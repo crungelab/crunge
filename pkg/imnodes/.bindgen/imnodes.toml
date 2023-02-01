@@ -1,0 +1,38 @@
+source = '../../depot/imnodes/imnodes.h'
+target = 'src/crunge/imnodes/bindings/generated.cpp'
+
+prefix = 'ImNodes'
+short_prefix = 'Im'
+
+module = '_imnodes'
+
+flags = [
+    '-x', 'c++',
+    '-std=c++17',
+    '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
+    '-I../../depot/imgui',
+    '-I./src'
+]
+
+excludes = [
+    # Wrapped
+    'ImNodes::CreateContext',
+    'ImNodes::DestroyContext',
+    'ImNodes::GetCurrentContext',
+    'ImNodes::SetCurrentContext',
+
+    'ImNodes::EditorContextCreate',
+    'ImNodes::EditorContextFree',
+    'ImNodes::EditorContextSet',
+    'ImNodes::MiniMap',
+    # Internal / Ignored
+    'ImNodes::EditorContext',
+    'ImNodes::SaveEditorStateToIniString',
+    'ImNodes::LoadEditorStateFromIniFile',
+    'ImNodes::LoadEditorStateFromIniString',
+    'ImNodes::SaveEditorStateToIniFile',
+    #Obsolete
+]
+
+overloaded = [
+]
