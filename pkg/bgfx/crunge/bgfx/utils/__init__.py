@@ -9,6 +9,8 @@ try:
 except Exception:
     _is_numpy_array = lambda obj: False
 
+def as_null_ptr():
+    return ctypes.c_void_p(None)
 
 def as_void_ptr(obj: Any) -> ctypes.py_object:
     ctypes.pythonapi.PyCapsule_New.restype = ctypes.py_object

@@ -15,5 +15,10 @@ using namespace bgfx;
 namespace py = pybind11;
 
 void init_main(py::module &_bgfx, Registry &registry) {
+    PYCLASS_BEGIN(_bgfx, bgfx::Memory, Memory)
+    //Memory.def(py::init<>());
+    Memory.def_readwrite("data", &bgfx::Memory::data);
+    Memory.def_readwrite("size", &bgfx::Memory::size);
+    PYCLASS_END(_bgfx, bgfx::Memory, Memory)
 }
 
