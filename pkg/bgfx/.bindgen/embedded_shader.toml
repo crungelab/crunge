@@ -1,0 +1,21 @@
+source = '../../depot/bgfx/include/bgfx/embedded_shader.h'
+target = 'src/crunge/bgfx/bindings/embedded_shader.cpp'
+
+module = '_bgfx'
+
+# Flags that get passed to LLVM to parse the headers
+flags = [
+    '-x', 'c++',
+    '-std=c++17',
+    '-I../../lib/bgfx/include'
+]
+
+excludes = [
+    # Problems
+    # Wrapped
+    # Internal / Ignored
+    #Obsolete
+]
+
+overloaded = [
+]

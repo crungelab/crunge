@@ -10,3 +10,15 @@ set(PYBIND11_ROOT ${CRUNGE_ROOT}/depot/pybind11)
 set(IMGUI_ROOT ${CRUNGE_ROOT}/depot/imgui)
 set(IMPLOT_ROOT ${CRUNGE_ROOT}/depot/implot)
 set(IMNODES_ROOT ${CRUNGE_ROOT}/depot/imnodes)
+
+set(BX_ROOT ${CRUNGE_ROOT}/depot/bx)
+set(BIMG_ROOT ${CRUNGE_ROOT}/depot/bimg)
+set(BGFX_ROOT ${CRUNGE_ROOT}/depot/bgfx)
+
+set(CRUNGE_COMPILE_DEFS 
+    NOMINMAX=1
+)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(BX_COMPATIBILITY ${BX_ROOT}/include/compat/msvc)
+endif()

@@ -12,7 +12,7 @@ pytest = "^7.2.1"
 bindgen = {path = "./pkg/bindgen",  develop = true}
 procure = {path = "./pkg/procure",  develop = true}
 scikit-build = "^0.16.6"
-cmake = "^3.25.0"
+cmake = "^3.25.2"
 
 [tool.poetry.build]
 generate-setup-file = false

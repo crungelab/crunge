@@ -21,9 +21,29 @@ class ImNodes(GitSolution):
 	path = 'depot/imnodes'
 	url = 'https://github.com/Nelarius/imnodes'
 
+class Bgfx(GitSolution):
+	path = 'depot/bgfx'
+	url = 'https://github.com/bkaradzic/bgfx'
+
+class Bimg(GitSolution):
+	path = 'depot/bimg'
+	url = 'https://github.com/bkaradzic/bimg'
+
+class Bx(GitSolution):
+	path = 'depot/bx'
+	url = 'https://github.com/bkaradzic/bx'
+
+class AstcEncoder(GitSolution):
+	path = 'depot/astc-encoder'
+	url = 'https://github.com/ARM-software/astc-encoder'
+
 solutions = [
     Pybind11,
     ImGui,
     ImPlot,
-    ImNodes
+    ImNodes,
+		Bgfx,
+		Bimg,
+		Bx,
+		AstcEncoder
 ]

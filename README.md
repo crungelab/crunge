@@ -22,8 +22,11 @@ Creative coding extensions for Python using C++ and pybind11
 
 ## Clone
 ```bash
-git clone --recursive https://github.com/crungelab/crunge
+git clone https://github.com/crungelab/crunge
 cd crunge
+poetry shell
+poetry install
+procure
 ```
 
 ## Virtual Environment

@@ -1,0 +1,32 @@
+source = '../../depot/bgfx/include/bgfx/bgfx.h'
+target = 'src/crunge/bgfx/bindings/bgfx.cpp'
+
+module = '_bgfx'
+
+# Flags that get passed to LLVM to parse the headers
+flags = [
+    '-x', 'c++',
+    '-std=c++17',
+    '-I../../depot/bgfx/include'
+]
+
+excludes = [
+    # Problems
+    'bgfx::VertexLayout::decode', # error C2352: 'bgfx::VertexLayout::decode': illegal call of non-static member function
+    'bgfx::setPaletteColor',
+    'bgfx::topologySortTriList',
+    'bgfx::vertexPack', #deleted function?
+    'bgfx::Memory', #deleted function
+    # Wrapped
+    # Internal / Ignored
+    #Obsolete
+]
+
+overloaded = [
+]
+
+[defaults]
+'_layoutHandle' = 'bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)'
+'_init' = 'bgfx::Init()'
+
+
