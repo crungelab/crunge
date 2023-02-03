@@ -10,12 +10,13 @@ from typing import List, Optional
 
 from loguru import logger
 
-from crunge import bgfx
-from crunge.bgfx.utils import as_void_ptr
+# noinspection PyUnresolvedReferences
+from pybgfx import bgfx
+from pybgfx.utils import as_void_ptr
 
-logger.disable("bgfx")
+logger.disable("pybgfx")
 
-_pkg_path = Path(os.path.dirname(__file__)).parent.parent
+_pkg_path = Path(os.path.dirname(__file__)).parent
 _default_bin_path = _pkg_path / "bin"
 _default_include_dir = _pkg_path / "include" / "shaders"
 _os_exe_suffix = ".exe" if platform.system() == "Windows" else ""
@@ -44,7 +45,7 @@ def _get_platform() -> str:
 
 
 def _get_profile(shader_type: ShaderType) -> str:
-    renderer_type = bgfx.get_renderer_type()
+    renderer_type = bgfx.getRendererType()
     sys_platform = platform.system()
     windows_shader_type = {
         ShaderType.FRAGMENT: "ps_",
@@ -62,7 +63,7 @@ def _get_profile(shader_type: ShaderType) -> str:
             return "glsl"
 
     elif sys_platform == "Windows":
-        if renderer_type == bgfx.RendererType.DIRECT3_D9:
+        if renderer_type == bgfx.RendererType.Direct3D9:
             return windows_shader_type.get(shader_type) + "3_0"
         else:
             return windows_shader_type.get(shader_type) + "5_0"
@@ -135,8 +136,8 @@ def load_shader(
 
             os.unlink(compiled_shader)
 
-    handle = bgfx.create_shader(memory)
-    bgfx.set_name(handle, name)
+    handle = bgfx.createShader(memory)
+    bgfx.setName(handle, name)
 
     return handle
 
@@ -179,11 +180,9 @@ def compile_shader(
         options.extend(["-O", "1" if shader_type == ShaderType.COMPUTE else "3"])
 
     shaderc_bin = str(_default_bin_path / "shadercRelease{}".format(_os_exe_suffix))
-    #os.chmod(shaderc_bin, 0o774)
+    os.chmod(shaderc_bin, 0o774)
 
     run_args = [shaderc_bin] + options
-    print(run_args)
-    
     run_info = subprocess.run(run_args, capture_output=True, text=True)
 
     if run_info.returncode != 0:

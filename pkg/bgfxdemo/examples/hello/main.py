@@ -1,6 +1,5 @@
 import os
 
-
 from crunge import bgfx
 from crunge.bgfx.window import Window
 from crunge.bgfx.constants import *
@@ -22,6 +21,10 @@ class HelloWorld(Window):
         bgfx.set_platform_data(platform_data)
         bgfx.init(self.init_conf)
 
+        bgfx.reset(
+            self.width, self.height, BGFX_RESET_VSYNC, self.init_conf.resolution.format,
+        )
+
         bgfx.set_debug(BGFX_DEBUG_TEXT)
         bgfx.set_view_clear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0, 0)
 
@@ -34,6 +37,7 @@ class HelloWorld(Window):
         bgfx.set_view_rect(0, 0, 0, self.width, self.height)
         bgfx.touch(0)
         bgfx.dbg_text_clear(0, False)
+        
         bgfx.dbg_text_image(
             int(max(self.width / 2 / 8, 20)) - 20,
             int(max(self.height / 2 / 16, 6)) - 6,
@@ -69,7 +73,6 @@ class HelloWorld(Window):
             0x0F,
             f"Backbuffer {stats.width}W x {stats.height}H in pixels, debug text {stats.text_width}W x {stats.text_height}H in characters.",
         )
-
         bgfx.frame()
 
     def resize(self, width, height):

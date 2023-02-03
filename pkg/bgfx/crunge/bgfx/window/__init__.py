@@ -8,12 +8,11 @@ from glfw import _glfw as glfw_native
 from crunge import bgfx
 from crunge.bgfx.utils import as_void_ptr, as_null_ptr
 
-class Window(object):
+class Window:
     def __init__(self, width, height, title):
         self.title = title
         self.height = height
         self.width = width
-        self.ctx = None
         self.window = None
 
     def init(self, platform_data):
@@ -79,7 +78,6 @@ class Window(object):
 
         data = bgfx.PlatformData()
         #data.ndt = as_void_ptr(display) if display else cppyy.nullptr
-        #data.nwh = as_void_ptr(handle)
         data.nwh = as_void_ptr(handle)
         #data.context = cppyy.nullptr
         data.context = None
