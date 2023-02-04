@@ -15,8 +15,8 @@ excludes = [
     'bgfx::VertexLayout::decode', # error C2352: 'bgfx::VertexLayout::decode': illegal call of non-static member function
     'bgfx::setPaletteColor',
     'bgfx::topologySortTriList',
-    'bgfx::vertexPack', #deleted function?
-    'bgfx::Memory', #deleted function
+    'bgfx::vertexPack', #deleted function
+    'bgfx::Memory', #deleted constructor
     # Wrapped
     # Internal / Ignored
     #Obsolete

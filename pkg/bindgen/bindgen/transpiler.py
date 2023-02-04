@@ -1,6 +1,7 @@
 from loguru import logger
 #from clang import cindex
 from crunge.clang import cindex
+from crunge.clang.cindex import AccessSpecifier
 
 from .transpiler_base import TranspilerBase
 
@@ -11,7 +12,12 @@ class Transpiler(TranspilerBase):
     def parse_enum(self, node):
         if self.is_forward_declaration(node):
             return
+        if node.is_scoped_enum:
+            return self.parse_scoped_enum(node)
+
         logger.debug(node.spelling)
+        logger.debug(dir(node))
+        #logger.debug(node.enum_type.spelling)
 
         self.scope(f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())')
         self.scope.indent += 1
@@ -21,6 +27,19 @@ class Transpiler(TranspilerBase):
         self.scope.indent -= 1
         self.scope('')
 
+    def parse_scoped_enum(self, node):
+        logger.debug(node.spelling)
+        #logger.debug(dir(node))
+
+        self.scope(f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())')
+        self.scope.indent += 1
+        for value in node.get_children():
+            self.scope(f'.value("{self.format_enum(value.spelling)}", {self.spell(node)}::{value.spelling})')
+        self.scope('.export_values();')
+        self.scope.indent -= 1
+        self.scope('')
+
+    # TODO: Handle is_deleted_method
     def parse_constructor(self, node, cls):
         arguments = [a for a in node.get_arguments()]
         if len(arguments):
@@ -31,6 +50,8 @@ class Transpiler(TranspilerBase):
             self.scope(f'{self.module_(cls)}.def(py::init<>());')
 
     def parse_field(self, node, cls):
+        if node.access_specifier == AccessSpecifier.PRIVATE:
+            return
         pyname = self.format_attribute(node.spelling)
         cname = self.spell(node)
         if self.is_property_mappable(node):
@@ -91,6 +112,9 @@ class Transpiler(TranspilerBase):
 
     def parse_function(self, node, cls=None):
         #print(node.spelling)
+        if node.access_specifier == AccessSpecifier.PRIVATE:
+            return
+
         if self.is_function_mappable(node):
             mname = self.module_(cls)
             arguments = [a for a in node.get_arguments()]

@@ -21,6 +21,7 @@ class ImNodes(GitSolution):
 	path = 'depot/imnodes'
 	url = 'https://github.com/Nelarius/imnodes'
 
+"""
 class Bgfx(GitSolution):
 	path = 'depot/bgfx'
 	url = 'https://github.com/bkaradzic/bgfx'
@@ -36,14 +37,29 @@ class Bx(GitSolution):
 class AstcEncoder(GitSolution):
 	path = 'depot/astc-encoder'
 	url = 'https://github.com/ARM-software/astc-encoder'
+"""
+
+class Dawn(GitSolution):
+	path = 'depot/dawn'
+	url = 'https://github.com/encounter/dawn-cmake'
+
+"""
+solutions = [
+    Pybind11,
+    ImGui,
+    ImPlot,
+    ImNodes,
+    Bgfx,
+    Bimg,
+    Bx,
+    AstcEncoder
+]
+"""
 
 solutions = [
     Pybind11,
     ImGui,
     ImPlot,
     ImNodes,
-		Bgfx,
-		Bimg,
-		Bx,
-		AstcEncoder
+    Dawn
 ]

@@ -6,7 +6,7 @@ import glfw
 from glfw import _glfw as glfw_native
 
 from crunge import bgfx
-from crunge.bgfx.utils import as_void_ptr, as_null_ptr
+from crunge.bgfx.utils import as_void_ptr, null_ptr
 
 class Window:
     def __init__(self, width, height, title):
@@ -79,6 +79,7 @@ class Window:
         data = bgfx.PlatformData()
         #data.ndt = as_void_ptr(display) if display else cppyy.nullptr
         data.nwh = as_void_ptr(handle)
+        #data.nwh = ctypes.pythonapi.PyCapsule_New(handle, "None", None)
         #data.context = cppyy.nullptr
         data.context = None
         #data.backBuffer = cppyy.nullptr
@@ -86,6 +87,7 @@ class Window:
         #data.backBufferDS = cppyy.nullptr
         data.back_buffer_ds = None
 
+        print(data.nwh)
         self.init(data)
 
         last_time = None
