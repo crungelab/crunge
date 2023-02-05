@@ -206,6 +206,7 @@ class Transpiler(TranspilerBase):
             kind = child.kind
             if kind in self.actions:
                 self.dispatch(child)
+            """
             elif kind == cindex.CursorKind.ENUM_DECL:
                 self.parse_enum(child)
             elif kind == cindex.CursorKind.VAR_DECL:
@@ -216,7 +217,7 @@ class Transpiler(TranspilerBase):
                 self.parse_definitions(child)
             elif kind == cindex.CursorKind.UNEXPOSED_DECL:
                 self.parse_definitions(child)
-
+            """
     def parse_overloads(self, node):
         for child in node.get_children():
             if child.kind in [cindex.CursorKind.CXX_METHOD, cindex.CursorKind.FUNCTION_DECL]:

@@ -15,8 +15,8 @@ set(BX_ROOT ${CRUNGE_ROOT}/depot/bx)
 set(BIMG_ROOT ${CRUNGE_ROOT}/depot/bimg)
 set(BGFX_ROOT ${CRUNGE_ROOT}/depot/bgfx)
 
-#set(DAWN_ROOT ${CRUNGE_ROOT}/lib/dawn)
 set(DAWN_ROOT ${CRUNGE_ROOT}/depot/dawn)
+set(DAWN_LIB ${CRUNGE_ROOT}/lib/dawn)
 
 set(CRUNGE_COMPILE_DEFS 
     NOMINMAX=1

@@ -7,17 +7,21 @@ function(USES_DAWN THIS)
 
     target_include_directories(${THIS} PRIVATE
         ${DAWN_ROOT}/include
+        ${DAWN_LIB}/include
     )
 
+    target_link_directories(${THIS} PRIVATE
+        ${DAWN_LIB}/bin/win/x64
+    )
     target_link_libraries(${THIS} PRIVATE
-        dawn_internal_config
+        #dawn_internal_config
         dawncpp
         dawn_proc
-        dawn_common
+        #dawn_common
         #dawn_glfw
-        dawn_native
-        dawn_wire
-        dawn_utils
+        #dawn_native
+        #dawn_wire
+        #dawn_utils
         #glfw
     )
 endfunction()

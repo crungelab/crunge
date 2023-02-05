@@ -2,6 +2,8 @@ import ctypes
 import time
 import sys
 
+from crunge import wgpu
+
 import glfw
 from glfw import _glfw as glfw_native
 
@@ -28,6 +30,15 @@ def main():
 
     nwh = as_void_ptr(handle)
     print(nwh)
+
+    #adapter = wgpu.Adapter()
+    #device = wgpu.Adapter.create_device()
+    #instance = wgpu.create_instance()
+    #instance_descriptor = wgpu.InstanceDescriptor()
+    #dawn_instance_descriptor = wgpu.DawnInstanceDescriptor()
+    #instance_descriptor.next_in_chain = dawn_instance_descriptor
+    #instance = wgpu.create_instance(instance_descriptor)
+    instance = wgpu.create_instance(None)
 
     last_time = None
     while not glfw.window_should_close(window):

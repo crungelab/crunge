@@ -3,7 +3,6 @@
 #include <pybind11/stl.h>
 #include <limits>
 
-#include <dawn/dawn_proc.h>
 #include <dawn/webgpu_cpp.h>
 
 #include <crunge/core/bindtools.h>

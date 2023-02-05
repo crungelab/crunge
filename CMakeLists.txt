@@ -29,3 +29,5 @@ add_subdirectory(pkg/imnodes)
 #
 add_subdirectory(depot/dawn)
 add_subdirectory(pkg/wgpu)
+
+add_subdirectory(examples)

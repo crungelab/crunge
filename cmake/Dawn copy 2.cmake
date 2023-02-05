@@ -9,6 +9,9 @@ function(USES_DAWN THIS)
         ${DAWN_ROOT}/include
     )
 
+    # target_link_directories(${THIS} PRIVATE
+    # ${DAWN_ROOT}/bin/win/x64
+    # )
     target_link_libraries(${THIS} PRIVATE
         dawn_internal_config
         dawncpp
