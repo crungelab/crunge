@@ -104,6 +104,11 @@ void init_main(py::module &_wgpu, Registry &registry) {
     PYEXTEND_BEGIN(wgpu::AdapterProperties, AdapterProperties)
         AdapterProperties.def(py::init<>());
     PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor)
+        ShaderModuleDescriptor.def(py::init<>());
+    PYEXTEND_END
+
 }
 
 //void RequestAdapter(RequestAdapterOptions const * options, RequestAdapterCallback callback, void * userdata) const;

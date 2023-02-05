@@ -1,9 +1,11 @@
 from loguru import logger
-#from clang import cindex
+
+# from clang import cindex
 from crunge.clang import cindex
 from crunge.clang.cindex import AccessSpecifier
 
 from .transpiler_base import TranspilerBase
+
 
 class Transpiler(TranspilerBase):
     def __init__(self):
@@ -17,37 +19,47 @@ class Transpiler(TranspilerBase):
 
         logger.debug(node.spelling)
         logger.debug(dir(node))
-        #logger.debug(node.enum_type.spelling)
+        # logger.debug(node.enum_type.spelling)
 
-        self.scope(f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())')
+        self.scope(
+            f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
+        )
         self.scope.indent += 1
         for value in node.get_children():
-            self.scope(f'.value("{self.format_enum(value.spelling)}", {value.spelling})')
-        self.scope('.export_values();')
+            self.scope(
+                f'.value("{self.format_enum(value.spelling)}", {value.spelling})'
+            )
+        self.scope(".export_values();")
         self.scope.indent -= 1
-        self.scope('')
+        self.scope("")
 
     def parse_scoped_enum(self, node):
         logger.debug(node.spelling)
-        #logger.debug(dir(node))
+        # logger.debug(dir(node))
 
-        self.scope(f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())')
+        self.scope(
+            f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
+        )
         self.scope.indent += 1
         for value in node.get_children():
-            self.scope(f'.value("{self.format_enum(value.spelling)}", {self.spell(node)}::{value.spelling})')
-        self.scope('.export_values();')
+            self.scope(
+                f'.value("{self.format_enum(value.spelling)}", {self.spell(node)}::{value.spelling})'
+            )
+        self.scope(".export_values();")
         self.scope.indent -= 1
-        self.scope('')
+        self.scope("")
 
     # TODO: Handle is_deleted_method
     def parse_constructor(self, node, cls):
         arguments = [a for a in node.get_arguments()]
         if len(arguments):
-            self.scope(f'{self.module_(cls)}.def(py::init<{self.arg_types(arguments)}>()')
+            self.scope(
+                f"{self.module_(cls)}.def(py::init<{self.arg_types(arguments)}>()"
+            )
             self.write_pyargs(arguments)
-            self.scope(');')
+            self.scope(");")
         else:
-            self.scope(f'{self.module_(cls)}.def(py::init<>());')
+            self.scope(f"{self.module_(cls)}.def(py::init<>());")
 
     def parse_field(self, node, cls):
         if node.access_specifier == AccessSpecifier.PRIVATE:
@@ -94,73 +106,87 @@ class Transpiler(TranspilerBase):
         return False
 
     def get_function_return(self, node):
-        returned = [a.spelling for a in node.get_arguments() if self.should_return_argument(a)]
+        returned = [
+            a.spelling for a in node.get_arguments() if self.should_return_argument(a)
+        ]
         if not self.is_function_void_return(node):
-            returned.insert(0, 'ret')
+            returned.insert(0, "ret")
         if len(returned) > 1:
-            return 'std::make_tuple({})'.format(', '.join(returned))
+            return "std::make_tuple({})".format(", ".join(returned))
         if len(returned) == 1:
             return returned[0]
-        return ''
+        return ""
 
     def get_return_policy(self, node):
         result = node.type.get_result()
         if result.kind == cindex.TypeKind.LVALUEREFERENCE:
-            return 'py::return_value_policy::reference'
+            return "py::return_value_policy::reference"
         else:
-            return 'py::return_value_policy::automatic_reference'
+            return "py::return_value_policy::automatic_reference"
 
     def parse_function(self, node, cls=None):
-        #print(node.spelling)
+        # print(node.spelling)
         if node.access_specifier == AccessSpecifier.PRIVATE:
             return
 
         if self.is_function_mappable(node):
             mname = self.module_(cls)
             arguments = [a for a in node.get_arguments()]
-            cname = '&' + self.spell(node)
+            cname = "&" + self.spell(node)
             pyname = self.format_attribute(node.spelling)
             if self.is_overloaded(node):
-                cname = f'py::overload_cast<{self.arg_types(arguments)}>({cname})'
+                cname = f"py::overload_cast<{self.arg_types(arguments)}>({cname})"
             if self.should_wrap_function(node):
                 self.scope(f'{mname}.def("{pyname}", []({self.arg_string(arguments)})')
-                self.scope('{')
-                ret = '' if self.is_function_void_return(node) else 'auto ret = '
-                self.scope(f'    {ret}{self.spell(node)}({self.arg_names(arguments)});')
-                self.scope(f'    return {self.get_function_return(node)};')
-                self.scope('}')
+                self.scope("{")
+                ret = "" if self.is_function_void_return(node) else "auto ret = "
+                self.scope(f"    {ret}{self.spell(node)}({self.arg_names(arguments)});")
+                self.scope(f"    return {self.get_function_return(node)};")
+                self.scope("}")
             else:
                 self.scope(f'{mname}.def("{pyname}", {cname}')
             self.write_pyargs(arguments)
-            self.scope(f', {self.get_return_policy(node)});')
+            self.scope(f", {self.get_return_policy(node)});")
 
     def parse_struct_enum(self, node, clsname, pyname):
         if not node.get_children():
             return
-        self.scope(f'py::enum_<{self.spell(node)}>({self.module}, "{pyname}", py::arithmetic())')
+        self.scope(
+            f'py::enum_<{self.spell(node)}>({self.module}, "{pyname}", py::arithmetic())'
+        )
         logger.debug(node.spelling)
         self.scope.indent += 1
         for value in node.get_children():
-            self.scope(f'.value("{self.format_enum(value.spelling)}", {clsname}::Enum::{value.spelling})')
-        self.scope('.export_values();')
+            self.scope(
+                f'.value("{self.format_enum(value.spelling)}", {clsname}::Enum::{value.spelling})'
+            )
+        self.scope(".export_values();")
         self.scope.indent -= 1
-        self.scope('')
+        self.scope("")
 
     def parse_struct(self, node):
         if self.is_class_mappable(node):
             clsname = self.spell(node)
-            #logger.debug(clsname)
+            # logger.debug(clsname)
             pyname = self.format_type(node.spelling)
-            children = list(node.get_children()) # it's an iterator
+            children = list(node.get_children())  # it's an iterator
             wrapped = False
-            #Handle the case of a struct with one enum child
+            # Handle the case of a struct with one enum child
             if len(children) == 1:
                 first_child = children[0]
                 wrapped = first_child.kind == cindex.CursorKind.ENUM_DECL
             if not wrapped:
-              self.scope(f'PYCLASS_BEGIN({self.module}, {clsname}, {pyname})')
+                base = None
+                for child in node.get_children():
+                    if child.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
+                        base = child
+                if base:
+                    basename = self.spell(base)
+                    self.scope(f"PYCLASS_INHERIT_BEGIN({self.module}, {clsname}, {basename}, {pyname})")
+                else:
+                    self.scope(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})")
             for child in node.get_children():
-                #logger.debug(f"{child.kind} : {child.spelling}")
+                # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
                     self.parse_constructor(child, node)
                 elif child.kind == cindex.CursorKind.CXX_METHOD:
@@ -171,17 +197,17 @@ class Transpiler(TranspilerBase):
                     self.parse_struct_enum(child, clsname, pyname)
 
             if not wrapped:
-              self.scope(f'PYCLASS_END({self.module}, {clsname}, {pyname})\n')
+                self.scope(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
 
     def parse_class(self, node):
         if self.is_class_mappable(node):
-            #clsname = self.name(node)
+            # clsname = self.name(node)
             clsname = self.spell(node)
-            #logger.debug(clsname)
+            # logger.debug(clsname)
             pyname = self.format_type(node.spelling)
-            self.scope(f'PYCLASS_BEGIN({self.module}, {clsname}, {pyname})')
+            self.scope(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})")
             for child in node.get_children():
-                #logger.debug(f"{child.kind} : {child.spelling}")
+                # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
                     self.parse_constructor(child, node)
                 elif child.kind == cindex.CursorKind.FUNCTION_DECL:
@@ -190,10 +216,10 @@ class Transpiler(TranspilerBase):
                     self.parse_function(child, node)
                 elif child.kind == cindex.CursorKind.FIELD_DECL:
                     self.parse_field(child, node)
-            self.scope(f'PYCLASS_END({self.module}, {clsname}, {pyname})\n')
+            self.scope(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
 
     def parse_var(self, node):
-        logger.debug(f'Not implemented:  parse_var: {node.spelling}')
+        logger.debug(f"Not implemented:  parse_var: {node.spelling}")
 
     def dispatch(self, node):
         self.actions[node.kind](self, node)
@@ -202,7 +228,7 @@ class Transpiler(TranspilerBase):
         for child in node.get_children():
             if not self.is_node_mappable(child):
                 continue
-            #print(child.spelling, ':  ', child.kind)
+            # print(child.spelling, ':  ', child.kind)
             kind = child.kind
             if kind in self.actions:
                 self.dispatch(child)
@@ -218,9 +244,13 @@ class Transpiler(TranspilerBase):
             elif kind == cindex.CursorKind.UNEXPOSED_DECL:
                 self.parse_definitions(child)
             """
+
     def parse_overloads(self, node):
         for child in node.get_children():
-            if child.kind in [cindex.CursorKind.CXX_METHOD, cindex.CursorKind.FUNCTION_DECL]:
+            if child.kind in [
+                cindex.CursorKind.CXX_METHOD,
+                cindex.CursorKind.FUNCTION_DECL,
+            ]:
                 key = self.spell(child)
                 if key in self.overloaded.visited:
                     self.overloaded.add(key)

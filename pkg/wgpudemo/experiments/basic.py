@@ -31,14 +31,15 @@ def main():
     nwh = as_void_ptr(handle)
     print(nwh)
 
-    #adapter = wgpu.Adapter()
-    #device = wgpu.Adapter.create_device()
-    #instance = wgpu.create_instance()
-    #instance_descriptor = wgpu.InstanceDescriptor()
-    #dawn_instance_descriptor = wgpu.DawnInstanceDescriptor()
-    #instance_descriptor.next_in_chain = dawn_instance_descriptor
-    #instance = wgpu.create_instance(instance_descriptor)
-    instance = wgpu.create_instance(None)
+    instance = wgpu.create_instance()
+    adapter = instance.request_adapter()
+    props = wgpu.AdapterProperties()
+    adapter.get_properties(props)
+    print(props.vendor_name)
+    device = adapter.create_device()
+    print(device)
+    #feature_name = FeatureName()
+    queue = device.get_queue()
 
     last_time = None
     while not glfw.window_should_close(window):

@@ -1198,27 +1198,27 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     CopyTextureForBrowserOptions.def_readwrite("internal_usage", &wgpu::CopyTextureForBrowserOptions::internalUsage);
     PYCLASS_END(_wgpu, wgpu::CopyTextureForBrowserOptions, CopyTextureForBrowserOptions)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::DawnCacheDeviceDescriptor, DawnCacheDeviceDescriptor)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::DawnCacheDeviceDescriptor, struct wgpu::ChainedStruct, DawnCacheDeviceDescriptor)
     DawnCacheDeviceDescriptor.def(py::init<>());
     DawnCacheDeviceDescriptor.def_readwrite("isolation_key", &wgpu::DawnCacheDeviceDescriptor::isolationKey);
     PYCLASS_END(_wgpu, wgpu::DawnCacheDeviceDescriptor, DawnCacheDeviceDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::DawnEncoderInternalUsageDescriptor, DawnEncoderInternalUsageDescriptor)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::DawnEncoderInternalUsageDescriptor, struct wgpu::ChainedStruct, DawnEncoderInternalUsageDescriptor)
     DawnEncoderInternalUsageDescriptor.def(py::init<>());
     DawnEncoderInternalUsageDescriptor.def_readwrite("use_internal_usages", &wgpu::DawnEncoderInternalUsageDescriptor::useInternalUsages);
     PYCLASS_END(_wgpu, wgpu::DawnEncoderInternalUsageDescriptor, DawnEncoderInternalUsageDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::DawnInstanceDescriptor, DawnInstanceDescriptor)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::DawnInstanceDescriptor, struct wgpu::ChainedStruct, DawnInstanceDescriptor)
     DawnInstanceDescriptor.def(py::init<>());
     DawnInstanceDescriptor.def_readwrite("additional_runtime_search_paths_count", &wgpu::DawnInstanceDescriptor::additionalRuntimeSearchPathsCount);
     PYCLASS_END(_wgpu, wgpu::DawnInstanceDescriptor, DawnInstanceDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::DawnTextureInternalUsageDescriptor, DawnTextureInternalUsageDescriptor)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::DawnTextureInternalUsageDescriptor, struct wgpu::ChainedStruct, DawnTextureInternalUsageDescriptor)
     DawnTextureInternalUsageDescriptor.def(py::init<>());
     DawnTextureInternalUsageDescriptor.def_readwrite("internal_usage", &wgpu::DawnTextureInternalUsageDescriptor::internalUsage);
     PYCLASS_END(_wgpu, wgpu::DawnTextureInternalUsageDescriptor, DawnTextureInternalUsageDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::DawnTogglesDeviceDescriptor, DawnTogglesDeviceDescriptor)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::DawnTogglesDeviceDescriptor, struct wgpu::ChainedStruct, DawnTogglesDeviceDescriptor)
     DawnTogglesDeviceDescriptor.def(py::init<>());
     DawnTogglesDeviceDescriptor.def_readwrite("force_enabled_toggles_count", &wgpu::DawnTogglesDeviceDescriptor::forceEnabledTogglesCount);
     DawnTogglesDeviceDescriptor.def_readwrite("force_disabled_toggles_count", &wgpu::DawnTogglesDeviceDescriptor::forceDisabledTogglesCount);
@@ -1230,12 +1230,12 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     Extent3D.def_readwrite("depth_or_array_layers", &wgpu::Extent3D::depthOrArrayLayers);
     PYCLASS_END(_wgpu, wgpu::Extent3D, Extent3D)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::ExternalTextureBindingEntry, ExternalTextureBindingEntry)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::ExternalTextureBindingEntry, struct wgpu::ChainedStruct, ExternalTextureBindingEntry)
     ExternalTextureBindingEntry.def(py::init<>());
     ExternalTextureBindingEntry.def_readwrite("external_texture", &wgpu::ExternalTextureBindingEntry::externalTexture);
     PYCLASS_END(_wgpu, wgpu::ExternalTextureBindingEntry, ExternalTextureBindingEntry)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::ExternalTextureBindingLayout, ExternalTextureBindingLayout)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::ExternalTextureBindingLayout, struct wgpu::ChainedStruct, ExternalTextureBindingLayout)
     ExternalTextureBindingLayout.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ExternalTextureBindingLayout, ExternalTextureBindingLayout)
 
@@ -1306,7 +1306,7 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     PipelineLayoutDescriptor.def_readwrite("bind_group_layouts", &wgpu::PipelineLayoutDescriptor::bindGroupLayouts);
     PYCLASS_END(_wgpu, wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::PrimitiveDepthClipControl, PrimitiveDepthClipControl)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::PrimitiveDepthClipControl, struct wgpu::ChainedStruct, PrimitiveDepthClipControl)
     PrimitiveDepthClipControl.def(py::init<>());
     PrimitiveDepthClipControl.def_readwrite("unclipped_depth", &wgpu::PrimitiveDepthClipControl::unclippedDepth);
     PYCLASS_END(_wgpu, wgpu::PrimitiveDepthClipControl, PrimitiveDepthClipControl)
@@ -1363,7 +1363,7 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     RenderPassDepthStencilAttachment.def_readwrite("stencil_read_only", &wgpu::RenderPassDepthStencilAttachment::stencilReadOnly);
     PYCLASS_END(_wgpu, wgpu::RenderPassDepthStencilAttachment, RenderPassDepthStencilAttachment)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::RenderPassDescriptorMaxDrawCount, RenderPassDescriptorMaxDrawCount)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::RenderPassDescriptorMaxDrawCount, struct wgpu::ChainedStruct, RenderPassDescriptorMaxDrawCount)
     RenderPassDescriptorMaxDrawCount.def(py::init<>());
     RenderPassDescriptorMaxDrawCount.def_readwrite("max_draw_count", &wgpu::RenderPassDescriptorMaxDrawCount::maxDrawCount);
     PYCLASS_END(_wgpu, wgpu::RenderPassDescriptorMaxDrawCount, RenderPassDescriptorMaxDrawCount)
@@ -1406,13 +1406,13 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     ShaderModuleDescriptor.def_readwrite("label", &wgpu::ShaderModuleDescriptor::label);
     PYCLASS_END(_wgpu, wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::ShaderModuleSPIRVDescriptor, ShaderModuleSPIRVDescriptor)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::ShaderModuleSPIRVDescriptor, struct wgpu::ChainedStruct, ShaderModuleSPIRVDescriptor)
     ShaderModuleSPIRVDescriptor.def(py::init<>());
     ShaderModuleSPIRVDescriptor.def_readwrite("code_size", &wgpu::ShaderModuleSPIRVDescriptor::codeSize);
     ShaderModuleSPIRVDescriptor.def_readwrite("code", &wgpu::ShaderModuleSPIRVDescriptor::code);
     PYCLASS_END(_wgpu, wgpu::ShaderModuleSPIRVDescriptor, ShaderModuleSPIRVDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::ShaderModuleWGSLDescriptor, struct wgpu::ChainedStruct, ShaderModuleWGSLDescriptor)
     ShaderModuleWGSLDescriptor.def(py::init<>());
     ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);
     PYCLASS_END(_wgpu, wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
@@ -1436,44 +1436,44 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     SurfaceDescriptor.def_readwrite("label", &wgpu::SurfaceDescriptor::label);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptor, SurfaceDescriptor)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromAndroidNativeWindow, SurfaceDescriptorFromAndroidNativeWindow)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromAndroidNativeWindow, struct wgpu::ChainedStruct, SurfaceDescriptorFromAndroidNativeWindow)
     SurfaceDescriptorFromAndroidNativeWindow.def(py::init<>());
     SurfaceDescriptorFromAndroidNativeWindow.def_readwrite("window", &wgpu::SurfaceDescriptorFromAndroidNativeWindow::window);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromAndroidNativeWindow, SurfaceDescriptorFromAndroidNativeWindow)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, SurfaceDescriptorFromCanvasHTMLSelector)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, struct wgpu::ChainedStruct, SurfaceDescriptorFromCanvasHTMLSelector)
     SurfaceDescriptorFromCanvasHTMLSelector.def(py::init<>());
     SurfaceDescriptorFromCanvasHTMLSelector.def_readwrite("selector", &wgpu::SurfaceDescriptorFromCanvasHTMLSelector::selector);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, SurfaceDescriptorFromCanvasHTMLSelector)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromMetalLayer, SurfaceDescriptorFromMetalLayer)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromMetalLayer, struct wgpu::ChainedStruct, SurfaceDescriptorFromMetalLayer)
     SurfaceDescriptorFromMetalLayer.def(py::init<>());
     SurfaceDescriptorFromMetalLayer.def_readwrite("layer", &wgpu::SurfaceDescriptorFromMetalLayer::layer);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromMetalLayer, SurfaceDescriptorFromMetalLayer)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWaylandSurface, SurfaceDescriptorFromWaylandSurface)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWaylandSurface, struct wgpu::ChainedStruct, SurfaceDescriptorFromWaylandSurface)
     SurfaceDescriptorFromWaylandSurface.def(py::init<>());
     SurfaceDescriptorFromWaylandSurface.def_readwrite("display", &wgpu::SurfaceDescriptorFromWaylandSurface::display);
     SurfaceDescriptorFromWaylandSurface.def_readwrite("surface", &wgpu::SurfaceDescriptorFromWaylandSurface::surface);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromWaylandSurface, SurfaceDescriptorFromWaylandSurface)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWindowsCoreWindow, SurfaceDescriptorFromWindowsCoreWindow)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWindowsCoreWindow, struct wgpu::ChainedStruct, SurfaceDescriptorFromWindowsCoreWindow)
     SurfaceDescriptorFromWindowsCoreWindow.def(py::init<>());
     SurfaceDescriptorFromWindowsCoreWindow.def_readwrite("core_window", &wgpu::SurfaceDescriptorFromWindowsCoreWindow::coreWindow);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromWindowsCoreWindow, SurfaceDescriptorFromWindowsCoreWindow)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWindowsHWND, SurfaceDescriptorFromWindowsHWND)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWindowsHWND, struct wgpu::ChainedStruct, SurfaceDescriptorFromWindowsHWND)
     SurfaceDescriptorFromWindowsHWND.def(py::init<>());
     SurfaceDescriptorFromWindowsHWND.def_readwrite("hinstance", &wgpu::SurfaceDescriptorFromWindowsHWND::hinstance);
     SurfaceDescriptorFromWindowsHWND.def_readwrite("hwnd", &wgpu::SurfaceDescriptorFromWindowsHWND::hwnd);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromWindowsHWND, SurfaceDescriptorFromWindowsHWND)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWindowsSwapChainPanel, SurfaceDescriptorFromWindowsSwapChainPanel)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWindowsSwapChainPanel, struct wgpu::ChainedStruct, SurfaceDescriptorFromWindowsSwapChainPanel)
     SurfaceDescriptorFromWindowsSwapChainPanel.def(py::init<>());
     SurfaceDescriptorFromWindowsSwapChainPanel.def_readwrite("swap_chain_panel", &wgpu::SurfaceDescriptorFromWindowsSwapChainPanel::swapChainPanel);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromWindowsSwapChainPanel, SurfaceDescriptorFromWindowsSwapChainPanel)
 
-    PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromXlibWindow, SurfaceDescriptorFromXlibWindow)
+    PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromXlibWindow, struct wgpu::ChainedStruct, SurfaceDescriptorFromXlibWindow)
     SurfaceDescriptorFromXlibWindow.def(py::init<>());
     SurfaceDescriptorFromXlibWindow.def_readwrite("display", &wgpu::SurfaceDescriptorFromXlibWindow::display);
     SurfaceDescriptorFromXlibWindow.def_readwrite("window", &wgpu::SurfaceDescriptorFromXlibWindow::window);

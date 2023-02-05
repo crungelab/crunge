@@ -7,6 +7,10 @@ def main():
     props = wgpu.AdapterProperties()
     adapter.get_properties(props)
     print(props.vendor_name)
+    device = adapter.create_device()
+    print(device)
+    #feature_name = FeatureName()
+    queue = device.get_queue()
 
 if __name__ == "__main__":
     main()
