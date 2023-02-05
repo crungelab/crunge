@@ -25,7 +25,6 @@ def main():
 
     wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
     wgsl_desc.source = shader_code
-
     descriptor = wgpu.ShaderModuleDescriptor()
     descriptor.next_in_chain = wgsl_desc
     shader_module = device.create_shader_module(descriptor)

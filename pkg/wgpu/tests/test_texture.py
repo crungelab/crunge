@@ -17,13 +17,5 @@ def main():
     texture = device.create_texture(descriptor)
     print(texture)
 
-"""
-wgpu::TextureDescriptor descriptor{};
-descriptor.usage = wgpu::TextureUsage::RenderAttachment | wgpu::TextureUsage::CopySrc;
-descriptor.size = {1, 1, 1};
-descriptor.format = wgpu::TextureFormat::BGRA8Unorm;
-readbackTexture = device.CreateTexture(&descriptor);
-"""
-
 if __name__ == "__main__":
     main()

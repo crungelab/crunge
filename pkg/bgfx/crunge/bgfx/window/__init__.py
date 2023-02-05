@@ -78,7 +78,7 @@ class Window:
 
         data = bgfx.PlatformData()
         #data.ndt = as_void_ptr(display) if display else cppyy.nullptr
-        data.nwh = as_void_ptr(handle)
+        data.nwh = as_void_ptr(handle) #ctypes.c_void_p(handle)?
         #data.nwh = ctypes.pythonapi.PyCapsule_New(handle, "None", None)
         #data.context = cppyy.nullptr
         data.context = None

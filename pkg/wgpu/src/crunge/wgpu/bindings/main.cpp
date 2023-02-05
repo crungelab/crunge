@@ -141,6 +141,55 @@ void init_main(py::module &_wgpu, Registry &registry) {
         , py::arg("depth")
         );
     PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor)
+        PipelineLayoutDescriptor.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::ColorTargetState, ColorTargetState)
+        ColorTargetState.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::FragmentState, FragmentState)
+        FragmentState.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::DepthStencilState, DepthStencilState)
+        DepthStencilState.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor)
+        RenderPipelineDescriptor.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::RenderPassColorAttachment, RenderPassColorAttachment)
+        RenderPassColorAttachment.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::Color, Color)
+        Color.def(py::init<float, float, float, float>()
+        , py::arg("r")
+        , py::arg("g")
+        , py::arg("b")
+        , py::arg("a")
+        );
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::RenderPassDescriptor, RenderPassDescriptor)
+        RenderPassDescriptor.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::RenderPassDepthStencilAttachment, RenderPassDepthStencilAttachment)
+        RenderPassDepthStencilAttachment.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::CommandBuffer, CommandBuffer)
+        CommandBuffer.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::SurfaceDescriptor, SurfaceDescriptor)
+        SurfaceDescriptor.def(py::init<>());
+    PYEXTEND_END
 }
 
 /*
