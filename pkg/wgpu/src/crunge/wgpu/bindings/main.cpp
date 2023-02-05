@@ -105,6 +105,14 @@ void init_main(py::module &_wgpu, Registry &registry) {
         AdapterProperties.def(py::init<>());
     PYEXTEND_END
 
+    PYEXTEND_BEGIN(wgpu::BindGroupLayoutDescriptor, BindGroupLayoutDescriptor)
+        BindGroupLayoutDescriptor.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::BindGroupDescriptor, BindGroupDescriptor)
+        BindGroupDescriptor.def(py::init<>());
+    PYEXTEND_END
+
     PYEXTEND_BEGIN(wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor)
         ShaderModuleDescriptor.def(py::init<>());
     PYEXTEND_END
