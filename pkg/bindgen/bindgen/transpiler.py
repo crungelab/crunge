@@ -33,6 +33,7 @@ class Transpiler(TranspilerBase):
         self.scope.indent -= 1
         self.scope("")
 
+    """
     def parse_scoped_enum(self, node):
         logger.debug(node.spelling)
         # logger.debug(dir(node))
@@ -47,6 +48,31 @@ class Transpiler(TranspilerBase):
             )
         self.scope(".export_values();")
         self.scope.indent -= 1
+        self.scope("")
+    """
+
+    def parse_scoped_enum(self, node):
+        logger.debug(node.spelling)
+        # logger.debug(dir(node))
+
+        clsname = self.spell(node)
+        # logger.debug(clsname)
+        pyname = self.format_type(node.spelling)
+        self.scope(f"PYENUM_SCOPED_BEGIN({self.module}, {clsname}, {pyname})")
+
+        #self.scope(
+        #    f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
+        #)
+        self.scope(pyname)
+            
+        self.scope.indent += 1
+        for value in node.get_children():
+            self.scope(
+                f'.value("{self.format_enum(value.spelling)}", {self.spell(node)}::{value.spelling})'
+            )
+        self.scope(".export_values();")
+        self.scope.indent -= 1
+        self.scope(f"PYENUM_SCOPED_END({self.module}, {clsname}, {pyname})\n")
         self.scope("")
 
     # TODO: Handle is_deleted_method
@@ -201,7 +227,6 @@ class Transpiler(TranspilerBase):
 
     def parse_class(self, node):
         if self.is_class_mappable(node):
-            # clsname = self.name(node)
             clsname = self.spell(node)
             # logger.debug(clsname)
             pyname = self.format_type(node.spelling)

@@ -1,5 +1,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/operators.h>
 #include <pybind11/stl.h>
 #include <limits>
 
@@ -14,26 +15,36 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("a")
     , py::arg("b")
     , py::return_value_policy::automatic_reference);
-    py::enum_<wgpu::AdapterType>(_wgpu, "AdapterType", py::arithmetic())
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::AdapterType, AdapterType)
+    AdapterType
         .value("DISCRETE_GPU", wgpu::AdapterType::DiscreteGPU)
         .value("INTEGRATED_GPU", wgpu::AdapterType::IntegratedGPU)
         .value("CPU", wgpu::AdapterType::CPU)
         .value("UNKNOWN", wgpu::AdapterType::Unknown)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::AdapterType, AdapterType)
 
-    py::enum_<wgpu::AddressMode>(_wgpu, "AddressMode", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::AddressMode, AddressMode)
+    AddressMode
         .value("REPEAT", wgpu::AddressMode::Repeat)
         .value("MIRROR_REPEAT", wgpu::AddressMode::MirrorRepeat)
         .value("CLAMP_TO_EDGE", wgpu::AddressMode::ClampToEdge)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::AddressMode, AddressMode)
 
-    py::enum_<wgpu::AlphaMode>(_wgpu, "AlphaMode", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::AlphaMode, AlphaMode)
+    AlphaMode
         .value("PREMULTIPLIED", wgpu::AlphaMode::Premultiplied)
         .value("UNPREMULTIPLIED", wgpu::AlphaMode::Unpremultiplied)
         .value("OPAQUE", wgpu::AlphaMode::Opaque)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::AlphaMode, AlphaMode)
 
-    py::enum_<wgpu::BackendType>(_wgpu, "BackendType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::BackendType, BackendType)
+    BackendType
         .value("NULL", wgpu::BackendType::Null)
         .value("WEB_GPU", wgpu::BackendType::WebGPU)
         .value("D3_D11", wgpu::BackendType::D3D11)
@@ -43,8 +54,11 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("OPEN_GL", wgpu::BackendType::OpenGL)
         .value("OPEN_GLES", wgpu::BackendType::OpenGLES)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::BackendType, BackendType)
 
-    py::enum_<wgpu::BlendFactor>(_wgpu, "BlendFactor", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::BlendFactor, BlendFactor)
+    BlendFactor
         .value("ZERO", wgpu::BlendFactor::Zero)
         .value("ONE", wgpu::BlendFactor::One)
         .value("SRC", wgpu::BlendFactor::Src)
@@ -59,23 +73,32 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("CONSTANT", wgpu::BlendFactor::Constant)
         .value("ONE_MINUS_CONSTANT", wgpu::BlendFactor::OneMinusConstant)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::BlendFactor, BlendFactor)
 
-    py::enum_<wgpu::BlendOperation>(_wgpu, "BlendOperation", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::BlendOperation, BlendOperation)
+    BlendOperation
         .value("ADD", wgpu::BlendOperation::Add)
         .value("SUBTRACT", wgpu::BlendOperation::Subtract)
         .value("REVERSE_SUBTRACT", wgpu::BlendOperation::ReverseSubtract)
         .value("MIN", wgpu::BlendOperation::Min)
         .value("MAX", wgpu::BlendOperation::Max)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::BlendOperation, BlendOperation)
 
-    py::enum_<wgpu::BufferBindingType>(_wgpu, "BufferBindingType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::BufferBindingType, BufferBindingType)
+    BufferBindingType
         .value("UNDEFINED", wgpu::BufferBindingType::Undefined)
         .value("UNIFORM", wgpu::BufferBindingType::Uniform)
         .value("STORAGE", wgpu::BufferBindingType::Storage)
         .value("READ_ONLY_STORAGE", wgpu::BufferBindingType::ReadOnlyStorage)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::BufferBindingType, BufferBindingType)
 
-    py::enum_<wgpu::BufferMapAsyncStatus>(_wgpu, "BufferMapAsyncStatus", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::BufferMapAsyncStatus, BufferMapAsyncStatus)
+    BufferMapAsyncStatus
         .value("SUCCESS", wgpu::BufferMapAsyncStatus::Success)
         .value("ERROR", wgpu::BufferMapAsyncStatus::Error)
         .value("UNKNOWN", wgpu::BufferMapAsyncStatus::Unknown)
@@ -83,8 +106,11 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("DESTROYED_BEFORE_CALLBACK", wgpu::BufferMapAsyncStatus::DestroyedBeforeCallback)
         .value("UNMAPPED_BEFORE_CALLBACK", wgpu::BufferMapAsyncStatus::UnmappedBeforeCallback)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::BufferMapAsyncStatus, BufferMapAsyncStatus)
 
-    py::enum_<wgpu::CompareFunction>(_wgpu, "CompareFunction", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::CompareFunction, CompareFunction)
+    CompareFunction
         .value("UNDEFINED", wgpu::CompareFunction::Undefined)
         .value("NEVER", wgpu::CompareFunction::Never)
         .value("LESS", wgpu::CompareFunction::Less)
@@ -95,58 +121,85 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("NOT_EQUAL", wgpu::CompareFunction::NotEqual)
         .value("ALWAYS", wgpu::CompareFunction::Always)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::CompareFunction, CompareFunction)
 
-    py::enum_<wgpu::CompilationInfoRequestStatus>(_wgpu, "CompilationInfoRequestStatus", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::CompilationInfoRequestStatus, CompilationInfoRequestStatus)
+    CompilationInfoRequestStatus
         .value("SUCCESS", wgpu::CompilationInfoRequestStatus::Success)
         .value("ERROR", wgpu::CompilationInfoRequestStatus::Error)
         .value("DEVICE_LOST", wgpu::CompilationInfoRequestStatus::DeviceLost)
         .value("UNKNOWN", wgpu::CompilationInfoRequestStatus::Unknown)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::CompilationInfoRequestStatus, CompilationInfoRequestStatus)
 
-    py::enum_<wgpu::CompilationMessageType>(_wgpu, "CompilationMessageType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::CompilationMessageType, CompilationMessageType)
+    CompilationMessageType
         .value("ERROR", wgpu::CompilationMessageType::Error)
         .value("WARNING", wgpu::CompilationMessageType::Warning)
         .value("INFO", wgpu::CompilationMessageType::Info)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::CompilationMessageType, CompilationMessageType)
 
-    py::enum_<wgpu::ComputePassTimestampLocation>(_wgpu, "ComputePassTimestampLocation", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::ComputePassTimestampLocation, ComputePassTimestampLocation)
+    ComputePassTimestampLocation
         .value("BEGINNING", wgpu::ComputePassTimestampLocation::Beginning)
         .value("END", wgpu::ComputePassTimestampLocation::End)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::ComputePassTimestampLocation, ComputePassTimestampLocation)
 
-    py::enum_<wgpu::CreatePipelineAsyncStatus>(_wgpu, "CreatePipelineAsyncStatus", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::CreatePipelineAsyncStatus, CreatePipelineAsyncStatus)
+    CreatePipelineAsyncStatus
         .value("SUCCESS", wgpu::CreatePipelineAsyncStatus::Success)
         .value("ERROR", wgpu::CreatePipelineAsyncStatus::Error)
         .value("DEVICE_LOST", wgpu::CreatePipelineAsyncStatus::DeviceLost)
         .value("DEVICE_DESTROYED", wgpu::CreatePipelineAsyncStatus::DeviceDestroyed)
         .value("UNKNOWN", wgpu::CreatePipelineAsyncStatus::Unknown)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::CreatePipelineAsyncStatus, CreatePipelineAsyncStatus)
 
-    py::enum_<wgpu::CullMode>(_wgpu, "CullMode", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::CullMode, CullMode)
+    CullMode
         .value("NONE", wgpu::CullMode::None)
         .value("FRONT", wgpu::CullMode::Front)
         .value("BACK", wgpu::CullMode::Back)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::CullMode, CullMode)
 
-    py::enum_<wgpu::DeviceLostReason>(_wgpu, "DeviceLostReason", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::DeviceLostReason, DeviceLostReason)
+    DeviceLostReason
         .value("UNDEFINED", wgpu::DeviceLostReason::Undefined)
         .value("DESTROYED", wgpu::DeviceLostReason::Destroyed)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::DeviceLostReason, DeviceLostReason)
 
-    py::enum_<wgpu::ErrorFilter>(_wgpu, "ErrorFilter", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::ErrorFilter, ErrorFilter)
+    ErrorFilter
         .value("VALIDATION", wgpu::ErrorFilter::Validation)
         .value("OUT_OF_MEMORY", wgpu::ErrorFilter::OutOfMemory)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::ErrorFilter, ErrorFilter)
 
-    py::enum_<wgpu::ErrorType>(_wgpu, "ErrorType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::ErrorType, ErrorType)
+    ErrorType
         .value("NO_ERROR", wgpu::ErrorType::NoError)
         .value("VALIDATION", wgpu::ErrorType::Validation)
         .value("OUT_OF_MEMORY", wgpu::ErrorType::OutOfMemory)
         .value("UNKNOWN", wgpu::ErrorType::Unknown)
         .value("DEVICE_LOST", wgpu::ErrorType::DeviceLost)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::ErrorType, ErrorType)
 
-    py::enum_<wgpu::FeatureName>(_wgpu, "FeatureName", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::FeatureName, FeatureName)
+    FeatureName
         .value("UNDEFINED", wgpu::FeatureName::Undefined)
         .value("DEPTH_CLIP_CONTROL", wgpu::FeatureName::DepthClipControl)
         .value("DEPTH32_FLOAT_STENCIL8", wgpu::FeatureName::Depth32FloatStencil8)
@@ -162,96 +215,141 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("DAWN_NATIVE", wgpu::FeatureName::DawnNative)
         .value("CHROMIUM_EXPERIMENTAL_DP4A", wgpu::FeatureName::ChromiumExperimentalDp4a)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::FeatureName, FeatureName)
 
-    py::enum_<wgpu::FilterMode>(_wgpu, "FilterMode", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::FilterMode, FilterMode)
+    FilterMode
         .value("NEAREST", wgpu::FilterMode::Nearest)
         .value("LINEAR", wgpu::FilterMode::Linear)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::FilterMode, FilterMode)
 
-    py::enum_<wgpu::FrontFace>(_wgpu, "FrontFace", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::FrontFace, FrontFace)
+    FrontFace
         .value("CCW", wgpu::FrontFace::CCW)
         .value("CW", wgpu::FrontFace::CW)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::FrontFace, FrontFace)
 
-    py::enum_<wgpu::IndexFormat>(_wgpu, "IndexFormat", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::IndexFormat, IndexFormat)
+    IndexFormat
         .value("UNDEFINED", wgpu::IndexFormat::Undefined)
         .value("UINT16", wgpu::IndexFormat::Uint16)
         .value("UINT32", wgpu::IndexFormat::Uint32)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::IndexFormat, IndexFormat)
 
-    py::enum_<wgpu::LoadOp>(_wgpu, "LoadOp", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::LoadOp, LoadOp)
+    LoadOp
         .value("UNDEFINED", wgpu::LoadOp::Undefined)
         .value("CLEAR", wgpu::LoadOp::Clear)
         .value("LOAD", wgpu::LoadOp::Load)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::LoadOp, LoadOp)
 
-    py::enum_<wgpu::LoggingType>(_wgpu, "LoggingType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::LoggingType, LoggingType)
+    LoggingType
         .value("VERBOSE", wgpu::LoggingType::Verbose)
         .value("INFO", wgpu::LoggingType::Info)
         .value("WARNING", wgpu::LoggingType::Warning)
         .value("ERROR", wgpu::LoggingType::Error)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::LoggingType, LoggingType)
 
-    py::enum_<wgpu::PipelineStatisticName>(_wgpu, "PipelineStatisticName", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::PipelineStatisticName, PipelineStatisticName)
+    PipelineStatisticName
         .value("VERTEX_SHADER_INVOCATIONS", wgpu::PipelineStatisticName::VertexShaderInvocations)
         .value("CLIPPER_INVOCATIONS", wgpu::PipelineStatisticName::ClipperInvocations)
         .value("CLIPPER_PRIMITIVES_OUT", wgpu::PipelineStatisticName::ClipperPrimitivesOut)
         .value("FRAGMENT_SHADER_INVOCATIONS", wgpu::PipelineStatisticName::FragmentShaderInvocations)
         .value("COMPUTE_SHADER_INVOCATIONS", wgpu::PipelineStatisticName::ComputeShaderInvocations)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::PipelineStatisticName, PipelineStatisticName)
 
-    py::enum_<wgpu::PowerPreference>(_wgpu, "PowerPreference", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::PowerPreference, PowerPreference)
+    PowerPreference
         .value("UNDEFINED", wgpu::PowerPreference::Undefined)
         .value("LOW_POWER", wgpu::PowerPreference::LowPower)
         .value("HIGH_PERFORMANCE", wgpu::PowerPreference::HighPerformance)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::PowerPreference, PowerPreference)
 
-    py::enum_<wgpu::PresentMode>(_wgpu, "PresentMode", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::PresentMode, PresentMode)
+    PresentMode
         .value("IMMEDIATE", wgpu::PresentMode::Immediate)
         .value("MAILBOX", wgpu::PresentMode::Mailbox)
         .value("FIFO", wgpu::PresentMode::Fifo)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::PresentMode, PresentMode)
 
-    py::enum_<wgpu::PrimitiveTopology>(_wgpu, "PrimitiveTopology", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::PrimitiveTopology, PrimitiveTopology)
+    PrimitiveTopology
         .value("POINT_LIST", wgpu::PrimitiveTopology::PointList)
         .value("LINE_LIST", wgpu::PrimitiveTopology::LineList)
         .value("LINE_STRIP", wgpu::PrimitiveTopology::LineStrip)
         .value("TRIANGLE_LIST", wgpu::PrimitiveTopology::TriangleList)
         .value("TRIANGLE_STRIP", wgpu::PrimitiveTopology::TriangleStrip)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::PrimitiveTopology, PrimitiveTopology)
 
-    py::enum_<wgpu::QueryType>(_wgpu, "QueryType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::QueryType, QueryType)
+    QueryType
         .value("OCCLUSION", wgpu::QueryType::Occlusion)
         .value("PIPELINE_STATISTICS", wgpu::QueryType::PipelineStatistics)
         .value("TIMESTAMP", wgpu::QueryType::Timestamp)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::QueryType, QueryType)
 
-    py::enum_<wgpu::QueueWorkDoneStatus>(_wgpu, "QueueWorkDoneStatus", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::QueueWorkDoneStatus, QueueWorkDoneStatus)
+    QueueWorkDoneStatus
         .value("SUCCESS", wgpu::QueueWorkDoneStatus::Success)
         .value("ERROR", wgpu::QueueWorkDoneStatus::Error)
         .value("UNKNOWN", wgpu::QueueWorkDoneStatus::Unknown)
         .value("DEVICE_LOST", wgpu::QueueWorkDoneStatus::DeviceLost)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::QueueWorkDoneStatus, QueueWorkDoneStatus)
 
-    py::enum_<wgpu::RenderPassTimestampLocation>(_wgpu, "RenderPassTimestampLocation", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::RenderPassTimestampLocation, RenderPassTimestampLocation)
+    RenderPassTimestampLocation
         .value("BEGINNING", wgpu::RenderPassTimestampLocation::Beginning)
         .value("END", wgpu::RenderPassTimestampLocation::End)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::RenderPassTimestampLocation, RenderPassTimestampLocation)
 
-    py::enum_<wgpu::RequestAdapterStatus>(_wgpu, "RequestAdapterStatus", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::RequestAdapterStatus, RequestAdapterStatus)
+    RequestAdapterStatus
         .value("SUCCESS", wgpu::RequestAdapterStatus::Success)
         .value("UNAVAILABLE", wgpu::RequestAdapterStatus::Unavailable)
         .value("ERROR", wgpu::RequestAdapterStatus::Error)
         .value("UNKNOWN", wgpu::RequestAdapterStatus::Unknown)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::RequestAdapterStatus, RequestAdapterStatus)
 
-    py::enum_<wgpu::RequestDeviceStatus>(_wgpu, "RequestDeviceStatus", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::RequestDeviceStatus, RequestDeviceStatus)
+    RequestDeviceStatus
         .value("SUCCESS", wgpu::RequestDeviceStatus::Success)
         .value("ERROR", wgpu::RequestDeviceStatus::Error)
         .value("UNKNOWN", wgpu::RequestDeviceStatus::Unknown)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::RequestDeviceStatus, RequestDeviceStatus)
 
-    py::enum_<wgpu::SType>(_wgpu, "SType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::SType, SType)
+    SType
         .value("INVALID", wgpu::SType::Invalid)
         .value("SURFACE_DESCRIPTOR_FROM_METAL_LAYER", wgpu::SType::SurfaceDescriptorFromMetalLayer)
         .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_HWND", wgpu::SType::SurfaceDescriptorFromWindowsHWND)
@@ -273,15 +371,21 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("DAWN_INSTANCE_DESCRIPTOR", wgpu::SType::DawnInstanceDescriptor)
         .value("DAWN_CACHE_DEVICE_DESCRIPTOR", wgpu::SType::DawnCacheDeviceDescriptor)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::SType, SType)
 
-    py::enum_<wgpu::SamplerBindingType>(_wgpu, "SamplerBindingType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::SamplerBindingType, SamplerBindingType)
+    SamplerBindingType
         .value("UNDEFINED", wgpu::SamplerBindingType::Undefined)
         .value("FILTERING", wgpu::SamplerBindingType::Filtering)
         .value("NON_FILTERING", wgpu::SamplerBindingType::NonFiltering)
         .value("COMPARISON", wgpu::SamplerBindingType::Comparison)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::SamplerBindingType, SamplerBindingType)
 
-    py::enum_<wgpu::StencilOperation>(_wgpu, "StencilOperation", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::StencilOperation, StencilOperation)
+    StencilOperation
         .value("KEEP", wgpu::StencilOperation::Keep)
         .value("ZERO", wgpu::StencilOperation::Zero)
         .value("REPLACE", wgpu::StencilOperation::Replace)
@@ -291,40 +395,58 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("INCREMENT_WRAP", wgpu::StencilOperation::IncrementWrap)
         .value("DECREMENT_WRAP", wgpu::StencilOperation::DecrementWrap)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::StencilOperation, StencilOperation)
 
-    py::enum_<wgpu::StorageTextureAccess>(_wgpu, "StorageTextureAccess", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::StorageTextureAccess, StorageTextureAccess)
+    StorageTextureAccess
         .value("UNDEFINED", wgpu::StorageTextureAccess::Undefined)
         .value("WRITE_ONLY", wgpu::StorageTextureAccess::WriteOnly)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::StorageTextureAccess, StorageTextureAccess)
 
-    py::enum_<wgpu::StoreOp>(_wgpu, "StoreOp", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::StoreOp, StoreOp)
+    StoreOp
         .value("UNDEFINED", wgpu::StoreOp::Undefined)
         .value("STORE", wgpu::StoreOp::Store)
         .value("DISCARD", wgpu::StoreOp::Discard)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::StoreOp, StoreOp)
 
-    py::enum_<wgpu::TextureAspect>(_wgpu, "TextureAspect", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureAspect, TextureAspect)
+    TextureAspect
         .value("ALL", wgpu::TextureAspect::All)
         .value("STENCIL_ONLY", wgpu::TextureAspect::StencilOnly)
         .value("DEPTH_ONLY", wgpu::TextureAspect::DepthOnly)
         .value("PLANE0_ONLY", wgpu::TextureAspect::Plane0Only)
         .value("PLANE1_ONLY", wgpu::TextureAspect::Plane1Only)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::TextureAspect, TextureAspect)
 
-    py::enum_<wgpu::TextureComponentType>(_wgpu, "TextureComponentType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureComponentType, TextureComponentType)
+    TextureComponentType
         .value("FLOAT", wgpu::TextureComponentType::Float)
         .value("SINT", wgpu::TextureComponentType::Sint)
         .value("UINT", wgpu::TextureComponentType::Uint)
         .value("DEPTH_COMPARISON", wgpu::TextureComponentType::DepthComparison)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::TextureComponentType, TextureComponentType)
 
-    py::enum_<wgpu::TextureDimension>(_wgpu, "TextureDimension", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureDimension, TextureDimension)
+    TextureDimension
         .value("E1_D", wgpu::TextureDimension::e1D)
         .value("E2_D", wgpu::TextureDimension::e2D)
         .value("E3_D", wgpu::TextureDimension::e3D)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::TextureDimension, TextureDimension)
 
-    py::enum_<wgpu::TextureFormat>(_wgpu, "TextureFormat", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureFormat, TextureFormat)
+    TextureFormat
         .value("UNDEFINED", wgpu::TextureFormat::Undefined)
         .value("R8_UNORM", wgpu::TextureFormat::R8Unorm)
         .value("R8_SNORM", wgpu::TextureFormat::R8Snorm)
@@ -422,8 +544,11 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("ASTC12X12_UNORM_SRGB", wgpu::TextureFormat::ASTC12x12UnormSrgb)
         .value("R8_BG8_BIPLANAR420_UNORM", wgpu::TextureFormat::R8BG8Biplanar420Unorm)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::TextureFormat, TextureFormat)
 
-    py::enum_<wgpu::TextureSampleType>(_wgpu, "TextureSampleType", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureSampleType, TextureSampleType)
+    TextureSampleType
         .value("UNDEFINED", wgpu::TextureSampleType::Undefined)
         .value("FLOAT", wgpu::TextureSampleType::Float)
         .value("UNFILTERABLE_FLOAT", wgpu::TextureSampleType::UnfilterableFloat)
@@ -431,8 +556,11 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("SINT", wgpu::TextureSampleType::Sint)
         .value("UINT", wgpu::TextureSampleType::Uint)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::TextureSampleType, TextureSampleType)
 
-    py::enum_<wgpu::TextureViewDimension>(_wgpu, "TextureViewDimension", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureViewDimension, TextureViewDimension)
+    TextureViewDimension
         .value("UNDEFINED", wgpu::TextureViewDimension::Undefined)
         .value("E1_D", wgpu::TextureViewDimension::e1D)
         .value("E2_D", wgpu::TextureViewDimension::e2D)
@@ -441,8 +569,11 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("CUBE_ARRAY", wgpu::TextureViewDimension::CubeArray)
         .value("E3_D", wgpu::TextureViewDimension::e3D)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::TextureViewDimension, TextureViewDimension)
 
-    py::enum_<wgpu::VertexFormat>(_wgpu, "VertexFormat", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::VertexFormat, VertexFormat)
+    VertexFormat
         .value("UNDEFINED", wgpu::VertexFormat::Undefined)
         .value("UINT8X2", wgpu::VertexFormat::Uint8x2)
         .value("UINT8X4", wgpu::VertexFormat::Uint8x4)
@@ -475,14 +606,20 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("SINT32X3", wgpu::VertexFormat::Sint32x3)
         .value("SINT32X4", wgpu::VertexFormat::Sint32x4)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::VertexFormat, VertexFormat)
 
-    py::enum_<wgpu::VertexStepMode>(_wgpu, "VertexStepMode", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::VertexStepMode, VertexStepMode)
+    VertexStepMode
         .value("VERTEX", wgpu::VertexStepMode::Vertex)
         .value("INSTANCE", wgpu::VertexStepMode::Instance)
         .value("VERTEX_BUFFER_NOT_USED", wgpu::VertexStepMode::VertexBufferNotUsed)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::VertexStepMode, VertexStepMode)
 
-    py::enum_<wgpu::BufferUsage>(_wgpu, "BufferUsage", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::BufferUsage, BufferUsage)
+    BufferUsage
         .value("NONE", wgpu::BufferUsage::None)
         .value("MAP_READ", wgpu::BufferUsage::MapRead)
         .value("MAP_WRITE", wgpu::BufferUsage::MapWrite)
@@ -495,8 +632,11 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("INDIRECT", wgpu::BufferUsage::Indirect)
         .value("QUERY_RESOLVE", wgpu::BufferUsage::QueryResolve)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::BufferUsage, BufferUsage)
 
-    py::enum_<wgpu::ColorWriteMask>(_wgpu, "ColorWriteMask", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::ColorWriteMask, ColorWriteMask)
+    ColorWriteMask
         .value("NONE", wgpu::ColorWriteMask::None)
         .value("RED", wgpu::ColorWriteMask::Red)
         .value("GREEN", wgpu::ColorWriteMask::Green)
@@ -504,21 +644,30 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("ALPHA", wgpu::ColorWriteMask::Alpha)
         .value("ALL", wgpu::ColorWriteMask::All)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::ColorWriteMask, ColorWriteMask)
 
-    py::enum_<wgpu::MapMode>(_wgpu, "MapMode", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::MapMode, MapMode)
+    MapMode
         .value("NONE", wgpu::MapMode::None)
         .value("READ", wgpu::MapMode::Read)
         .value("WRITE", wgpu::MapMode::Write)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::MapMode, MapMode)
 
-    py::enum_<wgpu::ShaderStage>(_wgpu, "ShaderStage", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::ShaderStage, ShaderStage)
+    ShaderStage
         .value("NONE", wgpu::ShaderStage::None)
         .value("VERTEX", wgpu::ShaderStage::Vertex)
         .value("FRAGMENT", wgpu::ShaderStage::Fragment)
         .value("COMPUTE", wgpu::ShaderStage::Compute)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::ShaderStage, ShaderStage)
 
-    py::enum_<wgpu::TextureUsage>(_wgpu, "TextureUsage", py::arithmetic())
+
+    PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureUsage, TextureUsage)
+    TextureUsage
         .value("NONE", wgpu::TextureUsage::None)
         .value("COPY_SRC", wgpu::TextureUsage::CopySrc)
         .value("COPY_DST", wgpu::TextureUsage::CopyDst)
@@ -527,6 +676,8 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("RENDER_ATTACHMENT", wgpu::TextureUsage::RenderAttachment)
         .value("PRESENT", wgpu::TextureUsage::Present)
         .export_values();
+    PYENUM_SCOPED_END(_wgpu, wgpu::TextureUsage, TextureUsage)
+
 
     PYCLASS_BEGIN(_wgpu, wgpu::Adapter, Adapter)
     Adapter.def("create_device", &wgpu::Adapter::CreateDevice
