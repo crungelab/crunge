@@ -48,12 +48,16 @@ def main():
     print(props.vendor_name)
     device = adapter.create_device()
     print(device)
+    device.enable_logging()
 
     wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
     wsd.hwnd = nwh
     wsd.hinstance = None
+    print(wsd.hwnd)
 
     sd = wgpu.SurfaceDescriptor()
+    sd.label = 'blah'
+    print(sd.label)
     sd.next_in_chain = wsd
 
     surface = instance.create_surface(sd)
@@ -70,9 +74,6 @@ def main():
         frame_time = now - last_time
         last_time = now
 
-        #self.update(frame_time)
-
-    #self.shutdown()
     glfw.destroy_window(window)
     glfw.terminate()
 

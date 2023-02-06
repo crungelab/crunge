@@ -1565,7 +1565,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
 
     PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::ShaderModuleWGSLDescriptor, struct wgpu::ChainedStruct, ShaderModuleWGSLDescriptor)
     ShaderModuleWGSLDescriptor.def(py::init<>());
-    ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);
     PYCLASS_END(_wgpu, wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::StencilFaceState, StencilFaceState)

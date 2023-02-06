@@ -9,16 +9,8 @@ def main():
     print(props.vendor_name)
     device = adapter.create_device()
     print(device)
-    device.enable_logging()
 
-    bgl_desc = wgpu.BindGroupLayoutDescriptor()
-    bgl = device.create_bind_group_layout(bgl_desc)
-    desc = wgpu.BindGroupDescriptor()
-    desc.layout = bgl
-    desc.entry_count = 0
-    desc.entries = None
-    bg = device.create_bind_group(desc)
-    print(bg)
+    device.set_uncaptured_error_callback(lambda type, message, userdata: print(message))
 
 if __name__ == "__main__":
     main()

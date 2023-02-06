@@ -16,6 +16,60 @@ namespace py = pybind11;
 
 using namespace wgpu;
 
+/*void RequestAdapter() {
+    Instance CreateInstance(InstanceDescriptor const * descriptor = nullptr);
+    Instance instance = CreateInstance();
+}*/
+
+/*static dawn::native::Adapter RequestAdapter(WGPUBackendType type1st, WGPUBackendType type2nd = WGPUBackendType_Null) {
+	static dawn::native::Instance instance;
+	instance.DiscoverDefaultAdapters();
+	wgpu::AdapterProperties properties;
+	std::vector<dawn::native::Adapter> adapters = instance.GetAdapters();
+	for (auto it = adapters.begin(); it != adapters.end(); ++it) {
+		it->GetProperties(&properties);
+		if (static_cast<WGPUBackendType>(properties.backendType) == type1st) {
+			return *it;
+		}
+	}
+	if (type2nd) {
+		for (auto it = adapters.begin(); it != adapters.end(); ++it) {
+			it->GetProperties(&properties);
+			if (static_cast<WGPUBackendType>(properties.backendType) == type2nd) {
+				return *it;
+			}
+		}
+	}
+	return dawn::native::Adapter();
+}*/
+
+/*static dawn::native::Adapter NativeRequestAdapter(WGPUBackendType type1st, WGPUBackendType type2nd = WGPUBackendType_Null) {
+	static dawn::native::Instance instance;
+	instance.DiscoverDefaultAdapters();
+	wgpu::AdapterProperties properties;
+	std::vector<dawn::native::Adapter> adapters = instance.GetAdapters();
+	for (auto it = adapters.begin(); it != adapters.end(); ++it) {
+		it->GetProperties(&properties);
+		if (static_cast<WGPUBackendType>(properties.backendType) == type1st) {
+			return *it;
+		}
+	}
+	if (type2nd) {
+		for (auto it = adapters.begin(); it != adapters.end(); ++it) {
+			it->GetProperties(&properties);
+			if (static_cast<WGPUBackendType>(properties.backendType) == type2nd) {
+				return *it;
+			}
+		}
+	}
+	return dawn::native::Adapter();
+}
+
+static Adapter RequestAdapter(BackendType type1st, BackendType type2nd = BackendType::Null) {
+    auto adapter = NativeRequestAdapter((WGPUBackendType)type1st, (WGPUBackendType)type2nd);
+    return reinterpret_cast<Adapter>(adapter);
+}*/
+
 void CreateProcTable() {
     DawnProcTable procs(dawn::native::GetProcs());
     dawnProcSetProcs(&procs);
@@ -25,10 +79,6 @@ void CreateProcTable() {
 //bool bit_or(T a, T b) { return a | b; }
 //auto bit_or = [](auto a, auto b) { return a | b; };
 //auto bit_or = []<class T>(T a, T b) { return a | b; };
-
-struct TestObject {
-    char const * label = nullptr;
-};
 
 void init_main(py::module &_wgpu, Registry &registry) {
     /*_wgpu.def("request_adapter", &RequestAdapter
@@ -40,11 +90,6 @@ void init_main(py::module &_wgpu, Registry &registry) {
     , py::return_value_policy::automatic_reference);*/
 
     _wgpu.def("create_proc_table", &CreateProcTable);
-
-    PYCLASS_BEGIN(_wgpu, TestObject, TestObject)
-        TestObject.def(py::init<>());
-        TestObject.def_readwrite("label", &TestObject::label);
-    PYCLASS_END(_wgpu, TestObject, TestObject)
 
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
     Instance.def("request_adapter", [](const wgpu::Instance& self)
@@ -62,22 +107,37 @@ void init_main(py::module &_wgpu, Registry &registry) {
     });
     PYEXTEND_END
 
-    //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;
-    //typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata);
-    PYEXTEND_BEGIN(wgpu::Device, Device)
-    Device.def("enable_logging",
-        [](const wgpu::Device& self) {
-            self.SetUncapturedErrorCallback([](WGPUErrorType type, char const * message, void * userdata){
-                printf(message);
-            }, nullptr);
-    });
+        //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;
+        //typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata);
 
-    /*Device.def("set_uncaptured_error_callback",
-        [](const wgpu::Device& self, ErrorCallback callback, py::object userdata) {
-            self.SetUncapturedErrorCallback(callback, userdata.ptr());
-    }
-    , py::arg("callback")
-    , py::arg("userdata"));*/
+    /*std::function<void(WGPUErrorType type, char const * message, void * userdata)> err_cb(const std::function<int(int)> &f) {
+        return [f](int i) {
+            return f(i) + 1;
+        };
+    }*/
+        PYEXTEND_BEGIN(wgpu::Device, Device)
+        Device.def("set_uncaptured_error_callback",
+            [](const wgpu::Device& self, py::function _callback, py::object _userdata) {
+                auto userdata = _userdata.ptr();
+                //self.SetUncapturedErrorCallback(callback, userdata.ptr());
+                std::function<void(WGPUErrorType type, char const * message, void * userdata)> cb =
+                    [_callback](WGPUErrorType type, char const * message, void * userdata){
+                    _callback(type, message, userdata); };
+
+                self.SetUncapturedErrorCallback(cb, userdata);
+                }
+        )
+        , py::arg("callback")
+        , py::arg("userdata");
+    /*
+        Device.def("set_uncaptured_error_callback",
+            [](const wgpu::Device& self, ErrorCallback callback, py::object userdata) {
+                return self.SetUncapturedErrorCallback(callback, userdata.ptr());
+        }
+        , py::arg("callback")
+        , py::arg("userdata")
+        , py::return_value_policy::automatic_reference);
+    */
     PYEXTEND_END
 
     PYEXTEND_BEGIN(wgpu::AdapterProperties, AdapterProperties)
@@ -167,16 +227,13 @@ void init_main(py::module &_wgpu, Registry &registry) {
     PYEXTEND_BEGIN(wgpu::SwapChainDescriptor, SwapChainDescriptor)
         SwapChainDescriptor.def(py::init<>());
     PYEXTEND_END
-
-    PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
-        //ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);
-        ShaderModuleWGSLDescriptor.def_property("source",
-            [](const wgpu::ShaderModuleWGSLDescriptor& self) {
-                return self.source;
-            },
-            [](wgpu::ShaderModuleWGSLDescriptor& self, std::string source) {
-                self.source = source.c_str();
-            }
-        );
-    PYEXTEND_END
 }
+
+/*
+    struct Extent3D {
+        uint32_t width;
+        uint32_t height = 1;
+        uint32_t depthOrArrayLayers = 1;
+    };
+
+*/

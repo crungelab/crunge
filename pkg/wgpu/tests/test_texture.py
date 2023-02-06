@@ -9,6 +9,7 @@ def main():
     print(props.vendor_name)
     device = adapter.create_device()
     print(device)
+    device.enable_logging()
 
     descriptor = wgpu.TextureDescriptor()
     descriptor.usage = wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_SRC
