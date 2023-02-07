@@ -102,6 +102,17 @@ void init_main(py::module &_wgpu, Registry &registry) {
             }, py::is_operator());
     PYEXTEND_END
 
+    PYEXTEND_BEGIN(wgpu::BufferDescriptor, BufferDescriptor)
+        BufferDescriptor.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::BufferUsage, BufferUsage)
+        //TextureUsage.def(py::self | py::self); //Doesn't work
+        BufferUsage.def("__or__", [](wgpu::BufferUsage& a, wgpu::BufferUsage& b) {
+        return (wgpu::BufferUsage)(a | b);
+            }, py::is_operator());
+    PYEXTEND_END
+
     PYEXTEND_BEGIN(wgpu::Extent3D, Extent3D)
         Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>()
         , py::arg("width")

@@ -93,7 +93,7 @@ class HelloWgpu:
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
 
-        self.window = glfw.create_window(800, 600, "Test", None, None)
+        self.window = glfw.create_window(self.kWidth, self.kHeight, "Hello", None, None)
 
     def create_swapchain(self):
         handle, display = None, None
