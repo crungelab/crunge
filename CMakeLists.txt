@@ -37,10 +37,10 @@ add_subdirectory(pkg/imnodes)
 #
 # bgfx
 #
-#add_subdirectory(depot/astc-encoder)
-#add_subdirectory(src/bimg)
-#add_subdirectory(src/bgfx)
-#add_subdirectory(pkg/bgfx)
+add_subdirectory(depot/astc-encoder)
+add_subdirectory(src/bimg)
+add_subdirectory(src/bgfx)
+add_subdirectory(pkg/bgfx)
 
 #
 # wgpu

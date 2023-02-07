@@ -33,38 +33,13 @@ class Transpiler(TranspilerBase):
         self.scope.indent -= 1
         self.scope("")
 
-    """
     def parse_scoped_enum(self, node):
         logger.debug(node.spelling)
-        # logger.debug(dir(node))
-
-        self.scope(
-            f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
-        )
-        self.scope.indent += 1
-        for value in node.get_children():
-            self.scope(
-                f'.value("{self.format_enum(value.spelling)}", {self.spell(node)}::{value.spelling})'
-            )
-        self.scope(".export_values();")
-        self.scope.indent -= 1
-        self.scope("")
-    """
-
-    def parse_scoped_enum(self, node):
-        logger.debug(node.spelling)
-        # logger.debug(dir(node))
-
         clsname = self.spell(node)
         # logger.debug(clsname)
         pyname = self.format_type(node.spelling)
         self.scope(f"PYENUM_SCOPED_BEGIN({self.module}, {clsname}, {pyname})")
-
-        #self.scope(
-        #    f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
-        #)
         self.scope(pyname)
-            
         self.scope.indent += 1
         for value in node.get_children():
             self.scope(
@@ -90,13 +65,55 @@ class Transpiler(TranspilerBase):
     def parse_field(self, node, cls):
         if node.access_specifier == AccessSpecifier.PRIVATE:
             return
+        if not self.is_property_mappable(node):
+            return
         pyname = self.format_attribute(node.spelling)
         cname = self.spell(node)
-        if self.is_property_mappable(node):
-            if self.is_property_readonly(node):
-                self.scope(f'{self.module_(cls)}.def_readonly("{pyname}", &{cname});')
+
+        # Need to log/track this because pointers can be a source of problems        
+        if node.type.get_canonical().kind == cindex.TypeKind.POINTER:
+            ptr = node.type.get_canonical().get_pointee().kind
+            logger.debug(f"{node.spelling}: {ptr}")
+
+        if self.is_property_readonly(node):
+            self.scope(f'{self.module_(cls)}.def_readonly("{pyname}", &{cname});')
+        else:
+            if self.is_char_pointer(node):
+                logger.debug(f"{node.spelling}: is char*")
+                self.parse_char_ptr_field(node, cls, pyname, cname)
             else:
                 self.scope(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
+
+    """
+        VertexState.def_property("entry_point",
+            [](const wgpu::VertexState& self) {
+                return self.entryPoint;
+            },
+            [](wgpu::VertexState& self, std::string source) {
+                char* c = (char *)malloc(source.size());
+                strcpy(c, source.c_str());
+                self.entryPoint = c;
+            }
+        );
+    """
+    def parse_char_ptr_field(self, node, cls, pyname, cname):
+        pname = self.spell(node.semantic_parent)
+        name = node.spelling
+        #self.scope(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
+        self.scope(f'{self.module_(cls)}.def_property("{pyname}",')
+        self.scope.indent += 1
+        self.scope(
+        f'[](const {pname}& self)' '{'
+        f' return self.{name};'
+        ' },'
+        f'[]({pname}& self, std::string source)' '{'
+        ' char* c = (char *)malloc(source.size());'
+        ' strcpy(c, source.c_str());'
+        f' self.{name} = c;'
+        ' }'
+        )
+        self.scope.indent -= 1
+        self.scope(');')
 
     def should_wrap_function(self, node):
         if node.type.is_function_variadic():

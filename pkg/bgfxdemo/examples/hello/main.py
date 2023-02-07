@@ -1,29 +1,33 @@
 import os
-
+from loguru import logger
 from crunge import bgfx
 from crunge.bgfx.window import Window
 from crunge.bgfx.constants import *
+#from crunge.bgfx.utils.debug import config_logging
 
 import python_image
+
+#config_logging()
 
 class HelloWorld(Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
 
-        self.init_conf = bgfx.Init()
-        self.init_conf.debug = True
-        self.init_conf.resolution.width = self.width
-        self.init_conf.resolution.height = self.height
-        self.init_conf.resolution.reset = BGFX_RESET_VSYNC
 
     def init(self, platform_data):
         bgfx.render_frame()
-        bgfx.set_platform_data(platform_data)
-        bgfx.init(self.init_conf)
+        self.init_conf = init_conf = bgfx.Init()
+        init_conf.platform_data = platform_data
+        init_conf.type = bgfx.RendererType.COUNT
+        #self.init_conf.type = bgfx.RendererType.DIRECT3_D11
+        init_conf.vendor_id = BGFX_PCI_ID_NONE
+        init_conf.device_id = 0
+        init_conf.debug = True
+        init_conf.resolution.width = self.width
+        init_conf.resolution.height = self.height
+        init_conf.resolution.reset = BGFX_RESET_VSYNC
 
-        bgfx.reset(
-            self.width, self.height, BGFX_RESET_VSYNC, self.init_conf.resolution.format,
-        )
+        bgfx.init(init_conf)
 
         bgfx.set_debug(BGFX_DEBUG_TEXT)
         bgfx.set_view_clear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0, 0)

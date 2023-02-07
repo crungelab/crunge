@@ -5,7 +5,7 @@ from pathlib import Path
 
 from loguru import logger
 import numpy as np
-import trimesh as tm
+import openmesh as om
 
 from crunge import bgfx
 from crunge.bgfx.utils import as_void_ptr
@@ -30,22 +30,23 @@ class Bunnies(Window):
         self.write_a = c_bool(True)
 
         bunny_path = Path(__file__).parent.parent / "assets" / "meshes" / "bunny.obj"
-        self.bunny_mesh = bunny_mesh = tm.load(str(bunny_path))
+        bunny_mesh = om.read_trimesh(str(bunny_path))
+        self.bunny_mesh = bunny_mesh
+
         #Vertices
-        #vertices = self.vertices = bunny_mesh.vertices.astype(np.float32)
-        vertices = np.asanyarray(bunny_mesh.vertices, dtype=np.float64)
-        logger.debug(f'vertices type: {type(vertices)}')
-        logger.debug(f'vertices:  {vertices}')
-        n_vertices = self.n_vertices = len(vertices)
-        logger.debug(f'n_vertices:  {n_vertices}')
+        vertices = self.vertices = bunny_mesh.points().astype(np.float32)
         self.vertices_p = as_void_ptr(vertices)
+        logger.debug(f'vertices:  {vertices}')
+
+        n_vertices = self.n_vertices = bunny_mesh.n_vertices()
+        logger.debug(f'n_vertices:  {n_vertices}')
 
         #Indices
-        indices = self.indices = self.bunny_mesh.faces.astype(np.uint16)
+        indices = self.indices = self.bunny_mesh.fv_indices().astype(np.uint16)
         self.indices_p = as_void_ptr(indices)
         
         logger.debug(f'indices:  {indices}')
-        n_indices = self.n_indices = len(indices)
+        n_indices = self.n_indices = self.bunny_mesh.n_faces()
         logger.debug(f'n_indices:  {n_indices}')
 
 

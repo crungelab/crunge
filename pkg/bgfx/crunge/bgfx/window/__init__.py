@@ -1,9 +1,8 @@
 import ctypes
 import time
 import sys
-
+from loguru import logger
 import glfw
-from glfw import _glfw as glfw_native
 
 from crunge import bgfx
 from crunge.bgfx.utils import as_void_ptr, null_ptr
@@ -46,16 +45,6 @@ class Window:
         )
 
     def run(self):
-        glfw_native.glfwCreateWindow.argtypes = [
-            ctypes.c_int,
-            ctypes.c_int,
-            ctypes.c_char_p,
-        ]
-        glfw_native.glfwCreateWindow.restype = ctypes.POINTER(glfw._GLFWwindow)
-        glfw_native.glfwMakeContextCurrent.argtypes = [ctypes.POINTER(glfw._GLFWwindow)]
-        glfw_native.glfwWindowShouldClose.argtypes = [ctypes.POINTER(glfw._GLFWwindow)]
-        glfw_native.glfwWindowShouldClose.restype = ctypes.c_int
-
         glfw.init()
 
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
@@ -76,9 +65,12 @@ class Window:
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
 
+        logger.debug(handle)
+        
         data = bgfx.PlatformData()
         #data.ndt = as_void_ptr(display) if display else cppyy.nullptr
-        data.nwh = as_void_ptr(handle) #ctypes.c_void_p(handle)?
+        data.nwh = as_void_ptr(handle)
+        logger.debug(data.nwh)
         #data.nwh = ctypes.pythonapi.PyCapsule_New(handle, "None", None)
         #data.context = cppyy.nullptr
         data.context = None

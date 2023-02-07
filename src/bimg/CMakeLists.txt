@@ -10,7 +10,7 @@ set(BIMG_SOURCES
   ${BIMG_ROOT}/src/image.cpp
   ${BIMG_ROOT}/src/image_gnf.cpp
   ${BIMG_ROOT}/src/image_decode.cpp
-  #${BIMG_ROOT}/3rdparty/tinyexr/deps/miniz/miniz.c
+  ${BIMG_ROOT}/3rdparty/tinyexr/deps/miniz/miniz.c
 )
 
 set(BIMG_HEADERS
@@ -45,7 +45,8 @@ target_include_directories(${THIS}
         ${BX_ROOT}/3rdparty
         ${BIMG_ROOT}/include
         ${BIMG_ROOT}/3rdparty
-        ${BIMG_ROOT}/3rdparty/astc-encoder/include
+        #${BIMG_ROOT}/3rdparty/astc-encoder/include
+        ${CRUNGE_ROOT}/depot/astc-encoder/Source
         ${BIMG_ROOT}/3rdparty/tinyexr/deps/miniz
 )
 

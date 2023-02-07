@@ -2,12 +2,19 @@ import ctypes
 from array import ArrayType
 from typing import Any
 
+from loguru import logger
+
+"""
 try:
     import numpy
 
     _is_numpy_array = lambda obj: type(obj) is numpy.ndarray
 except Exception:
     _is_numpy_array = lambda obj: False
+"""
+import numpy
+
+_is_numpy_array = lambda obj: type(obj) is numpy.ndarray
 
 null_ptr = ctypes.POINTER(ctypes.c_long)()
 
@@ -21,11 +28,9 @@ def as_void_ptr(obj: Any) -> ctypes.py_object:
 
     if type(obj) == ArrayType:
         obj = obj.buffer_info()[0]
-
-    if _is_numpy_array(obj):
+    elif _is_numpy_array(obj):
         obj = obj.ctypes.data_as(ctypes.POINTER(ctypes.c_void_p))
-
-    if type(obj) != ctypes.c_void_p:
+    elif type(obj) != ctypes.c_void_p:
         obj = ctypes.cast(obj, ctypes.c_void_p)
 
     capsule = ctypes.pythonapi.PyCapsule_New(obj, None, None)

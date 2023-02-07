@@ -19,7 +19,8 @@ function(USES_STD THIS)
 
     # target_compile_definitions(${THIS} UNICODE _UNICODE)
     # target_compile_features(${THIS} PUBLIC cxx_std_17)
-    target_compile_definitions(${THIS} PRIVATE NULL=nullptr)
+    # target_compile_definitions(${THIS} PRIVATE NULL=nullptr)
+    # target_compile_definitions(${THIS} PRIVATE NULL=0)
     target_compile_features(${THIS} PUBLIC cxx_std_20)
     set_property(TARGET ${THIS} PROPERTY CXX_STANDARD 20)
 

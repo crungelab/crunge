@@ -112,19 +112,15 @@ class Cubes(Window):
         self.write_a = c_bool(True)
         self.primitive_geometry = c_int(0)
 
-        self.init_conf = bgfx.Init()
-        self.init_conf.debug = True
-        self.init_conf.resolution.width = self.width
-        self.init_conf.resolution.height = self.height
-        self.init_conf.resolution.reset = BGFX_RESET_VSYNC
-
     def init(self, platform_data):
-        bgfx.set_platform_data(platform_data)
         bgfx.render_frame()
-        bgfx.init(self.init_conf)
-        bgfx.reset(
-            self.width, self.height, BGFX_RESET_VSYNC, self.init_conf.resolution.format,
-        )
+        self.init_conf = init_conf = bgfx.Init()
+        init_conf.platform_data = platform_data
+        init_conf.debug = True
+        init_conf.resolution.width = self.width
+        init_conf.resolution.height = self.height
+        init_conf.resolution.reset = BGFX_RESET_VSYNC
+        bgfx.init(init_conf)
 
         bgfx.set_debug(BGFX_DEBUG_TEXT)
         bgfx.set_view_clear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0, 0)

@@ -4,11 +4,10 @@ import sys
 
 from loguru import logger
 import glfw
-from glfw import _glfw as glfw_native
 
 from crunge import wgpu
 
-from utils import as_void_ptr
+from utils import to_capsule
 
 shader_code = """
 @vertex
@@ -22,6 +21,7 @@ fn main_f() -> @location(0) vec4<f32> {
     return vec4<f32>(0.0, 0.502, 1.0, 1.0); // 0x80/0xff ~= 0.502
 }
 """
+
 
 class HelloWgpu:
     device: wgpu.Device = None
@@ -92,7 +92,7 @@ class HelloWgpu:
 
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
-        
+
         self.window = glfw.create_window(800, 600, "Test", None, None)
 
     def create_swapchain(self):
@@ -108,24 +108,12 @@ class HelloWgpu:
 
         logger.debug(handle)
 
-        nwh = as_void_ptr(handle)
+        nwh = to_capsule(handle)
         logger.debug(nwh)
-
-        ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
-        ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object, ctypes.c_char_p]
-        handle1 = ctypes.pythonapi.PyCapsule_GetPointer(nwh, None)
-        logger.debug(handle1)
 
         wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
         wsd.hwnd = nwh
         wsd.hinstance = None
-
-        logger.debug(wsd.hwnd)
-
-        ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
-        ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object, ctypes.c_char_p]
-        handle2 = ctypes.pythonapi.PyCapsule_GetPointer(wsd.hwnd, None)
-        logger.debug(handle2)
 
         sd = wgpu.SurfaceDescriptor()
         sd.next_in_chain = wsd
@@ -143,11 +131,11 @@ class HelloWgpu:
         logger.debug(self.swap_chain)
 
     def create_depth_stencil_view(self):
-      descriptor = wgpu.TextureDescriptor()
-      descriptor.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
-      descriptor.size = wgpu.Extent3D(self.kWidth, self.kHeight, 1)
-      descriptor.format = wgpu.TextureFormat.DEPTH32_FLOAT
-      self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
+        descriptor = wgpu.TextureDescriptor()
+        descriptor.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
+        descriptor.size = wgpu.Extent3D(self.kWidth, self.kHeight, 1)
+        descriptor.format = wgpu.TextureFormat.DEPTH32_FLOAT
+        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
     def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
         attachment = wgpu.RenderPassColorAttachment()
@@ -159,7 +147,7 @@ class HelloWgpu:
         renderpass = wgpu.RenderPassDescriptor()
         renderpass.color_attachment_count = 1
         renderpass.color_attachments = attachment
-        #renderpass.color_attachments = [attachment] #TODO:  Pointer to array
+        # renderpass.color_attachments = [attachment] #TODO:  Pointer to array
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment()
         depth_stencil_attachment.view = depthStencilView
@@ -176,11 +164,11 @@ class HelloWgpu:
         pass_enc.draw(3)
         pass_enc.end()
         commands = encoder.finish()
-        
+
         self.queue.submit(1, commands)
 
     def frame(self):
-        backbuffer: wgpu.TextureView  = self.swap_chain.get_current_texture_view()
+        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         self.render(backbuffer, self.depth_stencil_view)
         self.swap_chain.present()
 
@@ -201,7 +189,7 @@ class HelloWgpu:
             last_time = now
 
             self.frame()
-            #exit()
+            # exit()
 
         glfw.destroy_window(self.window)
         glfw.terminate()

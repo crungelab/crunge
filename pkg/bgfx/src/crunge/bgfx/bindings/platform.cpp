@@ -25,9 +25,20 @@ void init_platform(py::module &_bgfx, Registry &registry) {
     _bgfx.def("render_frame", &bgfx::renderFrame
     , py::arg("_msecs") = -1
     , py::return_value_policy::automatic_reference);
-    _bgfx.def("set_platform_data", &bgfx::setPlatformData
-    , py::arg("_data")
-    , py::return_value_policy::automatic_reference);
+
+    /*_bgfx.def("set_platform_data", &bgfx::setPlatformData
+    , py::arg("_data"));*/
+
+    PYEXTEND_BEGIN(bgfx::PlatformData, PlatformData)
+    PlatformData.def("set",
+        [](const bgfx::PlatformData& self) {
+            bgfx::PlatformData data;
+            printf("%p\n", self.nwh);
+            data.nwh = self.nwh;
+            bgfx::setPlatformData(data);
+    });
+    PYEXTEND_END
+
     PYCLASS_BEGIN(_bgfx, bgfx::InternalData, InternalData)
     InternalData.def_readwrite("caps", &bgfx::InternalData::caps);
     InternalData.def_readwrite("context", &bgfx::InternalData::context);
@@ -35,10 +46,12 @@ void init_platform(py::module &_bgfx, Registry &registry) {
 
     _bgfx.def("get_internal_data", &bgfx::getInternalData
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("override_internal", py::overload_cast<bgfx::TextureHandle, uintptr_t>(&bgfx::overrideInternal)
     , py::arg("_handle")
     , py::arg("_ptr")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("override_internal", py::overload_cast<bgfx::TextureHandle, uint16_t, uint16_t, uint8_t, TextureFormat::Enum, uint64_t>(&bgfx::overrideInternal)
     , py::arg("_handle")
     , py::arg("_width")
@@ -47,5 +60,4 @@ void init_platform(py::module &_bgfx, Registry &registry) {
     , py::arg("_format")
     , py::arg("_flags") = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE
     , py::return_value_policy::automatic_reference);
-
 }

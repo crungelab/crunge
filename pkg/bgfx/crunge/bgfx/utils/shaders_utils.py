@@ -15,9 +15,9 @@ from crunge.bgfx.utils import as_void_ptr
 
 logger.disable("bgfx")
 
-_pkg_path = Path(os.path.dirname(__file__)).parent.parent
+_pkg_path = Path(os.path.dirname(__file__)).parent
 _default_bin_path = _pkg_path / "bin"
-_default_include_dir = _pkg_path / "include" / "shaders"
+_default_include_dir = _pkg_path / "resources" / "shaders" / "include"
 _os_exe_suffix = ".exe" if platform.system() == "Windows" else ""
 
 
@@ -65,7 +65,8 @@ def _get_profile(shader_type: ShaderType) -> str:
         if renderer_type == bgfx.RendererType.DIRECT3_D9:
             return windows_shader_type.get(shader_type) + "3_0"
         else:
-            return windows_shader_type.get(shader_type) + "5_0"
+            #return windows_shader_type.get(shader_type) + "5_0"
+            return "s_5_0"
 
     else:
         raise ValueError("'{}' is not supported!".format(sys_platform))
@@ -172,7 +173,9 @@ def compile_shader(
         options.extend(["-i", include_dir])
 
     options.extend(("--platform", _get_platform()))
-    options.extend(("--profile", _get_profile(shader_type)))
+    profile = _get_profile(shader_type)
+    logger.debug(profile)
+    options.extend(("--profile", profile))
     options.extend(("--type", shader_type.value))
 
     if platform.system() == "Windows":

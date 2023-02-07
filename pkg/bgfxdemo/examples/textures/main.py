@@ -6,10 +6,10 @@ import numpy as np
 from PIL import Image
 from loguru import logger
 
-import aimgfx
-from aimgfx.utils import as_void_ptr
-from aimgfx.utils.shaders_utils import ShaderType, load_shader
-from aimgfx.constants import (
+from crunge import bgfx
+from crunge.bgfx.utils import as_void_ptr
+from crunge.bgfx.utils.shaders_utils import ShaderType, load_shader
+from crunge.bgfx.constants import (
     BGFX_CLEAR_COLOR,
     BGFX_CLEAR_DEPTH,
     BGFX_DEBUG_TEXT,
@@ -21,10 +21,10 @@ from aimgfx.constants import (
     BGFX_TEXTURE_RT,
     BGFX_STATE_WRITE_RGB,
 )
-from aimgfx.window import Window
-from aimgfx.utils.matrix_utils import look_at, proj, rotate_xy
+from crunge.bgfx.window import Window
+from crunge.bgfx.utils.matrix_utils import look_at, proj, rotate_xy
 
-logger.enable("aimgfx")
+logger.enable("bgfx")
 
 
 class PosColorTexVertex(Structure):
@@ -118,61 +118,57 @@ class Textures(Window):
 
         self.elapsed_time = 0
 
-        self.init_conf = aimgfx.Init()
-        self.init_conf.debug = True
-        self.init_conf.resolution.width = self.width
-        self.init_conf.resolution.height = self.height
-        self.init_conf.resolution.reset = BGFX_RESET_VSYNC
-
     def init(self, platform_data):
-        aimgfx.set_platform_data(platform_data)
-        aimgfx.render_frame()
-        aimgfx.init(self.init_conf)
-        aimgfx.reset(
-            self.width, self.height, BGFX_RESET_VSYNC, self.init_conf.resolution.format,
-        )
+        bgfx.render_frame()
+        self.init_conf = init_conf = bgfx.Init()
+        init_conf.platform_data = platform_data
+        init_conf.debug = True
+        init_conf.resolution.width = self.width
+        init_conf.resolution.height = self.height
+        init_conf.resolution.reset = BGFX_RESET_VSYNC
+        bgfx.init(init_conf)
 
-        aimgfx.set_debug(BGFX_DEBUG_TEXT)
-        aimgfx.set_view_clear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0, 0)
+        bgfx.set_debug(BGFX_DEBUG_TEXT)
+        bgfx.set_view_clear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0, 0)
 
-        self.vertex_layout = aimgfx.VertexLayout()
+        self.vertex_layout = bgfx.VertexLayout()
         self.vertex_layout.begin().add(
-            aimgfx.Attrib.POSITION, 3, aimgfx.AttribType.FLOAT
-        ).add(aimgfx.Attrib.COLOR0, 4, aimgfx.AttribType.UINT8, True).add(
-            aimgfx.Attrib.TEX_COORD0, 2, aimgfx.AttribType.FLOAT
+            bgfx.Attrib.POSITION, 3, bgfx.AttribType.FLOAT
+        ).add(bgfx.Attrib.COLOR0, 4, bgfx.AttribType.UINT8, True).add(
+            bgfx.Attrib.TEX_COORD0, 2, bgfx.AttribType.FLOAT
         ).end()
 
         # Create static vertex buffer
-        vb_memory = aimgfx.copy(
+        vb_memory = bgfx.copy(
             as_void_ptr(cube_vertices), sizeof(PosColorTexVertex) * num_vertices
         )
-        self.vertex_buffer = aimgfx.create_vertex_buffer(vb_memory, self.vertex_layout)
+        self.vertex_buffer = bgfx.create_vertex_buffer(vb_memory, self.vertex_layout)
 
         # Create index buffer
-        ib_memory = aimgfx.copy(as_void_ptr(cube_indices), cube_indices.nbytes)
-        self.index_buffer = aimgfx.create_index_buffer(ib_memory)
+        ib_memory = bgfx.copy(as_void_ptr(cube_indices), cube_indices.nbytes)
+        self.index_buffer = bgfx.create_index_buffer(ib_memory)
 
         # Create texture uniform
-        self.texture_uniform = aimgfx.create_uniform("s_tex", aimgfx.UniformType.SAMPLER)
+        self.texture_uniform = bgfx.create_uniform("s_tex", bgfx.UniformType.SAMPLER)
 
         # Load the image using PIL and make the texture
         logo = Image.open(
             Path(__file__).parent.parent / "assets" / "textures" / "python_logo.png"
         )
         image_bytes = logo.tobytes()
-        logo_memory = aimgfx.copy(as_void_ptr(image_bytes), len(image_bytes))
-        self.logo_texture = aimgfx.create_texture2_d(
+        logo_memory = bgfx.copy(as_void_ptr(image_bytes), len(image_bytes))
+        self.logo_texture = bgfx.create_texture2_d(
             logo.width,
             logo.height,
             False,
             1,
-            aimgfx.TextureFormat.RGBA8,
+            bgfx.TextureFormat.RGBA8,
             BGFX_TEXTURE_RT,
             logo_memory,
         )
 
         # Create program from shaders.
-        self.main_program = aimgfx.create_program(
+        self.main_program = bgfx.create_program(
             load_shader(
                 "textures.VertexShader.vert", ShaderType.VERTEX, root_path=root_path
             ),
@@ -183,12 +179,12 @@ class Textures(Window):
         )
 
     def shutdown(self):
-        aimgfx.destroy(self.index_buffer)
-        aimgfx.destroy(self.vertex_buffer)
-        aimgfx.destroy(self.texture_uniform)
-        aimgfx.destroy(self.logo_texture)
-        aimgfx.destroy(self.main_program)
-        aimgfx.shutdown()
+        bgfx.destroy(self.index_buffer)
+        bgfx.destroy(self.vertex_buffer)
+        bgfx.destroy(self.texture_uniform)
+        bgfx.destroy(self.logo_texture)
+        bgfx.destroy(self.main_program)
+        bgfx.shutdown()
 
     def update(self, dt):
         self.elapsed_time += dt
@@ -201,13 +197,13 @@ class Textures(Window):
         view = look_at(eye, at, up)
         projection = proj(60.0, self.width / self.height, 0.1, 100.0)
 
-        aimgfx.set_view_transform(0, as_void_ptr(view), as_void_ptr(projection))
-        aimgfx.set_view_rect(0, 0, 0, self.width, self.height)
+        bgfx.set_view_transform(0, as_void_ptr(view), as_void_ptr(projection))
+        bgfx.set_view_rect(0, 0, 0, self.width, self.height)
 
-        aimgfx.touch(0)
+        bgfx.touch(0)
 
         # Set the texture
-        aimgfx.set_texture(0, self.texture_uniform, self.logo_texture)
+        bgfx.set_texture(0, self.texture_uniform, self.logo_texture)
 
         for yy in range(-2, 2):
             for xx in range(-2, 2):
@@ -217,13 +213,13 @@ class Textures(Window):
                 mtx[3, 0] = 4 + xx * 3.5
                 mtx[3, 1] = 2 + yy * 3.5
                 mtx[3, 2] = 0
-                aimgfx.set_transform(as_void_ptr(mtx), 1)
+                bgfx.set_transform(as_void_ptr(mtx), 1)
 
                 # Set vertex and index buffer.
-                aimgfx.set_vertex_buffer(0, self.vertex_buffer, 0, num_vertices)
-                aimgfx.set_index_buffer(self.index_buffer, 0, cube_indices.size)
+                bgfx.set_vertex_buffer(0, self.vertex_buffer, 0, num_vertices)
+                bgfx.set_index_buffer(self.index_buffer, 0, cube_indices.size)
 
-                aimgfx.set_state(
+                bgfx.set_state(
                     0
                     | BGFX_STATE_WRITE_RGB
                     | BGFX_STATE_WRITE_A
@@ -233,12 +229,12 @@ class Textures(Window):
                     0,
                 )
 
-                aimgfx.submit(0, self.main_program, 0, False)
+                bgfx.submit(0, self.main_program, 0, False)
 
-        aimgfx.frame()
+        bgfx.frame()
 
     def resize(self, width, height):
-        aimgfx.reset(
+        bgfx.reset(
             self.width, self.height, BGFX_RESET_VSYNC, self.init_conf.resolution.format
         )
 

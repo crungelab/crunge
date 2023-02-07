@@ -36,6 +36,7 @@ configure_project(${THIS} ${BINARY})
 USES_PYBIND11(${THIS})
 
 target_compile_definitions(${THIS} PRIVATE IMGUI_USER_CONFIG=<crunge/imgui/imconfig.h>)
+target_compile_definitions(${THIS} PRIVATE NULL=nullptr)
 
 target_sources(${THIS} PRIVATE ${IMGUI_SRC} ${IMGUI_HEADERS})
 

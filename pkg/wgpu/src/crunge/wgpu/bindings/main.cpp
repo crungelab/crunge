@@ -24,27 +24,13 @@ void CreateProcTable() {
     dawnProcSetProcs(&procs);
 }
 
-//template<typename T>
-//bool bit_or(T a, T b) { return a | b; }
-//auto bit_or = [](auto a, auto b) { return a | b; };
-//auto bit_or = []<class T>(T a, T b) { return a | b; };
-
 void init_main(py::module &_wgpu, Registry &registry) {
-    /*_wgpu.def("request_adapter", &RequestAdapter
-        , py::arg("descriptor") = nullptr
-        , py::return_value_policy::automatic_reference);*/
-    /*_wgpu.def("request_adapter", &RequestAdapter
-    , py::arg("first")
-    , py::arg("second")
-    , py::return_value_policy::automatic_reference);*/
-
     _wgpu.def("create_proc_table", &CreateProcTable);
 
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
     Instance.def("request_adapter", [](const wgpu::Instance& self)
     {
         RequestAdapterOptions options;
-        //RequestAdapterCallback cb;
         //typedef void (*WGPURequestAdapterCallback)(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const * message, void * userdata);
         static Adapter adapter;
         auto cb = [](WGPURequestAdapterStatus status, WGPUAdapter _adapter, char const* message, void* userdata) {
@@ -108,8 +94,9 @@ void init_main(py::module &_wgpu, Registry &registry) {
         TextureDescriptor.def(py::init<>());
     PYEXTEND_END
 
+    //TODO:GENERATE: need to define our own bitwise operators for scoped enums.
     PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::TextureUsage, TextureUsage)
-        //TextureUsage.def(py::self | py::self);
+        //TextureUsage.def(py::self | py::self); //Doesn't work
         TextureUsage.def("__or__", [](wgpu::TextureUsage& a, wgpu::TextureUsage& b) {
         return (wgpu::TextureUsage)(a | b);
             }, py::is_operator());
@@ -176,7 +163,7 @@ void init_main(py::module &_wgpu, Registry &registry) {
         SwapChainDescriptor.def(py::init<>());
     PYEXTEND_END
 
-    PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
+    /*PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
         //ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);
         ShaderModuleWGSLDescriptor.def_property("source",
             [](const wgpu::ShaderModuleWGSLDescriptor& self) {
@@ -216,6 +203,6 @@ void init_main(py::module &_wgpu, Registry &registry) {
                 self.entryPoint = c;
             }
         );
-    PYEXTEND_END
+    PYEXTEND_END*/
 
 }

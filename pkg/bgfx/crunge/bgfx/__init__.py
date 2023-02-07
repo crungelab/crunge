@@ -6,3 +6,6 @@ core.add_plugin(__file__)
 
 from ._bgfx import *
 from .constants import *
+
+def set_platform_data(platform_data):
+    platform_data.set()

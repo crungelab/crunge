@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
+from loguru import logger
 #from clang import cindex
+
 from crunge.clang import cindex
 
 from . import UserSet
@@ -21,10 +23,6 @@ class Scope:
 class TranspilerBase:
     def __init__(self):
         self.scopes = []
-        #
-        # Injected members
-        # TODO: Validate after injection
-        #
         self.source = ''
         self.mapped = [] #headers we want to generate bindings for
         self.target = ''
@@ -119,19 +117,23 @@ class TranspilerBase:
                 return False
         return True
 
+    def is_char_pointer(self, node):
+        if node.type.get_canonical().kind == cindex.TypeKind.POINTER:
+            ptr = node.type.get_canonical().get_pointee().kind
+            if ptr == cindex.TypeKind.CHAR_S:
+                return True
+        return False
+
     def is_forward_declaration(self, node):
         definition = node.get_definition()
 
         # If the definition is null, then there is no definition in this translation
         # unit, so this cursor must be a forward declaration.
-        #if (clang_equalCursors(definition, clang_getNullCursor()))
-        #    return true;
         if not definition:
             return True
         # If there is a definition, then the forward declaration and the definition
         # are in the same translation unit. This cursor is the forward declaration if
         # it is _not_ the definition.
-        #return !clang_equalCursors(cursor, definition);
         return node != definition
 
     def is_function_void_return(self, node):

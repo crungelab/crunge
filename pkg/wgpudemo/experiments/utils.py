@@ -11,7 +11,7 @@ except Exception:
 
 null_ptr = ctypes.POINTER(ctypes.c_long)()
 
-def as_void_ptr(obj: Any) -> ctypes.py_object:
+def to_capsule(obj: Any) -> ctypes.py_object:
     ctypes.pythonapi.PyCapsule_New.restype = ctypes.py_object
     ctypes.pythonapi.PyCapsule_New.argtypes = [
         ctypes.c_void_p,
@@ -31,3 +31,8 @@ def as_void_ptr(obj: Any) -> ctypes.py_object:
     capsule = ctypes.pythonapi.PyCapsule_New(obj, None, None)
 
     return capsule
+
+def from_capsule(capsule):
+    ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
+    ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object, ctypes.c_char_p]
+    return ctypes.pythonapi.PyCapsule_GetPointer(capsule, None)

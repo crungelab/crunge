@@ -12,7 +12,7 @@ void init_embedded_shader(py::module&, Registry& registry);
 
 PYBIND11_MODULE(_bgfx, m) {
         Registry r;
+        init_platform(m, r);
         init_main(m, r);
         init_bgfx(m, r);
-        init_platform(m, r);
 }
