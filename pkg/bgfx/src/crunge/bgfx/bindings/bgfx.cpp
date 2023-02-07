@@ -252,6 +252,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::DynamicIndexBufferHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::DynamicVertexBufferHandle, DynamicVertexBufferHandle)
     DynamicVertexBufferHandle.def_readwrite("idx", &bgfx::DynamicVertexBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::DynamicVertexBufferHandle, DynamicVertexBufferHandle)
@@ -259,6 +260,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::DynamicVertexBufferHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::FrameBufferHandle, FrameBufferHandle)
     FrameBufferHandle.def_readwrite("idx", &bgfx::FrameBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::FrameBufferHandle, FrameBufferHandle)
@@ -266,6 +268,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::FrameBufferHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::IndexBufferHandle, IndexBufferHandle)
     IndexBufferHandle.def_readwrite("idx", &bgfx::IndexBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::IndexBufferHandle, IndexBufferHandle)
@@ -273,6 +276,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::IndexBufferHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::IndirectBufferHandle, IndirectBufferHandle)
     IndirectBufferHandle.def_readwrite("idx", &bgfx::IndirectBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::IndirectBufferHandle, IndirectBufferHandle)
@@ -280,6 +284,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::IndirectBufferHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::OcclusionQueryHandle, OcclusionQueryHandle)
     OcclusionQueryHandle.def_readwrite("idx", &bgfx::OcclusionQueryHandle::idx);
     PYCLASS_END(_bgfx, bgfx::OcclusionQueryHandle, OcclusionQueryHandle)
@@ -287,6 +292,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::OcclusionQueryHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::ProgramHandle, ProgramHandle)
     ProgramHandle.def_readwrite("idx", &bgfx::ProgramHandle::idx);
     PYCLASS_END(_bgfx, bgfx::ProgramHandle, ProgramHandle)
@@ -294,6 +300,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::ProgramHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::ShaderHandle, ShaderHandle)
     ShaderHandle.def_readwrite("idx", &bgfx::ShaderHandle::idx);
     PYCLASS_END(_bgfx, bgfx::ShaderHandle, ShaderHandle)
@@ -301,6 +308,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::ShaderHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::TextureHandle, TextureHandle)
     TextureHandle.def_readwrite("idx", &bgfx::TextureHandle::idx);
     PYCLASS_END(_bgfx, bgfx::TextureHandle, TextureHandle)
@@ -308,6 +316,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::TextureHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::UniformHandle, UniformHandle)
     UniformHandle.def_readwrite("idx", &bgfx::UniformHandle::idx);
     PYCLASS_END(_bgfx, bgfx::UniformHandle, UniformHandle)
@@ -315,6 +324,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::UniformHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::VertexBufferHandle, VertexBufferHandle)
     VertexBufferHandle.def_readwrite("idx", &bgfx::VertexBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::VertexBufferHandle, VertexBufferHandle)
@@ -322,6 +332,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::VertexBufferHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::VertexLayoutHandle, VertexLayoutHandle)
     VertexLayoutHandle.def_readwrite("idx", &bgfx::VertexLayoutHandle::idx);
     PYCLASS_END(_bgfx, bgfx::VertexLayoutHandle, VertexLayoutHandle)
@@ -329,6 +340,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     _bgfx.def("is_valid", py::overload_cast<bgfx::VertexLayoutHandle>(&bgfx::isValid)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_bgfx, bgfx::CallbackI, CallbackI)
     CallbackI.def("fatal", &bgfx::CallbackI::fatal
     , py::arg("_file_path")
@@ -336,33 +348,40 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_code")
     , py::arg("_str")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("profiler_begin", &bgfx::CallbackI::profilerBegin
     , py::arg("_name")
     , py::arg("_abgr")
     , py::arg("_file_path")
     , py::arg("_line")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("profiler_begin_literal", &bgfx::CallbackI::profilerBeginLiteral
     , py::arg("_name")
     , py::arg("_abgr")
     , py::arg("_file_path")
     , py::arg("_line")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("profiler_end", &bgfx::CallbackI::profilerEnd
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("cache_read_size", &bgfx::CallbackI::cacheReadSize
     , py::arg("_id")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("cache_read", &bgfx::CallbackI::cacheRead
     , py::arg("_id")
     , py::arg("_data")
     , py::arg("_size")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("cache_write", &bgfx::CallbackI::cacheWrite
     , py::arg("_id")
     , py::arg("_data")
     , py::arg("_size")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("screen_shot", &bgfx::CallbackI::screenShot
     , py::arg("_file_path")
     , py::arg("_width")
@@ -372,6 +391,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_size")
     , py::arg("_yflip")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("capture_begin", &bgfx::CallbackI::captureBegin
     , py::arg("_width")
     , py::arg("_height")
@@ -379,12 +399,15 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_format")
     , py::arg("_yflip")
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("capture_end", &bgfx::CallbackI::captureEnd
     , py::return_value_policy::automatic_reference);
+
     CallbackI.def("capture_frame", &bgfx::CallbackI::captureFrame
     , py::arg("_data")
     , py::arg("_size")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_bgfx, bgfx::CallbackI, CallbackI)
 
     PYCLASS_BEGIN(_bgfx, bgfx::PlatformData, PlatformData)
@@ -487,6 +510,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_mip") = 0
     , py::arg("_resolve") = BGFX_RESOLVE_AUTO_GEN_MIPS
     , py::return_value_policy::automatic_reference);
+
     Attachment.def_readwrite("access", &bgfx::Attachment::access);
     Attachment.def_readwrite("handle", &bgfx::Attachment::handle);
     Attachment.def_readwrite("mip", &bgfx::Attachment::mip);
@@ -562,72 +586,89 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     Encoder.def("set_marker", &bgfx::Encoder::setMarker
     , py::arg("_marker")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_state", &bgfx::Encoder::setState
     , py::arg("_state")
     , py::arg("_rgba") = 0
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_condition", &bgfx::Encoder::setCondition
     , py::arg("_handle")
     , py::arg("_visible")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_stencil", &bgfx::Encoder::setStencil
     , py::arg("_fstencil")
     , py::arg("_bstencil") = BGFX_STENCIL_NONE
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_scissor", py::overload_cast<uint16_t, uint16_t, uint16_t, uint16_t>(&bgfx::Encoder::setScissor)
     , py::arg("_x")
     , py::arg("_y")
     , py::arg("_width")
     , py::arg("_height")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_scissor", py::overload_cast<uint16_t>(&bgfx::Encoder::setScissor)
     , py::arg("_cache") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_transform", py::overload_cast<const void *, uint16_t>(&bgfx::Encoder::setTransform)
     , py::arg("_mtx")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("alloc_transform", &bgfx::Encoder::allocTransform
     , py::arg("_transform")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_transform", py::overload_cast<uint32_t, uint16_t>(&bgfx::Encoder::setTransform)
     , py::arg("_cache")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_uniform", &bgfx::Encoder::setUniform
     , py::arg("_handle")
     , py::arg("_value")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_index_buffer", py::overload_cast<bgfx::IndexBufferHandle>(&bgfx::Encoder::setIndexBuffer)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_index_buffer", py::overload_cast<bgfx::IndexBufferHandle, uint32_t, uint32_t>(&bgfx::Encoder::setIndexBuffer)
     , py::arg("_handle")
     , py::arg("_first_index")
     , py::arg("_num_indices")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_index_buffer", py::overload_cast<bgfx::DynamicIndexBufferHandle>(&bgfx::Encoder::setIndexBuffer)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_index_buffer", py::overload_cast<bgfx::DynamicIndexBufferHandle, uint32_t, uint32_t>(&bgfx::Encoder::setIndexBuffer)
     , py::arg("_handle")
     , py::arg("_first_index")
     , py::arg("_num_indices")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_index_buffer", py::overload_cast<const bgfx::TransientIndexBuffer *>(&bgfx::Encoder::setIndexBuffer)
     , py::arg("_tib")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_index_buffer", py::overload_cast<const bgfx::TransientIndexBuffer *, uint32_t, uint32_t>(&bgfx::Encoder::setIndexBuffer)
     , py::arg("_tib")
     , py::arg("_first_index")
     , py::arg("_num_indices")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::VertexBufferHandle>(&bgfx::Encoder::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::VertexBufferHandle, uint32_t, uint32_t, bgfx::VertexLayoutHandle>(&bgfx::Encoder::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
@@ -635,10 +676,12 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_vertices")
     , py::arg("_layout_handle") = bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::DynamicVertexBufferHandle>(&bgfx::Encoder::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::DynamicVertexBufferHandle, uint32_t, uint32_t, bgfx::VertexLayoutHandle>(&bgfx::Encoder::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
@@ -646,10 +689,12 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_vertices")
     , py::arg("_layout_handle") = bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_vertex_buffer", py::overload_cast<uint8_t, const bgfx::TransientVertexBuffer *>(&bgfx::Encoder::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_tvb")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_vertex_buffer", py::overload_cast<uint8_t, const bgfx::TransientVertexBuffer *, uint32_t, uint32_t, bgfx::VertexLayoutHandle>(&bgfx::Encoder::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_tvb")
@@ -657,45 +702,55 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_vertices")
     , py::arg("_layout_handle") = bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_vertex_count", &bgfx::Encoder::setVertexCount
     , py::arg("_num_vertices")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_instance_data_buffer", py::overload_cast<const bgfx::InstanceDataBuffer *>(&bgfx::Encoder::setInstanceDataBuffer)
     , py::arg("_idb")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_instance_data_buffer", py::overload_cast<const bgfx::InstanceDataBuffer *, uint32_t, uint32_t>(&bgfx::Encoder::setInstanceDataBuffer)
     , py::arg("_idb")
     , py::arg("_start")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_instance_data_buffer", py::overload_cast<bgfx::VertexBufferHandle, uint32_t, uint32_t>(&bgfx::Encoder::setInstanceDataBuffer)
     , py::arg("_handle")
     , py::arg("_start")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_instance_data_buffer", py::overload_cast<bgfx::DynamicVertexBufferHandle, uint32_t, uint32_t>(&bgfx::Encoder::setInstanceDataBuffer)
     , py::arg("_handle")
     , py::arg("_start")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_instance_count", &bgfx::Encoder::setInstanceCount
     , py::arg("_num_instances")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_texture", &bgfx::Encoder::setTexture
     , py::arg("_stage")
     , py::arg("_sampler")
     , py::arg("_handle")
     , py::arg("_flags") = UINT32_MAX
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("touch", &bgfx::Encoder::touch
     , py::arg("_id")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, uint32_t, uint8_t>(&bgfx::Encoder::submit)
     , py::arg("_id")
     , py::arg("_program")
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::OcclusionQueryHandle, uint32_t, uint8_t>(&bgfx::Encoder::submit)
     , py::arg("_id")
     , py::arg("_program")
@@ -703,6 +758,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::IndirectBufferHandle, uint16_t, uint16_t, uint32_t, uint8_t>(&bgfx::Encoder::submit)
     , py::arg("_id")
     , py::arg("_program")
@@ -712,6 +768,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::IndirectBufferHandle, uint16_t, bgfx::IndexBufferHandle, uint32_t, uint16_t, uint32_t, uint8_t>(&bgfx::Encoder::submit)
     , py::arg("_id")
     , py::arg("_program")
@@ -723,31 +780,37 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_buffer", py::overload_cast<uint8_t, bgfx::IndexBufferHandle, Access::Enum>(&bgfx::Encoder::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_buffer", py::overload_cast<uint8_t, bgfx::VertexBufferHandle, Access::Enum>(&bgfx::Encoder::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_buffer", py::overload_cast<uint8_t, bgfx::DynamicIndexBufferHandle, Access::Enum>(&bgfx::Encoder::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_buffer", py::overload_cast<uint8_t, bgfx::DynamicVertexBufferHandle, Access::Enum>(&bgfx::Encoder::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_buffer", py::overload_cast<uint8_t, bgfx::IndirectBufferHandle, Access::Enum>(&bgfx::Encoder::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("set_image", &bgfx::Encoder::setImage
     , py::arg("_stage")
     , py::arg("_handle")
@@ -755,6 +818,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_access")
     , py::arg("_format") = TextureFormat::Count
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("dispatch", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, uint32_t, uint32_t, uint32_t, uint8_t>(&bgfx::Encoder::dispatch)
     , py::arg("_id")
     , py::arg("_handle")
@@ -763,6 +827,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_z") = 1
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("dispatch", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::IndirectBufferHandle, uint16_t, uint16_t, uint8_t>(&bgfx::Encoder::dispatch)
     , py::arg("_id")
     , py::arg("_handle")
@@ -771,9 +836,11 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num") = 1
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("discard", &bgfx::Encoder::discard
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("blit", py::overload_cast<bgfx::ViewId, bgfx::TextureHandle, uint16_t, uint16_t, bgfx::TextureHandle, uint16_t, uint16_t, uint16_t, uint16_t>(&bgfx::Encoder::blit)
     , py::arg("_id")
     , py::arg("_dst")
@@ -785,6 +852,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_width") = UINT16_MAX
     , py::arg("_height") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     Encoder.def("blit", py::overload_cast<bgfx::ViewId, bgfx::TextureHandle, uint8_t, uint16_t, uint16_t, uint16_t, bgfx::TextureHandle, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t>(&bgfx::Encoder::blit)
     , py::arg("_id")
     , py::arg("_dst")
@@ -801,6 +869,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_height") = UINT16_MAX
     , py::arg("_depth") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_bgfx, bgfx::Encoder, Encoder)
 
     PYCLASS_BEGIN(_bgfx, bgfx::VertexLayout, VertexLayout)
@@ -808,8 +877,10 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     VertexLayout.def("begin", &bgfx::VertexLayout::begin
     , py::arg("_renderer") = RendererType::Noop
     , py::return_value_policy::reference);
+
     VertexLayout.def("end", &bgfx::VertexLayout::end
     , py::return_value_policy::automatic_reference);
+
     VertexLayout.def("add", &bgfx::VertexLayout::add
     , py::arg("_attrib")
     , py::arg("_num")
@@ -817,20 +888,26 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_normalized") = false
     , py::arg("_as_int") = false
     , py::return_value_policy::reference);
+
     VertexLayout.def("skip", &bgfx::VertexLayout::skip
     , py::arg("_num")
     , py::return_value_policy::reference);
+
     VertexLayout.def("has", &bgfx::VertexLayout::has
     , py::arg("_attrib")
     , py::return_value_policy::automatic_reference);
+
     VertexLayout.def("get_offset", &bgfx::VertexLayout::getOffset
     , py::arg("_attrib")
     , py::return_value_policy::automatic_reference);
+
     VertexLayout.def("get_stride", &bgfx::VertexLayout::getStride
     , py::return_value_policy::automatic_reference);
+
     VertexLayout.def("get_size", &bgfx::VertexLayout::getSize
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     VertexLayout.def_readwrite("m_hash", &bgfx::VertexLayout::m_hash);
     VertexLayout.def_readwrite("m_stride", &bgfx::VertexLayout::m_stride);
     VertexLayout.def_readonly("m_offset", &bgfx::VertexLayout::m_offset);
@@ -848,6 +925,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_data")
     , py::arg("_index") = 0
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("vertex_convert", &bgfx::vertexConvert
     , py::arg("_dest_layout")
     , py::arg("_dest_data")
@@ -855,6 +933,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_src_data")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("weld_vertices", &bgfx::weldVertices
     , py::arg("_output")
     , py::arg("_layout")
@@ -863,6 +942,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_index32")
     , py::arg("_epsilon") = 0.001f
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("topology_convert", &bgfx::topologyConvert
     , py::arg("_conversion")
     , py::arg("_dst")
@@ -871,53 +951,69 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_indices")
     , py::arg("_index32")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_supported_renderers", &bgfx::getSupportedRenderers
     , py::arg("_max") = 0
     , py::arg("_enum") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_renderer_name", &bgfx::getRendererName
     , py::arg("_type")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("init", &bgfx::init
     , py::arg("_init") = bgfx::Init()
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("shutdown", &bgfx::shutdown
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("reset", &bgfx::reset
     , py::arg("_width")
     , py::arg("_height")
     , py::arg("_flags") = BGFX_RESET_NONE
     , py::arg("_format") = TextureFormat::Count
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("begin", &bgfx::begin
     , py::arg("_for_thread") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("end", &bgfx::end
     , py::arg("_encoder")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("frame", &bgfx::frame
     , py::arg("_capture") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_renderer_type", &bgfx::getRendererType
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_caps", &bgfx::getCaps
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_stats", &bgfx::getStats
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("alloc", &bgfx::alloc
     , py::arg("_size")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("copy", &bgfx::copy
     , py::arg("_data")
     , py::arg("_size")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_debug", &bgfx::setDebug
     , py::arg("_debug")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("dbg_text_clear", &bgfx::dbgTextClear
     , py::arg("_attr") = 0
     , py::arg("_small") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("dbg_text_printf", [](uint16_t _x, uint16_t _y, uint8_t _attr, const char * _format)
     {
         bgfx::dbgTextPrintf(_x, _y, _attr, _format);
@@ -928,6 +1024,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_attr")
     , py::arg("_format")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("dbg_text_image", &bgfx::dbgTextImage
     , py::arg("_x")
     , py::arg("_y")
@@ -936,93 +1033,115 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_data")
     , py::arg("_pitch")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_index_buffer", &bgfx::createIndexBuffer
     , py::arg("_mem")
     , py::arg("_flags") = BGFX_BUFFER_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_name", py::overload_cast<bgfx::IndexBufferHandle, const char *, int32_t>(&bgfx::setName)
     , py::arg("_handle")
     , py::arg("_name")
     , py::arg("_len") = INT32_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::IndexBufferHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_vertex_layout", &bgfx::createVertexLayout
     , py::arg("_layout")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::VertexLayoutHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_vertex_buffer", &bgfx::createVertexBuffer
     , py::arg("_mem")
     , py::arg("_layout")
     , py::arg("_flags") = BGFX_BUFFER_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_name", py::overload_cast<bgfx::VertexBufferHandle, const char *, int32_t>(&bgfx::setName)
     , py::arg("_handle")
     , py::arg("_name")
     , py::arg("_len") = INT32_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::VertexBufferHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_dynamic_index_buffer", py::overload_cast<uint32_t, uint16_t>(&bgfx::createDynamicIndexBuffer)
     , py::arg("_num")
     , py::arg("_flags") = BGFX_BUFFER_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_dynamic_index_buffer", py::overload_cast<const bgfx::Memory *, uint16_t>(&bgfx::createDynamicIndexBuffer)
     , py::arg("_mem")
     , py::arg("_flags") = BGFX_BUFFER_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("update", py::overload_cast<bgfx::DynamicIndexBufferHandle, uint32_t, const bgfx::Memory *>(&bgfx::update)
     , py::arg("_handle")
     , py::arg("_start_index")
     , py::arg("_mem")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::DynamicIndexBufferHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_dynamic_vertex_buffer", py::overload_cast<uint32_t, const bgfx::VertexLayout &, uint16_t>(&bgfx::createDynamicVertexBuffer)
     , py::arg("_num")
     , py::arg("_layout")
     , py::arg("_flags") = BGFX_BUFFER_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_dynamic_vertex_buffer", py::overload_cast<const bgfx::Memory *, const bgfx::VertexLayout &, uint16_t>(&bgfx::createDynamicVertexBuffer)
     , py::arg("_mem")
     , py::arg("_layout")
     , py::arg("_flags") = BGFX_BUFFER_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("update", py::overload_cast<bgfx::DynamicVertexBufferHandle, uint32_t, const bgfx::Memory *>(&bgfx::update)
     , py::arg("_handle")
     , py::arg("_start_vertex")
     , py::arg("_mem")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::DynamicVertexBufferHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_avail_transient_index_buffer", &bgfx::getAvailTransientIndexBuffer
     , py::arg("_num")
     , py::arg("_index32") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_avail_transient_vertex_buffer", &bgfx::getAvailTransientVertexBuffer
     , py::arg("_num")
     , py::arg("_layout")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_avail_instance_data_buffer", &bgfx::getAvailInstanceDataBuffer
     , py::arg("_num")
     , py::arg("_stride")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("alloc_transient_index_buffer", &bgfx::allocTransientIndexBuffer
     , py::arg("_tib")
     , py::arg("_num")
     , py::arg("_index32") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("alloc_transient_vertex_buffer", &bgfx::allocTransientVertexBuffer
     , py::arg("_tvb")
     , py::arg("_num")
     , py::arg("_layout")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("alloc_transient_buffers", &bgfx::allocTransientBuffers
     , py::arg("_tvb")
     , py::arg("_layout")
@@ -1031,45 +1150,56 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_indices")
     , py::arg("_index32") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("alloc_instance_data_buffer", &bgfx::allocInstanceDataBuffer
     , py::arg("_idb")
     , py::arg("_num")
     , py::arg("_stride")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_indirect_buffer", &bgfx::createIndirectBuffer
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::IndirectBufferHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_shader", &bgfx::createShader
     , py::arg("_mem")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_shader_uniforms", &bgfx::getShaderUniforms
     , py::arg("_handle")
     , py::arg("_uniforms") = nullptr
     , py::arg("_max") = 0
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_name", py::overload_cast<bgfx::ShaderHandle, const char *, int32_t>(&bgfx::setName)
     , py::arg("_handle")
     , py::arg("_name")
     , py::arg("_len") = INT32_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::ShaderHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_program", py::overload_cast<bgfx::ShaderHandle, bgfx::ShaderHandle, bool>(&bgfx::createProgram)
     , py::arg("_vsh")
     , py::arg("_fsh")
     , py::arg("_destroy_shaders") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_program", py::overload_cast<bgfx::ShaderHandle, bool>(&bgfx::createProgram)
     , py::arg("_csh")
     , py::arg("_destroy_shader") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::ProgramHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("is_texture_valid", &bgfx::isTextureValid
     , py::arg("_depth")
     , py::arg("_cube_map")
@@ -1077,10 +1207,12 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_format")
     , py::arg("_flags")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("is_frame_buffer_valid", &bgfx::isFrameBufferValid
     , py::arg("_num")
     , py::arg("_attachment")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("calc_texture_size", [](bgfx::TextureInfo & _info, uint16_t _width, uint16_t _height, uint16_t _depth, bool _cubeMap, bool _hasMips, uint16_t _numLayers, TextureFormat::Enum _format)
     {
         bgfx::calcTextureSize(_info, _width, _height, _depth, _cubeMap, _hasMips, _numLayers, _format);
@@ -1095,12 +1227,14 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_layers")
     , py::arg("_format")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_texture", &bgfx::createTexture
     , py::arg("_mem")
     , py::arg("_flags") = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE
     , py::arg("_skip") = 0
     , py::arg("_info") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_texture2_d", py::overload_cast<uint16_t, uint16_t, bool, uint16_t, TextureFormat::Enum, uint64_t, const bgfx::Memory *>(&bgfx::createTexture2D)
     , py::arg("_width")
     , py::arg("_height")
@@ -1110,6 +1244,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_flags") = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE
     , py::arg("_mem") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_texture2_d", py::overload_cast<BackbufferRatio::Enum, bool, uint16_t, TextureFormat::Enum, uint64_t>(&bgfx::createTexture2D)
     , py::arg("_ratio")
     , py::arg("_has_mips")
@@ -1117,6 +1252,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_format")
     , py::arg("_flags") = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_texture3_d", &bgfx::createTexture3D
     , py::arg("_width")
     , py::arg("_height")
@@ -1126,6 +1262,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_flags") = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE
     , py::arg("_mem") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_texture_cube", &bgfx::createTextureCube
     , py::arg("_size")
     , py::arg("_has_mips")
@@ -1134,6 +1271,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_flags") = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE
     , py::arg("_mem") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("update_texture2_d", &bgfx::updateTexture2D
     , py::arg("_handle")
     , py::arg("_layer")
@@ -1145,6 +1283,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_mem")
     , py::arg("_pitch") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("update_texture3_d", &bgfx::updateTexture3D
     , py::arg("_handle")
     , py::arg("_mip")
@@ -1156,6 +1295,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth")
     , py::arg("_mem")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("update_texture_cube", &bgfx::updateTextureCube
     , py::arg("_handle")
     , py::arg("_layer")
@@ -1168,43 +1308,52 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_mem")
     , py::arg("_pitch") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("read_texture", &bgfx::readTexture
     , py::arg("_handle")
     , py::arg("_data")
     , py::arg("_mip") = 0
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_name", py::overload_cast<bgfx::TextureHandle, const char *, int32_t>(&bgfx::setName)
     , py::arg("_handle")
     , py::arg("_name")
     , py::arg("_len") = INT32_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_direct_access_ptr", &bgfx::getDirectAccessPtr
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::TextureHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_frame_buffer", py::overload_cast<uint16_t, uint16_t, TextureFormat::Enum, uint64_t>(&bgfx::createFrameBuffer)
     , py::arg("_width")
     , py::arg("_height")
     , py::arg("_format")
     , py::arg("_texture_flags") = BGFX_SAMPLER_U_CLAMP|BGFX_SAMPLER_V_CLAMP
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_frame_buffer", py::overload_cast<BackbufferRatio::Enum, TextureFormat::Enum, uint64_t>(&bgfx::createFrameBuffer)
     , py::arg("_ratio")
     , py::arg("_format")
     , py::arg("_texture_flags") = BGFX_SAMPLER_U_CLAMP|BGFX_SAMPLER_V_CLAMP
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_frame_buffer", py::overload_cast<uint8_t, const bgfx::TextureHandle *, bool>(&bgfx::createFrameBuffer)
     , py::arg("_num")
     , py::arg("_handles")
     , py::arg("_destroy_textures") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_frame_buffer", py::overload_cast<uint8_t, const bgfx::Attachment *, bool>(&bgfx::createFrameBuffer)
     , py::arg("_num")
     , py::arg("_attachment")
     , py::arg("_destroy_textures") = false
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_frame_buffer", py::overload_cast<void *, uint16_t, uint16_t, TextureFormat::Enum, TextureFormat::Enum>(&bgfx::createFrameBuffer)
     , py::arg("_nwh")
     , py::arg("_width")
@@ -1212,23 +1361,28 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_format") = TextureFormat::Count
     , py::arg("_depth_format") = TextureFormat::Count
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_name", py::overload_cast<bgfx::FrameBufferHandle, const char *, int32_t>(&bgfx::setName)
     , py::arg("_handle")
     , py::arg("_name")
     , py::arg("_len") = INT32_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_texture", &bgfx::getTexture
     , py::arg("_handle")
     , py::arg("_attachment") = 0
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::FrameBufferHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_uniform", &bgfx::createUniform
     , py::arg("_name")
     , py::arg("_type")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_uniform_info", [](bgfx::UniformHandle _handle, bgfx::UniformInfo & _info)
     {
         bgfx::getUniformInfo(_handle, _info);
@@ -1237,11 +1391,14 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_handle")
     , py::arg("_info")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::UniformHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("create_occlusion_query", &bgfx::createOcclusionQuery
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("get_result", [](bgfx::OcclusionQueryHandle _handle, int32_t * _result)
     {
         auto ret = bgfx::getResult(_handle, _result);
@@ -1250,13 +1407,16 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_handle")
     , py::arg("_result") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("destroy", py::overload_cast<bgfx::OcclusionQueryHandle>(&bgfx::destroy)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_name", &bgfx::setViewName
     , py::arg("_id")
     , py::arg("_name")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_rect", py::overload_cast<bgfx::ViewId, uint16_t, uint16_t, uint16_t, uint16_t>(&bgfx::setViewRect)
     , py::arg("_id")
     , py::arg("_x")
@@ -1264,12 +1424,14 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_width")
     , py::arg("_height")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_rect", py::overload_cast<bgfx::ViewId, uint16_t, uint16_t, BackbufferRatio::Enum>(&bgfx::setViewRect)
     , py::arg("_id")
     , py::arg("_x")
     , py::arg("_y")
     , py::arg("_ratio")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_scissor", &bgfx::setViewScissor
     , py::arg("_id")
     , py::arg("_x") = 0
@@ -1277,6 +1439,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_width") = 0
     , py::arg("_height") = 0
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_clear", py::overload_cast<bgfx::ViewId, uint16_t, uint32_t, float, uint8_t>(&bgfx::setViewClear)
     , py::arg("_id")
     , py::arg("_flags")
@@ -1284,6 +1447,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth") = 1.0f
     , py::arg("_stencil") = 0
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_clear", py::overload_cast<bgfx::ViewId, uint16_t, float, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t>(&bgfx::setViewClear)
     , py::arg("_id")
     , py::arg("_flags")
@@ -1298,96 +1462,119 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_6") = UINT8_MAX
     , py::arg("_7") = UINT8_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_mode", &bgfx::setViewMode
     , py::arg("_id")
     , py::arg("_mode") = ViewMode::Default
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_frame_buffer", &bgfx::setViewFrameBuffer
     , py::arg("_id")
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_transform", &bgfx::setViewTransform
     , py::arg("_id")
     , py::arg("_view")
     , py::arg("_proj")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_view_order", &bgfx::setViewOrder
     , py::arg("_id") = 0
     , py::arg("_num") = UINT16_MAX
     , py::arg("_remap") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("reset_view", &bgfx::resetView
     , py::arg("_id")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_marker", &bgfx::setMarker
     , py::arg("_marker")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_state", &bgfx::setState
     , py::arg("_state")
     , py::arg("_rgba") = 0
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_condition", &bgfx::setCondition
     , py::arg("_handle")
     , py::arg("_visible")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_stencil", &bgfx::setStencil
     , py::arg("_fstencil")
     , py::arg("_bstencil") = BGFX_STENCIL_NONE
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_scissor", py::overload_cast<uint16_t, uint16_t, uint16_t, uint16_t>(&bgfx::setScissor)
     , py::arg("_x")
     , py::arg("_y")
     , py::arg("_width")
     , py::arg("_height")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_scissor", py::overload_cast<uint16_t>(&bgfx::setScissor)
     , py::arg("_cache") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_transform", py::overload_cast<const void *, uint16_t>(&bgfx::setTransform)
     , py::arg("_mtx")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("alloc_transform", &bgfx::allocTransform
     , py::arg("_transform")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_transform", py::overload_cast<uint32_t, uint16_t>(&bgfx::setTransform)
     , py::arg("_cache")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_uniform", &bgfx::setUniform
     , py::arg("_handle")
     , py::arg("_value")
     , py::arg("_num") = 1
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_index_buffer", py::overload_cast<bgfx::IndexBufferHandle>(&bgfx::setIndexBuffer)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_index_buffer", py::overload_cast<bgfx::IndexBufferHandle, uint32_t, uint32_t>(&bgfx::setIndexBuffer)
     , py::arg("_handle")
     , py::arg("_first_index")
     , py::arg("_num_indices")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_index_buffer", py::overload_cast<bgfx::DynamicIndexBufferHandle>(&bgfx::setIndexBuffer)
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_index_buffer", py::overload_cast<bgfx::DynamicIndexBufferHandle, uint32_t, uint32_t>(&bgfx::setIndexBuffer)
     , py::arg("_handle")
     , py::arg("_first_index")
     , py::arg("_num_indices")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_index_buffer", py::overload_cast<const bgfx::TransientIndexBuffer *>(&bgfx::setIndexBuffer)
     , py::arg("_tib")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_index_buffer", py::overload_cast<const bgfx::TransientIndexBuffer *, uint32_t, uint32_t>(&bgfx::setIndexBuffer)
     , py::arg("_tib")
     , py::arg("_first_index")
     , py::arg("_num_indices")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::VertexBufferHandle>(&bgfx::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::VertexBufferHandle, uint32_t, uint32_t, bgfx::VertexLayoutHandle>(&bgfx::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
@@ -1395,10 +1582,12 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_vertices")
     , py::arg("_layout_handle") = bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::DynamicVertexBufferHandle>(&bgfx::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_vertex_buffer", py::overload_cast<uint8_t, bgfx::DynamicVertexBufferHandle, uint32_t, uint32_t, bgfx::VertexLayoutHandle>(&bgfx::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_handle")
@@ -1406,10 +1595,12 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_vertices")
     , py::arg("_layout_handle") = bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_vertex_buffer", py::overload_cast<uint8_t, const bgfx::TransientVertexBuffer *>(&bgfx::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_tvb")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_vertex_buffer", py::overload_cast<uint8_t, const bgfx::TransientVertexBuffer *, uint32_t, uint32_t, bgfx::VertexLayoutHandle>(&bgfx::setVertexBuffer)
     , py::arg("_stream")
     , py::arg("_tvb")
@@ -1417,45 +1608,55 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_vertices")
     , py::arg("_layout_handle") = bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_vertex_count", &bgfx::setVertexCount
     , py::arg("_num_vertices")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_instance_data_buffer", py::overload_cast<const bgfx::InstanceDataBuffer *>(&bgfx::setInstanceDataBuffer)
     , py::arg("_idb")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_instance_data_buffer", py::overload_cast<const bgfx::InstanceDataBuffer *, uint32_t, uint32_t>(&bgfx::setInstanceDataBuffer)
     , py::arg("_idb")
     , py::arg("_start")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_instance_data_buffer", py::overload_cast<bgfx::VertexBufferHandle, uint32_t, uint32_t>(&bgfx::setInstanceDataBuffer)
     , py::arg("_handle")
     , py::arg("_start")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_instance_data_buffer", py::overload_cast<bgfx::DynamicVertexBufferHandle, uint32_t, uint32_t>(&bgfx::setInstanceDataBuffer)
     , py::arg("_handle")
     , py::arg("_start")
     , py::arg("_num")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_instance_count", &bgfx::setInstanceCount
     , py::arg("_num_instances")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_texture", &bgfx::setTexture
     , py::arg("_stage")
     , py::arg("_sampler")
     , py::arg("_handle")
     , py::arg("_flags") = UINT32_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("touch", &bgfx::touch
     , py::arg("_id")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, uint32_t, uint8_t>(&bgfx::submit)
     , py::arg("_id")
     , py::arg("_program")
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::OcclusionQueryHandle, uint32_t, uint8_t>(&bgfx::submit)
     , py::arg("_id")
     , py::arg("_program")
@@ -1463,6 +1664,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::IndirectBufferHandle, uint16_t, uint16_t, uint32_t, uint8_t>(&bgfx::submit)
     , py::arg("_id")
     , py::arg("_program")
@@ -1472,6 +1674,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("submit", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::IndirectBufferHandle, uint16_t, bgfx::IndexBufferHandle, uint32_t, uint16_t, uint32_t, uint8_t>(&bgfx::submit)
     , py::arg("_id")
     , py::arg("_program")
@@ -1483,31 +1686,37 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_depth") = 0
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_buffer", py::overload_cast<uint8_t, bgfx::IndexBufferHandle, Access::Enum>(&bgfx::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_buffer", py::overload_cast<uint8_t, bgfx::VertexBufferHandle, Access::Enum>(&bgfx::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_buffer", py::overload_cast<uint8_t, bgfx::DynamicIndexBufferHandle, Access::Enum>(&bgfx::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_buffer", py::overload_cast<uint8_t, bgfx::DynamicVertexBufferHandle, Access::Enum>(&bgfx::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_buffer", py::overload_cast<uint8_t, bgfx::IndirectBufferHandle, Access::Enum>(&bgfx::setBuffer)
     , py::arg("_stage")
     , py::arg("_handle")
     , py::arg("_access")
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("set_image", &bgfx::setImage
     , py::arg("_stage")
     , py::arg("_handle")
@@ -1515,6 +1724,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_access")
     , py::arg("_format") = TextureFormat::Count
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("dispatch", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, uint32_t, uint32_t, uint32_t, uint8_t>(&bgfx::dispatch)
     , py::arg("_id")
     , py::arg("_handle")
@@ -1523,6 +1733,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num_z") = 1
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("dispatch", py::overload_cast<bgfx::ViewId, bgfx::ProgramHandle, bgfx::IndirectBufferHandle, uint16_t, uint16_t, uint8_t>(&bgfx::dispatch)
     , py::arg("_id")
     , py::arg("_handle")
@@ -1531,9 +1742,11 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_num") = 1
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("discard", &bgfx::discard
     , py::arg("_flags") = BGFX_DISCARD_ALL
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("blit", py::overload_cast<bgfx::ViewId, bgfx::TextureHandle, uint16_t, uint16_t, bgfx::TextureHandle, uint16_t, uint16_t, uint16_t, uint16_t>(&bgfx::blit)
     , py::arg("_id")
     , py::arg("_dst")
@@ -1545,6 +1758,7 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_width") = UINT16_MAX
     , py::arg("_height") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("blit", py::overload_cast<bgfx::ViewId, bgfx::TextureHandle, uint8_t, uint16_t, uint16_t, uint16_t, bgfx::TextureHandle, uint8_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t, uint16_t>(&bgfx::blit)
     , py::arg("_id")
     , py::arg("_dst")
@@ -1561,9 +1775,11 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::arg("_height") = UINT16_MAX
     , py::arg("_depth") = UINT16_MAX
     , py::return_value_policy::automatic_reference);
+
     _bgfx.def("request_screen_shot", &bgfx::requestScreenShot
     , py::arg("_handle")
     , py::arg("_file_path")
     , py::return_value_policy::automatic_reference);
+
 
 }

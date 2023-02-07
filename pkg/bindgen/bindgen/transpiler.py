@@ -52,6 +52,9 @@ class Transpiler(TranspilerBase):
 
     # TODO: Handle is_deleted_method
     def parse_constructor(self, node, cls):
+        #TODO: This should be in Clang 15.06, but it's not ...
+        #if node.is_deleted_method():
+        #    return
         arguments = [a for a in node.get_arguments()]
         if len(arguments):
             self.scope(
@@ -84,18 +87,6 @@ class Transpiler(TranspilerBase):
             else:
                 self.scope(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
 
-    """
-        VertexState.def_property("entry_point",
-            [](const wgpu::VertexState& self) {
-                return self.entryPoint;
-            },
-            [](wgpu::VertexState& self, std::string source) {
-                char* c = (char *)malloc(source.size());
-                strcpy(c, source.c_str());
-                self.entryPoint = c;
-            }
-        );
-    """
     def parse_char_ptr_field(self, node, cls, pyname, cname):
         pname = self.spell(node.semantic_parent)
         name = node.spelling
@@ -189,7 +180,7 @@ class Transpiler(TranspilerBase):
             else:
                 self.scope(f'{mname}.def("{pyname}", {cname}')
             self.write_pyargs(arguments)
-            self.scope(f", {self.get_return_policy(node)});")
+            self.scope(f", {self.get_return_policy(node)});\n")
 
     def parse_struct_enum(self, node, clsname, pyname):
         if not node.get_children():

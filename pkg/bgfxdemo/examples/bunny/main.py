@@ -15,19 +15,15 @@ from crunge.bgfx.constants import *
 from crunge.bgfx.window import Window
 from crunge.bgfx.utils.matrix_utils import look_at, proj, rotate_xy
 
-logger.enable("bunnies")
+logger.enable("bunny")
 
 root_path = Path(__file__).parent.parent / "assets" / "shaders"
 
-class Bunnies(Window):
+class Bunny(Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
 
         self.elapsed_time = 0
-        self.write_r = c_bool(True)
-        self.write_g = c_bool(True)
-        self.write_b = c_bool(True)
-        self.write_a = c_bool(True)
 
         bunny_path = Path(__file__).parent.parent / "assets" / "meshes" / "bunny.obj"
         self.bunny_mesh = bunny_mesh = tm.load(str(bunny_path))
@@ -143,8 +139,8 @@ class Bunnies(Window):
         )
 
 def main():
-    bunnies = Bunnies(1280, 720, "examples/bunnies")
-    bunnies.run()
+    bunny = Bunny(1280, 720, "examples/bunny")
+    bunny.run()
 
 if __name__ == "__main__":
     main()

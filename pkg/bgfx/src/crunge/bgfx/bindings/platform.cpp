@@ -26,18 +26,9 @@ void init_platform(py::module &_bgfx, Registry &registry) {
     , py::arg("_msecs") = -1
     , py::return_value_policy::automatic_reference);
 
-    /*_bgfx.def("set_platform_data", &bgfx::setPlatformData
-    , py::arg("_data"));*/
-
-    PYEXTEND_BEGIN(bgfx::PlatformData, PlatformData)
-    PlatformData.def("set",
-        [](const bgfx::PlatformData& self) {
-            bgfx::PlatformData data;
-            printf("%p\n", self.nwh);
-            data.nwh = self.nwh;
-            bgfx::setPlatformData(data);
-    });
-    PYEXTEND_END
+    _bgfx.def("set_platform_data", &bgfx::setPlatformData
+    , py::arg("_data")
+    , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::InternalData, InternalData)
     InternalData.def_readwrite("caps", &bgfx::InternalData::caps);
@@ -60,4 +51,6 @@ void init_platform(py::module &_bgfx, Registry &registry) {
     , py::arg("_format")
     , py::arg("_flags") = BGFX_TEXTURE_NONE|BGFX_SAMPLER_NONE
     , py::return_value_policy::automatic_reference);
+
+
 }

@@ -28,4 +28,5 @@ void init_embedded_shader(py::module &_bgfx, Registry &registry) {
     , py::arg("_name")
     , py::return_value_policy::automatic_reference);
 
+
 }
