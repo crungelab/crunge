@@ -2,21 +2,22 @@ import ctypes
 import time
 import sys
 
-from crunge import wgpu
-
+from loguru import logger
 import glfw
 from glfw import _glfw as glfw_native
+
+from crunge import wgpu
 
 from utils import as_void_ptr
 
 shader_code = """
-@stage(vertex)
+@vertex
 fn main_v(@builtin(vertex_index) idx: u32) -> @builtin(position) vec4<f32> {
     var pos = array<vec2<f32>, 3>(
         vec2<f32>(0.0, 0.5), vec2<f32>(-0.5, -0.5), vec2<f32>(0.5, -0.5));
     return vec4<f32>(pos[idx], 0.0, 1.0);
 }
-@stage(fragment)
+@fragment
 fn main_f() -> @location(0) vec4<f32> {
     return vec4<f32>(0.0, 0.502, 1.0, 1.0); // 0x80/0xff ~= 0.502
 }
@@ -28,20 +29,21 @@ class HelloWgpu:
     readbackBuffer: wgpu.Buffer = None
     pipeline: wgpu.RenderPipeline = None
 
+    surface: wgpu.Surface = None
     swap_chain: wgpu.SwapChain = None
     depth_stencil_view: wgpu.TextureView = None
 
-    kWidth = 300
-    kHeight = 150
+    kWidth = 800
+    kHeight = 600
 
     def __init__(self):
         self.instance = wgpu.create_instance()
         self.adapter = self.instance.request_adapter()
         props = wgpu.AdapterProperties()
         self.adapter.get_properties(props)
-        print(props.vendor_name)
+        logger.debug(props.vendor_name)
         self.device = self.adapter.create_device()
-        print(self.device)
+        logger.debug(self.device)
         self.device.enable_logging()
         self.queue = self.device.get_queue()
 
@@ -83,7 +85,7 @@ class HelloWgpu:
         descriptor.primitive.topology = wgpu.PrimitiveTopology.TRIANGLE_LIST
         descriptor.depth_stencil = depthStencilState
         self.pipeline = self.device.create_render_pipeline(descriptor)
-        print(self.pipeline)
+        logger.debug(self.pipeline)
 
     def create_window(self):
         glfw.init()
@@ -104,18 +106,32 @@ class HelloWgpu:
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
 
+        logger.debug(handle)
+
         nwh = as_void_ptr(handle)
-        print(nwh)
+        logger.debug(nwh)
+
+        ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
+        ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object, ctypes.c_char_p]
+        handle1 = ctypes.pythonapi.PyCapsule_GetPointer(nwh, None)
+        logger.debug(handle1)
 
         wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
         wsd.hwnd = nwh
         wsd.hinstance = None
 
+        logger.debug(wsd.hwnd)
+
+        ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
+        ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object, ctypes.c_char_p]
+        handle2 = ctypes.pythonapi.PyCapsule_GetPointer(wsd.hwnd, None)
+        logger.debug(handle2)
+
         sd = wgpu.SurfaceDescriptor()
         sd.next_in_chain = wsd
 
-        surface = self.instance.create_surface(sd)
-        print(surface)
+        self.surface = self.instance.create_surface(sd)
+        logger.debug(self.surface)
 
         scDesc = wgpu.SwapChainDescriptor()
         scDesc.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
@@ -123,8 +139,8 @@ class HelloWgpu:
         scDesc.width = 800
         scDesc.height = 600
         scDesc.present_mode = wgpu.PresentMode.FIFO
-        self.swap_chain = self.device.create_swap_chain(surface, scDesc)
-        print(self.swap_chain)
+        self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
+        logger.debug(self.swap_chain)
 
     def create_depth_stencil_view(self):
       descriptor = wgpu.TextureDescriptor()
@@ -185,7 +201,7 @@ class HelloWgpu:
             last_time = now
 
             self.frame()
-            exit()
+            #exit()
 
         glfw.destroy_window(self.window)
         glfw.terminate()

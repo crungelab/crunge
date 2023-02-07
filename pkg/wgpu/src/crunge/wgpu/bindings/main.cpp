@@ -1,5 +1,7 @@
 #include <limits>
 #include <filesystem>
+#include <string>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
@@ -11,6 +13,7 @@
 
 #include <crunge/core/bindtools.h>
 #include <crunge/wgpu/crunge-wgpu.h>
+#include <crunge/wgpu/conversions.h>
 
 namespace py = pybind11;
 
@@ -26,10 +29,6 @@ void CreateProcTable() {
 //auto bit_or = [](auto a, auto b) { return a | b; };
 //auto bit_or = []<class T>(T a, T b) { return a | b; };
 
-struct TestObject {
-    char const * label = nullptr;
-};
-
 void init_main(py::module &_wgpu, Registry &registry) {
     /*_wgpu.def("request_adapter", &RequestAdapter
         , py::arg("descriptor") = nullptr
@@ -40,11 +39,6 @@ void init_main(py::module &_wgpu, Registry &registry) {
     , py::return_value_policy::automatic_reference);*/
 
     _wgpu.def("create_proc_table", &CreateProcTable);
-
-    PYCLASS_BEGIN(_wgpu, TestObject, TestObject)
-        TestObject.def(py::init<>());
-        TestObject.def_readwrite("label", &TestObject::label);
-    PYCLASS_END(_wgpu, TestObject, TestObject)
 
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
     Instance.def("request_adapter", [](const wgpu::Instance& self)
@@ -63,11 +57,25 @@ void init_main(py::module &_wgpu, Registry &registry) {
     PYEXTEND_END
 
     //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;
+    //void Device::SetLoggingCallback(WGPULoggingCallback callback, void* userdata) {
+    //void Device::SetDeviceLostCallback(WGPUDeviceLostCallback callback, void* userdata) {
+
     //typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata);
+    //typedef void (*WGPULoggingCallback)(WGPULoggingType type, char const * message, void * userdata);
+    //typedef void (*WGPUDeviceLostCallback)(WGPUDeviceLostReason reason, char const * message, void * userdata);
+
     PYEXTEND_BEGIN(wgpu::Device, Device)
     Device.def("enable_logging",
         [](const wgpu::Device& self) {
             self.SetUncapturedErrorCallback([](WGPUErrorType type, char const * message, void * userdata){
+                printf(message);
+            }, nullptr);
+
+            self.SetLoggingCallback([](WGPULoggingType type, char const * message, void * userdata){
+                printf(message);
+            }, nullptr);
+
+            self.SetDeviceLostCallback([](WGPUDeviceLostReason reason, char const * message, void * userdata){
                 printf(message);
             }, nullptr);
     });
@@ -175,8 +183,39 @@ void init_main(py::module &_wgpu, Registry &registry) {
                 return self.source;
             },
             [](wgpu::ShaderModuleWGSLDescriptor& self, std::string source) {
-                self.source = source.c_str();
+                //self.source = source.c_str();
+                char* c = (char *)malloc(source.size());
+                strcpy(c, source.c_str());
+                self.source = c;
             }
         );
     PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::VertexState, VertexState)
+        VertexState.def_property("entry_point",
+            [](const wgpu::VertexState& self) {
+                return self.entryPoint;
+            },
+            [](wgpu::VertexState& self, std::string source) {
+                char* c = (char *)malloc(source.size());
+                strcpy(c, source.c_str());
+                self.entryPoint = c;
+            }
+        );
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::FragmentState, FragmentState)
+        FragmentState.def(py::init<>());
+        FragmentState.def_property("entry_point",
+            [](const wgpu::FragmentState& self) {
+                return self.entryPoint;
+            },
+            [](wgpu::FragmentState& self, std::string source) {
+                char* c = (char *)malloc(source.size());
+                strcpy(c, source.c_str());
+                self.entryPoint = c;
+            }
+        );
+    PYEXTEND_END
+
 }

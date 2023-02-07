@@ -7,6 +7,7 @@
 #include <dawn/webgpu_cpp.h>
 
 #include <crunge/core/bindtools.h>
+#include <crunge/wgpu/conversions.h>
 
 namespace py = pybind11;
 

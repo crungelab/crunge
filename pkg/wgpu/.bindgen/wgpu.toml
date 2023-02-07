@@ -13,6 +13,8 @@ flags = [
 excludes = [
     # Wrapped
     'wgpu::ShaderModuleWGSLDescriptor::source', # TODO: Needs string conversion?
+    'wgpu::VertexState::entryPoint',
+    'wgpu::FragmentState::entryPoint',
     # Internal / Ignored
     'dawn::IsDawnBitmask', # TODO: Should skip templates in the transpiler
     # These three have a weird signature:  const char* const * 

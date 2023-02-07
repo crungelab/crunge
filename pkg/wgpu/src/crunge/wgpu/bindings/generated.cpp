@@ -7,6 +7,7 @@
 #include <dawn/webgpu_cpp.h>
 
 #include <crunge/core/bindtools.h>
+#include <crunge/wgpu/conversions.h>
 
 namespace py = pybind11;
 
@@ -1827,7 +1828,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::VertexState, VertexState)
     VertexState.def_readwrite("next_in_chain", &wgpu::VertexState::nextInChain);
     VertexState.def_readwrite("module", &wgpu::VertexState::module);
-    VertexState.def_readwrite("entry_point", &wgpu::VertexState::entryPoint);
     VertexState.def_readwrite("constant_count", &wgpu::VertexState::constantCount);
     VertexState.def_readwrite("constants", &wgpu::VertexState::constants);
     VertexState.def_readwrite("buffer_count", &wgpu::VertexState::bufferCount);
@@ -1837,7 +1837,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::FragmentState, FragmentState)
     FragmentState.def_readwrite("next_in_chain", &wgpu::FragmentState::nextInChain);
     FragmentState.def_readwrite("module", &wgpu::FragmentState::module);
-    FragmentState.def_readwrite("entry_point", &wgpu::FragmentState::entryPoint);
     FragmentState.def_readwrite("constant_count", &wgpu::FragmentState::constantCount);
     FragmentState.def_readwrite("constants", &wgpu::FragmentState::constants);
     FragmentState.def_readwrite("target_count", &wgpu::FragmentState::targetCount);
