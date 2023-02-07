@@ -32,8 +32,7 @@ class Bunnies(Window):
         bunny_path = Path(__file__).parent.parent / "assets" / "meshes" / "bunny.obj"
         self.bunny_mesh = bunny_mesh = tm.load(str(bunny_path))
         #Vertices
-        #vertices = self.vertices = bunny_mesh.vertices.astype(np.float32)
-        vertices = np.asanyarray(bunny_mesh.vertices, dtype=np.float64)
+        vertices = self.vertices = bunny_mesh.vertices.astype(np.float32)
         logger.debug(f'vertices type: {type(vertices)}')
         logger.debug(f'vertices:  {vertices}')
         n_vertices = self.n_vertices = len(vertices)
@@ -52,14 +51,12 @@ class Bunnies(Window):
     def init(self, platform_data):
         bgfx.render_frame()
         self.init_conf = init_conf = bgfx.Init()
+        init_conf.platform_data = platform_data
         init_conf.debug = True
         init_conf.resolution.width = self.width
         init_conf.resolution.height = self.height
         init_conf.resolution.reset = BGFX_RESET_VSYNC
         bgfx.init(init_conf)
-        bgfx.reset(
-            self.width, self.height, BGFX_RESET_VSYNC, self.init_conf.resolution.format,
-        )
 
         bgfx.set_debug(BGFX_DEBUG_TEXT)
         bgfx.set_view_clear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x443355FF, 1.0, 0)
@@ -82,10 +79,10 @@ class Bunnies(Window):
         # Create program from shaders.
         self.main_program = bgfx.create_program(
             load_shader(
-                "textures.VertexShader.vert", ShaderType.VERTEX, root_path=root_path
+                "mesh.VertexShader.vert", ShaderType.VERTEX, root_path=root_path
             ),
             load_shader(
-                "textures.FragmentShader.frag", ShaderType.FRAGMENT, root_path=root_path
+                "mesh.FragmentShader.frag", ShaderType.FRAGMENT, root_path=root_path
             ),
             True,
         )

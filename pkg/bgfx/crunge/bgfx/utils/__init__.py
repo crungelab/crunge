@@ -14,7 +14,8 @@ except Exception:
 """
 import numpy
 
-_is_numpy_array = lambda obj: type(obj) is numpy.ndarray
+#_is_numpy_array = lambda obj: type(obj) is numpy.ndarray
+_is_numpy_array = lambda obj: isinstance(obj, numpy.ndarray)
 
 null_ptr = ctypes.POINTER(ctypes.c_long)()
 
@@ -28,9 +29,9 @@ def as_void_ptr(obj: Any) -> ctypes.py_object:
 
     if type(obj) == ArrayType:
         obj = obj.buffer_info()[0]
-    elif _is_numpy_array(obj):
+    if _is_numpy_array(obj):
         obj = obj.ctypes.data_as(ctypes.POINTER(ctypes.c_void_p))
-    elif type(obj) != ctypes.c_void_p:
+    if type(obj) != ctypes.c_void_p:
         obj = ctypes.cast(obj, ctypes.c_void_p)
 
     capsule = ctypes.pythonapi.PyCapsule_New(obj, None, None)

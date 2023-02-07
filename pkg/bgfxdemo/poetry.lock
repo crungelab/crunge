@@ -117,6 +117,17 @@ optional = false
 python-versions = ">=3.8"
 
 [[package]]
+name = "openmesh"
+version = "1.2.1"
+description = "a versatile halfedge-based data structure for representing and manipulating polygon meshes"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+numpy = "*"
+
+[[package]]
 name = "packaging"
 version = "23.0"
 description = "Core utilities for Python packages"
@@ -194,7 +205,7 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10.0,<3.12"
-content-hash = "106951e5df83321f86497428b4684fdbd147b7cc6392cdee7ece85a51d06be97"
+content-hash = "bcf51c1a8b5a66d34f0522e096185512a5a657b520e31843b858d3567e418fa2"
 
 [metadata.files]
 attrs = [
@@ -260,6 +271,13 @@ numpy = [
     {file = "numpy-1.24.2-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f9006288bcf4895917d02583cf3411f98631275bc67cce355a7f39f8c14338fa"},
     {file = "numpy-1.24.2-pp38-pypy38_pp73-win_amd64.whl", hash = "sha256:150947adbdfeceec4e5926d956a06865c1c690f2fd902efede4ca6fe2e657c3f"},
     {file = "numpy-1.24.2.tar.gz", hash = "sha256:003a9f530e880cb2cd177cba1af7220b9aa42def9c4afc2a2fc3ee6be7eb2b22"},
+]
+openmesh = [
+    {file = "openmesh-1.2.1-cp39-cp39-macosx_10_13_x86_64.whl", hash = "sha256:b7c99c55777cac2183e6161d2cd37723537c74ab57d6483e346931bd4dd5fff9"},
+    {file = "openmesh-1.2.1-cp39-cp39-macosx_12_0_arm64.whl", hash = "sha256:e98e09a05504f25584a0e9dbcf74c71c85707bbd8c03010a0a9ec7f9b80fa29e"},
+    {file = "openmesh-1.2.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:e91c81f286f4e3443bca0f57b850d04f2ab4888930d08f84715f69fdaac604c3"},
+    {file = "openmesh-1.2.1-cp39-cp39-win_amd64.whl", hash = "sha256:39aef855270758ae51b6505fd9845025142c274f8dce5633ad27f0a8ab14c3b4"},
+    {file = "openmesh-1.2.1.tar.gz", hash = "sha256:6fd3fa41a68148e4a7523f562426aa9758bf65ccc6642abcf79c37bae9c6af3c"},
 ]
 packaging = [
     {file = "packaging-23.0-py3-none-any.whl", hash = "sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2"},
