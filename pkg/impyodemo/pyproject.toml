@@ -9,7 +9,6 @@ python = ">=3.8,<3.12"
 #pyo = "^1.0.4"
 pyo = {git = "https://github.com/belangeo/pyo.git"}
 arcade = "^2.6.16"
-numpy = "^1.24.1"
 crunge-imgui = {path = "../imgui",  develop = true}
 crunge-implot = {path = "../implot",  develop = true}
 mido = "^1.2.10"

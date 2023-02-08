@@ -7,7 +7,7 @@ from PIL import Image
 from loguru import logger
 
 from crunge import bgfx
-from crunge.bgfx.utils import as_void_ptr
+from crunge.core import as_capsule
 from crunge.bgfx.utils.shaders_utils import ShaderType, load_shader
 from crunge.bgfx.constants import (
     BGFX_CLEAR_COLOR,
@@ -140,12 +140,12 @@ class Textures(Window):
 
         # Create static vertex buffer
         vb_memory = bgfx.copy(
-            as_void_ptr(cube_vertices), sizeof(PosColorTexVertex) * num_vertices
+            as_capsule(cube_vertices), sizeof(PosColorTexVertex) * num_vertices
         )
         self.vertex_buffer = bgfx.create_vertex_buffer(vb_memory, self.vertex_layout)
 
         # Create index buffer
-        ib_memory = bgfx.copy(as_void_ptr(cube_indices), cube_indices.nbytes)
+        ib_memory = bgfx.copy(as_capsule(cube_indices), cube_indices.nbytes)
         self.index_buffer = bgfx.create_index_buffer(ib_memory)
 
         # Create texture uniform
@@ -156,7 +156,7 @@ class Textures(Window):
             Path(__file__).parent.parent / "assets" / "textures" / "python_logo.png"
         )
         image_bytes = logo.tobytes()
-        logo_memory = bgfx.copy(as_void_ptr(image_bytes), len(image_bytes))
+        logo_memory = bgfx.copy(as_capsule(image_bytes), len(image_bytes))
         self.logo_texture = bgfx.create_texture2_d(
             logo.width,
             logo.height,
@@ -197,7 +197,7 @@ class Textures(Window):
         view = look_at(eye, at, up)
         projection = proj(60.0, self.width / self.height, 0.1, 100.0)
 
-        bgfx.set_view_transform(0, as_void_ptr(view), as_void_ptr(projection))
+        bgfx.set_view_transform(0, as_capsule(view), as_capsule(projection))
         bgfx.set_view_rect(0, 0, 0, self.width, self.height)
 
         bgfx.touch(0)
@@ -213,7 +213,7 @@ class Textures(Window):
                 mtx[3, 0] = 4 + xx * 3.5
                 mtx[3, 1] = 2 + yy * 3.5
                 mtx[3, 2] = 0
-                bgfx.set_transform(as_void_ptr(mtx), 1)
+                bgfx.set_transform(as_capsule(mtx), 1)
 
                 # Set vertex and index buffer.
                 bgfx.set_vertex_buffer(0, self.vertex_buffer, 0, num_vertices)

@@ -8,7 +8,7 @@ import numpy as np
 import trimesh as tm
 
 from crunge import bgfx
-from crunge.bgfx.utils import as_void_ptr
+from crunge.core import as_capsule
 from crunge.bgfx.utils.shaders_utils import ShaderType, load_shader
 from crunge.bgfx.constants import *
 
@@ -33,11 +33,11 @@ class Bunny(Window):
         logger.debug(f'vertices:  {vertices}')
         n_vertices = self.n_vertices = len(vertices)
         logger.debug(f'n_vertices:  {n_vertices}')
-        self.vertices_p = as_void_ptr(vertices)
+        self.vertices_p = as_capsule(vertices)
 
         #Indices
         indices = self.indices = self.bunny_mesh.faces.astype(np.uint16)
-        self.indices_p = as_void_ptr(indices)
+        self.indices_p = as_capsule(indices)
         
         logger.debug(f'indices:  {indices}')
         n_indices = self.n_indices = len(indices)
@@ -100,7 +100,7 @@ class Bunny(Window):
         view = look_at(eye, at, up)
         projection = proj(60.0, self.width / self.height, 0.1, 100.0)
 
-        bgfx.set_view_transform(0, as_void_ptr(view), as_void_ptr(projection))
+        bgfx.set_view_transform(0, as_capsule(view), as_capsule(projection))
         bgfx.set_view_rect(0, 0, 0, self.width, self.height)
 
         # This dummy draw call is here to make sure that view 0 is cleared
@@ -111,7 +111,7 @@ class Bunny(Window):
     
         bgfx.set_uniform(
             self.time_uniform,
-            as_void_ptr((c_float * 4)(self.elapsed_time, 0.0, 0.0, 0.0)),
+            as_capsule((c_float * 4)(self.elapsed_time, 0.0, 0.0, 0.0)),
         )
 
         # Set vertex and index buffer.

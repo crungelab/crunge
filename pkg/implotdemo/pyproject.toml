@@ -7,7 +7,7 @@ authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
 arcade = "^2.6.16"
-numpy = "^1.24.1"
+
 crunge-imgui = {path = "../imgui",  develop = true}
 crunge-implot = {path = "../implot",  develop = true}
 

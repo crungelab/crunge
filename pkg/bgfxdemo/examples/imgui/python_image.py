@@ -1,6 +1,6 @@
 from array import array
 
-from aimgfx.utils import as_void_ptr
+from crunge.core import as_capsule
 
 s_python_logo = array(
     "B",
@@ -4008,4 +4008,4 @@ s_python_logo = array(
     ],
 )
 
-logo = as_void_ptr(s_python_logo)
+logo = as_capsule(s_python_logo)

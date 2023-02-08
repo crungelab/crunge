@@ -11,7 +11,7 @@ from typing import List, Optional
 from loguru import logger
 
 from crunge import bgfx
-from crunge.bgfx.utils import as_void_ptr
+from crunge.core import as_capsule
 
 logger.disable("bgfx")
 
@@ -74,7 +74,7 @@ def _get_profile(shader_type: ShaderType) -> str:
 
 def _load_mem(content: bytes) -> bgfx.Memory:
     size = len(content)
-    memory = bgfx.copy(as_void_ptr(content), size)
+    memory = bgfx.copy(as_capsule(content), size)
     return memory
 
 

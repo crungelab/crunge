@@ -22,6 +22,14 @@ fn main_f() -> @location(0) vec4<f32> {
 }
 """
 
+"""
+        static const uint32_t indexData[3] = {
+            0,
+            1,
+            2,
+        };
+"""
+index_data = [0, 1, 2]
 
 class HelloTriangle:
     device: wgpu.Device = None
@@ -94,6 +102,25 @@ class HelloTriangle:
         glfw.window_hint(glfw.RESIZABLE, True)
 
         self.window = glfw.create_window(self.kWidth, self.kHeight, "Hello", None, None)
+
+    """
+    void initBuffers() {
+        static const uint32_t indexData[3] = {
+            0,
+            1,
+            2,
+        };
+        indexBuffer =
+            utils::CreateBufferFromData(device, indexData, sizeof(indexData), wgpu::BufferUsage::Index);
+
+        static const float vertexData[12] = {
+            0.0f, 0.5f, 0.0f, 1.0f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f, -0.5f, 0.0f, 1.0f,
+        };
+        vertexBuffer = utils::CreateBufferFromData(device, vertexData, sizeof(vertexData),
+                                                wgpu::BufferUsage::Vertex);
+    }
+    """
+    def create_buffers(self):
 
     def create_swapchain(self):
         handle, display = None, None

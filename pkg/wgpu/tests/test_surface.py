@@ -2,12 +2,10 @@ import ctypes
 import time
 import sys
 
-from crunge import wgpu
-
 import glfw
-from glfw import _glfw as glfw_native
 
-from utils import as_void_ptr
+from crunge import wgpu
+from crunge.core import as_capsule
 
 device: wgpu.Device = None
 queue: wgpu.Queue = None
@@ -38,7 +36,7 @@ def main():
         handle = glfw.get_x11_window(self.window)
         display = glfw.get_x11_display()
 
-    nwh = as_void_ptr(handle)
+    nwh = as_capsule(handle)
     print(nwh)
 
     instance = wgpu.create_instance()

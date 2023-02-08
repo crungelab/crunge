@@ -5,7 +5,7 @@ from loguru import logger
 import glfw
 
 from crunge import bgfx
-from crunge.bgfx.utils import as_void_ptr, null_ptr
+from crunge.core import as_capsule
 
 class Window:
     def __init__(self, width, height, title):
@@ -68,15 +68,11 @@ class Window:
         logger.debug(handle)
         
         data = bgfx.PlatformData()
-        #data.ndt = as_void_ptr(display) if display else cppyy.nullptr
-        data.nwh = as_void_ptr(handle)
+        data.ndt = as_capsule(display) if display else None
+        data.nwh = as_capsule(handle)
         logger.debug(data.nwh)
-        #data.nwh = ctypes.pythonapi.PyCapsule_New(handle, "None", None)
-        #data.context = cppyy.nullptr
         data.context = None
-        #data.backBuffer = cppyy.nullptr
         data.back_buffer = None
-        #data.backBufferDS = cppyy.nullptr
         data.back_buffer_ds = None
 
         print(data.nwh)

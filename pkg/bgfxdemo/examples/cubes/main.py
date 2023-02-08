@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from crunge import bgfx
-from crunge.bgfx.utils import as_void_ptr
+from crunge.core import as_capsule
 from crunge.bgfx.utils.shaders_utils import ShaderType, load_shader
 from crunge.bgfx.constants import *
 
@@ -132,14 +132,14 @@ class Cubes(Window):
 
         # Create static vertex buffer
         vb_memory = bgfx.copy(
-            as_void_ptr(cube_vertices), sizeof(PosColorVertex) * num_vertices
+            as_capsule(cube_vertices), sizeof(PosColorVertex) * num_vertices
         )
         self.vertex_buffer = bgfx.create_vertex_buffer(vb_memory, self.vertex_layout)
 
         self.index_buffers = []
 
         for i in range(0, len(primitives)):
-            ib_memory = bgfx.copy(as_void_ptr(primitives[i]), primitives[i].nbytes)
+            ib_memory = bgfx.copy(as_capsule(primitives[i]), primitives[i].nbytes)
             self.index_buffers.append(bgfx.create_index_buffer(ib_memory))
 
         # Create program from shaders.
@@ -174,7 +174,7 @@ class Cubes(Window):
         view = look_at(eye, at, up)
         projection = proj(60.0, self.width / self.height, 0.1, 100.0)
 
-        bgfx.set_view_transform(0, as_void_ptr(view), as_void_ptr(projection))
+        bgfx.set_view_transform(0, as_capsule(view), as_capsule(projection))
         bgfx.set_view_rect(0, 0, 0, self.width, self.height)
 
         # This dummy draw call is here to make sure that view 0 is cleared
@@ -189,7 +189,7 @@ class Cubes(Window):
                 mtx[3, 0] = -15.0 + xx * 3.0
                 mtx[3, 1] = -15.0 + yy * 3.0
                 mtx[3, 2] = 0.0
-                bgfx.set_transform(as_void_ptr(mtx), 1)
+                bgfx.set_transform(as_capsule(mtx), 1)
 
                 # Set vertex and index buffer.
                 bgfx.set_vertex_buffer(0, self.vertex_buffer, 0, num_vertices)

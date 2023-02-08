@@ -42,15 +42,19 @@ void init_main(py::module &_wgpu, Registry &registry) {
     });
     PYEXTEND_END
 
-    //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;
-    //void Device::SetLoggingCallback(WGPULoggingCallback callback, void* userdata) {
-    //void Device::SetDeviceLostCallback(WGPUDeviceLostCallback callback, void* userdata) {
+        //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;
+        //void Device::SetLoggingCallback(WGPULoggingCallback callback, void* userdata) {
+        //void Device::SetDeviceLostCallback(WGPUDeviceLostCallback callback, void* userdata) {
 
-    //typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata);
-    //typedef void (*WGPULoggingCallback)(WGPULoggingType type, char const * message, void * userdata);
-    //typedef void (*WGPUDeviceLostCallback)(WGPUDeviceLostReason reason, char const * message, void * userdata);
+        //typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata);
+        //typedef void (*WGPULoggingCallback)(WGPULoggingType type, char const * message, void * userdata);
+        //typedef void (*WGPUDeviceLostCallback)(WGPUDeviceLostReason reason, char const * message, void * userdata);
 
-    PYEXTEND_BEGIN(wgpu::Device, Device)
+        PYEXTEND_BEGIN(wgpu::Device, Device)
+        Device.def_property_readonly("queue", [](const wgpu::Device& self) {
+            return self.GetQueue();
+        }, py::return_value_policy::automatic_reference);
+    
     Device.def("enable_logging",
         [](const wgpu::Device& self) {
             self.SetUncapturedErrorCallback([](WGPUErrorType type, char const * message, void * userdata){
@@ -62,7 +66,7 @@ void init_main(py::module &_wgpu, Registry &registry) {
             }, nullptr);
 
             self.SetDeviceLostCallback([](WGPUDeviceLostReason reason, char const * message, void * userdata){
-                printf(message);
+                printf(message); printf("\n");
             }, nullptr);
     });
 
