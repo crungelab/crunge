@@ -4,10 +4,12 @@ import sys
 
 from loguru import logger
 import glfw
+import numpy as np
+
 
 from crunge import wgpu
-
-from utils import to_capsule
+import crunge.wgpu.utils as utils
+from crunge.core import as_capsule
 
 shader_code = """
 @vertex
@@ -20,26 +22,46 @@ fn main_v(@builtin(vertex_index) idx: u32) -> @builtin(position) vec4<f32> {
 fn main_f() -> @location(0) vec4<f32> {
     return vec4<f32>(0.0, 0.502, 1.0, 1.0); // 0x80/0xff ~= 0.502
 }
-"""
 
 """
-        static const uint32_t indexData[3] = {
-            0,
-            1,
-            2,
-        };
+vs_shader_code = """
+@vertex fn main(@location(0) pos : vec4<f32>) -> @builtin(position) vec4<f32> {
+    return pos;
+}
 """
-index_data = [0, 1, 2]
+
+fs_shader_code = """
+@group(0) @binding(0) var mySampler: sampler;
+@group(0) @binding(1) var myTexture : texture_2d<f32>;
+
+@fragment fn main(@builtin(position) FragCoord : vec4<f32>)
+                        -> @location(0) vec4<f32> {
+    return textureSample(myTexture, mySampler, FragCoord.xy / vec2<f32>(640.0, 480.0));
+}
+"""
+
+index_data = np.array([0, 1, 2], dtype=np.uint32)
+
+vertex_data = np.array([
+    0.0, 0.5, 0.0, 1.0, -0.5, -0.5, 0.0, 1.0, 0.5, -0.5, 0.0, 1.0,
+], dtype=np.float32)
+
 
 class HelloTriangle:
     device: wgpu.Device = None
     queue: wgpu.Queue = None
-    readbackBuffer: wgpu.Buffer = None
+    readback_buffer: wgpu.Buffer = None
     pipeline: wgpu.RenderPipeline = None
 
     surface: wgpu.Surface = None
     swap_chain: wgpu.SwapChain = None
     depth_stencil_view: wgpu.TextureView = None
+
+    index_buffer: wgpu.Buffer = None
+    vertex_buffer: wgpu.Buffer = None
+
+    texture: wgpu.Texture = None
+    sampler: wgpu.Sampler = None
 
     kWidth = 800
     kHeight = 600
@@ -47,14 +69,25 @@ class HelloTriangle:
     def __init__(self):
         self.instance = wgpu.create_instance()
         self.adapter = self.instance.request_adapter()
-        props = wgpu.AdapterProperties()
-        self.adapter.get_properties(props)
-        logger.debug(props.vendor_name)
         self.device = self.adapter.create_device()
-        logger.debug(self.device)
         self.device.enable_logging()
-        self.queue = self.device.get_queue()
+        self.queue = self.device.queue
 
+        self.create_buffers()
+        self.create_textures()
+
+        vs_module: wgpu.ShaderModule = utils.create_shader_module(self.device, vs_shader_code)
+        fs_module: wgpu.ShaderModule = utils.create_shader_module(self.device, fs_shader_code)
+
+        """
+            auto bgl = utils::MakeBindGroupLayout(
+                device, {
+                            {0, wgpu::ShaderStage::Fragment, wgpu::SamplerBindingType::Filtering},
+                            {1, wgpu::ShaderStage::Fragment, wgpu::TextureSampleType::Float},
+                        });
+
+        """
+        """
         wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
         wgsl_desc.source = shader_code
         descriptor = wgpu.ShaderModuleDescriptor()
@@ -94,6 +127,7 @@ class HelloTriangle:
         descriptor.depth_stencil = depthStencilState
         self.pipeline = self.device.create_render_pipeline(descriptor)
         logger.debug(self.pipeline)
+        """
 
     def create_window(self):
         glfw.init()
@@ -103,25 +137,39 @@ class HelloTriangle:
 
         self.window = glfw.create_window(self.kWidth, self.kHeight, "Hello", None, None)
 
-    """
-    void initBuffers() {
-        static const uint32_t indexData[3] = {
-            0,
-            1,
-            2,
-        };
-        indexBuffer =
-            utils::CreateBufferFromData(device, indexData, sizeof(indexData), wgpu::BufferUsage::Index);
-
-        static const float vertexData[12] = {
-            0.0f, 0.5f, 0.0f, 1.0f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f, -0.5f, 0.0f, 1.0f,
-        };
-        vertexBuffer = utils::CreateBufferFromData(device, vertexData, sizeof(vertexData),
-                                                wgpu::BufferUsage::Vertex);
-    }
-    """
     def create_buffers(self):
+        self.index_buffer = utils.create_buffer_from_ndarray(self.device, index_data, wgpu.BufferUsage.INDEX)
+        self.vertex_buffer = utils.create_buffer_from_ndarray(self.device, vertex_data, wgpu.BufferUsage.VERTEX)
 
+    def create_textures(self):
+        descriptor = wgpu.TextureDescriptor()
+        descriptor.dimension = wgpu.TextureDimension.E2_D
+        descriptor.size.width = 1024
+        descriptor.size.height = 1024
+        descriptor.size.depth_or_array_layers = 1
+        descriptor.sample_count = 1
+        descriptor.format = wgpu.TextureFormat.RGBA8_UNORM
+        descriptor.mip_level_count = 1
+        descriptor.usage = wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING
+        texture = self.device.create_texture(descriptor)
+
+        sampler = self.device.create_sampler()
+
+        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint32)
+        for i in range(0, data.size):
+            data[i] = (i % 253)
+
+        staging_buffer = utils.create_buffer_from_ndarray(self.device, data, wgpu.BufferUsage.COPY_SRC)
+        image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, 4 * 1024)
+        image_copy_texture = utils.create_image_copy_texture(texture)
+        copy_size = wgpu.Extent3D(1024, 1024, 1)
+
+        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+        encoder.copy_buffer_to_texture(image_copy_buffer, image_copy_texture, copy_size)
+
+        copy: wgpu.CommandBuffer = encoder.finish()
+        self.queue.submit(1, copy)
+        
     def create_swapchain(self):
         handle, display = None, None
 
@@ -135,7 +183,7 @@ class HelloTriangle:
 
         logger.debug(handle)
 
-        nwh = to_capsule(handle)
+        nwh = as_capsule(handle)
         logger.debug(nwh)
 
         wsd = wgpu.SurfaceDescriptorFromWindowsHWND()

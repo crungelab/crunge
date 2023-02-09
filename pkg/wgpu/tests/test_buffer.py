@@ -27,8 +27,6 @@ def main():
     logger.debug(device)
     device.enable_logging()
 
-    #queue = device.get_queue()
-
     descriptor = wgpu.BufferDescriptor()
     descriptor.size = size
     descriptor.usage = usage | wgpu.BufferUsage.COPY_DST

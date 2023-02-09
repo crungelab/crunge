@@ -2,7 +2,7 @@ import ctypes
 from array import ArrayType
 from typing import Any
 
-import numpy
+import numpy as np
 
 from loguru import logger
 
@@ -19,7 +19,7 @@ def as_capsule(obj: Any) -> ctypes.py_object:
 
     if type(obj) == ArrayType:
         obj = obj.buffer_info()[0]
-    if isinstance(obj, numpy.ndarray):
+    if isinstance(obj, np.ndarray):
         obj = obj.ctypes.data_as(ctypes.POINTER(ctypes.c_void_p))
     if type(obj) != ctypes.c_void_p:
         obj = ctypes.cast(obj, ctypes.c_void_p)

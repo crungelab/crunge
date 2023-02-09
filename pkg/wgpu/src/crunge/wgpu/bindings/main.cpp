@@ -6,6 +6,7 @@
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
 
 #include <dawn/webgpu_cpp.h>
 #include "dawn/native/DawnNative.h"
@@ -24,8 +25,16 @@ void CreateProcTable() {
     dawnProcSetProcs(&procs);
 }
 
+namespace wgpu {
+    typedef std::vector<BindGroupLayoutEntry> BindGroupLayoutEntries;
+}
+
+PYBIND11_MAKE_OPAQUE(BindGroupLayoutEntries)
+
 void init_main(py::module &_wgpu, Registry &registry) {
     _wgpu.def("create_proc_table", &CreateProcTable);
+
+    py::bind_vector<BindGroupLayoutEntries>(_wgpu, "BindGroupLayoutEntries", "BindGroupLayoutEntry Vector");
 
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
     Instance.def("request_adapter", [](const wgpu::Instance& self)
@@ -125,6 +134,14 @@ void init_main(py::module &_wgpu, Registry &registry) {
         );
     PYEXTEND_END
 
+    PYEXTEND_BEGIN(wgpu::Origin3D, Origin3D)
+        Origin3D.def(py::init<uint32_t, uint32_t, uint32_t>()
+        , py::arg("x")
+        , py::arg("y")
+        , py::arg("z")
+        );
+    PYEXTEND_END
+
     PYEXTEND_BEGIN(wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor)
         PipelineLayoutDescriptor.def(py::init<>());
     PYEXTEND_END
@@ -176,6 +193,18 @@ void init_main(py::module &_wgpu, Registry &registry) {
 
     PYEXTEND_BEGIN(wgpu::SwapChainDescriptor, SwapChainDescriptor)
         SwapChainDescriptor.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::ImageCopyBuffer, ImageCopyBuffer)
+        ImageCopyBuffer.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::ImageCopyTexture, ImageCopyTexture)
+        ImageCopyTexture.def(py::init<>());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::TextureDataLayout, TextureDataLayout)
+        TextureDataLayout.def(py::init<>());
     PYEXTEND_END
 
     /*PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)

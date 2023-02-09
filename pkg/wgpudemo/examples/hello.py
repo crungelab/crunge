@@ -6,8 +6,8 @@ from loguru import logger
 import glfw
 
 from crunge import wgpu
+from crunge.core import as_capsule
 
-from utils import to_capsule
 
 shader_code = """
 @vertex
@@ -108,7 +108,7 @@ class HelloWgpu:
 
         logger.debug(handle)
 
-        nwh = to_capsule(handle)
+        nwh = as_capsule(handle)
         logger.debug(nwh)
 
         wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
