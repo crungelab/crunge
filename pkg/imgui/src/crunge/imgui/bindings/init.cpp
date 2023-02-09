@@ -9,7 +9,7 @@ void init_generated(py::module &, Registry& registry);
 
 
 PYBIND11_MODULE(_imgui, m) {
-        Registry r;
-        init_main(m, r);
-        init_generated(m, r);
+    Registry r;
+    init_main(m, r);
+    init_generated(m, r);
 }
