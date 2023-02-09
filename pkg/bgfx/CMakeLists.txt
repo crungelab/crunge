@@ -5,8 +5,8 @@ set(BINARY bgfx)
 
 project(${THIS} VERSION "0.1")
 
-include(../../cmake/Core.cmake)
 include(../../cmake/Pybind11.cmake)
+include(../../cmake/Core.cmake)
 
 set(AIMGFX_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -47,9 +47,9 @@ set(AIMGFX_SRC
 pybind11_add_module(${THIS} SHARED
     src/crunge/bgfx/bindings/init.cpp
 )
-USES_CORE(${THIS})
-USES_PYBIND11(${THIS})
 configure_project(${THIS} ${BINARY})
+USES_PYBIND11(${THIS})
+USES_CORE(${THIS})
 
 #install(TARGETS ${THIS} EXPORT AimGfxTargets
 #	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -7,9 +7,10 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include <crunge/core/bindtools.h>
+
 #include <crunge/imgui/crunge-imgui.h>
 #include <crunge/imgui/conversions.h>
-#include <crunge/imgui/bindtools.h>
 
 namespace py = pybind11;
 

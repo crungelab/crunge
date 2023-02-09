@@ -30,10 +30,9 @@ class TranspilerBase:
         self.short_prefix = ''
         self.module = ''
         self.flags = []
-        self.defaults = {}
         self.excludes = []
         self.overloads = []
-        self.entries = {}
+        self.defaults = {}
 
     @property
     def scope(self):
@@ -79,16 +78,9 @@ class TranspilerBase:
             return self.format_type(node.spelling)
 
     def is_excluded(self, node):
-        #logger.debug(self.spell(node))
-        #logger.debug(node.spelling)
-        if self.spell(node) in self.excluded:
+        #print(self.spell(node))
+        if self.spell(node) in self.excludes:
             return True
-        #entry = self.entries.get(self.spell(node))
-        #if not entry:
-        #    return False
-        #if entry.exclude:
-        #    return True
-        #elif node.spelling.startswith('_'):
         if node.spelling.startswith('_'):
             return True
         return False

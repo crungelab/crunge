@@ -1,6 +1,6 @@
 #include <pybind11/pybind11.h>
 
-#include <crunge/imgui/bindtools.h>
+#include <crunge/core/bindtools.h>
 
 namespace py = pybind11;
 

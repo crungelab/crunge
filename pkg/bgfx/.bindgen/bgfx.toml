@@ -10,23 +10,26 @@ flags = [
     '-I../../depot/bgfx/include'
 ]
 
-excludes = [
-    # Problems
-    'bgfx::VertexLayout::decode', # error C2352: 'bgfx::VertexLayout::decode': illegal call of non-static member function
-    'bgfx::setPaletteColor',
-    'bgfx::topologySortTriList',
-    'bgfx::vertexPack', #deleted function
-    'bgfx::Memory', #deleted constructor
-    # Wrapped
-    # Internal / Ignored
-    #Obsolete
-]
-
-overloaded = [
-]
-
 [defaults]
 '_layoutHandle' = 'bgfx::VertexLayoutHandle(BGFX_INVALID_HANDLE)'
 '_init' = 'bgfx::Init()'
 
+# Problems
 
+# error C2352: 'bgfx::VertexLayout::decode': illegal call of non-static member function
+[method.'bgfx::VertexLayout::decode']
+    exclude = true
+
+[function.'bgfx::setPaletteColor']
+    exclude = true
+
+[function.'bgfx::topologySortTriList']
+    exclude = true
+
+#deleted function
+[function.'bgfx::vertexPack']
+    exclude = true
+
+#deleted constructor
+[struct.'bgfx::Memory']
+    exclude = true

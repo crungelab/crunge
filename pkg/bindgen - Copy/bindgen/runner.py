@@ -15,6 +15,7 @@ class Runner:
         elif sys.platform == 'linux':
             cindex.Config.set_library_file('libclang-10.so')
         else:
+            #cindex.Config.set_library_file('C:/Program Files/LLVM/bin/libclang.dll')
             cindex.Config.set_library_path('C:/Program Files/LLVM/bin')
 
     def gen(self, name):

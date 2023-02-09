@@ -10,19 +10,18 @@ flags = [
     '-I../../depot/dawn/include',
 ]
 
-excludes = [
-    # Wrapped
-    #'wgpu::ShaderModuleWGSLDescriptor::source', # TODO: Needs string conversion?
-    #'wgpu::VertexState::entryPoint',
-    #'wgpu::FragmentState::entryPoint',
-    # Internal / Ignored
-    'dawn::IsDawnBitmask', # TODO: Should skip templates in the transpiler
-    # These three have a weird signature:  const char* const * 
-    'wgpu::DawnInstanceDescriptor::additionalRuntimeSearchPaths',
-    'wgpu::DawnTogglesDeviceDescriptor::forceEnabledToggles',
-    'wgpu::DawnTogglesDeviceDescriptor::forceDisabledToggles'
-    #Obsolete
-]
 
-overloaded = [
-]
+# Internal / Ignored
+
+[struct.'dawn::IsDawnBitmask'] #TODO: Should skip templates in the transpiler
+    exclude = true
+
+# These three have a weird signature:  const char* const * 
+[field.'wgpu::DawnInstanceDescriptor::additionalRuntimeSearchPaths']
+    exclude = true
+
+[field.'wgpu::DawnTogglesDeviceDescriptor::forceEnabledToggles']
+    exclude = true
+
+[field.'wgpu::DawnTogglesDeviceDescriptor::forceDisabledToggles']
+    exclude = true

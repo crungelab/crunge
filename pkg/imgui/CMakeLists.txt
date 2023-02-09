@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.4)
 
 include(../../cmake/Pybind11.cmake)
+include(../../cmake/Core.cmake)
 
 set(THIS crunge-imgui)
 set(BINARY imgui)
@@ -30,10 +31,12 @@ set(IMGUI_SRC
 
 add_library(${THIS} SHARED src/crunge/imgui/bindings/init.cpp)
 python_extension_module(${THIS})
-#install(TARGETS ${THIS} LIBRARY DESTINATION aimgui)
-
 configure_project(${THIS} ${BINARY})
+
 USES_PYBIND11(${THIS})
+USES_CORE(${THIS})
+
+#install(TARGETS ${THIS} LIBRARY DESTINATION aimgui)
 
 target_compile_definitions(${THIS} PRIVATE IMGUI_USER_CONFIG=<crunge/imgui/imconfig.h>)
 target_compile_definitions(${THIS} PRIVATE NULL=nullptr)

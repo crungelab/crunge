@@ -14,23 +14,33 @@ flags = [
     '-I../../depot/imgui'
 ]
 
-excludes = [
-    # Wrapped
-    'ImPlot::CreateContext',
-    'ImPlot::DestroyContext',
-    'ImPlot::GetCurrentContext',
-    'ImPlot::SetCurrentContext',
-    # Internal / Ignored
-    'ImPlotLimits::Contains',
-    'ImPlot::PixelsToPlot',
-    'ImPlot::SetNextPlotTicksX',
-    'ImPlot::SetNextPlotTicksY',
-    'ImPlotRect::Contains', #TODO: overload problems
-    'ImPlot::SetupAxisTicks' #TODO: generator problem:
-        #_crunge/implot.def("setup_axis_ticks", py::overload_cast<ImAxis, double, double, int, const char *const [], bool>(&ImPlot::SetupAxisTicks)
-    #Obsolete
-]
+# Wrapped
 
-overloaded = [
-    'ImPlot::LerpColormap'
-]
+[function.'ImPlot::CreateContext']
+    exclude = true
+
+[function.'ImPlot::DestroyContext']
+    exclude = true
+
+[function.'ImPlot::GetCurrentContext']
+    exclude = true
+
+[function.'ImPlot::SetCurrentContext']
+    exclude = true
+
+# Internal / Ignored
+
+[function.'ImPlot::PixelsToPlot']
+    exclude = true
+
+[function.'ImPlot::SetNextPlotTicksX']
+    exclude = true
+
+[function.'ImPlot::SetNextPlotTicksY']
+    exclude = true
+
+[function.'ImPlot::SetupAxisTicks'] #TODO: need to wrap this
+    exclude = true
+
+[method.'ImPlotRect::Contains'] #TODO: overload problems
+    exclude = true

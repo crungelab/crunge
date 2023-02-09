@@ -14,25 +14,45 @@ flags = [
     '-I./src'
 ]
 
-excludes = [
-    # Wrapped
-    'ImNodes::CreateContext',
-    'ImNodes::DestroyContext',
-    'ImNodes::GetCurrentContext',
-    'ImNodes::SetCurrentContext',
+# Wrapped
 
-    'ImNodes::EditorContextCreate',
-    'ImNodes::EditorContextFree',
-    'ImNodes::EditorContextSet',
-    'ImNodes::MiniMap',
-    # Internal / Ignored
-    'ImNodes::EditorContext',
-    'ImNodes::SaveEditorStateToIniString',
-    'ImNodes::LoadEditorStateFromIniFile',
-    'ImNodes::LoadEditorStateFromIniString',
-    'ImNodes::SaveEditorStateToIniFile',
-    #Obsolete
-]
+[function.'ImNodes::CreateContext']
+    exclude = true
 
-overloaded = [
-]
+[function.'ImNodes::DestroyContext']
+    exclude = true
+
+[function.'ImNodes::GetCurrentContext']
+    exclude = true
+
+[function.'ImNodes::SetCurrentContext']
+    exclude = true
+
+[function.'ImNodes::EditorContextCreate']
+    exclude = true
+
+[function.'ImNodes::EditorContextFree']
+    exclude = true
+
+[function.'ImNodes::EditorContextSet']
+    exclude = true
+
+[function.'ImNodes::MiniMap']
+    exclude = true
+
+# Internal / Ignored
+
+[function.'ImNodes::EditorContext']
+    exclude = true
+
+[function.'SaveEditorStateToIniString']
+    exclude = true
+
+[function.'LoadEditorStateFromIniFile']
+    exclude = true
+
+[function.'LoadEditorStateFromIniString']
+    exclude = true
+
+[function.'SaveEditorStateToIniFile']
+    exclude = true

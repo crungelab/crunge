@@ -23,8 +23,9 @@ set(IMPLOT_SRC
 pybind11_add_module(${THIS} MODULE
     src/crunge/implot/bindings/init.cpp
 )
-USES_IMGUI(${THIS})
 configure_project(${THIS} ${BINARY})
+
+USES_IMGUI(${THIS})
 
 target_compile_definitions(${THIS} PRIVATE IMPLOT_DISABLE_OBSOLETE_FUNCTIONS)
 

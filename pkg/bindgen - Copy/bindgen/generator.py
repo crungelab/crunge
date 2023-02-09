@@ -2,16 +2,15 @@ import os
 from pathlib import Path
 import importlib
 import toml
-from loguru import logger
-import jinja2
 #from clang import cindex
 from crunge.clang import cindex
+from loguru import logger
 
 from . import UserSet
 
 from .transpiler import Transpiler
-from .entry import Entry, FunctionEntry, FieldEntry, MethodEntry, StructEntry
 
+import jinja2
 
 class Options:
     def __init__(self, *options, **kwargs):
@@ -32,23 +31,11 @@ class Overloaded(UserSet):
 class Generator(Transpiler):
     def __init__(self, config, **kwargs):
         super().__init__()
-        self.excludes = []
-        self.overloads = []
         self.config = config
         self.options = { 'save': True }
-        for key, value in config.items():
+        for key in config:
             #print(config[key])
-            if key == 'function':
-                self.create_entries(FunctionEntry, value)
-            elif key == 'field':
-                self.create_entries(FieldEntry, value)
-            elif key == 'method':
-                self.create_entries(MethodEntry, value)
-            elif key == 'struct':
-                self.create_entries(StructEntry, value)
-            else:
-                setattr(self, key, config[key])
-
+            setattr(self, key, config[key])
         for key in kwargs:
             if key == 'options':
                 options = kwargs[key]
@@ -58,22 +45,12 @@ class Generator(Transpiler):
             setattr(self, key, kwargs[key])
         
         self.options = Options(self.options)
-        self.excluded = set(self.excludes)
-        self.overloaded = Overloaded(self.overloads)
+        self.overloaded = Overloaded(self.overloaded)
 
         BASE_PATH = Path('.')
         self.path = BASE_PATH / self.source
         #self.path = Path(self.source).absolute()
         self.mapped.append(self.path.name)
-
-    def create_entries(self, cls: Entry, category):
-        for key, value in category.items():
-            entry = cls(value)
-            if entry.exclude:
-                self.excludes.append(key)
-            if entry.overload:
-                self.overloads.append(key)
-            self.entries[key] = entry
 
     @classmethod
     def create(self, name="bindgen"):

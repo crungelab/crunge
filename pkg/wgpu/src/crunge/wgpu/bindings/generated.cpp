@@ -16,6 +16,7 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("a")
     , py::arg("b")
     , py::return_value_policy::automatic_reference);
+
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::AdapterType, AdapterType)
     AdapterType
         .value("DISCRETE_GPU", wgpu::AdapterType::DiscreteGPU)
@@ -684,72 +685,90 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     Adapter.def("create_device", &wgpu::Adapter::CreateDevice
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     Adapter.def("enumerate_features", &wgpu::Adapter::EnumerateFeatures
     , py::arg("features")
     , py::return_value_policy::automatic_reference);
+
     Adapter.def("get_limits", &wgpu::Adapter::GetLimits
     , py::arg("limits")
     , py::return_value_policy::automatic_reference);
+
     Adapter.def("get_properties", &wgpu::Adapter::GetProperties
     , py::arg("properties")
     , py::return_value_policy::automatic_reference);
+
     Adapter.def("has_feature", &wgpu::Adapter::HasFeature
     , py::arg("feature")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Adapter, Adapter)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroup, BindGroup)
     BindGroup.def("set_label", &wgpu::BindGroup::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::BindGroup, BindGroup)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroupLayout, BindGroupLayout)
     BindGroupLayout.def("set_label", &wgpu::BindGroupLayout::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::BindGroupLayout, BindGroupLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Buffer, Buffer)
     Buffer.def("destroy", &wgpu::Buffer::Destroy
     , py::return_value_policy::automatic_reference);
+
     Buffer.def("get_const_mapped_range", &wgpu::Buffer::GetConstMappedRange
     , py::arg("offset") = 0
     , py::arg("size") = WGPU_WHOLE_MAP_SIZE
     , py::return_value_policy::automatic_reference);
+
     Buffer.def("get_mapped_range", &wgpu::Buffer::GetMappedRange
     , py::arg("offset") = 0
     , py::arg("size") = WGPU_WHOLE_MAP_SIZE
     , py::return_value_policy::automatic_reference);
+
     Buffer.def("get_size", &wgpu::Buffer::GetSize
     , py::return_value_policy::automatic_reference);
+
     Buffer.def("get_usage", &wgpu::Buffer::GetUsage
     , py::return_value_policy::automatic_reference);
+
     Buffer.def("set_label", &wgpu::Buffer::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     Buffer.def("unmap", &wgpu::Buffer::Unmap
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Buffer, Buffer)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CommandBuffer, CommandBuffer)
     CommandBuffer.def("set_label", &wgpu::CommandBuffer::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::CommandBuffer, CommandBuffer)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CommandEncoder, CommandEncoder)
     CommandEncoder.def("begin_compute_pass", &wgpu::CommandEncoder::BeginComputePass
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("begin_render_pass", &wgpu::CommandEncoder::BeginRenderPass
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("clear_buffer", &wgpu::CommandEncoder::ClearBuffer
     , py::arg("buffer")
     , py::arg("offset") = 0
     , py::arg("size") = WGPU_WHOLE_SIZE
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("copy_buffer_to_buffer", &wgpu::CommandEncoder::CopyBufferToBuffer
     , py::arg("source")
     , py::arg("source_offset")
@@ -757,40 +776,50 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("destination_offset")
     , py::arg("size")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("copy_buffer_to_texture", &wgpu::CommandEncoder::CopyBufferToTexture
     , py::arg("source")
     , py::arg("destination")
     , py::arg("copy_size")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("copy_texture_to_buffer", &wgpu::CommandEncoder::CopyTextureToBuffer
     , py::arg("source")
     , py::arg("destination")
     , py::arg("copy_size")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("copy_texture_to_texture", &wgpu::CommandEncoder::CopyTextureToTexture
     , py::arg("source")
     , py::arg("destination")
     , py::arg("copy_size")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("copy_texture_to_texture_internal", &wgpu::CommandEncoder::CopyTextureToTextureInternal
     , py::arg("source")
     , py::arg("destination")
     , py::arg("copy_size")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("finish", &wgpu::CommandEncoder::Finish
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("inject_validation_error", &wgpu::CommandEncoder::InjectValidationError
     , py::arg("message")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("insert_debug_marker", &wgpu::CommandEncoder::InsertDebugMarker
     , py::arg("marker_label")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("pop_debug_group", &wgpu::CommandEncoder::PopDebugGroup
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("push_debug_group", &wgpu::CommandEncoder::PushDebugGroup
     , py::arg("group_label")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("resolve_query_set", &wgpu::CommandEncoder::ResolveQuerySet
     , py::arg("query_set")
     , py::arg("first_query")
@@ -798,19 +827,23 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("destination")
     , py::arg("destination_offset")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("set_label", &wgpu::CommandEncoder::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("write_buffer", &wgpu::CommandEncoder::WriteBuffer
     , py::arg("buffer")
     , py::arg("buffer_offset")
     , py::arg("data")
     , py::arg("size")
     , py::return_value_policy::automatic_reference);
+
     CommandEncoder.def("write_timestamp", &wgpu::CommandEncoder::WriteTimestamp
     , py::arg("query_set")
     , py::arg("query_index")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::CommandEncoder, CommandEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePassEncoder, ComputePassEncoder)
@@ -819,170 +852,221 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("workgroup_count_y") = 1
     , py::arg("workgroup_count_z") = 1
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("dispatch_indirect", &wgpu::ComputePassEncoder::DispatchIndirect
     , py::arg("indirect_buffer")
     , py::arg("indirect_offset")
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("dispatch_workgroups", &wgpu::ComputePassEncoder::DispatchWorkgroups
     , py::arg("workgroup_count_x")
     , py::arg("workgroup_count_y") = 1
     , py::arg("workgroup_count_z") = 1
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("dispatch_workgroups_indirect", &wgpu::ComputePassEncoder::DispatchWorkgroupsIndirect
     , py::arg("indirect_buffer")
     , py::arg("indirect_offset")
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("end", &wgpu::ComputePassEncoder::End
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("end_pass", &wgpu::ComputePassEncoder::EndPass
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("insert_debug_marker", &wgpu::ComputePassEncoder::InsertDebugMarker
     , py::arg("marker_label")
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("pop_debug_group", &wgpu::ComputePassEncoder::PopDebugGroup
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("push_debug_group", &wgpu::ComputePassEncoder::PushDebugGroup
     , py::arg("group_label")
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("set_bind_group", &wgpu::ComputePassEncoder::SetBindGroup
     , py::arg("group_index")
     , py::arg("group")
     , py::arg("dynamic_offset_count") = 0
     , py::arg("dynamic_offsets") = nullptr
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("set_label", &wgpu::ComputePassEncoder::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("set_pipeline", &wgpu::ComputePassEncoder::SetPipeline
     , py::arg("pipeline")
     , py::return_value_policy::automatic_reference);
+
     ComputePassEncoder.def("write_timestamp", &wgpu::ComputePassEncoder::WriteTimestamp
     , py::arg("query_set")
     , py::arg("query_index")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::ComputePassEncoder, ComputePassEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePipeline, ComputePipeline)
     ComputePipeline.def("get_bind_group_layout", &wgpu::ComputePipeline::GetBindGroupLayout
     , py::arg("group_index")
     , py::return_value_policy::automatic_reference);
+
     ComputePipeline.def("set_label", &wgpu::ComputePipeline::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::ComputePipeline, ComputePipeline)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Device, Device)
     Device.def("create_bind_group", &wgpu::Device::CreateBindGroup
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_bind_group_layout", &wgpu::Device::CreateBindGroupLayout
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_buffer", &wgpu::Device::CreateBuffer
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_command_encoder", &wgpu::Device::CreateCommandEncoder
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_compute_pipeline", &wgpu::Device::CreateComputePipeline
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_error_buffer", &wgpu::Device::CreateErrorBuffer
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_error_external_texture", &wgpu::Device::CreateErrorExternalTexture
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_error_texture", &wgpu::Device::CreateErrorTexture
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_external_texture", &wgpu::Device::CreateExternalTexture
     , py::arg("external_texture_descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_pipeline_layout", &wgpu::Device::CreatePipelineLayout
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_query_set", &wgpu::Device::CreateQuerySet
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_render_bundle_encoder", &wgpu::Device::CreateRenderBundleEncoder
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_render_pipeline", &wgpu::Device::CreateRenderPipeline
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_sampler", &wgpu::Device::CreateSampler
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_shader_module", &wgpu::Device::CreateShaderModule
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_swap_chain", &wgpu::Device::CreateSwapChain
     , py::arg("surface")
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("create_texture", &wgpu::Device::CreateTexture
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     Device.def("destroy", &wgpu::Device::Destroy
     , py::return_value_policy::automatic_reference);
+
     Device.def("enumerate_features", &wgpu::Device::EnumerateFeatures
     , py::arg("features")
     , py::return_value_policy::automatic_reference);
+
     Device.def("get_adapter", &wgpu::Device::GetAdapter
     , py::return_value_policy::automatic_reference);
+
     Device.def("get_limits", &wgpu::Device::GetLimits
     , py::arg("limits")
     , py::return_value_policy::automatic_reference);
+
     Device.def("get_queue", &wgpu::Device::GetQueue
     , py::return_value_policy::automatic_reference);
+
     Device.def("has_feature", &wgpu::Device::HasFeature
     , py::arg("feature")
     , py::return_value_policy::automatic_reference);
+
     Device.def("inject_error", &wgpu::Device::InjectError
     , py::arg("type")
     , py::arg("message")
     , py::return_value_policy::automatic_reference);
+
     Device.def("lose_for_testing", &wgpu::Device::LoseForTesting
     , py::return_value_policy::automatic_reference);
+
     Device.def("push_error_scope", &wgpu::Device::PushErrorScope
     , py::arg("filter")
     , py::return_value_policy::automatic_reference);
+
     Device.def("set_label", &wgpu::Device::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     Device.def("tick", &wgpu::Device::Tick
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Device, Device)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ExternalTexture, ExternalTexture)
     ExternalTexture.def("destroy", &wgpu::ExternalTexture::Destroy
     , py::return_value_policy::automatic_reference);
+
     ExternalTexture.def("set_label", &wgpu::ExternalTexture::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::ExternalTexture, ExternalTexture)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Instance, Instance)
     Instance.def("create_surface", &wgpu::Instance::CreateSurface
     , py::arg("descriptor")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Instance, Instance)
 
     PYCLASS_BEGIN(_wgpu, wgpu::PipelineLayout, PipelineLayout)
     PipelineLayout.def("set_label", &wgpu::PipelineLayout::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::PipelineLayout, PipelineLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::QuerySet, QuerySet)
     QuerySet.def("destroy", &wgpu::QuerySet::Destroy
     , py::return_value_policy::automatic_reference);
+
     QuerySet.def("get_count", &wgpu::QuerySet::GetCount
     , py::return_value_policy::automatic_reference);
+
     QuerySet.def("get_type", &wgpu::QuerySet::GetType
     , py::return_value_policy::automatic_reference);
+
     QuerySet.def("set_label", &wgpu::QuerySet::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::QuerySet, QuerySet)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Queue, Queue)
@@ -992,19 +1076,23 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("copy_size")
     , py::arg("options")
     , py::return_value_policy::automatic_reference);
+
     Queue.def("set_label", &wgpu::Queue::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     Queue.def("submit", &wgpu::Queue::Submit
     , py::arg("command_count")
     , py::arg("commands")
     , py::return_value_policy::automatic_reference);
+
     Queue.def("write_buffer", &wgpu::Queue::WriteBuffer
     , py::arg("buffer")
     , py::arg("buffer_offset")
     , py::arg("data")
     , py::arg("size")
     , py::return_value_policy::automatic_reference);
+
     Queue.def("write_texture", &wgpu::Queue::WriteTexture
     , py::arg("destination")
     , py::arg("data")
@@ -1012,6 +1100,7 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("data_layout")
     , py::arg("write_size")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Queue, Queue)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderBundle, RenderBundle)
@@ -1024,6 +1113,7 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("first_vertex") = 0
     , py::arg("first_instance") = 0
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("draw_indexed", &wgpu::RenderBundleEncoder::DrawIndexed
     , py::arg("index_count")
     , py::arg("instance_count") = 1
@@ -1031,61 +1121,75 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("base_vertex") = 0
     , py::arg("first_instance") = 0
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("draw_indexed_indirect", &wgpu::RenderBundleEncoder::DrawIndexedIndirect
     , py::arg("indirect_buffer")
     , py::arg("indirect_offset")
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("draw_indirect", &wgpu::RenderBundleEncoder::DrawIndirect
     , py::arg("indirect_buffer")
     , py::arg("indirect_offset")
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("finish", &wgpu::RenderBundleEncoder::Finish
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("insert_debug_marker", &wgpu::RenderBundleEncoder::InsertDebugMarker
     , py::arg("marker_label")
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("pop_debug_group", &wgpu::RenderBundleEncoder::PopDebugGroup
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("push_debug_group", &wgpu::RenderBundleEncoder::PushDebugGroup
     , py::arg("group_label")
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("set_bind_group", &wgpu::RenderBundleEncoder::SetBindGroup
     , py::arg("group_index")
     , py::arg("group")
     , py::arg("dynamic_offset_count") = 0
     , py::arg("dynamic_offsets") = nullptr
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("set_index_buffer", &wgpu::RenderBundleEncoder::SetIndexBuffer
     , py::arg("buffer")
     , py::arg("format")
     , py::arg("offset") = 0
     , py::arg("size") = WGPU_WHOLE_SIZE
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("set_label", &wgpu::RenderBundleEncoder::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("set_pipeline", &wgpu::RenderBundleEncoder::SetPipeline
     , py::arg("pipeline")
     , py::return_value_policy::automatic_reference);
+
     RenderBundleEncoder.def("set_vertex_buffer", &wgpu::RenderBundleEncoder::SetVertexBuffer
     , py::arg("slot")
     , py::arg("buffer")
     , py::arg("offset") = 0
     , py::arg("size") = WGPU_WHOLE_SIZE
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::RenderBundleEncoder, RenderBundleEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPassEncoder, RenderPassEncoder)
     RenderPassEncoder.def("begin_occlusion_query", &wgpu::RenderPassEncoder::BeginOcclusionQuery
     , py::arg("query_index")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("draw", &wgpu::RenderPassEncoder::Draw
     , py::arg("vertex_count")
     , py::arg("instance_count") = 1
     , py::arg("first_vertex") = 0
     , py::arg("first_instance") = 0
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("draw_indexed", &wgpu::RenderPassEncoder::DrawIndexed
     , py::arg("index_count")
     , py::arg("instance_count") = 1
@@ -1093,68 +1197,86 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("base_vertex") = 0
     , py::arg("first_instance") = 0
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("draw_indexed_indirect", &wgpu::RenderPassEncoder::DrawIndexedIndirect
     , py::arg("indirect_buffer")
     , py::arg("indirect_offset")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("draw_indirect", &wgpu::RenderPassEncoder::DrawIndirect
     , py::arg("indirect_buffer")
     , py::arg("indirect_offset")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("end", &wgpu::RenderPassEncoder::End
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("end_occlusion_query", &wgpu::RenderPassEncoder::EndOcclusionQuery
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("end_pass", &wgpu::RenderPassEncoder::EndPass
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("execute_bundles", &wgpu::RenderPassEncoder::ExecuteBundles
     , py::arg("bundles_count")
     , py::arg("bundles")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("insert_debug_marker", &wgpu::RenderPassEncoder::InsertDebugMarker
     , py::arg("marker_label")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("pop_debug_group", &wgpu::RenderPassEncoder::PopDebugGroup
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("push_debug_group", &wgpu::RenderPassEncoder::PushDebugGroup
     , py::arg("group_label")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_bind_group", &wgpu::RenderPassEncoder::SetBindGroup
     , py::arg("group_index")
     , py::arg("group")
     , py::arg("dynamic_offset_count") = 0
     , py::arg("dynamic_offsets") = nullptr
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_blend_constant", &wgpu::RenderPassEncoder::SetBlendConstant
     , py::arg("color")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_index_buffer", &wgpu::RenderPassEncoder::SetIndexBuffer
     , py::arg("buffer")
     , py::arg("format")
     , py::arg("offset") = 0
     , py::arg("size") = WGPU_WHOLE_SIZE
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_label", &wgpu::RenderPassEncoder::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_pipeline", &wgpu::RenderPassEncoder::SetPipeline
     , py::arg("pipeline")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_scissor_rect", &wgpu::RenderPassEncoder::SetScissorRect
     , py::arg("x")
     , py::arg("y")
     , py::arg("width")
     , py::arg("height")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_stencil_reference", &wgpu::RenderPassEncoder::SetStencilReference
     , py::arg("reference")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_vertex_buffer", &wgpu::RenderPassEncoder::SetVertexBuffer
     , py::arg("slot")
     , py::arg("buffer")
     , py::arg("offset") = 0
     , py::arg("size") = WGPU_WHOLE_SIZE
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("set_viewport", &wgpu::RenderPassEncoder::SetViewport
     , py::arg("x")
     , py::arg("y")
@@ -1163,31 +1285,37 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("min_depth")
     , py::arg("max_depth")
     , py::return_value_policy::automatic_reference);
+
     RenderPassEncoder.def("write_timestamp", &wgpu::RenderPassEncoder::WriteTimestamp
     , py::arg("query_set")
     , py::arg("query_index")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::RenderPassEncoder, RenderPassEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPipeline, RenderPipeline)
     RenderPipeline.def("get_bind_group_layout", &wgpu::RenderPipeline::GetBindGroupLayout
     , py::arg("group_index")
     , py::return_value_policy::automatic_reference);
+
     RenderPipeline.def("set_label", &wgpu::RenderPipeline::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::RenderPipeline, RenderPipeline)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Sampler, Sampler)
     Sampler.def("set_label", &wgpu::Sampler::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Sampler, Sampler)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ShaderModule, ShaderModule)
     ShaderModule.def("set_label", &wgpu::ShaderModule::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::ShaderModule, ShaderModule)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Surface, Surface)
@@ -1200,52 +1328,69 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     , py::arg("width")
     , py::arg("height")
     , py::return_value_policy::automatic_reference);
+
     SwapChain.def("get_current_texture_view", &wgpu::SwapChain::GetCurrentTextureView
     , py::return_value_policy::automatic_reference);
+
     SwapChain.def("present", &wgpu::SwapChain::Present
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::SwapChain, SwapChain)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Texture, Texture)
     Texture.def("create_view", &wgpu::Texture::CreateView
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     Texture.def("destroy", &wgpu::Texture::Destroy
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_depth_or_array_layers", &wgpu::Texture::GetDepthOrArrayLayers
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_dimension", &wgpu::Texture::GetDimension
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_format", &wgpu::Texture::GetFormat
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_height", &wgpu::Texture::GetHeight
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_mip_level_count", &wgpu::Texture::GetMipLevelCount
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_sample_count", &wgpu::Texture::GetSampleCount
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_usage", &wgpu::Texture::GetUsage
     , py::return_value_policy::automatic_reference);
+
     Texture.def("get_width", &wgpu::Texture::GetWidth
     , py::return_value_policy::automatic_reference);
+
     Texture.def("set_label", &wgpu::Texture::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Texture, Texture)
 
     PYCLASS_BEGIN(_wgpu, wgpu::TextureView, TextureView)
     TextureView.def("set_label", &wgpu::TextureView::SetLabel
     , py::arg("label")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::TextureView, TextureView)
 
     _wgpu.def("create_instance", &wgpu::CreateInstance
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference);
+
     _wgpu.def("get_proc_address", &wgpu::GetProcAddress
     , py::arg("device")
     , py::arg("proc_name")
     , py::return_value_policy::automatic_reference);
+
     PYCLASS_BEGIN(_wgpu, wgpu::ChainedStruct, ChainedStruct)
     ChainedStruct.def_readwrite("next_in_chain", &wgpu::ChainedStruct::nextInChain);
     ChainedStruct.def_readwrite("s_type", &wgpu::ChainedStruct::sType);
