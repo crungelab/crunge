@@ -1,4 +1,5 @@
 import ctypes
+from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
 import sys
 
@@ -64,7 +65,95 @@ class HelloWgpu:
 
         self.create_buffers()
 
-        shader: wgpu.ShaderModule = utils.create_shader_module(self.device, shader_code)
+        shader_module: wgpu.ShaderModule = utils.create_shader_module(self.device, shader_code)
+
+        # Pipeline creation
+
+        # TODO: Need to implement kwargs initializers
+        va0 = wgpu.VertexAttribute()
+        va0.format = wgpu.VertexFormat.FLOAT32X4
+        va0.offset = 0
+        va0.shader_location = 0
+        
+        va1 = wgpu.VertexAttribute()
+        va1.format = wgpu.VertexFormat.FLOAT32X4
+        va1.offset = 4 * sizeof(c_float)
+        va1.shader_location = 1
+
+        vertAttributes = wgpu.VertexAttributes([va0, va1])
+        
+        #mv = memoryview(vertAttributes)  # We expose the buffer interface
+
+        vertBufferLayout = wgpu.VertexBufferLayout()
+        vertBufferLayout.array_stride = 8 * sizeof(c_float)
+        vertBufferLayout.attribute_count = 2
+        vertBufferLayout.attributes = vertAttributes[0] #TODO: Looks funky
+        #vertBufferLayout.attributes = vertAttributes
+
+        colorTargetState = wgpu.ColorTargetState()
+        colorTargetState.format = wgpu.TextureFormat.BGRA8_UNORM
+
+        fragmentState = wgpu.FragmentState()
+        fragmentState.module = shader_module
+        fragmentState.entry_point = "fs_main"
+        fragmentState.target_count = 1
+        fragmentState.targets = colorTargetState
+
+        pl = wgpu.PipelineLayoutDescriptor()
+        pl.bind_group_layout_count = 0
+        pl.bind_group_layouts = None
+
+        descriptor = wgpu.RenderPipelineDescriptor()
+        descriptor.label = "Main Render Pipeline"
+        #descriptor.layout = None # Automatic layout
+        descriptor.layout = self.device.create_pipeline_layout(pl)
+        descriptor.vertex.module = shader_module
+        descriptor.vertex.entry_point = "vs_main"
+        descriptor.vertex.buffer_count = 1
+        descriptor.vertex.buffers = vertBufferLayout
+        descriptor.fragment = fragmentState
+        #descriptor.primitive.topology = wgpu.PrimitiveTopology.TRIANGLE_LIST
+        #descriptor.depth_stencil = depthStencilState
+        self.pipeline = self.device.create_render_pipeline(descriptor)
+        #exit()
+
+
+        logger.debug('end of test')
+
+        """
+        wgpu::RenderPipelineDescriptor pipelineDesc{
+            .label = "Main Render Pipeline",
+            .layout = nullptr,  // Automatic layout
+            .vertex =
+                {
+                    .module = shader,
+                    .entryPoint = "vs_main",
+                    .bufferCount = 1,
+                    .buffers = &vertBufferLayout,
+                },
+            .fragment = &fragState,
+        };
+        """
+        """
+        // Pipeline creation
+        wgpu::VertexAttribute vertAttributes[2] = {
+            {
+                .format = wgpu::VertexFormat::Float32x4,
+                .offset = 0,
+                .shaderLocation = 0,
+            },
+            {
+                .format = wgpu::VertexFormat::Float32x4,
+                .offset = 4 * sizeof(float),
+                .shaderLocation = 1,
+            }};
+
+        wgpu::VertexBufferLayout vertBufferLayout{
+            .arrayStride = 8 * sizeof(float),
+            .attributeCount = 2,
+            .attributes = vertAttributes,
+        };
+        """
 
         """
         wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
@@ -171,7 +260,8 @@ class HelloWgpu:
         descriptor.format = wgpu.TextureFormat.DEPTH32_FLOAT
         self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
+    #def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
+    def render(self, view: wgpu.TextureView):
         attachment = wgpu.RenderPassColorAttachment()
         attachment.view = view
         attachment.load_op = wgpu.LoadOp.CLEAR
@@ -179,22 +269,32 @@ class HelloWgpu:
         attachment.clear_value = wgpu.Color(0, 0, 0, 1)
 
         renderpass = wgpu.RenderPassDescriptor()
+        renderpass.label = "Main Render Pass"
         renderpass.color_attachment_count = 1
         renderpass.color_attachments = attachment
         # renderpass.color_attachments = [attachment] #TODO:  Pointer to array
 
+        """
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment()
         depth_stencil_attachment.view = depthStencilView
         depth_stencil_attachment.depth_clear_value = 0
         depth_stencil_attachment.depth_load_op = wgpu.LoadOp.CLEAR
         depth_stencil_attachment.depth_store_op = wgpu.StoreOp.STORE
-
         renderpass.depth_stencil_attachment = depth_stencil_attachment
+        """
 
+        """
+        auto pass = encoder.BeginRenderPass(&renderPass);
+        pass.SetPipeline(pipeline);
+        pass.SetVertexBuffer(0, vertexBuffer);
+        pass.Draw(3);
+        pass.End();
+        """
         commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
+        pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(3)
         pass_enc.end()
         commands = encoder.finish()
@@ -203,7 +303,10 @@ class HelloWgpu:
 
     def frame(self):
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        self.render(backbuffer, self.depth_stencil_view)
+        backbuffer.set_label("Back Buffer Texture View")
+
+        #self.render(backbuffer, self.depth_stencil_view)
+        self.render(backbuffer)
         self.swap_chain.present()
 
     def run(self):

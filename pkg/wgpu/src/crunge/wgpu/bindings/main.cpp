@@ -6,7 +6,6 @@
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
 #include <pybind11/stl.h>
-#include <pybind11/stl_bind.h>
 
 #include <dawn/webgpu_cpp.h>
 #include "dawn/native/DawnNative.h"
@@ -25,16 +24,11 @@ void CreateProcTable() {
     dawnProcSetProcs(&procs);
 }
 
-namespace wgpu {
-    typedef std::vector<BindGroupLayoutEntry> BindGroupLayoutEntries;
-}
-
-PYBIND11_MAKE_OPAQUE(BindGroupLayoutEntries)
-
 void init_main(py::module &_wgpu, Registry &registry) {
     _wgpu.def("create_proc_table", &CreateProcTable);
 
     py::bind_vector<BindGroupLayoutEntries>(_wgpu, "BindGroupLayoutEntries", "BindGroupLayoutEntry Vector");
+    py::bind_vector<VertexAttributes>(_wgpu, "VertexAttributes", "VertexAttribute Vector");
 
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
     Instance.def("request_adapter", [](const wgpu::Instance& self)
@@ -210,6 +204,17 @@ void init_main(py::module &_wgpu, Registry &registry) {
         );
     PYEXTEND_END
 
+    /*PYEXTEND_BEGIN(wgpu::VertexBufferLayout, VertexBufferLayout)
+        VertexBufferLayout.def_property("attributes",
+            [](const wgpu::VertexBufferLayout& self) {
+                return self.attributes;
+            },
+            [](wgpu::VertexBufferLayout& self, VertexAttributes& source) {
+                self.attributes = source.data();
+                //self.attributes = &source[0];
+            }
+        );
+    PYEXTEND_END*/
 
     /*PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
         //ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);

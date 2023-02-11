@@ -21,3 +21,5 @@ flags: [
 'field.wgpu::DawnTogglesDeviceDescriptor::forceDisabledToggles': {exclude: true}
 
 'ctor.wgpu::AdapterProperties::AdapterProperties': {}
+
+#'field.wgpu::VertexBufferLayout::attributes': {exclude: true}
