@@ -13,6 +13,9 @@ class Entry:
 class FunctionEntry(Entry):
     pass
 
+class CtorEntry(Entry):
+    pass
+
 class FieldEntry(Entry):
     pass
 
@@ -21,3 +24,20 @@ class MethodEntry(Entry):
 
 class StructEntry(Entry):
     pass
+
+entry_map = {
+    'function': FunctionEntry,
+    'ctor': CtorEntry,
+    'field': FieldEntry,
+    'method': MethodEntry,
+    'struct': StructEntry
+}
+
+registry = {}
+
+def create_entry(key, value):
+    s = key.split('.')
+    cls = entry_map[s[0]]
+    entry = cls(value)
+    registry[s[1]] = entry
+    return entry

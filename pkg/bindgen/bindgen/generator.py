@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 import importlib
-import toml
 from loguru import logger
 import jinja2
 #from clang import cindex
@@ -10,8 +9,16 @@ from crunge.clang import cindex
 from . import UserSet
 
 from .transpiler import Transpiler
-from .entry import Entry, FunctionEntry, FieldEntry, MethodEntry, StructEntry
+from .entry import Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructEntry, create_entry
+from .yaml import load_yaml
 
+entry_cls_map = {
+    'function': FunctionEntry,
+    'ctor': CtorEntry,
+    'field': FieldEntry,
+    'method': MethodEntry,
+    'struct': StructEntry
+}
 
 class Options:
     def __init__(self, *options, **kwargs):
@@ -37,17 +44,11 @@ class Generator(Transpiler):
         self.config = config
         self.options = { 'save': True }
         for key, value in config.items():
-            #print(config[key])
-            if key == 'function':
-                self.create_entries(FunctionEntry, value)
-            elif key == 'field':
-                self.create_entries(FieldEntry, value)
-            elif key == 'method':
-                self.create_entries(MethodEntry, value)
-            elif key == 'struct':
-                self.create_entries(StructEntry, value)
+            #logger.debug(config[key])
+            if '.' in key:
+                self.create_entry(key, value)
             else:
-                setattr(self, key, config[key])
+                setattr(self, key, value)
 
         for key in kwargs:
             if key == 'options':
@@ -66,22 +67,27 @@ class Generator(Transpiler):
         #self.path = Path(self.source).absolute()
         self.mapped.append(self.path.name)
 
-    def create_entries(self, cls: Entry, category):
-        for key, value in category.items():
-            entry = cls(value)
-            if entry.exclude:
-                self.excludes.append(key)
-            if entry.overload:
-                self.overloads.append(key)
-            self.entries[key] = entry
+    def create_entry(self, key, value):
+        s = key.split('.')
+        cls = entry_cls_map[s[0]]
+        entry = cls(value)
+
+        if entry.exclude:
+            self.excludes.append(s[1])
+        if entry.overload:
+            self.overloads.append(s[1])
+
+        self.entries[s[1]] = entry
+
+        return entry
 
     @classmethod
     def create(self, name="bindgen"):
-        filename = f'{name}.toml'
+        filename = f'{name}.yaml'
         print(f'processing:  {filename}')
         path = Path(os.getcwd(), '.bindgen', filename)
-        #print(path)
-        config = toml.load(path)
+        #logger.debug(path)
+        config = load_yaml(path)
         config['name'] = name
         instance = Generator(config)
         instance.import_actions()
@@ -101,16 +107,15 @@ class Generator(Transpiler):
         logger.debug(self.path)
         #tu = cindex.Index.create().parse(self.path, args=self.flags)
         tu = cindex.TranslationUnit.from_source(self.path, args=self.flags, options=cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD)
-        self.begin(tu)
-        self.scope.indent = 1
-        self.parse_overloads(tu.cursor)
-        self.parse_definitions(tu.cursor)
-        self.scope.indent = 0
-        #self.scope(self.footer)
+
+        with self:
+            self.visit_overloads(tu.cursor)
+            self.visit_children(tu.cursor)
+
         #Jinja
         config = self.config
-        #print(self.config)
-        config['body'] = self.scope.text
+        #logger.debug(self.config)
+        config['body'] = self.text
         self.searchpath = Path('.')  / '.bindgen'
         loader = jinja2.FileSystemLoader(searchpath=self.searchpath)
         env = jinja2.Environment(loader=loader)

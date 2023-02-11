@@ -424,6 +424,7 @@ void init_generated(py::module &_implot, Registry &registry) {
 
 
     PYCLASS_BEGIN(_implot, ImPlotPoint, Point)
+
     Point.def_readwrite("x", &ImPlotPoint::x);
     Point.def_readwrite("y", &ImPlotPoint::y);
     Point.def(py::init<>());
@@ -437,6 +438,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     PYCLASS_END(_implot, ImPlotPoint, Point)
 
     PYCLASS_BEGIN(_implot, ImPlotRange, Range)
+
     Range.def_readwrite("min", &ImPlotRange::Min);
     Range.def_readwrite("max", &ImPlotRange::Max);
     Range.def(py::init<>());
@@ -458,6 +460,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     PYCLASS_END(_implot, ImPlotRange, Range)
 
     PYCLASS_BEGIN(_implot, ImPlotRect, Rect)
+
     Rect.def_readwrite("x", &ImPlotRect::X);
     Rect.def_readwrite("y", &ImPlotRect::Y);
     Rect.def(py::init<>());
@@ -488,6 +491,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     PYCLASS_END(_implot, ImPlotRect, Rect)
 
     PYCLASS_BEGIN(_implot, ImPlotStyle, Style)
+
     Style.def_readwrite("line_weight", &ImPlotStyle::LineWeight);
     Style.def_readwrite("marker", &ImPlotStyle::Marker);
     Style.def_readwrite("marker_size", &ImPlotStyle::MarkerSize);
@@ -524,6 +528,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     PYCLASS_END(_implot, ImPlotStyle, Style)
 
     PYCLASS_BEGIN(_implot, ImPlotInputMap, InputMap)
+
     InputMap.def_readwrite("pan", &ImPlotInputMap::Pan);
     InputMap.def_readwrite("pan_mod", &ImPlotInputMap::PanMod);
     InputMap.def_readwrite("fit", &ImPlotInputMap::Fit);

@@ -31,6 +31,7 @@ void init_platform(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::InternalData, InternalData)
+
     InternalData.def_readwrite("caps", &bgfx::InternalData::caps);
     InternalData.def_readwrite("context", &bgfx::InternalData::context);
     PYCLASS_END(_bgfx, bgfx::InternalData, InternalData)

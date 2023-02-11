@@ -11,61 +11,58 @@ class Transpiler(TranspilerBase):
     def __init__(self):
         super().__init__()
 
-    def parse_enum(self, node):
+    def visit_enum(self, node):
         if self.is_forward_declaration(node):
             return
         if node.is_scoped_enum:
-            return self.parse_scoped_enum(node)
+            return self.visit_scoped_enum(node)
 
-        logger.debug(node.spelling)
-        logger.debug(dir(node))
+        #logger.debug(node.spelling)
         # logger.debug(node.enum_type.spelling)
 
-        self.scope(
+        self(
             f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
         )
-        self.scope.indent += 1
-        for value in node.get_children():
-            self.scope(
-                f'.value("{self.format_enum(value.spelling)}", {value.spelling})'
-            )
-        self.scope(".export_values();")
-        self.scope.indent -= 1
-        self.scope("")
+        with self:
+            for value in node.get_children():
+                self(
+                    f'.value("{self.format_enum(value.spelling)}", {value.spelling})'
+                )
+            self(".export_values();")
+        self()
 
-    def parse_scoped_enum(self, node):
+    def visit_scoped_enum(self, node):
         logger.debug(node.spelling)
         clsname = self.spell(node)
         # logger.debug(clsname)
         pyname = self.format_type(node.spelling)
-        self.scope(f"PYENUM_SCOPED_BEGIN({self.module}, {clsname}, {pyname})")
-        self.scope(pyname)
-        self.scope.indent += 1
-        for value in node.get_children():
-            self.scope(
-                f'.value("{self.format_enum(value.spelling)}", {self.spell(node)}::{value.spelling})'
-            )
-        self.scope(".export_values();")
-        self.scope.indent -= 1
-        self.scope(f"PYENUM_SCOPED_END({self.module}, {clsname}, {pyname})\n")
-        self.scope("")
+        self(f"PYENUM_SCOPED_BEGIN({self.module}, {clsname}, {pyname})")
+        self(pyname)
+        with self:
+            for value in node.get_children():
+                self(
+                    f'.value("{self.format_enum(value.spelling)}", {self.spell(node)}::{value.spelling})'
+                )
+            self(".export_values();")
+        self(f"PYENUM_SCOPED_END({self.module}, {clsname}, {pyname})\n")
+        self()
 
     # TODO: Handle is_deleted_method
-    def parse_constructor(self, node, cls):
+    def visit_constructor(self, node, cls):
         #TODO: This should be in Clang 15.06, but it's not ...
         #if node.is_deleted_method():
         #    return
         arguments = [a for a in node.get_arguments()]
         if len(arguments):
-            self.scope(
+            self(
                 f"{self.module_(cls)}.def(py::init<{self.arg_types(arguments)}>()"
             )
             self.write_pyargs(arguments)
-            self.scope(");")
+            self(");")
         else:
-            self.scope(f"{self.module_(cls)}.def(py::init<>());")
+            self(f"{self.module_(cls)}.def(py::init<>());")
 
-    def parse_field(self, node, cls):
+    def visit_field(self, node, cls):
         if node.access_specifier == AccessSpecifier.PRIVATE:
             return
         if not self.is_property_mappable(node):
@@ -79,32 +76,30 @@ class Transpiler(TranspilerBase):
             logger.debug(f"{node.spelling}: {ptr}")
 
         if self.is_property_readonly(node):
-            self.scope(f'{self.module_(cls)}.def_readonly("{pyname}", &{cname});')
+            self(f'{self.module_(cls)}.def_readonly("{pyname}", &{cname});')
         else:
             if self.is_char_pointer(node):
                 logger.debug(f"{node.spelling}: is char*")
-                self.parse_char_ptr_field(node, cls, pyname, cname)
+                self.visit_char_ptr_field(node, cls, pyname, cname)
             else:
-                self.scope(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
+                self(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
 
-    def parse_char_ptr_field(self, node, cls, pyname, cname):
+    def visit_char_ptr_field(self, node, cls, pyname, cname):
         pname = self.spell(node.semantic_parent)
         name = node.spelling
-        #self.scope(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
-        self.scope(f'{self.module_(cls)}.def_property("{pyname}",')
-        self.scope.indent += 1
-        self.scope(
-        f'[](const {pname}& self)' '{'
-        f' return self.{name};'
-        ' },'
-        f'[]({pname}& self, std::string source)' '{'
-        ' char* c = (char *)malloc(source.size());'
-        ' strcpy(c, source.c_str());'
-        f' self.{name} = c;'
-        ' }'
-        )
-        self.scope.indent -= 1
-        self.scope(');')
+        self(f'{self.module_(cls)}.def_property("{pyname}",')
+        with self:
+            self(
+            f'[](const {pname}& self)' '{'
+            f' return self.{name};'
+            ' },'
+            f'[]({pname}& self, std::string source)' '{'
+            ' char* c = (char *)malloc(source.size());'
+            ' strcpy(c, source.c_str());'
+            f' self.{name} = c;'
+            ' }'
+            )
+        self(');')
 
     def should_wrap_function(self, node):
         if node.type.is_function_variadic():
@@ -158,7 +153,7 @@ class Transpiler(TranspilerBase):
         else:
             return "py::return_value_policy::automatic_reference"
 
-    def parse_function(self, node, cls=None):
+    def visit_function(self, node, cls=None):
         # print(node.spelling)
         if node.access_specifier == AccessSpecifier.PRIVATE:
             return
@@ -171,34 +166,34 @@ class Transpiler(TranspilerBase):
             if self.is_overloaded(node):
                 cname = f"py::overload_cast<{self.arg_types(arguments)}>({cname})"
             if self.should_wrap_function(node):
-                self.scope(f'{mname}.def("{pyname}", []({self.arg_string(arguments)})')
-                self.scope("{")
+                self(f'{mname}.def("{pyname}", []({self.arg_string(arguments)})')
+                self("{")
                 ret = "" if self.is_function_void_return(node) else "auto ret = "
-                self.scope(f"    {ret}{self.spell(node)}({self.arg_names(arguments)});")
-                self.scope(f"    return {self.get_function_return(node)};")
-                self.scope("}")
+                with self:
+                    self(f"{ret}{self.spell(node)}({self.arg_names(arguments)});")
+                    self(f"return {self.get_function_return(node)};")
+                self("}")
             else:
-                self.scope(f'{mname}.def("{pyname}", {cname}')
+                self(f'{mname}.def("{pyname}", {cname}')
             self.write_pyargs(arguments)
-            self.scope(f", {self.get_return_policy(node)});\n")
+            self(f", {self.get_return_policy(node)});\n")
 
-    def parse_struct_enum(self, node, clsname, pyname):
+    def visit_struct_enum(self, node, clsname, pyname):
         if not node.get_children():
             return
-        self.scope(
+        self(
             f'py::enum_<{self.spell(node)}>({self.module}, "{pyname}", py::arithmetic())'
         )
         logger.debug(node.spelling)
-        self.scope.indent += 1
-        for value in node.get_children():
-            self.scope(
-                f'.value("{self.format_enum(value.spelling)}", {clsname}::Enum::{value.spelling})'
-            )
-        self.scope(".export_values();")
-        self.scope.indent -= 1
-        self.scope("")
+        with self:
+            for value in node.get_children():
+                self(
+                    f'.value("{self.format_enum(value.spelling)}", {clsname}::Enum::{value.spelling})'
+                )
+            self(".export_values();")
+        self("")
 
-    def parse_struct(self, node):
+    def visit_struct(self, node):
         if self.is_class_mappable(node):
             clsname = self.spell(node)
             # logger.debug(clsname)
@@ -216,69 +211,57 @@ class Transpiler(TranspilerBase):
                         base = child
                 if base:
                     basename = self.spell(base)
-                    self.scope(f"PYCLASS_INHERIT_BEGIN({self.module}, {clsname}, {basename}, {pyname})")
+                    self(f"PYCLASS_INHERIT_BEGIN({self.module}, {clsname}, {basename}, {pyname})\n")
                 else:
-                    self.scope(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})")
+                    self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
-                    self.parse_constructor(child, node)
+                    self.visit_constructor(child, node)
                 elif child.kind == cindex.CursorKind.CXX_METHOD:
-                    self.parse_function(child, node)
+                    self.visit_function(child, node)
                 elif child.kind == cindex.CursorKind.FIELD_DECL:
-                    self.parse_field(child, node)
+                    self.visit_field(child, node)
                 elif child.kind == cindex.CursorKind.ENUM_DECL:
-                    self.parse_struct_enum(child, clsname, pyname)
+                    self.visit_struct_enum(child, clsname, pyname)
 
             if not wrapped:
-                self.scope(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
+                self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
 
-    def parse_class(self, node):
+    def visit_class(self, node):
         if self.is_class_mappable(node):
             clsname = self.spell(node)
             # logger.debug(clsname)
             pyname = self.format_type(node.spelling)
-            self.scope(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})")
+            self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
-                    self.parse_constructor(child, node)
+                    self.visit_constructor(child, node)
                 elif child.kind == cindex.CursorKind.FUNCTION_DECL:
-                    self.parse_function(child, node)
+                    self.visit_function(child, node)
                 elif child.kind == cindex.CursorKind.CXX_METHOD:
-                    self.parse_function(child, node)
+                    self.visit_function(child, node)
                 elif child.kind == cindex.CursorKind.FIELD_DECL:
-                    self.parse_field(child, node)
-            self.scope(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
+                    self.visit_field(child, node)
+            self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
 
-    def parse_var(self, node):
-        logger.debug(f"Not implemented:  parse_var: {node.spelling}")
+    def visit_var(self, node):
+        logger.debug(f"Not implemented:  visit_var: {node.spelling}")
 
-    def dispatch(self, node):
+    def visit(self, node):
         self.actions[node.kind](self, node)
 
-    def parse_definitions(self, node):
+    def visit_children(self, node):
         for child in node.get_children():
             if not self.is_node_mappable(child):
                 continue
-            # print(child.spelling, ':  ', child.kind)
+            # logger.debug(child.spelling, ':  ', child.kind)
             kind = child.kind
             if kind in self.actions:
-                self.dispatch(child)
-            """
-            elif kind == cindex.CursorKind.ENUM_DECL:
-                self.parse_enum(child)
-            elif kind == cindex.CursorKind.VAR_DECL:
-                self.parse_var(child)
-            elif kind == cindex.CursorKind.FUNCTION_DECL:
-                self.parse_function(child)
-            elif kind == cindex.CursorKind.NAMESPACE:
-                self.parse_definitions(child)
-            elif kind == cindex.CursorKind.UNEXPOSED_DECL:
-                self.parse_definitions(child)
-            """
+                self.visit(child)
 
-    def parse_overloads(self, node):
+    def visit_overloads(self, node):
         for child in node.get_children():
             if child.kind in [
                 cindex.CursorKind.CXX_METHOD,
@@ -290,4 +273,4 @@ class Transpiler(TranspilerBase):
                 else:
                     self.overloaded.visited.add(key)
             elif self.is_node_mappable(child):
-                self.parse_overloads(child)
+                self.visit_overloads(child)

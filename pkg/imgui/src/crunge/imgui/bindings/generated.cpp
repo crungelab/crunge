@@ -13,6 +13,7 @@ namespace py = pybind11;
 
 void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_BEGIN(_imgui, ImVec2, Vec2)
+
     Vec2.def_readwrite("x", &ImVec2::x);
     Vec2.def_readwrite("y", &ImVec2::y);
     Vec2.def(py::init<>());
@@ -23,6 +24,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImVec2, Vec2)
 
     PYCLASS_BEGIN(_imgui, ImVec4, Vec4)
+
     Vec4.def_readwrite("x", &ImVec4::x);
     Vec4.def_readwrite("y", &ImVec4::y);
     Vec4.def_readwrite("z", &ImVec4::z);
@@ -2668,9 +2670,11 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
 
     PYCLASS_BEGIN(_imgui, ImNewWrapper, NewWrapper)
+
     PYCLASS_END(_imgui, ImNewWrapper, NewWrapper)
 
     PYCLASS_BEGIN(_imgui, ImGuiStyle, Style)
+
     Style.def_readwrite("alpha", &ImGuiStyle::Alpha);
     Style.def_readwrite("disabled_alpha", &ImGuiStyle::DisabledAlpha);
     Style.def_readwrite("window_padding", &ImGuiStyle::WindowPadding);
@@ -2719,6 +2723,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiStyle, Style)
 
     PYCLASS_BEGIN(_imgui, ImGuiKeyData, KeyData)
+
     KeyData.def_readwrite("down", &ImGuiKeyData::Down);
     KeyData.def_readwrite("down_duration", &ImGuiKeyData::DownDuration);
     KeyData.def_readwrite("down_duration_prev", &ImGuiKeyData::DownDurationPrev);
@@ -2726,6 +2731,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiKeyData, KeyData)
 
     PYCLASS_BEGIN(_imgui, ImGuiIO, IO)
+
     IO.def_readwrite("config_flags", &ImGuiIO::ConfigFlags);
     IO.def_readwrite("backend_flags", &ImGuiIO::BackendFlags);
     IO.def_readwrite("display_size", &ImGuiIO::DisplaySize);
@@ -2892,6 +2898,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiIO, IO)
 
     PYCLASS_BEGIN(_imgui, ImGuiInputTextCallbackData, InputTextCallbackData)
+
     InputTextCallbackData.def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag);
     InputTextCallbackData.def_readwrite("flags", &ImGuiInputTextCallbackData::Flags);
     InputTextCallbackData.def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData);
@@ -2930,6 +2937,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiInputTextCallbackData, InputTextCallbackData)
 
     PYCLASS_BEGIN(_imgui, ImGuiSizeCallbackData, SizeCallbackData)
+
     SizeCallbackData.def_readwrite("user_data", &ImGuiSizeCallbackData::UserData);
     SizeCallbackData.def_readwrite("pos", &ImGuiSizeCallbackData::Pos);
     SizeCallbackData.def_readwrite("current_size", &ImGuiSizeCallbackData::CurrentSize);
@@ -2937,6 +2945,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiSizeCallbackData, SizeCallbackData)
 
     PYCLASS_BEGIN(_imgui, ImGuiWindowClass, WindowClass)
+
     WindowClass.def_readwrite("class_id", &ImGuiWindowClass::ClassId);
     WindowClass.def_readwrite("parent_viewport_id", &ImGuiWindowClass::ParentViewportId);
     WindowClass.def_readwrite("viewport_flags_override_set", &ImGuiWindowClass::ViewportFlagsOverrideSet);
@@ -2949,6 +2958,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiWindowClass, WindowClass)
 
     PYCLASS_BEGIN(_imgui, ImGuiPayload, Payload)
+
     Payload.def_readwrite("data", &ImGuiPayload::Data);
     Payload.def_readwrite("data_size", &ImGuiPayload::DataSize);
     Payload.def_readwrite("source_id", &ImGuiPayload::SourceId);
@@ -2974,6 +2984,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiPayload, Payload)
 
     PYCLASS_BEGIN(_imgui, ImGuiTableColumnSortSpecs, TableColumnSortSpecs)
+
     TableColumnSortSpecs.def_readwrite("column_user_id", &ImGuiTableColumnSortSpecs::ColumnUserID);
     TableColumnSortSpecs.def_readwrite("column_index", &ImGuiTableColumnSortSpecs::ColumnIndex);
     TableColumnSortSpecs.def_readwrite("sort_order", &ImGuiTableColumnSortSpecs::SortOrder);
@@ -2981,6 +2992,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiTableColumnSortSpecs, TableColumnSortSpecs)
 
     PYCLASS_BEGIN(_imgui, ImGuiTableSortSpecs, TableSortSpecs)
+
     TableSortSpecs.def_readwrite("specs", &ImGuiTableSortSpecs::Specs);
     TableSortSpecs.def_readwrite("specs_count", &ImGuiTableSortSpecs::SpecsCount);
     TableSortSpecs.def_readwrite("specs_dirty", &ImGuiTableSortSpecs::SpecsDirty);
@@ -2988,11 +3000,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiTableSortSpecs, TableSortSpecs)
 
     PYCLASS_BEGIN(_imgui, ImGuiOnceUponAFrame, OnceUponAFrame)
+
     OnceUponAFrame.def(py::init<>());
     OnceUponAFrame.def_readwrite("ref_frame", &ImGuiOnceUponAFrame::RefFrame);
     PYCLASS_END(_imgui, ImGuiOnceUponAFrame, OnceUponAFrame)
 
     PYCLASS_BEGIN(_imgui, ImGuiTextFilter, TextFilter)
+
     TextFilter.def(py::init<const char *>()
     , py::arg("default_filter") = nullptr
     );
@@ -3020,6 +3034,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiTextFilter, TextFilter)
 
     PYCLASS_BEGIN(_imgui, ImGuiStorage, Storage)
+
     Storage.def("clear", &ImGuiStorage::Clear
     , py::return_value_policy::automatic_reference);
 
@@ -3092,6 +3107,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiStorage, Storage)
 
     PYCLASS_BEGIN(_imgui, ImColor, Color)
+
     Color.def_readwrite("value", &ImColor::Value);
     Color.def(py::init<>());
     Color.def(py::init<float, float, float, float>()
@@ -3122,6 +3138,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImColor, Color)
 
     PYCLASS_BEGIN(_imgui, ImDrawCmd, DrawCmd)
+
     DrawCmd.def_readwrite("clip_rect", &ImDrawCmd::ClipRect);
     DrawCmd.def_readwrite("texture_id", &ImDrawCmd::TextureId);
     DrawCmd.def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset);
@@ -3135,21 +3152,25 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImDrawCmd, DrawCmd)
 
     PYCLASS_BEGIN(_imgui, ImDrawVert, DrawVert)
+
     DrawVert.def_readwrite("pos", &ImDrawVert::pos);
     DrawVert.def_readwrite("uv", &ImDrawVert::uv);
     DrawVert.def_readwrite("col", &ImDrawVert::col);
     PYCLASS_END(_imgui, ImDrawVert, DrawVert)
 
     PYCLASS_BEGIN(_imgui, ImDrawCmdHeader, DrawCmdHeader)
+
     DrawCmdHeader.def_readwrite("clip_rect", &ImDrawCmdHeader::ClipRect);
     DrawCmdHeader.def_readwrite("texture_id", &ImDrawCmdHeader::TextureId);
     DrawCmdHeader.def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset);
     PYCLASS_END(_imgui, ImDrawCmdHeader, DrawCmdHeader)
 
     PYCLASS_BEGIN(_imgui, ImDrawChannel, DrawChannel)
+
     PYCLASS_END(_imgui, ImDrawChannel, DrawChannel)
 
     PYCLASS_BEGIN(_imgui, ImDrawListSplitter, DrawListSplitter)
+
     DrawListSplitter.def(py::init<>());
     DrawListSplitter.def("clear", &ImDrawListSplitter::Clear
     , py::return_value_policy::automatic_reference);
@@ -3205,6 +3226,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
 
     PYCLASS_BEGIN(_imgui, ImDrawList, DrawList)
+
     DrawList.def_readwrite("cmd_buffer", &ImDrawList::CmdBuffer);
     DrawList.def_readwrite("idx_buffer", &ImDrawList::IdxBuffer);
     DrawList.def_readwrite("vtx_buffer", &ImDrawList::VtxBuffer);
@@ -3544,6 +3566,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImDrawList, DrawList)
 
     PYCLASS_BEGIN(_imgui, ImDrawData, DrawData)
+
     DrawData.def_readwrite("valid", &ImDrawData::Valid);
     DrawData.def_readwrite("cmd_lists_count", &ImDrawData::CmdListsCount);
     DrawData.def_readwrite("total_idx_count", &ImDrawData::TotalIdxCount);
@@ -3566,6 +3589,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImDrawData, DrawData)
 
     PYCLASS_BEGIN(_imgui, ImFontConfig, FontConfig)
+
     FontConfig.def_readwrite("font_data", &ImFontConfig::FontData);
     FontConfig.def_readwrite("font_data_size", &ImFontConfig::FontDataSize);
     FontConfig.def_readwrite("font_data_owned_by_atlas", &ImFontConfig::FontDataOwnedByAtlas);
@@ -3589,6 +3613,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImFontConfig, FontConfig)
 
     PYCLASS_BEGIN(_imgui, ImFontGlyph, FontGlyph)
+
     FontGlyph.def_readwrite("advance_x", &ImFontGlyph::AdvanceX);
     FontGlyph.def_readwrite("x0", &ImFontGlyph::X0);
     FontGlyph.def_readwrite("y0", &ImFontGlyph::Y0);
@@ -3601,6 +3626,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImFontGlyph, FontGlyph)
 
     PYCLASS_BEGIN(_imgui, ImFontGlyphRangesBuilder, FontGlyphRangesBuilder)
+
     FontGlyphRangesBuilder.def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars);
     FontGlyphRangesBuilder.def(py::init<>());
     FontGlyphRangesBuilder.def("clear", &ImFontGlyphRangesBuilder::Clear
@@ -3634,6 +3660,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImFontGlyphRangesBuilder, FontGlyphRangesBuilder)
 
     PYCLASS_BEGIN(_imgui, ImFontAtlasCustomRect, FontAtlasCustomRect)
+
     FontAtlasCustomRect.def_readwrite("width", &ImFontAtlasCustomRect::Width);
     FontAtlasCustomRect.def_readwrite("height", &ImFontAtlasCustomRect::Height);
     FontAtlasCustomRect.def_readwrite("x", &ImFontAtlasCustomRect::X);
@@ -3659,6 +3686,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
 
     PYCLASS_BEGIN(_imgui, ImFontAtlas, FontAtlas)
+
     FontAtlas.def(py::init<>());
     FontAtlas.def("add_font", &ImFontAtlas::AddFont
     , py::arg("font_cfg")
@@ -3756,6 +3784,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImFontAtlas, FontAtlas)
 
     PYCLASS_BEGIN(_imgui, ImFont, Font)
+
     Font.def_readwrite("index_advance_x", &ImFont::IndexAdvanceX);
     Font.def_readwrite("fallback_advance_x", &ImFont::FallbackAdvanceX);
     Font.def_readwrite("font_size", &ImFont::FontSize);
@@ -3885,6 +3914,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
 
     PYCLASS_BEGIN(_imgui, ImGuiViewport, Viewport)
+
     Viewport.def_readwrite("id", &ImGuiViewport::ID);
     Viewport.def_readwrite("flags", &ImGuiViewport::Flags);
     Viewport.def_readwrite("pos", &ImGuiViewport::Pos);
@@ -3912,6 +3942,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiViewport, Viewport)
 
     PYCLASS_BEGIN(_imgui, ImGuiPlatformImeData, PlatformeData)
+
     PlatformeData.def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible);
     PlatformeData.def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos);
     PlatformeData.def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight);

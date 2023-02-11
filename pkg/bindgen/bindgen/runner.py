@@ -32,6 +32,6 @@ class Runner:
 
     def gen_all(self):
         path = Path(os.getcwd(), '.bindgen')
-        files = path.glob('*.toml')
+        files = path.glob('*.yaml')
         for file in files:
             self.gen(file.stem)

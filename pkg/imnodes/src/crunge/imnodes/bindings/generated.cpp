@@ -108,6 +108,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
 
 
     PYCLASS_BEGIN(_imnodes, ImNodesIO, IO)
+
     IO.def_readwrite("emulate_three_button_mouse", &ImNodesIO::EmulateThreeButtonMouse);
     IO.def_readwrite("link_detach_with_modifier_click", &ImNodesIO::LinkDetachWithModifierClick);
     IO.def_readwrite("multiple_select_modifier", &ImNodesIO::MultipleSelectModifier);
@@ -117,6 +118,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
     PYCLASS_END(_imnodes, ImNodesIO, IO)
 
     PYCLASS_BEGIN(_imnodes, ImNodesStyle, Style)
+
     Style.def_readwrite("grid_spacing", &ImNodesStyle::GridSpacing);
     Style.def_readwrite("node_corner_rounding", &ImNodesStyle::NodeCornerRounding);
     Style.def_readwrite("node_padding", &ImNodesStyle::NodePadding);

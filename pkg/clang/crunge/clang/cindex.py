@@ -64,7 +64,7 @@ from __future__ import absolute_import, division, print_function
 
 from ctypes import *
 
-import clang.enumerations
+from . import enumerations
 
 import os
 import sys
@@ -4307,7 +4307,7 @@ class Config(object):
         return True
 
 def register_enumerations():
-    for name, value in clang.enumerations.TokenKinds:
+    for name, value in enumerations.TokenKinds:
         TokenKind.register(value, name)
 
 conf = Config()

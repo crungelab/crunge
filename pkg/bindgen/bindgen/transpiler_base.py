@@ -1,28 +1,15 @@
 import re
 from pathlib import Path
 from loguru import logger
+
 #from clang import cindex
-
 from crunge.clang import cindex
-
-from . import UserSet
-
-class Scope:
-    def __init__(self, node):
-        self.node = node
-        self.indent = 0
-        self.text = ''
-
-    def __call__(self, line):
-        if len(line):
-            self.text += ' ' * self.indent * 4
-            self.text += line.replace('>>', '> >')
-        self.text += '\n'
 
 
 class TranspilerBase:
     def __init__(self):
-        self.scopes = []
+        self.indentation = 0
+        self.text = ''
         self.source = ''
         self.mapped = [] #headers we want to generate bindings for
         self.target = ''
@@ -35,15 +22,23 @@ class TranspilerBase:
         self.overloads = []
         self.entries = {}
 
-    @property
-    def scope(self):
-        return self.scopes[-1]
-    
-    def begin(self, node):
-        self.scopes.append(Scope(node))
+    def __call__(self, line=""):
+        if len(line):
+            self.text += ' ' * self.indentation * 4
+            self.text += line.replace('>>', '> >')
+        self.text += '\n'
 
-    def end(self):
-        return self.scopes.pop()
+    def __enter__(self):
+        self.indent()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.dedent()
+
+    def indent(self):
+        self.indentation +=1
+
+    def dedent(self):
+        self.indentation -=1
         
     def snake(self, name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
@@ -83,12 +78,6 @@ class TranspilerBase:
         #logger.debug(node.spelling)
         if self.spell(node) in self.excluded:
             return True
-        #entry = self.entries.get(self.spell(node))
-        #if not entry:
-        #    return False
-        #if entry.exclude:
-        #    return True
-        #elif node.spelling.startswith('_'):
         if node.spelling.startswith('_'):
             return True
         return False
@@ -203,8 +192,8 @@ class TranspilerBase:
                 elif not len(default):
                     default = self.default_from_tokens(child.get_tokens())
             default = self.defaults.get(argument.spelling, default)
-            #print(argument.spelling)
-            #print(default)
+            #logger.debug(argument.spelling)
+            #logger.debug(default)
             if len(default):
                 default = ' = ' + default
-            self.scope(f', py::arg("{self.format_attribute(argument.spelling)}"){default}')
+            self(f', py::arg("{self.format_attribute(argument.spelling)}"){default}')
