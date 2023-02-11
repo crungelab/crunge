@@ -87,7 +87,7 @@ void init_main(py::module &_wgpu, Registry &registry) {
     , py::arg("userdata"));*/
     PYEXTEND_END
 
-    PYEXTEND_BEGIN(wgpu::AdapterProperties, AdapterProperties)
+    /*PYEXTEND_BEGIN(wgpu::AdapterProperties, AdapterProperties)
         AdapterProperties.def(py::init<>());
     PYEXTEND_END
 
@@ -107,39 +107,8 @@ void init_main(py::module &_wgpu, Registry &registry) {
         TextureDescriptor.def(py::init<>());
     PYEXTEND_END
 
-    //TODO:GENERATE: need to define our own bitwise operators for scoped enums.
-    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::TextureUsage, TextureUsage)
-        //TextureUsage.def(py::self | py::self); //Doesn't work
-        TextureUsage.def("__or__", [](wgpu::TextureUsage& a, wgpu::TextureUsage& b) {
-        return (wgpu::TextureUsage)(a | b);
-            }, py::is_operator());
-    PYEXTEND_END
-
     PYEXTEND_BEGIN(wgpu::BufferDescriptor, BufferDescriptor)
         BufferDescriptor.def(py::init<>());
-    PYEXTEND_END
-
-    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::BufferUsage, BufferUsage)
-        //TextureUsage.def(py::self | py::self); //Doesn't work
-        BufferUsage.def("__or__", [](wgpu::BufferUsage& a, wgpu::BufferUsage& b) {
-        return (wgpu::BufferUsage)(a | b);
-            }, py::is_operator());
-    PYEXTEND_END
-
-    PYEXTEND_BEGIN(wgpu::Extent3D, Extent3D)
-        Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>()
-        , py::arg("width")
-        , py::arg("height")
-        , py::arg("depth")
-        );
-    PYEXTEND_END
-
-    PYEXTEND_BEGIN(wgpu::Origin3D, Origin3D)
-        Origin3D.def(py::init<uint32_t, uint32_t, uint32_t>()
-        , py::arg("x")
-        , py::arg("y")
-        , py::arg("z")
-        );
     PYEXTEND_END
 
     PYEXTEND_BEGIN(wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor)
@@ -164,15 +133,6 @@ void init_main(py::module &_wgpu, Registry &registry) {
 
     PYEXTEND_BEGIN(wgpu::RenderPassColorAttachment, RenderPassColorAttachment)
         RenderPassColorAttachment.def(py::init<>());
-    PYEXTEND_END
-
-    PYEXTEND_BEGIN(wgpu::Color, Color)
-        Color.def(py::init<float, float, float, float>()
-        , py::arg("r")
-        , py::arg("g")
-        , py::arg("b")
-        , py::arg("a")
-        );
     PYEXTEND_END
 
     PYEXTEND_BEGIN(wgpu::RenderPassDescriptor, RenderPassDescriptor)
@@ -206,6 +166,50 @@ void init_main(py::module &_wgpu, Registry &registry) {
     PYEXTEND_BEGIN(wgpu::TextureDataLayout, TextureDataLayout)
         TextureDataLayout.def(py::init<>());
     PYEXTEND_END
+
+    */
+
+    //TODO:GENERATE: need to define our own bitwise operators for scoped enums.
+    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::TextureUsage, TextureUsage)
+        //TextureUsage.def(py::self | py::self); //Doesn't work
+        TextureUsage.def("__or__", [](wgpu::TextureUsage& a, wgpu::TextureUsage& b) {
+        return (wgpu::TextureUsage)(a | b);
+            }, py::is_operator());
+    PYEXTEND_END
+
+    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::BufferUsage, BufferUsage)
+        //TextureUsage.def(py::self | py::self); //Doesn't work
+        BufferUsage.def("__or__", [](wgpu::BufferUsage& a, wgpu::BufferUsage& b) {
+        return (wgpu::BufferUsage)(a | b);
+            }, py::is_operator());
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::Extent3D, Extent3D)
+        Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>()
+        , py::arg("width")
+        , py::arg("height")
+        , py::arg("depth")
+        );
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::Origin3D, Origin3D)
+        Origin3D.def(py::init<uint32_t, uint32_t, uint32_t>()
+        , py::arg("x")
+        , py::arg("y")
+        , py::arg("z")
+        );
+    PYEXTEND_END
+
+
+    PYEXTEND_BEGIN(wgpu::Color, Color)
+        Color.def(py::init<float, float, float, float>()
+        , py::arg("r")
+        , py::arg("g")
+        , py::arg("b")
+        , py::arg("a")
+        );
+    PYEXTEND_END
+
 
     /*PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
         //ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);

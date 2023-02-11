@@ -55,13 +55,14 @@ def create_shader_module(device: wgpu.Device, source: str) -> wgpu.ShaderModule:
     descriptor.next_in_chain = wgsl_desc
     return device.create_shader_module(descriptor)
 
+"""
 def make_bind_group_layout(device: wgpu.Device, initializers: list[tuple[3]]):
     entries = wgpu.BindGroupLayoutEntries()
     for inizer in initializers:
         entry = wgpu.BindGroupLayoutEntry()
         entry.
         entries.append(entry)
-
+"""
 """
 struct BindGroupLayoutEntry {
     ChainedStruct const * nextInChain = nullptr;

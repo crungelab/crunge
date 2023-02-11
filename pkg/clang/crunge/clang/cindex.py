@@ -2936,7 +2936,6 @@ class TranslationUnit(ClangObject):
 
         if not ptr:
             raise TranslationUnitLoadError("Error parsing translation unit.")
-            #raise TranslationUnitLoadError(str(ptr))
 
         return cls(ptr, index=index)
 

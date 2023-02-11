@@ -2,8 +2,12 @@ class Entry:
     exclude: bool = False
     overload: bool = False
 
-    def __init__(self, config):
+    def __init__(self, key, config):
+        self.key = key
         self.configure(config)
+
+    def __repr__(self) -> str:
+        return f'<{self.__class__.__name__} key={self.key}>'
 
     def configure(self, config):
         #logger.debug(f"config: {config}")
@@ -22,22 +26,12 @@ class FieldEntry(Entry):
 class MethodEntry(Entry):
     pass
 
-class StructEntry(Entry):
+class StructOrClassEntry(Entry):
+    constructible: bool = True
+    has_constructor: bool = False
+
+class StructEntry(StructOrClassEntry):
     pass
 
-entry_map = {
-    'function': FunctionEntry,
-    'ctor': CtorEntry,
-    'field': FieldEntry,
-    'method': MethodEntry,
-    'struct': StructEntry
-}
-
-registry = {}
-
-def create_entry(key, value):
-    s = key.split('.')
-    cls = entry_map[s[0]]
-    entry = cls(value)
-    registry[s[1]] = entry
-    return entry
+class ClassEntry(StructOrClassEntry):
+    pass

@@ -1,10 +1,22 @@
 import re
 from pathlib import Path
+from contextlib import contextmanager
+
 from loguru import logger
 
 #from clang import cindex
 from crunge.clang import cindex
 
+from .entry import Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructEntry, ClassEntry
+
+entry_cls_map = {
+    'function': FunctionEntry,
+    'ctor': CtorEntry,
+    'field': FieldEntry,
+    'method': MethodEntry,
+    'struct': StructEntry,
+    'class': ClassEntry
+}
 
 class TranspilerBase:
     def __init__(self):
@@ -21,12 +33,28 @@ class TranspilerBase:
         self.excludes = []
         self.overloads = []
         self.entries = {}
+        self.entry_stack = []
+
+    @property
+    def entry(self):
+        return self.entry_stack [-1]
 
     def __call__(self, line=""):
         if len(line):
             self.text += ' ' * self.indentation * 4
             self.text += line.replace('>>', '> >')
         self.text += '\n'
+
+    @contextmanager
+    def enter(self, entry_key, value={}):
+        kind, key = entry_key.split('.')
+        entry = self.lookup_or_create(entry_key, value)
+        self.entry_stack.append(entry)
+
+        self.indent()
+        yield entry
+        self.dedent()
+        self.entry_stack.pop()
 
     def __enter__(self):
         self.indent()
@@ -39,7 +67,34 @@ class TranspilerBase:
 
     def dedent(self):
         self.indentation -=1
-        
+
+    def lookup(self, entry_key):
+        kind, key = entry_key.split('.')
+        if key in self.entries:
+            return self.entries[key]
+        return None
+
+    def lookup_or_create(self, entry_key, value):
+        kind, key = entry_key.split('.')
+        entry = self.lookup(entry_key)
+        if not entry:
+            entry = self.create_entry(entry_key, value)
+        return entry
+
+    def create_entry(self, entry_key, value):
+        kind, key = entry_key.split('.')
+        cls = entry_cls_map[kind]
+        entry = cls(key, value)
+
+        if entry.exclude:
+            self.excludes.append(key)
+        if entry.overload:
+            self.overloads.append(key)
+
+        self.entries[key] = entry
+
+        return entry
+
     def snake(self, name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
         return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()

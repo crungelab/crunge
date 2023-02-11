@@ -32,7 +32,7 @@ class Transpiler(TranspilerBase):
         self()
 
     def visit_scoped_enum(self, node):
-        logger.debug(node.spelling)
+        #logger.debug(node.spelling)
         clsname = self.spell(node)
         # logger.debug(clsname)
         pyname = self.format_type(node.spelling)
@@ -52,6 +52,7 @@ class Transpiler(TranspilerBase):
         #TODO: This should be in Clang 15.06, but it's not ...
         #if node.is_deleted_method():
         #    return
+        self.entry.has_constructor = True
         arguments = [a for a in node.get_arguments()]
         if len(arguments):
             self(
@@ -73,13 +74,13 @@ class Transpiler(TranspilerBase):
         # Need to log/track this because pointers can be a source of problems        
         if node.type.get_canonical().kind == cindex.TypeKind.POINTER:
             ptr = node.type.get_canonical().get_pointee().kind
-            logger.debug(f"{node.spelling}: {ptr}")
+            #logger.debug(f"{node.spelling}: {ptr}")
 
         if self.is_property_readonly(node):
             self(f'{self.module_(cls)}.def_readonly("{pyname}", &{cname});')
         else:
             if self.is_char_pointer(node):
-                logger.debug(f"{node.spelling}: is char*")
+                #logger.debug(f"{node.spelling}: is char*")
                 self.visit_char_ptr_field(node, cls, pyname, cname)
             else:
                 self(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
@@ -154,6 +155,12 @@ class Transpiler(TranspilerBase):
             return "py::return_value_policy::automatic_reference"
 
     def visit_function(self, node, cls=None):
+        self.visit_function_or_method(node, cls)
+
+    def visit_method(self, node, cls=None):
+        self.visit_function_or_method(node, cls)
+
+    def visit_function_or_method(self, node, cls=None):
         # print(node.spelling)
         if node.access_specifier == AccessSpecifier.PRIVATE:
             return
@@ -194,26 +201,28 @@ class Transpiler(TranspilerBase):
         self("")
 
     def visit_struct(self, node):
-        if self.is_class_mappable(node):
-            clsname = self.spell(node)
-            # logger.debug(clsname)
-            pyname = self.format_type(node.spelling)
-            children = list(node.get_children())  # it's an iterator
-            wrapped = False
-            # Handle the case of a struct with one enum child
-            if len(children) == 1:
-                first_child = children[0]
-                wrapped = first_child.kind == cindex.CursorKind.ENUM_DECL
-            if not wrapped:
-                base = None
-                for child in node.get_children():
-                    if child.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
-                        base = child
-                if base:
-                    basename = self.spell(base)
-                    self(f"PYCLASS_INHERIT_BEGIN({self.module}, {clsname}, {basename}, {pyname})\n")
-                else:
-                    self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
+        if not self.is_class_mappable(node):
+            return
+        clsname = self.spell(node)
+        # logger.debug(clsname)
+        pyname = self.format_type(node.spelling)
+        children = list(node.get_children())  # it's an iterator
+        wrapped = False
+        # Handle the case of a struct with one enum child
+        if len(children) == 1:
+            first_child = children[0]
+            wrapped = first_child.kind == cindex.CursorKind.ENUM_DECL
+        if not wrapped:
+            base = None
+            for child in node.get_children():
+                if child.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
+                    base = child
+            if base:
+                basename = self.spell(base)
+                self(f"PYCLASS_INHERIT_BEGIN({self.module}, {clsname}, {basename}, {pyname})\n")
+            else:
+                self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
+        with self.enter(f'struct.{clsname}') as entry:
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
@@ -224,27 +233,37 @@ class Transpiler(TranspilerBase):
                     self.visit_field(child, node)
                 elif child.kind == cindex.CursorKind.ENUM_DECL:
                     self.visit_struct_enum(child, clsname, pyname)
+            if not entry.has_constructor:
+                print(entry)
+                self(f"{self.module_(node)}.def(py::init<>());")
 
-            if not wrapped:
-                self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
+        if not wrapped:
+            self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
 
     def visit_class(self, node):
-        if self.is_class_mappable(node):
-            clsname = self.spell(node)
-            # logger.debug(clsname)
-            pyname = self.format_type(node.spelling)
-            self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
+        if not self.is_class_mappable(node):
+            return
+        clsname = self.spell(node)
+        # logger.debug(clsname)
+        pyname = self.format_type(node.spelling)
+        self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
+        with self.enter(f'class.{clsname}') as entry:
+            logger.debug(entry)
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
                     self.visit_constructor(child, node)
-                elif child.kind == cindex.CursorKind.FUNCTION_DECL:
-                    self.visit_function(child, node)
+                #elif child.kind == cindex.CursorKind.FUNCTION_DECL:
+                #    self.visit_function(child, node)
                 elif child.kind == cindex.CursorKind.CXX_METHOD:
-                    self.visit_function(child, node)
+                    self.visit_method(child, node)
                 elif child.kind == cindex.CursorKind.FIELD_DECL:
                     self.visit_field(child, node)
-            self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
+            if not entry.has_constructor:
+                print(entry)
+                self(f"{self.module_(node)}.def(py::init<>());")
+
+        self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
 
     def visit_var(self, node):
         logger.debug(f"Not implemented:  visit_var: {node.spelling}")

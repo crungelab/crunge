@@ -9,16 +9,8 @@ from crunge.clang import cindex
 from . import UserSet
 
 from .transpiler import Transpiler
-from .entry import Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructEntry, create_entry
 from .yaml import load_yaml
 
-entry_cls_map = {
-    'function': FunctionEntry,
-    'ctor': CtorEntry,
-    'field': FieldEntry,
-    'method': MethodEntry,
-    'struct': StructEntry
-}
 
 class Options:
     def __init__(self, *options, **kwargs):
@@ -66,20 +58,6 @@ class Generator(Transpiler):
         self.path = BASE_PATH / self.source
         #self.path = Path(self.source).absolute()
         self.mapped.append(self.path.name)
-
-    def create_entry(self, key, value):
-        s = key.split('.')
-        cls = entry_cls_map[s[0]]
-        entry = cls(value)
-
-        if entry.exclude:
-            self.excludes.append(s[1])
-        if entry.overload:
-            self.overloads.append(s[1])
-
-        self.entries[s[1]] = entry
-
-        return entry
 
     @classmethod
     def create(self, name="bindgen"):

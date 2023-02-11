@@ -14,28 +14,28 @@ namespace py = pybind11;
 void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_BEGIN(_imgui, ImVec2, Vec2)
 
-    Vec2.def_readwrite("x", &ImVec2::x);
-    Vec2.def_readwrite("y", &ImVec2::y);
-    Vec2.def(py::init<>());
-    Vec2.def(py::init<float, float>()
-    , py::arg("_x")
-    , py::arg("_y")
-    );
+        Vec2.def_readwrite("x", &ImVec2::x);
+        Vec2.def_readwrite("y", &ImVec2::y);
+        Vec2.def(py::init<>());
+        Vec2.def(py::init<float, float>()
+        , py::arg("_x")
+        , py::arg("_y")
+        );
     PYCLASS_END(_imgui, ImVec2, Vec2)
 
     PYCLASS_BEGIN(_imgui, ImVec4, Vec4)
 
-    Vec4.def_readwrite("x", &ImVec4::x);
-    Vec4.def_readwrite("y", &ImVec4::y);
-    Vec4.def_readwrite("z", &ImVec4::z);
-    Vec4.def_readwrite("w", &ImVec4::w);
-    Vec4.def(py::init<>());
-    Vec4.def(py::init<float, float, float, float>()
-    , py::arg("_x")
-    , py::arg("_y")
-    , py::arg("_z")
-    , py::arg("_w")
-    );
+        Vec4.def_readwrite("x", &ImVec4::x);
+        Vec4.def_readwrite("y", &ImVec4::y);
+        Vec4.def_readwrite("z", &ImVec4::z);
+        Vec4.def_readwrite("w", &ImVec4::w);
+        Vec4.def(py::init<>());
+        Vec4.def(py::init<float, float, float, float>()
+        , py::arg("_x")
+        , py::arg("_y")
+        , py::arg("_z")
+        , py::arg("_w")
+        );
     PYCLASS_END(_imgui, ImVec4, Vec4)
 
     _imgui.def("get_io", &ImGui::GetIO
@@ -2671,526 +2671,533 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_BEGIN(_imgui, ImNewWrapper, NewWrapper)
 
+        NewWrapper.def(py::init<>());
     PYCLASS_END(_imgui, ImNewWrapper, NewWrapper)
 
     PYCLASS_BEGIN(_imgui, ImGuiStyle, Style)
 
-    Style.def_readwrite("alpha", &ImGuiStyle::Alpha);
-    Style.def_readwrite("disabled_alpha", &ImGuiStyle::DisabledAlpha);
-    Style.def_readwrite("window_padding", &ImGuiStyle::WindowPadding);
-    Style.def_readwrite("window_rounding", &ImGuiStyle::WindowRounding);
-    Style.def_readwrite("window_border_size", &ImGuiStyle::WindowBorderSize);
-    Style.def_readwrite("window_min_size", &ImGuiStyle::WindowMinSize);
-    Style.def_readwrite("window_title_align", &ImGuiStyle::WindowTitleAlign);
-    Style.def_readwrite("window_menu_button_position", &ImGuiStyle::WindowMenuButtonPosition);
-    Style.def_readwrite("child_rounding", &ImGuiStyle::ChildRounding);
-    Style.def_readwrite("child_border_size", &ImGuiStyle::ChildBorderSize);
-    Style.def_readwrite("popup_rounding", &ImGuiStyle::PopupRounding);
-    Style.def_readwrite("popup_border_size", &ImGuiStyle::PopupBorderSize);
-    Style.def_readwrite("frame_padding", &ImGuiStyle::FramePadding);
-    Style.def_readwrite("frame_rounding", &ImGuiStyle::FrameRounding);
-    Style.def_readwrite("frame_border_size", &ImGuiStyle::FrameBorderSize);
-    Style.def_readwrite("item_spacing", &ImGuiStyle::ItemSpacing);
-    Style.def_readwrite("item_inner_spacing", &ImGuiStyle::ItemInnerSpacing);
-    Style.def_readwrite("cell_padding", &ImGuiStyle::CellPadding);
-    Style.def_readwrite("touch_extra_padding", &ImGuiStyle::TouchExtraPadding);
-    Style.def_readwrite("indent_spacing", &ImGuiStyle::IndentSpacing);
-    Style.def_readwrite("columns_min_spacing", &ImGuiStyle::ColumnsMinSpacing);
-    Style.def_readwrite("scrollbar_size", &ImGuiStyle::ScrollbarSize);
-    Style.def_readwrite("scrollbar_rounding", &ImGuiStyle::ScrollbarRounding);
-    Style.def_readwrite("grab_min_size", &ImGuiStyle::GrabMinSize);
-    Style.def_readwrite("grab_rounding", &ImGuiStyle::GrabRounding);
-    Style.def_readwrite("log_slider_deadzone", &ImGuiStyle::LogSliderDeadzone);
-    Style.def_readwrite("tab_rounding", &ImGuiStyle::TabRounding);
-    Style.def_readwrite("tab_border_size", &ImGuiStyle::TabBorderSize);
-    Style.def_readwrite("tab_min_width_for_close_button", &ImGuiStyle::TabMinWidthForCloseButton);
-    Style.def_readwrite("color_button_position", &ImGuiStyle::ColorButtonPosition);
-    Style.def_readwrite("button_text_align", &ImGuiStyle::ButtonTextAlign);
-    Style.def_readwrite("selectable_text_align", &ImGuiStyle::SelectableTextAlign);
-    Style.def_readwrite("display_window_padding", &ImGuiStyle::DisplayWindowPadding);
-    Style.def_readwrite("display_safe_area_padding", &ImGuiStyle::DisplaySafeAreaPadding);
-    Style.def_readwrite("mouse_cursor_scale", &ImGuiStyle::MouseCursorScale);
-    Style.def_readwrite("anti_aliased_lines", &ImGuiStyle::AntiAliasedLines);
-    Style.def_readwrite("anti_aliased_lines_use_tex", &ImGuiStyle::AntiAliasedLinesUseTex);
-    Style.def_readwrite("anti_aliased_fill", &ImGuiStyle::AntiAliasedFill);
-    Style.def_readwrite("curve_tessellation_tol", &ImGuiStyle::CurveTessellationTol);
-    Style.def_readwrite("circle_tessellation_max_error", &ImGuiStyle::CircleTessellationMaxError);
-    Style.def(py::init<>());
-    Style.def("scale_all_sizes", &ImGuiStyle::ScaleAllSizes
-    , py::arg("scale_factor")
-    , py::return_value_policy::automatic_reference);
+        Style.def_readwrite("alpha", &ImGuiStyle::Alpha);
+        Style.def_readwrite("disabled_alpha", &ImGuiStyle::DisabledAlpha);
+        Style.def_readwrite("window_padding", &ImGuiStyle::WindowPadding);
+        Style.def_readwrite("window_rounding", &ImGuiStyle::WindowRounding);
+        Style.def_readwrite("window_border_size", &ImGuiStyle::WindowBorderSize);
+        Style.def_readwrite("window_min_size", &ImGuiStyle::WindowMinSize);
+        Style.def_readwrite("window_title_align", &ImGuiStyle::WindowTitleAlign);
+        Style.def_readwrite("window_menu_button_position", &ImGuiStyle::WindowMenuButtonPosition);
+        Style.def_readwrite("child_rounding", &ImGuiStyle::ChildRounding);
+        Style.def_readwrite("child_border_size", &ImGuiStyle::ChildBorderSize);
+        Style.def_readwrite("popup_rounding", &ImGuiStyle::PopupRounding);
+        Style.def_readwrite("popup_border_size", &ImGuiStyle::PopupBorderSize);
+        Style.def_readwrite("frame_padding", &ImGuiStyle::FramePadding);
+        Style.def_readwrite("frame_rounding", &ImGuiStyle::FrameRounding);
+        Style.def_readwrite("frame_border_size", &ImGuiStyle::FrameBorderSize);
+        Style.def_readwrite("item_spacing", &ImGuiStyle::ItemSpacing);
+        Style.def_readwrite("item_inner_spacing", &ImGuiStyle::ItemInnerSpacing);
+        Style.def_readwrite("cell_padding", &ImGuiStyle::CellPadding);
+        Style.def_readwrite("touch_extra_padding", &ImGuiStyle::TouchExtraPadding);
+        Style.def_readwrite("indent_spacing", &ImGuiStyle::IndentSpacing);
+        Style.def_readwrite("columns_min_spacing", &ImGuiStyle::ColumnsMinSpacing);
+        Style.def_readwrite("scrollbar_size", &ImGuiStyle::ScrollbarSize);
+        Style.def_readwrite("scrollbar_rounding", &ImGuiStyle::ScrollbarRounding);
+        Style.def_readwrite("grab_min_size", &ImGuiStyle::GrabMinSize);
+        Style.def_readwrite("grab_rounding", &ImGuiStyle::GrabRounding);
+        Style.def_readwrite("log_slider_deadzone", &ImGuiStyle::LogSliderDeadzone);
+        Style.def_readwrite("tab_rounding", &ImGuiStyle::TabRounding);
+        Style.def_readwrite("tab_border_size", &ImGuiStyle::TabBorderSize);
+        Style.def_readwrite("tab_min_width_for_close_button", &ImGuiStyle::TabMinWidthForCloseButton);
+        Style.def_readwrite("color_button_position", &ImGuiStyle::ColorButtonPosition);
+        Style.def_readwrite("button_text_align", &ImGuiStyle::ButtonTextAlign);
+        Style.def_readwrite("selectable_text_align", &ImGuiStyle::SelectableTextAlign);
+        Style.def_readwrite("display_window_padding", &ImGuiStyle::DisplayWindowPadding);
+        Style.def_readwrite("display_safe_area_padding", &ImGuiStyle::DisplaySafeAreaPadding);
+        Style.def_readwrite("mouse_cursor_scale", &ImGuiStyle::MouseCursorScale);
+        Style.def_readwrite("anti_aliased_lines", &ImGuiStyle::AntiAliasedLines);
+        Style.def_readwrite("anti_aliased_lines_use_tex", &ImGuiStyle::AntiAliasedLinesUseTex);
+        Style.def_readwrite("anti_aliased_fill", &ImGuiStyle::AntiAliasedFill);
+        Style.def_readwrite("curve_tessellation_tol", &ImGuiStyle::CurveTessellationTol);
+        Style.def_readwrite("circle_tessellation_max_error", &ImGuiStyle::CircleTessellationMaxError);
+        Style.def(py::init<>());
+        Style.def("scale_all_sizes", &ImGuiStyle::ScaleAllSizes
+        , py::arg("scale_factor")
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImGuiStyle, Style)
 
     PYCLASS_BEGIN(_imgui, ImGuiKeyData, KeyData)
 
-    KeyData.def_readwrite("down", &ImGuiKeyData::Down);
-    KeyData.def_readwrite("down_duration", &ImGuiKeyData::DownDuration);
-    KeyData.def_readwrite("down_duration_prev", &ImGuiKeyData::DownDurationPrev);
-    KeyData.def_readwrite("analog_value", &ImGuiKeyData::AnalogValue);
+        KeyData.def_readwrite("down", &ImGuiKeyData::Down);
+        KeyData.def_readwrite("down_duration", &ImGuiKeyData::DownDuration);
+        KeyData.def_readwrite("down_duration_prev", &ImGuiKeyData::DownDurationPrev);
+        KeyData.def_readwrite("analog_value", &ImGuiKeyData::AnalogValue);
+        KeyData.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiKeyData, KeyData)
 
     PYCLASS_BEGIN(_imgui, ImGuiIO, IO)
 
-    IO.def_readwrite("config_flags", &ImGuiIO::ConfigFlags);
-    IO.def_readwrite("backend_flags", &ImGuiIO::BackendFlags);
-    IO.def_readwrite("display_size", &ImGuiIO::DisplaySize);
-    IO.def_readwrite("delta_time", &ImGuiIO::DeltaTime);
-    IO.def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate);
-    IO.def_property("ini_filename",
-        [](const ImGuiIO& self){ return self.IniFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.IniFilename = c; }
-    );
-    IO.def_property("log_filename",
-        [](const ImGuiIO& self){ return self.LogFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.LogFilename = c; }
-    );
-    IO.def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime);
-    IO.def_readwrite("mouse_double_click_max_dist", &ImGuiIO::MouseDoubleClickMaxDist);
-    IO.def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold);
-    IO.def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay);
-    IO.def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate);
-    IO.def_readwrite("hover_delay_normal", &ImGuiIO::HoverDelayNormal);
-    IO.def_readwrite("hover_delay_short", &ImGuiIO::HoverDelayShort);
-    IO.def_readwrite("user_data", &ImGuiIO::UserData);
-    IO.def_readwrite("fonts", &ImGuiIO::Fonts);
-    IO.def_readwrite("font_global_scale", &ImGuiIO::FontGlobalScale);
-    IO.def_readwrite("font_allow_user_scaling", &ImGuiIO::FontAllowUserScaling);
-    IO.def_readwrite("font_default", &ImGuiIO::FontDefault);
-    IO.def_readwrite("display_framebuffer_scale", &ImGuiIO::DisplayFramebufferScale);
-    IO.def_readwrite("config_docking_no_split", &ImGuiIO::ConfigDockingNoSplit);
-    IO.def_readwrite("config_docking_with_shift", &ImGuiIO::ConfigDockingWithShift);
-    IO.def_readwrite("config_docking_always_tab_bar", &ImGuiIO::ConfigDockingAlwaysTabBar);
-    IO.def_readwrite("config_docking_transparent_payload", &ImGuiIO::ConfigDockingTransparentPayload);
-    IO.def_readwrite("config_viewports_no_auto_merge", &ImGuiIO::ConfigViewportsNoAutoMerge);
-    IO.def_readwrite("config_viewports_no_task_bar_icon", &ImGuiIO::ConfigViewportsNoTaskBarIcon);
-    IO.def_readwrite("config_viewports_no_decoration", &ImGuiIO::ConfigViewportsNoDecoration);
-    IO.def_readwrite("config_viewports_no_default_parent", &ImGuiIO::ConfigViewportsNoDefaultParent);
-    IO.def_readwrite("mouse_draw_cursor", &ImGuiIO::MouseDrawCursor);
-    IO.def_readwrite("config_mac_osx_behaviors", &ImGuiIO::ConfigMacOSXBehaviors);
-    IO.def_readwrite("config_input_trickle_event_queue", &ImGuiIO::ConfigInputTrickleEventQueue);
-    IO.def_readwrite("config_input_text_cursor_blink", &ImGuiIO::ConfigInputTextCursorBlink);
-    IO.def_readwrite("config_input_text_enter_keep_active", &ImGuiIO::ConfigInputTextEnterKeepActive);
-    IO.def_readwrite("config_drag_click_to_input_text", &ImGuiIO::ConfigDragClickToInputText);
-    IO.def_readwrite("config_windows_resize_from_edges", &ImGuiIO::ConfigWindowsResizeFromEdges);
-    IO.def_readwrite("config_windows_move_from_title_bar_only", &ImGuiIO::ConfigWindowsMoveFromTitleBarOnly);
-    IO.def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer);
-    IO.def_property("backend_platform_name",
-        [](const ImGuiIO& self){ return self.BackendPlatformName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.BackendPlatformName = c; }
-    );
-    IO.def_property("backend_renderer_name",
-        [](const ImGuiIO& self){ return self.BackendRendererName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.BackendRendererName = c; }
-    );
-    IO.def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData);
-    IO.def_readwrite("backend_renderer_user_data", &ImGuiIO::BackendRendererUserData);
-    IO.def_readwrite("backend_language_user_data", &ImGuiIO::BackendLanguageUserData);
-    IO.def_readwrite("clipboard_user_data", &ImGuiIO::ClipboardUserData);
-    IO.def_readwrite("set_platform_ime_data_fn", &ImGuiIO::SetPlatformImeDataFn);
-    IO.def("add_key_event", &ImGuiIO::AddKeyEvent
-    , py::arg("key")
-    , py::arg("down")
-    , py::return_value_policy::automatic_reference);
+        IO.def_readwrite("config_flags", &ImGuiIO::ConfigFlags);
+        IO.def_readwrite("backend_flags", &ImGuiIO::BackendFlags);
+        IO.def_readwrite("display_size", &ImGuiIO::DisplaySize);
+        IO.def_readwrite("delta_time", &ImGuiIO::DeltaTime);
+        IO.def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate);
+        IO.def_property("ini_filename",
+            [](const ImGuiIO& self){ return self.IniFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.IniFilename = c; }
+        );
+        IO.def_property("log_filename",
+            [](const ImGuiIO& self){ return self.LogFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.LogFilename = c; }
+        );
+        IO.def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime);
+        IO.def_readwrite("mouse_double_click_max_dist", &ImGuiIO::MouseDoubleClickMaxDist);
+        IO.def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold);
+        IO.def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay);
+        IO.def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate);
+        IO.def_readwrite("hover_delay_normal", &ImGuiIO::HoverDelayNormal);
+        IO.def_readwrite("hover_delay_short", &ImGuiIO::HoverDelayShort);
+        IO.def_readwrite("user_data", &ImGuiIO::UserData);
+        IO.def_readwrite("fonts", &ImGuiIO::Fonts);
+        IO.def_readwrite("font_global_scale", &ImGuiIO::FontGlobalScale);
+        IO.def_readwrite("font_allow_user_scaling", &ImGuiIO::FontAllowUserScaling);
+        IO.def_readwrite("font_default", &ImGuiIO::FontDefault);
+        IO.def_readwrite("display_framebuffer_scale", &ImGuiIO::DisplayFramebufferScale);
+        IO.def_readwrite("config_docking_no_split", &ImGuiIO::ConfigDockingNoSplit);
+        IO.def_readwrite("config_docking_with_shift", &ImGuiIO::ConfigDockingWithShift);
+        IO.def_readwrite("config_docking_always_tab_bar", &ImGuiIO::ConfigDockingAlwaysTabBar);
+        IO.def_readwrite("config_docking_transparent_payload", &ImGuiIO::ConfigDockingTransparentPayload);
+        IO.def_readwrite("config_viewports_no_auto_merge", &ImGuiIO::ConfigViewportsNoAutoMerge);
+        IO.def_readwrite("config_viewports_no_task_bar_icon", &ImGuiIO::ConfigViewportsNoTaskBarIcon);
+        IO.def_readwrite("config_viewports_no_decoration", &ImGuiIO::ConfigViewportsNoDecoration);
+        IO.def_readwrite("config_viewports_no_default_parent", &ImGuiIO::ConfigViewportsNoDefaultParent);
+        IO.def_readwrite("mouse_draw_cursor", &ImGuiIO::MouseDrawCursor);
+        IO.def_readwrite("config_mac_osx_behaviors", &ImGuiIO::ConfigMacOSXBehaviors);
+        IO.def_readwrite("config_input_trickle_event_queue", &ImGuiIO::ConfigInputTrickleEventQueue);
+        IO.def_readwrite("config_input_text_cursor_blink", &ImGuiIO::ConfigInputTextCursorBlink);
+        IO.def_readwrite("config_input_text_enter_keep_active", &ImGuiIO::ConfigInputTextEnterKeepActive);
+        IO.def_readwrite("config_drag_click_to_input_text", &ImGuiIO::ConfigDragClickToInputText);
+        IO.def_readwrite("config_windows_resize_from_edges", &ImGuiIO::ConfigWindowsResizeFromEdges);
+        IO.def_readwrite("config_windows_move_from_title_bar_only", &ImGuiIO::ConfigWindowsMoveFromTitleBarOnly);
+        IO.def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer);
+        IO.def_property("backend_platform_name",
+            [](const ImGuiIO& self){ return self.BackendPlatformName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.BackendPlatformName = c; }
+        );
+        IO.def_property("backend_renderer_name",
+            [](const ImGuiIO& self){ return self.BackendRendererName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.BackendRendererName = c; }
+        );
+        IO.def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData);
+        IO.def_readwrite("backend_renderer_user_data", &ImGuiIO::BackendRendererUserData);
+        IO.def_readwrite("backend_language_user_data", &ImGuiIO::BackendLanguageUserData);
+        IO.def_readwrite("clipboard_user_data", &ImGuiIO::ClipboardUserData);
+        IO.def_readwrite("set_platform_ime_data_fn", &ImGuiIO::SetPlatformImeDataFn);
+        IO.def("add_key_event", &ImGuiIO::AddKeyEvent
+        , py::arg("key")
+        , py::arg("down")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_key_analog_event", &ImGuiIO::AddKeyAnalogEvent
-    , py::arg("key")
-    , py::arg("down")
-    , py::arg("v")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_key_analog_event", &ImGuiIO::AddKeyAnalogEvent
+        , py::arg("key")
+        , py::arg("down")
+        , py::arg("v")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_mouse_pos_event", &ImGuiIO::AddMousePosEvent
-    , py::arg("x")
-    , py::arg("y")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_mouse_pos_event", &ImGuiIO::AddMousePosEvent
+        , py::arg("x")
+        , py::arg("y")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_mouse_button_event", &ImGuiIO::AddMouseButtonEvent
-    , py::arg("button")
-    , py::arg("down")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_mouse_button_event", &ImGuiIO::AddMouseButtonEvent
+        , py::arg("button")
+        , py::arg("down")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_mouse_wheel_event", &ImGuiIO::AddMouseWheelEvent
-    , py::arg("wheel_x")
-    , py::arg("wheel_y")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_mouse_wheel_event", &ImGuiIO::AddMouseWheelEvent
+        , py::arg("wheel_x")
+        , py::arg("wheel_y")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_mouse_viewport_event", &ImGuiIO::AddMouseViewportEvent
-    , py::arg("id")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_mouse_viewport_event", &ImGuiIO::AddMouseViewportEvent
+        , py::arg("id")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_focus_event", &ImGuiIO::AddFocusEvent
-    , py::arg("focused")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_focus_event", &ImGuiIO::AddFocusEvent
+        , py::arg("focused")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_input_character", &ImGuiIO::AddInputCharacter
-    , py::arg("c")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_input_character", &ImGuiIO::AddInputCharacter
+        , py::arg("c")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_input_character_utf16", &ImGuiIO::AddInputCharacterUTF16
-    , py::arg("c")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_input_character_utf16", &ImGuiIO::AddInputCharacterUTF16
+        , py::arg("c")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("add_input_characters_utf8", &ImGuiIO::AddInputCharactersUTF8
-    , py::arg("str")
-    , py::return_value_policy::automatic_reference);
+        IO.def("add_input_characters_utf8", &ImGuiIO::AddInputCharactersUTF8
+        , py::arg("str")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("set_key_event_native_data", &ImGuiIO::SetKeyEventNativeData
-    , py::arg("key")
-    , py::arg("native_keycode")
-    , py::arg("native_scancode")
-    , py::arg("native_legacy_index") = -1
-    , py::return_value_policy::automatic_reference);
+        IO.def("set_key_event_native_data", &ImGuiIO::SetKeyEventNativeData
+        , py::arg("key")
+        , py::arg("native_keycode")
+        , py::arg("native_scancode")
+        , py::arg("native_legacy_index") = -1
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("set_app_accepting_events", &ImGuiIO::SetAppAcceptingEvents
-    , py::arg("accepting_events")
-    , py::return_value_policy::automatic_reference);
+        IO.def("set_app_accepting_events", &ImGuiIO::SetAppAcceptingEvents
+        , py::arg("accepting_events")
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("clear_input_characters", &ImGuiIO::ClearInputCharacters
-    , py::return_value_policy::automatic_reference);
+        IO.def("clear_input_characters", &ImGuiIO::ClearInputCharacters
+        , py::return_value_policy::automatic_reference);
 
-    IO.def("clear_input_keys", &ImGuiIO::ClearInputKeys
-    , py::return_value_policy::automatic_reference);
+        IO.def("clear_input_keys", &ImGuiIO::ClearInputKeys
+        , py::return_value_policy::automatic_reference);
 
-    IO.def_readwrite("want_capture_mouse", &ImGuiIO::WantCaptureMouse);
-    IO.def_readwrite("want_capture_keyboard", &ImGuiIO::WantCaptureKeyboard);
-    IO.def_readwrite("want_text_input", &ImGuiIO::WantTextInput);
-    IO.def_readwrite("want_set_mouse_pos", &ImGuiIO::WantSetMousePos);
-    IO.def_readwrite("want_save_ini_settings", &ImGuiIO::WantSaveIniSettings);
-    IO.def_readwrite("nav_active", &ImGuiIO::NavActive);
-    IO.def_readwrite("nav_visible", &ImGuiIO::NavVisible);
-    IO.def_readwrite("framerate", &ImGuiIO::Framerate);
-    IO.def_readwrite("metrics_render_vertices", &ImGuiIO::MetricsRenderVertices);
-    IO.def_readwrite("metrics_render_indices", &ImGuiIO::MetricsRenderIndices);
-    IO.def_readwrite("metrics_render_windows", &ImGuiIO::MetricsRenderWindows);
-    IO.def_readwrite("metrics_active_windows", &ImGuiIO::MetricsActiveWindows);
-    IO.def_readwrite("metrics_active_allocations", &ImGuiIO::MetricsActiveAllocations);
-    IO.def_readwrite("mouse_delta", &ImGuiIO::MouseDelta);
-    IO.def_readwrite("mouse_pos", &ImGuiIO::MousePos);
-    IO.def_readonly("mouse_down", &ImGuiIO::MouseDown);
-    IO.def_readwrite("mouse_wheel", &ImGuiIO::MouseWheel);
-    IO.def_readwrite("mouse_wheel_h", &ImGuiIO::MouseWheelH);
-    IO.def_readwrite("mouse_hovered_viewport", &ImGuiIO::MouseHoveredViewport);
-    IO.def_readwrite("key_ctrl", &ImGuiIO::KeyCtrl);
-    IO.def_readwrite("key_shift", &ImGuiIO::KeyShift);
-    IO.def_readwrite("key_alt", &ImGuiIO::KeyAlt);
-    IO.def_readwrite("key_super", &ImGuiIO::KeySuper);
-    IO.def_readwrite("key_mods", &ImGuiIO::KeyMods);
-    IO.def_readonly("keys_data", &ImGuiIO::KeysData);
-    IO.def_readwrite("want_capture_mouse_unless_popup_close", &ImGuiIO::WantCaptureMouseUnlessPopupClose);
-    IO.def_readwrite("mouse_pos_prev", &ImGuiIO::MousePosPrev);
-    IO.def_readonly("mouse_clicked_pos", &ImGuiIO::MouseClickedPos);
-    IO.def_readonly("mouse_clicked_time", &ImGuiIO::MouseClickedTime);
-    IO.def_readonly("mouse_clicked", &ImGuiIO::MouseClicked);
-    IO.def_readonly("mouse_double_clicked", &ImGuiIO::MouseDoubleClicked);
-    IO.def_readonly("mouse_clicked_count", &ImGuiIO::MouseClickedCount);
-    IO.def_readonly("mouse_clicked_last_count", &ImGuiIO::MouseClickedLastCount);
-    IO.def_readonly("mouse_released", &ImGuiIO::MouseReleased);
-    IO.def_readonly("mouse_down_owned", &ImGuiIO::MouseDownOwned);
-    IO.def_readonly("mouse_down_owned_unless_popup_close", &ImGuiIO::MouseDownOwnedUnlessPopupClose);
-    IO.def_readonly("mouse_down_duration", &ImGuiIO::MouseDownDuration);
-    IO.def_readonly("mouse_down_duration_prev", &ImGuiIO::MouseDownDurationPrev);
-    IO.def_readonly("mouse_drag_max_distance_abs", &ImGuiIO::MouseDragMaxDistanceAbs);
-    IO.def_readonly("mouse_drag_max_distance_sqr", &ImGuiIO::MouseDragMaxDistanceSqr);
-    IO.def_readwrite("pen_pressure", &ImGuiIO::PenPressure);
-    IO.def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost);
-    IO.def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents);
-    IO.def_readwrite("backend_using_legacy_key_arrays", &ImGuiIO::BackendUsingLegacyKeyArrays);
-    IO.def_readwrite("backend_using_legacy_nav_input_array", &ImGuiIO::BackendUsingLegacyNavInputArray);
-    IO.def_readwrite("input_queue_surrogate", &ImGuiIO::InputQueueSurrogate);
-    IO.def_readwrite("input_queue_characters", &ImGuiIO::InputQueueCharacters);
-    IO.def(py::init<>());
+        IO.def_readwrite("want_capture_mouse", &ImGuiIO::WantCaptureMouse);
+        IO.def_readwrite("want_capture_keyboard", &ImGuiIO::WantCaptureKeyboard);
+        IO.def_readwrite("want_text_input", &ImGuiIO::WantTextInput);
+        IO.def_readwrite("want_set_mouse_pos", &ImGuiIO::WantSetMousePos);
+        IO.def_readwrite("want_save_ini_settings", &ImGuiIO::WantSaveIniSettings);
+        IO.def_readwrite("nav_active", &ImGuiIO::NavActive);
+        IO.def_readwrite("nav_visible", &ImGuiIO::NavVisible);
+        IO.def_readwrite("framerate", &ImGuiIO::Framerate);
+        IO.def_readwrite("metrics_render_vertices", &ImGuiIO::MetricsRenderVertices);
+        IO.def_readwrite("metrics_render_indices", &ImGuiIO::MetricsRenderIndices);
+        IO.def_readwrite("metrics_render_windows", &ImGuiIO::MetricsRenderWindows);
+        IO.def_readwrite("metrics_active_windows", &ImGuiIO::MetricsActiveWindows);
+        IO.def_readwrite("metrics_active_allocations", &ImGuiIO::MetricsActiveAllocations);
+        IO.def_readwrite("mouse_delta", &ImGuiIO::MouseDelta);
+        IO.def_readwrite("mouse_pos", &ImGuiIO::MousePos);
+        IO.def_readonly("mouse_down", &ImGuiIO::MouseDown);
+        IO.def_readwrite("mouse_wheel", &ImGuiIO::MouseWheel);
+        IO.def_readwrite("mouse_wheel_h", &ImGuiIO::MouseWheelH);
+        IO.def_readwrite("mouse_hovered_viewport", &ImGuiIO::MouseHoveredViewport);
+        IO.def_readwrite("key_ctrl", &ImGuiIO::KeyCtrl);
+        IO.def_readwrite("key_shift", &ImGuiIO::KeyShift);
+        IO.def_readwrite("key_alt", &ImGuiIO::KeyAlt);
+        IO.def_readwrite("key_super", &ImGuiIO::KeySuper);
+        IO.def_readwrite("key_mods", &ImGuiIO::KeyMods);
+        IO.def_readonly("keys_data", &ImGuiIO::KeysData);
+        IO.def_readwrite("want_capture_mouse_unless_popup_close", &ImGuiIO::WantCaptureMouseUnlessPopupClose);
+        IO.def_readwrite("mouse_pos_prev", &ImGuiIO::MousePosPrev);
+        IO.def_readonly("mouse_clicked_pos", &ImGuiIO::MouseClickedPos);
+        IO.def_readonly("mouse_clicked_time", &ImGuiIO::MouseClickedTime);
+        IO.def_readonly("mouse_clicked", &ImGuiIO::MouseClicked);
+        IO.def_readonly("mouse_double_clicked", &ImGuiIO::MouseDoubleClicked);
+        IO.def_readonly("mouse_clicked_count", &ImGuiIO::MouseClickedCount);
+        IO.def_readonly("mouse_clicked_last_count", &ImGuiIO::MouseClickedLastCount);
+        IO.def_readonly("mouse_released", &ImGuiIO::MouseReleased);
+        IO.def_readonly("mouse_down_owned", &ImGuiIO::MouseDownOwned);
+        IO.def_readonly("mouse_down_owned_unless_popup_close", &ImGuiIO::MouseDownOwnedUnlessPopupClose);
+        IO.def_readonly("mouse_down_duration", &ImGuiIO::MouseDownDuration);
+        IO.def_readonly("mouse_down_duration_prev", &ImGuiIO::MouseDownDurationPrev);
+        IO.def_readonly("mouse_drag_max_distance_abs", &ImGuiIO::MouseDragMaxDistanceAbs);
+        IO.def_readonly("mouse_drag_max_distance_sqr", &ImGuiIO::MouseDragMaxDistanceSqr);
+        IO.def_readwrite("pen_pressure", &ImGuiIO::PenPressure);
+        IO.def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost);
+        IO.def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents);
+        IO.def_readwrite("backend_using_legacy_key_arrays", &ImGuiIO::BackendUsingLegacyKeyArrays);
+        IO.def_readwrite("backend_using_legacy_nav_input_array", &ImGuiIO::BackendUsingLegacyNavInputArray);
+        IO.def_readwrite("input_queue_surrogate", &ImGuiIO::InputQueueSurrogate);
+        IO.def_readwrite("input_queue_characters", &ImGuiIO::InputQueueCharacters);
+        IO.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiIO, IO)
 
     PYCLASS_BEGIN(_imgui, ImGuiInputTextCallbackData, InputTextCallbackData)
 
-    InputTextCallbackData.def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag);
-    InputTextCallbackData.def_readwrite("flags", &ImGuiInputTextCallbackData::Flags);
-    InputTextCallbackData.def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData);
-    InputTextCallbackData.def_readwrite("event_char", &ImGuiInputTextCallbackData::EventChar);
-    InputTextCallbackData.def_readwrite("event_key", &ImGuiInputTextCallbackData::EventKey);
-    InputTextCallbackData.def_property("buf",
-        [](const ImGuiInputTextCallbackData& self){ return self.Buf; },[](ImGuiInputTextCallbackData& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.Buf = c; }
-    );
-    InputTextCallbackData.def_readwrite("buf_text_len", &ImGuiInputTextCallbackData::BufTextLen);
-    InputTextCallbackData.def_readwrite("buf_size", &ImGuiInputTextCallbackData::BufSize);
-    InputTextCallbackData.def_readwrite("buf_dirty", &ImGuiInputTextCallbackData::BufDirty);
-    InputTextCallbackData.def_readwrite("cursor_pos", &ImGuiInputTextCallbackData::CursorPos);
-    InputTextCallbackData.def_readwrite("selection_start", &ImGuiInputTextCallbackData::SelectionStart);
-    InputTextCallbackData.def_readwrite("selection_end", &ImGuiInputTextCallbackData::SelectionEnd);
-    InputTextCallbackData.def(py::init<>());
-    InputTextCallbackData.def("delete_chars", &ImGuiInputTextCallbackData::DeleteChars
-    , py::arg("pos")
-    , py::arg("bytes_count")
-    , py::return_value_policy::automatic_reference);
+        InputTextCallbackData.def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag);
+        InputTextCallbackData.def_readwrite("flags", &ImGuiInputTextCallbackData::Flags);
+        InputTextCallbackData.def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData);
+        InputTextCallbackData.def_readwrite("event_char", &ImGuiInputTextCallbackData::EventChar);
+        InputTextCallbackData.def_readwrite("event_key", &ImGuiInputTextCallbackData::EventKey);
+        InputTextCallbackData.def_property("buf",
+            [](const ImGuiInputTextCallbackData& self){ return self.Buf; },[](ImGuiInputTextCallbackData& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.Buf = c; }
+        );
+        InputTextCallbackData.def_readwrite("buf_text_len", &ImGuiInputTextCallbackData::BufTextLen);
+        InputTextCallbackData.def_readwrite("buf_size", &ImGuiInputTextCallbackData::BufSize);
+        InputTextCallbackData.def_readwrite("buf_dirty", &ImGuiInputTextCallbackData::BufDirty);
+        InputTextCallbackData.def_readwrite("cursor_pos", &ImGuiInputTextCallbackData::CursorPos);
+        InputTextCallbackData.def_readwrite("selection_start", &ImGuiInputTextCallbackData::SelectionStart);
+        InputTextCallbackData.def_readwrite("selection_end", &ImGuiInputTextCallbackData::SelectionEnd);
+        InputTextCallbackData.def(py::init<>());
+        InputTextCallbackData.def("delete_chars", &ImGuiInputTextCallbackData::DeleteChars
+        , py::arg("pos")
+        , py::arg("bytes_count")
+        , py::return_value_policy::automatic_reference);
 
-    InputTextCallbackData.def("insert_chars", &ImGuiInputTextCallbackData::InsertChars
-    , py::arg("pos")
-    , py::arg("text")
-    , py::arg("text_end") = nullptr
-    , py::return_value_policy::automatic_reference);
+        InputTextCallbackData.def("insert_chars", &ImGuiInputTextCallbackData::InsertChars
+        , py::arg("pos")
+        , py::arg("text")
+        , py::arg("text_end") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    InputTextCallbackData.def("select_all", &ImGuiInputTextCallbackData::SelectAll
-    , py::return_value_policy::automatic_reference);
+        InputTextCallbackData.def("select_all", &ImGuiInputTextCallbackData::SelectAll
+        , py::return_value_policy::automatic_reference);
 
-    InputTextCallbackData.def("clear_selection", &ImGuiInputTextCallbackData::ClearSelection
-    , py::return_value_policy::automatic_reference);
+        InputTextCallbackData.def("clear_selection", &ImGuiInputTextCallbackData::ClearSelection
+        , py::return_value_policy::automatic_reference);
 
-    InputTextCallbackData.def("has_selection", &ImGuiInputTextCallbackData::HasSelection
-    , py::return_value_policy::automatic_reference);
+        InputTextCallbackData.def("has_selection", &ImGuiInputTextCallbackData::HasSelection
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImGuiInputTextCallbackData, InputTextCallbackData)
 
     PYCLASS_BEGIN(_imgui, ImGuiSizeCallbackData, SizeCallbackData)
 
-    SizeCallbackData.def_readwrite("user_data", &ImGuiSizeCallbackData::UserData);
-    SizeCallbackData.def_readwrite("pos", &ImGuiSizeCallbackData::Pos);
-    SizeCallbackData.def_readwrite("current_size", &ImGuiSizeCallbackData::CurrentSize);
-    SizeCallbackData.def_readwrite("desired_size", &ImGuiSizeCallbackData::DesiredSize);
+        SizeCallbackData.def_readwrite("user_data", &ImGuiSizeCallbackData::UserData);
+        SizeCallbackData.def_readwrite("pos", &ImGuiSizeCallbackData::Pos);
+        SizeCallbackData.def_readwrite("current_size", &ImGuiSizeCallbackData::CurrentSize);
+        SizeCallbackData.def_readwrite("desired_size", &ImGuiSizeCallbackData::DesiredSize);
+        SizeCallbackData.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiSizeCallbackData, SizeCallbackData)
 
     PYCLASS_BEGIN(_imgui, ImGuiWindowClass, WindowClass)
 
-    WindowClass.def_readwrite("class_id", &ImGuiWindowClass::ClassId);
-    WindowClass.def_readwrite("parent_viewport_id", &ImGuiWindowClass::ParentViewportId);
-    WindowClass.def_readwrite("viewport_flags_override_set", &ImGuiWindowClass::ViewportFlagsOverrideSet);
-    WindowClass.def_readwrite("viewport_flags_override_clear", &ImGuiWindowClass::ViewportFlagsOverrideClear);
-    WindowClass.def_readwrite("tab_item_flags_override_set", &ImGuiWindowClass::TabItemFlagsOverrideSet);
-    WindowClass.def_readwrite("dock_node_flags_override_set", &ImGuiWindowClass::DockNodeFlagsOverrideSet);
-    WindowClass.def_readwrite("docking_always_tab_bar", &ImGuiWindowClass::DockingAlwaysTabBar);
-    WindowClass.def_readwrite("docking_allow_unclassed", &ImGuiWindowClass::DockingAllowUnclassed);
-    WindowClass.def(py::init<>());
+        WindowClass.def_readwrite("class_id", &ImGuiWindowClass::ClassId);
+        WindowClass.def_readwrite("parent_viewport_id", &ImGuiWindowClass::ParentViewportId);
+        WindowClass.def_readwrite("viewport_flags_override_set", &ImGuiWindowClass::ViewportFlagsOverrideSet);
+        WindowClass.def_readwrite("viewport_flags_override_clear", &ImGuiWindowClass::ViewportFlagsOverrideClear);
+        WindowClass.def_readwrite("tab_item_flags_override_set", &ImGuiWindowClass::TabItemFlagsOverrideSet);
+        WindowClass.def_readwrite("dock_node_flags_override_set", &ImGuiWindowClass::DockNodeFlagsOverrideSet);
+        WindowClass.def_readwrite("docking_always_tab_bar", &ImGuiWindowClass::DockingAlwaysTabBar);
+        WindowClass.def_readwrite("docking_allow_unclassed", &ImGuiWindowClass::DockingAllowUnclassed);
+        WindowClass.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiWindowClass, WindowClass)
 
     PYCLASS_BEGIN(_imgui, ImGuiPayload, Payload)
 
-    Payload.def_readwrite("data", &ImGuiPayload::Data);
-    Payload.def_readwrite("data_size", &ImGuiPayload::DataSize);
-    Payload.def_readwrite("source_id", &ImGuiPayload::SourceId);
-    Payload.def_readwrite("source_parent_id", &ImGuiPayload::SourceParentId);
-    Payload.def_readwrite("data_frame_count", &ImGuiPayload::DataFrameCount);
-    Payload.def_readonly("data_type", &ImGuiPayload::DataType);
-    Payload.def_readwrite("preview", &ImGuiPayload::Preview);
-    Payload.def_readwrite("delivery", &ImGuiPayload::Delivery);
-    Payload.def(py::init<>());
-    Payload.def("clear", &ImGuiPayload::Clear
-    , py::return_value_policy::automatic_reference);
+        Payload.def_readwrite("data", &ImGuiPayload::Data);
+        Payload.def_readwrite("data_size", &ImGuiPayload::DataSize);
+        Payload.def_readwrite("source_id", &ImGuiPayload::SourceId);
+        Payload.def_readwrite("source_parent_id", &ImGuiPayload::SourceParentId);
+        Payload.def_readwrite("data_frame_count", &ImGuiPayload::DataFrameCount);
+        Payload.def_readonly("data_type", &ImGuiPayload::DataType);
+        Payload.def_readwrite("preview", &ImGuiPayload::Preview);
+        Payload.def_readwrite("delivery", &ImGuiPayload::Delivery);
+        Payload.def(py::init<>());
+        Payload.def("clear", &ImGuiPayload::Clear
+        , py::return_value_policy::automatic_reference);
 
-    Payload.def("is_data_type", &ImGuiPayload::IsDataType
-    , py::arg("type")
-    , py::return_value_policy::automatic_reference);
+        Payload.def("is_data_type", &ImGuiPayload::IsDataType
+        , py::arg("type")
+        , py::return_value_policy::automatic_reference);
 
-    Payload.def("is_preview", &ImGuiPayload::IsPreview
-    , py::return_value_policy::automatic_reference);
+        Payload.def("is_preview", &ImGuiPayload::IsPreview
+        , py::return_value_policy::automatic_reference);
 
-    Payload.def("is_delivery", &ImGuiPayload::IsDelivery
-    , py::return_value_policy::automatic_reference);
+        Payload.def("is_delivery", &ImGuiPayload::IsDelivery
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImGuiPayload, Payload)
 
     PYCLASS_BEGIN(_imgui, ImGuiTableColumnSortSpecs, TableColumnSortSpecs)
 
-    TableColumnSortSpecs.def_readwrite("column_user_id", &ImGuiTableColumnSortSpecs::ColumnUserID);
-    TableColumnSortSpecs.def_readwrite("column_index", &ImGuiTableColumnSortSpecs::ColumnIndex);
-    TableColumnSortSpecs.def_readwrite("sort_order", &ImGuiTableColumnSortSpecs::SortOrder);
-    TableColumnSortSpecs.def(py::init<>());
+        TableColumnSortSpecs.def_readwrite("column_user_id", &ImGuiTableColumnSortSpecs::ColumnUserID);
+        TableColumnSortSpecs.def_readwrite("column_index", &ImGuiTableColumnSortSpecs::ColumnIndex);
+        TableColumnSortSpecs.def_readwrite("sort_order", &ImGuiTableColumnSortSpecs::SortOrder);
+        TableColumnSortSpecs.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiTableColumnSortSpecs, TableColumnSortSpecs)
 
     PYCLASS_BEGIN(_imgui, ImGuiTableSortSpecs, TableSortSpecs)
 
-    TableSortSpecs.def_readwrite("specs", &ImGuiTableSortSpecs::Specs);
-    TableSortSpecs.def_readwrite("specs_count", &ImGuiTableSortSpecs::SpecsCount);
-    TableSortSpecs.def_readwrite("specs_dirty", &ImGuiTableSortSpecs::SpecsDirty);
-    TableSortSpecs.def(py::init<>());
+        TableSortSpecs.def_readwrite("specs", &ImGuiTableSortSpecs::Specs);
+        TableSortSpecs.def_readwrite("specs_count", &ImGuiTableSortSpecs::SpecsCount);
+        TableSortSpecs.def_readwrite("specs_dirty", &ImGuiTableSortSpecs::SpecsDirty);
+        TableSortSpecs.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiTableSortSpecs, TableSortSpecs)
 
     PYCLASS_BEGIN(_imgui, ImGuiOnceUponAFrame, OnceUponAFrame)
 
-    OnceUponAFrame.def(py::init<>());
-    OnceUponAFrame.def_readwrite("ref_frame", &ImGuiOnceUponAFrame::RefFrame);
+        OnceUponAFrame.def(py::init<>());
+        OnceUponAFrame.def_readwrite("ref_frame", &ImGuiOnceUponAFrame::RefFrame);
     PYCLASS_END(_imgui, ImGuiOnceUponAFrame, OnceUponAFrame)
 
     PYCLASS_BEGIN(_imgui, ImGuiTextFilter, TextFilter)
 
-    TextFilter.def(py::init<const char *>()
-    , py::arg("default_filter") = nullptr
-    );
-    TextFilter.def("draw", &ImGuiTextFilter::Draw
-    , py::arg("label") = nullptr
-    , py::arg("width") = 0.0f
-    , py::return_value_policy::automatic_reference);
+        TextFilter.def(py::init<const char *>()
+        , py::arg("default_filter") = nullptr
+        );
+        TextFilter.def("draw", &ImGuiTextFilter::Draw
+        , py::arg("label") = nullptr
+        , py::arg("width") = 0.0f
+        , py::return_value_policy::automatic_reference);
 
-    TextFilter.def("pass_filter", &ImGuiTextFilter::PassFilter
-    , py::arg("text")
-    , py::arg("text_end") = nullptr
-    , py::return_value_policy::automatic_reference);
+        TextFilter.def("pass_filter", &ImGuiTextFilter::PassFilter
+        , py::arg("text")
+        , py::arg("text_end") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    TextFilter.def("build", &ImGuiTextFilter::Build
-    , py::return_value_policy::automatic_reference);
+        TextFilter.def("build", &ImGuiTextFilter::Build
+        , py::return_value_policy::automatic_reference);
 
-    TextFilter.def("clear", &ImGuiTextFilter::Clear
-    , py::return_value_policy::automatic_reference);
+        TextFilter.def("clear", &ImGuiTextFilter::Clear
+        , py::return_value_policy::automatic_reference);
 
-    TextFilter.def("is_active", &ImGuiTextFilter::IsActive
-    , py::return_value_policy::automatic_reference);
+        TextFilter.def("is_active", &ImGuiTextFilter::IsActive
+        , py::return_value_policy::automatic_reference);
 
-    TextFilter.def_readonly("input_buf", &ImGuiTextFilter::InputBuf);
-    TextFilter.def_readwrite("count_grep", &ImGuiTextFilter::CountGrep);
+        TextFilter.def_readonly("input_buf", &ImGuiTextFilter::InputBuf);
+        TextFilter.def_readwrite("count_grep", &ImGuiTextFilter::CountGrep);
     PYCLASS_END(_imgui, ImGuiTextFilter, TextFilter)
 
     PYCLASS_BEGIN(_imgui, ImGuiStorage, Storage)
 
-    Storage.def("clear", &ImGuiStorage::Clear
-    , py::return_value_policy::automatic_reference);
+        Storage.def("clear", &ImGuiStorage::Clear
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_int", &ImGuiStorage::GetInt
-    , py::arg("key")
-    , py::arg("default_val") = 0
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_int", &ImGuiStorage::GetInt
+        , py::arg("key")
+        , py::arg("default_val") = 0
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("set_int", &ImGuiStorage::SetInt
-    , py::arg("key")
-    , py::arg("val")
-    , py::return_value_policy::automatic_reference);
+        Storage.def("set_int", &ImGuiStorage::SetInt
+        , py::arg("key")
+        , py::arg("val")
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_bool", &ImGuiStorage::GetBool
-    , py::arg("key")
-    , py::arg("default_val") = false
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_bool", &ImGuiStorage::GetBool
+        , py::arg("key")
+        , py::arg("default_val") = false
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("set_bool", &ImGuiStorage::SetBool
-    , py::arg("key")
-    , py::arg("val")
-    , py::return_value_policy::automatic_reference);
+        Storage.def("set_bool", &ImGuiStorage::SetBool
+        , py::arg("key")
+        , py::arg("val")
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_float", &ImGuiStorage::GetFloat
-    , py::arg("key")
-    , py::arg("default_val") = 0.0f
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_float", &ImGuiStorage::GetFloat
+        , py::arg("key")
+        , py::arg("default_val") = 0.0f
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("set_float", &ImGuiStorage::SetFloat
-    , py::arg("key")
-    , py::arg("val")
-    , py::return_value_policy::automatic_reference);
+        Storage.def("set_float", &ImGuiStorage::SetFloat
+        , py::arg("key")
+        , py::arg("val")
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_void_ptr", &ImGuiStorage::GetVoidPtr
-    , py::arg("key")
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_void_ptr", &ImGuiStorage::GetVoidPtr
+        , py::arg("key")
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("set_void_ptr", &ImGuiStorage::SetVoidPtr
-    , py::arg("key")
-    , py::arg("val")
-    , py::return_value_policy::automatic_reference);
+        Storage.def("set_void_ptr", &ImGuiStorage::SetVoidPtr
+        , py::arg("key")
+        , py::arg("val")
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_int_ref", &ImGuiStorage::GetIntRef
-    , py::arg("key")
-    , py::arg("default_val") = 0
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_int_ref", &ImGuiStorage::GetIntRef
+        , py::arg("key")
+        , py::arg("default_val") = 0
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_bool_ref", &ImGuiStorage::GetBoolRef
-    , py::arg("key")
-    , py::arg("default_val") = false
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_bool_ref", &ImGuiStorage::GetBoolRef
+        , py::arg("key")
+        , py::arg("default_val") = false
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_float_ref", &ImGuiStorage::GetFloatRef
-    , py::arg("key")
-    , py::arg("default_val") = 0.0f
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_float_ref", &ImGuiStorage::GetFloatRef
+        , py::arg("key")
+        , py::arg("default_val") = 0.0f
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("get_void_ptr_ref", &ImGuiStorage::GetVoidPtrRef
-    , py::arg("key")
-    , py::arg("default_val") = nullptr
-    , py::return_value_policy::automatic_reference);
+        Storage.def("get_void_ptr_ref", &ImGuiStorage::GetVoidPtrRef
+        , py::arg("key")
+        , py::arg("default_val") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("set_all_int", &ImGuiStorage::SetAllInt
-    , py::arg("val")
-    , py::return_value_policy::automatic_reference);
+        Storage.def("set_all_int", &ImGuiStorage::SetAllInt
+        , py::arg("val")
+        , py::return_value_policy::automatic_reference);
 
-    Storage.def("build_sort_by_key", &ImGuiStorage::BuildSortByKey
-    , py::return_value_policy::automatic_reference);
+        Storage.def("build_sort_by_key", &ImGuiStorage::BuildSortByKey
+        , py::return_value_policy::automatic_reference);
 
+        Storage.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiStorage, Storage)
 
     PYCLASS_BEGIN(_imgui, ImColor, Color)
 
-    Color.def_readwrite("value", &ImColor::Value);
-    Color.def(py::init<>());
-    Color.def(py::init<float, float, float, float>()
-    , py::arg("r")
-    , py::arg("g")
-    , py::arg("b")
-    , py::arg("a") = 1.0f
-    );
-    Color.def(py::init<const ImVec4 &>()
-    , py::arg("col")
-    );
-    Color.def(py::init<int, int, int, int>()
-    , py::arg("r")
-    , py::arg("g")
-    , py::arg("b")
-    , py::arg("a") = 255
-    );
-    Color.def(py::init<ImU32>()
-    , py::arg("rgba")
-    );
-    Color.def("set_hsv", &ImColor::SetHSV
-    , py::arg("h")
-    , py::arg("s")
-    , py::arg("v")
-    , py::arg("a") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        Color.def_readwrite("value", &ImColor::Value);
+        Color.def(py::init<>());
+        Color.def(py::init<float, float, float, float>()
+        , py::arg("r")
+        , py::arg("g")
+        , py::arg("b")
+        , py::arg("a") = 1.0f
+        );
+        Color.def(py::init<const ImVec4 &>()
+        , py::arg("col")
+        );
+        Color.def(py::init<int, int, int, int>()
+        , py::arg("r")
+        , py::arg("g")
+        , py::arg("b")
+        , py::arg("a") = 255
+        );
+        Color.def(py::init<ImU32>()
+        , py::arg("rgba")
+        );
+        Color.def("set_hsv", &ImColor::SetHSV
+        , py::arg("h")
+        , py::arg("s")
+        , py::arg("v")
+        , py::arg("a") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImColor, Color)
 
     PYCLASS_BEGIN(_imgui, ImDrawCmd, DrawCmd)
 
-    DrawCmd.def_readwrite("clip_rect", &ImDrawCmd::ClipRect);
-    DrawCmd.def_readwrite("texture_id", &ImDrawCmd::TextureId);
-    DrawCmd.def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset);
-    DrawCmd.def_readwrite("idx_offset", &ImDrawCmd::IdxOffset);
-    DrawCmd.def_readwrite("elem_count", &ImDrawCmd::ElemCount);
-    DrawCmd.def_readwrite("user_callback_data", &ImDrawCmd::UserCallbackData);
-    DrawCmd.def(py::init<>());
-    DrawCmd.def("get_tex_id", &ImDrawCmd::GetTexID
-    , py::return_value_policy::automatic_reference);
+        DrawCmd.def_readwrite("clip_rect", &ImDrawCmd::ClipRect);
+        DrawCmd.def_readwrite("texture_id", &ImDrawCmd::TextureId);
+        DrawCmd.def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset);
+        DrawCmd.def_readwrite("idx_offset", &ImDrawCmd::IdxOffset);
+        DrawCmd.def_readwrite("elem_count", &ImDrawCmd::ElemCount);
+        DrawCmd.def_readwrite("user_callback_data", &ImDrawCmd::UserCallbackData);
+        DrawCmd.def(py::init<>());
+        DrawCmd.def("get_tex_id", &ImDrawCmd::GetTexID
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImDrawCmd, DrawCmd)
 
     PYCLASS_BEGIN(_imgui, ImDrawVert, DrawVert)
 
-    DrawVert.def_readwrite("pos", &ImDrawVert::pos);
-    DrawVert.def_readwrite("uv", &ImDrawVert::uv);
-    DrawVert.def_readwrite("col", &ImDrawVert::col);
+        DrawVert.def_readwrite("pos", &ImDrawVert::pos);
+        DrawVert.def_readwrite("uv", &ImDrawVert::uv);
+        DrawVert.def_readwrite("col", &ImDrawVert::col);
+        DrawVert.def(py::init<>());
     PYCLASS_END(_imgui, ImDrawVert, DrawVert)
 
     PYCLASS_BEGIN(_imgui, ImDrawCmdHeader, DrawCmdHeader)
 
-    DrawCmdHeader.def_readwrite("clip_rect", &ImDrawCmdHeader::ClipRect);
-    DrawCmdHeader.def_readwrite("texture_id", &ImDrawCmdHeader::TextureId);
-    DrawCmdHeader.def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset);
+        DrawCmdHeader.def_readwrite("clip_rect", &ImDrawCmdHeader::ClipRect);
+        DrawCmdHeader.def_readwrite("texture_id", &ImDrawCmdHeader::TextureId);
+        DrawCmdHeader.def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset);
+        DrawCmdHeader.def(py::init<>());
     PYCLASS_END(_imgui, ImDrawCmdHeader, DrawCmdHeader)
 
     PYCLASS_BEGIN(_imgui, ImDrawChannel, DrawChannel)
 
+        DrawChannel.def(py::init<>());
     PYCLASS_END(_imgui, ImDrawChannel, DrawChannel)
 
     PYCLASS_BEGIN(_imgui, ImDrawListSplitter, DrawListSplitter)
 
-    DrawListSplitter.def(py::init<>());
-    DrawListSplitter.def("clear", &ImDrawListSplitter::Clear
-    , py::return_value_policy::automatic_reference);
+        DrawListSplitter.def(py::init<>());
+        DrawListSplitter.def("clear", &ImDrawListSplitter::Clear
+        , py::return_value_policy::automatic_reference);
 
-    DrawListSplitter.def("clear_free_memory", &ImDrawListSplitter::ClearFreeMemory
-    , py::return_value_policy::automatic_reference);
+        DrawListSplitter.def("clear_free_memory", &ImDrawListSplitter::ClearFreeMemory
+        , py::return_value_policy::automatic_reference);
 
-    DrawListSplitter.def("split", &ImDrawListSplitter::Split
-    , py::arg("draw_list")
-    , py::arg("count")
-    , py::return_value_policy::automatic_reference);
+        DrawListSplitter.def("split", &ImDrawListSplitter::Split
+        , py::arg("draw_list")
+        , py::arg("count")
+        , py::return_value_policy::automatic_reference);
 
-    DrawListSplitter.def("merge", &ImDrawListSplitter::Merge
-    , py::arg("draw_list")
-    , py::return_value_policy::automatic_reference);
+        DrawListSplitter.def("merge", &ImDrawListSplitter::Merge
+        , py::arg("draw_list")
+        , py::return_value_policy::automatic_reference);
 
-    DrawListSplitter.def("set_current_channel", &ImDrawListSplitter::SetCurrentChannel
-    , py::arg("draw_list")
-    , py::arg("channel_idx")
-    , py::return_value_policy::automatic_reference);
+        DrawListSplitter.def("set_current_channel", &ImDrawListSplitter::SetCurrentChannel
+        , py::arg("draw_list")
+        , py::arg("channel_idx")
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImDrawListSplitter, DrawListSplitter)
 
@@ -3227,451 +3234,452 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_BEGIN(_imgui, ImDrawList, DrawList)
 
-    DrawList.def_readwrite("cmd_buffer", &ImDrawList::CmdBuffer);
-    DrawList.def_readwrite("idx_buffer", &ImDrawList::IdxBuffer);
-    DrawList.def_readwrite("vtx_buffer", &ImDrawList::VtxBuffer);
-    DrawList.def_readwrite("flags", &ImDrawList::Flags);
-    DrawList.def(py::init<ImDrawListSharedData *>()
-    , py::arg("shared_data")
-    );
-    DrawList.def("push_clip_rect", &ImDrawList::PushClipRect
-    , py::arg("clip_rect_min")
-    , py::arg("clip_rect_max")
-    , py::arg("intersect_with_current_clip_rect") = false
-    , py::return_value_policy::automatic_reference);
+        DrawList.def_readwrite("cmd_buffer", &ImDrawList::CmdBuffer);
+        DrawList.def_readwrite("idx_buffer", &ImDrawList::IdxBuffer);
+        DrawList.def_readwrite("vtx_buffer", &ImDrawList::VtxBuffer);
+        DrawList.def_readwrite("flags", &ImDrawList::Flags);
+        DrawList.def(py::init<ImDrawListSharedData *>()
+        , py::arg("shared_data")
+        );
+        DrawList.def("push_clip_rect", &ImDrawList::PushClipRect
+        , py::arg("clip_rect_min")
+        , py::arg("clip_rect_max")
+        , py::arg("intersect_with_current_clip_rect") = false
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("push_clip_rect_full_screen", &ImDrawList::PushClipRectFullScreen
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("push_clip_rect_full_screen", &ImDrawList::PushClipRectFullScreen
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("pop_clip_rect", &ImDrawList::PopClipRect
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("pop_clip_rect", &ImDrawList::PopClipRect
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("push_texture_id", &ImDrawList::PushTextureID
-    , py::arg("texture_id")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("push_texture_id", &ImDrawList::PushTextureID
+        , py::arg("texture_id")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("pop_texture_id", &ImDrawList::PopTextureID
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("pop_texture_id", &ImDrawList::PopTextureID
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("get_clip_rect_min", &ImDrawList::GetClipRectMin
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("get_clip_rect_min", &ImDrawList::GetClipRectMin
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("get_clip_rect_max", &ImDrawList::GetClipRectMax
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("get_clip_rect_max", &ImDrawList::GetClipRectMax
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_line", &ImDrawList::AddLine
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("col")
-    , py::arg("thickness") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_line", &ImDrawList::AddLine
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("col")
+        , py::arg("thickness") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_rect", &ImDrawList::AddRect
-    , py::arg("p_min")
-    , py::arg("p_max")
-    , py::arg("col")
-    , py::arg("rounding") = 0.0f
-    , py::arg("flags") = 0
-    , py::arg("thickness") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_rect", &ImDrawList::AddRect
+        , py::arg("p_min")
+        , py::arg("p_max")
+        , py::arg("col")
+        , py::arg("rounding") = 0.0f
+        , py::arg("flags") = 0
+        , py::arg("thickness") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_rect_filled", &ImDrawList::AddRectFilled
-    , py::arg("p_min")
-    , py::arg("p_max")
-    , py::arg("col")
-    , py::arg("rounding") = 0.0f
-    , py::arg("flags") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_rect_filled", &ImDrawList::AddRectFilled
+        , py::arg("p_min")
+        , py::arg("p_max")
+        , py::arg("col")
+        , py::arg("rounding") = 0.0f
+        , py::arg("flags") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_rect_filled_multi_color", &ImDrawList::AddRectFilledMultiColor
-    , py::arg("p_min")
-    , py::arg("p_max")
-    , py::arg("col_upr_left")
-    , py::arg("col_upr_right")
-    , py::arg("col_bot_right")
-    , py::arg("col_bot_left")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_rect_filled_multi_color", &ImDrawList::AddRectFilledMultiColor
+        , py::arg("p_min")
+        , py::arg("p_max")
+        , py::arg("col_upr_left")
+        , py::arg("col_upr_right")
+        , py::arg("col_bot_right")
+        , py::arg("col_bot_left")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_quad", &ImDrawList::AddQuad
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("p4")
-    , py::arg("col")
-    , py::arg("thickness") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_quad", &ImDrawList::AddQuad
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("p4")
+        , py::arg("col")
+        , py::arg("thickness") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_quad_filled", &ImDrawList::AddQuadFilled
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("p4")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_quad_filled", &ImDrawList::AddQuadFilled
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("p4")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_triangle", &ImDrawList::AddTriangle
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("col")
-    , py::arg("thickness") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_triangle", &ImDrawList::AddTriangle
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("col")
+        , py::arg("thickness") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_triangle_filled", &ImDrawList::AddTriangleFilled
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_triangle_filled", &ImDrawList::AddTriangleFilled
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_circle", &ImDrawList::AddCircle
-    , py::arg("center")
-    , py::arg("radius")
-    , py::arg("col")
-    , py::arg("num_segments") = 0
-    , py::arg("thickness") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_circle", &ImDrawList::AddCircle
+        , py::arg("center")
+        , py::arg("radius")
+        , py::arg("col")
+        , py::arg("num_segments") = 0
+        , py::arg("thickness") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_circle_filled", &ImDrawList::AddCircleFilled
-    , py::arg("center")
-    , py::arg("radius")
-    , py::arg("col")
-    , py::arg("num_segments") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_circle_filled", &ImDrawList::AddCircleFilled
+        , py::arg("center")
+        , py::arg("radius")
+        , py::arg("col")
+        , py::arg("num_segments") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_ngon", &ImDrawList::AddNgon
-    , py::arg("center")
-    , py::arg("radius")
-    , py::arg("col")
-    , py::arg("num_segments")
-    , py::arg("thickness") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_ngon", &ImDrawList::AddNgon
+        , py::arg("center")
+        , py::arg("radius")
+        , py::arg("col")
+        , py::arg("num_segments")
+        , py::arg("thickness") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_ngon_filled", &ImDrawList::AddNgonFilled
-    , py::arg("center")
-    , py::arg("radius")
-    , py::arg("col")
-    , py::arg("num_segments")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_ngon_filled", &ImDrawList::AddNgonFilled
+        , py::arg("center")
+        , py::arg("radius")
+        , py::arg("col")
+        , py::arg("num_segments")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_text", py::overload_cast<const ImVec2 &, ImU32, const char *, const char *>(&ImDrawList::AddText)
-    , py::arg("pos")
-    , py::arg("col")
-    , py::arg("text_begin")
-    , py::arg("text_end") = nullptr
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_text", py::overload_cast<const ImVec2 &, ImU32, const char *, const char *>(&ImDrawList::AddText)
+        , py::arg("pos")
+        , py::arg("col")
+        , py::arg("text_begin")
+        , py::arg("text_end") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_text", py::overload_cast<const ImFont *, float, const ImVec2 &, ImU32, const char *, const char *, float, const ImVec4 *>(&ImDrawList::AddText)
-    , py::arg("font")
-    , py::arg("font_size")
-    , py::arg("pos")
-    , py::arg("col")
-    , py::arg("text_begin")
-    , py::arg("text_end") = nullptr
-    , py::arg("wrap_width") = 0.0f
-    , py::arg("cpu_fine_clip_rect") = nullptr
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_text", py::overload_cast<const ImFont *, float, const ImVec2 &, ImU32, const char *, const char *, float, const ImVec4 *>(&ImDrawList::AddText)
+        , py::arg("font")
+        , py::arg("font_size")
+        , py::arg("pos")
+        , py::arg("col")
+        , py::arg("text_begin")
+        , py::arg("text_end") = nullptr
+        , py::arg("wrap_width") = 0.0f
+        , py::arg("cpu_fine_clip_rect") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_polyline", &ImDrawList::AddPolyline
-    , py::arg("points")
-    , py::arg("num_points")
-    , py::arg("col")
-    , py::arg("flags")
-    , py::arg("thickness")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_polyline", &ImDrawList::AddPolyline
+        , py::arg("points")
+        , py::arg("num_points")
+        , py::arg("col")
+        , py::arg("flags")
+        , py::arg("thickness")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_convex_poly_filled", &ImDrawList::AddConvexPolyFilled
-    , py::arg("points")
-    , py::arg("num_points")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_convex_poly_filled", &ImDrawList::AddConvexPolyFilled
+        , py::arg("points")
+        , py::arg("num_points")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_bezier_cubic", &ImDrawList::AddBezierCubic
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("p4")
-    , py::arg("col")
-    , py::arg("thickness")
-    , py::arg("num_segments") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_bezier_cubic", &ImDrawList::AddBezierCubic
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("p4")
+        , py::arg("col")
+        , py::arg("thickness")
+        , py::arg("num_segments") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_bezier_quadratic", &ImDrawList::AddBezierQuadratic
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("col")
-    , py::arg("thickness")
-    , py::arg("num_segments") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_bezier_quadratic", &ImDrawList::AddBezierQuadratic
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("col")
+        , py::arg("thickness")
+        , py::arg("num_segments") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_image", &ImDrawList::AddImage
-    , py::arg("user_texture_id")
-    , py::arg("p_min")
-    , py::arg("p_max")
-    , py::arg("uv_min") = ImVec2(0,0)
-    , py::arg("uv_max") = ImVec2(1,1)
-    , py::arg("col") = IM_COL32_WHITE
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_image", &ImDrawList::AddImage
+        , py::arg("user_texture_id")
+        , py::arg("p_min")
+        , py::arg("p_max")
+        , py::arg("uv_min") = ImVec2(0,0)
+        , py::arg("uv_max") = ImVec2(1,1)
+        , py::arg("col") = IM_COL32_WHITE
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_image_quad", &ImDrawList::AddImageQuad
-    , py::arg("user_texture_id")
-    , py::arg("p1")
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("p4")
-    , py::arg("uv1") = ImVec2(0,0)
-    , py::arg("uv2") = ImVec2(1,0)
-    , py::arg("uv3") = ImVec2(1,1)
-    , py::arg("uv4") = ImVec2(0,1)
-    , py::arg("col") = IM_COL32_WHITE
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_image_quad", &ImDrawList::AddImageQuad
+        , py::arg("user_texture_id")
+        , py::arg("p1")
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("p4")
+        , py::arg("uv1") = ImVec2(0,0)
+        , py::arg("uv2") = ImVec2(1,0)
+        , py::arg("uv3") = ImVec2(1,1)
+        , py::arg("uv4") = ImVec2(0,1)
+        , py::arg("col") = IM_COL32_WHITE
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_image_rounded", &ImDrawList::AddImageRounded
-    , py::arg("user_texture_id")
-    , py::arg("p_min")
-    , py::arg("p_max")
-    , py::arg("uv_min")
-    , py::arg("uv_max")
-    , py::arg("col")
-    , py::arg("rounding")
-    , py::arg("flags") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_image_rounded", &ImDrawList::AddImageRounded
+        , py::arg("user_texture_id")
+        , py::arg("p_min")
+        , py::arg("p_max")
+        , py::arg("uv_min")
+        , py::arg("uv_max")
+        , py::arg("col")
+        , py::arg("rounding")
+        , py::arg("flags") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_clear", &ImDrawList::PathClear
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_clear", &ImDrawList::PathClear
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_line_to", &ImDrawList::PathLineTo
-    , py::arg("pos")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_line_to", &ImDrawList::PathLineTo
+        , py::arg("pos")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_line_to_merge_duplicate", &ImDrawList::PathLineToMergeDuplicate
-    , py::arg("pos")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_line_to_merge_duplicate", &ImDrawList::PathLineToMergeDuplicate
+        , py::arg("pos")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_fill_convex", &ImDrawList::PathFillConvex
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_fill_convex", &ImDrawList::PathFillConvex
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_stroke", &ImDrawList::PathStroke
-    , py::arg("col")
-    , py::arg("flags") = 0
-    , py::arg("thickness") = 1.0f
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_stroke", &ImDrawList::PathStroke
+        , py::arg("col")
+        , py::arg("flags") = 0
+        , py::arg("thickness") = 1.0f
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_arc_to", &ImDrawList::PathArcTo
-    , py::arg("center")
-    , py::arg("radius")
-    , py::arg("a_min")
-    , py::arg("a_max")
-    , py::arg("num_segments") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_arc_to", &ImDrawList::PathArcTo
+        , py::arg("center")
+        , py::arg("radius")
+        , py::arg("a_min")
+        , py::arg("a_max")
+        , py::arg("num_segments") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_arc_to_fast", &ImDrawList::PathArcToFast
-    , py::arg("center")
-    , py::arg("radius")
-    , py::arg("a_min_of_12")
-    , py::arg("a_max_of_12")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_arc_to_fast", &ImDrawList::PathArcToFast
+        , py::arg("center")
+        , py::arg("radius")
+        , py::arg("a_min_of_12")
+        , py::arg("a_max_of_12")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_bezier_cubic_curve_to", &ImDrawList::PathBezierCubicCurveTo
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("p4")
-    , py::arg("num_segments") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_bezier_cubic_curve_to", &ImDrawList::PathBezierCubicCurveTo
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("p4")
+        , py::arg("num_segments") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_bezier_quadratic_curve_to", &ImDrawList::PathBezierQuadraticCurveTo
-    , py::arg("p2")
-    , py::arg("p3")
-    , py::arg("num_segments") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_bezier_quadratic_curve_to", &ImDrawList::PathBezierQuadraticCurveTo
+        , py::arg("p2")
+        , py::arg("p3")
+        , py::arg("num_segments") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("path_rect", &ImDrawList::PathRect
-    , py::arg("rect_min")
-    , py::arg("rect_max")
-    , py::arg("rounding") = 0.0f
-    , py::arg("flags") = 0
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("path_rect", &ImDrawList::PathRect
+        , py::arg("rect_min")
+        , py::arg("rect_max")
+        , py::arg("rounding") = 0.0f
+        , py::arg("flags") = 0
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("add_draw_cmd", &ImDrawList::AddDrawCmd
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("add_draw_cmd", &ImDrawList::AddDrawCmd
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("clone_output", &ImDrawList::CloneOutput
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("clone_output", &ImDrawList::CloneOutput
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("channels_split", &ImDrawList::ChannelsSplit
-    , py::arg("count")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("channels_split", &ImDrawList::ChannelsSplit
+        , py::arg("count")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("channels_merge", &ImDrawList::ChannelsMerge
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("channels_merge", &ImDrawList::ChannelsMerge
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("channels_set_current", &ImDrawList::ChannelsSetCurrent
-    , py::arg("n")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("channels_set_current", &ImDrawList::ChannelsSetCurrent
+        , py::arg("n")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_reserve", &ImDrawList::PrimReserve
-    , py::arg("idx_count")
-    , py::arg("vtx_count")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_reserve", &ImDrawList::PrimReserve
+        , py::arg("idx_count")
+        , py::arg("vtx_count")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_unreserve", &ImDrawList::PrimUnreserve
-    , py::arg("idx_count")
-    , py::arg("vtx_count")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_unreserve", &ImDrawList::PrimUnreserve
+        , py::arg("idx_count")
+        , py::arg("vtx_count")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_rect", &ImDrawList::PrimRect
-    , py::arg("a")
-    , py::arg("b")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_rect", &ImDrawList::PrimRect
+        , py::arg("a")
+        , py::arg("b")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_rect_uv", &ImDrawList::PrimRectUV
-    , py::arg("a")
-    , py::arg("b")
-    , py::arg("uv_a")
-    , py::arg("uv_b")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_rect_uv", &ImDrawList::PrimRectUV
+        , py::arg("a")
+        , py::arg("b")
+        , py::arg("uv_a")
+        , py::arg("uv_b")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_quad_uv", &ImDrawList::PrimQuadUV
-    , py::arg("a")
-    , py::arg("b")
-    , py::arg("c")
-    , py::arg("d")
-    , py::arg("uv_a")
-    , py::arg("uv_b")
-    , py::arg("uv_c")
-    , py::arg("uv_d")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_quad_uv", &ImDrawList::PrimQuadUV
+        , py::arg("a")
+        , py::arg("b")
+        , py::arg("c")
+        , py::arg("d")
+        , py::arg("uv_a")
+        , py::arg("uv_b")
+        , py::arg("uv_c")
+        , py::arg("uv_d")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_write_vtx", &ImDrawList::PrimWriteVtx
-    , py::arg("pos")
-    , py::arg("uv")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_write_vtx", &ImDrawList::PrimWriteVtx
+        , py::arg("pos")
+        , py::arg("uv")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_write_idx", &ImDrawList::PrimWriteIdx
-    , py::arg("idx")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_write_idx", &ImDrawList::PrimWriteIdx
+        , py::arg("idx")
+        , py::return_value_policy::automatic_reference);
 
-    DrawList.def("prim_vtx", &ImDrawList::PrimVtx
-    , py::arg("pos")
-    , py::arg("uv")
-    , py::arg("col")
-    , py::return_value_policy::automatic_reference);
+        DrawList.def("prim_vtx", &ImDrawList::PrimVtx
+        , py::arg("pos")
+        , py::arg("uv")
+        , py::arg("col")
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImDrawList, DrawList)
 
     PYCLASS_BEGIN(_imgui, ImDrawData, DrawData)
 
-    DrawData.def_readwrite("valid", &ImDrawData::Valid);
-    DrawData.def_readwrite("cmd_lists_count", &ImDrawData::CmdListsCount);
-    DrawData.def_readwrite("total_idx_count", &ImDrawData::TotalIdxCount);
-    DrawData.def_readwrite("total_vtx_count", &ImDrawData::TotalVtxCount);
-    DrawData.def_readwrite("display_pos", &ImDrawData::DisplayPos);
-    DrawData.def_readwrite("display_size", &ImDrawData::DisplaySize);
-    DrawData.def_readwrite("framebuffer_scale", &ImDrawData::FramebufferScale);
-    DrawData.def_readwrite("owner_viewport", &ImDrawData::OwnerViewport);
-    DrawData.def(py::init<>());
-    DrawData.def("clear", &ImDrawData::Clear
-    , py::return_value_policy::automatic_reference);
+        DrawData.def_readwrite("valid", &ImDrawData::Valid);
+        DrawData.def_readwrite("cmd_lists_count", &ImDrawData::CmdListsCount);
+        DrawData.def_readwrite("total_idx_count", &ImDrawData::TotalIdxCount);
+        DrawData.def_readwrite("total_vtx_count", &ImDrawData::TotalVtxCount);
+        DrawData.def_readwrite("display_pos", &ImDrawData::DisplayPos);
+        DrawData.def_readwrite("display_size", &ImDrawData::DisplaySize);
+        DrawData.def_readwrite("framebuffer_scale", &ImDrawData::FramebufferScale);
+        DrawData.def_readwrite("owner_viewport", &ImDrawData::OwnerViewport);
+        DrawData.def(py::init<>());
+        DrawData.def("clear", &ImDrawData::Clear
+        , py::return_value_policy::automatic_reference);
 
-    DrawData.def("de_index_all_buffers", &ImDrawData::DeIndexAllBuffers
-    , py::return_value_policy::automatic_reference);
+        DrawData.def("de_index_all_buffers", &ImDrawData::DeIndexAllBuffers
+        , py::return_value_policy::automatic_reference);
 
-    DrawData.def("scale_clip_rects", &ImDrawData::ScaleClipRects
-    , py::arg("fb_scale")
-    , py::return_value_policy::automatic_reference);
+        DrawData.def("scale_clip_rects", &ImDrawData::ScaleClipRects
+        , py::arg("fb_scale")
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImDrawData, DrawData)
 
     PYCLASS_BEGIN(_imgui, ImFontConfig, FontConfig)
 
-    FontConfig.def_readwrite("font_data", &ImFontConfig::FontData);
-    FontConfig.def_readwrite("font_data_size", &ImFontConfig::FontDataSize);
-    FontConfig.def_readwrite("font_data_owned_by_atlas", &ImFontConfig::FontDataOwnedByAtlas);
-    FontConfig.def_readwrite("font_no", &ImFontConfig::FontNo);
-    FontConfig.def_readwrite("size_pixels", &ImFontConfig::SizePixels);
-    FontConfig.def_readwrite("oversample_h", &ImFontConfig::OversampleH);
-    FontConfig.def_readwrite("oversample_v", &ImFontConfig::OversampleV);
-    FontConfig.def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH);
-    FontConfig.def_readwrite("glyph_extra_spacing", &ImFontConfig::GlyphExtraSpacing);
-    FontConfig.def_readwrite("glyph_offset", &ImFontConfig::GlyphOffset);
-    FontConfig.def_readwrite("glyph_ranges", &ImFontConfig::GlyphRanges);
-    FontConfig.def_readwrite("glyph_min_advance_x", &ImFontConfig::GlyphMinAdvanceX);
-    FontConfig.def_readwrite("glyph_max_advance_x", &ImFontConfig::GlyphMaxAdvanceX);
-    FontConfig.def_readwrite("merge_mode", &ImFontConfig::MergeMode);
-    FontConfig.def_readwrite("font_builder_flags", &ImFontConfig::FontBuilderFlags);
-    FontConfig.def_readwrite("rasterizer_multiply", &ImFontConfig::RasterizerMultiply);
-    FontConfig.def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar);
-    FontConfig.def_readonly("name", &ImFontConfig::Name);
-    FontConfig.def_readwrite("dst_font", &ImFontConfig::DstFont);
-    FontConfig.def(py::init<>());
+        FontConfig.def_readwrite("font_data", &ImFontConfig::FontData);
+        FontConfig.def_readwrite("font_data_size", &ImFontConfig::FontDataSize);
+        FontConfig.def_readwrite("font_data_owned_by_atlas", &ImFontConfig::FontDataOwnedByAtlas);
+        FontConfig.def_readwrite("font_no", &ImFontConfig::FontNo);
+        FontConfig.def_readwrite("size_pixels", &ImFontConfig::SizePixels);
+        FontConfig.def_readwrite("oversample_h", &ImFontConfig::OversampleH);
+        FontConfig.def_readwrite("oversample_v", &ImFontConfig::OversampleV);
+        FontConfig.def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH);
+        FontConfig.def_readwrite("glyph_extra_spacing", &ImFontConfig::GlyphExtraSpacing);
+        FontConfig.def_readwrite("glyph_offset", &ImFontConfig::GlyphOffset);
+        FontConfig.def_readwrite("glyph_ranges", &ImFontConfig::GlyphRanges);
+        FontConfig.def_readwrite("glyph_min_advance_x", &ImFontConfig::GlyphMinAdvanceX);
+        FontConfig.def_readwrite("glyph_max_advance_x", &ImFontConfig::GlyphMaxAdvanceX);
+        FontConfig.def_readwrite("merge_mode", &ImFontConfig::MergeMode);
+        FontConfig.def_readwrite("font_builder_flags", &ImFontConfig::FontBuilderFlags);
+        FontConfig.def_readwrite("rasterizer_multiply", &ImFontConfig::RasterizerMultiply);
+        FontConfig.def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar);
+        FontConfig.def_readonly("name", &ImFontConfig::Name);
+        FontConfig.def_readwrite("dst_font", &ImFontConfig::DstFont);
+        FontConfig.def(py::init<>());
     PYCLASS_END(_imgui, ImFontConfig, FontConfig)
 
     PYCLASS_BEGIN(_imgui, ImFontGlyph, FontGlyph)
 
-    FontGlyph.def_readwrite("advance_x", &ImFontGlyph::AdvanceX);
-    FontGlyph.def_readwrite("x0", &ImFontGlyph::X0);
-    FontGlyph.def_readwrite("y0", &ImFontGlyph::Y0);
-    FontGlyph.def_readwrite("x1", &ImFontGlyph::X1);
-    FontGlyph.def_readwrite("y1", &ImFontGlyph::Y1);
-    FontGlyph.def_readwrite("u0", &ImFontGlyph::U0);
-    FontGlyph.def_readwrite("v0", &ImFontGlyph::V0);
-    FontGlyph.def_readwrite("u1", &ImFontGlyph::U1);
-    FontGlyph.def_readwrite("v1", &ImFontGlyph::V1);
+        FontGlyph.def_readwrite("advance_x", &ImFontGlyph::AdvanceX);
+        FontGlyph.def_readwrite("x0", &ImFontGlyph::X0);
+        FontGlyph.def_readwrite("y0", &ImFontGlyph::Y0);
+        FontGlyph.def_readwrite("x1", &ImFontGlyph::X1);
+        FontGlyph.def_readwrite("y1", &ImFontGlyph::Y1);
+        FontGlyph.def_readwrite("u0", &ImFontGlyph::U0);
+        FontGlyph.def_readwrite("v0", &ImFontGlyph::V0);
+        FontGlyph.def_readwrite("u1", &ImFontGlyph::U1);
+        FontGlyph.def_readwrite("v1", &ImFontGlyph::V1);
+        FontGlyph.def(py::init<>());
     PYCLASS_END(_imgui, ImFontGlyph, FontGlyph)
 
     PYCLASS_BEGIN(_imgui, ImFontGlyphRangesBuilder, FontGlyphRangesBuilder)
 
-    FontGlyphRangesBuilder.def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars);
-    FontGlyphRangesBuilder.def(py::init<>());
-    FontGlyphRangesBuilder.def("clear", &ImFontGlyphRangesBuilder::Clear
-    , py::return_value_policy::automatic_reference);
+        FontGlyphRangesBuilder.def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars);
+        FontGlyphRangesBuilder.def(py::init<>());
+        FontGlyphRangesBuilder.def("clear", &ImFontGlyphRangesBuilder::Clear
+        , py::return_value_policy::automatic_reference);
 
-    FontGlyphRangesBuilder.def("get_bit", &ImFontGlyphRangesBuilder::GetBit
-    , py::arg("n")
-    , py::return_value_policy::automatic_reference);
+        FontGlyphRangesBuilder.def("get_bit", &ImFontGlyphRangesBuilder::GetBit
+        , py::arg("n")
+        , py::return_value_policy::automatic_reference);
 
-    FontGlyphRangesBuilder.def("set_bit", &ImFontGlyphRangesBuilder::SetBit
-    , py::arg("n")
-    , py::return_value_policy::automatic_reference);
+        FontGlyphRangesBuilder.def("set_bit", &ImFontGlyphRangesBuilder::SetBit
+        , py::arg("n")
+        , py::return_value_policy::automatic_reference);
 
-    FontGlyphRangesBuilder.def("add_char", &ImFontGlyphRangesBuilder::AddChar
-    , py::arg("c")
-    , py::return_value_policy::automatic_reference);
+        FontGlyphRangesBuilder.def("add_char", &ImFontGlyphRangesBuilder::AddChar
+        , py::arg("c")
+        , py::return_value_policy::automatic_reference);
 
-    FontGlyphRangesBuilder.def("add_text", &ImFontGlyphRangesBuilder::AddText
-    , py::arg("text")
-    , py::arg("text_end") = nullptr
-    , py::return_value_policy::automatic_reference);
+        FontGlyphRangesBuilder.def("add_text", &ImFontGlyphRangesBuilder::AddText
+        , py::arg("text")
+        , py::arg("text_end") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    FontGlyphRangesBuilder.def("add_ranges", &ImFontGlyphRangesBuilder::AddRanges
-    , py::arg("ranges")
-    , py::return_value_policy::automatic_reference);
+        FontGlyphRangesBuilder.def("add_ranges", &ImFontGlyphRangesBuilder::AddRanges
+        , py::arg("ranges")
+        , py::return_value_policy::automatic_reference);
 
-    FontGlyphRangesBuilder.def("build_ranges", &ImFontGlyphRangesBuilder::BuildRanges
-    , py::arg("out_ranges")
-    , py::return_value_policy::automatic_reference);
+        FontGlyphRangesBuilder.def("build_ranges", &ImFontGlyphRangesBuilder::BuildRanges
+        , py::arg("out_ranges")
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImFontGlyphRangesBuilder, FontGlyphRangesBuilder)
 
     PYCLASS_BEGIN(_imgui, ImFontAtlasCustomRect, FontAtlasCustomRect)
 
-    FontAtlasCustomRect.def_readwrite("width", &ImFontAtlasCustomRect::Width);
-    FontAtlasCustomRect.def_readwrite("height", &ImFontAtlasCustomRect::Height);
-    FontAtlasCustomRect.def_readwrite("x", &ImFontAtlasCustomRect::X);
-    FontAtlasCustomRect.def_readwrite("y", &ImFontAtlasCustomRect::Y);
-    FontAtlasCustomRect.def_readwrite("glyph_id", &ImFontAtlasCustomRect::GlyphID);
-    FontAtlasCustomRect.def_readwrite("glyph_advance_x", &ImFontAtlasCustomRect::GlyphAdvanceX);
-    FontAtlasCustomRect.def_readwrite("glyph_offset", &ImFontAtlasCustomRect::GlyphOffset);
-    FontAtlasCustomRect.def_readwrite("font", &ImFontAtlasCustomRect::Font);
-    FontAtlasCustomRect.def(py::init<>());
-    FontAtlasCustomRect.def("is_packed", &ImFontAtlasCustomRect::IsPacked
-    , py::return_value_policy::automatic_reference);
+        FontAtlasCustomRect.def_readwrite("width", &ImFontAtlasCustomRect::Width);
+        FontAtlasCustomRect.def_readwrite("height", &ImFontAtlasCustomRect::Height);
+        FontAtlasCustomRect.def_readwrite("x", &ImFontAtlasCustomRect::X);
+        FontAtlasCustomRect.def_readwrite("y", &ImFontAtlasCustomRect::Y);
+        FontAtlasCustomRect.def_readwrite("glyph_id", &ImFontAtlasCustomRect::GlyphID);
+        FontAtlasCustomRect.def_readwrite("glyph_advance_x", &ImFontAtlasCustomRect::GlyphAdvanceX);
+        FontAtlasCustomRect.def_readwrite("glyph_offset", &ImFontAtlasCustomRect::GlyphOffset);
+        FontAtlasCustomRect.def_readwrite("font", &ImFontAtlasCustomRect::Font);
+        FontAtlasCustomRect.def(py::init<>());
+        FontAtlasCustomRect.def("is_packed", &ImFontAtlasCustomRect::IsPacked
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImFontAtlasCustomRect, FontAtlasCustomRect)
 
@@ -3687,209 +3695,209 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_BEGIN(_imgui, ImFontAtlas, FontAtlas)
 
-    FontAtlas.def(py::init<>());
-    FontAtlas.def("add_font", &ImFontAtlas::AddFont
-    , py::arg("font_cfg")
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def(py::init<>());
+        FontAtlas.def("add_font", &ImFontAtlas::AddFont
+        , py::arg("font_cfg")
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("add_font_default", &ImFontAtlas::AddFontDefault
-    , py::arg("font_cfg") = nullptr
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("add_font_default", &ImFontAtlas::AddFontDefault
+        , py::arg("font_cfg") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("add_font_from_memory_ttf", &ImFontAtlas::AddFontFromMemoryTTF
-    , py::arg("font_data")
-    , py::arg("font_size")
-    , py::arg("size_pixels")
-    , py::arg("font_cfg") = nullptr
-    , py::arg("glyph_ranges") = nullptr
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("add_font_from_memory_ttf", &ImFontAtlas::AddFontFromMemoryTTF
+        , py::arg("font_data")
+        , py::arg("font_size")
+        , py::arg("size_pixels")
+        , py::arg("font_cfg") = nullptr
+        , py::arg("glyph_ranges") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("add_font_from_memory_compressed_ttf", &ImFontAtlas::AddFontFromMemoryCompressedTTF
-    , py::arg("compressed_font_data")
-    , py::arg("compressed_font_size")
-    , py::arg("size_pixels")
-    , py::arg("font_cfg") = nullptr
-    , py::arg("glyph_ranges") = nullptr
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("add_font_from_memory_compressed_ttf", &ImFontAtlas::AddFontFromMemoryCompressedTTF
+        , py::arg("compressed_font_data")
+        , py::arg("compressed_font_size")
+        , py::arg("size_pixels")
+        , py::arg("font_cfg") = nullptr
+        , py::arg("glyph_ranges") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("add_font_from_memory_compressed_base85_ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
-    , py::arg("compressed_font_data_base85")
-    , py::arg("size_pixels")
-    , py::arg("font_cfg") = nullptr
-    , py::arg("glyph_ranges") = nullptr
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("add_font_from_memory_compressed_base85_ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
+        , py::arg("compressed_font_data_base85")
+        , py::arg("size_pixels")
+        , py::arg("font_cfg") = nullptr
+        , py::arg("glyph_ranges") = nullptr
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("clear_input_data", &ImFontAtlas::ClearInputData
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("clear_input_data", &ImFontAtlas::ClearInputData
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("clear_tex_data", &ImFontAtlas::ClearTexData
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("clear_tex_data", &ImFontAtlas::ClearTexData
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("clear_fonts", &ImFontAtlas::ClearFonts
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("clear_fonts", &ImFontAtlas::ClearFonts
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("clear", &ImFontAtlas::Clear
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("clear", &ImFontAtlas::Clear
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("build", &ImFontAtlas::Build
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("build", &ImFontAtlas::Build
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("is_built", &ImFontAtlas::IsBuilt
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("is_built", &ImFontAtlas::IsBuilt
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("set_tex_id", &ImFontAtlas::SetTexID
-    , py::arg("id")
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("set_tex_id", &ImFontAtlas::SetTexID
+        , py::arg("id")
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_default", &ImFontAtlas::GetGlyphRangesDefault
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_default", &ImFontAtlas::GetGlyphRangesDefault
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_greek", &ImFontAtlas::GetGlyphRangesGreek
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_greek", &ImFontAtlas::GetGlyphRangesGreek
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_korean", &ImFontAtlas::GetGlyphRangesKorean
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_korean", &ImFontAtlas::GetGlyphRangesKorean
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_japanese", &ImFontAtlas::GetGlyphRangesJapanese
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_japanese", &ImFontAtlas::GetGlyphRangesJapanese
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_chinese_full", &ImFontAtlas::GetGlyphRangesChineseFull
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_chinese_full", &ImFontAtlas::GetGlyphRangesChineseFull
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_chinese_simplified_common", &ImFontAtlas::GetGlyphRangesChineseSimplifiedCommon
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_chinese_simplified_common", &ImFontAtlas::GetGlyphRangesChineseSimplifiedCommon
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_cyrillic", &ImFontAtlas::GetGlyphRangesCyrillic
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_cyrillic", &ImFontAtlas::GetGlyphRangesCyrillic
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_thai", &ImFontAtlas::GetGlyphRangesThai
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_thai", &ImFontAtlas::GetGlyphRangesThai
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_glyph_ranges_vietnamese", &ImFontAtlas::GetGlyphRangesVietnamese
-    , py::return_value_policy::automatic_reference);
+        FontAtlas.def("get_glyph_ranges_vietnamese", &ImFontAtlas::GetGlyphRangesVietnamese
+        , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def_readwrite("flags", &ImFontAtlas::Flags);
-    FontAtlas.def_readwrite("tex_id", &ImFontAtlas::TexID);
-    FontAtlas.def_readwrite("tex_desired_width", &ImFontAtlas::TexDesiredWidth);
-    FontAtlas.def_readwrite("tex_glyph_padding", &ImFontAtlas::TexGlyphPadding);
-    FontAtlas.def_readwrite("locked", &ImFontAtlas::Locked);
-    FontAtlas.def_readwrite("user_data", &ImFontAtlas::UserData);
-    FontAtlas.def_readwrite("tex_ready", &ImFontAtlas::TexReady);
-    FontAtlas.def_readwrite("tex_pixels_use_colors", &ImFontAtlas::TexPixelsUseColors);
-    FontAtlas.def_readonly("tex_uv_lines", &ImFontAtlas::TexUvLines);
-    FontAtlas.def_readwrite("font_builder_io", &ImFontAtlas::FontBuilderIO);
-    FontAtlas.def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags);
-    FontAtlas.def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors);
-    FontAtlas.def_readwrite("pack_id_lines", &ImFontAtlas::PackIdLines);
+        FontAtlas.def_readwrite("flags", &ImFontAtlas::Flags);
+        FontAtlas.def_readwrite("tex_id", &ImFontAtlas::TexID);
+        FontAtlas.def_readwrite("tex_desired_width", &ImFontAtlas::TexDesiredWidth);
+        FontAtlas.def_readwrite("tex_glyph_padding", &ImFontAtlas::TexGlyphPadding);
+        FontAtlas.def_readwrite("locked", &ImFontAtlas::Locked);
+        FontAtlas.def_readwrite("user_data", &ImFontAtlas::UserData);
+        FontAtlas.def_readwrite("tex_ready", &ImFontAtlas::TexReady);
+        FontAtlas.def_readwrite("tex_pixels_use_colors", &ImFontAtlas::TexPixelsUseColors);
+        FontAtlas.def_readonly("tex_uv_lines", &ImFontAtlas::TexUvLines);
+        FontAtlas.def_readwrite("font_builder_io", &ImFontAtlas::FontBuilderIO);
+        FontAtlas.def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags);
+        FontAtlas.def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors);
+        FontAtlas.def_readwrite("pack_id_lines", &ImFontAtlas::PackIdLines);
     PYCLASS_END(_imgui, ImFontAtlas, FontAtlas)
 
     PYCLASS_BEGIN(_imgui, ImFont, Font)
 
-    Font.def_readwrite("index_advance_x", &ImFont::IndexAdvanceX);
-    Font.def_readwrite("fallback_advance_x", &ImFont::FallbackAdvanceX);
-    Font.def_readwrite("font_size", &ImFont::FontSize);
-    Font.def_readwrite("index_lookup", &ImFont::IndexLookup);
-    Font.def_readwrite("glyphs", &ImFont::Glyphs);
-    Font.def_readwrite("fallback_glyph", &ImFont::FallbackGlyph);
-    Font.def_readwrite("container_atlas", &ImFont::ContainerAtlas);
-    Font.def_readwrite("config_data", &ImFont::ConfigData);
-    Font.def_readwrite("config_data_count", &ImFont::ConfigDataCount);
-    Font.def_readwrite("fallback_char", &ImFont::FallbackChar);
-    Font.def_readwrite("ellipsis_char", &ImFont::EllipsisChar);
-    Font.def_readwrite("ellipsis_char_count", &ImFont::EllipsisCharCount);
-    Font.def_readwrite("ellipsis_width", &ImFont::EllipsisWidth);
-    Font.def_readwrite("ellipsis_char_step", &ImFont::EllipsisCharStep);
-    Font.def_readwrite("dirty_lookup_tables", &ImFont::DirtyLookupTables);
-    Font.def_readwrite("scale", &ImFont::Scale);
-    Font.def_readwrite("ascent", &ImFont::Ascent);
-    Font.def_readwrite("descent", &ImFont::Descent);
-    Font.def_readwrite("metrics_total_surface", &ImFont::MetricsTotalSurface);
-    Font.def_readonly("used4k_pages_map", &ImFont::Used4kPagesMap);
-    Font.def(py::init<>());
-    Font.def("find_glyph", &ImFont::FindGlyph
-    , py::arg("c")
-    , py::return_value_policy::automatic_reference);
+        Font.def_readwrite("index_advance_x", &ImFont::IndexAdvanceX);
+        Font.def_readwrite("fallback_advance_x", &ImFont::FallbackAdvanceX);
+        Font.def_readwrite("font_size", &ImFont::FontSize);
+        Font.def_readwrite("index_lookup", &ImFont::IndexLookup);
+        Font.def_readwrite("glyphs", &ImFont::Glyphs);
+        Font.def_readwrite("fallback_glyph", &ImFont::FallbackGlyph);
+        Font.def_readwrite("container_atlas", &ImFont::ContainerAtlas);
+        Font.def_readwrite("config_data", &ImFont::ConfigData);
+        Font.def_readwrite("config_data_count", &ImFont::ConfigDataCount);
+        Font.def_readwrite("fallback_char", &ImFont::FallbackChar);
+        Font.def_readwrite("ellipsis_char", &ImFont::EllipsisChar);
+        Font.def_readwrite("ellipsis_char_count", &ImFont::EllipsisCharCount);
+        Font.def_readwrite("ellipsis_width", &ImFont::EllipsisWidth);
+        Font.def_readwrite("ellipsis_char_step", &ImFont::EllipsisCharStep);
+        Font.def_readwrite("dirty_lookup_tables", &ImFont::DirtyLookupTables);
+        Font.def_readwrite("scale", &ImFont::Scale);
+        Font.def_readwrite("ascent", &ImFont::Ascent);
+        Font.def_readwrite("descent", &ImFont::Descent);
+        Font.def_readwrite("metrics_total_surface", &ImFont::MetricsTotalSurface);
+        Font.def_readonly("used4k_pages_map", &ImFont::Used4kPagesMap);
+        Font.def(py::init<>());
+        Font.def("find_glyph", &ImFont::FindGlyph
+        , py::arg("c")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("find_glyph_no_fallback", &ImFont::FindGlyphNoFallback
-    , py::arg("c")
-    , py::return_value_policy::automatic_reference);
+        Font.def("find_glyph_no_fallback", &ImFont::FindGlyphNoFallback
+        , py::arg("c")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("get_char_advance", &ImFont::GetCharAdvance
-    , py::arg("c")
-    , py::return_value_policy::automatic_reference);
+        Font.def("get_char_advance", &ImFont::GetCharAdvance
+        , py::arg("c")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("is_loaded", &ImFont::IsLoaded
-    , py::return_value_policy::automatic_reference);
+        Font.def("is_loaded", &ImFont::IsLoaded
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("get_debug_name", &ImFont::GetDebugName
-    , py::return_value_policy::automatic_reference);
+        Font.def("get_debug_name", &ImFont::GetDebugName
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("calc_word_wrap_position_a", &ImFont::CalcWordWrapPositionA
-    , py::arg("scale")
-    , py::arg("text")
-    , py::arg("text_end")
-    , py::arg("wrap_width")
-    , py::return_value_policy::automatic_reference);
+        Font.def("calc_word_wrap_position_a", &ImFont::CalcWordWrapPositionA
+        , py::arg("scale")
+        , py::arg("text")
+        , py::arg("text_end")
+        , py::arg("wrap_width")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("render_char", &ImFont::RenderChar
-    , py::arg("draw_list")
-    , py::arg("size")
-    , py::arg("pos")
-    , py::arg("col")
-    , py::arg("c")
-    , py::return_value_policy::automatic_reference);
+        Font.def("render_char", &ImFont::RenderChar
+        , py::arg("draw_list")
+        , py::arg("size")
+        , py::arg("pos")
+        , py::arg("col")
+        , py::arg("c")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("render_text", &ImFont::RenderText
-    , py::arg("draw_list")
-    , py::arg("size")
-    , py::arg("pos")
-    , py::arg("col")
-    , py::arg("clip_rect")
-    , py::arg("text_begin")
-    , py::arg("text_end")
-    , py::arg("wrap_width") = 0.0f
-    , py::arg("cpu_fine_clip") = false
-    , py::return_value_policy::automatic_reference);
+        Font.def("render_text", &ImFont::RenderText
+        , py::arg("draw_list")
+        , py::arg("size")
+        , py::arg("pos")
+        , py::arg("col")
+        , py::arg("clip_rect")
+        , py::arg("text_begin")
+        , py::arg("text_end")
+        , py::arg("wrap_width") = 0.0f
+        , py::arg("cpu_fine_clip") = false
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("build_lookup_table", &ImFont::BuildLookupTable
-    , py::return_value_policy::automatic_reference);
+        Font.def("build_lookup_table", &ImFont::BuildLookupTable
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("clear_output_data", &ImFont::ClearOutputData
-    , py::return_value_policy::automatic_reference);
+        Font.def("clear_output_data", &ImFont::ClearOutputData
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("grow_index", &ImFont::GrowIndex
-    , py::arg("new_size")
-    , py::return_value_policy::automatic_reference);
+        Font.def("grow_index", &ImFont::GrowIndex
+        , py::arg("new_size")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("add_glyph", &ImFont::AddGlyph
-    , py::arg("src_cfg")
-    , py::arg("c")
-    , py::arg("x0")
-    , py::arg("y0")
-    , py::arg("x1")
-    , py::arg("y1")
-    , py::arg("u0")
-    , py::arg("v0")
-    , py::arg("u1")
-    , py::arg("v1")
-    , py::arg("advance_x")
-    , py::return_value_policy::automatic_reference);
+        Font.def("add_glyph", &ImFont::AddGlyph
+        , py::arg("src_cfg")
+        , py::arg("c")
+        , py::arg("x0")
+        , py::arg("y0")
+        , py::arg("x1")
+        , py::arg("y1")
+        , py::arg("u0")
+        , py::arg("v0")
+        , py::arg("u1")
+        , py::arg("v1")
+        , py::arg("advance_x")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("add_remap_char", &ImFont::AddRemapChar
-    , py::arg("dst")
-    , py::arg("src")
-    , py::arg("overwrite_dst") = true
-    , py::return_value_policy::automatic_reference);
+        Font.def("add_remap_char", &ImFont::AddRemapChar
+        , py::arg("dst")
+        , py::arg("src")
+        , py::arg("overwrite_dst") = true
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("set_glyph_visible", &ImFont::SetGlyphVisible
-    , py::arg("c")
-    , py::arg("visible")
-    , py::return_value_policy::automatic_reference);
+        Font.def("set_glyph_visible", &ImFont::SetGlyphVisible
+        , py::arg("c")
+        , py::arg("visible")
+        , py::return_value_policy::automatic_reference);
 
-    Font.def("is_glyph_range_unused", &ImFont::IsGlyphRangeUnused
-    , py::arg("c_begin")
-    , py::arg("c_last")
-    , py::return_value_policy::automatic_reference);
+        Font.def("is_glyph_range_unused", &ImFont::IsGlyphRangeUnused
+        , py::arg("c_begin")
+        , py::arg("c_last")
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImFont, Font)
 
@@ -3915,38 +3923,38 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_BEGIN(_imgui, ImGuiViewport, Viewport)
 
-    Viewport.def_readwrite("id", &ImGuiViewport::ID);
-    Viewport.def_readwrite("flags", &ImGuiViewport::Flags);
-    Viewport.def_readwrite("pos", &ImGuiViewport::Pos);
-    Viewport.def_readwrite("size", &ImGuiViewport::Size);
-    Viewport.def_readwrite("work_pos", &ImGuiViewport::WorkPos);
-    Viewport.def_readwrite("work_size", &ImGuiViewport::WorkSize);
-    Viewport.def_readwrite("dpi_scale", &ImGuiViewport::DpiScale);
-    Viewport.def_readwrite("parent_viewport_id", &ImGuiViewport::ParentViewportId);
-    Viewport.def_readwrite("draw_data", &ImGuiViewport::DrawData);
-    Viewport.def_readwrite("renderer_user_data", &ImGuiViewport::RendererUserData);
-    Viewport.def_readwrite("platform_user_data", &ImGuiViewport::PlatformUserData);
-    Viewport.def_readwrite("platform_handle", &ImGuiViewport::PlatformHandle);
-    Viewport.def_readwrite("platform_handle_raw", &ImGuiViewport::PlatformHandleRaw);
-    Viewport.def_readwrite("platform_window_created", &ImGuiViewport::PlatformWindowCreated);
-    Viewport.def_readwrite("platform_request_move", &ImGuiViewport::PlatformRequestMove);
-    Viewport.def_readwrite("platform_request_resize", &ImGuiViewport::PlatformRequestResize);
-    Viewport.def_readwrite("platform_request_close", &ImGuiViewport::PlatformRequestClose);
-    Viewport.def(py::init<>());
-    Viewport.def("get_center", &ImGuiViewport::GetCenter
-    , py::return_value_policy::automatic_reference);
+        Viewport.def_readwrite("id", &ImGuiViewport::ID);
+        Viewport.def_readwrite("flags", &ImGuiViewport::Flags);
+        Viewport.def_readwrite("pos", &ImGuiViewport::Pos);
+        Viewport.def_readwrite("size", &ImGuiViewport::Size);
+        Viewport.def_readwrite("work_pos", &ImGuiViewport::WorkPos);
+        Viewport.def_readwrite("work_size", &ImGuiViewport::WorkSize);
+        Viewport.def_readwrite("dpi_scale", &ImGuiViewport::DpiScale);
+        Viewport.def_readwrite("parent_viewport_id", &ImGuiViewport::ParentViewportId);
+        Viewport.def_readwrite("draw_data", &ImGuiViewport::DrawData);
+        Viewport.def_readwrite("renderer_user_data", &ImGuiViewport::RendererUserData);
+        Viewport.def_readwrite("platform_user_data", &ImGuiViewport::PlatformUserData);
+        Viewport.def_readwrite("platform_handle", &ImGuiViewport::PlatformHandle);
+        Viewport.def_readwrite("platform_handle_raw", &ImGuiViewport::PlatformHandleRaw);
+        Viewport.def_readwrite("platform_window_created", &ImGuiViewport::PlatformWindowCreated);
+        Viewport.def_readwrite("platform_request_move", &ImGuiViewport::PlatformRequestMove);
+        Viewport.def_readwrite("platform_request_resize", &ImGuiViewport::PlatformRequestResize);
+        Viewport.def_readwrite("platform_request_close", &ImGuiViewport::PlatformRequestClose);
+        Viewport.def(py::init<>());
+        Viewport.def("get_center", &ImGuiViewport::GetCenter
+        , py::return_value_policy::automatic_reference);
 
-    Viewport.def("get_work_center", &ImGuiViewport::GetWorkCenter
-    , py::return_value_policy::automatic_reference);
+        Viewport.def("get_work_center", &ImGuiViewport::GetWorkCenter
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_imgui, ImGuiViewport, Viewport)
 
     PYCLASS_BEGIN(_imgui, ImGuiPlatformImeData, PlatformeData)
 
-    PlatformeData.def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible);
-    PlatformeData.def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos);
-    PlatformeData.def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight);
-    PlatformeData.def(py::init<>());
+        PlatformeData.def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible);
+        PlatformeData.def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos);
+        PlatformeData.def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight);
+        PlatformeData.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiPlatformImeData, PlatformeData)
 
     _imgui.def("get_key_index", &ImGui::GetKeyIndex
