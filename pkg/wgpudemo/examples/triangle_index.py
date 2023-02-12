@@ -1,4 +1,5 @@
-from ctypes import c_float, sizeof
+import ctypes
+from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
 import sys
 
@@ -10,6 +11,7 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
+index_data = np.array([0, 1, 2], dtype=np.uint32)
 
 vertex_data = np.array([
     0.0, .5, 0.0, 1.0, 1.0, 0.0,  0.0, 1.0, -.5, -.5, 0., 1.0,
@@ -101,7 +103,7 @@ class HelloWgpu:
 
         descriptor = wgpu.RenderPipelineDescriptor()
         descriptor.label = "Main Render Pipeline"
-        #descriptor.layout = None # Automatic layout # TODO:?
+        #descriptor.layout = None # Automatic layout #TODO: ?
         descriptor.layout = self.device.create_pipeline_layout(pl)
         descriptor.vertex.module = shader_module
         descriptor.vertex.entry_point = "vs_main"
@@ -111,6 +113,7 @@ class HelloWgpu:
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def create_buffers(self):
+        self.index_buffer = utils.create_buffer_from_ndarray(self.device, index_data, wgpu.BufferUsage.INDEX)
         self.vertex_buffer = utils.create_buffer_from_ndarray(self.device, vertex_data, wgpu.BufferUsage.VERTEX)
 
     def create_window(self):
@@ -181,7 +184,8 @@ class HelloWgpu:
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.draw(3)
+        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32);
+        pass_enc.draw_indexed(3)
         pass_enc.end()
         commands = encoder.finish()
 
