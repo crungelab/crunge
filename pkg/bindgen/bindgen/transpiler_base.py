@@ -47,7 +47,6 @@ class TranspilerBase:
 
     @contextmanager
     def enter(self, entry_key, value={}):
-        kind, key = entry_key.split('.')
         entry = self.lookup_or_create(entry_key, value)
         self.entry_stack.append(entry)
 
@@ -97,7 +96,8 @@ class TranspilerBase:
 
     def snake(self, name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-        return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+        #return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+        return re.sub('([a-z])([A-Z])', r'\1_\2', s1).lower()
 
     def format_attribute(self, name):
         name = self.snake(name)

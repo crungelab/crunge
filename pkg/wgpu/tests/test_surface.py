@@ -54,7 +54,7 @@ def main():
     print(wsd.hwnd)
 
     sd = wgpu.SurfaceDescriptor()
-    sd.label = 'blah'
+    sd.label = 'Test Surface'
     print(sd.label)
     sd.next_in_chain = wsd
 

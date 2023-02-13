@@ -8,6 +8,7 @@ def main():
     adapter.get_properties(props)
     print(props.vendor_name)
     device = adapter.create_device()
+    device.enable_logging()
     print(device)
 
 if __name__ == "__main__":

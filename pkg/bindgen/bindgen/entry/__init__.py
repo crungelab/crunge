@@ -29,6 +29,8 @@ class MethodEntry(Entry):
 class StructOrClassEntry(Entry):
     constructible: bool = True
     has_constructor: bool = False
+    gen_init: bool = False
+    gen_kw_init: bool = False
 
 class StructEntry(StructOrClassEntry):
     pass

@@ -1,6 +1,8 @@
 from crunge import wgpu
 from crunge.wgpu import BackendType
 
+#TODO: Have to implement callbacks first!
+
 def main():
     instance = wgpu.create_instance()
     adapter = instance.request_adapter()

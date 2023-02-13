@@ -49,8 +49,8 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     BackendType
         .value("NULL", wgpu::BackendType::Null)
         .value("WEB_GPU", wgpu::BackendType::WebGPU)
-        .value("D3_D11", wgpu::BackendType::D3D11)
-        .value("D3_D12", wgpu::BackendType::D3D12)
+        .value("D3D11", wgpu::BackendType::D3D11)
+        .value("D3D12", wgpu::BackendType::D3D12)
         .value("METAL", wgpu::BackendType::Metal)
         .value("VULKAN", wgpu::BackendType::Vulkan)
         .value("OPEN_GL", wgpu::BackendType::OpenGL)
@@ -440,9 +440,9 @@ void init_generated(py::module &_wgpu, Registry &registry) {
 
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureDimension, TextureDimension)
     TextureDimension
-        .value("E1_D", wgpu::TextureDimension::e1D)
-        .value("E2_D", wgpu::TextureDimension::e2D)
-        .value("E3_D", wgpu::TextureDimension::e3D)
+        .value("E1D", wgpu::TextureDimension::e1D)
+        .value("E2D", wgpu::TextureDimension::e2D)
+        .value("E3D", wgpu::TextureDimension::e3D)
         .export_values();
     PYENUM_SCOPED_END(_wgpu, wgpu::TextureDimension, TextureDimension)
 
@@ -474,9 +474,9 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("RGBA8_SINT", wgpu::TextureFormat::RGBA8Sint)
         .value("BGRA8_UNORM", wgpu::TextureFormat::BGRA8Unorm)
         .value("BGRA8_UNORM_SRGB", wgpu::TextureFormat::BGRA8UnormSrgb)
-        .value("RGB10_A2_UNORM", wgpu::TextureFormat::RGB10A2Unorm)
-        .value("RG11_B10_UFLOAT", wgpu::TextureFormat::RG11B10Ufloat)
-        .value("RGB9_E5_UFLOAT", wgpu::TextureFormat::RGB9E5Ufloat)
+        .value("RGB10A2_UNORM", wgpu::TextureFormat::RGB10A2Unorm)
+        .value("RG11B10_UFLOAT", wgpu::TextureFormat::RG11B10Ufloat)
+        .value("RGB9E5_UFLOAT", wgpu::TextureFormat::RGB9E5Ufloat)
         .value("RG32_FLOAT", wgpu::TextureFormat::RG32Float)
         .value("RG32_UINT", wgpu::TextureFormat::RG32Uint)
         .value("RG32_SINT", wgpu::TextureFormat::RG32Sint)
@@ -492,26 +492,26 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("DEPTH24_PLUS_STENCIL8", wgpu::TextureFormat::Depth24PlusStencil8)
         .value("DEPTH32_FLOAT", wgpu::TextureFormat::Depth32Float)
         .value("DEPTH32_FLOAT_STENCIL8", wgpu::TextureFormat::Depth32FloatStencil8)
-        .value("BC1_RGBA_UNORM", wgpu::TextureFormat::BC1RGBAUnorm)
-        .value("BC1_RGBA_UNORM_SRGB", wgpu::TextureFormat::BC1RGBAUnormSrgb)
-        .value("BC2_RGBA_UNORM", wgpu::TextureFormat::BC2RGBAUnorm)
-        .value("BC2_RGBA_UNORM_SRGB", wgpu::TextureFormat::BC2RGBAUnormSrgb)
-        .value("BC3_RGBA_UNORM", wgpu::TextureFormat::BC3RGBAUnorm)
-        .value("BC3_RGBA_UNORM_SRGB", wgpu::TextureFormat::BC3RGBAUnormSrgb)
-        .value("BC4_R_UNORM", wgpu::TextureFormat::BC4RUnorm)
-        .value("BC4_R_SNORM", wgpu::TextureFormat::BC4RSnorm)
-        .value("BC5_RG_UNORM", wgpu::TextureFormat::BC5RGUnorm)
-        .value("BC5_RG_SNORM", wgpu::TextureFormat::BC5RGSnorm)
-        .value("BC6_HRGB_UFLOAT", wgpu::TextureFormat::BC6HRGBUfloat)
-        .value("BC6_HRGB_FLOAT", wgpu::TextureFormat::BC6HRGBFloat)
-        .value("BC7_RGBA_UNORM", wgpu::TextureFormat::BC7RGBAUnorm)
-        .value("BC7_RGBA_UNORM_SRGB", wgpu::TextureFormat::BC7RGBAUnormSrgb)
-        .value("ETC2_RGB8_UNORM", wgpu::TextureFormat::ETC2RGB8Unorm)
-        .value("ETC2_RGB8_UNORM_SRGB", wgpu::TextureFormat::ETC2RGB8UnormSrgb)
-        .value("ETC2_RGB8_A1_UNORM", wgpu::TextureFormat::ETC2RGB8A1Unorm)
-        .value("ETC2_RGB8_A1_UNORM_SRGB", wgpu::TextureFormat::ETC2RGB8A1UnormSrgb)
-        .value("ETC2_RGBA8_UNORM", wgpu::TextureFormat::ETC2RGBA8Unorm)
-        .value("ETC2_RGBA8_UNORM_SRGB", wgpu::TextureFormat::ETC2RGBA8UnormSrgb)
+        .value("BC1RGBA_UNORM", wgpu::TextureFormat::BC1RGBAUnorm)
+        .value("BC1RGBA_UNORM_SRGB", wgpu::TextureFormat::BC1RGBAUnormSrgb)
+        .value("BC2RGBA_UNORM", wgpu::TextureFormat::BC2RGBAUnorm)
+        .value("BC2RGBA_UNORM_SRGB", wgpu::TextureFormat::BC2RGBAUnormSrgb)
+        .value("BC3RGBA_UNORM", wgpu::TextureFormat::BC3RGBAUnorm)
+        .value("BC3RGBA_UNORM_SRGB", wgpu::TextureFormat::BC3RGBAUnormSrgb)
+        .value("BC4R_UNORM", wgpu::TextureFormat::BC4RUnorm)
+        .value("BC4R_SNORM", wgpu::TextureFormat::BC4RSnorm)
+        .value("BC5RG_UNORM", wgpu::TextureFormat::BC5RGUnorm)
+        .value("BC5RG_SNORM", wgpu::TextureFormat::BC5RGSnorm)
+        .value("BC6HRGB_UFLOAT", wgpu::TextureFormat::BC6HRGBUfloat)
+        .value("BC6HRGB_FLOAT", wgpu::TextureFormat::BC6HRGBFloat)
+        .value("BC7RGBA_UNORM", wgpu::TextureFormat::BC7RGBAUnorm)
+        .value("BC7RGBA_UNORM_SRGB", wgpu::TextureFormat::BC7RGBAUnormSrgb)
+        .value("ETC2RGB8_UNORM", wgpu::TextureFormat::ETC2RGB8Unorm)
+        .value("ETC2RGB8_UNORM_SRGB", wgpu::TextureFormat::ETC2RGB8UnormSrgb)
+        .value("ETC2RGB8A1_UNORM", wgpu::TextureFormat::ETC2RGB8A1Unorm)
+        .value("ETC2RGB8A1_UNORM_SRGB", wgpu::TextureFormat::ETC2RGB8A1UnormSrgb)
+        .value("ETC2RGBA8_UNORM", wgpu::TextureFormat::ETC2RGBA8Unorm)
+        .value("ETC2RGBA8_UNORM_SRGB", wgpu::TextureFormat::ETC2RGBA8UnormSrgb)
         .value("EACR11_UNORM", wgpu::TextureFormat::EACR11Unorm)
         .value("EACR11_SNORM", wgpu::TextureFormat::EACR11Snorm)
         .value("EACRG11_UNORM", wgpu::TextureFormat::EACRG11Unorm)
@@ -544,7 +544,7 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         .value("ASTC12X10_UNORM_SRGB", wgpu::TextureFormat::ASTC12x10UnormSrgb)
         .value("ASTC12X12_UNORM", wgpu::TextureFormat::ASTC12x12Unorm)
         .value("ASTC12X12_UNORM_SRGB", wgpu::TextureFormat::ASTC12x12UnormSrgb)
-        .value("R8_BG8_BIPLANAR420_UNORM", wgpu::TextureFormat::R8BG8Biplanar420Unorm)
+        .value("R8BG8_BIPLANAR420_UNORM", wgpu::TextureFormat::R8BG8Biplanar420Unorm)
         .export_values();
     PYENUM_SCOPED_END(_wgpu, wgpu::TextureFormat, TextureFormat)
 
@@ -564,12 +564,12 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::TextureViewDimension, TextureViewDimension)
     TextureViewDimension
         .value("UNDEFINED", wgpu::TextureViewDimension::Undefined)
-        .value("E1_D", wgpu::TextureViewDimension::e1D)
-        .value("E2_D", wgpu::TextureViewDimension::e2D)
-        .value("E2_D_ARRAY", wgpu::TextureViewDimension::e2DArray)
+        .value("E1D", wgpu::TextureViewDimension::e1D)
+        .value("E2D", wgpu::TextureViewDimension::e2D)
+        .value("E2D_ARRAY", wgpu::TextureViewDimension::e2DArray)
         .value("CUBE", wgpu::TextureViewDimension::Cube)
         .value("CUBE_ARRAY", wgpu::TextureViewDimension::CubeArray)
-        .value("E3_D", wgpu::TextureViewDimension::e3D)
+        .value("E3D", wgpu::TextureViewDimension::e3D)
         .export_values();
     PYENUM_SCOPED_END(_wgpu, wgpu::TextureViewDimension, TextureViewDimension)
 
@@ -703,7 +703,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("feature")
         , py::return_value_policy::automatic_reference);
 
-        Adapter.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Adapter, Adapter)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroup, BindGroup)
@@ -712,7 +711,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        BindGroup.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::BindGroup, BindGroup)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroupLayout, BindGroupLayout)
@@ -721,7 +719,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        BindGroupLayout.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::BindGroupLayout, BindGroupLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Buffer, Buffer)
@@ -752,7 +749,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         Buffer.def("unmap", &wgpu::Buffer::Unmap
         , py::return_value_policy::automatic_reference);
 
-        Buffer.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Buffer, Buffer)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CommandBuffer, CommandBuffer)
@@ -855,7 +851,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("query_index")
         , py::return_value_policy::automatic_reference);
 
-        CommandEncoder.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::CommandEncoder, CommandEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePassEncoder, ComputePassEncoder)
@@ -919,7 +914,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("query_index")
         , py::return_value_policy::automatic_reference);
 
-        ComputePassEncoder.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ComputePassEncoder, ComputePassEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePipeline, ComputePipeline)
@@ -932,7 +926,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        ComputePipeline.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ComputePipeline, ComputePipeline)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Device, Device)
@@ -1044,7 +1037,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         Device.def("tick", &wgpu::Device::Tick
         , py::return_value_policy::automatic_reference);
 
-        Device.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Device, Device)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ExternalTexture, ExternalTexture)
@@ -1056,7 +1048,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        ExternalTexture.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ExternalTexture, ExternalTexture)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Instance, Instance)
@@ -1065,7 +1056,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference);
 
-        Instance.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Instance, Instance)
 
     PYCLASS_BEGIN(_wgpu, wgpu::PipelineLayout, PipelineLayout)
@@ -1074,7 +1064,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        PipelineLayout.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::PipelineLayout, PipelineLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::QuerySet, QuerySet)
@@ -1092,7 +1081,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        QuerySet.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::QuerySet, QuerySet)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Queue, Queue)
@@ -1128,12 +1116,10 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("write_size")
         , py::return_value_policy::automatic_reference);
 
-        Queue.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Queue, Queue)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderBundle, RenderBundle)
 
-        RenderBundle.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RenderBundle, RenderBundle)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderBundleEncoder, RenderBundleEncoder)
@@ -1207,7 +1193,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("size") = WGPU_WHOLE_SIZE
         , py::return_value_policy::automatic_reference);
 
-        RenderBundleEncoder.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RenderBundleEncoder, RenderBundleEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPassEncoder, RenderPassEncoder)
@@ -1317,7 +1302,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("query_index")
         , py::return_value_policy::automatic_reference);
 
-        RenderPassEncoder.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RenderPassEncoder, RenderPassEncoder)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPipeline, RenderPipeline)
@@ -1330,7 +1314,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        RenderPipeline.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RenderPipeline, RenderPipeline)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Sampler, Sampler)
@@ -1339,7 +1322,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        Sampler.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Sampler, Sampler)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ShaderModule, ShaderModule)
@@ -1348,12 +1330,10 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        ShaderModule.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ShaderModule, ShaderModule)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Surface, Surface)
 
-        Surface.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Surface, Surface)
 
     PYCLASS_BEGIN(_wgpu, wgpu::SwapChain, SwapChain)
@@ -1371,7 +1351,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         SwapChain.def("present", &wgpu::SwapChain::Present
         , py::return_value_policy::automatic_reference);
 
-        SwapChain.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::SwapChain, SwapChain)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Texture, Texture)
@@ -1411,7 +1390,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        Texture.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Texture, Texture)
 
     PYCLASS_BEGIN(_wgpu, wgpu::TextureView, TextureView)
@@ -1420,7 +1398,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
 
-        TextureView.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::TextureView, TextureView)
 
     _wgpu.def("create_instance", &wgpu::CreateInstance
@@ -1436,14 +1413,12 @@ void init_generated(py::module &_wgpu, Registry &registry) {
 
         ChainedStruct.def_readwrite("next_in_chain", &wgpu::ChainedStruct::nextInChain);
         ChainedStruct.def_readwrite("s_type", &wgpu::ChainedStruct::sType);
-        ChainedStruct.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ChainedStruct, ChainedStruct)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ChainedStructOut, ChainedStructOut)
 
         ChainedStructOut.def_readwrite("next_in_chain", &wgpu::ChainedStructOut::nextInChain);
         ChainedStructOut.def_readwrite("s_type", &wgpu::ChainedStructOut::sType);
-        ChainedStructOut.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ChainedStructOut, ChainedStructOut)
 
     PYCLASS_BEGIN(_wgpu, wgpu::AdapterProperties, AdapterProperties)
@@ -1485,7 +1460,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         BlendComponent.def_readwrite("operation", &wgpu::BlendComponent::operation);
         BlendComponent.def_readwrite("src_factor", &wgpu::BlendComponent::srcFactor);
         BlendComponent.def_readwrite("dst_factor", &wgpu::BlendComponent::dstFactor);
-        BlendComponent.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::BlendComponent, BlendComponent)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BufferBindingLayout, BufferBindingLayout)
@@ -1494,7 +1468,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         BufferBindingLayout.def_readwrite("type", &wgpu::BufferBindingLayout::type);
         BufferBindingLayout.def_readwrite("has_dynamic_offset", &wgpu::BufferBindingLayout::hasDynamicOffset);
         BufferBindingLayout.def_readwrite("min_binding_size", &wgpu::BufferBindingLayout::minBindingSize);
-        BufferBindingLayout.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::BufferBindingLayout, BufferBindingLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BufferDescriptor, BufferDescriptor)
@@ -1515,7 +1488,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         Color.def_readwrite("g", &wgpu::Color::g);
         Color.def_readwrite("b", &wgpu::Color::b);
         Color.def_readwrite("a", &wgpu::Color::a);
-        Color.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Color, Color)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CommandBufferDescriptor, CommandBufferDescriptor)
@@ -1524,7 +1496,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         CommandBufferDescriptor.def_property("label",
             [](const wgpu::CommandBufferDescriptor& self){ return self.label; },[](wgpu::CommandBufferDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
         );
-        CommandBufferDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::CommandBufferDescriptor, CommandBufferDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CommandEncoderDescriptor, CommandEncoderDescriptor)
@@ -1533,7 +1504,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         CommandEncoderDescriptor.def_property("label",
             [](const wgpu::CommandEncoderDescriptor& self){ return self.label; },[](wgpu::CommandEncoderDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
         );
-        CommandEncoderDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::CommandEncoderDescriptor, CommandEncoderDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CompilationMessage, CompilationMessage)
@@ -1547,7 +1517,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         CompilationMessage.def_readwrite("line_pos", &wgpu::CompilationMessage::linePos);
         CompilationMessage.def_readwrite("offset", &wgpu::CompilationMessage::offset);
         CompilationMessage.def_readwrite("length", &wgpu::CompilationMessage::length);
-        CompilationMessage.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::CompilationMessage, CompilationMessage)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePassTimestampWrite, ComputePassTimestampWrite)
@@ -1555,7 +1524,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         ComputePassTimestampWrite.def_readwrite("query_set", &wgpu::ComputePassTimestampWrite::querySet);
         ComputePassTimestampWrite.def_readwrite("query_index", &wgpu::ComputePassTimestampWrite::queryIndex);
         ComputePassTimestampWrite.def_readwrite("location", &wgpu::ComputePassTimestampWrite::location);
-        ComputePassTimestampWrite.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ComputePassTimestampWrite, ComputePassTimestampWrite)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ConstantEntry, ConstantEntry)
@@ -1565,7 +1533,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
             [](const wgpu::ConstantEntry& self){ return self.key; },[](wgpu::ConstantEntry& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.key = c; }
         );
         ConstantEntry.def_readwrite("value", &wgpu::ConstantEntry::value);
-        ConstantEntry.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ConstantEntry, ConstantEntry)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CopyTextureForBrowserOptions, CopyTextureForBrowserOptions)
@@ -1579,7 +1546,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         CopyTextureForBrowserOptions.def_readwrite("dst_transfer_function_parameters", &wgpu::CopyTextureForBrowserOptions::dstTransferFunctionParameters);
         CopyTextureForBrowserOptions.def_readwrite("dst_alpha_mode", &wgpu::CopyTextureForBrowserOptions::dstAlphaMode);
         CopyTextureForBrowserOptions.def_readwrite("internal_usage", &wgpu::CopyTextureForBrowserOptions::internalUsage);
-        CopyTextureForBrowserOptions.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::CopyTextureForBrowserOptions, CopyTextureForBrowserOptions)
 
     PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::DawnCacheDeviceDescriptor, struct wgpu::ChainedStruct, DawnCacheDeviceDescriptor)
@@ -1647,20 +1613,18 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         ExternalTextureDescriptor.def_readwrite("src_transfer_function_parameters", &wgpu::ExternalTextureDescriptor::srcTransferFunctionParameters);
         ExternalTextureDescriptor.def_readwrite("dst_transfer_function_parameters", &wgpu::ExternalTextureDescriptor::dstTransferFunctionParameters);
         ExternalTextureDescriptor.def_readwrite("gamut_conversion_matrix", &wgpu::ExternalTextureDescriptor::gamutConversionMatrix);
-        ExternalTextureDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ExternalTextureDescriptor, ExternalTextureDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::InstanceDescriptor, InstanceDescriptor)
 
         InstanceDescriptor.def_readwrite("next_in_chain", &wgpu::InstanceDescriptor::nextInChain);
-        InstanceDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::InstanceDescriptor, InstanceDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Limits, Limits)
 
-        Limits.def_readwrite("max_texture_dimension1_d", &wgpu::Limits::maxTextureDimension1D);
-        Limits.def_readwrite("max_texture_dimension2_d", &wgpu::Limits::maxTextureDimension2D);
-        Limits.def_readwrite("max_texture_dimension3_d", &wgpu::Limits::maxTextureDimension3D);
+        Limits.def_readwrite("max_texture_dimension1d", &wgpu::Limits::maxTextureDimension1D);
+        Limits.def_readwrite("max_texture_dimension2d", &wgpu::Limits::maxTextureDimension2D);
+        Limits.def_readwrite("max_texture_dimension3d", &wgpu::Limits::maxTextureDimension3D);
         Limits.def_readwrite("max_texture_array_layers", &wgpu::Limits::maxTextureArrayLayers);
         Limits.def_readwrite("max_bind_groups", &wgpu::Limits::maxBindGroups);
         Limits.def_readwrite("max_dynamic_uniform_buffers_per_pipeline_layout", &wgpu::Limits::maxDynamicUniformBuffersPerPipelineLayout);
@@ -1686,7 +1650,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         Limits.def_readwrite("max_compute_workgroup_size_y", &wgpu::Limits::maxComputeWorkgroupSizeY);
         Limits.def_readwrite("max_compute_workgroup_size_z", &wgpu::Limits::maxComputeWorkgroupSizeZ);
         Limits.def_readwrite("max_compute_workgroups_per_dimension", &wgpu::Limits::maxComputeWorkgroupsPerDimension);
-        Limits.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Limits, Limits)
 
     PYCLASS_BEGIN(_wgpu, wgpu::MultisampleState, MultisampleState)
@@ -1695,7 +1658,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         MultisampleState.def_readwrite("count", &wgpu::MultisampleState::count);
         MultisampleState.def_readwrite("mask", &wgpu::MultisampleState::mask);
         MultisampleState.def_readwrite("alpha_to_coverage_enabled", &wgpu::MultisampleState::alphaToCoverageEnabled);
-        MultisampleState.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::MultisampleState, MultisampleState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Origin3D, Origin3D)
@@ -1703,7 +1665,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         Origin3D.def_readwrite("x", &wgpu::Origin3D::x);
         Origin3D.def_readwrite("y", &wgpu::Origin3D::y);
         Origin3D.def_readwrite("z", &wgpu::Origin3D::z);
-        Origin3D.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::Origin3D, Origin3D)
 
     PYCLASS_BEGIN(_wgpu, wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor)
@@ -1743,7 +1704,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         QuerySetDescriptor.def_readwrite("count", &wgpu::QuerySetDescriptor::count);
         QuerySetDescriptor.def_readwrite("pipeline_statistics", &wgpu::QuerySetDescriptor::pipelineStatistics);
         QuerySetDescriptor.def_readwrite("pipeline_statistics_count", &wgpu::QuerySetDescriptor::pipelineStatisticsCount);
-        QuerySetDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::QuerySetDescriptor, QuerySetDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::QueueDescriptor, QueueDescriptor)
@@ -1752,7 +1712,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         QueueDescriptor.def_property("label",
             [](const wgpu::QueueDescriptor& self){ return self.label; },[](wgpu::QueueDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
         );
-        QueueDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::QueueDescriptor, QueueDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderBundleDescriptor, RenderBundleDescriptor)
@@ -1761,7 +1720,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RenderBundleDescriptor.def_property("label",
             [](const wgpu::RenderBundleDescriptor& self){ return self.label; },[](wgpu::RenderBundleDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
         );
-        RenderBundleDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RenderBundleDescriptor, RenderBundleDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderBundleEncoderDescriptor, RenderBundleEncoderDescriptor)
@@ -1776,7 +1734,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RenderBundleEncoderDescriptor.def_readwrite("sample_count", &wgpu::RenderBundleEncoderDescriptor::sampleCount);
         RenderBundleEncoderDescriptor.def_readwrite("depth_read_only", &wgpu::RenderBundleEncoderDescriptor::depthReadOnly);
         RenderBundleEncoderDescriptor.def_readwrite("stencil_read_only", &wgpu::RenderBundleEncoderDescriptor::stencilReadOnly);
-        RenderBundleEncoderDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RenderBundleEncoderDescriptor, RenderBundleEncoderDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPassDepthStencilAttachment, RenderPassDepthStencilAttachment)
@@ -1806,7 +1763,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RenderPassTimestampWrite.def_readwrite("query_set", &wgpu::RenderPassTimestampWrite::querySet);
         RenderPassTimestampWrite.def_readwrite("query_index", &wgpu::RenderPassTimestampWrite::queryIndex);
         RenderPassTimestampWrite.def_readwrite("location", &wgpu::RenderPassTimestampWrite::location);
-        RenderPassTimestampWrite.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RenderPassTimestampWrite, RenderPassTimestampWrite)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RequestAdapterOptions, RequestAdapterOptions)
@@ -1815,14 +1771,12 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RequestAdapterOptions.def_readwrite("compatible_surface", &wgpu::RequestAdapterOptions::compatibleSurface);
         RequestAdapterOptions.def_readwrite("power_preference", &wgpu::RequestAdapterOptions::powerPreference);
         RequestAdapterOptions.def_readwrite("force_fallback_adapter", &wgpu::RequestAdapterOptions::forceFallbackAdapter);
-        RequestAdapterOptions.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RequestAdapterOptions, RequestAdapterOptions)
 
     PYCLASS_BEGIN(_wgpu, wgpu::SamplerBindingLayout, SamplerBindingLayout)
 
         SamplerBindingLayout.def_readwrite("next_in_chain", &wgpu::SamplerBindingLayout::nextInChain);
         SamplerBindingLayout.def_readwrite("type", &wgpu::SamplerBindingLayout::type);
-        SamplerBindingLayout.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::SamplerBindingLayout, SamplerBindingLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::SamplerDescriptor, SamplerDescriptor)
@@ -1841,7 +1795,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         SamplerDescriptor.def_readwrite("lod_max_clamp", &wgpu::SamplerDescriptor::lodMaxClamp);
         SamplerDescriptor.def_readwrite("compare", &wgpu::SamplerDescriptor::compare);
         SamplerDescriptor.def_readwrite("max_anisotropy", &wgpu::SamplerDescriptor::maxAnisotropy);
-        SamplerDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::SamplerDescriptor, SamplerDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor)
@@ -1874,7 +1827,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         StencilFaceState.def_readwrite("fail_op", &wgpu::StencilFaceState::failOp);
         StencilFaceState.def_readwrite("depth_fail_op", &wgpu::StencilFaceState::depthFailOp);
         StencilFaceState.def_readwrite("pass_op", &wgpu::StencilFaceState::passOp);
-        StencilFaceState.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::StencilFaceState, StencilFaceState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::StorageTextureBindingLayout, StorageTextureBindingLayout)
@@ -1883,7 +1835,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         StorageTextureBindingLayout.def_readwrite("access", &wgpu::StorageTextureBindingLayout::access);
         StorageTextureBindingLayout.def_readwrite("format", &wgpu::StorageTextureBindingLayout::format);
         StorageTextureBindingLayout.def_readwrite("view_dimension", &wgpu::StorageTextureBindingLayout::viewDimension);
-        StorageTextureBindingLayout.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::StorageTextureBindingLayout, StorageTextureBindingLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptor, SurfaceDescriptor)
@@ -1969,7 +1920,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         TextureBindingLayout.def_readwrite("sample_type", &wgpu::TextureBindingLayout::sampleType);
         TextureBindingLayout.def_readwrite("view_dimension", &wgpu::TextureBindingLayout::viewDimension);
         TextureBindingLayout.def_readwrite("multisampled", &wgpu::TextureBindingLayout::multisampled);
-        TextureBindingLayout.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::TextureBindingLayout, TextureBindingLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::TextureDataLayout, TextureDataLayout)
@@ -1994,7 +1944,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         TextureViewDescriptor.def_readwrite("base_array_layer", &wgpu::TextureViewDescriptor::baseArrayLayer);
         TextureViewDescriptor.def_readwrite("array_layer_count", &wgpu::TextureViewDescriptor::arrayLayerCount);
         TextureViewDescriptor.def_readwrite("aspect", &wgpu::TextureViewDescriptor::aspect);
-        TextureViewDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::TextureViewDescriptor, TextureViewDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::VertexAttribute, VertexAttribute)
@@ -2026,14 +1975,12 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         BindGroupLayoutEntry.def_readwrite("sampler", &wgpu::BindGroupLayoutEntry::sampler);
         BindGroupLayoutEntry.def_readwrite("texture", &wgpu::BindGroupLayoutEntry::texture);
         BindGroupLayoutEntry.def_readwrite("storage_texture", &wgpu::BindGroupLayoutEntry::storageTexture);
-        BindGroupLayoutEntry.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::BindGroupLayoutEntry, BindGroupLayoutEntry)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BlendState, BlendState)
 
         BlendState.def_readwrite("color", &wgpu::BlendState::color);
         BlendState.def_readwrite("alpha", &wgpu::BlendState::alpha);
-        BlendState.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::BlendState, BlendState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CompilationInfo, CompilationInfo)
@@ -2041,7 +1988,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         CompilationInfo.def_readwrite("next_in_chain", &wgpu::CompilationInfo::nextInChain);
         CompilationInfo.def_readwrite("message_count", &wgpu::CompilationInfo::messageCount);
         CompilationInfo.def_readwrite("messages", &wgpu::CompilationInfo::messages);
-        CompilationInfo.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::CompilationInfo, CompilationInfo)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePassDescriptor, ComputePassDescriptor)
@@ -2052,7 +1998,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         );
         ComputePassDescriptor.def_readwrite("timestamp_write_count", &wgpu::ComputePassDescriptor::timestampWriteCount);
         ComputePassDescriptor.def_readwrite("timestamp_writes", &wgpu::ComputePassDescriptor::timestampWrites);
-        ComputePassDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ComputePassDescriptor, ComputePassDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::DepthStencilState, DepthStencilState)
@@ -2098,7 +2043,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         );
         ProgrammableStageDescriptor.def_readwrite("constant_count", &wgpu::ProgrammableStageDescriptor::constantCount);
         ProgrammableStageDescriptor.def_readwrite("constants", &wgpu::ProgrammableStageDescriptor::constants);
-        ProgrammableStageDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ProgrammableStageDescriptor, ProgrammableStageDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPassColorAttachment, RenderPassColorAttachment)
@@ -2116,14 +2060,12 @@ void init_generated(py::module &_wgpu, Registry &registry) {
 
         RequiredLimits.def_readwrite("next_in_chain", &wgpu::RequiredLimits::nextInChain);
         RequiredLimits.def_readwrite("limits", &wgpu::RequiredLimits::limits);
-        RequiredLimits.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::RequiredLimits, RequiredLimits)
 
     PYCLASS_BEGIN(_wgpu, wgpu::SupportedLimits, SupportedLimits)
 
         SupportedLimits.def_readwrite("next_in_chain", &wgpu::SupportedLimits::nextInChain);
         SupportedLimits.def_readwrite("limits", &wgpu::SupportedLimits::limits);
-        SupportedLimits.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::SupportedLimits, SupportedLimits)
 
     PYCLASS_BEGIN(_wgpu, wgpu::TextureDescriptor, TextureDescriptor)
@@ -2180,7 +2122,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         );
         ComputePipelineDescriptor.def_readwrite("layout", &wgpu::ComputePipelineDescriptor::layout);
         ComputePipelineDescriptor.def_readwrite("compute", &wgpu::ComputePipelineDescriptor::compute);
-        ComputePipelineDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
@@ -2193,7 +2134,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         DeviceDescriptor.def_readwrite("required_features", &wgpu::DeviceDescriptor::requiredFeatures);
         DeviceDescriptor.def_readwrite("required_limits", &wgpu::DeviceDescriptor::requiredLimits);
         DeviceDescriptor.def_readwrite("default_queue", &wgpu::DeviceDescriptor::defaultQueue);
-        DeviceDescriptor.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPassDescriptor, RenderPassDescriptor)
@@ -2222,7 +2162,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         VertexState.def_readwrite("constants", &wgpu::VertexState::constants);
         VertexState.def_readwrite("buffer_count", &wgpu::VertexState::bufferCount);
         VertexState.def_readwrite("buffers", &wgpu::VertexState::buffers);
-        VertexState.def(py::init<>());
     PYCLASS_END(_wgpu, wgpu::VertexState, VertexState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::FragmentState, FragmentState)

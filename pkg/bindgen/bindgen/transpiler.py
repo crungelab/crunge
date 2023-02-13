@@ -233,8 +233,12 @@ class Transpiler(TranspilerBase):
                     self.visit_field(child, node)
                 elif child.kind == cindex.CursorKind.ENUM_DECL:
                     self.visit_struct_enum(child, clsname, pyname)
-            if not entry.has_constructor:
-                print(entry)
+                elif child.kind == cindex.CursorKind.USING_DECLARATION:
+                    self.visit_using_decl(child)
+
+            #if not entry.has_constructor:
+            if entry.gen_init:
+                #print(entry)
                 self(f"{self.module_(node)}.def(py::init<>());")
 
         if not wrapped:
@@ -259,14 +263,21 @@ class Transpiler(TranspilerBase):
                     self.visit_method(child, node)
                 elif child.kind == cindex.CursorKind.FIELD_DECL:
                     self.visit_field(child, node)
-            if not entry.has_constructor:
-                print(entry)
+                elif child.kind == cindex.CursorKind.USING_DECLARATION:
+                    self.visit_using_decl(child)
+
+            #if not entry.has_constructor:
+            if entry.gen_init:
+                #print(entry)
                 self(f"{self.module_(node)}.def(py::init<>());")
 
         self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
 
     def visit_var(self, node):
         logger.debug(f"Not implemented:  visit_var: {node.spelling}")
+
+    def visit_using_decl(self, node):
+        logger.debug(f"Not implemented:  visit_using_decl: {node.spelling}")
 
     def visit(self, node):
         self.actions[node.kind](self, node)

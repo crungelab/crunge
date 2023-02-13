@@ -181,8 +181,8 @@ void init_main(py::module &_wgpu, Registry &registry) {
     PYEXTEND_BEGIN(wgpu::Extent3D, Extent3D)
         Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>()
         , py::arg("width")
-        , py::arg("height")
-        , py::arg("depth")
+        , py::arg("height") = 1
+        , py::arg("depth") = 1
         );
     PYEXTEND_END
 

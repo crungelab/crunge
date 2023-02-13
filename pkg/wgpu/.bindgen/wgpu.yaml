@@ -20,9 +20,32 @@ flags: [
 'field.wgpu::DawnTogglesDeviceDescriptor::forceEnabledToggles': {exclude: true}
 'field.wgpu::DawnTogglesDeviceDescriptor::forceDisabledToggles': {exclude: true}
 
-'ctor.wgpu::AdapterProperties::AdapterProperties': {}
-
-#'field.wgpu::VertexBufferLayout::attributes': {exclude: true}
-
 # Wrapped
 'method.wgpu::RenderPassEncoder::SetBindGroup': {exclude: true}
+
+# Need initializers
+'struct.wgpu::AdapterProperties': {gen_init: true}
+'struct.wgpu::BindGroupLayoutDescriptor': {gen_init: true}
+'struct.wgpu::BindGroupDescriptor': {gen_init: true}
+'struct.wgpu::ShaderModuleDescriptor': {gen_init: true}
+'struct.wgpu::TextureDescriptor': {gen_init: true}
+'struct.wgpu::BufferDescriptor': {gen_init: true}
+'struct.wgpu::PipelineLayoutDescriptor': {gen_init: true}
+'struct.wgpu::ColorTargetState': {gen_init: true}
+'struct.wgpu::FragmentState': {gen_init: true}
+'struct.wgpu::DepthStencilState': {gen_init: true}
+'struct.wgpu::RenderPipelineDescriptor': {gen_init: true}
+'struct.wgpu::RenderPassColorAttachment': {gen_init: true}
+'struct.wgpu::RenderPassDescriptor': {gen_init: true}
+'struct.wgpu::RenderPassDepthStencilAttachment': {gen_init: true}
+'struct.wgpu::CommandBuffer': {gen_init: true}
+'struct.wgpu::SurfaceDescriptor': {gen_init: true}
+'struct.wgpu::SwapChainDescriptor': {gen_init: true}
+'struct.wgpu::ImageCopyBuffer': {gen_init: true}
+'struct.wgpu::ImageCopyTexture': {gen_init: true}
+'struct.wgpu::TextureDataLayout': {gen_init: true}
+'struct.wgpu::VertexAttribute': {gen_init: true}
+'struct.wgpu::VertexBufferLayout': {gen_init: true}
+'struct.wgpu::PrimitiveState': {gen_init: true}
+'struct.wgpu::BindGroupEntry': {gen_init: true}
+'struct.wgpu::Extent3D': {gen_init: true}

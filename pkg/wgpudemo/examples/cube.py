@@ -179,13 +179,10 @@ class HelloWgpu:
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
         # Create depth texture
-        extent = wgpu.Extent3D()
-        extent.width = self.kWidth
-        extent.height = self.kHeight
         self.depthTexture = utils.create_texture(
             self.device,
             "Depth texture",
-            extent,
+            wgpu.Extent3D(self.kWidth, self.kHeight),
             wgpu.TextureFormat.DEPTH24_PLUS,
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
@@ -206,6 +203,7 @@ class HelloWgpu:
         aspect = float(self.kWidth) / float(self.kHeight)
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
+        #exit()
 
     @property
     def transform_matrix(self):
@@ -236,7 +234,7 @@ class HelloWgpu:
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
 
-        self.window = glfw.create_window(self.kWidth, self.kHeight, "Hello", None, None)
+        self.window = glfw.create_window(self.kWidth, self.kHeight, "Cube", None, None)
 
     def create_swapchain(self):
         handle, display = None, None
