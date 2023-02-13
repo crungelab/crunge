@@ -1,20 +1,22 @@
 from crunge.clang import cindex
 
 class Entry:
-    key: str = None
+    fqname: str = None
+    pyname: str = None
     config: dict = {}
     node: cindex.Cursor = None
 
     exclude: bool = False
     overload: bool = False
 
-    def __init__(self, key: str, config: dict={}, node: cindex.Cursor = None):
-        self.key = key
+    def __init__(self, fqname: str, pyname: str, config: dict={}, node: cindex.Cursor = None):
+        self.fqname = fqname
+        self.pyname = pyname
         self.configure(config)
         self.node = node
 
     def __repr__(self) -> str:
-        return f'<{self.__class__.__name__} key={self.key}>'
+        return f'<{self.__class__.__name__} fqname={self.fqname}, pyname={self.pyname}>'
 
     def configure(self, config):
         #logger.debug(f"config: {config}")

@@ -18,7 +18,7 @@ entry_cls_map = {
     'class': ClassEntry
 }
 
-class TranspilerBase:
+class GeneratorBase:
     def __init__(self):
         self.indentation = 0
         self.text = ''
@@ -83,18 +83,31 @@ class TranspilerBase:
         return entry
 
     def create_entry(self, entry_key: str, config: dict, node: cindex.Cursor = None):
-        kind, key = entry_key.split('.')
+        kind, fqname = entry_key.split('.')
+        name = fqname.split('::')[-1]
+        pyname = self.format_type(name)
         cls = entry_cls_map[kind]
-        entry = cls(key, config, node)
+        entry = cls(fqname, pyname, config, node)
 
         if entry.exclude:
-            self.excludes.append(key)
+            self.excludes.append(fqname)
         if entry.overload:
-            self.overloads.append(key)
+            self.overloads.append(fqname)
 
-        self.entries[key] = entry
+        self.entries[fqname] = entry
 
         return entry
+
+    def spell(self, node):
+        if node is None:
+            return ''
+        elif node.kind == cindex.CursorKind.TRANSLATION_UNIT:
+            return ''
+        else:
+            res = self.spell(node.semantic_parent)
+            if res != '':
+                return res + '::' + node.spelling
+        return node.spelling
 
     def snake(self, name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
@@ -142,17 +155,6 @@ class TranspilerBase:
         if node.spelling.startswith('_'):
             return True
         return False
-
-    def spell(self, node):
-        if node is None:
-            return ''
-        elif node.kind == cindex.CursorKind.TRANSLATION_UNIT:
-            return ''
-        else:
-            res = self.spell(node.semantic_parent)
-            if res != '':
-                return res + '::' + node.spelling
-        return node.spelling
 
     def is_class_mappable(self, node):
         if not node.is_definition():
@@ -218,6 +220,39 @@ class TranspilerBase:
     def is_overloaded(self, node):
         return self.spell(node) in self.overloaded
 
+    def should_wrap_function(self, node):
+        if node.type.is_function_variadic():
+            return True
+        for arg in node.get_arguments():
+            if arg.type.kind == cindex.TypeKind.CONSTANTARRAY:
+                return True
+            if self.should_return_argument(arg):
+                return True
+        return False
+
+    def should_return_argument(self, argument):
+        argtype = argument.type.get_canonical()
+        if argtype.kind == cindex.TypeKind.LVALUEREFERENCE:
+            if not argtype.get_pointee().is_const_qualified():
+                return True
+        if argtype.kind == cindex.TypeKind.CONSTANTARRAY:
+            return True
+        if argtype.kind == cindex.TypeKind.POINTER:
+            ptr = argtype.get_pointee()
+            kinds = [
+                cindex.TypeKind.BOOL,
+                cindex.TypeKind.FLOAT,
+                cindex.TypeKind.DOUBLE,
+                cindex.TypeKind.INT,
+                cindex.TypeKind.UINT,
+                cindex.TypeKind.USHORT,
+                cindex.TypeKind.ULONG,
+                cindex.TypeKind.ULONGLONG,
+            ]
+            if not ptr.is_const_qualified() and ptr.kind in kinds:
+                return True
+        return False
+
     def arg_type(self, argument):
         if argument.type.kind == cindex.TypeKind.CONSTANTARRAY:
             return f'std::array<{argument.type.get_array_element_type().spelling}, {argument.type.get_array_size()}>&'
@@ -243,6 +278,26 @@ class TranspilerBase:
         if len(parts) == 2:
             return parts[1]
         return ''
+
+    def get_function_return(self, node):
+        returned = [
+            a.spelling for a in node.get_arguments() if self.should_return_argument(a)
+        ]
+        if not self.is_function_void_return(node):
+            returned.insert(0, "ret")
+        if len(returned) > 1:
+            return "std::make_tuple({})".format(", ".join(returned))
+        if len(returned) == 1:
+            return returned[0]
+        return ""
+
+    def get_return_policy(self, node):
+        result = node.type.get_result()
+        if result.kind == cindex.TypeKind.LVALUEREFERENCE:
+            return "py::return_value_policy::reference"
+        else:
+            return "py::return_value_policy::automatic_reference"
+
 
     def write_pyargs(self, arguments):
         for argument in arguments:
