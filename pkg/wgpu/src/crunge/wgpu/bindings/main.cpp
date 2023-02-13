@@ -279,7 +279,7 @@ void init_main(py::module &_wgpu, Registry &registry) {
                 // or: return Foo(...); // return by value (move constructor)
             }));
         */
-        PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
+        /*PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
         ShaderModuleWGSLDescriptor.def(py::init([](const py::kwargs& kwargs) {
             wgpu::ShaderModuleWGSLDescriptor obj;
             if (kwargs.contains("source")) {
@@ -290,6 +290,6 @@ void init_main(py::module &_wgpu, Registry &registry) {
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
-    PYEXTEND_END
+        PYEXTEND_END*/
 
 }

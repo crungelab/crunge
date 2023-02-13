@@ -162,6 +162,7 @@ class Generator(GeneratorBase):
         if not self.is_field_mappable(node):
             return
         entry: FieldEntry = self.lookup_or_create(f'field.{self.spell(node)}', node=node)
+        self.entry.add_child(entry)
         #logger.debug(entry)
 
         # Need to log/track this because pointers can be a source of problems        
@@ -258,9 +259,9 @@ class Generator(GeneratorBase):
                     base = child
             if base:
                 basename = self.spell(base)
-                self(f"PYCLASS_INHERIT_BEGIN({self.module}, {entry.fqname}, {basename}, {entry.pyname})\n")
+                self(f"PYCLASS_INHERIT_BEGIN({self.module}, {entry.fqname}, {basename}, {entry.pyname})")
             else:
-                self(f"PYCLASS_BEGIN({self.module}, {entry.fqname}, {entry.pyname})\n")
+                self(f"PYCLASS_BEGIN({self.module}, {entry.fqname}, {entry.pyname})")
         with self.enter(entry):
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
@@ -278,6 +279,8 @@ class Generator(GeneratorBase):
             #if not entry.has_constructor:
             if entry.gen_init:
                 self.gen_init()
+            elif entry.gen_kw_init:
+                self.gen_kw_init()
 
         if not wrapped:
             self(f"PYCLASS_END({self.module}, {entry.fqname}, {entry.pyname})\n")
@@ -287,7 +290,7 @@ class Generator(GeneratorBase):
             return
         entry: ClassEntry = self.lookup_or_create(f'class.{self.spell(node)}', node=node)
         #logger.debug(entry)
-        self(f"PYCLASS_BEGIN({self.module}, {entry.fqname}, {entry.pyname})\n")
+        self(f"PYCLASS_BEGIN({self.module}, {entry.fqname}, {entry.pyname})")
         with self.enter(entry):
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
@@ -303,11 +306,60 @@ class Generator(GeneratorBase):
             #if not entry.has_constructor:
             if entry.gen_init:
                 self.gen_init()
+            elif entry.gen_kw_init:
+                self.gen_kw_init()
 
         self(f"PYCLASS_END({self.module}, {entry.fqname}, {entry.pyname})\n")
 
     def gen_init(self):
         self(f"{self.scope}.def(py::init<>());")
+
+    """
+    ShaderModuleWGSLDescriptor.def(py::init([](const py::kwargs& kwargs) {
+        wgpu::ShaderModuleWGSLDescriptor obj;
+        if (kwargs.contains("source")) {
+            auto _source = kwargs["source"].cast<std::string>();
+            char* source = (char*)malloc(_source.size());
+            strcpy(source, _source.c_str());
+            obj.source = source;
+        }
+        return obj;
+    }), py::return_value_policy::automatic_reference);
+    """
+    def gen_kw_init(self):
+        entry = self.entry
+        #self(f"{self.scope}.def(py::init<>());")
+        self(f'{self.scope}.def(py::init([](const py::kwargs& kwargs)')
+        self("{")
+        with self:
+            self(f'{entry.fqname} obj;')
+            for child in entry.children:
+                node = child.node
+                typename = None
+                is_char_pointer = self.is_char_pointer(node)
+                if is_char_pointer:
+                    typename = 'std::string'
+                else:
+                    typename = node.type.spelling
+                if type(child) is FieldEntry:
+                    #self(str(child))
+                    self(f'if (kwargs.contains("{child.pyname}"))')
+                    self("{")
+                    with self:
+                        #self(f'//{str(child)}')
+                        #self(f'auto _value = kwargs["{child.pyname}"].cast<std::string>();')
+                        #self(f'auto _value = kwargs["{child.pyname}"].cast<{typename}>();')
+                        if is_char_pointer:
+                            self(f'auto _value = kwargs["{child.pyname}"].cast<{typename}>();')
+                            self(f'char* value = (char*)malloc(_value.size());')
+                            self(f'strcpy(value, _value.c_str());')
+                        else:
+                            self(f'auto value = kwargs["{child.pyname}"].cast<{typename}>();')
+                        self(f'obj.{child.name} = value;')
+                    self("}")
+            self('return obj;')
+        self("}), py::return_value_policy::automatic_reference);")
+
 
     def visit_var(self, node):
         #logger.debug(f"Not implemented:  visit_var: {node.spelling}")

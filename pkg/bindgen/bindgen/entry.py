@@ -19,14 +19,14 @@ class EntryKind(Enum):
     METHOD = 3
     STRUCT = 4
     CLASS = 5
-    
+
 class Entry:
     fqname: str = None
     name: str = None
     pyname: str = None
     config: dict = {}
     node: cindex.Cursor = None
-
+    children: list["Entry"] = []
     exclude: bool = False
     overload: bool = False
 
@@ -36,6 +36,7 @@ class Entry:
         self.pyname = pyname
         self.configure(config)
         self.node = node
+        self.children = []
 
     def __repr__(self) -> str:
         return f'<{self.__class__.__name__} fqname={self.fqname}, name={self.name}, pyname={self.pyname}>'
@@ -44,6 +45,9 @@ class Entry:
         #logger.debug(f"config: {config}")
         for key, value in config.items():
             setattr(self, key, value)
+
+    def add_child(self, entry: "Entry"):
+        self.children.append(entry)
 
 class FunctionEntry(Entry):
     pass

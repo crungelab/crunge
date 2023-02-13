@@ -28,6 +28,7 @@ flags: [
 'struct.wgpu::BindGroupLayoutDescriptor': {gen_init: true}
 'struct.wgpu::BindGroupDescriptor': {gen_init: true}
 'struct.wgpu::ShaderModuleDescriptor': {gen_init: true}
+'struct.wgpu::ShaderModuleWGSLDescriptor': {gen_kw_init: true}
 'struct.wgpu::TextureDescriptor': {gen_init: true}
 'struct.wgpu::BufferDescriptor': {gen_init: true}
 'struct.wgpu::PipelineLayoutDescriptor': {gen_init: true}
