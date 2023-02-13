@@ -1266,13 +1266,6 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         , py::arg("group_label")
         , py::return_value_policy::automatic_reference);
 
-        RenderPassEncoder.def("set_bind_group", &wgpu::RenderPassEncoder::SetBindGroup
-        , py::arg("group_index")
-        , py::arg("group")
-        , py::arg("dynamic_offset_count") = 0
-        , py::arg("dynamic_offsets") = nullptr
-        , py::return_value_policy::automatic_reference);
-
         RenderPassEncoder.def("set_blend_constant", &wgpu::RenderPassEncoder::SetBlendConstant
         , py::arg("color")
         , py::return_value_policy::automatic_reference);

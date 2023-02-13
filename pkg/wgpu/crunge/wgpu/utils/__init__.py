@@ -152,3 +152,58 @@ wgpu::TextureDataLayout CreateTextureDataLayout(uint64_t offset,
     return textureDataLayout;
 }
 """
+
+def create_texture(device: wgpu.Device, label: str, extent: wgpu.Extent3D, format: wgpu.TextureFormat, usage: wgpu.TextureUsage):
+    descriptor = wgpu.TextureDescriptor()
+    descriptor.label = label
+    #descriptor.dimension = wgpu.TextureDimension.E2_D
+    #descriptor.size.width = 1024
+    #descriptor.size.height = 1024
+    #descriptor.size.depth_or_array_layers = 1
+    descriptor.size = extent
+    #descriptor.sample_count = 1
+    #descriptor.format = wgpu.TextureFormat.RGBA8_UNORM
+    descriptor.format = format
+    #descriptor.mip_level_count = 1
+    #descriptor.usage = wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING
+    descriptor.usage = usage
+    texture = device.create_texture(descriptor)
+    return texture
+
+"""
+wgpu::Texture createTexture(const wgpu::Device& device,
+                            const std::string& label,
+                            wgpu::Extent3D extent,
+                            wgpu::TextureFormat format,
+                            wgpu::TextureUsage usage) {
+  wgpu::TextureDescriptor desc{
+      .label = label.c_str(),
+      .usage = usage,
+      .size = extent,
+      .format = format,
+  };
+
+  return device.CreateTexture(&desc);
+}
+"""
+
+def create_buffer(device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage):
+    desc = wgpu.BufferDescriptor()
+    desc.label = label
+    desc.usage = usage | wgpu.BufferUsage.COPY_DST
+    desc.size = size
+    return device.create_buffer(desc)
+
+"""
+wgpu::Buffer createBuffer(const wgpu::Device& device,
+                          const std::string& label,
+                          uint64_t size,
+                          wgpu::BufferUsage usage) {
+  wgpu::BufferDescriptor desc{
+      .label = label.c_str(),
+      .usage = usage | wgpu::BufferUsage::CopyDst,
+      .size = size,
+  };
+  return device.CreateBuffer(&desc);
+}
+"""
