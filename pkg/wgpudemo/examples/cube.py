@@ -132,19 +132,6 @@ class HelloWgpu:
 
         # Pipeline creation
 
-        """
-        wgpu::VertexAttribute vertAttributes[2] = {
-            {
-                .format = wgpu::VertexFormat::Float32x4,
-                .offset = kPositionByteOffset,
-                .shaderLocation = 0,
-            },
-            {
-                .format = wgpu::VertexFormat::Float32x2,
-                .offset = kUVByteOffset,
-                .shaderLocation = 1,
-            }};
-        """
         # TODO: Need to implement kwargs initializers
         va0 = wgpu.VertexAttribute()
         va0.format = wgpu.VertexFormat.FLOAT32X4
@@ -158,13 +145,6 @@ class HelloWgpu:
 
         vertAttributes = wgpu.VertexAttributes([va0, va1])
 
-        """
-        wgpu::VertexBufferLayout vertBufferLayout{
-            .arrayStride = kCubeDataStride * sizeof(float),
-            .attributeCount = 2,
-            .attributes = vertAttributes,
-        };
-        """
         vertBufferLayout = wgpu.VertexBufferLayout()
         vertBufferLayout.array_stride = self.kCubeDataStride * sizeof(c_float)
         vertBufferLayout.attribute_count = 2
@@ -173,64 +153,22 @@ class HelloWgpu:
         colorTargetState = wgpu.ColorTargetState()
         colorTargetState.format = wgpu.TextureFormat.BGRA8_UNORM
 
-        """
-        wgpu::FragmentState fragState{
-            .module = shader,
-            .entryPoint = "fs_main",
-            .targetCount = 1,
-            .targets = &target,
-        };
-        """
         fragmentState = wgpu.FragmentState()
         fragmentState.module = shader_module
         fragmentState.entry_point = "fs_main"
         fragmentState.target_count = 1
         fragmentState.targets = colorTargetState
 
-        """
-        wgpu::DepthStencilState depthState = {
-            .format = wgpu::TextureFormat::Depth24Plus,
-            .depthWriteEnabled = true,
-            .depthCompare = wgpu::CompareFunction::Less,
-        };
-        """
         depthStencilState = wgpu.DepthStencilState()
         depthStencilState.format = wgpu.TextureFormat.DEPTH24_PLUS
         depthStencilState.depth_write_enabled = True
         depthStencilState.depth_compare = wgpu.CompareFunction.LESS
 
-        pl = wgpu.PipelineLayoutDescriptor()
-        pl.bind_group_layout_count = 0
-        pl.bind_group_layouts = None
-
-        """
-        wgpu::RenderPipelineDescriptor pipelineDesc{
-            .label = "Main Render Pipeline",
-            .layout = nullptr,
-            .vertex =
-                {
-                    .module = shader,
-                    .entryPoint = "vs_main",
-                    .bufferCount = 1,
-                    .buffers = &vertBufferLayout,
-                },
-            .primitive =
-                {
-                    // Cube is solid, so the back faces can never be seen
-                    .cullMode = wgpu::CullMode::Back,
-                },
-            // Enable depth-testing so correct front ordering is maintained
-            .depthStencil = &depthState,
-            .fragment = &fragState,
-        };
-        """
         primitive = wgpu.PrimitiveState()
         primitive.cull_mode = wgpu.CullMode.BACK
 
         descriptor = wgpu.RenderPipelineDescriptor()
         descriptor.label = "Main Render Pipeline"
-        # descriptor.layout = None # Automatic layout #TODO: ?
-        #descriptor.layout = self.device.create_pipeline_layout(pl)
         descriptor.vertex.module = shader_module
         descriptor.vertex.entry_point = "vs_main"
         descriptor.vertex.buffer_count = 1
@@ -240,16 +178,6 @@ class HelloWgpu:
         descriptor.fragment = fragmentState
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-        """
-        // Create depth texture
-        auto depthTexture = dusk::webgpu::createTexture(
-            device, "Depth texture",
-            {
-                .width = kWidth,
-                .height = kHeight,
-            },
-            wgpu::TextureFormat::Depth24Plus, wgpu::TextureUsage::RenderAttachment);
-        """
         # Create depth texture
         extent = wgpu.Extent3D()
         extent.width = self.kWidth
@@ -262,21 +190,6 @@ class HelloWgpu:
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
 
-        """
-        wgpu::BindGroupEntry bindEntries[1] = {{
-            .binding = 0,
-            .buffer = uniformBuffer,
-            .size = uniformBufferSize,
-        }};
-
-        wgpu::BindGroupDescriptor bindGroupDesc{
-            .label = "Uniform bind group",
-            .layout = pipeline.GetBindGroupLayout(0),
-            .entryCount = 1,
-            .entries = bindEntries,
-        };
-        auto uniformBindGroup = device.CreateBindGroup(&bindGroupDesc);
-        """
         bindEntry = wgpu.BindGroupEntry()
         bindEntry.binding = 0
         bindEntry.buffer = self.uniformBuffer
@@ -298,30 +211,11 @@ class HelloWgpu:
     def transform_matrix(self):
         now = time.time()
         ms = round(now * 1000) / 1000
-        print(ms)
+        #print(ms)
         viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
         rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
         rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
         return self.projectionMatrix * viewMatrix * rotMatrix
-        
-        """
-        auto aspect = float(kWidth) / float(kHeight);
-        auto fov_y_radians = float((2.f * std::numbers::pi) / 5.f);
-        auto projectionMatrix =
-            dusk::Mat4::Perspective(fov_y_radians, aspect, 1.f, 100.f);
-
-        auto transform_matrix = [&projectionMatrix]() -> dusk::Mat4 {
-            auto now_s = std::chrono::time_point_cast<std::chrono::milliseconds>(
-                std::chrono::steady_clock::now());
-            auto ms = float(now_s.time_since_epoch().count()) / 1000.f;
-
-            auto viewMatrix = dusk::Mat4::Translation(dusk::Vec3(0, 0, -4));
-            auto rotMatrix = dusk::Mat4::Rotation(1, dusk::Vec3(sinf(ms), cosf(ms), 0));
-
-            return projectionMatrix * viewMatrix * rotMatrix;
-        };
-        """
-        #exit()
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
@@ -380,35 +274,6 @@ class HelloWgpu:
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
-    def create_depth_stencil_view(self):
-        descriptor = wgpu.TextureDescriptor()
-        descriptor.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
-        descriptor.size = wgpu.Extent3D(self.kWidth, self.kHeight, 1)
-        descriptor.format = wgpu.TextureFormat.DEPTH32_FLOAT
-        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
-
-    """
-    wgpu::RenderPassColorAttachment attachment{
-        .view = nullptr,
-        .loadOp = wgpu::LoadOp::Clear,
-        .storeOp = wgpu::StoreOp::Store,
-        .clearValue = {.5, .5, .5, 1.},
-    };
-
-    wgpu::RenderPassDepthStencilAttachment depthStencilAttach{
-        .view = depthTexture.CreateView(),
-        .depthLoadOp = wgpu::LoadOp::Clear,
-        .depthStoreOp = wgpu::StoreOp::Store,
-        .depthClearValue = 1.0,
-    };
-
-    wgpu::RenderPassDescriptor renderPass{
-        .label = "Main Render Pass",
-        .colorAttachmentCount = 1,
-        .colorAttachments = &attachment,
-        .depthStencilAttachment = &depthStencilAttach,
-    };
-    """
     def render(self, backbufferView: wgpu.TextureView):
         attachment = wgpu.RenderPassColorAttachment()
         attachment.view = backbufferView
@@ -441,11 +306,6 @@ class HelloWgpu:
         self.queue.submit(1, commands)
 
     def frame(self):
-        """
-        auto transform = transform_matrix();
-        device.GetQueue().WriteBuffer(uniformBuffer, 0, transform.Data(),
-                                    uniformBufferSize);
-        """
         transform = self.transform_matrix
         self.device.queue.write_buffer(self.uniformBuffer, 0, as_capsule(glm.value_ptr(transform)), self.uniformBufferSize)
         backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
@@ -456,7 +316,6 @@ class HelloWgpu:
     def run(self):
         self.create_window()
         self.create_swapchain()
-        #self.create_depth_stencil_view()
 
         last_time = None
         while not glfw.window_should_close(self.window):

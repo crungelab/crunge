@@ -95,14 +95,8 @@ class HelloWgpu:
         fragmentState.target_count = 1
         fragmentState.targets = colorTargetState
 
-        pl = wgpu.PipelineLayoutDescriptor()
-        pl.bind_group_layout_count = 0
-        pl.bind_group_layouts = None
-
         descriptor = wgpu.RenderPipelineDescriptor()
         descriptor.label = "Main Render Pipeline"
-        #descriptor.layout = None # Automatic layout # TODO:?
-        descriptor.layout = self.device.create_pipeline_layout(pl)
         descriptor.vertex.module = shader_module
         descriptor.vertex.entry_point = "vs_main"
         descriptor.vertex.buffer_count = 1
@@ -157,13 +151,6 @@ class HelloWgpu:
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
-    def create_depth_stencil_view(self):
-        descriptor = wgpu.TextureDescriptor()
-        descriptor.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
-        descriptor.size = wgpu.Extent3D(self.kWidth, self.kHeight, 1)
-        descriptor.format = wgpu.TextureFormat.DEPTH32_FLOAT
-        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
-
     def render(self, view: wgpu.TextureView):
         attachment = wgpu.RenderPassColorAttachment()
         attachment.view = view
@@ -196,7 +183,6 @@ class HelloWgpu:
     def run(self):
         self.create_window()
         self.create_swapchain()
-        self.create_depth_stencil_view()
 
         last_time = None
         while not glfw.window_should_close(self.window):

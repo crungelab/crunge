@@ -53,18 +53,6 @@ class HelloWgpu:
         descriptor.next_in_chain = wgsl_desc
         shader_module = self.device.create_shader_module(descriptor)
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor()
-        bgl = self.device.create_bind_group_layout(bgl_desc)
-        desc = wgpu.BindGroupDescriptor()
-        desc.layout = bgl
-        desc.entry_count = 0
-        desc.entries = None
-        bg = self.device.create_bind_group(desc)
-
-        pl = wgpu.PipelineLayoutDescriptor()
-        pl.bind_group_layout_count = 0
-        pl.bind_group_layouts = None
-
         colorTargetState = wgpu.ColorTargetState()
         colorTargetState.format = wgpu.TextureFormat.BGRA8_UNORM
 
@@ -78,7 +66,6 @@ class HelloWgpu:
         depthStencilState.format = wgpu.TextureFormat.DEPTH32_FLOAT
 
         descriptor = wgpu.RenderPipelineDescriptor()
-        descriptor.layout = self.device.create_pipeline_layout(pl)
         descriptor.vertex.module = shader_module
         descriptor.vertex.entry_point = "main_v"
         descriptor.fragment = fragmentState
@@ -147,7 +134,6 @@ class HelloWgpu:
         renderpass = wgpu.RenderPassDescriptor()
         renderpass.color_attachment_count = 1
         renderpass.color_attachments = attachment
-        # renderpass.color_attachments = [attachment] #TODO:  Pointer to array
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment()
         depth_stencil_attachment.view = depthStencilView
