@@ -5,7 +5,6 @@ from loguru import logger
 import jinja2
 #from clang import cindex
 from crunge.clang import cindex
-from crunge.clang.cindex import AccessSpecifier
 
 from .generator_base import GeneratorBase
 from .yaml import load_yaml
@@ -83,7 +82,7 @@ class Generator(GeneratorBase):
         self.actions = __actions__.MAP
 
     def generate(self):
-        logger.debug(self.path)
+        #logger.debug(self.path)
         #tu = cindex.Index.create().parse(self.path, args=self.flags)
         tu = cindex.TranslationUnit.from_source(self.path, args=self.flags, options=cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD)
 
@@ -118,9 +117,10 @@ class Generator(GeneratorBase):
             f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
         )
         with self:
-            for value in node.get_children():
+            for child in node.get_children():
+                #logger.debug(child.kind) #CursorKind.ENUM_CONSTANT_DECL
                 self(
-                    f'.value("{self.format_enum(value.spelling)}", {value.spelling})'
+                    f'.value("{self.format_enum(child.spelling)}", {child.spelling})'
                 )
             self(".export_values();")
         self()
@@ -133,9 +133,10 @@ class Generator(GeneratorBase):
         self(f"PYENUM_SCOPED_BEGIN({self.module}, {fqname}, {pyname})")
         self(pyname)
         with self:
-            for value in node.get_children():
+            for child in node.get_children():
+                #logger.debug(child.kind) #CursorKind.ENUM_CONSTANT_DECL
                 self(
-                    f'.value("{self.format_enum(value.spelling)}", {fqname}::{value.spelling})'
+                    f'.value("{self.format_enum(child.spelling)}", {fqname}::{child.spelling})'
                 )
             self(".export_values();")
         self(f"PYENUM_SCOPED_END({self.module}, {fqname}, {pyname})\n")
@@ -150,39 +151,37 @@ class Generator(GeneratorBase):
         arguments = [a for a in node.get_arguments()]
         if len(arguments):
             self(
-                f"{self.module_(self.entry.node)}.def(py::init<{self.arg_types(arguments)}>()"
+                f"{self.scope}.def(py::init<{self.arg_types(arguments)}>()"
             )
             self.write_pyargs(arguments)
             self(");")
         else:
-            self(f"{self.module_(self.entry.node)}.def(py::init<>());")
+            self(f"{self.scope}.def(py::init<>());")
 
-    def visit_field(self, node, cls):
-        if node.access_specifier == AccessSpecifier.PRIVATE:
+    def visit_field(self, node):
+        if not self.is_field_mappable(node):
             return
-        if not self.is_property_mappable(node):
-            return
-        pyname = self.format_attribute(node.spelling)
-        cname = self.spell(node)
+        entry: FieldEntry = self.lookup_or_create(f'field.{self.spell(node)}', node=node)
+        #logger.debug(entry)
 
         # Need to log/track this because pointers can be a source of problems        
         if node.type.get_canonical().kind == cindex.TypeKind.POINTER:
             ptr = node.type.get_canonical().get_pointee().kind
             #logger.debug(f"{node.spelling}: {ptr}")
 
-        if self.is_property_readonly(node):
-            self(f'{self.module_(cls)}.def_readonly("{pyname}", &{cname});')
+        if self.is_field_readonly(node):
+            self(f'{self.scope}.def_readonly("{entry.pyname}", &{entry.fqname});')
         else:
             if self.is_char_pointer(node):
                 #logger.debug(f"{node.spelling}: is char*")
-                self.visit_char_ptr_field(node, cls, pyname, cname)
+                self.visit_char_ptr_field(node, entry.pyname, entry.name)
             else:
-                self(f'{self.module_(cls)}.def_readwrite("{pyname}", &{cname});')
+                self(f'{self.scope}.def_readwrite("{entry.pyname}", &{entry.fqname});')
 
-    def visit_char_ptr_field(self, node, cls, pyname, cname):
+    def visit_char_ptr_field(self, node, pyname, cname):
         pname = self.spell(node.semantic_parent)
         name = node.spelling
-        self(f'{self.module_(cls)}.def_property("{pyname}",')
+        self(f'{self.scope}.def_property("{pyname}",')
         with self:
             self(
             f'[](const {pname}& self)' '{'
@@ -196,48 +195,47 @@ class Generator(GeneratorBase):
             )
         self(');')
 
-    def visit_function(self, node, cls=None):
-        self.visit_function_or_method(node, cls)
+    def visit_function(self, node):
+        self.visit_function_or_method(node)
 
-    def visit_method(self, node, cls=None):
-        self.visit_function_or_method(node, cls)
+    def visit_method(self, node):
+        self.visit_function_or_method(node)
 
-    def visit_function_or_method(self, node, cls=None):
-        # print(node.spelling)
-        if node.access_specifier == AccessSpecifier.PRIVATE:
+    def visit_function_or_method(self, node):
+        #logger.debug(node.spelling)
+        if not self.is_function_mappable(node):
             return
+        mname = self.scope
+        arguments = [a for a in node.get_arguments()]
+        cname = "&" + self.spell(node)
+        pyname = self.format_field(node.spelling)
+        if self.is_overloaded(node):
+            cname = f"py::overload_cast<{self.arg_types(arguments)}>({cname})"
+        if self.should_wrap_function(node):
+            self(f'{mname}.def("{pyname}", []({self.arg_string(arguments)})')
+            self("{")
+            ret = "" if self.is_function_void_return(node) else "auto ret = "
+            with self:
+                self(f"{ret}{self.spell(node)}({self.arg_names(arguments)});")
+                self(f"return {self.get_function_return(node)};")
+            self("}")
+        else:
+            self(f'{mname}.def("{pyname}", {cname}')
+        self.write_pyargs(arguments)
+        self(f", {self.get_return_policy(node)});\n")
 
-        if self.is_function_mappable(node):
-            mname = self.module_(cls)
-            arguments = [a for a in node.get_arguments()]
-            cname = "&" + self.spell(node)
-            pyname = self.format_attribute(node.spelling)
-            if self.is_overloaded(node):
-                cname = f"py::overload_cast<{self.arg_types(arguments)}>({cname})"
-            if self.should_wrap_function(node):
-                self(f'{mname}.def("{pyname}", []({self.arg_string(arguments)})')
-                self("{")
-                ret = "" if self.is_function_void_return(node) else "auto ret = "
-                with self:
-                    self(f"{ret}{self.spell(node)}({self.arg_names(arguments)});")
-                    self(f"return {self.get_function_return(node)};")
-                self("}")
-            else:
-                self(f'{mname}.def("{pyname}", {cname}')
-            self.write_pyargs(arguments)
-            self(f", {self.get_return_policy(node)});\n")
-
-    def visit_struct_enum(self, node, fqname, pyname):
+    def visit_struct_enum(self, node):
+        entry = self.entry
         if not node.get_children():
             return
         self(
-            f'py::enum_<{self.spell(node)}>({self.module}, "{pyname}", py::arithmetic())'
+            f'py::enum_<{self.spell(node)}>({self.module}, "{entry.pyname}", py::arithmetic())'
         )
         logger.debug(node.spelling)
         with self:
             for value in node.get_children():
                 self(
-                    f'.value("{self.format_enum(value.spelling)}", {fqname}::Enum::{value.spelling})'
+                    f'.value("{self.format_enum(value.spelling)}", {entry.fqname}::Enum::{value.spelling})'
                 )
             self(".export_values();")
         self("")
@@ -245,9 +243,8 @@ class Generator(GeneratorBase):
     def visit_struct(self, node):
         if not self.is_class_mappable(node):
             return
-        fqname = self.spell(node)
-        # logger.debug(fqname)
-        pyname = self.format_type(node.spelling)
+        entry: StructEntry = self.lookup_or_create(f'struct.{self.spell(node)}', node=node)
+        #logger.debug(entry)
         children = list(node.get_children())  # it's an iterator
         wrapped = False
         # Handle the case of a struct with one enum child
@@ -261,67 +258,64 @@ class Generator(GeneratorBase):
                     base = child
             if base:
                 basename = self.spell(base)
-                self(f"PYCLASS_INHERIT_BEGIN({self.module}, {fqname}, {basename}, {pyname})\n")
+                self(f"PYCLASS_INHERIT_BEGIN({self.module}, {entry.fqname}, {basename}, {entry.pyname})\n")
             else:
-                self(f"PYCLASS_BEGIN({self.module}, {fqname}, {pyname})\n")
-        with self.enter(f'struct.{fqname}', node=node) as entry:
+                self(f"PYCLASS_BEGIN({self.module}, {entry.fqname}, {entry.pyname})\n")
+        with self.enter(entry):
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
-                    #self.visit_constructor(child, node)
                     self.visit_constructor(child)
                 elif child.kind == cindex.CursorKind.CXX_METHOD:
-                    self.visit_function(child, node)
+                    self.visit_function(child)
                 elif child.kind == cindex.CursorKind.FIELD_DECL:
-                    self.visit_field(child, node)
+                    self.visit_field(child)
                 elif child.kind == cindex.CursorKind.ENUM_DECL:
-                    self.visit_struct_enum(child, fqname, pyname)
+                    self.visit_struct_enum(child)
                 elif child.kind == cindex.CursorKind.USING_DECLARATION:
                     self.visit_using_decl(child)
 
             #if not entry.has_constructor:
             if entry.gen_init:
-                self.gen_init(entry)
+                self.gen_init()
 
         if not wrapped:
-            self(f"PYCLASS_END({self.module}, {fqname}, {pyname})\n")
+            self(f"PYCLASS_END({self.module}, {entry.fqname}, {entry.pyname})\n")
 
     def visit_class(self, node):
         if not self.is_class_mappable(node):
             return
-        fqname = self.spell(node)
-        # logger.debug(fqname)
-        pyname = self.format_type(node.spelling)
-        self(f"PYCLASS_BEGIN({self.module}, {fqname}, {pyname})\n")
-        with self.enter(f'class.{fqname}', node=node) as entry:
-            logger.debug(entry)
+        entry: ClassEntry = self.lookup_or_create(f'class.{self.spell(node)}', node=node)
+        #logger.debug(entry)
+        self(f"PYCLASS_BEGIN({self.module}, {entry.fqname}, {entry.pyname})\n")
+        with self.enter(entry):
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
-                    self.visit_constructor(child, node)
-                #elif child.kind == cindex.CursorKind.FUNCTION_DECL:
-                #    self.visit_function(child, node)
+                    self.visit_constructor(child)
                 elif child.kind == cindex.CursorKind.CXX_METHOD:
-                    self.visit_method(child, node)
+                    self.visit_method(child)
                 elif child.kind == cindex.CursorKind.FIELD_DECL:
-                    self.visit_field(child, node)
+                    self.visit_field(child)
                 elif child.kind == cindex.CursorKind.USING_DECLARATION:
                     self.visit_using_decl(child)
 
             #if not entry.has_constructor:
             if entry.gen_init:
-                self.gen_init(entry)
+                self.gen_init()
 
-        self(f"PYCLASS_END({self.module}, {fqname}, {pyname})\n")
+        self(f"PYCLASS_END({self.module}, {entry.fqname}, {entry.pyname})\n")
 
-    def gen_init(self, entry: StructOrClassEntry):
-        self(f"{self.module_(entry.node)}.def(py::init<>());")
+    def gen_init(self):
+        self(f"{self.scope}.def(py::init<>());")
 
     def visit_var(self, node):
-        logger.debug(f"Not implemented:  visit_var: {node.spelling}")
+        #logger.debug(f"Not implemented:  visit_var: {node.spelling}")
+        pass
 
     def visit_using_decl(self, node):
-        logger.debug(f"Not implemented:  visit_using_decl: {node.spelling}")
+        #logger.debug(f"Not implemented:  visit_using_decl: {node.spelling}")
+        pass
 
     def visit(self, node):
         self.actions[node.kind](self, node)

@@ -37,6 +37,8 @@ class GeneratorBase:
 
     @property
     def entry(self):
+        if len(self.entry_stack) == 0:
+            return None
         return self.entry_stack [-1]
 
     def __call__(self, line=""):
@@ -45,11 +47,20 @@ class GeneratorBase:
             self.text += line.replace('>>', '> >')
         self.text += '\n'
 
+    """
     @contextmanager
     def enter(self, entry_key, config={}, node: cindex.Cursor = None):
         entry = self.lookup_or_create(entry_key, config, node)
         self.entry_stack.append(entry)
 
+        self.indent()
+        yield entry
+        self.dedent()
+        self.entry_stack.pop()
+    """
+    @contextmanager
+    def enter(self, entry):
+        self.entry_stack.append(entry)
         self.indent()
         yield entry
         self.dedent()
@@ -73,8 +84,7 @@ class GeneratorBase:
             return self.entries[key]
         return None
 
-    def lookup_or_create(self, entry_key: str, config: dict, node: cindex.Cursor = None):
-        #kind, key = entry_key.split('.')
+    def lookup_or_create(self, entry_key: str, config: dict = {}, node: cindex.Cursor = None):
         entry = self.lookup(entry_key)
         if not entry:
             entry = self.create_entry(entry_key, config, node)
@@ -82,12 +92,18 @@ class GeneratorBase:
             entry.node = node
         return entry
 
-    def create_entry(self, entry_key: str, config: dict, node: cindex.Cursor = None):
+    def create_entry(self, entry_key: str, config: dict = {}, node: cindex.Cursor = None):
         kind, fqname = entry_key.split('.')
         name = fqname.split('::')[-1]
-        pyname = self.format_type(name)
+        pyname = None
+        if kind == 'field':
+            pyname = self.format_field(name)
+        elif kind == 'enum':
+            pyname = self.format_enum(name)
+        else:
+            pyname = self.format_type(name)
         cls = entry_cls_map[kind]
-        entry = cls(fqname, pyname, config, node)
+        entry = cls(fqname, name, pyname, config, node)
 
         if entry.exclude:
             self.excludes.append(fqname)
@@ -114,7 +130,7 @@ class GeneratorBase:
         #return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
         return re.sub('([a-z])([A-Z])', r'\1_\2', s1).lower()
 
-    def format_attribute(self, name):
+    def format_field(self, name):
         name = self.snake(name)
         name = name.rstrip('_')
         name = name.replace('__', '_')
@@ -141,11 +157,19 @@ class GeneratorBase:
         name = name.rstrip('_')
         return name
 
-    def module_(self, node):
-        if node is None:
+    @property
+    def scope(self):
+        entry = self.entry
+        if entry is None:
             return self.module
         else:
-            return self.format_type(node.spelling)
+            return entry.pyname
+
+    def module_(self, entry: Entry):
+        if entry is None:
+            return self.module
+        else:
+            return entry.pyname
 
     def is_excluded(self, node):
         #logger.debug(self.spell(node))
@@ -156,17 +180,31 @@ class GeneratorBase:
             return True
         return False
 
-    def is_class_mappable(self, node):
-        if not node.is_definition():
-            return False
+    def is_node_mappable(self, node):
         if self.is_excluded(node):
+            return False
+        if node.access_specifier == cindex.AccessSpecifier.PRIVATE:
+            return False
+        #print(node.location.file.name)
+        if node.location.file:
+            node_path = Path(node.location.file.name)
+            return node_path.name in self.mapped
+        return False
+
+    def is_field_mappable(self, node):
+        return self.is_node_mappable(node)
+
+    def is_class_mappable(self, node):
+        if not self.is_node_mappable(node):
+            return False
+        if not node.is_definition():
             return False
         return True
 
     def is_function_mappable(self, node):
-        if 'operator' in node.spelling:
+        if not self.is_node_mappable(node):
             return False
-        if self.is_excluded(node):
+        if 'operator' in node.spelling:
             return False
         for argument in node.get_arguments():
             if argument.type.get_canonical().kind == cindex.TypeKind.POINTER:
@@ -200,19 +238,7 @@ class GeneratorBase:
         result = node.type.get_result()
         return result.kind == cindex.TypeKind.VOID
 
-    def is_property_mappable(self, node):
-        if self.is_excluded(node):
-            return False
-        return True
-
-    def is_node_mappable(self, node):
-        #print(node.location.file.name)
-        if node.location.file:
-            node_path = Path(node.location.file.name)
-            return node_path.name in self.mapped
-        return False
-
-    def is_property_readonly(self, node):
+    def is_field_readonly(self, node):
         if node.type.kind == cindex.TypeKind.CONSTANTARRAY:
             return True
         return False
@@ -312,4 +338,4 @@ class GeneratorBase:
             #logger.debug(default)
             if len(default):
                 default = ' = ' + default
-            self(f', py::arg("{self.format_attribute(argument.spelling)}"){default}')
+            self(f', py::arg("{self.format_field(argument.spelling)}"){default}')
