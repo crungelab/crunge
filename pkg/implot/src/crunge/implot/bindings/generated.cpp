@@ -425,123 +425,123 @@ void init_generated(py::module &_implot, Registry &registry) {
 
     PYCLASS_BEGIN(_implot, ImPlotPoint, Point)
 
-    Point.def_readwrite("x", &ImPlotPoint::x);
-    Point.def_readwrite("y", &ImPlotPoint::y);
-    Point.def(py::init<>());
-    Point.def(py::init<double, double>()
-    , py::arg("_x")
-    , py::arg("_y")
-    );
-    Point.def(py::init<const ImVec2 &>()
-    , py::arg("p")
-    );
+        Point.def_readwrite("x", &ImPlotPoint::x);
+        Point.def_readwrite("y", &ImPlotPoint::y);
+        Point.def(py::init<>());
+        Point.def(py::init<double, double>()
+        , py::arg("_x")
+        , py::arg("_y")
+        );
+        Point.def(py::init<const ImVec2 &>()
+        , py::arg("p")
+        );
     PYCLASS_END(_implot, ImPlotPoint, Point)
 
     PYCLASS_BEGIN(_implot, ImPlotRange, Range)
 
-    Range.def_readwrite("min", &ImPlotRange::Min);
-    Range.def_readwrite("max", &ImPlotRange::Max);
-    Range.def(py::init<>());
-    Range.def(py::init<double, double>()
-    , py::arg("_min")
-    , py::arg("_max")
-    );
-    Range.def("contains", &ImPlotRange::Contains
-    , py::arg("value")
-    , py::return_value_policy::automatic_reference);
+        Range.def_readwrite("min", &ImPlotRange::Min);
+        Range.def_readwrite("max", &ImPlotRange::Max);
+        Range.def(py::init<>());
+        Range.def(py::init<double, double>()
+        , py::arg("_min")
+        , py::arg("_max")
+        );
+        Range.def("contains", &ImPlotRange::Contains
+        , py::arg("value")
+        , py::return_value_policy::automatic_reference);
 
-    Range.def("size", &ImPlotRange::Size
-    , py::return_value_policy::automatic_reference);
+        Range.def("size", &ImPlotRange::Size
+        , py::return_value_policy::automatic_reference);
 
-    Range.def("clamp", &ImPlotRange::Clamp
-    , py::arg("value")
-    , py::return_value_policy::automatic_reference);
+        Range.def("clamp", &ImPlotRange::Clamp
+        , py::arg("value")
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_implot, ImPlotRange, Range)
 
     PYCLASS_BEGIN(_implot, ImPlotRect, Rect)
 
-    Rect.def_readwrite("x", &ImPlotRect::X);
-    Rect.def_readwrite("y", &ImPlotRect::Y);
-    Rect.def(py::init<>());
-    Rect.def(py::init<double, double, double, double>()
-    , py::arg("x_min")
-    , py::arg("x_max")
-    , py::arg("y_min")
-    , py::arg("y_max")
-    );
-    Rect.def("size", &ImPlotRect::Size
-    , py::return_value_policy::automatic_reference);
+        Rect.def_readwrite("x", &ImPlotRect::X);
+        Rect.def_readwrite("y", &ImPlotRect::Y);
+        Rect.def(py::init<>());
+        Rect.def(py::init<double, double, double, double>()
+        , py::arg("x_min")
+        , py::arg("x_max")
+        , py::arg("y_min")
+        , py::arg("y_max")
+        );
+        Rect.def("size", &ImPlotRect::Size
+        , py::return_value_policy::automatic_reference);
 
-    Rect.def("clamp", py::overload_cast<const ImPlotPoint &>(&ImPlotRect::Clamp)
-    , py::arg("p")
-    , py::return_value_policy::automatic_reference);
+        Rect.def("clamp", py::overload_cast<const ImPlotPoint &>(&ImPlotRect::Clamp)
+        , py::arg("p")
+        , py::return_value_policy::automatic_reference);
 
-    Rect.def("clamp", py::overload_cast<double, double>(&ImPlotRect::Clamp)
-    , py::arg("x")
-    , py::arg("y")
-    , py::return_value_policy::automatic_reference);
+        Rect.def("clamp", py::overload_cast<double, double>(&ImPlotRect::Clamp)
+        , py::arg("x")
+        , py::arg("y")
+        , py::return_value_policy::automatic_reference);
 
-    Rect.def("min", &ImPlotRect::Min
-    , py::return_value_policy::automatic_reference);
+        Rect.def("min", &ImPlotRect::Min
+        , py::return_value_policy::automatic_reference);
 
-    Rect.def("max", &ImPlotRect::Max
-    , py::return_value_policy::automatic_reference);
+        Rect.def("max", &ImPlotRect::Max
+        , py::return_value_policy::automatic_reference);
 
     PYCLASS_END(_implot, ImPlotRect, Rect)
 
     PYCLASS_BEGIN(_implot, ImPlotStyle, Style)
 
-    Style.def_readwrite("line_weight", &ImPlotStyle::LineWeight);
-    Style.def_readwrite("marker", &ImPlotStyle::Marker);
-    Style.def_readwrite("marker_size", &ImPlotStyle::MarkerSize);
-    Style.def_readwrite("marker_weight", &ImPlotStyle::MarkerWeight);
-    Style.def_readwrite("fill_alpha", &ImPlotStyle::FillAlpha);
-    Style.def_readwrite("error_bar_size", &ImPlotStyle::ErrorBarSize);
-    Style.def_readwrite("error_bar_weight", &ImPlotStyle::ErrorBarWeight);
-    Style.def_readwrite("digital_bit_height", &ImPlotStyle::DigitalBitHeight);
-    Style.def_readwrite("digital_bit_gap", &ImPlotStyle::DigitalBitGap);
-    Style.def_readwrite("plot_border_size", &ImPlotStyle::PlotBorderSize);
-    Style.def_readwrite("minor_alpha", &ImPlotStyle::MinorAlpha);
-    Style.def_readwrite("major_tick_len", &ImPlotStyle::MajorTickLen);
-    Style.def_readwrite("minor_tick_len", &ImPlotStyle::MinorTickLen);
-    Style.def_readwrite("major_tick_size", &ImPlotStyle::MajorTickSize);
-    Style.def_readwrite("minor_tick_size", &ImPlotStyle::MinorTickSize);
-    Style.def_readwrite("major_grid_size", &ImPlotStyle::MajorGridSize);
-    Style.def_readwrite("minor_grid_size", &ImPlotStyle::MinorGridSize);
-    Style.def_readwrite("plot_padding", &ImPlotStyle::PlotPadding);
-    Style.def_readwrite("label_padding", &ImPlotStyle::LabelPadding);
-    Style.def_readwrite("legend_padding", &ImPlotStyle::LegendPadding);
-    Style.def_readwrite("legend_inner_padding", &ImPlotStyle::LegendInnerPadding);
-    Style.def_readwrite("legend_spacing", &ImPlotStyle::LegendSpacing);
-    Style.def_readwrite("mouse_pos_padding", &ImPlotStyle::MousePosPadding);
-    Style.def_readwrite("annotation_padding", &ImPlotStyle::AnnotationPadding);
-    Style.def_readwrite("fit_padding", &ImPlotStyle::FitPadding);
-    Style.def_readwrite("plot_default_size", &ImPlotStyle::PlotDefaultSize);
-    Style.def_readwrite("plot_min_size", &ImPlotStyle::PlotMinSize);
-    Style.def_readonly("colors", &ImPlotStyle::Colors);
-    Style.def_readwrite("colormap", &ImPlotStyle::Colormap);
-    Style.def_readwrite("use_local_time", &ImPlotStyle::UseLocalTime);
-    Style.def_readwrite("use_iso8601", &ImPlotStyle::UseISO8601);
-    Style.def_readwrite("use24_hour_clock", &ImPlotStyle::Use24HourClock);
-    Style.def(py::init<>());
+        Style.def_readwrite("line_weight", &ImPlotStyle::LineWeight);
+        Style.def_readwrite("marker", &ImPlotStyle::Marker);
+        Style.def_readwrite("marker_size", &ImPlotStyle::MarkerSize);
+        Style.def_readwrite("marker_weight", &ImPlotStyle::MarkerWeight);
+        Style.def_readwrite("fill_alpha", &ImPlotStyle::FillAlpha);
+        Style.def_readwrite("error_bar_size", &ImPlotStyle::ErrorBarSize);
+        Style.def_readwrite("error_bar_weight", &ImPlotStyle::ErrorBarWeight);
+        Style.def_readwrite("digital_bit_height", &ImPlotStyle::DigitalBitHeight);
+        Style.def_readwrite("digital_bit_gap", &ImPlotStyle::DigitalBitGap);
+        Style.def_readwrite("plot_border_size", &ImPlotStyle::PlotBorderSize);
+        Style.def_readwrite("minor_alpha", &ImPlotStyle::MinorAlpha);
+        Style.def_readwrite("major_tick_len", &ImPlotStyle::MajorTickLen);
+        Style.def_readwrite("minor_tick_len", &ImPlotStyle::MinorTickLen);
+        Style.def_readwrite("major_tick_size", &ImPlotStyle::MajorTickSize);
+        Style.def_readwrite("minor_tick_size", &ImPlotStyle::MinorTickSize);
+        Style.def_readwrite("major_grid_size", &ImPlotStyle::MajorGridSize);
+        Style.def_readwrite("minor_grid_size", &ImPlotStyle::MinorGridSize);
+        Style.def_readwrite("plot_padding", &ImPlotStyle::PlotPadding);
+        Style.def_readwrite("label_padding", &ImPlotStyle::LabelPadding);
+        Style.def_readwrite("legend_padding", &ImPlotStyle::LegendPadding);
+        Style.def_readwrite("legend_inner_padding", &ImPlotStyle::LegendInnerPadding);
+        Style.def_readwrite("legend_spacing", &ImPlotStyle::LegendSpacing);
+        Style.def_readwrite("mouse_pos_padding", &ImPlotStyle::MousePosPadding);
+        Style.def_readwrite("annotation_padding", &ImPlotStyle::AnnotationPadding);
+        Style.def_readwrite("fit_padding", &ImPlotStyle::FitPadding);
+        Style.def_readwrite("plot_default_size", &ImPlotStyle::PlotDefaultSize);
+        Style.def_readwrite("plot_min_size", &ImPlotStyle::PlotMinSize);
+        Style.def_readonly("colors", &ImPlotStyle::Colors);
+        Style.def_readwrite("colormap", &ImPlotStyle::Colormap);
+        Style.def_readwrite("use_local_time", &ImPlotStyle::UseLocalTime);
+        Style.def_readwrite("use_iso8601", &ImPlotStyle::UseISO8601);
+        Style.def_readwrite("use24_hour_clock", &ImPlotStyle::Use24HourClock);
+        Style.def(py::init<>());
     PYCLASS_END(_implot, ImPlotStyle, Style)
 
     PYCLASS_BEGIN(_implot, ImPlotInputMap, InputMap)
 
-    InputMap.def_readwrite("pan", &ImPlotInputMap::Pan);
-    InputMap.def_readwrite("pan_mod", &ImPlotInputMap::PanMod);
-    InputMap.def_readwrite("fit", &ImPlotInputMap::Fit);
-    InputMap.def_readwrite("select", &ImPlotInputMap::Select);
-    InputMap.def_readwrite("select_cancel", &ImPlotInputMap::SelectCancel);
-    InputMap.def_readwrite("select_mod", &ImPlotInputMap::SelectMod);
-    InputMap.def_readwrite("select_horz_mod", &ImPlotInputMap::SelectHorzMod);
-    InputMap.def_readwrite("select_vert_mod", &ImPlotInputMap::SelectVertMod);
-    InputMap.def_readwrite("menu", &ImPlotInputMap::Menu);
-    InputMap.def_readwrite("override_mod", &ImPlotInputMap::OverrideMod);
-    InputMap.def_readwrite("zoom_mod", &ImPlotInputMap::ZoomMod);
-    InputMap.def_readwrite("zoom_rate", &ImPlotInputMap::ZoomRate);
-    InputMap.def(py::init<>());
+        InputMap.def_readwrite("pan", &ImPlotInputMap::Pan);
+        InputMap.def_readwrite("pan_mod", &ImPlotInputMap::PanMod);
+        InputMap.def_readwrite("fit", &ImPlotInputMap::Fit);
+        InputMap.def_readwrite("select", &ImPlotInputMap::Select);
+        InputMap.def_readwrite("select_cancel", &ImPlotInputMap::SelectCancel);
+        InputMap.def_readwrite("select_mod", &ImPlotInputMap::SelectMod);
+        InputMap.def_readwrite("select_horz_mod", &ImPlotInputMap::SelectHorzMod);
+        InputMap.def_readwrite("select_vert_mod", &ImPlotInputMap::SelectVertMod);
+        InputMap.def_readwrite("menu", &ImPlotInputMap::Menu);
+        InputMap.def_readwrite("override_mod", &ImPlotInputMap::OverrideMod);
+        InputMap.def_readwrite("zoom_mod", &ImPlotInputMap::ZoomMod);
+        InputMap.def_readwrite("zoom_rate", &ImPlotInputMap::ZoomRate);
+        InputMap.def(py::init<>());
     PYCLASS_END(_implot, ImPlotInputMap, InputMap)
 
     _implot.def("set_im_gui_context", &ImPlot::SetImGuiContext

@@ -46,8 +46,8 @@ class TranspilerBase:
         self.text += '\n'
 
     @contextmanager
-    def enter(self, entry_key, value={}):
-        entry = self.lookup_or_create(entry_key, value)
+    def enter(self, entry_key, config={}, node: cindex.Cursor = None):
+        entry = self.lookup_or_create(entry_key, config, node)
         self.entry_stack.append(entry)
 
         self.indent()
@@ -67,23 +67,25 @@ class TranspilerBase:
     def dedent(self):
         self.indentation -=1
 
-    def lookup(self, entry_key):
+    def lookup(self, entry_key: str):
         kind, key = entry_key.split('.')
         if key in self.entries:
             return self.entries[key]
         return None
 
-    def lookup_or_create(self, entry_key, value):
-        kind, key = entry_key.split('.')
+    def lookup_or_create(self, entry_key: str, config: dict, node: cindex.Cursor = None):
+        #kind, key = entry_key.split('.')
         entry = self.lookup(entry_key)
         if not entry:
-            entry = self.create_entry(entry_key, value)
+            entry = self.create_entry(entry_key, config, node)
+        else:
+            entry.node = node
         return entry
 
-    def create_entry(self, entry_key, value):
+    def create_entry(self, entry_key: str, config: dict, node: cindex.Cursor = None):
         kind, key = entry_key.split('.')
         cls = entry_cls_map[kind]
-        entry = cls(key, value)
+        entry = cls(key, config, node)
 
         if entry.exclude:
             self.excludes.append(key)
@@ -106,8 +108,10 @@ class TranspilerBase:
         return name
 
     def format_type(self, name):
-        name = name.replace(self.prefix, '')
-        name = name.replace(self.short_prefix, '')
+        #name = name.replace(self.prefix, '')
+        name = name.replace(self.prefix, '', 1)
+        #name = name.replace(self.short_prefix, '')
+        name = name.replace(self.short_prefix, '', 1)
         name = name.replace('<', '_')
         name = name.replace('>', '')
         name = name.replace(' ', '')
@@ -115,8 +119,10 @@ class TranspilerBase:
         return name
 
     def format_enum(self, name):
-        name = name.replace(self.prefix, '')
-        name = name.replace(self.short_prefix, '')
+        #name = name.replace(self.prefix, '')
+        name = name.replace(self.prefix, '', 1)
+        #name = name.replace(self.short_prefix, '')
+        name = name.replace(self.short_prefix, '', 1)
         name = self.snake(name).upper()
         name = name.replace('__', '_')
         name = name.rstrip('_')

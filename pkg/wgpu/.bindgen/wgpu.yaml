@@ -21,7 +21,7 @@ flags: [
 'field.wgpu::DawnTogglesDeviceDescriptor::forceDisabledToggles': {exclude: true}
 
 # Wrapped
-'method.wgpu::RenderPassEncoder::SetBindGroup': {exclude: true}
+'method.wgpu::RenderPassEncoder::SetBindGroup': {exclude: true} #TODO: Signatures match but got a TypeError. Strange.
 
 # Need initializers
 'struct.wgpu::AdapterProperties': {gen_init: true}

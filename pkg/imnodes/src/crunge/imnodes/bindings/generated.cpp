@@ -109,34 +109,34 @@ void init_generated(py::module &_imnodes, Registry &registry) {
 
     PYCLASS_BEGIN(_imnodes, ImNodesIO, IO)
 
-    IO.def_readwrite("emulate_three_button_mouse", &ImNodesIO::EmulateThreeButtonMouse);
-    IO.def_readwrite("link_detach_with_modifier_click", &ImNodesIO::LinkDetachWithModifierClick);
-    IO.def_readwrite("multiple_select_modifier", &ImNodesIO::MultipleSelectModifier);
-    IO.def_readwrite("alt_mouse_button", &ImNodesIO::AltMouseButton);
-    IO.def_readwrite("auto_panning_speed", &ImNodesIO::AutoPanningSpeed);
-    IO.def(py::init<>());
+        IO.def_readwrite("emulate_three_button_mouse", &ImNodesIO::EmulateThreeButtonMouse);
+        IO.def_readwrite("link_detach_with_modifier_click", &ImNodesIO::LinkDetachWithModifierClick);
+        IO.def_readwrite("multiple_select_modifier", &ImNodesIO::MultipleSelectModifier);
+        IO.def_readwrite("alt_mouse_button", &ImNodesIO::AltMouseButton);
+        IO.def_readwrite("auto_panning_speed", &ImNodesIO::AutoPanningSpeed);
+        IO.def(py::init<>());
     PYCLASS_END(_imnodes, ImNodesIO, IO)
 
     PYCLASS_BEGIN(_imnodes, ImNodesStyle, Style)
 
-    Style.def_readwrite("grid_spacing", &ImNodesStyle::GridSpacing);
-    Style.def_readwrite("node_corner_rounding", &ImNodesStyle::NodeCornerRounding);
-    Style.def_readwrite("node_padding", &ImNodesStyle::NodePadding);
-    Style.def_readwrite("node_border_thickness", &ImNodesStyle::NodeBorderThickness);
-    Style.def_readwrite("link_thickness", &ImNodesStyle::LinkThickness);
-    Style.def_readwrite("link_line_segments_per_length", &ImNodesStyle::LinkLineSegmentsPerLength);
-    Style.def_readwrite("link_hover_distance", &ImNodesStyle::LinkHoverDistance);
-    Style.def_readwrite("pin_circle_radius", &ImNodesStyle::PinCircleRadius);
-    Style.def_readwrite("pin_quad_side_length", &ImNodesStyle::PinQuadSideLength);
-    Style.def_readwrite("pin_triangle_side_length", &ImNodesStyle::PinTriangleSideLength);
-    Style.def_readwrite("pin_line_thickness", &ImNodesStyle::PinLineThickness);
-    Style.def_readwrite("pin_hover_radius", &ImNodesStyle::PinHoverRadius);
-    Style.def_readwrite("pin_offset", &ImNodesStyle::PinOffset);
-    Style.def_readwrite("mini_map_padding", &ImNodesStyle::MiniMapPadding);
-    Style.def_readwrite("mini_map_offset", &ImNodesStyle::MiniMapOffset);
-    Style.def_readwrite("flags", &ImNodesStyle::Flags);
-    Style.def_readonly("colors", &ImNodesStyle::Colors);
-    Style.def(py::init<>());
+        Style.def_readwrite("grid_spacing", &ImNodesStyle::GridSpacing);
+        Style.def_readwrite("node_corner_rounding", &ImNodesStyle::NodeCornerRounding);
+        Style.def_readwrite("node_padding", &ImNodesStyle::NodePadding);
+        Style.def_readwrite("node_border_thickness", &ImNodesStyle::NodeBorderThickness);
+        Style.def_readwrite("link_thickness", &ImNodesStyle::LinkThickness);
+        Style.def_readwrite("link_line_segments_per_length", &ImNodesStyle::LinkLineSegmentsPerLength);
+        Style.def_readwrite("link_hover_distance", &ImNodesStyle::LinkHoverDistance);
+        Style.def_readwrite("pin_circle_radius", &ImNodesStyle::PinCircleRadius);
+        Style.def_readwrite("pin_quad_side_length", &ImNodesStyle::PinQuadSideLength);
+        Style.def_readwrite("pin_triangle_side_length", &ImNodesStyle::PinTriangleSideLength);
+        Style.def_readwrite("pin_line_thickness", &ImNodesStyle::PinLineThickness);
+        Style.def_readwrite("pin_hover_radius", &ImNodesStyle::PinHoverRadius);
+        Style.def_readwrite("pin_offset", &ImNodesStyle::PinOffset);
+        Style.def_readwrite("mini_map_padding", &ImNodesStyle::MiniMapPadding);
+        Style.def_readwrite("mini_map_offset", &ImNodesStyle::MiniMapOffset);
+        Style.def_readwrite("flags", &ImNodesStyle::Flags);
+        Style.def_readonly("colors", &ImNodesStyle::Colors);
+        Style.def(py::init<>());
     PYCLASS_END(_imnodes, ImNodesStyle, Style)
 
     PYENUM_SCOPED_BEGIN(_imnodes, ImNodesMiniMapLocation_, MiniMapLocation)

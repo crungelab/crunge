@@ -217,58 +217,79 @@ void init_main(py::module &_wgpu, Registry &registry) {
         , py::return_value_policy::automatic_reference);
     PYEXTEND_END
 
-    /*PYEXTEND_BEGIN(wgpu::VertexBufferLayout, VertexBufferLayout)
-        VertexBufferLayout.def_property("attributes",
-            [](const wgpu::VertexBufferLayout& self) {
-                return self.attributes;
-            },
-            [](wgpu::VertexBufferLayout& self, VertexAttributes& source) {
-                self.attributes = source.data();
-                //self.attributes = &source[0];
-            }
-        );
-    PYEXTEND_END*/
+        /*PYEXTEND_BEGIN(wgpu::VertexBufferLayout, VertexBufferLayout)
+            VertexBufferLayout.def_property("attributes",
+                [](const wgpu::VertexBufferLayout& self) {
+                    return self.attributes;
+                },
+                [](wgpu::VertexBufferLayout& self, VertexAttributes& source) {
+                    self.attributes = source.data();
+                    //self.attributes = &source[0];
+                }
+            );
+        PYEXTEND_END*/
 
-    /*PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
-        //ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);
-        ShaderModuleWGSLDescriptor.def_property("source",
-            [](const wgpu::ShaderModuleWGSLDescriptor& self) {
-                return self.source;
-            },
-            [](wgpu::ShaderModuleWGSLDescriptor& self, std::string source) {
-                //self.source = source.c_str();
-                char* c = (char *)malloc(source.size());
-                strcpy(c, source.c_str());
-                self.source = c;
+        /*PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
+            //ShaderModuleWGSLDescriptor.def_readwrite("source", &wgpu::ShaderModuleWGSLDescriptor::source);
+            ShaderModuleWGSLDescriptor.def_property("source",
+                [](const wgpu::ShaderModuleWGSLDescriptor& self) {
+                    return self.source;
+                },
+                [](wgpu::ShaderModuleWGSLDescriptor& self, std::string source) {
+                    //self.source = source.c_str();
+                    char* c = (char *)malloc(source.size());
+                    strcpy(c, source.c_str());
+                    self.source = c;
+                }
+            );
+        PYEXTEND_END
+
+        PYEXTEND_BEGIN(wgpu::VertexState, VertexState)
+            VertexState.def_property("entry_point",
+                [](const wgpu::VertexState& self) {
+                    return self.entryPoint;
+                },
+                [](wgpu::VertexState& self, std::string source) {
+                    char* c = (char *)malloc(source.size());
+                    strcpy(c, source.c_str());
+                    self.entryPoint = c;
+                }
+            );
+        PYEXTEND_END
+
+        PYEXTEND_BEGIN(wgpu::FragmentState, FragmentState)
+            FragmentState.def(py::init<>());
+            FragmentState.def_property("entry_point",
+                [](const wgpu::FragmentState& self) {
+                    return self.entryPoint;
+                },
+                [](wgpu::FragmentState& self, std::string source) {
+                    char* c = (char *)malloc(source.size());
+                    strcpy(c, source.c_str());
+                    self.entryPoint = c;
+                }
+            );
+        PYEXTEND_END*/
+
+        /*
+        py::class<Foo>(m, "Foo")
+            .def(py::init([](...) { // Note: no `self` argument
+                return new Foo(...); // return by raw pointer
+                // or: return std::make_unique<Foo>(...); // return by holder
+                // or: return Foo(...); // return by value (move constructor)
+            }));
+        */
+        PYEXTEND_BEGIN(wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
+        ShaderModuleWGSLDescriptor.def(py::init([](const py::kwargs& kwargs) {
+            wgpu::ShaderModuleWGSLDescriptor obj;
+            if (kwargs.contains("source")) {
+                auto _source = kwargs["source"].cast<std::string>();
+                char* source = (char*)malloc(_source.size());
+                strcpy(source, _source.c_str());
+                obj.source = source;
             }
-        );
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYEXTEND_END
-
-    PYEXTEND_BEGIN(wgpu::VertexState, VertexState)
-        VertexState.def_property("entry_point",
-            [](const wgpu::VertexState& self) {
-                return self.entryPoint;
-            },
-            [](wgpu::VertexState& self, std::string source) {
-                char* c = (char *)malloc(source.size());
-                strcpy(c, source.c_str());
-                self.entryPoint = c;
-            }
-        );
-    PYEXTEND_END
-
-    PYEXTEND_BEGIN(wgpu::FragmentState, FragmentState)
-        FragmentState.def(py::init<>());
-        FragmentState.def_property("entry_point",
-            [](const wgpu::FragmentState& self) {
-                return self.entryPoint;
-            },
-            [](wgpu::FragmentState& self, std::string source) {
-                char* c = (char *)malloc(source.size());
-                strcpy(c, source.c_str());
-                self.entryPoint = c;
-            }
-        );
-    PYEXTEND_END*/
 
 }

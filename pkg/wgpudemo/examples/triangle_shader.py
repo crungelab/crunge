@@ -47,8 +47,10 @@ class HelloWgpu:
         self.device.enable_logging()
         self.queue = self.device.get_queue()
 
-        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
-        wgsl_desc.source = shader_code
+        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
+        #wgsl_desc.source = shader_code
+        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(source=shader_code)
+        
         descriptor = wgpu.ShaderModuleDescriptor()
         descriptor.next_in_chain = wgsl_desc
         shader_module = self.device.create_shader_module(descriptor)

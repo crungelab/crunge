@@ -1,10 +1,17 @@
+from crunge.clang import cindex
+
 class Entry:
+    key: str = None
+    config: dict = {}
+    node: cindex.Cursor = None
+
     exclude: bool = False
     overload: bool = False
 
-    def __init__(self, key, config):
+    def __init__(self, key: str, config: dict={}, node: cindex.Cursor = None):
         self.key = key
         self.configure(config)
+        self.node = node
 
     def __repr__(self) -> str:
         return f'<{self.__class__.__name__} key={self.key}>'

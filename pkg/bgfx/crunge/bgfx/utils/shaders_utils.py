@@ -62,7 +62,7 @@ def _get_profile(shader_type: ShaderType) -> str:
             return "glsl"
 
     elif sys_platform == "Windows":
-        if renderer_type == bgfx.RendererType.DIRECT3_D9:
+        if renderer_type == bgfx.RendererType.DIRECT3D9:
             return windows_shader_type.get(shader_type) + "3_0"
         else:
             #return windows_shader_type.get(shader_type) + "5_0"

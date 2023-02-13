@@ -14,13 +14,13 @@ using namespace bgfx;
 namespace py = pybind11;
 
 void init_platform(py::module &_bgfx, Registry &registry) {
-    py::enum_<bgfx::RenderFrame::Enum>(_bgfx, "RenderFrame", py::arithmetic())
-        .value("NO_CONTEXT", bgfx::RenderFrame::Enum::NoContext)
-        .value("RENDER", bgfx::RenderFrame::Enum::Render)
-        .value("TIMEOUT", bgfx::RenderFrame::Enum::Timeout)
-        .value("EXITING", bgfx::RenderFrame::Enum::Exiting)
-        .value("COUNT", bgfx::RenderFrame::Enum::Count)
-        .export_values();
+        py::enum_<bgfx::RenderFrame::Enum>(_bgfx, "RenderFrame", py::arithmetic())
+            .value("NO_CONTEXT", bgfx::RenderFrame::Enum::NoContext)
+            .value("RENDER", bgfx::RenderFrame::Enum::Render)
+            .value("TIMEOUT", bgfx::RenderFrame::Enum::Timeout)
+            .value("EXITING", bgfx::RenderFrame::Enum::Exiting)
+            .value("COUNT", bgfx::RenderFrame::Enum::Count)
+            .export_values();
 
     _bgfx.def("render_frame", &bgfx::renderFrame
     , py::arg("_msecs") = -1
@@ -32,8 +32,8 @@ void init_platform(py::module &_bgfx, Registry &registry) {
 
     PYCLASS_BEGIN(_bgfx, bgfx::InternalData, InternalData)
 
-    InternalData.def_readwrite("caps", &bgfx::InternalData::caps);
-    InternalData.def_readwrite("context", &bgfx::InternalData::context);
+        InternalData.def_readwrite("caps", &bgfx::InternalData::caps);
+        InternalData.def_readwrite("context", &bgfx::InternalData::context);
     PYCLASS_END(_bgfx, bgfx::InternalData, InternalData)
 
     _bgfx.def("get_internal_data", &bgfx::getInternalData

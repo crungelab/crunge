@@ -5,6 +5,7 @@ from crunge.clang import cindex
 from crunge.clang.cindex import AccessSpecifier
 
 from .transpiler_base import TranspilerBase
+from .entry import Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructOrClassEntry, StructEntry, ClassEntry
 
 
 class Transpiler(TranspilerBase):
@@ -222,7 +223,7 @@ class Transpiler(TranspilerBase):
                 self(f"PYCLASS_INHERIT_BEGIN({self.module}, {clsname}, {basename}, {pyname})\n")
             else:
                 self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
-        with self.enter(f'struct.{clsname}') as entry:
+        with self.enter(f'struct.{clsname}', node=node) as entry:
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
                 if child.kind == cindex.CursorKind.CONSTRUCTOR:
@@ -239,7 +240,8 @@ class Transpiler(TranspilerBase):
             #if not entry.has_constructor:
             if entry.gen_init:
                 #print(entry)
-                self(f"{self.module_(node)}.def(py::init<>());")
+                #self(f"{self.module_(node)}.def(py::init<>());")
+                self.gen_init(entry)
 
         if not wrapped:
             self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
@@ -251,7 +253,7 @@ class Transpiler(TranspilerBase):
         # logger.debug(clsname)
         pyname = self.format_type(node.spelling)
         self(f"PYCLASS_BEGIN({self.module}, {clsname}, {pyname})\n")
-        with self.enter(f'class.{clsname}') as entry:
+        with self.enter(f'class.{clsname}', node=node) as entry:
             logger.debug(entry)
             for child in node.get_children():
                 # logger.debug(f"{child.kind} : {child.spelling}")
@@ -268,10 +270,13 @@ class Transpiler(TranspilerBase):
 
             #if not entry.has_constructor:
             if entry.gen_init:
-                #print(entry)
-                self(f"{self.module_(node)}.def(py::init<>());")
+                #self(f"{self.module_(node)}.def(py::init<>());")
+                self.gen_init(entry)
 
         self(f"PYCLASS_END({self.module}, {clsname}, {pyname})\n")
+
+    def gen_init(self, entry: StructOrClassEntry):
+        self(f"{self.module_(entry.node)}.def(py::init<>());")
 
     def visit_var(self, node):
         logger.debug(f"Not implemented:  visit_var: {node.spelling}")

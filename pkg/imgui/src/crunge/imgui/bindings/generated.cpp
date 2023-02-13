@@ -2671,7 +2671,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_BEGIN(_imgui, ImNewWrapper, NewWrapper)
 
-        NewWrapper.def(py::init<>());
     PYCLASS_END(_imgui, ImNewWrapper, NewWrapper)
 
     PYCLASS_BEGIN(_imgui, ImGuiStyle, Style)
@@ -2729,7 +2728,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
         KeyData.def_readwrite("down_duration", &ImGuiKeyData::DownDuration);
         KeyData.def_readwrite("down_duration_prev", &ImGuiKeyData::DownDurationPrev);
         KeyData.def_readwrite("analog_value", &ImGuiKeyData::AnalogValue);
-        KeyData.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiKeyData, KeyData)
 
     PYCLASS_BEGIN(_imgui, ImGuiIO, IO)
@@ -2944,7 +2942,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
         SizeCallbackData.def_readwrite("pos", &ImGuiSizeCallbackData::Pos);
         SizeCallbackData.def_readwrite("current_size", &ImGuiSizeCallbackData::CurrentSize);
         SizeCallbackData.def_readwrite("desired_size", &ImGuiSizeCallbackData::DesiredSize);
-        SizeCallbackData.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiSizeCallbackData, SizeCallbackData)
 
     PYCLASS_BEGIN(_imgui, ImGuiWindowClass, WindowClass)
@@ -3107,7 +3104,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
         Storage.def("build_sort_by_key", &ImGuiStorage::BuildSortByKey
         , py::return_value_policy::automatic_reference);
 
-        Storage.def(py::init<>());
     PYCLASS_END(_imgui, ImGuiStorage, Storage)
 
     PYCLASS_BEGIN(_imgui, ImColor, Color)
@@ -3160,7 +3156,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
         DrawVert.def_readwrite("pos", &ImDrawVert::pos);
         DrawVert.def_readwrite("uv", &ImDrawVert::uv);
         DrawVert.def_readwrite("col", &ImDrawVert::col);
-        DrawVert.def(py::init<>());
     PYCLASS_END(_imgui, ImDrawVert, DrawVert)
 
     PYCLASS_BEGIN(_imgui, ImDrawCmdHeader, DrawCmdHeader)
@@ -3168,12 +3163,10 @@ void init_generated(py::module &_imgui, Registry &registry) {
         DrawCmdHeader.def_readwrite("clip_rect", &ImDrawCmdHeader::ClipRect);
         DrawCmdHeader.def_readwrite("texture_id", &ImDrawCmdHeader::TextureId);
         DrawCmdHeader.def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset);
-        DrawCmdHeader.def(py::init<>());
     PYCLASS_END(_imgui, ImDrawCmdHeader, DrawCmdHeader)
 
     PYCLASS_BEGIN(_imgui, ImDrawChannel, DrawChannel)
 
-        DrawChannel.def(py::init<>());
     PYCLASS_END(_imgui, ImDrawChannel, DrawChannel)
 
     PYCLASS_BEGIN(_imgui, ImDrawListSplitter, DrawListSplitter)
@@ -3630,7 +3623,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
         FontGlyph.def_readwrite("v0", &ImFontGlyph::V0);
         FontGlyph.def_readwrite("u1", &ImFontGlyph::U1);
         FontGlyph.def_readwrite("v1", &ImFontGlyph::V1);
-        FontGlyph.def(py::init<>());
     PYCLASS_END(_imgui, ImFontGlyph, FontGlyph)
 
     PYCLASS_BEGIN(_imgui, ImFontGlyphRangesBuilder, FontGlyphRangesBuilder)
@@ -3720,7 +3712,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("glyph_ranges") = nullptr
         , py::return_value_policy::automatic_reference);
 
-        FontAtlas.def("add_font_from_memory_compressed_base85_ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
+        FontAtlas.def("add_font_from_memory_compressed_base85ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
         , py::arg("compressed_font_data_base85")
         , py::arg("size_pixels")
         , py::arg("font_cfg") = nullptr
