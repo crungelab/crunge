@@ -17,49 +17,225 @@ WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
 WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
 
-vertex_data = np.array([
+vertex_data = np.array(
+    [
         # vec4<f32> position, vec2<f32> uv,
-     1, -1,  1,  1,      1, 1,
-    -1, -1,  1,  1,      0, 1,
-    -1, -1, -1,  1,      0, 0,
-     1, -1, -1,  1,      1, 0,
-     1, -1,  1,  1,      1, 1,
-    -1, -1, -1,  1,      0, 0,
-
-     1,  1,  1,  1,      1, 1,
-     1, -1,  1,  1,      0, 1,
-     1, -1, -1,  1,      0, 0,
-     1,  1, -1,  1,      1, 0,
-     1,  1,  1,  1,      1, 1,
-     1, -1, -1,  1,      0, 0,
-
-    -1,  1,  1,  1,      1, 1,
-     1,  1,  1,  1,      0, 1,
-     1,  1, -1,  1,      0, 0,
-    -1,  1, -1,  1,      1, 0,
-    -1,  1,  1,  1,      1, 1,
-     1,  1, -1,  1,      0, 0,
-
-    -1, -1,  1,  1,      1, 1,
-    -1,  1,  1,  1,      0, 1,
-    -1,  1, -1,  1,      0, 0,
-    -1, -1, -1,  1,      1, 0,
-    -1, -1,  1,  1,      1, 1,
-    -1,  1, -1,  1,      0, 0,
-
-     1,  1,  1,  1,      1, 1,
-    -1,  1,  1,  1,      0, 1,
-    -1, -1,  1,  1,      0, 0,
-    -1, -1,  1,  1,      0, 0,
-     1, -1,  1,  1,      1, 0,
-     1,  1,  1,  1,      1, 1,
-
-     1, -1, -1,  1,      1, 1,
-    -1, -1, -1,  1,      0, 1,
-    -1,  1, -1,  1,      0, 0,
-     1,  1, -1,  1,      1, 0,
-     1, -1, -1,  1,      1, 1,
-    -1,  1, -1,  1,      0, 0,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        0,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        0,
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        0,
     ],
     dtype=np.float32,
 )
@@ -132,50 +308,59 @@ class HelloWgpu:
 
         # Pipeline creation
 
-        # TODO: Need to implement kwargs initializers
-        va0 = wgpu.VertexAttribute()
-        va0.format = wgpu.VertexFormat.FLOAT32X4
-        va0.offset = self.kPositionByteOffset
-        va0.shader_location = 0
+        vertAttributes = wgpu.VertexAttributes(
+            [
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X4,
+                    offset=self.kPositionByteOffset,
+                    shader_location=0,
+                ),
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X2,
+                    offset=self.kUVByteOffset,
+                    shader_location=1,
+                ),
+            ]
+        )
 
-        va1 = wgpu.VertexAttribute()
-        va1.format = wgpu.VertexFormat.FLOAT32X2
-        va1.offset = self.kUVByteOffset
-        va1.shader_location = 1
+        vertBufferLayout = wgpu.VertexBufferLayout(
+            array_stride=self.kCubeDataStride * sizeof(c_float),
+            attribute_count=2,
+            attributes=vertAttributes[0],
+        )
 
-        vertAttributes = wgpu.VertexAttributes([va0, va1])
+        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
-        vertBufferLayout = wgpu.VertexBufferLayout()
-        vertBufferLayout.array_stride = self.kCubeDataStride * sizeof(c_float)
-        vertBufferLayout.attribute_count = 2
-        vertBufferLayout.attributes = vertAttributes[0]
+        fragmentState = wgpu.FragmentState(
+            module=shader_module,
+            entry_point="fs_main",
+            target_count=1,
+            targets=colorTargetState,
+        )
 
-        colorTargetState = wgpu.ColorTargetState()
-        colorTargetState.format = wgpu.TextureFormat.BGRA8_UNORM
+        depthStencilState = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
+            depth_write_enabled=True,
+            depth_compare=wgpu.CompareFunction.LESS,
+        )
 
-        fragmentState = wgpu.FragmentState()
-        fragmentState.module = shader_module
-        fragmentState.entry_point = "fs_main"
-        fragmentState.target_count = 1
-        fragmentState.targets = colorTargetState
+        primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
 
-        depthStencilState = wgpu.DepthStencilState()
-        depthStencilState.format = wgpu.TextureFormat.DEPTH24_PLUS
-        depthStencilState.depth_write_enabled = True
-        depthStencilState.depth_compare = wgpu.CompareFunction.LESS
+        vertex_state = wgpu.VertexState(
+            module=shader_module,
+            entry_point="vs_main",
+            buffer_count=1,
+            buffers=vertBufferLayout,
+        )
 
-        primitive = wgpu.PrimitiveState()
-        primitive.cull_mode = wgpu.CullMode.BACK
+        descriptor = wgpu.RenderPipelineDescriptor(
+            label="Main Render Pipeline",
+            vertex=vertex_state,
+            primitive=primitive,
+            depth_stencil=depthStencilState,
+            fragment=fragmentState,
+        )
 
-        descriptor = wgpu.RenderPipelineDescriptor()
-        descriptor.label = "Main Render Pipeline"
-        descriptor.vertex.module = shader_module
-        descriptor.vertex.entry_point = "vs_main"
-        descriptor.vertex.buffer_count = 1
-        descriptor.vertex.buffers = vertBufferLayout
-        descriptor.primitive = primitive
-        descriptor.depth_stencil = depthStencilState
-        descriptor.fragment = fragmentState
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
         # Create depth texture
@@ -187,29 +372,29 @@ class HelloWgpu:
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
 
-        bindEntry = wgpu.BindGroupEntry()
-        bindEntry.binding = 0
-        bindEntry.buffer = self.uniformBuffer
-        bindEntry.size = self.uniformBufferSize
+        bindEntry = wgpu.BindGroupEntry(
+            binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize
+        )
 
-        bindGroupDesc = wgpu.BindGroupDescriptor()
-        bindGroupDesc.label = "Uniform bind group"
-        bindGroupDesc.layout = self.pipeline.get_bind_group_layout(0)
-        bindGroupDesc.entry_count = 1
-        bindGroupDesc.entries = bindEntry
+        bindGroupDesc = wgpu.BindGroupDescriptor(
+            label="Uniform bind group",
+            layout=self.pipeline.get_bind_group_layout(0),
+            entry_count=1,
+            entries=bindEntry,
+        )
 
         self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
 
         aspect = float(self.kWidth) / float(self.kHeight)
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
-        #exit()
+        # exit()
 
     @property
     def transform_matrix(self):
         now = time.time()
         ms = round(now * 1000) / 1000
-        #print(ms)
+        # print(ms)
         viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
         rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
         rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
@@ -219,14 +404,13 @@ class HelloWgpu:
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, vertex_data, wgpu.BufferUsage.VERTEX
         )
-        """
-        constexpr uint64_t uniformBufferSize = 4 * 16;  // mat4x4<f32>
-        auto uniformBuffer = dusk::webgpu::createBuffer(
-            device, "Uniform buffer", uniformBufferSize, wgpu::BufferUsage::Uniform);
-        """
         self.uniformBufferSize = 4 * 16
         self.uniformBuffer = utils.create_buffer(
-            self.device, "Uniform buffer", self.uniformBufferSize, wgpu.BufferUsage.UNIFORM)
+            self.device,
+            "Uniform buffer",
+            self.uniformBufferSize,
+            wgpu.BufferUsage.UNIFORM,
+        )
 
     def create_window(self):
         glfw.init()
@@ -256,40 +440,42 @@ class HelloWgpu:
         wsd.hwnd = nwh
         wsd.hinstance = None
 
-        sd = wgpu.SurfaceDescriptor()
-        sd.next_in_chain = wsd
-
+        sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
 
-        scDesc = wgpu.SwapChainDescriptor()
-        scDesc.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
-        scDesc.format = wgpu.TextureFormat.BGRA8_UNORM
-        scDesc.width = self.kWidth
-        scDesc.height = self.kHeight
-        # scDesc.present_mode = wgpu.PresentMode.FIFO
-        scDesc.present_mode = wgpu.PresentMode.MAILBOX
+        scDesc = wgpu.SwapChainDescriptor(
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            format=wgpu.TextureFormat.BGRA8_UNORM,
+            width=self.kWidth,
+            height=self.kHeight,
+            present_mode=wgpu.PresentMode.MAILBOX,
+        )
+
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
-    def render(self, backbufferView: wgpu.TextureView):
-        attachment = wgpu.RenderPassColorAttachment()
-        attachment.view = backbufferView
-        attachment.load_op = wgpu.LoadOp.CLEAR
-        attachment.store_op = wgpu.StoreOp.STORE
-        attachment.clear_value = wgpu.Color(.5, .5, .5, 1.)
+    def render(self, view: wgpu.TextureView):
+        attachment = wgpu.RenderPassColorAttachment(
+            view=view,
+            load_op=wgpu.LoadOp.CLEAR,
+            store_op=wgpu.StoreOp.STORE,
+            clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
+        )
 
-        depthStencilAttach = wgpu.RenderPassDepthStencilAttachment()
-        depthStencilAttach.view = self.depthTexture.create_view()
-        depthStencilAttach.depth_load_op = wgpu.LoadOp.CLEAR
-        depthStencilAttach.depth_store_op = wgpu.StoreOp.STORE
-        depthStencilAttach.depth_clear_value = 1.0
+        depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
+            view=self.depthTexture.create_view(),
+            depth_load_op=wgpu.LoadOp.CLEAR,
+            depth_store_op=wgpu.StoreOp.STORE,
+            depth_clear_value=1.0,
+        )
 
-        renderpass = wgpu.RenderPassDescriptor()
-        renderpass.label = "Main Render Pass"
-        renderpass.color_attachment_count = 1
-        renderpass.color_attachments = attachment
-        renderpass.depth_stencil_attachment = depthStencilAttach
+        renderpass = wgpu.RenderPassDescriptor(
+            label="Main Render Pass",
+            color_attachment_count=1,
+            color_attachments=attachment,
+            depth_stencil_attachment=depthStencilAttach,
+        )
 
         commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
@@ -305,7 +491,12 @@ class HelloWgpu:
 
     def frame(self):
         transform = self.transform_matrix
-        self.device.queue.write_buffer(self.uniformBuffer, 0, as_capsule(glm.value_ptr(transform)), self.uniformBufferSize)
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            as_capsule(glm.value_ptr(transform)),
+            self.uniformBufferSize,
+        )
         backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)

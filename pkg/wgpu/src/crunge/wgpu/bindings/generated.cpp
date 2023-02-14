@@ -1424,7 +1424,46 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         BindGroupEntry.def_readwrite("size", &wgpu::BindGroupEntry::size);
         BindGroupEntry.def_readwrite("sampler", &wgpu::BindGroupEntry::sampler);
         BindGroupEntry.def_readwrite("texture_view", &wgpu::BindGroupEntry::textureView);
-        BindGroupEntry.def(py::init<>());
+        BindGroupEntry.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::BindGroupEntry obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("binding"))
+            {
+                auto value = kwargs["binding"].cast<uint32_t>();
+                obj.binding = value;
+            }
+            if (kwargs.contains("buffer"))
+            {
+                auto value = kwargs["buffer"].cast<wgpu::Buffer>();
+                obj.buffer = value;
+            }
+            if (kwargs.contains("offset"))
+            {
+                auto value = kwargs["offset"].cast<uint64_t>();
+                obj.offset = value;
+            }
+            if (kwargs.contains("size"))
+            {
+                auto value = kwargs["size"].cast<uint64_t>();
+                obj.size = value;
+            }
+            if (kwargs.contains("sampler"))
+            {
+                auto value = kwargs["sampler"].cast<wgpu::Sampler>();
+                obj.sampler = value;
+            }
+            if (kwargs.contains("texture_view"))
+            {
+                auto value = kwargs["texture_view"].cast<wgpu::TextureView>();
+                obj.textureView = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::BindGroupEntry, BindGroupEntry)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BlendComponent, BlendComponent)
@@ -1637,7 +1676,36 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         PrimitiveState.def_readwrite("strip_index_format", &wgpu::PrimitiveState::stripIndexFormat);
         PrimitiveState.def_readwrite("front_face", &wgpu::PrimitiveState::frontFace);
         PrimitiveState.def_readwrite("cull_mode", &wgpu::PrimitiveState::cullMode);
-        PrimitiveState.def(py::init<>());
+        PrimitiveState.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::PrimitiveState obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("topology"))
+            {
+                auto value = kwargs["topology"].cast<wgpu::PrimitiveTopology>();
+                obj.topology = value;
+            }
+            if (kwargs.contains("strip_index_format"))
+            {
+                auto value = kwargs["strip_index_format"].cast<wgpu::IndexFormat>();
+                obj.stripIndexFormat = value;
+            }
+            if (kwargs.contains("front_face"))
+            {
+                auto value = kwargs["front_face"].cast<wgpu::FrontFace>();
+                obj.frontFace = value;
+            }
+            if (kwargs.contains("cull_mode"))
+            {
+                auto value = kwargs["cull_mode"].cast<wgpu::CullMode>();
+                obj.cullMode = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::PrimitiveState, PrimitiveState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::QuerySetDescriptor, QuerySetDescriptor)
@@ -1690,7 +1758,66 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RenderPassDepthStencilAttachment.def_readwrite("clear_stencil", &wgpu::RenderPassDepthStencilAttachment::clearStencil);
         RenderPassDepthStencilAttachment.def_readwrite("stencil_clear_value", &wgpu::RenderPassDepthStencilAttachment::stencilClearValue);
         RenderPassDepthStencilAttachment.def_readwrite("stencil_read_only", &wgpu::RenderPassDepthStencilAttachment::stencilReadOnly);
-        RenderPassDepthStencilAttachment.def(py::init<>());
+        RenderPassDepthStencilAttachment.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::RenderPassDepthStencilAttachment obj;
+            if (kwargs.contains("view"))
+            {
+                auto value = kwargs["view"].cast<wgpu::TextureView>();
+                obj.view = value;
+            }
+            if (kwargs.contains("depth_load_op"))
+            {
+                auto value = kwargs["depth_load_op"].cast<wgpu::LoadOp>();
+                obj.depthLoadOp = value;
+            }
+            if (kwargs.contains("depth_store_op"))
+            {
+                auto value = kwargs["depth_store_op"].cast<wgpu::StoreOp>();
+                obj.depthStoreOp = value;
+            }
+            if (kwargs.contains("clear_depth"))
+            {
+                auto value = kwargs["clear_depth"].cast<float>();
+                obj.clearDepth = value;
+            }
+            if (kwargs.contains("depth_clear_value"))
+            {
+                auto value = kwargs["depth_clear_value"].cast<float>();
+                obj.depthClearValue = value;
+            }
+            if (kwargs.contains("depth_read_only"))
+            {
+                auto value = kwargs["depth_read_only"].cast<bool>();
+                obj.depthReadOnly = value;
+            }
+            if (kwargs.contains("stencil_load_op"))
+            {
+                auto value = kwargs["stencil_load_op"].cast<wgpu::LoadOp>();
+                obj.stencilLoadOp = value;
+            }
+            if (kwargs.contains("stencil_store_op"))
+            {
+                auto value = kwargs["stencil_store_op"].cast<wgpu::StoreOp>();
+                obj.stencilStoreOp = value;
+            }
+            if (kwargs.contains("clear_stencil"))
+            {
+                auto value = kwargs["clear_stencil"].cast<uint32_t>();
+                obj.clearStencil = value;
+            }
+            if (kwargs.contains("stencil_clear_value"))
+            {
+                auto value = kwargs["stencil_clear_value"].cast<uint32_t>();
+                obj.stencilClearValue = value;
+            }
+            if (kwargs.contains("stencil_read_only"))
+            {
+                auto value = kwargs["stencil_read_only"].cast<bool>();
+                obj.stencilReadOnly = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::RenderPassDepthStencilAttachment, RenderPassDepthStencilAttachment)
 
     PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::RenderPassDescriptorMaxDrawCount, struct wgpu::ChainedStruct, RenderPassDescriptorMaxDrawCount)
@@ -1738,7 +1865,23 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         ShaderModuleDescriptor.def_property("label",
             [](const wgpu::ShaderModuleDescriptor& self){ return self.label; },[](wgpu::ShaderModuleDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
         );
-        ShaderModuleDescriptor.def(py::init<>());
+        ShaderModuleDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::ShaderModuleDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor)
 
     PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::ShaderModuleSPIRVDescriptor, struct wgpu::ChainedStruct, ShaderModuleSPIRVDescriptor)
@@ -1785,7 +1928,23 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         SurfaceDescriptor.def_property("label",
             [](const wgpu::SurfaceDescriptor& self){ return self.label; },[](wgpu::SurfaceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
         );
-        SurfaceDescriptor.def(py::init<>());
+        SurfaceDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::SurfaceDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptor, SurfaceDescriptor)
 
     PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromAndroidNativeWindow, struct wgpu::ChainedStruct, SurfaceDescriptorFromAndroidNativeWindow)
@@ -1844,7 +2003,53 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         SwapChainDescriptor.def_readwrite("height", &wgpu::SwapChainDescriptor::height);
         SwapChainDescriptor.def_readwrite("present_mode", &wgpu::SwapChainDescriptor::presentMode);
         SwapChainDescriptor.def_readwrite("implementation", &wgpu::SwapChainDescriptor::implementation);
-        SwapChainDescriptor.def(py::init<>());
+        SwapChainDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::SwapChainDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("usage"))
+            {
+                auto value = kwargs["usage"].cast<wgpu::TextureUsage>();
+                obj.usage = value;
+            }
+            if (kwargs.contains("format"))
+            {
+                auto value = kwargs["format"].cast<wgpu::TextureFormat>();
+                obj.format = value;
+            }
+            if (kwargs.contains("width"))
+            {
+                auto value = kwargs["width"].cast<uint32_t>();
+                obj.width = value;
+            }
+            if (kwargs.contains("height"))
+            {
+                auto value = kwargs["height"].cast<uint32_t>();
+                obj.height = value;
+            }
+            if (kwargs.contains("present_mode"))
+            {
+                auto value = kwargs["present_mode"].cast<wgpu::PresentMode>();
+                obj.presentMode = value;
+            }
+            if (kwargs.contains("implementation"))
+            {
+                auto value = kwargs["implementation"].cast<uint64_t>();
+                obj.implementation = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::SwapChainDescriptor, SwapChainDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::TextureBindingLayout, TextureBindingLayout)
@@ -1880,7 +2085,26 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         VertexAttribute.def_readwrite("format", &wgpu::VertexAttribute::format);
         VertexAttribute.def_readwrite("offset", &wgpu::VertexAttribute::offset);
         VertexAttribute.def_readwrite("shader_location", &wgpu::VertexAttribute::shaderLocation);
-        VertexAttribute.def(py::init<>());
+        VertexAttribute.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::VertexAttribute obj;
+            if (kwargs.contains("format"))
+            {
+                auto value = kwargs["format"].cast<wgpu::VertexFormat>();
+                obj.format = value;
+            }
+            if (kwargs.contains("offset"))
+            {
+                auto value = kwargs["offset"].cast<uint64_t>();
+                obj.offset = value;
+            }
+            if (kwargs.contains("shader_location"))
+            {
+                auto value = kwargs["shader_location"].cast<uint32_t>();
+                obj.shaderLocation = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::VertexAttribute, VertexAttribute)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroupDescriptor, BindGroupDescriptor)
@@ -1891,7 +2115,38 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         BindGroupDescriptor.def_readwrite("layout", &wgpu::BindGroupDescriptor::layout);
         BindGroupDescriptor.def_readwrite("entry_count", &wgpu::BindGroupDescriptor::entryCount);
         BindGroupDescriptor.def_readwrite("entries", &wgpu::BindGroupDescriptor::entries);
-        BindGroupDescriptor.def(py::init<>());
+        BindGroupDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::BindGroupDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("layout"))
+            {
+                auto value = kwargs["layout"].cast<wgpu::BindGroupLayout>();
+                obj.layout = value;
+            }
+            if (kwargs.contains("entry_count"))
+            {
+                auto value = kwargs["entry_count"].cast<uint32_t>();
+                obj.entryCount = value;
+            }
+            if (kwargs.contains("entries"))
+            {
+                auto value = kwargs["entries"].cast<const wgpu::BindGroupEntry *>();
+                obj.entries = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::BindGroupDescriptor, BindGroupDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroupLayoutEntry, BindGroupLayoutEntry)
@@ -1936,7 +2191,66 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         DepthStencilState.def_readwrite("depth_bias", &wgpu::DepthStencilState::depthBias);
         DepthStencilState.def_readwrite("depth_bias_slope_scale", &wgpu::DepthStencilState::depthBiasSlopeScale);
         DepthStencilState.def_readwrite("depth_bias_clamp", &wgpu::DepthStencilState::depthBiasClamp);
-        DepthStencilState.def(py::init<>());
+        DepthStencilState.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::DepthStencilState obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("format"))
+            {
+                auto value = kwargs["format"].cast<wgpu::TextureFormat>();
+                obj.format = value;
+            }
+            if (kwargs.contains("depth_write_enabled"))
+            {
+                auto value = kwargs["depth_write_enabled"].cast<bool>();
+                obj.depthWriteEnabled = value;
+            }
+            if (kwargs.contains("depth_compare"))
+            {
+                auto value = kwargs["depth_compare"].cast<wgpu::CompareFunction>();
+                obj.depthCompare = value;
+            }
+            if (kwargs.contains("stencil_front"))
+            {
+                auto value = kwargs["stencil_front"].cast<wgpu::StencilFaceState>();
+                obj.stencilFront = value;
+            }
+            if (kwargs.contains("stencil_back"))
+            {
+                auto value = kwargs["stencil_back"].cast<wgpu::StencilFaceState>();
+                obj.stencilBack = value;
+            }
+            if (kwargs.contains("stencil_read_mask"))
+            {
+                auto value = kwargs["stencil_read_mask"].cast<uint32_t>();
+                obj.stencilReadMask = value;
+            }
+            if (kwargs.contains("stencil_write_mask"))
+            {
+                auto value = kwargs["stencil_write_mask"].cast<uint32_t>();
+                obj.stencilWriteMask = value;
+            }
+            if (kwargs.contains("depth_bias"))
+            {
+                auto value = kwargs["depth_bias"].cast<int32_t>();
+                obj.depthBias = value;
+            }
+            if (kwargs.contains("depth_bias_slope_scale"))
+            {
+                auto value = kwargs["depth_bias_slope_scale"].cast<float>();
+                obj.depthBiasSlopeScale = value;
+            }
+            if (kwargs.contains("depth_bias_clamp"))
+            {
+                auto value = kwargs["depth_bias_clamp"].cast<float>();
+                obj.depthBiasClamp = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::DepthStencilState, DepthStencilState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ImageCopyBuffer, ImageCopyBuffer)
@@ -1972,7 +2286,41 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RenderPassColorAttachment.def_readwrite("store_op", &wgpu::RenderPassColorAttachment::storeOp);
         RenderPassColorAttachment.def_readwrite("clear_color", &wgpu::RenderPassColorAttachment::clearColor);
         RenderPassColorAttachment.def_readwrite("clear_value", &wgpu::RenderPassColorAttachment::clearValue);
-        RenderPassColorAttachment.def(py::init<>());
+        RenderPassColorAttachment.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::RenderPassColorAttachment obj;
+            if (kwargs.contains("view"))
+            {
+                auto value = kwargs["view"].cast<wgpu::TextureView>();
+                obj.view = value;
+            }
+            if (kwargs.contains("resolve_target"))
+            {
+                auto value = kwargs["resolve_target"].cast<wgpu::TextureView>();
+                obj.resolveTarget = value;
+            }
+            if (kwargs.contains("load_op"))
+            {
+                auto value = kwargs["load_op"].cast<wgpu::LoadOp>();
+                obj.loadOp = value;
+            }
+            if (kwargs.contains("store_op"))
+            {
+                auto value = kwargs["store_op"].cast<wgpu::StoreOp>();
+                obj.storeOp = value;
+            }
+            if (kwargs.contains("clear_color"))
+            {
+                auto value = kwargs["clear_color"].cast<wgpu::Color>();
+                obj.clearColor = value;
+            }
+            if (kwargs.contains("clear_value"))
+            {
+                auto value = kwargs["clear_value"].cast<wgpu::Color>();
+                obj.clearValue = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::RenderPassColorAttachment, RenderPassColorAttachment)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RequiredLimits, RequiredLimits)
@@ -1998,7 +2346,63 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         TextureDescriptor.def_readwrite("sample_count", &wgpu::TextureDescriptor::sampleCount);
         TextureDescriptor.def_readwrite("view_format_count", &wgpu::TextureDescriptor::viewFormatCount);
         TextureDescriptor.def_readwrite("view_formats", &wgpu::TextureDescriptor::viewFormats);
-        TextureDescriptor.def(py::init<>());
+        TextureDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::TextureDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("usage"))
+            {
+                auto value = kwargs["usage"].cast<wgpu::TextureUsage>();
+                obj.usage = value;
+            }
+            if (kwargs.contains("dimension"))
+            {
+                auto value = kwargs["dimension"].cast<wgpu::TextureDimension>();
+                obj.dimension = value;
+            }
+            if (kwargs.contains("size"))
+            {
+                auto value = kwargs["size"].cast<wgpu::Extent3D>();
+                obj.size = value;
+            }
+            if (kwargs.contains("format"))
+            {
+                auto value = kwargs["format"].cast<wgpu::TextureFormat>();
+                obj.format = value;
+            }
+            if (kwargs.contains("mip_level_count"))
+            {
+                auto value = kwargs["mip_level_count"].cast<uint32_t>();
+                obj.mipLevelCount = value;
+            }
+            if (kwargs.contains("sample_count"))
+            {
+                auto value = kwargs["sample_count"].cast<uint32_t>();
+                obj.sampleCount = value;
+            }
+            if (kwargs.contains("view_format_count"))
+            {
+                auto value = kwargs["view_format_count"].cast<uint32_t>();
+                obj.viewFormatCount = value;
+            }
+            if (kwargs.contains("view_formats"))
+            {
+                auto value = kwargs["view_formats"].cast<const wgpu::TextureFormat *>();
+                obj.viewFormats = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::TextureDescriptor, TextureDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::VertexBufferLayout, VertexBufferLayout)
@@ -2006,7 +2410,31 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         VertexBufferLayout.def_readwrite("step_mode", &wgpu::VertexBufferLayout::stepMode);
         VertexBufferLayout.def_readwrite("attribute_count", &wgpu::VertexBufferLayout::attributeCount);
         VertexBufferLayout.def_readwrite("attributes", &wgpu::VertexBufferLayout::attributes);
-        VertexBufferLayout.def(py::init<>());
+        VertexBufferLayout.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::VertexBufferLayout obj;
+            if (kwargs.contains("array_stride"))
+            {
+                auto value = kwargs["array_stride"].cast<uint64_t>();
+                obj.arrayStride = value;
+            }
+            if (kwargs.contains("step_mode"))
+            {
+                auto value = kwargs["step_mode"].cast<wgpu::VertexStepMode>();
+                obj.stepMode = value;
+            }
+            if (kwargs.contains("attribute_count"))
+            {
+                auto value = kwargs["attribute_count"].cast<uint32_t>();
+                obj.attributeCount = value;
+            }
+            if (kwargs.contains("attributes"))
+            {
+                auto value = kwargs["attributes"].cast<const wgpu::VertexAttribute *>();
+                obj.attributes = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::VertexBufferLayout, VertexBufferLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroupLayoutDescriptor, BindGroupLayoutDescriptor)
@@ -2024,7 +2452,31 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         ColorTargetState.def_readwrite("format", &wgpu::ColorTargetState::format);
         ColorTargetState.def_readwrite("blend", &wgpu::ColorTargetState::blend);
         ColorTargetState.def_readwrite("write_mask", &wgpu::ColorTargetState::writeMask);
-        ColorTargetState.def(py::init<>());
+        ColorTargetState.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::ColorTargetState obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("format"))
+            {
+                auto value = kwargs["format"].cast<wgpu::TextureFormat>();
+                obj.format = value;
+            }
+            if (kwargs.contains("blend"))
+            {
+                auto value = kwargs["blend"].cast<const wgpu::BlendState *>();
+                obj.blend = value;
+            }
+            if (kwargs.contains("write_mask"))
+            {
+                auto value = kwargs["write_mask"].cast<wgpu::ColorWriteMask>();
+                obj.writeMask = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::ColorTargetState, ColorTargetState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor)
@@ -2058,7 +2510,53 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RenderPassDescriptor.def_readwrite("occlusion_query_set", &wgpu::RenderPassDescriptor::occlusionQuerySet);
         RenderPassDescriptor.def_readwrite("timestamp_write_count", &wgpu::RenderPassDescriptor::timestampWriteCount);
         RenderPassDescriptor.def_readwrite("timestamp_writes", &wgpu::RenderPassDescriptor::timestampWrites);
-        RenderPassDescriptor.def(py::init<>());
+        RenderPassDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::RenderPassDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("color_attachment_count"))
+            {
+                auto value = kwargs["color_attachment_count"].cast<uint32_t>();
+                obj.colorAttachmentCount = value;
+            }
+            if (kwargs.contains("color_attachments"))
+            {
+                auto value = kwargs["color_attachments"].cast<const wgpu::RenderPassColorAttachment *>();
+                obj.colorAttachments = value;
+            }
+            if (kwargs.contains("depth_stencil_attachment"))
+            {
+                auto value = kwargs["depth_stencil_attachment"].cast<const wgpu::RenderPassDepthStencilAttachment *>();
+                obj.depthStencilAttachment = value;
+            }
+            if (kwargs.contains("occlusion_query_set"))
+            {
+                auto value = kwargs["occlusion_query_set"].cast<wgpu::QuerySet>();
+                obj.occlusionQuerySet = value;
+            }
+            if (kwargs.contains("timestamp_write_count"))
+            {
+                auto value = kwargs["timestamp_write_count"].cast<uint32_t>();
+                obj.timestampWriteCount = value;
+            }
+            if (kwargs.contains("timestamp_writes"))
+            {
+                auto value = kwargs["timestamp_writes"].cast<const wgpu::RenderPassTimestampWrite *>();
+                obj.timestampWrites = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::RenderPassDescriptor, RenderPassDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::VertexState, VertexState)
@@ -2071,6 +2569,48 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         VertexState.def_readwrite("constants", &wgpu::VertexState::constants);
         VertexState.def_readwrite("buffer_count", &wgpu::VertexState::bufferCount);
         VertexState.def_readwrite("buffers", &wgpu::VertexState::buffers);
+        VertexState.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::VertexState obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("module"))
+            {
+                auto value = kwargs["module"].cast<wgpu::ShaderModule>();
+                obj.module = value;
+            }
+            if (kwargs.contains("entry_point"))
+            {
+                auto _value = kwargs["entry_point"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.entryPoint = value;
+            }
+            if (kwargs.contains("constant_count"))
+            {
+                auto value = kwargs["constant_count"].cast<uint32_t>();
+                obj.constantCount = value;
+            }
+            if (kwargs.contains("constants"))
+            {
+                auto value = kwargs["constants"].cast<const wgpu::ConstantEntry *>();
+                obj.constants = value;
+            }
+            if (kwargs.contains("buffer_count"))
+            {
+                auto value = kwargs["buffer_count"].cast<uint32_t>();
+                obj.bufferCount = value;
+            }
+            if (kwargs.contains("buffers"))
+            {
+                auto value = kwargs["buffers"].cast<const wgpu::VertexBufferLayout *>();
+                obj.buffers = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::VertexState, VertexState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::FragmentState, FragmentState)
@@ -2083,7 +2623,48 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         FragmentState.def_readwrite("constants", &wgpu::FragmentState::constants);
         FragmentState.def_readwrite("target_count", &wgpu::FragmentState::targetCount);
         FragmentState.def_readwrite("targets", &wgpu::FragmentState::targets);
-        FragmentState.def(py::init<>());
+        FragmentState.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::FragmentState obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("module"))
+            {
+                auto value = kwargs["module"].cast<wgpu::ShaderModule>();
+                obj.module = value;
+            }
+            if (kwargs.contains("entry_point"))
+            {
+                auto _value = kwargs["entry_point"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.entryPoint = value;
+            }
+            if (kwargs.contains("constant_count"))
+            {
+                auto value = kwargs["constant_count"].cast<uint32_t>();
+                obj.constantCount = value;
+            }
+            if (kwargs.contains("constants"))
+            {
+                auto value = kwargs["constants"].cast<const wgpu::ConstantEntry *>();
+                obj.constants = value;
+            }
+            if (kwargs.contains("target_count"))
+            {
+                auto value = kwargs["target_count"].cast<uint32_t>();
+                obj.targetCount = value;
+            }
+            if (kwargs.contains("targets"))
+            {
+                auto value = kwargs["targets"].cast<const wgpu::ColorTargetState *>();
+                obj.targets = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::FragmentState, FragmentState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor)
@@ -2097,7 +2678,53 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         RenderPipelineDescriptor.def_readwrite("depth_stencil", &wgpu::RenderPipelineDescriptor::depthStencil);
         RenderPipelineDescriptor.def_readwrite("multisample", &wgpu::RenderPipelineDescriptor::multisample);
         RenderPipelineDescriptor.def_readwrite("fragment", &wgpu::RenderPipelineDescriptor::fragment);
-        RenderPipelineDescriptor.def(py::init<>());
+        RenderPipelineDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::RenderPipelineDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("layout"))
+            {
+                auto value = kwargs["layout"].cast<wgpu::PipelineLayout>();
+                obj.layout = value;
+            }
+            if (kwargs.contains("vertex"))
+            {
+                auto value = kwargs["vertex"].cast<wgpu::VertexState>();
+                obj.vertex = value;
+            }
+            if (kwargs.contains("primitive"))
+            {
+                auto value = kwargs["primitive"].cast<wgpu::PrimitiveState>();
+                obj.primitive = value;
+            }
+            if (kwargs.contains("depth_stencil"))
+            {
+                auto value = kwargs["depth_stencil"].cast<const wgpu::DepthStencilState *>();
+                obj.depthStencil = value;
+            }
+            if (kwargs.contains("multisample"))
+            {
+                auto value = kwargs["multisample"].cast<wgpu::MultisampleState>();
+                obj.multisample = value;
+            }
+            if (kwargs.contains("fragment"))
+            {
+                auto value = kwargs["fragment"].cast<const wgpu::FragmentState *>();
+                obj.fragment = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor)
 
 

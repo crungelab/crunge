@@ -11,10 +11,35 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 
-vertex_data = np.array([
-    0.0, .5, 0.0, 1.0, 1.0, 0.0,  0.0, 1.0, -.5, -.5, 0., 1.0,
-    0.0, 1.0, 0.0, 1.0, .5, -.5, 0.0, 1.0, 0.0,  0.0,  1.0, 1.0,
-], dtype=np.float32)
+vertex_data = np.array(
+    [
+        0.0,
+        0.5,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        -0.5,
+        -0.5,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        0.5,
+        -0.5,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+    ],
+    dtype=np.float32,
+)
 
 
 shader_code = """
@@ -64,48 +89,56 @@ class HelloWgpu:
 
         self.create_buffers()
 
-        shader_module: wgpu.ShaderModule = utils.create_shader_module(self.device, shader_code)
+        shader_module: wgpu.ShaderModule = utils.create_shader_module(
+            self.device, shader_code
+        )
 
         # Pipeline creation
 
-        # TODO: Need to implement kwargs initializers
-        va0 = wgpu.VertexAttribute()
-        va0.format = wgpu.VertexFormat.FLOAT32X4
-        va0.offset = 0
-        va0.shader_location = 0
-        
-        va1 = wgpu.VertexAttribute()
-        va1.format = wgpu.VertexFormat.FLOAT32X4
-        va1.offset = 4 * sizeof(c_float)
-        va1.shader_location = 1
+        vertAttributes = wgpu.VertexAttributes(
+            [
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X4, offset=0, shader_location=0
+                ),
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X4,
+                    offset=4 * sizeof(c_float),
+                    shader_location=1,
+                ),
+            ]
+        )
 
-        vertAttributes = wgpu.VertexAttributes([va0, va1])
-        
-        vertBufferLayout = wgpu.VertexBufferLayout()
-        vertBufferLayout.array_stride = 8 * sizeof(c_float)
-        vertBufferLayout.attribute_count = 2
-        vertBufferLayout.attributes = vertAttributes[0]
+        vertBufferLayout = wgpu.VertexBufferLayout(
+            array_stride=8 * sizeof(c_float),
+            attribute_count=2,
+            attributes=vertAttributes[0],
+        )
 
-        colorTargetState = wgpu.ColorTargetState()
-        colorTargetState.format = wgpu.TextureFormat.BGRA8_UNORM
+        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
-        fragmentState = wgpu.FragmentState()
-        fragmentState.module = shader_module
-        fragmentState.entry_point = "fs_main"
-        fragmentState.target_count = 1
-        fragmentState.targets = colorTargetState
+        fragmentState = wgpu.FragmentState(
+            module=shader_module,
+            entry_point="fs_main",
+            target_count=1,
+            targets=colorTargetState,
+        )
 
-        descriptor = wgpu.RenderPipelineDescriptor()
-        descriptor.label = "Main Render Pipeline"
-        descriptor.vertex.module = shader_module
-        descriptor.vertex.entry_point = "vs_main"
-        descriptor.vertex.buffer_count = 1
-        descriptor.vertex.buffers = vertBufferLayout
-        descriptor.fragment = fragmentState
+        vertex_state = wgpu.VertexState(
+            module=shader_module,
+            entry_point="vs_main",
+            buffer_count=1,
+            buffers=vertBufferLayout,
+        )
+        descriptor = wgpu.RenderPipelineDescriptor(
+            label="Main Render Pipeline", vertex=vertex_state, fragment=fragmentState
+        )
+
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def create_buffers(self):
-        self.vertex_buffer = utils.create_buffer_from_ndarray(self.device, vertex_data, wgpu.BufferUsage.VERTEX)
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.device, vertex_data, wgpu.BufferUsage.VERTEX
+        )
 
     def create_window(self):
         glfw.init()
@@ -131,37 +164,40 @@ class HelloWgpu:
         nwh = as_capsule(handle)
         logger.debug(nwh)
 
+        # TODO: create convenience function for this
         wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
         wsd.hwnd = nwh
         wsd.hinstance = None
 
-        sd = wgpu.SurfaceDescriptor()
-        sd.next_in_chain = wsd
+        sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
 
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
 
-        scDesc = wgpu.SwapChainDescriptor()
-        scDesc.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
-        scDesc.format = wgpu.TextureFormat.BGRA8_UNORM
-        scDesc.width = self.kWidth
-        scDesc.height = self.kHeight
-        #scDesc.present_mode = wgpu.PresentMode.FIFO
-        scDesc.present_mode = wgpu.PresentMode.MAILBOX
+        scDesc = wgpu.SwapChainDescriptor(
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            format=wgpu.TextureFormat.BGRA8_UNORM,
+            width=self.kWidth,
+            height=self.kHeight,
+            present_mode=wgpu.PresentMode.MAILBOX,
+        )
+
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
     def render(self, view: wgpu.TextureView):
-        attachment = wgpu.RenderPassColorAttachment()
-        attachment.view = view
-        attachment.load_op = wgpu.LoadOp.CLEAR
-        attachment.store_op = wgpu.StoreOp.STORE
-        attachment.clear_value = wgpu.Color(0, 0, 0, 1)
+        attachment = wgpu.RenderPassColorAttachment(
+            view=view,
+            load_op=wgpu.LoadOp.CLEAR,
+            store_op=wgpu.StoreOp.STORE,
+            clear_value=wgpu.Color(0, 0, 0, 1),
+        )
 
-        renderpass = wgpu.RenderPassDescriptor()
-        renderpass.label = "Main Render Pass"
-        renderpass.color_attachment_count = 1
-        renderpass.color_attachments = attachment
+        renderpass = wgpu.RenderPassDescriptor(
+            label="Main Render Pass",
+            color_attachment_count=1,
+            color_attachments=attachment,
+        )
 
         commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()

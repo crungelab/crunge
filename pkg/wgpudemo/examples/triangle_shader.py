@@ -39,42 +39,44 @@ class HelloWgpu:
     def __init__(self):
         self.instance = wgpu.create_instance()
         self.adapter = self.instance.request_adapter()
-        props = wgpu.AdapterProperties()
-        self.adapter.get_properties(props)
-        logger.debug(props.vendor_name)
         self.device = self.adapter.create_device()
-        logger.debug(self.device)
         self.device.enable_logging()
-        self.queue = self.device.get_queue()
+        self.queue = self.device.queue
 
-        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
-        #wgsl_desc.source = shader_code
         wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(source=shader_code)
-        
-        descriptor = wgpu.ShaderModuleDescriptor()
-        descriptor.next_in_chain = wgsl_desc
-        shader_module = self.device.create_shader_module(descriptor)
 
-        colorTargetState = wgpu.ColorTargetState()
-        colorTargetState.format = wgpu.TextureFormat.BGRA8_UNORM
+        sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
+        shader_module = self.device.create_shader_module(sm_descriptor)
 
-        fragmentState = wgpu.FragmentState()
-        fragmentState.module = shader_module
-        fragmentState.entry_point = "main_f"
-        fragmentState.target_count = 1
-        fragmentState.targets = colorTargetState
+        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
-        depthStencilState = wgpu.DepthStencilState()
-        depthStencilState.format = wgpu.TextureFormat.DEPTH32_FLOAT
+        fragmentState = wgpu.FragmentState(
+            module=shader_module,
+            entry_point="main_f",
+            target_count=1,
+            targets=colorTargetState,
+        )
 
-        descriptor = wgpu.RenderPipelineDescriptor()
-        descriptor.vertex.module = shader_module
-        descriptor.vertex.entry_point = "main_v"
-        descriptor.fragment = fragmentState
-        descriptor.primitive.topology = wgpu.PrimitiveTopology.TRIANGLE_LIST
-        descriptor.depth_stencil = depthStencilState
+        depthStencilState = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH32_FLOAT,
+        )
+
+        primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_LIST)
+
+        vertex_state = wgpu.VertexState(
+            module=shader_module,
+            entry_point="main_v",
+        )
+
+        descriptor = wgpu.RenderPipelineDescriptor(
+            label="Main Render Pipeline",
+            vertex=vertex_state,
+            primitive=primitive,
+            depth_stencil=depthStencilState,
+            fragment=fragmentState,
+        )
+
         self.pipeline = self.device.create_render_pipeline(descriptor)
-        logger.debug(self.pipeline)
 
     def create_window(self):
         glfw.init()
@@ -104,46 +106,50 @@ class HelloWgpu:
         wsd.hwnd = nwh
         wsd.hinstance = None
 
-        sd = wgpu.SurfaceDescriptor()
-        sd.next_in_chain = wsd
-
+        sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
 
-        scDesc = wgpu.SwapChainDescriptor()
-        scDesc.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
-        scDesc.format = wgpu.TextureFormat.BGRA8_UNORM
-        scDesc.width = self.kWidth
-        scDesc.height = self.kHeight
-        scDesc.present_mode = wgpu.PresentMode.FIFO
+        scDesc = wgpu.SwapChainDescriptor(
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            format=wgpu.TextureFormat.BGRA8_UNORM,
+            width=self.kWidth,
+            height=self.kHeight,
+            present_mode=wgpu.PresentMode.FIFO,
+        )
+
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
     def create_depth_stencil_view(self):
-        descriptor = wgpu.TextureDescriptor()
-        descriptor.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
-        descriptor.size = wgpu.Extent3D(self.kWidth, self.kHeight, 1)
-        descriptor.format = wgpu.TextureFormat.DEPTH32_FLOAT
+        descriptor = wgpu.TextureDescriptor(
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            size=wgpu.Extent3D(self.kWidth, self.kHeight, 1),
+            format=wgpu.TextureFormat.DEPTH32_FLOAT,
+        )
         self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
     def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
-        attachment = wgpu.RenderPassColorAttachment()
-        attachment.view = view
-        attachment.load_op = wgpu.LoadOp.CLEAR
-        attachment.store_op = wgpu.StoreOp.STORE
-        attachment.clear_value = wgpu.Color(0, 0, 0, 1)
+        attachment = wgpu.RenderPassColorAttachment(
+            view=view,
+            load_op=wgpu.LoadOp.CLEAR,
+            store_op=wgpu.StoreOp.STORE,
+            clear_value=wgpu.Color(0, 0, 0, 1),
+        )
 
-        renderpass = wgpu.RenderPassDescriptor()
-        renderpass.color_attachment_count = 1
-        renderpass.color_attachments = attachment
+        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
+            view=depthStencilView,
+            depth_load_op=wgpu.LoadOp.CLEAR,
+            depth_store_op=wgpu.StoreOp.STORE,
+            depth_clear_value=0,
+        )
 
-        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment()
-        depth_stencil_attachment.view = depthStencilView
-        depth_stencil_attachment.depth_clear_value = 0
-        depth_stencil_attachment.depth_load_op = wgpu.LoadOp.CLEAR
-        depth_stencil_attachment.depth_store_op = wgpu.StoreOp.STORE
-
-        renderpass.depth_stencil_attachment = depth_stencil_attachment
+        renderpass = wgpu.RenderPassDescriptor(
+            label="Main Render Pass",
+            color_attachment_count=1,
+            color_attachments=attachment,
+            depth_stencil_attachment=depth_stencil_attachment,
+        )
 
         commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
