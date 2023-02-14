@@ -1,17 +1,9 @@
+import re
 from enum import Enum
 
 from crunge.clang import cindex
+from .context import EntryContext
 
-"""
-entry_cls_map = {
-    'function': FunctionEntry,
-    'ctor': CtorEntry,
-    'field': FieldEntry,
-    'method': MethodEntry,
-    'struct': StructEntry,
-    'class': ClassEntry
-}
-"""
 class EntryKind(Enum):
     FUNCTION = 0
     CTOR = 1
@@ -21,6 +13,7 @@ class EntryKind(Enum):
     CLASS = 5
 
 class Entry:
+    context: EntryContext = None
     fqname: str = None
     name: str = None
     pyname: str = None
@@ -30,16 +23,20 @@ class Entry:
     exclude: bool = False
     overload: bool = False
 
-    def __init__(self, fqname: str, name: str, pyname: str, config: dict={}, node: cindex.Cursor = None):
+    def __init__(self, context: EntryContext, fqname: str, config: dict={}, node: cindex.Cursor = None):
+        self.context = context
         self.fqname = fqname
-        self.name = name
-        self.pyname = pyname
-        self.configure(config)
+        self.name = fqname.split('::')[-1]
+        self.pyname = self.create_pyname(self.name)
         self.node = node
         self.children = []
+        self.configure(config)
 
     def __repr__(self) -> str:
         return f'<{self.__class__.__name__} fqname={self.fqname}, name={self.name}, pyname={self.pyname}>'
+
+    def create_pyname(self, name):
+        return self.context.format_type(name)
 
     def configure(self, config):
         #logger.debug(f"config: {config}")
@@ -56,7 +53,8 @@ class CtorEntry(Entry):
     pass
 
 class FieldEntry(Entry):
-    pass
+    def create_pyname(self, name):
+        return self.context.format_field(name)
 
 class MethodEntry(Entry):
     pass
@@ -72,3 +70,10 @@ class StructEntry(StructOrClassEntry):
 
 class ClassEntry(StructOrClassEntry):
     pass
+
+class EnumEntry(Entry):
+    pass
+
+class EnumConstEntry(Entry):
+    def create_pyname(self, name):
+        return self.context.format_enum(name)

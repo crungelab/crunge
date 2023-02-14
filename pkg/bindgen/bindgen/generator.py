@@ -3,13 +3,13 @@ from pathlib import Path
 import importlib
 from loguru import logger
 import jinja2
-#from clang import cindex
+
 from crunge.clang import cindex
 
 from .generator_base import GeneratorBase
 from .yaml import load_yaml
 
-from .entry import Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructOrClassEntry, StructEntry, ClassEntry
+from .entry import EntryContext, Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructOrClassEntry, StructEntry, ClassEntry
 from . import UserSet
 
 class Options:
@@ -31,6 +31,7 @@ class Overloaded(UserSet):
 class Generator(GeneratorBase):
     def __init__(self, config, **kwargs):
         super().__init__()
+        self.context = EntryContext()
         self.excludes = []
         self.overloads = []
         self.config = config
@@ -56,7 +57,6 @@ class Generator(GeneratorBase):
 
         BASE_PATH = Path('.')
         self.path = BASE_PATH / self.source
-        #self.path = Path(self.source).absolute()
         self.mapped.append(self.path.name)
 
     @classmethod
@@ -109,21 +109,32 @@ class Generator(GeneratorBase):
             return
         if node.is_scoped_enum:
             return self.visit_scoped_enum(node)
-
-        #logger.debug(node.spelling)
-        # logger.debug(node.enum_type.spelling)
-
         self(
             f'py::enum_<{self.spell(node)}>({self.module}, "{self.format_type(node.spelling)}", py::arithmetic())'
         )
         with self:
             for child in node.get_children():
-                #logger.debug(child.kind) #CursorKind.ENUM_CONSTANT_DECL
                 self(
                     f'.value("{self.format_enum(child.spelling)}", {child.spelling})'
                 )
             self(".export_values();")
         self()
+
+    def visit_struct_enum(self, node):
+        entry = self.entry
+        if not node.get_children():
+            return
+        self(
+            f'py::enum_<{self.spell(node)}>({self.module}, "{entry.pyname}", py::arithmetic())'
+        )
+        logger.debug(node.spelling)
+        with self:
+            for child in node.get_children():
+                self(
+                    f'.value("{self.format_enum(child.spelling)}", {entry.fqname}::Enum::{child.spelling})'
+                )
+            self(".export_values();")
+        self("")
 
     def visit_scoped_enum(self, node):
         #logger.debug(node.spelling)
@@ -175,11 +186,11 @@ class Generator(GeneratorBase):
         else:
             if self.is_char_pointer(node):
                 #logger.debug(f"{node.spelling}: is char*")
-                self.visit_char_ptr_field(node, entry.pyname, entry.name)
+                self.visit_char_ptr_field(node, entry.pyname)
             else:
                 self(f'{self.scope}.def_readwrite("{entry.pyname}", &{entry.fqname});')
 
-    def visit_char_ptr_field(self, node, pyname, cname):
+    def visit_char_ptr_field(self, node, pyname):
         pname = self.spell(node.semantic_parent)
         name = node.spelling
         self(f'{self.scope}.def_property("{pyname}",')
@@ -224,22 +235,6 @@ class Generator(GeneratorBase):
             self(f'{mname}.def("{pyname}", {cname}')
         self.write_pyargs(arguments)
         self(f", {self.get_return_policy(node)});\n")
-
-    def visit_struct_enum(self, node):
-        entry = self.entry
-        if not node.get_children():
-            return
-        self(
-            f'py::enum_<{self.spell(node)}>({self.module}, "{entry.pyname}", py::arithmetic())'
-        )
-        logger.debug(node.spelling)
-        with self:
-            for value in node.get_children():
-                self(
-                    f'.value("{self.format_enum(value.spelling)}", {entry.fqname}::Enum::{value.spelling})'
-                )
-            self(".export_values();")
-        self("")
 
     def visit_struct(self, node):
         if not self.is_class_mappable(node):
@@ -292,16 +287,7 @@ class Generator(GeneratorBase):
         #logger.debug(entry)
         self(f"PYCLASS_BEGIN({self.module}, {entry.fqname}, {entry.pyname})")
         with self.enter(entry):
-            for child in node.get_children():
-                # logger.debug(f"{child.kind} : {child.spelling}")
-                if child.kind == cindex.CursorKind.CONSTRUCTOR:
-                    self.visit_constructor(child)
-                elif child.kind == cindex.CursorKind.CXX_METHOD:
-                    self.visit_method(child)
-                elif child.kind == cindex.CursorKind.FIELD_DECL:
-                    self.visit_field(child)
-                elif child.kind == cindex.CursorKind.USING_DECLARATION:
-                    self.visit_using_decl(child)
+            self.visit_children(node)
 
             #if not entry.has_constructor:
             if entry.gen_init:

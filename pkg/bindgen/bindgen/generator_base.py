@@ -7,7 +7,7 @@ from loguru import logger
 #from clang import cindex
 from crunge.clang import cindex
 
-from .entry import Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructEntry, ClassEntry
+from .entry import EntryContext, Entry, FunctionEntry, CtorEntry, FieldEntry, MethodEntry, StructEntry, ClassEntry
 
 entry_cls_map = {
     'function': FunctionEntry,
@@ -25,21 +25,17 @@ class GeneratorBase:
         self.source = ''
         self.mapped = [] #headers we want to generate bindings for
         self.target = ''
-        self.prefix = ''
-        self.short_prefix = ''
+        self._prefix = ''
+        self._short_prefix = ''
         self.module = ''
         self.flags = []
         self.defaults = {}
         self.excludes = []
         self.overloads = []
+
+        self.context = None
         self.entries = {}
         self.entry_stack = []
-
-    @property
-    def entry(self):
-        if len(self.entry_stack) == 0:
-            return None
-        return self.entry_stack [-1]
 
     def __call__(self, line=""):
         if len(line):
@@ -47,17 +43,6 @@ class GeneratorBase:
             self.text += line.replace('>>', '> >')
         self.text += '\n'
 
-    """
-    @contextmanager
-    def enter(self, entry_key, config={}, node: cindex.Cursor = None):
-        entry = self.lookup_or_create(entry_key, config, node)
-        self.entry_stack.append(entry)
-
-        self.indent()
-        yield entry
-        self.dedent()
-        self.entry_stack.pop()
-    """
     @contextmanager
     def enter(self, entry):
         self.entry_stack.append(entry)
@@ -71,6 +56,30 @@ class GeneratorBase:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.dedent()
+
+    @property
+    def entry(self):
+        if len(self.entry_stack) == 0:
+            return None
+        return self.entry_stack [-1]
+
+    @property
+    def prefix(self):
+        return self._prefix
+
+    @prefix.setter
+    def prefix(self, value):
+        self._prefix = value
+        self.context.prefix = value
+
+    @property
+    def short_prefix(self):
+        return self._short_prefix
+
+    @short_prefix.setter
+    def short_prefix(self, value):
+        self._short_prefix = value
+        self.context.short_prefix = value
 
     def indent(self):
         self.indentation +=1
@@ -94,6 +103,7 @@ class GeneratorBase:
 
     def create_entry(self, entry_key: str, config: dict = {}, node: cindex.Cursor = None):
         kind, fqname = entry_key.split('.')
+        """
         name = fqname.split('::')[-1]
         pyname = None
         if kind == 'field':
@@ -102,8 +112,11 @@ class GeneratorBase:
             pyname = self.format_enum(name)
         else:
             pyname = self.format_type(name)
+        """
         cls = entry_cls_map[kind]
-        entry = cls(fqname, name, pyname, config, node)
+        #TODO: make produce class method?
+        #entry = cls(fqname, name, pyname, config, node)
+        entry = cls(self.context, fqname, config, node)
 
         if entry.exclude:
             self.excludes.append(fqname)
@@ -114,22 +127,25 @@ class GeneratorBase:
 
         return entry
 
-    def spell(self, node):
+    @classmethod
+    def spell(cls, node):
         if node is None:
             return ''
         elif node.kind == cindex.CursorKind.TRANSLATION_UNIT:
             return ''
         else:
-            res = self.spell(node.semantic_parent)
+            res = cls.spell(node.semantic_parent)
             if res != '':
                 return res + '::' + node.spelling
         return node.spelling
 
-    def snake(self, name):
+    @classmethod
+    def snake(cls, name):
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
         #return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
         return re.sub('([a-z])([A-Z])', r'\1_\2', s1).lower()
 
+    @classmethod
     def format_field(self, name):
         name = self.snake(name)
         name = name.rstrip('_')
