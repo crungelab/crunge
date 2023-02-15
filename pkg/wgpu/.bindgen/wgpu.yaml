@@ -29,6 +29,7 @@ flags: [
 'struct.wgpu::BindGroupLayoutEntry': {gen_kw_init: true}
 'struct.wgpu::SamplerBindingLayout': {gen_kw_init: true}
 'struct.wgpu::TextureBindingLayout': {gen_kw_init: true}
+'struct.wgpu::BufferBindingLayout': {gen_kw_init: true}
 'struct.wgpu::BindGroupDescriptor': {gen_kw_init: true}
 'struct.wgpu::ShaderModuleDescriptor': {gen_kw_init: true}
 'struct.wgpu::ShaderModuleWGSLDescriptor': {gen_kw_init: true}

@@ -19,51 +19,31 @@ WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
 WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
 
+vs_shader_code = """
+@vertex fn main(@location(0) pos : vec4<f32>) -> @builtin(position) vec4<f32> {
+    return pos;
+}
+"""
+
+fs_shader_code = """
+@group(0) @binding(0) var mySampler: sampler;
+@group(0) @binding(1) var myTexture : texture_2d<f32>;
+
+@fragment fn main(@builtin(position) FragCoord : vec4<f32>)
+                        -> @location(0) vec4<f32> {
+    return textureSample(myTexture, mySampler, FragCoord.xy / vec2<f32>(800.0, 600.0));
+    //return textureSample(myTexture, mySampler, FragCoord.xy);
+}
+"""
+
 shader_code = """
+@group(0) @binding(0) var mySampler: sampler;
+@group(0) @binding(1) var myTexture : texture_2d<f32>;
+
 struct Uniforms {
   modelViewProjectionMatrix : mat4x4<f32>,
 }
-@binding(0) @group(0) var<uniform> uniforms : Uniforms;
-
-struct VertexInput {
-    @location(0) position: vec4<f32>,
-    @location(1) tex_coords: vec2<f32>,
-}
-
-struct VertexOutput {
-    @builtin(position) clip_position: vec4<f32>,
-    @location(0) tex_coords: vec2<f32>,
-}
-
-@vertex
-fn vs_main(
-    model: VertexInput,
-) -> VertexOutput {
-    let vert_pos = uniforms.modelViewProjectionMatrix * model.position;
-    var out: VertexOutput;
-    out.tex_coords = model.tex_coords;
-    out.clip_position = vert_pos;
-    return out;
-}
-
-// Fragment shader
-
-@group(0) @binding(0)
-var t_diffuse: texture_2d<f32>;
-@group(0)@binding(1)
-var s_diffuse: sampler;
-
-@fragment
-fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    return textureSample(t_diffuse, s_diffuse, in.tex_coords);
-}
-"""
-#Old shader_code
-"""
-struct Uniforms {
-  modelViewProjectionMatrix : mat4x4<f32>,
-}
-@binding(0) @group(0) var<uniform> uniforms : Uniforms;
+@group(0) @binding(2) var<uniform> uniforms : Uniforms;
 
 struct VertexInput {
   @location(0) pos: vec4<f32>,
@@ -73,22 +53,27 @@ struct VertexInput {
 struct VertexOutput {
   @builtin(position) vertex_pos : vec4<f32>,
   @location(0) uv: vec2<f32>,
-  @location(1) frag_colour: vec4<f32>,
 }
 
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
   let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
-  let frag_colour = 0.5 * (in.pos + vec4(1));
-  return VertexOutput(vert_pos, in.uv, frag_colour);
+  return VertexOutput(vert_pos, in.uv);
 }
 
 @fragment
 fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
-  return in.frag_colour;
+  return textureSample(myTexture, mySampler, in.uv);
 }
 """
-
+#
+"""
+@fragment fn main(@builtin(position) FragCoord : vec4<f32>)
+                        -> @location(0) vec4<f32> {
+    return textureSample(myTexture, mySampler, FragCoord.xy / vec2<f32>(800.0, 600.0));
+    //return textureSample(myTexture, mySampler, FragCoord.xy);
+}
+"""
 
 class HelloWgpu:
     device: wgpu.Device = None
@@ -172,15 +157,50 @@ class HelloWgpu:
             buffers=vertBufferLayout,
         )
 
-        descriptor = wgpu.RenderPipelineDescriptor(
+        bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.FRAGMENT,
+                    sampler=wgpu.SamplerBindingLayout(
+                        type=wgpu.SamplerBindingType.FILTERING
+                    ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=1,
+                    visibility=wgpu.ShaderStage.FRAGMENT,
+                    texture=wgpu.TextureBindingLayout(
+                        sample_type=wgpu.TextureSampleType.FLOAT,
+                        view_dimension=wgpu.TextureViewDimension.E2D,
+                    ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=2,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM)
+                ),
+            ]
+        )
+
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(bgl_entries), entries=bgl_entries[0]
+        )
+        bgl = self.device.create_bind_group_layout(bgl_desc)
+
+        pl_desc = wgpu.PipelineLayoutDescriptor(
+            bind_group_layout_count=1, bind_group_layouts=bgl
+        )
+
+        rp_descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
+            layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             primitive=primitive,
             depth_stencil=depthStencilState,
             fragment=fragmentState,
         )
 
-        self.pipeline = self.device.create_render_pipeline(descriptor)
+        self.pipeline = self.device.create_render_pipeline(rp_descriptor)
 
         # Create depth texture
         self.depthTexture = utils.create_texture(
@@ -191,15 +211,21 @@ class HelloWgpu:
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
 
-        bindEntry = wgpu.BindGroupEntry(
-            binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize
+        view: wgpu.TextureView = self.texture.create_view()
+
+        bg_entries = wgpu.BindGroupEntries(
+            [
+                wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
+                wgpu.BindGroupEntry(binding=1, texture_view=view),
+                wgpu.BindGroupEntry(binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize),
+            ]
         )
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
-            label="Uniform bind group",
+            label="Texture+Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=1,
-            entries=bindEntry,
+            entry_count=len(bg_entries),
+            entries=bg_entries[0],
         )
 
         self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
@@ -207,7 +233,7 @@ class HelloWgpu:
         aspect = float(self.kWidth) / float(self.kHeight)
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
-        exit()
+        #exit()
 
     @property
     def transform_matrix(self):
@@ -241,11 +267,11 @@ class HelloWgpu:
             usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
         )
 
-        texture = self.device.create_texture(descriptor)
+        self.texture = self.device.create_texture(descriptor)
 
         self.sampler = self.device.create_sampler()
 
-        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint32)
+        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint8)
         for i in range(0, data.size):
             data[i] = i % 253
 
@@ -253,7 +279,7 @@ class HelloWgpu:
             self.device, data, wgpu.BufferUsage.COPY_SRC
         )
         image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, 4 * 1024)
-        image_copy_texture = utils.create_image_copy_texture(texture)
+        image_copy_texture = utils.create_image_copy_texture(self.texture)
         copy_size = wgpu.Extent3D(1024, 1024, 1)
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
@@ -310,7 +336,7 @@ class HelloWgpu:
             view=view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
+            clear_value=wgpu.Color(0, 0, 0, 1),
         )
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(

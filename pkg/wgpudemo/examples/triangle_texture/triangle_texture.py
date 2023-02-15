@@ -97,35 +97,6 @@ class HelloWgpu:
             self.device, fs_shader_code
         )
 
-        entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-            ]
-        )
-
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(entries), entries=entries[0]
-        )
-        bgl = self.device.create_bind_group_layout(bgl_desc)
-
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
-        )
-
         vertAttributes = wgpu.VertexAttributes(
             [
                 wgpu.VertexAttribute(
@@ -161,6 +132,35 @@ class HelloWgpu:
             entry_point="main",
             buffer_count=1,
             buffers=vertBufferLayout,
+        )
+
+        bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.FRAGMENT,
+                    sampler=wgpu.SamplerBindingLayout(
+                        type=wgpu.SamplerBindingType.FILTERING
+                    ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=1,
+                    visibility=wgpu.ShaderStage.FRAGMENT,
+                    texture=wgpu.TextureBindingLayout(
+                        sample_type=wgpu.TextureSampleType.FLOAT,
+                        view_dimension=wgpu.TextureViewDimension.E2D,
+                    ),
+                ),
+            ]
+        )
+
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(bgl_entries), entries=bgl_entries[0]
+        )
+        bgl = self.device.create_bind_group_layout(bgl_desc)
+
+        pl_desc = wgpu.PipelineLayoutDescriptor(
+            bind_group_layout_count=1, bind_group_layouts=bgl
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(
@@ -210,16 +210,13 @@ class HelloWgpu:
         )
 
     def create_textures(self):
-        descriptor = wgpu.TextureDescriptor()
-        descriptor.dimension = wgpu.TextureDimension.E2D
-        descriptor.size.width = 1024
-        descriptor.size.height = 1024
-        descriptor.size.depth_or_array_layers = 1
-        descriptor.sample_count = 1
-        descriptor.format = wgpu.TextureFormat.RGBA8_UNORM
-        descriptor.mip_level_count = 1
-        descriptor.usage = (
-            wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING
+        descriptor = wgpu.TextureDescriptor(
+            dimension=wgpu.TextureDimension.E2D,
+            size=wgpu.Extent3D(1024, 1024, 1),
+            sample_count=1,
+            format=wgpu.TextureFormat.RGBA8_UNORM,
+            mip_level_count = 1,
+            usage = wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING
         )
         self.texture = self.device.create_texture(descriptor)
 

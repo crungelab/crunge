@@ -1477,6 +1477,31 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         BufferBindingLayout.def_readwrite("type", &wgpu::BufferBindingLayout::type);
         BufferBindingLayout.def_readwrite("has_dynamic_offset", &wgpu::BufferBindingLayout::hasDynamicOffset);
         BufferBindingLayout.def_readwrite("min_binding_size", &wgpu::BufferBindingLayout::minBindingSize);
+        BufferBindingLayout.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::BufferBindingLayout obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("type"))
+            {
+                auto value = kwargs["type"].cast<wgpu::BufferBindingType>();
+                obj.type = value;
+            }
+            if (kwargs.contains("has_dynamic_offset"))
+            {
+                auto value = kwargs["has_dynamic_offset"].cast<bool>();
+                obj.hasDynamicOffset = value;
+            }
+            if (kwargs.contains("min_binding_size"))
+            {
+                auto value = kwargs["min_binding_size"].cast<uint64_t>();
+                obj.minBindingSize = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::BufferBindingLayout, BufferBindingLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BufferDescriptor, BufferDescriptor)
