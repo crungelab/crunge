@@ -208,7 +208,7 @@ class HelloWgpu:
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, vertex_data, wgpu.BufferUsage.VERTEX
         )
-
+    """
     def create_textures(self):
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
@@ -238,7 +238,62 @@ class HelloWgpu:
 
         copy: wgpu.CommandBuffer = encoder.finish()
         self.queue.submit(1, copy)
+    """
+    def create_textures(self):
+        descriptor = wgpu.TextureDescriptor(
+            dimension=wgpu.TextureDimension.E2D,
+            size=wgpu.Extent3D(1024, 1024, 1),
+            sample_count=1,
+            format=wgpu.TextureFormat.RGBA8_UNORM,
+            mip_level_count = 1,
+            usage = wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING
+        )
+        self.texture = self.device.create_texture(descriptor)
 
+        self.sampler = self.device.create_sampler()
+
+        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint8)
+        for i in range(0, data.size):
+            data[i] = i % 253
+
+        # The OLD way:
+        """
+        staging_buffer = utils.create_buffer_from_ndarray(
+            self.device, data, wgpu.BufferUsage.COPY_SRC
+        )
+        image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, 4 * 1024)
+        image_copy_texture = utils.create_image_copy_texture(self.texture)
+        copy_size = wgpu.Extent3D(1024, 1024, 1)
+
+        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+        encoder.copy_buffer_to_texture(image_copy_buffer, image_copy_texture, copy_size)
+
+        copy: wgpu.CommandBuffer = encoder.finish()
+        self.queue.submit(1, copy)
+        """
+        # The NEW way:
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.ImageCopyTexture(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
+            utils.as_capsule(data),
+            # Data size
+            data.size,
+            # The layout of the texture
+            wgpu.TextureDataLayout(
+                offset=0,
+                bytes_per_row=4 * 1024,
+                rows_per_image=1024,
+            ),
+            #The texture size
+            wgpu.Extent3D(1024, 1024, 1),
+        )
+        
     def create_swapchain(self):
         handle, display = None, None
 

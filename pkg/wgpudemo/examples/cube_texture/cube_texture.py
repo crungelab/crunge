@@ -4,10 +4,12 @@ import time
 import sys
 import math
 import glm
+from pathlib import Path
 
 from loguru import logger
 import glfw
 import numpy as np
+import imageio.v3 as iio
 
 from crunge.core import as_capsule
 from crunge import wgpu
@@ -258,9 +260,22 @@ class HelloWgpu:
         )
 
     def create_textures(self):
+        path = Path(__file__).parent.parent / "resources" / "textures" / "python_logo.png"
+        im = iio.imread(path)
+        shape = im.shape
+        logger.debug(shape)
+        im_width = shape[0]
+        im_height = shape[1]
+        #im_depth = shape[2]
+        im_depth = 1
+        # Has to be a multiple of 256
+        size = utils.divround_up(im.nbytes, 256)
+        #size = im.nbytes
+        logger.debug(size)
+
         descriptor = wgpu.TextureDescriptor(
             dimension = wgpu.TextureDimension.E2D,
-            size=wgpu.Extent3D(1024, 1024, 1),
+            size=wgpu.Extent3D(im_width, im_height, im_depth),
             sample_count = 1,
             format = wgpu.TextureFormat.RGBA8_UNORM,
             mip_level_count = 1,
@@ -270,23 +285,49 @@ class HelloWgpu:
         self.texture = self.device.create_texture(descriptor)
 
         self.sampler = self.device.create_sampler()
+        
+        bytes_per_row = 4 * im_width
+        logger.debug(bytes_per_row)
+        rows_per_image = im_height
 
-        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint8)
-        for i in range(0, data.size):
-            data[i] = i % 253
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.ImageCopyTexture(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
+            utils.as_capsule(im),
+            # Data size
+            size,
+            # The layout of the texture
+            wgpu.TextureDataLayout(
+                offset=0,
+                bytes_per_row=bytes_per_row,
+                rows_per_image=rows_per_image,
+            ),
+            #The texture size
+            wgpu.Extent3D(im_width, im_height, im_depth),
+        )
 
+        """
+        data = im
         staging_buffer = utils.create_buffer_from_ndarray(
             self.device, data, wgpu.BufferUsage.COPY_SRC
         )
-        image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, 4 * 1024)
+    
+        image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, bytes_per_row, rows_per_image)
         image_copy_texture = utils.create_image_copy_texture(self.texture)
-        copy_size = wgpu.Extent3D(1024, 1024, 1)
+        copy_size = wgpu.Extent3D(im_width, im_height, im_depth)
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         encoder.copy_buffer_to_texture(image_copy_buffer, image_copy_texture, copy_size)
 
         copy: wgpu.CommandBuffer = encoder.finish()
         self.queue.submit(1, copy)
+        """
 
     def create_window(self):
         glfw.init()

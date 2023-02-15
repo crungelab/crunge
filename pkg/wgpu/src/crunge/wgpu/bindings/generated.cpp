@@ -2155,7 +2155,31 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         TextureDataLayout.def_readwrite("offset", &wgpu::TextureDataLayout::offset);
         TextureDataLayout.def_readwrite("bytes_per_row", &wgpu::TextureDataLayout::bytesPerRow);
         TextureDataLayout.def_readwrite("rows_per_image", &wgpu::TextureDataLayout::rowsPerImage);
-        TextureDataLayout.def(py::init<>());
+        TextureDataLayout.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::TextureDataLayout obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("offset"))
+            {
+                auto value = kwargs["offset"].cast<uint64_t>();
+                obj.offset = value;
+            }
+            if (kwargs.contains("bytes_per_row"))
+            {
+                auto value = kwargs["bytes_per_row"].cast<uint32_t>();
+                obj.bytesPerRow = value;
+            }
+            if (kwargs.contains("rows_per_image"))
+            {
+                auto value = kwargs["rows_per_image"].cast<uint32_t>();
+                obj.rowsPerImage = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::TextureDataLayout, TextureDataLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::TextureViewDescriptor, TextureViewDescriptor)
@@ -2397,7 +2421,36 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         ImageCopyTexture.def_readwrite("mip_level", &wgpu::ImageCopyTexture::mipLevel);
         ImageCopyTexture.def_readwrite("origin", &wgpu::ImageCopyTexture::origin);
         ImageCopyTexture.def_readwrite("aspect", &wgpu::ImageCopyTexture::aspect);
-        ImageCopyTexture.def(py::init<>());
+        ImageCopyTexture.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::ImageCopyTexture obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("texture"))
+            {
+                auto value = kwargs["texture"].cast<wgpu::Texture>();
+                obj.texture = value;
+            }
+            if (kwargs.contains("mip_level"))
+            {
+                auto value = kwargs["mip_level"].cast<uint32_t>();
+                obj.mipLevel = value;
+            }
+            if (kwargs.contains("origin"))
+            {
+                auto value = kwargs["origin"].cast<wgpu::Origin3D>();
+                obj.origin = value;
+            }
+            if (kwargs.contains("aspect"))
+            {
+                auto value = kwargs["aspect"].cast<wgpu::TextureAspect>();
+                obj.aspect = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::ImageCopyTexture, ImageCopyTexture)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ProgrammableStageDescriptor, ProgrammableStageDescriptor)
