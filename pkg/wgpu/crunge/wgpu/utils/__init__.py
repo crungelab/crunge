@@ -10,6 +10,10 @@ def create_buffer_from_ndarray(
     device: wgpu.Device, data: np.ndarray, usage: wgpu.BufferUsage
 ) -> wgpu.Buffer:
     size = data.nbytes
+    # Buffer size has to be a multiple of 4
+    mod = size % 4
+    if mod != 0:
+        size += mod
     descriptor = wgpu.BufferDescriptor()
     descriptor.size = size
     descriptor.usage = usage | wgpu.BufferUsage.COPY_DST
