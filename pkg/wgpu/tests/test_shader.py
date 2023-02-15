@@ -1,5 +1,4 @@
 from crunge import wgpu
-from crunge.wgpu import BackendType
 
 shader_code = """
 @vertex
@@ -24,11 +23,8 @@ def main():
     print(device)
     device.enable_logging()
 
-    #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
-    #wgsl_desc.source = shader_code
     wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(source=shader_code)
     print(wgsl_desc)
-    #print(wgsl_desc.source)
     descriptor = wgpu.ShaderModuleDescriptor()
     descriptor.next_in_chain = wgsl_desc
     shader_module = device.create_shader_module(descriptor)

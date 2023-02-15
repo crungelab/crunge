@@ -25,13 +25,16 @@ flags: [
 
 # Need initializers
 'struct.wgpu::AdapterProperties': {gen_init: true}
-'struct.wgpu::BindGroupLayoutDescriptor': {gen_init: true}
+'struct.wgpu::BindGroupLayoutDescriptor': {gen_kw_init: true}
+'struct.wgpu::BindGroupLayoutEntry': {gen_kw_init: true}
+'struct.wgpu::SamplerBindingLayout': {gen_kw_init: true}
+'struct.wgpu::TextureBindingLayout': {gen_kw_init: true}
 'struct.wgpu::BindGroupDescriptor': {gen_kw_init: true}
 'struct.wgpu::ShaderModuleDescriptor': {gen_kw_init: true}
 'struct.wgpu::ShaderModuleWGSLDescriptor': {gen_kw_init: true}
 'struct.wgpu::TextureDescriptor': {gen_kw_init: true}
 'struct.wgpu::BufferDescriptor': {gen_init: true}
-'struct.wgpu::PipelineLayoutDescriptor': {gen_init: true}
+'struct.wgpu::PipelineLayoutDescriptor': {gen_kw_init: true}
 'struct.wgpu::ColorTargetState': {gen_kw_init: true}
 'struct.wgpu::FragmentState': {gen_kw_init: true}
 'struct.wgpu::VertexState': {gen_kw_init: true}

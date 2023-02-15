@@ -1662,7 +1662,33 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         );
         PipelineLayoutDescriptor.def_readwrite("bind_group_layout_count", &wgpu::PipelineLayoutDescriptor::bindGroupLayoutCount);
         PipelineLayoutDescriptor.def_readwrite("bind_group_layouts", &wgpu::PipelineLayoutDescriptor::bindGroupLayouts);
-        PipelineLayoutDescriptor.def(py::init<>());
+        PipelineLayoutDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::PipelineLayoutDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("bind_group_layout_count"))
+            {
+                auto value = kwargs["bind_group_layout_count"].cast<uint32_t>();
+                obj.bindGroupLayoutCount = value;
+            }
+            if (kwargs.contains("bind_group_layouts"))
+            {
+                auto value = kwargs["bind_group_layouts"].cast<const wgpu::BindGroupLayout *>();
+                obj.bindGroupLayouts = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor)
 
     PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::PrimitiveDepthClipControl, struct wgpu::ChainedStruct, PrimitiveDepthClipControl)
@@ -1841,6 +1867,21 @@ void init_generated(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::SamplerBindingLayout, SamplerBindingLayout)
         SamplerBindingLayout.def_readwrite("next_in_chain", &wgpu::SamplerBindingLayout::nextInChain);
         SamplerBindingLayout.def_readwrite("type", &wgpu::SamplerBindingLayout::type);
+        SamplerBindingLayout.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::SamplerBindingLayout obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("type"))
+            {
+                auto value = kwargs["type"].cast<wgpu::SamplerBindingType>();
+                obj.type = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::SamplerBindingLayout, SamplerBindingLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::SamplerDescriptor, SamplerDescriptor)
@@ -2057,6 +2098,31 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         TextureBindingLayout.def_readwrite("sample_type", &wgpu::TextureBindingLayout::sampleType);
         TextureBindingLayout.def_readwrite("view_dimension", &wgpu::TextureBindingLayout::viewDimension);
         TextureBindingLayout.def_readwrite("multisampled", &wgpu::TextureBindingLayout::multisampled);
+        TextureBindingLayout.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::TextureBindingLayout obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("sample_type"))
+            {
+                auto value = kwargs["sample_type"].cast<wgpu::TextureSampleType>();
+                obj.sampleType = value;
+            }
+            if (kwargs.contains("view_dimension"))
+            {
+                auto value = kwargs["view_dimension"].cast<wgpu::TextureViewDimension>();
+                obj.viewDimension = value;
+            }
+            if (kwargs.contains("multisampled"))
+            {
+                auto value = kwargs["multisampled"].cast<bool>();
+                obj.multisampled = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::TextureBindingLayout, TextureBindingLayout)
 
     PYCLASS_BEGIN(_wgpu, wgpu::TextureDataLayout, TextureDataLayout)
@@ -2157,6 +2223,46 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         BindGroupLayoutEntry.def_readwrite("sampler", &wgpu::BindGroupLayoutEntry::sampler);
         BindGroupLayoutEntry.def_readwrite("texture", &wgpu::BindGroupLayoutEntry::texture);
         BindGroupLayoutEntry.def_readwrite("storage_texture", &wgpu::BindGroupLayoutEntry::storageTexture);
+        BindGroupLayoutEntry.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::BindGroupLayoutEntry obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("binding"))
+            {
+                auto value = kwargs["binding"].cast<uint32_t>();
+                obj.binding = value;
+            }
+            if (kwargs.contains("visibility"))
+            {
+                auto value = kwargs["visibility"].cast<wgpu::ShaderStage>();
+                obj.visibility = value;
+            }
+            if (kwargs.contains("buffer"))
+            {
+                auto value = kwargs["buffer"].cast<wgpu::BufferBindingLayout>();
+                obj.buffer = value;
+            }
+            if (kwargs.contains("sampler"))
+            {
+                auto value = kwargs["sampler"].cast<wgpu::SamplerBindingLayout>();
+                obj.sampler = value;
+            }
+            if (kwargs.contains("texture"))
+            {
+                auto value = kwargs["texture"].cast<wgpu::TextureBindingLayout>();
+                obj.texture = value;
+            }
+            if (kwargs.contains("storage_texture"))
+            {
+                auto value = kwargs["storage_texture"].cast<wgpu::StorageTextureBindingLayout>();
+                obj.storageTexture = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::BindGroupLayoutEntry, BindGroupLayoutEntry)
 
     PYCLASS_BEGIN(_wgpu, wgpu::BlendState, BlendState)
@@ -2444,7 +2550,33 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         );
         BindGroupLayoutDescriptor.def_readwrite("entry_count", &wgpu::BindGroupLayoutDescriptor::entryCount);
         BindGroupLayoutDescriptor.def_readwrite("entries", &wgpu::BindGroupLayoutDescriptor::entries);
-        BindGroupLayoutDescriptor.def(py::init<>());
+        BindGroupLayoutDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::BindGroupLayoutDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("entry_count"))
+            {
+                auto value = kwargs["entry_count"].cast<uint32_t>();
+                obj.entryCount = value;
+            }
+            if (kwargs.contains("entries"))
+            {
+                auto value = kwargs["entries"].cast<const wgpu::BindGroupLayoutEntry *>();
+                obj.entries = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::BindGroupLayoutDescriptor, BindGroupLayoutDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ColorTargetState, ColorTargetState)

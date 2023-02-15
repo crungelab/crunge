@@ -59,80 +59,6 @@ def create_shader_module(device: wgpu.Device, source: str) -> wgpu.ShaderModule:
     descriptor.next_in_chain = wgsl_desc
     return device.create_shader_module(descriptor)
 
-"""
-def make_bind_group_layout(device: wgpu.Device, initializers: list[tuple[3]]):
-    entries = wgpu.BindGroupLayoutEntries()
-    for inizer in initializers:
-        entry = wgpu.BindGroupLayoutEntry()
-        entry.
-        entries.append(entry)
-"""
-"""
-struct BindGroupLayoutEntry {
-    ChainedStruct const * nextInChain = nullptr;
-    uint32_t binding;
-    ShaderStage visibility;
-    BufferBindingLayout buffer;
-    SamplerBindingLayout sampler;
-    TextureBindingLayout texture;
-    StorageTextureBindingLayout storageTexture;
-};
-"""
-
-"""
-wgpu::BindGroupLayout MakeBindGroupLayout(
-    const wgpu::Device& device,
-    std::initializer_list<BindingLayoutEntryInitializationHelper> entriesInitializer) {
-    std::vector<wgpu::BindGroupLayoutEntry> entries;
-    for (const BindingLayoutEntryInitializationHelper& entry : entriesInitializer) {
-        entries.push_back(entry);
-    }
-
-    wgpu::BindGroupLayoutDescriptor descriptor;
-    descriptor.entryCount = static_cast<uint32_t>(entries.size());
-    descriptor.entries = entries.data();
-    return device.CreateBindGroupLayout(&descriptor);
-}
-"""
-"""
-wgpu::ShaderModule CreateShaderModule(const wgpu::Device& device, const char* source) {
-    wgpu::ShaderModuleWGSLDescriptor wgslDesc;
-    wgslDesc.source = source;
-    wgpu::ShaderModuleDescriptor descriptor;
-    descriptor.nextInChain = &wgslDesc;
-    return device.CreateShaderModule(&descriptor);
-}
-
-"""
-"""
-wgpu::ImageCopyTexture CreateImageCopyTexture(wgpu::Texture texture,
-                                              uint32_t mipLevel,
-                                              wgpu::Origin3D origin,
-                                              wgpu::TextureAspect aspect) {
-    wgpu::ImageCopyTexture imageCopyTexture;
-    imageCopyTexture.texture = texture;
-    imageCopyTexture.mipLevel = mipLevel;
-    imageCopyTexture.origin = origin;
-    imageCopyTexture.aspect = aspect;
-
-    return imageCopyTexture;
-}
-"""
-
-"""
-wgpu::ImageCopyBuffer CreateImageCopyBuffer(wgpu::Buffer buffer,
-                                            uint64_t offset,
-                                            uint32_t bytesPerRow,
-                                            uint32_t rowsPerImage) {
-    wgpu::ImageCopyBuffer imageCopyBuffer = {};
-    imageCopyBuffer.buffer = buffer;
-    imageCopyBuffer.layout = CreateTextureDataLayout(offset, bytesPerRow, rowsPerImage);
-
-    return imageCopyBuffer;
-}
-"""
-
-
 def create_texture_data_layout(
     offset: int, bytes_per_row: int, rows_per_image: int
 ) -> wgpu.TextureDataLayout:
@@ -143,19 +69,6 @@ def create_texture_data_layout(
 
     return texture_data_layout
 
-
-"""
-wgpu::TextureDataLayout CreateTextureDataLayout(uint64_t offset,
-                                                uint32_t bytesPerRow,
-                                                uint32_t rowsPerImage) {
-    wgpu::TextureDataLayout textureDataLayout;
-    textureDataLayout.offset = offset;
-    textureDataLayout.bytesPerRow = bytesPerRow;
-    textureDataLayout.rowsPerImage = rowsPerImage;
-
-    return textureDataLayout;
-}
-"""
 
 def create_texture(device: wgpu.Device, label: str, extent: wgpu.Extent3D, format: wgpu.TextureFormat, usage: wgpu.TextureUsage):
     descriptor = wgpu.TextureDescriptor()
@@ -174,40 +87,9 @@ def create_texture(device: wgpu.Device, label: str, extent: wgpu.Extent3D, forma
     texture = device.create_texture(descriptor)
     return texture
 
-"""
-wgpu::Texture createTexture(const wgpu::Device& device,
-                            const std::string& label,
-                            wgpu::Extent3D extent,
-                            wgpu::TextureFormat format,
-                            wgpu::TextureUsage usage) {
-  wgpu::TextureDescriptor desc{
-      .label = label.c_str(),
-      .usage = usage,
-      .size = extent,
-      .format = format,
-  };
-
-  return device.CreateTexture(&desc);
-}
-"""
-
 def create_buffer(device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage):
     desc = wgpu.BufferDescriptor()
     desc.label = label
     desc.usage = usage | wgpu.BufferUsage.COPY_DST
     desc.size = size
     return device.create_buffer(desc)
-
-"""
-wgpu::Buffer createBuffer(const wgpu::Device& device,
-                          const std::string& label,
-                          uint64_t size,
-                          wgpu::BufferUsage usage) {
-  wgpu::BufferDescriptor desc{
-      .label = label.c_str(),
-      .usage = usage | wgpu::BufferUsage::CopyDst,
-      .size = size,
-  };
-  return device.CreateBuffer(&desc);
-}
-"""

@@ -28,6 +28,7 @@ void init_main(py::module &_wgpu, Registry &registry) {
     _wgpu.def("create_proc_table", &CreateProcTable);
 
     py::bind_vector<BindGroupLayoutEntries>(_wgpu, "BindGroupLayoutEntries", "BindGroupLayoutEntry Vector");
+    py::bind_vector<BindGroupEntries>(_wgpu, "BindGroupEntries", "BindGroupEntry Vector");
     py::bind_vector<VertexAttributes>(_wgpu, "VertexAttributes", "VertexAttribute Vector");
 
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
