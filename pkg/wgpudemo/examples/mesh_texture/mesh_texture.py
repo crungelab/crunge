@@ -1,3 +1,4 @@
+from enum import IntEnum
 import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
@@ -20,6 +21,11 @@ WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
 WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
 WORLD_SCALE = 10
+
+class Binding(IntEnum):
+    SAMPLER = 0
+    TEXTURE = 1
+    UNIFORM = 2
 
 shader_code = """
 @group(0) @binding(0) var mySampler: sampler;
@@ -48,11 +54,12 @@ fn vs_main(in : VertexInput) -> VertexOutput {
 
 @fragment
 fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
-  return textureSample(myTexture, mySampler, in.uv);
+  let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);
+  return textureSample(myTexture, mySampler, uv);
 }
 """
 
-class Vertex(Structure):
+class Position(Structure):
     _fields_ = [
         ("x", c_float),
         ("y", c_float),
@@ -64,6 +71,19 @@ class UvCoord(Structure):
         ("u", c_float),
         ("v", c_float),
     ]
+
+class Vertex(Structure):
+    _fields_ = [
+        ("pos", Position),
+        ("uv", UvCoord),
+    ]
+
+kWidth = 1024
+kHeight = 768
+
+kPositionByteOffset = Vertex.pos.offset
+kUVByteOffset = Vertex.uv.offset
+kVertexDataStride = sizeof(Vertex)
 
 class HelloWgpu:
     device: wgpu.Device = None
@@ -78,12 +98,8 @@ class HelloWgpu:
     vertex_data: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
 
-    kWidth = 1024
-    kHeight = 768
-
-    kPositionByteOffset = 0
-    kUVByteOffset = 3 * sizeof(c_float)
-    kVertexDataStride = 5
+    index_data: np.ndarray = None
+    index_buffer: wgpu.Buffer = None
 
     def __init__(self):
         self.instance = wgpu.create_instance()
@@ -107,19 +123,19 @@ class HelloWgpu:
             [
                 wgpu.VertexAttribute(
                     format=wgpu.VertexFormat.FLOAT32X3,
-                    offset=self.kPositionByteOffset,
+                    offset=kPositionByteOffset,
                     shader_location=0,
                 ),
                 wgpu.VertexAttribute(
                     format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=self.kUVByteOffset,
+                    offset=kUVByteOffset,
                     shader_location=1,
                 ),
             ]
         )
 
         vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=self.kVertexDataStride * sizeof(c_float),
+            array_stride=kVertexDataStride,
             attribute_count=2,
             attributes=vertAttributes[0],
         )
@@ -151,14 +167,14 @@ class HelloWgpu:
         bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(
-                    binding=0,
+                    binding=Binding.SAMPLER,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
                     ),
                 ),
                 wgpu.BindGroupLayoutEntry(
-                    binding=1,
+                    binding=Binding.TEXTURE,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
@@ -166,7 +182,7 @@ class HelloWgpu:
                     ),
                 ),
                 wgpu.BindGroupLayoutEntry(
-                    binding=2,
+                    binding=Binding.UNIFORM,
                     visibility=wgpu.ShaderStage.VERTEX,
                     buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM)
                 ),
@@ -197,7 +213,7 @@ class HelloWgpu:
         self.depthTexture = utils.create_texture(
             self.device,
             "Depth texture",
-            wgpu.Extent3D(self.kWidth, self.kHeight),
+            wgpu.Extent3D(kWidth, kHeight),
             wgpu.TextureFormat.DEPTH24_PLUS,
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
@@ -221,7 +237,7 @@ class HelloWgpu:
 
         self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
 
-        aspect = float(self.kWidth) / float(self.kHeight)
+        aspect = float(kWidth) / float(kHeight)
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
         #exit()
@@ -234,12 +250,14 @@ class HelloWgpu:
         viewMatrix = glm.mat4(1.0)
         viewMatrix = glm.translate(viewMatrix, glm.vec3(0, 0, -4))
         viewMatrix = glm.scale(viewMatrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE))
-        rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
+        
+        rotMatrix = glm.mat4(1.0)
+        rotMatrix = glm.rotate(rotMatrix, math.sin(ms), WORLD_AXIS_X)
         rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
         return self.projectionMatrix * viewMatrix * rotMatrix
 
     def create_meshes(self):
-        mesh_path = Path(__file__).parent.parent / "resources" / "models" / "fuze" / "fuze.obj"
+        mesh_path = Path(__file__).parent.parent / "resources" / "models" / "Fuze" / "fuze.obj"
         self.mesh = mesh = tm.load(str(mesh_path))
         #Vertices
         vertices = self.vertex_data = mesh.vertices.astype(np.float32)
@@ -255,12 +273,12 @@ class HelloWgpu:
         logger.debug(f'n_uv_coords:  {n_uv_coords}')
 
         vertex_data = self.vertex_data = np.concatenate((vertices, uv_coords), axis=1)
-        logger.debug(type(vertex_data))
+        #logger.debug(type(vertex_data))
         logger.debug(f'vertex_data:  {vertex_data}')
         #exit()
         
         #Indices
-        indices = self.index_data = self.mesh.faces.astype(np.uint16)
+        indices = self.index_data = self.mesh.faces.astype(np.uint32)
         logger.debug(f'indices:  {indices}')
         n_indices = self.n_indices = len(indices)
         logger.debug(f'n_indices:  {n_indices}')
@@ -271,6 +289,9 @@ class HelloWgpu:
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, self.vertex_data, wgpu.BufferUsage.VERTEX
         )
+        self.index_buffer = utils.create_buffer_from_ndarray(
+            self.device, self.index_data, wgpu.BufferUsage.INDEX
+        )
         self.uniformBufferSize = 4 * 16
         self.uniformBuffer = utils.create_buffer(
             self.device,
@@ -280,7 +301,7 @@ class HelloWgpu:
         )
 
     def create_textures(self):
-        path = Path(__file__).parent.parent / "resources" / "models" / "fuze" / "fuze uv.jpg"
+        path = Path(__file__).parent.parent / "resources" / "models" / "Fuze" / "fuze_uv.jpg"
         im = iio.imread(
             path,
             plugin="pillow",
@@ -290,7 +311,6 @@ class HelloWgpu:
         logger.debug(shape)
         im_width = shape[0]
         im_height = shape[1]
-        #im_depth = shape[2]
         im_depth = 1
         # Has to be a multiple of 256
         size = utils.divround_up(im.nbytes, 256)
@@ -342,7 +362,7 @@ class HelloWgpu:
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
 
-        self.window = glfw.create_window(self.kWidth, self.kHeight, "Cube", None, None)
+        self.window = glfw.create_window(kWidth, kHeight, "Cube", None, None)
 
     def create_swapchain(self):
         handle, display = None, None
@@ -371,8 +391,8 @@ class HelloWgpu:
         scDesc = wgpu.SwapChainDescriptor(
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            width=self.kWidth,
-            height=self.kHeight,
+            width=kWidth,
+            height=kHeight,
             present_mode=wgpu.PresentMode.MAILBOX,
         )
 
@@ -407,7 +427,8 @@ class HelloWgpu:
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.uniformBindGroup)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.draw(len(self.vertex_data))
+        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
+        pass_enc.draw_indexed(len(self.index_data)* 3)
         pass_enc.end()
         commands = encoder.finish()
 

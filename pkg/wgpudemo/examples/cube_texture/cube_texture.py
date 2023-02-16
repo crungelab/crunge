@@ -21,23 +21,6 @@ WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
 WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
 
-vs_shader_code = """
-@vertex fn main(@location(0) pos : vec4<f32>) -> @builtin(position) vec4<f32> {
-    return pos;
-}
-"""
-
-fs_shader_code = """
-@group(0) @binding(0) var mySampler: sampler;
-@group(0) @binding(1) var myTexture : texture_2d<f32>;
-
-@fragment fn main(@builtin(position) FragCoord : vec4<f32>)
-                        -> @location(0) vec4<f32> {
-    return textureSample(myTexture, mySampler, FragCoord.xy / vec2<f32>(800.0, 600.0));
-    //return textureSample(myTexture, mySampler, FragCoord.xy);
-}
-"""
-
 shader_code = """
 @group(0) @binding(0) var mySampler: sampler;
 @group(0) @binding(1) var myTexture : texture_2d<f32>;
@@ -65,15 +48,8 @@ fn vs_main(in : VertexInput) -> VertexOutput {
 
 @fragment
 fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
-  return textureSample(myTexture, mySampler, in.uv);
-}
-"""
-#
-"""
-@fragment fn main(@builtin(position) FragCoord : vec4<f32>)
-                        -> @location(0) vec4<f32> {
-    return textureSample(myTexture, mySampler, FragCoord.xy / vec2<f32>(800.0, 600.0));
-    //return textureSample(myTexture, mySampler, FragCoord.xy);
+  let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);
+  return textureSample(myTexture, mySampler, uv);
 }
 """
 
@@ -270,7 +246,6 @@ class HelloWgpu:
         im_depth = 1
         # Has to be a multiple of 256
         size = utils.divround_up(im.nbytes, 256)
-        #size = im.nbytes
         logger.debug(size)
 
         descriptor = wgpu.TextureDescriptor(
@@ -311,23 +286,6 @@ class HelloWgpu:
             #The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
-
-        """
-        data = im
-        staging_buffer = utils.create_buffer_from_ndarray(
-            self.device, data, wgpu.BufferUsage.COPY_SRC
-        )
-    
-        image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, bytes_per_row, rows_per_image)
-        image_copy_texture = utils.create_image_copy_texture(self.texture)
-        copy_size = wgpu.Extent3D(im_width, im_height, im_depth)
-
-        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
-        encoder.copy_buffer_to_texture(image_copy_buffer, image_copy_texture, copy_size)
-
-        copy: wgpu.CommandBuffer = encoder.finish()
-        self.queue.submit(1, copy)
-        """
 
     def create_window(self):
         glfw.init()

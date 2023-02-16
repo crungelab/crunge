@@ -246,7 +246,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
             .export_values();
 
     PYCLASS_BEGIN(_bgfx, bgfx::DynamicIndexBufferHandle, DynamicIndexBufferHandle)
-
         DynamicIndexBufferHandle.def_readwrite("idx", &bgfx::DynamicIndexBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::DynamicIndexBufferHandle, DynamicIndexBufferHandle)
 
@@ -255,7 +254,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::DynamicVertexBufferHandle, DynamicVertexBufferHandle)
-
         DynamicVertexBufferHandle.def_readwrite("idx", &bgfx::DynamicVertexBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::DynamicVertexBufferHandle, DynamicVertexBufferHandle)
 
@@ -264,7 +262,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::FrameBufferHandle, FrameBufferHandle)
-
         FrameBufferHandle.def_readwrite("idx", &bgfx::FrameBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::FrameBufferHandle, FrameBufferHandle)
 
@@ -273,7 +270,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::IndexBufferHandle, IndexBufferHandle)
-
         IndexBufferHandle.def_readwrite("idx", &bgfx::IndexBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::IndexBufferHandle, IndexBufferHandle)
 
@@ -282,7 +278,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::IndirectBufferHandle, IndirectBufferHandle)
-
         IndirectBufferHandle.def_readwrite("idx", &bgfx::IndirectBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::IndirectBufferHandle, IndirectBufferHandle)
 
@@ -291,7 +286,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::OcclusionQueryHandle, OcclusionQueryHandle)
-
         OcclusionQueryHandle.def_readwrite("idx", &bgfx::OcclusionQueryHandle::idx);
     PYCLASS_END(_bgfx, bgfx::OcclusionQueryHandle, OcclusionQueryHandle)
 
@@ -300,7 +294,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::ProgramHandle, ProgramHandle)
-
         ProgramHandle.def_readwrite("idx", &bgfx::ProgramHandle::idx);
     PYCLASS_END(_bgfx, bgfx::ProgramHandle, ProgramHandle)
 
@@ -309,7 +302,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::ShaderHandle, ShaderHandle)
-
         ShaderHandle.def_readwrite("idx", &bgfx::ShaderHandle::idx);
     PYCLASS_END(_bgfx, bgfx::ShaderHandle, ShaderHandle)
 
@@ -318,7 +310,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::TextureHandle, TextureHandle)
-
         TextureHandle.def_readwrite("idx", &bgfx::TextureHandle::idx);
     PYCLASS_END(_bgfx, bgfx::TextureHandle, TextureHandle)
 
@@ -327,7 +318,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::UniformHandle, UniformHandle)
-
         UniformHandle.def_readwrite("idx", &bgfx::UniformHandle::idx);
     PYCLASS_END(_bgfx, bgfx::UniformHandle, UniformHandle)
 
@@ -336,7 +326,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::VertexBufferHandle, VertexBufferHandle)
-
         VertexBufferHandle.def_readwrite("idx", &bgfx::VertexBufferHandle::idx);
     PYCLASS_END(_bgfx, bgfx::VertexBufferHandle, VertexBufferHandle)
 
@@ -345,7 +334,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::VertexLayoutHandle, VertexLayoutHandle)
-
         VertexLayoutHandle.def_readwrite("idx", &bgfx::VertexLayoutHandle::idx);
     PYCLASS_END(_bgfx, bgfx::VertexLayoutHandle, VertexLayoutHandle)
 
@@ -354,7 +342,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     PYCLASS_BEGIN(_bgfx, bgfx::CallbackI, CallbackI)
-
         CallbackI.def("fatal", &bgfx::CallbackI::fatal
         , py::arg("_file_path")
         , py::arg("_line")
@@ -424,7 +411,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::CallbackI, CallbackI)
 
     PYCLASS_BEGIN(_bgfx, bgfx::PlatformData, PlatformData)
-
         PlatformData.def(py::init<>());
         PlatformData.def_readwrite("ndt", &bgfx::PlatformData::ndt);
         PlatformData.def_readwrite("nwh", &bgfx::PlatformData::nwh);
@@ -434,7 +420,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::PlatformData, PlatformData)
 
     PYCLASS_BEGIN(_bgfx, bgfx::Resolution, Resolution)
-
         Resolution.def(py::init<>());
         Resolution.def_readwrite("format", &bgfx::Resolution::format);
         Resolution.def_readwrite("width", &bgfx::Resolution::width);
@@ -445,7 +430,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::Resolution, Resolution)
 
     PYCLASS_BEGIN(_bgfx, bgfx::Init, Init)
-
         Init.def(py::init<>());
         Init.def_readwrite("type", &bgfx::Init::type);
         Init.def_readwrite("vendor_id", &bgfx::Init::vendorId);
@@ -461,7 +445,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::Init, Init)
 
     PYCLASS_BEGIN(_bgfx, bgfx::Caps, Caps)
-
         Caps.def_readwrite("renderer_type", &bgfx::Caps::rendererType);
         Caps.def_readwrite("supported", &bgfx::Caps::supported);
         Caps.def_readwrite("vendor_id", &bgfx::Caps::vendorId);
@@ -475,7 +458,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::Caps, Caps)
 
     PYCLASS_BEGIN(_bgfx, bgfx::TransientIndexBuffer, TransientIndexBuffer)
-
         TransientIndexBuffer.def_readwrite("data", &bgfx::TransientIndexBuffer::data);
         TransientIndexBuffer.def_readwrite("size", &bgfx::TransientIndexBuffer::size);
         TransientIndexBuffer.def_readwrite("start_index", &bgfx::TransientIndexBuffer::startIndex);
@@ -484,7 +466,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::TransientIndexBuffer, TransientIndexBuffer)
 
     PYCLASS_BEGIN(_bgfx, bgfx::TransientVertexBuffer, TransientVertexBuffer)
-
         TransientVertexBuffer.def_readwrite("data", &bgfx::TransientVertexBuffer::data);
         TransientVertexBuffer.def_readwrite("size", &bgfx::TransientVertexBuffer::size);
         TransientVertexBuffer.def_readwrite("start_vertex", &bgfx::TransientVertexBuffer::startVertex);
@@ -494,7 +475,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::TransientVertexBuffer, TransientVertexBuffer)
 
     PYCLASS_BEGIN(_bgfx, bgfx::InstanceDataBuffer, InstanceDataBuffer)
-
         InstanceDataBuffer.def_readwrite("data", &bgfx::InstanceDataBuffer::data);
         InstanceDataBuffer.def_readwrite("size", &bgfx::InstanceDataBuffer::size);
         InstanceDataBuffer.def_readwrite("offset", &bgfx::InstanceDataBuffer::offset);
@@ -504,7 +484,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::InstanceDataBuffer, InstanceDataBuffer)
 
     PYCLASS_BEGIN(_bgfx, bgfx::TextureInfo, TextureInfo)
-
         TextureInfo.def_readwrite("format", &bgfx::TextureInfo::format);
         TextureInfo.def_readwrite("storage_size", &bgfx::TextureInfo::storageSize);
         TextureInfo.def_readwrite("width", &bgfx::TextureInfo::width);
@@ -517,14 +496,12 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::TextureInfo, TextureInfo)
 
     PYCLASS_BEGIN(_bgfx, bgfx::UniformInfo, UniformInfo)
-
         UniformInfo.def_readonly("name", &bgfx::UniformInfo::name);
         UniformInfo.def_readwrite("type", &bgfx::UniformInfo::type);
         UniformInfo.def_readwrite("num", &bgfx::UniformInfo::num);
     PYCLASS_END(_bgfx, bgfx::UniformInfo, UniformInfo)
 
     PYCLASS_BEGIN(_bgfx, bgfx::Attachment, Attachment)
-
         Attachment.def("init", &bgfx::Attachment::init
         , py::arg("_handle")
         , py::arg("_access") = Access::Write
@@ -543,13 +520,11 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::Attachment, Attachment)
 
     PYCLASS_BEGIN(_bgfx, bgfx::Transform, Transform)
-
         Transform.def_readwrite("data", &bgfx::Transform::data);
         Transform.def_readwrite("num", &bgfx::Transform::num);
     PYCLASS_END(_bgfx, bgfx::Transform, Transform)
 
     PYCLASS_BEGIN(_bgfx, bgfx::ViewStats, ViewStats)
-
         ViewStats.def_readonly("name", &bgfx::ViewStats::name);
         ViewStats.def_readwrite("view", &bgfx::ViewStats::view);
         ViewStats.def_readwrite("cpu_time_begin", &bgfx::ViewStats::cpuTimeBegin);
@@ -560,13 +535,11 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::ViewStats, ViewStats)
 
     PYCLASS_BEGIN(_bgfx, bgfx::EncoderStats, EncoderStats)
-
         EncoderStats.def_readwrite("cpu_time_begin", &bgfx::EncoderStats::cpuTimeBegin);
         EncoderStats.def_readwrite("cpu_time_end", &bgfx::EncoderStats::cpuTimeEnd);
     PYCLASS_END(_bgfx, bgfx::EncoderStats, EncoderStats)
 
     PYCLASS_BEGIN(_bgfx, bgfx::Stats, Stats)
-
         Stats.def_readwrite("cpu_time_frame", &bgfx::Stats::cpuTimeFrame);
         Stats.def_readwrite("cpu_time_begin", &bgfx::Stats::cpuTimeBegin);
         Stats.def_readwrite("cpu_time_end", &bgfx::Stats::cpuTimeEnd);
@@ -610,7 +583,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::Stats, Stats)
 
     PYCLASS_BEGIN(_bgfx, bgfx::Encoder, Encoder)
-
         Encoder.def("set_marker", &bgfx::Encoder::setMarker
         , py::arg("_marker")
         , py::return_value_policy::automatic_reference);
@@ -901,7 +873,6 @@ void init_bgfx(py::module &_bgfx, Registry &registry) {
     PYCLASS_END(_bgfx, bgfx::Encoder, Encoder)
 
     PYCLASS_BEGIN(_bgfx, bgfx::VertexLayout, VertexLayout)
-
         VertexLayout.def(py::init<>());
         VertexLayout.def("begin", &bgfx::VertexLayout::begin
         , py::arg("_renderer") = RendererType::Noop

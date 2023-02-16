@@ -9,6 +9,7 @@ from pathlib import Path
 from loguru import logger
 import glfw
 import numpy as np
+from gltflib import GLTF
 import trimesh as tm
 import imageio.v3 as iio
 
@@ -93,6 +94,8 @@ class HelloWgpu:
         self.device.enable_logging()
         self.queue = self.device.get_queue()
 
+        #self.create_model()
+        #exit()
         self.create_meshes()
         self.create_buffers()
         self.create_textures()
@@ -234,13 +237,27 @@ class HelloWgpu:
         viewMatrix = glm.mat4(1.0)
         viewMatrix = glm.translate(viewMatrix, glm.vec3(0, 0, -4))
         viewMatrix = glm.scale(viewMatrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE))
-        rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
-        rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
+        
+        rotMatrix = glm.mat4(1.0)
+        rotMatrix = glm.rotate(rotMatrix, math.sin(ms), WORLD_AXIS_X)
+        #rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
         return self.projectionMatrix * viewMatrix * rotMatrix
 
+    def create_model(self):
+        model_path = Path(__file__).parent.parent / "resources" / "models"  / "Box" / "glTF" / "Box.gltf"
+        gltf = GLTF.load(model_path)
+        print(gltf.model)
+
     def create_meshes(self):
-        mesh_path = Path(__file__).parent.parent / "resources" / "models" / "fuze" / "fuze.obj"
-        self.mesh = mesh = tm.load(str(mesh_path))
+        mesh_path = Path(__file__).parent.parent / "resources" / "models" / "Character" / "Character.gltf"
+        #self.mesh = mesh = tm.load(str(mesh_path))
+        scene = tm.load(str(mesh_path))
+        print(scene)
+        print(scene.geometry)
+        geometries = list(scene.geometry.values())
+        geometry = geometries[0]
+        print(geometry)
+        exit()
         #Vertices
         vertices = self.vertex_data = mesh.vertices.astype(np.float32)
         logger.debug(f'vertices type: {type(vertices)}')
@@ -260,7 +277,7 @@ class HelloWgpu:
         #exit()
         
         #Indices
-        indices = self.index_data = self.mesh.faces.astype(np.uint16)
+        indices = self.index_data = self.mesh.faces.astype(np.uint32)
         logger.debug(f'indices:  {indices}')
         n_indices = self.n_indices = len(indices)
         logger.debug(f'n_indices:  {n_indices}')
@@ -270,6 +287,9 @@ class HelloWgpu:
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, self.vertex_data, wgpu.BufferUsage.VERTEX
+        )
+        self.index_buffer = utils.create_buffer_from_ndarray(
+            self.device, self.index_data, wgpu.BufferUsage.INDEX
         )
         self.uniformBufferSize = 4 * 16
         self.uniformBuffer = utils.create_buffer(
@@ -407,7 +427,8 @@ class HelloWgpu:
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.uniformBindGroup)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.draw(len(self.vertex_data))
+        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
+        pass_enc.draw_indexed(len(self.index_data)* 3)
         pass_enc.end()
         commands = encoder.finish()
 

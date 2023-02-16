@@ -78,6 +78,7 @@ class HelloWgpu:
     depth_stencil_view: wgpu.TextureView = None
 
     vertex_buffer: wgpu.Buffer = None
+    index_buffer: wgpu.Buffer = None
 
     kWidth = 1024
     kHeight = 768
@@ -138,11 +139,11 @@ class HelloWgpu:
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def create_buffers(self):
-        self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, index_data, wgpu.BufferUsage.INDEX
-        )
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, vertex_data, wgpu.BufferUsage.VERTEX
+        )
+        self.index_buffer = utils.create_buffer_from_ndarray(
+            self.device, index_data, wgpu.BufferUsage.INDEX
         )
 
     def create_window(self):

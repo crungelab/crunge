@@ -16,7 +16,6 @@ namespace py = pybind11;
 
 void init_embedded_shader(py::module &_bgfx, Registry &registry) {
     PYCLASS_BEGIN(_bgfx, bgfx::EmbeddedShader, EmbeddedShader)
-
         EmbeddedShader.def_property("name",
             [](const bgfx::EmbeddedShader& self){ return self.name; },[](bgfx::EmbeddedShader& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.name = c; }
         );

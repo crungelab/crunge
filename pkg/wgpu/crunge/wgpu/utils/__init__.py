@@ -11,17 +11,12 @@ def divround_down(value, step):
 def divround_up(value, step):
     return (value+step-1)//step*step
 
-# def create_buffer_from_ndarray(device: wgpu.Device, data: np.ndarray, size:int, usage: wgpu.BufferUsage) -> wgpu.Buffer:
 def create_buffer_from_ndarray(
     device: wgpu.Device, data: np.ndarray, usage: wgpu.BufferUsage
 ) -> wgpu.Buffer:
     # Buffer size has to be a multiple of 4
     size = divround_up(data.nbytes, 4)
-    """
-    mod = size % 4
-    if mod != 0:
-        size += mod
-    """
+
     descriptor = wgpu.BufferDescriptor()
     descriptor.size = size
     descriptor.usage = usage | wgpu.BufferUsage.COPY_DST

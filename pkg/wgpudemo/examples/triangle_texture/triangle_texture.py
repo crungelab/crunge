@@ -71,8 +71,8 @@ class HelloWgpu:
     swap_chain: wgpu.SwapChain = None
     depth_stencil_view: wgpu.TextureView = None
 
-    index_buffer: wgpu.Buffer = None
     vertex_buffer: wgpu.Buffer = None
+    index_buffer: wgpu.Buffer = None
 
     texture: wgpu.Texture = None
     sampler: wgpu.Sampler = None

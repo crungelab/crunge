@@ -5,7 +5,7 @@ description = ""
 authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10.0,<3.12"
+python = ">=3.10.0,<3.11.0"
 crunge-core = {path = "../core",  develop = true}
 crunge-bgfx = {path = "../bgfx",  develop = true}
 crunge-imgui = {path = "../imgui",  develop = true}
