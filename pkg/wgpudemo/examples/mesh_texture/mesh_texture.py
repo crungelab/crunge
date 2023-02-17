@@ -17,6 +17,8 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
+resource_root = Path(__file__).parent.parent.parent / "resources"
+
 WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
 WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
@@ -257,7 +259,7 @@ class HelloWgpu:
         return self.projectionMatrix * viewMatrix * rotMatrix
 
     def create_meshes(self):
-        mesh_path = Path(__file__).parent.parent / "resources" / "models" / "Fuze" / "fuze.obj"
+        mesh_path = resource_root / "models" / "Fuze" / "fuze.obj"
         self.mesh = mesh = tm.load(str(mesh_path))
         #Vertices
         vertices = self.vertex_data = mesh.vertices.astype(np.float32)
@@ -301,7 +303,7 @@ class HelloWgpu:
         )
 
     def create_textures(self):
-        path = Path(__file__).parent.parent / "resources" / "models" / "Fuze" / "fuze_uv.jpg"
+        path = resource_root / "models" / "Fuze" / "fuze_uv.jpg"
         im = iio.imread(
             path,
             plugin="pillow",

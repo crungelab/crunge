@@ -1,2 +1,0 @@
-import mesh
-mesh.main()

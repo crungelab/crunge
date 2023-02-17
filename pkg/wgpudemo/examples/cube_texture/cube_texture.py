@@ -17,6 +17,8 @@ import crunge.wgpu.utils as utils
 
 from data import vertex_data
 
+resource_root = Path(__file__).parent.parent.parent / "resources"
+
 WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
 WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
@@ -236,7 +238,7 @@ class HelloWgpu:
         )
 
     def create_textures(self):
-        path = Path(__file__).parent.parent / "resources" / "textures" / "python_logo.png"
+        path = resource_root / "textures" / "python_logo.png"
         im = iio.imread(path)
         shape = im.shape
         logger.debug(shape)

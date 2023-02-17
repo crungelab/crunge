@@ -1,0 +1,2 @@
+import gltfv
+gltfv.main()
