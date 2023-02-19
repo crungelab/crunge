@@ -2045,6 +2045,21 @@ void init_generated(py::module &_wgpu, Registry &registry) {
         SurfaceDescriptorFromWindowsHWND.def(py::init<>());
         SurfaceDescriptorFromWindowsHWND.def_readwrite("hinstance", &wgpu::SurfaceDescriptorFromWindowsHWND::hinstance);
         SurfaceDescriptorFromWindowsHWND.def_readwrite("hwnd", &wgpu::SurfaceDescriptorFromWindowsHWND::hwnd);
+        SurfaceDescriptorFromWindowsHWND.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::SurfaceDescriptorFromWindowsHWND obj;
+            if (kwargs.contains("hinstance"))
+            {
+                auto value = kwargs["hinstance"].cast<void *>();
+                obj.hinstance = value;
+            }
+            if (kwargs.contains("hwnd"))
+            {
+                auto value = kwargs["hwnd"].cast<void *>();
+                obj.hwnd = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromWindowsHWND, SurfaceDescriptorFromWindowsHWND)
 
     PYCLASS_INHERIT_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromWindowsSwapChainPanel, struct wgpu::ChainedStruct, SurfaceDescriptorFromWindowsSwapChainPanel)

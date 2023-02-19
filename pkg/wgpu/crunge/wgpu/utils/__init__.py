@@ -90,7 +90,7 @@ def create_texture(device: wgpu.Device, label: str, extent: wgpu.Extent3D, forma
     texture = device.create_texture(descriptor)
     return texture
 
-def create_buffer(device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage):
+def create_buffer(device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage) -> wgpu.Buffer:
     desc = wgpu.BufferDescriptor()
     desc.label = label
     desc.usage = usage | wgpu.BufferUsage.COPY_DST

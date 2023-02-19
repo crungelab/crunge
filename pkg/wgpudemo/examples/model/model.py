@@ -252,13 +252,10 @@ class HelloWgpu:
 
     def create_meshes(self):
         #mesh_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
-        mesh_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
+        #mesh_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
         #mesh_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
-        #mesh_path = resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
-        #self.mesh = mesh = tm.load(str(mesh_path))
+        mesh_path = resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
         scene = tm.load(str(mesh_path))
-        #print(scene)
-        #print(scene.geometry)
         geometries = list(scene.geometry.values())
         logger.debug(geometries)
         self.mesh = mesh = geometries[0]
@@ -268,11 +265,9 @@ class HelloWgpu:
         material = visual.material
         logger.debug(material.__dict__)
         self.create_texture(material)
-        #image = visual.image
-        #print(image)
-        #exit()
+
         #Vertices
-        vertices = self.vertex_data = mesh.vertices.astype(np.float32)
+        vertices = mesh.vertices.astype(np.float32)
         logger.debug(f'vertices type: {type(vertices)}')
         logger.debug(f'vertices:  {vertices}')
         n_vertices =  len(vertices)
@@ -280,42 +275,20 @@ class HelloWgpu:
 
         logger.debug(mesh.visual.__dict__)
 
+        # Texture Coordinates
         uv_coords = mesh.visual.uv.astype(np.float32)
-        #u = uv_coords[0]
-        #v = uv_coords[1]
-        u_min = np.min(uv_coords,axis=0)
-        u_max = np.max(uv_coords,axis=0)
-        v_min = np.min(uv_coords,axis=1)
-        v_max = np.max(uv_coords,axis=1)
-        #uv_coords = uv_coords - [u_min, v_min]
-        #uv_coords = (uv_coords - np.min(uv_coords))/(np.max(uv_coords) - np.min(uv_coords))
-
+        # Normalize (0..1)
         uv_coords = (uv_coords - np.min(uv_coords))/(np.max(uv_coords) - np.min(uv_coords))
-
-
-        # find the minimum and maximum values of the array
-        min_val = np.min(uv_coords)
-        max_val = np.max(uv_coords)
-
-        # subtract the minimum value from all elements in the array
-        uv_coords = uv_coords - min_val
-
-        # divide all elements in the array by the range
-        range_val = max_val - min_val
-        uv_coords = uv_coords / range_val
-
-        # multiply the result by the range of the original data and add the minimum value back in
-        uv_coords = uv_coords * range_val + min_val
 
         logger.debug(f'uv_coords type: {type(uv_coords)}')
         logger.debug(f'uv_coords:  {uv_coords}')
         n_uv_coords = len(uv_coords)
         logger.debug(f'n_uv_coords:  {n_uv_coords}')
 
+        # Vertex Data
         vertex_data = self.vertex_data = np.concatenate((vertices, uv_coords), axis=1)
         logger.debug(type(vertex_data))
         logger.debug(f'vertex_data:  {vertex_data}')
-        #exit()
         
         #Indices
         indices = self.index_data = self.mesh.faces.astype(np.uint32)

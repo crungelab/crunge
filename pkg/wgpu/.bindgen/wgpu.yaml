@@ -45,6 +45,7 @@ flags: [
 'struct.wgpu::RenderPassDescriptor': {gen_kw_init: true}
 'struct.wgpu::RenderPassDepthStencilAttachment': {gen_kw_init: true}
 'struct.wgpu::CommandBuffer': {gen_init: true}
+'struct.wgpu::SurfaceDescriptorFromWindowsHWND': {gen_kw_init: true}
 'struct.wgpu::SurfaceDescriptor': {gen_kw_init: true}
 'struct.wgpu::SwapChainDescriptor': {gen_kw_init: true}
 'struct.wgpu::ImageCopyBuffer': {gen_init: true}
