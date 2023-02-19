@@ -8,7 +8,6 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from . import utils
 from .builder import Builder
 from .scene import Scene
 from .mesh import Mesh

@@ -11,7 +11,6 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from .builder import Builder
-#from . import utils
 from .scene import Scene
 from .mesh import Mesh
 from .texture_builder import TextureBuilder
@@ -67,9 +66,6 @@ class Vertex(Structure):
         ("pos", Position),
         ("uv", UvCoord),
     ]
-
-#kWidth = 1024
-#kHeight = 768
 
 kPositionByteOffset = Vertex.pos.offset
 kUVByteOffset = Vertex.uv.offset
@@ -127,7 +123,7 @@ class MeshBuilder(Builder):
 
         uniform_buffer_size = 4 * 16
         mesh.uniform_buffer_size = uniform_buffer_size
-        
+
         uniform_buffer = utils.create_buffer(
             self.device,
             "Uniform buffer",

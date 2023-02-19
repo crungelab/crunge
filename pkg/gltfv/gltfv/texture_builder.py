@@ -7,7 +7,6 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from .builder import Builder
-#from . import utils
 from .texture import Texture
 
 

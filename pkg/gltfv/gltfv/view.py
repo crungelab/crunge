@@ -15,7 +15,6 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from .constants import *
-#from . import utils
 from .base import Base
 from .scene import Scene
 from .camera import Camera

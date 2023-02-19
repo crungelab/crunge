@@ -1,0 +1,2 @@
+import cubes
+cubes.main()

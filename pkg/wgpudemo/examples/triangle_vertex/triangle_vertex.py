@@ -10,37 +10,7 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-
-vertex_data = np.array(
-    [
-        0.0,
-        0.5,
-        0.0,
-        1.0,
-        1.0,
-        0.0,
-        0.0,
-        1.0,
-        -0.5,
-        -0.5,
-        0.0,
-        1.0,
-        0.0,
-        1.0,
-        0.0,
-        1.0,
-        0.5,
-        -0.5,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        1.0,
-        1.0,
-    ],
-    dtype=np.float32,
-)
-
+from data import vertex_data
 
 shader_code = """
 struct VertexInput {

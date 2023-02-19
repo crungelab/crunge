@@ -1,4 +1,3 @@
-import ctypes
 import time
 import sys
 
@@ -21,7 +20,6 @@ fn main_f() -> @location(0) vec4<f32> {
     return vec4<f32>(0.0, 0.502, 1.0, 1.0); // 0x80/0xff ~= 0.502
 }
 """
-
 
 class HelloWgpu:
     device: wgpu.Device = None
@@ -102,9 +100,7 @@ class HelloWgpu:
         nwh = as_capsule(handle)
         logger.debug(nwh)
 
-        wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-        wsd.hwnd = nwh
-        wsd.hinstance = None
+        wsd = wgpu.SurfaceDescriptorFromWindowsHWND(hwnd=nwh)
 
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)
