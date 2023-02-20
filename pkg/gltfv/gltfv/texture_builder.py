@@ -16,8 +16,7 @@ class TextureBuilder(Builder):
     def __init__(self) -> None:
         self.texture = Texture()
 
-    def build(self, material):
-        image = material.baseColorTexture
+    def build(self, image):
         im = None
         logger.debug(f'image mode: {image.mode}')
         if image.mode != 'RGBA':

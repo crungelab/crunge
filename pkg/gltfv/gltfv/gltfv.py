@@ -27,11 +27,13 @@ class GLTFV:
         self.device.set_label("Primary Device")
         self.device.enable_logging()
 
+        #scene_path = resource_root / "models" / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
         #scene_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
         #scene_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
-        scene_path = resource_root / "models" / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
+        #scene_path = resource_root / "models" / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
         #scene_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
-        #scene_path = resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
+        scene_path = resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
+        #scene_path = resource_root / "models" / "Character" / "Character.gltf"
 
         scene = SceneBuilder().load(scene_path)
         Viewer().show(scene)

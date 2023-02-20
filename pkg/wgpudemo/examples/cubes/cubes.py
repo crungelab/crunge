@@ -259,6 +259,7 @@ class HelloWgpu:
         }
     """
 
+    #TODO: This is screwed up somehow ...
     def update_transformation_matrices(self):
         now = time.time()
         ms = round(now * 1000) / 1000
@@ -377,6 +378,8 @@ class HelloWgpu:
 
     def frame(self):
         self.update_transformation_matrices()
+        #for i in range(len(self.mvp_matrices)):
+        #    self.mvp_matrices[i] = self.transform_matrix
         #print(self.mvp_matrices)
         #exit()
         self.device.queue.write_buffer(

@@ -1,0 +1,55 @@
+from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+
+import numpy as np
+
+from crunge import wgpu
+
+class VertexColumn:
+    struct: Structure
+    data: np.ndarray
+
+    def __init__(self, data: np.ndarray) -> None:
+        self.data = data
+
+    @property
+    def struct_size(self):
+        return sizeof(self.struct)
+
+class Position(Structure):
+    _fields_ = [
+        ("x", c_float),
+        ("y", c_float),
+        ("z", c_float),
+    ]
+
+class PosColumn(VertexColumn):
+    struct = Position
+    format = wgpu.VertexFormat.FLOAT32X3
+    def __init__(self, data: np.ndarray) -> None:
+        super().__init__(data)
+
+class UvCoord(Structure):
+    _fields_ = [
+        ("u", c_float),
+        ("v", c_float),
+    ]
+
+class UvColumn(VertexColumn):
+    struct = UvCoord
+    format = wgpu.VertexFormat.FLOAT32X2
+    def __init__(self, data: np.ndarray) -> None:
+        super().__init__(data)
+
+class RgbaColor(Structure):
+    _fields_ = [
+        ("r", c_float),
+        ("g", c_float),
+        ("b", c_float),
+        ("a", c_float),
+    ]
+
+class RgbaColumn(VertexColumn):
+    struct = RgbaColor
+    format = wgpu.VertexFormat.FLOAT32X4
+    def __init__(self, data: np.ndarray) -> None:
+        super().__init__(data)
