@@ -20,65 +20,7 @@ from .vertex_column import PosColumn, UvColumn, RgbaColumn
 from .material_builder import MaterialBuilder
 from .material import Material
 
-
-shader_code = """
-struct Uniforms {
-  modelViewProjectionMatrix : mat4x4<f32>,
-}
-@group(0) @binding(0) var<uniform> uniforms : Uniforms;
-
-@group(0) @binding(1) var mySampler: sampler;
-@group(0) @binding(2) var myTexture : texture_2d<f32>;
-
-struct VertexInput {
-  @location(0) pos: vec4<f32>,
-  @location(1) uv: vec2<f32>,
-}
-
-struct VertexOutput {
-  @builtin(position) vertex_pos : vec4<f32>,
-  @location(0) uv: vec2<f32>,
-}
-
-@vertex
-fn vs_main(in : VertexInput) -> VertexOutput {
-  let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
-  return VertexOutput(vert_pos, in.uv);
-}
-
-@fragment
-fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
-  let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);
-  return textureSample(myTexture, mySampler, uv);
-}
-"""
-
-
-class Position(Structure):
-    _fields_ = [
-        ("x", c_float),
-        ("y", c_float),
-        ("z", c_float),
-    ]
-
-
-class UvCoord(Structure):
-    _fields_ = [
-        ("u", c_float),
-        ("v", c_float),
-    ]
-
-
-class Vertex(Structure):
-    _fields_ = [
-        ("pos", Position),
-        ("uv", UvCoord),
-    ]
-
-
-kPositionByteOffset = Vertex.pos.offset
-kUVByteOffset = Vertex.uv.offset
-kVertexDataStride = sizeof(Vertex)
+from .shader import VertexShaderBuilder, FragmentShaderBuilder
 
 
 class MeshBuilder(Builder):
@@ -184,12 +126,6 @@ class MeshBuilder(Builder):
         #exit()
         return mesh
 
-    def create_shader_module(self):
-        shader_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, shader_code
-        )
-        return shader_module
-
     def create_vertex_attributes(self):
         vert_attributes = wgpu.VertexAttributes()
         offset = 0
@@ -205,7 +141,9 @@ class MeshBuilder(Builder):
         return vert_attributes
 
     def create_pipeline(self):
-        shader_module = self.create_shader_module()
+        #shader_module = self.create_shader_module()
+        vs_module: wgpu.ShaderModule = VertexShaderBuilder().build()
+        fs_module: wgpu.ShaderModule = FragmentShaderBuilder().build(self.material)
 
         vertAttributes = self.create_vertex_attributes()
 
@@ -215,10 +153,17 @@ class MeshBuilder(Builder):
             attributes=vertAttributes[0],
         )
 
+        vertex_state = wgpu.VertexState(
+            module=vs_module,
+            entry_point="vs_main",
+            buffer_count=1,
+            buffers=vertBufferLayout,
+        )
+
         colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
         fragmentState = wgpu.FragmentState(
-            module=shader_module,
+            module=fs_module,
             entry_point="fs_main",
             target_count=1,
             targets=colorTargetState,
@@ -232,41 +177,6 @@ class MeshBuilder(Builder):
 
         primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
 
-        vertex_state = wgpu.VertexState(
-            module=shader_module,
-            entry_point="vs_main",
-            buffer_count=1,
-            buffers=vertBufferLayout,
-        )
-
-        """
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-            ]
-        )
-        """
         bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(

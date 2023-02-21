@@ -18,11 +18,11 @@ class MaterialBuilder(Builder):
     def __init__(self) -> None:
         self.material = Material()
 
-    def build(self, material) -> Material:
-        logger.debug(material)
-        logger.debug(material.__dict__)
-        if material.baseColorTexture:
-            texture = TextureBuilder().build(material.baseColorTexture)
+    def build(self, tm_material) -> Material:
+        logger.debug(tm_material)
+        logger.debug(tm_material.__dict__)
+        if tm_material.baseColorTexture:
+            texture = TextureBuilder('baseColor').build(tm_material.baseColorTexture)
             self.material.base_color_texture = texture
             self.material.add_texture(texture)
 

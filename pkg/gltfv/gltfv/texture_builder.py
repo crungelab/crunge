@@ -11,10 +11,11 @@ from .texture import Texture
 
 
 class TextureBuilder(Builder):
+    name: str = None
     texture: Texture = None
 
-    def __init__(self) -> None:
-        self.texture = Texture()
+    def __init__(self, name: str) -> None:
+        self.texture = Texture(name)
 
     def build(self, image):
         im = None

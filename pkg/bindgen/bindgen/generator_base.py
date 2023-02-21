@@ -57,6 +57,12 @@ class GeneratorBase:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.dedent()
 
+    def indent(self):
+        self.indentation +=1
+
+    def dedent(self):
+        self.indentation -=1
+
     @property
     def entry(self):
         if len(self.entry_stack) == 0:
@@ -80,12 +86,6 @@ class GeneratorBase:
     def short_prefix(self, value):
         self._short_prefix = value
         self.context.short_prefix = value
-
-    def indent(self):
-        self.indentation +=1
-
-    def dedent(self):
-        self.indentation -=1
 
     def lookup(self, entry_key: str):
         kind, key = entry_key.split('.')
