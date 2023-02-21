@@ -108,10 +108,10 @@ class MeshBuilder(Builder):
 
         for i, texture in enumerate(material.textures):
             bg_entries.append(
-                wgpu.BindGroupEntry(binding=i + 1, sampler=texture.sampler)
+                wgpu.BindGroupEntry(binding=i*2+1, sampler=texture.sampler)
             )
             bg_entries.append(
-                wgpu.BindGroupEntry(binding=i + 2, texture_view=texture.view)
+                wgpu.BindGroupEntry(binding=i*2+2, texture_view=texture.view)
             )
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
@@ -192,7 +192,7 @@ class MeshBuilder(Builder):
         for i, texture in enumerate(self.material.textures):
             bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i+1,
+                    binding=i*2+1,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
@@ -201,7 +201,7 @@ class MeshBuilder(Builder):
             )
             bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i+2,
+                    binding=i*2+2,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
