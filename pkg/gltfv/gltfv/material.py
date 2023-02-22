@@ -11,7 +11,7 @@ class Material:
     metallic_roughness_texure: Texture = None
 
     normal_texure: Texture = None
-
+    occlusion_texure: Texture = None
     # (3,) float
     emissive_factor: tuple = (0, 0, 0)
     emissive_texture: Texture = None

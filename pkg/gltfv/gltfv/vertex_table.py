@@ -12,6 +12,9 @@ class VertexTable:
     def add_column(self, column):
         self.columns.append(column)
 
+    def has(self, name):
+        return name in self.columns
+
     @property
     def count(self):
         return len(self.columns)

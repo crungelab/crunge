@@ -34,7 +34,7 @@ class Viewer(Base):
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
 
-        self.window = glfw.create_window(self.kWidth, self.kHeight, "Cube", None, None)
+        self.window = glfw.create_window(self.kWidth, self.kHeight, "GlTF Viewer", None, None)
 
     def create_view(self, scene: Scene):
         handle, display = None, None

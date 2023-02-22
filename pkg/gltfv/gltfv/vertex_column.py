@@ -6,9 +6,11 @@ from crunge import wgpu
 
 class VertexColumn:
     struct: Structure
+    name: str
     data: np.ndarray
 
-    def __init__(self, data: np.ndarray) -> None:
+    def __init__(self, name: str, data: np.ndarray) -> None:
+        self.name = name
         self.data = data
 
     @property
@@ -25,8 +27,17 @@ class Position(Structure):
 class PosColumn(VertexColumn):
     struct = Position
     format = wgpu.VertexFormat.FLOAT32X3
-    def __init__(self, data: np.ndarray) -> None:
-        super().__init__(data)
+
+class Normal(Structure):
+    _fields_ = [
+        ("x", c_float),
+        ("y", c_float),
+        ("z", c_float),
+    ]
+
+class NormalColumn(VertexColumn):
+    struct = Normal
+    format = wgpu.VertexFormat.FLOAT32X3
 
 class UvCoord(Structure):
     _fields_ = [
@@ -37,8 +48,6 @@ class UvCoord(Structure):
 class UvColumn(VertexColumn):
     struct = UvCoord
     format = wgpu.VertexFormat.FLOAT32X2
-    def __init__(self, data: np.ndarray) -> None:
-        super().__init__(data)
 
 class RgbaColor(Structure):
     _fields_ = [
@@ -51,5 +60,3 @@ class RgbaColor(Structure):
 class RgbaColumn(VertexColumn):
     struct = RgbaColor
     format = wgpu.VertexFormat.FLOAT32X4
-    def __init__(self, data: np.ndarray) -> None:
-        super().__init__(data)

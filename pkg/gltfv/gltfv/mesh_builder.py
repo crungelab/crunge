@@ -15,7 +15,7 @@ from .scene import Scene
 from .mesh import Mesh
 
 from .vertex_table import VertexTable
-from .vertex_column import PosColumn, UvColumn, RgbaColumn
+from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn
 
 from .material_builder import MaterialBuilder
 from .material import Material
@@ -39,7 +39,11 @@ class MeshBuilder(Builder):
 
         # Vertices
         vertices = tm_mesh.vertices.astype(np.float32)
-        self.vertex_table.add_column(PosColumn(vertices))
+        self.vertex_table.add_column(PosColumn('pos', vertices))
+
+        # Normals
+        normals = tm_mesh.vertex_normals.astype(np.float32)
+        self.vertex_table.add_column(NormalColumn('normal', normals))
 
         # Visuals
         visual = tm_mesh.visual
@@ -49,10 +53,10 @@ class MeshBuilder(Builder):
             uv_coords = (uv_coords - np.min(uv_coords)) / (
                 np.max(uv_coords) - np.min(uv_coords)
             )
-            self.vertex_table.add_column(UvColumn(uv_coords))
+            self.vertex_table.add_column(UvColumn('uv', uv_coords))
         elif visual_kind == "vertex":
             vc = visual.vertex_colors.astype(np.float32)
-            self.vertex_table.add_column(RgbaColumn(vc))
+            self.vertex_table.add_column(RgbaColumn('color', vc))
 
         # Vertex Data
         vertex_data = self.vertex_table.data
@@ -142,8 +146,8 @@ class MeshBuilder(Builder):
 
     def create_pipeline(self):
         #shader_module = self.create_shader_module()
-        vs_module: wgpu.ShaderModule = VertexShaderBuilder().build()
-        fs_module: wgpu.ShaderModule = FragmentShaderBuilder().build(self.material)
+        vs_module: wgpu.ShaderModule = VertexShaderBuilder(self.vertex_table).build()
+        fs_module: wgpu.ShaderModule = FragmentShaderBuilder(self.vertex_table, self.material).build()
 
         vertAttributes = self.create_vertex_attributes()
 
