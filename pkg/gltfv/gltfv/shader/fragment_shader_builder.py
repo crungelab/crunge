@@ -91,11 +91,10 @@ class FragmentShaderBuilder(ShaderBuilder):
 
         self(shader_code_fragment)
         with self:
-            #self('let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);')
-            self('let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));')
-            self(f'var color = vec4<f32>{material.base_color_factor};')
-            #self('return textureSample(baseColorTexture, baseColorSampler, uv);')
-            if material.base_color_texture:
+            bcf = material.base_color_factor
+            self(f'var color = vec4<f32>({bcf[0]}, {bcf[1]}, {bcf[2]}, {bcf[3]});')
+
+            if material.has_texture('baseColor'):
                 #self(f'color = color * linearSample(baseColorTexture, baseColorSampler, uv);')
                 self(f'color = color * textureSample(baseColorTexture, baseColorSampler, uv);')
 
@@ -103,26 +102,33 @@ class FragmentShaderBuilder(ShaderBuilder):
             self(f'var metallic: f32 = {material.metallic_factor};')
             self(f'var roughness: f32 = {material.roughness_factor};')
 
-            if material.metallic_roughness_texure:
+            if material.has_texture('metallicRoughness'):
+                """
                 self('let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);')
                 self('metallic = metallic * metalRough.b;')
                 self('roughness = roughness * metalRough.g;')
+                """
+                self("""
+                    let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv).rg;
+                    roughness = roughness * metalRough.r;
+                    metallic = metallic * metalRough.g;
+                """)
             self('roughness = clamp(roughness, 0.04, 1.0);')
 
             # Normal
-            if material.normal_texure:
+            if material.has_texture('normal'):
                 self(f'''
                 var normal = textureSample(normalTexture, normalSampler, uv).rgb;
-                //normal = normal * 2.0 - 1.0;
+                normal = normal * 2.0 - 1.0;
                 //normal = normal.x * tangent + normal.y * bitangent + normal.z * in.normal;
-                //normal = normalize(normal);
+                normal = normalize(normal);
                 '''
                 )
             else:
                 self('var normal = normalize(in.normal);')
 
             # Occlusion
-            if material.occlusion_texure:
+            if material.has_texture('occlusion'):
                 self(f'''
                 var ao = textureSample(occlusionTexture, occlusionSampler, uv).r;
                 '''
@@ -134,7 +140,8 @@ class FragmentShaderBuilder(ShaderBuilder):
             # Emission
             e = material.emissive_factor
             self(f'var emissive = vec3<f32>({e[0]}, {e[1]}, {e[2]});')
-            if material.emissive_texure:
+
+            if material.has_texture('emissive'):
                 self(f'''
                 emissive = emissive * linearSample(emissiveTexture, emissiveSampler, uv).rgb;
                 '''
@@ -143,8 +150,9 @@ class FragmentShaderBuilder(ShaderBuilder):
             #self('return color;')
 
             self("""
+                let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
                 //let viewDir = normalize(camera.eye - worldPos);
-                let viewDir = normalize(vec3<f32>(0.0, 0.0, -1.0));
+                let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
                 var rgb = brdf(color.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
                 rgb = pow(rgb, vec3<f32>(1.0 / 2.2));
                 return vec4<f32>(rgb, color.a);
@@ -155,4 +163,6 @@ class FragmentShaderBuilder(ShaderBuilder):
         shader_module: wgpu.ShaderModule = utils.create_shader_module(
             self.device, self.shader_code
         )
+        print(self.shader_code)
+        #exit()
         return shader_module

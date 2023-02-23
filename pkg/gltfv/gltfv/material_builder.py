@@ -32,7 +32,7 @@ class MaterialBuilder(Builder):
         # Base Color Texture
         if tm_material.baseColorTexture:
             texture = TextureBuilder('baseColor').build(tm_material.baseColorTexture)
-            material.base_color_texture = texture
+            #material.base_color_texture = texture
             material.add_texture(texture)
 
         # Metallic Factor
@@ -49,19 +49,19 @@ class MaterialBuilder(Builder):
         # Metallic Roughness Texture
         if tm_material.metallicRoughnessTexture:
             texture = TextureBuilder('metallicRoughness').build(tm_material.metallicRoughnessTexture)
-            material.metallic_roughness_texure = texture
+            #material.metallic_roughness_texure = texture
             material.add_texture(texture)
 
         # Normal Texture
         if tm_material.normalTexture:
             texture = TextureBuilder('normal').build(tm_material.normalTexture)
-            material.normal_texure = texture
+            #material.normal_texure = texture
             material.add_texture(texture)
 
         # Occlusion Texture
         if tm_material.occlusionTexture:
             texture = TextureBuilder('occlusion').build(tm_material.occlusionTexture)
-            material.occlusion_texure = texture
+            #material.occlusion_texure = texture
             material.add_texture(texture)
 
         #emissive_factor = tm_material.emissiveFactor if tm_material.emissiveFactor else (1, 1, 1)
@@ -72,7 +72,7 @@ class MaterialBuilder(Builder):
         # Emissive Texture
         if tm_material.emissiveTexture:
             texture = TextureBuilder('emissive').build(tm_material.emissiveTexture)
-            material.emissive_texure = texture
+            #material.emissive_texture = texture
             material.add_texture(texture)
 
         return self.material
