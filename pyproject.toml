@@ -1,0 +1,55 @@
+#[build-system]
+#requires = ["poetry-core>=1.0.0", "setuptools", "wheel", "scikit-build", "cmake", "ninja"]
+#build-backend = "poetry.masonry.api"
+
+[build-system]
+requires = ["cxbuild==0.1.2", "setuptools", "wheel"]
+build-backend = "cxbuild.backend"
+
+#[tool.poetry]
+#name = "crunge"
+#version = "0.1.0"
+#description = ""
+#authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
+
+[project]
+name = "crunge"
+version = "0.1.0"
+description = 'Creative coding extensions for Python'
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+keywords = []
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+#[tool.poetry.dependencies]
+#python = ">=3.8,<3.12"
+
+#[tool.poetry.dev-dependencies]
+#pytest = "^7.2.1"
+#scikit-build = "^0.16.6"
+#cmake = "^3.25.2"
+
+#[tool.poetry.build]
+#generate-setup-file = false
+#script = "build.py"
+
+[tool.cxbuild]
+#projects = ["pkg/*"]
+projects = [
+  "pkg/imgui",
+  "pkg/implot",
+  "pkg/imnodes",
+  ]
+plugins = ["cxbind"]
+

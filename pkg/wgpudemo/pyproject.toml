@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "wgpudemo"
+version = "0.1.0"
+description = ""
+authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.10.0,<3.11.0"
+crunge-core = {path = "../core",  develop = true}
+crunge-wgpu = {path = "../wgpu",  develop = true}
+crunge-imgui = {path = "../imgui",  develop = true}
+glfw = "^2.5.6"
+loguru = "^0.6.0"
+#openmesh = "^1.2.1"
+pyglm = "^2.7.0"
+trimesh = "^3.20.0"
+imageio = "^2.25.1"
+bpy = "^3.4.0"
+gltflib = "^1.0.13"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

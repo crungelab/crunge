@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "implotdemo"
+version = "0.1.0"
+description = ""
+authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.12"
+arcade = "^2.6.16"
+
+crunge-imgui = {path = "../imgui",  develop = true}
+crunge-implot = {path = "../implot",  develop = true}
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

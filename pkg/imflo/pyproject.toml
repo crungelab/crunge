@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imflo"
+version = "0.1.0"
+description = 'ImFlo'
+requires-python = ">=3.8"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "arcade ~=2.6.17",
+    "rx ~=3.2.0",
+    "scipy ~= 1.11.3"
+]

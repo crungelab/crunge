@@ -1,0 +1,58 @@
+source: '../../lib/dawn/include/dawn/webgpu_cpp.h'
+target: 'src/crunge/wgpu/bindings/generated.cpp'
+
+module: _wgpu
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-I../../lib/dawn/include',
+  '-I../../depot/dawn/include',
+]
+
+
+# Internal / Ignored
+
+'struct.dawn::IsDawnBitmask': {exclude: true} #TODO: Should skip templates in the transpiler
+
+# These three have a weird signature:  const char* const * 
+'field.wgpu::DawnInstanceDescriptor::additionalRuntimeSearchPaths': {exclude: true}
+'field.wgpu::DawnTogglesDeviceDescriptor::forceEnabledToggles': {exclude: true}
+'field.wgpu::DawnTogglesDeviceDescriptor::forceDisabledToggles': {exclude: true}
+
+# Wrapped
+'method.wgpu::RenderPassEncoder::SetBindGroup': {exclude: true} #TODO: Signatures match but got a TypeError. Strange.
+
+# Need initializers
+'struct.wgpu::AdapterProperties': {gen_init: true}
+'struct.wgpu::BindGroupLayoutDescriptor': {gen_kw_init: true}
+'struct.wgpu::BindGroupLayoutEntry': {gen_kw_init: true}
+'struct.wgpu::SamplerBindingLayout': {gen_kw_init: true}
+'struct.wgpu::TextureBindingLayout': {gen_kw_init: true}
+'struct.wgpu::BufferBindingLayout': {gen_kw_init: true}
+'struct.wgpu::BindGroupDescriptor': {gen_kw_init: true}
+'struct.wgpu::ShaderModuleDescriptor': {gen_kw_init: true}
+'struct.wgpu::ShaderModuleWGSLDescriptor': {gen_kw_init: true}
+'struct.wgpu::TextureDescriptor': {gen_kw_init: true}
+'struct.wgpu::BufferDescriptor': {gen_init: true}
+'struct.wgpu::PipelineLayoutDescriptor': {gen_kw_init: true}
+'struct.wgpu::ColorTargetState': {gen_kw_init: true}
+'struct.wgpu::FragmentState': {gen_kw_init: true}
+'struct.wgpu::VertexState': {gen_kw_init: true}
+'struct.wgpu::DepthStencilState': {gen_kw_init: true}
+'struct.wgpu::RenderPipelineDescriptor': {gen_kw_init: true}
+'struct.wgpu::RenderPassColorAttachment': {gen_kw_init: true}
+'struct.wgpu::RenderPassDescriptor': {gen_kw_init: true}
+'struct.wgpu::RenderPassDepthStencilAttachment': {gen_kw_init: true}
+'struct.wgpu::CommandBuffer': {gen_init: true}
+'struct.wgpu::SurfaceDescriptorFromWindowsHWND': {gen_kw_init: true}
+'struct.wgpu::SurfaceDescriptor': {gen_kw_init: true}
+'struct.wgpu::SwapChainDescriptor': {gen_kw_init: true}
+'struct.wgpu::ImageCopyBuffer': {gen_init: true}
+'struct.wgpu::ImageCopyTexture': {gen_kw_init: true}
+'struct.wgpu::TextureDataLayout': {gen_kw_init: true}
+'struct.wgpu::VertexAttribute': {gen_kw_init: true}
+'struct.wgpu::VertexBufferLayout': {gen_kw_init: true}
+'struct.wgpu::PrimitiveState': {gen_kw_init: true}
+'struct.wgpu::BindGroupEntry': {gen_kw_init: true}
+'struct.wgpu::Extent3D': {gen_init: true}
