@@ -1,11 +1,14 @@
 [build-system]
-requires = ["cxbuild==0.1.2", "setuptools", "wheel"]
+requires = ["cxbuild==0.1.6", "setuptools", "wheel"]
 build-backend = "cxbuild.backend"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["crunge"]
-namespaces = true
+#[tool.setuptools.packages.find]
+#where = ["."]
+#include = ["crunge"]
+
+[tool.setuptools]
+packages = ["crunge", "crunge.imgui"]
+
 
 [project]
 name = "crunge-imgui"

@@ -1,11 +1,15 @@
 [build-system]
-requires = ["cxbuild==0.1.2", "setuptools", "wheel"]
+requires = ["cxbuild==0.1.6", "setuptools", "wheel"]
 build-backend = "cxbuild.backend"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["crunge"]
-namespaces = true
+#[tool.setuptools.packages.find]
+#where = ["."]
+#include = ["crunge.imnodes"]
+#exclude = ["crunge.imgui"]
+#namespaces = true
+
+[tool.setuptools]
+packages = ["crunge", "crunge.imnodes"]
 
 [project]
 name = "crunge-imnodes"
@@ -30,5 +34,5 @@ classifiers = [
 [tool.cxbuild.project]
 
 [tool.cxbuild.extension]
-name="crunge.imgui._imnodes"
+name="crunge.imnodes._imnodes"
 
