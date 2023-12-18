@@ -27,6 +27,7 @@ projects = [
   "pkg/imgui",
   "pkg/implot",
   "pkg/imnodes",
+  "pkg/wgpu",
   ]
 plugins = ["cxbind"]
 

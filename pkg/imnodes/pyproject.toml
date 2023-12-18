@@ -2,12 +2,6 @@
 requires = ["cxbuild==0.1.6", "setuptools", "wheel"]
 build-backend = "cxbuild.backend"
 
-#[tool.setuptools.packages.find]
-#where = ["."]
-#include = ["crunge.imnodes"]
-#exclude = ["crunge.imgui"]
-#namespaces = true
-
 [tool.setuptools]
 packages = ["crunge", "crunge.imnodes"]
 

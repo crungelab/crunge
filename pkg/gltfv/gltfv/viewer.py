@@ -37,23 +37,24 @@ class Viewer(Base):
         self.window = glfw.create_window(self.kWidth, self.kHeight, "GlTF Viewer", None, None)
 
     def create_view(self, scene: Scene):
-        handle, display = None, None
-
+        wsd = None
         if sys.platform == "darwin":
             handle = glfw.get_cocoa_window(self.window)
         elif sys.platform == "win32":
+            wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
             handle = glfw.get_win32_window(self.window)
+            wsd.hwnd = as_capsule(handle)
+            wsd.hinstance = None
+
         elif sys.platform == "linux":
+            wsd = wgpu.SurfaceDescriptorFromXlibWindow()
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
-
-        logger.debug(handle)
-
-        nwh = as_capsule(handle)
-        logger.debug(nwh)
+            wsd.window = handle
+            wsd.display = as_capsule(display)
 
         view = View(scene, self.kWidth, self.kHeight)
-        view.create_from_windows_hwnd(nwh)
+        view.create_from_wsd(wsd)
         self.view = view
 
     def show(self, scene: Scene):

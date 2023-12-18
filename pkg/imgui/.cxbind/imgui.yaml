@@ -95,7 +95,9 @@ defaults:
 'struct.ImGuiListClipper': {exclude: true}
 'struct.ImGuiContext': {exclude: true}
 'field.ImGuiIO::SetPlatformImeDataFn': {exclude: true}
+'field.ImGuiIO::Ctx': {exclude: true}
 'struct.ImGuiDockRequest': {exclude: true}
+'field.ImGuiInputTextCallbackData::Ctx': {exclude: true}
 
 # Overloads
 

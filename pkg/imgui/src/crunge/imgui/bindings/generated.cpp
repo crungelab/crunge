@@ -3,8 +3,8 @@
 #include <pybind11/stl.h>
 #include <limits>
 
-#include "imgui.h"
 #include "imgui_internal.h"
+//#include "imgui.h"
 
 #include <crunge/core/bindtools.h>
 #include <crunge/imgui/conversions.h>
@@ -2907,7 +2907,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
         IO.def_readwrite("metrics_render_windows", &ImGuiIO::MetricsRenderWindows);
         IO.def_readwrite("metrics_active_windows", &ImGuiIO::MetricsActiveWindows);
         IO.def_readwrite("mouse_delta", &ImGuiIO::MouseDelta);
-        //IO.def_readwrite("ctx", &ImGuiIO::Ctx);
         IO.def_readwrite("mouse_pos", &ImGuiIO::MousePos);
         IO.def_readonly("mouse_down", &ImGuiIO::MouseDown);
         IO.def_readwrite("mouse_wheel", &ImGuiIO::MouseWheel);
@@ -2947,7 +2946,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS_END(_imgui, ImGuiIO, IO)
 
     PYCLASS_BEGIN(_imgui, ImGuiInputTextCallbackData, InputTextCallbackData)
-        //InputTextCallbackData.def_readwrite("ctx", &ImGuiInputTextCallbackData::Ctx);
         InputTextCallbackData.def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag);
         InputTextCallbackData.def_readwrite("flags", &ImGuiInputTextCallbackData::Flags);
         InputTextCallbackData.def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData);

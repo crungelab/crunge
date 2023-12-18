@@ -1,20 +1,32 @@
-[tool.poetry]
+[build-system]
+requires = ["cxbuild==0.1.6", "setuptools", "wheel"]
+build-backend = "cxbuild.backend"
+
+[tool.setuptools]
+packages = ["crunge", "crunge.wgpu"]
+
+[project]
 name = "crunge-wgpu"
 version = "0.1.0"
-description = ""
-authors = ["Kurtis Fields <kurtisfields@gmail.com>"]
-packages = [
-  { include = "crunge" },
+description = 'Crunge WebGPU Extension'
+#readme = "README.md"
+requires-python = ">=3.8"
+#license = { file = "LICENSE" }
+keywords = []
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+[tool.cxbuild.project]
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.2.0"
-bindgen = {path = "../bindgen",  develop = true}
-scikit-build = "^0.16.6"
+[tool.cxbuild.extension]
+name="crunge.wgpu._wgpu"
 
-[build-system]
-requires = ["poetry-core>=1.0.0", "setuptools", "wheel", "scikit-build", "cmake", "ninja"]
-build-backend = "poetry.masonry.api"

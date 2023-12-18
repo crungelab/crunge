@@ -1,0 +1,13 @@
+# TODO: We need to get this from CMake info somehow ...
+source: '/home/kurt/Dev/crunge/_cxbuild/build/depot/dawn/gen/include/dawn/webgpu_cpp_chained_struct.h'
+
+target: 'src/crunge/wgpu/bindings/chained_struct.cpp'
+
+module: _wgpu
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  #'-I../../depot/dawn/include',
+  '-I/home/kurt/Dev/crunge/_cxbuild/build/depot/dawn/gen/include',
+]

@@ -5,15 +5,16 @@ include(../../cmake/Core.cmake)
 include(../../cmake/Dawn.cmake)
 
 set(THIS crunge-wgpu)
-set(BINARY wgpu)
+set(MODULE wgpu)
 
-project(${THIS} VERSION "0.1")
+project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
-pybind11_add_module(${THIS} SHARED
-    src/crunge/wgpu/bindings/init.cpp
-)
+find_package(Python COMPONENTS Interpreter Development)
 
-configure_project(${THIS} ${BINARY})
+pybind11_add_module(${THIS} SHARED src/crunge/wgpu/bindings/init.cpp)
+cxbind_module(${THIS})
+configure_project(${THIS} ${MODULE})
+
 USES_PYBIND11(${THIS})
 USES_CORE(${THIS})
 USES_DAWN(${THIS})
@@ -22,7 +23,8 @@ USES_DAWN(${THIS})
 
 # target_compile_definitions(${THIS} PRIVATE IMGUI_USER_CONFIG=<crunge/imgui/imconfig.h>)
 set(SOURCES
-    src/crunge/wgpu/bindings/generated.cpp
+    src/crunge/wgpu/bindings/chained_struct.cpp
+    src/crunge/wgpu/bindings/wgpu.cpp
     src/crunge/wgpu/bindings/main.cpp
 )
 
@@ -39,20 +41,4 @@ target_include_directories(${THIS}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-#
-# INSTALL
-#
-# install headers
-# install(FILES ${IMGUI_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-# Quiet a warning, since this project is only valid with SKBUILD
-set(ignoreMe "${SKBUILD}")
-
-get_target_property(_RUNTIME_OUTPUT_DIRECTORY ${THIS} RUNTIME_OUTPUT_DIRECTORY)
-
-add_custom_command(
-    TARGET ${THIS} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${_RUNTIME_OUTPUT_DIRECTORY}/Debug/_wgpu.pyd
-    ${CMAKE_CURRENT_SOURCE_DIR}/crunge/wgpu/_wgpu.pyd
-)
+install(TARGETS ${THIS} DESTINATION crunge/${MODULE})

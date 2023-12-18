@@ -3,8 +3,8 @@
 #include <pybind11/stl.h>
 #include <limits>
 
-#include "imgui.h"
 #include "imgui_internal.h"
+//#include "imgui.h"
 
 #include <crunge/core/bindtools.h>
 #include <crunge/imgui/conversions.h>

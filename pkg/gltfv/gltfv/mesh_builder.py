@@ -145,7 +145,6 @@ class MeshBuilder(Builder):
         return vert_attributes
 
     def create_pipeline(self):
-        #shader_module = self.create_shader_module()
         vs_module: wgpu.ShaderModule = VertexShaderBuilder(self.vertex_table).build()
         fs_module: wgpu.ShaderModule = FragmentShaderBuilder(self.vertex_table, self.material).build()
 

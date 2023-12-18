@@ -53,10 +53,9 @@ add_subdirectory(pkg/imnodes)
 # wgpu
 #
 
-set(DAWN_SUPPORTS_GLFW_FOR_WINDOWING OFF CACHE BOOL "Enable GLFW for windowing" FORCE)
-set(DAWN_USE_GLFW OFF CACHE BOOL "Enable GLFW for windowing" FORCE)
+set(DAWN_BUILD_SAMPLES OFF CACHE BOOL "Build Samples" FORCE)
+add_subdirectory(depot/dawn)
 
-#add_subdirectory(depot/dawn)
-#add_subdirectory(pkg/wgpu)
+add_subdirectory(pkg/wgpu)
 
-#add_subdirectory(examples)
+add_subdirectory(examples)

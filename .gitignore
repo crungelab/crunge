@@ -88,3 +88,6 @@ temp
 
 # Procure
 depot/*
+
+# CxBuild
+_cxbuild

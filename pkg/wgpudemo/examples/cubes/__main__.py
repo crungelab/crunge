@@ -1,2 +1,0 @@
-import cubes
-cubes.main()

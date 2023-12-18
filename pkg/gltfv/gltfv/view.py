@@ -39,11 +39,7 @@ class View(Base):
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
 
-    def create_from_windows_hwnd(self, hwnd: py_object, hinstance = None):
-        wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-        wsd.hwnd = hwnd
-        wsd.hinstance = hinstance
-
+    def create_from_wsd(self, wsd):
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
