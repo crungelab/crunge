@@ -41,7 +41,6 @@ class AstcEncoder(GitSolution):
 
 class Dawn(GitSolution):
 	path = 'depot/dawn'
-	#url = 'https://github.com/encounter/dawn-cmake'
 	url = 'https://dawn.googlesource.com/dawn'
 
 solutions = [

@@ -34,6 +34,7 @@ class MeshBuilder(Builder):
         self.vertex_table = VertexTable()
 
     def build(self, tm_mesh: tm.Trimesh):
+        logger.debug("Building mesh")
         mesh: Mesh = self.mesh
         logger.debug(tm_mesh.__dict__)
 
@@ -48,12 +49,14 @@ class MeshBuilder(Builder):
         # Visuals
         visual = tm_mesh.visual
         visual_kind = visual.kind
+        logger.debug(f"visual_kind:  {visual_kind}")
         if visual_kind == "texture":
-            uv_coords = visual.uv.astype(np.float32)
-            uv_coords = (uv_coords - np.min(uv_coords)) / (
-                np.max(uv_coords) - np.min(uv_coords)
-            )
-            self.vertex_table.add_column(UvColumn('uv', uv_coords))
+            if hasattr(visual, "uv") and visual.uv is not None:
+                uv_coords = visual.uv.astype(np.float32)
+                uv_coords = (uv_coords - np.min(uv_coords)) / (
+                    np.max(uv_coords) - np.min(uv_coords)
+                )
+                self.vertex_table.add_column(UvColumn('uv', uv_coords))
         elif visual_kind == "vertex":
             vc = visual.vertex_colors.astype(np.float32)
             self.vertex_table.add_column(RgbaColumn('color', vc))
@@ -92,13 +95,19 @@ class MeshBuilder(Builder):
         mesh.uniform_buffer = uniform_buffer
 
         visual = tm_mesh.visual
-        logger.debug(tm_mesh.visual.__dict__)
-        tm_material = visual.material
-        logger.debug(tm_material.__dict__)
+        logger.debug(visual.__dict__)
 
-        material = MaterialBuilder().build(tm_material)
-        self.material = material
+        visual_cls = visual.__class__
+        if visual_cls == tm.visual.TextureVisuals:
+            tm_material = visual.material
+            logger.debug(tm_material.__dict__)
 
+            material = MaterialBuilder().build(tm_material)
+            self.material = material
+        elif visual_cls == tm.visual.ColorVisuals:
+            material = Material()
+            material.base_color_factor = (1, 1, 1, 1)
+            self.material = material
         pipeline = self.create_pipeline()
         mesh.pipeline = pipeline
 
@@ -131,6 +140,7 @@ class MeshBuilder(Builder):
         return mesh
 
     def create_vertex_attributes(self):
+        logger.debug("Creating vertex attributes")
         vert_attributes = wgpu.VertexAttributes()
         offset = 0
         for i, column in enumerate(self.vertex_table.columns):
@@ -145,9 +155,10 @@ class MeshBuilder(Builder):
         return vert_attributes
 
     def create_pipeline(self):
+        logger.debug("Creating pipeline")
         vs_module: wgpu.ShaderModule = VertexShaderBuilder(self.vertex_table).build()
         fs_module: wgpu.ShaderModule = FragmentShaderBuilder(self.vertex_table, self.material).build()
-
+        #exit()
         vertAttributes = self.create_vertex_attributes()
 
         vertBufferLayout = wgpu.VertexBufferLayout(

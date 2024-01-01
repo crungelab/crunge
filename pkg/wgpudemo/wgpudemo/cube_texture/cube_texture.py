@@ -72,11 +72,11 @@ class CubeTextureDemo(Demo):
 
         self.create_buffers()
         self.create_textures()
+        self.create_pipeline()
 
-        shader_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, shader_code
-        )
-
+    def create_pipeline(self):
+        shader_module = self.create_shader_module(shader_code)
+        
         # Pipeline creation
 
         vertAttributes = wgpu.VertexAttributes(

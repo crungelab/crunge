@@ -8,12 +8,15 @@ class VertexTable:
 
     def __init__(self) -> None:
         self.columns = []
+        self.column_map = {}
 
     def add_column(self, column):
+        column.location = len(self.columns)
         self.columns.append(column)
+        self.column_map[column.name] = column
 
     def has(self, name):
-        return name in self.columns
+        return name in self.column_map
 
     @property
     def count(self):

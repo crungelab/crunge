@@ -81,12 +81,8 @@ class TriangleTextureDemo(Demo):
         self.create_buffers()
         self.create_textures()
 
-        vs_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, vs_shader_code
-        )
-        fs_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, fs_shader_code
-        )
+        vs_module = self.create_shader_module(vs_shader_code)
+        fs_module = self.create_shader_module(fs_shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [

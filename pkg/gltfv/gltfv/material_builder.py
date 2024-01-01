@@ -67,7 +67,7 @@ class MaterialBuilder(Builder):
         #emissive_factor = tm_material.emissiveFactor if tm_material.emissiveFactor else (1, 1, 1)
         emissive_factor = (0, 0, 0) if tm_material.emissiveFactor is None else tm_material.emissiveFactor
         material.emissive_factor = emissive_factor
-        logger.debug(emissive_factor)
+        logger.debug(f"emissive_factor: {emissive_factor}")
 
         # Emissive Texture
         if tm_material.emissiveTexture:

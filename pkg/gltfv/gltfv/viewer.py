@@ -62,16 +62,24 @@ class Viewer(Base):
         self.create_window()
         self.create_view(scene)
 
-        last_time = None
+        last_time = time.perf_counter()
+        target_frame_time = 1 / 60  # Target frame time for 60 FPS
+
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
 
             now = time.perf_counter()
-            if not last_time:
-                last_time = now
-
             frame_time = now - last_time
-            last_time = now
+
+            # Calculate how much time is left to delay to maintain 60 FPS
+            time_left = target_frame_time - frame_time
+
+            # If there's time left in this frame, delay the next frame
+            if time_left > 0:
+                time.sleep(time_left)
+
+            # Update last_time for the next frame, considering the sleep
+            last_time = time.perf_counter()
 
             self.view.frame()
 

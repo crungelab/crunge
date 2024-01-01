@@ -9,7 +9,7 @@ class Material:
 
     metallic_factor: float = 0
     roughness_factor: float = 0
-    #metallic_roughness_texure: Texture = None
+    #metallic_roughness_texture: Texture = None
 
     #normal_texure: Texture = None
     #occlusion_texure: Texture = None

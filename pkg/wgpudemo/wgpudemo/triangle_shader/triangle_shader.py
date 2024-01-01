@@ -11,13 +11,13 @@ from ..common import Demo
 
 shader_code = """
 @vertex
-fn main_v(@builtin(vertex_index) idx: u32) -> @builtin(position) vec4<f32> {
+fn vs_main(@builtin(vertex_index) idx: u32) -> @builtin(position) vec4<f32> {
     var pos = array<vec2<f32>, 3>(
         vec2<f32>(0.0, 0.5), vec2<f32>(-0.5, -0.5), vec2<f32>(0.5, -0.5));
     return vec4<f32>(pos[idx], 0.0, 1.0);
 }
 @fragment
-fn main_f() -> @location(0) vec4<f32> {
+fn fs_main() -> @location(0) vec4<f32> {
     return vec4<f32>(0.0, 0.502, 1.0, 1.0); // 0x80/0xff ~= 0.502
 }
 """
@@ -31,16 +31,13 @@ class TriangleShaderDemo(Demo):
 
         self.create_depth_stencil_view()
 
-        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=shader_code)
-
-        sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
-        shader_module = self.device.create_shader_module(sm_descriptor)
+        shader_module = self.create_shader_module(shader_code)
 
         colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
         fragmentState = wgpu.FragmentState(
             module=shader_module,
-            entry_point="main_f",
+            entry_point="fs_main",
             target_count=1,
             targets=colorTargetState,
         )
@@ -53,7 +50,7 @@ class TriangleShaderDemo(Demo):
 
         vertex_state = wgpu.VertexState(
             module=shader_module,
-            entry_point="main_v",
+            entry_point="vs_main",
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(
@@ -106,11 +103,12 @@ class TriangleShaderDemo(Demo):
 
         self.queue.submit(1, commands)
 
+    '''
     def frame(self):
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         self.render(backbuffer, self.depth_stencil_view)
         self.swap_chain.present()
-
+    '''
 
 def main():
     TriangleShaderDemo().run()

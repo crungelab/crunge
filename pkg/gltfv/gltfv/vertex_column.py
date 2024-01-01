@@ -8,6 +8,7 @@ class VertexColumn:
     struct: Structure
     name: str
     data: np.ndarray
+    location: int = None
 
     def __init__(self, name: str, data: np.ndarray) -> None:
         self.name = name
@@ -16,6 +17,17 @@ class VertexColumn:
     @property
     def struct_size(self):
         return sizeof(self.struct)
+    
+    @property
+    def type(self):
+        if self.name == 'pos':
+            return "vec4<f32>"
+        elif self.format == wgpu.VertexFormat.FLOAT32X2:
+            return "vec2<f32>"
+        elif self.format == wgpu.VertexFormat.FLOAT32X3:
+            return "vec3<f32>"
+        elif self.format == wgpu.VertexFormat.FLOAT32X4:
+            return "vec4<f32>"
 
 class Position(Structure):
     _fields_ = [

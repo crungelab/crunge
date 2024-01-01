@@ -86,14 +86,11 @@ class ModelDemo(Demo):
 
     def __init__(self):
         super().__init__()
-        # self.create_model()
-        # exit()
+
         self.create_meshes()
         self.create_buffers()
 
-        shader_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, shader_code
-        )
+        shader_module = self.create_shader_module(shader_code)
 
         # Pipeline creation
 

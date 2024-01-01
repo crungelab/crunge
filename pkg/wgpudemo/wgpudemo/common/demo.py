@@ -17,6 +17,8 @@ class Demo:
     surface: wgpu.Surface = None
     swap_chain: wgpu.SwapChain = None
 
+    depth_stencil_view: wgpu.TextureView = None
+
     def __init__(self):
         super().__init__()
         self.name = self.__class__.__name__
@@ -66,26 +68,41 @@ class Demo:
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
+    def create_shader_module(self, code: str) -> wgpu.ShaderModule:
+        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
+        sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
+        shader_module = self.device.create_shader_module(sm_descriptor)
+        return shader_module
+
+    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
+        pass
 
     def frame(self):
-        pass
+        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        self.render(backbuffer, self.depth_stencil_view)
+        self.swap_chain.present()
 
     def run(self):
         self.create_window()
         self.create_swapchain()
 
-        last_time = None
+        last_time = time.perf_counter()
+        target_frame_time = 1 / 60  # Target frame time for 60 FPS
+
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
 
             now = time.perf_counter()
-            if not last_time:
-                last_time = now
-
             frame_time = now - last_time
-            last_time = now
+
+            # Calculate how much time is left to delay to maintain 60 FPS
+            time_left = target_frame_time - frame_time
+
+            # If there's time left in this frame, delay the next frame
+            if time_left > 0:
+                time.sleep(time_left)
+
+            # Update last_time for the next frame, considering the sleep
+            last_time = time.perf_counter()
 
             self.frame()
-
-        glfw.destroy_window(self.window)
-        glfw.terminate()

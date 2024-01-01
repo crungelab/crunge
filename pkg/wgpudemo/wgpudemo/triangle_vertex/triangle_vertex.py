@@ -49,10 +49,15 @@ class TriangleVertexDemo(Demo):
         super().__init__()
 
         self.create_buffers()
+        self.create_pipeline()
 
-        shader_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, shader_code
+    def create_buffers(self):
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.device, vertex_data, wgpu.BufferUsage.VERTEX
         )
+
+    def create_pipeline(self):
+        shader_module = self.create_shader_module(shader_code)
 
         # Pipeline creation
 
@@ -96,12 +101,7 @@ class TriangleVertexDemo(Demo):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-    def create_buffers(self):
-        self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, vertex_data, wgpu.BufferUsage.VERTEX
-        )
-
-    def render(self, view: wgpu.TextureView):
+    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
         attachment = wgpu.RenderPassColorAttachment(
             view=view,
             load_op=wgpu.LoadOp.CLEAR,
@@ -126,12 +126,13 @@ class TriangleVertexDemo(Demo):
 
         self.queue.submit(1, commands)
 
+    '''
     def frame(self):
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
         self.swap_chain.present()
-
+    '''
 
 def main():
     TriangleVertexDemo().run()

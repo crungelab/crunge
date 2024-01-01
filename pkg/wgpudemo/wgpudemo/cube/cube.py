@@ -64,10 +64,10 @@ class CubeDemo(Demo):
         super().__init__()
 
         self.create_buffers()
+        self.create_pipeline()
 
-        shader_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, shader_code
-        )
+    def create_pipeline(self):
+        shader_module = self.create_shader_module(shader_code)
 
         # Pipeline creation
 
@@ -151,7 +151,6 @@ class CubeDemo(Demo):
         aspect = float(self.kWidth) / float(self.kHeight)
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
-        # exit()
 
     @property
     def transform_matrix(self):

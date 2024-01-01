@@ -112,9 +112,7 @@ class MeshTextureDemo(Demo):
         self.create_buffers()
         self.create_textures()
 
-        shader_module: wgpu.ShaderModule = utils.create_shader_module(
-            self.device, shader_code
-        )
+        shader_module = self.create_shader_module(shader_code)
 
         # Pipeline creation
 
