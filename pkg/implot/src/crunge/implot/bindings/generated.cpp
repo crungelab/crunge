@@ -14,8 +14,7 @@
 namespace py = pybind11;
 
 void init_generated(py::module &_implot, Registry &registry) {
-    PYENUM_SCOPED_BEGIN(_implot, ImAxis_, Axis)
-    Axis
+    py::enum_<ImAxis_>(_implot, "Axis", py::arithmetic())
         .value("AXIS_X1", ImAxis_::ImAxis_X1)
         .value("AXIS_X2", ImAxis_::ImAxis_X2)
         .value("AXIS_X3", ImAxis_::ImAxis_X3)
@@ -24,11 +23,8 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("AXIS_Y3", ImAxis_::ImAxis_Y3)
         .value("AXIS_COUNT", ImAxis_::ImAxis_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImAxis_, Axis)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotFlags_, Flags)
-    Flags
+    py::enum_<ImPlotFlags_>(_implot, "Flags", py::arithmetic())
         .value("FLAGS_NONE", ImPlotFlags_::ImPlotFlags_None)
         .value("FLAGS_NO_TITLE", ImPlotFlags_::ImPlotFlags_NoTitle)
         .value("FLAGS_NO_LEGEND", ImPlotFlags_::ImPlotFlags_NoLegend)
@@ -41,11 +37,8 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("FLAGS_CROSSHAIRS", ImPlotFlags_::ImPlotFlags_Crosshairs)
         .value("FLAGS_CANVAS_ONLY", ImPlotFlags_::ImPlotFlags_CanvasOnly)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotFlags_, Flags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotAxisFlags_, AxisFlags)
-    AxisFlags
+    py::enum_<ImPlotAxisFlags_>(_implot, "AxisFlags", py::arithmetic())
         .value("AXIS_FLAGS_NONE", ImPlotAxisFlags_::ImPlotAxisFlags_None)
         .value("AXIS_FLAGS_NO_LABEL", ImPlotAxisFlags_::ImPlotAxisFlags_NoLabel)
         .value("AXIS_FLAGS_NO_GRID_LINES", ImPlotAxisFlags_::ImPlotAxisFlags_NoGridLines)
@@ -67,11 +60,8 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("AXIS_FLAGS_NO_DECORATIONS", ImPlotAxisFlags_::ImPlotAxisFlags_NoDecorations)
         .value("AXIS_FLAGS_AUX_DEFAULT", ImPlotAxisFlags_::ImPlotAxisFlags_AuxDefault)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotAxisFlags_, AxisFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotSubplotFlags_, SubplotFlags)
-    SubplotFlags
+    py::enum_<ImPlotSubplotFlags_>(_implot, "SubplotFlags", py::arithmetic())
         .value("SUBPLOT_FLAGS_NONE", ImPlotSubplotFlags_::ImPlotSubplotFlags_None)
         .value("SUBPLOT_FLAGS_NO_TITLE", ImPlotSubplotFlags_::ImPlotSubplotFlags_NoTitle)
         .value("SUBPLOT_FLAGS_NO_LEGEND", ImPlotSubplotFlags_::ImPlotSubplotFlags_NoLegend)
@@ -85,11 +75,8 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("SUBPLOT_FLAGS_LINK_ALL_Y", ImPlotSubplotFlags_::ImPlotSubplotFlags_LinkAllY)
         .value("SUBPLOT_FLAGS_COL_MAJOR", ImPlotSubplotFlags_::ImPlotSubplotFlags_ColMajor)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotSubplotFlags_, SubplotFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotLegendFlags_, LegendFlags)
-    LegendFlags
+    py::enum_<ImPlotLegendFlags_>(_implot, "LegendFlags", py::arithmetic())
         .value("LEGEND_FLAGS_NONE", ImPlotLegendFlags_::ImPlotLegendFlags_None)
         .value("LEGEND_FLAGS_NO_BUTTONS", ImPlotLegendFlags_::ImPlotLegendFlags_NoButtons)
         .value("LEGEND_FLAGS_NO_HIGHLIGHT_ITEM", ImPlotLegendFlags_::ImPlotLegendFlags_NoHighlightItem)
@@ -99,51 +86,36 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("LEGEND_FLAGS_HORIZONTAL", ImPlotLegendFlags_::ImPlotLegendFlags_Horizontal)
         .value("LEGEND_FLAGS_SORT", ImPlotLegendFlags_::ImPlotLegendFlags_Sort)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotLegendFlags_, LegendFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotMouseTextFlags_, MouseTextFlags)
-    MouseTextFlags
+    py::enum_<ImPlotMouseTextFlags_>(_implot, "MouseTextFlags", py::arithmetic())
         .value("MOUSE_TEXT_FLAGS_NONE", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_None)
         .value("MOUSE_TEXT_FLAGS_NO_AUX_AXES", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_NoAuxAxes)
         .value("MOUSE_TEXT_FLAGS_NO_FORMAT", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_NoFormat)
         .value("MOUSE_TEXT_FLAGS_SHOW_ALWAYS", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_ShowAlways)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotMouseTextFlags_, MouseTextFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotDragToolFlags_, DragToolFlags)
-    DragToolFlags
+    py::enum_<ImPlotDragToolFlags_>(_implot, "DragToolFlags", py::arithmetic())
         .value("DRAG_TOOL_FLAGS_NONE", ImPlotDragToolFlags_::ImPlotDragToolFlags_None)
         .value("DRAG_TOOL_FLAGS_NO_CURSORS", ImPlotDragToolFlags_::ImPlotDragToolFlags_NoCursors)
         .value("DRAG_TOOL_FLAGS_NO_FIT", ImPlotDragToolFlags_::ImPlotDragToolFlags_NoFit)
         .value("DRAG_TOOL_FLAGS_NO_INPUTS", ImPlotDragToolFlags_::ImPlotDragToolFlags_NoInputs)
         .value("DRAG_TOOL_FLAGS_DELAYED", ImPlotDragToolFlags_::ImPlotDragToolFlags_Delayed)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotDragToolFlags_, DragToolFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotColormapScaleFlags_, ColormapScaleFlags)
-    ColormapScaleFlags
+    py::enum_<ImPlotColormapScaleFlags_>(_implot, "ColormapScaleFlags", py::arithmetic())
         .value("COLORMAP_SCALE_FLAGS_NONE", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_None)
         .value("COLORMAP_SCALE_FLAGS_NO_LABEL", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_NoLabel)
         .value("COLORMAP_SCALE_FLAGS_OPPOSITE", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_Opposite)
         .value("COLORMAP_SCALE_FLAGS_INVERT", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_Invert)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotColormapScaleFlags_, ColormapScaleFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotItemFlags_, ItemFlags)
-    ItemFlags
+    py::enum_<ImPlotItemFlags_>(_implot, "ItemFlags", py::arithmetic())
         .value("ITEM_FLAGS_NONE", ImPlotItemFlags_::ImPlotItemFlags_None)
         .value("ITEM_FLAGS_NO_LEGEND", ImPlotItemFlags_::ImPlotItemFlags_NoLegend)
         .value("ITEM_FLAGS_NO_FIT", ImPlotItemFlags_::ImPlotItemFlags_NoFit)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotItemFlags_, ItemFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotLineFlags_, LineFlags)
-    LineFlags
+    py::enum_<ImPlotLineFlags_>(_implot, "LineFlags", py::arithmetic())
         .value("LINE_FLAGS_NONE", ImPlotLineFlags_::ImPlotLineFlags_None)
         .value("LINE_FLAGS_SEGMENTS", ImPlotLineFlags_::ImPlotLineFlags_Segments)
         .value("LINE_FLAGS_LOOP", ImPlotLineFlags_::ImPlotLineFlags_Loop)
@@ -151,93 +123,60 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("LINE_FLAGS_NO_CLIP", ImPlotLineFlags_::ImPlotLineFlags_NoClip)
         .value("LINE_FLAGS_SHADED", ImPlotLineFlags_::ImPlotLineFlags_Shaded)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotLineFlags_, LineFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotScatterFlags_, ScatterFlags)
-    ScatterFlags
+    py::enum_<ImPlotScatterFlags_>(_implot, "ScatterFlags", py::arithmetic())
         .value("SCATTER_FLAGS_NONE", ImPlotScatterFlags_::ImPlotScatterFlags_None)
         .value("SCATTER_FLAGS_NO_CLIP", ImPlotScatterFlags_::ImPlotScatterFlags_NoClip)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotScatterFlags_, ScatterFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotStairsFlags_, StairsFlags)
-    StairsFlags
+    py::enum_<ImPlotStairsFlags_>(_implot, "StairsFlags", py::arithmetic())
         .value("STAIRS_FLAGS_NONE", ImPlotStairsFlags_::ImPlotStairsFlags_None)
         .value("STAIRS_FLAGS_PRE_STEP", ImPlotStairsFlags_::ImPlotStairsFlags_PreStep)
         .value("STAIRS_FLAGS_SHADED", ImPlotStairsFlags_::ImPlotStairsFlags_Shaded)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotStairsFlags_, StairsFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotShadedFlags_, ShadedFlags)
-    ShadedFlags
+    py::enum_<ImPlotShadedFlags_>(_implot, "ShadedFlags", py::arithmetic())
         .value("SHADED_FLAGS_NONE", ImPlotShadedFlags_::ImPlotShadedFlags_None)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotShadedFlags_, ShadedFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotBarsFlags_, BarsFlags)
-    BarsFlags
+    py::enum_<ImPlotBarsFlags_>(_implot, "BarsFlags", py::arithmetic())
         .value("BARS_FLAGS_NONE", ImPlotBarsFlags_::ImPlotBarsFlags_None)
         .value("BARS_FLAGS_HORIZONTAL", ImPlotBarsFlags_::ImPlotBarsFlags_Horizontal)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotBarsFlags_, BarsFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotBarGroupsFlags_, BarGroupsFlags)
-    BarGroupsFlags
+    py::enum_<ImPlotBarGroupsFlags_>(_implot, "BarGroupsFlags", py::arithmetic())
         .value("BAR_GROUPS_FLAGS_NONE", ImPlotBarGroupsFlags_::ImPlotBarGroupsFlags_None)
         .value("BAR_GROUPS_FLAGS_HORIZONTAL", ImPlotBarGroupsFlags_::ImPlotBarGroupsFlags_Horizontal)
         .value("BAR_GROUPS_FLAGS_STACKED", ImPlotBarGroupsFlags_::ImPlotBarGroupsFlags_Stacked)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotBarGroupsFlags_, BarGroupsFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotErrorBarsFlags_, ErrorBarsFlags)
-    ErrorBarsFlags
+    py::enum_<ImPlotErrorBarsFlags_>(_implot, "ErrorBarsFlags", py::arithmetic())
         .value("ERROR_BARS_FLAGS_NONE", ImPlotErrorBarsFlags_::ImPlotErrorBarsFlags_None)
         .value("ERROR_BARS_FLAGS_HORIZONTAL", ImPlotErrorBarsFlags_::ImPlotErrorBarsFlags_Horizontal)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotErrorBarsFlags_, ErrorBarsFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotStemsFlags_, StemsFlags)
-    StemsFlags
+    py::enum_<ImPlotStemsFlags_>(_implot, "StemsFlags", py::arithmetic())
         .value("STEMS_FLAGS_NONE", ImPlotStemsFlags_::ImPlotStemsFlags_None)
         .value("STEMS_FLAGS_HORIZONTAL", ImPlotStemsFlags_::ImPlotStemsFlags_Horizontal)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotStemsFlags_, StemsFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotInfLinesFlags_, InfLinesFlags)
-    InfLinesFlags
+    py::enum_<ImPlotInfLinesFlags_>(_implot, "InfLinesFlags", py::arithmetic())
         .value("INF_LINES_FLAGS_NONE", ImPlotInfLinesFlags_::ImPlotInfLinesFlags_None)
         .value("INF_LINES_FLAGS_HORIZONTAL", ImPlotInfLinesFlags_::ImPlotInfLinesFlags_Horizontal)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotInfLinesFlags_, InfLinesFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotPieChartFlags_, PieChartFlags)
-    PieChartFlags
+    py::enum_<ImPlotPieChartFlags_>(_implot, "PieChartFlags", py::arithmetic())
         .value("PIE_CHART_FLAGS_NONE", ImPlotPieChartFlags_::ImPlotPieChartFlags_None)
         .value("PIE_CHART_FLAGS_NORMALIZE", ImPlotPieChartFlags_::ImPlotPieChartFlags_Normalize)
         .value("PIE_CHART_FLAGS_IGNORE_HIDDEN", ImPlotPieChartFlags_::ImPlotPieChartFlags_IgnoreHidden)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotPieChartFlags_, PieChartFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotHeatmapFlags_, HeatmapFlags)
-    HeatmapFlags
+    py::enum_<ImPlotHeatmapFlags_>(_implot, "HeatmapFlags", py::arithmetic())
         .value("HEATMAP_FLAGS_NONE", ImPlotHeatmapFlags_::ImPlotHeatmapFlags_None)
         .value("HEATMAP_FLAGS_COL_MAJOR", ImPlotHeatmapFlags_::ImPlotHeatmapFlags_ColMajor)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotHeatmapFlags_, HeatmapFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotHistogramFlags_, HistogramFlags)
-    HistogramFlags
+    py::enum_<ImPlotHistogramFlags_>(_implot, "HistogramFlags", py::arithmetic())
         .value("HISTOGRAM_FLAGS_NONE", ImPlotHistogramFlags_::ImPlotHistogramFlags_None)
         .value("HISTOGRAM_FLAGS_HORIZONTAL", ImPlotHistogramFlags_::ImPlotHistogramFlags_Horizontal)
         .value("HISTOGRAM_FLAGS_CUMULATIVE", ImPlotHistogramFlags_::ImPlotHistogramFlags_Cumulative)
@@ -245,49 +184,31 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("HISTOGRAM_FLAGS_NO_OUTLIERS", ImPlotHistogramFlags_::ImPlotHistogramFlags_NoOutliers)
         .value("HISTOGRAM_FLAGS_COL_MAJOR", ImPlotHistogramFlags_::ImPlotHistogramFlags_ColMajor)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotHistogramFlags_, HistogramFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotDigitalFlags_, DigitalFlags)
-    DigitalFlags
+    py::enum_<ImPlotDigitalFlags_>(_implot, "DigitalFlags", py::arithmetic())
         .value("DIGITAL_FLAGS_NONE", ImPlotDigitalFlags_::ImPlotDigitalFlags_None)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotDigitalFlags_, DigitalFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotImageFlags_, ageFlags)
-    ageFlags
+    py::enum_<ImPlotImageFlags_>(_implot, "ageFlags", py::arithmetic())
         .value("AGE_FLAGS_NONE", ImPlotImageFlags_::ImPlotImageFlags_None)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotImageFlags_, ageFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotTextFlags_, TextFlags)
-    TextFlags
+    py::enum_<ImPlotTextFlags_>(_implot, "TextFlags", py::arithmetic())
         .value("TEXT_FLAGS_NONE", ImPlotTextFlags_::ImPlotTextFlags_None)
         .value("TEXT_FLAGS_VERTICAL", ImPlotTextFlags_::ImPlotTextFlags_Vertical)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotTextFlags_, TextFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotDummyFlags_, DummyFlags)
-    DummyFlags
+    py::enum_<ImPlotDummyFlags_>(_implot, "DummyFlags", py::arithmetic())
         .value("DUMMY_FLAGS_NONE", ImPlotDummyFlags_::ImPlotDummyFlags_None)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotDummyFlags_, DummyFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotCond_, Cond)
-    Cond
+    py::enum_<ImPlotCond_>(_implot, "Cond", py::arithmetic())
         .value("COND_NONE", ImPlotCond_::ImPlotCond_None)
         .value("COND_ALWAYS", ImPlotCond_::ImPlotCond_Always)
         .value("COND_ONCE", ImPlotCond_::ImPlotCond_Once)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotCond_, Cond)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotCol_, Col)
-    Col
+    py::enum_<ImPlotCol_>(_implot, "Col", py::arithmetic())
         .value("COL_LINE", ImPlotCol_::ImPlotCol_Line)
         .value("COL_FILL", ImPlotCol_::ImPlotCol_Fill)
         .value("COL_MARKER_OUTLINE", ImPlotCol_::ImPlotCol_MarkerOutline)
@@ -311,11 +232,8 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("COL_CROSSHAIRS", ImPlotCol_::ImPlotCol_Crosshairs)
         .value("COL_COUNT", ImPlotCol_::ImPlotCol_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotCol_, Col)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotStyleVar_, StyleVar)
-    StyleVar
+    py::enum_<ImPlotStyleVar_>(_implot, "StyleVar", py::arithmetic())
         .value("STYLE_VAR_LINE_WEIGHT", ImPlotStyleVar_::ImPlotStyleVar_LineWeight)
         .value("STYLE_VAR_MARKER", ImPlotStyleVar_::ImPlotStyleVar_Marker)
         .value("STYLE_VAR_MARKER_SIZE", ImPlotStyleVar_::ImPlotStyleVar_MarkerSize)
@@ -345,21 +263,15 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("STYLE_VAR_PLOT_MIN_SIZE", ImPlotStyleVar_::ImPlotStyleVar_PlotMinSize)
         .value("STYLE_VAR_COUNT", ImPlotStyleVar_::ImPlotStyleVar_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotStyleVar_, StyleVar)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotScale_, Scale)
-    Scale
+    py::enum_<ImPlotScale_>(_implot, "Scale", py::arithmetic())
         .value("SCALE_LINEAR", ImPlotScale_::ImPlotScale_Linear)
         .value("SCALE_TIME", ImPlotScale_::ImPlotScale_Time)
         .value("SCALE_LOG10", ImPlotScale_::ImPlotScale_Log10)
         .value("SCALE_SYM_LOG", ImPlotScale_::ImPlotScale_SymLog)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotScale_, Scale)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotMarker_, Marker)
-    Marker
+    py::enum_<ImPlotMarker_>(_implot, "Marker", py::arithmetic())
         .value("MARKER_NONE", ImPlotMarker_::ImPlotMarker_None)
         .value("MARKER_CIRCLE", ImPlotMarker_::ImPlotMarker_Circle)
         .value("MARKER_SQUARE", ImPlotMarker_::ImPlotMarker_Square)
@@ -373,11 +285,8 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("MARKER_ASTERISK", ImPlotMarker_::ImPlotMarker_Asterisk)
         .value("MARKER_COUNT", ImPlotMarker_::ImPlotMarker_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotMarker_, Marker)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotColormap_, Colormap)
-    Colormap
+    py::enum_<ImPlotColormap_>(_implot, "Colormap", py::arithmetic())
         .value("COLORMAP_DEEP", ImPlotColormap_::ImPlotColormap_Deep)
         .value("COLORMAP_DARK", ImPlotColormap_::ImPlotColormap_Dark)
         .value("COLORMAP_PASTEL", ImPlotColormap_::ImPlotColormap_Pastel)
@@ -395,11 +304,8 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("COLORMAP_SPECTRAL", ImPlotColormap_::ImPlotColormap_Spectral)
         .value("COLORMAP_GREYS", ImPlotColormap_::ImPlotColormap_Greys)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotColormap_, Colormap)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotLocation_, Location)
-    Location
+    py::enum_<ImPlotLocation_>(_implot, "Location", py::arithmetic())
         .value("LOCATION_CENTER", ImPlotLocation_::ImPlotLocation_Center)
         .value("LOCATION_NORTH", ImPlotLocation_::ImPlotLocation_North)
         .value("LOCATION_SOUTH", ImPlotLocation_::ImPlotLocation_South)
@@ -410,18 +316,13 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("LOCATION_SOUTH_WEST", ImPlotLocation_::ImPlotLocation_SouthWest)
         .value("LOCATION_SOUTH_EAST", ImPlotLocation_::ImPlotLocation_SouthEast)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotLocation_, Location)
 
-
-    PYENUM_SCOPED_BEGIN(_implot, ImPlotBin_, Bin)
-    Bin
+    py::enum_<ImPlotBin_>(_implot, "Bin", py::arithmetic())
         .value("BIN_SQRT", ImPlotBin_::ImPlotBin_Sqrt)
         .value("BIN_STURGES", ImPlotBin_::ImPlotBin_Sturges)
         .value("BIN_RICE", ImPlotBin_::ImPlotBin_Rice)
         .value("BIN_SCOTT", ImPlotBin_::ImPlotBin_Scott)
         .export_values();
-    PYENUM_SCOPED_END(_implot, ImPlotBin_, Bin)
-
 
     PYCLASS_BEGIN(_implot, ImPlotPoint, Point)
         Point.def_readwrite("x", &ImPlotPoint::x);

@@ -11,7 +11,7 @@ authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
     "arcade ~=2.6.17",
-    "numpy ~=1.26.0",
+    "numpy ~=1.26.2",
     "pyo ~= 1.0.5",
-    "mido ~=1.3.0",
+    "mido ~=1.3.2",
 ]

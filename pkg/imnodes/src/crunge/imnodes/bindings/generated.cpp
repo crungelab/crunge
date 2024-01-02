@@ -17,8 +17,7 @@
 namespace py = pybind11;
 
 void init_generated(py::module &_imnodes, Registry &registry) {
-    PYENUM_SCOPED_BEGIN(_imnodes, ImNodesCol_, Col)
-    Col
+    py::enum_<ImNodesCol_>(_imnodes, "Col", py::arithmetic())
         .value("COL_NODE_BACKGROUND", ImNodesCol_::ImNodesCol_NodeBackground)
         .value("COL_NODE_BACKGROUND_HOVERED", ImNodesCol_::ImNodesCol_NodeBackgroundHovered)
         .value("COL_NODE_BACKGROUND_SELECTED", ImNodesCol_::ImNodesCol_NodeBackgroundSelected)
@@ -50,11 +49,8 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("COL_MINI_MAP_CANVAS_OUTLINE", ImNodesCol_::ImNodesCol_MiniMapCanvasOutline)
         .value("COL_COUNT", ImNodesCol_::ImNodesCol_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imnodes, ImNodesCol_, Col)
 
-
-    PYENUM_SCOPED_BEGIN(_imnodes, ImNodesStyleVar_, StyleVar)
-    StyleVar
+    py::enum_<ImNodesStyleVar_>(_imnodes, "StyleVar", py::arithmetic())
         .value("STYLE_VAR_GRID_SPACING", ImNodesStyleVar_::ImNodesStyleVar_GridSpacing)
         .value("STYLE_VAR_NODE_CORNER_ROUNDING", ImNodesStyleVar_::ImNodesStyleVar_NodeCornerRounding)
         .value("STYLE_VAR_NODE_PADDING", ImNodesStyleVar_::ImNodesStyleVar_NodePadding)
@@ -72,22 +68,16 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("STYLE_VAR_MINI_MAP_OFFSET", ImNodesStyleVar_::ImNodesStyleVar_MiniMapOffset)
         .value("STYLE_VAR_COUNT", ImNodesStyleVar_::ImNodesStyleVar_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imnodes, ImNodesStyleVar_, StyleVar)
 
-
-    PYENUM_SCOPED_BEGIN(_imnodes, ImNodesStyleFlags_, StyleFlags)
-    StyleFlags
+    py::enum_<ImNodesStyleFlags_>(_imnodes, "StyleFlags", py::arithmetic())
         .value("STYLE_FLAGS_NONE", ImNodesStyleFlags_::ImNodesStyleFlags_None)
         .value("STYLE_FLAGS_NODE_OUTLINE", ImNodesStyleFlags_::ImNodesStyleFlags_NodeOutline)
         .value("STYLE_FLAGS_GRID_LINES", ImNodesStyleFlags_::ImNodesStyleFlags_GridLines)
         .value("STYLE_FLAGS_GRID_LINES_PRIMARY", ImNodesStyleFlags_::ImNodesStyleFlags_GridLinesPrimary)
         .value("STYLE_FLAGS_GRID_SNAPPING", ImNodesStyleFlags_::ImNodesStyleFlags_GridSnapping)
         .export_values();
-    PYENUM_SCOPED_END(_imnodes, ImNodesStyleFlags_, StyleFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imnodes, ImNodesPinShape_, PinShape)
-    PinShape
+    py::enum_<ImNodesPinShape_>(_imnodes, "PinShape", py::arithmetic())
         .value("PIN_SHAPE_CIRCLE", ImNodesPinShape_::ImNodesPinShape_Circle)
         .value("PIN_SHAPE_CIRCLE_FILLED", ImNodesPinShape_::ImNodesPinShape_CircleFilled)
         .value("PIN_SHAPE_TRIANGLE", ImNodesPinShape_::ImNodesPinShape_Triangle)
@@ -95,30 +85,38 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("PIN_SHAPE_QUAD", ImNodesPinShape_::ImNodesPinShape_Quad)
         .value("PIN_SHAPE_QUAD_FILLED", ImNodesPinShape_::ImNodesPinShape_QuadFilled)
         .export_values();
-    PYENUM_SCOPED_END(_imnodes, ImNodesPinShape_, PinShape)
 
-
-    PYENUM_SCOPED_BEGIN(_imnodes, ImNodesAttributeFlags_, AttributeFlags)
-    AttributeFlags
+    py::enum_<ImNodesAttributeFlags_>(_imnodes, "AttributeFlags", py::arithmetic())
         .value("ATTRIBUTE_FLAGS_NONE", ImNodesAttributeFlags_::ImNodesAttributeFlags_None)
         .value("ATTRIBUTE_FLAGS_ENABLE_LINK_DETACH_WITH_DRAG_CLICK", ImNodesAttributeFlags_::ImNodesAttributeFlags_EnableLinkDetachWithDragClick)
         .value("ATTRIBUTE_FLAGS_ENABLE_LINK_CREATION_ON_SNAP", ImNodesAttributeFlags_::ImNodesAttributeFlags_EnableLinkCreationOnSnap)
         .export_values();
-    PYENUM_SCOPED_END(_imnodes, ImNodesAttributeFlags_, AttributeFlags)
-
 
     PYCLASS_BEGIN(_imnodes, ImNodesIO, IO)
+        PYCLASS_BEGIN(_imnodes, ImNodesIO::EmulateThreeButtonMouse, EmulateThreeButtonMouse)
+            EmulateThreeButtonMouse.def(py::init<>());
+            EmulateThreeButtonMouse.def_readwrite("modifier", &ImNodesIO::EmulateThreeButtonMouse::Modifier);
+        PYCLASS_END(_imnodes, ImNodesIO::EmulateThreeButtonMouse, EmulateThreeButtonMouse)
 
-        IO.def_readwrite("emulate_three_button_mouse", &ImNodesIO::EmulateThreeButtonMouse);
-        IO.def_readwrite("link_detach_with_modifier_click", &ImNodesIO::LinkDetachWithModifierClick);
-        IO.def_readwrite("multiple_select_modifier", &ImNodesIO::MultipleSelectModifier);
+        IO.def_readwrite("EmulateThreeButtonMouse", &ImNodesIO::EmulateThreeButtonMouse);
+        PYCLASS_BEGIN(_imnodes, ImNodesIO::LinkDetachWithModifierClick, LinkDetachWithModifierClick)
+            LinkDetachWithModifierClick.def(py::init<>());
+            LinkDetachWithModifierClick.def_readwrite("modifier", &ImNodesIO::LinkDetachWithModifierClick::Modifier);
+        PYCLASS_END(_imnodes, ImNodesIO::LinkDetachWithModifierClick, LinkDetachWithModifierClick)
+
+        IO.def_readwrite("LinkDetachWithModifierClick", &ImNodesIO::LinkDetachWithModifierClick);
+        PYCLASS_BEGIN(_imnodes, ImNodesIO::MultipleSelectModifier, MultipleSelectModifier)
+            MultipleSelectModifier.def(py::init<>());
+            MultipleSelectModifier.def_readwrite("modifier", &ImNodesIO::MultipleSelectModifier::Modifier);
+        PYCLASS_END(_imnodes, ImNodesIO::MultipleSelectModifier, MultipleSelectModifier)
+
+        IO.def_readwrite("MultipleSelectModifier", &ImNodesIO::MultipleSelectModifier);
         IO.def_readwrite("alt_mouse_button", &ImNodesIO::AltMouseButton);
         IO.def_readwrite("auto_panning_speed", &ImNodesIO::AutoPanningSpeed);
         IO.def(py::init<>());
     PYCLASS_END(_imnodes, ImNodesIO, IO)
 
     PYCLASS_BEGIN(_imnodes, ImNodesStyle, Style)
-
         Style.def_readwrite("grid_spacing", &ImNodesStyle::GridSpacing);
         Style.def_readwrite("node_corner_rounding", &ImNodesStyle::NodeCornerRounding);
         Style.def_readwrite("node_padding", &ImNodesStyle::NodePadding);
@@ -139,15 +137,12 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         Style.def(py::init<>());
     PYCLASS_END(_imnodes, ImNodesStyle, Style)
 
-    PYENUM_SCOPED_BEGIN(_imnodes, ImNodesMiniMapLocation_, MiniMapLocation)
-    MiniMapLocation
+    py::enum_<ImNodesMiniMapLocation_>(_imnodes, "MiniMapLocation", py::arithmetic())
         .value("MINI_MAP_LOCATION_BOTTOM_LEFT", ImNodesMiniMapLocation_::ImNodesMiniMapLocation_BottomLeft)
         .value("MINI_MAP_LOCATION_BOTTOM_RIGHT", ImNodesMiniMapLocation_::ImNodesMiniMapLocation_BottomRight)
         .value("MINI_MAP_LOCATION_TOP_LEFT", ImNodesMiniMapLocation_::ImNodesMiniMapLocation_TopLeft)
         .value("MINI_MAP_LOCATION_TOP_RIGHT", ImNodesMiniMapLocation_::ImNodesMiniMapLocation_TopRight)
         .export_values();
-    PYENUM_SCOPED_END(_imnodes, ImNodesMiniMapLocation_, MiniMapLocation)
-
 
     _imnodes.def("set_im_gui_context", &ImNodes::SetImGuiContext
     , py::arg("ctx")

@@ -1,3 +1,0 @@
-# Procure
-
-Utility for procuring git repositories etc ...

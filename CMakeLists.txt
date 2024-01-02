@@ -39,17 +39,6 @@ add_subdirectory(pkg/implot)
 add_subdirectory(pkg/imnodes)
 
 #
-# bgfx
-#
-#set(CLI OFF CACHE BOOL "Enable build of CLI" FORCE)
-#set(UNITTEST OFF CACHE BOOL "Enable builds for unit tests" FORCE)
-#add_subdirectory(depot/astc-encoder)
-
-#add_subdirectory(src/bimg)
-#add_subdirectory(src/bgfx)
-#add_subdirectory(pkg/bgfx)
-
-#
 # TinyGLTF
 #
 add_subdirectory(depot/gltf)

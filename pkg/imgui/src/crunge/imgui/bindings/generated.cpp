@@ -1938,8 +1938,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     , py::arg("platform_handle")
     , py::return_value_policy::automatic_reference);
 
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiWindowFlags_, WindowFlags)
-    WindowFlags
+    py::enum_<ImGuiWindowFlags_>(_imgui, "WindowFlags", py::arithmetic())
         .value("WINDOW_FLAGS_NONE", ImGuiWindowFlags_::ImGuiWindowFlags_None)
         .value("WINDOW_FLAGS_NO_TITLE_BAR", ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar)
         .value("WINDOW_FLAGS_NO_RESIZE", ImGuiWindowFlags_::ImGuiWindowFlags_NoResize)
@@ -1973,11 +1972,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("WINDOW_FLAGS_CHILD_MENU", ImGuiWindowFlags_::ImGuiWindowFlags_ChildMenu)
         .value("WINDOW_FLAGS_DOCK_NODE_HOST", ImGuiWindowFlags_::ImGuiWindowFlags_DockNodeHost)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiWindowFlags_, WindowFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiInputTextFlags_, InputTextFlags)
-    InputTextFlags
+    py::enum_<ImGuiInputTextFlags_>(_imgui, "InputTextFlags", py::arithmetic())
         .value("INPUT_TEXT_FLAGS_NONE", ImGuiInputTextFlags_::ImGuiInputTextFlags_None)
         .value("INPUT_TEXT_FLAGS_CHARS_DECIMAL", ImGuiInputTextFlags_::ImGuiInputTextFlags_CharsDecimal)
         .value("INPUT_TEXT_FLAGS_CHARS_HEXADECIMAL", ImGuiInputTextFlags_::ImGuiInputTextFlags_CharsHexadecimal)
@@ -2001,11 +1997,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("INPUT_TEXT_FLAGS_CALLBACK_EDIT", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackEdit)
         .value("INPUT_TEXT_FLAGS_ESCAPE_CLEARS_ALL", ImGuiInputTextFlags_::ImGuiInputTextFlags_EscapeClearsAll)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiInputTextFlags_, InputTextFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiTreeNodeFlags_, TreeNodeFlags)
-    TreeNodeFlags
+    py::enum_<ImGuiTreeNodeFlags_>(_imgui, "TreeNodeFlags", py::arithmetic())
         .value("TREE_NODE_FLAGS_NONE", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_None)
         .value("TREE_NODE_FLAGS_SELECTED", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Selected)
         .value("TREE_NODE_FLAGS_FRAMED", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Framed)
@@ -2024,11 +2017,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("TREE_NODE_FLAGS_NAV_LEFT_JUMPS_BACK_HERE", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_NavLeftJumpsBackHere)
         .value("TREE_NODE_FLAGS_COLLAPSING_HEADER", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_CollapsingHeader)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiTreeNodeFlags_, TreeNodeFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiPopupFlags_, PopupFlags)
-    PopupFlags
+    py::enum_<ImGuiPopupFlags_>(_imgui, "PopupFlags", py::arithmetic())
         .value("POPUP_FLAGS_NONE", ImGuiPopupFlags_::ImGuiPopupFlags_None)
         .value("POPUP_FLAGS_MOUSE_BUTTON_LEFT", ImGuiPopupFlags_::ImGuiPopupFlags_MouseButtonLeft)
         .value("POPUP_FLAGS_MOUSE_BUTTON_RIGHT", ImGuiPopupFlags_::ImGuiPopupFlags_MouseButtonRight)
@@ -2041,11 +2031,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("POPUP_FLAGS_ANY_POPUP_LEVEL", ImGuiPopupFlags_::ImGuiPopupFlags_AnyPopupLevel)
         .value("POPUP_FLAGS_ANY_POPUP", ImGuiPopupFlags_::ImGuiPopupFlags_AnyPopup)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiPopupFlags_, PopupFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiSelectableFlags_, SelectableFlags)
-    SelectableFlags
+    py::enum_<ImGuiSelectableFlags_>(_imgui, "SelectableFlags", py::arithmetic())
         .value("SELECTABLE_FLAGS_NONE", ImGuiSelectableFlags_::ImGuiSelectableFlags_None)
         .value("SELECTABLE_FLAGS_DONT_CLOSE_POPUPS", ImGuiSelectableFlags_::ImGuiSelectableFlags_DontClosePopups)
         .value("SELECTABLE_FLAGS_SPAN_ALL_COLUMNS", ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns)
@@ -2053,11 +2040,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("SELECTABLE_FLAGS_DISABLED", ImGuiSelectableFlags_::ImGuiSelectableFlags_Disabled)
         .value("SELECTABLE_FLAGS_ALLOW_OVERLAP", ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowOverlap)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiSelectableFlags_, SelectableFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiComboFlags_, ComboFlags)
-    ComboFlags
+    py::enum_<ImGuiComboFlags_>(_imgui, "ComboFlags", py::arithmetic())
         .value("COMBO_FLAGS_NONE", ImGuiComboFlags_::ImGuiComboFlags_None)
         .value("COMBO_FLAGS_POPUP_ALIGN_LEFT", ImGuiComboFlags_::ImGuiComboFlags_PopupAlignLeft)
         .value("COMBO_FLAGS_HEIGHT_SMALL", ImGuiComboFlags_::ImGuiComboFlags_HeightSmall)
@@ -2068,11 +2052,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("COMBO_FLAGS_NO_PREVIEW", ImGuiComboFlags_::ImGuiComboFlags_NoPreview)
         .value("COMBO_FLAGS_HEIGHT_MASK", ImGuiComboFlags_::ImGuiComboFlags_HeightMask_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiComboFlags_, ComboFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiTabBarFlags_, TabBarFlags)
-    TabBarFlags
+    py::enum_<ImGuiTabBarFlags_>(_imgui, "TabBarFlags", py::arithmetic())
         .value("TAB_BAR_FLAGS_NONE", ImGuiTabBarFlags_::ImGuiTabBarFlags_None)
         .value("TAB_BAR_FLAGS_REORDERABLE", ImGuiTabBarFlags_::ImGuiTabBarFlags_Reorderable)
         .value("TAB_BAR_FLAGS_AUTO_SELECT_NEW_TABS", ImGuiTabBarFlags_::ImGuiTabBarFlags_AutoSelectNewTabs)
@@ -2085,11 +2066,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("TAB_BAR_FLAGS_FITTING_POLICY_MASK", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyMask_)
         .value("TAB_BAR_FLAGS_FITTING_POLICY_DEFAULT", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyDefault_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiTabBarFlags_, TabBarFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiTabItemFlags_, TabItemFlags)
-    TabItemFlags
+    py::enum_<ImGuiTabItemFlags_>(_imgui, "TabItemFlags", py::arithmetic())
         .value("TAB_ITEM_FLAGS_NONE", ImGuiTabItemFlags_::ImGuiTabItemFlags_None)
         .value("TAB_ITEM_FLAGS_UNSAVED_DOCUMENT", ImGuiTabItemFlags_::ImGuiTabItemFlags_UnsavedDocument)
         .value("TAB_ITEM_FLAGS_SET_SELECTED", ImGuiTabItemFlags_::ImGuiTabItemFlags_SetSelected)
@@ -2100,11 +2078,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("TAB_ITEM_FLAGS_LEADING", ImGuiTabItemFlags_::ImGuiTabItemFlags_Leading)
         .value("TAB_ITEM_FLAGS_TRAILING", ImGuiTabItemFlags_::ImGuiTabItemFlags_Trailing)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiTabItemFlags_, TabItemFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiTableFlags_, TableFlags)
-    TableFlags
+    py::enum_<ImGuiTableFlags_>(_imgui, "TableFlags", py::arithmetic())
         .value("TABLE_FLAGS_NONE", ImGuiTableFlags_::ImGuiTableFlags_None)
         .value("TABLE_FLAGS_RESIZABLE", ImGuiTableFlags_::ImGuiTableFlags_Resizable)
         .value("TABLE_FLAGS_REORDERABLE", ImGuiTableFlags_::ImGuiTableFlags_Reorderable)
@@ -2142,11 +2117,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("TABLE_FLAGS_SORT_TRISTATE", ImGuiTableFlags_::ImGuiTableFlags_SortTristate)
         .value("TABLE_FLAGS_SIZING_MASK", ImGuiTableFlags_::ImGuiTableFlags_SizingMask_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiTableFlags_, TableFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiTableColumnFlags_, TableColumnFlags)
-    TableColumnFlags
+    py::enum_<ImGuiTableColumnFlags_>(_imgui, "TableColumnFlags", py::arithmetic())
         .value("TABLE_COLUMN_FLAGS_NONE", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_None)
         .value("TABLE_COLUMN_FLAGS_DISABLED", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_Disabled)
         .value("TABLE_COLUMN_FLAGS_DEFAULT_HIDE", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_DefaultHide)
@@ -2175,29 +2147,20 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("TABLE_COLUMN_FLAGS_STATUS_MASK", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_StatusMask_)
         .value("TABLE_COLUMN_FLAGS_NO_DIRECT_RESIZE", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_NoDirectResize_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiTableColumnFlags_, TableColumnFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiTableRowFlags_, TableRowFlags)
-    TableRowFlags
+    py::enum_<ImGuiTableRowFlags_>(_imgui, "TableRowFlags", py::arithmetic())
         .value("TABLE_ROW_FLAGS_NONE", ImGuiTableRowFlags_::ImGuiTableRowFlags_None)
         .value("TABLE_ROW_FLAGS_HEADERS", ImGuiTableRowFlags_::ImGuiTableRowFlags_Headers)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiTableRowFlags_, TableRowFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiTableBgTarget_, TableBgTarget)
-    TableBgTarget
+    py::enum_<ImGuiTableBgTarget_>(_imgui, "TableBgTarget", py::arithmetic())
         .value("TABLE_BG_TARGET_NONE", ImGuiTableBgTarget_::ImGuiTableBgTarget_None)
         .value("TABLE_BG_TARGET_ROW_BG0", ImGuiTableBgTarget_::ImGuiTableBgTarget_RowBg0)
         .value("TABLE_BG_TARGET_ROW_BG1", ImGuiTableBgTarget_::ImGuiTableBgTarget_RowBg1)
         .value("TABLE_BG_TARGET_CELL_BG", ImGuiTableBgTarget_::ImGuiTableBgTarget_CellBg)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiTableBgTarget_, TableBgTarget)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiFocusedFlags_, FocusedFlags)
-    FocusedFlags
+    py::enum_<ImGuiFocusedFlags_>(_imgui, "FocusedFlags", py::arithmetic())
         .value("FOCUSED_FLAGS_NONE", ImGuiFocusedFlags_::ImGuiFocusedFlags_None)
         .value("FOCUSED_FLAGS_CHILD_WINDOWS", ImGuiFocusedFlags_::ImGuiFocusedFlags_ChildWindows)
         .value("FOCUSED_FLAGS_ROOT_WINDOW", ImGuiFocusedFlags_::ImGuiFocusedFlags_RootWindow)
@@ -2206,11 +2169,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("FOCUSED_FLAGS_DOCK_HIERARCHY", ImGuiFocusedFlags_::ImGuiFocusedFlags_DockHierarchy)
         .value("FOCUSED_FLAGS_ROOT_AND_CHILD_WINDOWS", ImGuiFocusedFlags_::ImGuiFocusedFlags_RootAndChildWindows)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiFocusedFlags_, FocusedFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiHoveredFlags_, HoveredFlags)
-    HoveredFlags
+    py::enum_<ImGuiHoveredFlags_>(_imgui, "HoveredFlags", py::arithmetic())
         .value("HOVERED_FLAGS_NONE", ImGuiHoveredFlags_::ImGuiHoveredFlags_None)
         .value("HOVERED_FLAGS_CHILD_WINDOWS", ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows)
         .value("HOVERED_FLAGS_ROOT_WINDOW", ImGuiHoveredFlags_::ImGuiHoveredFlags_RootWindow)
@@ -2233,11 +2193,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("HOVERED_FLAGS_DELAY_NORMAL", ImGuiHoveredFlags_::ImGuiHoveredFlags_DelayNormal)
         .value("HOVERED_FLAGS_NO_SHARED_DELAY", ImGuiHoveredFlags_::ImGuiHoveredFlags_NoSharedDelay)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiHoveredFlags_, HoveredFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiDockNodeFlags_, DockNodeFlags)
-    DockNodeFlags
+    py::enum_<ImGuiDockNodeFlags_>(_imgui, "DockNodeFlags", py::arithmetic())
         .value("DOCK_NODE_FLAGS_NONE", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None)
         .value("DOCK_NODE_FLAGS_KEEP_ALIVE_ONLY", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_KeepAliveOnly)
         .value("DOCK_NODE_FLAGS_NO_DOCKING_OVER_CENTRAL_NODE", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_NoDockingOverCentralNode)
@@ -2247,11 +2204,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DOCK_NODE_FLAGS_AUTO_HIDE_TAB_BAR", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_AutoHideTabBar)
         .value("DOCK_NODE_FLAGS_NO_UNDOCKING", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_NoUndocking)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiDockNodeFlags_, DockNodeFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiDragDropFlags_, DragDropFlags)
-    DragDropFlags
+    py::enum_<ImGuiDragDropFlags_>(_imgui, "DragDropFlags", py::arithmetic())
         .value("DRAG_DROP_FLAGS_NONE", ImGuiDragDropFlags_::ImGuiDragDropFlags_None)
         .value("DRAG_DROP_FLAGS_SOURCE_NO_PREVIEW_TOOLTIP", ImGuiDragDropFlags_::ImGuiDragDropFlags_SourceNoPreviewTooltip)
         .value("DRAG_DROP_FLAGS_SOURCE_NO_DISABLE_HOVER", ImGuiDragDropFlags_::ImGuiDragDropFlags_SourceNoDisableHover)
@@ -2264,11 +2218,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DRAG_DROP_FLAGS_ACCEPT_NO_PREVIEW_TOOLTIP", ImGuiDragDropFlags_::ImGuiDragDropFlags_AcceptNoPreviewTooltip)
         .value("DRAG_DROP_FLAGS_ACCEPT_PEEK_ONLY", ImGuiDragDropFlags_::ImGuiDragDropFlags_AcceptPeekOnly)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiDragDropFlags_, DragDropFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiDataType_, DataType)
-    DataType
+    py::enum_<ImGuiDataType_>(_imgui, "DataType", py::arithmetic())
         .value("DATA_TYPE_S8", ImGuiDataType_::ImGuiDataType_S8)
         .value("DATA_TYPE_U8", ImGuiDataType_::ImGuiDataType_U8)
         .value("DATA_TYPE_S16", ImGuiDataType_::ImGuiDataType_S16)
@@ -2281,11 +2232,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DATA_TYPE_DOUBLE", ImGuiDataType_::ImGuiDataType_Double)
         .value("DATA_TYPE_COUNT", ImGuiDataType_::ImGuiDataType_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiDataType_, DataType)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiDir_, Dir)
-    Dir
+    py::enum_<ImGuiDir_>(_imgui, "Dir", py::arithmetic())
         .value("DIR_NONE", ImGuiDir_::ImGuiDir_None)
         .value("DIR_LEFT", ImGuiDir_::ImGuiDir_Left)
         .value("DIR_RIGHT", ImGuiDir_::ImGuiDir_Right)
@@ -2293,20 +2241,14 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DIR_DOWN", ImGuiDir_::ImGuiDir_Down)
         .value("DIR_COUNT", ImGuiDir_::ImGuiDir_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiDir_, Dir)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiSortDirection_, SortDirection)
-    SortDirection
+    py::enum_<ImGuiSortDirection_>(_imgui, "SortDirection", py::arithmetic())
         .value("SORT_DIRECTION_NONE", ImGuiSortDirection_::ImGuiSortDirection_None)
         .value("SORT_DIRECTION_ASCENDING", ImGuiSortDirection_::ImGuiSortDirection_Ascending)
         .value("SORT_DIRECTION_DESCENDING", ImGuiSortDirection_::ImGuiSortDirection_Descending)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiSortDirection_, SortDirection)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiKey, Key)
-    Key
+    py::enum_<ImGuiKey>(_imgui, "Key", py::arithmetic())
         .value("KEY_NONE", ImGuiKey::ImGuiKey_None)
         .value("KEY_TAB", ImGuiKey::ImGuiKey_Tab)
         .value("KEY_LEFT_ARROW", ImGuiKey::ImGuiKey_LeftArrow)
@@ -2462,11 +2404,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("KEY_KEYS_DATA_SIZE", ImGuiKey::ImGuiKey_KeysData_SIZE)
         .value("KEY_KEYS_DATA_OFFSET", ImGuiKey::ImGuiKey_KeysData_OFFSET)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiKey, Key)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiConfigFlags_, ConfigFlags)
-    ConfigFlags
+    py::enum_<ImGuiConfigFlags_>(_imgui, "ConfigFlags", py::arithmetic())
         .value("CONFIG_FLAGS_NONE", ImGuiConfigFlags_::ImGuiConfigFlags_None)
         .value("CONFIG_FLAGS_NAV_ENABLE_KEYBOARD", ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableKeyboard)
         .value("CONFIG_FLAGS_NAV_ENABLE_GAMEPAD", ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableGamepad)
@@ -2481,11 +2420,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("CONFIG_FLAGS_IS_SRGB", ImGuiConfigFlags_::ImGuiConfigFlags_IsSRGB)
         .value("CONFIG_FLAGS_IS_TOUCH_SCREEN", ImGuiConfigFlags_::ImGuiConfigFlags_IsTouchScreen)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiConfigFlags_, ConfigFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiBackendFlags_, BackendFlags)
-    BackendFlags
+    py::enum_<ImGuiBackendFlags_>(_imgui, "BackendFlags", py::arithmetic())
         .value("BACKEND_FLAGS_NONE", ImGuiBackendFlags_::ImGuiBackendFlags_None)
         .value("BACKEND_FLAGS_HAS_GAMEPAD", ImGuiBackendFlags_::ImGuiBackendFlags_HasGamepad)
         .value("BACKEND_FLAGS_HAS_MOUSE_CURSORS", ImGuiBackendFlags_::ImGuiBackendFlags_HasMouseCursors)
@@ -2495,11 +2431,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("BACKEND_FLAGS_HAS_MOUSE_HOVERED_VIEWPORT", ImGuiBackendFlags_::ImGuiBackendFlags_HasMouseHoveredViewport)
         .value("BACKEND_FLAGS_RENDERER_HAS_VIEWPORTS", ImGuiBackendFlags_::ImGuiBackendFlags_RendererHasViewports)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiBackendFlags_, BackendFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiCol_, Col)
-    Col
+    py::enum_<ImGuiCol_>(_imgui, "Col", py::arithmetic())
         .value("COL_TEXT", ImGuiCol_::ImGuiCol_Text)
         .value("COL_TEXT_DISABLED", ImGuiCol_::ImGuiCol_TextDisabled)
         .value("COL_WINDOW_BG", ImGuiCol_::ImGuiCol_WindowBg)
@@ -2557,11 +2490,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("COL_MODAL_WINDOW_DIM_BG", ImGuiCol_::ImGuiCol_ModalWindowDimBg)
         .value("COL_COUNT", ImGuiCol_::ImGuiCol_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiCol_, Col)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiStyleVar_, StyleVar)
-    StyleVar
+    py::enum_<ImGuiStyleVar_>(_imgui, "StyleVar", py::arithmetic())
         .value("STYLE_VAR_ALPHA", ImGuiStyleVar_::ImGuiStyleVar_Alpha)
         .value("STYLE_VAR_DISABLED_ALPHA", ImGuiStyleVar_::ImGuiStyleVar_DisabledAlpha)
         .value("STYLE_VAR_WINDOW_PADDING", ImGuiStyleVar_::ImGuiStyleVar_WindowPadding)
@@ -2594,11 +2524,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("STYLE_VAR_DOCKING_SEPARATOR_SIZE", ImGuiStyleVar_::ImGuiStyleVar_DockingSeparatorSize)
         .value("STYLE_VAR_COUNT", ImGuiStyleVar_::ImGuiStyleVar_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiStyleVar_, StyleVar)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiButtonFlags_, ButtonFlags)
-    ButtonFlags
+    py::enum_<ImGuiButtonFlags_>(_imgui, "ButtonFlags", py::arithmetic())
         .value("BUTTON_FLAGS_NONE", ImGuiButtonFlags_::ImGuiButtonFlags_None)
         .value("BUTTON_FLAGS_MOUSE_BUTTON_LEFT", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonLeft)
         .value("BUTTON_FLAGS_MOUSE_BUTTON_RIGHT", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonRight)
@@ -2606,11 +2533,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("BUTTON_FLAGS_MOUSE_BUTTON_MASK", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonMask_)
         .value("BUTTON_FLAGS_MOUSE_BUTTON_DEFAULT", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonDefault_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiButtonFlags_, ButtonFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiColorEditFlags_, ColorEditFlags)
-    ColorEditFlags
+    py::enum_<ImGuiColorEditFlags_>(_imgui, "ColorEditFlags", py::arithmetic())
         .value("COLOR_EDIT_FLAGS_NONE", ImGuiColorEditFlags_::ImGuiColorEditFlags_None)
         .value("COLOR_EDIT_FLAGS_NO_ALPHA", ImGuiColorEditFlags_::ImGuiColorEditFlags_NoAlpha)
         .value("COLOR_EDIT_FLAGS_NO_PICKER", ImGuiColorEditFlags_::ImGuiColorEditFlags_NoPicker)
@@ -2641,11 +2565,8 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("COLOR_EDIT_FLAGS_PICKER_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_PickerMask_)
         .value("COLOR_EDIT_FLAGS_INPUT_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_InputMask_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiColorEditFlags_, ColorEditFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiSliderFlags_, SliderFlags)
-    SliderFlags
+    py::enum_<ImGuiSliderFlags_>(_imgui, "SliderFlags", py::arithmetic())
         .value("SLIDER_FLAGS_NONE", ImGuiSliderFlags_::ImGuiSliderFlags_None)
         .value("SLIDER_FLAGS_ALWAYS_CLAMP", ImGuiSliderFlags_::ImGuiSliderFlags_AlwaysClamp)
         .value("SLIDER_FLAGS_LOGARITHMIC", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic)
@@ -2653,21 +2574,15 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("SLIDER_FLAGS_NO_INPUT", ImGuiSliderFlags_::ImGuiSliderFlags_NoInput)
         .value("SLIDER_FLAGS_INVALID_MASK", ImGuiSliderFlags_::ImGuiSliderFlags_InvalidMask_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiSliderFlags_, SliderFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiMouseButton_, MouseButton)
-    MouseButton
+    py::enum_<ImGuiMouseButton_>(_imgui, "MouseButton", py::arithmetic())
         .value("MOUSE_BUTTON_LEFT", ImGuiMouseButton_::ImGuiMouseButton_Left)
         .value("MOUSE_BUTTON_RIGHT", ImGuiMouseButton_::ImGuiMouseButton_Right)
         .value("MOUSE_BUTTON_MIDDLE", ImGuiMouseButton_::ImGuiMouseButton_Middle)
         .value("MOUSE_BUTTON_COUNT", ImGuiMouseButton_::ImGuiMouseButton_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiMouseButton_, MouseButton)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiMouseCursor_, MouseCursor)
-    MouseCursor
+    py::enum_<ImGuiMouseCursor_>(_imgui, "MouseCursor", py::arithmetic())
         .value("MOUSE_CURSOR_NONE", ImGuiMouseCursor_::ImGuiMouseCursor_None)
         .value("MOUSE_CURSOR_ARROW", ImGuiMouseCursor_::ImGuiMouseCursor_Arrow)
         .value("MOUSE_CURSOR_TEXT_INPUT", ImGuiMouseCursor_::ImGuiMouseCursor_TextInput)
@@ -2680,29 +2595,21 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("MOUSE_CURSOR_NOT_ALLOWED", ImGuiMouseCursor_::ImGuiMouseCursor_NotAllowed)
         .value("MOUSE_CURSOR_COUNT", ImGuiMouseCursor_::ImGuiMouseCursor_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiMouseCursor_, MouseCursor)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiMouseSource, MouseSource)
-    MouseSource
+    py::enum_<ImGuiMouseSource>(_imgui, "MouseSource", py::arithmetic())
         .value("MOUSE_SOURCE_MOUSE", ImGuiMouseSource::ImGuiMouseSource_Mouse)
         .value("MOUSE_SOURCE_TOUCH_SCREEN", ImGuiMouseSource::ImGuiMouseSource_TouchScreen)
         .value("MOUSE_SOURCE_PEN", ImGuiMouseSource::ImGuiMouseSource_Pen)
         .value("MOUSE_SOURCE_COUNT", ImGuiMouseSource::ImGuiMouseSource_COUNT)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiMouseSource, MouseSource)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiCond_, Cond)
-    Cond
+    py::enum_<ImGuiCond_>(_imgui, "Cond", py::arithmetic())
         .value("COND_NONE", ImGuiCond_::ImGuiCond_None)
         .value("COND_ALWAYS", ImGuiCond_::ImGuiCond_Always)
         .value("COND_ONCE", ImGuiCond_::ImGuiCond_Once)
         .value("COND_FIRST_USE_EVER", ImGuiCond_::ImGuiCond_FirstUseEver)
         .value("COND_APPEARING", ImGuiCond_::ImGuiCond_Appearing)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiCond_, Cond)
-
 
     PYCLASS_BEGIN(_imgui, ImNewWrapper, NewWrapper)
     PYCLASS_END(_imgui, ImNewWrapper, NewWrapper)
@@ -3069,11 +2976,49 @@ void init_generated(py::module &_imgui, Registry &registry) {
         TextFilter.def("is_active", &ImGuiTextFilter::IsActive
         , py::return_value_policy::automatic_reference);
 
+        PYCLASS_BEGIN(_imgui, ImGuiTextFilter::ImGuiTextRange, TextRange)
+            TextRange.def_property("b",
+                [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.b; },[](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.b = c; }
+            );
+            TextRange.def_property("e",
+                [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.e; },[](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.e = c; }
+            );
+            TextRange.def(py::init<>());
+            TextRange.def(py::init<const char *, const char *>()
+            , py::arg("_b")
+            , py::arg("_e")
+            );
+            TextRange.def("empty", &ImGuiTextFilter::ImGuiTextRange::empty
+            , py::return_value_policy::automatic_reference);
+
+            TextRange.def("split", &ImGuiTextFilter::ImGuiTextRange::split
+            , py::arg("separator")
+            , py::arg("out")
+            , py::return_value_policy::automatic_reference);
+
+        PYCLASS_END(_imgui, ImGuiTextFilter::ImGuiTextRange, TextRange)
+
         TextFilter.def_readonly("input_buf", &ImGuiTextFilter::InputBuf);
         TextFilter.def_readwrite("count_grep", &ImGuiTextFilter::CountGrep);
     PYCLASS_END(_imgui, ImGuiTextFilter, TextFilter)
 
     PYCLASS_BEGIN(_imgui, ImGuiStorage, Storage)
+        PYCLASS_BEGIN(_imgui, ImGuiStorage::ImGuiStoragePair, StoragePair)
+            StoragePair.def_readwrite("key", &ImGuiStorage::ImGuiStoragePair::key);
+            StoragePair.def(py::init<ImGuiID, int>()
+            , py::arg("_key")
+            , py::arg("_val_i")
+            );
+            StoragePair.def(py::init<ImGuiID, float>()
+            , py::arg("_key")
+            , py::arg("_val_f")
+            );
+            StoragePair.def(py::init<ImGuiID, void *>()
+            , py::arg("_key")
+            , py::arg("_val_p")
+            );
+        PYCLASS_END(_imgui, ImGuiStorage::ImGuiStoragePair, StoragePair)
+
         Storage.def("clear", &ImGuiStorage::Clear
         , py::return_value_policy::automatic_reference);
 
@@ -3227,8 +3172,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_END(_imgui, ImDrawListSplitter, DrawListSplitter)
 
-    PYENUM_SCOPED_BEGIN(_imgui, ImDrawFlags_, DrawFlags)
-    DrawFlags
+    py::enum_<ImDrawFlags_>(_imgui, "DrawFlags", py::arithmetic())
         .value("DRAW_FLAGS_NONE", ImDrawFlags_::ImDrawFlags_None)
         .value("DRAW_FLAGS_CLOSED", ImDrawFlags_::ImDrawFlags_Closed)
         .value("DRAW_FLAGS_ROUND_CORNERS_TOP_LEFT", ImDrawFlags_::ImDrawFlags_RoundCornersTopLeft)
@@ -3244,19 +3188,14 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DRAW_FLAGS_ROUND_CORNERS_DEFAULT", ImDrawFlags_::ImDrawFlags_RoundCornersDefault_)
         .value("DRAW_FLAGS_ROUND_CORNERS_MASK", ImDrawFlags_::ImDrawFlags_RoundCornersMask_)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImDrawFlags_, DrawFlags)
 
-
-    PYENUM_SCOPED_BEGIN(_imgui, ImDrawListFlags_, DrawListFlags)
-    DrawListFlags
+    py::enum_<ImDrawListFlags_>(_imgui, "DrawListFlags", py::arithmetic())
         .value("DRAW_LIST_FLAGS_NONE", ImDrawListFlags_::ImDrawListFlags_None)
         .value("DRAW_LIST_FLAGS_ANTI_ALIASED_LINES", ImDrawListFlags_::ImDrawListFlags_AntiAliasedLines)
         .value("DRAW_LIST_FLAGS_ANTI_ALIASED_LINES_USE_TEX", ImDrawListFlags_::ImDrawListFlags_AntiAliasedLinesUseTex)
         .value("DRAW_LIST_FLAGS_ANTI_ALIASED_FILL", ImDrawListFlags_::ImDrawListFlags_AntiAliasedFill)
         .value("DRAW_LIST_FLAGS_ALLOW_VTX_OFFSET", ImDrawListFlags_::ImDrawListFlags_AllowVtxOffset)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImDrawListFlags_, DrawListFlags)
-
 
     PYCLASS_BEGIN(_imgui, ImDrawList, DrawList)
         DrawList.def_readwrite("cmd_buffer", &ImDrawList::CmdBuffer);
@@ -3735,15 +3674,12 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_END(_imgui, ImFontAtlasCustomRect, FontAtlasCustomRect)
 
-    PYENUM_SCOPED_BEGIN(_imgui, ImFontAtlasFlags_, FontAtlasFlags)
-    FontAtlasFlags
+    py::enum_<ImFontAtlasFlags_>(_imgui, "FontAtlasFlags", py::arithmetic())
         .value("FONT_ATLAS_FLAGS_NONE", ImFontAtlasFlags_::ImFontAtlasFlags_None)
         .value("FONT_ATLAS_FLAGS_NO_POWER_OF_TWO_HEIGHT", ImFontAtlasFlags_::ImFontAtlasFlags_NoPowerOfTwoHeight)
         .value("FONT_ATLAS_FLAGS_NO_MOUSE_CURSORS", ImFontAtlasFlags_::ImFontAtlasFlags_NoMouseCursors)
         .value("FONT_ATLAS_FLAGS_NO_BAKED_LINES", ImFontAtlasFlags_::ImFontAtlasFlags_NoBakedLines)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImFontAtlasFlags_, FontAtlasFlags)
-
 
     PYCLASS_BEGIN(_imgui, ImFontAtlas, FontAtlas)
         FontAtlas.def(py::init<>());
@@ -3951,8 +3887,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_END(_imgui, ImFont, Font)
 
-    PYENUM_SCOPED_BEGIN(_imgui, ImGuiViewportFlags_, ViewportFlags)
-    ViewportFlags
+    py::enum_<ImGuiViewportFlags_>(_imgui, "ViewportFlags", py::arithmetic())
         .value("VIEWPORT_FLAGS_NONE", ImGuiViewportFlags_::ImGuiViewportFlags_None)
         .value("VIEWPORT_FLAGS_IS_PLATFORM_WINDOW", ImGuiViewportFlags_::ImGuiViewportFlags_IsPlatformWindow)
         .value("VIEWPORT_FLAGS_IS_PLATFORM_MONITOR", ImGuiViewportFlags_::ImGuiViewportFlags_IsPlatformMonitor)
@@ -3969,8 +3904,6 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("VIEWPORT_FLAGS_IS_MINIMIZED", ImGuiViewportFlags_::ImGuiViewportFlags_IsMinimized)
         .value("VIEWPORT_FLAGS_IS_FOCUSED", ImGuiViewportFlags_::ImGuiViewportFlags_IsFocused)
         .export_values();
-    PYENUM_SCOPED_END(_imgui, ImGuiViewportFlags_, ViewportFlags)
-
 
     PYCLASS_BEGIN(_imgui, ImGuiViewport, Viewport)
         Viewport.def_readwrite("id", &ImGuiViewport::ID);
