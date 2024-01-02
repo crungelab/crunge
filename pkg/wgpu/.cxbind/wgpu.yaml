@@ -22,6 +22,7 @@ flags: [
 
 # mValue is private
 'struct.dawn::Bool': {exclude: true}
+'class.std::hash': {exclude: true}
 
 # Function pointers and callbacks.  TODO!
 'function.wgpu::GetProcAddress': {exclude: true}

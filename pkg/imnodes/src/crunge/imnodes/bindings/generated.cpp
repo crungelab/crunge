@@ -93,24 +93,6 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .export_values();
 
     PYCLASS_BEGIN(_imnodes, ImNodesIO, IO)
-        PYCLASS_BEGIN(_imnodes, ImNodesIO::EmulateThreeButtonMouse, EmulateThreeButtonMouse)
-            EmulateThreeButtonMouse.def(py::init<>());
-            EmulateThreeButtonMouse.def_readwrite("modifier", &ImNodesIO::EmulateThreeButtonMouse::Modifier);
-        PYCLASS_END(_imnodes, ImNodesIO::EmulateThreeButtonMouse, EmulateThreeButtonMouse)
-
-        IO.def_readwrite("EmulateThreeButtonMouse", &ImNodesIO::EmulateThreeButtonMouse);
-        PYCLASS_BEGIN(_imnodes, ImNodesIO::LinkDetachWithModifierClick, LinkDetachWithModifierClick)
-            LinkDetachWithModifierClick.def(py::init<>());
-            LinkDetachWithModifierClick.def_readwrite("modifier", &ImNodesIO::LinkDetachWithModifierClick::Modifier);
-        PYCLASS_END(_imnodes, ImNodesIO::LinkDetachWithModifierClick, LinkDetachWithModifierClick)
-
-        IO.def_readwrite("LinkDetachWithModifierClick", &ImNodesIO::LinkDetachWithModifierClick);
-        PYCLASS_BEGIN(_imnodes, ImNodesIO::MultipleSelectModifier, MultipleSelectModifier)
-            MultipleSelectModifier.def(py::init<>());
-            MultipleSelectModifier.def_readwrite("modifier", &ImNodesIO::MultipleSelectModifier::Modifier);
-        PYCLASS_END(_imnodes, ImNodesIO::MultipleSelectModifier, MultipleSelectModifier)
-
-        IO.def_readwrite("MultipleSelectModifier", &ImNodesIO::MultipleSelectModifier);
         IO.def_readwrite("alt_mouse_button", &ImNodesIO::AltMouseButton);
         IO.def_readwrite("auto_panning_speed", &ImNodesIO::AutoPanningSpeed);
         IO.def(py::init<>());

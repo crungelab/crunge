@@ -17,7 +17,9 @@ class ImPlot(GitSolution):
 
 class ImNodes(GitSolution):
     path = 'depot/imnodes'
-    url = 'https://github.com/Nelarius/imnodes'
+    #url = 'https://github.com/Nelarius/imnodes'
+    url = 'https://github.com/crungelab/imnodes'
+    #branch = 'crunge'
 
 class Dawn(GitSolution):
     path = 'depot/dawn'

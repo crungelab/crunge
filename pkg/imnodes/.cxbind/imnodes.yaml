@@ -26,6 +26,11 @@ flags: [
 'function.ImNodes::MiniMap': {exclude: true}
 # Internal / Ignored
 
+# These three have member names same as struct names
+'struct.ImNodesIO::EmulateThreeButtonMouse': {exclude: true}
+'struct.ImNodesIO::LinkDetachWithModifierClick': {exclude: true}
+'struct.ImNodesIO::MultipleSelectModifier': {exclude: true}
+
 'function.ImNodes::EditorContext': {exclude: true}
 'function.SaveEditorStateToIniString': {exclude: true}
 'function.LoadEditorStateFromIniFile': {exclude: true}

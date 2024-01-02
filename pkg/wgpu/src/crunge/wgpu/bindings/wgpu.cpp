@@ -3532,4 +3532,5 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor)
 
+
 }
