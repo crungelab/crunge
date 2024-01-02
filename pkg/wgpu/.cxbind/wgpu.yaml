@@ -20,6 +20,9 @@ flags: [
  #TODO: Should skip templates in the transpiler
 'struct.dawn::IsDawnBitmask': {exclude: true}
 
+# mValue is private
+'struct.dawn::Bool': {exclude: true}
+
 # Function pointers and callbacks.  TODO!
 'function.wgpu::GetProcAddress': {exclude: true}
 
@@ -80,3 +83,6 @@ flags: [
 'struct.wgpu::PrimitiveState': {gen_kw_init: true}
 'struct.wgpu::BindGroupEntry': {gen_kw_init: true}
 'struct.wgpu::Extent3D': {gen_init: true}
+'struct.wgpu::BlendState': {gen_kw_init: true}
+'struct.wgpu::BlendComponent': {gen_kw_init: true}
+

@@ -2,13 +2,17 @@
 requires = ["cxbuild==0.1.6", "setuptools", "wheel"]
 build-backend = "cxbuild.backend"
 
+[tool.setuptools]
+packages = ["crunge", "crunge.gltf"]
+
+
 [project]
-name = "crunge"
+name = "crunge-gltf"
 version = "0.1.0"
-description = 'Creative coding extensions for Python'
-readme = "README.md"
+description = 'Crunge Gltf Extension'
+#readme = "README.md"
 requires-python = ">=3.8"
-license = { file = "LICENSE" }
+#license = { file = "LICENSE" }
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [
@@ -22,13 +26,8 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
-[tool.cxbuild]
-projects = [
-  "pkg/imgui",
-  "pkg/implot",
-  "pkg/imnodes",
-  "pkg/wgpu",
-  "pkg/gltf",
-  ]
-plugins = ["cxbind"]
+[tool.cxbuild.project]
+
+[tool.cxbuild.extension]
+name="crunge.gltf._gltf"
 

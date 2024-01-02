@@ -25,15 +25,18 @@ class SceneBuilder(Builder):
         self.tm_scene = tm_scene = tm.load(str(path))
         logger.debug(tm_scene.__dict__)
         logger.debug(tm_scene.graph.__dict__)
-        logger.debug(tm_scene.graph.transforms.edge_data)
-        logger.debug(tm_scene.graph.transforms.node_data)
+        #logger.debug(tm_scene.graph.transforms.edge_data)
+        #logger.debug(tm_scene.graph.transforms.node_data)
+        #logger.debug(tm_scene.graph.geometry_nodes)
+        logger.debug(tm_scene.graph.transforms)
+        exit()
         self.create_meshes()
         return scene
 
     def create_meshes(self):
-        tm_meshes = list(self.tm_scene.geometry.values())
-        logger.debug(tm_meshes)
-        for tm_mesh in tm_meshes:
+        for key, tm_mesh in self.tm_scene.geometry.items():
+            logger.debug(self.tm_scene.graph.geometry_nodes[key])
+            #exit()
             self.create_mesh(tm_mesh)
 
     def create_mesh(self, tm_mesh):

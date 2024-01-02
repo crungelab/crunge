@@ -31,10 +31,10 @@ class GLTFV:
         #scene_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
         #scene_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
         #scene_path = resource_root / "models" / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
-        #scene_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
+        scene_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
         #scene_path = resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
         #scene_path = resource_root / "models" / "Character" / "Character.gltf"
-        scene_path = resource_root / "models" / "RobotCopernicus" / "scene.gltf"
+        #scene_path = resource_root / "models" / "RobotCopernicus" / "scene.gltf"
 
         scene = SceneBuilder().load(scene_path)
         Viewer().show(scene)

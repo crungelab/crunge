@@ -107,19 +107,18 @@ class FragmentShaderBuilder(ShaderBuilder):
             self(f'var roughness: f32 = {material.roughness_factor};')
 
             if material.has_texture('metallicRoughness'):
+                '''
                 self("""
     let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv).rg;
     metallic = metallic * metalRough.g;
     roughness = roughness * metalRough.r;
                 """)
-
                 '''
                 self("""
     let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
     metallic = metallic * metalRough.b;
     roughness = roughness * metalRough.g;
                 """)
-                '''
 
             self('roughness = clamp(roughness, 0.04, 1.0);')
 

@@ -4,7 +4,7 @@ namespace py = pybind11;
 
 namespace pybind11 { namespace detail {
 
-template <> struct type_caster<wgpu::Bool> {
+/*template <> struct type_caster<wgpu::Bool> {
 public:
     PYBIND11_TYPE_CASTER(wgpu::Bool, _("Bool"));
     bool load(handle src, bool implicit) {
@@ -16,6 +16,6 @@ public:
     static handle cast(wgpu::Bool src, return_value_policy, handle) {
         return PyBool_FromLong(src.mValue);
     }
-};
+};*/
 
 }} // namespace pybind11::detail

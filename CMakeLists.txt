@@ -50,11 +50,19 @@ add_subdirectory(pkg/imnodes)
 #add_subdirectory(pkg/bgfx)
 
 #
-# wgpu
+# TinyGLTF
+#
+add_subdirectory(depot/gltf)
+set_target_properties(tinygltf PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+add_subdirectory(pkg/gltf)
+#
+# Dawn
 #
 
 set(DAWN_BUILD_SAMPLES OFF CACHE BOOL "Build Samples" FORCE)
-add_subdirectory(depot/dawn)
+set(DAWN_FETCH_DEPENDENCIES ON)
+add_subdirectory("depot/dawn" EXCLUDE_FROM_ALL)
 
 add_subdirectory(pkg/wgpu)
 

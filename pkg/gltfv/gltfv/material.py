@@ -3,6 +3,8 @@ from .texture import Texture
 class Material:
     textures: list[Texture] = None
     texture_set: set = None
+
+    alpha_mode: str = 'BLEND'
     # (3,) or (4,) float with RGBA colors
     base_color_factor = (0, 0, 0, 0)
     #base_color_texture: Texture = None

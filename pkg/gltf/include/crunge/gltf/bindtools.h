@@ -22,19 +22,10 @@ class Registry {
 
 #define PYCLASS_BEGIN(_module, _class, _name) py::class_<_class> _name(_module, #_name);
 
-#define PYSUBCLASS_BEGIN(_module, _class, _base, _name) py::class_<_class, _base> _name(_module, #_name);
-
 #define PYCLASS_END(_module, _class, _name) registry.on(_module, #_name, _name);
 
 #define PYEXTEND_BEGIN(_class, name) \
     registry.addCallback(#name, [](py::detail::generic_type& _type) { \
         py::class_<_class> &name = (py::class_<_class>&)_type;
-
-#define PYENUM_SCOPED_BEGIN(_module, _class, _name) py::enum_<_class> _name(_module, #_name, py::arithmetic());
-#define PYENUM_SCOPED_END(_module, _class, _name) registry.on(_module, #_name, _name);
-
-#define PYEXTEND_SCOPED_ENUM_BEGIN(_class, name) \
-    registry.addCallback(#name, [](py::detail::generic_type& _type) { \
-        py::enum_<_class> &name = (py::enum_<_class>&)_type;
 
 #define PYEXTEND_END });

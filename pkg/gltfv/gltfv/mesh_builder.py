@@ -73,7 +73,7 @@ class MeshBuilder(Builder):
 
         # Indices
         indices = tm_mesh.faces.astype(np.uint32)
-        logger.debug(f"indices:  {indices}")
+        #logger.debug(f"indices:  {indices}")
         n_indices = self.n_indices = len(indices)
         logger.debug(f"n_indices:  {n_indices}")
         mesh.index_data = indices
@@ -174,7 +174,37 @@ class MeshBuilder(Builder):
             buffers=vertBufferLayout,
         )
 
-        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
+        blend_state: wgpu.BlendState = None
+
+        '''
+        wgpu::BlendState blend_state = {};
+        blend_state.alpha.operation = wgpu::BlendOperation::Add;
+        blend_state.alpha.srcFactor = wgpu::BlendFactor::One;
+        blend_state.alpha.dstFactor = wgpu::BlendFactor::OneMinusSrcAlpha;
+        blend_state.color.operation = wgpu::BlendOperation::Add;
+        blend_state.color.srcFactor = wgpu::BlendFactor::SrcAlpha;
+        blend_state.color.dstFactor = wgpu::BlendFactor::OneMinusSrcAlpha;
+        '''
+        if self.material.alpha_mode == "BLEND":
+            blend_state = wgpu.BlendState(
+                alpha = wgpu.BlendComponent(
+                    operation=wgpu.BlendOperation.ADD,
+                    src_factor=wgpu.BlendFactor.ONE,
+                    #dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+                    dst_factor=wgpu.BlendFactor.ONE,
+                ),
+                color = wgpu.BlendComponent(
+                    operation=wgpu.BlendOperation.ADD,
+                    src_factor=wgpu.BlendFactor.SRC_ALPHA,
+                    dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+                ),
+            )
+
+        colorTargetState = wgpu.ColorTargetState(
+            format=wgpu.TextureFormat.BGRA8_UNORM,
+            blend=blend_state,
+            write_mask=wgpu.ColorWriteMask.ALL,
+            )
 
         fragmentState = wgpu.FragmentState(
             module=fs_module,
