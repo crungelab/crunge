@@ -79,7 +79,10 @@ class MeshBuilder(NodeBuilder):
         logger.debug(f"component_type: {component_type}")
         count = accessor.count
         logger.debug(f"count: {count}")
-        data = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
+        type = accessor.type
+        logger.debug(f"type: {type}")
+        #data = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
+        data = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, type, component_type)
         logger.debug(f"data: {data}")
 
         if name == "POSITION":
@@ -103,16 +106,19 @@ class MeshBuilder(NodeBuilder):
         logger.debug(f"buffer_view: {buffer_view}")
         logger.debug(f"buffer: {buffer}")
 
+        type = accessor.type
+        logger.debug(f"type: {type}")
+
         component_type = accessor.component_type
         logger.debug(f"component_type: {component_type}")
+        if component_type == gltf.ComponentType.UNSIGNED_SHORT:
+            self.mesh.index_format = wgpu.IndexFormat.UINT16
+        elif component_type == gltf.ComponentType.UNSIGNED_INT:
+            self.mesh.index_format = wgpu.IndexFormat.UINT32
+
         count = accessor.count
         logger.debug(f"count: {count}")
-        indices = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
-        #array = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
-        #indices = np.ndarray(shape=(count,), dtype=np.uint32, buffer=array)
-        #indices = np.ndarray(shape=(count,), dtype=np.uint16, buffer=array)
-        #indices = np.array(array, dtype=np.uint32)
-        #indices = np.array(array, dtype=np.uint16)
+        indices = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, type, component_type)
 
         logger.debug(f"indices: {indices}")
 

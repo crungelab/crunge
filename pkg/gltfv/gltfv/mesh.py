@@ -17,6 +17,7 @@ class Mesh(Node):
 
     index_data: np.ndarray = None
     index_buffer: wgpu.Buffer = None
+    index_format: wgpu.IndexFormat = None
 
     uniform_buffer: wgpu.Buffer = None
     uniform_buffer_size: int = 0
@@ -50,6 +51,7 @@ class Mesh(Node):
         pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         #pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT16)
+        #pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT16)
+        pass_enc.set_index_buffer(self.index_buffer, self.index_format)
         #pass_enc.draw_indexed(len(self.index_data)* 3)
         pass_enc.draw_indexed(len(self.index_data))

@@ -38,7 +38,7 @@ class NodeBuilder(ModelBuilder):
             scale = glm.vec3(self.tf_node.scale)
             self.node.scale = scale
         if len(self.tf_node.matrix) == 16:
-            self.node.matrix = glm.mat4(self.tf_node.matrix)
+            self.node.matrix = glm.mat4(*self.tf_node.matrix)
 
     def build_children(self):
         for tf_child in self.tf_node.children:

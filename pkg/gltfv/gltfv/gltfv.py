@@ -37,7 +37,7 @@ class GltfV:
         #scene_path = resource_root / "models" / "RobotCopernicus" / "scene.gltf"
 
         scene = SceneBuilder().build(scene_path)
-        exit()
+        #exit()
         Viewer().show(scene)
 
 def main():

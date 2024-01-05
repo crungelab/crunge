@@ -24,8 +24,8 @@ class VertexTable:
 
     @property
     def data(self):
-        #return np.concatenate([x.data for x in self.columns], axis=1)
-        return np.concatenate([x.data for x in self.columns])
+        return np.concatenate([x.data for x in self.columns], axis=1)
+        #return np.concatenate([x.data for x in self.columns])
     
     @property
     def vertex_size(self):
