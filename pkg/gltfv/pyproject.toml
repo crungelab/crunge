@@ -13,10 +13,7 @@ dependencies = [
     "click ==8.1.7",
     "glfw ==2.6.4",
     "PyGLM ==2.7.1",
-    "trimesh ==4.0.8",
-    "imageio ==2.33.1",
-    "gltflib ==1.0.13",
-    "networkx ==3.2.1",
+    "numpy ==1.26.3",
 ]
 
 [project.scripts]

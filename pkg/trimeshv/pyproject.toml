@@ -1,0 +1,21 @@
+[tool.setuptools]
+packages = ["trimeshv"]
+
+[project]
+name = "trimeshv"
+version = "0.1.0"
+description = 'Crunge WebGPU/Trimesh Demo'
+requires-python = ">=3.8"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "loguru ==0.7.2",
+    "click ==8.1.7",
+    "glfw ==2.6.4",
+    "PyGLM ==2.7.1",
+    "trimesh ==4.0.8",
+    "networkx ==3.2.1",
+]
+
+[project.scripts]
+TrimeshV = 'trimeshv.cli:cli'

@@ -14,7 +14,7 @@ from .viewer import Viewer
 
 resource_root = Path(__file__).parent.parent / "resources"
 
-class GLTFV:
+class GltfV:
     def __init__(self):
         pass
 
@@ -27,20 +27,21 @@ class GLTFV:
         self.device.set_label("Primary Device")
         self.device.enable_logging()
 
-        #scene_path = resource_root / "models" / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
+        scene_path = resource_root / "models" / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
         #scene_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
         #scene_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
         #scene_path = resource_root / "models" / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
-        scene_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
+        #scene_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
         #scene_path = resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
         #scene_path = resource_root / "models" / "Character" / "Character.gltf"
         #scene_path = resource_root / "models" / "RobotCopernicus" / "scene.gltf"
 
-        scene = SceneBuilder().load(scene_path)
+        scene = SceneBuilder().build(scene_path)
+        exit()
         Viewer().show(scene)
 
 def main():
-    GLTFV().run()
+    GltfV().run()
 
 if __name__ == "__main__":
     main()

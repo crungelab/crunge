@@ -1,7 +1,7 @@
 import os
 import click
 
-from .gltfv import GLTFV
+from .gltfv import GltfV
 
 
 @click.group(invoke_without_command=True)
@@ -9,4 +9,4 @@ from .gltfv import GLTFV
 def cli(ctx):
     ctx.ensure_object(dict)
     if ctx.invoked_subcommand is None:
-        GLTFV().run()
+        GltfV().run()

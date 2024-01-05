@@ -1,6 +1,5 @@
 from loguru import logger
 import numpy as np
-import trimesh as tm
 
 from crunge.core import as_capsule
 from crunge import wgpu

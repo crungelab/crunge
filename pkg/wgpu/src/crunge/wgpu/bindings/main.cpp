@@ -44,10 +44,10 @@ void init_main(py::module &_wgpu, Registry &registry) {
         self.RequestAdapter(&options, cb, &userdata);
 		return adapter;
     });
-    Instance.def("process_events", [](const wgpu::Instance& self)
+    /*Instance.def("process_events", [](const wgpu::Instance& self)
     {
         dawn::native::InstanceProcessEvents(self.Get());
-    });
+    });*/
     PYEXTEND_END
 
         //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;

@@ -1,145 +1,128 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-from pathlib import Path
-
 from loguru import logger
+
 import numpy as np
-import trimesh as tm
 
 from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
+from crunge import gltf
 
-from .builder import Builder
-from .scene import Scene
+from .node_builder import NodeBuilder
+from .node import Node
+from .debug import debug_node, debug_mesh, debug_primitive, debug_accessor
+
 from .mesh import Mesh
 
 from .vertex_table import VertexTable
 from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn
 
-from .material_builder import MaterialBuilder
+#from .material_builder import MaterialBuilder
 from .material import Material
 
 from .shader import VertexShaderBuilder, FragmentShaderBuilder
 
-
-class MeshBuilder(Builder):
-    mesh: Mesh = None
-    vertex_table: VertexTable = None
-    material: Material = None
-
-    def __init__(self, scene: Scene) -> None:
-        self.scene = scene
-        self.mesh = Mesh()
+class MeshBuilder(NodeBuilder):
+    def __init__(self, tf_model: gltf.Model, tf_node: gltf.Node) -> None:
+        super().__init__(tf_model, tf_node)
+        self.tf_mesh = tf_model.meshes[self.tf_node.mesh]
+        self.mesh : Mesh = None
         self.vertex_table = VertexTable()
+        self.material = Material()
 
-    def build(self, tm_mesh: tm.Trimesh):
-        logger.debug("Building mesh")
-        mesh: Mesh = self.mesh
-        logger.debug(tm_mesh.__dict__)
+    def create_node(self):
+        self.node = self.mesh = Mesh()
 
-        # Vertices
-        vertices = tm_mesh.vertices.astype(np.float32)
-        self.vertex_table.add_column(PosColumn('pos', vertices))
+    def build_node(self):
+        super().build_node()
+        for primitive in self.tf_mesh.primitives:
+            self.build_primitive(primitive)
+        self.build_pipeline()
+        self.build_bindgroup()
 
-        # Normals
-        normals = tm_mesh.vertex_normals.astype(np.float32)
-        self.vertex_table.add_column(NormalColumn('normal', normals))
-
-        # Visuals
-        visual = tm_mesh.visual
-        visual_kind = visual.kind
-        logger.debug(f"visual_kind:  {visual_kind}")
-        if visual_kind == "texture":
-            if hasattr(visual, "uv") and visual.uv is not None:
-                uv_coords = visual.uv.astype(np.float32)
-                uv_coords = (uv_coords - np.min(uv_coords)) / (
-                    np.max(uv_coords) - np.min(uv_coords)
-                )
-                self.vertex_table.add_column(UvColumn('uv', uv_coords))
-        elif visual_kind == "vertex":
-            vc = visual.vertex_colors.astype(np.float32)
-            self.vertex_table.add_column(RgbaColumn('color', vc))
-
+    def build_primitive(self, primitive: gltf.Primitive):
+        debug_primitive(primitive)
+        if primitive.indices >= 0 and primitive.indices < len(self.tf_model.accessors):
+            self.build_indices(primitive)
+        self.build_attributes(primitive)
         # Vertex Data
         vertex_data = self.vertex_table.data
 
-        mesh.vertex_data = vertex_data
-        mesh.vertex_buffer = utils.create_buffer_from_ndarray(
+        self.mesh.vertex_data = vertex_data
+        self.mesh.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, vertex_data, wgpu.BufferUsage.VERTEX
         )
 
-        # exit()
+    def build_attributes(self, primitive: gltf.Primitive):
+        attributes: dict = primitive.attributes.copy()
+        pos = attributes.get('POSITION', None)
+        if pos:
+            self.build_attribute(('POSITION', pos))
+            del attributes['POSITION']
+        for attribute in attributes.items():
+            self.build_attribute(attribute)
 
-        # Indices
-        indices = tm_mesh.faces.astype(np.uint32)
-        #logger.debug(f"indices:  {indices}")
-        n_indices = self.n_indices = len(indices)
-        logger.debug(f"n_indices:  {n_indices}")
-        mesh.index_data = indices
-        mesh.index_buffer = utils.create_buffer_from_ndarray(
+    def build_attribute(self, attribute: tuple):
+        name, value = attribute
+        #logger.debug(f"primitive.attributes[{attribute[0]}]: {attribute[1]}")
+        logger.debug(f"primitive.attributes[{name}]: {value}")
+        #logger.debug(f"primitive.attributes[{attribute}]: {attributes[attribute]}")
+        #accessor = self.tf_model.accessors[attributes[attribute]]
+        accessor = self.tf_model.accessors[value]
+        debug_accessor(accessor)
+
+        buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
+        buffer = self.tf_model.buffers[buffer_view.buffer]
+        logger.debug(f"buffer_view: {buffer_view}")
+        logger.debug(f"buffer: {buffer}")
+
+        component_type = accessor.component_type
+        logger.debug(f"component_type: {component_type}")
+        count = accessor.count
+        logger.debug(f"count: {count}")
+        data = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
+        logger.debug(f"data: {data}")
+
+        if name == "POSITION":
+            self.vertex_table.add_column(PosColumn('pos', data))
+        elif name == "NORMAL":
+            self.vertex_table.add_column(NormalColumn('normal', data))
+        elif name == "TEXCOORD_0":
+            self.vertex_table.add_column(UvColumn('uv', data))
+        elif name == "COLOR_0":
+            self.vertex_table.add_column(RgbaColumn('color', data))
+        else:
+            logger.debug(f"Unknown attribute: {name}")
+
+    def build_indices(self, primitive: gltf.Primitive):
+        logger.debug(f"primitive.indices: {primitive.indices}")
+        accessor = self.tf_model.accessors[primitive.indices]
+        debug_accessor(accessor)
+
+        buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
+        buffer = self.tf_model.buffers[buffer_view.buffer]
+        logger.debug(f"buffer_view: {buffer_view}")
+        logger.debug(f"buffer: {buffer}")
+
+        component_type = accessor.component_type
+        logger.debug(f"component_type: {component_type}")
+        count = accessor.count
+        logger.debug(f"count: {count}")
+        indices = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
+        #array = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
+        #indices = np.ndarray(shape=(count,), dtype=np.uint32, buffer=array)
+        #indices = np.ndarray(shape=(count,), dtype=np.uint16, buffer=array)
+        #indices = np.array(array, dtype=np.uint32)
+        #indices = np.array(array, dtype=np.uint16)
+
+        logger.debug(f"indices: {indices}")
+
+        self.mesh.index_data = indices
+        self.mesh.index_buffer = utils.create_buffer_from_ndarray(
             self.device, indices, wgpu.BufferUsage.INDEX
         )
-
-        # Uniform Buffer
-
-        uniform_buffer_size = 4 * 16
-        mesh.uniform_buffer_size = uniform_buffer_size
-
-        uniform_buffer = utils.create_buffer(
-            self.device,
-            "Uniform buffer",
-            uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-        mesh.uniform_buffer = uniform_buffer
-
-        visual = tm_mesh.visual
-        logger.debug(visual.__dict__)
-
-        visual_cls = visual.__class__
-        if visual_cls == tm.visual.TextureVisuals:
-            tm_material = visual.material
-            logger.debug(tm_material.__dict__)
-
-            material = MaterialBuilder().build(tm_material)
-            self.material = material
-        elif visual_cls == tm.visual.ColorVisuals:
-            material = Material()
-            material.base_color_factor = (1, 1, 1, 1)
-            self.material = material
-        pipeline = self.create_pipeline()
-        mesh.pipeline = pipeline
-
-        bg_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0, buffer=uniform_buffer, size=uniform_buffer_size
-                ),
-            ]
-        )
-
-        for i, texture in enumerate(material.textures):
-            bg_entries.append(
-                wgpu.BindGroupEntry(binding=i*2+1, sampler=texture.sampler)
-            )
-            bg_entries.append(
-                wgpu.BindGroupEntry(binding=i*2+2, texture_view=texture.view)
-            )
-
-        bindGroupDesc = wgpu.BindGroupDescriptor(
-            label="Uniform bind group",
-            layout=pipeline.get_bind_group_layout(0),
-            entry_count=len(bg_entries),
-            entries=bg_entries[0],
-        )
-
-        mesh.bind_group = self.device.create_bind_group(bindGroupDesc)
-
         #exit()
-        return mesh
 
-    def create_vertex_attributes(self):
+    def build_vertex_attributes(self):
         logger.debug("Creating vertex attributes")
         vert_attributes = wgpu.VertexAttributes()
         offset = 0
@@ -154,12 +137,12 @@ class MeshBuilder(Builder):
             offset += column.struct_size
         return vert_attributes
 
-    def create_pipeline(self):
+    def build_pipeline(self):
         logger.debug("Creating pipeline")
         vs_module: wgpu.ShaderModule = VertexShaderBuilder(self.vertex_table).build()
         fs_module: wgpu.ShaderModule = FragmentShaderBuilder(self.vertex_table, self.material).build()
         #exit()
-        vertAttributes = self.create_vertex_attributes()
+        vertAttributes = self.build_vertex_attributes()
 
         vertBufferLayout = wgpu.VertexBufferLayout(
             array_stride=self.vertex_table.vertex_size,
@@ -176,15 +159,6 @@ class MeshBuilder(Builder):
 
         blend_state: wgpu.BlendState = None
 
-        '''
-        wgpu::BlendState blend_state = {};
-        blend_state.alpha.operation = wgpu::BlendOperation::Add;
-        blend_state.alpha.srcFactor = wgpu::BlendFactor::One;
-        blend_state.alpha.dstFactor = wgpu::BlendFactor::OneMinusSrcAlpha;
-        blend_state.color.operation = wgpu::BlendOperation::Add;
-        blend_state.color.srcFactor = wgpu::BlendFactor::SrcAlpha;
-        blend_state.color.dstFactor = wgpu::BlendFactor::OneMinusSrcAlpha;
-        '''
         if self.material.alpha_mode == "BLEND":
             blend_state = wgpu.BlendState(
                 alpha = wgpu.BlendComponent(
@@ -272,4 +246,30 @@ class MeshBuilder(Builder):
             fragment=fragmentState,
         )
 
-        return self.device.create_render_pipeline(rp_descriptor)
+        self.mesh.pipeline = self.device.create_render_pipeline(rp_descriptor)
+
+    def build_bindgroup(self):
+        bg_entries = wgpu.BindGroupEntries(
+            [
+                wgpu.BindGroupEntry(
+                    binding=0, buffer=self.mesh.uniform_buffer, size=self.mesh.uniform_buffer_size
+                ),
+            ]
+        )
+
+        for i, texture in enumerate(self.material.textures):
+            bg_entries.append(
+                wgpu.BindGroupEntry(binding=i*2+1, sampler=texture.sampler)
+            )
+            bg_entries.append(
+                wgpu.BindGroupEntry(binding=i*2+2, texture_view=texture.view)
+            )
+
+        bindGroupDesc = wgpu.BindGroupDescriptor(
+            label="Uniform bind group",
+            layout=self.mesh.pipeline.get_bind_group_layout(0),
+            entry_count=len(bg_entries),
+            entries=bg_entries[0],
+        )
+
+        self.mesh.bind_group = self.device.create_bind_group(bindGroupDesc)

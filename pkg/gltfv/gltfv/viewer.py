@@ -1,20 +1,14 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
 import sys
-import math
-import glm
-from pathlib import Path
 
 from loguru import logger
 import glfw
-import numpy as np
-import trimesh as tm
-import networkx as nx
 
 from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
+
+import gltfv.globals as globals
 
 from .base import Base
 from .scene import Scene
@@ -66,6 +60,7 @@ class Viewer(Base):
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
         while not glfw.window_should_close(self.window):
+            globals.instance.process_events()
             glfw.poll_events()
 
             now = time.perf_counter()

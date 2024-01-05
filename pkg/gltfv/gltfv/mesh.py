@@ -22,7 +22,20 @@ class Mesh(Node):
     uniform_buffer_size: int = 0
 
     def __init__(self) -> None:
-        pass
+        super().__init__()
+        # Uniform Buffer
+
+        uniform_buffer_size = 4 * 16
+        self.uniform_buffer_size = uniform_buffer_size
+
+        uniform_buffer = utils.create_buffer(
+            self.device,
+            "Uniform buffer",
+            uniform_buffer_size,
+            wgpu.BufferUsage.UNIFORM,
+        )
+        self.uniform_buffer = uniform_buffer
+
 
     def draw(self, camera: Camera, pass_enc: wgpu.RenderPassEncoder):
         transform = camera.transform_matrix
@@ -36,5 +49,7 @@ class Mesh(Node):
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        pass_enc.draw_indexed(len(self.index_data)* 3)
+        #pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
+        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT16)
+        #pass_enc.draw_indexed(len(self.index_data)* 3)
+        pass_enc.draw_indexed(len(self.index_data))

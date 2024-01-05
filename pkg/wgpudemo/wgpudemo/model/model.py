@@ -1,17 +1,12 @@
-import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
-import sys
 import math
 import glm
 from pathlib import Path
 
 from loguru import logger
-import glfw
 import numpy as np
-from gltflib import GLTF
 import trimesh as tm
-import imageio.v3 as iio
 
 from crunge.core import as_capsule
 from crunge import wgpu
@@ -236,11 +231,6 @@ class ModelDemo(Demo):
         rotMatrix = glm.rotate(rotMatrix, math.sin(ms), WORLD_AXIS_X)
         rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
         return self.projectionMatrix * viewMatrix * rotMatrix
-
-    def create_model(self):
-        model_path = resource_root / "models" / "Box" / "glTF" / "Box.gltf"
-        gltf = GLTF.load(model_path)
-        print(gltf.model)
 
     def create_meshes(self):
         # mesh_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
