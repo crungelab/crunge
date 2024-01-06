@@ -60,6 +60,7 @@ class View(Base):
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
+            #clear_value=wgpu.Color(.5, .5, .5, 1),
         )
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(

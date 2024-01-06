@@ -6,8 +6,8 @@ class Material:
 
     alpha_mode: str = 'BLEND'
     # (3,) or (4,) float with RGBA colors
-    #base_color_factor = (0, 0, 0, 0)
-    base_color_factor: tuple = (1, 1, 1, 1)
+    base_color_factor: tuple = (0, 0, 0, 0)
+    #base_color_factor: tuple = (1, 1, 1, 1)
     #base_color_texture: Texture = None
 
     metallic_factor: float = 0

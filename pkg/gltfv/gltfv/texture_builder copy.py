@@ -4,60 +4,33 @@ import numpy as np
 from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge import gltf
 
-from .debug import debug_texture, debug_image
-from .model_builder import ModelBuilder
+from .builder import Builder
 from .texture import Texture
 
 
-class TextureBuilder(ModelBuilder):
+class TextureBuilder(Builder):
     name: str = None
     texture: Texture = None
 
-    def __init__(self, name: str, tf_model: gltf.Model, texture_info: gltf.TextureInfo) -> None:
-        super().__init__(tf_model)
-        self.texture_info = texture_info
+    def __init__(self, name: str) -> None:
         self.texture = Texture(name)
 
-    def build(self) -> Texture:
-        tf_texture = self.tf_model.textures[self.texture_info.index]
-        debug_texture(tf_texture)
-
-        tf_image = self.tf_model.images[tf_texture.source]
-        debug_image(tf_image)
-
-        self.texture.source = tf_image.uri
-        logger.debug(self.texture.source)
-
+    def build(self, image):
         im = None
-        '''
         logger.debug(f'image mode: {image.mode}')
         if image.mode != 'RGBA':
             im = np.array(image.convert('RGBA'))
         else:
             im = np.array(image)
-        '''
-        im = np.array(tf_image.image)
         shape = im.shape
-        logger.debug(f"im.shape: {shape}")
-        logger.debug(f"im.dtype: {im.dtype}")
-        logger.debug(f"im.nbytes: {im.nbytes}")
-        logger.debug(f"im.size: {im.size}")
-        logger.debug(f"im.itemsize: {im.itemsize}")
-        logger.debug(f"im.ndim: {im.ndim}")
-        logger.debug(f"im.strides: {im.strides}")
-        logger.debug(im)
-        #exit()
-        #im_width = shape[0]
-        im_width = tf_image.width
-        #im_height = shape[1]
-        im_height = tf_image.height
+        logger.debug(shape)
+        im_width = shape[0]
+        im_height = shape[1]
         im_depth = 1
         # Has to be a multiple of 256
         size = utils.divround_up(im.nbytes, 256)
-        logger.debug(f"im.size: {size}")
-        #exit()
+        logger.debug(size)
 
         descriptor = wgpu.TextureDescriptor(
             dimension = wgpu.TextureDimension.E2D,
@@ -75,7 +48,7 @@ class TextureBuilder(ModelBuilder):
         self.texture.sampler = self.device.create_sampler()
         
         bytes_per_row = 4 * im_width
-        logger.debug(f"bytes_per_row: {bytes_per_row}")
+        logger.debug(bytes_per_row)
         rows_per_image = im_height
 
         self.device.queue.write_texture(

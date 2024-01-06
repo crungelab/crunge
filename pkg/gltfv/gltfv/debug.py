@@ -17,7 +17,7 @@ def debug_node(model, node):
     logger.debug(f"node.extras_json_string: {node.extras_json_string}")
     logger.debug(f"node.extensions_json_string: {node.extensions_json_string}")
 
-def debug_mesh(model, mesh):
+def debug_mesh(mesh):
     logger.debug(f"mesh: {mesh}")
     logger.debug(f"mesh.name: {mesh.name}")
     logger.debug(f"mesh.primitives: {mesh.primitives}")
@@ -57,3 +57,92 @@ def debug_accessor(accessor):
 
 def debug_attribute(attribute):
     logger.debug(f"attribute: {attribute}")
+
+def debug_material(material):
+    logger.debug(f"material: {material}")
+    logger.debug(f"material.name: {material.name}")
+    logger.debug(f"material.pbr_metallic_roughness: {material.pbr_metallic_roughness}")
+    logger.debug(f"material.normal_texture: {material.normal_texture}")
+    logger.debug(f"material.occlusion_texture: {material.occlusion_texture}")
+    logger.debug(f"material.emissive_texture: {material.emissive_texture}")
+    logger.debug(f"material.emissive_factor: {material.emissive_factor}")
+    logger.debug(f"material.alpha_mode: {material.alpha_mode}")
+    logger.debug(f"material.alpha_cutoff: {material.alpha_cutoff}")
+    logger.debug(f"material.double_sided: {material.double_sided}")
+    logger.debug(f"material.extensions: {material.extensions}")
+    logger.debug(f"material.extras: {material.extras}")
+    logger.debug(f"material.extras_json_string: {material.extras_json_string}")
+    logger.debug(f"material.extensions_json_string: {material.extensions_json_string}")
+    logger.debug(f"material.values: {material.values}")
+    logger.debug(f"material.additional_values: {material.additional_values}")
+
+def debug_pbr_metallic_roughness(pbr_metallic_roughness):
+    logger.debug(f"pbr_metallic_roughness: {pbr_metallic_roughness}")
+    logger.debug(f"pbr_metallic_roughness.base_color_factor: {pbr_metallic_roughness.base_color_factor}")
+    logger.debug(f"pbr_metallic_roughness.base_color_texture: {pbr_metallic_roughness.base_color_texture}")
+    logger.debug(f"pbr_metallic_roughness.metallic_factor: {pbr_metallic_roughness.metallic_factor}")
+    logger.debug(f"pbr_metallic_roughness.roughness_factor: {pbr_metallic_roughness.roughness_factor}")
+    logger.debug(f"pbr_metallic_roughness.metallic_roughness_texture: {pbr_metallic_roughness.metallic_roughness_texture}")
+    logger.debug(f"pbr_metallic_roughness.extensions: {pbr_metallic_roughness.extensions}")
+    logger.debug(f"pbr_metallic_roughness.extras: {pbr_metallic_roughness.extras}")
+    logger.debug(f"pbr_metallic_roughness.extras_json_string: {pbr_metallic_roughness.extras_json_string}")
+    logger.debug(f"pbr_metallic_roughness.extensions_json_string: {pbr_metallic_roughness.extensions_json_string}")
+
+def debug_texture_info(texture_info):
+    logger.debug(f"texture_info: {texture_info}")
+    logger.debug(f"texture_info.index: {texture_info.index}")
+    logger.debug(f"texture_info.tex_coord: {texture_info.tex_coord}")
+    logger.debug(f"texture_info.extensions: {texture_info.extensions}")
+    logger.debug(f"texture_info.extras: {texture_info.extras}")
+    logger.debug(f"texture_info.extras_json_string: {texture_info.extras_json_string}")
+    logger.debug(f"texture_info.extensions_json_string: {texture_info.extensions_json_string}")
+
+def debug_texture(texture):
+    logger.debug(f"texture: {texture}")
+    logger.debug(f"texture.name: {texture.name}")
+    logger.debug(f"texture.sampler: {texture.sampler}")
+    logger.debug(f"texture.source: {texture.source}")
+    logger.debug(f"texture.extensions: {texture.extensions}")
+    logger.debug(f"texture.extras: {texture.extras}")
+    logger.debug(f"texture.extras_json_string: {texture.extras_json_string}")
+    logger.debug(f"texture.extensions_json_string: {texture.extensions_json_string}")
+
+def debug_sampler(sampler):
+    logger.debug(f"sampler: {sampler}")
+    logger.debug(f"sampler.name: {sampler.name}")
+    logger.debug(f"sampler.mag_filter: {sampler.mag_filter}")
+    logger.debug(f"sampler.min_filter: {sampler.min_filter}")
+    logger.debug(f"sampler.wrap_s: {sampler.wrap_s}")
+    logger.debug(f"sampler.wrap_t: {sampler.wrap_t}")
+    logger.debug(f"sampler.extensions: {sampler.extensions}")
+    logger.debug(f"sampler.extras: {sampler.extras}")
+    logger.debug(f"sampler.extras_json_string: {sampler.extras_json_string}")
+    logger.debug(f"sampler.extensions_json_string: {sampler.extensions_json_string}")
+
+def debug_image(image):
+    logger.debug(f"image: {image}")
+    logger.debug(f"image.name: {image.name}")
+    logger.debug(f"image.width: {image.width}")
+    logger.debug(f"image.height: {image.height}")
+    logger.debug(f"image.component: {image.component}")
+    logger.debug(f"image.bits: {image.bits}")
+    logger.debug(f"image.pixel_type: {image.pixel_type}")
+    #logger.debug(f"image.image: {image.image}")
+    logger.debug(f"image.buffer_view: {image.buffer_view}")
+    logger.debug(f"image.mime_type: {image.mime_type}")
+    logger.debug(f"image.uri: {image.uri}")
+    logger.debug(f"image.extras: {image.extras}")
+    logger.debug(f"image.extensions: {image.extensions}")
+    logger.debug(f"image.extras_json_string: {image.extras_json_string}")
+    logger.debug(f"image.extensions_json_string: {image.extensions_json_string}")
+    logger.debug(f"image.as_is: {image.as_is}")
+
+def debug_animation(animation):
+    logger.debug(f"animation: {animation}")
+    logger.debug(f"animation.name: {animation.name}")
+    logger.debug(f"animation.samplers: {animation.samplers}")
+    logger.debug(f"animation.channels: {animation.channels}")
+    logger.debug(f"animation.extensions: {animation.extensions}")
+    logger.debug(f"animation.extras: {animation.extras}")
+    logger.debug(f"animation.extras_json_string: {animation.extras_json_string}")
+    logger.debug(f"animation.extensions_json_string: {animation.extensions_json_string}")

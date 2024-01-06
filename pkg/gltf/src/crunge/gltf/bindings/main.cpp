@@ -48,19 +48,19 @@ pybind11::object get_array(const tinygltf::Buffer& self, size_t byte_offset, siz
     size_t componentCount = tinygltf::GetNumComponentsInType(type);
     std::array<size_t, 2> shape = {count, componentCount};
     switch (componentType) {
-        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:  // signed char
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
             return get_typed_array<unsigned char>(self.data, byte_offset, shape);
-        case TINYGLTF_COMPONENT_TYPE_SHORT:  // unsigned char
+        case TINYGLTF_COMPONENT_TYPE_SHORT:
             return get_typed_array<short>(self.data, byte_offset, shape);
-        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:  // signed int
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
             return get_typed_array<unsigned short>(self.data, byte_offset, shape);
-        case TINYGLTF_COMPONENT_TYPE_INT:  // signed int
+        case TINYGLTF_COMPONENT_TYPE_INT:
             return get_typed_array<int>(self.data, byte_offset, shape);
-        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:  // signed int
+        case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
             return get_typed_array<unsigned int>(self.data, byte_offset, shape);
-        case TINYGLTF_COMPONENT_TYPE_FLOAT:  // signed int
+        case TINYGLTF_COMPONENT_TYPE_FLOAT:
             return get_typed_array<float>(self.data, byte_offset, shape);
-        case TINYGLTF_COMPONENT_TYPE_DOUBLE:  // signed int
+        case TINYGLTF_COMPONENT_TYPE_DOUBLE:
             return get_typed_array<double>(self.data, byte_offset, shape);
         // Add more cases as needed for different data types
         default:

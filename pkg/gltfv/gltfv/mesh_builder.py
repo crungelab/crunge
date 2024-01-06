@@ -9,14 +9,14 @@ from crunge import gltf
 
 from .node_builder import NodeBuilder
 from .node import Node
-from .debug import debug_node, debug_mesh, debug_primitive, debug_accessor
+from .debug import debug_node, debug_mesh, debug_primitive, debug_accessor, debug_material
 
 from .mesh import Mesh
 
 from .vertex_table import VertexTable
 from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn
 
-#from .material_builder import MaterialBuilder
+from .material_builder import MaterialBuilder
 from .material import Material
 
 from .shader import VertexShaderBuilder, FragmentShaderBuilder
@@ -26,24 +26,23 @@ class MeshBuilder(NodeBuilder):
         super().__init__(tf_model, tf_node)
         self.tf_mesh = tf_model.meshes[self.tf_node.mesh]
         self.mesh : Mesh = None
+        self.material = None
+
         self.vertex_table = VertexTable()
-        self.material = Material()
 
     def create_node(self):
         self.node = self.mesh = Mesh()
 
     def build_node(self):
         super().build_node()
-        for primitive in self.tf_mesh.primitives:
-            self.build_primitive(primitive)
+        debug_mesh(self.tf_mesh)
+        self.build_primitives()
         self.build_pipeline()
         self.build_bindgroup()
 
-    def build_primitive(self, primitive: gltf.Primitive):
-        debug_primitive(primitive)
-        if primitive.indices >= 0 and primitive.indices < len(self.tf_model.accessors):
-            self.build_indices(primitive)
-        self.build_attributes(primitive)
+    def build_primitives(self):
+        for primitive in self.tf_mesh.primitives:
+            self.build_primitive(primitive)
         # Vertex Data
         vertex_data = self.vertex_table.data
 
@@ -52,21 +51,28 @@ class MeshBuilder(NodeBuilder):
             self.device, vertex_data, wgpu.BufferUsage.VERTEX
         )
 
+    def build_primitive(self, primitive: gltf.Primitive):
+        debug_primitive(primitive)
+        self.build_attributes(primitive)
+
+        if primitive.indices >= 0 and primitive.indices < len(self.tf_model.accessors):
+            self.build_indices(primitive)
+        if primitive.material >= 0 and primitive.material < len(self.tf_model.materials):
+            self.build_material(primitive)
+
     def build_attributes(self, primitive: gltf.Primitive):
         attributes: dict = primitive.attributes.copy()
-        pos = attributes.get('POSITION', None)
+        #pos = attributes.get('POSITION', None)
+        pos = attributes.pop('POSITION', None)
         if pos:
             self.build_attribute(('POSITION', pos))
-            del attributes['POSITION']
+            #del attributes['POSITION']
         for attribute in attributes.items():
             self.build_attribute(attribute)
 
     def build_attribute(self, attribute: tuple):
         name, value = attribute
-        #logger.debug(f"primitive.attributes[{attribute[0]}]: {attribute[1]}")
         logger.debug(f"primitive.attributes[{name}]: {value}")
-        #logger.debug(f"primitive.attributes[{attribute}]: {attributes[attribute]}")
-        #accessor = self.tf_model.accessors[attributes[attribute]]
         accessor = self.tf_model.accessors[value]
         debug_accessor(accessor)
 
@@ -81,7 +87,6 @@ class MeshBuilder(NodeBuilder):
         logger.debug(f"count: {count}")
         type = accessor.type
         logger.debug(f"type: {type}")
-        #data = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, component_type)
         data = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, type, component_type)
         logger.debug(f"data: {data}")
 
@@ -132,16 +137,23 @@ class MeshBuilder(NodeBuilder):
         logger.debug("Creating vertex attributes")
         vert_attributes = wgpu.VertexAttributes()
         offset = 0
-        for i, column in enumerate(self.vertex_table.columns):
+        for location, column in enumerate(self.vertex_table.columns):
             vert_attributes.append(
                 wgpu.VertexAttribute(
                     format=column.format,
                     offset=offset,
-                    shader_location=i,
+                    shader_location=location,
                 )
             )
             offset += column.struct_size
         return vert_attributes
+
+    def build_material(self, primitive: gltf.Primitive):
+        logger.debug(f"primitive.material: {primitive.material}")
+        material = self.tf_model.materials[primitive.material]
+        debug_material(material)
+        self.material = MaterialBuilder(self.tf_model, material).build()
+        #exit()
 
     def build_pipeline(self):
         logger.debug("Creating pipeline")

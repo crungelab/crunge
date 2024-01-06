@@ -1,3 +1,4 @@
+import os
 import time
 import sys
 import math
@@ -12,7 +13,8 @@ import gltfv.globals
 from .scene_builder import SceneBuilder
 from .viewer import Viewer
 
-resource_root = Path(__file__).parent.parent / "resources"
+models_root = Path(__file__).parent.parent / "resources" / "models"
+#models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class GltfV:
     def __init__(self):
@@ -27,14 +29,14 @@ class GltfV:
         self.device.set_label("Primary Device")
         self.device.enable_logging()
 
-        scene_path = resource_root / "models" / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
-        #scene_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
-        #scene_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
-        #scene_path = resource_root / "models" / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
-        #scene_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
-        #scene_path = resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
-        #scene_path = resource_root / "models" / "Character" / "Character.gltf"
-        #scene_path = resource_root / "models" / "RobotCopernicus" / "scene.gltf"
+        #scene_path = models_root / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
+        scene_path = models_root / "BoxTextured" / "glTF" / "BoxTextured.gltf"
+        #scene_path = models_root / "Cube" / "glTF" / "Cube.gltf"
+        #scene_path = models_root / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
+        #scene_path = models_root / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
+        #scene_path = models_root / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
+        #scene_path = models_root / "Character" / "Character.gltf"
+        #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
         scene = SceneBuilder().build(scene_path)
         #exit()

@@ -50,8 +50,6 @@ class Mesh(Node):
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        #pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        #pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT16)
         pass_enc.set_index_buffer(self.index_buffer, self.index_format)
         #pass_enc.draw_indexed(len(self.index_data)* 3)
         pass_enc.draw_indexed(len(self.index_data))
