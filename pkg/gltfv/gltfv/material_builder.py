@@ -45,12 +45,12 @@ class MaterialBuilder(ModelBuilder):
         # Metallic Factor
         metallic_factor = 1 if not pbr.metallic_factor else pbr.metallic_factor
         material.metallic_factor = metallic_factor
-        logger.debug(metallic_factor)
+        logger.debug(f"metallic_factor: {metallic_factor}")
 
         # Roughness Factor
         roughness_factor = 1 if not pbr.roughness_factor else pbr.roughness_factor
         material.roughness_factor = roughness_factor
-        logger.debug(roughness_factor)
+        logger.debug(f"roughness_factor: {roughness_factor}")
         #exit()
 
         # Metallic Roughness Texture

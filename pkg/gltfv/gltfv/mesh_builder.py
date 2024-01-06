@@ -26,7 +26,7 @@ class MeshBuilder(NodeBuilder):
         super().__init__(tf_model, tf_node)
         self.tf_mesh = tf_model.meshes[self.tf_node.mesh]
         self.mesh : Mesh = None
-        self.material = None
+        self.material = Material()
 
         self.vertex_table = VertexTable()
 
@@ -88,18 +88,34 @@ class MeshBuilder(NodeBuilder):
         type = accessor.type
         logger.debug(f"type: {type}")
         data = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, type, component_type)
-        logger.debug(f"data: {data}")
 
         if name == "POSITION":
             self.vertex_table.add_column(PosColumn('pos', data))
         elif name == "NORMAL":
             self.vertex_table.add_column(NormalColumn('normal', data))
         elif name == "TEXCOORD_0":
+            if accessor.normalized == False and accessor.max_values:
+                data = (data - np.min(data)) / (
+                    np.max(data) - np.min(data)
+                )
+                '''
+                min_values = np.array(accessor.min_values)
+                max_values = np.array(accessor.max_values)
+
+                data = data - min_values
+
+                # Now, scale the values so the maximum becomes 1
+                range_values = max_values - min_values
+                data = data / range_values
+                '''
+                
             self.vertex_table.add_column(UvColumn('uv', data))
         elif name == "COLOR_0":
             self.vertex_table.add_column(RgbaColumn('color', data))
         else:
             logger.debug(f"Unknown attribute: {name}")
+
+        logger.debug(f"data: {data}")
 
     def build_indices(self, primitive: gltf.Primitive):
         logger.debug(f"primitive.indices: {primitive.indices}")
@@ -194,7 +210,7 @@ class MeshBuilder(NodeBuilder):
 
         colorTargetState = wgpu.ColorTargetState(
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
+            #blend=blend_state,
             write_mask=wgpu.ColorWriteMask.ALL,
             )
 

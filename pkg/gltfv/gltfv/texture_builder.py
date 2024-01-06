@@ -27,9 +27,6 @@ class TextureBuilder(ModelBuilder):
         tf_image = self.tf_model.images[tf_texture.source]
         debug_image(tf_image)
 
-        self.texture.source = tf_image.uri
-        logger.debug(self.texture.source)
-
         im = None
         '''
         logger.debug(f'image mode: {image.mode}')
@@ -38,7 +35,7 @@ class TextureBuilder(ModelBuilder):
         else:
             im = np.array(image)
         '''
-        im = np.array(tf_image.image)
+        im = np.array(tf_image.image, dtype=np.uint8)
         shape = im.shape
         logger.debug(f"im.shape: {shape}")
         logger.debug(f"im.dtype: {im.dtype}")
