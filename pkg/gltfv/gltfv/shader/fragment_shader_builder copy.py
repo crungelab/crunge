@@ -11,15 +11,6 @@ from .shader_builder import ShaderBuilder
 
 
 shader_code_fragment = """
-// Utility function for gamma correction
-fn sRGBToLinear(color: vec3<f32>) -> vec3<f32> {
-    return pow(color, vec3<f32>(2.2));
-}
-
-fn linearToSRGB(color: vec3<f32>) -> vec3<f32> {
-    return pow(color, vec3<f32>(1.0 / 2.2));
-}
-
 fn linearSample(texture: texture_2d<f32>, texSampler: sampler, uv: vec2<f32>) -> vec4<f32>
   {
     let color = textureSample(texture, texSampler, uv);
@@ -106,27 +97,28 @@ class FragmentShaderBuilder(ShaderBuilder):
                 self("let uv = in.uv;\n")
 
             if self.vertex_table.has('color'):
-                self("let albedo = in.color;\n")
+                self("var color = in.color;\n")
             else:
                 bcf = material.base_color_factor
-                self(f'let bcf = vec4<f32>({bcf[0]}, {bcf[1]}, {bcf[2]}, {bcf[3]});')
+                self(f'var color = vec4<f32>({bcf[0]}, {bcf[1]}, {bcf[2]}, {bcf[3]});')
 
             if material.has_texture('baseColor'):
-                #self(f'color = color * linearSample(baseColorTexture, baseColorSampler, uv);\n')
-                self(f'let albedo = bcf * linearSample(baseColorTexture, baseColorSampler, uv);\n')
-                #self(f'let albedo = bcf * sRGBToLinear(textureSample(baseColorTexture, baseColorSampler, uv).rgb);')
+                self(f'color = color * linearSample(baseColorTexture, baseColorSampler, uv);\n')
+                #self(f'color = color * textureSample(baseColorTexture, baseColorSampler, uv);')
 
             # Metallic
-            self(f'let metallic_factor: f32 = {material.metallic_factor};')
-            self(f'let roughness_factor: f32 = {material.roughness_factor};')
+            self(f'var metallic: f32 = {material.metallic_factor};')
+            self(f'var roughness: f32 = {material.roughness_factor};')
 
             if material.has_texture('metallicRoughness'):
                 # Its green channel contains roughness values and its blue channel contains metalness values.
                 self("""
     let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
-    let metallic = metallic_factor * metalRough.b;
-    let roughness = clamp(roughness_factor * metalRough.g, 0.04, 1.0);
+    metallic = metallic * metalRough.b;
+    roughness = roughness * metalRough.g;
                 """)
+                
+            self('roughness = clamp(roughness, 0.04, 1.0);')
 
             # Normal
             if material.has_texture('normal'):
@@ -144,7 +136,7 @@ class FragmentShaderBuilder(ShaderBuilder):
             # Occlusion
             if material.has_texture('occlusion'):
                 # The red channel of the texture encodes the occlusion value
-                self(f'''let ao = textureSample(occlusionTexture, occlusionSampler, uv).r;'''
+                self(f'''var ao = textureSample(occlusionTexture, occlusionSampler, uv).r;'''
                 )
             else:
                 self('let ao = 1.0;')
@@ -152,10 +144,10 @@ class FragmentShaderBuilder(ShaderBuilder):
 
             # Emission
             e = material.emissive_factor
-            self(f'let emissive_factor = vec3<f32>({e[0]}, {e[1]}, {e[2]});')
+            self(f'var emissive = vec3<f32>({e[0]}, {e[1]}, {e[2]});')
 
             if material.has_texture('emissive'):
-                self(f'''let emissive = emissive_factor * textureSample(emissiveTexture, emissiveSampler, uv).rgb;'''
+                self(f'''emissive = emissive * textureSample(emissiveTexture, emissiveSampler, uv).rgb;'''
                 )
 
             #self('return color;')
@@ -163,10 +155,9 @@ class FragmentShaderBuilder(ShaderBuilder):
             self("""
     let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
     let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
-    let rgb = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
-    //rgb = pow(rgb, vec3<f32>(1.0 / 2.2));
-    let finalColor = linearToSRGB(rgb);
-    return vec4<f32>(finalColor, albedo.a);
+    var rgb = brdf(color.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
+    rgb = pow(rgb, vec3<f32>(1.0 / 2.2));
+    return vec4<f32>(rgb, color.a);
             """)
             
         self('}')

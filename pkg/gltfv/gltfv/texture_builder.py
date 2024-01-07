@@ -44,7 +44,7 @@ class TextureBuilder(ModelBuilder):
         logger.debug(f"im.itemsize: {im.itemsize}")
         logger.debug(f"im.ndim: {im.ndim}")
         logger.debug(f"im.strides: {im.strides}")
-        logger.debug(im)
+        #logger.debug(im)
         #exit()
         #im_width = shape[0]
         im_width = tf_image.width

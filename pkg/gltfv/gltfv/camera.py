@@ -9,18 +9,20 @@ class Camera:
     def __init__(self, width, height) -> None:
         aspect = float(width) / float(height)
         fov_y_radians = (2.0 * math.pi) / 5.0
-        self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
+        self.view_matrix = glm.mat4(1.0)
+        self.projection_matrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
+        self.transform_matrix = glm.mat4(1.0)
 
-    @property
-    def transform_matrix(self):
+    def update(self):
         now = time.time()
         ms = round(now * 1000) / 1000
         # print(ms)
-        viewMatrix = glm.mat4(1.0)
-        viewMatrix = glm.translate(viewMatrix, glm.vec3(0, 0, -4))
-        viewMatrix = glm.scale(viewMatrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE))
+        view_matrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
+        view_matrix = glm.scale(view_matrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE))
         
-        rotMatrix = glm.mat4(1.0)
-        rotMatrix = glm.rotate(rotMatrix, math.sin(ms), WORLD_AXIS_X)
-        rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
-        return self.projectionMatrix * viewMatrix * rotMatrix
+        rot_matrix = glm.mat4(1.0)
+        rot_matrix = glm.rotate(rot_matrix, math.sin(ms), WORLD_AXIS_X)
+        rot_matrix = glm.rotate(rot_matrix, math.cos(ms), WORLD_AXIS_Y)
+        self.view_matrix = view_matrix * rot_matrix
+
+        self.transform_matrix = self.projection_matrix * self.view_matrix

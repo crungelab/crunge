@@ -41,11 +41,11 @@ class GltfV:
         #model = "2CylinderEngine"
         #model = "Avocado"
         #model = "BoxVertexColors"
-        model = "BoxTextured"
+        #model = "BoxTextured"
         #model = "BoomBox"
         #model = "Cube"
         #model = "Corset"
-        #model = "DamagedHelmet"
+        model = "DamagedHelmet"
 
         scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"

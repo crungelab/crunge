@@ -8,16 +8,21 @@ import crunge.wgpu.utils as utils
 from ..vertex_table import VertexTable
 from .shader_builder import ShaderBuilder
 
+'''
+    var out: VertexOutput;
+    out.vertex_pos = uniforms.transformMatrix * in.pos;
+    out.normal = normalize(uniforms.normalMatrix * in.normal); // Transform the normal
+    out.uv = in.uv;
+    // Compute and pass tangent and bitangent if using normal maps
+    return out;
+'''
+
 vertex_shader_code = """
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
-    let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
+    let vert_pos = uniforms.transformMatrix * in.pos;
 """
 
-'''
-return VertexOutput(vert_pos, in.normal, in.uv);
-}
-'''
 
 class VertexShaderBuilder(ShaderBuilder):
     def __init__(self, vertex_table: VertexTable) -> None:
@@ -38,6 +43,9 @@ class VertexShaderBuilder(ShaderBuilder):
         self.write('return VertexOutput(vert_pos')
         for column in self.vertex_table.columns:
             if column.name == 'pos':
+                continue
+            if column.name == 'normal':
+                self.write(f', normalize(uniforms.normalMatrix * in.{column.name})')
                 continue
             self.write(f', in.{column.name}')
         self.write(');\n')

@@ -112,7 +112,7 @@ class MeshBuilder(NodeBuilder):
                 range_values = max_values - min_values
                 logger.debug(f"range_values: {range_values}")
                 data = data / range_values
-                logger.debug(data)
+                #logger.debug(data)
                 #exit()
                 
                 
@@ -148,7 +148,7 @@ class MeshBuilder(NodeBuilder):
         logger.debug(f"count: {count}")
         indices = buffer.get_array(buffer_view.byte_offset + accessor.byte_offset, count, type, component_type)
 
-        logger.debug(f"indices: {indices}")
+        #logger.debug(f"indices: {indices}")
 
         self.mesh.index_data = indices
         self.mesh.index_buffer = utils.create_buffer_from_ndarray(
