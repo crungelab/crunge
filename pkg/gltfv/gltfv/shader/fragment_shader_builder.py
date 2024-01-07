@@ -93,8 +93,9 @@ class FragmentShaderBuilder(ShaderBuilder):
 
         with self:
             if self.vertex_table.has('uv'):
-                self("let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);\n")
+                #self("let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);\n")
                 #self("let uv = vec2<f32>(in.uv.x, in.uv.y);\n")
+                self("let uv = in.uv;\n")
 
             if self.vertex_table.has('color'):
                 self("var color = in.color;\n")
@@ -111,18 +112,13 @@ class FragmentShaderBuilder(ShaderBuilder):
             self(f'var roughness: f32 = {material.roughness_factor};')
 
             if material.has_texture('metallicRoughness'):
-                self("""
-    let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv).rg;
-    metallic = metallic * metalRough.g;
-    roughness = roughness * metalRough.r;
-                """)
-                '''
+                # Its green channel contains roughness values and its blue channel contains metalness values.
                 self("""
     let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
     metallic = metallic * metalRough.b;
     roughness = roughness * metalRough.g;
                 """)
-                '''
+                
             self('roughness = clamp(roughness, 0.04, 1.0);')
 
             # Normal
@@ -140,6 +136,7 @@ class FragmentShaderBuilder(ShaderBuilder):
 
             # Occlusion
             if material.has_texture('occlusion'):
+                # The red channel of the texture encodes the occlusion value
                 self(f'''var ao = textureSample(occlusionTexture, occlusionSampler, uv).r;'''
                 )
             else:
@@ -151,7 +148,7 @@ class FragmentShaderBuilder(ShaderBuilder):
             self(f'var emissive = vec3<f32>({e[0]}, {e[1]}, {e[2]});')
 
             if material.has_texture('emissive'):
-                self(f'''emissive = emissive * linearSample(emissiveTexture, emissiveSampler, uv).rgb;'''
+                self(f'''emissive = emissive * textureSample(emissiveTexture, emissiveSampler, uv).rgb;'''
                 )
 
             #self('return color;')

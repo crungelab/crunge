@@ -38,11 +38,17 @@ class GltfV:
         #scene_path = models_root / "Character" / "Character.gltf"
         #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
-        #model = "BoxTextured"
-        model = "DamagedHelmet"
+        #model = "2CylinderEngine"
+        #model = "Avocado"
+        #model = "BoxVertexColors"
+        model = "BoxTextured"
+        #model = "BoomBox"
+        #model = "Cube"
+        #model = "Corset"
+        #model = "DamagedHelmet"
 
-        #scene_path = models_root / model / "glTF" / f"{model}.gltf"
-        scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
+        scene_path = models_root / model / "glTF" / f"{model}.gltf"
+        #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Binary" / f"{model}.glb"
         scene = SceneBuilder().build(scene_path)
         #exit()

@@ -95,19 +95,26 @@ class MeshBuilder(NodeBuilder):
             self.vertex_table.add_column(NormalColumn('normal', data))
         elif name == "TEXCOORD_0":
             if accessor.normalized == False and accessor.max_values:
+                '''
                 data = (data - np.min(data)) / (
                     np.max(data) - np.min(data)
                 )
                 '''
-                min_values = np.array(accessor.min_values)
-                max_values = np.array(accessor.max_values)
-
+                min_values = np.array(accessor.min_values, dtype=np.float32)
+                logger.debug(f"min_values: {min_values}")
+                max_values = np.array(accessor.max_values, dtype=np.float32)
+                logger.debug(f"max_values: {max_values}")
+                #exit()
+                logger.debug(data)
                 data = data - min_values
 
                 # Now, scale the values so the maximum becomes 1
                 range_values = max_values - min_values
+                logger.debug(f"range_values: {range_values}")
                 data = data / range_values
-                '''
+                logger.debug(data)
+                #exit()
+                
                 
             self.vertex_table.add_column(UvColumn('uv', data))
         elif name == "COLOR_0":
@@ -198,8 +205,8 @@ class MeshBuilder(NodeBuilder):
                 alpha = wgpu.BlendComponent(
                     operation=wgpu.BlendOperation.ADD,
                     src_factor=wgpu.BlendFactor.ONE,
-                    #dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-                    dst_factor=wgpu.BlendFactor.ONE,
+                    dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+                    #dst_factor=wgpu.BlendFactor.ONE,
                 ),
                 color = wgpu.BlendComponent(
                     operation=wgpu.BlendOperation.ADD,
