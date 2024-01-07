@@ -101,6 +101,13 @@ void init_main(py::module &_wgpu, Registry &registry) {
             }, py::is_operator());
     PYEXTEND_END
 
+    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::ShaderStage, ShaderStage)
+        //TextureUsage.def(py::self | py::self); //Doesn't work
+        ShaderStage.def("__or__", [](wgpu::ShaderStage& a, wgpu::ShaderStage& b) {
+        return (wgpu::ShaderStage)(a | b);
+            }, py::is_operator());
+    PYEXTEND_END
+
     PYEXTEND_BEGIN(wgpu::Extent3D, Extent3D)
         Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>()
         , py::arg("width")

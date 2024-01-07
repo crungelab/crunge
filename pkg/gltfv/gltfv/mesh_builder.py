@@ -244,6 +244,13 @@ class MeshBuilder(NodeBuilder):
                     buffer=wgpu.BufferBindingLayout(
                         type=wgpu.BufferBindingType.UNIFORM
                     ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=1,
+                    visibility=wgpu.ShaderStage.FRAGMENT,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM
+                    ),
                 )
             ]
         )
@@ -251,7 +258,7 @@ class MeshBuilder(NodeBuilder):
         for i, texture in enumerate(self.material.textures):
             bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i*2+1,
+                    binding=i*2+3,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
@@ -260,7 +267,7 @@ class MeshBuilder(NodeBuilder):
             )
             bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i*2+2,
+                    binding=i*2+4,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
@@ -293,17 +300,20 @@ class MeshBuilder(NodeBuilder):
         bg_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
-                    binding=0, buffer=self.mesh.uniform_buffer, size=self.mesh.uniform_buffer_size
+                    binding=0, buffer=self.mesh.vs_uniform_buffer, size=self.mesh.vs_uniform_buffer_size
+                ),
+                wgpu.BindGroupEntry(
+                    binding=1, buffer=self.mesh.fs_uniform_buffer, size=self.mesh.fs_uniform_buffer_size
                 ),
             ]
         )
 
         for i, texture in enumerate(self.material.textures):
             bg_entries.append(
-                wgpu.BindGroupEntry(binding=i*2+1, sampler=texture.sampler)
+                wgpu.BindGroupEntry(binding=i*2+3, sampler=texture.sampler)
             )
             bg_entries.append(
-                wgpu.BindGroupEntry(binding=i*2+2, texture_view=texture.view)
+                wgpu.BindGroupEntry(binding=i*2+4, texture_view=texture.view)
             )
 
         bindGroupDesc = wgpu.BindGroupDescriptor(

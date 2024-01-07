@@ -11,6 +11,21 @@ from .shader_builder import ShaderBuilder
 
 
 shader_code_fragment = """
+struct Light {
+    position: vec3<f32>,
+    color: vec3<f32>,
+    intensity: f32,
+}
+struct Camera {
+    position: vec3<f32>,
+}
+struct FsUniforms {
+    normalMatrix: mat3x3<f32>,
+    light: Light,
+    camera: Camera,
+}
+@group(0) @binding(1) var<uniform> uniforms : FsUniforms;
+
 // Utility function for gamma correction
 fn sRGBToLinear(color: vec3<f32>) -> vec3<f32> {
     return pow(color, vec3<f32>(2.2));
@@ -94,8 +109,8 @@ class FragmentShaderBuilder(ShaderBuilder):
         logger.debug("Building fragment shader")
         material = self.material
         for i, texture in enumerate(material.textures):
-            self(f'@group(0) @binding({i*2+1}) var {texture.name}Sampler: sampler;')
-            self(f'@group(0) @binding({i*2+2}) var {texture.name}Texture : texture_2d<f32>;')
+            self(f'@group(0) @binding({i*2+3}) var {texture.name}Sampler: sampler;')
+            self(f'@group(0) @binding({i*2+4}) var {texture.name}Texture : texture_2d<f32>;')
 
         self(shader_code_fragment)
 
@@ -161,11 +176,20 @@ class FragmentShaderBuilder(ShaderBuilder):
             #self('return color;')
             
             self("""
-    let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
-    let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
-    let rgb = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
+    let fragPos = vec3<f32>(in.vertex_pos.xyz);
+    let lightDir = normalize(uniforms.light.position - fragPos);
+    //let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
+    let viewDir = normalize(uniforms.camera.position - fragPos);
+    //let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
+    //let lightColor = uniforms.light.color * uniforms.light.intensity;
+    let lightColor = vec3<f32>(5.0, 5.0, 5.0);
+    //let rgb = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
+    let reflection = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal);
+    let rgb = reflection * lightColor * ao + emissive;
+    //let rgb = reflection * ao + emissive;
     //rgb = pow(rgb, vec3<f32>(1.0 / 2.2));
     let finalColor = linearToSRGB(rgb);
+    //let finalColor = pow(rgb, vec3<f32>(1.0 / 2.2));
     return vec4<f32>(finalColor, albedo.a);
             """)
             

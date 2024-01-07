@@ -18,6 +18,12 @@ from .shader_builder import ShaderBuilder
 '''
 
 vertex_shader_code = """
+struct VsUniforms {
+    transformMatrix : mat4x4<f32>,
+    normalMatrix: mat3x3<f32>,
+}
+@group(0) @binding(0) var<uniform> uniforms : VsUniforms;
+
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
     let vert_pos = uniforms.transformMatrix * in.pos;

@@ -3,11 +3,6 @@ from ..vertex_table import VertexTable
 
 
 shader_code_preamble = """
-struct Uniforms {
-    transformMatrix : mat4x4<f32>,
-    normalMatrix: mat3x3<f32>,
-}
-@group(0) @binding(0) var<uniform> uniforms : Uniforms;
 """
 
 
