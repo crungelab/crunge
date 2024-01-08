@@ -7,6 +7,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge import gltf
 
+from .constants import RESERVED_BINDINGS, TEXTURE_BINDING_START
 from .node_builder import NodeBuilder
 from .node import Node
 from .debug import debug_node, debug_mesh, debug_primitive, debug_accessor, debug_material
@@ -114,15 +115,13 @@ class MeshBuilder(NodeBuilder):
                 data = data / range_values
                 #logger.debug(data)
                 #exit()
-                
-                
             self.vertex_table.add_column(UvColumn('uv', data))
         elif name == "COLOR_0":
             self.vertex_table.add_column(RgbaColumn('color', data))
         else:
             logger.debug(f"Unknown attribute: {name}")
 
-        logger.debug(f"data: {data}")
+        #logger.debug(f"data: {data}")
 
     def build_indices(self, primitive: gltf.Primitive):
         logger.debug(f"primitive.indices: {primitive.indices}")
@@ -217,6 +216,7 @@ class MeshBuilder(NodeBuilder):
 
         colorTargetState = wgpu.ColorTargetState(
             format=wgpu.TextureFormat.BGRA8_UNORM,
+            #TODO: Something is wrong with the blend state
             #blend=blend_state,
             write_mask=wgpu.ColorWriteMask.ALL,
             )
@@ -258,7 +258,7 @@ class MeshBuilder(NodeBuilder):
         for i, texture in enumerate(self.material.textures):
             bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i*2+3,
+                    binding=i*2+TEXTURE_BINDING_START,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
@@ -267,7 +267,7 @@ class MeshBuilder(NodeBuilder):
             )
             bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i*2+4,
+                    binding=i*2+TEXTURE_BINDING_START+1,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
@@ -310,10 +310,10 @@ class MeshBuilder(NodeBuilder):
 
         for i, texture in enumerate(self.material.textures):
             bg_entries.append(
-                wgpu.BindGroupEntry(binding=i*2+3, sampler=texture.sampler)
+                wgpu.BindGroupEntry(binding=i*2+TEXTURE_BINDING_START, sampler=texture.sampler)
             )
             bg_entries.append(
-                wgpu.BindGroupEntry(binding=i*2+4, texture_view=texture.view)
+                wgpu.BindGroupEntry(binding=i*2+TEXTURE_BINDING_START+1, texture_view=texture.view)
             )
 
         bindGroupDesc = wgpu.BindGroupDescriptor(

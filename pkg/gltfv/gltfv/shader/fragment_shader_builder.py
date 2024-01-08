@@ -5,6 +5,7 @@ from loguru import logger
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
+from ..constants import RESERVED_BINDINGS, TEXTURE_BINDING_START
 from ..vertex_table import VertexTable
 from ..material import Material
 from .shader_builder import ShaderBuilder
@@ -20,7 +21,6 @@ struct Camera {
     position: vec3<f32>,
 }
 struct FsUniforms {
-    normalMatrix: mat3x3<f32>,
     light: Light,
     camera: Camera,
 }
@@ -109,8 +109,8 @@ class FragmentShaderBuilder(ShaderBuilder):
         logger.debug("Building fragment shader")
         material = self.material
         for i, texture in enumerate(material.textures):
-            self(f'@group(0) @binding({i*2+3}) var {texture.name}Sampler: sampler;')
-            self(f'@group(0) @binding({i*2+4}) var {texture.name}Texture : texture_2d<f32>;')
+            self(f'@group(0) @binding({i*2+TEXTURE_BINDING_START}) var {texture.name}Sampler: sampler;')
+            self(f'@group(0) @binding({i*2+TEXTURE_BINDING_START+1}) var {texture.name}Texture : texture_2d<f32>;')
 
         self(shader_code_fragment)
 
@@ -147,9 +147,10 @@ class FragmentShaderBuilder(ShaderBuilder):
             if material.has_texture('normal'):
                 self(f'''
     var normal = textureSample(normalTexture, normalSampler, uv).rgb;
-    normal = normal * 2.0 - 1.0;
+    normal = normal * 2.0 - 1.0; // Remap from [0, 1] to [-1, 1]
     //normal = normal.x * tangent + normal.y * bitangent + normal.z * in.normal;
-    normal = normalize(normal);
+    //normal = normalize(normal * in.normal);
+    normal = normal * in.normal;
                 '''
                 )
             else:
