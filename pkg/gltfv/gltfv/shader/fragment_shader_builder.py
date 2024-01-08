@@ -148,9 +148,10 @@ class FragmentShaderBuilder(ShaderBuilder):
                 self(f'''
     var normal = textureSample(normalTexture, normalSampler, uv).rgb;
     normal = normal * 2.0 - 1.0; // Remap from [0, 1] to [-1, 1]
-    //normal = normal.x * tangent + normal.y * bitangent + normal.z * in.normal;
+    //normal = normal.x * in.tangent + normal.y * in.bitangent + normal.z * in.normal;
+    normal = normalize(normal.x * in.tangent + normal.y * in.bitangent + normal.z * in.normal);
     //normal = normalize(normal * in.normal);
-    normal = normal * in.normal;
+    //normal = normal * in.normal;
                 '''
                 )
             else:

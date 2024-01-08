@@ -17,6 +17,9 @@ class VertexTable:
 
     def has(self, name):
         return name in self.column_map
+    
+    def get(self, name):
+        return self.column_map[name]
 
     @property
     def count(self):

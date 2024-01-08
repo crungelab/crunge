@@ -160,7 +160,7 @@ class Mesh(Node):
         fs_uniforms.light.intensity = 5.0
         fs_uniforms.camera.position.x = 0.0
         fs_uniforms.camera.position.y = 0.0
-        fs_uniforms.camera.position.z = 0.0
+        fs_uniforms.camera.position.z = 4.0
 
         self.device.queue.write_buffer(
             self.fs_uniform_buffer,

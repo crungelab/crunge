@@ -22,6 +22,8 @@ from .material import Material
 
 from .shader import VertexShaderBuilder, FragmentShaderBuilder
 
+from .tangents import calculate_tangents_bitangents
+
 class MeshBuilder(NodeBuilder):
     def __init__(self, tf_model: gltf.Model, tf_node: gltf.Node) -> None:
         super().__init__(tf_model, tf_node)
@@ -54,22 +56,31 @@ class MeshBuilder(NodeBuilder):
 
     def build_primitive(self, primitive: gltf.Primitive):
         debug_primitive(primitive)
-        self.build_attributes(primitive)
 
         if primitive.indices >= 0 and primitive.indices < len(self.tf_model.accessors):
             self.build_indices(primitive)
         if primitive.material >= 0 and primitive.material < len(self.tf_model.materials):
             self.build_material(primitive)
 
+        self.build_attributes(primitive)
+
     def build_attributes(self, primitive: gltf.Primitive):
         attributes: dict = primitive.attributes.copy()
-        #pos = attributes.get('POSITION', None)
         pos = attributes.pop('POSITION', None)
         if pos:
             self.build_attribute(('POSITION', pos))
-            #del attributes['POSITION']
         for attribute in attributes.items():
             self.build_attribute(attribute)
+
+        if self.vertex_table.has('uv'):
+            tangents, bitangents = calculate_tangents_bitangents(
+                self.vertex_table.get('pos').data,
+                self.vertex_table.get('uv').data,
+                self.vertex_table.get('normal').data,
+                self.mesh.index_data
+            )
+            self.vertex_table.add_column(PosColumn('tangent', tangents))
+            self.vertex_table.add_column(PosColumn('bitangent', bitangents))
 
     def build_attribute(self, attribute: tuple):
         name, value = attribute
