@@ -66,7 +66,7 @@ class MeshBuilder(Builder):
 
         mesh.vertex_data = vertex_data
         mesh.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, vertex_data, wgpu.BufferUsage.VERTEX
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
         )
 
         # exit()
@@ -78,7 +78,7 @@ class MeshBuilder(Builder):
         logger.debug(f"n_indices:  {n_indices}")
         mesh.index_data = indices
         mesh.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, indices, wgpu.BufferUsage.INDEX
+            self.device, "INDEX", indices, wgpu.BufferUsage.INDEX
         )
 
         # Uniform Buffer
@@ -97,6 +97,7 @@ class MeshBuilder(Builder):
         visual = tm_mesh.visual
         logger.debug(visual.__dict__)
 
+        
         visual_cls = visual.__class__
         if visual_cls == tm.visual.TextureVisuals:
             tm_material = visual.material
@@ -108,6 +109,7 @@ class MeshBuilder(Builder):
             material = Material()
             material.base_color_factor = (1, 1, 1, 1)
             self.material = material
+
         pipeline = self.create_pipeline()
         mesh.pipeline = pipeline
 

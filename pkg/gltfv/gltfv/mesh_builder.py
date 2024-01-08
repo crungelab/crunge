@@ -49,7 +49,7 @@ class MeshBuilder(NodeBuilder):
 
         self.mesh.vertex_data = vertex_data
         self.mesh.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, vertex_data, wgpu.BufferUsage.VERTEX
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
         )
 
     def build_primitive(self, primitive: gltf.Primitive):
@@ -151,7 +151,7 @@ class MeshBuilder(NodeBuilder):
 
         self.mesh.index_data = indices
         self.mesh.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, indices, wgpu.BufferUsage.INDEX
+            self.device, "INDEX", indices, wgpu.BufferUsage.INDEX
         )
         #exit()
 

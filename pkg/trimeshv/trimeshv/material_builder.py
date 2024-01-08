@@ -30,7 +30,7 @@ class MaterialBuilder(Builder):
         #exit()
 
         # Base Color Texture
-        if tm_material.baseColorTexture:
+        if tm_material.baseColorTexture is not None:
             texture = TextureBuilder('baseColor').build(tm_material.baseColorTexture)
             #material.base_color_texture = texture
             material.add_texture(texture)
@@ -47,19 +47,19 @@ class MaterialBuilder(Builder):
         #exit()
 
         # Metallic Roughness Texture
-        if tm_material.metallicRoughnessTexture:
+        if tm_material.metallicRoughnessTexture is not None:
             texture = TextureBuilder('metallicRoughness').build(tm_material.metallicRoughnessTexture)
             #material.metallic_roughness_texure = texture
             material.add_texture(texture)
 
         # Normal Texture
-        if tm_material.normalTexture:
+        if tm_material.normalTexture is not None:
             texture = TextureBuilder('normal').build(tm_material.normalTexture)
             #material.normal_texure = texture
             material.add_texture(texture)
 
         # Occlusion Texture
-        if tm_material.occlusionTexture:
+        if tm_material.occlusionTexture is not None:
             texture = TextureBuilder('occlusion').build(tm_material.occlusionTexture)
             #material.occlusion_texure = texture
             material.add_texture(texture)

@@ -164,7 +164,7 @@ class CubeDemo(Demo):
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, vertex_data, wgpu.BufferUsage.VERTEX
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
         )
         self.uniformBufferSize = 4 * 16
         self.uniformBuffer = utils.create_buffer(

@@ -181,44 +181,12 @@ class TriangleTextureDemo(Demo):
         # exit()
 
     def create_buffers(self):
-        self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, index_data, wgpu.BufferUsage.INDEX
-        )
         self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, vertex_data, wgpu.BufferUsage.VERTEX
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
         )
-
-    """
-    def create_textures(self):
-        descriptor = wgpu.TextureDescriptor(
-            dimension=wgpu.TextureDimension.E2D,
-            size=wgpu.Extent3D(1024, 1024, 1),
-            sample_count=1,
-            format=wgpu.TextureFormat.RGBA8_UNORM,
-            mip_level_count = 1,
-            usage = wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING
+        self.index_buffer = utils.create_buffer_from_ndarray(
+            self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
         )
-        self.texture = self.device.create_texture(descriptor)
-
-        self.sampler = self.device.create_sampler()
-
-        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint8)
-        for i in range(0, data.size):
-            data[i] = i % 253
-
-        staging_buffer = utils.create_buffer_from_ndarray(
-            self.device, data, wgpu.BufferUsage.COPY_SRC
-        )
-        image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, 4 * 1024)
-        image_copy_texture = utils.create_image_copy_texture(self.texture)
-        copy_size = wgpu.Extent3D(1024, 1024, 1)
-
-        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
-        encoder.copy_buffer_to_texture(image_copy_buffer, image_copy_texture, copy_size)
-
-        copy: wgpu.CommandBuffer = encoder.finish()
-        self.queue.submit(1, copy)
-    """
 
     def create_textures(self):
         descriptor = wgpu.TextureDescriptor(
@@ -237,22 +205,6 @@ class TriangleTextureDemo(Demo):
         for i in range(0, data.size):
             data[i] = i % 253
 
-        # The OLD way:
-        """
-        staging_buffer = utils.create_buffer_from_ndarray(
-            self.device, data, wgpu.BufferUsage.COPY_SRC
-        )
-        image_copy_buffer = utils.create_image_copy_buffer(staging_buffer, 0, 4 * 1024)
-        image_copy_texture = utils.create_image_copy_texture(self.texture)
-        copy_size = wgpu.Extent3D(1024, 1024, 1)
-
-        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
-        encoder.copy_buffer_to_texture(image_copy_buffer, image_copy_texture, copy_size)
-
-        copy: wgpu.CommandBuffer = encoder.finish()
-        self.queue.submit(1, copy)
-        """
-        # The NEW way:
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             wgpu.ImageCopyTexture(

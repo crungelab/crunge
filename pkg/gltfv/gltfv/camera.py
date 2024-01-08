@@ -20,8 +20,7 @@ class Camera:
         view_matrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
         view_matrix = glm.scale(view_matrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE))
         
-        rot_matrix = glm.mat4(1.0)
-        rot_matrix = glm.rotate(rot_matrix, math.sin(ms), WORLD_AXIS_X)
+        rot_matrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
         rot_matrix = glm.rotate(rot_matrix, math.cos(ms), WORLD_AXIS_Y)
         self.view_matrix = view_matrix * rot_matrix
 

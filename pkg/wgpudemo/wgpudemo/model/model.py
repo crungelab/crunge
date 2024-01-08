@@ -285,10 +285,10 @@ class ModelDemo(Demo):
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, self.vertex_data, wgpu.BufferUsage.VERTEX
+            self.device, "VERTEX", self.vertex_data, wgpu.BufferUsage.VERTEX
         )
         self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, self.index_data, wgpu.BufferUsage.INDEX
+            self.device, "INDEX", self.index_data, wgpu.BufferUsage.INDEX
         )
         self.uniformBufferSize = 4 * 16
         self.uniformBuffer = utils.create_buffer(

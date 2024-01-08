@@ -183,7 +183,8 @@ class FragmentShaderBuilder(ShaderBuilder):
     let viewDir = normalize(uniforms.camera.position - fragPos);
     //let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
     //let lightColor = uniforms.light.color * uniforms.light.intensity;
-    let lightColor = vec3<f32>(5.0, 5.0, 5.0);
+    let lightColor = uniforms.light.color * 5.0;
+    //let lightColor = vec3<f32>(5.0, 5.0, 5.0);
     //let rgb = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
     let reflection = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal);
     let rgb = reflection * lightColor * ao + emissive;
