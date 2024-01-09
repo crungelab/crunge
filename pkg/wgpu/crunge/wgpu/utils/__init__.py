@@ -18,7 +18,7 @@ def create_buffer(
     device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage
 ) -> wgpu.Buffer:
     # Buffer size has to be a multiple of 4
-    size = divround_up(size, 4)
+    #size = divround_up(size, 4)
     desc = wgpu.BufferDescriptor()
     desc.label = label
     desc.usage = usage | wgpu.BufferUsage.COPY_DST

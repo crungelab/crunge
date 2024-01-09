@@ -13,8 +13,8 @@ import gltfv.globals
 from .scene_builder import SceneBuilder
 from .viewer import Viewer
 
-#models_root = Path(__file__).parent.parent / "resources" / "models"
-models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
+models_root = Path(__file__).parent.parent / "resources" / "models"
+#models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class GltfV:
     def __init__(self):
@@ -34,7 +34,7 @@ class GltfV:
         #scene_path = models_root / "Cube" / "glTF-Embedded" / "Cube.gltf"
         #scene_path = models_root / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
         #scene_path = models_root / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
-        #scene_path = models_root / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
+        scene_path = models_root / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
         #scene_path = models_root / "Character" / "Character.gltf"
         #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
@@ -45,9 +45,9 @@ class GltfV:
         #model = "BoomBox"
         #model = "Cube"
         #model = "Corset"
-        model = "DamagedHelmet"
+        #model = "DamagedHelmet"
 
-        scene_path = models_root / model / "glTF" / f"{model}.gltf"
+        #scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Binary" / f"{model}.glb"
         scene = SceneBuilder().build(scene_path)

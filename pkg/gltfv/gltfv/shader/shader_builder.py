@@ -21,7 +21,7 @@ class ShaderBuilder(Builder):
         self('struct VertexInput {')
         self.indent()
         for column in self.vertex_table.columns:
-            self(f'@location({column.location}) {column.name}: {column.type},')
+            self(f'@location({column.location}) {column.name}: {column.input_type},')
         self.dedent()
         self('}')
 
@@ -32,10 +32,9 @@ class ShaderBuilder(Builder):
         for column in self.vertex_table.columns:
             if column.name == 'pos':
                 continue
-            self(f'@location({column.location-1}) {column.name}: {column.type},')
-        #location = self.vertex_table.columns[-1].location + 1
-        #self(f'@location({location}) tangent: vec3<f32>,')
-        #self(f'@location({location+1}) bitangent: vec3<f32>,')
+            self(f'@location({column.location-1}) {column.name}: {column.output_type},')
+        location = self.vertex_table.columns[-1].location + 1
+        self(f'@location({location}) bitangent: vec3<f32>,')
         self.dedent()
         self('}')
 

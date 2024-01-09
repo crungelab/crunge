@@ -21,8 +21,8 @@ struct Camera {
     position: vec3<f32>,
 }
 struct FsUniforms {
-    camera: Camera,
     light: Light,
+    camera: Camera,
 }
 @group(0) @binding(1) var<uniform> uniforms : FsUniforms;
 
@@ -101,6 +101,8 @@ class FragmentShaderBuilder(ShaderBuilder):
 
         with self:
             if self.vertex_table.has('uv'):
+                #self("let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);\n")
+                #self("let uv = vec2<f32>(in.uv.x, in.uv.y);\n")
                 self("let uv = in.uv;\n")
 
             if self.vertex_table.has('color'):
@@ -110,7 +112,9 @@ class FragmentShaderBuilder(ShaderBuilder):
                 self(f'let bcf = vec4<f32>({bcf[0]}, {bcf[1]}, {bcf[2]}, {bcf[3]});')
 
             if material.has_texture('baseColor'):
+                #self(f'color = color * linearSample(baseColorTexture, baseColorSampler, uv);\n')
                 self(f'let albedo = bcf * linearSample(baseColorTexture, baseColorSampler, uv);\n')
+                #self(f'let albedo = bcf * sRGBToLinear(textureSample(baseColorTexture, baseColorSampler, uv).rgb);')
 
             # Metallic
             self(f'let metallic_factor: f32 = {material.metallic_factor};')
@@ -129,9 +133,8 @@ class FragmentShaderBuilder(ShaderBuilder):
                 self(f'''
     var normal = textureSample(normalTexture, normalSampler, uv).rgb;
     normal = normal * 2.0 - 1.0; // Remap from [0, 1] to [-1, 1]
-    normal = normalize(normal.x * in.tangent + normal.y * in.bitangent + normal.z * in.normal);
-
     //normal = normal.x * in.tangent + normal.y * in.bitangent + normal.z * in.normal;
+    normal = normalize(normal.x * in.tangent + normal.y * in.bitangent + normal.z * in.normal);
     //normal = normalize(normal * in.normal);
     //normal = normal * in.normal;
                 '''
@@ -156,8 +159,6 @@ class FragmentShaderBuilder(ShaderBuilder):
             if material.has_texture('emissive'):
                 self(f'''let emissive = emissive_factor * textureSample(emissiveTexture, emissiveSampler, uv).rgb;'''
                 )
-            else:
-                self('let emissive = emissive_factor;')
 
             #self('return color;')
             

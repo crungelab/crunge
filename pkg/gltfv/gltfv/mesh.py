@@ -84,7 +84,7 @@ assert sizeof(VsUniforms) % 16 == 0
 
 
 class FsUniforms(Structure):
-    _fields_ = [("light", Light), ("camera", Camera)]
+    _fields_ = [("camera", Camera), ("light", Light)]
 
 
 assert sizeof(FsUniforms) % 16 == 0
@@ -151,16 +151,23 @@ class Mesh(Node):
         )
 
         fs_uniforms = FsUniforms()
+        
+        '''
         fs_uniforms.light.position.x = 2.0
         fs_uniforms.light.position.y = 4.0
         fs_uniforms.light.position.z = 3.0
+        '''
+        fs_uniforms.light.position.x = camera.position.x + 2.0
+        fs_uniforms.light.position.y = camera.position.y + 4.0
+        fs_uniforms.light.position.z = camera.position.z + 3.0
+
         fs_uniforms.light.color.x = 1.0
         fs_uniforms.light.color.y = 1.0
         fs_uniforms.light.color.z = 1.0
         fs_uniforms.light.intensity = 5.0
-        fs_uniforms.camera.position.x = 0.0
-        fs_uniforms.camera.position.y = 0.0
-        fs_uniforms.camera.position.z = 4.0
+        fs_uniforms.camera.position.x = camera.position.x
+        fs_uniforms.camera.position.y = camera.position.y
+        fs_uniforms.camera.position.z = camera.position.z
 
         self.device.queue.write_buffer(
             self.fs_uniform_buffer,

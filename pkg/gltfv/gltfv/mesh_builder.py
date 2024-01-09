@@ -15,14 +15,14 @@ from .debug import debug_node, debug_mesh, debug_primitive, debug_accessor, debu
 from .mesh import Mesh
 
 from .vertex_table import VertexTable
-from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn
+from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, TangentColumn
 
 from .material_builder import MaterialBuilder
 from .material import Material
 
 from .shader import VertexShaderBuilder, FragmentShaderBuilder
 
-from .tangents import calculate_tangents_bitangents
+from .tangents import compute_tangents
 
 class MeshBuilder(NodeBuilder):
     def __init__(self, tf_model: gltf.Model, tf_node: gltf.Node) -> None:
@@ -73,14 +73,14 @@ class MeshBuilder(NodeBuilder):
             self.build_attribute(attribute)
 
         if self.vertex_table.has('uv'):
-            tangents, bitangents = calculate_tangents_bitangents(
-                self.vertex_table.get('pos').data,
-                self.vertex_table.get('uv').data,
-                self.vertex_table.get('normal').data,
-                self.mesh.index_data
-            )
-            self.vertex_table.add_column(PosColumn('tangent', tangents))
-            self.vertex_table.add_column(PosColumn('bitangent', bitangents))
+            if not self.vertex_table.has('tangent'):
+                tangents = compute_tangents(
+                    self.vertex_table.get('pos').data,
+                    self.vertex_table.get('uv').data,
+                    self.vertex_table.get('normal').data,
+                    self.mesh.index_data
+                )
+                self.vertex_table.add_column(TangentColumn('tangent', tangents))
 
     def build_attribute(self, attribute: tuple):
         name, value = attribute
@@ -105,6 +105,8 @@ class MeshBuilder(NodeBuilder):
             self.vertex_table.add_column(PosColumn('pos', data))
         elif name == "NORMAL":
             self.vertex_table.add_column(NormalColumn('normal', data))
+        elif name == "TANGENT":
+            self.vertex_table.add_column(TangentColumn('tangent', data))
         elif name == "TEXCOORD_0":
             if accessor.normalized == False and accessor.max_values:
                 '''

@@ -25,11 +25,25 @@ struct VsUniforms {
 @group(0) @binding(0) var<uniform> uniforms : VsUniforms;
 
 @vertex
-fn vs_main(in : VertexInput) -> VertexOutput {
-    let vert_pos = uniforms.transformMatrix * in.pos;
+fn vs_main(input : VertexInput) -> VertexOutput {
+    var output : VertexOutput;
+    output.vertex_pos = uniforms.transformMatrix * input.pos;
+    output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal
+    output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz); // Transform the normal
+    output.bitangent = (cross(output.normal, output.tangent) * input.tangent.w);
+    
 """
+#output.tangent = normalize(((modelMatrix * vec4(input.tangent.xyz, 0.0))).xyz);
 
+'''
+    output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal
+    output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz); // Transform the normal
+'''
 
+'''
+    output.normal = normalize(((uniforms.transformMatrix * vec4(input.normal, 0.0))).xyz);
+    output.tangent = normalize(((uniforms.transformMatrix * vec4(input.tangent.xyz, 0.0))).xyz);
+'''
 class VertexShaderBuilder(ShaderBuilder):
     def __init__(self, vertex_table: VertexTable) -> None:
         super().__init__(vertex_table)
@@ -46,15 +60,20 @@ class VertexShaderBuilder(ShaderBuilder):
         return shader_module
 
     def build_return(self):
+        for column in self.vertex_table.columns:
+            if column.name in ['pos', 'normal', 'tangent']:
+                continue
+
+            self(f'output.{column.name} = input.{column.name};')
+        self('return output;')
+        self('}')
+
+    '''
+    def build_return(self):
         self.write('return VertexOutput(vert_pos')
         for column in self.vertex_table.columns:
             if column.name == 'pos':
                 continue
-            '''
-            if column.name == 'normal':
-                self.write(f', normalize(uniforms.normalMatrix * in.{column.name})')
-                continue
-            '''
             if column.name in ['normal', 'tangent', 'bitangent']:
                 self.write(f', normalize(uniforms.normalMatrix * in.{column.name})')
                 continue
@@ -62,3 +81,4 @@ class VertexShaderBuilder(ShaderBuilder):
             self.write(f', in.{column.name}')
         self.write(');\n')
         self('}')
+    '''

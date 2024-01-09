@@ -34,7 +34,7 @@ class Camera:
 
         aspect = float(width) / float(height)
         fov_y_radians = (2.0 * math.pi) / 5.0
-        self.projection_matrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
+        self.projection_matrix = glm.perspective(fov_y_radians, aspect, .5, 100.0)
         self.view_matrix = glm.mat4(1.0)
 
     @property

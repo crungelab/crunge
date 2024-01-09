@@ -28,28 +28,63 @@ class VertexColumn:
             return "vec3<f32>"
         elif self.format == wgpu.VertexFormat.FLOAT32X4:
             return "vec4<f32>"
+        
+    @property
+    def input_type(self):
+        return self.type
 
-class Position(Structure):
+    @property
+    def output_type(self):
+        return self.type
+
+class Vec3(Structure):
     _fields_ = [
         ("x", c_float),
         ("y", c_float),
         ("z", c_float),
     ]
+
+class Vec4(Structure):
+    _fields_ = [
+        ("x", c_float),
+        ("y", c_float),
+        ("z", c_float),
+        ("w", c_float),
+    ]
+
+class Position(Vec3):
+    pass
 
 class PosColumn(VertexColumn):
     struct = Position
     format = wgpu.VertexFormat.FLOAT32X3
 
-class Normal(Structure):
-    _fields_ = [
-        ("x", c_float),
-        ("y", c_float),
-        ("z", c_float),
-    ]
+class Normal(Vec3):
+    pass
 
 class NormalColumn(VertexColumn):
     struct = Normal
     format = wgpu.VertexFormat.FLOAT32X3
+
+class Tangent(Vec4):
+    pass
+
+class TangentColumn(VertexColumn):
+    struct = Tangent
+    format = wgpu.VertexFormat.FLOAT32X4
+
+    @property
+    def output_type(self):
+        return "vec3<f32>"
+
+'''
+class BiTangent(Vec3):
+    pass
+
+class BiTangentColumn(VertexColumn):
+    struct = BiTangent
+    format = wgpu.VertexFormat.FLOAT32X3
+'''
 
 class UvCoord(Structure):
     _fields_ = [
