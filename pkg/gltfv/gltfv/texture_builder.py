@@ -35,8 +35,8 @@ class TextureBuilder(ModelBuilder):
         else:
             im = np.array(image)
         '''
-        #im = np.array(tf_image.image, dtype=np.uint8)
-        im = np.array(tf_image.image, dtype=np.uint8, copy=False)
+        im = np.array(tf_image.image, dtype=np.uint8)
+        #im = np.array(tf_image.image, dtype=np.uint8, copy=False)
         shape = im.shape
         logger.debug(f"im.shape: {shape}")
         logger.debug(f"im.dtype: {im.dtype}")

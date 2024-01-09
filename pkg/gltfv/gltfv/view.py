@@ -55,7 +55,7 @@ class View(Base):
 
 
     def draw(self, view: wgpu.TextureView):
-        self.camera.update()
+        #self.camera.update()
         
         attachment = wgpu.RenderPassColorAttachment(
             view=view,

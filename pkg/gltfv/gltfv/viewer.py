@@ -13,14 +13,21 @@ import gltfv.globals as globals
 from .base import Base
 from .scene import Scene
 from .view import View
-
+from .camera import Camera
+from .controller.camera import CameraController
+from .controller.camera.arcball import ArcballCameraController
+#from .controller.camera.arcball1 import ArcballCameraController
+#from .controller.camera.arcball2 import ArcballCameraController
+#from .controller.camera.arcball3 import ArcballCameraController
 
 class Viewer(Base):
     kWidth = 1024
     kHeight = 768
     
     def __init__(self):
-        pass
+        self.camera: Camera = None
+        self.camera_controller: CameraController = None
+        self.delta_time = 0
 
     def create_window(self):
         glfw.init()
@@ -29,6 +36,13 @@ class Viewer(Base):
         glfw.window_hint(glfw.RESIZABLE, True)
 
         self.window = glfw.create_window(self.kWidth, self.kHeight, "GlTF Viewer", None, None)
+
+        glfw.set_cursor_pos_callback(self.window, self.mouse_callback)
+        glfw.set_mouse_button_callback(self.window, self.mouse_button_callback)
+        #glfw.set_scroll_callback(self.window, lambda w, xoffset, yoffset: camera.zoom(yoffset * 0.1))
+        glfw.set_scroll_callback(self.window, self.scroll_callback)
+
+        glfw.set_key_callback(self.window, self.key_callback)
 
     def create_view(self, scene: Scene):
         wsd = None
@@ -56,6 +70,10 @@ class Viewer(Base):
         self.create_window()
         self.create_view(scene)
 
+        self.camera = self.view.camera
+        self.camera_controller = ArcballCameraController(self.window, self.camera)
+        self.camera_controller.activate()
+
         last_time = time.perf_counter()
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
@@ -65,6 +83,8 @@ class Viewer(Base):
 
             now = time.perf_counter()
             frame_time = now - last_time
+            self.delta_time = frame_time
+            self.camera_controller.update(frame_time)
 
             # Calculate how much time is left to delay to maintain 60 FPS
             time_left = target_frame_time - frame_time
@@ -80,3 +100,17 @@ class Viewer(Base):
 
         glfw.destroy_window(self.window)
         glfw.terminate()
+
+    def mouse_callback(self, window, xpos, ypos):
+        self.camera_controller.on_mouse(window, xpos, ypos)
+
+    def mouse_button_callback(self,window, button, action, mods):
+        self.camera_controller.on_mouse_button(window, button, action, mods)
+
+    def scroll_callback(self, window, xoffset, yoffset):
+        self.camera_controller.on_mouse_scroll(window, xoffset, yoffset)
+
+    def key_callback(self, window, key, scancode, action, mods):
+        self.camera_controller.on_key(window, key, scancode, action, mods)
+        if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
+            glfw.set_window_should_close(window, True)

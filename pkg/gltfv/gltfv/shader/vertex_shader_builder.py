@@ -50,9 +50,15 @@ class VertexShaderBuilder(ShaderBuilder):
         for column in self.vertex_table.columns:
             if column.name == 'pos':
                 continue
+            '''
             if column.name == 'normal':
                 self.write(f', normalize(uniforms.normalMatrix * in.{column.name})')
                 continue
+            '''
+            if column.name in ['normal', 'tangent', 'bitangent']:
+                self.write(f', normalize(uniforms.normalMatrix * in.{column.name})')
+                continue
+
             self.write(f', in.{column.name}')
         self.write(');\n')
         self('}')
