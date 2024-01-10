@@ -98,14 +98,13 @@ class MeshBuilder(Builder):
         logger.debug(visual.__dict__)
 
         
-        visual_cls = visual.__class__
-        if visual_cls == tm.visual.TextureVisuals:
+        if visual.kind == "texture":
             tm_material = visual.material
             logger.debug(tm_material.__dict__)
 
             material = MaterialBuilder().build(tm_material)
             self.material = material
-        elif visual_cls == tm.visual.ColorVisuals:
+        elif visual.kind == "vertex":
             material = Material()
             material.base_color_factor = (1, 1, 1, 1)
             self.material = material

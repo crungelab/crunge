@@ -98,7 +98,7 @@ class ArcballCameraController(CameraController):
         self.inv_camera = glm.inverse(self.camera.view_matrix)
 
     def process_mouse_movement(self, xpos, ypos):
-        logger.debug(f"Mouse movement: {xpos}, {ypos}")
+        #logger.debug(f"Mouse movement: {xpos}, {ypos}")
 
         if self.first_mouse:
             self.prev_mouse = transform_mouse(glm.vec2(xpos, ypos), self.width, self.height)
@@ -108,8 +108,8 @@ class ArcballCameraController(CameraController):
 
         self.position = self.target + self.orientation * glm.vec3(0, 0, -1) * self.distance
 
-        logger.debug(f"Camera position: {self.camera.position}")
-        logger.debug(f"Camera orientation: {self.camera.orientation}")
+        #logger.debug(f"Camera position: {self.camera.position}")
+        #logger.debug(f"Camera orientation: {self.camera.orientation}")
 
         #self.camera.update_camera_vectors()
         #self.camera.look_at(self.target)

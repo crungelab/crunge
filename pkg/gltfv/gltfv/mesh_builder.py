@@ -132,6 +132,10 @@ class MeshBuilder(NodeBuilder):
             self.vertex_table.add_column(UvColumn('uv', data))
         elif name == "COLOR_0":
             self.vertex_table.add_column(RgbaColumn('color', data))
+        elif name == "JOINTS_0":
+            return
+        elif name == "WEIGHTS_0":
+            return
         else:
             #logger.debug(f"Unknown attribute: {name}")
             raise Exception(f"Unknown attribute: {name}")

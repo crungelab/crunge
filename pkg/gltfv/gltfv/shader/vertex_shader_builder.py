@@ -20,20 +20,12 @@ struct VsUniforms {
 fn vs_main(input : VertexInput) -> VertexOutput {
     var output : VertexOutput;
     output.vertex_pos = uniforms.transformMatrix * input.pos;
-    output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal    
+    output.normal = normalize(((uniforms.transformMatrix * vec4(input.normal.xyz, 0.0))).xyz);
 """
-#output.tangent = normalize(((modelMatrix * vec4(input.tangent.xyz, 0.0))).xyz);
+#output.tangent = normalize(((uniforms.transformMatrix * vec4(input.tangent.xyz, 0.0))).xyz);
 
-'''
-    output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal
-    output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz); // Transform the normal
-    output.bitangent = (cross(output.normal, output.tangent) * input.tangent.w);
-'''
+#output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal    
 
-'''
-    output.normal = normalize(((uniforms.transformMatrix * vec4(input.normal, 0.0))).xyz);
-    output.tangent = normalize(((uniforms.transformMatrix * vec4(input.tangent.xyz, 0.0))).xyz);
-'''
 class VertexShaderBuilder(ShaderBuilder):
     def __init__(self, vertex_table: VertexTable) -> None:
         super().__init__(vertex_table)
@@ -51,7 +43,8 @@ class VertexShaderBuilder(ShaderBuilder):
 
     def build_return(self):
         if self.vertex_table.has('tangent'):
-            self('output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz);')
+            #self('output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz);')
+            self('output.tangent = normalize(((uniforms.transformMatrix * vec4(input.tangent.xyz, 0.0))).xyz);')
             self('output.bitangent = (cross(output.normal, output.tangent) * input.tangent.w);')
         for column in self.vertex_table.columns:
             if column.name in ['pos', 'normal', 'tangent']:

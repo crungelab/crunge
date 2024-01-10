@@ -14,6 +14,7 @@ class Node(Base):
         self.rotation = glm.mat4(1.0)
         self.scale = glm.vec3(1.0)
         self.matrix = glm.mat4(1.0)
+        self.transform = glm.mat4(1.0)
 
     def add_child(self, child):
         self.children.append(child)

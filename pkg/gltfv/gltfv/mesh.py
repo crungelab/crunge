@@ -20,85 +20,13 @@ import crunge.wgpu.utils as utils
 
 from .node import Node
 from .camera import Camera
-
-# MAT4_SIZE = 4 * 4 * 4
-
-
-class Vec3(Structure):
-    _fields_ = [
-        ("x", c_float),
-        ("y", c_float),
-        ("z", c_float),
-        ("_pad", c_float),
-    ]  # Padding to ensure 16-byte alignment
-
-
-assert sizeof(Vec3) % 16 == 0
-assert sizeof(Vec3) == 16
-
-
-class Mat4(Structure):
-    _fields_ = [("data", c_float * 16)]  # GLM uses column-major order
-
-
-assert sizeof(Mat4) % 16 == 0
-assert sizeof(Mat4) == 64
-
-
-class Mat3(Structure):
-    _fields_ = [
-        ("data", c_float * 9),
-        ("_pad1", c_float * 3),
-    ]  # GLM uses column-major order
-    # _fields_ = [("data", c_float * 9), ("_pad1", c_float * 3)]  # Padding after each vec3
-
-
-assert sizeof(Mat3) % 16 == 0
-assert sizeof(Mat3) == 48
-
-
-class Light(Structure):
-    _fields_ = [
-        ("position", Vec3),
-        ("color", Vec3),
-        ("intensity", c_float),
-        ("_pad1", c_float * 3),
-    ]
-
-
-assert sizeof(Light) % 16 == 0
-
-
-class Camera(Structure):
-    _fields_ = [("position", Vec3)]
-
-
-assert sizeof(Camera) % 16 == 0
-
-
-class VsUniforms(Structure):
-    _fields_ = [("transform_matrix", Mat4), ("normal_matrix", Mat3)]
-
-
-assert sizeof(VsUniforms) % 16 == 0
-
-
-class FsUniforms(Structure):
-    _fields_ = [("camera", Camera), ("light", Light)]
-
-
-assert sizeof(FsUniforms) % 16 == 0
-
-
-def cast_matrix4(matrix):
-    ptr = glm.value_ptr(matrix)
-    return cast(ptr, POINTER(c_float * 16)).contents
-
-
-def cast_matrix3(matrix):
-    ptr = glm.value_ptr(matrix)
-    return cast(ptr, POINTER(c_float * 9)).contents
-
+from .uniforms import (
+    cast_matrix3,
+    cast_matrix4,
+    cast_vec3,
+    VsUniforms,
+    FsUniforms,
+)
 
 class Mesh(Node):
     pipeline: wgpu.RenderPipeline = None
@@ -136,7 +64,7 @@ class Mesh(Node):
         )
 
     def draw(self, camera: Camera, pass_enc: wgpu.RenderPassEncoder):
-        transform_matrix = camera.transform_matrix
+        transform_matrix = camera.transform_matrix * self.transform
         normal_matrix = glm.transpose(glm.inverse(glm.mat3(transform_matrix)))
 
         vs_uniforms = VsUniforms()
@@ -152,22 +80,20 @@ class Mesh(Node):
 
         fs_uniforms = FsUniforms()
         
-        '''
-        fs_uniforms.light.position.x = 2.0
-        fs_uniforms.light.position.y = 4.0
-        fs_uniforms.light.position.z = 3.0
-        '''
-        fs_uniforms.light.position.x = camera.position.x + 2.0
-        fs_uniforms.light.position.y = camera.position.y + 4.0
-        fs_uniforms.light.position.z = camera.position.z + 3.0
+        #fs_uniforms.light.position.x = -2.0
+        #fs_uniforms.light.position.y = 4.0
+        #fs_uniforms.light.position.z = 3.0
+        fs_uniforms.light.position.data = cast_vec3(glm.vec3(2.0, 4.0, 3.0))
 
         fs_uniforms.light.color.x = 1.0
         fs_uniforms.light.color.y = 1.0
         fs_uniforms.light.color.z = 1.0
         fs_uniforms.light.intensity = 5.0
-        fs_uniforms.camera.position.x = camera.position.x
-        fs_uniforms.camera.position.y = camera.position.y
-        fs_uniforms.camera.position.z = camera.position.z
+
+        #fs_uniforms.camera.position.x = camera.position.x
+        #fs_uniforms.camera.position.y = camera.position.y
+        #fs_uniforms.camera.position.z = camera.position.z
+        fs_uniforms.camera.position.data = cast_vec3(camera.position)
 
         self.device.queue.write_buffer(
             self.fs_uniform_buffer,

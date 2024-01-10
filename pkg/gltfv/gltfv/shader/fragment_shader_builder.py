@@ -27,18 +27,21 @@ struct FsUniforms {
 @group(0) @binding(1) var<uniform> uniforms : FsUniforms;
 
 // Utility function for gamma correction
-fn sRGBToLinear(color: vec3<f32>) -> vec3<f32> {
-    return pow(color, vec3<f32>(2.2));
+const GAMMA = 2.200000048;
+
+fn linearToSRGB(linear : vec3<f32>) -> vec3<f32> {
+  let INV_GAMMA = (1.0 / GAMMA);
+  return pow(linear, vec3<f32>(INV_GAMMA));
 }
 
-fn linearToSRGB(color: vec3<f32>) -> vec3<f32> {
-    return pow(color, vec3<f32>(1.0 / 2.2));
+fn sRGBToLinear(srgb : vec3<f32>) -> vec3<f32> {
+  return pow(srgb, vec3<f32>(GAMMA));
 }
 
 fn linearSample(texture: texture_2d<f32>, texSampler: sampler, uv: vec2<f32>) -> vec4<f32>
   {
     let color = textureSample(texture, texSampler, uv);
-    return vec4<f32>(pow(color.rgb, vec3<f32>(2.2)), color.a);
+    return vec4<f32>(sRGBToLinear(color.rgb), color.a);
   }
 
 const pi: f32 = 3.141592653589793;
@@ -52,7 +55,8 @@ fn brdf(color: vec3<f32>,
 {
     let h = normalize(l + v);
     let ndotl = clamp(dot(n, l), 0.0, 1.0);
-    let ndotv = abs(dot(n, v));
+    //let ndotv = abs(dot(n, v));
+    let ndotv = dot(n, v);
     let ndoth = clamp(dot(n, h), 0.0, 1.0);
     let vdoth = clamp(dot(v, h), 0.0, 1.0);
 
@@ -80,7 +84,7 @@ fn brdf(color: vec3<f32>,
 }
 
 @fragment
-fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
+fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
 """
 
 
@@ -104,10 +108,10 @@ class FragmentShaderBuilder(ShaderBuilder):
             self(f'let bcf = vec4<f32>({bcf[0]}, {bcf[1]}, {bcf[2]}, {bcf[3]});')
 
             if self.vertex_table.has('uv'):
-                self("let uv = in.uv;")
+                self("let uv = input.uv;")
 
             if self.vertex_table.has('color'):
-                self("let albedo = in.color;")
+                self("let albedo = input.color;")
             elif material.has_texture('baseColor'):
                 self(f'let albedo = bcf * linearSample(baseColorTexture, baseColorSampler, uv);')
             else:
@@ -129,18 +133,14 @@ class FragmentShaderBuilder(ShaderBuilder):
             # Normal
             if material.has_texture('normal'):
                 self(f'''
-    var normal = textureSample(normalTexture, normalSampler, uv).rgb;
-    normal = normal * 2.0 - 1.0; // Remap from [0, 1] to [-1, 1]
-    normal = normalize(normal.x * in.tangent + normal.y * in.bitangent + normal.z * in.normal);
-
-    //normal = normal.x * in.tangent + normal.y * in.bitangent + normal.z * in.normal;
-    //normal = normalize(normal * in.normal);
-    //normal = normal * in.normal;
+    let tbn = mat3x3(input.tangent, input.bitangent, input.normal);
+    let normalMap = textureSample(normalTexture, normalSampler, uv).rgb;
+    let normal = normalize((tbn * ((2.0 * normalMap) - vec3(1.0))));
                 '''
                 )
             else:
-                self('var normal = normalize(in.normal);')
-                #self('var normal = in.normal;')
+                self('let normal = normalize(input.normal);')
+                #self('let normal = input.normal;')
 
             # Occlusion
             if material.has_texture('occlusion'):
@@ -165,24 +165,26 @@ class FragmentShaderBuilder(ShaderBuilder):
             
             if material.has_texture('metallicRoughness'):
                 self("""
-    let fragPos = vec3<f32>(in.vertex_pos.xyz);
+    let fragPos = vec3<f32>(input.vertex_pos.xyz);
+
     let lightDir = normalize(uniforms.light.position - fragPos);
     //let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
+
     let viewDir = normalize(uniforms.camera.position - fragPos);
     //let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
+                     
     //let lightColor = uniforms.light.color * uniforms.light.intensity;
     let lightColor = uniforms.light.color * 5.0;
     //let lightColor = vec3<f32>(5.0, 5.0, 5.0);
-    //let rgb = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
+
     let reflection = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal);
     let rgb = reflection * lightColor * ao + emissive;
-    //let rgb = reflection * ao + emissive;
     let finalColor = linearToSRGB(rgb);
     return vec4<f32>(finalColor, albedo.a);
                 """)
             else:
                 self("""
-    let fragPos = vec3<f32>(in.vertex_pos.xyz);
+    let fragPos = vec3<f32>(input.vertex_pos.xyz);
     let lightDir = normalize(uniforms.light.position - fragPos);
     //let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
     let viewDir = normalize(uniforms.camera.position - fragPos);
