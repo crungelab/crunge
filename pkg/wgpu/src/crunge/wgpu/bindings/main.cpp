@@ -15,6 +15,9 @@
 #include <crunge/wgpu/crunge-wgpu.h>
 #include <crunge/wgpu/conversions.h>
 
+#include "callbacks.h"
+using namespace crunge::wgpu;
+
 namespace py = pybind11;
 
 using namespace wgpu;
@@ -65,6 +68,15 @@ void init_main(py::module &_wgpu, Registry &registry) {
     
     Device.def("enable_logging",
         [](const wgpu::Device& self) {
+            self.SetUncapturedErrorCallback(crunge::wgpu::ErrorCallback, nullptr);
+
+            self.SetLoggingCallback(crunge::wgpu::LoggingCallback, nullptr);
+
+            self.SetDeviceLostCallback(crunge::wgpu::DeviceLostCallback, nullptr);
+    });
+
+    /*Device.def("enable_logging",
+        [](const wgpu::Device& self) {
             self.SetUncapturedErrorCallback([](WGPUErrorType type, char const * message, void * userdata){
                 printf(message);
             }, nullptr);
@@ -76,7 +88,7 @@ void init_main(py::module &_wgpu, Registry &registry) {
             self.SetDeviceLostCallback([](WGPUDeviceLostReason reason, char const * message, void * userdata){
                 printf(message); printf("\n");
             }, nullptr);
-    });
+    });*/
 
     /*Device.def("set_uncaptured_error_callback",
         [](const wgpu::Device& self, ErrorCallback callback, py::object userdata) {

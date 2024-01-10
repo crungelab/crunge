@@ -31,12 +31,12 @@ class GltfV:
 
         #scene_path = models_root / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
         #scene_path = models_root / "BoxTextured" / "glTF" / "BoxTextured.gltf"
-        #scene_path = models_root / "Cube" / "glTF-Embedded" / "Cube.gltf"
+        #scene_path = models_root / "Cube" / "glTF" / "Cube.gltf"
         #scene_path = models_root / "SimpleMeshes" / "glTF" / "SimpleMeshes.gltf"
         #scene_path = models_root / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
-        scene_path = models_root / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
+        #scene_path = models_root / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
         #scene_path = models_root / "Character" / "Character.gltf"
-        #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
+        scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
         #model = "2CylinderEngine"
         #model = "Avocado"

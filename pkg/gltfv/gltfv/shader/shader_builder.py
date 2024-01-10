@@ -30,11 +30,12 @@ class ShaderBuilder(Builder):
         self.indent()
         self('@builtin(position) vertex_pos : vec4<f32>,')
         for column in self.vertex_table.columns:
-            if column.name == 'pos':
-                continue
-            self(f'@location({column.location-1}) {column.name}: {column.output_type},')
+            #if column.name == 'pos':
+            #    continue
+            self(f'@location({column.location}) {column.name}: {column.output_type},')
         location = self.vertex_table.columns[-1].location + 1
-        self(f'@location({location}) bitangent: vec3<f32>,')
+        if self.vertex_table.has('tangent'):
+            self(f'@location({location}) bitangent: vec3<f32>,')
         self.dedent()
         self('}')
 

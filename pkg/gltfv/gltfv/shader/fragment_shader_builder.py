@@ -99,18 +99,20 @@ class FragmentShaderBuilder(ShaderBuilder):
 
         self(shader_code_fragment)
 
+        bcf = material.base_color_factor
         with self:
+            self(f'let bcf = vec4<f32>({bcf[0]}, {bcf[1]}, {bcf[2]}, {bcf[3]});')
+
             if self.vertex_table.has('uv'):
-                self("let uv = in.uv;\n")
+                self("let uv = in.uv;")
 
             if self.vertex_table.has('color'):
-                self("let albedo = in.color;\n")
+                self("let albedo = in.color;")
+            elif material.has_texture('baseColor'):
+                self(f'let albedo = bcf * linearSample(baseColorTexture, baseColorSampler, uv);')
             else:
-                bcf = material.base_color_factor
-                self(f'let bcf = vec4<f32>({bcf[0]}, {bcf[1]}, {bcf[2]}, {bcf[3]});')
+                self("let albedo = vec4(1.0, 1.0, 1.0, 1.0);")
 
-            if material.has_texture('baseColor'):
-                self(f'let albedo = bcf * linearSample(baseColorTexture, baseColorSampler, uv);\n')
 
             # Metallic
             self(f'let metallic_factor: f32 = {material.metallic_factor};')

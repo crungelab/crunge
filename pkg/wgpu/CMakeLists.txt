@@ -26,6 +26,7 @@ set(SOURCES
     src/crunge/wgpu/bindings/chained_struct.cpp
     src/crunge/wgpu/bindings/wgpu.cpp
     src/crunge/wgpu/bindings/main.cpp
+    src/crunge/wgpu/bindings/callbacks.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})

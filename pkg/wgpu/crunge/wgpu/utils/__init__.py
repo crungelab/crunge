@@ -18,7 +18,7 @@ def create_buffer(
     device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage
 ) -> wgpu.Buffer:
     # Buffer size has to be a multiple of 4
-    #size = divround_up(size, 4)
+    size = divround_up(size, 4)
     desc = wgpu.BufferDescriptor()
     desc.label = label
     desc.usage = usage | wgpu.BufferUsage.COPY_DST
@@ -30,6 +30,8 @@ def create_buffer_from_ndarray(
     device: wgpu.Device, label: str, data: np.ndarray, usage: wgpu.BufferUsage
 ) -> wgpu.Buffer:
     size = data.nbytes
+    # Buffer size has to be a multiple of 4
+    size = divround_up(size, 4)
     buffer = create_buffer(device, label, size, usage)
     device.queue.write_buffer(buffer, 0, as_capsule(data), size)
     return buffer

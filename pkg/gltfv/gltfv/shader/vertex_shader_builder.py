@@ -8,14 +8,6 @@ import crunge.wgpu.utils as utils
 from ..vertex_table import VertexTable
 from .shader_builder import ShaderBuilder
 
-'''
-    var out: VertexOutput;
-    out.vertex_pos = uniforms.transformMatrix * in.pos;
-    out.normal = normalize(uniforms.normalMatrix * in.normal); // Transform the normal
-    out.uv = in.uv;
-    // Compute and pass tangent and bitangent if using normal maps
-    return out;
-'''
 
 vertex_shader_code = """
 struct VsUniforms {
@@ -28,16 +20,14 @@ struct VsUniforms {
 fn vs_main(input : VertexInput) -> VertexOutput {
     var output : VertexOutput;
     output.vertex_pos = uniforms.transformMatrix * input.pos;
-    output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal
-    output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz); // Transform the normal
-    output.bitangent = (cross(output.normal, output.tangent) * input.tangent.w);
-    
+    output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal    
 """
 #output.tangent = normalize(((modelMatrix * vec4(input.tangent.xyz, 0.0))).xyz);
 
 '''
     output.normal = normalize(uniforms.normalMatrix * input.normal); // Transform the normal
     output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz); // Transform the normal
+    output.bitangent = (cross(output.normal, output.tangent) * input.tangent.w);
 '''
 
 '''
@@ -60,6 +50,9 @@ class VertexShaderBuilder(ShaderBuilder):
         return shader_module
 
     def build_return(self):
+        if self.vertex_table.has('tangent'):
+            self('output.tangent = normalize(uniforms.normalMatrix * input.tangent.xyz);')
+            self('output.bitangent = (cross(output.normal, output.tangent) * input.tangent.w);')
         for column in self.vertex_table.columns:
             if column.name in ['pos', 'normal', 'tangent']:
                 continue

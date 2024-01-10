@@ -66,9 +66,10 @@ class MeshBuilder(NodeBuilder):
 
     def build_attributes(self, primitive: gltf.Primitive):
         attributes: dict = primitive.attributes.copy()
-        pos = attributes.pop('POSITION', None)
+        pos = attributes.get('POSITION', None)
         if pos:
             self.build_attribute(('POSITION', pos))
+            del attributes['POSITION']
         for attribute in attributes.items():
             self.build_attribute(attribute)
 
@@ -132,7 +133,8 @@ class MeshBuilder(NodeBuilder):
         elif name == "COLOR_0":
             self.vertex_table.add_column(RgbaColumn('color', data))
         else:
-            logger.debug(f"Unknown attribute: {name}")
+            #logger.debug(f"Unknown attribute: {name}")
+            raise Exception(f"Unknown attribute: {name}")
 
         #logger.debug(f"data: {data}")
 
