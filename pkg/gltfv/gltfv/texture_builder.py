@@ -70,7 +70,19 @@ class TextureBuilder(ModelBuilder):
         self.texture.texture = wgpu_texture
         self.texture.view = wgpu_texture.create_view()
 
-        self.texture.sampler = self.device.create_sampler()
+        sampler_desc = wgpu.SamplerDescriptor(
+            address_mode_u=wgpu.AddressMode.CLAMP_TO_EDGE,
+            address_mode_v=wgpu.AddressMode.CLAMP_TO_EDGE,
+            address_mode_w=wgpu.AddressMode.CLAMP_TO_EDGE,
+            mag_filter=wgpu.FilterMode.LINEAR,
+            min_filter=wgpu.FilterMode.LINEAR,
+            mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
+            lod_min_clamp=0,
+            lod_max_clamp=100,
+            compare=wgpu.CompareFunction.UNDEFINED,
+            anisotropy=16,
+        )
+        self.texture.sampler = self.device.create_sampler(sampler_desc)
         
         bytes_per_row = 4 * im_width
         logger.debug(f"bytes_per_row: {bytes_per_row}")

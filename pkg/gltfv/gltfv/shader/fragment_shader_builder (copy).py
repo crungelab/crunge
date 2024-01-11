@@ -156,12 +156,13 @@ class FragmentShaderBuilder(ShaderBuilder):
 
             #self('return color;')
             
-            self("""
-    let fragPos = input.frag_pos;
+            if material.has_texture('metallicRoughness'):
+                self("""
+    let fragPos = vec3<f32>(input.vertex_pos.xyz);
 
     let lightPos = light.position;
-    //let lightPos = vec3<f32>(2.0, 2.0, 2.0);
-    let lightDir = normalize(lightPos - fragPos);
+    //let lightPos = vec3<f32>(2.0, 4.0, 3.0);
+    let lightDir = normalize(lightPos - fragPos);\n
 
     let cameraPos = camera.position;
     //let cameraPos = vec3<f32>(0.0, 0.0, 3.0);
@@ -170,10 +171,8 @@ class FragmentShaderBuilder(ShaderBuilder):
                      
     //let lightColor = light.color * light.intensity;
     let lightColor = light.color * 5.0;
-            """)
+    //let lightColor = vec3<f32>(5.0, 5.0, 5.0);
 
-            if material.has_texture('metallicRoughness'):
-                self("""
     let reflection = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal);
     let rgb = reflection * lightColor * ao + emissive;
     let finalColor = linearToSRGB(rgb);
@@ -181,7 +180,18 @@ class FragmentShaderBuilder(ShaderBuilder):
                 """)
             else:
                 self("""
+    let fragPos = vec3<f32>(input.vertex_pos.xyz);
+    let lightDir = normalize(light.position - fragPos);
+    //let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
+    let viewDir = normalize(camera.position - fragPos);
+    //let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
+    //let lightColor = light.color * light.intensity;
+    let lightColor = light.color * 5.0;
+    //let lightColor = vec3<f32>(5.0, 5.0, 5.0);
+    //let rgb = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
+    //let rgb = albedo.rgb * lightColor * ao + emissive;
     let rgb = albedo.rgb * lightColor * ao;
+    //let rgb = reflection * ao + emissive;
     let finalColor = linearToSRGB(rgb);
     return vec4<f32>(finalColor, albedo.a);\n
                 """)

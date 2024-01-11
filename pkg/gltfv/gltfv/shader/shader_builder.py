@@ -3,6 +3,13 @@ from ..vertex_table import VertexTable
 
 
 shader_code_preamble = """
+struct Camera {
+    modelMatrix : mat4x4<f32>,
+    transformMatrix : mat4x4<f32>,
+    normalMatrix: mat3x3<f32>,
+    position: vec3<f32>,
+}
+@group(0) @binding(0) var<uniform> camera : Camera;
 """
 
 
@@ -34,6 +41,8 @@ class ShaderBuilder(Builder):
             #    continue
             self(f'@location({column.location}) {column.name}: {column.output_type},')
         location = self.vertex_table.columns[-1].location + 1
+        self(f'@location({location}) frag_pos: vec3<f32>,')
+        location += 1
         if self.vertex_table.has('tangent'):
             self(f'@location({location}) bitangent: vec3<f32>,')
         self.dedent()

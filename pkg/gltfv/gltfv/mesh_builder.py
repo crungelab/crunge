@@ -259,7 +259,7 @@ class MeshBuilder(NodeBuilder):
             [
                 wgpu.BindGroupLayoutEntry(
                     binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
+                    visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
                     buffer=wgpu.BufferBindingLayout(
                         type=wgpu.BufferBindingType.UNIFORM
                     ),
@@ -319,10 +319,10 @@ class MeshBuilder(NodeBuilder):
         bg_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
-                    binding=0, buffer=self.mesh.vs_uniform_buffer, size=self.mesh.vs_uniform_buffer_size
+                    binding=0, buffer=self.mesh.camera_uniform_buffer, size=self.mesh.camera_uniform_buffer_size
                 ),
                 wgpu.BindGroupEntry(
-                    binding=1, buffer=self.mesh.fs_uniform_buffer, size=self.mesh.fs_uniform_buffer_size
+                    binding=1, buffer=self.mesh.light_uniform_buffer, size=self.mesh.light_uniform_buffer_size
                 ),
             ]
         )

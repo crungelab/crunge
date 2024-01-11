@@ -24,8 +24,8 @@ from .uniforms import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
-    VsUniforms,
-    FsUniforms,
+    CameraUniform,
+    LightUniform,
 )
 
 class Mesh(Node):
@@ -39,67 +39,69 @@ class Mesh(Node):
     index_buffer: wgpu.Buffer = None
     index_format: wgpu.IndexFormat = None
 
-    vs_uniform_buffer: wgpu.Buffer = None
-    vs_uniform_buffer_size: int = 0
+    camera_uniform_buffer: wgpu.Buffer = None
+    camera_uniform_buffer_size: int = 0
 
-    fs_uniform_buffer: wgpu.Buffer = None
-    fs_uniform_buffer_size: int = 0
+    light_uniform_buffer: wgpu.Buffer = None
+    light_uniform_buffer_size: int = 0
 
     def __init__(self) -> None:
         super().__init__()
         # Uniform Buffers
-        self.vs_uniform_buffer_size = sizeof(VsUniforms)
-        self.vs_uniform_buffer = utils.create_buffer(
+        self.camera_uniform_buffer_size = sizeof(CameraUniform)
+        self.camera_uniform_buffer = utils.create_buffer(
             self.device,
-            "Vertex Uniform Buffer",
-            self.vs_uniform_buffer_size,
+            "Camera Uniform Buffer",
+            self.camera_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
-        self.fs_uniform_buffer_size = sizeof(FsUniforms)
-        self.fs_uniform_buffer = utils.create_buffer(
+        self.light_uniform_buffer_size = sizeof(LightUniform)
+        self.light_uniform_buffer = utils.create_buffer(
             self.device,
-            "Fragment Uniform Buffer",
-            self.fs_uniform_buffer_size,
+            "Light Uniform Buffer",
+            self.light_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
 
     def draw(self, camera: Camera, pass_enc: wgpu.RenderPassEncoder):
+        model_matrix = self.transform
         transform_matrix = camera.transform_matrix * self.transform
         normal_matrix = glm.transpose(glm.inverse(glm.mat3(transform_matrix)))
 
-        vs_uniforms = VsUniforms()
-        vs_uniforms.transform_matrix.data = cast_matrix4(transform_matrix)
-        vs_uniforms.normal_matrix.data = cast_matrix3(normal_matrix)
+        camera_uniform = CameraUniform()
+        camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
+        camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
+        camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
+        #camera_uniform.position.x = camera.position.x
+        #camera_uniform.position.y = camera.position.y
+        #camera_uniform.position.z = camera.position.z
+        camera_uniform.position.data = cast_vec3(camera.position)
 
         self.device.queue.write_buffer(
-            self.vs_uniform_buffer,
+            self.camera_uniform_buffer,
             0,
-            as_capsule(vs_uniforms),
-            self.vs_uniform_buffer_size,
+            as_capsule(camera_uniform),
+            self.camera_uniform_buffer_size,
         )
 
-        fs_uniforms = FsUniforms()
+        light_uniform = LightUniform()
         
-        #fs_uniforms.light.position.x = -2.0
-        #fs_uniforms.light.position.y = 4.0
-        #fs_uniforms.light.position.z = 3.0
-        fs_uniforms.light.position.data = cast_vec3(glm.vec3(2.0, 4.0, 3.0))
+        light_uniform.position.x = 2.0
+        light_uniform.position.y = 2.0
+        light_uniform.position.z = 2.0
+        #light_uniform.position.data = cast_vec3(glm.vec3(2.0, 2.0, 2.0))
 
-        fs_uniforms.light.color.x = 1.0
-        fs_uniforms.light.color.y = 1.0
-        fs_uniforms.light.color.z = 1.0
-        fs_uniforms.light.intensity = 5.0
+        light_uniform.color.x = 1.0
+        light_uniform.color.y = 1.0
+        light_uniform.color.z = 1.0
+        light_uniform.intensity = 5.0
 
-        #fs_uniforms.camera.position.x = camera.position.x
-        #fs_uniforms.camera.position.y = camera.position.y
-        #fs_uniforms.camera.position.z = camera.position.z
-        fs_uniforms.camera.position.data = cast_vec3(camera.position)
 
         self.device.queue.write_buffer(
-            self.fs_uniform_buffer,
+            self.light_uniform_buffer,
             0,
-            as_capsule(fs_uniforms),
-            self.fs_uniform_buffer_size,
+            as_capsule(light_uniform),
+            self.light_uniform_buffer_size,
         )
 
         pass_enc.set_pipeline(self.pipeline)

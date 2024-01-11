@@ -63,24 +63,10 @@ assert sizeof(LightUniform) % 16 == 0
 
 
 class CameraUniform(Structure):
-    _fields_ = [("position", Vec3)]
+    _fields_ = [("model_matrix", Mat4), ("transform_matrix", Mat4), ("normal_matrix", Mat3), ("position", Vec3)]
 
 
 assert sizeof(CameraUniform) % 16 == 0
-
-
-class VsUniforms(Structure):
-    _fields_ = [("transform_matrix", Mat4), ("normal_matrix", Mat3)]
-
-
-assert sizeof(VsUniforms) % 16 == 0
-
-
-class FsUniforms(Structure):
-    _fields_ = [("camera", CameraUniform), ("light", LightUniform)]
-
-
-assert sizeof(FsUniforms) % 16 == 0
 
 
 def cast_matrix4(matrix):

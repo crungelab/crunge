@@ -2261,6 +2261,73 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         SamplerDescriptor.def_readwrite("lod_max_clamp", &wgpu::SamplerDescriptor::lodMaxClamp);
         SamplerDescriptor.def_readwrite("compare", &wgpu::SamplerDescriptor::compare);
         SamplerDescriptor.def_readwrite("max_anisotropy", &wgpu::SamplerDescriptor::maxAnisotropy);
+        SamplerDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::SamplerDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("address_mode_u"))
+            {
+                auto value = kwargs["address_mode_u"].cast<wgpu::AddressMode>();
+                obj.addressModeU = value;
+            }
+            if (kwargs.contains("address_mode_v"))
+            {
+                auto value = kwargs["address_mode_v"].cast<wgpu::AddressMode>();
+                obj.addressModeV = value;
+            }
+            if (kwargs.contains("address_mode_w"))
+            {
+                auto value = kwargs["address_mode_w"].cast<wgpu::AddressMode>();
+                obj.addressModeW = value;
+            }
+            if (kwargs.contains("mag_filter"))
+            {
+                auto value = kwargs["mag_filter"].cast<wgpu::FilterMode>();
+                obj.magFilter = value;
+            }
+            if (kwargs.contains("min_filter"))
+            {
+                auto value = kwargs["min_filter"].cast<wgpu::FilterMode>();
+                obj.minFilter = value;
+            }
+            if (kwargs.contains("mipmap_filter"))
+            {
+                auto value = kwargs["mipmap_filter"].cast<wgpu::MipmapFilterMode>();
+                obj.mipmapFilter = value;
+            }
+            if (kwargs.contains("lod_min_clamp"))
+            {
+                auto value = kwargs["lod_min_clamp"].cast<float>();
+                obj.lodMinClamp = value;
+            }
+            if (kwargs.contains("lod_max_clamp"))
+            {
+                auto value = kwargs["lod_max_clamp"].cast<float>();
+                obj.lodMaxClamp = value;
+            }
+            if (kwargs.contains("compare"))
+            {
+                auto value = kwargs["compare"].cast<wgpu::CompareFunction>();
+                obj.compare = value;
+            }
+            if (kwargs.contains("max_anisotropy"))
+            {
+                auto value = kwargs["max_anisotropy"].cast<uint16_t>();
+                obj.maxAnisotropy = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::SamplerDescriptor, SamplerDescriptor)
 
     PYSUBCLASS_BEGIN(_wgpu, wgpu::ShaderModuleSPIRVDescriptor, struct wgpu::ChainedStruct, ShaderModuleSPIRVDescriptor)

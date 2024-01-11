@@ -86,4 +86,5 @@ flags: [
 'struct.wgpu::Extent3D': {gen_init: true}
 'struct.wgpu::BlendState': {gen_kw_init: true}
 'struct.wgpu::BlendComponent': {gen_kw_init: true}
+'struct.wgpu::SamplerDescriptor': {gen_kw_init: true}
 
