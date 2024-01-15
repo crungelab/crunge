@@ -27,16 +27,12 @@ class TextureBuilder(ModelBuilder):
         tf_image = self.tf_model.images[tf_texture.source]
         debug_image(tf_image)
 
-        im = None
-        '''
-        logger.debug(f'image mode: {image.mode}')
-        if image.mode != 'RGBA':
-            im = np.array(image.convert('RGBA'))
-        else:
-            im = np.array(image)
-        '''
-        im = np.array(tf_image.image, dtype=np.uint8)
+        # This was too slow.
+        #im = np.array(tf_image.image, dtype=np.uint8)
         #im = np.array(tf_image.image, dtype=np.uint8, copy=False)
+
+        im = tf_image.get_array()
+
         shape = im.shape
         logger.debug(f"im.shape: {shape}")
         logger.debug(f"im.dtype: {im.dtype}")

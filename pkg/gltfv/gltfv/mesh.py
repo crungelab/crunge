@@ -66,16 +66,17 @@ class Mesh(Node):
     def draw(self, camera: Camera, pass_enc: wgpu.RenderPassEncoder):
         model_matrix = self.transform
         transform_matrix = camera.transform_matrix * self.transform
-        normal_matrix = glm.transpose(glm.inverse(glm.mat3(transform_matrix)))
+        normal_matrix = glm.transpose(glm.inverse(glm.mat3(model_matrix)))
 
         camera_uniform = CameraUniform()
         camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
         camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
         camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
+
         #camera_uniform.position.x = camera.position.x
         #camera_uniform.position.y = camera.position.y
         #camera_uniform.position.z = camera.position.z
-        camera_uniform.position.data = cast_vec3(camera.position)
+        camera_uniform.position = cast_vec3(camera.position)
 
         self.device.queue.write_buffer(
             self.camera_uniform_buffer,
@@ -89,12 +90,14 @@ class Mesh(Node):
         light_uniform.position.x = 2.0
         light_uniform.position.y = 2.0
         light_uniform.position.z = 2.0
-        #light_uniform.position.data = cast_vec3(glm.vec3(2.0, 2.0, 2.0))
+        #light_uniform.position = cast_vec3(glm.vec3(2.0, 2.0, 2.0))
 
         light_uniform.color.x = 1.0
         light_uniform.color.y = 1.0
         light_uniform.color.z = 1.0
-        light_uniform.intensity = 5.0
+
+        light_uniform.range = 10.0
+        light_uniform.intensity = 10.0
 
 
         self.device.queue.write_buffer(

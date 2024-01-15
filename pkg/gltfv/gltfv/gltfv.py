@@ -44,13 +44,16 @@ class GltfV:
         #model = "BoxTextured"
         #model = "BoomBox"
         #model = "Buggy"
+        #model = "CesiumMilkTruck"
         #model = "Cube"
         #model = "Corset"
         model = "DamagedHelmet"
         #model = "Duck"
-        #model = "Fox" #No normals
+        #model = "FlightHelmet"
+        #model = "Fox" #No normals, no indices
         #model = "GearboxAssy"
         #model = "Lantern"
+        #model = "SimpleMeshes"
 
         scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
@@ -58,6 +61,7 @@ class GltfV:
         scene = SceneBuilder().build(scene_path)
         #exit()
         Viewer().show(scene)
+        self.device.destroy()
 
 def main():
     GltfV().run()

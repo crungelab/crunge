@@ -30,49 +30,37 @@ class MaterialBuilder(ModelBuilder):
         logger.debug(pbr)
 
         # Base Color Factor
-        #base_color_factor = (1, 1, 1, 1) if not pbr.base_color_factor else pbr.base_color_factor
-        base_color_factor = (0, 0, 0, 0) if not pbr.base_color_factor else pbr.base_color_factor
+        base_color_factor = (1, 1, 1, 1) if not pbr.base_color_factor else pbr.base_color_factor
         material.base_color_factor = base_color_factor
         logger.debug(base_color_factor)
         #exit()
 
         # Base Color Texture
         if pbr.base_color_texture:
-            #texture = TextureBuilder('baseColor', self.tf_model, pbr.base_color_texture).build()
-            #material.base_color_texture = texture
-            #material.add_texture(texture)
             self.build_texture('baseColor', pbr.base_color_texture)
 
         # Metallic Factor
-        metallic_factor = 0 if not pbr.metallic_factor else pbr.metallic_factor
+        metallic_factor = 1 if not pbr.metallic_factor else pbr.metallic_factor
         material.metallic_factor = metallic_factor
         logger.debug(f"metallic_factor: {metallic_factor}")
 
         # Roughness Factor
-        roughness_factor = 0 if not pbr.roughness_factor else pbr.roughness_factor
+        roughness_factor = 1 if not pbr.roughness_factor else pbr.roughness_factor
         material.roughness_factor = roughness_factor
         logger.debug(f"roughness_factor: {roughness_factor}")
         #exit()
 
         # Metallic Roughness Texture
         if pbr.metallic_roughness_texture:
-            #texture = TextureBuilder('metallicRoughness', self.tf_model, pbr.metallic_roughness_texture).build()
-            #material.metallic_roughness_texure = texture
-            #material.add_texture(texture)
             self.build_texture('metallicRoughness', pbr.metallic_roughness_texture)
 
         # Normal Texture
         if tf_material.normal_texture:
-            #texture = TextureBuilder('normal').build(tf_material.normalTexture)
-            #material.normal_texure = texture
-            #material.add_texture(texture)
             self.build_texture('normal', tf_material.normal_texture)
 
         # Occlusion Texture
         if tf_material.occlusion_texture:
-            #texture = TextureBuilder('occlusion').build(tf_material.occlusionTexture)
-            #material.occlusion_texure = texture
-            #material.add_texture(texture)
+            self.occlusion_strength = tf_material.occlusion_texture.strength
             self.build_texture('occlusion', tf_material.occlusion_texture)
 
         #emissive_factor = tf_material.emissiveFactor if tf_material.emissiveFactor else (1, 1, 1)
@@ -82,9 +70,6 @@ class MaterialBuilder(ModelBuilder):
 
         # Emissive Texture
         if tf_material.emissive_texture:
-            #texture = TextureBuilder('emissive').build(tf_material.emissiveTexture)
-            #material.emissive_texture = texture
-            #material.add_texture(texture)
             self.build_texture('emissive', tf_material.emissive_texture)
 
         return self.material

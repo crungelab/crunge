@@ -27,7 +27,6 @@ class FragmentShaderBuilder(ShaderBuilder):
         self.base_color_factor = material.base_color_factor
         self.metallic_factor = material.metallic_factor
         self.roughness_factor = material.roughness_factor
-        self.occlusion_strength = material.occlusion_strength
         self.emissive_factor = material.emissive_factor
 
     def add_binding(self, binding: Binding):

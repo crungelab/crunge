@@ -32,20 +32,19 @@ class SceneBuilder(Builder):
         self.tf_model = tf_model = gltf.Model()
         logger.debug(f"tf_model_: {tf_model}")
 
-        err = ''
-        warn = ''
+        res, err, warn = loader.load_ascii_from_file(tf_model, str(scene_path))
 
-        res = loader.load_ascii_from_file(tf_model, err, warn, str(scene_path))
         logger.debug(f"res: {res}")
 
-        if not warn:
+        if warn:
             logger.debug(f"warn: {warn}")
 
-        if not err:
+        if err:
             logger.debug(f"err: {err}")
 
         if not res:
             logger.debug(f"Failed to load glTF: {scene_path}")
+            exit()
         else:
             logger.debug(f"Loaded glTF: {scene_path}")
 

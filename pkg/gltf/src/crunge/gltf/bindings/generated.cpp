@@ -747,14 +747,6 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
     PYCLASS_BEGIN(_gltf, tinygltf::TinyGLTF, TinyGLTF)
         TinyGLTF.def(py::init<>());
-        TinyGLTF.def("load_ascii_from_file", &tinygltf::TinyGLTF::LoadASCIIFromFile
-        , py::arg("model")
-        , py::arg("err")
-        , py::arg("warn")
-        , py::arg("filename")
-        , py::arg("check_sections") = SectionCheck::REQUIRE_VERSION
-        , py::return_value_policy::automatic_reference);
-
         TinyGLTF.def("load_ascii_from_string", &tinygltf::TinyGLTF::LoadASCIIFromString
         , py::arg("model")
         , py::arg("err")

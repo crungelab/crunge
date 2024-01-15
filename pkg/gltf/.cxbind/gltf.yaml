@@ -12,6 +12,8 @@ flags: [
 ]
 
 # Wrapped
+# These write to err and warn.  Not good
+'function.tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
 
 # Internal / Ignored
 

@@ -40,11 +40,16 @@ pybind11::array_t<T> get_typed_array(const std::vector<unsigned char>& buffer, s
     // Reinterpret the buffer slice as an array of type T and copy the data
     const T* buffer_ptr = reinterpret_cast<const T*>(buffer.data() + byte_offset);
     std::copy(buffer_ptr, buffer_ptr + total_elements, result_ptr);
-
+    /*
+    // Basically the same thing...
+    size_t total_size = total_elements * sizeof(T);
+    const unsigned char* buffer_start = buffer.data() + byte_offset;
+    std::memcpy(result_ptr, buffer_start, total_size);
+    */
     return result;
 }
 
-pybind11::object get_array(const tinygltf::Buffer& self, size_t byte_offset, size_t count, uint32_t type, uint32_t componentType) {
+pybind11::object get_buffer_array(const tinygltf::Buffer& self, size_t byte_offset, size_t count, uint32_t type, uint32_t componentType) {
     size_t componentCount = tinygltf::GetNumComponentsInType(type);
     std::array<size_t, 2> shape = {count, componentCount};
     switch (componentType) {
@@ -68,9 +73,43 @@ pybind11::object get_array(const tinygltf::Buffer& self, size_t byte_offset, siz
     }
 }
 
+py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
+    auto data = self.image.data();
+    auto size = self.image.size();
+    // Create a NumPy array that views the existing memory
+    // TODO:  May want to copy the data instead of using a view
+    return py::array(size, data);
+}
+
+// Wrapper function
+std::tuple<bool, std::string, std::string> LoadASCIIFromFileWrapper(
+    tinygltf::TinyGLTF &loader, 
+    tinygltf::Model *model, 
+    const std::string &filename, 
+    tinygltf::SectionCheck::Enum check_sections) {
+
+    std::string err;
+    std::string warn;
+
+    bool result = loader.LoadASCIIFromFile(model, &err, &warn, filename, check_sections);
+
+    return std::make_tuple(result, err, warn);
+}
+
 void init_main(py::module &_gltf, Registry &registry) {
     PYEXTEND_BEGIN(tinygltf::Buffer, Buffer)
-        Buffer.def("get_array", &get_array, py::arg("byte_offset"), py::arg("count"), py::arg("type"), py::arg("component_type"));
+        Buffer.def("get_array", &get_buffer_array, py::arg("byte_offset"), py::arg("count"), py::arg("type"), py::arg("component_type"));
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(tinygltf::Image, Image)
+        Image.def("get_array", &get_image_array);
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(tinygltf::TinyGLTF, TinyGLTF)
+        TinyGLTF.def("load_ascii_from_file", &LoadASCIIFromFileWrapper
+        , py::arg("model")
+        , py::arg("filename")
+        , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION);
     PYEXTEND_END
 }
 

@@ -1764,7 +1764,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::BufferDescriptor, BufferDescriptor)
         BufferDescriptor.def_readwrite("next_in_chain", &wgpu::BufferDescriptor::nextInChain);
         BufferDescriptor.def_property("label",
-            [](const wgpu::BufferDescriptor& self){ return self.label; },[](wgpu::BufferDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::BufferDescriptor& self){ return self.label; },[](wgpu::BufferDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         BufferDescriptor.def_readwrite("usage", &wgpu::BufferDescriptor::usage);
         BufferDescriptor.def_readwrite("size", &wgpu::BufferDescriptor::size);
@@ -1794,21 +1794,21 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::CommandBufferDescriptor, CommandBufferDescriptor)
         CommandBufferDescriptor.def_readwrite("next_in_chain", &wgpu::CommandBufferDescriptor::nextInChain);
         CommandBufferDescriptor.def_property("label",
-            [](const wgpu::CommandBufferDescriptor& self){ return self.label; },[](wgpu::CommandBufferDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::CommandBufferDescriptor& self){ return self.label; },[](wgpu::CommandBufferDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
     PYCLASS_END(_wgpu, wgpu::CommandBufferDescriptor, CommandBufferDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CommandEncoderDescriptor, CommandEncoderDescriptor)
         CommandEncoderDescriptor.def_readwrite("next_in_chain", &wgpu::CommandEncoderDescriptor::nextInChain);
         CommandEncoderDescriptor.def_property("label",
-            [](const wgpu::CommandEncoderDescriptor& self){ return self.label; },[](wgpu::CommandEncoderDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::CommandEncoderDescriptor& self){ return self.label; },[](wgpu::CommandEncoderDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
     PYCLASS_END(_wgpu, wgpu::CommandEncoderDescriptor, CommandEncoderDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::CompilationMessage, CompilationMessage)
         CompilationMessage.def_readwrite("next_in_chain", &wgpu::CompilationMessage::nextInChain);
         CompilationMessage.def_property("message",
-            [](const wgpu::CompilationMessage& self){ return self.message; },[](wgpu::CompilationMessage& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.message = c; }
+            [](const wgpu::CompilationMessage& self){ return self.message; },[](wgpu::CompilationMessage& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.message = c; }
         );
         CompilationMessage.def_readwrite("type", &wgpu::CompilationMessage::type);
         CompilationMessage.def_readwrite("line_num", &wgpu::CompilationMessage::lineNum);
@@ -1829,7 +1829,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::ConstantEntry, ConstantEntry)
         ConstantEntry.def_readwrite("next_in_chain", &wgpu::ConstantEntry::nextInChain);
         ConstantEntry.def_property("key",
-            [](const wgpu::ConstantEntry& self){ return self.key; },[](wgpu::ConstantEntry& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.key = c; }
+            [](const wgpu::ConstantEntry& self){ return self.key; },[](wgpu::ConstantEntry& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.key = c; }
         );
         ConstantEntry.def_readwrite("value", &wgpu::ConstantEntry::value);
     PYCLASS_END(_wgpu, wgpu::ConstantEntry, ConstantEntry)
@@ -1864,7 +1864,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYSUBCLASS_BEGIN(_wgpu, wgpu::DawnCacheDeviceDescriptor, struct wgpu::ChainedStruct, DawnCacheDeviceDescriptor)
         DawnCacheDeviceDescriptor.def(py::init<>());
         DawnCacheDeviceDescriptor.def_property("isolation_key",
-            [](const wgpu::DawnCacheDeviceDescriptor& self){ return self.isolationKey; },[](wgpu::DawnCacheDeviceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.isolationKey = c; }
+            [](const wgpu::DawnCacheDeviceDescriptor& self){ return self.isolationKey; },[](wgpu::DawnCacheDeviceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.isolationKey = c; }
         );
     PYCLASS_END(_wgpu, wgpu::DawnCacheDeviceDescriptor, DawnCacheDeviceDescriptor)
 
@@ -2014,7 +2014,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor)
         PipelineLayoutDescriptor.def_readwrite("next_in_chain", &wgpu::PipelineLayoutDescriptor::nextInChain);
         PipelineLayoutDescriptor.def_property("label",
-            [](const wgpu::PipelineLayoutDescriptor& self){ return self.label; },[](wgpu::PipelineLayoutDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::PipelineLayoutDescriptor& self){ return self.label; },[](wgpu::PipelineLayoutDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         PipelineLayoutDescriptor.def_readwrite("bind_group_layout_count", &wgpu::PipelineLayoutDescriptor::bindGroupLayoutCount);
         PipelineLayoutDescriptor.def_readwrite("bind_group_layouts", &wgpu::PipelineLayoutDescriptor::bindGroupLayouts);
@@ -2099,7 +2099,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::QuerySetDescriptor, QuerySetDescriptor)
         QuerySetDescriptor.def_readwrite("next_in_chain", &wgpu::QuerySetDescriptor::nextInChain);
         QuerySetDescriptor.def_property("label",
-            [](const wgpu::QuerySetDescriptor& self){ return self.label; },[](wgpu::QuerySetDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::QuerySetDescriptor& self){ return self.label; },[](wgpu::QuerySetDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         QuerySetDescriptor.def_readwrite("type", &wgpu::QuerySetDescriptor::type);
         QuerySetDescriptor.def_readwrite("count", &wgpu::QuerySetDescriptor::count);
@@ -2108,7 +2108,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::QueueDescriptor, QueueDescriptor)
         QueueDescriptor.def_readwrite("next_in_chain", &wgpu::QueueDescriptor::nextInChain);
         QueueDescriptor.def_property("label",
-            [](const wgpu::QueueDescriptor& self){ return self.label; },[](wgpu::QueueDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::QueueDescriptor& self){ return self.label; },[](wgpu::QueueDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
     PYCLASS_END(_wgpu, wgpu::QueueDescriptor, QueueDescriptor)
 
@@ -2121,14 +2121,14 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::RenderBundleDescriptor, RenderBundleDescriptor)
         RenderBundleDescriptor.def_readwrite("next_in_chain", &wgpu::RenderBundleDescriptor::nextInChain);
         RenderBundleDescriptor.def_property("label",
-            [](const wgpu::RenderBundleDescriptor& self){ return self.label; },[](wgpu::RenderBundleDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::RenderBundleDescriptor& self){ return self.label; },[](wgpu::RenderBundleDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
     PYCLASS_END(_wgpu, wgpu::RenderBundleDescriptor, RenderBundleDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderBundleEncoderDescriptor, RenderBundleEncoderDescriptor)
         RenderBundleEncoderDescriptor.def_readwrite("next_in_chain", &wgpu::RenderBundleEncoderDescriptor::nextInChain);
         RenderBundleEncoderDescriptor.def_property("label",
-            [](const wgpu::RenderBundleEncoderDescriptor& self){ return self.label; },[](wgpu::RenderBundleEncoderDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::RenderBundleEncoderDescriptor& self){ return self.label; },[](wgpu::RenderBundleEncoderDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         RenderBundleEncoderDescriptor.def_readwrite("color_format_count", &wgpu::RenderBundleEncoderDescriptor::colorFormatCount);
         RenderBundleEncoderDescriptor.def_readwrite("color_formats", &wgpu::RenderBundleEncoderDescriptor::colorFormats);
@@ -2249,7 +2249,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::SamplerDescriptor, SamplerDescriptor)
         SamplerDescriptor.def_readwrite("next_in_chain", &wgpu::SamplerDescriptor::nextInChain);
         SamplerDescriptor.def_property("label",
-            [](const wgpu::SamplerDescriptor& self){ return self.label; },[](wgpu::SamplerDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::SamplerDescriptor& self){ return self.label; },[](wgpu::SamplerDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         SamplerDescriptor.def_readwrite("address_mode_u", &wgpu::SamplerDescriptor::addressModeU);
         SamplerDescriptor.def_readwrite("address_mode_v", &wgpu::SamplerDescriptor::addressModeV);
@@ -2339,7 +2339,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYSUBCLASS_BEGIN(_wgpu, wgpu::ShaderModuleWGSLDescriptor, struct wgpu::ChainedStruct, ShaderModuleWGSLDescriptor)
         ShaderModuleWGSLDescriptor.def(py::init<>());
         ShaderModuleWGSLDescriptor.def_property("code",
-            [](const wgpu::ShaderModuleWGSLDescriptor& self){ return self.code; },[](wgpu::ShaderModuleWGSLDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.code = c; }
+            [](const wgpu::ShaderModuleWGSLDescriptor& self){ return self.code; },[](wgpu::ShaderModuleWGSLDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.code = c; }
         );
         ShaderModuleWGSLDescriptor.def(py::init([](const py::kwargs& kwargs)
         {
@@ -2358,7 +2358,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor)
         ShaderModuleDescriptor.def_readwrite("next_in_chain", &wgpu::ShaderModuleDescriptor::nextInChain);
         ShaderModuleDescriptor.def_property("label",
-            [](const wgpu::ShaderModuleDescriptor& self){ return self.label; },[](wgpu::ShaderModuleDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::ShaderModuleDescriptor& self){ return self.label; },[](wgpu::ShaderModuleDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         ShaderModuleDescriptor.def(py::init([](const py::kwargs& kwargs)
         {
@@ -2402,7 +2402,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::SharedFenceDescriptor, SharedFenceDescriptor)
         SharedFenceDescriptor.def_readwrite("next_in_chain", &wgpu::SharedFenceDescriptor::nextInChain);
         SharedFenceDescriptor.def_property("label",
-            [](const wgpu::SharedFenceDescriptor& self){ return self.label; },[](wgpu::SharedFenceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::SharedFenceDescriptor& self){ return self.label; },[](wgpu::SharedFenceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
     PYCLASS_END(_wgpu, wgpu::SharedFenceDescriptor, SharedFenceDescriptor)
 
@@ -2472,7 +2472,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::SharedTextureMemoryDescriptor, SharedTextureMemoryDescriptor)
         SharedTextureMemoryDescriptor.def_readwrite("next_in_chain", &wgpu::SharedTextureMemoryDescriptor::nextInChain);
         SharedTextureMemoryDescriptor.def_property("label",
-            [](const wgpu::SharedTextureMemoryDescriptor& self){ return self.label; },[](wgpu::SharedTextureMemoryDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::SharedTextureMemoryDescriptor& self){ return self.label; },[](wgpu::SharedTextureMemoryDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
     PYCLASS_END(_wgpu, wgpu::SharedTextureMemoryDescriptor, SharedTextureMemoryDescriptor)
 
@@ -2539,7 +2539,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptor, SurfaceDescriptor)
         SurfaceDescriptor.def_readwrite("next_in_chain", &wgpu::SurfaceDescriptor::nextInChain);
         SurfaceDescriptor.def_property("label",
-            [](const wgpu::SurfaceDescriptor& self){ return self.label; },[](wgpu::SurfaceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::SurfaceDescriptor& self){ return self.label; },[](wgpu::SurfaceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         SurfaceDescriptor.def(py::init([](const py::kwargs& kwargs)
         {
@@ -2568,7 +2568,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYSUBCLASS_BEGIN(_wgpu, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, struct wgpu::ChainedStruct, SurfaceDescriptorFromCanvasHTMLSelector)
         SurfaceDescriptorFromCanvasHTMLSelector.def(py::init<>());
         SurfaceDescriptorFromCanvasHTMLSelector.def_property("selector",
-            [](const wgpu::SurfaceDescriptorFromCanvasHTMLSelector& self){ return self.selector; },[](wgpu::SurfaceDescriptorFromCanvasHTMLSelector& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.selector = c; }
+            [](const wgpu::SurfaceDescriptorFromCanvasHTMLSelector& self){ return self.selector; },[](wgpu::SurfaceDescriptorFromCanvasHTMLSelector& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.selector = c; }
         );
     PYCLASS_END(_wgpu, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, SurfaceDescriptorFromCanvasHTMLSelector)
 
@@ -2623,7 +2623,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::SwapChainDescriptor, SwapChainDescriptor)
         SwapChainDescriptor.def_readwrite("next_in_chain", &wgpu::SwapChainDescriptor::nextInChain);
         SwapChainDescriptor.def_property("label",
-            [](const wgpu::SwapChainDescriptor& self){ return self.label; },[](wgpu::SwapChainDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::SwapChainDescriptor& self){ return self.label; },[](wgpu::SwapChainDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         SwapChainDescriptor.def_readwrite("usage", &wgpu::SwapChainDescriptor::usage);
         SwapChainDescriptor.def_readwrite("format", &wgpu::SwapChainDescriptor::format);
@@ -2746,7 +2746,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::TextureViewDescriptor, TextureViewDescriptor)
         TextureViewDescriptor.def_readwrite("next_in_chain", &wgpu::TextureViewDescriptor::nextInChain);
         TextureViewDescriptor.def_property("label",
-            [](const wgpu::TextureViewDescriptor& self){ return self.label; },[](wgpu::TextureViewDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::TextureViewDescriptor& self){ return self.label; },[](wgpu::TextureViewDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         TextureViewDescriptor.def_readwrite("format", &wgpu::TextureViewDescriptor::format);
         TextureViewDescriptor.def_readwrite("dimension", &wgpu::TextureViewDescriptor::dimension);
@@ -2791,7 +2791,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroupDescriptor, BindGroupDescriptor)
         BindGroupDescriptor.def_readwrite("next_in_chain", &wgpu::BindGroupDescriptor::nextInChain);
         BindGroupDescriptor.def_property("label",
-            [](const wgpu::BindGroupDescriptor& self){ return self.label; },[](wgpu::BindGroupDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::BindGroupDescriptor& self){ return self.label; },[](wgpu::BindGroupDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         BindGroupDescriptor.def_readwrite("layout", &wgpu::BindGroupDescriptor::layout);
         BindGroupDescriptor.def_readwrite("entry_count", &wgpu::BindGroupDescriptor::entryCount);
@@ -2909,7 +2909,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePassDescriptor, ComputePassDescriptor)
         ComputePassDescriptor.def_readwrite("next_in_chain", &wgpu::ComputePassDescriptor::nextInChain);
         ComputePassDescriptor.def_property("label",
-            [](const wgpu::ComputePassDescriptor& self){ return self.label; },[](wgpu::ComputePassDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::ComputePassDescriptor& self){ return self.label; },[](wgpu::ComputePassDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         ComputePassDescriptor.def_readwrite("timestamp_writes", &wgpu::ComputePassDescriptor::timestampWrites);
     PYCLASS_END(_wgpu, wgpu::ComputePassDescriptor, ComputePassDescriptor)
@@ -2991,7 +2991,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::ExternalTextureDescriptor, ExternalTextureDescriptor)
         ExternalTextureDescriptor.def_readwrite("next_in_chain", &wgpu::ExternalTextureDescriptor::nextInChain);
         ExternalTextureDescriptor.def_property("label",
-            [](const wgpu::ExternalTextureDescriptor& self){ return self.label; },[](wgpu::ExternalTextureDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::ExternalTextureDescriptor& self){ return self.label; },[](wgpu::ExternalTextureDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         ExternalTextureDescriptor.def_readwrite("plane0", &wgpu::ExternalTextureDescriptor::plane0);
         ExternalTextureDescriptor.def_readwrite("plane1", &wgpu::ExternalTextureDescriptor::plane1);
@@ -3079,7 +3079,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         ProgrammableStageDescriptor.def_readwrite("next_in_chain", &wgpu::ProgrammableStageDescriptor::nextInChain);
         ProgrammableStageDescriptor.def_readwrite("module", &wgpu::ProgrammableStageDescriptor::module);
         ProgrammableStageDescriptor.def_property("entry_point",
-            [](const wgpu::ProgrammableStageDescriptor& self){ return self.entryPoint; },[](wgpu::ProgrammableStageDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.entryPoint = c; }
+            [](const wgpu::ProgrammableStageDescriptor& self){ return self.entryPoint; },[](wgpu::ProgrammableStageDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.entryPoint = c; }
         );
         ProgrammableStageDescriptor.def_readwrite("constant_count", &wgpu::ProgrammableStageDescriptor::constantCount);
         ProgrammableStageDescriptor.def_readwrite("constants", &wgpu::ProgrammableStageDescriptor::constants);
@@ -3180,7 +3180,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::TextureDescriptor, TextureDescriptor)
         TextureDescriptor.def_readwrite("next_in_chain", &wgpu::TextureDescriptor::nextInChain);
         TextureDescriptor.def_property("label",
-            [](const wgpu::TextureDescriptor& self){ return self.label; },[](wgpu::TextureDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::TextureDescriptor& self){ return self.label; },[](wgpu::TextureDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         TextureDescriptor.def_readwrite("usage", &wgpu::TextureDescriptor::usage);
         TextureDescriptor.def_readwrite("dimension", &wgpu::TextureDescriptor::dimension);
@@ -3284,7 +3284,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::BindGroupLayoutDescriptor, BindGroupLayoutDescriptor)
         BindGroupLayoutDescriptor.def_readwrite("next_in_chain", &wgpu::BindGroupLayoutDescriptor::nextInChain);
         BindGroupLayoutDescriptor.def_property("label",
-            [](const wgpu::BindGroupLayoutDescriptor& self){ return self.label; },[](wgpu::BindGroupLayoutDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::BindGroupLayoutDescriptor& self){ return self.label; },[](wgpu::BindGroupLayoutDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         BindGroupLayoutDescriptor.def_readwrite("entry_count", &wgpu::BindGroupLayoutDescriptor::entryCount);
         BindGroupLayoutDescriptor.def_readwrite("entries", &wgpu::BindGroupLayoutDescriptor::entries);
@@ -3352,7 +3352,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor)
         ComputePipelineDescriptor.def_readwrite("next_in_chain", &wgpu::ComputePipelineDescriptor::nextInChain);
         ComputePipelineDescriptor.def_property("label",
-            [](const wgpu::ComputePipelineDescriptor& self){ return self.label; },[](wgpu::ComputePipelineDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::ComputePipelineDescriptor& self){ return self.label; },[](wgpu::ComputePipelineDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         ComputePipelineDescriptor.def_readwrite("layout", &wgpu::ComputePipelineDescriptor::layout);
         ComputePipelineDescriptor.def_readwrite("compute", &wgpu::ComputePipelineDescriptor::compute);
@@ -3361,7 +3361,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
         DeviceDescriptor.def_readwrite("next_in_chain", &wgpu::DeviceDescriptor::nextInChain);
         DeviceDescriptor.def_property("label",
-            [](const wgpu::DeviceDescriptor& self){ return self.label; },[](wgpu::DeviceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::DeviceDescriptor& self){ return self.label; },[](wgpu::DeviceDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         DeviceDescriptor.def_readwrite("required_feature_count", &wgpu::DeviceDescriptor::requiredFeatureCount);
         DeviceDescriptor.def_readwrite("required_features", &wgpu::DeviceDescriptor::requiredFeatures);
@@ -3373,7 +3373,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPassDescriptor, RenderPassDescriptor)
         RenderPassDescriptor.def_readwrite("next_in_chain", &wgpu::RenderPassDescriptor::nextInChain);
         RenderPassDescriptor.def_property("label",
-            [](const wgpu::RenderPassDescriptor& self){ return self.label; },[](wgpu::RenderPassDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::RenderPassDescriptor& self){ return self.label; },[](wgpu::RenderPassDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         RenderPassDescriptor.def_readwrite("color_attachment_count", &wgpu::RenderPassDescriptor::colorAttachmentCount);
         RenderPassDescriptor.def_readwrite("color_attachments", &wgpu::RenderPassDescriptor::colorAttachments);
@@ -3435,7 +3435,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         VertexState.def_readwrite("next_in_chain", &wgpu::VertexState::nextInChain);
         VertexState.def_readwrite("module", &wgpu::VertexState::module);
         VertexState.def_property("entry_point",
-            [](const wgpu::VertexState& self){ return self.entryPoint; },[](wgpu::VertexState& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.entryPoint = c; }
+            [](const wgpu::VertexState& self){ return self.entryPoint; },[](wgpu::VertexState& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.entryPoint = c; }
         );
         VertexState.def_readwrite("constant_count", &wgpu::VertexState::constantCount);
         VertexState.def_readwrite("constants", &wgpu::VertexState::constants);
@@ -3489,7 +3489,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         FragmentState.def_readwrite("next_in_chain", &wgpu::FragmentState::nextInChain);
         FragmentState.def_readwrite("module", &wgpu::FragmentState::module);
         FragmentState.def_property("entry_point",
-            [](const wgpu::FragmentState& self){ return self.entryPoint; },[](wgpu::FragmentState& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.entryPoint = c; }
+            [](const wgpu::FragmentState& self){ return self.entryPoint; },[](wgpu::FragmentState& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.entryPoint = c; }
         );
         FragmentState.def_readwrite("constant_count", &wgpu::FragmentState::constantCount);
         FragmentState.def_readwrite("constants", &wgpu::FragmentState::constants);
@@ -3542,7 +3542,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor)
         RenderPipelineDescriptor.def_readwrite("next_in_chain", &wgpu::RenderPipelineDescriptor::nextInChain);
         RenderPipelineDescriptor.def_property("label",
-            [](const wgpu::RenderPipelineDescriptor& self){ return self.label; },[](wgpu::RenderPipelineDescriptor& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.label = c; }
+            [](const wgpu::RenderPipelineDescriptor& self){ return self.label; },[](wgpu::RenderPipelineDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         RenderPipelineDescriptor.def_readwrite("layout", &wgpu::RenderPipelineDescriptor::layout);
         RenderPipelineDescriptor.def_readwrite("vertex", &wgpu::RenderPipelineDescriptor::vertex);

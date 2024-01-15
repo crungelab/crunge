@@ -48,8 +48,8 @@ fn brdf(color: vec3<f32>,
 {
     let h = normalize(l + v);
     let ndotl = clamp(dot(n, l), 0.0, 1.0);
-    //let ndotv = abs(dot(n, v));
-    let ndotv = dot(n, v);
+    let ndotv = abs(dot(n, v));
+    //let ndotv = dot(n, v);
     let ndoth = clamp(dot(n, h), 0.0, 1.0);
     let vdoth = clamp(dot(v, h), 0.0, 1.0);
 
@@ -129,6 +129,9 @@ class FragmentShaderBuilder(ShaderBuilder):
     let tbn = mat3x3(input.tangent, input.bitangent, input.normal);
     let normalMap = textureSample(normalTexture, normalSampler, uv).rgb;
     let normal = normalize((tbn * ((2.0 * normalMap) - vec3(1.0))));
+    //var normal = textureSample(normalTexture, normalSampler, uv).rgb;
+    //normal = normal * 2.0 - 1.0; // Remap from [0, 1] to [-1, 1]
+    //normal = normalize(normal.x * input.tangent + normal.y * input.bitangent + normal.z * input.normal);
                 '''
                 )
             else:
@@ -156,13 +159,12 @@ class FragmentShaderBuilder(ShaderBuilder):
 
             #self('return color;')
             
-            if material.has_texture('metallicRoughness'):
-                self("""
-    let fragPos = vec3<f32>(input.vertex_pos.xyz);
+            self("""
+    let fragPos = input.frag_pos;
 
     let lightPos = light.position;
-    //let lightPos = vec3<f32>(2.0, 4.0, 3.0);
-    let lightDir = normalize(lightPos - fragPos);\n
+    //let lightPos = vec3<f32>(2.0, 2.0, 2.0);
+    let lightDir = normalize(lightPos - fragPos);
 
     let cameraPos = camera.position;
     //let cameraPos = vec3<f32>(0.0, 0.0, 3.0);
@@ -171,8 +173,10 @@ class FragmentShaderBuilder(ShaderBuilder):
                      
     //let lightColor = light.color * light.intensity;
     let lightColor = light.color * 5.0;
-    //let lightColor = vec3<f32>(5.0, 5.0, 5.0);
+            """)
 
+            if material.has_texture('metallicRoughness'):
+                self("""
     let reflection = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal);
     let rgb = reflection * lightColor * ao + emissive;
     let finalColor = linearToSRGB(rgb);
@@ -180,20 +184,9 @@ class FragmentShaderBuilder(ShaderBuilder):
                 """)
             else:
                 self("""
-    let fragPos = vec3<f32>(input.vertex_pos.xyz);
-    let lightDir = normalize(light.position - fragPos);
-    //let lightDir = normalize(vec3<f32>(2.0, 4.0, 3.0));
-    let viewDir = normalize(camera.position - fragPos);
-    //let viewDir = normalize(vec3<f32>(0.0, 0.0, 1.0));
-    //let lightColor = light.color * light.intensity;
-    let lightColor = light.color * 5.0;
-    //let lightColor = vec3<f32>(5.0, 5.0, 5.0);
-    //let rgb = brdf(albedo.rgb, metallic, roughness, lightDir, viewDir, normal) * ao + emissive;
-    //let rgb = albedo.rgb * lightColor * ao + emissive;
     let rgb = albedo.rgb * lightColor * ao;
-    //let rgb = reflection * ao + emissive;
     let finalColor = linearToSRGB(rgb);
-    return vec4<f32>(finalColor, albedo.a);\n
+    return vec4<f32>(finalColor, albedo.a);
                 """)
             
         self('}')

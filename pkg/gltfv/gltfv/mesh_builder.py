@@ -22,6 +22,7 @@ from .material import Material
 
 from .shader import VertexShaderBuilder, FragmentShaderBuilder
 
+from .normals import compute_normals
 from .tangents import compute_tangents
 
 class MeshBuilder(NodeBuilder):
@@ -73,13 +74,20 @@ class MeshBuilder(NodeBuilder):
         for attribute in attributes.items():
             self.build_attribute(attribute)
 
+        if not self.vertex_table.has('normal'):
+            normals = compute_normals(
+                self.mesh.index_data,
+                self.vertex_table.get('pos').data
+            )
+            self.vertex_table.add_column(NormalColumn('normal', normals))
+
         if self.vertex_table.has('uv'):
             if not self.vertex_table.has('tangent'):
                 tangents = compute_tangents(
+                    self.mesh.index_data,
                     self.vertex_table.get('pos').data,
                     self.vertex_table.get('uv').data,
-                    self.vertex_table.get('normal').data,
-                    self.mesh.index_data
+                    self.vertex_table.get('normal').data
                 )
                 self.vertex_table.add_column(TangentColumn('tangent', tangents))
 

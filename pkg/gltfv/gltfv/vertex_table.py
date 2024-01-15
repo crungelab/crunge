@@ -33,3 +33,11 @@ class VertexTable:
     @property
     def vertex_size(self):
         return sum([x.struct_size for x in self.columns])
+    
+    @property
+    def has_color(self):
+        return self.has('color')
+    
+    @property
+    def has_uv(self):
+        return self.has('uv')

@@ -50,23 +50,29 @@ assert sizeof(Mat3) % 16 == 0
 assert sizeof(Mat3) == 48
 
 
+class CameraUniform(Structure):
+    _fields_ = [
+        ("model_matrix", Mat4),
+        ("transform_matrix", Mat4),
+        ("normal_matrix", Mat3),
+        ("position", Vec3),
+    ]
+
+
+assert sizeof(CameraUniform) % 16 == 0
+
+
 class LightUniform(Structure):
     _fields_ = [
         ("position", Vec3),
         ("color", Vec3),
+        ("range", c_float),
         ("intensity", c_float),
-        ("_pad1", c_float * 3),
+        ("_pad1", c_float * 2),
     ]
 
 
 assert sizeof(LightUniform) % 16 == 0
-
-
-class CameraUniform(Structure):
-    _fields_ = [("model_matrix", Mat4), ("transform_matrix", Mat4), ("normal_matrix", Mat3), ("position", Vec3)]
-
-
-assert sizeof(CameraUniform) % 16 == 0
 
 
 def cast_matrix4(matrix):
@@ -78,6 +84,6 @@ def cast_matrix3(matrix):
     ptr = glm.value_ptr(matrix)
     return cast(ptr, POINTER(c_float * 9)).contents
 
+
 def cast_vec3(vec):
-    ptr = glm.value_ptr(vec)
-    return cast(ptr, POINTER(c_float * 4)).contents
+    return Vec3(vec.x, vec.y, vec.z, 0.0)

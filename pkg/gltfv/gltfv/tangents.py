@@ -1,7 +1,7 @@
 import numpy as np
 import glm
 
-def compute_tangents(vertices, uvs, normals, indices):
+def compute_tangents(indices, vertices, uvs, normals):
     tangents = np.zeros((len(vertices), 4), dtype=np.float32)
 
     for i in range(0, len(indices), 3):
