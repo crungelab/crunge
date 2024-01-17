@@ -2527,6 +2527,31 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         StencilFaceState.def_readwrite("fail_op", &wgpu::StencilFaceState::failOp);
         StencilFaceState.def_readwrite("depth_fail_op", &wgpu::StencilFaceState::depthFailOp);
         StencilFaceState.def_readwrite("pass_op", &wgpu::StencilFaceState::passOp);
+        StencilFaceState.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::StencilFaceState obj;
+            if (kwargs.contains("compare"))
+            {
+                auto value = kwargs["compare"].cast<wgpu::CompareFunction>();
+                obj.compare = value;
+            }
+            if (kwargs.contains("fail_op"))
+            {
+                auto value = kwargs["fail_op"].cast<wgpu::StencilOperation>();
+                obj.failOp = value;
+            }
+            if (kwargs.contains("depth_fail_op"))
+            {
+                auto value = kwargs["depth_fail_op"].cast<wgpu::StencilOperation>();
+                obj.depthFailOp = value;
+            }
+            if (kwargs.contains("pass_op"))
+            {
+                auto value = kwargs["pass_op"].cast<wgpu::StencilOperation>();
+                obj.passOp = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::StencilFaceState, StencilFaceState)
 
     PYCLASS_BEGIN(_wgpu, wgpu::StorageTextureBindingLayout, StorageTextureBindingLayout)
@@ -2755,6 +2780,58 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         TextureViewDescriptor.def_readwrite("base_array_layer", &wgpu::TextureViewDescriptor::baseArrayLayer);
         TextureViewDescriptor.def_readwrite("array_layer_count", &wgpu::TextureViewDescriptor::arrayLayerCount);
         TextureViewDescriptor.def_readwrite("aspect", &wgpu::TextureViewDescriptor::aspect);
+        TextureViewDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::TextureViewDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.label = value;
+            }
+            if (kwargs.contains("format"))
+            {
+                auto value = kwargs["format"].cast<wgpu::TextureFormat>();
+                obj.format = value;
+            }
+            if (kwargs.contains("dimension"))
+            {
+                auto value = kwargs["dimension"].cast<wgpu::TextureViewDimension>();
+                obj.dimension = value;
+            }
+            if (kwargs.contains("base_mip_level"))
+            {
+                auto value = kwargs["base_mip_level"].cast<uint32_t>();
+                obj.baseMipLevel = value;
+            }
+            if (kwargs.contains("mip_level_count"))
+            {
+                auto value = kwargs["mip_level_count"].cast<uint32_t>();
+                obj.mipLevelCount = value;
+            }
+            if (kwargs.contains("base_array_layer"))
+            {
+                auto value = kwargs["base_array_layer"].cast<uint32_t>();
+                obj.baseArrayLayer = value;
+            }
+            if (kwargs.contains("array_layer_count"))
+            {
+                auto value = kwargs["array_layer_count"].cast<uint32_t>();
+                obj.arrayLayerCount = value;
+            }
+            if (kwargs.contains("aspect"))
+            {
+                auto value = kwargs["aspect"].cast<wgpu::TextureAspect>();
+                obj.aspect = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::TextureViewDescriptor, TextureViewDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::VertexAttribute, VertexAttribute)

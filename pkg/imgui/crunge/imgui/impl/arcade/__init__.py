@@ -115,9 +115,9 @@ class ArcadeRenderer(OpenGLRendererBase):
         self._ctx.scissor = None
 
     def refresh_font_texture(self):
-        width, height, pixels = self.io.fonts.get_tex_data_as_rgba32()
+        pixels, width, height, bpp = self.io.fonts.get_tex_data_as_rgba32()
         # Old font texture will be GCed if exist
-        self._font_texture = self._ctx.texture((width, height), components=4, data=pixels)
+        self._font_texture = self._ctx.texture((width, height), components=bpp, data=pixels)
         # Need to convert ctype to python object.  Can't do it from the c++ side evidently ...
         #self.io.fonts.tex_id = self._font_texture.glo
         self.io.fonts.tex_id = self._font_texture.glo.value

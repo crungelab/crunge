@@ -91,6 +91,7 @@ class Demo:
 
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
+            self.instance.process_events()
 
             now = time.perf_counter()
             frame_time = now - last_time

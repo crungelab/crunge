@@ -64,8 +64,6 @@ vertex_data = np.array(
 
 
 class TriangleTextureDemo(Demo):
-    depth_stencil_view: wgpu.TextureView = None
-
     vertex_buffer: wgpu.Buffer = None
     index_buffer: wgpu.Buffer = None
 

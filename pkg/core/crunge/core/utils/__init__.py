@@ -17,26 +17,29 @@ def as_capsule(obj: Any) -> ctypes.py_object:
         ctypes.c_void_p,
     ]
 
-    '''
-    if type(obj) == ArrayType:
-        obj = obj.buffer_info()[0]
-    if isinstance(obj, ctypes.Structure):
-        obj = ctypes.cast(ctypes.pointer(obj), ctypes.c_void_p)
-    if isinstance(obj, np.ndarray):
-        obj = obj.ctypes.data_as(ctypes.POINTER(ctypes.c_void_p))
-    if type(obj) != ctypes.c_void_p:
-        obj = ctypes.cast(obj, ctypes.c_void_p)
-    '''
     if isinstance(obj, np.ndarray):
         obj = obj.ctypes.data_as(ctypes.c_void_p)
     elif isinstance(obj, ctypes.Structure):
         obj = ctypes.cast(ctypes.pointer(obj), ctypes.c_void_p)
     elif isinstance(obj, ArrayType):
         obj = obj.buffer_info()[0]
-    else:
+    elif isinstance(obj, memoryview):
+        #obj = ctypes.c_void_p.from_buffer(obj)
+        #obj = ctypes.cast(ctypes.pointer(obj), ctypes.c_void_p)
+        #obj = ctypes.c_char_p.from_buffer(obj)
+        #ctypes.cast(ctypes.pointer(obj), ctypes.c_void_p)
+        Buffer = ctypes.c_char * obj.nbytes
+        buf = Buffer.from_buffer(obj)
+        obj = ctypes.cast(buf, ctypes.c_void_p)
+
+    if type(obj) != ctypes.c_void_p:
         obj = ctypes.cast(obj, ctypes.c_void_p)
 
+    #logger.debug(f"obj: {obj}")
+
     capsule = ctypes.pythonapi.PyCapsule_New(obj, None, None)
+
+    #logger.debug(f"capsule: {capsule}")
 
     return capsule
 

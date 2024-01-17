@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
+#include <pybind11/numpy.h>
 
 #define BUILDING_DLL
 
@@ -290,21 +291,31 @@ void init_main(py::module &_imgui, Registry &registry) {
     //, py::arg("font_cfg") = nullptr
     //, py::arg("glyph_ranges") = nullptr
     , py::return_value_policy::automatic_reference);
-    FontAtlas.def("get_tex_data_as_alpha8", [](ImFontAtlas& atlas)
+    FontAtlas.def("get_tex_data_as_alpha8", [](ImFontAtlas& self)
     {
         unsigned char* pixels;
         int width, height, bytes_per_pixel;
-        atlas.GetTexDataAsAlpha8(&pixels, &width, &height, &bytes_per_pixel);
+        self.GetTexDataAsAlpha8(&pixels, &width, &height, &bytes_per_pixel);
         std::string data((char*)pixels, width * height * bytes_per_pixel);
-        return std::make_tuple(width, height, py::bytes(data));
+        return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
     });
-    FontAtlas.def("get_tex_data_as_rgba32", [](ImFontAtlas& atlas)
+    FontAtlas.def("get_tex_data_as_rgba32", [](ImFontAtlas& self)
     {
         unsigned char* pixels;
         int width, height, bytes_per_pixel;
-        atlas.GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixel);
+        self.GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixel);
         std::string data((char*)pixels, width * height * bytes_per_pixel);
-        return std::make_tuple(width, height, py::bytes(data));
+        return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
+    });
+    FontAtlas.def("get_tex_data_as_rgba32_array", [](ImFontAtlas& self)
+    {
+        unsigned char* pixels;
+        int width, height, bytes_per_pixel;
+        self.GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixel);
+        //std::string data((char*)pixels, width * height * bytes_per_pixel);
+        py::array_t<unsigned char> data(width * height * bytes_per_pixel, pixels);
+        //return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
+        return std::make_tuple(data, width, height, bytes_per_pixel);
     });
     PYEXTEND_END
 

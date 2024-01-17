@@ -67,13 +67,13 @@ class ModernGLRenderer(OpenGLRendererBase):
         del self._textures[texture.glo]
 
     def refresh_font_texture(self):
-        width, height, pixels = self.io.fonts.get_tex_data_as_rgba32()
+        pixels, width, height, bpp = self.io.fonts.get_tex_data_as_rgba32()
 
         if self._font_texture:
             self.remove_texture(self._font_texture)
             self._font_texture.release()
 
-        self._font_texture = self.ctx.texture((width, height), 4, data=pixels)
+        self._font_texture = self.ctx.texture((width, height), bpp, data=pixels)
         self.register_texture(self._font_texture)
         self.io.fonts.tex_id = self._font_texture.glo
         self.io.fonts.clear_tex_data()

@@ -25,6 +25,12 @@ def create_buffer(
     desc.size = size
     return device.create_buffer(desc)
 
+def write_buffer(
+    device: wgpu.Device, buffer: wgpu.Buffer, offset: int, data: object, size: int
+) -> None:
+    # Buffer size has to be a multiple of 4
+    size = divround_up(size, 4)
+    device.queue.write_buffer(buffer, offset, as_capsule(data), size)
 
 def create_buffer_from_ndarray(
     device: wgpu.Device, label: str, data: np.ndarray, usage: wgpu.BufferUsage
@@ -35,6 +41,14 @@ def create_buffer_from_ndarray(
     buffer = create_buffer(device, label, size, usage)
     device.queue.write_buffer(buffer, 0, as_capsule(data), size)
     return buffer
+
+def write_buffer_from_ndarray(
+    device: wgpu.Device, buffer: wgpu.Buffer, data: np.ndarray
+) -> None:
+    size = data.nbytes
+    # Buffer size has to be a multiple of 4
+    size = divround_up(size, 4)
+    device.queue.write_buffer(buffer, 0, as_capsule(data), size)
 
 '''
 def create_buffer(

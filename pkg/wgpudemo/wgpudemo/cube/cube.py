@@ -156,7 +156,6 @@ class CubeDemo(Demo):
     def transform_matrix(self):
         now = time.time()
         ms = round(now * 1000) / 1000
-        # print(ms)
         viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
         rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
         rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
