@@ -37,6 +37,9 @@ class Demo:
 
         self.window = glfw.create_window(self.kWidth, self.kHeight, self.name, None, None)
 
+    def _create_device_objects(self):
+        pass
+
     def create_swapchain(self):
         if sys.platform == "darwin":
             handle = glfw.get_cocoa_window(self.window)
@@ -84,6 +87,7 @@ class Demo:
 
     def run(self):
         self.create_window()
+        self._create_device_objects()
         self.create_swapchain()
 
         last_time = time.perf_counter()

@@ -99,6 +99,16 @@ fn main(in: VertexOutput) -> @location(0) vec4<f32> {
 """
 
 
+def compute_framebuffer_scale(window_size, frame_buffer_size):
+    win_width, win_height = window_size
+    fb_width, fb_height = frame_buffer_size
+
+    if win_width != 0 and win_width != 0:
+        return fb_width / win_width, fb_height / win_height
+
+    return 1.0, 1.0
+
+
 class WImGuiDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
     index_buffer: wgpu.Buffer = None
@@ -107,11 +117,10 @@ class WImGuiDemo(Demo):
     texture_view: wgpu.TextureView = None
     sampler: wgpu.Sampler = None
 
-    kWidth = 800
-    kHeight = 600
-
     def __init__(self):
         super().__init__()
+
+        self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
         self.context = imgui.create_context()
         imgui.set_current_context(self.context)
@@ -120,14 +129,48 @@ class WImGuiDemo(Demo):
 
         io = imgui.get_io()
         self.io = io
-        io.display_size = self.kWidth, self.kHeight
-        io.display_framebuffer_scale = 1.0, 1.0
-        #default_font = io.fonts.add_font_default()
-        #imgui.push_font(default_font)
 
+    def _set_pixel_ratio(self):
+        window_size = glfw.get_window_size(self.window)
+        self.io.display_size = window_size
+
+        framebuffer_size = glfw.get_framebuffer_size(self.window)
+        pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
+        self.io.display_framebuffer_scale = pixel_ratio
+
+    def _create_device_objects(self):
         self.create_buffers()
         self.create_textures()
         self.create_pipeline()
+
+    def create_window(self):
+        super().create_window()
+        glfw.set_cursor_enter_callback(self.window, self.on_cursor_enter)
+        glfw.set_cursor_pos_callback(self.window, self.on_cursor_pos)
+        glfw.set_mouse_button_callback(self.window, self.on_mouse_button)
+        glfw.set_scroll_callback(self.window, self.on_scroll)
+        self._set_pixel_ratio()
+
+    def on_cursor_enter(self, window, entered: int):
+        if entered:
+            self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
+        else:
+            last_mouse = self.io.mouse_pos
+            self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
+            self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
+
+    def on_cursor_pos(self, window, x: float, y: float):
+        self.io.add_mouse_pos_event(x, y)
+        self.last_mouse = glm.vec2(x, y)
+
+    def on_mouse_button(self, window, button: int, action: int, mods: int):
+        if button < 3:
+            #self.io.mouse_down[button] = action == glfw.PRESS
+            self.io.add_mouse_button_event(button, action == glfw.PRESS)
+
+    def on_scroll(self, window, x: float, y: float):
+        #self.io.mouse_wheel = y
+        self.io.add_mouse_wheel_event(x, y)
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer(
@@ -147,26 +190,13 @@ class WImGuiDemo(Demo):
 
     def create_textures(self):
         io = self.io
-        #io.fonts.add_font_default()
-        #io.fonts.build()
-        #default_font = io.fonts.add_font_default()
-        #imgui.push_font(default_font)
-
         pixels, width, height, bpp = io.fonts.get_tex_data_as_rgba32()
-        #for i in range(0, 1000):
-        #    logger.debug(f"pixels[{i}]: {pixels[i]}")
-        #exit()
         logger.debug(f"width: {width}")
         logger.debug(f"height: {height}")
         logger.debug(f"bpp: {bpp}")
-        #exit()
-        #logger.debug(f"pixels: {pixels}")
-        #print(pixels)
-        #logger.debug(io.fonts.is_built())
-        #exit()
 
         texture_desc = wgpu.TextureDescriptor(
-            label = "Dear ImGui Font Texture",
+            label="Dear ImGui Font Texture",
             dimension=wgpu.TextureDimension.E2D,
             size=wgpu.Extent3D(width, height, 1),
             sample_count=1,
@@ -200,23 +230,10 @@ class WImGuiDemo(Demo):
 
         self.sampler = self.device.create_sampler(sampler_desc)
 
-        #size = utils.divround_up(pixels.nbytes, 256)
-        #size = utils.divround_up(width * height * bpp, 256)
+        # size = utils.divround_up(pixels.nbytes, 256)
+        # size = utils.divround_up(width * height * bpp, 256)
         size = width * height * bpp
 
-        """
-        WGPUImageCopyTexture dst_view = {};
-        dst_view.texture = bd->renderResources.FontTexture;
-        dst_view.mipLevel = 0;
-        dst_view.origin = { 0, 0, 0 };
-        dst_view.aspect = WGPUTextureAspect_All;
-        WGPUTextureDataLayout layout = {};
-        layout.offset = 0;
-        layout.bytesPerRow = width * size_pp;
-        layout.rowsPerImage = height;
-        WGPUExtent3D size = { (uint32_t)width, (uint32_t)height, 1 };
-        wgpuQueueWriteTexture(bd->defaultQueue, &dst_view, pixels, (uint32_t)(width * size_pp * height), &layout, &size);
-        """
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             wgpu.ImageCopyTexture(
@@ -228,7 +245,7 @@ class WImGuiDemo(Demo):
             # The actual pixel data
             utils.as_capsule(pixels),
             # Data size
-            #width * height * bpp,
+            # width * height * bpp,
             size,
             # The layout of the texture
             wgpu.TextureDataLayout(
@@ -240,8 +257,8 @@ class WImGuiDemo(Demo):
             wgpu.Extent3D(width, height, 1),
         )
 
-        #io.fonts.set_tex_id(id(self.texture_view))
-        #io.fonts.clear_tex_data()
+        # io.fonts.set_tex_id(id(self.texture_view))
+        # io.fonts.clear_tex_data()
 
     def create_pipeline(self):
         logger.debug("create_pipeline")
@@ -273,14 +290,6 @@ class WImGuiDemo(Demo):
             attributes=vertAttributes[0],
         )
 
-        """
-        blend_state.alpha.operation = WGPUBlendOperation_Add;
-        blend_state.alpha.srcFactor = WGPUBlendFactor_One;
-        blend_state.alpha.dstFactor = WGPUBlendFactor_OneMinusSrcAlpha;
-        blend_state.color.operation = WGPUBlendOperation_Add;
-        blend_state.color.srcFactor = WGPUBlendFactor_SrcAlpha;
-        blend_state.color.dstFactor = WGPUBlendFactor_OneMinusSrcAlpha;
-        """
         blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
                 operation=wgpu.BlendOperation.ADD,
@@ -357,15 +366,7 @@ class WImGuiDemo(Demo):
             cull_mode=wgpu.CullMode.NONE,
         )
 
-        """
-        WGPUDepthStencilState depth_stencil_state = {};
-        depth_stencil_state.format = bd->depthStencilFormat;
-        depth_stencil_state.depthWriteEnabled = false;
-        depth_stencil_state.depthCompare = WGPUCompareFunction_Always;
-        depth_stencil_state.stencilFront.compare = WGPUCompareFunction_Always;
-        depth_stencil_state.stencilBack.compare = WGPUCompareFunction_Always;
-        """
-
+        # TODO: depth_stencil_state
         """
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS_STENCIL8,
@@ -379,13 +380,13 @@ class WImGuiDemo(Demo):
             ),
         )
         """
-        
+
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             primitive=primitive,
-            #depth_stencil=depth_stencil_state,
+            # depth_stencil=depth_stencil_state,
             fragment=fragmentState,
         )
 
@@ -413,7 +414,7 @@ class WImGuiDemo(Demo):
     def render_draw_data(
         self, draw_data: imgui.DrawData, pass_enc: wgpu.RenderPassEncoder
     ):
-        #logger.debug("render_draw_data")
+        # logger.debug("render_draw_data")
         vtx_offset = 0
         idx_offset = 0
         for commands in draw_data.cmd_lists:
@@ -421,7 +422,8 @@ class WImGuiDemo(Demo):
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
-                vtx_offset,
+                #utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
+                vtx_offset * imgui.VERTEX_SIZE,
                 commands.vtx_buffer_data,
                 commands.vtx_buffer_size * imgui.VERTEX_SIZE,
             )
@@ -429,7 +431,8 @@ class WImGuiDemo(Demo):
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
-                idx_offset,
+                #utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
+                idx_offset * imgui.INDEX_SIZE,
                 commands.idx_buffer_data,
                 commands.idx_buffer_size * imgui.INDEX_SIZE,
             )
@@ -458,11 +461,11 @@ class WImGuiDemo(Demo):
                         0,
                     )
 
-            vtx_offset += commands.vtx_buffer_size * imgui.VERTEX_SIZE # // imgui.VERTEX_SIZE
-            idx_offset += commands.idx_buffer_size * imgui.INDEX_SIZE # // imgui.INDEX_SIZE
+            vtx_offset += commands.vtx_buffer_size
+            idx_offset += commands.idx_buffer_size
 
     def render(self, view: wgpu.TextureView):
-        #logger.debug("render")
+        # logger.debug("render")
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -516,28 +519,26 @@ class WImGuiDemo(Demo):
 
         self.queue.submit(1, commands)
 
-    def frame(self):
-        #logger.debug("frame")
-        imgui.new_frame()
-
-        #imgui.set_next_window_pos( (16, 32) )
-        #imgui.set_next_window_size( (512, 512) )
-
+    def draw_buttons(self):
         imgui.begin("Buttons")
         imgui.button("Button 1")
         imgui.button("Button 2")
         imgui.end()
 
-        #imgui.show_demo_window()
-
-        imgui.set_next_window_pos( (16, 64) )
-        imgui.set_next_window_size( (512, 512) )
-
+    def draw_more_buttons(self):
         imgui.begin("More Buttons")
         imgui.button("Button 1")
         imgui.button("Button 2")
         imgui.end()
 
+    def frame(self):
+        # logger.debug("frame")
+        imgui.new_frame()
+
+        self.draw_buttons()
+        self.draw_more_buttons()
+        imgui.show_demo_window()
+        
         imgui.end_frame()
 
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
