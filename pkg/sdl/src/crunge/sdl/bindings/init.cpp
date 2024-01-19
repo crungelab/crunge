@@ -8,6 +8,8 @@ void init_main(py::module &, Registry& registry);
 void init_sdl_init(py::module &, Registry& registry);
 void init_sdl_video(py::module &, Registry& registry);
 void init_sdl_events(py::module &, Registry& registry);
+void init_sdl_keyboard(py::module &, Registry& registry);
+void init_sdl_properties(py::module &, Registry& registry);
 
 
 PYBIND11_MODULE(_sdl, m) {
@@ -16,4 +18,6 @@ PYBIND11_MODULE(_sdl, m) {
     init_sdl_init(m, r);
     init_sdl_video(m, r);
     init_sdl_events(m, r);
+    init_sdl_keyboard(m, r);
+    init_sdl_properties(m, r);
 }

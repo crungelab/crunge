@@ -33,21 +33,33 @@ void init_main(py::module &_sdl, Registry &registry)
         //return py::cast(event);
         switch (event.type)
         {
-        case SDL_EVENT_QUIT:
-        {
-            SDL_QuitEvent quitEvent = event.quit;
-            return py::cast(quitEvent);
-        }
-        case SDL_EVENT_KEY_DOWN:
-        {
-            SDL_KeyboardEvent keyEvent = event.key;
-            return py::cast(keyEvent);
-        }
-        case SDL_EVENT_KEY_UP:
-        {
-            SDL_KeyboardEvent keyEvent = event.key;
-            return py::cast(keyEvent);
-        }
+            case SDL_EVENT_QUIT:
+            {
+                SDL_QuitEvent quitEvent = event.quit;
+                return py::cast(quitEvent);
+            }
+            case SDL_EVENT_KEY_DOWN:
+            case SDL_EVENT_KEY_UP:
+            {
+                SDL_KeyboardEvent keyEvent = event.key;
+                return py::cast(keyEvent);
+            }
+            case SDL_EVENT_MOUSE_MOTION:
+            {
+                SDL_MouseMotionEvent mouseMotionEvent = event.motion;
+                return py::cast(mouseMotionEvent);
+            }
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+            {
+                SDL_MouseButtonEvent mouseButtonEvent = event.button;
+                return py::cast(mouseButtonEvent);
+            }
+            case SDL_EVENT_MOUSE_WHEEL:
+            {
+                SDL_MouseWheelEvent mouseWheelEvent = event.wheel;
+                return py::cast(mouseWheelEvent);
+            }
         }
         return py::cast<py::object>(Py_None); },
         py::return_value_policy::automatic_reference);

@@ -18,6 +18,8 @@ set(SOURCES
     src/crunge/sdl/bindings/sdl_init.cpp
     src/crunge/sdl/bindings/sdl_video.cpp
     src/crunge/sdl/bindings/sdl_events.cpp
+    src/crunge/sdl/bindings/sdl_keyboard.cpp
+    src/crunge/sdl/bindings/sdl_properties.cpp
     src/crunge/sdl/bindings/main.cpp
 )
 
