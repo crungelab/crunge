@@ -1,8 +1,7 @@
 source: '../../depot/imgui/imgui.h'
 target: 'src/crunge/imgui/bindings/generated.cpp'
 
-prefix: ImGui
-short_prefix: Im
+prefixes: [ImGui, Im]
 
 module: _imgui
 

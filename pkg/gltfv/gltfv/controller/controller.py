@@ -15,13 +15,13 @@ class Controller:
     def update(self, delta_time: float):
         self.delta_time = delta_time
 
-    def on_mouse(self, window, xpos, ypos):
+    def on_cursor_pos(self, window, xpos, ypos):
         pass
 
     def on_mouse_button(self, window, button, action, mods):
         pass
 
-    def on_mouse_scroll(self, window, xoffset, yoffset):
+    def on_scroll(self, window, xoffset, yoffset):
         pass
 
     def on_key(self, window, key, scancode, action, mods):

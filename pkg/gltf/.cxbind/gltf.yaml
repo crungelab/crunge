@@ -1,9 +1,6 @@
 source: '../../depot/gltf/tiny_gltf.h'
 target: 'src/crunge/gltf/bindings/generated.cpp'
 
-#prefix: ImGui
-#short_prefix: Im
-
 module: _gltf
 
 flags: [

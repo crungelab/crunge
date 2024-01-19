@@ -114,7 +114,7 @@ class ArcballCameraController(CameraController):
         #self.camera.update_camera_vectors()
         #self.camera.look_at(self.target)
 
-    def on_mouse_scroll(self, window, xoffset, yoffset):
+    def on_scroll(self, window, xoffset, yoffset):
         self.zoom(yoffset * 0.1)
 
     def process_keyboard(self, direction, delta_time):
@@ -129,7 +129,7 @@ class ArcballCameraController(CameraController):
             self.camera.position += self.camera.right * velocity
 
     '''
-    def on_mouse(self, window, xpos, ypos):
+    def on_cursor_pos(self, window, xpos, ypos):
         if not self.mouse_captured:
             return
         self.process_mouse_movement(xpos, ypos)

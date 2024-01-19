@@ -1,8 +1,7 @@
 source: '../../depot/imnodes/imnodes.h'
 target: 'src/crunge/imnodes/bindings/generated.cpp'
 
-prefix: ImNodes
-short_prefix: Im
+prefixes: [ImNodes, Im]
 
 module: _imnodes
 

@@ -1,0 +1,15 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "implotdemo"
+version = "0.1.0"
+description = 'Crunge ImPlot Demo'
+requires-python = ">=3.8"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "arcade ~=2.6.17",
+    "numpy ~=1.26.0"
+]

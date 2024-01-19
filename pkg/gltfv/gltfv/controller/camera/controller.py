@@ -25,7 +25,7 @@ class CameraController(Controller):
     def orientation(self, value):
         self.camera.orientation = value
 
-    def on_mouse(self, window, xpos, ypos):
+    def on_cursor_pos(self, window, xpos, ypos):
         if not self.mouse_captured:
             return
         self.process_mouse_movement(xpos, ypos)

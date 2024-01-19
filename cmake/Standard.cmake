@@ -5,6 +5,10 @@ include_guard()
 include(${CMAKE_CURRENT_LIST_DIR}/Config.cmake)
 
 function(USES_STD THIS)
+    target_include_directories(${THIS} PRIVATE
+        ${DEPOT_ROOT}
+    )
+
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_compile_definitions(${THIS} PRIVATE 
             ${CRUNGE_COMPILE_DEFS}

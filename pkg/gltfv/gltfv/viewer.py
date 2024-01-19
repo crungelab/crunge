@@ -37,12 +37,11 @@ class Viewer(Base):
 
         self.window = glfw.create_window(self.kWidth, self.kHeight, "GlTF Viewer", None, None)
 
-        glfw.set_cursor_pos_callback(self.window, self.mouse_callback)
-        glfw.set_mouse_button_callback(self.window, self.mouse_button_callback)
-        #glfw.set_scroll_callback(self.window, lambda w, xoffset, yoffset: camera.zoom(yoffset * 0.1))
-        glfw.set_scroll_callback(self.window, self.scroll_callback)
+        glfw.set_cursor_pos_callback(self.window, self.on_cursor_pos)
+        glfw.set_mouse_button_callback(self.window, self.on_mouse_button)
+        glfw.set_scroll_callback(self.window, self.on_scroll)
 
-        glfw.set_key_callback(self.window, self.key_callback)
+        glfw.set_key_callback(self.window, self.on_key)
 
     def create_view(self, scene: Scene):
         wsd = None
@@ -101,16 +100,16 @@ class Viewer(Base):
         glfw.destroy_window(self.window)
         glfw.terminate()
 
-    def mouse_callback(self, window, xpos, ypos):
-        self.camera_controller.on_mouse(window, xpos, ypos)
+    def on_cursor_pos(self, window, xpos, ypos):
+        self.camera_controller.on_cursor_pos(window, xpos, ypos)
 
-    def mouse_button_callback(self,window, button, action, mods):
+    def on_mouse_button(self,window, button, action, mods):
         self.camera_controller.on_mouse_button(window, button, action, mods)
 
-    def scroll_callback(self, window, xoffset, yoffset):
-        self.camera_controller.on_mouse_scroll(window, xoffset, yoffset)
+    def on_scroll(self, window, xoffset, yoffset):
+        self.camera_controller.on_scroll(window, xoffset, yoffset)
 
-    def key_callback(self, window, key, scancode, action, mods):
+    def on_key(self, window, key, scancode, action, mods):
         self.camera_controller.on_key(window, key, scancode, action, mods)
         if key == glfw.KEY_ESCAPE and action == glfw.PRESS:
             glfw.set_window_should_close(window, True)

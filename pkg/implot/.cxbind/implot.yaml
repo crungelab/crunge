@@ -1,8 +1,7 @@
 source: '../../depot/implot/implot.h'
 target: 'src/crunge/implot/bindings/generated.cpp'
 
-prefix: ImPlot
-short_prefix: Im
+prefixes: [ImPlot, Im]
 
 module: _implot
 
