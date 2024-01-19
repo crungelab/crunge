@@ -1,2 +1,4 @@
+-e ../core
+-e ../wgpu
 -e ../imgui
--e ../implot
+-e ../sdl

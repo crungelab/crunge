@@ -1,15 +1,16 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.setuptools]
+packages = ["sdldemo"]
 
 [project]
-name = "implotdemo"
+name = "sdldemo"
 version = "0.1.0"
-description = 'Crunge ImPlot Demo'
-requires-python = ">=3.8"
+description = 'Crunge SDL Demo'
+requires-python = ">=3.10"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
-    "arcade ~=2.6.17",
-    "numpy ~=1.26.0"
+    "loguru ==0.7.2",
+    "PyGLM ==2.7.1",
+    "trimesh ==4.0.5",
+    "imageio ==2.33.1",
 ]

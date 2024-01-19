@@ -657,7 +657,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     _imgui.def("bullet", &ImGui::Bullet
     , py::return_value_policy::automatic_reference);
 
-    _imgui.def("image", &ImGui::Image
+    _imgui.def("age", &ImGui::Image
     , py::arg("user_texture_id")
     , py::arg("size")
     , py::arg("uv0") = ImVec2(0,0)
@@ -666,7 +666,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     , py::arg("border_col") = ImVec4(0,0,0,0)
     , py::return_value_policy::automatic_reference);
 
-    _imgui.def("image_button", &ImGui::ImageButton
+    _imgui.def("age_button", &ImGui::ImageButton
     , py::arg("str_id")
     , py::arg("user_texture_id")
     , py::arg("size")
@@ -2686,10 +2686,10 @@ void init_generated(py::module &_imgui, Registry &registry) {
         IO.def_readwrite("delta_time", &ImGuiIO::DeltaTime);
         IO.def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate);
         IO.def_property("ini_filename",
-            [](const ImGuiIO& self){ return self.IniFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.IniFilename = c; }
+            [](const ImGuiIO& self){ return self.IniFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.IniFilename = c; }
         );
         IO.def_property("log_filename",
-            [](const ImGuiIO& self){ return self.LogFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.LogFilename = c; }
+            [](const ImGuiIO& self){ return self.LogFilename; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.LogFilename = c; }
         );
         IO.def_readwrite("user_data", &ImGuiIO::UserData);
         IO.def_readwrite("fonts", &ImGuiIO::Fonts);
@@ -2724,10 +2724,10 @@ void init_generated(py::module &_imgui, Registry &registry) {
         IO.def_readwrite("config_debug_ignore_focus_loss", &ImGuiIO::ConfigDebugIgnoreFocusLoss);
         IO.def_readwrite("config_debug_ini_settings", &ImGuiIO::ConfigDebugIniSettings);
         IO.def_property("backend_platform_name",
-            [](const ImGuiIO& self){ return self.BackendPlatformName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.BackendPlatformName = c; }
+            [](const ImGuiIO& self){ return self.BackendPlatformName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.BackendPlatformName = c; }
         );
         IO.def_property("backend_renderer_name",
-            [](const ImGuiIO& self){ return self.BackendRendererName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.BackendRendererName = c; }
+            [](const ImGuiIO& self){ return self.BackendRendererName; },[](ImGuiIO& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.BackendRendererName = c; }
         );
         IO.def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData);
         IO.def_readwrite("backend_renderer_user_data", &ImGuiIO::BackendRendererUserData);
@@ -2859,7 +2859,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         InputTextCallbackData.def_readwrite("event_char", &ImGuiInputTextCallbackData::EventChar);
         InputTextCallbackData.def_readwrite("event_key", &ImGuiInputTextCallbackData::EventKey);
         InputTextCallbackData.def_property("buf",
-            [](const ImGuiInputTextCallbackData& self){ return self.Buf; },[](ImGuiInputTextCallbackData& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.Buf = c; }
+            [](const ImGuiInputTextCallbackData& self){ return self.Buf; },[](ImGuiInputTextCallbackData& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.Buf = c; }
         );
         InputTextCallbackData.def_readwrite("buf_text_len", &ImGuiInputTextCallbackData::BufTextLen);
         InputTextCallbackData.def_readwrite("buf_size", &ImGuiInputTextCallbackData::BufSize);
@@ -2978,10 +2978,10 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
         PYCLASS_BEGIN(_imgui, ImGuiTextFilter::ImGuiTextRange, TextRange)
             TextRange.def_property("b",
-                [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.b; },[](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.b = c; }
+                [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.b; },[](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.b = c; }
             );
             TextRange.def_property("e",
-                [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.e; },[](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size()); strcpy(c, source.c_str()); self.e = c; }
+                [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.e; },[](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.e = c; }
             );
             TextRange.def(py::init<>());
             TextRange.def(py::init<const char *, const char *>()
@@ -3395,7 +3395,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("num_segments") = 0
         , py::return_value_policy::automatic_reference);
 
-        DrawList.def("add_image", &ImDrawList::AddImage
+        DrawList.def("addage", &ImDrawList::AddImage
         , py::arg("user_texture_id")
         , py::arg("p_min")
         , py::arg("p_max")
@@ -3404,7 +3404,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("col") = IM_COL32_WHITE
         , py::return_value_policy::automatic_reference);
 
-        DrawList.def("add_image_quad", &ImDrawList::AddImageQuad
+        DrawList.def("addage_quad", &ImDrawList::AddImageQuad
         , py::arg("user_texture_id")
         , py::arg("p1")
         , py::arg("p2")
@@ -3417,7 +3417,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("col") = IM_COL32_WHITE
         , py::return_value_policy::automatic_reference);
 
-        DrawList.def("add_image_rounded", &ImDrawList::AddImageRounded
+        DrawList.def("addage_rounded", &ImDrawList::AddImageRounded
         , py::arg("user_texture_id")
         , py::arg("p_min")
         , py::arg("p_max")

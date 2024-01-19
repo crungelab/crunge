@@ -13,14 +13,14 @@ properties = sdl.get_window_properties(window)
 
 logger.info(f"window properties: {properties}")
 
-#void* display = SDL_GetProperty(SDL_GetWindowProperties(window_), "SDL.window.x11.display", 0);
+# Display
 display = sdl.get_property(properties, "SDL.window.x11.display", None)
 logger.debug(f"display: {display}")
 
 display = sdl.get_property(properties, sdl.WindowProperties.X11_DISPLAY_POINTER, None)
 logger.debug(f"display: {display}")
 
-#XWindow hwnd = (XWindow)SDL_GetNumberProperty(SDL_GetWindowProperties(window_), "SDL.window.x11.window", 0);
+# Window Handle
 hwnd = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
 logger.debug(f"hwnd: {hwnd}")
 
