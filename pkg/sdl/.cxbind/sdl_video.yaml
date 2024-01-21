@@ -11,6 +11,18 @@ flags: [
   '-I../../depot/sdl/include',
 ]
 
+'function.SDL_GetWindowSize':
+  omit_ret: true
+  arguments:
+    w: { default: 0}
+    h: { default: 0}
+
+'function.SDL_GetWindowSizeInPixels':
+  omit_ret: true
+  arguments:
+    w: { default: 0}
+    h: { default: 0}
+
 # Wrapped
 'struct.SDL_Window':
   gen_wrapper:

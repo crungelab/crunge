@@ -147,7 +147,8 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         TextEditingEvent.def_readwrite("timestamp", &SDL_TextEditingEvent::timestamp);
         TextEditingEvent.def_readwrite("window_id", &SDL_TextEditingEvent::windowID);
         TextEditingEvent.def_property("text",
-            [](const SDL_TextEditingEvent& self){ return self.text; },[](SDL_TextEditingEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.text = c; }
+            [](const SDL_TextEditingEvent& self){ return self.text; },
+            [](SDL_TextEditingEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.text = c; }
         );
         TextEditingEvent.def_readwrite("start", &SDL_TextEditingEvent::start);
         TextEditingEvent.def_readwrite("length", &SDL_TextEditingEvent::length);
@@ -158,7 +159,8 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         TextInputEvent.def_readwrite("timestamp", &SDL_TextInputEvent::timestamp);
         TextInputEvent.def_readwrite("window_id", &SDL_TextInputEvent::windowID);
         TextInputEvent.def_property("text",
-            [](const SDL_TextInputEvent& self){ return self.text; },[](SDL_TextInputEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.text = c; }
+            [](const SDL_TextInputEvent& self){ return self.text; },
+            [](SDL_TextInputEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.text = c; }
         );
     PYCLASS_END(_sdl, SDL_TextInputEvent, TextInputEvent)
 
@@ -361,10 +363,12 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         DropEvent.def_readwrite("x", &SDL_DropEvent::x);
         DropEvent.def_readwrite("y", &SDL_DropEvent::y);
         DropEvent.def_property("source",
-            [](const SDL_DropEvent& self){ return self.source; },[](SDL_DropEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.source = c; }
+            [](const SDL_DropEvent& self){ return self.source; },
+            [](SDL_DropEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.source = c; }
         );
         DropEvent.def_property("data",
-            [](const SDL_DropEvent& self){ return self.data; },[](SDL_DropEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.data = c; }
+            [](const SDL_DropEvent& self){ return self.data; },
+            [](SDL_DropEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.data = c; }
         );
     PYCLASS_END(_sdl, SDL_DropEvent, DropEvent)
 

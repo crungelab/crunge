@@ -93,14 +93,23 @@ class Demo:
             case sdl.QuitEvent:
                 return False
             case sdl.MouseMotionEvent:
-                logger.debug(f"mouse motion: x={event.x}, y={event.y}")
+                self.on_mouse_motion(event)
             case sdl.MouseButtonEvent:
-                logger.debug(f"mouse button: button={event.button}, state={event.state}")
+                self.on_mouse_button(event)
             case sdl.MouseWheelEvent:
-                logger.debug(f"mouse wheel: x={event.x}, y={event.y}")
+                self.on_mouse_wheel(event)
             case _:
                 pass
         return True
+
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+        logger.debug(f"mouse motion: x={event.x}, y={event.y}")
+
+    def on_mouse_button(self, event: sdl.MouseButtonEvent):
+        logger.debug(f"mouse button: button={event.button}, state={event.state}")
+
+    def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
+        logger.debug(f"mouse wheel: x={event.x}, y={event.y}")
 
     def run(self):
         self.create_window()

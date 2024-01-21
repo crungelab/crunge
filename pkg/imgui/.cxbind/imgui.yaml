@@ -24,10 +24,12 @@ defaults:
 
 # Wrapped
 
+#TODO:  I can probably generate the next four if I use a wrapper for the opaque type.
 'function.ImGui::CreateContext': {exclude: true}
 'function.ImGui::DestroyContext': {exclude: true}
 'function.ImGui::GetCurrentContext': {exclude: true}
 'function.ImGui::SetCurrentContext': {exclude: true}
+
 'function.ImGui::SetDragDropPayload': {exclude: true}
 'function.ImGui::Combo': {exclude: true}
 'function.ImGui::MenuItem': {exclude: true}

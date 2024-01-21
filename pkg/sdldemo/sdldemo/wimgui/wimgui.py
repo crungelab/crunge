@@ -161,17 +161,20 @@ class WImGuiDemo(Demo):
             self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
             self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
 
-    def on_cursor_pos(self, window, x: float, y: float):
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+        x, y = event.x, event.y
         self.io.add_mouse_pos_event(x, y)
         self.last_mouse = glm.vec2(x, y)
 
-    def on_mouse_button(self, window, button: int, action: int, mods: int):
+    def on_mouse_button(self, event: sdl.MouseButtonEvent):
+        super().on_mouse_button(event)
+        button = event.button - 1 # SDL starts at 1, ImGui starts at 0
+        action = event.state == 1
         if button < 3:
-            #self.io.mouse_down[button] = action == glfw.PRESS
-            self.io.add_mouse_button_event(button, action == glfw.PRESS)
+            self.io.add_mouse_button_event(button, action)
 
-    def on_scroll(self, window, x: float, y: float):
-        #self.io.mouse_wheel = y
+    def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
+        x, y = event.x, event.y
         self.io.add_mouse_wheel_event(x, y)
 
     def create_buffers(self):

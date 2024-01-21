@@ -354,11 +354,11 @@ void init_sdl_video(py::module &_sdl, Registry &registry) {
     _sdl.def("get_window_size", [](SDLWindowWrapper * window, int * w, int * h)
     {
         auto ret = SDL_GetWindowSize(window->get(), w, h);
-        return std::make_tuple(ret, w, h);
+        return std::make_tuple(w, h);
     }
     , py::arg("window")
-    , py::arg("w")
-    , py::arg("h")
+    , py::arg("w") = 0
+    , py::arg("h") = 0
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("get_window_borders_size", [](SDLWindowWrapper * window, int * top, int * left, int * bottom, int * right)
@@ -376,11 +376,11 @@ void init_sdl_video(py::module &_sdl, Registry &registry) {
     _sdl.def("get_window_size_in_pixels", [](SDLWindowWrapper * window, int * w, int * h)
     {
         auto ret = SDL_GetWindowSizeInPixels(window->get(), w, h);
-        return std::make_tuple(ret, w, h);
+        return std::make_tuple(w, h);
     }
     , py::arg("window")
-    , py::arg("w")
-    , py::arg("h")
+    , py::arg("w") = 0
+    , py::arg("h") = 0
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("set_window_minimum_size", [](SDLWindowWrapper * window, int min_w, int min_h)
