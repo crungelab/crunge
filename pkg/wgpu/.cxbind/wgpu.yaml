@@ -12,16 +12,19 @@ flags: [
   '-I/home/kurt/Dev/crunge/_cxbuild/build/depot/dawn/gen/include',
 ]
 
+defaults:
+  size: WGPU_WHOLE_SIZE
 
 # Internal / Ignored
 
 #'struct.wgpu::Bool': {exclude: true}
 
  #TODO: Should skip templates in the transpiler
-'struct.dawn::IsDawnBitmask': {exclude: true}
+'class.wgpu::IsWGPUBitmask': {exclude: true}
+
 
 # mValue is private
-'struct.dawn::Bool': {exclude: true}
+'class.wgpu::Bool': {exclude: true}
 'class.std::hash': {exclude: true}
 
 # Function pointers and callbacks.  TODO!
@@ -31,6 +34,7 @@ flags: [
 'field.wgpu::BufferMapCallbackInfo::callback': {exclude: true}
 'field.wgpu::QueueWorkDoneCallbackInfo::callback': {exclude: true}
 'field.wgpu::RequestAdapterCallbackInfo::callback': {exclude: true}
+'field.wgpu::RequestDeviceCallbackInfo::callback': {exclude: true}
 'field.wgpu::DeviceDescriptor::deviceLostCallback': {exclude: true}
 
 # These have this signature:  const char* const * 
@@ -46,8 +50,11 @@ flags: [
 
 # Wrapped
 'method.wgpu::RenderPassEncoder::SetBindGroup': {exclude: true} #TODO: Signatures match but got a TypeError. Strange.
+'method.wgpu::Instance::RequestAdapter': {exclude: true}
+'method.wgpu::Adapter::GetProperties': {exclude: true}
 
 # Read Only
+# error: use of deleted function ‘wgpu::AdapterProperties::AdapterProperties(const wgpu::AdapterProperties&)’
 'struct.wgpu::AdapterProperties': {readonly: true}
 'struct.wgpu::AdapterPropertiesMemoryHeaps': {readonly: true}
 'struct.wgpu::SharedTextureMemoryEndAccessState': {readonly: true}
@@ -89,4 +96,5 @@ flags: [
 'struct.wgpu::SamplerDescriptor': {gen_kw_init: true}
 'struct.wgpu::TextureViewDescriptor': {gen_kw_init: true}
 'struct.wgpu::StencilFaceState': {gen_kw_init: true}
+'struct.wgpu::MultisampleState': {gen_kw_init: true}
 

@@ -16,8 +16,7 @@ fn main_f() -> @location(0) vec4<f32> {
 def main():
     instance = wgpu.create_instance()
     adapter = instance.request_adapter()
-    props = wgpu.AdapterProperties()
-    adapter.get_properties(props)
+    props = adapter.get_properties()
     print(props.vendor_name)
     device = adapter.create_device()
     print(device)

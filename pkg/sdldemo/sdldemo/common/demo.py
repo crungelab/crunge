@@ -88,10 +88,12 @@ class Demo:
         self.swap_chain.present()
 
     def dispatch(self, event):
-        logger.debug(event)
+        #logger.debug(event)
         match event.__class__:
             case sdl.QuitEvent:
                 return False
+            case sdl.WindowEvent:
+                self.on_window(event)
             case sdl.MouseMotionEvent:
                 self.on_mouse_motion(event)
             case sdl.MouseButtonEvent:
@@ -101,6 +103,22 @@ class Demo:
             case _:
                 pass
         return True
+
+    def on_window(self, event: sdl.WindowEvent):
+        logger.debug("window event")
+        match event.type:
+            case sdl.EventType.WINDOW_MOUSE_ENTER:
+                self.on_mouse_enter(event)
+            case sdl.EventType.WINDOW_MOUSE_LEAVE:
+                self.on_mouse_leave(event)
+            case _:
+                pass
+
+    def on_mouse_enter(self, event: sdl.WindowEvent):
+        logger.debug("mouse enter")
+
+    def on_mouse_leave(self, event: sdl.WindowEvent):
+        logger.debug("mouse leave")
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         logger.debug(f"mouse motion: x={event.x}, y={event.y}")
@@ -121,7 +139,8 @@ class Demo:
 
         running = True
         while running:
-            self.instance.process_events()
+            #TODO: !wasAlreadyWaited
+            #self.instance.process_events()
 
             while event := sdl.poll_event():
                 if not self.dispatch(event):

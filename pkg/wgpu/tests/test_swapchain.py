@@ -15,43 +15,41 @@ pipeline: wgpu.RenderPipeline = None
 
 swapChain: wgpu.SwapChain = None
 canvasDepthStencilView: wgpu.TextureView = None
-kWidth: int = 300
-kHeight: int = 150
+kWidth: int = 800
+kHeight: int = 600
 
 def main():
     glfw.init()
 
     glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
 
-    window = glfw.create_window(800, 600, "Test", None, None)
+    window = glfw.create_window(kWidth, kHeight, "Test", None, None)
 
     #glfw.set_window_size_callback(self.window, self._handle_window_resize)
 
-    handle, display = None, None
+    wsd = None
 
     if sys.platform == "darwin":
-        handle = glfw.get_cocoa_window(self.window)
+        handle = glfw.get_cocoa_window(window)
     elif sys.platform == "win32":
+        wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
         handle = glfw.get_win32_window(window)
+        wsd.hwnd = as_capsule(handle)
+        wsd.hinstance = None
     elif sys.platform == "linux":
-        handle = glfw.get_x11_window(self.window)
+        wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+        handle = glfw.get_x11_window(window)
         display = glfw.get_x11_display()
-
-    nwh = as_capsule(handle)
-    print(nwh)
+        wsd.window = handle
+        wsd.display = as_capsule(display)
 
     instance = wgpu.create_instance()
     adapter = instance.request_adapter()
-    props = wgpu.AdapterProperties()
-    adapter.get_properties(props)
+    props = adapter.get_properties()
     print(props.vendor_name)
     device = adapter.create_device()
     print(device)
     device.enable_logging()
-
-    wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-    wsd.hwnd = nwh
-    wsd.hinstance = None
 
     sd = wgpu.SurfaceDescriptor()
     sd.next_in_chain = wsd
@@ -62,26 +60,35 @@ def main():
     scDesc = wgpu.SwapChainDescriptor()
     scDesc.usage = wgpu.TextureUsage.RENDER_ATTACHMENT
     scDesc.format = wgpu.TextureFormat.BGRA8_UNORM
-    scDesc.width = 800
-    scDesc.height = 600
+    scDesc.width = kWidth
+    scDesc.height = kHeight
     scDesc.present_mode = wgpu.PresentMode.FIFO
     swapChain = device.create_swap_chain(surface, scDesc)
     print(swapChain)
 
-    last_time = None
+    last_time = time.perf_counter()
+    target_frame_time = 1 / 60  # Target frame time for 60 FPS
+
     while not glfw.window_should_close(window):
+        #instance.process_events()
         glfw.poll_events()
 
         now = time.perf_counter()
-        if not last_time:
-            last_time = now
-
         frame_time = now - last_time
-        last_time = now
+
+        # Calculate how much time is left to delay to maintain 60 FPS
+        time_left = target_frame_time - frame_time
+
+        # If there's time left in this frame, delay the next frame
+        if time_left > 0:
+            time.sleep(time_left)
+
+        # Update last_time for the next frame, considering the sleep
+        last_time = time.perf_counter()
 
         #self.update(frame_time)
 
-    #self.shutdown()
+    device.destroy()
     glfw.destroy_window(window)
     glfw.terminate()
 

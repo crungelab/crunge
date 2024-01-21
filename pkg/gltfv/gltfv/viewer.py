@@ -77,7 +77,9 @@ class Viewer(Base):
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
         while not glfw.window_should_close(self.window):
-            globals.instance.process_events()
+            #Error: Assertion failure at /home/kurt/Dev/crunge/depot/dawn/src/dawn/native/EventManager.cpp:479 (WaitRef): !wasAlreadyWaited
+            #globals.instance.process_events()
+
             glfw.poll_events()
 
             now = time.perf_counter()

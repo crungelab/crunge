@@ -4,8 +4,7 @@ from crunge.wgpu import BackendType
 def main():
     instance = wgpu.create_instance()
     adapter = instance.request_adapter()
-    props = wgpu.AdapterProperties()
-    adapter.get_properties(props)
+    props = adapter.get_properties()
     print(f'vendor_id: {props.vendor_id}')
     print(f'vendor_name: {props.vendor_name}')
     print(f'architecture: {props.architecture}')

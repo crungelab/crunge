@@ -23,11 +23,16 @@ class Demo:
         super().__init__()
         self.name = self.__class__.__name__
         self.instance = wgpu.create_instance()
+        logger.debug(f"instance: {self.instance}")
         self.adapter = self.instance.request_adapter()
+        logger.debug(f"adapter: {self.adapter}")
         self.device = self.adapter.create_device()
+        logger.debug(f"device: {self.device}")
         self.device.set_label("Primary Device")
         self.device.enable_logging()
+
         self.queue = self.device.get_queue()
+        logger.debug(f"queue: {self.queue}")
 
     def create_window(self):
         glfw.init()
@@ -37,10 +42,11 @@ class Demo:
 
         self.window = glfw.create_window(self.kWidth, self.kHeight, self.name, None, None)
 
-    def _create_device_objects(self):
+    def create_device_objects(self):
         pass
 
     def create_swapchain(self):
+        logger.debug("Creating swapchain")
         if sys.platform == "darwin":
             handle = glfw.get_cocoa_window(self.window)
         elif sys.platform == "win32":
@@ -87,7 +93,7 @@ class Demo:
 
     def run(self):
         self.create_window()
-        self._create_device_objects()
+        self.create_device_objects()
         self.create_swapchain()
 
         last_time = time.perf_counter()
@@ -95,7 +101,7 @@ class Demo:
 
         while not glfw.window_should_close(self.window):
             glfw.poll_events()
-            self.instance.process_events()
+            #self.instance.process_events()
 
             now = time.perf_counter()
             frame_time = now - last_time

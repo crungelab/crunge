@@ -29,8 +29,10 @@ void init_main(py::module &_sdl, Registry &registry)
         SDL_Event event;
         if(!SDL_PollEvent(&event))
             return py::cast<py::object>(Py_None);
-            //return py::none();
-        //return py::cast(event);
+        if (event.type >= SDL_EVENT_WINDOW_FIRST && event.type <= SDL_EVENT_WINDOW_LAST) {
+            SDL_WindowEvent windowEvent = event.window;
+            return py::cast(windowEvent);
+        }
         switch (event.type)
         {
             case SDL_EVENT_QUIT:

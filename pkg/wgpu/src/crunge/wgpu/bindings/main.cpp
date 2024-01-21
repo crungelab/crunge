@@ -42,9 +42,11 @@ void init_main(py::module &_wgpu, Registry &registry) {
         static Adapter adapter;
         auto cb = [](WGPURequestAdapterStatus status, WGPUAdapter _adapter, char const* message, void* userdata) {
             adapter = static_cast<Adapter>(_adapter);
+            std::cerr << message << std::endl;
         };
         int userdata = 0;
         self.RequestAdapter(&options, cb, &userdata);
+        //self.RequestAdapter(&options, cb, self.Get());
 		return adapter;
     });
     /*Instance.def("process_events", [](const wgpu::Instance& self)
@@ -53,18 +55,18 @@ void init_main(py::module &_wgpu, Registry &registry) {
     });*/
     PYEXTEND_END
 
-        //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;
-        //void Device::SetLoggingCallback(WGPULoggingCallback callback, void* userdata) {
-        //void Device::SetDeviceLostCallback(WGPUDeviceLostCallback callback, void* userdata) {
+    //void SetUncapturedErrorCallback(ErrorCallback callback, void * userdata) const;
+    //void Device::SetLoggingCallback(WGPULoggingCallback callback, void* userdata) {
+    //void Device::SetDeviceLostCallback(WGPUDeviceLostCallback callback, void* userdata) {
 
-        //typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata);
-        //typedef void (*WGPULoggingCallback)(WGPULoggingType type, char const * message, void * userdata);
-        //typedef void (*WGPUDeviceLostCallback)(WGPUDeviceLostReason reason, char const * message, void * userdata);
+    //typedef void (*WGPUErrorCallback)(WGPUErrorType type, char const * message, void * userdata);
+    //typedef void (*WGPULoggingCallback)(WGPULoggingType type, char const * message, void * userdata);
+    //typedef void (*WGPUDeviceLostCallback)(WGPUDeviceLostReason reason, char const * message, void * userdata);
 
-        PYEXTEND_BEGIN(wgpu::Device, Device)
-        Device.def_property_readonly("queue", [](const wgpu::Device& self) {
-            return self.GetQueue();
-        }, py::return_value_policy::automatic_reference);
+    PYEXTEND_BEGIN(wgpu::Device, Device)
+    Device.def_property_readonly("queue", [](const wgpu::Device& self) {
+        return self.GetQueue();
+    }, py::return_value_policy::automatic_reference);
     
     Device.def("enable_logging",
         [](const wgpu::Device& self) {
@@ -74,28 +76,15 @@ void init_main(py::module &_wgpu, Registry &registry) {
 
             self.SetDeviceLostCallback(crunge::wgpu::DeviceLostCallback, nullptr);
     });
+    PYEXTEND_END
 
-    /*Device.def("enable_logging",
-        [](const wgpu::Device& self) {
-            self.SetUncapturedErrorCallback([](WGPUErrorType type, char const * message, void * userdata){
-                printf(message);
-            }, nullptr);
-
-            self.SetLoggingCallback([](WGPULoggingType type, char const * message, void * userdata){
-                printf(message);
-            }, nullptr);
-
-            self.SetDeviceLostCallback([](WGPUDeviceLostReason reason, char const * message, void * userdata){
-                printf(message); printf("\n");
-            }, nullptr);
-    });*/
-
-    /*Device.def("set_uncaptured_error_callback",
-        [](const wgpu::Device& self, ErrorCallback callback, py::object userdata) {
-            self.SetUncapturedErrorCallback(callback, userdata.ptr());
-    }
-    , py::arg("callback")
-    , py::arg("userdata"));*/
+    PYEXTEND_BEGIN(wgpu::Adapter, Adapter)
+    Adapter.def("get_properties",
+        [](const wgpu::Adapter& self) {
+            wgpu::AdapterProperties properties;
+            self.GetProperties(&properties);
+            return properties;
+    });
     PYEXTEND_END
 
     //TODO:GENERATE: need to define our own bitwise operators for scoped enums.

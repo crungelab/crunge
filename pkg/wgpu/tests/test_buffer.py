@@ -12,7 +12,6 @@ from crunge.wgpu import BackendType
 
 indices = np.array([0, 1, 2, 3, 7, 1, 5, 0, 4, 2, 6, 7, 4, 5,], dtype=np.uint16)
 data = as_capsule(indices)
-#size = len(indices) * sizeof(c_uint16)
 size = indices.nbytes
 logger.debug(size)
 usage = wgpu.BufferUsage.INDEX
@@ -20,8 +19,7 @@ usage = wgpu.BufferUsage.INDEX
 def main():
     instance = wgpu.create_instance()
     adapter = instance.request_adapter()
-    props = wgpu.AdapterProperties()
-    adapter.get_properties(props)
+    props = adapter.get_properties()
     logger.debug(props.vendor_name)
     device = adapter.create_device()
     logger.debug(device)

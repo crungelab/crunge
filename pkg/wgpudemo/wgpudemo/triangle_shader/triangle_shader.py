@@ -29,12 +29,20 @@ class TriangleShaderDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def create_device_objects(self):
         self.create_depth_stencil_view()
+        self.create_pipeline()
 
+    def create_pipeline(self):
+        logger.debug("Creating pipeline")
+
+        logger.debug("Creating shader module")
         shader_module = self.create_shader_module(shader_code)
 
+        logger.debug("Creating colorTargetState")
         colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
+        logger.debug("Creating fragmentState")
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
@@ -42,17 +50,21 @@ class TriangleShaderDemo(Demo):
             targets=colorTargetState,
         )
 
+        logger.debug("Creating depthStencilState")
         depthStencilState = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH32_FLOAT,
         )
 
+        logger.debug("Creating primitive")
         primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_LIST)
 
+        logger.debug("Creating vertex_state")
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
         )
 
+        logger.debug("Creating render pipeline descriptor")
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
             vertex=vertex_state,
@@ -60,8 +72,11 @@ class TriangleShaderDemo(Demo):
             depth_stencil=depthStencilState,
             fragment=fragmentState,
         )
+        logger.debug(descriptor)
 
+        logger.debug("Creating render pipeline")
         self.pipeline = self.device.create_render_pipeline(descriptor)
+        logger.debug(self.pipeline)
 
     def create_depth_stencil_view(self):
         descriptor = wgpu.TextureDescriptor(
@@ -103,12 +118,6 @@ class TriangleShaderDemo(Demo):
 
         self.queue.submit(1, commands)
 
-    '''
-    def frame(self):
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        self.render(backbuffer, self.depth_stencil_view)
-        self.swap_chain.present()
-    '''
 
 def main():
     TriangleShaderDemo().run()

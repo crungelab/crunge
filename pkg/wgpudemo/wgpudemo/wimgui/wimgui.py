@@ -138,7 +138,7 @@ class WImGuiDemo(Demo):
         pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 
-    def _create_device_objects(self):
+    def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
         self.create_pipeline()

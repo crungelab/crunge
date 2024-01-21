@@ -147,12 +147,9 @@ class WImGuiDemo(Demo):
 
     def create_window(self):
         super().create_window()
-        #glfw.set_cursor_enter_callback(self.window, self.on_cursor_enter)
-        #glfw.set_cursor_pos_callback(self.window, self.on_cursor_pos)
-        #glfw.set_mouse_button_callback(self.window, self.on_mouse_button)
-        #glfw.set_scroll_callback(self.window, self.on_scroll)
         self._set_pixel_ratio()
 
+    '''
     def on_cursor_enter(self, window, entered: int):
         if entered:
             self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
@@ -160,6 +157,16 @@ class WImGuiDemo(Demo):
             last_mouse = self.io.mouse_pos
             self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
             self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
+    '''
+    def on_mouse_enter(self, event: sdl.WindowEvent):
+        super().on_mouse_enter(event)
+        self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
+
+    def on_mouse_leave(self, event: sdl.WindowEvent):
+        super().on_mouse_leave(event)
+        last_mouse = self.io.mouse_pos
+        self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
+        self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         x, y = event.x, event.y
