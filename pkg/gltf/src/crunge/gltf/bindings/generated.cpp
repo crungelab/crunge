@@ -387,35 +387,35 @@ void init_generated(py::module &_gltf, Registry &registry) {
         Accessor.def_readwrite("extensions_json_string", &tinygltf::Accessor::extensions_json_string);
         Accessor.def_readwrite("min_values", &tinygltf::Accessor::minValues);
         Accessor.def_readwrite("max_values", &tinygltf::Accessor::maxValues);
-        PYCLASS_BEGIN(_gltf, tinygltf::Accessor::Sparse, Sparse)
-            Sparse.def_readwrite("count", &tinygltf::Accessor::Sparse::count);
-            Sparse.def_readwrite("is_sparse", &tinygltf::Accessor::Sparse::isSparse);
-            PYCLASS_BEGIN(_gltf, tinygltf::Accessor::Sparse::Indices, Indices)
-                Indices.def_readwrite("byte_offset", &tinygltf::Accessor::Sparse::Indices::byteOffset);
-                Indices.def_readwrite("buffer_view", &tinygltf::Accessor::Sparse::Indices::bufferView);
-                Indices.def_readwrite("component_type", &tinygltf::Accessor::Sparse::Indices::componentType);
-                Indices.def_readwrite("extras", &tinygltf::Accessor::Sparse::Indices::extras);
-                Indices.def_readwrite("extensions", &tinygltf::Accessor::Sparse::Indices::extensions);
-                Indices.def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::Indices::extras_json_string);
-                Indices.def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::Indices::extensions_json_string);
-            PYCLASS_END(_gltf, tinygltf::Accessor::Sparse::Indices, Indices)
+        PYCLASS_BEGIN(_gltf, tinygltf::Accessor::Sparse, AccessorSparse)
+            AccessorSparse.def_readwrite("count", &tinygltf::Accessor::Sparse::count);
+            AccessorSparse.def_readwrite("is_sparse", &tinygltf::Accessor::Sparse::isSparse);
+            PYCLASS_BEGIN(_gltf, tinygltf::Accessor::Sparse::Indices, AccessorSparseIndices)
+                AccessorSparseIndices.def_readwrite("byte_offset", &tinygltf::Accessor::Sparse::Indices::byteOffset);
+                AccessorSparseIndices.def_readwrite("buffer_view", &tinygltf::Accessor::Sparse::Indices::bufferView);
+                AccessorSparseIndices.def_readwrite("component_type", &tinygltf::Accessor::Sparse::Indices::componentType);
+                AccessorSparseIndices.def_readwrite("extras", &tinygltf::Accessor::Sparse::Indices::extras);
+                AccessorSparseIndices.def_readwrite("extensions", &tinygltf::Accessor::Sparse::Indices::extensions);
+                AccessorSparseIndices.def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::Indices::extras_json_string);
+                AccessorSparseIndices.def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::Indices::extensions_json_string);
+            PYCLASS_END(_gltf, tinygltf::Accessor::Sparse::Indices, AccessorSparseIndices)
 
-            Sparse.def_readwrite("indices", &tinygltf::Accessor::Sparse::indices);
-            PYCLASS_BEGIN(_gltf, tinygltf::Accessor::Sparse::Values, Values)
-                Values.def_readwrite("buffer_view", &tinygltf::Accessor::Sparse::Values::bufferView);
-                Values.def_readwrite("byte_offset", &tinygltf::Accessor::Sparse::Values::byteOffset);
-                Values.def_readwrite("extras", &tinygltf::Accessor::Sparse::Values::extras);
-                Values.def_readwrite("extensions", &tinygltf::Accessor::Sparse::Values::extensions);
-                Values.def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::Values::extras_json_string);
-                Values.def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::Values::extensions_json_string);
-            PYCLASS_END(_gltf, tinygltf::Accessor::Sparse::Values, Values)
+            AccessorSparse.def_readwrite("indices", &tinygltf::Accessor::Sparse::indices);
+            PYCLASS_BEGIN(_gltf, tinygltf::Accessor::Sparse::Values, AccessorSparseValues)
+                AccessorSparseValues.def_readwrite("buffer_view", &tinygltf::Accessor::Sparse::Values::bufferView);
+                AccessorSparseValues.def_readwrite("byte_offset", &tinygltf::Accessor::Sparse::Values::byteOffset);
+                AccessorSparseValues.def_readwrite("extras", &tinygltf::Accessor::Sparse::Values::extras);
+                AccessorSparseValues.def_readwrite("extensions", &tinygltf::Accessor::Sparse::Values::extensions);
+                AccessorSparseValues.def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::Values::extras_json_string);
+                AccessorSparseValues.def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::Values::extensions_json_string);
+            PYCLASS_END(_gltf, tinygltf::Accessor::Sparse::Values, AccessorSparseValues)
 
-            Sparse.def_readwrite("values", &tinygltf::Accessor::Sparse::values);
-            Sparse.def_readwrite("extras", &tinygltf::Accessor::Sparse::extras);
-            Sparse.def_readwrite("extensions", &tinygltf::Accessor::Sparse::extensions);
-            Sparse.def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::extras_json_string);
-            Sparse.def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::extensions_json_string);
-        PYCLASS_END(_gltf, tinygltf::Accessor::Sparse, Sparse)
+            AccessorSparse.def_readwrite("values", &tinygltf::Accessor::Sparse::values);
+            AccessorSparse.def_readwrite("extras", &tinygltf::Accessor::Sparse::extras);
+            AccessorSparse.def_readwrite("extensions", &tinygltf::Accessor::Sparse::extensions);
+            AccessorSparse.def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::extras_json_string);
+            AccessorSparse.def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::extensions_json_string);
+        PYCLASS_END(_gltf, tinygltf::Accessor::Sparse, AccessorSparse)
 
         Accessor.def_readwrite("sparse", &tinygltf::Accessor::sparse);
         Accessor.def("byte_stride", &tinygltf::Accessor::ByteStride

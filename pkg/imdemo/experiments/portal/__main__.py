@@ -1,15 +1,15 @@
 from crunge import imgui
-from experiments.portal.gui import ArcadeGui
+from experiments.portal.gui import LudiGui
 
-import arcade
+import ludi
 
-class App(arcade.Window):
+class App(ludi.Window):
     def __init__(self):
         super().__init__(800, 600, 'Portal Experiment', resizable=True)
-        self.gui = ArcadeGui(self)
+        self.gui = LudiGui(self)
 
     def on_draw(self):
-        arcade.start_render()
+        ludi.start_render()
 
         imgui.new_frame()
 
@@ -48,4 +48,4 @@ class App(arcade.Window):
 
 
 app = App()
-arcade.run()
+ludi.run()

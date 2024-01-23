@@ -1683,37 +1683,37 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::BindGroupEntry::nextInChain = value;
             }
             if (kwargs.contains("binding"))
             {
                 auto value = kwargs["binding"].cast<uint32_t>();
-                obj.binding = value;
+                obj.wgpu::BindGroupEntry::binding = value;
             }
             if (kwargs.contains("buffer"))
             {
                 auto value = kwargs["buffer"].cast<wgpu::Buffer>();
-                obj.buffer = value;
+                obj.wgpu::BindGroupEntry::buffer = value;
             }
             if (kwargs.contains("offset"))
             {
                 auto value = kwargs["offset"].cast<uint64_t>();
-                obj.offset = value;
+                obj.wgpu::BindGroupEntry::offset = value;
             }
             if (kwargs.contains("size"))
             {
                 auto value = kwargs["size"].cast<uint64_t>();
-                obj.size = value;
+                obj.wgpu::BindGroupEntry::size = value;
             }
             if (kwargs.contains("sampler"))
             {
                 auto value = kwargs["sampler"].cast<wgpu::Sampler>();
-                obj.sampler = value;
+                obj.wgpu::BindGroupEntry::sampler = value;
             }
             if (kwargs.contains("texture_view"))
             {
                 auto value = kwargs["texture_view"].cast<wgpu::TextureView>();
-                obj.textureView = value;
+                obj.wgpu::BindGroupEntry::textureView = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -1729,17 +1729,17 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("operation"))
             {
                 auto value = kwargs["operation"].cast<wgpu::BlendOperation>();
-                obj.operation = value;
+                obj.wgpu::BlendComponent::operation = value;
             }
             if (kwargs.contains("src_factor"))
             {
                 auto value = kwargs["src_factor"].cast<wgpu::BlendFactor>();
-                obj.srcFactor = value;
+                obj.wgpu::BlendComponent::srcFactor = value;
             }
             if (kwargs.contains("dst_factor"))
             {
                 auto value = kwargs["dst_factor"].cast<wgpu::BlendFactor>();
-                obj.dstFactor = value;
+                obj.wgpu::BlendComponent::dstFactor = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -1756,22 +1756,22 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::BufferBindingLayout::nextInChain = value;
             }
             if (kwargs.contains("type"))
             {
                 auto value = kwargs["type"].cast<wgpu::BufferBindingType>();
-                obj.type = value;
+                obj.wgpu::BufferBindingLayout::type = value;
             }
             if (kwargs.contains("has_dynamic_offset"))
             {
                 auto value = kwargs["has_dynamic_offset"].cast<wgpu::Bool>();
-                obj.hasDynamicOffset = value;
+                obj.wgpu::BufferBindingLayout::hasDynamicOffset = value;
             }
             if (kwargs.contains("min_binding_size"))
             {
                 auto value = kwargs["min_binding_size"].cast<uint64_t>();
-                obj.minBindingSize = value;
+                obj.wgpu::BufferBindingLayout::minBindingSize = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2026,22 +2026,22 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::MultisampleState::nextInChain = value;
             }
             if (kwargs.contains("count"))
             {
                 auto value = kwargs["count"].cast<uint32_t>();
-                obj.count = value;
+                obj.wgpu::MultisampleState::count = value;
             }
             if (kwargs.contains("mask"))
             {
                 auto value = kwargs["mask"].cast<uint32_t>();
-                obj.mask = value;
+                obj.wgpu::MultisampleState::mask = value;
             }
             if (kwargs.contains("alpha_to_coverage_enabled"))
             {
                 auto value = kwargs["alpha_to_coverage_enabled"].cast<wgpu::Bool>();
-                obj.alphaToCoverageEnabled = value;
+                obj.wgpu::MultisampleState::alphaToCoverageEnabled = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2072,24 +2072,24 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::PipelineLayoutDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::PipelineLayoutDescriptor::label = value;
             }
             if (kwargs.contains("bind_group_layout_count"))
             {
                 auto value = kwargs["bind_group_layout_count"].cast<size_t>();
-                obj.bindGroupLayoutCount = value;
+                obj.wgpu::PipelineLayoutDescriptor::bindGroupLayoutCount = value;
             }
             if (kwargs.contains("bind_group_layouts"))
             {
                 auto value = kwargs["bind_group_layouts"].cast<const wgpu::BindGroupLayout *>();
-                obj.bindGroupLayouts = value;
+                obj.wgpu::PipelineLayoutDescriptor::bindGroupLayouts = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2118,27 +2118,27 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::PrimitiveState::nextInChain = value;
             }
             if (kwargs.contains("topology"))
             {
                 auto value = kwargs["topology"].cast<wgpu::PrimitiveTopology>();
-                obj.topology = value;
+                obj.wgpu::PrimitiveState::topology = value;
             }
             if (kwargs.contains("strip_index_format"))
             {
                 auto value = kwargs["strip_index_format"].cast<wgpu::IndexFormat>();
-                obj.stripIndexFormat = value;
+                obj.wgpu::PrimitiveState::stripIndexFormat = value;
             }
             if (kwargs.contains("front_face"))
             {
                 auto value = kwargs["front_face"].cast<wgpu::FrontFace>();
-                obj.frontFace = value;
+                obj.wgpu::PrimitiveState::frontFace = value;
             }
             if (kwargs.contains("cull_mode"))
             {
                 auto value = kwargs["cull_mode"].cast<wgpu::CullMode>();
-                obj.cullMode = value;
+                obj.wgpu::PrimitiveState::cullMode = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2206,47 +2206,47 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("view"))
             {
                 auto value = kwargs["view"].cast<wgpu::TextureView>();
-                obj.view = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::view = value;
             }
             if (kwargs.contains("depth_load_op"))
             {
                 auto value = kwargs["depth_load_op"].cast<wgpu::LoadOp>();
-                obj.depthLoadOp = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::depthLoadOp = value;
             }
             if (kwargs.contains("depth_store_op"))
             {
                 auto value = kwargs["depth_store_op"].cast<wgpu::StoreOp>();
-                obj.depthStoreOp = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::depthStoreOp = value;
             }
             if (kwargs.contains("depth_clear_value"))
             {
                 auto value = kwargs["depth_clear_value"].cast<float>();
-                obj.depthClearValue = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::depthClearValue = value;
             }
             if (kwargs.contains("depth_read_only"))
             {
                 auto value = kwargs["depth_read_only"].cast<wgpu::Bool>();
-                obj.depthReadOnly = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::depthReadOnly = value;
             }
             if (kwargs.contains("stencil_load_op"))
             {
                 auto value = kwargs["stencil_load_op"].cast<wgpu::LoadOp>();
-                obj.stencilLoadOp = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::stencilLoadOp = value;
             }
             if (kwargs.contains("stencil_store_op"))
             {
                 auto value = kwargs["stencil_store_op"].cast<wgpu::StoreOp>();
-                obj.stencilStoreOp = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::stencilStoreOp = value;
             }
             if (kwargs.contains("stencil_clear_value"))
             {
                 auto value = kwargs["stencil_clear_value"].cast<uint32_t>();
-                obj.stencilClearValue = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::stencilClearValue = value;
             }
             if (kwargs.contains("stencil_read_only"))
             {
                 auto value = kwargs["stencil_read_only"].cast<wgpu::Bool>();
-                obj.stencilReadOnly = value;
+                obj.wgpu::RenderPassDepthStencilAttachment::stencilReadOnly = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2293,12 +2293,12 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::SamplerBindingLayout::nextInChain = value;
             }
             if (kwargs.contains("type"))
             {
                 auto value = kwargs["type"].cast<wgpu::SamplerBindingType>();
-                obj.type = value;
+                obj.wgpu::SamplerBindingLayout::type = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2326,64 +2326,64 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::SamplerDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::SamplerDescriptor::label = value;
             }
             if (kwargs.contains("address_mode_u"))
             {
                 auto value = kwargs["address_mode_u"].cast<wgpu::AddressMode>();
-                obj.addressModeU = value;
+                obj.wgpu::SamplerDescriptor::addressModeU = value;
             }
             if (kwargs.contains("address_mode_v"))
             {
                 auto value = kwargs["address_mode_v"].cast<wgpu::AddressMode>();
-                obj.addressModeV = value;
+                obj.wgpu::SamplerDescriptor::addressModeV = value;
             }
             if (kwargs.contains("address_mode_w"))
             {
                 auto value = kwargs["address_mode_w"].cast<wgpu::AddressMode>();
-                obj.addressModeW = value;
+                obj.wgpu::SamplerDescriptor::addressModeW = value;
             }
             if (kwargs.contains("mag_filter"))
             {
                 auto value = kwargs["mag_filter"].cast<wgpu::FilterMode>();
-                obj.magFilter = value;
+                obj.wgpu::SamplerDescriptor::magFilter = value;
             }
             if (kwargs.contains("min_filter"))
             {
                 auto value = kwargs["min_filter"].cast<wgpu::FilterMode>();
-                obj.minFilter = value;
+                obj.wgpu::SamplerDescriptor::minFilter = value;
             }
             if (kwargs.contains("mipmap_filter"))
             {
                 auto value = kwargs["mipmap_filter"].cast<wgpu::MipmapFilterMode>();
-                obj.mipmapFilter = value;
+                obj.wgpu::SamplerDescriptor::mipmapFilter = value;
             }
             if (kwargs.contains("lod_min_clamp"))
             {
                 auto value = kwargs["lod_min_clamp"].cast<float>();
-                obj.lodMinClamp = value;
+                obj.wgpu::SamplerDescriptor::lodMinClamp = value;
             }
             if (kwargs.contains("lod_max_clamp"))
             {
                 auto value = kwargs["lod_max_clamp"].cast<float>();
-                obj.lodMaxClamp = value;
+                obj.wgpu::SamplerDescriptor::lodMaxClamp = value;
             }
             if (kwargs.contains("compare"))
             {
                 auto value = kwargs["compare"].cast<wgpu::CompareFunction>();
-                obj.compare = value;
+                obj.wgpu::SamplerDescriptor::compare = value;
             }
             if (kwargs.contains("max_anisotropy"))
             {
                 auto value = kwargs["max_anisotropy"].cast<uint16_t>();
-                obj.maxAnisotropy = value;
+                obj.wgpu::SamplerDescriptor::maxAnisotropy = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2409,7 +2409,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
                 auto _value = kwargs["code"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.code = value;
+                obj.wgpu::ShaderModuleWGSLDescriptor::code = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2427,14 +2427,14 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::ShaderModuleDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::ShaderModuleDescriptor::label = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2597,22 +2597,22 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("compare"))
             {
                 auto value = kwargs["compare"].cast<wgpu::CompareFunction>();
-                obj.compare = value;
+                obj.wgpu::StencilFaceState::compare = value;
             }
             if (kwargs.contains("fail_op"))
             {
                 auto value = kwargs["fail_op"].cast<wgpu::StencilOperation>();
-                obj.failOp = value;
+                obj.wgpu::StencilFaceState::failOp = value;
             }
             if (kwargs.contains("depth_fail_op"))
             {
                 auto value = kwargs["depth_fail_op"].cast<wgpu::StencilOperation>();
-                obj.depthFailOp = value;
+                obj.wgpu::StencilFaceState::depthFailOp = value;
             }
             if (kwargs.contains("pass_op"))
             {
                 auto value = kwargs["pass_op"].cast<wgpu::StencilOperation>();
-                obj.passOp = value;
+                obj.wgpu::StencilFaceState::passOp = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2637,14 +2637,14 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::SurfaceDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::SurfaceDescriptor::label = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2684,12 +2684,12 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("hinstance"))
             {
                 auto value = kwargs["hinstance"].cast<void *>();
-                obj.hinstance = value;
+                obj.wgpu::SurfaceDescriptorFromWindowsHWND::hinstance = value;
             }
             if (kwargs.contains("hwnd"))
             {
                 auto value = kwargs["hwnd"].cast<void *>();
-                obj.hwnd = value;
+                obj.wgpu::SurfaceDescriptorFromWindowsHWND::hwnd = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2728,39 +2728,39 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::SwapChainDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::SwapChainDescriptor::label = value;
             }
             if (kwargs.contains("usage"))
             {
                 auto value = kwargs["usage"].cast<wgpu::TextureUsage>();
-                obj.usage = value;
+                obj.wgpu::SwapChainDescriptor::usage = value;
             }
             if (kwargs.contains("format"))
             {
                 auto value = kwargs["format"].cast<wgpu::TextureFormat>();
-                obj.format = value;
+                obj.wgpu::SwapChainDescriptor::format = value;
             }
             if (kwargs.contains("width"))
             {
                 auto value = kwargs["width"].cast<uint32_t>();
-                obj.width = value;
+                obj.wgpu::SwapChainDescriptor::width = value;
             }
             if (kwargs.contains("height"))
             {
                 auto value = kwargs["height"].cast<uint32_t>();
-                obj.height = value;
+                obj.wgpu::SwapChainDescriptor::height = value;
             }
             if (kwargs.contains("present_mode"))
             {
                 auto value = kwargs["present_mode"].cast<wgpu::PresentMode>();
-                obj.presentMode = value;
+                obj.wgpu::SwapChainDescriptor::presentMode = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2777,22 +2777,22 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::TextureBindingLayout::nextInChain = value;
             }
             if (kwargs.contains("sample_type"))
             {
                 auto value = kwargs["sample_type"].cast<wgpu::TextureSampleType>();
-                obj.sampleType = value;
+                obj.wgpu::TextureBindingLayout::sampleType = value;
             }
             if (kwargs.contains("view_dimension"))
             {
                 auto value = kwargs["view_dimension"].cast<wgpu::TextureViewDimension>();
-                obj.viewDimension = value;
+                obj.wgpu::TextureBindingLayout::viewDimension = value;
             }
             if (kwargs.contains("multisampled"))
             {
                 auto value = kwargs["multisampled"].cast<wgpu::Bool>();
-                obj.multisampled = value;
+                obj.wgpu::TextureBindingLayout::multisampled = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2814,22 +2814,22 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::TextureDataLayout::nextInChain = value;
             }
             if (kwargs.contains("offset"))
             {
                 auto value = kwargs["offset"].cast<uint64_t>();
-                obj.offset = value;
+                obj.wgpu::TextureDataLayout::offset = value;
             }
             if (kwargs.contains("bytes_per_row"))
             {
                 auto value = kwargs["bytes_per_row"].cast<uint32_t>();
-                obj.bytesPerRow = value;
+                obj.wgpu::TextureDataLayout::bytesPerRow = value;
             }
             if (kwargs.contains("rows_per_image"))
             {
                 auto value = kwargs["rows_per_image"].cast<uint32_t>();
-                obj.rowsPerImage = value;
+                obj.wgpu::TextureDataLayout::rowsPerImage = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2854,49 +2854,49 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::TextureViewDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::TextureViewDescriptor::label = value;
             }
             if (kwargs.contains("format"))
             {
                 auto value = kwargs["format"].cast<wgpu::TextureFormat>();
-                obj.format = value;
+                obj.wgpu::TextureViewDescriptor::format = value;
             }
             if (kwargs.contains("dimension"))
             {
                 auto value = kwargs["dimension"].cast<wgpu::TextureViewDimension>();
-                obj.dimension = value;
+                obj.wgpu::TextureViewDescriptor::dimension = value;
             }
             if (kwargs.contains("base_mip_level"))
             {
                 auto value = kwargs["base_mip_level"].cast<uint32_t>();
-                obj.baseMipLevel = value;
+                obj.wgpu::TextureViewDescriptor::baseMipLevel = value;
             }
             if (kwargs.contains("mip_level_count"))
             {
                 auto value = kwargs["mip_level_count"].cast<uint32_t>();
-                obj.mipLevelCount = value;
+                obj.wgpu::TextureViewDescriptor::mipLevelCount = value;
             }
             if (kwargs.contains("base_array_layer"))
             {
                 auto value = kwargs["base_array_layer"].cast<uint32_t>();
-                obj.baseArrayLayer = value;
+                obj.wgpu::TextureViewDescriptor::baseArrayLayer = value;
             }
             if (kwargs.contains("array_layer_count"))
             {
                 auto value = kwargs["array_layer_count"].cast<uint32_t>();
-                obj.arrayLayerCount = value;
+                obj.wgpu::TextureViewDescriptor::arrayLayerCount = value;
             }
             if (kwargs.contains("aspect"))
             {
                 auto value = kwargs["aspect"].cast<wgpu::TextureAspect>();
-                obj.aspect = value;
+                obj.wgpu::TextureViewDescriptor::aspect = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2912,17 +2912,17 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("format"))
             {
                 auto value = kwargs["format"].cast<wgpu::VertexFormat>();
-                obj.format = value;
+                obj.wgpu::VertexAttribute::format = value;
             }
             if (kwargs.contains("offset"))
             {
                 auto value = kwargs["offset"].cast<uint64_t>();
-                obj.offset = value;
+                obj.wgpu::VertexAttribute::offset = value;
             }
             if (kwargs.contains("shader_location"))
             {
                 auto value = kwargs["shader_location"].cast<uint32_t>();
-                obj.shaderLocation = value;
+                obj.wgpu::VertexAttribute::shaderLocation = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2948,29 +2948,29 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::BindGroupDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::BindGroupDescriptor::label = value;
             }
             if (kwargs.contains("layout"))
             {
                 auto value = kwargs["layout"].cast<wgpu::BindGroupLayout>();
-                obj.layout = value;
+                obj.wgpu::BindGroupDescriptor::layout = value;
             }
             if (kwargs.contains("entry_count"))
             {
                 auto value = kwargs["entry_count"].cast<size_t>();
-                obj.entryCount = value;
+                obj.wgpu::BindGroupDescriptor::entryCount = value;
             }
             if (kwargs.contains("entries"))
             {
                 auto value = kwargs["entries"].cast<const wgpu::BindGroupEntry *>();
-                obj.entries = value;
+                obj.wgpu::BindGroupDescriptor::entries = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -2990,37 +2990,37 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::BindGroupLayoutEntry::nextInChain = value;
             }
             if (kwargs.contains("binding"))
             {
                 auto value = kwargs["binding"].cast<uint32_t>();
-                obj.binding = value;
+                obj.wgpu::BindGroupLayoutEntry::binding = value;
             }
             if (kwargs.contains("visibility"))
             {
                 auto value = kwargs["visibility"].cast<wgpu::ShaderStage>();
-                obj.visibility = value;
+                obj.wgpu::BindGroupLayoutEntry::visibility = value;
             }
             if (kwargs.contains("buffer"))
             {
                 auto value = kwargs["buffer"].cast<wgpu::BufferBindingLayout>();
-                obj.buffer = value;
+                obj.wgpu::BindGroupLayoutEntry::buffer = value;
             }
             if (kwargs.contains("sampler"))
             {
                 auto value = kwargs["sampler"].cast<wgpu::SamplerBindingLayout>();
-                obj.sampler = value;
+                obj.wgpu::BindGroupLayoutEntry::sampler = value;
             }
             if (kwargs.contains("texture"))
             {
                 auto value = kwargs["texture"].cast<wgpu::TextureBindingLayout>();
-                obj.texture = value;
+                obj.wgpu::BindGroupLayoutEntry::texture = value;
             }
             if (kwargs.contains("storage_texture"))
             {
                 auto value = kwargs["storage_texture"].cast<wgpu::StorageTextureBindingLayout>();
-                obj.storageTexture = value;
+                obj.wgpu::BindGroupLayoutEntry::storageTexture = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3035,12 +3035,12 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("color"))
             {
                 auto value = kwargs["color"].cast<wgpu::BlendComponent>();
-                obj.color = value;
+                obj.wgpu::BlendState::color = value;
             }
             if (kwargs.contains("alpha"))
             {
                 auto value = kwargs["alpha"].cast<wgpu::BlendComponent>();
-                obj.alpha = value;
+                obj.wgpu::BlendState::alpha = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3079,57 +3079,57 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::DepthStencilState::nextInChain = value;
             }
             if (kwargs.contains("format"))
             {
                 auto value = kwargs["format"].cast<wgpu::TextureFormat>();
-                obj.format = value;
+                obj.wgpu::DepthStencilState::format = value;
             }
             if (kwargs.contains("depth_write_enabled"))
             {
                 auto value = kwargs["depth_write_enabled"].cast<wgpu::Bool>();
-                obj.depthWriteEnabled = value;
+                obj.wgpu::DepthStencilState::depthWriteEnabled = value;
             }
             if (kwargs.contains("depth_compare"))
             {
                 auto value = kwargs["depth_compare"].cast<wgpu::CompareFunction>();
-                obj.depthCompare = value;
+                obj.wgpu::DepthStencilState::depthCompare = value;
             }
             if (kwargs.contains("stencil_front"))
             {
                 auto value = kwargs["stencil_front"].cast<wgpu::StencilFaceState>();
-                obj.stencilFront = value;
+                obj.wgpu::DepthStencilState::stencilFront = value;
             }
             if (kwargs.contains("stencil_back"))
             {
                 auto value = kwargs["stencil_back"].cast<wgpu::StencilFaceState>();
-                obj.stencilBack = value;
+                obj.wgpu::DepthStencilState::stencilBack = value;
             }
             if (kwargs.contains("stencil_read_mask"))
             {
                 auto value = kwargs["stencil_read_mask"].cast<uint32_t>();
-                obj.stencilReadMask = value;
+                obj.wgpu::DepthStencilState::stencilReadMask = value;
             }
             if (kwargs.contains("stencil_write_mask"))
             {
                 auto value = kwargs["stencil_write_mask"].cast<uint32_t>();
-                obj.stencilWriteMask = value;
+                obj.wgpu::DepthStencilState::stencilWriteMask = value;
             }
             if (kwargs.contains("depth_bias"))
             {
                 auto value = kwargs["depth_bias"].cast<int32_t>();
-                obj.depthBias = value;
+                obj.wgpu::DepthStencilState::depthBias = value;
             }
             if (kwargs.contains("depth_bias_slope_scale"))
             {
                 auto value = kwargs["depth_bias_slope_scale"].cast<float>();
-                obj.depthBiasSlopeScale = value;
+                obj.wgpu::DepthStencilState::depthBiasSlopeScale = value;
             }
             if (kwargs.contains("depth_bias_clamp"))
             {
                 auto value = kwargs["depth_bias_clamp"].cast<float>();
-                obj.depthBiasClamp = value;
+                obj.wgpu::DepthStencilState::depthBiasClamp = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3185,27 +3185,27 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::ImageCopyTexture::nextInChain = value;
             }
             if (kwargs.contains("texture"))
             {
                 auto value = kwargs["texture"].cast<wgpu::Texture>();
-                obj.texture = value;
+                obj.wgpu::ImageCopyTexture::texture = value;
             }
             if (kwargs.contains("mip_level"))
             {
                 auto value = kwargs["mip_level"].cast<uint32_t>();
-                obj.mipLevel = value;
+                obj.wgpu::ImageCopyTexture::mipLevel = value;
             }
             if (kwargs.contains("origin"))
             {
                 auto value = kwargs["origin"].cast<wgpu::Origin3D>();
-                obj.origin = value;
+                obj.wgpu::ImageCopyTexture::origin = value;
             }
             if (kwargs.contains("aspect"))
             {
                 auto value = kwargs["aspect"].cast<wgpu::TextureAspect>();
-                obj.aspect = value;
+                obj.wgpu::ImageCopyTexture::aspect = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3248,37 +3248,37 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::RenderPassColorAttachment::nextInChain = value;
             }
             if (kwargs.contains("view"))
             {
                 auto value = kwargs["view"].cast<wgpu::TextureView>();
-                obj.view = value;
+                obj.wgpu::RenderPassColorAttachment::view = value;
             }
             if (kwargs.contains("depth_slice"))
             {
                 auto value = kwargs["depth_slice"].cast<uint32_t>();
-                obj.depthSlice = value;
+                obj.wgpu::RenderPassColorAttachment::depthSlice = value;
             }
             if (kwargs.contains("resolve_target"))
             {
                 auto value = kwargs["resolve_target"].cast<wgpu::TextureView>();
-                obj.resolveTarget = value;
+                obj.wgpu::RenderPassColorAttachment::resolveTarget = value;
             }
             if (kwargs.contains("load_op"))
             {
                 auto value = kwargs["load_op"].cast<wgpu::LoadOp>();
-                obj.loadOp = value;
+                obj.wgpu::RenderPassColorAttachment::loadOp = value;
             }
             if (kwargs.contains("store_op"))
             {
                 auto value = kwargs["store_op"].cast<wgpu::StoreOp>();
-                obj.storeOp = value;
+                obj.wgpu::RenderPassColorAttachment::storeOp = value;
             }
             if (kwargs.contains("clear_value"))
             {
                 auto value = kwargs["clear_value"].cast<wgpu::Color>();
-                obj.clearValue = value;
+                obj.wgpu::RenderPassColorAttachment::clearValue = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3346,54 +3346,54 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::TextureDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::TextureDescriptor::label = value;
             }
             if (kwargs.contains("usage"))
             {
                 auto value = kwargs["usage"].cast<wgpu::TextureUsage>();
-                obj.usage = value;
+                obj.wgpu::TextureDescriptor::usage = value;
             }
             if (kwargs.contains("dimension"))
             {
                 auto value = kwargs["dimension"].cast<wgpu::TextureDimension>();
-                obj.dimension = value;
+                obj.wgpu::TextureDescriptor::dimension = value;
             }
             if (kwargs.contains("size"))
             {
                 auto value = kwargs["size"].cast<wgpu::Extent3D>();
-                obj.size = value;
+                obj.wgpu::TextureDescriptor::size = value;
             }
             if (kwargs.contains("format"))
             {
                 auto value = kwargs["format"].cast<wgpu::TextureFormat>();
-                obj.format = value;
+                obj.wgpu::TextureDescriptor::format = value;
             }
             if (kwargs.contains("mip_level_count"))
             {
                 auto value = kwargs["mip_level_count"].cast<uint32_t>();
-                obj.mipLevelCount = value;
+                obj.wgpu::TextureDescriptor::mipLevelCount = value;
             }
             if (kwargs.contains("sample_count"))
             {
                 auto value = kwargs["sample_count"].cast<uint32_t>();
-                obj.sampleCount = value;
+                obj.wgpu::TextureDescriptor::sampleCount = value;
             }
             if (kwargs.contains("view_format_count"))
             {
                 auto value = kwargs["view_format_count"].cast<size_t>();
-                obj.viewFormatCount = value;
+                obj.wgpu::TextureDescriptor::viewFormatCount = value;
             }
             if (kwargs.contains("view_formats"))
             {
                 auto value = kwargs["view_formats"].cast<const wgpu::TextureFormat *>();
-                obj.viewFormats = value;
+                obj.wgpu::TextureDescriptor::viewFormats = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3410,22 +3410,22 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("array_stride"))
             {
                 auto value = kwargs["array_stride"].cast<uint64_t>();
-                obj.arrayStride = value;
+                obj.wgpu::VertexBufferLayout::arrayStride = value;
             }
             if (kwargs.contains("step_mode"))
             {
                 auto value = kwargs["step_mode"].cast<wgpu::VertexStepMode>();
-                obj.stepMode = value;
+                obj.wgpu::VertexBufferLayout::stepMode = value;
             }
             if (kwargs.contains("attribute_count"))
             {
                 auto value = kwargs["attribute_count"].cast<size_t>();
-                obj.attributeCount = value;
+                obj.wgpu::VertexBufferLayout::attributeCount = value;
             }
             if (kwargs.contains("attributes"))
             {
                 auto value = kwargs["attributes"].cast<const wgpu::VertexAttribute *>();
-                obj.attributes = value;
+                obj.wgpu::VertexBufferLayout::attributes = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3445,24 +3445,24 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::BindGroupLayoutDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::BindGroupLayoutDescriptor::label = value;
             }
             if (kwargs.contains("entry_count"))
             {
                 auto value = kwargs["entry_count"].cast<size_t>();
-                obj.entryCount = value;
+                obj.wgpu::BindGroupLayoutDescriptor::entryCount = value;
             }
             if (kwargs.contains("entries"))
             {
                 auto value = kwargs["entries"].cast<const wgpu::BindGroupLayoutEntry *>();
-                obj.entries = value;
+                obj.wgpu::BindGroupLayoutDescriptor::entries = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3479,22 +3479,22 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::ColorTargetState::nextInChain = value;
             }
             if (kwargs.contains("format"))
             {
                 auto value = kwargs["format"].cast<wgpu::TextureFormat>();
-                obj.format = value;
+                obj.wgpu::ColorTargetState::format = value;
             }
             if (kwargs.contains("blend"))
             {
                 auto value = kwargs["blend"].cast<const wgpu::BlendState *>();
-                obj.blend = value;
+                obj.wgpu::ColorTargetState::blend = value;
             }
             if (kwargs.contains("write_mask"))
             {
                 auto value = kwargs["write_mask"].cast<wgpu::ColorWriteMask>();
-                obj.writeMask = value;
+                obj.wgpu::ColorTargetState::writeMask = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3540,39 +3540,39 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::RenderPassDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::RenderPassDescriptor::label = value;
             }
             if (kwargs.contains("color_attachment_count"))
             {
                 auto value = kwargs["color_attachment_count"].cast<size_t>();
-                obj.colorAttachmentCount = value;
+                obj.wgpu::RenderPassDescriptor::colorAttachmentCount = value;
             }
             if (kwargs.contains("color_attachments"))
             {
                 auto value = kwargs["color_attachments"].cast<const wgpu::RenderPassColorAttachment *>();
-                obj.colorAttachments = value;
+                obj.wgpu::RenderPassDescriptor::colorAttachments = value;
             }
             if (kwargs.contains("depth_stencil_attachment"))
             {
                 auto value = kwargs["depth_stencil_attachment"].cast<const wgpu::RenderPassDepthStencilAttachment *>();
-                obj.depthStencilAttachment = value;
+                obj.wgpu::RenderPassDescriptor::depthStencilAttachment = value;
             }
             if (kwargs.contains("occlusion_query_set"))
             {
                 auto value = kwargs["occlusion_query_set"].cast<wgpu::QuerySet>();
-                obj.occlusionQuerySet = value;
+                obj.wgpu::RenderPassDescriptor::occlusionQuerySet = value;
             }
             if (kwargs.contains("timestamp_writes"))
             {
                 auto value = kwargs["timestamp_writes"].cast<const wgpu::RenderPassTimestampWrites *>();
-                obj.timestampWrites = value;
+                obj.wgpu::RenderPassDescriptor::timestampWrites = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3602,39 +3602,39 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::VertexState::nextInChain = value;
             }
             if (kwargs.contains("module"))
             {
                 auto value = kwargs["module"].cast<wgpu::ShaderModule>();
-                obj.module = value;
+                obj.wgpu::VertexState::module = value;
             }
             if (kwargs.contains("entry_point"))
             {
                 auto _value = kwargs["entry_point"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.entryPoint = value;
+                obj.wgpu::VertexState::entryPoint = value;
             }
             if (kwargs.contains("constant_count"))
             {
                 auto value = kwargs["constant_count"].cast<size_t>();
-                obj.constantCount = value;
+                obj.wgpu::VertexState::constantCount = value;
             }
             if (kwargs.contains("constants"))
             {
                 auto value = kwargs["constants"].cast<const wgpu::ConstantEntry *>();
-                obj.constants = value;
+                obj.wgpu::VertexState::constants = value;
             }
             if (kwargs.contains("buffer_count"))
             {
                 auto value = kwargs["buffer_count"].cast<size_t>();
-                obj.bufferCount = value;
+                obj.wgpu::VertexState::bufferCount = value;
             }
             if (kwargs.contains("buffers"))
             {
                 auto value = kwargs["buffers"].cast<const wgpu::VertexBufferLayout *>();
-                obj.buffers = value;
+                obj.wgpu::VertexState::buffers = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3657,39 +3657,39 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::FragmentState::nextInChain = value;
             }
             if (kwargs.contains("module"))
             {
                 auto value = kwargs["module"].cast<wgpu::ShaderModule>();
-                obj.module = value;
+                obj.wgpu::FragmentState::module = value;
             }
             if (kwargs.contains("entry_point"))
             {
                 auto _value = kwargs["entry_point"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.entryPoint = value;
+                obj.wgpu::FragmentState::entryPoint = value;
             }
             if (kwargs.contains("constant_count"))
             {
                 auto value = kwargs["constant_count"].cast<size_t>();
-                obj.constantCount = value;
+                obj.wgpu::FragmentState::constantCount = value;
             }
             if (kwargs.contains("constants"))
             {
                 auto value = kwargs["constants"].cast<const wgpu::ConstantEntry *>();
-                obj.constants = value;
+                obj.wgpu::FragmentState::constants = value;
             }
             if (kwargs.contains("target_count"))
             {
                 auto value = kwargs["target_count"].cast<size_t>();
-                obj.targetCount = value;
+                obj.wgpu::FragmentState::targetCount = value;
             }
             if (kwargs.contains("targets"))
             {
                 auto value = kwargs["targets"].cast<const wgpu::ColorTargetState *>();
-                obj.targets = value;
+                obj.wgpu::FragmentState::targets = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);
@@ -3713,44 +3713,44 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             if (kwargs.contains("next_in_chain"))
             {
                 auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
-                obj.nextInChain = value;
+                obj.wgpu::RenderPipelineDescriptor::nextInChain = value;
             }
             if (kwargs.contains("label"))
             {
                 auto _value = kwargs["label"].cast<std::string>();
                 char* value = (char*)malloc(_value.size());
                 strcpy(value, _value.c_str());
-                obj.label = value;
+                obj.wgpu::RenderPipelineDescriptor::label = value;
             }
             if (kwargs.contains("layout"))
             {
                 auto value = kwargs["layout"].cast<wgpu::PipelineLayout>();
-                obj.layout = value;
+                obj.wgpu::RenderPipelineDescriptor::layout = value;
             }
             if (kwargs.contains("vertex"))
             {
                 auto value = kwargs["vertex"].cast<wgpu::VertexState>();
-                obj.vertex = value;
+                obj.wgpu::RenderPipelineDescriptor::vertex = value;
             }
             if (kwargs.contains("primitive"))
             {
                 auto value = kwargs["primitive"].cast<wgpu::PrimitiveState>();
-                obj.primitive = value;
+                obj.wgpu::RenderPipelineDescriptor::primitive = value;
             }
             if (kwargs.contains("depth_stencil"))
             {
                 auto value = kwargs["depth_stencil"].cast<const wgpu::DepthStencilState *>();
-                obj.depthStencil = value;
+                obj.wgpu::RenderPipelineDescriptor::depthStencil = value;
             }
             if (kwargs.contains("multisample"))
             {
                 auto value = kwargs["multisample"].cast<wgpu::MultisampleState>();
-                obj.multisample = value;
+                obj.wgpu::RenderPipelineDescriptor::multisample = value;
             }
             if (kwargs.contains("fragment"))
             {
                 auto value = kwargs["fragment"].cast<const wgpu::FragmentState *>();
-                obj.fragment = value;
+                obj.wgpu::RenderPipelineDescriptor::fragment = value;
             }
             return obj;
         }), py::return_value_policy::automatic_reference);

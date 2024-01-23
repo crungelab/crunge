@@ -1,4 +1,4 @@
-import arcade
+import ludi
 from crunge import imgui
 
 from imdemo.page import Page

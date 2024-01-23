@@ -38,7 +38,7 @@ class Demo:
         logger.info(f"SDL_Init: {success}")
         self.window = sdl.create_window(self.name, self.kWidth, self.kHeight, sdl.WindowFlags.RESIZABLE)
 
-    def _create_device_objects(self):
+    def create_device_objects(self):
         pass
 
     def create_swapchain(self):
@@ -131,7 +131,7 @@ class Demo:
 
     def run(self):
         self.create_window()
-        self._create_device_objects()
+        self.create_device_objects()
         self.create_swapchain()
 
         last_time = time.perf_counter()

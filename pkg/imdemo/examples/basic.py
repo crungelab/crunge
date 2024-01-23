@@ -1,17 +1,17 @@
 from crunge import imgui
-from crunge.imgui.impl.arcade import ArcadeGui
+from crunge.imgui.impl.ludi import LudiGui
 
-import arcade
+import ludi
 
-class App(arcade.Window):
+class App(ludi.Window):
     def __init__(self):
         super().__init__(800, 600, "Button Example", resizable=True)
-        self.gui = ArcadeGui(self)
+        self.gui = LudiGui(self)
         imgui.set_next_window_pos( (16, 32) )
         imgui.set_next_window_size( (512, 512) )
 
     def on_draw(self):
-        arcade.start_render()
+        ludi.start_render()
 
         imgui.new_frame()
 
@@ -26,4 +26,4 @@ class App(arcade.Window):
 
 
 app = App()
-arcade.run()
+ludi.run()

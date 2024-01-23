@@ -1,16 +1,16 @@
 from pyglet import gl, clock
 from pyglet.window import key, mouse
-from arcade.gl import BufferDescription, Context
-import arcade
+from ludi.gl import BufferDescription, Context
+import ludi
 
 from crunge import imgui
 from imgui.renderer import compute_framebuffer_scale
 from imgui.renderer.gl_base import OpenGLRendererBase
 
 
-class ArcadePortalRenderer(OpenGLRendererBase):
+class LudiPortalRenderer(OpenGLRendererBase):
     """
-    A renderer using the arcade.gl module instead of PyOpenGL.
+    A renderer using the ludi.gl module instead of PyOpenGL.
     This is using pyglet's OpenGL bindings instead.
     """
 
@@ -157,7 +157,7 @@ class ArcadePortalRenderer(OpenGLRendererBase):
         self._invalidate_device_objects()
 
 
-class ArcadeGuiBase:
+class LudiGuiBase:
     REVERSE_KEY_MAP = {
         key.TAB: imgui.KEY_TAB,
         key.LEFT: imgui.KEY_LEFT_ARROW,
@@ -311,7 +311,7 @@ class ArcadeGuiBase:
         self.io.display_size = width, height
 
 
-class ArcadePortalGui(ArcadeGuiBase):
+class LudiPortalGui(LudiGuiBase):
     def __init__(self, window, attach_callbacks=True):
         self.window = window
 
@@ -320,7 +320,7 @@ class ArcadePortalGui(ArcadeGuiBase):
 
         self.io = imgui.get_io()
 
-        self.renderer = ArcadePortalRenderer(self)
+        self.renderer = LudiPortalRenderer(self)
 
         window_size = window.get_size()
         if hasattr(window, 'get_viewport_size'):

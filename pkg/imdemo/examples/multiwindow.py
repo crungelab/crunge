@@ -2,11 +2,11 @@ import pyglet
 pyglet.options['shadow_window']=False
 
 from crunge import imgui
-from crunge.imgui.impl.arcade import ArcadeGui
+from crunge.imgui.impl.ludi import LudiGui
 
-import arcade
+import ludi
 
-class ChildGui(ArcadeGui):
+class ChildGui(LudiGui):
     def __init__(self, window):
         super().__init__(window)
         self.title = "Child Gui"
@@ -44,17 +44,17 @@ class ChildGui(ArcadeGui):
 
         super().draw()
 
-class ChildApp(arcade.Window):
+class ChildApp(ludi.Window):
     def __init__(self):
         super().__init__(800, 600, "Child Window", resizable=True)
         self.gui = ChildGui(self)
 
     def on_draw(self):
-        arcade.start_render()
+        ludi.start_render()
         self.gui.render()
 
 
-class MyGui(ArcadeGui):
+class MyGui(LudiGui):
     def __init__(self, window):
         super().__init__(window)
         self.title = "Parent Gui"
@@ -91,19 +91,19 @@ class MyGui(ArcadeGui):
 
         super().draw()
 
-class App(arcade.Window):
+class App(ludi.Window):
     def __init__(self):
         super().__init__(800, 600, "Main Window", resizable=True)
         self.gui = MyGui(self)
 
     def on_draw(self):
-        arcade.start_render()
+        ludi.start_render()
         self.gui.render()
 
 
 #app = ChildApp()
 app = App()
 
-arcade.run()
+ludi.run()
 
 #pyglet.app.run()

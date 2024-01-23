@@ -1,4 +1,4 @@
-import arcade
+import ludi
 
 from crunge import imgui
 
@@ -14,7 +14,7 @@ class DrawCallbackPage(Page):
             left = clip[0]
             bottom = self.window.height - clip[3]
 
-            arcade.draw_text("Simple line of text in 20 point", left, bottom, arcade.color.WHITE, 20)
+            ludi.draw_text("Simple line of text in 20 point", left, bottom, ludi.color.WHITE, 20)
 
         draw_list = imgui.get_window_draw_list()
 

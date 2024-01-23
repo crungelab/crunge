@@ -1,4 +1,4 @@
-import arcade
+import ludi
 from crunge import imgui
 
 from imdemo.page import Page
@@ -11,7 +11,7 @@ class FramebufferPage(Page):
     def __init__(self, window, name, title):
         super().__init__(window, name, title)
         self.fullwidth = self.fullheight = True
-        self.sprite = arcade.Sprite(
+        self.sprite = ludi.Sprite(
             ":resources:images/space_shooter/playerShip1_orange.png",
             SPRITE_SCALING,
             center_x = 256,
@@ -73,17 +73,17 @@ class FramebufferPage(Page):
 
         self.offscreen.use()
         self.offscreen.clear((0, 0, 0, 0))
-        vp = arcade.get_viewport()
-        arcade.set_viewport(0, FBSIZE[0], 0, FBSIZE[1])
+        vp = ludi.get_viewport()
+        ludi.set_viewport(0, FBSIZE[0], 0, FBSIZE[1])
 
         prj = self.window.ctx.projection_2d
         self.window.ctx.projection_2d = (0, FBSIZE[0],FBSIZE[1],0)
         self.sprite.draw()
-        arcade.draw_text("Simple line of text in 20 point", 0,0 , arcade.color.WHITE, 20)
+        ludi.draw_text("Simple line of text in 20 point", 0,0 , ludi.color.WHITE, 20)
         self.window.ctx.projection_2d = prj
 
         self.window.ctx.screen.use()
-        arcade.set_viewport(*vp)
+        ludi.set_viewport(*vp)
         self.sprite.draw()
 
 

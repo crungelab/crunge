@@ -1,4 +1,4 @@
-import arcade
+import ludi
 from crunge import imgui
 
 from imdemo.page import Page
@@ -16,7 +16,7 @@ class Input(Page):
 
         imgui.end()
 
-        arcade.draw_text(str(self.test_input), 0, 0, arcade.color.WHITE_SMOKE, 64)
+        ludi.draw_text(str(self.test_input), 0, 0, ludi.color.WHITE_SMOKE, 64)
 
 class InputDouble(Page):
     def reset(self):
@@ -31,7 +31,7 @@ class InputDouble(Page):
 
         imgui.end()
 
-        arcade.draw_text(str(self.double_val), 0, 0, arcade.color.WHITE_SMOKE, 64)
+        ludi.draw_text(str(self.double_val), 0, 0, ludi.color.WHITE_SMOKE, 64)
 
 class InputFloat(Page):
     def reset(self):
@@ -45,7 +45,7 @@ class InputFloat(Page):
         imgui.text('You wrote: %f' % self.float_val)
         imgui.end()
 
-        arcade.draw_text(str(self.float_val), 0, 0, arcade.color.WHITE_SMOKE, 64)
+        ludi.draw_text(str(self.float_val), 0, 0, ludi.color.WHITE_SMOKE, 64)
 
 def install(app):
     app.add_page(Input, "input", "Input")

@@ -1,12 +1,12 @@
 from crunge import imgui
 from crunge.imgui import rel
-from crunge.imgui.impl.arcade import ArcadeGui
+from crunge.imgui.impl.ludi import LudiGui
 
-from experiments.gig.gui import ArcadePortalGui
+from experiments.gig.gui import LudiPortalGui
 
-import arcade
+import ludi
 
-class InnerGui(ArcadePortalGui):
+class InnerGui(LudiPortalGui):
     def draw(self):
         imgui.set_current_context(self.context)
         #self.io.display_framebuffer_scale = (self.zoom, self.zoom)
@@ -45,14 +45,14 @@ class InnerGui(ArcadePortalGui):
         imgui.end_frame()
         super().draw()
 
-class App(arcade.Window):
+class App(ludi.Window):
     def __init__(self):
         super().__init__(1280, 640, 'Gui in Gui Experiment', resizable=True)
-        self.gui = ArcadeGui(self)
+        self.gui = LudiGui(self)
         self.inner_gui = InnerGui(self)
 
     def on_draw(self):
-        arcade.start_render()
+        ludi.start_render()
 
         imgui.set_current_context(self.gui.context)
         imgui.new_frame()
@@ -82,4 +82,4 @@ class App(arcade.Window):
         self.gui.render()
 
 app = App()
-arcade.run()
+ludi.run()

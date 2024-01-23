@@ -1,7 +1,7 @@
-import arcade
+import ludi
 from crunge import imgui
 
-class Page(arcade.View):
+class Page(ludi.View):
     def __init__(self, window, name, title):
         super().__init__(window)
         self.window = window
@@ -20,9 +20,9 @@ class Page(arcade.View):
         return page
 
     def on_draw(self):
-        arcade.start_render()
+        #ludi.start_render()
 
-        imgui.new_frame()
+        #imgui.new_frame()
         
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
@@ -60,7 +60,7 @@ class Page(arcade.View):
 
         self.draw()
         
-        imgui.end_frame()
+        #imgui.end_frame()
 
     def draw_navbar(self):
         #gui.set_next_window_pos((16, 32), imgui.COND_ONCE)

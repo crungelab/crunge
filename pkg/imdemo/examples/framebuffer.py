@@ -1,15 +1,15 @@
-import arcade
+import ludi
 from crunge import imgui
 
-from crunge.imgui.impl.arcade import ArcadeGui
+from crunge.imgui.impl.ludi import LudiGui
 
 SPRITE_SCALING = 0.5
 FBSIZE = (512, 256)
 
-class MyGui(ArcadeGui):
+class MyGui(LudiGui):
     def __init__(self, window):
         super().__init__(window)
-        self.sprite = arcade.Sprite(
+        self.sprite = ludi.Sprite(
             ":resources:images/space_shooter/playerShip1_orange.png",
             SPRITE_SCALING,
             center_x = 256,
@@ -71,32 +71,32 @@ class MyGui(ArcadeGui):
 
         self.offscreen.use()
         self.offscreen.clear((0, 0, 0, 0))
-        vp = arcade.get_viewport()
-        arcade.set_viewport(0, FBSIZE[0], 0, FBSIZE[1])
+        vp = ludi.get_viewport()
+        ludi.set_viewport(0, FBSIZE[0], 0, FBSIZE[1])
         prj = self.window.ctx.projection_2d
         self.window.ctx.projection_2d = (0, FBSIZE[0],FBSIZE[1],0)
         self.sprite.draw()
-        arcade.draw_text("Simple line of text in 20 point", 0,0 , arcade.color.WHITE, 20)
+        ludi.draw_text("Simple line of text in 20 point", 0,0 , ludi.color.WHITE, 20)
 
         self.window.ctx.projection_2d = prj
 
         self.window.use()
-        arcade.set_viewport(*vp)
+        ludi.set_viewport(*vp)
         self.sprite.draw()
 
         imgui.end_frame()
 
         super().draw()
 
-class App(arcade.Window):
+class App(ludi.Window):
     def __init__(self):
         super().__init__(800, 600, "Framebuffer Example", resizable=True)
         self.gui = MyGui(self)
 
     def on_draw(self):
-        arcade.start_render()
+        ludi.start_render()
         self.gui.render()
 
 
 app = App()
-arcade.run()
+ludi.run()

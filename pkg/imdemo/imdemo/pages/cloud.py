@@ -1,6 +1,6 @@
-import arcade
-from arcade import Point, Vector
-from arcade.utils import _Vec2  # bring in "private" class
+import ludi
+from ludi import Point, Vector
+from ludi.utils import _Vec2  # bring in "private" class
 import os
 import random
 import pyglet
@@ -13,9 +13,9 @@ from imdemo.particle import AnimatedAlphaParticle
 SCREEN_TITLE = "Particle based fireworks"
 
 CLOUD_TEXTURES = [
-    arcade.make_soft_circle_texture(50, arcade.color.WHITE),
-    arcade.make_soft_circle_texture(50, arcade.color.LIGHT_GRAY),
-    arcade.make_soft_circle_texture(50, arcade.color.LIGHT_BLUE),
+    ludi.make_soft_circle_texture(50, ludi.color.WHITE),
+    ludi.make_soft_circle_texture(50, ludi.color.LIGHT_GRAY),
+    ludi.make_soft_circle_texture(50, ludi.color.LIGHT_BLUE),
 ]
 
 class CloudPage(Page):
@@ -24,22 +24,22 @@ class CloudPage(Page):
         self.fullwidth=self.fullheight=False
 
     def on_show(self):
-        arcade.set_background_color(arcade.color.BLACK)
+        ludi.set_background_color(ludi.color.BLACK)
 
     def create_emitter(self):
-        self.emitter = arcade.Emitter(
+        self.emitter = ludi.Emitter(
             center_xy=(64, self.window.height/2),
             change_xy=(0.15, 0),
-            emit_controller=arcade.EmitMaintainCount(60),
+            emit_controller=ludi.EmitMaintainCount(60),
             particle_factory=lambda emitter: AnimatedAlphaParticle(
                 filename_or_texture=random.choice(CLOUD_TEXTURES),
-                change_xy=(_Vec2(arcade.rand_in_circle((0.0, 0.0), 0.04)) + _Vec2(0.1, 0)).as_tuple(),
+                change_xy=(_Vec2(ludi.rand_in_circle((0.0, 0.0), 0.04)) + _Vec2(0.1, 0)).as_tuple(),
                 start_alpha=0,
                 duration1=random.uniform(5.0, 10.0),
                 mid_alpha=255,
                 duration2=random.uniform(5.0, 10.0),
                 end_alpha=0,
-                center_xy=arcade.rand_in_circle((0.0, 0.0), 50)
+                center_xy=ludi.rand_in_circle((0.0, 0.0), 50)
             )
         )
 
@@ -60,8 +60,8 @@ class CloudPage(Page):
         self.emitter.draw()
 
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.ESCAPE:
-            arcade.close_window()
+        if key == ludi.key.ESCAPE:
+            ludi.close_window()
 
 def install(app):
     app.add_page(CloudPage, "cloud", "Cloud")

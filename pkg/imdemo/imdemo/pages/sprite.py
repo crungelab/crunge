@@ -1,4 +1,4 @@
-import arcade
+import ludi
 from crunge import imgui
 
 from imdemo.page import Page
@@ -10,7 +10,7 @@ class SpritePage(Page):
     def __init__(self, window, name, title):
         super().__init__(window, name, title)
         self.fullwidth = self.fullheight = False
-        self.sprite = arcade.Sprite(
+        self.sprite = ludi.Sprite(
             ":resources:images/space_shooter/playerShip1_orange.png",
             SPRITE_SCALING,
             center_x = 512,

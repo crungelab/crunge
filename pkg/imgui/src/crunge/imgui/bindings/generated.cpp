@@ -2981,50 +2981,50 @@ void init_generated(py::module &_imgui, Registry &registry) {
         TextFilter.def("is_active", &ImGuiTextFilter::IsActive
         , py::return_value_policy::automatic_reference);
 
-        PYCLASS_BEGIN(_imgui, ImGuiTextFilter::ImGuiTextRange, TextRange)
-            TextRange.def_property("b",
+        PYCLASS_BEGIN(_imgui, ImGuiTextFilter::ImGuiTextRange, TextFilterTextRange)
+            TextFilterTextRange.def_property("b",
                 [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.b; },
                 [](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.b = c; }
             );
-            TextRange.def_property("e",
+            TextFilterTextRange.def_property("e",
                 [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.e; },
                 [](ImGuiTextFilter::ImGuiTextRange& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.e = c; }
             );
-            TextRange.def(py::init<>());
-            TextRange.def(py::init<const char *, const char *>()
+            TextFilterTextRange.def(py::init<>());
+            TextFilterTextRange.def(py::init<const char *, const char *>()
             , py::arg("_b")
             , py::arg("_e")
             );
-            TextRange.def("empty", &ImGuiTextFilter::ImGuiTextRange::empty
+            TextFilterTextRange.def("empty", &ImGuiTextFilter::ImGuiTextRange::empty
             , py::return_value_policy::automatic_reference);
 
-            TextRange.def("split", &ImGuiTextFilter::ImGuiTextRange::split
+            TextFilterTextRange.def("split", &ImGuiTextFilter::ImGuiTextRange::split
             , py::arg("separator")
             , py::arg("out")
             , py::return_value_policy::automatic_reference);
 
-        PYCLASS_END(_imgui, ImGuiTextFilter::ImGuiTextRange, TextRange)
+        PYCLASS_END(_imgui, ImGuiTextFilter::ImGuiTextRange, TextFilterTextRange)
 
         TextFilter.def_readonly("input_buf", &ImGuiTextFilter::InputBuf);
         TextFilter.def_readwrite("count_grep", &ImGuiTextFilter::CountGrep);
     PYCLASS_END(_imgui, ImGuiTextFilter, TextFilter)
 
     PYCLASS_BEGIN(_imgui, ImGuiStorage, Storage)
-        PYCLASS_BEGIN(_imgui, ImGuiStorage::ImGuiStoragePair, StoragePair)
-            StoragePair.def_readwrite("key", &ImGuiStorage::ImGuiStoragePair::key);
-            StoragePair.def(py::init<ImGuiID, int>()
+        PYCLASS_BEGIN(_imgui, ImGuiStorage::ImGuiStoragePair, StorageStoragePair)
+            StorageStoragePair.def_readwrite("key", &ImGuiStorage::ImGuiStoragePair::key);
+            StorageStoragePair.def(py::init<ImGuiID, int>()
             , py::arg("_key")
             , py::arg("_val_i")
             );
-            StoragePair.def(py::init<ImGuiID, float>()
+            StorageStoragePair.def(py::init<ImGuiID, float>()
             , py::arg("_key")
             , py::arg("_val_f")
             );
-            StoragePair.def(py::init<ImGuiID, void *>()
+            StorageStoragePair.def(py::init<ImGuiID, void *>()
             , py::arg("_key")
             , py::arg("_val_p")
             );
-        PYCLASS_END(_imgui, ImGuiStorage::ImGuiStoragePair, StoragePair)
+        PYCLASS_END(_imgui, ImGuiStorage::ImGuiStoragePair, StorageStoragePair)
 
         Storage.def("clear", &ImGuiStorage::Clear
         , py::return_value_policy::automatic_reference);
