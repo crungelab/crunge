@@ -5,6 +5,7 @@ from loguru import logger
 from crunge import sdl
 
 from .window import Window
+from .view import View
 
 class App(Window):
     def __init__(self, width, height, title="", resizable=False):
@@ -16,14 +17,6 @@ class App(Window):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
         logger.info(f"SDL_Init: {success}")
         super().create_window()
-
-    def show_view(self, view):
-        self.view = view
-        
-    def on_draw(self):
-        #return super().on_draw()
-        if self.view is not None:
-            self.view.on_draw()
     
     def schedule_once(self, callback, delay):
         #self.callbacks.append((callback, delay))
@@ -59,3 +52,4 @@ class App(Window):
 
             for callback in self.callbacks:
                 callback(frame_time)
+            self.callbacks.clear()

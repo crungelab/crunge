@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Overlay(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Poly Line Overlay")
         draw_list = imgui.get_foreground_draw_list()
         draw_list.add_polyline([(20, 35), (90, 35), (55, 80)], imgui.get_color_u32((1,1,0,1)), closed=False, thickness=3)

@@ -11,6 +11,7 @@ class ImageDraw(Page):
         self.texture = window.ctx.load_texture(image_path, flip=False)
 
     def draw(self):
+        super().draw()
         imgui.begin("Image example")
         draw_list = imgui.get_window_draw_list()
         pos = rel(0,0)

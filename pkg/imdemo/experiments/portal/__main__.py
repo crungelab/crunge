@@ -8,7 +8,7 @@ class App(ludi.Window):
         super().__init__(800, 600, 'Portal Experiment', resizable=True)
         self.gui = LudiGui(self)
 
-    def on_draw(self):
+    def draw(self):
         ludi.start_render()
 
         imgui.new_frame()

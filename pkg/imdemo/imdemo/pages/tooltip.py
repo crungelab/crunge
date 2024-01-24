@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Tooltip(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: tooltip")
         imgui.button("Click me!")
         if imgui.is_item_hovered():

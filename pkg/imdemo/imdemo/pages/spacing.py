@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class SpacingPage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         imgui.text("Some text with bullets:")

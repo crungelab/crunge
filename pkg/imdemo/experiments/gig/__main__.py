@@ -51,7 +51,7 @@ class App(ludi.Window):
         self.gui = LudiGui(self)
         self.inner_gui = InnerGui(self)
 
-    def on_draw(self):
+    def draw(self):
         ludi.start_render()
 
         imgui.set_current_context(self.gui.context)

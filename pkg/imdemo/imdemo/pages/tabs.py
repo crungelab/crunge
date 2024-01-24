@@ -36,6 +36,7 @@ class TabsPage(Page):
         self.color = 1,1,1
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         imgui.begin_child("item view", (0, -imgui.get_frame_height_with_spacing())) #Leave room for 1 line below us

@@ -28,7 +28,9 @@ class DockingPage(Page):
     def reset(self):
         io = imgui.get_io()
         io.config_flags |= imgui.CONFIG_FLAGS_DOCKING_ENABLE
+
     def draw(self):
+        super().draw()
         #gui.begin(self.title, True, imgui.WINDOW_FLAGS_DOCK_NODE_HOST)
         imgui.begin(self.title, True)
 

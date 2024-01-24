@@ -9,6 +9,7 @@ class ColorEdit3(Page):
         self.color_2 = 0., .8, .3
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: color edit without alpha")
 
         # note: first element of return two-tuple notifies if the color was changed
@@ -24,6 +25,7 @@ class ColorEdit4(Page):
         self.color = 1., .0, .5, 1.
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: color edit with alpha")
 
         # note: first element of return two-tuple notifies if the color was changed

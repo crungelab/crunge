@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Indent(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: item indenting")
 
         imgui.text("Some text with bullets:")

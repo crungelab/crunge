@@ -3,10 +3,11 @@
 #from arcade.gl import BufferDescription, Context
 
 from crunge import imgui
-from crunge.imgui.renderer.wgpu_base import WgpuRendererBase
-from crunge.imgui.renderer.util import compute_framebuffer_scale
 
-class LudiRenderer(WgpuRendererBase):
+from ...util import compute_framebuffer_scale
+from ...renderer import Renderer
+
+class WgpuRenderer(Renderer):
     """
     A renderer using the arcade.gl module instead of PyOpenGL.
     This is using pyglet's OpenGL bindings instead.
@@ -157,7 +158,7 @@ class LudiRenderer(WgpuRendererBase):
         self.io.fonts.texture_id = 0
 
 
-class LudiGuiBase:
+class WgpuGuiBase:
     '''
     REVERSE_KEY_MAP = {
         key.TAB: imgui.KEY_TAB,
@@ -271,7 +272,7 @@ class LudiGuiBase:
         self.io.display_size = width, height
 
 
-class LudiGui(LudiGuiBase):
+class WgpuGui(WgpuGuiBase):
     def __init__(self, window, attach_callbacks=True):
         self.window = window
 
@@ -280,7 +281,7 @@ class LudiGui(LudiGuiBase):
 
         self.io = imgui.get_io()
 
-        self.renderer = LudiRenderer.produce(window)
+        self.renderer = WgpuRenderer.produce(window)
 
         #window_size = window.get_size()
         #viewport = window.get_viewport()

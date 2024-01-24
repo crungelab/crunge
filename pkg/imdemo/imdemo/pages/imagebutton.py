@@ -20,6 +20,7 @@ class ImageButton(Page):
         self.message = ''
 
     def draw(self):
+        super().draw()
         imgui.begin("Image Button")
         #if imgui.image_button(self.texture.glo.value, self.texture.size):
         if imgui.image_button("Image Button", self.texture.glo.value, self.texture.size):

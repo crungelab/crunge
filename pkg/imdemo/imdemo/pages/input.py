@@ -9,6 +9,7 @@ class Input(Page):
         self.test_input = 0
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         imgui.text("This is the test window.")
@@ -23,6 +24,7 @@ class InputDouble(Page):
         self.double_val = 3.14159265358979323846
 
     def draw(self):
+        super().draw()
         imgui.begin("Test Window")
 
         imgui.text("This is the test window.")
@@ -38,6 +40,7 @@ class InputFloat(Page):
         self.float_val = 0.4
 
     def draw(self):
+        super().draw()
         imgui.begin("Test Window")
 
         imgui.text("This is the test window.")

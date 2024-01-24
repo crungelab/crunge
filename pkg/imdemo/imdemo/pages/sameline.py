@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class SameLinePage(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: same line widgets")
 
         imgui.text("same_line() with defaults:")

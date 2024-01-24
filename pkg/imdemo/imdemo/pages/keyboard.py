@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class KeyboardPage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         '''
         imgui.label_text(str(imgui.is_key_down()), "is down")

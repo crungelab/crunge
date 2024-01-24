@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class DrawTextPage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         draw_list = imgui.get_window_draw_list()
         p1 = rel(100, 60)
@@ -13,12 +14,14 @@ class DrawTextPage(Page):
 
 class TextPage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.text("Simple text")
         imgui.end()
 
 class ColoredTextPage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.text_colored((1, 0, 0, 1), "Colored text")
         imgui.end()
@@ -32,12 +35,14 @@ class UnformattedTextPage(Page):
         '''
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.text_unformatted(self.text)
         imgui.end()
 
 class LabelTextPage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.label_text("my label", "my text")
         imgui.end()

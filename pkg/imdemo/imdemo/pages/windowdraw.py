@@ -6,6 +6,7 @@ from imdemo.page import Page
 
 class WindowDraw(Page):
     def draw(self):
+        super().draw()
         sz = 20
         draw_list = imgui.get_window_draw_list()
         rgba_color = imgui.get_color_u32((1, 1, 1, 1))

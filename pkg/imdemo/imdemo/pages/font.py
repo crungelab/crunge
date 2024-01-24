@@ -4,16 +4,19 @@ from crunge import imgui
 
 from imdemo.page import Page
 
-RESOURCE_PATH = Path(__file__).parent.parent / 'assets'
+RESOURCE_PATH = Path(__file__).parent.parent / 'resources'
 
 class FontPage(Page):
     def reset(self):
         io = imgui.get_io()
         font_path = self.window.resource_path / 'DroidSans.ttf'
         self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20)
-        self.window.gui.renderer.refresh_font_texture()
+        #self.window.gui.renderer.refresh_font_texture()
+        layer = self.window.view.get_layer("ImGuiLayer")
+        layer.renderer.refresh_font_texture()
 
     def draw(self):
+        super().draw()
         imgui.begin("Font")
 
         imgui.text("Text displayed using default font")

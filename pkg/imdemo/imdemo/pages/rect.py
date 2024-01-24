@@ -6,6 +6,7 @@ from imdemo.page import Page
 
 class Rect(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Rectangle")
         draw_list = imgui.get_window_draw_list()
         p1 = rel(20, 35)
@@ -18,6 +19,7 @@ class Rect(Page):
 
 class RectFilled(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Rectangle Filled")
         draw_list = imgui.get_window_draw_list()
         p1 = rel(20, 35)

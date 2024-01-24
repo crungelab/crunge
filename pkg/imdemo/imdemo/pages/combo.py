@@ -9,6 +9,7 @@ class Combo(Page):
         self.current = 2
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: combo widget")
 
         clicked, self.current = imgui.combo(

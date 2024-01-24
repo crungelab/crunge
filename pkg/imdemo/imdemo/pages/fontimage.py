@@ -6,6 +6,7 @@ from imdemo.page import Page
 
 class FontImage(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Image example")
         tex_id = imgui.get_io().fonts.tex_id
         draw_list = imgui.get_window_draw_list()

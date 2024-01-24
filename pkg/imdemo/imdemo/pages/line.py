@@ -6,6 +6,7 @@ from imdemo.page import Page
 
 class Line(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Line")
         draw_list = imgui.get_window_draw_list()
         p1 = rel(20, 35)
@@ -18,6 +19,7 @@ class Line(Page):
 
 class PolyLine(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Poly Line")
         draw_list = imgui.get_window_draw_list()
         p1 = rel(20, 35)

@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class TreePage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         #if imgui.tree_node("Expand me!", imgui.TREE_NODE_DEFAULT_OPEN):
         if imgui.tree_node("Expand me!"):

@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class DnD(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag and drop")
 
         imgui.button('source')

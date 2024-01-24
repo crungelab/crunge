@@ -8,6 +8,7 @@ class TextInputPage(Page):
         self.text_val = 'Type your message here.'
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         changed, self.text_val = imgui.input_text(
             'Text',
@@ -24,6 +25,7 @@ class MultiTextInputPage(Page):
         self.text_val = 'Type your message here.'
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         changed, self.text_val = imgui.input_text_multiline(
             'Message',

@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class MousePage(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         #imgui.text(str(imgui.is_mouse_down(0)))

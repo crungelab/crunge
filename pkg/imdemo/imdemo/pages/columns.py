@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Columns(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: Columns - File list")
         imgui.columns(4, 'fileList')
         imgui.separator()

@@ -6,11 +6,12 @@ from crunge import as_capsule
 from crunge import sdl, wgpu
 import crunge.wgpu.utils as utils
 
-class Window:
+from .frame import Frame
+from .render_context import RenderContext
+
+class Window(Frame):
     def __init__(self, width, height, title="", resizable=False):
-        super().__init__()
-        self.width = width
-        self.height = height
+        super().__init__(width, height)
         self.name = title
 
         self.window = None
@@ -80,56 +81,9 @@ class Window:
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module
-
-    def on_draw(self):
-        pass
     
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
-        pass
-
     def frame(self):
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        self.render(backbuffer, self.depth_stencil_view)
+        context = RenderContext(self.device, backbuffer, self.depth_stencil_view)
+        self.render(context)
         self.swap_chain.present()
-
-    def dispatch(self, event):
-        #logger.debug(event)
-        match event.__class__:
-            case sdl.QuitEvent:
-                return False
-            case sdl.WindowEvent:
-                self.on_window(event)
-            case sdl.MouseMotionEvent:
-                self.on_mouse_motion(event)
-            case sdl.MouseButtonEvent:
-                self.on_mouse_button(event)
-            case sdl.MouseWheelEvent:
-                self.on_mouse_wheel(event)
-            case _:
-                pass
-        return True
-
-    def on_window(self, event: sdl.WindowEvent):
-        logger.debug("window event")
-        match event.type:
-            case sdl.EventType.WINDOW_MOUSE_ENTER:
-                self.on_mouse_enter(event)
-            case sdl.EventType.WINDOW_MOUSE_LEAVE:
-                self.on_mouse_leave(event)
-            case _:
-                pass
-
-    def on_mouse_enter(self, event: sdl.WindowEvent):
-        logger.debug("mouse enter")
-
-    def on_mouse_leave(self, event: sdl.WindowEvent):
-        logger.debug("mouse leave")
-
-    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
-        logger.debug(f"mouse motion: x={event.x}, y={event.y}")
-
-    def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        logger.debug(f"mouse button: button={event.button}, state={event.state}")
-
-    def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
-        logger.debug(f"mouse wheel: x={event.x}, y={event.y}")

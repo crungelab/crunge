@@ -9,6 +9,7 @@ class Checkbox(Page):
         self.checkbox2_enabled = False
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: checkboxes")
 
         # note: first element of return two-tuple notifies if there was a click
@@ -27,6 +28,7 @@ class CheckboxFlags(Page):
         self.flags = imgui.WINDOW_FLAGS_NO_RESIZE | imgui.WINDOW_FLAGS_NO_MOVE
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: checkboxes for flags", flags=self.flags)
 
         clicked, self.flags = imgui.checkbox_flags(

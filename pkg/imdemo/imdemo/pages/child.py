@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Child(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: child region")
 
         #imgui.begin_child("region", (150, -50), border=True)

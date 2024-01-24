@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Popup(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: simple popup")
 
         if imgui.button("select"):
@@ -24,6 +25,7 @@ class Popup(Page):
 
 class PopupContextView(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: popup context view")
         imgui.text("Right-click to set value.")
         if imgui.begin_popup_context_item("Item Context Menu"):
@@ -33,6 +35,7 @@ class PopupContextView(Page):
 
 class PopupContextWindow(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: popup context window")
         if imgui.begin_popup_context_window():
             imgui.selectable("Clear", True)
@@ -41,6 +44,7 @@ class PopupContextWindow(Page):
 
 class PopupModal(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: simple popup modal")
 
         if imgui.button("Open Modal popup"):

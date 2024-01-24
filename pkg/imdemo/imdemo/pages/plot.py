@@ -12,6 +12,7 @@ class PlotHistogramPage(Page):
         self.values = array('f', [random() for _ in range(20)])
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.plot_histogram("histogram(random())", self.values)
         imgui.end()
@@ -21,6 +22,7 @@ class PlotLinesPage(Page):
         self.values = array('f', [sin(x * 0.1) for x in range(100)])
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.plot_lines("Sin(t)", self.values)
         imgui.end()

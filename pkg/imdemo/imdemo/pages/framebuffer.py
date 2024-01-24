@@ -29,6 +29,7 @@ class FramebufferPage(Page):
         self.color = 1,1,1
 
     def draw(self):
+        super().draw()
         #gui.set_next_window_pos((self.window.width - 512 - 16, 32), imgui.COND_ONCE)
         #gui.set_next_window_size((512, 512), imgui.COND_ONCE)
         #gui.set_next_window_pos((self.window.width - (512+256) - 32, 32), imgui.COND_ONCE)

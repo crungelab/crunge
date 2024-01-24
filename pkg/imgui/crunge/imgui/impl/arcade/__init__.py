@@ -3,10 +3,11 @@ from pyglet.window import key, mouse
 from arcade.gl import BufferDescription, Context
 
 from crunge import imgui
-from crunge.imgui.renderer.gl_base import OpenGLRendererBase
-from crunge.imgui.renderer.util import compute_framebuffer_scale
 
-class ArcadeRenderer(OpenGLRendererBase):
+from ...util import compute_framebuffer_scale
+from ...renderer import Renderer
+
+class ArcadeRenderer(Renderer):
     """
     A renderer using the arcade.gl module instead of PyOpenGL.
     This is using pyglet's OpenGL bindings instead.

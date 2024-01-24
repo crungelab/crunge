@@ -8,6 +8,7 @@ class FloatSliderPage(Page):
         self.value = 88
 
     def draw(self):
+        super().draw()
         width = 20
         height = 100
 
@@ -26,6 +27,7 @@ class IntSliderPage(Page):
         self.value = 88
 
     def draw(self):
+        super().draw()
         width = 20
         height = 100
 

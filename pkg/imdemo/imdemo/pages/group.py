@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Group(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: item groups")
 
         imgui.begin_group()

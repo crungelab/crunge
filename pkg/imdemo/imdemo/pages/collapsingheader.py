@@ -8,6 +8,7 @@ class CollapsingHeader(Page):
         self.visible = True
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: collapsing header")
         expanded, self.visible = imgui.collapsing_header("Expand me!", self.visible)
 

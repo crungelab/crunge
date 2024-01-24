@@ -8,6 +8,7 @@ class Button(Page):
         self.message = ""
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: buttons")
 
         if imgui.button("Button 1"):
@@ -28,6 +29,7 @@ class ColorButton(Page):
         self.color_name = ''
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: color button")
         if imgui.color_button("Button 1", RED, 0, (10, 10)):
             self.color = RED
@@ -50,6 +52,7 @@ class RadioButtonPage(Page):
         self.radio_active = True
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         if imgui.radio_button("Radio button", self.radio_active):

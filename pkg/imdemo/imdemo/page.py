@@ -1,7 +1,9 @@
 from crunge import shell
+from crunge.shell.imgui import ImGuiView
 from crunge import imgui
 
-class Page(shell.View):
+#class Page(shell.View):
+class Page(ImGuiView):
     def __init__(self, window, name, title):
         super().__init__(window)
         self.window = window
@@ -19,11 +21,7 @@ class Page(shell.View):
         page.reset()
         return page
 
-    def on_draw(self):
-        #shell.start_render()
-
-        #imgui.new_frame()
-        
+    def draw(self):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
 
@@ -57,11 +55,7 @@ class Page(shell.View):
 
         imgui.set_next_window_pos((x, y), imgui.COND_ONCE)
         imgui.set_next_window_size((width, height), imgui.COND_ONCE)
-
-        self.draw()
         
-        #imgui.end_frame()
-
     def draw_navbar(self):
         #gui.set_next_window_pos((16, 32), imgui.COND_ONCE)
         imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.COND_ONCE)
@@ -103,6 +97,3 @@ class Page(shell.View):
                 imgui.end_menu()
 
             imgui.end_main_menu_bar()
-
-    def draw(self):
-        pass

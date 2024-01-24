@@ -6,11 +6,11 @@ from pyglet.window import key, mouse
 import moderngl
 
 from crunge import imgui
-from imgui.renderer import compute_framebuffer_scale
-from imgui.renderer.gl_base import OpenGLRendererBase
+from ...util import compute_framebuffer_scale
+from ...renderer import Renderer
 
 
-class ModernGLRenderer(OpenGLRendererBase):
+class ModernGLRenderer(Renderer):
 
     VERTEX_SHADER_SRC = """
         #version 330

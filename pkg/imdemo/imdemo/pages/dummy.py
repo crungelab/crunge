@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Dummy(Page):
     def draw(self):
+        super().draw()
         imgui.begin("Example: dummy elements")
 
         imgui.text("Some text with bullets:")

@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class ColorsPage(Page):
     def draw(self):
+        super().draw()
         style = imgui.get_style()
         
         imgui.begin("Colors")

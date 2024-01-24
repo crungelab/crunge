@@ -8,6 +8,7 @@ class SelectablePage(Page):
         self.selected = [False, False]
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         _, self.selected[0] = imgui.selectable(
             "1. I am selectable", self.selected[0]

@@ -5,6 +5,7 @@ from imdemo.page import Page
 
 class Bullet(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         for i in range(10):
@@ -15,6 +16,7 @@ class Bullet(Page):
 
 class BulletText(Page):
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.bullet_text("Bullet 1")
         imgui.bullet_text("Bullet 2")

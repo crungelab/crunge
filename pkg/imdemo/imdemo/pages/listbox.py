@@ -9,7 +9,8 @@ class ListboxPage(Page):
         self.options = OPTIONS
         self.current = 2
 
-    def draw(self):    
+    def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         clicked, self.current = imgui.list_box(
@@ -24,7 +25,8 @@ class CustomListboxPage(Page):
     def reset(self):
         self.selected = 'second'
 
-    def draw(self):    
+    def draw(self):
+        super().draw()
         imgui.begin(self.title)
 
         if imgui.begin_list_box("Custom List", (200, 100)):

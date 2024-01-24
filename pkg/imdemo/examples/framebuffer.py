@@ -93,7 +93,7 @@ class App(ludi.Window):
         super().__init__(800, 600, "Framebuffer Example", resizable=True)
         self.gui = MyGui(self)
 
-    def on_draw(self):
+    def draw(self):
         ludi.start_render()
         self.gui.render()
 

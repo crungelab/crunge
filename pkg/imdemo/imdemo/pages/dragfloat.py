@@ -8,6 +8,7 @@ class DragFloat(Page):
         self.value = 42.0
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag float")
         changed, self.value = imgui.drag_float(
             "Default", self.value,
@@ -23,6 +24,7 @@ class DragFloat2(Page):
         self.values = 88.0, 42.0
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag float 2")
         changed, self.values = imgui.drag_float2(
             "Default", self.values
@@ -38,6 +40,7 @@ class DragFloat3(Page):
         self.values = 88.0, 42.0, 69.0
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag float 3")
         changed, self.values = imgui.drag_float3(
             "Default", self.values
@@ -53,6 +56,7 @@ class DragFloat4(Page):
         self.values = 88.0, 42.0, 69.0, 0.0
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag float 4")
         changed, self.values = imgui.drag_float4(
             "Default", self.values

@@ -10,7 +10,7 @@ class App(ludi.Window):
         imgui.set_next_window_pos( (16, 32) )
         imgui.set_next_window_size( (512, 512) )
 
-    def on_draw(self):
+    def draw(self):
         ludi.start_render()
 
         imgui.new_frame()

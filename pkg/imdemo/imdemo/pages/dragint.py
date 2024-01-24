@@ -8,6 +8,7 @@ class DragInt(Page):
         self.value = 42
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag int")
         changed, self.value = imgui.drag_int("drag int", self.value,)
         imgui.text("Changed: %s, Value: %s" % (changed, self.value))
@@ -18,6 +19,7 @@ class DragInt2(Page):
         self.values = 88, 42
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag int 2")
         changed, self.values = imgui.drag_int2(
             "drag ints", self.values
@@ -30,6 +32,7 @@ class DragInt3(Page):
         self.values = 88, 42, 69
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag int 3")
         changed, self.values = imgui.drag_int3(
             "drag ints", self.values
@@ -42,6 +45,7 @@ class DragInt4(Page):
         self.values = 88, 42, 69, 0
 
     def draw(self):
+        super().draw()
         imgui.begin("Example: drag int 4")
         changed, self.values = imgui.drag_int4(
             "drag ints", self.values

@@ -10,6 +10,7 @@ class ImagePage(Page):
         self.texture = window.ctx.load_texture(image_path, flip=False)
 
     def draw(self):
+        super().draw()
         imgui.begin(self.title)
         imgui.image(self.texture.glo.value, self.texture.size)
         imgui.end()

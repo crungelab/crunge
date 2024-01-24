@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from crunge import imgui
 
-class WgpuRendererBase(ABC):
+class Renderer(ABC):
     def __init__(self):
         if not imgui.get_current_context():
             raise RuntimeError(
