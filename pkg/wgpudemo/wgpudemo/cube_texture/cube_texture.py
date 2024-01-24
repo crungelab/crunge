@@ -11,7 +11,7 @@ import glfw
 import numpy as np
 import imageio.v3 as iio
 
-from crunge.core import as_capsule
+from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 

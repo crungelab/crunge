@@ -1,3 +1,3 @@
--e ../core
+-e ../crunge
 -e ../wgpu
 -e ../gltf

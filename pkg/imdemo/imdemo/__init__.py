@@ -8,9 +8,9 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-import ludi
+from crunge import shell
 
-from crunge.core import as_capsule
+from crunge import as_capsule
 from crunge import sdl, wgpu
 import crunge.wgpu.utils as utils
 
@@ -97,7 +97,7 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
 
     return 1.0, 1.0
 
-class App(ludi.App):
+class App(shell.App):
     def __init__(self):
         super().__init__(1280, 640, "imgui Demo", resizable=True)
         #self.gui = LudiGui(self)

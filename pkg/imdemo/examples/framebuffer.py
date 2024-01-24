@@ -1,4 +1,4 @@
-import ludi
+from crunge import shell
 from crunge import imgui
 
 from crunge.imgui.impl.ludi import LudiGui

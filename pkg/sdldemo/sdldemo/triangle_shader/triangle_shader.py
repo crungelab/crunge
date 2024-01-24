@@ -4,7 +4,7 @@ import sys
 from loguru import logger
 
 from crunge import wgpu
-from crunge.core import as_capsule
+from crunge import as_capsule
 
 from ..common import Demo
 

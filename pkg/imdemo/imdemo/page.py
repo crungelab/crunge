@@ -1,7 +1,7 @@
-import ludi
+from crunge import shell
 from crunge import imgui
 
-class Page(ludi.View):
+class Page(shell.View):
     def __init__(self, window, name, title):
         super().__init__(window)
         self.window = window
@@ -20,7 +20,7 @@ class Page(ludi.View):
         return page
 
     def on_draw(self):
-        #ludi.start_render()
+        #shell.start_render()
 
         #imgui.new_frame()
         

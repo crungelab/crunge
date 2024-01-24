@@ -6,7 +6,7 @@ import glfw
 from glfw import _glfw as glfw_native
 
 from crunge import wgpu
-from crunge.core import as_capsule
+from crunge import as_capsule
 
 device: wgpu.Device = None
 queue: wgpu.Queue = None

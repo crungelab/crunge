@@ -1,7 +1,7 @@
 from pyglet import gl, clock
 from pyglet.window import key, mouse
 from ludi.gl import BufferDescription, Context
-import ludi
+from crunge import shell
 
 from crunge import imgui
 from imgui.renderer import compute_framebuffer_scale

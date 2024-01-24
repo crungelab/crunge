@@ -1,4 +1,4 @@
--e ../core
+-e ../crunge
 -e ../wgpu
 -e ../imgui
 -e ../sdl

@@ -4,7 +4,7 @@ import math
 import glm
 from pathlib import Path
 
-from crunge.core import as_capsule
+from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 

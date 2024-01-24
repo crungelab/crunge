@@ -1,12 +1,9 @@
-#[build-system]
-#requires = ["hatchling"]
-#build-backend = "hatchling.build"
-
-[tool.setuptools]
-packages = ["crunge", "crunge.core"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
-name = "crunge-core"
+name = "crunge"
 version = "0.1.0"
 description = 'Crunge Core'
 #readme = "README.md"
@@ -23,4 +20,9 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "loguru ~=0.7.2",
+  "numpy ~=1.26.3",
+  "PyGLM ==2.7.1",
 ]

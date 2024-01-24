@@ -2,7 +2,7 @@ import sys, time
 from loguru import logger
 
 
-from crunge.core import as_capsule
+from crunge import as_capsule
 
 from crunge import sdl
 

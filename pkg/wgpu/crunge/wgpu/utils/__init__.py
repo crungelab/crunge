@@ -3,7 +3,7 @@ import numpy as np
 
 from crunge import wgpu
 from crunge.wgpu.constants import *
-from crunge.core import as_capsule
+from crunge import as_capsule
 
 
 def divround_down(value, step):

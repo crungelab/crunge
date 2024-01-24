@@ -5,7 +5,7 @@ import numpy as np
 from loguru import logger
 
 from crunge import wgpu
-from crunge.core import as_capsule
+from crunge import as_capsule
 from crunge.wgpu import BackendType
 
 
