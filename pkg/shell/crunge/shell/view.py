@@ -7,8 +7,8 @@ from .widget import Widget
 from .layer import Layer
 
 class View(Widget):
-    def __init__(self, window: "Window") -> None:
-        super().__init__(window.width, window.height)
+    def __init__(self, window: "Window", children=[]) -> None:
+        super().__init__(window.width, window.height, children)
         self.window = window
         self.layers: Dict[str, Layer] = {}
 

@@ -76,6 +76,7 @@ class ImGuiLayer(Layer):
         self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+        super().on_mouse_motion(event)
         x, y = event.x, event.y
         self.io.add_mouse_pos_event(x, y)
         self.last_mouse = glm.vec2(x, y)

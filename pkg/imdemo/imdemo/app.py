@@ -16,7 +16,7 @@ from crunge import imgui
 
 class App(shell.App):
     def __init__(self):
-        super().__init__(1280, 640, "imgui Demo", resizable=True)
+        super().__init__(1280, 640, "ImGui Demo", resizable=True)
         self.pages = {}
         self.show_metrics = False
         self.show_style_editor = False
@@ -56,4 +56,3 @@ class App(shell.App):
         context = shell.RenderContext(self.device, backbuffer, self.depth_stencil_view)
         self.render(context)
         self.swap_chain.present()
-        #self.end_frame()

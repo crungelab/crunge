@@ -1,21 +1,22 @@
-import os, sys
 import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-from pathlib import Path
+import time
+import sys
 
 from loguru import logger
+import numpy as np
 import glm
 
-from crunge import shell
-
 from crunge import as_capsule
-from crunge import sdl, wgpu
+
+from crunge import sdl
+
+from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
-from ..window import Window
-from ..render_context import RenderContext
+from ..common import Demo
 
 from .uniforms import (
     cast_matrix3,
@@ -23,6 +24,19 @@ from .uniforms import (
     cast_vec3,
     Uniforms,
 )
+
+"""
+struct ImDrawVert
+{
+    ImVec2  pos;
+    ImVec2  uv;
+    ImU32   col;
+};
+#else
+// You can override the vertex format layout by defining IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT in imconfig.h
+// The code expect ImVec2 pos (8 bytes), ImVec2 uv (8 bytes), ImU32 col (4 bytes)
+"""
+
 
 class ImDrawVert(Structure):
     _fields_ = [
@@ -86,46 +100,91 @@ fn main(in: VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
-class ImGuiRenderer:
-    def __init__(self, window: Window) -> None:
-        self.window = window
-        self.device = window.device
-        self.queue = window.queue
-        self.io = imgui.get_io()
 
-    @classmethod
-    def produce(cls, window: Window):
-        renderer = cls(window)
-        renderer.create()
-        return renderer
+def compute_framebuffer_scale(window_size, frame_buffer_size):
+    win_width, win_height = window_size
+    fb_width, fb_height = frame_buffer_size
 
-    def create(self):
-        self.create_device_objects()
-        self.refresh_font_texture()
+    if win_width != 0 and win_width != 0:
+        return fb_width / win_width, fb_height / win_height
+
+    return 1.0, 1.0
+
+
+class WImGuiDemo(Demo):
+    vertex_buffer: wgpu.Buffer = None
+    index_buffer: wgpu.Buffer = None
+
+    texture: wgpu.Texture = None
+    texture_view: wgpu.TextureView = None
+    sampler: wgpu.Sampler = None
+
+    def __init__(self):
+        super().__init__()
+
+        self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
+
+        self.context = imgui.create_context()
+        imgui.set_current_context(self.context)
+
+        imgui.style_colors_dark()
+
+        io = imgui.get_io()
+        self.io = io
+
+    def _set_pixel_ratio(self):
+        window_size = sdl.get_window_size(self.window)
+        self.io.display_size = window_size
+
+        framebuffer_size = sdl.get_window_size_in_pixels(self.window)
+        pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
+        self.io.display_framebuffer_scale = pixel_ratio
 
     def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
         self.create_pipeline()
 
-    def refresh_font_texture(self):
-        #pass
-        self.create_textures()
-        #self.io.fonts.set_tex_id(id(self.texture_view))
-        self.io.fonts.clear_tex_data()
+    def create_window(self):
+        super().create_window()
+        self._set_pixel_ratio()
 
-        '''
-        pixels, width, height, bpp = self.io.fonts.get_tex_data_as_rgba32()
-        # Old font texture will be GCed if exist
-        self._font_texture = self._ctx.texture((width, height), components=bpp, data=pixels)
-        # Need to convert ctype to python object.  Can't do it from the c++ side evidently ...
-        #self.io.fonts.tex_id = self._font_texture.glo
-        self.io.fonts.tex_id = self._font_texture.glo.value
-        self.io.fonts.clear_tex_data()
-        '''
+    '''
+    def on_cursor_enter(self, window, entered: int):
+        if entered:
+            self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
+        else:
+            last_mouse = self.io.mouse_pos
+            self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
+            self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
+    '''
+    def on_mouse_enter(self, event: sdl.WindowEvent):
+        super().on_mouse_enter(event)
+        self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
+
+    def on_mouse_leave(self, event: sdl.WindowEvent):
+        super().on_mouse_leave(event)
+        last_mouse = self.io.mouse_pos
+        self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
+        self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
+
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+        x, y = event.x, event.y
+        self.io.add_mouse_pos_event(x, y)
+        self.last_mouse = glm.vec2(x, y)
+
+    def on_mouse_button(self, event: sdl.MouseButtonEvent):
+        super().on_mouse_button(event)
+        button = event.button - 1 # SDL starts at 1, ImGui starts at 0
+        action = event.state == 1
+        if button < 3:
+            self.io.add_mouse_button_event(button, action)
+
+    def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
+        x, y = event.x, event.y
+        self.io.add_mouse_wheel_event(x, y)
 
     def create_buffers(self):
-        logger.debug("create_buffers")
         self.vertex_buffer = utils.create_buffer(
             self.device, "VERTEX", imgui.VERTEX_SIZE * 65536, wgpu.BufferUsage.VERTEX
         )
@@ -210,11 +269,14 @@ class ImGuiRenderer:
             wgpu.Extent3D(width, height, 1),
         )
 
+        # io.fonts.set_tex_id(id(self.texture_view))
+        # io.fonts.clear_tex_data()
+
     def create_pipeline(self):
         logger.debug("create_pipeline")
 
-        vs_module = self.window.create_shader_module(vs_shader_code)
-        fs_module = self.window.create_shader_module(fs_shader_code)
+        vs_module = self.create_shader_module(vs_shader_code)
+        fs_module = self.create_shader_module(fs_shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -414,9 +476,8 @@ class ImGuiRenderer:
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    #def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
-    def render(self, context: RenderContext):
-        #logger.debug("ImGuiRenderer.render")
+    def render(self, view: wgpu.TextureView):
+        # logger.debug("render")
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -445,7 +506,7 @@ class ImGuiRenderer:
         draw_data.scale_clip_rects(fb_scale)
 
         attachment = wgpu.RenderPassColorAttachment(
-            view=context.texture_view,
+            view=view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -469,3 +530,38 @@ class ImGuiRenderer:
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
+
+    def draw_buttons(self):
+        imgui.begin("Buttons")
+        imgui.button("Button 1")
+        imgui.button("Button 2")
+        imgui.end()
+
+    def draw_more_buttons(self):
+        imgui.begin("More Buttons")
+        imgui.button("Button 1")
+        imgui.button("Button 2")
+        imgui.end()
+
+    def frame(self):
+        # logger.debug("frame")
+        imgui.new_frame()
+
+        self.draw_buttons()
+        self.draw_more_buttons()
+        imgui.show_demo_window()
+        
+        imgui.end_frame()
+
+        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        backbuffer.set_label("Back Buffer Texture View")
+        self.render(backbuffer)
+        self.swap_chain.present()
+
+
+def main():
+    WImGuiDemo().run()
+
+
+if __name__ == "__main__":
+    main()

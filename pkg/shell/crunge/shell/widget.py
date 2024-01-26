@@ -6,11 +6,11 @@ from .dispatcher import Dispatcher
 from .render_context import RenderContext
 
 class Widget(Dispatcher):
-    def __init__(self, width, height) -> None:
+    def __init__(self, width, height, children=[]) -> None:
         super().__init__()
         self.width = width
         self.height = height
-        self.children: List["Widget"] = []
+        self.children: List["Widget"] = children
 
     def add_child(self, child):
         self.children.append(child)

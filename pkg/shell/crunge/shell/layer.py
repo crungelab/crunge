@@ -12,3 +12,5 @@ class Layer(Widget):
         self.window = view.window
         self.name = name
 
+    def create(self):
+        pass
