@@ -40,7 +40,7 @@ class App(shell.App):
         logger.debug(f"show {name}")
         def callback(delta_time):
             entry = self.pages[name]
-            self.page = page = entry['klass'].create(self, name, entry['title'])
+            self.page = page = entry['klass'].produce(self, name, entry['title'])
             self.show_view(page)
         self.schedule_once(callback, 0)
             

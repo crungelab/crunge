@@ -3,11 +3,11 @@ import sys
 
 from loguru import logger
 
-from crunge import wgpu, imgui
+from crunge import wgpu
 from crunge import as_capsule
 from crunge.shell import RenderContext
 
-from ..demo import Demo, DemoView, DemoLayer
+from ..demo import Demo, DemoView
 
 shader_code = """
 @vertex
@@ -23,13 +23,15 @@ fn fs_main() -> @location(0) vec4<f32> {
 """
 
 
-class TriangleShaderLayer(DemoLayer):
+class TriangleShaderDemo(Demo):
+    depth_stencil_view: wgpu.TextureView = None
+
     def __init__(self):
         super().__init__()
 
-    def create(self, view):
-        super().create(view)
-        shader_module = self.window.create_shader_module(shader_code)
+        self.create_depth_stencil_view()
+
+        shader_module = self.create_shader_module(shader_code)
 
         colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
@@ -59,10 +61,17 @@ class TriangleShaderLayer(DemoLayer):
             fragment=fragmentState,
         )
 
-        self.pipeline = self.window.device.create_render_pipeline(descriptor)
+        self.pipeline = self.device.create_render_pipeline(descriptor)
+
+    def create_depth_stencil_view(self):
+        descriptor = wgpu.TextureDescriptor(
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            size=wgpu.Extent3D(self.kWidth, self.kHeight, 1),
+            format=wgpu.TextureFormat.DEPTH32_FLOAT,
+        )
+        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
     def render(self, context: RenderContext):
-        logger.debug("render")
         attachment = wgpu.RenderPassColorAttachment(
             view=context.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
@@ -85,35 +94,24 @@ class TriangleShaderLayer(DemoLayer):
         )
 
         commands = wgpu.CommandBuffer()
-        encoder: wgpu.CommandEncoder = context.device.create_command_encoder()
+        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.draw(3)
         pass_enc.end()
         commands = encoder.finish()
 
-        context.device.queue.submit(1, commands)
+        self.queue.submit(1, commands)
 
-
-class TriangleShaderDemo(Demo):
-    depth_stencil_view: wgpu.TextureView = None
-
-    def __init__(self, view: DemoView = None):
-        super().__init__(view=view)
-
-        self.create_depth_stencil_view()
-
-    def create_depth_stencil_view(self):
-        descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            size=wgpu.Extent3D(self.kWidth, self.kHeight, 1),
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
-        )
-        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
-
+    '''
+    def frame(self):
+        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        self.render(backbuffer, self.depth_stencil_view)
+        self.swap_chain.present()
+    '''
 
 def main():
-    TriangleShaderDemo(DemoView(layers=[TriangleShaderLayer()])).create().run()
+    TriangleShaderDemo().create().run()
 
 
 if __name__ == "__main__":

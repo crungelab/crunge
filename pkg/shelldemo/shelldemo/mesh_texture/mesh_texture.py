@@ -16,7 +16,7 @@ from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ..common import Demo
+from ..demo import Demo
 
 resource_root = Path(__file__).parent.parent.parent / "resources"
 

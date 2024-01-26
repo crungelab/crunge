@@ -14,7 +14,7 @@ from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ..common import Demo
+from ..demo import Demo
 
 from .data import vertex_data
 

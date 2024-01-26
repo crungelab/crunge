@@ -10,8 +10,8 @@ from .frame import Frame
 from .render_context import RenderContext
 
 class Window(Frame):
-    def __init__(self, width, height, title="", resizable=False):
-        super().__init__(width, height)
+    def __init__(self, width, height, title="", view=None, resizable=False):
+        super().__init__(width, height, view=view)
         self.name = title
 
         self.window = None
@@ -26,11 +26,13 @@ class Window(Frame):
         self.depth_stencil_view: wgpu.TextureView = None
 
     def create(self):
-        logger.debug("create")
+        #super().create()
+        logger.debug("Window.create")
         self.create_window()
         self.create_device_objects()
         self.create_swapchain()
-        return self
+        #return self
+        return super().create()
 
     def create_window(self):
         self.window = sdl.create_window(self.name, self.width, self.height, sdl.WindowFlags.RESIZABLE)
@@ -83,6 +85,10 @@ class Window(Frame):
         return shader_module
     
     def frame(self):
+        self.pre_draw()
+        self.draw()
+        self.post_draw()
+
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         context = RenderContext(self.device, backbuffer, self.depth_stencil_view)
         self.render(context)

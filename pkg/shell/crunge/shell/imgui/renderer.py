@@ -446,9 +446,10 @@ class ImGuiRenderer:
 
         attachment = wgpu.RenderPassColorAttachment(
             view=context.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
+            #load_op=wgpu.LoadOp.CLEAR,
+            load_op=wgpu.LoadOp.LOAD,
             store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
+            #clear_value=wgpu.Color(0, 0, 0, 1),
         )
 
         renderpass = wgpu.RenderPassDescriptor(

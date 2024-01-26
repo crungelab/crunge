@@ -1,0 +1,5 @@
+from crunge.shell import Layer
+
+class DemoLayer(Layer):
+    def __init__(self):
+        super().__init__("DemoLayer")

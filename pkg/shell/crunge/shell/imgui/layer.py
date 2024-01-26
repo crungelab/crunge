@@ -28,12 +28,14 @@ class ImGuiLayer(Layer):
     context = None
     renderer = None
 
-    def __init__(self, view):
-        super().__init__(view, "ImGuiLayer")
+    def __init__(self):
+        super().__init__("ImGuiLayer")
         logger.debug("ImGuiLayer.__init__")
         
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
+    def create(self, view: shell.View):
+        super().create(view)
         if not self.context:
             ImGuiLayer.context = imgui.create_context()
             imgui.set_current_context(self.context)
@@ -45,6 +47,7 @@ class ImGuiLayer(Layer):
             ImGuiLayer.renderer = ImGuiRenderer.produce(view.window)
 
         self._set_pixel_ratio()
+        return self
 
     def _set_pixel_ratio(self):
         window_size = self.window.get_size()

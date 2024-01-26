@@ -11,7 +11,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge.shell import RenderContext
 
-from ..common import Demo
+from ..demo import Demo
 
 index_data = np.array([0, 1, 2], dtype=np.uint32)
 
@@ -162,6 +162,8 @@ class TriangleIndexDemo(Demo):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
+
+        super().render(context)
 
     '''
     def frame(self):

@@ -24,7 +24,7 @@ class Dispatcher:
         return True
 
     def on_window(self, event: sdl.WindowEvent):
-        logger.debug("window event")
+        #logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_MOUSE_ENTER:
                 self.on_mouse_enter(event)

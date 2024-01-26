@@ -4,9 +4,8 @@ from crunge import imgui
 
 #class Page(shell.View):
 class Page(ImGuiView):
-    def __init__(self, window, name, title):
-        super().__init__(window)
-        self.window = window
+    def __init__(self, name, title):
+        super().__init__()
         self.name = name
         self.title = title
         self.fullwidth = True
@@ -16,8 +15,8 @@ class Page(ImGuiView):
         pass
 
     @classmethod
-    def create(self, app, name, title):
-        page = self(app, name, title)
+    def produce(cls, app, name, title):
+        page = cls(name, title).create(app)
         page.reset()
         return page
 

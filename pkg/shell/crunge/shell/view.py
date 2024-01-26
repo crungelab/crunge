@@ -3,14 +3,28 @@ from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
 if TYPE_CHECKING:
     from .window import Window
 
+from loguru import logger
+
 from .widget import Widget
 from .layer import Layer
 
 class View(Widget):
-    def __init__(self, window: "Window", children=[]) -> None:
-        super().__init__(window.width, window.height, children)
-        self.window = window
+    def __init__(self, layers=[]) -> None:
+        super().__init__()
+        self.window = None
         self.layers: Dict[str, Layer] = {}
+        for layer in layers:
+            self.add_layer(layer)
+
+    def create(self, window: "Window"):
+        logger.debug("View.create")
+        super().create()
+        self.window = window
+        self.width = window.width
+        self.height = window.height
+        for layer in self.layers.values():
+            layer.create(self)
+        return self
 
     def add_layer(self, layer: Layer):
         self.layers[layer.name] = layer

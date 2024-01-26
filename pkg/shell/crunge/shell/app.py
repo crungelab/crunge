@@ -7,19 +7,19 @@ from crunge import sdl
 from .window import Window
 from .view import View
 
+
 class App(Window):
-    def __init__(self, width, height, title="", resizable=False):
-        super().__init__(width, height, title, resizable)
-        self.view = None
+    def __init__(self, width, height, title="", view=None, resizable=False):
+        super().__init__(width, height, title, view=view, resizable=resizable)
         self.callbacks = []
 
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
         logger.info(f"SDL_Init: {success}")
         super().create_window()
-    
+
     def schedule_once(self, callback, delay):
-        #self.callbacks.append((callback, delay))
+        # self.callbacks.append((callback, delay))
         self.callbacks.append(callback)
 
     def run(self):
@@ -28,8 +28,8 @@ class App(Window):
 
         running = True
         while running:
-            #TODO: !wasAlreadyWaited
-            #self.instance.process_events()
+            # TODO: !wasAlreadyWaited
+            # self.instance.process_events()
 
             while event := sdl.poll_event():
                 if not self.dispatch(event):

@@ -16,7 +16,7 @@ import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
-from ..common import Demo
+from ..demo import Demo
 
 from .uniforms import (
     cast_matrix3,

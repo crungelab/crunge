@@ -10,7 +10,7 @@ from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ..common import Demo
+from ..demo import Demo
 
 vs_shader_code = """
 @vertex fn main(@location(0) pos : vec4<f32>) -> @builtin(position) vec4<f32> {
