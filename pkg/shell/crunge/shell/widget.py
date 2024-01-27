@@ -3,8 +3,9 @@ from typing import List
 from loguru import logger
 
 from .dispatcher import Dispatcher
+from .controller import Controller
 from .render_context import RenderContext
-
+from .gfx import Gfx
 
 class Widget(Dispatcher):
     def __init__(self, width=0, height=0) -> None:
@@ -12,6 +13,23 @@ class Widget(Dispatcher):
         self.width = width
         self.height = height
         self.children: List["Widget"] = []
+        self.controller: Controller = None
+
+    @property
+    def gfx(self):
+        return Gfx()
+
+    @property
+    def instance(self):
+        return self.gfx.instance
+
+    @property
+    def device(self):
+        return self.gfx.device
+
+    @property
+    def queue(self):
+        return self.gfx.queue
 
     def create(self):
         pass
@@ -27,6 +45,8 @@ class Widget(Dispatcher):
         for child in self.children:
             if not child.dispatch(event):
                 return False
+        if self.controller is not None:
+            return self.controller.dispatch(event) and super().dispatch(event)
         return super().dispatch(event)
 
     def pre_draw(self):
@@ -48,3 +68,10 @@ class Widget(Dispatcher):
         # logger.debug("Widget.render")
         for child in self.children:
             child.render(context)
+
+    def update(self, delta_time: float):
+        # logger.debug("Widget.update")
+        if self.controller is not None:
+            self.controller.update(delta_time)
+        for child in self.children:
+            child.update(delta_time)

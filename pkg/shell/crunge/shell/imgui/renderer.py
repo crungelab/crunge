@@ -14,8 +14,9 @@ import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
-from ..window import Window
+from ..renderer import Renderer
 from ..render_context import RenderContext
+from ..utils import singleton_producer
 
 from .uniforms import (
     cast_matrix3,
@@ -86,22 +87,24 @@ fn main(in: VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
-class ImGuiRenderer:
-    def __init__(self, window: Window) -> None:
-        self.window = window
-        self.device = window.device
-        self.queue = window.queue
+@singleton_producer
+class ImGuiRenderer(Renderer):
+    def __init__(self) -> None:
+        super().__init__()
         self.io = imgui.get_io()
 
+    '''
     @classmethod
-    def produce(cls, window: Window):
-        renderer = cls(window)
+    def produce(cls):
+        renderer = cls()
         renderer.create()
         return renderer
+    '''
 
     def create(self):
         self.create_device_objects()
         self.refresh_font_texture()
+        return self
 
     def create_device_objects(self):
         self.create_buffers()
@@ -213,8 +216,8 @@ class ImGuiRenderer:
     def create_pipeline(self):
         logger.debug("create_pipeline")
 
-        vs_module = self.window.create_shader_module(vs_shader_code)
-        fs_module = self.window.create_shader_module(fs_shader_code)
+        vs_module = self.gfx.create_shader_module(vs_shader_code)
+        fs_module = self.gfx.create_shader_module(fs_shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [

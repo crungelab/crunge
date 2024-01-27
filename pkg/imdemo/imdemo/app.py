@@ -15,8 +15,10 @@ import crunge.wgpu.utils as utils
 from crunge import imgui
 
 class App(shell.App):
+    kWidth = 1280
+    kHeight = 640
     def __init__(self):
-        super().__init__(1280, 640, "ImGui Demo", resizable=True)
+        super().__init__(self.kWidth, self.kHeight, "ImGui Demo", resizable=True)
         self.pages = {}
         self.show_metrics = False
         self.show_style_editor = False
@@ -53,6 +55,6 @@ class App(shell.App):
 
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         backbuffer.set_label("Back Buffer Texture View")
-        context = shell.RenderContext(self.device, backbuffer, self.depth_stencil_view)
+        context = shell.RenderContext(self.gfx.device, backbuffer, self.depth_stencil_view)
         self.render(context)
         self.swap_chain.present()

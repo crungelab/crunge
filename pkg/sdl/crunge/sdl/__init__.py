@@ -5,3 +5,6 @@ from ._sdl import *
 
 from .flags import WindowFlags
 from .properties import WindowProperties
+
+from .keycode import *
+from .scancode import *

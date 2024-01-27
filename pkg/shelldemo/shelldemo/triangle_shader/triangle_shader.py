@@ -29,7 +29,7 @@ class TriangleShaderLayer(DemoLayer):
 
     def create(self, view):
         super().create(view)
-        shader_module = self.window.create_shader_module(shader_code)
+        shader_module = self.gfx.create_shader_module(shader_code)
 
         colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
@@ -62,7 +62,7 @@ class TriangleShaderLayer(DemoLayer):
         self.pipeline = self.window.device.create_render_pipeline(descriptor)
 
     def render(self, context: RenderContext):
-        logger.debug("render")
+        #logger.debug("render")
         attachment = wgpu.RenderPassColorAttachment(
             view=context.texture_view,
             load_op=wgpu.LoadOp.CLEAR,

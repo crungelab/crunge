@@ -11,6 +11,7 @@ from .view import View
 class App(Window):
     def __init__(self, width, height, title="", view=None, resizable=False):
         super().__init__(width, height, title, view=view, resizable=resizable)
+        self.running = False
         self.callbacks = []
 
     def create_window(self):
@@ -22,18 +23,21 @@ class App(Window):
         # self.callbacks.append((callback, delay))
         self.callbacks.append(callback)
 
+    def quit(self):
+        self.running = False
+
     def run(self):
         last_time = time.perf_counter()
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
-        running = True
-        while running:
+        self.running = True
+        while self.running:
             # TODO: !wasAlreadyWaited
             # self.instance.process_events()
 
             while event := sdl.poll_event():
                 if not self.dispatch(event):
-                    running = False
+                    self.running = False
 
             now = time.perf_counter()
             frame_time = now - last_time
@@ -53,3 +57,7 @@ class App(Window):
             for callback in self.callbacks:
                 callback(frame_time)
             self.callbacks.clear()
+
+            self.update(frame_time)
+
+        #self.device.destroy()

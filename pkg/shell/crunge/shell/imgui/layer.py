@@ -43,9 +43,12 @@ class ImGuiLayer(Layer):
 
         self.io = imgui.get_io()
         # Need to create context before creating renderer
+        '''
         if not self.renderer:
-            ImGuiLayer.renderer = ImGuiRenderer.produce(view.window)
-
+            #ImGuiLayer.renderer = ImGuiRenderer.produce()
+            ImGuiLayer.renderer = ImGuiRenderer()
+        '''
+        self.renderer = ImGuiRenderer()
         self._set_pixel_ratio()
         return self
 
@@ -65,9 +68,11 @@ class ImGuiLayer(Layer):
         #logger.debug("ImGuiLayer.post_draw")
         imgui.end_frame()
 
+    '''
     def render(self, context: shell.RenderContext):
         self.renderer.render(context)
-    
+    '''
+
     def on_mouse_enter(self, event: sdl.WindowEvent):
         super().on_mouse_enter(event)
         self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)

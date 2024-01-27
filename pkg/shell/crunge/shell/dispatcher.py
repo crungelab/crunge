@@ -13,6 +13,8 @@ class Dispatcher:
                 return False
             case sdl.WindowEvent:
                 self.on_window(event)
+            case sdl.KeyboardEvent:
+                self.on_key(event)
             case sdl.MouseMotionEvent:
                 self.on_mouse_motion(event)
             case sdl.MouseButtonEvent:
@@ -32,6 +34,9 @@ class Dispatcher:
                 self.on_mouse_leave(event)
             case _:
                 pass
+    
+    def on_key(self, event: sdl.KeyboardEvent):
+        logger.debug(f"key: {event.keysym.sym}")
 
     def on_mouse_enter(self, event: sdl.WindowEvent):
         logger.debug("mouse enter")

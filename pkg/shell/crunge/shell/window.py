@@ -16,13 +16,6 @@ class Window(Frame):
 
         self.window = None
         
-        self.instance = wgpu.create_instance()
-        self.adapter = self.instance.request_adapter()
-        self.device = self.adapter.create_device()
-        self.device.set_label("Primary Device")
-        self.device.enable_logging()
-        self.queue = self.device.get_queue()
-
         self.depth_stencil_view: wgpu.TextureView = None
 
     def create(self):
@@ -78,12 +71,14 @@ class Window(Frame):
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
+    '''
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
         wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module
-    
+    '''
+
     def frame(self):
         self.pre_draw()
         self.draw()

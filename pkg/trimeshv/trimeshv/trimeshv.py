@@ -12,7 +12,7 @@ import trimeshv.globals
 from .scene_builder import SceneBuilder
 from .viewer import Viewer
 
-resource_root = Path(__file__).parent.parent / "resources"
+resource_root = Path(__file__).parent.parent.parent.parent / "resources"
 
 class TrimeshV:
     def __init__(self):

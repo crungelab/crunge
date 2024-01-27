@@ -85,7 +85,7 @@ class TriangleIndexDemo(Demo):
         self.create_pipeline()
 
     def create_pipeline(self):
-        shader_module = self.create_shader_module(shader_code)
+        shader_module = self.gfx.create_shader_module(shader_code)
 
         # Pipeline creation
 
