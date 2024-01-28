@@ -232,7 +232,6 @@ class MeshBuilder(NodeBuilder):
                     operation=wgpu.BlendOperation.ADD,
                     src_factor=wgpu.BlendFactor.ONE,
                     dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-                    #dst_factor=wgpu.BlendFactor.ONE,
                 ),
                 color = wgpu.BlendComponent(
                     operation=wgpu.BlendOperation.ADD,
@@ -243,8 +242,7 @@ class MeshBuilder(NodeBuilder):
 
         colorTargetState = wgpu.ColorTargetState(
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            #TODO: Something is wrong with the blend state
-            #blend=blend_state,
+            blend=blend_state,
             write_mask=wgpu.ColorWriteMask.ALL,
             )
 

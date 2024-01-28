@@ -1,5 +1,4 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import c_float, sizeof
 import time
 import sys
 
@@ -9,47 +8,10 @@ import numpy as np
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.shell import RenderContext
 
 from ..demo import Demo
 
-index_data = np.array([0, 1, 2], dtype=np.uint32)
-
-vertex_data = np.array(
-    [
-        0.0,
-        0.5,
-        0.0,
-        1.0,
-
-        1.0,
-        0.0,
-        0.0,
-        1.0,
-
-        -0.5,
-        -0.5,
-        0.0,
-        1.0,
-
-        0.0,
-        1.0,
-        0.0,
-        1.0,
-
-        0.5,
-        -0.5,
-        0.0,
-        1.0,
-        
-        0.0,
-        0.0,
-        1.0,
-        1.0,
-    ],
-    dtype=np.float32,
-)
-
+from .data import vertex_data
 
 shader_code = """
 struct VertexInput {
@@ -74,11 +36,10 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 """
 
 
-class TriangleIndexDemo(Demo):
+class QuadVertexDemo(Demo):
     depth_stencil_view: wgpu.TextureView = None
 
     vertex_buffer: wgpu.Buffer = None
-    index_buffer: wgpu.Buffer = None
 
     kWidth = 1024
     kHeight = 768
@@ -89,6 +50,11 @@ class TriangleIndexDemo(Demo):
         self.create_buffers()
         self.create_pipeline()
 
+    def create_buffers(self):
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
+        )
+
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
 
@@ -97,18 +63,18 @@ class TriangleIndexDemo(Demo):
         vertAttributes = wgpu.VertexAttributes(
             [
                 wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4, offset=0, shader_location=0
+                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
                 ),
                 wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=4 * sizeof(c_float),
+                    format=wgpu.VertexFormat.FLOAT32X3,
+                    offset=2 * sizeof(c_float),
                     shader_location=1,
                 ),
             ]
         )
 
         vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=8 * sizeof(c_float),
+            array_stride=5 * sizeof(c_float),
             attribute_count=2,
             attributes=vertAttributes[0],
         )
@@ -134,14 +100,6 @@ class TriangleIndexDemo(Demo):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-    def create_buffers(self):
-        self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
-        )
-        self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
-        )
-
     def draw(self):
         attachment = wgpu.RenderPassColorAttachment(
             view=self.ctx.texture_view,
@@ -161,25 +119,15 @@ class TriangleIndexDemo(Demo):
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        pass_enc.draw_indexed(3)
+        #pass_enc.draw(3)
+        pass_enc.draw(6)
         pass_enc.end()
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
 
-        super().draw()
-
-    '''
-    def frame(self):
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        self.render(backbuffer)
-        self.swap_chain.present()
-    '''
-
 def main():
-    TriangleIndexDemo().create().run()
+    QuadVertexDemo().create().run()
 
 
 if __name__ == "__main__":

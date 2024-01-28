@@ -321,12 +321,6 @@ class CubeTextureDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        '''
-        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.swap_chain.present()
-        '''
         super().frame()
 
 def main():
