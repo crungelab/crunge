@@ -7,6 +7,7 @@ from pathlib import Path
 from loguru import logger
 import numpy as np
 import imageio.v3 as iio
+import glm
 
 from crunge import as_capsule
 from crunge import wgpu
@@ -23,7 +24,7 @@ shader_code = """
 struct Uniforms {
   modelViewProjectionMatrix : mat4x4<f32>,
 }
-//@group(0) @binding(2) var<uniform> uniforms : Uniforms;
+@group(0) @binding(2) var<uniform> uniforms : Uniforms;
 
 struct VertexInput {
   @location(0) pos: vec4<f32>,
@@ -37,9 +38,8 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
-  //let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
-  //return VertexOutput(vert_pos, in.uv);
-    return VertexOutput(in.pos, in.uv);
+  let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
+  return VertexOutput(vert_pos, in.uv);
 }
 
 @fragment
@@ -134,6 +134,13 @@ class QuadTextureDemo(Demo):
                         view_dimension=wgpu.TextureViewDimension.E2D,
                     ),
                 ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=2,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM
+                    ),
+                ),
             ]
         )
 
@@ -161,13 +168,16 @@ class QuadTextureDemo(Demo):
             [
                 wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
                 wgpu.BindGroupEntry(binding=1, texture_view=view),
+                wgpu.BindGroupEntry(
+                    binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize
+                ),
             ]
         )
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=2,
+            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries[0],
         )
 
@@ -182,6 +192,13 @@ class QuadTextureDemo(Demo):
         )
         self.index_buffer = utils.create_buffer_from_ndarray(
             self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
+        )
+        self.uniformBufferSize = 4 * 16
+        self.uniformBuffer = utils.create_buffer(
+            self.device,
+            "Uniform buffer",
+            self.uniformBufferSize,
+            wgpu.BufferUsage.UNIFORM,
         )
 
     def create_textures(self):
@@ -236,47 +253,6 @@ class QuadTextureDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    '''
-    def create_textures(self):
-        descriptor = wgpu.TextureDescriptor(
-            dimension=wgpu.TextureDimension.E2D,
-            size=wgpu.Extent3D(1024, 1024, 1),
-            sample_count=1,
-            format=wgpu.TextureFormat.RGBA8_UNORM,
-            mip_level_count=1,
-            usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
-        )
-        self.texture = self.device.create_texture(descriptor)
-
-        self.sampler = self.device.create_sampler()
-
-        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint8)
-        for i in range(0, data.size):
-            data[i] = i % 253
-
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.ImageCopyTexture(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(data),
-            # Data size
-            data.size,
-            # The layout of the texture
-            wgpu.TextureDataLayout(
-                offset=0,
-                bytes_per_row=4 * 1024,
-                rows_per_image=1024,
-            ),
-            # The texture size
-            wgpu.Extent3D(1024, 1024, 1),
-        )
-    '''
-
     def draw(self):
         attachment = wgpu.RenderPassColorAttachment(
             view=self.ctx.texture_view,
@@ -304,6 +280,38 @@ class QuadTextureDemo(Demo):
 
         self.queue.submit(1, commands)
 
+    def frame(self):
+        model = glm.mat4(1.0)  # Identity matrix
+        model = glm.translate(model, glm.vec3(400, 300, 0))
+        model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
+        model = glm.scale(model, glm.vec3(200, 200, 1))
+        view = glm.mat4(1.0)  # Identity matrix
+
+        # Assuming you have viewport_width and viewport_height
+        viewport_width = self.kWidth
+        viewport_height = self.kHeight
+
+        ortho_left = 0
+        ortho_right = viewport_width
+        ortho_bottom = 0
+        ortho_top = viewport_height
+        ortho_near = -1  # Near clipping plane
+        ortho_far = 1    # Far clipping plane
+
+        projection = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
+        #projection = glm.ortho(0.0, viewport_width, viewport_height, 0.0, -1.0, 1.0)
+        #projection = glm.ortho(0, viewport_width, viewport_height, 0, 0, 1)
+
+
+        transform = projection * view * model
+
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            as_capsule(glm.value_ptr(transform)),
+            self.uniformBufferSize,
+        )
+        super().frame()
 
 def main():
     QuadTextureDemo().create().run()
