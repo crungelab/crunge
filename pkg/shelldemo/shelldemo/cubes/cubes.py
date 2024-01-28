@@ -61,6 +61,8 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 
 shader_code = shader_code.replace("{{NUM_INSTANCES}}", str(num_instances))
 
+#logger.debug(shader_code)
+#exit()
 
 class CubesDemo(Demo):
     depth_stencil_view: wgpu.TextureView = None
@@ -73,19 +75,6 @@ class CubesDemo(Demo):
 
     def __init__(self):
         super().__init__()
-        """
-        std::array<dusk::Mat4, num_instances> model_matrices;
-        std::array<dusk::Mat4, num_instances> mvp_matrices;
-        """
-        """
-        self.model_matrices = np.empty(num_instances, dtype=glm.mat4)
-        for i in range(num_instances):
-            self.model_matrices[i] = glm.mat4(1.0)
-
-        self.mvp_matrices = np.empty(num_instances, dtype=glm.mat4)
-        for i in range(num_instances):
-            self.mvp_matrices[i] = glm.mat4(1.0)
-        """
         self.model_matrices = glm.array.zeros(num_instances, glm.mat4)
         for i in range(num_instances):
             self.model_matrices[i] = glm.mat4(1.0)
@@ -94,7 +83,7 @@ class CubesDemo(Demo):
         for i in range(num_instances):
             self.mvp_matrices[i] = glm.mat4(1.0)
 
-        step = 4
+        step = 4.0
         half_x = (x_count / 2) + 0.5
         half_y = (y_count / 2) + 0.5
 
@@ -103,20 +92,6 @@ class CubesDemo(Demo):
                 self.model_matrices[(x * y_count) + y] = glm.translate(
                     glm.mat4(1), glm.vec3(step * (x - half_x), step * (y - half_y), 0)
                 )
-        """
-        constexpr float step = 4.f;
-
-        float half_x = (x_count / 2.f) + .5f;
-        float half_y = (y_count / 2.f) + .5f;
-
-        // Initialize matrix data for each cube instance
-        for (size_t x = 0; x < x_count; x++) {
-            for (size_t y = 0; y < y_count; y++) {
-            model_matrices[(x * y_count) + y] = dusk::Mat4::Translation(dusk::Vec3(
-                step * (float(x) - half_x), step * (float(y) - half_y), 0));
-            }
-        }
-        """
 
         self.create_buffers()
 
@@ -219,7 +194,8 @@ class CubesDemo(Demo):
             viewMatrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE)
         )
         rotMatrix = glm.rotate(glm.mat4(1.0), math.degrees(30), WORLD_AXIS_X)
-        return self.projectionMatrix * viewMatrix * rotMatrix
+        #return self.projectionMatrix * viewMatrix * rotMatrix
+        return self.projectionMatrix * viewMatrix
 
     """
     auto update_transformation_matrices = [&]() {
@@ -243,6 +219,51 @@ class CubesDemo(Demo):
         }
     """
 
+    '''
+    auto update_transformation_matrices = [&]()
+    {
+        auto now_s = std::chrono::time_point_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now());
+        auto ms = float(now_s.time_since_epoch().count()) / 1000.f;
+
+        for (size_t x = 0; x < x_count; x++)
+        {
+            for (size_t y = 0; y < y_count; y++)
+            {
+                auto rotMatrix = glm::rotate(glm::mat4(1.0f), sinf(ms), glm::vec3(0, 1, 0));
+                rotMatrix = glm::rotate(rotMatrix, cosf(ms), glm::vec3(1, 0, 0));
+
+                auto movZ = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, sinf((float(x) + 0.5f) * ms)));
+
+                auto idx = (x * y_count) + y;
+                // mvp_matrices[idx] = projectionMatrix * viewMatrix * (model_matrices[idx] * movZ) * rotMatrix;
+                mvp_matrices[idx] = projectionMatrix * viewMatrix * (model_matrices[idx]) * rotMatrix;
+            }
+        }
+    };
+    '''
+    # TODO: This is screwed up somehow ...
+    def update_transformation_matrices(self):
+        now = time.time()
+        ms = round(now * 1000) / 1000
+        for x in range(x_count):
+            for y in range(y_count):
+                rotMatrix = glm.rotate(
+                    glm.mat4(1.0),
+                    math.sin(ms),
+                    glm.vec3(0, 1, 0),
+                )
+                movZ = glm.translate(
+                    glm.mat4(1.0), glm.vec3(0, 0, math.sin(x + 0.5) * ms)
+                )
+                idx = (x * y_count) + y
+                self.mvp_matrices[idx] = (
+                    self.transform_matrix
+                    * self.model_matrices[idx]
+                    * rotMatrix
+                )
+
+    """
     # TODO: This is screwed up somehow ...
     def update_transformation_matrices(self):
         now = time.time()
@@ -263,7 +284,7 @@ class CubesDemo(Demo):
                     * (self.model_matrices[idx] * movZ)
                     * rotMatrix
                 )
-
+    """
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
@@ -311,7 +332,7 @@ class CubesDemo(Demo):
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.uniformBindGroup)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.draw(self.kVertexCount)
+        pass_enc.draw(self.kVertexCount, num_instances)
         pass_enc.end()
         commands = encoder.finish()
 
@@ -319,10 +340,6 @@ class CubesDemo(Demo):
 
     def frame(self):
         self.update_transformation_matrices()
-        # for i in range(len(self.mvp_matrices)):
-        #    self.mvp_matrices[i] = self.transform_matrix
-        # print(self.mvp_matrices)
-        # exit()
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
@@ -330,12 +347,6 @@ class CubesDemo(Demo):
             self.uniformBufferSize,
         )
 
-        '''
-        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.swap_chain.present()
-        '''
         super().frame()
 
 def main():
