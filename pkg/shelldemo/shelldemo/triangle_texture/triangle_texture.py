@@ -78,8 +78,8 @@ class TriangleTextureDemo(Demo):
         self.create_buffers()
         self.create_textures()
 
-        vs_module = self.create_shader_module(vs_shader_code)
-        fs_module = self.create_shader_module(fs_shader_code)
+        vs_module = self.gfx.create_shader_module(vs_shader_code)
+        fs_module = self.gfx.create_shader_module(fs_shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -224,9 +224,9 @@ class TriangleTextureDemo(Demo):
             wgpu.Extent3D(1024, 1024, 1),
         )
 
-    def render(self, view: wgpu.TextureView):
+    def draw(self):
         attachment = wgpu.RenderPassColorAttachment(
-            view=view,
+            view=self.ctx.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -251,15 +251,16 @@ class TriangleTextureDemo(Demo):
 
         self.queue.submit(1, commands)
 
+    '''
     def frame(self):
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
         self.swap_chain.present()
-
+    '''
 
 def main():
-    TriangleTextureDemo().run()
+    TriangleTextureDemo().create().run()
 
 
 if __name__ == "__main__":

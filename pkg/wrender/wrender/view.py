@@ -7,20 +7,15 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from crunge import shell
-from crunge.shell import RenderContext
+from crunge.shell.imgui import ImGuiView
 
 from .constants import *
 from .base import Base
 from .scene import Scene
 from .camera import Camera
 
-class View(shell.View):
-    scene: Scene = None
-    #surface: wgpu.Surface = None
-    #swap_chain: wgpu.SwapChain = None
-    width: int = 0
-    height: int = 0
-
+#class View(shell.View):
+class View(ImGuiView):
     def __init__(self, scene: Scene, width: int, height: int) -> None:
         super().__init__()
         self.scene = scene
@@ -35,40 +30,12 @@ class View(shell.View):
             wgpu.TextureFormat.DEPTH24_PLUS,
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
-    '''
-    def create_from_wsd(self, wsd):
-        sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
-        self.surface = self.instance.create_surface(sd)
-        logger.debug(self.surface)
 
-        scDesc = wgpu.SwapChainDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            width=self.width,
-            height=self.height,
-            present_mode=wgpu.PresentMode.MAILBOX,
-        )
+    def draw(self):
+        #logger.debug("View.draw()")
 
-        self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
-        logger.debug(self.swap_chain)
-    '''
-
-    '''
-    def frame(self):
-        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbufferView.set_label("Back Buffer Texture View")
-        self.draw(backbufferView)
-        self.swap_chain.present()
-    '''
-
-    def render(self, context: RenderContext):
-        #logger.debug("View.render()")
-        #logger.debug(context)
-        #exit()
-        #self.camera.update()
-        
         attachment = wgpu.RenderPassColorAttachment(
-            view=context.texture_view,
+            view=self.ctx.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),

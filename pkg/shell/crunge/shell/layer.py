@@ -22,10 +22,20 @@ class Layer(Widget):
         self.width = view.width
         self.height = view.height
 
-    def render(self, context: RenderContext):
+    def pre_draw(self):
         if self.renderer is not None:
-            self.renderer.render(context)
-        super().render(context)
+            self.renderer.pre_draw()
+        super().pre_draw()
+
+    def draw(self):
+        if self.renderer is not None:
+            self.renderer.draw()
+        super().draw()
+
+    def post_draw(self):
+        if self.renderer is not None:
+            self.renderer.post_draw()
+        super().post_draw()
 
     @property
     def window(self):

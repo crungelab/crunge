@@ -66,7 +66,7 @@ class CubeDemo(Demo):
         self.create_pipeline()
 
     def create_pipeline(self):
-        shader_module = self.create_shader_module(shader_code)
+        shader_module = self.gfx.create_shader_module(shader_code)
 
         # Pipeline creation
 
@@ -172,9 +172,9 @@ class CubeDemo(Demo):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def render(self, view: wgpu.TextureView):
+    def draw(self):
         attachment = wgpu.RenderPassColorAttachment(
-            view=view,
+            view=self.ctx.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
@@ -214,14 +214,16 @@ class CubeDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
+        '''
         backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
         self.swap_chain.present()
-
+        '''
+        super().frame()
 
 def main():
-    CubeDemo().run()
+    CubeDemo().create().run()
 
 
 if __name__ == "__main__":

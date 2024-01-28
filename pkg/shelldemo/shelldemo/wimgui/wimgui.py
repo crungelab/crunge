@@ -124,8 +124,8 @@ class WImGuiDemo(Demo):
 
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
-        self.context = imgui.create_context()
-        imgui.set_current_context(self.context)
+        self.imgui_context = imgui.create_context()
+        imgui.set_current_context(self.imgui_context)
 
         imgui.style_colors_dark()
 
@@ -275,8 +275,8 @@ class WImGuiDemo(Demo):
     def create_pipeline(self):
         logger.debug("create_pipeline")
 
-        vs_module = self.create_shader_module(vs_shader_code)
-        fs_module = self.create_shader_module(fs_shader_code)
+        vs_module = self.gfx.create_shader_module(vs_shader_code)
+        fs_module = self.gfx.create_shader_module(fs_shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -476,7 +476,7 @@ class WImGuiDemo(Demo):
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    def render(self, view: wgpu.TextureView):
+    def post_draw(self):
         # logger.debug("render")
         imgui.render()
         io = imgui.get_io()
@@ -506,7 +506,7 @@ class WImGuiDemo(Demo):
         draw_data.scale_clip_rects(fb_scale)
 
         attachment = wgpu.RenderPassColorAttachment(
-            view=view,
+            view=self.ctx.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -553,14 +553,16 @@ class WImGuiDemo(Demo):
         
         imgui.end_frame()
 
+        '''
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
         self.swap_chain.present()
-
+        '''
+        super().frame()
 
 def main():
-    WImGuiDemo().run()
+    WImGuiDemo().create().run()
 
 
 if __name__ == "__main__":

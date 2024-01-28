@@ -1,15 +1,19 @@
 from .gfx import Gfx
 from .render_context import RenderContext
-
-class Renderer:
+from .base import Base
+class Renderer(Base):
     def __init__(self) -> None:
-        self.instance = self.gfx.instance
-        self.device = self.gfx.device
-        self.queue = self.gfx.queue
+        super().__init__()
 
     @property
     def gfx(self):
         return Gfx()
 
-    def render(self, context: RenderContext):
+    def pre_draw(self):
+        pass
+
+    def draw(self):
+        pass
+
+    def post_draw(self):
         pass

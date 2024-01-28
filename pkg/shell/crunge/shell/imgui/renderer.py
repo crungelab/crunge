@@ -417,9 +417,8 @@ class ImGuiRenderer(Renderer):
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    #def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
-    def render(self, context: RenderContext):
-        #logger.debug("ImGuiRenderer.render")
+    def post_draw(self):
+        #logger.debug("ImGuiRenderer.post_draw")
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -448,7 +447,7 @@ class ImGuiRenderer(Renderer):
         draw_data.scale_clip_rects(fb_scale)
 
         attachment = wgpu.RenderPassColorAttachment(
-            view=context.texture_view,
+            view=self.ctx.texture_view,
             #load_op=wgpu.LoadOp.CLEAR,
             load_op=wgpu.LoadOp.LOAD,
             store_op=wgpu.StoreOp.STORE,

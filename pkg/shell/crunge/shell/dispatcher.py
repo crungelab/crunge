@@ -2,7 +2,9 @@ from crunge import sdl
 
 from loguru import logger
 
-class Dispatcher:
+from .base import Base
+
+class Dispatcher(Base):
     def __init__(self) -> None:
         pass
 

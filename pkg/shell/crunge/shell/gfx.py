@@ -6,7 +6,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from .utils import singleton
-
+from . import globals
 
 @singleton
 class Gfx:
@@ -17,6 +17,7 @@ class Gfx:
         self.device.set_label("Primary Device")
         self.device.enable_logging()
         self.queue = self.device.get_queue()
+        globals.set_gfx(self)
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
         wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)

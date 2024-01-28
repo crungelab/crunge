@@ -8,6 +8,7 @@ import crunge.wgpu.utils as utils
 
 from .frame import Frame
 from .render_context import RenderContext
+from . import globals
 
 class Window(Frame):
     def __init__(self, width, height, title="", view=None, resizable=False):
@@ -16,7 +17,8 @@ class Window(Frame):
 
         self.window = None
         
-        self.depth_stencil_view: wgpu.TextureView = None
+        self.context: RenderContext = RenderContext()
+        globals.set_current_window(self)
 
     def create(self):
         #super().create()
@@ -71,20 +73,11 @@ class Window(Frame):
         self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
         logger.debug(self.swap_chain)
 
-    '''
-    def create_shader_module(self, code: str) -> wgpu.ShaderModule:
-        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
-        sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
-        shader_module = self.device.create_shader_module(sm_descriptor)
-        return shader_module
-    '''
-
     def frame(self):
+        self.context.texture_view = self.swap_chain.get_current_texture_view()
+
         self.pre_draw()
         self.draw()
         self.post_draw()
 
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        context = RenderContext(self.device, backbuffer, self.depth_stencil_view)
-        self.render(context)
         self.swap_chain.present()

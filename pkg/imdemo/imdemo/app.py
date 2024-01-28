@@ -45,16 +45,3 @@ class App(shell.App):
             self.page = page = entry['klass'].produce(self, name, entry['title'])
             self.show_view(page)
         self.schedule_once(callback, 0)
-            
-
-    def frame(self):
-        #logger.debug("frame")
-        self.pre_draw()
-        self.draw()
-        self.post_draw()
-
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        context = shell.RenderContext(self.gfx.device, backbuffer, self.depth_stencil_view)
-        self.render(context)
-        self.swap_chain.present()

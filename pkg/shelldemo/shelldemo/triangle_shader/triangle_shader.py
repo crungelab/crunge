@@ -61,17 +61,17 @@ class TriangleShaderLayer(DemoLayer):
 
         self.pipeline = self.window.device.create_render_pipeline(descriptor)
 
-    def render(self, context: RenderContext):
+    def draw(self):
         #logger.debug("render")
         attachment = wgpu.RenderPassColorAttachment(
-            view=context.texture_view,
+            view=self.ctx.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
         )
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=context.depth_stencil_view,
+            view=self.ctx.depth_stencil_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -85,14 +85,14 @@ class TriangleShaderLayer(DemoLayer):
         )
 
         commands = wgpu.CommandBuffer()
-        encoder: wgpu.CommandEncoder = context.device.create_command_encoder()
+        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.draw(3)
         pass_enc.end()
         commands = encoder.finish()
 
-        context.device.queue.submit(1, commands)
+        self.queue.submit(1, commands)
 
 
 class TriangleShaderDemo(Demo):
@@ -109,7 +109,8 @@ class TriangleShaderDemo(Demo):
             size=wgpu.Extent3D(self.kWidth, self.kHeight, 1),
             format=wgpu.TextureFormat.DEPTH32_FLOAT,
         )
-        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
+        #self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
+        self.context.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
 
 def main():

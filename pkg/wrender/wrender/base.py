@@ -1,3 +1,9 @@
+from crunge import shell
+
+class Base(shell.Base):
+    pass
+
+'''
 from crunge.shell.gfx import Gfx
 
 class Base:
@@ -15,3 +21,4 @@ class Base:
     @property
     def device(self):
         return self.gfx.device
+'''

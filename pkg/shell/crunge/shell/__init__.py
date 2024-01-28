@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
+from .base import Base
 from .controller import Controller
 from .window import Window
 from .app import App

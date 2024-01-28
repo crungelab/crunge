@@ -63,10 +63,12 @@ class ImGuiLayer(Layer):
     def pre_draw(self):
         #logger.debug("ImGuiLayer.pre_draw")
         imgui.new_frame()
+        super().pre_draw()
 
     def post_draw(self):
         #logger.debug("ImGuiLayer.post_draw")
         imgui.end_frame()
+        super().post_draw()
 
     '''
     def render(self, context: shell.RenderContext):
