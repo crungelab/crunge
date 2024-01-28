@@ -2,9 +2,11 @@ import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
 import sys
+from pathlib import Path
 
 from loguru import logger
 import numpy as np
+import imageio.v3 as iio
 
 from crunge import as_capsule
 from crunge import wgpu
@@ -12,20 +14,38 @@ import crunge.wgpu.utils as utils
 
 from ..demo import Demo
 
-vs_shader_code = """
-@vertex fn main(@location(0) pos : vec4<f32>) -> @builtin(position) vec4<f32> {
-    return pos;
-}
-"""
+resource_root = Path(__file__).parent.parent.parent / "resources"
 
-fs_shader_code = """
+shader_code = """
 @group(0) @binding(0) var mySampler: sampler;
 @group(0) @binding(1) var myTexture : texture_2d<f32>;
 
-@fragment fn main(@builtin(position) FragCoord : vec4<f32>)
-                        -> @location(0) vec4<f32> {
-    return textureSample(myTexture, mySampler, FragCoord.xy / vec2<f32>(800.0, 600.0));
-    //return textureSample(myTexture, mySampler, FragCoord.xy);
+struct Uniforms {
+  modelViewProjectionMatrix : mat4x4<f32>,
+}
+//@group(0) @binding(2) var<uniform> uniforms : Uniforms;
+
+struct VertexInput {
+  @location(0) pos: vec4<f32>,
+  @location(1) uv: vec2<f32>,
+}
+
+struct VertexOutput {
+  @builtin(position) vertex_pos : vec4<f32>,
+  @location(0) uv: vec2<f32>,
+}
+
+@vertex
+fn vs_main(in : VertexInput) -> VertexOutput {
+  //let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
+  //return VertexOutput(vert_pos, in.uv);
+    return VertexOutput(in.pos, in.uv);
+}
+
+@fragment
+fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
+  let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);
+  return textureSample(myTexture, mySampler, uv);
 }
 """
 
@@ -58,8 +78,7 @@ class QuadTextureDemo(Demo):
         self.create_buffers()
         self.create_textures()
 
-        vs_module = self.gfx.create_shader_module(vs_shader_code)
-        fs_module = self.gfx.create_shader_module(fs_shader_code)
+        shader_module = self.gfx.create_shader_module(shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -85,15 +104,15 @@ class QuadTextureDemo(Demo):
         )
 
         fragmentState = wgpu.FragmentState(
-            module=fs_module,
-            entry_point="main",
+            module=shader_module,
+            entry_point="fs_main",
             target_count=1,
             targets=colorTargetState,
         )
 
         vertex_state = wgpu.VertexState(
-            module=vs_module,
-            entry_point="main",
+            module=shader_module,
+            entry_point="vs_main",
             buffer_count=1,
             buffers=vertBufferLayout,
         )
@@ -166,6 +185,59 @@ class QuadTextureDemo(Demo):
         )
 
     def create_textures(self):
+        path = resource_root / "textures" / "python_logo.png"
+        im = iio.imread(path)
+        shape = im.shape
+        logger.debug(shape)
+        im_width = shape[0]
+        im_height = shape[1]
+        # im_depth = shape[2]
+        im_depth = 1
+        # Has to be a multiple of 256
+        size = utils.divround_up(im.nbytes, 256)
+        logger.debug(size)
+
+        descriptor = wgpu.TextureDescriptor(
+            dimension=wgpu.TextureDimension.E2D,
+            size=wgpu.Extent3D(im_width, im_height, im_depth),
+            sample_count=1,
+            format=wgpu.TextureFormat.RGBA8_UNORM,
+            mip_level_count=1,
+            usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
+        )
+
+        self.texture = self.device.create_texture(descriptor)
+
+        self.sampler = self.device.create_sampler()
+
+        bytes_per_row = 4 * im_width
+        logger.debug(bytes_per_row)
+        rows_per_image = im_height
+
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.ImageCopyTexture(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
+            utils.as_capsule(im),
+            # Data size
+            size,
+            # The layout of the texture
+            wgpu.TextureDataLayout(
+                offset=0,
+                bytes_per_row=bytes_per_row,
+                rows_per_image=rows_per_image,
+            ),
+            # The texture size
+            wgpu.Extent3D(im_width, im_height, im_depth),
+        )
+
+    '''
+    def create_textures(self):
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
             size=wgpu.Extent3D(1024, 1024, 1),
@@ -203,6 +275,7 @@ class QuadTextureDemo(Demo):
             # The texture size
             wgpu.Extent3D(1024, 1024, 1),
         )
+    '''
 
     def draw(self):
         attachment = wgpu.RenderPassColorAttachment(
