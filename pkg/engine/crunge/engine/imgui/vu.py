@@ -15,7 +15,8 @@ import crunge.wgpu.utils as utils
 from crunge import imgui
 
 from ..renderer import Renderer
-from ..render_context import RenderContext
+#from ..render_context import RenderContext
+from ..vu import Vu
 from ..utils import singleton_producer
 
 from .uniforms import (
@@ -88,7 +89,7 @@ fn main(in: VertexOutput) -> @location(0) vec4<f32> {
 """
 
 @singleton_producer
-class ImGuiRenderer(Renderer):
+class ImGuiVu(Vu):
     def __init__(self) -> None:
         super().__init__()
         self.io = imgui.get_io()
@@ -417,7 +418,7 @@ class ImGuiRenderer(Renderer):
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    def post_draw(self):
+    def post_draw(self, renderer: Renderer):
         #logger.debug("ImGuiRenderer.post_draw")
         imgui.render()
         io = imgui.get_io()
@@ -447,7 +448,7 @@ class ImGuiRenderer(Renderer):
         draw_data.scale_clip_rects(fb_scale)
 
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             #load_op=wgpu.LoadOp.CLEAR,
             load_op=wgpu.LoadOp.LOAD,
             store_op=wgpu.StoreOp.STORE,

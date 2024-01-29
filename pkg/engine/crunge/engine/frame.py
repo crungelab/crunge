@@ -2,6 +2,7 @@ from loguru import logger
 
 from .widget import Widget
 from .view import View
+from .renderer import Renderer
 
 class Frame(Widget):
     def __init__(self, width=0, height=0, view: View = None) -> None:
@@ -20,7 +21,7 @@ class Frame(Widget):
         self.children.clear()
         self.add_child(view)
         
-    def draw(self):
+    def draw(self, renderer: Renderer):
         #return super().on_draw()
         if self.view is not None:
-            self.view.draw()
+            self.view.draw(renderer)

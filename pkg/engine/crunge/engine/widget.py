@@ -4,7 +4,9 @@ from loguru import logger
 
 from .dispatcher import Dispatcher
 from .controller import Controller
-from .render_context import RenderContext
+#from .render_context import RenderContext
+from .renderer import Renderer
+from .vu import Vu
 from .gfx import Gfx
 
 class Widget(Dispatcher):
@@ -14,6 +16,7 @@ class Widget(Dispatcher):
         self.height = height
         self.children: List["Widget"] = []
         self.controller: Controller = None
+        self.vu: Vu = None
 
     @property
     def gfx(self):
@@ -34,10 +37,10 @@ class Widget(Dispatcher):
     def create(self):
         pass
 
-    def add_child(self, child):
+    def add_child(self, child: "Widget"):
         self.children.append(child)
 
-    def remove_child(self, child):
+    def remove_child(self, child: "Widget"):
         self.children.remove(child)
 
     def dispatch(self, event):
@@ -49,25 +52,26 @@ class Widget(Dispatcher):
             return self.controller.dispatch(event) and super().dispatch(event)
         return super().dispatch(event)
 
-    def pre_draw(self):
+    def pre_draw(self, renderer: Renderer):
         # logger.debug("Widget.pre_draw")
+        if self.vu is not None:
+            self.vu.pre_draw(renderer)
         for child in self.children:
-            child.pre_draw()
+            child.pre_draw(renderer)
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         # logger.debug("Widget.draw")
+        if self.vu is not None:
+            self.vu.draw(renderer)
         for child in self.children:
-            child.draw()
+            child.draw(renderer)
 
-    def post_draw(self):
+    def post_draw(self, renderer: Renderer):
         # logger.debug("Widget.post_draw")
+        if self.vu is not None:
+            self.vu.post_draw(renderer)
         for child in self.children:
-            child.post_draw()
-
-    def render(self, context: RenderContext):
-        # logger.debug("Widget.render")
-        for child in self.children:
-            child.render(context)
+            child.post_draw(renderer)
 
     def update(self, delta_time: float):
         # logger.debug("Widget.update")

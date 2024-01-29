@@ -25,7 +25,9 @@ class Base:
     @property
     def wnd(self):
         return globals.current_window
-    
+
+    '''
     @property
     def ctx(self):
         return globals.current_context
+    '''

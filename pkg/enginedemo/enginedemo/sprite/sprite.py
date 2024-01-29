@@ -12,6 +12,7 @@ import glm
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
+from crunge.engine import Renderer
 
 from ..demo import Demo
 
@@ -62,7 +63,7 @@ vertex_data = np.array(
 )
 
 
-class QuadTextureDemo(Demo):
+class SpriteDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
     index_buffer: wgpu.Buffer = None
 
@@ -253,9 +254,9 @@ class QuadTextureDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -279,6 +280,8 @@ class QuadTextureDemo(Demo):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
+
+        super().draw(renderer)
 
     def frame(self):
         model = glm.mat4(1.0)  # Identity matrix
@@ -311,7 +314,7 @@ class QuadTextureDemo(Demo):
         super().frame()
 
 def main():
-    QuadTextureDemo().create().run()
+    SpriteDemo().create().run()
 
 
 if __name__ == "__main__":

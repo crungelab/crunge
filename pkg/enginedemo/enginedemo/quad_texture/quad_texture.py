@@ -9,6 +9,7 @@ import numpy as np
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
+from crunge.engine import Renderer
 
 from ..demo import Demo
 
@@ -204,9 +205,9 @@ class QuadTextureDemo(Demo):
             wgpu.Extent3D(1024, 1024, 1),
         )
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -230,6 +231,8 @@ class QuadTextureDemo(Demo):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
+
+        super().draw(renderer)
 
 
 def main():

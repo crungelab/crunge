@@ -11,6 +11,7 @@ import numpy as np
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
+from crunge.engine import Renderer
 
 from ..demo import Demo
 
@@ -172,9 +173,9 @@ class CubeDemo(Demo):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
@@ -206,6 +207,8 @@ class CubeDemo(Demo):
 
         self.queue.submit(1, commands)
 
+        super().draw(renderer)
+
     def frame(self):
         transform = self.transform_matrix
         self.device.queue.write_buffer(
@@ -214,12 +217,6 @@ class CubeDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        '''
-        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.swap_chain.present()
-        '''
         super().frame()
 
 def main():

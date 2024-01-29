@@ -1,3 +1,3 @@
 from .layer import ImGuiLayer
-from .renderer import ImGuiRenderer
+from .vu import ImGuiVu
 from .view import ImGuiView

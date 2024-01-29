@@ -9,47 +9,13 @@ import numpy as np
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import RenderContext
+from crunge.engine import Renderer
 
 from ..demo import Demo
 
 index_data = np.array([0, 1, 2], dtype=np.uint32)
 
-vertex_data = np.array(
-    [
-        0.0,
-        0.5,
-        0.0,
-        1.0,
-
-        1.0,
-        0.0,
-        0.0,
-        1.0,
-
-        -0.5,
-        -0.5,
-        0.0,
-        1.0,
-
-        0.0,
-        1.0,
-        0.0,
-        1.0,
-
-        0.5,
-        -0.5,
-        0.0,
-        1.0,
-        
-        0.0,
-        0.0,
-        1.0,
-        1.0,
-    ],
-    dtype=np.float32,
-)
-
+from .data import vertex_data
 
 shader_code = """
 struct VertexInput {
@@ -142,9 +108,9 @@ class TriangleIndexDemo(Demo):
             self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
         )
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -168,7 +134,7 @@ class TriangleIndexDemo(Demo):
 
         self.queue.submit(1, commands)
 
-        super().draw()
+        super().draw(renderer)
 
     '''
     def frame(self):

@@ -1,15 +1,10 @@
-from crunge import wgpu
-
-#from .gfx import Gfx
-#from .render_context import RenderContext
+from .renderer import Renderer
 from .base import Base
 
 
-class Renderer(Base):
+class Vu(Base):
     def __init__(self) -> None:
         super().__init__()
-        self.texture_view: wgpu.TextureView = None
-        self.depth_stencil_view: wgpu.TextureView = None
 
     def pre_draw(self, renderer: "Renderer"):
         pass

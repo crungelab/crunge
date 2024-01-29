@@ -7,14 +7,15 @@ from loguru import logger
 
 from .widget import Widget
 from .renderer import Renderer
-from .render_context import RenderContext
+from .vu import Vu
+#from .render_context import RenderContext
 
 class Layer(Widget):
-    def __init__(self, name: str, renderer: Renderer = None) -> None:
+    def __init__(self, name: str, vu: Vu = None) -> None:
         super().__init__()
         self.name = name
         self.view: "View" = None
-        self.renderer: Renderer = renderer
+        self.vu: Vu = vu
 
     def create(self, view: "View"):
         logger.debug("Layer.create")
@@ -22,21 +23,22 @@ class Layer(Widget):
         self.width = view.width
         self.height = view.height
 
-    def pre_draw(self):
-        if self.renderer is not None:
-            self.renderer.pre_draw()
-        super().pre_draw()
+    '''
+    def pre_draw(self, renderer: Renderer):
+        if self.vu is not None:
+            self.vu.pre_draw(renderer)
+        super().pre_draw(renderer)
 
-    def draw(self):
-        if self.renderer is not None:
-            self.renderer.draw()
-        super().draw()
+    def draw(self, renderer: Renderer):
+        if self.vu is not None:
+            self.vu.draw(renderer)
+        super().draw(renderer)
 
-    def post_draw(self):
-        if self.renderer is not None:
-            self.renderer.post_draw()
-        super().post_draw()
-
+    def post_draw(self, renderer: Renderer):
+        if self.vu is not None:
+            self.vu.post_draw(renderer)
+        super().post_draw(renderer)
+    '''
     @property
     def window(self):
         return self.view.window

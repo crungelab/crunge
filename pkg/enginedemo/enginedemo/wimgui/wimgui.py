@@ -11,10 +11,9 @@ from crunge import as_capsule
 
 from crunge import sdl
 
-from crunge import wgpu
+from crunge import wgpu, imgui
 import crunge.wgpu.utils as utils
-
-from crunge import imgui
+from crunge.engine import Renderer
 
 from ..demo import Demo
 
@@ -476,8 +475,20 @@ class WImGuiDemo(Demo):
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    def post_draw(self):
+    def pre_draw(self, renderer: Renderer):
+        imgui.new_frame()
+
+    def draw(self, renderer: Renderer):
+        # logger.debug("draw")
+        self.draw_buttons()
+        self.draw_more_buttons()
+        imgui.show_demo_window()
+
+        super().draw(renderer)
+
+    def post_draw(self, renderer: Renderer):
         # logger.debug("render")
+        imgui.end_frame()
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -506,7 +517,7 @@ class WImGuiDemo(Demo):
         draw_data.scale_clip_rects(fb_scale)
 
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -531,6 +542,8 @@ class WImGuiDemo(Demo):
 
         self.queue.submit(1, commands)
 
+        super().post_draw(renderer)
+
     def draw_buttons(self):
         imgui.begin("Buttons")
         imgui.button("Button 1")
@@ -542,24 +555,6 @@ class WImGuiDemo(Demo):
         imgui.button("Button 1")
         imgui.button("Button 2")
         imgui.end()
-
-    def frame(self):
-        # logger.debug("frame")
-        imgui.new_frame()
-
-        self.draw_buttons()
-        self.draw_more_buttons()
-        imgui.show_demo_window()
-        
-        imgui.end_frame()
-
-        '''
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        self.render(backbuffer)
-        self.swap_chain.present()
-        '''
-        super().frame()
 
 def main():
     WImGuiDemo().create().run()

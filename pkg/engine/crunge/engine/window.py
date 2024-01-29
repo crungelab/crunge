@@ -7,7 +7,8 @@ from crunge import sdl, wgpu
 import crunge.wgpu.utils as utils
 
 from .frame import Frame
-from .render_context import RenderContext
+#from .render_context import RenderContext
+from .renderer import Renderer
 from . import globals
 
 class Window(Frame):
@@ -17,7 +18,8 @@ class Window(Frame):
 
         self.window = None
         
-        self.context: RenderContext = RenderContext()
+        #self.context: RenderContext = RenderContext()
+        self.renderer: Renderer = Renderer()
         globals.set_current_window(self)
 
     def create(self):
@@ -74,10 +76,10 @@ class Window(Frame):
         logger.debug(self.swap_chain)
 
     def frame(self):
-        self.context.texture_view = self.swap_chain.get_current_texture_view()
+        self.renderer.texture_view = self.swap_chain.get_current_texture_view()
 
-        self.pre_draw()
-        self.draw()
-        self.post_draw()
+        self.pre_draw(self.renderer)
+        self.draw(self.renderer)
+        self.post_draw(self.renderer)
 
         self.swap_chain.present()

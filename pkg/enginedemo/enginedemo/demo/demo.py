@@ -4,8 +4,8 @@ from loguru import logger
 
 from crunge import as_capsule
 
-from crunge import sdl
-from crunge import engine
+from crunge import sdl, engine
+from crunge.engine import Renderer
 
 from crunge import wgpu, imgui
 import crunge.wgpu.utils as utils
@@ -25,9 +25,9 @@ class Demo(engine.App):
             resizable=True,
         )
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: button")
         imgui.button("Button 1")
         imgui.button("Button 2")
         imgui.end()
+        super().draw(renderer)

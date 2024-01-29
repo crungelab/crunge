@@ -4,16 +4,15 @@ from loguru import logger
 import glm
 
 from crunge import engine
+from crunge.engine import Renderer
 
 from crunge import as_capsule
-from crunge import sdl, wgpu
+from crunge import sdl, wgpu, imgui
 import crunge.wgpu.utils as utils
-
-from crunge import imgui
 
 from ..layer import Layer
 
-from .renderer import ImGuiRenderer
+from .vu import ImGuiVu
 
 def compute_framebuffer_scale(window_size, frame_buffer_size):
     win_width, win_height = window_size
@@ -26,7 +25,7 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
 
 class ImGuiLayer(Layer):
     context = None
-    renderer = None
+    vu = None
 
     def __init__(self):
         super().__init__("ImGuiLayer")
@@ -48,7 +47,7 @@ class ImGuiLayer(Layer):
             #ImGuiLayer.renderer = ImGuiRenderer.produce()
             ImGuiLayer.renderer = ImGuiRenderer()
         '''
-        self.renderer = ImGuiRenderer()
+        self.vu = ImGuiVu()
         self._set_pixel_ratio()
         return self
 
@@ -60,15 +59,15 @@ class ImGuiLayer(Layer):
         pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 
-    def pre_draw(self):
+    def pre_draw(self, renderer: Renderer):
         #logger.debug("ImGuiLayer.pre_draw")
         imgui.new_frame()
-        super().pre_draw()
+        super().pre_draw(renderer)
 
-    def post_draw(self):
+    def post_draw(self, renderer: Renderer):
         #logger.debug("ImGuiLayer.post_draw")
         imgui.end_frame()
-        super().post_draw()
+        super().post_draw(renderer)
 
     '''
     def render(self, context: engine.RenderContext):

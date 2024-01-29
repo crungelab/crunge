@@ -9,21 +9,11 @@ import numpy as np
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import RenderContext
+from crunge.engine import Renderer
 
 from ..demo import Demo
 
-index_data = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
-
-vertex_data = np.array(
-    [
-        -0.5, -0.5, 1.0, 0.0, 0.0, # Bottom left
-        0.5, -0.5, 0.0, 1.0, 0.0,  # Bottom right
-        0.5, 0.5, 0.0, 0.0, 1.0,   # Top right
-        -0.5, 0.5, 1.0, 1.0, 1.0   # Top left
-     ],
-    dtype=np.float32,
-)
+from .data import index_data, vertex_data
 
 shader_code = """
 struct VertexInput {
@@ -119,9 +109,9 @@ class QuadIndexDemo(Demo):
             self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
         )
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -139,22 +129,13 @@ class QuadIndexDemo(Demo):
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        # pass_enc.draw_indexed(3)
         pass_enc.draw_indexed(6)
         pass_enc.end()
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
 
-        super().draw()
-
-    """
-    def frame(self):
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        self.render(backbuffer)
-        self.swap_chain.present()
-    """
+        super().draw(renderer)
 
 
 def main():

@@ -15,6 +15,7 @@ import imageio.v3 as iio
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
+from crunge.engine import Renderer
 
 from ..demo import Demo
 
@@ -357,9 +358,9 @@ class MeshTextureDemo(Demo):
         )
         # exit()
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
@@ -391,7 +392,8 @@ class MeshTextureDemo(Demo):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
-        # exit()
+        
+        super().draw(renderer)
 
     def frame(self):
         transform = self.transform_matrix
@@ -401,12 +403,6 @@ class MeshTextureDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        '''
-        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.swap_chain.present()
-        '''
         super().frame()
 
 def main():

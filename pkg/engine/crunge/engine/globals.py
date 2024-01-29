@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 from crunge import wgpu
 
 from .gfx import Gfx
-from .render_context import RenderContext
+#from .render_context import RenderContext
 
 gfx: Gfx = None
 
@@ -24,15 +24,15 @@ def set_gfx(g: Gfx):
     global queue
     queue = g.queue
 
-current_context: RenderContext = None
+#current_context: RenderContext = None
 
 current_window: "Window" = None
 
 def set_current_window(w: "Window"):
     global current_window
     current_window = w
-    global current_context
-    current_context = w.context
+    #global current_context
+    #current_context = w.context
 
 def get_current_window() -> "Window":
     return current_window

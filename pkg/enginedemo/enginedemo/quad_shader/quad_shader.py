@@ -5,7 +5,7 @@ from loguru import logger
 
 from crunge import wgpu, imgui
 from crunge import as_capsule
-from crunge.engine import RenderContext
+from crunge.engine import Renderer
 
 from ..demo import Demo, DemoView, DemoLayer
 
@@ -79,17 +79,17 @@ class QuadShaderLayer(DemoLayer):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         #logger.debug("render")
         attachment = wgpu.RenderPassColorAttachment(
-            view=self.ctx.texture_view,
+            view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
         )
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=self.ctx.depth_stencil_view,
+            view=renderer.depth_stencil_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -112,6 +112,8 @@ class QuadShaderLayer(DemoLayer):
 
         self.queue.submit(1, commands)
 
+        super().draw(renderer)
+
 
 class QuadShaderDemo(Demo):
     def __init__(self, view: DemoView = None):
@@ -125,7 +127,7 @@ class QuadShaderDemo(Demo):
             size=wgpu.Extent3D(self.kWidth, self.kHeight, 1),
             format=wgpu.TextureFormat.DEPTH32_FLOAT,
         )
-        self.context.depth_stencil_view = self.device.create_texture(descriptor).create_view()
+        self.renderer.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
 
 def main():
