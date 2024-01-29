@@ -7,7 +7,6 @@ from crunge import sdl, wgpu
 import crunge.wgpu.utils as utils
 
 from .frame import Frame
-#from .render_context import RenderContext
 from .renderer import Renderer
 from . import globals
 
@@ -16,16 +15,21 @@ class Window(Frame):
         super().__init__(width, height, view=view)
         self.name = title
 
-        self.window = None
+        self.window: sdl.Window = None
         
-        #self.context: RenderContext = RenderContext()
-        self.renderer: Renderer = Renderer()
+        self.surface: wgpu.Surface = None
+        self.swap_chain: wgpu.SwapChain = None
+
+        #self.renderer: Renderer = Renderer()
+        self.renderer: Renderer = None
+
         globals.set_current_window(self)
 
     def create(self):
         #super().create()
         logger.debug("Window.create")
         self.create_window()
+        self.create_renderer()
         self.create_device_objects()
         self.create_swapchain()
         #return self
@@ -33,6 +37,10 @@ class Window(Frame):
 
     def create_window(self):
         self.window = sdl.create_window(self.name, self.width, self.height, sdl.WindowFlags.RESIZABLE)
+
+    def create_renderer(self):
+        self.renderer = Renderer()
+        #self.renderer.create(self)
 
     def get_size(self):
         return sdl.get_window_size(self.window)

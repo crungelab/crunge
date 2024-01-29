@@ -4,17 +4,20 @@ import sys
 from loguru import logger
 
 from crunge import as_capsule
-from crunge import wgpu, sdl, shell, imgui
+from crunge import wgpu, sdl, engine, imgui
+from crunge.engine import Renderer
 
 import crunge.wgpu.utils as utils
 
+from .scene_renderer import SceneRenderer
 from .scene import Scene
 from .view import View
 from .camera import Camera
 from .controller.camera import CameraController
 from .controller.camera.arcball import ArcballCameraController
 
-class Viewer(shell.App):
+class Viewer(engine.App):
+    renderer: SceneRenderer
     kWidth = 1024
     kHeight = 768
     
@@ -22,6 +25,9 @@ class Viewer(shell.App):
         super().__init__(self.kWidth, self.kHeight, "WRender", resizable=True)
         self.camera: Camera = None
         self.delta_time = 0
+
+    def create_renderer(self):
+        self.renderer = SceneRenderer()
 
     def create_view(self, scene: Scene):
         logger.debug("Creating view")
@@ -39,12 +45,12 @@ class Viewer(shell.App):
 
         self.run()
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: button")
         imgui.button("Button 1")
         imgui.button("Button 2")
         imgui.end()
-        super().draw()
+        super().draw(renderer)
 
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.keysym.sym

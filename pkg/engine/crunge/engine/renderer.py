@@ -1,7 +1,5 @@
 from crunge import wgpu
 
-#from .gfx import Gfx
-#from .render_context import RenderContext
 from .base import Base
 
 
@@ -10,12 +8,3 @@ class Renderer(Base):
         super().__init__()
         self.texture_view: wgpu.TextureView = None
         self.depth_stencil_view: wgpu.TextureView = None
-
-    def pre_draw(self, renderer: "Renderer"):
-        pass
-
-    def draw(self, renderer: "Renderer"):
-        pass
-
-    def post_draw(self, renderer: "Renderer"):
-        pass

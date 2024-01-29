@@ -116,15 +116,14 @@ class QuadShaderLayer(DemoLayer):
 
 
 class QuadShaderDemo(Demo):
-    def __init__(self, view: DemoView = None):
-        super().__init__(view=view)
-
+    def create_device_objects(self):
+        super().create_device_objects()
         self.create_depth_stencil_view()
 
     def create_depth_stencil_view(self):
         descriptor = wgpu.TextureDescriptor(
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            size=wgpu.Extent3D(self.kWidth, self.kHeight, 1),
+            size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.DEPTH32_FLOAT,
         )
         self.renderer.depth_stencil_view = self.device.create_texture(descriptor).create_view()

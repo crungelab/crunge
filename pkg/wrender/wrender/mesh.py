@@ -18,6 +18,7 @@ from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
+from .scene_renderer import SceneRenderer
 from .node import Node
 from .camera import Camera
 from .uniforms import (
@@ -61,7 +62,10 @@ class Mesh(Node):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def draw(self, camera: Camera, pass_enc: wgpu.RenderPassEncoder):
+    def draw(self, renderer: SceneRenderer):
+        camera = renderer.camera
+        pass_enc = renderer.pass_enc
+
         model_matrix = self.transform
         transform_matrix = camera.transform_matrix * self.transform
         normal_matrix = glm.transpose(glm.inverse(glm.mat3(model_matrix)))
@@ -109,5 +113,4 @@ class Mesh(Node):
         pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, self.index_format)
-        # pass_enc.draw_indexed(len(self.index_data)* 3)
         pass_enc.draw_indexed(len(self.index_data))

@@ -8,13 +8,11 @@ class ImagePage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
         image_path = self.wnd.resource_path / 'robocute.png'
-        #self.texture = window.ctx.load_texture(image_path, flip=False)
         self.texture = self.gfx.load_texture(image_path)
         self.texture_view = self.texture.create_view()
 
     def draw(self, renderer: Renderer):
         imgui.begin(self.title)
-        #imgui.image(self.texture.glo.value, self.texture.size)
         size = self.texture.get_width(), self.texture.get_height()
         imgui.image(self.texture_view, size)
         imgui.end()

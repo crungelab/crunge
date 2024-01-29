@@ -1,10 +1,10 @@
-from crunge import shell
+from crunge import engine
 
-class Base(shell.Base):
+class Base(engine.Base):
     pass
 
 '''
-from crunge.shell.gfx import Gfx
+from crunge.engine.gfx import Gfx
 
 class Base:
     def __init__(self) -> None:
