@@ -1,4 +1,6 @@
 import numpy as np
+from pathlib import Path
+import imageio.v3 as iio
 
 from loguru import logger
 
@@ -32,3 +34,26 @@ class Gfx:
         self, label: str, data: np.ndarray, usage: wgpu.BufferUsage
     ) -> wgpu.Buffer:
         return utils.create_buffer_from_ndarray(self.device, label, data, usage)
+
+    def load_texture(self, path: Path) -> wgpu.Texture:
+        im = iio.imread(path)
+        shape = im.shape
+        logger.debug(shape)
+        im_width = shape[0]
+        im_height = shape[1]
+        # im_depth = shape[2]
+        im_depth = 1
+        # Has to be a multiple of 256
+        size = utils.divround_up(im.nbytes, 256)
+        logger.debug(size)
+
+        descriptor = wgpu.TextureDescriptor(
+            dimension=wgpu.TextureDimension.E2D,
+            size=wgpu.Extent3D(im_width, im_height, im_depth),
+            sample_count=1,
+            format=wgpu.TextureFormat.RGBA8_UNORM,
+            mip_level_count=1,
+            usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
+        )
+
+        return self.device.create_texture(descriptor)

@@ -402,7 +402,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
     _sdl.def("pump_events", &SDL_PumpEvents
     , py::return_value_policy::automatic_reference);
 
-    py::enum_<SDL_eventaction>(_sdl, "eventaction", py::arithmetic())
+    py::enum_<SDL_eventaction>(_sdl, "SDL_eventaction", py::arithmetic())
         .value("ADDEVENT", SDL_eventaction::SDL_ADDEVENT)
         .value("PEEKEVENT", SDL_eventaction::SDL_PEEKEVENT)
         .value("GETEVENT", SDL_eventaction::SDL_GETEVENT)

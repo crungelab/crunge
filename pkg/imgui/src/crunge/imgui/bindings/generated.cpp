@@ -6,7 +6,6 @@
 #include "imgui_internal.h"
 //#include "imgui.h"
 
-//#include <cxbind/cxbind.h>
 #include <cxbind/cxbind.h>
 #include <crunge/imgui/conversions.h>
 
@@ -658,7 +657,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     _imgui.def("bullet", &ImGui::Bullet
     , py::return_value_policy::automatic_reference);
 
-    _imgui.def("age", &ImGui::Image
+    _imgui.def("image", &ImGui::Image
     , py::arg("user_texture_id")
     , py::arg("size")
     , py::arg("uv0") = ImVec2(0,0)
@@ -667,7 +666,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
     , py::arg("border_col") = ImVec4(0,0,0,0)
     , py::return_value_policy::automatic_reference);
 
-    _imgui.def("age_button", &ImGui::ImageButton
+    _imgui.def("image_button", &ImGui::ImageButton
     , py::arg("str_id")
     , py::arg("user_texture_id")
     , py::arg("size")

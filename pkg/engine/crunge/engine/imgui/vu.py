@@ -191,7 +191,8 @@ class ImGuiVu(Vu):
             wgpu.Extent3D(width, height, 1),
         )
 
-        #self.io.fonts.set_tex_id(id(self.texture_view))
+        #self.io.fonts.set_tex_id(as_capsule(self.texture_view))
+        self.io.fonts.set_tex_id(self.texture_view)
         self.io.fonts.clear_tex_data()
 
     def create_pipeline(self):
@@ -405,6 +406,29 @@ class ImGuiVu(Vu):
                         self, draw_data, commands, command, command.user_callback_data
                     )
                 else:
+                    #TODO: Need to figure out how to handle custom textures
+                    """
+                    gl.glBindTexture(gl.GL_TEXTURE_2D, command.texture_id)
+                    """
+
+                    """
+                    // Bind custom texture
+                    ImTextureID tex_id = pcmd->GetTexID();
+                    ImGuiID tex_id_hash = ImHashData(&tex_id, sizeof(tex_id));
+                    auto it = renderResources.ImageBindGroups.find(tex_id_hash);
+                    if (it != renderResources.ImageBindGroups.end())
+                    {
+                        auto bind_group = it->second;
+                        passEncoder.SetBindGroup(1, bind_group, 0, nullptr);
+                    }
+                    else
+                    {
+                        wgpu::BindGroup image_bind_group = CreateImageBindGroup(renderResources.ImageBindGroupLayout, (WGPUTextureView)tex_id);
+                        renderResources.ImageBindGroups[tex_id_hash] = image_bind_group;
+                        passEncoder.SetBindGroup(1, image_bind_group, 0, nullptr);
+                    }
+                    """
+
                     """
                     // Project scissor/clipping rectangles into framebuffer space
                     ImVec2 clipMin((pcmd->ClipRect.x - clipPos.x) * clipScale.x, (pcmd->ClipRect.y - clipPos.y) * clipScale.y);
