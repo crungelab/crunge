@@ -1,4 +1,5 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
@@ -9,8 +10,7 @@ class ListboxPage(Page):
         self.options = OPTIONS
         self.current = 2
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin(self.title)
 
         clicked, self.current = imgui.list_box(
@@ -20,13 +20,13 @@ class ListboxPage(Page):
         imgui.same_line()
         imgui.text(self.options[self.current])
         imgui.end()
+        super().draw(renderer)
 
 class CustomListboxPage(Page):
     def reset(self):
         self.selected = 'second'
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin(self.title)
 
         if imgui.begin_list_box("Custom List", (200, 100)):
@@ -42,6 +42,7 @@ class CustomListboxPage(Page):
         imgui.text(self.selected)
 
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(ListboxPage, "listbox", "Listbox")

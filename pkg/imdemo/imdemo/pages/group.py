@@ -1,11 +1,11 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class Group(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: item groups")
 
         imgui.begin_group()
@@ -23,6 +23,7 @@ class Group(Page):
         imgui.end_group()
 
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(Group, "group", "Group")

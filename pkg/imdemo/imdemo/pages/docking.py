@@ -1,4 +1,5 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
@@ -29,8 +30,7 @@ class DockingPage(Page):
         io = imgui.get_io()
         io.config_flags |= imgui.CONFIG_FLAGS_DOCKING_ENABLE
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         #gui.begin(self.title, True, imgui.WINDOW_FLAGS_DOCK_NODE_HOST)
         imgui.begin(self.title, True)
 
@@ -54,6 +54,7 @@ class DockingPage(Page):
         imgui.end_child()
         imgui.text("outside region")
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(DockingPage, "docking", "Docking")

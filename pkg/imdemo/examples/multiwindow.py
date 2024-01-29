@@ -4,7 +4,7 @@ pyglet.options['shadow_window']=False
 from crunge import imgui
 from crunge.imgui.impl.ludi import LudiGui
 
-from crunge import shell
+from crunge import engine
 
 class ChildGui(LudiGui):
     def __init__(self, window):

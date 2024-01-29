@@ -15,7 +15,6 @@ import crunge.wgpu.utils as utils
 from crunge import imgui
 
 from ..renderer import Renderer
-#from ..render_context import RenderContext
 from ..vu import Vu
 from ..utils import singleton_producer
 
@@ -94,17 +93,8 @@ class ImGuiVu(Vu):
         super().__init__()
         self.io = imgui.get_io()
 
-    '''
-    @classmethod
-    def produce(cls):
-        renderer = cls()
-        renderer.create()
-        return renderer
-    '''
-
     def create(self):
         self.create_device_objects()
-        self.refresh_font_texture()
         return self
 
     def create_device_objects(self):
@@ -113,20 +103,7 @@ class ImGuiVu(Vu):
         self.create_pipeline()
 
     def refresh_font_texture(self):
-        #pass
-        self.create_textures()
-        #self.io.fonts.set_tex_id(id(self.texture_view))
-        self.io.fonts.clear_tex_data()
-
-        '''
-        pixels, width, height, bpp = self.io.fonts.get_tex_data_as_rgba32()
-        # Old font texture will be GCed if exist
-        self._font_texture = self._ctx.texture((width, height), components=bpp, data=pixels)
-        # Need to convert ctype to python object.  Can't do it from the c++ side evidently ...
-        #self.io.fonts.tex_id = self._font_texture.glo
-        self.io.fonts.tex_id = self._font_texture.glo.value
-        self.io.fonts.clear_tex_data()
-        '''
+        self.create_device_objects()
 
     def create_buffers(self):
         logger.debug("create_buffers")
@@ -213,6 +190,9 @@ class ImGuiVu(Vu):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
+
+        #self.io.fonts.set_tex_id(id(self.texture_view))
+        self.io.fonts.clear_tex_data()
 
     def create_pipeline(self):
         logger.debug("create_pipeline")
@@ -369,8 +349,36 @@ class ImGuiVu(Vu):
         self, draw_data: imgui.DrawData, pass_enc: wgpu.RenderPassEncoder
     ):
         # logger.debug("render_draw_data")
+        """
+        float scWidth = window().swapchain_size_.width;
+        float scHeight = window().swapchain_size_.height;
+
+        // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
+        float fbWidth = drawData.DisplaySize.x * drawData.FramebufferScale.x;
+        float fbHeight = drawData.DisplaySize.y * drawData.FramebufferScale.y;
+        if (fbWidth <= 0 || fbHeight <= 0)
+            return;
+        """
+        #sc_width = self.width
+        sc_width = self.wnd.width
+        #sc_height = self.height
+        sc_height = self.wnd.height
+        fb_width = draw_data.display_size[0] * draw_data.framebuffer_scale[0]
+        fb_height = draw_data.display_size[1] * draw_data.framebuffer_scale[1]
+        if fb_width <= 0 or fb_height <= 0:
+            return
+        """
+        const ImVec2 clipPos = drawData.DisplayPos;         // (0,0) unless using multi-viewports
+        const ImVec2 clipScale = drawData.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
+        """
+        #clip_pos = draw_data.display_pos
+        clip_pos = glm.vec2(draw_data.display_pos[0], draw_data.display_pos[1])
+        #clip_scale = draw_data.framebuffer_scale
+        clip_scale = glm.vec2(draw_data.framebuffer_scale[0], draw_data.framebuffer_scale[1])
+
         vtx_offset = 0
         idx_offset = 0
+
         for commands in draw_data.cmd_lists:
             # logger.debug('write vertex_buffer')
             utils.write_buffer(
@@ -398,15 +406,41 @@ class ImGuiVu(Vu):
                     )
                 else:
                     """
-                    wgpuRenderPassEncoderSetScissorRect(pass_encoder, (uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
-                    wgpuRenderPassEncoderDrawIndexed(pass_encoder, pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
+                    // Project scissor/clipping rectangles into framebuffer space
+                    ImVec2 clipMin((pcmd->ClipRect.x - clipPos.x) * clipScale.x, (pcmd->ClipRect.y - clipPos.y) * clipScale.y);
+                    ImVec2 clipMax((pcmd->ClipRect.z - clipPos.x) * clipScale.x, (pcmd->ClipRect.w - clipPos.y) * clipScale.y);
+                    if (clipMax.x <= clipMin.x || clipMax.y <= clipMin.y)
+                        continue;
+
+                    if (clipMax.x > scWidth)
+                        clipMax.x = scWidth;
+                    if (clipMax.y > scHeight)
+                        clipMax.y = scHeight;
+                    
+                    auto clipX = (uint32_t)clipMin.x;
+                    auto clipY = (uint32_t)clipMin.y;
+                    auto clipWidth = (uint32_t)(clipMax.x - clipMin.x);
+                    auto clipHeight = (uint32_t)(clipMax.y - clipMin.y);
                     """
-                    pass_enc.set_scissor_rect(
-                        int(command.clip_rect[0]),
-                        int(command.clip_rect[1]),
-                        int(command.clip_rect[2] - command.clip_rect[0]),
-                        int(command.clip_rect[3] - command.clip_rect[1]),
-                    )
+                    clip_rect = glm.vec4(command.clip_rect[0], command.clip_rect[1], command.clip_rect[2], command.clip_rect[3])
+                    #clip_min = glm.vec2((command.clip_rect.x - clip_pos.x) * clip_scale.x, (command.clip_rect.y - clip_pos.y) * clip_scale.y)
+                    clip_min = glm.vec2((clip_rect.x - clip_pos.x) * clip_scale.x, (clip_rect.y - clip_pos.y) * clip_scale.y)
+                    #clip_max = glm.vec2((command.clip_rect.z - clip_pos.x) * clip_scale.x, (command.clip_rect.w - clip_pos.y) * clip_scale.y)
+                    clip_max = glm.vec2((clip_rect.z - clip_pos.x) * clip_scale.x, (clip_rect.w - clip_pos.y) * clip_scale.y)
+                    if clip_max.x <= clip_min.x or clip_max.y <= clip_min.y:
+                        continue
+
+                    if clip_max.x > sc_width:
+                        clip_max.x = sc_width
+                    if clip_max.y > sc_height:
+                        clip_max.y = sc_height
+
+                    clip_x = int(clip_min.x)
+                    clip_y = int(clip_min.y)
+                    clip_width = int(clip_max.x - clip_min.x)
+                    clip_height = int(clip_max.y - clip_min.y)
+
+                    pass_enc.set_scissor_rect(clip_x, clip_y, clip_width, clip_height)
                     pass_enc.draw_indexed(
                         command.elem_count,
                         1,

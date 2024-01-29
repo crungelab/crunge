@@ -1,11 +1,11 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class SameLinePage(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: same line widgets")
 
         imgui.text("same_line() with defaults:")
@@ -21,6 +21,7 @@ class SameLinePage(Page):
         imgui.button("no")
 
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(SameLinePage, "sameline", "Same Line")

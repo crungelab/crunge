@@ -1,11 +1,11 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class ColorsPage(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         style = imgui.get_style()
         
         imgui.begin("Colors")
@@ -16,6 +16,7 @@ class ColorsPage(Page):
             imgui.next_column()
 
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(ColorsPage, "colors", "Colors")

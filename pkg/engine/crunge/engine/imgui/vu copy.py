@@ -14,6 +14,10 @@ import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
+from ..renderer import Renderer
+from ..vu import Vu
+from ..utils import singleton_producer
+
 from .uniforms import (
     cast_matrix3,
     cast_matrix4,
@@ -83,100 +87,23 @@ fn main(in: VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
+@singleton_producer
+class ImGuiVu(Vu):
+    def __init__(self) -> None:
+        super().__init__()
+        self.io = imgui.get_io()
 
-def compute_framebuffer_scale(window_size, frame_buffer_size):
-    win_width, win_height = window_size
-    fb_width, fb_height = frame_buffer_size
+    def create(self):
+        self.create_device_objects()
+        return self
 
-    if win_width != 0 and win_width != 0:
-        return fb_width / win_width, fb_height / win_height
-
-    return 1.0, 1.0
-
-class App(engine.App):
-    def __init__(self):
-        super().__init__(1280, 640, "imgui Demo", resizable=True)
-        self.pages = {}
-        self.show_metrics = False
-        self.show_style_editor = False
-        self.resource_path = Path(__file__).parent.parent / 'resources'
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(file_path)
-
-        self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
-
-        self.context = imgui.create_context()
-        imgui.set_current_context(self.context)
-
-        imgui.style_colors_dark()
-
-        io = imgui.get_io()
-        self.io = io
-
-    def _set_pixel_ratio(self):
-        window_size = sdl.get_window_size(self.window)
-        self.io.display_size = window_size
-
-        framebuffer_size = sdl.get_window_size_in_pixels(self.window)
-        pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
-        self.io.display_framebuffer_scale = pixel_ratio
-
-    def create_window(self):
-        super().create_window()
-        self._set_pixel_ratio()
-
-    def draw(self):
-        super().draw()
-        #self.gui.render()
-
-    def on_mouse_enter(self, event: sdl.WindowEvent):
-        super().on_mouse_enter(event)
-        self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
-
-    def on_mouse_leave(self, event: sdl.WindowEvent):
-        super().on_mouse_leave(event)
-        last_mouse = self.io.mouse_pos
-        self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
-        self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
-
-    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
-        x, y = event.x, event.y
-        self.io.add_mouse_pos_event(x, y)
-        self.last_mouse = glm.vec2(x, y)
-
-    def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        super().on_mouse_button(event)
-        button = event.button - 1 # SDL starts at 1, ImGui starts at 0
-        action = event.state == 1
-        if button < 3:
-            self.io.add_mouse_button_event(button, action)
-
-    def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
-        x, y = event.x, event.y
-        self.io.add_mouse_wheel_event(x, y)
-
-    def use(self, name):
-        import importlib.util
-        spec = importlib.util.find_spec(f"imdemo.pages.{name}")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        module, install = module, module.install
-        install(self)
-
-    def add_page(self, klass, name, title):
-        self.pages[name] = { 'klass': klass, 'name': name, 'title': title }
-
-    def show(self, name):
-        def callback(delta_time):
-            entry = self.pages[name]
-            self.page = page = entry['klass'].create(self, name, entry['title'])
-            self.show_view(page)
-        self.schedule_once(callback, 0)
-            
     def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
         self.create_pipeline()
+
+    def refresh_font_texture(self):
+        self.create_device_objects()
 
     def create_buffers(self):
         logger.debug("create_buffers")
@@ -264,14 +191,14 @@ class App(engine.App):
             wgpu.Extent3D(width, height, 1),
         )
 
-        # io.fonts.set_tex_id(id(self.texture_view))
-        # io.fonts.clear_tex_data()
+        #self.io.fonts.set_tex_id(id(self.texture_view))
+        self.io.fonts.clear_tex_data()
 
     def create_pipeline(self):
         logger.debug("create_pipeline")
 
-        vs_module = self.create_shader_module(vs_shader_code)
-        fs_module = self.create_shader_module(fs_shader_code)
+        vs_module = self.gfx.create_shader_module(vs_shader_code)
+        fs_module = self.gfx.create_shader_module(fs_shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -452,7 +379,6 @@ class App(engine.App):
                 else:
                     """
                     wgpuRenderPassEncoderSetScissorRect(pass_encoder, (uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
-                    wgpuRenderPassEncoderDrawIndexed(pass_encoder, pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
                     """
                     pass_enc.set_scissor_rect(
                         int(command.clip_rect[0]),
@@ -471,8 +397,8 @@ class App(engine.App):
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
-        # logger.debug("render")
+    def post_draw(self, renderer: Renderer):
+        #logger.debug("ImGuiRenderer.post_draw")
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -501,10 +427,11 @@ class App(engine.App):
         draw_data.scale_clip_rects(fb_scale)
 
         attachment = wgpu.RenderPassColorAttachment(
-            view=view,
-            load_op=wgpu.LoadOp.CLEAR,
+            view=renderer.texture_view,
+            #load_op=wgpu.LoadOp.CLEAR,
+            load_op=wgpu.LoadOp.LOAD,
             store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
+            #clear_value=wgpu.Color(0, 0, 0, 1),
         )
 
         renderpass = wgpu.RenderPassDescriptor(
@@ -525,16 +452,3 @@ class App(engine.App):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
-
-    def frame(self):
-        # logger.debug("frame")
-        imgui.new_frame()
-
-        self.draw()
-                
-        imgui.end_frame()
-
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        self.render(backbuffer)
-        self.swap_chain.present()

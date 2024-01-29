@@ -1,11 +1,11 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class Indent(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: item indenting")
 
         imgui.text("Some text with bullets:")
@@ -18,6 +18,7 @@ class Indent(Page):
         imgui.bullet_text("Bullet D (indent cleared)")
 
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(Indent, "indent", "Indent")

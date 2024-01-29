@@ -4,7 +4,7 @@ from crunge.imgui.impl.ludi import LudiGui
 
 from experiments.gig.gui import LudiPortalGui
 
-from crunge import shell
+from crunge import engine
 
 class InnerGui(LudiPortalGui):
     def draw(self):

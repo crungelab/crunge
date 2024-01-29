@@ -1,4 +1,5 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
@@ -7,8 +8,7 @@ class DragFloat(Page):
     def reset(self):
         self.value = 42.0
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: drag float")
         changed, self.value = imgui.drag_float(
             "Default", self.value,
@@ -18,13 +18,13 @@ class DragFloat(Page):
         )
         imgui.text("Changed: %s, Value: %s" % (changed, self.value))
         imgui.end()
+        super().draw(renderer)
 
 class DragFloat2(Page):
     def reset(self):
         self.values = 88.0, 42.0
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: drag float 2")
         changed, self.values = imgui.drag_float2(
             "Default", self.values
@@ -34,13 +34,13 @@ class DragFloat2(Page):
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.values))
         imgui.end()
+        super().draw(renderer)
 
 class DragFloat3(Page):
     def reset(self):
         self.values = 88.0, 42.0, 69.0
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: drag float 3")
         changed, self.values = imgui.drag_float3(
             "Default", self.values
@@ -50,13 +50,13 @@ class DragFloat3(Page):
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.values))
         imgui.end()
+        super().draw(renderer)
 
 class DragFloat4(Page):
     def reset(self):
         self.values = 88.0, 42.0, 69.0, 0.0
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: drag float 4")
         changed, self.values = imgui.drag_float4(
             "Default", self.values
@@ -66,6 +66,7 @@ class DragFloat4(Page):
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.values))
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(DragFloat, "dragfloat", "Drag Float")

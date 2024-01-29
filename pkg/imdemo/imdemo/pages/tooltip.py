@@ -1,11 +1,11 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class Tooltip(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: tooltip")
         imgui.button("Click me!")
         if imgui.is_item_hovered():
@@ -16,6 +16,7 @@ class Tooltip(Page):
             imgui.image(tex_id, (512, 64), border_col=(1, 0, 0, 1))
             imgui.end_tooltip()
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(Tooltip, "tooltip", "Tooltip")

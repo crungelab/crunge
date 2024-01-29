@@ -1,4 +1,5 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
@@ -7,8 +8,7 @@ class FloatSliderPage(Page):
     def reset(self):
         self.value = 88
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         width = 20
         height = 100
 
@@ -21,13 +21,13 @@ class FloatSliderPage(Page):
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.value))
         imgui.end()
+        super().draw(renderer)
 
 class IntSliderPage(Page):
     def reset(self):
         self.value = 88
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         width = 20
         height = 100
 
@@ -40,6 +40,7 @@ class IntSliderPage(Page):
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.value))
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(FloatSliderPage, "floatslider", "Slider - Float")

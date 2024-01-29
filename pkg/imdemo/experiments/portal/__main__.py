@@ -1,7 +1,7 @@
 from crunge import imgui
 from experiments.portal.gui import LudiGui
 
-from crunge import shell
+from crunge import engine
 
 class App(ludi.Window):
     def __init__(self):

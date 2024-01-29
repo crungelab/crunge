@@ -6,7 +6,7 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from crunge import shell
+from crunge import engine
 
 from crunge import as_capsule
 from crunge import sdl, wgpu
@@ -14,7 +14,7 @@ import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
-class App(shell.App):
+class App(engine.App):
     kWidth = 1280
     kHeight = 640
     def __init__(self):

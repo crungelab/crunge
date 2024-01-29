@@ -1,4 +1,5 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
@@ -8,8 +9,7 @@ class Checkbox(Page):
         self.checkbox1_enabled = True
         self.checkbox2_enabled = False
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: checkboxes")
 
         # note: first element of return two-tuple notifies if there was a click
@@ -22,13 +22,13 @@ class Checkbox(Page):
         imgui.text("Checkbox 2 state value: {}".format(self.checkbox2_enabled))
 
         imgui.end()
+        super().draw(renderer)
 
 class CheckboxFlags(Page):
     def reset(self):
         self.flags = imgui.WINDOW_FLAGS_NO_RESIZE | imgui.WINDOW_FLAGS_NO_MOVE
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: checkboxes for flags", flags=self.flags)
 
         clicked, self.flags = imgui.checkbox_flags(
@@ -47,6 +47,7 @@ class CheckboxFlags(Page):
         )
         imgui.text("Current flags value: {0:b}".format(self.flags))
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(Checkbox, "checkbox", "Checkbox")

@@ -1,12 +1,12 @@
 from crunge import imgui
 from crunge.imgui import rel
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class WindowDraw(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         sz = 20
         draw_list = imgui.get_window_draw_list()
         rgba_color = imgui.get_color_u32((1, 1, 1, 1))
@@ -19,6 +19,7 @@ class WindowDraw(Page):
             
             p1 = rel(20, i*10)
             draw_list.add_text(p1, rgba_color, name)
+        super().draw(renderer)
 
 def install(app):
     app.add_page(WindowDraw, "windowdraw", "Window Draw")

@@ -1,8 +1,8 @@
-from crunge import shell
-from crunge.shell.imgui import ImGuiView
+from crunge.engine import Renderer
+from crunge.engine.imgui import ImGuiView
 from crunge import imgui
 
-#class Page(shell.View):
+#class Page(engine.View):
 class Page(ImGuiView):
     def __init__(self, name, title):
         super().__init__()
@@ -20,7 +20,7 @@ class Page(ImGuiView):
         page.reset()
         return page
 
-    def draw(self):
+    def draw(self, renderer: Renderer):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
 

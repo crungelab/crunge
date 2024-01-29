@@ -1,4 +1,5 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
@@ -8,8 +9,7 @@ class Combo(Page):
         self.options = ["first", "second", "third"]
         self.current = 2
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: combo widget")
 
         clicked, self.current = imgui.combo(
@@ -17,6 +17,7 @@ class Combo(Page):
         )
         imgui.text(f"You chose:  {self.options[self.current]}")
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(Combo, "combo", "Combo")

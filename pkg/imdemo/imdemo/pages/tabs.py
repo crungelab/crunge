@@ -1,4 +1,5 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
@@ -35,8 +36,7 @@ class TabsPage(Page):
         self.tabs = [True, True]
         self.color = 1,1,1
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin(self.title)
 
         imgui.begin_child("item view", (0, -imgui.get_frame_height_with_spacing())) #Leave room for 1 line below us
@@ -58,6 +58,7 @@ class TabsPage(Page):
 
         imgui.text("outside region")
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(TabsPage, "tabs", "Tabs")

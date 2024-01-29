@@ -1,10 +1,10 @@
 from pathlib import Path
 
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
-RESOURCE_PATH = Path(__file__).parent.parent / 'resources'
 
 class FontPage(Page):
     def reset(self):
@@ -13,10 +13,9 @@ class FontPage(Page):
         self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20)
         #self.window.gui.renderer.refresh_font_texture()
         layer = self.window.view.get_layer("ImGuiLayer")
-        layer.renderer.refresh_font_texture()
+        layer.vu.refresh_font_texture()
 
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Font")
 
         imgui.text("Text displayed using default font")
@@ -29,6 +28,7 @@ class FontPage(Page):
         imgui.pop_font()
 
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(FontPage, "font", "Font")

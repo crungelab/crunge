@@ -1,11 +1,11 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class Columns(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         imgui.begin("Example: Columns - File list")
         imgui.columns(4, 'fileList')
         imgui.separator()
@@ -38,6 +38,7 @@ class Columns(Page):
 
         imgui.columns(1)
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(Columns, "columns", "Columns")

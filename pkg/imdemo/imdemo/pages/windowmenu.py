@@ -1,11 +1,11 @@
 from crunge import imgui
+from crunge.engine import Renderer
 
 from imdemo.page import Page
 
 
 class WindowMenu(Page):
-    def draw(self):
-        super().draw()
+    def draw(self, renderer: Renderer):
         flags = imgui.WINDOW_FLAGS_MENU_BAR
 
         imgui.begin("Child Window - File Browser", flags=flags)
@@ -18,6 +18,7 @@ class WindowMenu(Page):
             imgui.end_menu_bar()
 
         imgui.end()
+        super().draw(renderer)
 
 def install(app):
     app.add_page(WindowMenu, "windowmenu", "Window Menu")
