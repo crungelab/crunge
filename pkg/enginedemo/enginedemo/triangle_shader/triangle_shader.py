@@ -5,7 +5,7 @@ from loguru import logger
 
 from crunge import wgpu, imgui
 from crunge import as_capsule
-from crunge.shell import RenderContext
+from crunge.engine import RenderContext
 
 from ..demo import Demo, DemoView, DemoLayer
 

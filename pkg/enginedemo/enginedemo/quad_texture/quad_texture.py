@@ -2,12 +2,9 @@ import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
 import sys
-from pathlib import Path
 
 from loguru import logger
 import numpy as np
-import imageio.v3 as iio
-import glm
 
 from crunge import as_capsule
 from crunge import wgpu
@@ -15,37 +12,20 @@ import crunge.wgpu.utils as utils
 
 from ..demo import Demo
 
-resource_root = Path(__file__).parent.parent.parent / "resources"
+vs_shader_code = """
+@vertex fn main(@location(0) pos : vec4<f32>) -> @builtin(position) vec4<f32> {
+    return pos;
+}
+"""
 
-shader_code = """
+fs_shader_code = """
 @group(0) @binding(0) var mySampler: sampler;
 @group(0) @binding(1) var myTexture : texture_2d<f32>;
 
-struct Uniforms {
-  modelViewProjectionMatrix : mat4x4<f32>,
-}
-@group(0) @binding(2) var<uniform> uniforms : Uniforms;
-
-struct VertexInput {
-  @location(0) pos: vec4<f32>,
-  @location(1) uv: vec2<f32>,
-}
-
-struct VertexOutput {
-  @builtin(position) vertex_pos : vec4<f32>,
-  @location(0) uv: vec2<f32>,
-}
-
-@vertex
-fn vs_main(in : VertexInput) -> VertexOutput {
-  let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
-  return VertexOutput(vert_pos, in.uv);
-}
-
-@fragment
-fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
-  let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);
-  return textureSample(myTexture, mySampler, uv);
+@fragment fn main(@builtin(position) FragCoord : vec4<f32>)
+                        -> @location(0) vec4<f32> {
+    return textureSample(myTexture, mySampler, FragCoord.xy / vec2<f32>(800.0, 600.0));
+    //return textureSample(myTexture, mySampler, FragCoord.xy);
 }
 """
 
@@ -78,7 +58,8 @@ class QuadTextureDemo(Demo):
         self.create_buffers()
         self.create_textures()
 
-        shader_module = self.gfx.create_shader_module(shader_code)
+        vs_module = self.gfx.create_shader_module(vs_shader_code)
+        fs_module = self.gfx.create_shader_module(fs_shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -104,15 +85,15 @@ class QuadTextureDemo(Demo):
         )
 
         fragmentState = wgpu.FragmentState(
-            module=shader_module,
-            entry_point="fs_main",
+            module=fs_module,
+            entry_point="main",
             target_count=1,
             targets=colorTargetState,
         )
 
         vertex_state = wgpu.VertexState(
-            module=shader_module,
-            entry_point="vs_main",
+            module=vs_module,
+            entry_point="main",
             buffer_count=1,
             buffers=vertBufferLayout,
         )
@@ -132,13 +113,6 @@ class QuadTextureDemo(Demo):
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
                         view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
                     ),
                 ),
             ]
@@ -168,16 +142,13 @@ class QuadTextureDemo(Demo):
             [
                 wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
                 wgpu.BindGroupEntry(binding=1, texture_view=view),
-                wgpu.BindGroupEntry(
-                    binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize
-                ),
             ]
         )
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
+            entry_count=2,
             entries=bindgroup_entries[0],
         )
 
@@ -193,43 +164,23 @@ class QuadTextureDemo(Demo):
         self.index_buffer = utils.create_buffer_from_ndarray(
             self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
         )
-        self.uniformBufferSize = 4 * 16
-        self.uniformBuffer = utils.create_buffer(
-            self.device,
-            "Uniform buffer",
-            self.uniformBufferSize,
-            wgpu.BufferUsage.UNIFORM,
-        )
 
     def create_textures(self):
-        path = resource_root / "textures" / "python_logo.png"
-        im = iio.imread(path)
-        shape = im.shape
-        logger.debug(shape)
-        im_width = shape[0]
-        im_height = shape[1]
-        # im_depth = shape[2]
-        im_depth = 1
-        # Has to be a multiple of 256
-        size = utils.divround_up(im.nbytes, 256)
-        logger.debug(size)
-
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
-            size=wgpu.Extent3D(im_width, im_height, im_depth),
+            size=wgpu.Extent3D(1024, 1024, 1),
             sample_count=1,
             format=wgpu.TextureFormat.RGBA8_UNORM,
             mip_level_count=1,
             usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
         )
-
         self.texture = self.device.create_texture(descriptor)
 
         self.sampler = self.device.create_sampler()
 
-        bytes_per_row = 4 * im_width
-        logger.debug(bytes_per_row)
-        rows_per_image = im_height
+        data = np.zeros((4 * 1024 * 1024,), dtype=np.uint8)
+        for i in range(0, data.size):
+            data[i] = i % 253
 
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
@@ -240,17 +191,17 @@ class QuadTextureDemo(Demo):
                 aspect=wgpu.TextureAspect.ALL,
             ),
             # The actual pixel data
-            utils.as_capsule(im),
+            utils.as_capsule(data),
             # Data size
-            size,
+            data.size,
             # The layout of the texture
             wgpu.TextureDataLayout(
                 offset=0,
-                bytes_per_row=bytes_per_row,
-                rows_per_image=rows_per_image,
+                bytes_per_row=4 * 1024,
+                rows_per_image=1024,
             ),
             # The texture size
-            wgpu.Extent3D(im_width, im_height, im_depth),
+            wgpu.Extent3D(1024, 1024, 1),
         )
 
     def draw(self):
@@ -280,35 +231,6 @@ class QuadTextureDemo(Demo):
 
         self.queue.submit(1, commands)
 
-    def frame(self):
-        model = glm.mat4(1.0)  # Identity matrix
-        model = glm.translate(model, glm.vec3(400, 300, 0))
-        model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
-        model = glm.scale(model, glm.vec3(200, 200, 1))
-        view = glm.mat4(1.0)  # Identity matrix
-
-        viewport_width = self.kWidth
-        viewport_height = self.kHeight
-
-        ortho_left = 0
-        ortho_right = viewport_width
-        ortho_bottom = 0
-        ortho_top = viewport_height
-        ortho_near = -1  # Near clipping plane
-        ortho_far = 1    # Far clipping plane
-
-        projection = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
-
-
-        transform = projection * view * model
-
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
-        )
-        super().frame()
 
 def main():
     QuadTextureDemo().create().run()

@@ -1,13 +1,16 @@
+from enum import IntEnum
 import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
 import sys
+import math
+import glm
 from pathlib import Path
 
 from loguru import logger
 import numpy as np
+import trimesh as tm
 import imageio.v3 as iio
-import glm
 
 from crunge import as_capsule
 from crunge import wgpu
@@ -16,6 +19,18 @@ import crunge.wgpu.utils as utils
 from ..demo import Demo
 
 resource_root = Path(__file__).parent.parent.parent / "resources"
+
+WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
+WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
+WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
+WORLD_SCALE = 10
+
+
+class Binding(IntEnum):
+    SAMPLER = 0
+    TEXTURE = 1
+    UNIFORM = 2
+
 
 shader_code = """
 @group(0) @binding(0) var mySampler: sampler;
@@ -49,59 +64,79 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
-index_data = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
 
-vertex_data = np.array(
-    [
-        -0.5,  0.5,  0.0, 1.0, # top-left
-        -0.5, -0.5,  0.0, 0.0, # bottom-left
-        0.5, -0.5,  1.0, 0.0, # bottom-right
-        0.5,  0.5,  1.0, 1.0, # top-right
-    ],
-    dtype=np.float32,
-)
+class Position(Structure):
+    _fields_ = [
+        ("x", c_float),
+        ("y", c_float),
+        ("z", c_float),
+    ]
 
 
-class QuadTextureDemo(Demo):
+class UvCoord(Structure):
+    _fields_ = [
+        ("u", c_float),
+        ("v", c_float),
+    ]
+
+
+class Vertex(Structure):
+    _fields_ = [
+        ("pos", Position),
+        ("uv", UvCoord),
+    ]
+
+
+kWidth = 1024
+kHeight = 768
+
+kPositionByteOffset = Vertex.pos.offset
+kUVByteOffset = Vertex.uv.offset
+kVertexDataStride = sizeof(Vertex)
+
+
+class MeshTextureDemo(Demo):
+    depth_stencil_view: wgpu.TextureView = None
+
+    vertex_data: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
+
+    index_data: np.ndarray = None
     index_buffer: wgpu.Buffer = None
-
-    texture: wgpu.Texture = None
-    sampler: wgpu.Sampler = None
-
-    kWidth = 800
-    kHeight = 600
 
     def __init__(self):
         super().__init__()
 
+        self.create_meshes()
         self.create_buffers()
         self.create_textures()
 
         shader_module = self.gfx.create_shader_module(shader_code)
 
+        # Pipeline creation
+
         vertAttributes = wgpu.VertexAttributes(
             [
                 wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+                    format=wgpu.VertexFormat.FLOAT32X3,
+                    offset=kPositionByteOffset,
+                    shader_location=0,
                 ),
                 wgpu.VertexAttribute(
                     format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=2 * sizeof(c_float),
+                    offset=kUVByteOffset,
                     shader_location=1,
                 ),
             ]
         )
 
         vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=4 * sizeof(c_float),
+            array_stride=kVertexDataStride,
             attribute_count=2,
             attributes=vertAttributes[0],
         )
 
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-        )
+        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
         fragmentState = wgpu.FragmentState(
             module=shader_module,
@@ -109,6 +144,14 @@ class QuadTextureDemo(Demo):
             target_count=1,
             targets=colorTargetState,
         )
+
+        depthStencilState = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
+            depth_write_enabled=True,
+            depth_compare=wgpu.CompareFunction.LESS,
+        )
+
+        primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
 
         vertex_state = wgpu.VertexState(
             module=shader_module,
@@ -120,14 +163,14 @@ class QuadTextureDemo(Demo):
         bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(
-                    binding=0,
+                    binding=Binding.SAMPLER,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
                     ),
                 ),
                 wgpu.BindGroupLayoutEntry(
-                    binding=1,
+                    binding=Binding.TEXTURE,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
@@ -135,7 +178,7 @@ class QuadTextureDemo(Demo):
                     ),
                 ),
                 wgpu.BindGroupLayoutEntry(
-                    binding=2,
+                    binding=Binding.UNIFORM,
                     visibility=wgpu.ShaderStage.VERTEX,
                     buffer=wgpu.BufferBindingLayout(
                         type=wgpu.BufferBindingType.UNIFORM
@@ -153,18 +196,29 @@ class QuadTextureDemo(Demo):
             bind_group_layout_count=1, bind_group_layouts=bgl
         )
 
-        descriptor = wgpu.RenderPipelineDescriptor(
+        rp_descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
+            primitive=primitive,
+            depth_stencil=depthStencilState,
             fragment=fragmentState,
         )
 
-        self.pipeline = self.device.create_render_pipeline(descriptor)
+        self.pipeline = self.device.create_render_pipeline(rp_descriptor)
+
+        # Create depth texture
+        self.depthTexture = utils.create_texture(
+            self.device,
+            "Depth texture",
+            wgpu.Extent3D(kWidth, kHeight),
+            wgpu.TextureFormat.DEPTH24_PLUS,
+            wgpu.TextureUsage.RENDER_ATTACHMENT,
+        )
 
         view: wgpu.TextureView = self.texture.create_view()
 
-        bindgroup_entries = wgpu.BindGroupEntries(
+        bg_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
                 wgpu.BindGroupEntry(binding=1, texture_view=view),
@@ -175,23 +229,69 @@ class QuadTextureDemo(Demo):
         )
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
-            label="Texture bind group",
+            label="Texture+Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
+            entry_count=len(bg_entries),
+            entries=bg_entries[0],
         )
 
-        self.bindGroup = self.device.create_bind_group(bindGroupDesc)
-        logger.debug(self.bindGroup)
+        self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
 
+        aspect = float(kWidth) / float(kHeight)
+        fov_y_radians = (2.0 * math.pi) / 5.0
+        self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
+        # exit()
+
+    @property
+    def transform_matrix(self):
+        now = time.time()
+        ms = round(now * 1000) / 1000
+        # print(ms)
+        viewMatrix = glm.mat4(1.0)
+        viewMatrix = glm.translate(viewMatrix, glm.vec3(0, 0, -4))
+        viewMatrix = glm.scale(
+            viewMatrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE)
+        )
+
+        rotMatrix = glm.mat4(1.0)
+        rotMatrix = glm.rotate(rotMatrix, math.sin(ms), WORLD_AXIS_X)
+        rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
+        return self.projectionMatrix * viewMatrix * rotMatrix
+
+    def create_meshes(self):
+        mesh_path = resource_root / "models" / "Fuze" / "fuze.obj"
+        self.mesh = mesh = tm.load(str(mesh_path))
+        # Vertices
+        vertices = self.vertex_data = mesh.vertices.astype(np.float32)
+        logger.debug(f"vertices type: {type(vertices)}")
+        logger.debug(f"vertices:  {vertices}")
+        n_vertices = len(vertices)
+        logger.debug(f"n_vertices:  {n_vertices}")
+
+        uv_coords = mesh.visual.uv.astype(np.float32)
+        logger.debug(f"uv_coords type: {type(uv_coords)}")
+        logger.debug(f"uv_coords:  {uv_coords}")
+        n_uv_coords = len(uv_coords)
+        logger.debug(f"n_uv_coords:  {n_uv_coords}")
+
+        vertex_data = self.vertex_data = np.concatenate((vertices, uv_coords), axis=1)
+        # logger.debug(type(vertex_data))
+        logger.debug(f"vertex_data:  {vertex_data}")
+        # exit()
+
+        # Indices
+        indices = self.index_data = self.mesh.faces.astype(np.uint32)
+        logger.debug(f"indices:  {indices}")
+        n_indices = self.n_indices = len(indices)
+        logger.debug(f"n_indices:  {n_indices}")
         # exit()
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
+            self.device, "VERTEX", self.vertex_data, wgpu.BufferUsage.VERTEX
         )
         self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
+            self.device, "INDEX", self.index_data, wgpu.BufferUsage.INDEX
         )
         self.uniformBufferSize = 4 * 16
         self.uniformBuffer = utils.create_buffer(
@@ -202,13 +302,16 @@ class QuadTextureDemo(Demo):
         )
 
     def create_textures(self):
-        path = resource_root / "textures" / "python_logo.png"
-        im = iio.imread(path)
+        path = resource_root / "models" / "Fuze" / "fuze_uv.jpg"
+        im = iio.imread(
+            path,
+            plugin="pillow",
+            mode="RGBA",
+        )
         shape = im.shape
         logger.debug(shape)
         im_width = shape[0]
         im_height = shape[1]
-        # im_depth = shape[2]
         im_depth = 1
         # Has to be a multiple of 256
         size = utils.divround_up(im.nbytes, 256)
@@ -252,6 +355,7 @@ class QuadTextureDemo(Demo):
             # The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
+        # exit()
 
     def draw(self):
         attachment = wgpu.RenderPassColorAttachment(
@@ -261,57 +365,52 @@ class QuadTextureDemo(Demo):
             clear_value=wgpu.Color(0, 0, 0, 1),
         )
 
+        depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
+            view=self.depthTexture.create_view(),
+            depth_load_op=wgpu.LoadOp.CLEAR,
+            depth_store_op=wgpu.StoreOp.STORE,
+            depth_clear_value=1.0,
+        )
+
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
             color_attachments=attachment,
+            depth_stencil_attachment=depthStencilAttach,
         )
 
         commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
-        pass_enc.set_bind_group(0, self.bindGroup)
+        pass_enc.set_bind_group(0, self.uniformBindGroup)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        pass_enc.draw_indexed(6)
+        pass_enc.draw_indexed(len(self.index_data) * 3)
         pass_enc.end()
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
+        # exit()
 
     def frame(self):
-        model = glm.mat4(1.0)  # Identity matrix
-        model = glm.translate(model, glm.vec3(400, 300, 0))
-        model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
-        model = glm.scale(model, glm.vec3(200, 200, 1))
-        view = glm.mat4(1.0)  # Identity matrix
-
-        viewport_width = self.kWidth
-        viewport_height = self.kHeight
-
-        ortho_left = 0
-        ortho_right = viewport_width
-        ortho_bottom = 0
-        ortho_top = viewport_height
-        ortho_near = -1  # Near clipping plane
-        ortho_far = 1    # Far clipping plane
-
-        projection = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
-
-
-        transform = projection * view * model
-
+        transform = self.transform_matrix
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
+        '''
+        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        backbufferView.set_label("Back Buffer Texture View")
+        self.render(backbufferView)
+        self.swap_chain.present()
+        '''
         super().frame()
 
 def main():
-    QuadTextureDemo().create().run()
+    MeshTextureDemo().create().run()
 
 
 if __name__ == "__main__":

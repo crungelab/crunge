@@ -20,22 +20,14 @@ from .data import vertex_data
 WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
 WORLD_AXIS_Z = glm.vec3(0.0, 0.0, 1.0)
-WORLD_SCALE = 1
-
-# 32 is the maximum we can use here without going over the max binding size
-# of a uniform buffer which is 65,536
-x_count: int = 32
-y_count: int = 32
-num_instances: int = x_count * y_count
 
 shader_code = """
 struct Uniforms {
-  modelViewProjectionMatrix : array<mat4x4<f32>, {{NUM_INSTANCES}}>,
+  modelViewProjectionMatrix : mat4x4<f32>,
 }
 @binding(0) @group(0) var<uniform> uniforms : Uniforms;
 
 struct VertexInput {
-  @builtin(instance_index) instance_idx : u32,
   @location(0) pos: vec4<f32>,
   @location(1) uv: vec2<f32>,
 }
@@ -48,7 +40,7 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
-  let vert_pos = uniforms.modelViewProjectionMatrix[in.instance_idx] * in.pos;
+  let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
   let frag_colour = 0.5 * (in.pos + vec4(1));
   return VertexOutput(vert_pos, in.uv, frag_colour);
 }
@@ -59,15 +51,9 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
-shader_code = shader_code.replace("{{NUM_INSTANCES}}", str(num_instances))
 
-#logger.debug(shader_code)
-#exit()
-
-class CubesDemo(Demo):
-    depth_stencil_view: wgpu.TextureView = None
+class CubeDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
-
     kVertexCount = 36
     kPositionByteOffset = 0
     kUVByteOffset = 4 * sizeof(c_float)
@@ -75,26 +61,11 @@ class CubesDemo(Demo):
 
     def __init__(self):
         super().__init__()
-        self.model_matrices = glm.array.zeros(num_instances, glm.mat4)
-        for i in range(num_instances):
-            self.model_matrices[i] = glm.mat4(1.0)
-
-        self.mvp_matrices = glm.array.zeros(num_instances, glm.mat4)
-        for i in range(num_instances):
-            self.mvp_matrices[i] = glm.mat4(1.0)
-
-        step = 4.0
-        half_x = (x_count / 2) + 0.5
-        half_y = (y_count / 2) + 0.5
-
-        for x in range(x_count):
-            for y in range(y_count):
-                self.model_matrices[(x * y_count) + y] = glm.translate(
-                    glm.mat4(1), glm.vec3(step * (x - half_x), step * (y - half_y), 0)
-                )
 
         self.create_buffers()
+        self.create_pipeline()
 
+    def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
 
         # Pipeline creation
@@ -180,48 +151,20 @@ class CubesDemo(Demo):
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
 
-        # exit()
-
     @property
     def transform_matrix(self):
-        viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 3, -92))
-        viewMatrix = glm.scale(
-            viewMatrix, glm.vec3(WORLD_SCALE, WORLD_SCALE, WORLD_SCALE)
-        )
-        return self.projectionMatrix * viewMatrix
-
-    def update_transformation_matrices(self):
         now = time.time()
         ms = round(now * 1000) / 1000
-        for x in range(x_count):
-            for y in range(y_count):
-                rotMatrix = glm.rotate(
-                    glm.mat4(1.0),
-                    math.sin(ms),
-                    glm.vec3(0, 1, 0),
-                )
-                movZ = glm.translate(
-                    glm.mat4(1.0), glm.vec3(0, 0, math.sin(x + 0.5) * ms)
-                )
-                idx = (x * y_count) + y
-                self.mvp_matrices[idx] = (
-                    self.transform_matrix
-                    * self.model_matrices[idx]
-                    * rotMatrix
-                )
+        viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
+        rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
+        rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
+        return self.projectionMatrix * viewMatrix * rotMatrix
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
         )
-
-        # Setup Uniforms
-        matrix_element_count = 4 * 4
-        # 4x4 matrix
-        matrix_byte_size = sizeof(c_float) * matrix_element_count
-
-        self.uniformBufferSize = matrix_byte_size * num_instances
-        # self.uniformBufferSize = self.mvp_matrices.nbytes
+        self.uniformBufferSize = 4 * 16
         self.uniformBuffer = utils.create_buffer(
             self.device,
             "Uniform buffer",
@@ -257,25 +200,30 @@ class CubesDemo(Demo):
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.uniformBindGroup)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.draw(self.kVertexCount, num_instances)
+        pass_enc.draw(self.kVertexCount)
         pass_enc.end()
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
 
     def frame(self):
-        self.update_transformation_matrices()
+        transform = self.transform_matrix
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
-            as_capsule(self.mvp_matrices.ptr),
+            as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-
+        '''
+        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        backbufferView.set_label("Back Buffer Texture View")
+        self.render(backbufferView)
+        self.swap_chain.present()
+        '''
         super().frame()
 
 def main():
-    CubesDemo().create().run()
+    CubeDemo().create().run()
 
 
 if __name__ == "__main__":

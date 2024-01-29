@@ -77,7 +77,7 @@ class QuadShaderLayer(DemoLayer):
             fragment=fragmentState,
         )
 
-        self.pipeline = self.window.device.create_render_pipeline(descriptor)
+        self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def draw(self):
         #logger.debug("render")
