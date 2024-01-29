@@ -6,7 +6,7 @@
 #include <tiny_gltf.h>
 #include <iostream>
 
-#include <crunge/core/bindtools.h>
+#include <cxbind/cxbind.h>
 #include <crunge/gltf/conversions.h>
 
 namespace py = pybind11;

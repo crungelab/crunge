@@ -9,7 +9,7 @@
 
 #include <tiny_gltf.h>
 
-#include <crunge/core/bindtools.h>
+#include <cxbind/cxbind.h>
 
 #include <crunge/gltf/crunge-gltf.h>
 #include <crunge/gltf/conversions.h>

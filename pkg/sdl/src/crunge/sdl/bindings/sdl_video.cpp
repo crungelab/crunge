@@ -6,7 +6,7 @@
 #include <SDL3/SDL.h>
 #include <iostream>
 
-#include <crunge/core/bindtools.h>
+#include <cxbind/cxbind.h>
 #include <crunge/sdl/crunge-sdl.h>
 #include <crunge/sdl/conversions.h>
 

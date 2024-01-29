@@ -6,7 +6,8 @@
 #include "imgui_internal.h"
 //#include "imgui.h"
 
-#include <crunge/core/bindtools.h>
+//#include <cxbind/cxbind.h>
+#include <cxbind/cxbind.h>
 #include <crunge/imgui/conversions.h>
 
 namespace py = pybind11;
@@ -3402,7 +3403,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("num_segments") = 0
         , py::return_value_policy::automatic_reference);
 
-        DrawList.def("addage", &ImDrawList::AddImage
+        DrawList.def("add_image", &ImDrawList::AddImage
         , py::arg("user_texture_id")
         , py::arg("p_min")
         , py::arg("p_max")
@@ -3411,7 +3412,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("col") = IM_COL32_WHITE
         , py::return_value_policy::automatic_reference);
 
-        DrawList.def("addage_quad", &ImDrawList::AddImageQuad
+        DrawList.def("add_image_quad", &ImDrawList::AddImageQuad
         , py::arg("user_texture_id")
         , py::arg("p1")
         , py::arg("p2")
@@ -3424,7 +3425,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("col") = IM_COL32_WHITE
         , py::return_value_policy::automatic_reference);
 
-        DrawList.def("addage_rounded", &ImDrawList::AddImageRounded
+        DrawList.def("add_image_rounded", &ImDrawList::AddImageRounded
         , py::arg("user_texture_id")
         , py::arg("p_min")
         , py::arg("p_max")
@@ -3939,12 +3940,12 @@ void init_generated(py::module &_imgui, Registry &registry) {
 
     PYCLASS_END(_imgui, ImGuiViewport, Viewport)
 
-    PYCLASS_BEGIN(_imgui, ImGuiPlatformImeData, PlatformeData)
-        PlatformeData.def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible);
-        PlatformeData.def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos);
-        PlatformeData.def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight);
-        PlatformeData.def(py::init<>());
-    PYCLASS_END(_imgui, ImGuiPlatformImeData, PlatformeData)
+    PYCLASS_BEGIN(_imgui, ImGuiPlatformImeData, PlatformImeData)
+        PlatformImeData.def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible);
+        PlatformImeData.def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos);
+        PlatformImeData.def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight);
+        PlatformImeData.def(py::init<>());
+    PYCLASS_END(_imgui, ImGuiPlatformImeData, PlatformImeData)
 
     _imgui.def("get_key_index", &ImGui::GetKeyIndex
     , py::arg("key")

@@ -11,7 +11,7 @@
 #include "dawn/native/DawnNative.h"
 #include <dawn/dawn_proc.h>
 
-#include <crunge/core/bindtools.h>
+#include <cxbind/cxbind.h>
 #include <crunge/wgpu/crunge-wgpu.h>
 #include <crunge/wgpu/conversions.h>
 
