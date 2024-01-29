@@ -19,7 +19,6 @@ from crunge.engine import Renderer
 
 from ..demo import Demo
 
-resource_root = Path(__file__).parent.parent.parent / "resources"
 
 WORLD_AXIS_X = glm.vec3(1.0, 0.0, 0.0)
 WORLD_AXIS_Y = glm.vec3(0.0, 1.0, 0.0)
@@ -260,7 +259,7 @@ class MeshTextureDemo(Demo):
         return self.projectionMatrix * viewMatrix * rotMatrix
 
     def create_meshes(self):
-        mesh_path = resource_root / "models" / "Fuze" / "fuze.obj"
+        mesh_path = self.wnd.resource_root / "models" / "Fuze" / "fuze.obj"
         self.mesh = mesh = tm.load(str(mesh_path))
         # Vertices
         vertices = self.vertex_data = mesh.vertices.astype(np.float32)
@@ -303,7 +302,7 @@ class MeshTextureDemo(Demo):
         )
 
     def create_textures(self):
-        path = resource_root / "models" / "Fuze" / "fuze_uv.jpg"
+        path = self.wnd.resource_root / "models" / "Fuze" / "fuze_uv.jpg"
         im = iio.imread(
             path,
             plugin="pillow",

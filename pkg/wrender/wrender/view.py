@@ -69,4 +69,3 @@ class View(ImGuiView):
         self.device.queue.submit(1, commands)
 
         super().draw(renderer)
-        #exit()

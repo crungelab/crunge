@@ -1,0 +1,15 @@
+[tool.setuptools]
+packages = ["spritedemo"]
+
+[project]
+name = "spritedemo"
+version = "0.1.0"
+description = 'Crunge Sprite Demo'
+requires-python = ">=3.10"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "loguru ==0.7.2",
+    "PyGLM ==2.7.1",
+    "imageio ==2.33.1",
+]

@@ -69,8 +69,6 @@ class SpriteDemo(Demo):
     texture: wgpu.Texture = None
     sampler: wgpu.Sampler = None
 
-    kWidth = 800
-    kHeight = 600
 
     def __init__(self):
         super().__init__()
@@ -202,13 +200,12 @@ class SpriteDemo(Demo):
         )
 
     def create_textures(self):
-        path = self.wnd.resource_root / "images" / "python_logo.png"
+        path = self.wnd.resource_root / "images" / "playerShip1_orange.png"
+        #path = self.wnd.resource_root / "images" / "python_logo.png"
         im = iio.imread(path)
         shape = im.shape
         logger.debug(shape)
-        im_width = shape[0]
-        im_height = shape[1]
-        # im_depth = shape[2]
+        im_height, im_width, im_channels = shape
         im_depth = 1
         # Has to be a multiple of 256
         size = utils.divround_up(im.nbytes, 256)
@@ -227,7 +224,8 @@ class SpriteDemo(Demo):
 
         self.sampler = self.device.create_sampler()
 
-        bytes_per_row = 4 * im_width
+        #bytes_per_row = 4 * im_width
+        bytes_per_row = im_channels * im_width
         logger.debug(bytes_per_row)
         rows_per_image = im_height
 
@@ -284,7 +282,9 @@ class SpriteDemo(Demo):
 
     def frame(self):
         model = glm.mat4(1.0)  # Identity matrix
-        model = glm.translate(model, glm.vec3(400, 300, 0))
+        x = self.kWidth / 2
+        y = self.kHeight / 2
+        model = glm.translate(model, glm.vec3(x, y, 0))
         model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
         model = glm.scale(model, glm.vec3(200, 200, 1))
         view = glm.mat4(1.0)  # Identity matrix
