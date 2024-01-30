@@ -1,30 +1,46 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
-from pathlib import Path
+from ctypes import (
+    Structure,
+    c_float,
+    c_uint32,
+    sizeof,
+    c_bool,
+    c_int,
+    c_void_p,
+    cast,
+    POINTER,
+)
 
 from loguru import logger
 import numpy as np
-import imageio.v3 as iio
 import glm
+import imageio.v3 as iio
 
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
 
-from ..demo import Demo
-
+from .scene_renderer import SceneRenderer
+from .node import Node
+from .camera import Camera
+from .uniforms import (
+    cast_matrix3,
+    cast_matrix4,
+    cast_vec3,
+    CameraUniform,
+    LightUniform,
+)
 
 shader_code = """
-@group(0) @binding(0) var mySampler: sampler;
-@group(0) @binding(1) var myTexture : texture_2d<f32>;
-
-struct Uniforms {
-  modelViewProjectionMatrix : mat4x4<f32>,
+struct Camera {
+    modelMatrix : mat4x4<f32>,
+    transformMatrix : mat4x4<f32>,
+    normalMatrix: mat3x3<f32>,
+    position: vec3<f32>,
 }
-@group(0) @binding(2) var<uniform> uniforms : Uniforms;
+@group(0) @binding(0) var<uniform> camera : Camera;
+
+@group(0) @binding(1) var mySampler: sampler;
+@group(0) @binding(2) var myTexture : texture_2d<f32>;
 
 struct VertexInput {
   @location(0) pos: vec4<f32>,
@@ -38,7 +54,7 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
-  let vert_pos = uniforms.modelViewProjectionMatrix * in.pos;
+  let vert_pos = camera.transformMatrix * in.pos;
   return VertexOutput(vert_pos, in.uv);
 }
 
@@ -49,7 +65,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
-index_data = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
+index_data = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint16)
 
 vertex_data = np.array(
     [
@@ -61,18 +77,26 @@ vertex_data = np.array(
     dtype=np.float32,
 )
 
+class Sprite(Node):
+    pipeline: wgpu.RenderPipeline = None
+    bind_group: wgpu.BindGroup = None
 
-class SpriteDemo(Demo):
+    vertex_data: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
+
+    index_data: np.ndarray = None
     index_buffer: wgpu.Buffer = None
+    #index_format: wgpu.IndexFormat = None
+    index_format: wgpu.IndexFormat = wgpu.IndexFormat.UINT16
 
-    texture: wgpu.Texture = None
-    sampler: wgpu.Sampler = None
-
+    camera_uniform_buffer: wgpu.Buffer = None
+    camera_uniform_buffer_size: int = 0
 
     def __init__(self):
         super().__init__()
 
+        self.index_data = index_data
+        self.vertex_data = vertex_data
         self.create_buffers()
         self.create_textures()
 
@@ -93,12 +117,27 @@ class SpriteDemo(Demo):
 
         vertBufferLayout = wgpu.VertexBufferLayout(
             array_stride=4 * sizeof(c_float),
-            attribute_count=2,
+            attribute_count=len(vertAttributes),
             attributes=vertAttributes[0],
+        )
+
+        blend_state = wgpu.BlendState(
+            alpha=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.ONE,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+            color=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.SRC_ALPHA,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
         )
 
         colorTargetState = wgpu.ColorTargetState(
             format=wgpu.TextureFormat.BGRA8_UNORM,
+            #blend=blend_state,
+            #write_mask=wgpu.ColorWriteMask.ALL,
         )
 
         fragmentState = wgpu.FragmentState(
@@ -115,28 +154,32 @@ class SpriteDemo(Demo):
             buffers=vertBufferLayout,
         )
 
+        depthStencilState = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
+        )
+
         bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(
                     binding=0,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM
+                    ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=1,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
                     ),
                 ),
                 wgpu.BindGroupLayoutEntry(
-                    binding=1,
+                    binding=2,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
                         view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
                     ),
                 ),
             ]
@@ -156,6 +199,7 @@ class SpriteDemo(Demo):
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             fragment=fragmentState,
+            depth_stencil=depthStencilState,
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
@@ -164,38 +208,38 @@ class SpriteDemo(Demo):
 
         bindgroup_entries = wgpu.BindGroupEntries(
             [
-                wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=view),
                 wgpu.BindGroupEntry(
-                    binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize
+                    binding=0, buffer=self.camera_uniform_buffer, size=self.camera_uniform_buffer_size
                 ),
+                wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+                wgpu.BindGroupEntry(binding=2, texture_view=view),
             ]
         )
 
-        bindGroupDesc = wgpu.BindGroupDescriptor(
+        bind_group_desc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=len(bindgroup_entries),
             entries=bindgroup_entries[0],
         )
 
-        self.bindGroup = self.device.create_bind_group(bindGroupDesc)
-        logger.debug(self.bindGroup)
+        self.bind_group = self.device.create_bind_group(bind_group_desc)
+        logger.debug(self.bind_group)
 
         # exit()
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
+            self.gfx.device, "VERTEX", self.vertex_data, wgpu.BufferUsage.VERTEX
         )
         self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
+            self.gfx.device, "INDEX", self.index_data, wgpu.BufferUsage.INDEX
         )
-        self.uniformBufferSize = 4 * 16
-        self.uniformBuffer = utils.create_buffer(
-            self.device,
-            "Uniform buffer",
-            self.uniformBufferSize,
+        # Uniform Buffers
+        self.camera_uniform_buffer_size = sizeof(CameraUniform)
+        self.camera_uniform_buffer = self.gfx.create_buffer(
+            "Camera Uniform Buffer",
+            self.camera_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
 
@@ -251,70 +295,34 @@ class SpriteDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    def draw(self, renderer: Renderer):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+    def draw(self, renderer: SceneRenderer):
+        #logger.debug("Drawing sprite")
+        camera = renderer.camera
+        pass_enc = renderer.pass_enc
 
-        renderpass = wgpu.RenderPassDescriptor(
-            label="Main Render Pass",
-            color_attachment_count=1,
-            color_attachments=attachment,
-        )
+        model_matrix = self.transform
+        transform_matrix = camera.transform_matrix * self.transform
+        normal_matrix = glm.transpose(glm.inverse(glm.mat3(model_matrix)))
 
-        commands = wgpu.CommandBuffer()
-        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
-        pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
-        pass_enc.set_pipeline(self.pipeline)
-        pass_enc.set_bind_group(0, self.bindGroup)
-        pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        pass_enc.draw_indexed(6)
-        pass_enc.end()
-        commands = encoder.finish()
+        camera_uniform = CameraUniform()
+        camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
+        camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
+        camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
 
-        self.queue.submit(1, commands)
+        #camera_uniform.position.x = camera.position.x
+        #camera_uniform.position.y = camera.position.y
+        #camera_uniform.position.z = camera.position.z
+        camera_uniform.position = cast_vec3(camera.position)
 
-        super().draw(renderer)
-
-    def frame(self):
-        model = glm.mat4(1.0)  # Identity matrix
-        x = self.kWidth / 2
-        y = self.kHeight / 2
-        model = glm.translate(model, glm.vec3(x, y, 0))
-        model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
-        model = glm.scale(model, glm.vec3(200, 200, 1))
-        view = glm.mat4(1.0)  # Identity matrix
-
-        viewport_width = self.kWidth
-        viewport_height = self.kHeight
-
-        ortho_left = 0
-        ortho_right = viewport_width
-        ortho_bottom = 0
-        ortho_top = viewport_height
-        ortho_near = -1  # Near clipping plane
-        ortho_far = 1    # Far clipping plane
-
-        projection = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
-
-
-        transform = projection * view * model
-
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
+        renderer.device.queue.write_buffer(
+            self.camera_uniform_buffer,
             0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
+            as_capsule(camera_uniform),
+            self.camera_uniform_buffer_size,
         )
-        super().frame()
 
-def main():
-    SpriteDemo().create().run()
-
-
-if __name__ == "__main__":
-    main()
+        pass_enc.set_pipeline(self.pipeline)
+        pass_enc.set_bind_group(0, self.bind_group)
+        pass_enc.set_vertex_buffer(0, self.vertex_buffer)
+        pass_enc.set_index_buffer(self.index_buffer, self.index_format)
+        pass_enc.draw_indexed(len(self.index_data))

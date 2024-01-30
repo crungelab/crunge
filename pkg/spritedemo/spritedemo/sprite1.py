@@ -172,15 +172,15 @@ class SpriteDemo(Demo):
             ]
         )
 
-        bindGroupDesc = wgpu.BindGroupDescriptor(
+        bind_group_desc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=len(bindgroup_entries),
             entries=bindgroup_entries[0],
         )
 
-        self.bindGroup = self.device.create_bind_group(bindGroupDesc)
-        logger.debug(self.bindGroup)
+        self.bind_group = self.device.create_bind_group(bind_group_desc)
+        logger.debug(self.bind_group)
 
         # exit()
 
@@ -269,7 +269,7 @@ class SpriteDemo(Demo):
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
-        pass_enc.set_bind_group(0, self.bindGroup)
+        pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
         pass_enc.draw_indexed(6)

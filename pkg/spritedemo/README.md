@@ -1,3 +1,3 @@
 ```bash
-python -m spritedemo.sprite
+python -m spritedemo.demo.sprite
 ```

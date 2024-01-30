@@ -41,15 +41,15 @@ class TriangleShaderLayer(DemoLayer):
             targets=colorTargetState,
         )
 
-        depthStencilState = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
-        )
-
         primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_LIST)
 
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
+        )
+
+        depthStencilState = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH32_FLOAT,
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(
