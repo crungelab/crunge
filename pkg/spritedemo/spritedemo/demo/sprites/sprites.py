@@ -20,8 +20,21 @@ class SpriteDemo(Demo):
         self.alpha = 255
         self.color_enabled = True
         self.color = 1, 1, 1
-
+        # Ship1
         path = self.resource_root / "images" / "playerShip1_orange.png"
+        texture = TextureKit().load(path)
+        sprite = self.sprite = Sprite(texture)
+        node = self.node = Node2D(vu=sprite)
+        x = self.width / 4
+        y = self.height / 4
+        node.position = glm.vec2(x, y)
+        node.angle = 45
+        node.size = glm.vec2(200, 200)
+
+        self.scene.add_child(self.node)
+
+        # Ship2
+        path = self.resource_root / "images" / "playerShip1_blue.png"
         texture = TextureKit().load(path)
         sprite = self.sprite = Sprite(texture)
         node = self.node = Node2D(vu=sprite)

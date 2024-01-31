@@ -1,15 +1,18 @@
 import glm
 
+from crunge.engine import Vu
+
 from .node import Node
 
 class Node2D(Node):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, vu: Vu=None) -> None:
+        super().__init__(vu)
         self._position = glm.vec2(0.0)
         self._depth = 0.0
-        self._rotation = 0.0
+        self._rotation = 0.0 # radians
         self._size = glm.vec2(1.0)
         self._scale = glm.vec2(1.0)
+        self.transform = glm.mat4(1.0)
         self.update_transform()
 
     @property
@@ -32,13 +35,11 @@ class Node2D(Node):
 
     @property
     def angle(self):
-        #return self._angle
-        return glm.degrees(self._rotation)
+        return glm.degrees(self._rotation) 
     
     @angle.setter
     def angle(self, value: float):
-        #self._angle = value
-        self._rotation = glm.radians(value)
+        self._rotation = glm.radians(value) * -1
         self.update_transform()
 
     @property
@@ -62,9 +63,13 @@ class Node2D(Node):
     def update_transform(self):
         x = self._position.x
         y = self._position.y
+        z = self._depth
 
         model = glm.mat4(1.0)  # Identity matrix
-        model = glm.translate(model, glm.vec3(x, y, 0))
+        model = glm.translate(model, glm.vec3(x, y, z))
         model = glm.rotate(model, self._rotation, glm.vec3(0, 0, 1))
         model = glm.scale(model, glm.vec3(self._size.x * self._scale.x, self._size.y * self._scale.y, 1))
         self.transform = model
+
+        if self.vu is not None:
+            self.vu.transform = self.transform

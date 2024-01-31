@@ -30,7 +30,6 @@ from .uniforms import (
     CameraUniform,
     LightUniform,
 )
-from .texture import Texture
 
 shader_code = """
 struct Camera {
@@ -94,12 +93,13 @@ class Sprite(Vu2D):
     camera_uniform_buffer: wgpu.Buffer = None
     camera_uniform_buffer_size: int = 0
 
-    def __init__(self, texture: Texture) -> None:
+    def __init__(self):
         super().__init__()
-        self.texture = texture
+
         self.index_data = index_data
         self.vertex_data = vertex_data
         self.create_buffers()
+        self.create_textures()
 
         shader_module = self.gfx.create_shader_module(shader_code)
 
@@ -137,8 +137,8 @@ class Sprite(Vu2D):
 
         colorTargetState = wgpu.ColorTargetState(
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
-            write_mask=wgpu.ColorWriteMask.ALL,
+            #blend=blend_state,
+            #write_mask=wgpu.ColorWriteMask.ALL,
         )
 
         fragmentState = wgpu.FragmentState(
@@ -205,14 +205,14 @@ class Sprite(Vu2D):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-        view: wgpu.TextureView = self.texture.texture.create_view()
+        view: wgpu.TextureView = self.texture.create_view()
 
         bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
                     binding=0, buffer=self.camera_uniform_buffer, size=self.camera_uniform_buffer_size
                 ),
-                wgpu.BindGroupEntry(binding=1, sampler=self.texture.sampler),
+                wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
                 wgpu.BindGroupEntry(binding=2, texture_view=view),
             ]
         )
@@ -242,6 +242,58 @@ class Sprite(Vu2D):
             "Camera Uniform Buffer",
             self.camera_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
+        )
+
+    def create_textures(self):
+        path = self.wnd.resource_root / "images" / "playerShip1_orange.png"
+        #path = self.wnd.resource_root / "images" / "python_logo.png"
+        im = iio.imread(path)
+        shape = im.shape
+        logger.debug(shape)
+        im_height, im_width, im_channels = shape
+        im_depth = 1
+        # Has to be a multiple of 256
+        size = utils.divround_up(im.nbytes, 256)
+        logger.debug(size)
+
+        descriptor = wgpu.TextureDescriptor(
+            dimension=wgpu.TextureDimension.E2D,
+            size=wgpu.Extent3D(im_width, im_height, im_depth),
+            sample_count=1,
+            format=wgpu.TextureFormat.RGBA8_UNORM,
+            mip_level_count=1,
+            usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
+        )
+
+        self.texture = self.device.create_texture(descriptor)
+
+        self.sampler = self.device.create_sampler()
+
+        #bytes_per_row = 4 * im_width
+        bytes_per_row = im_channels * im_width
+        logger.debug(bytes_per_row)
+        rows_per_image = im_height
+
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.ImageCopyTexture(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
+            utils.as_capsule(im),
+            # Data size
+            size,
+            # The layout of the texture
+            wgpu.TextureDataLayout(
+                offset=0,
+                bytes_per_row=bytes_per_row,
+                rows_per_image=rows_per_image,
+            ),
+            # The texture size
+            wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
     def draw(self, renderer: SceneRenderer):
