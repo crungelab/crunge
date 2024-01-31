@@ -20,7 +20,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from .scene_renderer import SceneRenderer
-from .node import Node
+from .node_2d import Node2D
 from .camera import Camera
 from .uniforms import (
     cast_matrix3,
@@ -77,7 +77,7 @@ vertex_data = np.array(
     dtype=np.float32,
 )
 
-class Sprite(Node):
+class Sprite(Node2D):
     pipeline: wgpu.RenderPipeline = None
     bind_group: wgpu.BindGroup = None
 
@@ -86,7 +86,6 @@ class Sprite(Node):
 
     index_data: np.ndarray = None
     index_buffer: wgpu.Buffer = None
-    #index_format: wgpu.IndexFormat = None
     index_format: wgpu.IndexFormat = wgpu.IndexFormat.UINT16
 
     camera_uniform_buffer: wgpu.Buffer = None

@@ -6,11 +6,11 @@ class Vu(Base):
     def __init__(self) -> None:
         super().__init__()
 
-    def pre_draw(self, renderer: "Renderer"):
+    def pre_draw(self, renderer: Renderer):
         pass
 
-    def draw(self, renderer: "Renderer"):
+    def draw(self, renderer: Renderer):
         pass
 
-    def post_draw(self, renderer: "Renderer"):
+    def post_draw(self, renderer: Renderer):
         pass

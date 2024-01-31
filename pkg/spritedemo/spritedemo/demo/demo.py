@@ -22,7 +22,7 @@ class Demo(engine.App):
     kHeight = 768
     
     def __init__(self):
-        super().__init__(self.kWidth, self.kHeight, "WRender", resizable=True)
+        super().__init__(self.kWidth, self.kHeight, self.__class__.__name__, resizable=True)
         self.camera: Camera = None
         self.delta_time = 0
         self.resource_root = Path(__file__).parent.parent.parent.parent.parent / "resources"
