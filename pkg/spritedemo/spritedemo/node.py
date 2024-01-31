@@ -22,3 +22,7 @@ class Node(Base):
             self.vu.draw(renderer)
         for child in self.children:
             child.draw(renderer)
+
+    def update(self, delta_time: float):
+        for child in self.children:
+            child.update(delta_time)

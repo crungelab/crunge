@@ -2,6 +2,7 @@ from pathlib import Path
 
 import imageio as iio
 from loguru import logger
+import glm
 
 from crunge import wgpu, utils
 
@@ -13,3 +14,4 @@ class Texture(Base):
         self.sampler = sampler
         self.width = width
         self.height = height
+        self.size = glm.vec2(width, height)

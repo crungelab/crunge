@@ -52,6 +52,24 @@ class Node2D(Node):
         self.update_transform()
 
     @property
+    def width(self):
+        return self._size.x
+    
+    @width.setter
+    def width(self, value: float):
+        self._size.x = value
+        self.update_transform()
+
+    @property
+    def height(self):
+        return self._size.y
+    
+    @height.setter
+    def height(self, value: float):
+        self._size.y = value
+        self.update_transform()
+        
+    @property
     def scale(self):
         return self._scale
     

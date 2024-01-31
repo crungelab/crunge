@@ -1,0 +1,9 @@
+from pathlib import Path
+
+from crunge import klass
+
+
+@klass.singleton
+class ResourceKit:
+    def __init__(self) -> None:
+        self.root = Path(__file__).parent.parent.parent.parent / "resources"

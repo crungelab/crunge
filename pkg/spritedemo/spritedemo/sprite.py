@@ -100,7 +100,17 @@ class Sprite(Vu2D):
         self.index_data = index_data
         self.vertex_data = vertex_data
         self.create_buffers()
+        self.create_pipeline()
 
+    @property
+    def width(self):
+        return self.texture.width
+    
+    @property
+    def height(self):
+        return self.texture.height
+    
+    def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
 
         vertAttributes = wgpu.VertexAttributes(

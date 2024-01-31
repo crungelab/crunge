@@ -1,3 +1,4 @@
+from typing import Dict
 from pathlib import Path
 
 import imageio as iio
@@ -10,7 +11,13 @@ from .texture import Texture
 
 @klass.singleton
 class TextureKit(Base):
+    def __init__(self):
+        super().__init__()
+        self.textures: Dict[Path, Texture] = {}
+
     def load(self, path: Path) -> Texture:
+        if path in self.textures:
+            return self.textures[path]
         im = iio.imread(path)
         shape = im.shape
         logger.debug(shape)
@@ -60,4 +67,6 @@ class TextureKit(Base):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-        return Texture(texture, sampler, im_width, im_height)
+        texture = Texture(texture, sampler, im_width, im_height)
+        self.textures[path] = texture
+        return texture
