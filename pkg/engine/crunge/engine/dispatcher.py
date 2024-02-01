@@ -38,19 +38,25 @@ class Dispatcher(Base):
                 pass
     
     def on_key(self, event: sdl.KeyboardEvent):
-        logger.debug(f"key: {event.keysym.sym}")
+        #logger.debug(f"key: {event.keysym.sym}")
+        pass
 
     def on_mouse_enter(self, event: sdl.WindowEvent):
-        logger.debug("mouse enter")
+        #logger.debug("mouse enter")
+        pass
 
     def on_mouse_leave(self, event: sdl.WindowEvent):
-        logger.debug("mouse leave")
+        #logger.debug("mouse leave")
+        pass
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
-        logger.debug(f"mouse motion: x={event.x}, y={event.y}")
+        #logger.debug(f"mouse motion: x={event.x}, y={event.y}")
+        pass
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        logger.debug(f"mouse button: button={event.button}, state={event.state}")
+        #logger.debug(f"mouse button: button={event.button}, state={event.state}")
+        pass
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
-        logger.debug(f"mouse wheel: x={event.x}, y={event.y}")
+        #logger.debug(f"mouse wheel: x={event.x}, y={event.y}")
+        pass

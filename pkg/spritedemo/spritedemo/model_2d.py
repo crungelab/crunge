@@ -19,7 +19,7 @@ class Model2D(Node2D):
         self.position = position
         self.brain = brain
 
-        self.angle = 0
+        #self.angle = 0
         #self.width = 0
         #self.height = 0
         self.radius = 0
@@ -60,17 +60,6 @@ class Model2D(Node2D):
     def post_setup(self):
         pass
 
-    '''
-    @property
-    def position(self):
-        return self._position
-
-    @position.setter
-    def position(self, val):
-        self._position = val
-        if self.sprite:
-            self.sprite.position = val
-    '''
     def do_setup(self):
         pass
         '''
@@ -133,7 +122,7 @@ class PhysicsModel2D(Model2D):
         self._physics = physics()
         self.geom = geom()
         self.mass = DEFAULT_MASS
-        self.transform = self.create_transform()
+        #self.transform = self.create_transform()
 
     @property
     def physics(self):
@@ -143,11 +132,9 @@ class PhysicsModel2D(Model2D):
     def physics(self, physics):
         if self._physics:
             self._physics = physics
-            #badwing.app.physics_engine.space.remove(self.body, self.shapes)
             self.remove_shapes()
             self.body = self.create_body()
             self.shapes = self.create_shapes()
-            #badwing.app.physics_engine.space.add(self.body, self.shapes)
             self.add_shapes()
         else:
             self._physics = physics
@@ -159,11 +146,7 @@ class PhysicsModel2D(Model2D):
 
     def post_setup(self):
         self.add_shapes()
-        '''
-        for shape in self.shapes:
-            shape.collision_type = self.physics.type
-            badwing.app.physics_engine.space.add(self.body, shape)
-        '''
+
     def update_physics(self, delta_time=1/60):
         if self.body:
             self.position = glm.vec2(self.body.position.x, self.body.position.y)
@@ -177,7 +160,9 @@ class PhysicsModel2D(Model2D):
 
     def add_shapes(self):
         for shape in self.shapes:
-            shape.collision_type = self.physics.type
+            logger.debug(f"shape: {shape}")
+            shape.collision_type = self.physics.kind
+            logger.debug(f"shape.collision_type: {shape.collision_type}")
             globals.physics_engine.space.add(self.body, shape)
 
     def remove_shapes(self):
@@ -228,7 +213,7 @@ class PhysicsGroup2D(PhysicsModel2D):
     def post_setup(self):
         pass
 
-class StaticModel(PhysicsModel2D):
+class StaticModel2D(PhysicsModel2D):
     def __init__(self, position=glm.vec2(), vu=None, brain=None, physics=physics.StaticPhysics, geom=geom.HullGeom):
         super().__init__(position, vu, brain, physics, geom)
 

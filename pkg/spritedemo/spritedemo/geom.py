@@ -26,13 +26,11 @@ class BoxGeom(Geom, metaclass=GeomMeta):
         super().__init__()
 
     def get_moment(self, model):
-        width = model.width
-        height = model.height
-        logger.debug(f"width: {width}, height: {height}")
-        #exit()
+        logger.debug(f"width: {model.width}, height: {model.height}")
         return pymunk.moment_for_box(model.mass, (model.width, model.height))
 
     def create_shapes(self, model, transform=None):
+        logger.debug(f"body: {model.body} width: {model.width}, height: {model.height}")
         shapes = []
         shape = pymunk.Poly.create_box(model.body, (model.width, model.height))
         shape.friction = 10
@@ -98,7 +96,7 @@ class DecomposedGeom(PolyGeom, metaclass=GeomMeta):
             shape = pymunk.Poly(body, poly, transform)
             shape.friction = 10
             shape.elasticity = 0.2
-            shape.collision_type = model.physics.type
+            shape.collision_type = model.physics.kind
             shapes.append(shape)
         return shapes
 
@@ -125,6 +123,6 @@ class HullGeom(PolyGeom, metaclass=GeomMeta):
 
         shape.friction = 10
         shape.elasticity = 0.2
-        shape.collision_type = model.physics.type
+        shape.collision_type = model.physics.kind
         shapes.append(shape)
         return shapes

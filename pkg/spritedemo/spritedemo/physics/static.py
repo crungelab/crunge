@@ -18,6 +18,7 @@ class StaticPhysics(Physics, metaclass=PhysicsMeta):
     def create_body(self, model, offset=None):
         body = pymunk.Body(body_type=pymunk.Body.STATIC)
         body.model = model
-        body.position = model.position
+        position = model.position
+        body.position = pymunk.Vec2d(position.x, position.y)
         body.angle = math.radians(model.angle)
         return body

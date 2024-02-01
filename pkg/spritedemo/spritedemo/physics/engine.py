@@ -7,6 +7,7 @@ from ..constants import *
 
 class PhysicsEngine:
     def __init__(self, gravity=GRAVITY, iterations=35):
+        logger.debug('PhysicsEngine.__init__')
         globals.physics_engine = self
         self.gravity = gravity
         self.space = pymunk.Space()

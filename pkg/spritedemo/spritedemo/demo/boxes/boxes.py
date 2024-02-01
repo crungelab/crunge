@@ -11,9 +11,11 @@ from ..demo import Demo
 from ...sprite import Sprite
 from ...node_2d import Node2D
 from ...texture_kit import TextureKit
+from ...physics import DynamicPhysicsEngine
 
 from .box import Box
-from ...physics import DynamicPhysicsEngine
+from .floor import Floor
+
 class BoxesDemo(Demo):
     def __init__(self):
         super().__init__()
@@ -22,6 +24,7 @@ class BoxesDemo(Demo):
         self.physics_engine = physics_engine = DynamicPhysicsEngine()
         self.space = physics_engine.space
         self.physics_engine.setup()
+        self.create_floor()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         x, y = event.x, event.y
@@ -39,6 +42,14 @@ class BoxesDemo(Demo):
 
     def create_box(self, position):
         box = Box(position)
+        box.setup()
+        self.scene.add_child(box)
+
+    def create_floor(self):
+        x = self.width / 2
+        y = -10
+        position = glm.vec2(x, y)
+        box = Floor(position, glm.vec2(self.width, 20))
         box.setup()
         self.scene.add_child(box)
 

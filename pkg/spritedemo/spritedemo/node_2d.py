@@ -39,7 +39,7 @@ class Node2D(Node):
     
     @angle.setter
     def angle(self, value: float):
-        self._rotation = glm.radians(value) * -1
+        self._rotation = glm.radians(value)
         self.update_transform()
 
     @property

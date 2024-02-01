@@ -15,7 +15,7 @@ class PhysicsMeta(type):
 
 class Physics:
     def __init__(self, kind):
-        self.type = kind
+        self.kind = kind
 
     def setup():
         pass
