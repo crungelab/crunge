@@ -109,13 +109,27 @@ class Sprite(Vu2D):
 
     def __init__(self, texture: Texture) -> None:
         super().__init__()
-        self.texture = texture
+        self._texture = texture
         self.indices = INDICES
         self.points = POINTS
         self.create_vertices()
         self.create_buffers()
         self.create_pipeline()
 
+    @property
+    def texture(self):
+        return self._texture
+    
+    @texture.setter
+    def texture(self, value: Texture):
+        self._texture = value
+        logger.debug(f"Setting texture: {value}")
+        self.update_vertices()
+
+    @property
+    def size(self):
+        return self.texture.size
+    
     @property
     def width(self):
         return self.texture.width
@@ -127,10 +141,13 @@ class Sprite(Vu2D):
     def create_vertices(self):
         # Create an empty array with the structured dtype
         self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
-
         # Fill the array with data
         self.vertices['position'] = self.points
         self.vertices['texcoord'] = self.texture.coords
+
+    def update_vertices(self):
+        self.create_vertices()
+        utils.write_buffer(self.gfx.device, self.vertex_buffer, 0, self.vertices, self.vertices.nbytes)
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(

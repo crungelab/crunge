@@ -22,13 +22,13 @@ class TextureAtlasDemo(Demo):
         self.color = 1, 1, 1
 
         path = self.resource_root / "platformer" / "Spritesheets" / "spritesheet_tiles.xml"
-        atlas = TextureAtlasKit().load(path)
+        atlas = self.atlas = TextureAtlasKit().load(path)
         logger.debug(f"atlas: {atlas}")
         
         #texture = atlas.get("grass.png")
         #texture = atlas.get("boxExplosive_disabled.png")
-        texture = atlas.get("boxExplosive.png")
-        #texture = atlas.get("bomb.png")
+        #texture = atlas.get("boxExplosive.png")
+        texture = self.texture = atlas.get("bomb.png")
 
         logger.debug(f"texture: {texture}")
         #exit()
@@ -38,6 +38,7 @@ class TextureAtlasDemo(Demo):
         y = self.height / 2
         node.position = glm.vec2(x, y)
         #node.angle = 45
+        #TODO: Need to set size based on texture size
         node.size = glm.vec2(200, 200)
 
         self.scene.add_child(self.node)
@@ -54,7 +55,7 @@ class TextureAtlasDemo(Demo):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
         imgui.set_next_window_size((256, 256), imgui.COND_ONCE)
 
-        imgui.begin("Ship")
+        imgui.begin("Object")
 
         # Rotation
         changed, self.angle = imgui.drag_float(
@@ -89,6 +90,21 @@ class TextureAtlasDemo(Demo):
         if imgui.button("Reset"):
             self.reset()
 
+        imgui.end()
+
+        imgui.begin("Textures")
+
+        if imgui.begin_list_box("Textures", (-1, -1)):
+
+            for name, texture in self.atlas.textures.items():
+                opened, selected = imgui.selectable(name, texture == self.texture)
+                if opened:
+                    logger.debug(f"Selected: {name}")
+                    self.texture = texture
+                    self.sprite.texture = texture
+
+            imgui.end_list_box()
+        
         imgui.end()
 
         super().draw(renderer)

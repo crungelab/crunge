@@ -1,11 +1,11 @@
 import glm
 
-from crunge.engine import Vu
+from .vu_2d import Vu2D
 
 from .node import Node
 
 class Node2D(Node):
-    def __init__(self, vu: Vu=None) -> None:
+    def __init__(self, vu: Vu2D=None) -> None:
         super().__init__(vu)
         self._position = glm.vec2(0.0)
         self._depth = 0.0
@@ -13,6 +13,10 @@ class Node2D(Node):
         self._size = glm.vec2(1.0)
         self._scale = glm.vec2(1.0)
         self.transform = glm.mat4(1.0)
+
+        if vu is not None:
+            self._size = vu.size
+
         self.update_transform()
 
     @property
