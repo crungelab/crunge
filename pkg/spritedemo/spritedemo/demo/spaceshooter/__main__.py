@@ -1,2 +1,2 @@
-from . import sprite
-sprite.main()
+from . import spaceshooter
+spaceshooter.main()

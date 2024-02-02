@@ -28,8 +28,8 @@ class SpriteDemo(Demo):
         x = self.width / 2
         y = self.height / 2
         node.position = glm.vec2(x, y)
-        node.angle = 45
-        node.size = glm.vec2(200, 200)
+        #node.angle = 45
+        #node.size = glm.vec2(200, 200)
 
         self.scene.add_child(self.node)
 

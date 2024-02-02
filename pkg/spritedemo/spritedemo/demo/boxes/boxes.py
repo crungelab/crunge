@@ -20,9 +20,7 @@ class BoxesDemo(Demo):
     def __init__(self):
         super().__init__()
         self.last_mouse = glm.vec2(0, 0)
-        # Our physics engine
-        self.physics_engine = physics_engine = DynamicPhysicsEngine()
-        self.space = physics_engine.space
+        self.physics_engine = DynamicPhysicsEngine()
         self.physics_engine.setup()
         self.create_floor()
 
@@ -57,6 +55,9 @@ class BoxesDemo(Demo):
         pass
 
     def draw(self, renderer: Renderer):
+        imgui.begin("Boxes Demo")
+        imgui.text("Click to create boxes")
+        imgui.end()
         super().draw(renderer)
 
     def update(self, delta_time: float):

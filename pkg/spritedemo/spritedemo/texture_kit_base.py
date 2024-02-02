@@ -17,14 +17,15 @@ class TextureKitBase(Base):
         self.textures: Dict[Path, Texture] = {}
     
     def load_wgpu_texture(self, path: Path) -> Texture:
-        im = iio.imread(path)
+        #im = iio.imread(path)
+        im = iio.imread(path, pilmode='RGBA')
         shape = im.shape
-        logger.debug(shape)
+        logger.debug(f"shape: {shape}")
         im_height, im_width, im_channels = shape
         im_depth = 1
         # Has to be a multiple of 256
         size = utils.divround_up(im.nbytes, 256)
-        logger.debug(size)
+        logger.debug(f"size: {size}")
 
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
@@ -41,7 +42,7 @@ class TextureKitBase(Base):
 
         #bytes_per_row = 4 * im_width
         bytes_per_row = im_channels * im_width
-        logger.debug(bytes_per_row)
+        logger.debug(f"bytes_per_row: {bytes_per_row}")
         rows_per_image = im_height
 
         self.queue.write_texture(

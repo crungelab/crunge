@@ -40,4 +40,4 @@ class DynamicPhysics(Physics, metaclass=PhysicsMeta):
 
 class DynamicPhysicsEngine(PhysicsEngine):
     def __init__(self, gravity=GRAVITY, iterations=35):
-        super().__init__()
+        super().__init__(gravity=gravity, iterations=iterations)
