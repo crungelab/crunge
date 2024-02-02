@@ -42,13 +42,15 @@ class Demo(engine.App):
         self.show_view(view)
         self.camera = self.view.camera
 
+    '''
     def draw(self, renderer: Renderer):
         imgui.begin("Example: button")
         imgui.button("Button 1")
         imgui.button("Button 2")
         imgui.end()
         super().draw(renderer)
-
+    '''
+    
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.keysym.sym
         state = event.state

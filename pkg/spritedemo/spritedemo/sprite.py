@@ -13,14 +13,12 @@ from ctypes import (
 from loguru import logger
 import numpy as np
 import glm
-import imageio.v3 as iio
 
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from .scene_renderer import SceneRenderer
-#from .node_2d import Node2D
 from .vu_2d import Vu2D
 from .camera import Camera
 from .uniforms import (
@@ -67,9 +65,10 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
-index_data = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint16)
+INDICES = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint16)
 
-vertex_data = np.array(
+'''
+vertices = np.array(
     [
         -0.5,  0.5,  0.0, 1.0, # top-left
         -0.5, -0.5,  0.0, 0.0, # bottom-left
@@ -78,16 +77,30 @@ vertex_data = np.array(
     ],
     dtype=np.float32,
 )
+'''
 
-#class Sprite(Node2D):
+POINTS = [
+    (-0.5, 0.5),  # top-left
+    (-0.5, -0.5), # bottom-left
+    (0.5, -0.5),  # bottom-right
+    (0.5, 0.5)    # top-right
+]
+
+# Define the structured dtype for the combined data
+vertex_dtype = np.dtype([
+    ('position', np.float32, (2,)),  # Points (x, y)
+    ('texcoord', np.float32, (2,))   # Texture coordinates (u, v)
+])
+
+
 class Sprite(Vu2D):
     pipeline: wgpu.RenderPipeline = None
     bind_group: wgpu.BindGroup = None
 
-    vertex_data: np.ndarray = None
+    vertices: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
 
-    index_data: np.ndarray = None
+    indices: np.ndarray = None
     index_buffer: wgpu.Buffer = None
     index_format: wgpu.IndexFormat = wgpu.IndexFormat.UINT16
 
@@ -97,8 +110,9 @@ class Sprite(Vu2D):
     def __init__(self, texture: Texture) -> None:
         super().__init__()
         self.texture = texture
-        self.index_data = index_data
-        self.vertex_data = vertex_data
+        self.indices = INDICES
+        self.points = POINTS
+        self.create_vertices()
         self.create_buffers()
         self.create_pipeline()
 
@@ -110,8 +124,32 @@ class Sprite(Vu2D):
     def height(self):
         return self.texture.height
     
+    def create_vertices(self):
+        # Create an empty array with the structured dtype
+        self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
+
+        # Fill the array with data
+        self.vertices['position'] = self.points
+        self.vertices['texcoord'] = self.texture.coords
+
+    def create_buffers(self):
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.gfx.device, "VERTEX", self.vertices, wgpu.BufferUsage.VERTEX
+        )
+        self.index_buffer = utils.create_buffer_from_ndarray(
+            self.gfx.device, "INDEX", self.indices, wgpu.BufferUsage.INDEX
+        )
+        # Uniform Buffers
+        self.camera_uniform_buffer_size = sizeof(CameraUniform)
+        self.camera_uniform_buffer = self.gfx.create_buffer(
+            "Camera Uniform Buffer",
+            self.camera_uniform_buffer_size,
+            wgpu.BufferUsage.UNIFORM,
+        )
+
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
+        sampler = self.device.create_sampler()
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -222,7 +260,7 @@ class Sprite(Vu2D):
                 wgpu.BindGroupEntry(
                     binding=0, buffer=self.camera_uniform_buffer, size=self.camera_uniform_buffer_size
                 ),
-                wgpu.BindGroupEntry(binding=1, sampler=self.texture.sampler),
+                wgpu.BindGroupEntry(binding=1, sampler=sampler),
                 wgpu.BindGroupEntry(binding=2, texture_view=view),
             ]
         )
@@ -239,20 +277,6 @@ class Sprite(Vu2D):
 
         # exit()
 
-    def create_buffers(self):
-        self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.gfx.device, "VERTEX", self.vertex_data, wgpu.BufferUsage.VERTEX
-        )
-        self.index_buffer = utils.create_buffer_from_ndarray(
-            self.gfx.device, "INDEX", self.index_data, wgpu.BufferUsage.INDEX
-        )
-        # Uniform Buffers
-        self.camera_uniform_buffer_size = sizeof(CameraUniform)
-        self.camera_uniform_buffer = self.gfx.create_buffer(
-            "Camera Uniform Buffer",
-            self.camera_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
 
     def draw(self, renderer: SceneRenderer):
         #logger.debug("Drawing sprite")
@@ -284,4 +308,4 @@ class Sprite(Vu2D):
         pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, self.index_format)
-        pass_enc.draw_indexed(len(self.index_data))
+        pass_enc.draw_indexed(len(self.indices))
