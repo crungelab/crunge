@@ -3,15 +3,38 @@ from loguru import logger
 import glm
 
 from ...sprite import Sprite
-#from ...node_2d import Node2D
+from ...node_2d import Node2D
 from ...model_2d import DynamicModel2D
 from ...texture_atlas_kit import TextureAtlasKit
 from ...resource_kit import ResourceKit
 from ...geom import BoxGeom
 
+class Thruster(Node2D):
+    def __init__(self, body, position: glm.vec2, force: glm.vec2, angular_velocity: float = 0) -> None:
+        super().__init__(position)
+        self.body = body
+        self.active = False
+        self.force = force
+        self.angular_velocity = angular_velocity
+
+    def on(self):
+        self.active = True
+
+    def off(self):
+        self.active = False
+
+    def update(self, dt):
+        super().update(dt)
+        if self.active:
+            self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
+            self.body.angular_velocity = self.angular_velocity
+        #else:
+        #    self.body.angular_velocity = 0
+
+
 class Ship(DynamicModel2D):
     def __init__(self, position: glm.vec2) -> None:
-        super().__init__(geom=BoxGeom)
+        super().__init__(position, geom=BoxGeom)
         path = ResourceKit().root / "spaceshooter" / "sheet.xml"
         atlas = TextureAtlasKit().load(path)
         logger.debug(f"atlas: {atlas}")
@@ -19,9 +42,27 @@ class Ship(DynamicModel2D):
         texture = atlas.get("playerShip1_orange.png")
 
         self.vu = Sprite(texture)
-        self.position = position
         self.size = texture.size
 
-    def update(self, dt):
-        super().update(dt)
-        self.body.apply_force_at_local_point((0, 100), (0, 0))
+        self.rear_thruster: Thruster = None
+
+    def do_create(self):
+        super().do_create()
+        self.front_thruster = Thruster(self.body, glm.vec2(0, self.size.y / 2), glm.vec2(0, -100))
+        self.add_child(self.front_thruster)
+
+        self.rear_thruster = Thruster(self.body, glm.vec2(0, -self.size.y / 2), glm.vec2(0, 100))
+        self.add_child(self.rear_thruster)
+
+        #self.left_thruster = Thruster(self.body, glm.vec2(-self.size.x / 2, 0), glm.vec2(-100, 0))
+        self.left_thruster = Thruster(self.body, glm.vec2(-self.size.x / 2, 0), glm.vec2(-100, 0), 5)
+        self.add_child(self.left_thruster)
+
+        #self.right_thruster = Thruster(self.body, glm.vec2(self.size.x / 2, 0), glm.vec2(100, 0))
+        self.right_thruster = Thruster(self.body, glm.vec2(self.size.x / 2, 0), glm.vec2(100, 0), -5)
+        self.add_child(self.right_thruster)
+
+    def update(self, delta_time: float):
+        super().update(delta_time)
+        if not self.left_thruster.active and not self.right_thruster.active:
+            self.body.angular_velocity = 0

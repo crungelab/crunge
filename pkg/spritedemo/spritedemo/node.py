@@ -12,6 +12,7 @@ class Node(Base):
     def __init__(self, vu: Vu = None) -> None:
         super().__init__()
         self.vu = vu
+        self.parent: "Node" = None
         self.children: List["Node"] = []
 
     def add_child(self, child):

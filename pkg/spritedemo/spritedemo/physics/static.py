@@ -9,7 +9,7 @@ class StaticPhysics(Physics, metaclass=PhysicsMeta):
     def __init__(self):
         super().__init__(PT_STATIC)
 
-    def setup():
+    def create():
         pass
 
     def update(self, model, delta_time=1/60.0):

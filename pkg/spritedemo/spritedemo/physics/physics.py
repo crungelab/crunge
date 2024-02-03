@@ -17,7 +17,7 @@ class Physics:
     def __init__(self, kind):
         self.kind = kind
 
-    def setup():
+    def create():
         pass
 
     def update(self, model, delta_time=1/60.0):
@@ -31,7 +31,7 @@ class GroupPhysics(Physics):
     def __init__(self, kind=PT_GROUP):
         super().__init__(kind)
 
-    def setup():
+    def create():
         pass
 
     def update(self, model, delta_time=1/60.0):

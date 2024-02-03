@@ -14,7 +14,7 @@ class PhysicsEngine:
         self.space.gravity = gravity
         self.space.iterations = iterations
     
-    def setup(self):
+    def create(self):
         pass
 
     def update(self, delta_time=1/60.0):

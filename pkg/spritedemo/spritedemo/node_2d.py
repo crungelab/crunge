@@ -1,3 +1,4 @@
+from loguru import logger
 import glm
 
 from .vu_2d import Vu2D
@@ -5,9 +6,9 @@ from .vu_2d import Vu2D
 from .node import Node
 
 class Node2D(Node):
-    def __init__(self, vu: Vu2D=None) -> None:
+    def __init__(self, position=glm.vec2(), vu: Vu2D=None) -> None:
         super().__init__(vu)
-        self._position = glm.vec2(0.0)
+        self._position = position
         self._depth = 0.0
         self._rotation = 0.0 # radians
         self._size = glm.vec2(1.0)
@@ -44,6 +45,7 @@ class Node2D(Node):
     @angle.setter
     def angle(self, value: float):
         self._rotation = glm.radians(value)
+        #logger.debug(f"class: {self.__class__}, angle: {value}, rotation: {self._rotation}")
         self.update_transform()
 
     @property
