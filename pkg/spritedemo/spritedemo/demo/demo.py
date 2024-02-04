@@ -11,7 +11,7 @@ import crunge.wgpu.utils as utils
 from ..scene_renderer import SceneRenderer
 from ..scene import Scene
 from .demo_view import DemoView
-from ..camera import Camera
+from ..camera_2d import Camera2D
 
 #from .controller.camera import CameraController
 #from .controller.camera.arcball import ArcballCameraController
@@ -23,7 +23,7 @@ class Demo(engine.App):
     
     def __init__(self):
         super().__init__(self.kWidth, self.kHeight, self.__class__.__name__, resizable=True)
-        self.camera: Camera = None
+        self.camera: Camera2D = None
         self.delta_time = 0
         self.resource_root = Path(__file__).parent.parent.parent.parent.parent / "resources"
         self.scene = Scene()

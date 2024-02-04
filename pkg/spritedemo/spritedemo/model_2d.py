@@ -13,42 +13,31 @@ from .vu_2d import Vu2D
 
 
 class Model2D(Node2D):
-    def __init__(self, position=glm.vec2(), vu: Vu2D = None, brain=None):
-        super().__init__(position, vu)
+    def __init__(
+        self,
+        position=glm.vec2(),
+        size=glm.vec2(1.0),
+        scale=glm.vec2(1.0),
+        vu: Vu2D = None,
+        brain=None,
+    ):
+        super().__init__(position, size, scale, vu)
         self.layer = None
         self.brain = brain
-        self.radius = 0
-
-        """
-        if vu:
-            self.width = sprite.width * TILE_SCALING
-            self.height = sprite.height * TILE_SCALING
-            self.radius = self.width / 2
-            self.angle = sprite.angle
-        """
-
-    """
-    def create(self, layer):
-        self.layer = layer
-        self.do_create()
-    """
 
     def create(self):
-        self.do_create()
+        self._create()
         self.post_create()
+        return self
 
-    def do_create(self):
+    def _create(self):
         pass
 
     def post_create(self):
         pass
 
-    def do_create(self):
+    def _create(self):
         pass
-        """
-        if self.sprite and len(self.sprite.sprite_lists) == 0:
-            self.layer.add_sprite(self.sprite)
-        """
 
     def update(self, delta_time: float):
         super().update(delta_time)
@@ -78,8 +67,8 @@ class Group2D(Model2D):
         self.models.append(model)
         return model
 
-    def do_create(self):
-        super().do_create()
+    def _create(self):
+        super()._create()
         for model in self.models:
             model.gid = self.id
             self.layer.add_model(model)
@@ -89,12 +78,14 @@ class PhysicsModel2D(Model2D):
     def __init__(
         self,
         position=glm.vec2(),
-        vu=None,
+        size=glm.vec2(1.0),
+        scale=glm.vec2(1.0),
+        vu: Vu2D = None,
         brain=None,
         physics=physics.StaticPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, vu, brain)
+        super().__init__(position, size, scale, vu, brain)
         self.body = None
         self.body_offset = None
         self.shapes = []
@@ -118,8 +109,8 @@ class PhysicsModel2D(Model2D):
         else:
             self._physics = physics
 
-    def do_create(self):
-        super().do_create()
+    def _create(self):
+        super()._create()
         self.body = self.create_body()
         self.shapes = self.create_shapes()
 
@@ -130,8 +121,8 @@ class PhysicsModel2D(Model2D):
         if self.body:
             self.position = glm.vec2(self.body.position.x, self.body.position.y)
             self.angle = math.degrees(self.body.angle)
-            #logger.debug(f"position: {self.position}")
-            #logger.debug(f"angle: {self.angle}")
+            # logger.debug(f"position: {self.position}")
+            # logger.debug(f"angle: {self.angle}")
 
     def create_body(self, offset=None):
         return self.physics.create_body(self, offset)
@@ -187,8 +178,8 @@ class PhysicsGroup2D(PhysicsModel2D):
         self.models.append(model)
         return model
 
-    def do_create(self):
-        super().do_create()
+    def _create(self):
+        super()._create()
         for model in self.models:
             model.gid = self.id
             # model.physics = self.physics
@@ -202,36 +193,42 @@ class StaticModel2D(PhysicsModel2D):
     def __init__(
         self,
         position=glm.vec2(),
+        size=glm.vec2(1.0),
+        scale=glm.vec2(1.0),
         vu=None,
         brain=None,
         physics=physics.StaticPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, vu, brain, physics, geom)
+        super().__init__(position, size, scale, vu, brain, physics, geom)
 
 
 class DynamicModel2D(PhysicsModel2D):
     def __init__(
         self,
         position=glm.vec2(),
+        size=glm.vec2(1.0),
+        scale=glm.vec2(1.0),
         vu=None,
         brain=None,
         physics=physics.DynamicPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, vu, brain, physics, geom)
+        super().__init__(position, size, scale, vu, brain, physics, geom)
 
 
 class KinematicModel(PhysicsModel2D):
     def __init__(
         self,
         position=glm.vec2(),
+        size=glm.vec2(1.0),
+        scale=glm.vec2(1.0),
         vu=None,
         brain=None,
         physics=physics.KinematicPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, vu, brain, physics, geom)
+        super().__init__(position, size, scale, vu, brain, physics, geom)
 
     def update(self, delta_time=1 / 60):
         super().update(delta_time)

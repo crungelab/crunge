@@ -7,7 +7,7 @@ from ...node_2d import Node2D
 from ...model_2d import DynamicModel2D
 from ...texture_atlas_kit import TextureAtlasKit
 from ...resource_kit import ResourceKit
-from ...geom import BoxGeom
+from ...geom import BallGeom
 
 class Thruster(Node2D):
     def __init__(self, body, position: glm.vec2, force: glm.vec2, angular_velocity: float = 0) -> None:
@@ -34,7 +34,7 @@ class Thruster(Node2D):
 
 class Ship(DynamicModel2D):
     def __init__(self, position: glm.vec2) -> None:
-        super().__init__(position, geom=BoxGeom)
+        super().__init__(position, geom=BallGeom)
         path = ResourceKit().root / "spaceshooter" / "sheet.xml"
         atlas = TextureAtlasKit().load(path)
         logger.debug(f"atlas: {atlas}")
@@ -46,8 +46,8 @@ class Ship(DynamicModel2D):
 
         self.rear_thruster: Thruster = None
 
-    def do_create(self):
-        super().do_create()
+    def _create(self):
+        super()._create()
         self.front_thruster = Thruster(self.body, glm.vec2(0, self.size.y / 2), glm.vec2(0, -100))
         self.add_child(self.front_thruster)
 

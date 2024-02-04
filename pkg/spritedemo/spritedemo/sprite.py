@@ -20,7 +20,7 @@ import crunge.wgpu.utils as utils
 
 from .scene_renderer import SceneRenderer
 from .vu_2d import Vu2D
-from .camera import Camera
+from .camera_2d import Camera2D
 from .uniforms import (
     cast_matrix3,
     cast_matrix4,
@@ -312,7 +312,8 @@ class Sprite(Vu2D):
         #camera_uniform.position.x = camera.position.x
         #camera_uniform.position.y = camera.position.y
         #camera_uniform.position.z = camera.position.z
-        camera_uniform.position = cast_vec3(camera.position)
+        #camera_uniform.position = cast_vec3(camera.position)
+        camera_uniform.position = cast_vec3(glm.vec3(camera.position.x, camera.position.y, 0))
 
         renderer.device.queue.write_buffer(
             self.camera_uniform_buffer,

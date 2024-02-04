@@ -20,7 +20,7 @@ import crunge.wgpu.utils as utils
 
 from .scene_renderer import SceneRenderer
 from .vu_2d import Vu2D
-from .camera import Camera
+from .camera_2d import Camera
 from .uniforms import (
     cast_matrix3,
     cast_matrix4,
