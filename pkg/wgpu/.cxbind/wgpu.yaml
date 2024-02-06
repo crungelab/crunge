@@ -8,7 +8,7 @@ module: _wgpu
 flags: [
   '-x', 'c++',
   '-std=c++17',
-  #'-I../../depot/dawn/include',
+  '-I../../depot/dawn/include',
   '-I/home/kurt/Dev/crunge/_cxbuild/build/depot/dawn/gen/include',
 ]
 
@@ -36,6 +36,9 @@ defaults:
 'field.wgpu::RequestAdapterCallbackInfo::callback': {exclude: true}
 'field.wgpu::RequestDeviceCallbackInfo::callback': {exclude: true}
 'field.wgpu::DeviceDescriptor::deviceLostCallback': {exclude: true}
+
+'field.wgpu::CreateComputePipelineAsyncCallbackInfo::callback': {exclude: true}
+'field.wgpu::CreateRenderPipelineAsyncCallbackInfo::callback': {exclude: true}
 
 # These have this signature:  const char* const * 
 'field.wgpu::DawnInstanceDescriptor::additionalRuntimeSearchPaths': {exclude: true}
@@ -98,3 +101,9 @@ defaults:
 'struct.wgpu::StencilFaceState': {gen_kw_init: true}
 'struct.wgpu::MultisampleState': {gen_kw_init: true}
 
+'struct.wgpu::ComputePipelineDescriptor': {gen_kw_init: true}
+'struct.wgpu::ProgrammableStageDescriptor': {gen_kw_init: true}
+'struct.wgpu::ComputePassDescriptor': {gen_kw_init: true}
+
+# Overloaded
+#'method.wgpu::Adapter::RequestDevice': {overload: true}

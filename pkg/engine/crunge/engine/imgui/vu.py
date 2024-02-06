@@ -192,7 +192,7 @@ class ImGuiVu(Vu):
         )
 
         #self.io.fonts.set_tex_id(as_capsule(self.texture_view))
-        self.io.fonts.set_tex_id(self.texture_view)
+        #self.io.fonts.set_tex_id(self.texture_view)
         self.io.fonts.clear_tex_data()
 
     def create_pipeline(self):

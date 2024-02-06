@@ -120,6 +120,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::BufferMapAsyncStatus, BufferMapAsyncStatus)
     BufferMapAsyncStatus
         .value("SUCCESS", wgpu::BufferMapAsyncStatus::Success)
+        .value("INSTANCE_DROPPED", wgpu::BufferMapAsyncStatus::InstanceDropped)
         .value("VALIDATION_ERROR", wgpu::BufferMapAsyncStatus::ValidationError)
         .value("UNKNOWN", wgpu::BufferMapAsyncStatus::Unknown)
         .value("DEVICE_LOST", wgpu::BufferMapAsyncStatus::DeviceLost)
@@ -164,6 +165,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::CompilationInfoRequestStatus, CompilationInfoRequestStatus)
     CompilationInfoRequestStatus
         .value("SUCCESS", wgpu::CompilationInfoRequestStatus::Success)
+        .value("INSTANCE_DROPPED", wgpu::CompilationInfoRequestStatus::InstanceDropped)
         .value("ERROR", wgpu::CompilationInfoRequestStatus::Error)
         .value("DEVICE_LOST", wgpu::CompilationInfoRequestStatus::DeviceLost)
         .value("UNKNOWN", wgpu::CompilationInfoRequestStatus::Unknown)
@@ -181,6 +183,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::CreatePipelineAsyncStatus, CreatePipelineAsyncStatus)
     CreatePipelineAsyncStatus
         .value("SUCCESS", wgpu::CreatePipelineAsyncStatus::Success)
+        .value("INSTANCE_DROPPED", wgpu::CreatePipelineAsyncStatus::InstanceDropped)
         .value("VALIDATION_ERROR", wgpu::CreatePipelineAsyncStatus::ValidationError)
         .value("INTERNAL_ERROR", wgpu::CreatePipelineAsyncStatus::InternalError)
         .value("DEVICE_LOST", wgpu::CreatePipelineAsyncStatus::DeviceLost)
@@ -375,6 +378,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::QueueWorkDoneStatus, QueueWorkDoneStatus)
     QueueWorkDoneStatus
         .value("SUCCESS", wgpu::QueueWorkDoneStatus::Success)
+        .value("INSTANCE_DROPPED", wgpu::QueueWorkDoneStatus::InstanceDropped)
         .value("ERROR", wgpu::QueueWorkDoneStatus::Error)
         .value("UNKNOWN", wgpu::QueueWorkDoneStatus::Unknown)
         .value("DEVICE_LOST", wgpu::QueueWorkDoneStatus::DeviceLost)
@@ -384,6 +388,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::RequestAdapterStatus, RequestAdapterStatus)
     RequestAdapterStatus
         .value("SUCCESS", wgpu::RequestAdapterStatus::Success)
+        .value("INSTANCE_DROPPED", wgpu::RequestAdapterStatus::InstanceDropped)
         .value("UNAVAILABLE", wgpu::RequestAdapterStatus::Unavailable)
         .value("ERROR", wgpu::RequestAdapterStatus::Error)
         .value("UNKNOWN", wgpu::RequestAdapterStatus::Unknown)
@@ -393,6 +398,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYENUM_SCOPED_BEGIN(_wgpu, wgpu::RequestDeviceStatus, RequestDeviceStatus)
     RequestDeviceStatus
         .value("SUCCESS", wgpu::RequestDeviceStatus::Success)
+        .value("INSTANCE_DROPPED", wgpu::RequestDeviceStatus::InstanceDropped)
         .value("ERROR", wgpu::RequestDeviceStatus::Error)
         .value("UNKNOWN", wgpu::RequestDeviceStatus::Unknown)
         .export_values();
@@ -816,13 +822,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         , py::arg("feature")
         , py::return_value_policy::automatic_reference);
 
-        Adapter.def("request_device", &wgpu::Adapter::RequestDevice
-        , py::arg("descriptor")
-        , py::arg("callback")
-        , py::arg("userdata")
-        , py::return_value_policy::automatic_reference);
-
-        Adapter.def("request_device_f", &wgpu::Adapter::RequestDeviceF
+        Adapter.def("request_device", py::overload_cast<const wgpu::DeviceDescriptor *, wgpu::RequestDeviceCallbackInfo>(&wgpu::Adapter::RequestDevice, py::const_)
         , py::arg("options")
         , py::arg("callback_info")
         , py::return_value_policy::automatic_reference);
@@ -866,15 +866,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         Buffer.def("get_usage", &wgpu::Buffer::GetUsage
         , py::return_value_policy::automatic_reference);
 
-        Buffer.def("map_async", &wgpu::Buffer::MapAsync
-        , py::arg("mode")
-        , py::arg("offset")
-        , py::arg("size") = WGPU_WHOLE_SIZE
-        , py::arg("callback")
-        , py::arg("userdata")
-        , py::return_value_policy::automatic_reference);
-
-        Buffer.def("map_async_f", &wgpu::Buffer::MapAsyncF
+        Buffer.def("map_async", py::overload_cast<wgpu::MapMode, size_t, size_t, wgpu::BufferMapCallbackInfo>(&wgpu::Buffer::MapAsync, py::const_)
         , py::arg("mode")
         , py::arg("offset")
         , py::arg("size") = WGPU_WHOLE_SIZE
@@ -1064,10 +1056,9 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference);
 
-        Device.def("create_compute_pipeline_async", &wgpu::Device::CreateComputePipelineAsync
+        Device.def("create_compute_pipeline_async", py::overload_cast<const wgpu::ComputePipelineDescriptor *, wgpu::CreateComputePipelineAsyncCallbackInfo>(&wgpu::Device::CreateComputePipelineAsync, py::const_)
         , py::arg("descriptor")
-        , py::arg("callback")
-        , py::arg("userdata")
+        , py::arg("callback_info")
         , py::return_value_policy::automatic_reference);
 
         Device.def("create_error_buffer", &wgpu::Device::CreateErrorBuffer
@@ -1106,10 +1097,9 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference);
 
-        Device.def("create_render_pipeline_async", &wgpu::Device::CreateRenderPipelineAsync
+        Device.def("create_render_pipeline_async", py::overload_cast<const wgpu::RenderPipelineDescriptor *, wgpu::CreateRenderPipelineAsyncCallbackInfo>(&wgpu::Device::CreateRenderPipelineAsync, py::const_)
         , py::arg("descriptor")
-        , py::arg("callback")
-        , py::arg("userdata")
+        , py::arg("callback_info")
         , py::return_value_policy::automatic_reference);
 
         Device.def("create_sampler", &wgpu::Device::CreateSampler
@@ -1172,32 +1162,12 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         , py::arg("message")
         , py::return_value_policy::automatic_reference);
 
-        Device.def("pop_error_scope", &wgpu::Device::PopErrorScope
-        , py::arg("callback")
-        , py::arg("userdata")
-        , py::return_value_policy::automatic_reference);
-
         Device.def("push_error_scope", &wgpu::Device::PushErrorScope
         , py::arg("filter")
         , py::return_value_policy::automatic_reference);
 
-        Device.def("set_device_lost_callback", &wgpu::Device::SetDeviceLostCallback
-        , py::arg("callback")
-        , py::arg("userdata")
-        , py::return_value_policy::automatic_reference);
-
         Device.def("set_label", &wgpu::Device::SetLabel
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-
-        Device.def("set_logging_callback", &wgpu::Device::SetLoggingCallback
-        , py::arg("callback")
-        , py::arg("userdata")
-        , py::return_value_policy::automatic_reference);
-
-        Device.def("set_uncaptured_error_callback", &wgpu::Device::SetUncapturedErrorCallback
-        , py::arg("callback")
-        , py::arg("userdata")
         , py::return_value_policy::automatic_reference);
 
         Device.def("tick", &wgpu::Device::Tick
@@ -1239,11 +1209,6 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         , py::return_value_policy::automatic_reference);
 
         Instance.def("process_events", &wgpu::Instance::ProcessEvents
-        , py::return_value_policy::automatic_reference);
-
-        Instance.def("request_adapter_f", &wgpu::Instance::RequestAdapterF
-        , py::arg("options")
-        , py::arg("callback_info")
         , py::return_value_policy::automatic_reference);
 
         Instance.def("wait_any", &wgpu::Instance::WaitAny
@@ -1292,12 +1257,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         , py::arg("options")
         , py::return_value_policy::automatic_reference);
 
-        Queue.def("on_submitted_work_done", &wgpu::Queue::OnSubmittedWorkDone
-        , py::arg("callback")
-        , py::arg("userdata")
-        , py::return_value_policy::automatic_reference);
-
-        Queue.def("on_submitted_work_done_f", &wgpu::Queue::OnSubmittedWorkDoneF
+        Queue.def("on_submitted_work_done", py::overload_cast<wgpu::QueueWorkDoneCallbackInfo>(&wgpu::Queue::OnSubmittedWorkDone, py::const_)
         , py::arg("callback_info")
         , py::return_value_policy::automatic_reference);
 
@@ -1533,11 +1493,6 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_END(_wgpu, wgpu::Sampler, Sampler)
 
     PYCLASS_BEGIN(_wgpu, wgpu::ShaderModule, ShaderModule)
-        ShaderModule.def("get_compilation_info", &wgpu::ShaderModule::GetCompilationInfo
-        , py::arg("callback")
-        , py::arg("userdata")
-        , py::return_value_policy::automatic_reference);
-
         ShaderModule.def("set_label", &wgpu::ShaderModule::SetLabel
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
@@ -1580,6 +1535,10 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
     PYCLASS_END(_wgpu, wgpu::SharedTextureMemory, SharedTextureMemory)
 
     PYCLASS_BEGIN(_wgpu, wgpu::Surface, Surface)
+        Surface.def("get_preferred_format", &wgpu::Surface::GetPreferredFormat
+        , py::arg("adapter")
+        , py::return_value_policy::automatic_reference);
+
     PYCLASS_END(_wgpu, wgpu::Surface, Surface)
 
     PYCLASS_BEGIN(_wgpu, wgpu::SwapChain, SwapChain)
@@ -1866,6 +1825,18 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         CopyTextureForBrowserOptions.def_readwrite("dst_alpha_mode", &wgpu::CopyTextureForBrowserOptions::dstAlphaMode);
         CopyTextureForBrowserOptions.def_readwrite("internal_usage", &wgpu::CopyTextureForBrowserOptions::internalUsage);
     PYCLASS_END(_wgpu, wgpu::CopyTextureForBrowserOptions, CopyTextureForBrowserOptions)
+
+    PYCLASS_BEGIN(_wgpu, wgpu::CreateComputePipelineAsyncCallbackInfo, CreateComputePipelineAsyncCallbackInfo)
+        CreateComputePipelineAsyncCallbackInfo.def_readwrite("next_in_chain", &wgpu::CreateComputePipelineAsyncCallbackInfo::nextInChain);
+        CreateComputePipelineAsyncCallbackInfo.def_readwrite("mode", &wgpu::CreateComputePipelineAsyncCallbackInfo::mode);
+        CreateComputePipelineAsyncCallbackInfo.def_readwrite("userdata", &wgpu::CreateComputePipelineAsyncCallbackInfo::userdata);
+    PYCLASS_END(_wgpu, wgpu::CreateComputePipelineAsyncCallbackInfo, CreateComputePipelineAsyncCallbackInfo)
+
+    PYCLASS_BEGIN(_wgpu, wgpu::CreateRenderPipelineAsyncCallbackInfo, CreateRenderPipelineAsyncCallbackInfo)
+        CreateRenderPipelineAsyncCallbackInfo.def_readwrite("next_in_chain", &wgpu::CreateRenderPipelineAsyncCallbackInfo::nextInChain);
+        CreateRenderPipelineAsyncCallbackInfo.def_readwrite("mode", &wgpu::CreateRenderPipelineAsyncCallbackInfo::mode);
+        CreateRenderPipelineAsyncCallbackInfo.def_readwrite("userdata", &wgpu::CreateRenderPipelineAsyncCallbackInfo::userdata);
+    PYCLASS_END(_wgpu, wgpu::CreateRenderPipelineAsyncCallbackInfo, CreateRenderPipelineAsyncCallbackInfo)
 
     PYSUBCLASS_BEGIN(_wgpu, wgpu::DawnWGSLBlocklist, struct wgpu::ChainedStruct, DawnWGSLBlocklist)
         DawnWGSLBlocklist.def(py::init<>());
@@ -3059,6 +3030,28 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
             [](wgpu::ComputePassDescriptor& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.label = c; }
         );
         ComputePassDescriptor.def_readwrite("timestamp_writes", &wgpu::ComputePassDescriptor::timestampWrites);
+        ComputePassDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::ComputePassDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.wgpu::ComputePassDescriptor::nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.wgpu::ComputePassDescriptor::label = value;
+            }
+            if (kwargs.contains("timestamp_writes"))
+            {
+                auto value = kwargs["timestamp_writes"].cast<const wgpu::ComputePassTimestampWrites *>();
+                obj.wgpu::ComputePassDescriptor::timestampWrites = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::ComputePassDescriptor, ComputePassDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::DepthStencilState, DepthStencilState)
@@ -3151,6 +3144,7 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         ExternalTextureDescriptor.def_readwrite("dst_transfer_function_parameters", &wgpu::ExternalTextureDescriptor::dstTransferFunctionParameters);
         ExternalTextureDescriptor.def_readwrite("gamut_conversion_matrix", &wgpu::ExternalTextureDescriptor::gamutConversionMatrix);
         ExternalTextureDescriptor.def_readwrite("flip_y", &wgpu::ExternalTextureDescriptor::flipY);
+        ExternalTextureDescriptor.def_readwrite("mirrored", &wgpu::ExternalTextureDescriptor::mirrored);
         ExternalTextureDescriptor.def_readwrite("rotation", &wgpu::ExternalTextureDescriptor::rotation);
     PYCLASS_END(_wgpu, wgpu::ExternalTextureDescriptor, ExternalTextureDescriptor)
 
@@ -3232,6 +3226,38 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         );
         ProgrammableStageDescriptor.def_readwrite("constant_count", &wgpu::ProgrammableStageDescriptor::constantCount);
         ProgrammableStageDescriptor.def_readwrite("constants", &wgpu::ProgrammableStageDescriptor::constants);
+        ProgrammableStageDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::ProgrammableStageDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.wgpu::ProgrammableStageDescriptor::nextInChain = value;
+            }
+            if (kwargs.contains("module"))
+            {
+                auto value = kwargs["module"].cast<wgpu::ShaderModule>();
+                obj.wgpu::ProgrammableStageDescriptor::module = value;
+            }
+            if (kwargs.contains("entry_point"))
+            {
+                auto _value = kwargs["entry_point"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.wgpu::ProgrammableStageDescriptor::entryPoint = value;
+            }
+            if (kwargs.contains("constant_count"))
+            {
+                auto value = kwargs["constant_count"].cast<size_t>();
+                obj.wgpu::ProgrammableStageDescriptor::constantCount = value;
+            }
+            if (kwargs.contains("constants"))
+            {
+                auto value = kwargs["constants"].cast<const wgpu::ConstantEntry *>();
+                obj.wgpu::ProgrammableStageDescriptor::constants = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::ProgrammableStageDescriptor, ProgrammableStageDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::RenderPassColorAttachment, RenderPassColorAttachment)
@@ -3508,6 +3534,33 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         );
         ComputePipelineDescriptor.def_readwrite("layout", &wgpu::ComputePipelineDescriptor::layout);
         ComputePipelineDescriptor.def_readwrite("compute", &wgpu::ComputePipelineDescriptor::compute);
+        ComputePipelineDescriptor.def(py::init([](const py::kwargs& kwargs)
+        {
+            wgpu::ComputePipelineDescriptor obj;
+            if (kwargs.contains("next_in_chain"))
+            {
+                auto value = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct *>();
+                obj.wgpu::ComputePipelineDescriptor::nextInChain = value;
+            }
+            if (kwargs.contains("label"))
+            {
+                auto _value = kwargs["label"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.wgpu::ComputePipelineDescriptor::label = value;
+            }
+            if (kwargs.contains("layout"))
+            {
+                auto value = kwargs["layout"].cast<wgpu::PipelineLayout>();
+                obj.wgpu::ComputePipelineDescriptor::layout = value;
+            }
+            if (kwargs.contains("compute"))
+            {
+                auto value = kwargs["compute"].cast<wgpu::ProgrammableStageDescriptor>();
+                obj.wgpu::ComputePipelineDescriptor::compute = value;
+            }
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     PYCLASS_END(_wgpu, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor)
 
     PYCLASS_BEGIN(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
