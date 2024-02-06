@@ -59,8 +59,8 @@ struct VertexOutput {
 @vertex
 fn vs_main(@location(0) pos: vec2f, @builtin(instance_index) index: u32) -> VertexOutput {
     var output: VertexOutput;
-    //let pos = particles[index].position;
-    output.position = vec4<f32>(pos.x, pos.y, 0.0, 1.0);
+    let frag_pos = pos + particles[index].position;
+    output.position = vec4<f32>(frag_pos.x, frag_pos.y, 0.0, 1.0);
     output.color = particles[index].color;
     return output;
 }
@@ -76,10 +76,10 @@ fn fs_main(@location(0) inColor: vec4<f32>) -> @location(0) vec4<f32> {
 particles_data = np.array(
     [
         # position, velocity, color, age, lifespan
-        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
     ],
     dtype=np.float32,
 )
@@ -284,7 +284,8 @@ class ParticlesDemo(Demo):
         compute_pass.set_pipeline(self.compute_pipeline)
         compute_pass.set_bind_group(0, self.compute_bind_group)
         #compute_pass.dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
-        compute_pass.dispatch_workgroups(4, 4, 1)
+        #compute_pass.dispatch_workgroups(4, 4, 1)
+        compute_pass.dispatch_workgroups(1)
         compute_pass.end()
         commands = encoder.finish()
         self.queue.submit(1, commands)
