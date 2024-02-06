@@ -26,9 +26,11 @@ class Demo(engine.App):
         )
         self.resource_root = Path(__file__).parent.parent.parent.parent.parent / "resources"
 
+    '''
     def draw(self, renderer: Renderer):
         imgui.begin("Example: button")
         imgui.button("Button 1")
         imgui.button("Button 2")
         imgui.end()
         super().draw(renderer)
+    '''

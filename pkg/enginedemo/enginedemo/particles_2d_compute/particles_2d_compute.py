@@ -9,7 +9,7 @@ import numpy as np
 import glm
 
 from crunge import as_capsule
-from crunge import wgpu
+from crunge import wgpu, imgui
 import crunge.wgpu.utils as utils
 
 from crunge.engine import Renderer
@@ -61,6 +61,8 @@ struct Particle {
 struct VertexOutput {
     @builtin(position) position: vec4<f32>,
     @location(0) color: vec4<f32>,
+    @location(1) age: f32,
+    @location(2) lifespan: f32,
 }
 
 @vertex
@@ -69,33 +71,34 @@ fn vs_main(@location(0) pos: vec2f, @builtin(instance_index) index: u32) -> Vert
     let vert_pos = pos + particles[index].position;
     output.position = uniforms.modelViewProjectionMatrix * vec4<f32>(vert_pos.x, vert_pos.y, 0.0, 1.0);
     output.color = particles[index].color;
+    output.age = particles[index].age;
+    output.lifespan = particles[index].lifespan;
     return output;
 }
 """
 
 fs_code = """
+struct VertexOutput {
+    @builtin(position) position: vec4<f32>,
+    @location(0) color: vec4<f32>,
+    @location(1) age: f32,
+    @location(2) lifespan: f32,
+}
+
 @fragment
-fn fs_main(@location(0) inColor: vec4<f32>) -> @location(0) vec4<f32> {
-    return inColor;
+fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
+    //return inColor;
+    let fadeFactor: f32 = 1.0 - (in.age / in.lifespan);
+    let outColor = vec4<f32>(in.color.rgb, in.color.a * fadeFactor);
+    // Optionally clamp fadeFactor to avoid negative values
+    // fadeFactor = max(fadeFactor, 0.0);
+    return outColor;
 }
 """
 
-'''
-particles_data = np.array(
-    [
-        # position, velocity, color, age, lifespan
-        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 100.0],
-    ],
-    dtype=np.float32,
-)
-'''
 
 class ParticlesDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
-    #index_buffer: wgpu.Buffer = None
     particles_buffer: wgpu.Buffer = None
 
     texture: wgpu.Texture = None
@@ -107,9 +110,14 @@ class ParticlesDemo(Demo):
     def __init__(self):
         super().__init__()
 
-        self.num_particles = 16
-        self.create_buffers()
+        self.num_particles = 32
         self.create_particles()
+        self.create_buffers()
+        self.create_pipeline()
+
+    def reset(self):
+        self.create_particles()
+        self.create_buffers()
         self.create_pipeline()
 
     def create_buffers(self):
@@ -121,27 +129,21 @@ class ParticlesDemo(Demo):
             self.uniformBufferSize,
             wgpu.BufferUsage.UNIFORM,
         )
-        '''
-        self.particles_buffer = utils.create_buffer_from_ndarray(
-            self.device, "PARTICLES", particles_data, wgpu.BufferUsage.STORAGE
-        )
-        '''
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
+        )
+        self.particles_buffer = utils.create_buffer_from_ctypes_array(
+            self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
         )
 
     def create_particles(self):
         self.particles = (Particle * self.num_particles)()
         for i in range(0, self.num_particles):
             self.particles[i].position = Vec2(0.0, 0.0)
-            #self.particles[i].velocity = Vec2(1.0, 1.0)
             self.particles[i].velocity = Vec2(random.uniform(-1, 1), random.uniform(-1, 1))
             self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
             self.particles[i].age = 0.0
             self.particles[i].lifespan = 100.0
-        self.particles_buffer = utils.create_buffer_from_ctypes_array(
-            self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
-        )
         
         
 
@@ -205,8 +207,23 @@ class ParticlesDemo(Demo):
         )
         self.compute_pipeline = self.device.create_compute_pipeline(compute_pl_desc)
 
+        blend_state = wgpu.BlendState(
+            alpha=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.ONE,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+            color=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.SRC_ALPHA,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+        )
+
         colorTargetState = wgpu.ColorTargetState(
             format=wgpu.TextureFormat.BGRA8_UNORM,
+            blend=blend_state,
+            write_mask=wgpu.ColorWriteMask.ALL,
         )
 
         fragmentState = wgpu.FragmentState(
@@ -321,7 +338,14 @@ class ParticlesDemo(Demo):
 
         self.queue.submit(1, commands)
 
+        self.draw_gui()
         super().draw(renderer)
+
+    def draw_gui(self):
+        imgui.begin("Sparks")
+        if imgui.button("Run"):
+            self.reset()
+        imgui.end()
 
     def frame(self):
         model = glm.mat4(1.0)  # Identity matrix
