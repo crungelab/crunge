@@ -2,9 +2,11 @@ import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
 import time
 import sys
+import random
 
 from loguru import logger
 import numpy as np
+import glm
 
 from crunge import as_capsule
 from crunge import wgpu
@@ -15,9 +17,9 @@ from crunge.engine import Renderer
 from ..demo import Demo
 
 from .data import vertex_data
+from .uniforms import Particle, Vec2, Vec4
 
 cs_code = """
-@group(0) @binding(0) var<storage, read_write> particles: array<Particle>;
 
 struct Particle {
     position: vec2<f32>,
@@ -26,6 +28,7 @@ struct Particle {
     age: f32,
     lifespan: f32,
 }
+@group(0) @binding(1) var<storage, read_write> particles: array<Particle>;
 
 @compute @workgroup_size(64) // Adjust workgroup size based on your needs
 fn cs_main(@builtin(global_invocation_id) global_id : vec3<u32>) {
@@ -41,6 +44,11 @@ fn cs_main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 """
 
 vs_code = """
+struct Uniforms {
+  modelViewProjectionMatrix : mat4x4<f32>,
+}
+@group(0) @binding(0) var<uniform> uniforms : Uniforms;
+
 struct Particle {
     position: vec2<f32>,
     velocity: vec2<f32>,
@@ -48,8 +56,7 @@ struct Particle {
     age: f32,
     lifespan: f32,
 }
-
-@binding(0) @group(0) var<storage, read> particles: array<Particle>;
+@group(0) @binding(1)  var<storage, read> particles: array<Particle>;
 
 struct VertexOutput {
     @builtin(position) position: vec4<f32>,
@@ -59,8 +66,8 @@ struct VertexOutput {
 @vertex
 fn vs_main(@location(0) pos: vec2f, @builtin(instance_index) index: u32) -> VertexOutput {
     var output: VertexOutput;
-    let frag_pos = pos + particles[index].position;
-    output.position = vec4<f32>(frag_pos.x, frag_pos.y, 0.0, 1.0);
+    let vert_pos = pos + particles[index].position;
+    output.position = uniforms.modelViewProjectionMatrix * vec4<f32>(vert_pos.x, vert_pos.y, 0.0, 1.0);
     output.color = particles[index].color;
     return output;
 }
@@ -73,6 +80,7 @@ fn fs_main(@location(0) inColor: vec4<f32>) -> @location(0) vec4<f32> {
 }
 """
 
+'''
 particles_data = np.array(
     [
         # position, velocity, color, age, lifespan
@@ -83,6 +91,7 @@ particles_data = np.array(
     ],
     dtype=np.float32,
 )
+'''
 
 class ParticlesDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
@@ -98,12 +107,45 @@ class ParticlesDemo(Demo):
     def __init__(self):
         super().__init__()
 
-        #self.num_particles = len(particles_data)
-        self.num_particles = 4
-
+        self.num_particles = 16
         self.create_buffers()
-        #self.create_textures()
+        self.create_particles()
+        self.create_pipeline()
 
+    def create_buffers(self):
+        logger.debug("create_buffers")
+        self.uniformBufferSize = 4 * 16
+        self.uniformBuffer = utils.create_buffer(
+            self.device,
+            "Uniform buffer",
+            self.uniformBufferSize,
+            wgpu.BufferUsage.UNIFORM,
+        )
+        '''
+        self.particles_buffer = utils.create_buffer_from_ndarray(
+            self.device, "PARTICLES", particles_data, wgpu.BufferUsage.STORAGE
+        )
+        '''
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
+        )
+
+    def create_particles(self):
+        self.particles = (Particle * self.num_particles)()
+        for i in range(0, self.num_particles):
+            self.particles[i].position = Vec2(0.0, 0.0)
+            #self.particles[i].velocity = Vec2(1.0, 1.0)
+            self.particles[i].velocity = Vec2(random.uniform(-1, 1), random.uniform(-1, 1))
+            self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
+            self.particles[i].age = 0.0
+            self.particles[i].lifespan = 100.0
+        self.particles_buffer = utils.create_buffer_from_ctypes_array(
+            self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
+        )
+        
+        
+
+    def create_pipeline(self):
         cs_module = self.gfx.create_shader_module(cs_code)
         vs_module = self.gfx.create_shader_module(vs_code)
         fs_module = self.gfx.create_shader_module(fs_code)
@@ -126,6 +168,14 @@ class ParticlesDemo(Demo):
             [
                 wgpu.BindGroupLayoutEntry(
                     binding=0,
+                    visibility=wgpu.ShaderStage.COMPUTE,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM,
+                        min_binding_size=0,
+                    ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=1,
                     visibility=wgpu.ShaderStage.COMPUTE,
                     buffer=wgpu.BufferBindingLayout(
                         type=wgpu.BufferBindingType.STORAGE,
@@ -178,6 +228,14 @@ class ParticlesDemo(Demo):
             [
                 wgpu.BindGroupLayoutEntry(
                     binding=0,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM,
+                        min_binding_size=0,
+                    ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=1,
                     visibility=wgpu.ShaderStage.COMPUTE | wgpu.ShaderStage.VERTEX,
                     buffer=wgpu.BufferBindingLayout(
                         type=wgpu.BufferBindingType.READ_ONLY_STORAGE,
@@ -210,7 +268,8 @@ class ParticlesDemo(Demo):
 
         bindgroup_entries = wgpu.BindGroupEntries(
             [
-                wgpu.BindGroupEntry(binding=0, buffer=self.particles_buffer),
+                wgpu.BindGroupEntry(binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize),
+                wgpu.BindGroupEntry(binding=1, buffer=self.particles_buffer),
             ]
         )
 
@@ -235,15 +294,6 @@ class ParticlesDemo(Demo):
         logger.debug(self.render_bind_group)
 
         # exit()
-
-    def create_buffers(self):
-        logger.debug("create_buffers")
-        self.particles_buffer = utils.create_buffer_from_ndarray(
-            self.device, "PARTICLES", particles_data, wgpu.BufferUsage.STORAGE
-        )
-        self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
-        )
 
     def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
@@ -272,6 +322,37 @@ class ParticlesDemo(Demo):
         self.queue.submit(1, commands)
 
         super().draw(renderer)
+
+    def frame(self):
+        model = glm.mat4(1.0)  # Identity matrix
+        x = self.kWidth / 2
+        y = self.kHeight / 2
+        model = glm.translate(model, glm.vec3(x, y, 0))
+        #model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
+        model = glm.scale(model, glm.vec3(2, 2, 1))
+        view = glm.mat4(1.0)  # Identity matrix
+
+        viewport_width = self.kWidth
+        viewport_height = self.kHeight
+
+        ortho_left = 0
+        ortho_right = viewport_width
+        ortho_bottom = 0
+        ortho_top = viewport_height
+        ortho_near = -1  # Near clipping plane
+        ortho_far = 1    # Far clipping plane
+
+        projection = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
+
+        transform = projection * view * model
+
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            as_capsule(glm.value_ptr(transform)),
+            self.uniformBufferSize,
+        )
+        super().frame()
 
     def update(self, delta_time: float):
         compute_pass = wgpu.ComputePassDescriptor(

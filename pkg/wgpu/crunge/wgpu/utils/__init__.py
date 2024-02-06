@@ -50,6 +50,27 @@ def write_buffer_from_ndarray(
     size = divround_up(size, 4)
     device.queue.write_buffer(buffer, 0, as_capsule(data), size)
 
+def create_buffer_from_ctypes_array(
+    device: wgpu.Device, label: str, data: ctypes.Array, usage: wgpu.BufferUsage
+) -> wgpu.Buffer:
+    # Calculate the size of the ctypes array
+    item_size = ctypes.sizeof(data._type_)
+    total_size = len(data) * item_size
+    # Buffer size has to be a multiple of 4
+    size = divround_up(total_size, 4)
+    
+    # Create the buffer
+    buffer = create_buffer(device, label, size, usage)
+    
+    # Get a pointer to the array data
+    #ptr = ctypes.cast(data, ctypes.POINTER(ctypes.c_byte * total_size))
+    ptr = as_capsule(data)
+    
+    # Write the data to the buffer
+    device.queue.write_buffer(buffer, 0, ptr, size)
+    
+    return buffer
+
 '''
 def create_buffer(
     device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage
