@@ -136,9 +136,27 @@ void init_main(py::module &_wgpu, Registry &registry) {
     PYEXTEND_END
 
     //TODO: Getting incompatible argument types when both signatures match.  Makes no sense ...
+    /*
+    TypeError: set_bind_group(): incompatible function arguments. The following argument types are supported:
+        1. (self: crunge.wgpu._wgpu.ComputePassEncoder, group_index: int, group: crunge.wgpu._wgpu.BindGroup, dynamic_offset_count: int = 0, dynamic_offsets: int = None) -> None
+
+    Invoked with: <crunge.wgpu._wgpu.ComputePassEncoder object at 0x7f7a6a76a8f0>, 0, <crunge.wgpu._wgpu.BindGroup object at 0x7f7a6a77c230>
+    */
+
     //void RenderPassEncoder::SetBindGroup(uint32_t groupIndex, BindGroup const& group, uint32_t dynamicOffsetCount, uint32_t const * dynamicOffsets) const {
     PYEXTEND_BEGIN(wgpu::RenderPassEncoder, RenderPassEncoder)
         RenderPassEncoder.def("set_bind_group", [](wgpu::RenderPassEncoder& self, uint32_t groupIndex, BindGroup const& group){
+            self.SetBindGroup(groupIndex, group, 0, nullptr);
+        }
+        , py::arg("group_index")
+        , py::arg("group")
+        //, py::arg("dynamic_offset_count") = 0
+        //, py::arg("dynamic_offsets") = nullptr
+        , py::return_value_policy::automatic_reference);
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(wgpu::ComputePassEncoder, ComputePassEncoder)
+        ComputePassEncoder.def("set_bind_group", [](wgpu::ComputePassEncoder& self, uint32_t groupIndex, BindGroup const& group){
             self.SetBindGroup(groupIndex, group, 0, nullptr);
         }
         , py::arg("group_index")

@@ -53,6 +53,7 @@ defaults:
 
 # Wrapped
 'method.wgpu::RenderPassEncoder::SetBindGroup': {exclude: true} #TODO: Signatures match but got a TypeError. Strange.
+'method.wgpu::ComputePassEncoder::SetBindGroup': {exclude: true} #TODO: Signatures match but got a TypeError. Strange.
 'method.wgpu::Instance::RequestAdapter': {exclude: true}
 'method.wgpu::Adapter::GetProperties': {exclude: true}
 

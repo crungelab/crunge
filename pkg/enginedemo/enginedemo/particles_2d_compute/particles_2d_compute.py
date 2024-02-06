@@ -14,12 +14,14 @@ from crunge.engine import Renderer
 
 from ..demo import Demo
 
+from .data import vertex_data
+
 cs_code = """
 @group(0) @binding(0) var<storage, read_write> particles: array<Particle>;
 
 struct Particle {
-    position: vec4<f32>,
-    velocity: vec4<f32>,
+    position: vec2<f32>,
+    velocity: vec2<f32>,
     color: vec4<f32>,
     age: f32,
     lifespan: f32,
@@ -40,8 +42,8 @@ fn cs_main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 vs_code = """
 struct Particle {
-    position: vec4<f32>,
-    velocity: vec4<f32>,
+    position: vec2<f32>,
+    velocity: vec2<f32>,
     color: vec4<f32>,
     age: f32,
     lifespan: f32,
@@ -55,9 +57,10 @@ struct VertexOutput {
 }
 
 @vertex
-fn vs_main(@builtin(vertex_index) index: u32) -> VertexOutput {
+fn vs_main(@location(0) pos: vec2f, @builtin(instance_index) index: u32) -> VertexOutput {
     var output: VertexOutput;
-    output.position = particles[index].position; // Assume position is already in clip space or transform it here
+    //let pos = particles[index].position;
+    output.position = vec4<f32>(pos.x, pos.y, 0.0, 1.0);
     output.color = particles[index].color;
     return output;
 }
@@ -73,16 +76,16 @@ fn fs_main(@location(0) inColor: vec4<f32>) -> @location(0) vec4<f32> {
 particles_data = np.array(
     [
         # position, velocity, color, age, lifespan
-        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 100.0],
-        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
+        [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 100.0],
     ],
     dtype=np.float32,
 )
 
 class ParticlesDemo(Demo):
-    #vertex_buffer: wgpu.Buffer = None
+    vertex_buffer: wgpu.Buffer = None
     #index_buffer: wgpu.Buffer = None
     particles_buffer: wgpu.Buffer = None
 
@@ -95,6 +98,9 @@ class ParticlesDemo(Demo):
     def __init__(self):
         super().__init__()
 
+        #self.num_particles = len(particles_data)
+        self.num_particles = 4
+
         self.create_buffers()
         #self.create_textures()
 
@@ -102,43 +108,52 @@ class ParticlesDemo(Demo):
         vs_module = self.gfx.create_shader_module(vs_code)
         fs_module = self.gfx.create_shader_module(fs_code)
         
-        '''
-        const computePipelineDescriptor = {
-            compute: {
-                module: device.createShaderModule({
-                    code: computeShaderCode, // Your WGSL shader code as a string
-                }),
-                entryPoint: 'main', // The entry point function in your WGSL shader
-            },
-        };
-        '''
+        vertAttributes = wgpu.VertexAttributes(
+            [
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+                ),
+            ]
+        )
+        vertBufferLayout = wgpu.VertexBufferLayout(
+            array_stride=2 * sizeof(c_float),
+            attribute_count=1,
+            attributes=vertAttributes[0],
+        )
+
+        # Compute Bind Group Layout Entries
+        compute_bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.COMPUTE,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.STORAGE,
+                        min_binding_size=0,
+                    ),
+                ),
+            ]
+        )
+        # Render Bind Group Layout
+        compute_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(compute_bgl_entries), entries=compute_bgl_entries[0]
+        )
+        compute_bgl = self.device.create_bind_group_layout(compute_bgl_desc)
+
+        # Render Pipeline Layout
+        compute_pll_desc = wgpu.PipelineLayoutDescriptor(
+            bind_group_layout_count=1, bind_group_layouts=compute_bgl
+        )
+
         compute_pl_desc = wgpu.ComputePipelineDescriptor(
             label="Main Compute Pipeline",
+            layout=self.device.create_pipeline_layout(compute_pll_desc),
             compute=wgpu.ProgrammableStageDescriptor(
                 module=cs_module,
                 entry_point="cs_main",
             ),
         )
         self.compute_pipeline = self.device.create_compute_pipeline(compute_pl_desc)
-        '''
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=4 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=8 * sizeof(c_float),
-            attribute_count=2,
-            attributes=vertAttributes[0],
-        )
-        '''
 
         colorTargetState = wgpu.ColorTargetState(
             format=wgpu.TextureFormat.BGRA8_UNORM,
@@ -154,44 +169,44 @@ class ParticlesDemo(Demo):
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="vs_main",
-            #buffer_count=1,
-            #buffers=vertBufferLayout,
+            buffer_count=1,
+            buffers=vertBufferLayout,
         )
 
-        bgl_entries = wgpu.BindGroupLayoutEntries(
+        # Render Bind Group Layout Entries
+        render_bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(
                     binding=0,
                     visibility=wgpu.ShaderStage.COMPUTE | wgpu.ShaderStage.VERTEX,
                     buffer=wgpu.BufferBindingLayout(
-                        #type=wgpu.BufferBindingType.STORAGE,
                         type=wgpu.BufferBindingType.READ_ONLY_STORAGE,
                         min_binding_size=0,
                     ),
                 ),
             ]
         )
-
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
+        # Render Bind Group Layout
+        render_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(render_bgl_entries), entries=render_bgl_entries[0]
         )
-        bgl = self.device.create_bind_group_layout(bgl_desc)
+        render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
+        # Render Pipeline Layout
+        render_pll_desc = wgpu.PipelineLayoutDescriptor(
+            bind_group_layout_count=1, bind_group_layouts=render_bgl
         )
 
-        descriptor = wgpu.RenderPipelineDescriptor(
+        render_pl_desc = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
-            layout=self.device.create_pipeline_layout(pl_desc),
+            layout=self.device.create_pipeline_layout(render_pll_desc),
             vertex=vertex_state,
             fragment=fragmentState,
         )
 
-        logger.debug(descriptor)
-        self.render_pipeline = self.device.create_render_pipeline(descriptor)
+        logger.debug(render_pl_desc)
+        self.render_pipeline = self.device.create_render_pipeline(render_pl_desc)
         logger.debug(self.render_pipeline)
-        #view: wgpu.TextureView = self.texture.create_view()
 
         bindgroup_entries = wgpu.BindGroupEntries(
             [
@@ -199,15 +214,25 @@ class ParticlesDemo(Demo):
             ]
         )
 
-        bindGroupDesc = wgpu.BindGroupDescriptor(
-            label="Particles bind group",
+        compute_bind_group_desc = wgpu.BindGroupDescriptor(
+            label="Compute bind group",
+            layout=self.compute_pipeline.get_bind_group_layout(0),
+            entry_count=len(bindgroup_entries),
+            entries=bindgroup_entries[0],
+        )
+
+        self.compute_bind_group = self.device.create_bind_group(compute_bind_group_desc)
+        logger.debug(self.compute_bind_group)
+
+        render_bind_group_desc = wgpu.BindGroupDescriptor(
+            label="Render bind group",
             layout=self.render_pipeline.get_bind_group_layout(0),
             entry_count=len(bindgroup_entries),
             entries=bindgroup_entries[0],
         )
 
-        self.bindGroup = self.device.create_bind_group(bindGroupDesc)
-        logger.debug(self.bindGroup)
+        self.render_bind_group = self.device.create_bind_group(render_bind_group_desc)
+        logger.debug(self.render_bind_group)
 
         # exit()
 
@@ -216,13 +241,11 @@ class ParticlesDemo(Demo):
         self.particles_buffer = utils.create_buffer_from_ndarray(
             self.device, "PARTICLES", particles_data, wgpu.BufferUsage.STORAGE
         )
-        logger.debug(self.particles_buffer)
-
-    def draw(self, renderer: Renderer):
-        compute_pass = wgpu.ComputePassDescriptor(
-            label="Main Compute Pass",
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
         )
 
+    def draw(self, renderer: Renderer):
         attachment = wgpu.RenderPassColorAttachment(
             view=renderer.texture_view,
             load_op=wgpu.LoadOp.CLEAR,
@@ -236,29 +259,35 @@ class ParticlesDemo(Demo):
             color_attachments=attachment,
         )
 
-        commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
-
-        compute_pass = encoder.begin_compute_pass(compute_pass)
-        compute_pass.set_pipeline(self.compute_pipeline)
-        compute_pass.set_bind_group(0, self.bindGroup)
-        #compute_pass.dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
-        compute_pass.dispatch_workgroups(64)
-        compute_pass.end()
 
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.render_pipeline)
-        pass_enc.set_bind_group(0, self.bindGroup)
-        #pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        #pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        #pass_enc.draw_indexed(3)
-        pass_enc.draw(len(particles_data), 1, 0, 0);
+        pass_enc.set_bind_group(0, self.render_bind_group)
+        pass_enc.set_vertex_buffer(0, self.vertex_buffer)
+        pass_enc.draw(6, self.num_particles)
         pass_enc.end()
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
 
         super().draw(renderer)
+
+    def update(self, delta_time: float):
+        compute_pass = wgpu.ComputePassDescriptor(
+            label="Main Compute Pass",
+        )
+
+        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+
+        compute_pass = encoder.begin_compute_pass(compute_pass)
+        compute_pass.set_pipeline(self.compute_pipeline)
+        compute_pass.set_bind_group(0, self.compute_bind_group)
+        #compute_pass.dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
+        compute_pass.dispatch_workgroups(4, 4, 1)
+        compute_pass.end()
+        commands = encoder.finish()
+        self.queue.submit(1, commands)
 
 
 def main():

@@ -1002,13 +1002,6 @@ void init_wgpu(py::module &_wgpu, Registry &registry) {
         , py::arg("group_label")
         , py::return_value_policy::automatic_reference);
 
-        ComputePassEncoder.def("set_bind_group", &wgpu::ComputePassEncoder::SetBindGroup
-        , py::arg("group_index")
-        , py::arg("group")
-        , py::arg("dynamic_offset_count") = 0
-        , py::arg("dynamic_offsets") = nullptr
-        , py::return_value_policy::automatic_reference);
-
         ComputePassEncoder.def("set_label", &wgpu::ComputePassEncoder::SetLabel
         , py::arg("label")
         , py::return_value_policy::automatic_reference);
