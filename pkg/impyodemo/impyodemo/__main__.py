@@ -5,7 +5,7 @@ sys.path.append(os.getcwd())
 from impyodemo import App
 
 
-app = App()
+app = App().create()
 
 app.use('help')
 app.use('intro')

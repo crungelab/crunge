@@ -2,8 +2,9 @@ import sys
 
 from pyo import *
 
-import arcade
 from crunge import imgui
+from crunge.engine.imgui import ImGuiView
+from crunge.engine import Renderer
 
 def trim_docstring(docstring):
     if not docstring:
@@ -30,15 +31,20 @@ def trim_docstring(docstring):
     # Return a single string:
     return '\n'.join(trimmed)
 
-class Page(arcade.View):
-    def __init__(self, window, name, title):
-        super().__init__(window)
-        self.window = window
+class Page(ImGuiView):
+    def __init__(self, name, title):
+        super().__init__()
         self.name = name
         self.title = title
         self.fullwidth = True
         self.fullheight = True
         self.server = None
+
+    @classmethod
+    def produce(cls, app, name, title):
+        page = cls(name, title).create(app)
+        page.reset()
+        return page
 
     @property
     def gui(self):
@@ -66,8 +72,8 @@ class Page(arcade.View):
         pass
 
     def create_server(self):
-        #self.server = s = Server(audio='jack')
-        self.server = s = Server()
+        #self.server = s = Server()
+        self.server = s = Server(audio='jack')
         s.setMidiInputDevice(4)
         s.boot()
 
@@ -81,18 +87,8 @@ class Page(arcade.View):
         if self.server:
             self.server.shutdown()
         self.gui.clear()
-        
-    @classmethod
-    def create(self, app, name, title):
-        page = self(app, name, title)
-        page.reset()
-        return page
 
-    def on_draw(self):
-        arcade.start_render()
-
-        imgui.new_frame()
-        
+    def draw(self, renderer: Renderer):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
 
@@ -127,9 +123,9 @@ class Page(arcade.View):
         imgui.set_next_window_pos((x, y), imgui.COND_ONCE)
         imgui.set_next_window_size((width, height), imgui.COND_ONCE)
 
-        self.draw()
+        self.draw_transport()
         self.window.gui.draw()
-        imgui.end_frame()
+        super().draw(renderer)
 
     def draw_navbar(self):
         imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.COND_ONCE)
@@ -172,7 +168,7 @@ class Page(arcade.View):
 
             imgui.end_main_menu_bar()
 
-    def draw(self):
+    def draw_transport(self):
         imgui.begin(self.title)
 
         if imgui.button('Start'):

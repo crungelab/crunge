@@ -1,11 +1,8 @@
-from crunge.imgui.impl.arcade import ArcadeGui
 from crunge import implot
 from .widgets import PyoObjectControl, PyoObjectView, PyoObjectGraph, PyoScope, PyoSpectrum
 
-class PyoGui(ArcadeGui):
-    def __init__(self, window, attach_callbacks=True):
-        super().__init__(window, attach_callbacks)
-        implot.create_context()
+class PyoGui():
+    def __init__(self):
         self.drawables = []
 
     def clear(self):
