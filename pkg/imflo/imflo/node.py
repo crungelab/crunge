@@ -1,4 +1,3 @@
-import arcade
 from crunge import imgui, imnodes
 
 class Node:

@@ -35,7 +35,7 @@ class App(engine.App):
     def use(self, name):
         logger.debug(f"use {name}")
         import importlib.util
-        spec = importlib.util.find_spec(f"imflo.pages.{name}")
+        spec = importlib.util.find_spec(f"imflodemo.pages.{name}")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         module, install = module, module.install

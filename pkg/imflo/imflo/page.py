@@ -1,12 +1,13 @@
-import arcade
 from crunge import imgui, imnodes
+from crunge.engine.imgui import ImGuiView
+from crunge.engine import Renderer
 
 #from imflo.wire import Wire
 from imflo.graph import Graph
 
-class Page(arcade.View):
-    def __init__(self, window, name, title):
-        super().__init__(window)
+class Page(ImGuiView):
+    def __init__(self, name, title):
+        super().__init__()
         self.name = name
         self.title = title
         self.dragged = None
@@ -16,8 +17,8 @@ class Page(arcade.View):
         self.graph.reset()
 
     @classmethod
-    def create(self, app, name, title):
-        page = self(app, name, title)
+    def produce(cls, app, name, title):
+        page = cls(name, title).create(app)
         page.reset()
         return page
 
@@ -32,12 +33,7 @@ class Page(arcade.View):
     def update(self, delta_time):
         self.graph.update(delta_time)
 
-    def on_draw(self):
-      
-        arcade.start_render()
-
-        imgui.new_frame()
-        
+    def draw(self, renderer: Renderer):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(p_open=True)
 
@@ -47,9 +43,9 @@ class Page(arcade.View):
         imgui.set_next_window_pos((288, 32), imgui.COND_ONCE)
         imgui.set_next_window_size((512, 512), imgui.COND_ONCE)
 
-        self.draw()
+        self.graph.draw()
         
-        imgui.end_frame()
+        super().draw(renderer)
 
     def draw_navbar(self):
         imgui.set_next_window_pos((16, 32), imgui.COND_ONCE)
@@ -92,6 +88,3 @@ class Page(arcade.View):
                 imgui.end_menu()
 
             imgui.end_main_menu_bar()
-
-    def draw(self):
-        self.graph.draw()

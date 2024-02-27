@@ -1,6 +1,3 @@
-import arcade
-from arcade import Point, Vector
-from arcade.utils import _Vec2  # bring in "private" class
 import os
 import random
 

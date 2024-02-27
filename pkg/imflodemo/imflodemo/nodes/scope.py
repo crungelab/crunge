@@ -4,7 +4,6 @@ from random import random
 from math import sin
 import numpy as np
 
-import arcade
 from crunge import imgui
 
 from imflo.node import Node

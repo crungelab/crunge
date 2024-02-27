@@ -1,4 +1,3 @@
-import arcade
 from crunge import imgui, imnodes
 
 from imflo.wire import Wire

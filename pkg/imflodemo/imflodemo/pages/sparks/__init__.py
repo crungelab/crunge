@@ -1,11 +1,7 @@
 import os
 import random
 
-import arcade
 from crunge import imgui
-
-from arcade import Point, Vector
-from arcade.utils import _Vec2  # bring in "private" class
 
 from imflo.particle import AnimatedAlphaParticle
 

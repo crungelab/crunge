@@ -1,3 +1,0 @@
--e ../crunge
--e ../imgui
--e ../implot

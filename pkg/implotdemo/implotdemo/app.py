@@ -18,7 +18,7 @@ class App(engine.App):
     kWidth = 1280
     kHeight = 640
     def __init__(self):
-        super().__init__(self.kWidth, self.kHeight, "ImGui Demo", resizable=True)
+        super().__init__(self.kWidth, self.kHeight, "ImPlot Demo", resizable=True)
         self.pages = {}
         self.show_metrics = False
         self.show_style_editor = False

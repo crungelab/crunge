@@ -1,6 +1,5 @@
 from rx.subject import Subject
 
-import arcade
 from crunge import imgui
 
 from imflo.node import Node

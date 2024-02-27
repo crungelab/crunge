@@ -1,4 +1,3 @@
-import arcade
 from crunge import imgui, imnodes
 
 from imflo.page import Page
@@ -8,8 +7,8 @@ from imflodemo.nodes.led import LedNode
 from imflo.wire import Wire
 
 class BasicPage(Page):
-    def __init__(self, window, name, title):
-        super().__init__(window, name, title)
+    def __init__(self, name, title):
+        super().__init__(name, title)
         volume_node = VolumeNode(self.graph, 'Volume')
         led_node = LedNode(self.graph, 'Led')
         self.graph.add_wire(Wire(volume_node.get_pin('output'), led_node.get_pin('input')))

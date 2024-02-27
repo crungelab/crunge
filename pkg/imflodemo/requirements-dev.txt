@@ -1,4 +1,7 @@
 -e ../crunge
 -e ../imgui
 -e ../imnodes
+-e ../wgpu
+-e ../sdl
+-e ../engine
 -e ../imflo

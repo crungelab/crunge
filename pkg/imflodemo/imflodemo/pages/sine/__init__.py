@@ -1,4 +1,3 @@
-import arcade
 from crunge import imgui
 
 from imflo.page import Page
@@ -7,8 +6,8 @@ from imflodemo.nodes.sine import SineNode
 from imflodemo.nodes.scope import ScopeNode
 
 class SinePage(Page):
-    def __init__(self, window, name, title):
-        super().__init__(window, name, title)
+    def __init__(self, name, title):
+        super().__init__(name, title)
         SineNode(self.graph, 'Sin')
         ScopeNode(self.graph, 'Scope')
     '''
