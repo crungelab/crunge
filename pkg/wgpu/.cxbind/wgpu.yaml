@@ -17,14 +17,13 @@ defaults:
 
 # Internal / Ignored
 
-#'struct.wgpu::Bool': {exclude: true}
-
  #TODO: Should skip templates in the transpiler
 'class.wgpu::IsWGPUBitmask': {exclude: true}
 
 
 # mValue is private
 'class.wgpu::Bool': {exclude: true}
+# ?
 'class.std::hash': {exclude: true}
 
 # Function pointers and callbacks.  TODO!
@@ -108,3 +107,6 @@ defaults:
 
 # Overloaded
 #'method.wgpu::Adapter::RequestDevice': {overload: true}
+
+# Holders
+#'class.wgpu::Buffer': {holder: wgpu::Ref}

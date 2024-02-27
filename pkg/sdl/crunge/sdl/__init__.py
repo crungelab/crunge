@@ -1,6 +1,6 @@
 __version__ = '0.1.0'
 
-from . import _sdl
+#from . import _sdl
 from ._sdl import *
 
 from .flags import WindowFlags

@@ -20,7 +20,6 @@ from .data import vertex_data
 from .uniforms import Particle, Vec2, Vec4
 
 cs_code = """
-
 struct Particle {
     position: vec2<f32>,
     velocity: vec2<f32>,
@@ -110,6 +109,10 @@ class ParticlesDemo(Demo):
     def __init__(self):
         super().__init__()
 
+        self.cs_module = self.gfx.create_shader_module(cs_code)
+        self.vs_module = self.gfx.create_shader_module(vs_code)
+        self.fs_module = self.gfx.create_shader_module(fs_code)
+
         self.num_particles = 32
         self.create_particles()
         self.create_buffers()
@@ -137,20 +140,19 @@ class ParticlesDemo(Demo):
         )
 
     def create_particles(self):
+        logger.debug("create_particles")
         self.particles = (Particle * self.num_particles)()
         for i in range(0, self.num_particles):
             self.particles[i].position = Vec2(0.0, 0.0)
-            self.particles[i].velocity = Vec2(random.uniform(-1, 1), random.uniform(-1, 1))
+            self.particles[i].velocity = Vec2(
+                random.uniform(-1, 1), random.uniform(-1, 1)
+            )
             self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
             self.particles[i].age = 0.0
             self.particles[i].lifespan = 100.0
-        
-        
 
     def create_pipeline(self):
-        cs_module = self.gfx.create_shader_module(cs_code)
-        vs_module = self.gfx.create_shader_module(vs_code)
-        fs_module = self.gfx.create_shader_module(fs_code)
+        logger.debug("create_pipeline")
         
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -201,7 +203,7 @@ class ParticlesDemo(Demo):
             label="Main Compute Pipeline",
             layout=self.device.create_pipeline_layout(compute_pll_desc),
             compute=wgpu.ProgrammableStageDescriptor(
-                module=cs_module,
+                module=self.cs_module,
                 entry_point="cs_main",
             ),
         )
@@ -227,14 +229,14 @@ class ParticlesDemo(Demo):
         )
 
         fragmentState = wgpu.FragmentState(
-            module=fs_module,
+            module=self.fs_module,
             entry_point="fs_main",
             target_count=1,
             targets=colorTargetState,
         )
 
         vertex_state = wgpu.VertexState(
-            module=vs_module,
+            module=self.vs_module,
             entry_point="vs_main",
             buffer_count=1,
             buffers=vertBufferLayout,
@@ -285,7 +287,9 @@ class ParticlesDemo(Demo):
 
         bindgroup_entries = wgpu.BindGroupEntries(
             [
-                wgpu.BindGroupEntry(binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize),
+                wgpu.BindGroupEntry(
+                    binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize
+                ),
                 wgpu.BindGroupEntry(binding=1, buffer=self.particles_buffer),
             ]
         )
@@ -352,7 +356,7 @@ class ParticlesDemo(Demo):
         x = self.kWidth / 2
         y = self.kHeight / 2
         model = glm.translate(model, glm.vec3(x, y, 0))
-        #model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
+        # model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
         model = glm.scale(model, glm.vec3(2, 2, 1))
         view = glm.mat4(1.0)  # Identity matrix
 
@@ -364,9 +368,11 @@ class ParticlesDemo(Demo):
         ortho_bottom = 0
         ortho_top = viewport_height
         ortho_near = -1  # Near clipping plane
-        ortho_far = 1    # Far clipping plane
+        ortho_far = 1  # Far clipping plane
 
-        projection = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
+        projection = glm.ortho(
+            ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far
+        )
 
         transform = projection * view * model
 
@@ -388,8 +394,8 @@ class ParticlesDemo(Demo):
         compute_pass = encoder.begin_compute_pass(compute_pass)
         compute_pass.set_pipeline(self.compute_pipeline)
         compute_pass.set_bind_group(0, self.compute_bind_group)
-        #compute_pass.dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
-        #compute_pass.dispatch_workgroups(4, 4, 1)
+        # compute_pass.dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
+        # compute_pass.dispatch_workgroups(4, 4, 1)
         compute_pass.dispatch_workgroups(1)
         compute_pass.end()
         commands = encoder.finish()

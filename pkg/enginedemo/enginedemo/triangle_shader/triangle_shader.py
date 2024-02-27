@@ -30,12 +30,12 @@ class TriangleShaderLayer(DemoLayer):
 
     def create(self, view):
         super().create(view)
-        shader_module = self.gfx.create_shader_module(shader_code)
+        self.shader_module = self.gfx.create_shader_module(shader_code)
 
         colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
 
         fragmentState = wgpu.FragmentState(
-            module=shader_module,
+            module=self.shader_module,
             entry_point="fs_main",
             target_count=1,
             targets=colorTargetState,
@@ -44,7 +44,7 @@ class TriangleShaderLayer(DemoLayer):
         primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_LIST)
 
         vertex_state = wgpu.VertexState(
-            module=shader_module,
+            module=self.shader_module,
             entry_point="vs_main",
         )
 

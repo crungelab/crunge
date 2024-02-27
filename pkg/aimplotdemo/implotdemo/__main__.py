@@ -4,7 +4,7 @@ sys.path.append(os.getcwd())
 
 from implotdemo import App
 
-app = App().create()
+app = App()
 
 app.use('index')
 app.use('demo')
