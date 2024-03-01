@@ -21,7 +21,8 @@ class DemoView(ImGuiView):
         self.scene = scene
         self.width = width
         self.height = height
-        self.camera = Camera2D(glm.vec2(width / 2, height / 2), glm.vec2(width, height))
+        
+        self.create_camera()
 
         self.depth_texture = utils.create_texture(
             self.device,
@@ -31,6 +32,9 @@ class DemoView(ImGuiView):
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
 
+    def create_camera(self):
+        self.camera = Camera2D(glm.vec2(self.width / 2, self.height / 2), glm.vec2(self.width, self.height))
+
     def draw(self, renderer: SceneRenderer):
         #logger.debug("View.draw()")
 
@@ -39,7 +43,6 @@ class DemoView(ImGuiView):
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0, 0, 0, 1),
-            #clear_value=wgpu.Color(.5, .5, .5, 1),
         )
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(

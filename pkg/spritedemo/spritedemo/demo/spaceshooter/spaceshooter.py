@@ -1,5 +1,6 @@
 from pathlib import Path
 import math
+from scipy.stats.qmc import PoissonDisk
 
 from loguru import logger
 import glm
@@ -14,7 +15,7 @@ from ...texture_atlas_kit import TextureAtlasKit
 from ...physics import DynamicPhysicsEngine
 
 from .ship import Ship
-from .meteor import Meteor
+from .meteor import Meteor, MeteorGreyBig1
 
 
 from .collision_type import CollisionType
@@ -30,8 +31,11 @@ class SpaceShooter(Demo):
 
         self.create_physics_engine()
 
-        self.create_ship(glm.vec2(self.width / 2, self.height / 2))
-        self.create_meteor(glm.vec2(self.width / 4, self.height / 4))
+        #self.create_ship(glm.vec2(self.width / 2, self.height / 2))
+        self.create_ship(glm.vec2(0, 0))
+        #self.create_meteor(glm.vec2(self.width / 4, self.height / 4))
+        #def create_asteroid_field(self, num_asteroids, safe_radius, min_radius, max_radius, bounds):
+        self.create_asteroid_field(100, 100, 50, 100, ((0, 0), (self.width, self.height)))
 
     def create_physics_engine(self):
         self.physics_engine = engine = DynamicPhysicsEngine(gravity=(0, 0))
@@ -67,8 +71,48 @@ class SpaceShooter(Demo):
         self.scene.add_child(ship)
 
     def create_meteor(self, position):
-        meteor = Meteor(position).create()
+        meteor = MeteorGreyBig1(position).create()
         self.scene.add_child(meteor)
+
+    def create_asteroid_field(self, num_asteroids, safe_radius, min_radius, max_radius, bounds):
+        """
+        Generates an asteroid field using Poisson Disk sampling.
+
+        Args:
+            num_asteroids (int): Number of asteroids to generate.
+            safe_radius (float): Radius of the safe zone around the ship.
+            min_radius (float): Minimum radius of the asteroids.
+            max_radius (float): Maximum radius of the asteroids.
+            bounds (tuple): Boundaries of the generation area ((xmin, ymin), (xmax, ymax)).
+        """
+
+        # 1. Enlarged bounds for Poisson Disk sampling domain (important for edge cases)
+        xmin, ymin = bounds[0]
+        xmax, ymax = bounds[1]
+        enlarged_bounds = ((xmin - max_radius, ymin - max_radius), (xmax + max_radius, ymax + max_radius))
+
+        def check_ship_distance(point, other_point):
+            return glm.distance(point, self.ship.position) > safe_radius  # Modify if your ship isn't a single point
+
+        # 2. Initialize Poisson Disk sampler
+        #sampler = PoissonDisk(d=2, radius=min_radius)
+        sampler = PoissonDisk(d=2, radius=.1)
+        #sampler = PoissonDisk(d=2, radius=1000)
+
+        # 3. Generate samples (ensure enough for num_asteroids)
+        #samples = sampler.generate(k=num_asteroids + 10)  # Generate extra in case some are invalid
+        samples = sampler.random(num_asteroids)
+        logger.debug(f"samples: {samples}")
+
+        # 4. Create asteroids within original bounds
+        for sample in samples:
+            xi, yi = sample
+            logger.debug(f"xi: {xi}, yi: {yi}")
+            x = self.width / 2 + (xi * 100)
+            y = self.height / 2 + (yi * 100)
+            #x = xi * self.width * 2
+            #y = yi * self.height * 2
+            self.create_meteor(glm.vec2(x, y))
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
