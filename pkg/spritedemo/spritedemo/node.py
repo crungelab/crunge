@@ -19,6 +19,18 @@ class Node(Base):
         self.parent: "Node" = None
         self.children: List["Node"] = []
 
+    def clear(self):
+        for child in self.children:
+            child.clear()
+        self.children.clear()
+
+    def destroy(self):
+        for child in self.children:
+            child.destroy()
+        if self.parent:
+            self.parent.children.remove(self)
+        self.clear()
+
     def add_child(self, child: "Node"):
         child.parent = self
         child.scene = self.scene

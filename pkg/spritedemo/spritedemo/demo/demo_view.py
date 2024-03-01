@@ -21,7 +21,6 @@ class DemoView(ImGuiView):
         self.scene = scene
         self.width = width
         self.height = height
-        #self.camera = Camera2D(size=glm.vec2(width, height))
         self.camera = Camera2D(glm.vec2(width / 2, height / 2), glm.vec2(width, height))
 
         self.depth_texture = utils.create_texture(

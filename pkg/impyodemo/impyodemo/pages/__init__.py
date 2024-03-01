@@ -1,4 +1,5 @@
 import sys
+from loguru import logger
 
 from pyo import *
 
@@ -72,8 +73,8 @@ class Page(ImGuiView):
         pass
 
     def create_server(self):
-        #self.server = s = Server()
-        self.server = s = Server(audio='jack')
+        logger.info("Creating server")
+        self.server = s = Server()
         s.setMidiInputDevice(4)
         s.boot()
 

@@ -10,6 +10,7 @@ from ...texture_atlas_kit import TextureAtlasKit
 from ...resource_kit import ResourceKit
 from ...geom import BallGeom
 
+from .collision_type import CollisionType
 from .thruster import Thruster
 from .laser import Laser
 
@@ -50,6 +51,10 @@ class Ship(DynamicModel2D):
         self.front_thruster: Thruster = None
         self.left_thruster: Thruster = None
         self.right_thruster: Thruster = None
+
+    def add_shape(self, shape):
+        shape.collision_type = CollisionType.SHIP
+        super().add_shape(shape)
 
     def _create(self):
         super()._create()

@@ -17,17 +17,49 @@ from .ship import Ship
 from .meteor import Meteor
 
 
+from .collision_type import CollisionType
+
 class SpaceShooter(Demo):
     def __init__(self):
         super().__init__()
-        self.scale = 1.0
+        self.reset()
+
+    def reset(self):
+        self.scene.clear()
         self.camera_target = glm.vec2(self.width / 2, self.height / 2)
 
-        self.physics_engine = DynamicPhysicsEngine(gravity=(0, 0))
-        self.physics_engine.create()
+        self.create_physics_engine()
 
         self.create_ship(glm.vec2(self.width / 2, self.height / 2))
         self.create_meteor(glm.vec2(self.width / 4, self.height / 4))
+
+    def create_physics_engine(self):
+        self.physics_engine = engine = DynamicPhysicsEngine(gravity=(0, 0))
+        engine.create()
+        def laser_asteroid_collision(arbiter, space, data):
+            for shape in arbiter.shapes:
+                logger.debug("shape")
+                logger.debug(shape)
+                logger.debug(shape.body)
+                logger.debug(shape.body.model)
+                logger.debug(shape.collision_type)
+            laser_shape, asteroid_shape = arbiter.shapes
+            laser_model = laser_shape.body.model
+            asteroid_model = asteroid_shape.body.model
+            logger.debug(f"laser_model: {laser_model}")
+            logger.debug(f"asteroid_model: {asteroid_model}")
+            laser_model.destroy()
+            asteroid_model.destroy()
+            # We'll handle the actual collision logic here later
+            print("A laser hit an asteroid!")
+            return False
+        # Create your collision handler
+        handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.METEOR)  # Replace with your collision types
+        handler.begin = laser_asteroid_collision
+
+    def create_view(self):
+        super().create_view()
+        self.camera.zoom = .5
 
     def create_ship(self, position):
         ship = self.ship = Ship(position).create()
@@ -38,19 +70,11 @@ class SpaceShooter(Demo):
         meteor = Meteor(position).create()
         self.scene.add_child(meteor)
 
-    def reset(self):
-        self.scale = 1.0
-
     def draw(self, renderer: Renderer):
-        # imgui.set_next_window_position(288, 32, imgui.ONCE)
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
         imgui.set_next_window_size((256, 256), imgui.COND_ONCE)
 
         imgui.begin("Ship")
-
-        # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
-        self.node.scale = glm.vec2(self.scale, self.scale)
 
         if imgui.button("Reset"):
             self.reset()
@@ -60,7 +84,6 @@ class SpaceShooter(Demo):
         super().draw(renderer)
 
     def update(self, delta_time: float):
-        # super().update(delta_time)
         self.physics_engine.update(1 / 60)
         self.scene.update(delta_time)
         threshold_distance = 200.0

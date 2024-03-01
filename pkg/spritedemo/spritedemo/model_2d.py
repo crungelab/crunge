@@ -117,6 +117,10 @@ class PhysicsModel2D(Model2D):
     def post_create(self):
         self.add_shapes()
 
+    def destroy(self):
+        self.remove_shapes()
+        super().destroy()
+        
     def update_physics(self, delta_time=1 / 60):
         if self.body:
             self.position = glm.vec2(self.body.position.x, self.body.position.y)
@@ -132,10 +136,13 @@ class PhysicsModel2D(Model2D):
 
     def add_shapes(self):
         for shape in self.shapes:
-            logger.debug(f"shape: {shape}")
-            shape.collision_type = self.physics.kind
-            logger.debug(f"shape.collision_type: {shape.collision_type}")
-            globals.physics_engine.space.add(self.body, shape)
+            self.add_shape(shape)
+
+    def add_shape(self, shape):
+        logger.debug(f"shape: {shape}")
+        #shape.collision_type = self.physics.kind
+        #logger.debug(f"shape.collision_type: {shape.collision_type}")
+        globals.physics_engine.space.add(self.body, shape)
 
     def remove_shapes(self):
         for shape in self.shapes:

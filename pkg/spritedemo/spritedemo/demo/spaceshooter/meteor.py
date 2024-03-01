@@ -9,7 +9,7 @@ from ...model_2d import DynamicModel2D
 from ...texture_atlas_kit import TextureAtlasKit
 from ...resource_kit import ResourceKit
 from ...geom import BallGeom
-
+from .collision_type import CollisionType
 
 class Meteor(DynamicModel2D):
     linear_velocity_range=((-100, 100), (-100, 100))
@@ -25,6 +25,10 @@ class Meteor(DynamicModel2D):
 
         self.vu = Sprite(texture)
         self.size = texture.size
+
+    def add_shape(self, shape):
+        shape.collision_type = CollisionType.METEOR
+        super().add_shape(shape)
 
     def _create(self):
         super()._create()

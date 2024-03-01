@@ -9,6 +9,7 @@ from ...model_2d import DynamicModel2D
 from ...texture_atlas_kit import TextureAtlasKit
 from ...resource_kit import ResourceKit
 from ...geom import BoxGeom
+from .collision_type import CollisionType
 
 class Laser(DynamicModel2D):
     def __init__(self, position: glm.vec2, angle: float, speed: glm.vec2) -> None:
@@ -23,6 +24,10 @@ class Laser(DynamicModel2D):
 
         self.vu = Sprite(texture)
         self.size = texture.size
+
+    def add_shape(self, shape):
+        shape.collision_type = CollisionType.LASER
+        super().add_shape(shape)
 
     def update(self, dt):
         super().update(dt)

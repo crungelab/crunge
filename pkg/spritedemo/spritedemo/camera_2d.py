@@ -15,7 +15,7 @@ class Camera2D(Node2D):
         size=glm.vec2(1.0),
     ):
         super().__init__(position, size)
-        self.zoom = 45.0
+        self.zoom = 1.0
         self.update_matrices()
 
     @property
@@ -28,49 +28,18 @@ class Camera2D(Node2D):
         self.update_matrices()
 
     def update_matrices(self):
-        ortho_left = self.x - self.width / 2
-        ortho_right = self.x + self.width / 2
-        ortho_bottom = self.y - self.height / 2
-        ortho_top = self.y + self.height / 2
+        ortho_left = (self.x - (self.width / self.zoom) / 2)
+        ortho_right = (self.x + (self.width / self.zoom) / 2)
+        ortho_bottom = (self.y - (self.height / self.zoom) / 2)
+        ortho_top = (self.y + (self.height / self.zoom) / 2)
 
-        ortho_near = -1  # Near clipping plane
-        ortho_far = 1    # Far clipping plane
-        '''
-        viewport_width = self.width
-        viewport_height = self.height
-        #logger.debug(f"Viewport: {viewport_width}x{viewport_height}")
-
-        ortho_left = 0
-        ortho_right = viewport_width
-        ortho_bottom = 0
-        ortho_top = viewport_height
-        ortho_near = -1  # Near clipping plane
-        ortho_far = 1    # Far clipping plane
-        '''
-
-        self.projection_matrix = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
-        self.view_matrix = glm.mat4(1.0)
-        #self.view_matrix = glm.translate(self.view_matrix, glm.vec3(-self.position.x, -self.position.y, -self.position.z))
-        #self.view_matrix = glm.translate(self.view_matrix, glm.vec3(self.position.x - self.width / 2, self.position.y - self.height / 2, 0))
-        logger.debug(f"Camera2D: {self.position}, {self.width}x{self.height}")
-
-
-    """
-    def update_matrices(self):
-        viewport_width = self.width
-        viewport_height = self.height
-        #logger.debug(f"Viewport: {viewport_width}x{viewport_height}")
-
-        ortho_left = 0
-        ortho_right = viewport_width
-        ortho_bottom = 0
-        ortho_top = viewport_height
         ortho_near = -1  # Near clipping plane
         ortho_far = 1    # Far clipping plane
 
         self.projection_matrix = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
         self.view_matrix = glm.mat4(1.0)
-    """
+        #logger.debug(f"Camera2D: {self.position}, {self.width}x{self.height}")
+
 
     @property
     def transform_matrix(self):

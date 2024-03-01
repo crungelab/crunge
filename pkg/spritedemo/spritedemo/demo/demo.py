@@ -18,15 +18,19 @@ from ..camera_2d import Camera2D
 
 class Demo(engine.App):
     renderer: SceneRenderer
+    view: DemoView
     kWidth = 1024
     kHeight = 768
     
     def __init__(self):
         super().__init__(self.kWidth, self.kHeight, self.__class__.__name__, resizable=True)
-        self.camera: Camera2D = None
         self.delta_time = 0
         self.resource_root = Path(__file__).parent.parent.parent.parent.parent / "resources"
         self.scene = Scene()
+
+    @property
+    def camera(self) -> Camera2D:
+        return self.view.camera
 
     def create(self):
         super().create()
@@ -40,16 +44,6 @@ class Demo(engine.App):
         logger.debug("Creating view")
         view = DemoView(self.scene, self.kWidth, self.kHeight).create(self)
         self.show_view(view)
-        self.camera = self.view.camera
-
-    '''
-    def draw(self, renderer: Renderer):
-        imgui.begin("Example: button")
-        imgui.button("Button 1")
-        imgui.button("Button 2")
-        imgui.end()
-        super().draw(renderer)
-    '''
     
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.keysym.sym
