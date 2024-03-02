@@ -15,8 +15,8 @@ from ...texture_atlas_kit import TextureAtlasKit
 from ...physics import DynamicPhysicsEngine
 
 from .ship import Ship
-from .meteor import Meteor, MeteorGreyBig1
-
+#from .meteor import Meteor, MeteorGreyBig1
+from .zone import Zone
 
 from .collision_type import CollisionType
 
@@ -27,26 +27,21 @@ class SpaceShooter(Demo):
 
     def reset(self):
         self.scene.clear()
-        self.camera_target = glm.vec2(self.width / 2, self.height / 2)
+        self.camera_target = glm.vec2(0, 0)
 
         self.create_physics_engine()
 
-        #self.create_ship(glm.vec2(self.width / 2, self.height / 2))
         self.create_ship(glm.vec2(0, 0))
-        #self.create_meteor(glm.vec2(self.width / 4, self.height / 4))
-        #def create_asteroid_field(self, num_asteroids, safe_radius, min_radius, max_radius, bounds):
-        self.create_asteroid_field(100, 100, 50, 100, ((0, 0), (self.width, self.height)))
+        zone = Zone(self.scene, glm.vec2(0, 0), glm.vec2(self.width * 2, self.height * 2)).create()
 
     def create_physics_engine(self):
         self.physics_engine = engine = DynamicPhysicsEngine(gravity=(0, 0))
         engine.create()
+
+        def laser_laser_collision(arbiter, space, data):
+            return False
+        
         def laser_asteroid_collision(arbiter, space, data):
-            for shape in arbiter.shapes:
-                logger.debug("shape")
-                logger.debug(shape)
-                logger.debug(shape.body)
-                logger.debug(shape.body.model)
-                logger.debug(shape.collision_type)
             laser_shape, asteroid_shape = arbiter.shapes
             laser_model = laser_shape.body.model
             asteroid_model = asteroid_shape.body.model
@@ -54,22 +49,25 @@ class SpaceShooter(Demo):
             logger.debug(f"asteroid_model: {asteroid_model}")
             laser_model.destroy()
             asteroid_model.destroy()
-            # We'll handle the actual collision logic here later
-            print("A laser hit an asteroid!")
             return False
-        # Create your collision handler
+
+        handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.LASER)  # Replace with your collision types
+        handler.begin = laser_laser_collision
+
         handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.METEOR)  # Replace with your collision types
         handler.begin = laser_asteroid_collision
 
     def create_view(self):
         super().create_view()
         self.camera.zoom = .5
+        self.camera.position = glm.vec2(0, 0)
 
     def create_ship(self, position):
         ship = self.ship = Ship(position).create()
         self.node = ship
         self.scene.add_child(ship)
 
+    '''
     def create_meteor(self, position):
         meteor = MeteorGreyBig1(position).create()
         self.scene.add_child(meteor)
@@ -113,7 +111,7 @@ class SpaceShooter(Demo):
             #x = xi * self.width * 2
             #y = yi * self.height * 2
             self.create_meteor(glm.vec2(x, y))
-
+    '''
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
         imgui.set_next_window_size((256, 256), imgui.COND_ONCE)

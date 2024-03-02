@@ -13,19 +13,21 @@ from ..scene import Scene
 from .demo_view import DemoView
 from ..camera_2d import Camera2D
 
-#from .controller.camera import CameraController
-#from .controller.camera.arcball import ArcballCameraController
 
 class Demo(engine.App):
     renderer: SceneRenderer
     view: DemoView
     kWidth = 1024
     kHeight = 768
-    
+
     def __init__(self):
-        super().__init__(self.kWidth, self.kHeight, self.__class__.__name__, resizable=True)
+        super().__init__(
+            self.kWidth, self.kHeight, self.__class__.__name__, resizable=True
+        )
         self.delta_time = 0
-        self.resource_root = Path(__file__).parent.parent.parent.parent.parent / "resources"
+        self.resource_root = (
+            Path(__file__).parent.parent.parent.parent.parent / "resources"
+        )
         self.scene = Scene()
 
     @property
@@ -44,7 +46,7 @@ class Demo(engine.App):
         logger.debug("Creating view")
         view = DemoView(self.scene, self.kWidth, self.kHeight).create(self)
         self.show_view(view)
-    
+
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.keysym.sym
         state = event.state
