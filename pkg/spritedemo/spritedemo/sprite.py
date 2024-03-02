@@ -220,7 +220,7 @@ class Sprite(Vu2D):
             buffers=vertBufferLayout,
         )
 
-        depthStencilState = wgpu.DepthStencilState(
+        depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
         )
 
@@ -265,7 +265,7 @@ class Sprite(Vu2D):
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             fragment=fragmentState,
-            depth_stencil=depthStencilState,
+            depth_stencil=depth_stencil_state,
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)

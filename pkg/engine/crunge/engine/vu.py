@@ -14,3 +14,6 @@ class Vu(Base):
 
     def post_draw(self, renderer: Renderer):
         pass
+
+    def update(self, delta_time: float):
+        pass

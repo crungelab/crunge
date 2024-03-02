@@ -43,5 +43,7 @@ class Node(Base):
             child.draw(renderer)
 
     def update(self, delta_time: float):
+        if self.vu is not None:
+            self.vu.update(delta_time)
         for child in self.children:
             child.update(delta_time)
