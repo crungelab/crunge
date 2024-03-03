@@ -46,8 +46,7 @@ class SpaceShooter(Demo):
             logger.debug(f"asteroid_model: {asteroid_model}")
             laser_model.destroy()
             asteroid_model.destroy()
-            logger.debug(f"asteroid_model.position: {asteroid_model.position}")
-            explosion = Explosion(asteroid_model.position, glm.vec2(200, 200))
+            explosion = Explosion(asteroid_model.position, glm.vec2(100, 100))
             self.scene.add_child(explosion)
             return False
 

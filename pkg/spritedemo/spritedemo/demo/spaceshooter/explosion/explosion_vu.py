@@ -9,7 +9,7 @@ import numpy as np
 import glm
 
 from crunge import as_capsule
-from crunge import wgpu, imgui
+from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ....scene_renderer import SceneRenderer
@@ -116,9 +116,6 @@ class ExplosionVu(Vu2D):
     texture: wgpu.Texture = None
     sampler: wgpu.Sampler = None
 
-    kWidth = 800
-    kHeight = 600
-
     def __init__(self):
         super().__init__()
 
@@ -130,6 +127,10 @@ class ExplosionVu(Vu2D):
         self.create_particles()
         self.create_buffers()
         self.create_pipeline()
+
+    @property
+    def size(self):
+        return glm.vec2(10, 10)
 
     def create_buffers(self):
         logger.debug("create_buffers")

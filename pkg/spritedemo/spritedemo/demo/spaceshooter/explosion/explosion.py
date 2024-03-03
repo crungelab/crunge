@@ -6,5 +6,5 @@ from .explosion_vu import ExplosionVu
 
 class Explosion(Node2D):
     def __init__(self, position: glm.vec2, size: glm.vec2) -> None:
-        super().__init__(position, size)
-        self.vu = ExplosionVu()
+        super().__init__(position, size, vu=ExplosionVu())
+        #self.vu = ExplosionVu()
