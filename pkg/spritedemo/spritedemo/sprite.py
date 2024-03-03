@@ -92,7 +92,6 @@ class SpriteProgram(Program):
 
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
-        #sampler = self.device.create_sampler()
 
         vertAttributes = wgpu.VertexAttributes(
             [
@@ -198,7 +197,6 @@ class SpriteProgram(Program):
 
 
 class Sprite(Vu2D):
-    #pipeline: wgpu.RenderPipeline = None
     bind_group: wgpu.BindGroup = None
 
     vertices: np.ndarray = None
@@ -219,7 +217,6 @@ class Sprite(Vu2D):
         self.points = POINTS
         self.create_vertices()
         self.create_buffers()
-        #self.create_pipeline()
         self.create_bind_group()
 
     @property
@@ -293,137 +290,6 @@ class Sprite(Vu2D):
 
         self.bind_group = self.device.create_bind_group(bind_group_desc)
         logger.debug(self.bind_group)
-    '''
-    def create_pipeline(self):
-        shader_module = self.gfx.create_shader_module(shader_code)
-        sampler = self.device.create_sampler()
-
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=2 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
-
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=4 * sizeof(c_float),
-            attribute_count=len(vertAttributes),
-            attributes=vertAttributes[0],
-        )
-
-        blend_state = wgpu.BlendState(
-            alpha=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.ONE,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-            color=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.SRC_ALPHA,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-        )
-
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
-            write_mask=wgpu.ColorWriteMask.ALL,
-        )
-
-        fragmentState = wgpu.FragmentState(
-            module=shader_module,
-            entry_point="fs_main",
-            target_count=1,
-            targets=colorTargetState,
-        )
-
-        vertex_state = wgpu.VertexState(
-            module=shader_module,
-            entry_point="vs_main",
-            buffer_count=1,
-            buffers=vertBufferLayout,
-        )
-
-        depth_stencil_state = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH24_PLUS,
-        )
-
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-            ]
-        )
-
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
-        )
-        bgl = self.device.create_bind_group_layout(bgl_desc)
-
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
-        )
-
-        descriptor = wgpu.RenderPipelineDescriptor(
-            label="Main Render Pipeline",
-            layout=self.device.create_pipeline_layout(pl_desc),
-            vertex=vertex_state,
-            fragment=fragmentState,
-            depth_stencil=depth_stencil_state,
-        )
-
-        self.pipeline = self.device.create_render_pipeline(descriptor)
-
-        view: wgpu.TextureView = self.texture.texture.create_view()
-
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0, buffer=self.camera_uniform_buffer, size=self.camera_uniform_buffer_size
-                ),
-                wgpu.BindGroupEntry(binding=1, sampler=sampler),
-                wgpu.BindGroupEntry(binding=2, texture_view=view),
-            ]
-        )
-
-        bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Texture bind group",
-            layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
-        )
-
-        self.bind_group = self.device.create_bind_group(bind_group_desc)
-        logger.debug(self.bind_group)
-
-        # exit()
-    '''
 
     def draw(self, renderer: SceneRenderer):
         #logger.debug("Drawing sprite")
@@ -438,11 +304,6 @@ class Sprite(Vu2D):
         camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
         camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
         camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
-
-        #camera_uniform.position.x = camera.position.x
-        #camera_uniform.position.y = camera.position.y
-        #camera_uniform.position.z = camera.position.z
-        #camera_uniform.position = cast_vec3(camera.position)
         camera_uniform.position = cast_vec3(glm.vec3(camera.position.x, camera.position.y, 0))
 
         renderer.device.queue.write_buffer(
