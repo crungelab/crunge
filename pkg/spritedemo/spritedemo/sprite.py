@@ -71,16 +71,19 @@ INDICES = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint16)
 
 POINTS = [
     (-0.5, 0.5),  # top-left
-    (-0.5, -0.5), # bottom-left
+    (-0.5, -0.5),  # bottom-left
     (0.5, -0.5),  # bottom-right
-    (0.5, 0.5)    # top-right
+    (0.5, 0.5),  # top-right
 ]
 
 # Define the structured dtype for the combined data
-vertex_dtype = np.dtype([
-    ('position', np.float32, (2,)),  # Points (x, y)
-    ('texcoord', np.float32, (2,))   # Texture coordinates (u, v)
-])
+vertex_dtype = np.dtype(
+    [
+        ("position", np.float32, (2,)),  # Points (x, y)
+        ("texcoord", np.float32, (2,)),  # Texture coordinates (u, v)
+    ]
+)
+
 
 @klass.singleton
 class SpriteProgram(Program):
@@ -222,7 +225,7 @@ class Sprite(Vu2D):
     @property
     def texture(self):
         return self._texture
-    
+
     @texture.setter
     def texture(self, value: Texture):
         self._texture = value
@@ -232,25 +235,27 @@ class Sprite(Vu2D):
     @property
     def size(self):
         return self.texture.size
-    
+
     @property
     def width(self):
         return self.texture.width
-    
+
     @property
     def height(self):
         return self.texture.height
-    
+
     def create_vertices(self):
         # Create an empty array with the structured dtype
         self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
         # Fill the array with data
-        self.vertices['position'] = self.points
-        self.vertices['texcoord'] = self.texture.coords
+        self.vertices["position"] = self.points
+        self.vertices["texcoord"] = self.texture.coords
 
     def update_vertices(self):
         self.create_vertices()
-        utils.write_buffer(self.gfx.device, self.vertex_buffer, 0, self.vertices, self.vertices.nbytes)
+        utils.write_buffer(
+            self.gfx.device, self.vertex_buffer, 0, self.vertices, self.vertices.nbytes
+        )
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
@@ -274,7 +279,9 @@ class Sprite(Vu2D):
         bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
-                    binding=0, buffer=self.camera_uniform_buffer, size=self.camera_uniform_buffer_size
+                    binding=0,
+                    buffer=self.camera_uniform_buffer,
+                    size=self.camera_uniform_buffer_size,
                 ),
                 wgpu.BindGroupEntry(binding=1, sampler=sampler),
                 wgpu.BindGroupEntry(binding=2, texture_view=view),
@@ -289,10 +296,9 @@ class Sprite(Vu2D):
         )
 
         self.bind_group = self.device.create_bind_group(bind_group_desc)
-        logger.debug(self.bind_group)
 
     def draw(self, renderer: SceneRenderer):
-        #logger.debug("Drawing sprite")
+        # logger.debug("Drawing sprite")
         camera = renderer.camera
         pass_enc = renderer.pass_enc
 
@@ -304,7 +310,9 @@ class Sprite(Vu2D):
         camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
         camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
         camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
-        camera_uniform.position = cast_vec3(glm.vec3(camera.position.x, camera.position.y, 0))
+        camera_uniform.position = cast_vec3(
+            glm.vec3(camera.position.x, camera.position.y, 0)
+        )
 
         renderer.device.queue.write_buffer(
             self.camera_uniform_buffer,

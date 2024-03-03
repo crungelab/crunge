@@ -15,7 +15,7 @@ class TextureAtlasKit(TextureKitBase):
     def __init__(self):
         super().__init__()
 
-    def load(self, path: Path) -> TextureAtlas:
+    def load_xml(self, path: Path) -> TextureAtlas:
         if path in self.textures:
             return self.textures[path]
 

@@ -15,7 +15,7 @@ class Camera2D(Node2D):
         size=glm.vec2(1.0),
     ):
         super().__init__(position, size)
-        self.zoom = 1.0
+        self._zoom = 1.0
         self.update_matrices()
 
     @property
@@ -25,6 +25,15 @@ class Camera2D(Node2D):
     @position.setter
     def position(self, value: glm.vec2):
         self._position = value
+        self.update_matrices()
+
+    @property
+    def zoom(self):
+        return self._zoom
+    
+    @zoom.setter
+    def zoom(self, value: float):
+        self._zoom = value
         self.update_matrices()
 
     def update_matrices(self):

@@ -22,12 +22,9 @@ class TextureAtlasDemo(Demo):
         self.color = 1, 1, 1
 
         path = self.resource_root / "platformer" / "Spritesheets" / "spritesheet_tiles.xml"
-        atlas = self.atlas = TextureAtlasKit().load(path)
+        atlas = self.atlas = TextureAtlasKit().load_xml(path)
         logger.debug(f"atlas: {atlas}")
         
-        #texture = atlas.get("grass.png")
-        #texture = atlas.get("boxExplosive_disabled.png")
-        #texture = atlas.get("boxExplosive.png")
         texture = self.texture = atlas.get("bomb.png")
 
         logger.debug(f"texture: {texture}")

@@ -17,7 +17,7 @@ class Laser(DynamicModel2D):
         self.angle = angle
         self.speed = speed
         path = ResourceKit().root / "spaceshooter" / "sheet.xml"
-        atlas = TextureAtlasKit().load(path)
+        atlas = TextureAtlasKit().load_xml(path)
         logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get("laserBlue01.png")
