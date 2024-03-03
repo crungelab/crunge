@@ -42,8 +42,6 @@ class SpaceShooter(Demo):
             laser_shape, asteroid_shape = arbiter.shapes
             laser_model = laser_shape.body.model
             asteroid_model = asteroid_shape.body.model
-            logger.debug(f"laser_model: {laser_model}")
-            logger.debug(f"asteroid_model: {asteroid_model}")
             laser_model.destroy()
             asteroid_model.destroy()
             explosion = Explosion(asteroid_model.position, glm.vec2(100, 100))

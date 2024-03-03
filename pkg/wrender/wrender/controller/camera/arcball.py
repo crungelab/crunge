@@ -29,7 +29,7 @@ class ArcballCameraController(CameraController):
         self.target = target
         self.radius = radius
         self.distance = glm.length(camera.position - target)
-        self.movement_speed = 2.5
+        self.movement_speed = 10.0
         self.mouse_sensitivity = 20.0
         self.first_mouse = True
         self.width = 0
@@ -92,12 +92,11 @@ class ArcballCameraController(CameraController):
         return glm.normalize(glm.vec3(self.inv_camera * glm.vec4(0, 1, 0, 0)))
 
     def update_camera(self):
-        #self.camera = self.translation * glm.mat4_cast(self.rotation) * self.target_translation
         self.camera.view_matrix = self.translation * glm.mat4_cast(self.orientation) * self.target_translation
         self.inv_camera = glm.inverse(self.camera.view_matrix)
 
     def process_mouse_movement(self, xpos, ypos):
-        logger.debug(f"Mouse movement: {xpos}, {ypos}")
+        #logger.debug(f"Mouse movement: {xpos}, {ypos}")
 
         if self.first_mouse:
             self.prev_mouse = transform_mouse(glm.vec2(xpos, ypos), self.width, self.height)
@@ -109,9 +108,6 @@ class ArcballCameraController(CameraController):
 
         #logger.debug(f"Camera position: {self.camera.position}")
         #logger.debug(f"Camera orientation: {self.camera.orientation}")
-
-        #self.camera.update_camera_vectors()
-        #self.camera.look_at(self.target)
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
         self.zoom(event.y * 0.1)

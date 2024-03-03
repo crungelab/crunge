@@ -100,9 +100,6 @@ class ParticlesDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
     particles_buffer: wgpu.Buffer = None
 
-    texture: wgpu.Texture = None
-    sampler: wgpu.Sampler = None
-
     kWidth = 800
     kHeight = 600
 

@@ -9,13 +9,11 @@ import numpy as np
 import glm
 
 from crunge import as_capsule
-from crunge import klass
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ....scene_renderer import SceneRenderer
 
-from ....program import Program
 from ....vu_2d import Vu2D
 from ....uniforms import (
     cast_matrix3,
@@ -108,8 +106,16 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 """
 
 
-@klass.singleton
-class ExplosionProgram(Program):
+class ExplosionVu(Vu2D):
+    camera_uniform_buffer: wgpu.Buffer = None
+    camera_uniform_buffer_size: int = 0
+
+    vertex_buffer: wgpu.Buffer = None
+    particles_buffer: wgpu.Buffer = None
+
+    texture: wgpu.Texture = None
+    sampler: wgpu.Sampler = None
+
     def __init__(self):
         super().__init__()
 
@@ -117,9 +123,47 @@ class ExplosionProgram(Program):
         self.vs_module = self.gfx.create_shader_module(vs_code)
         self.fs_module = self.gfx.create_shader_module(fs_code)
 
-        self.create_pipelines()
+        self.num_particles = 32
+        self.create_particles()
+        self.create_buffers()
+        self.create_pipeline()
 
-    def create_pipelines(self):
+    @property
+    def size(self):
+        return glm.vec2(10, 10)
+
+    def create_buffers(self):
+        logger.debug("create_buffers")
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
+        )
+        self.particles_buffer = utils.create_buffer_from_ctypes_array(
+            self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
+        )
+        # Uniform Buffers
+        self.camera_uniform_buffer_size = sizeof(CameraUniform)
+        self.camera_uniform_buffer = self.gfx.create_buffer(
+            "Camera Uniform Buffer",
+            self.camera_uniform_buffer_size,
+            wgpu.BufferUsage.UNIFORM,
+        )
+
+
+    def create_particles(self):
+        logger.debug("create_particles")
+        self.particles = (Particle * self.num_particles)()
+        for i in range(0, self.num_particles):
+            self.particles[i].position = Vec2(0.0, 0.0)
+            self.particles[i].velocity = Vec2(
+                random.uniform(-1, 1), random.uniform(-1, 1)
+            )
+            self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
+            self.particles[i].age = 0.0
+            self.particles[i].lifespan = 100.0
+
+    def create_pipeline(self):
+        logger.debug("create_pipeline")
+        
         vertAttributes = wgpu.VertexAttributes(
             [
                 wgpu.VertexAttribute(
@@ -256,57 +300,6 @@ class ExplosionProgram(Program):
         self.render_pipeline = self.device.create_render_pipeline(render_pl_desc)
         logger.debug(self.render_pipeline)
 
-
-class ExplosionVu(Vu2D):
-    camera_uniform_buffer: wgpu.Buffer = None
-    camera_uniform_buffer_size: int = 0
-
-    vertex_buffer: wgpu.Buffer = None
-    particles_buffer: wgpu.Buffer = None
-
-
-    def __init__(self):
-        super().__init__()
-        self.program = ExplosionProgram()
-
-        self.num_particles = 32
-        self.create_particles()
-        self.create_buffers()
-        self.create_bindgroups()
-
-    @property
-    def size(self):
-        return glm.vec2(10, 10)
-
-    def create_particles(self):
-        logger.debug("create_particles")
-        self.particles = (Particle * self.num_particles)()
-        for i in range(0, self.num_particles):
-            self.particles[i].position = Vec2(0.0, 0.0)
-            self.particles[i].velocity = Vec2(
-                random.uniform(-1, 1), random.uniform(-1, 1)
-            )
-            self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
-            self.particles[i].age = 0.0
-            self.particles[i].lifespan = 100.0
-
-    def create_buffers(self):
-        logger.debug("create_buffers")
-        self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
-        )
-        self.particles_buffer = utils.create_buffer_from_ctypes_array(
-            self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
-        )
-        # Uniform Buffers
-        self.camera_uniform_buffer_size = sizeof(CameraUniform)
-        self.camera_uniform_buffer = self.gfx.create_buffer(
-            "Camera Uniform Buffer",
-            self.camera_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-
-    def create_bindgroups(self):
         bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
@@ -318,7 +311,7 @@ class ExplosionVu(Vu2D):
 
         compute_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Compute bind group",
-            layout=self.program.compute_pipeline.get_bind_group_layout(0),
+            layout=self.compute_pipeline.get_bind_group_layout(0),
             entry_count=len(bindgroup_entries),
             entries=bindgroup_entries[0],
         )
@@ -328,7 +321,7 @@ class ExplosionVu(Vu2D):
 
         render_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Render bind group",
-            layout=self.program.render_pipeline.get_bind_group_layout(0),
+            layout=self.render_pipeline.get_bind_group_layout(0),
             entry_count=len(bindgroup_entries),
             entries=bindgroup_entries[0],
         )
@@ -358,7 +351,7 @@ class ExplosionVu(Vu2D):
             self.camera_uniform_buffer_size,
         )
 
-        pass_enc.set_pipeline(self.program.render_pipeline)
+        pass_enc.set_pipeline(self.render_pipeline)
         pass_enc.set_bind_group(0, self.render_bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(6, self.num_particles)
@@ -372,8 +365,10 @@ class ExplosionVu(Vu2D):
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
 
         compute_pass = encoder.begin_compute_pass(compute_pass)
-        compute_pass.set_pipeline(self.program.compute_pipeline)
+        compute_pass.set_pipeline(self.compute_pipeline)
         compute_pass.set_bind_group(0, self.compute_bind_group)
+        # compute_pass.dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
+        # compute_pass.dispatch_workgroups(4, 4, 1)
         compute_pass.dispatch_workgroups(1)
         compute_pass.end()
         commands = encoder.finish()
