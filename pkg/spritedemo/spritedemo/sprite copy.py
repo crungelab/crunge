@@ -14,7 +14,6 @@ from loguru import logger
 import numpy as np
 import glm
 
-from crunge import klass
 from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
@@ -29,7 +28,6 @@ from .uniforms import (
     CameraUniform,
     LightUniform,
 )
-from .program import Program
 from .texture import Texture
 
 shader_code = """
@@ -69,6 +67,18 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 
 INDICES = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint16)
 
+'''
+vertices = np.array(
+    [
+        -0.5,  0.5,  0.0, 1.0, # top-left
+        -0.5, -0.5,  0.0, 0.0, # bottom-left
+        0.5, -0.5,  1.0, 0.0, # bottom-right
+        0.5,  0.5,  1.0, 1.0, # top-right
+    ],
+    dtype=np.float32,
+)
+'''
+
 POINTS = [
     (-0.5, 0.5),  # top-left
     (-0.5, -0.5), # bottom-left
@@ -82,123 +92,9 @@ vertex_dtype = np.dtype([
     ('texcoord', np.float32, (2,))   # Texture coordinates (u, v)
 ])
 
-@klass.singleton
-class SpriteProgram(Program):
-    pipeline: wgpu.RenderPipeline = None
-
-    def __init__(self):
-        super().__init__()
-        self.create_pipeline()
-
-    def create_pipeline(self):
-        shader_module = self.gfx.create_shader_module(shader_code)
-        #sampler = self.device.create_sampler()
-
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=2 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
-
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=4 * sizeof(c_float),
-            attribute_count=len(vertAttributes),
-            attributes=vertAttributes[0],
-        )
-
-        blend_state = wgpu.BlendState(
-            alpha=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.ONE,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-            color=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.SRC_ALPHA,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-        )
-
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
-            write_mask=wgpu.ColorWriteMask.ALL,
-        )
-
-        fragmentState = wgpu.FragmentState(
-            module=shader_module,
-            entry_point="fs_main",
-            target_count=1,
-            targets=colorTargetState,
-        )
-
-        vertex_state = wgpu.VertexState(
-            module=shader_module,
-            entry_point="vs_main",
-            buffer_count=1,
-            buffers=vertBufferLayout,
-        )
-
-        depth_stencil_state = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH24_PLUS,
-        )
-
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-            ]
-        )
-
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
-        )
-        bgl = self.device.create_bind_group_layout(bgl_desc)
-
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
-        )
-
-        descriptor = wgpu.RenderPipelineDescriptor(
-            label="Main Render Pipeline",
-            layout=self.device.create_pipeline_layout(pl_desc),
-            vertex=vertex_state,
-            fragment=fragmentState,
-            depth_stencil=depth_stencil_state,
-        )
-
-        self.pipeline = self.device.create_render_pipeline(descriptor)
-
 
 class Sprite(Vu2D):
-    #pipeline: wgpu.RenderPipeline = None
+    pipeline: wgpu.RenderPipeline = None
     bind_group: wgpu.BindGroup = None
 
     vertices: np.ndarray = None
@@ -213,14 +109,12 @@ class Sprite(Vu2D):
 
     def __init__(self, texture: Texture) -> None:
         super().__init__()
-        self.program = SpriteProgram()
         self._texture = texture
         self.indices = INDICES
         self.points = POINTS
         self.create_vertices()
         self.create_buffers()
-        #self.create_pipeline()
-        self.create_bind_group()
+        self.create_pipeline()
 
     @property
     def texture(self):
@@ -270,30 +164,6 @@ class Sprite(Vu2D):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def create_bind_group(self):
-        view: wgpu.TextureView = self.texture.texture.create_view()
-        sampler = self.device.create_sampler()
-
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0, buffer=self.camera_uniform_buffer, size=self.camera_uniform_buffer_size
-                ),
-                wgpu.BindGroupEntry(binding=1, sampler=sampler),
-                wgpu.BindGroupEntry(binding=2, texture_view=view),
-            ]
-        )
-
-        bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Texture bind group",
-            layout=self.program.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
-        )
-
-        self.bind_group = self.device.create_bind_group(bind_group_desc)
-        logger.debug(self.bind_group)
-    '''
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
         sampler = self.device.create_sampler()
@@ -423,7 +293,7 @@ class Sprite(Vu2D):
         logger.debug(self.bind_group)
 
         # exit()
-    '''
+
 
     def draw(self, renderer: SceneRenderer):
         #logger.debug("Drawing sprite")
@@ -452,7 +322,7 @@ class Sprite(Vu2D):
             self.camera_uniform_buffer_size,
         )
 
-        pass_enc.set_pipeline(self.program.pipeline)
+        pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, self.index_format)
