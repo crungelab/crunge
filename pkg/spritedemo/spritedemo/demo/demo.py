@@ -11,7 +11,6 @@ from ..camera_2d import Camera2D
 
 
 class Demo(engine.App):
-    renderer: SceneRenderer
     view: DemoView
     kWidth = 1024
     kHeight = 768
@@ -34,9 +33,6 @@ class Demo(engine.App):
         super().create()
         self.create_view()
         return self
-
-    def create_renderer(self):
-        self.renderer = SceneRenderer()
 
     def create_view(self):
         logger.debug("Creating view")
