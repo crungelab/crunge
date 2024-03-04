@@ -52,15 +52,20 @@ assert sizeof(Mat3) == 48
 
 class CameraUniform(Structure):
     _fields_ = [
-        ("model_matrix", Mat4),
-        ("transform_matrix", Mat4),
-        ("normal_matrix", Mat3),
+        ("projection", Mat4),
+        ("view", Mat4),
         ("position", Vec3),
     ]
 
 
 assert sizeof(CameraUniform) % 16 == 0
 
+class MeshUniform(Structure):
+    _fields_ = [
+        ("model", Mat4),
+    ]
+
+assert sizeof(MeshUniform) % 16 == 0
 
 class LightUniform(Structure):
     _fields_ = [

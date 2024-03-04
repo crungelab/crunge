@@ -6,11 +6,13 @@
 namespace py = pybind11;
 
 namespace wgpu {
+    typedef std::vector<BindGroupLayout> BindGroupLayouts;
     typedef std::vector<BindGroupLayoutEntry> BindGroupLayoutEntries;
     typedef std::vector<BindGroupEntry> BindGroupEntries;
     typedef std::vector<VertexAttribute> VertexAttributes;
 }
 
+PYBIND11_MAKE_OPAQUE(wgpu::BindGroupLayouts)
 PYBIND11_MAKE_OPAQUE(wgpu::BindGroupLayoutEntries)
 PYBIND11_MAKE_OPAQUE(wgpu::BindGroupEntries)
 PYBIND11_MAKE_OPAQUE(wgpu::VertexAttributes)

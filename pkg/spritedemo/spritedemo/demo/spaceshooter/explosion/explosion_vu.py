@@ -21,8 +21,7 @@ from ....uniforms import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
-    CameraUniform,
-    LightUniform,
+    MeshUniform,
 )
 
 from .data import vertex_data
@@ -36,7 +35,7 @@ struct Particle {
     age: f32,
     lifespan: f32,
 }
-@group(0) @binding(1) var<storage, read_write> particles: array<Particle>;
+@group(0) @binding(0) var<storage, read_write> particles: array<Particle>;
 
 @compute @workgroup_size(64) // Adjust workgroup size based on your needs
 fn cs_main(@builtin(global_invocation_id) global_id : vec3<u32>) {
@@ -53,12 +52,13 @@ fn cs_main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
 vs_code = """
 struct Camera {
-    modelMatrix : mat4x4<f32>,
-    transformMatrix : mat4x4<f32>,
-    normalMatrix: mat3x3<f32>,
+    projection : mat4x4<f32>,
+    view : mat4x4<f32>,
     position: vec3<f32>,
 }
 @group(0) @binding(0) var<uniform> camera : Camera;
+
+@group(1) @binding(0) var<uniform> model : mat4x4<f32>;
 
 struct Particle {
     position: vec2<f32>,
@@ -67,7 +67,7 @@ struct Particle {
     age: f32,
     lifespan: f32,
 }
-@group(0) @binding(1)  var<storage, read> particles: array<Particle>;
+@group(1) @binding(1)  var<storage, read> particles: array<Particle>;
 
 struct VertexOutput {
     @builtin(position) position: vec4<f32>,
@@ -80,7 +80,7 @@ struct VertexOutput {
 fn vs_main(@location(0) pos: vec2f, @builtin(instance_index) index: u32) -> VertexOutput {
     var output: VertexOutput;
     let vert_pos = pos + particles[index].position;
-    output.position = camera.transformMatrix * vec4<f32>(vert_pos.x, vert_pos.y, 0.0, 1.0);
+    output.position = camera.projection * camera.view * model * vec4<f32>(vert_pos.x, vert_pos.y, 0.0, 1.0);
     output.color = particles[index].color;
     output.age = particles[index].age;
     output.lifespan = particles[index].lifespan;
@@ -117,9 +117,10 @@ class ExplosionProgram(Program):
         self.vs_module = self.gfx.create_shader_module(vs_code)
         self.fs_module = self.gfx.create_shader_module(fs_code)
 
-        self.create_pipelines()
+        self.create_render_pipeline()
+        self.create_compute_pipeline()
 
-    def create_pipelines(self):
+    def create_render_pipeline(self):
         vertAttributes = wgpu.VertexAttributes(
             [
                 wgpu.VertexAttribute(
@@ -132,48 +133,6 @@ class ExplosionProgram(Program):
             attribute_count=1,
             attributes=vertAttributes[0],
         )
-
-        # Compute Bind Group Layout Entries
-        compute_bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.COMPUTE,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM,
-                        min_binding_size=0,
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.COMPUTE,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.STORAGE,
-                        min_binding_size=0,
-                    ),
-                ),
-            ]
-        )
-        # Render Bind Group Layout
-        compute_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(compute_bgl_entries), entries=compute_bgl_entries[0]
-        )
-        compute_bgl = self.device.create_bind_group_layout(compute_bgl_desc)
-
-        # Render Pipeline Layout
-        compute_pll_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=compute_bgl
-        )
-
-        compute_pl_desc = wgpu.ComputePipelineDescriptor(
-            label="Main Compute Pipeline",
-            layout=self.device.create_pipeline_layout(compute_pll_desc),
-            compute=wgpu.ProgrammableStageDescriptor(
-                module=self.cs_module,
-                entry_point="cs_main",
-            ),
-        )
-        self.compute_pipeline = self.device.create_compute_pipeline(compute_pl_desc)
 
         blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
@@ -212,6 +171,24 @@ class ExplosionProgram(Program):
             format=wgpu.TextureFormat.DEPTH24_PLUS,
         )
 
+        # Camera Bind Group Layout Entries
+        camera_bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM
+                    ),
+                ),
+            ]
+        )
+        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries[0]
+        )
+        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
+        logger.debug(f"camera_bgl: {camera_bgl}")
+
         # Render Bind Group Layout Entries
         render_bgl_entries = wgpu.BindGroupLayoutEntries(
             [
@@ -239,9 +216,13 @@ class ExplosionProgram(Program):
         )
         render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
 
+        render_bind_group_layouts = wgpu.BindGroupLayouts(
+            [camera_bgl, render_bgl]
+        )
+
         # Render Pipeline Layout
         render_pll_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=render_bgl
+            bind_group_layout_count=len(render_bind_group_layouts), bind_group_layouts=render_bind_group_layouts[0]
         )
 
         render_pl_desc = wgpu.RenderPipelineDescriptor(
@@ -256,14 +237,56 @@ class ExplosionProgram(Program):
         self.render_pipeline = self.device.create_render_pipeline(render_pl_desc)
         logger.debug(self.render_pipeline)
 
+    def create_compute_pipeline(self):
+        # Compute Bind Group Layout Entries
+        compute_bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.COMPUTE,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.STORAGE,
+                        min_binding_size=0,
+                    ),
+                ),
+            ]
+        )
+        # Compute Bind Group Layout
+        compute_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(compute_bgl_entries), entries=compute_bgl_entries[0]
+        )
+        compute_bgl = self.device.create_bind_group_layout(compute_bgl_desc)
+
+        '''
+        compute_bind_group_layouts = wgpu.BindGroupLayouts(
+            [compute_bgl]
+        )
+        '''
+
+        # Compute Pipeline Layout
+        compute_pll_desc = wgpu.PipelineLayoutDescriptor(
+            #bind_group_layout_count=len(compute_bind_group_layouts), bind_group_layouts=compute_bind_group_layouts[0]
+            bind_group_layout_count=1, bind_group_layouts=compute_bgl
+        )
+
+        compute_pl_desc = wgpu.ComputePipelineDescriptor(
+            label="Main Compute Pipeline",
+            layout=self.device.create_pipeline_layout(compute_pll_desc),
+            compute=wgpu.ProgrammableStageDescriptor(
+                module=self.cs_module,
+                entry_point="cs_main",
+            ),
+        )
+        self.compute_pipeline = self.device.create_compute_pipeline(compute_pl_desc)
+        logger.debug(self.compute_pipeline)
+
 
 class ExplosionVu(Vu2D):
-    camera_uniform_buffer: wgpu.Buffer = None
-    camera_uniform_buffer_size: int = 0
+    mesh_uniform_buffer: wgpu.Buffer = None
+    mesh_uniform_buffer_size: int = 0
 
     vertex_buffer: wgpu.Buffer = None
     particles_buffer: wgpu.Buffer = None
-
 
     def __init__(self):
         super().__init__()
@@ -299,67 +322,63 @@ class ExplosionVu(Vu2D):
             self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
         )
         # Uniform Buffers
-        self.camera_uniform_buffer_size = sizeof(CameraUniform)
-        self.camera_uniform_buffer = self.gfx.create_buffer(
-            "Camera Uniform Buffer",
-            self.camera_uniform_buffer_size,
+        self.mesh_uniform_buffer_size = sizeof(MeshUniform)
+        self.mesh_uniform_buffer = self.gfx.create_buffer(
+            "Mesh Buffer",
+            self.mesh_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
 
     def create_bindgroups(self):
-        bindgroup_entries = wgpu.BindGroupEntries(
+        compute_bindgroup_entries = wgpu.BindGroupEntries(
             [
-                wgpu.BindGroupEntry(
-                    binding=0, buffer=self.camera_uniform_buffer, size=self.camera_uniform_buffer_size
-                ),
-                wgpu.BindGroupEntry(binding=1, buffer=self.particles_buffer),
+                wgpu.BindGroupEntry(binding=0, buffer=self.particles_buffer),
             ]
         )
 
         compute_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Compute bind group",
             layout=self.program.compute_pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
+            entry_count=len(compute_bindgroup_entries),
+            entries=compute_bindgroup_entries[0],
         )
 
         self.compute_bind_group = self.device.create_bind_group(compute_bind_group_desc)
         logger.debug(self.compute_bind_group)
 
+        render_bindgroup_entries = wgpu.BindGroupEntries(
+            [
+                wgpu.BindGroupEntry(
+                    binding=0, buffer=self.mesh_uniform_buffer, size=self.mesh_uniform_buffer_size
+                ),
+                wgpu.BindGroupEntry(binding=1, buffer=self.particles_buffer),
+            ]
+        )
+
         render_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Render bind group",
-            layout=self.program.render_pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
+            layout=self.program.render_pipeline.get_bind_group_layout(1),
+            entry_count=len(render_bindgroup_entries),
+            entries=render_bindgroup_entries[0],
         )
 
         self.render_bind_group = self.device.create_bind_group(render_bind_group_desc)
 
     def draw(self, renderer: SceneRenderer):
         #logger.debug("Drawing explosion")
-        camera = renderer.camera
-        pass_enc = renderer.pass_enc
 
-        model_matrix = self.transform
-        transform_matrix = camera.transform_matrix * self.transform
-        normal_matrix = glm.transpose(glm.inverse(glm.mat3(model_matrix)))
-
-        camera_uniform = CameraUniform()
-        camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
-        camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
-        camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
-
-        camera_uniform.position = cast_vec3(glm.vec3(camera.position.x, camera.position.y, 0))
-
+        mesh_uniform = MeshUniform()
+        mesh_uniform.model.data = cast_matrix4(self.transform)
         renderer.device.queue.write_buffer(
-            self.camera_uniform_buffer,
+            self.mesh_uniform_buffer,
             0,
-            as_capsule(camera_uniform),
-            self.camera_uniform_buffer_size,
+            as_capsule(mesh_uniform),
+            self.mesh_uniform_buffer_size,
         )
 
+        pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline)
-        pass_enc.set_bind_group(0, self.render_bind_group)
+        pass_enc.set_bind_group(1, self.render_bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(6, self.num_particles)
 

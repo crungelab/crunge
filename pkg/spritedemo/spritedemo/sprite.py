@@ -21,28 +21,27 @@ import crunge.wgpu.utils as utils
 
 from .scene_renderer import SceneRenderer
 from .vu_2d import Vu2D
-from .camera_2d import Camera2D
 from .uniforms import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
-    CameraUniform,
-    LightUniform,
+    MeshUniform,
 )
 from .program import Program
 from .texture import Texture
 
 shader_code = """
 struct Camera {
-    modelMatrix : mat4x4<f32>,
-    transformMatrix : mat4x4<f32>,
-    normalMatrix: mat3x3<f32>,
+    projection : mat4x4<f32>,
+    view : mat4x4<f32>,
     position: vec3<f32>,
 }
 @group(0) @binding(0) var<uniform> camera : Camera;
 
-@group(0) @binding(1) var mySampler: sampler;
-@group(0) @binding(2) var myTexture : texture_2d<f32>;
+@group(1) @binding(0) var mySampler: sampler;
+@group(1) @binding(1) var myTexture : texture_2d<f32>;
+
+@group(2) @binding(0) var<uniform> model : mat4x4<f32>;
 
 struct VertexInput {
   @location(0) pos: vec4<f32>,
@@ -56,7 +55,7 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
-  let vert_pos = camera.transformMatrix * in.pos;
+  let vert_pos = camera.projection * camera.view * model * in.pos;
   return VertexOutput(vert_pos, in.uv);
 }
 
@@ -152,7 +151,7 @@ class SpriteProgram(Program):
             format=wgpu.TextureFormat.DEPTH24_PLUS,
         )
 
-        bgl_entries = wgpu.BindGroupLayoutEntries(
+        camera_bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(
                     binding=0,
@@ -161,15 +160,25 @@ class SpriteProgram(Program):
                         type=wgpu.BufferBindingType.UNIFORM
                     ),
                 ),
+            ]
+        )
+        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries[0]
+        )
+        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
+        logger.debug(f"camera_bgl: {camera_bgl}")
+
+        material_bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
                 wgpu.BindGroupLayoutEntry(
-                    binding=1,
+                    binding=0,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
                     ),
                 ),
                 wgpu.BindGroupLayoutEntry(
-                    binding=2,
+                    binding=1,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
@@ -178,16 +187,37 @@ class SpriteProgram(Program):
                 ),
             ]
         )
-
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
+        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(material_bgl_entries), entries=material_bgl_entries[0]
         )
-        bgl = self.device.create_bind_group_layout(bgl_desc)
+        material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
+        logger.debug(f"material_bgl: {material_bgl}")
+
+        mesh_bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM
+                    ),
+                ),
+            ]
+        )
+        mesh_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(mesh_bgl_entries), entries=mesh_bgl_entries[0]
+        )
+        mesh_bgl = self.device.create_bind_group_layout(mesh_bgl_desc)
+        logger.debug(f"mesh_bgl: {mesh_bgl}")
+
+        bind_group_layouts = wgpu.BindGroupLayouts(
+            [camera_bgl, material_bgl, mesh_bgl]
+        )
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
+            bind_group_layout_count=len(bind_group_layouts), bind_group_layouts=bind_group_layouts[0]
         )
-
+        
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
             layout=self.device.create_pipeline_layout(pl_desc),
@@ -195,12 +225,13 @@ class SpriteProgram(Program):
             fragment=fragmentState,
             depth_stencil=depth_stencil_state,
         )
-
+        
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
 
 class Sprite(Vu2D):
-    bind_group: wgpu.BindGroup = None
+    material_bind_group: wgpu.BindGroup = None
+    mesh_bind_group: wgpu.BindGroup = None
 
     vertices: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
@@ -209,8 +240,8 @@ class Sprite(Vu2D):
     index_buffer: wgpu.Buffer = None
     index_format: wgpu.IndexFormat = wgpu.IndexFormat.UINT16
 
-    camera_uniform_buffer: wgpu.Buffer = None
-    camera_uniform_buffer_size: int = 0
+    mesh_uniform_buffer: wgpu.Buffer = None
+    mesh_uniform_buffer_size: int = 0
 
     def __init__(self, texture: Texture) -> None:
         super().__init__()
@@ -220,7 +251,7 @@ class Sprite(Vu2D):
         self.points = POINTS
         self.create_vertices()
         self.create_buffers()
-        self.create_bind_group()
+        self.create_bind_groups()
 
     @property
     def texture(self):
@@ -265,64 +296,67 @@ class Sprite(Vu2D):
             self.gfx.device, "INDEX", self.indices, wgpu.BufferUsage.INDEX
         )
         # Uniform Buffers
-        self.camera_uniform_buffer_size = sizeof(CameraUniform)
-        self.camera_uniform_buffer = self.gfx.create_buffer(
-            "Camera Uniform Buffer",
-            self.camera_uniform_buffer_size,
+        self.mesh_uniform_buffer_size = sizeof(MeshUniform)
+        self.mesh_uniform_buffer = self.gfx.create_buffer(
+            "Mesh Buffer",
+            self.mesh_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def create_bind_group(self):
+    def create_bind_groups(self):
         view: wgpu.TextureView = self.texture.texture.create_view()
         sampler = self.device.create_sampler()
 
-        bindgroup_entries = wgpu.BindGroupEntries(
+        material_bindgroup_entries = wgpu.BindGroupEntries(
             [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.camera_uniform_buffer,
-                    size=self.camera_uniform_buffer_size,
-                ),
-                wgpu.BindGroupEntry(binding=1, sampler=sampler),
-                wgpu.BindGroupEntry(binding=2, texture_view=view),
+                wgpu.BindGroupEntry(binding=0, sampler=sampler),
+                wgpu.BindGroupEntry(binding=1, texture_view=view),
             ]
         )
 
-        bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Texture bind group",
-            layout=self.program.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
+        material_bind_group_desc = wgpu.BindGroupDescriptor(
+            label="Material bind group",
+            layout=self.program.pipeline.get_bind_group_layout(1),
+            entry_count=len(material_bindgroup_entries),
+            entries=material_bindgroup_entries[0],
         )
 
-        self.bind_group = self.device.create_bind_group(bind_group_desc)
+        self.material_bind_group = self.device.create_bind_group(material_bind_group_desc)
+
+        mesh_bindgroup_entries = wgpu.BindGroupEntries(
+            [
+                wgpu.BindGroupEntry(
+                    binding=0,
+                    buffer=self.mesh_uniform_buffer,
+                    size=self.mesh_uniform_buffer_size,
+                ),
+            ]
+        )
+
+        mesh_bind_group_desc = wgpu.BindGroupDescriptor(
+            label="Mesh bind group",
+            layout=self.program.pipeline.get_bind_group_layout(2),
+            entry_count=len(mesh_bindgroup_entries),
+            entries=mesh_bindgroup_entries[0],
+        )
+
+        self.mesh_bind_group = self.device.create_bind_group(mesh_bind_group_desc)
 
     def draw(self, renderer: SceneRenderer):
         # logger.debug("Drawing sprite")
-        camera = renderer.camera
-        pass_enc = renderer.pass_enc
-
-        model_matrix = self.transform
-        transform_matrix = camera.transform_matrix * self.transform
-        normal_matrix = glm.transpose(glm.inverse(glm.mat3(model_matrix)))
-
-        camera_uniform = CameraUniform()
-        camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
-        camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
-        camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
-        camera_uniform.position = cast_vec3(
-            glm.vec3(camera.position.x, camera.position.y, 0)
-        )
-
+        mesh_uniform = MeshUniform()
+        mesh_uniform.model.data = cast_matrix4(self.transform)
         renderer.device.queue.write_buffer(
-            self.camera_uniform_buffer,
+            self.mesh_uniform_buffer,
             0,
-            as_capsule(camera_uniform),
-            self.camera_uniform_buffer_size,
+            as_capsule(mesh_uniform),
+            self.mesh_uniform_buffer_size,
         )
 
+        pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
-        pass_enc.set_bind_group(0, self.bind_group)
+        pass_enc.set_bind_group(1, self.material_bind_group)
+        pass_enc.set_bind_group(2, self.mesh_bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, self.index_format)
         pass_enc.draw_indexed(len(self.indices))
