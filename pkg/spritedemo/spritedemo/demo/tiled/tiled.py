@@ -2,7 +2,7 @@ from pathlib import Path
 
 from loguru import logger
 import glm
-from pytmx import TiledMap, TiledTileLayer
+from pytmx import TiledMap, TiledTileLayer, TiledObjectGroup
 
 from crunge import imgui
 from crunge.engine import Renderer
@@ -38,6 +38,7 @@ class TiledDemo(Demo):
         th = self.tmx_data.tileheight
         mw = self.tmx_data.width
         mh = self.tmx_data.height - 1
+        pixel_height = mh * th
 
         for i, layer in enumerate(self.tmx_data.visible_layers):
             if isinstance(layer, TiledTileLayer):
@@ -63,6 +64,46 @@ class TiledDemo(Demo):
                     sprite = Sprite(texture)
                     node = Node2D(glm.vec2(x ,y), vu=sprite)
                     self.scene.add_child(node)
+
+            elif isinstance(layer, TiledObjectGroup):
+                # iterate over all the objects in the layer
+                for obj in layer:
+                    logger.info(obj)
+
+                    # objects with points are polygons or lines
+                    if hasattr(obj, "points"):
+                        #draw_lines(poly_color, obj.closed, obj.points, 3)
+                        pass
+
+                    # some object have an image
+                    elif obj.image:
+                        logger.debug(f"obj.image: {obj.image}")
+
+                        image = obj.image
+                        x = obj.x
+                        #y = mh - obj.y
+                        y = pixel_height - obj.y
+                        path = image[0]
+                        atlas = TextureKit().load(path)
+                        logger.debug(f"atlas: {atlas}")
+
+                        rect = image[1]
+                        if rect:
+                            tx, ty, tw, th = rect
+                            texture = Texture(atlas.texture, int(tx), int(ty), int(tw), int(th), atlas)
+                            logger.debug(f"texture: {texture}")
+                        else:
+                            texture = atlas
+
+                        sprite = Sprite(texture)
+                        node = Node2D(glm.vec2(x ,y), vu=sprite)
+                        self.scene.add_child(node)
+
+                    # draw a rect for everything else
+                    else:
+                        #draw_rect(rect_color, (obj.x, obj.y, obj.width, obj.height), 3)
+                        pass
+
 
     def draw(self, renderer: Renderer):
         # imgui.set_next_window_position(288, 32, imgui.ONCE)
