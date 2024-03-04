@@ -90,67 +90,10 @@ class SpriteProgram(Program):
 
     def __init__(self):
         super().__init__()
-        self.create_pipeline()
+        self.create_render_bind_group_layouts()
+        self.create_render_pipeline()
 
-    def create_pipeline(self):
-        shader_module = self.gfx.create_shader_module(shader_code)
-
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=2 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
-
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=4 * sizeof(c_float),
-            attribute_count=len(vertAttributes),
-            attributes=vertAttributes[0],
-        )
-
-        blend_state = wgpu.BlendState(
-            alpha=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.ONE,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-            color=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.SRC_ALPHA,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-        )
-
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
-            write_mask=wgpu.ColorWriteMask.ALL,
-        )
-
-        fragmentState = wgpu.FragmentState(
-            module=shader_module,
-            entry_point="fs_main",
-            target_count=1,
-            targets=colorTargetState,
-        )
-
-        vertex_state = wgpu.VertexState(
-            module=shader_module,
-            entry_point="vs_main",
-            buffer_count=1,
-            buffers=vertBufferLayout,
-        )
-
-        depth_stencil_state = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH24_PLUS,
-        )
-
+    def create_render_bind_group_layouts(self):
         camera_bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(
@@ -210,12 +153,72 @@ class SpriteProgram(Program):
         mesh_bgl = self.device.create_bind_group_layout(mesh_bgl_desc)
         logger.debug(f"mesh_bgl: {mesh_bgl}")
 
-        bind_group_layouts = wgpu.BindGroupLayouts(
+        self.bind_group_layouts = wgpu.BindGroupLayouts(
             [camera_bgl, material_bgl, mesh_bgl]
         )
 
+    def create_render_pipeline(self):
+        shader_module = self.gfx.create_shader_module(shader_code)
+
+        vertAttributes = wgpu.VertexAttributes(
+            [
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+                ),
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X2,
+                    offset=2 * sizeof(c_float),
+                    shader_location=1,
+                ),
+            ]
+        )
+
+        vertBufferLayout = wgpu.VertexBufferLayout(
+            array_stride=4 * sizeof(c_float),
+            attribute_count=len(vertAttributes),
+            attributes=vertAttributes[0],
+        )
+
+        blend_state = wgpu.BlendState(
+            alpha=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.ONE,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+            color=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.SRC_ALPHA,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+        )
+
+        colorTargetState = wgpu.ColorTargetState(
+            format=wgpu.TextureFormat.BGRA8_UNORM,
+            blend=blend_state,
+            write_mask=wgpu.ColorWriteMask.ALL,
+        )
+
+        fragmentState = wgpu.FragmentState(
+            module=shader_module,
+            entry_point="fs_main",
+            target_count=1,
+            targets=colorTargetState,
+        )
+
+        vertex_state = wgpu.VertexState(
+            module=shader_module,
+            entry_point="vs_main",
+            buffer_count=1,
+            buffers=vertBufferLayout,
+        )
+
+        depth_stencil_state = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
+        )
+
+
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(bind_group_layouts), bind_group_layouts=bind_group_layouts[0]
+            bind_group_layout_count=len(self.bind_group_layouts), bind_group_layouts=self.bind_group_layouts[0]
         )
         
         descriptor = wgpu.RenderPipelineDescriptor(

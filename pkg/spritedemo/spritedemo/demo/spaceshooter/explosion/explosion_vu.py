@@ -117,8 +117,60 @@ class ExplosionProgram(Program):
         self.vs_module = self.gfx.create_shader_module(vs_code)
         self.fs_module = self.gfx.create_shader_module(fs_code)
 
+        self.create_render_bind_group_layouts()
         self.create_render_pipeline()
+        self.create_compute_bind_group_layouts()
         self.create_compute_pipeline()
+
+    def create_render_bind_group_layouts(self):
+        # Camera Bind Group Layout Entries
+        camera_bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM
+                    ),
+                ),
+            ]
+        )
+        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries[0]
+        )
+        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
+        logger.debug(f"camera_bgl: {camera_bgl}")
+
+        # Render Bind Group Layout Entries
+        render_bgl_entries = wgpu.BindGroupLayoutEntries(
+            [
+                wgpu.BindGroupLayoutEntry(
+                    binding=0,
+                    visibility=wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.UNIFORM,
+                        min_binding_size=0,
+                    ),
+                ),
+                wgpu.BindGroupLayoutEntry(
+                    binding=1,
+                    visibility=wgpu.ShaderStage.COMPUTE | wgpu.ShaderStage.VERTEX,
+                    buffer=wgpu.BufferBindingLayout(
+                        type=wgpu.BufferBindingType.READ_ONLY_STORAGE,
+                        min_binding_size=0,
+                    ),
+                ),
+            ]
+        )
+        # Render Bind Group Layout
+        render_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(render_bgl_entries), entries=render_bgl_entries[0]
+        )
+        render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
+
+        self.render_bind_group_layouts = wgpu.BindGroupLayouts(
+            [camera_bgl, render_bgl]
+        )
 
     def create_render_pipeline(self):
         vertAttributes = wgpu.VertexAttributes(
@@ -171,58 +223,10 @@ class ExplosionProgram(Program):
             format=wgpu.TextureFormat.DEPTH24_PLUS,
         )
 
-        # Camera Bind Group Layout Entries
-        camera_bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-            ]
-        )
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries[0]
-        )
-        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
-        logger.debug(f"camera_bgl: {camera_bgl}")
-
-        # Render Bind Group Layout Entries
-        render_bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM,
-                        min_binding_size=0,
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.COMPUTE | wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.READ_ONLY_STORAGE,
-                        min_binding_size=0,
-                    ),
-                ),
-            ]
-        )
-        # Render Bind Group Layout
-        render_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(render_bgl_entries), entries=render_bgl_entries[0]
-        )
-        render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
-
-        render_bind_group_layouts = wgpu.BindGroupLayouts(
-            [camera_bgl, render_bgl]
-        )
 
         # Render Pipeline Layout
         render_pll_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(render_bind_group_layouts), bind_group_layouts=render_bind_group_layouts[0]
+            bind_group_layout_count=len(self.render_bind_group_layouts), bind_group_layouts=self.render_bind_group_layouts[0]
         )
 
         render_pl_desc = wgpu.RenderPipelineDescriptor(
@@ -237,7 +241,7 @@ class ExplosionProgram(Program):
         self.render_pipeline = self.device.create_render_pipeline(render_pl_desc)
         logger.debug(self.render_pipeline)
 
-    def create_compute_pipeline(self):
+    def create_compute_bind_group_layouts(self):
         # Compute Bind Group Layout Entries
         compute_bgl_entries = wgpu.BindGroupLayoutEntries(
             [
@@ -257,16 +261,15 @@ class ExplosionProgram(Program):
         )
         compute_bgl = self.device.create_bind_group_layout(compute_bgl_desc)
 
-        '''
-        compute_bind_group_layouts = wgpu.BindGroupLayouts(
+        self.compute_bind_group_layouts = wgpu.BindGroupLayouts(
             [compute_bgl]
         )
-        '''
+
+    def create_compute_pipeline(self):
 
         # Compute Pipeline Layout
         compute_pll_desc = wgpu.PipelineLayoutDescriptor(
-            #bind_group_layout_count=len(compute_bind_group_layouts), bind_group_layouts=compute_bind_group_layouts[0]
-            bind_group_layout_count=1, bind_group_layouts=compute_bgl
+            bind_group_layout_count=len(self.compute_bind_group_layouts), bind_group_layouts=self.compute_bind_group_layouts[0]
         )
 
         compute_pl_desc = wgpu.ComputePipelineDescriptor(

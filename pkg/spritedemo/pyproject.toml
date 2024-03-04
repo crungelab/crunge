@@ -10,8 +10,6 @@ authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
     "loguru ==0.7.2",
-    "PyGLM ==2.7.1",
-    "imageio ==2.33.1",
     "pymunk ==6.6.0",
     "lxml ==5.1.0",
     "scipy ==1.12.0",
