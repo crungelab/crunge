@@ -4,7 +4,6 @@ from loguru import logger
 
 from .dispatcher import Dispatcher
 from .controller import Controller
-#from .render_context import RenderContext
 from .renderer import Renderer
 from .vu import Vu
 from .gfx import Gfx

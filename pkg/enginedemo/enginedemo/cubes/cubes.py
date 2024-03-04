@@ -181,8 +181,6 @@ class CubesDemo(Demo):
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
 
-        # exit()
-
     @property
     def transform_matrix(self):
         viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 3, -92))
@@ -217,12 +215,13 @@ class CubesDemo(Demo):
         )
 
         # Setup Uniforms
+        '''
         matrix_element_count = 4 * 4
         # 4x4 matrix
         matrix_byte_size = sizeof(c_float) * matrix_element_count
-
         self.uniformBufferSize = matrix_byte_size * num_instances
-        # self.uniformBufferSize = self.mvp_matrices.nbytes
+        '''
+        self.uniformBufferSize = self.mvp_matrices.nbytes
         self.uniformBuffer = utils.create_buffer(
             self.device,
             "Uniform buffer",
@@ -236,6 +235,7 @@ class CubesDemo(Demo):
             load_op=wgpu.LoadOp.CLEAR,
             store_op=wgpu.StoreOp.STORE,
             clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
+            #clear_value=wgpu.Color(0.0, 0.0, 0.0, 1.0),
         )
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
@@ -252,7 +252,6 @@ class CubesDemo(Demo):
             depth_stencil_attachment=depthStencilAttach,
         )
 
-        commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)

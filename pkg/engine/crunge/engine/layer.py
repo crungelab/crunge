@@ -8,7 +8,7 @@ from loguru import logger
 from .widget import Widget
 from .renderer import Renderer
 from .vu import Vu
-#from .render_context import RenderContext
+
 
 class Layer(Widget):
     def __init__(self, name: str, vu: Vu = None) -> None:

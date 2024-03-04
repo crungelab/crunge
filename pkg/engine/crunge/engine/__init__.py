@@ -8,6 +8,5 @@ from .window import Window
 from .app import App
 from .view import View
 from .layer import Layer
-#from .render_context import RenderContext
 from .renderer import Renderer
 from .vu import Vu

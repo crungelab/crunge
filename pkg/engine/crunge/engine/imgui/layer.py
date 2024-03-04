@@ -41,12 +41,6 @@ class ImGuiLayer(Layer):
             imgui.style_colors_dark()
 
         self.io = imgui.get_io()
-        # Need to create context before creating renderer
-        '''
-        if not self.renderer:
-            #ImGuiLayer.renderer = ImGuiRenderer.produce()
-            ImGuiLayer.renderer = ImGuiRenderer()
-        '''
         self.vu = ImGuiVu()
         self._set_pixel_ratio()
         return self
@@ -68,11 +62,6 @@ class ImGuiLayer(Layer):
         #logger.debug("ImGuiLayer.post_draw")
         imgui.end_frame()
         super().post_draw(renderer)
-
-    '''
-    def render(self, context: engine.RenderContext):
-        self.renderer.render(context)
-    '''
 
     def on_mouse_enter(self, event: sdl.WindowEvent):
         super().on_mouse_enter(event)

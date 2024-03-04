@@ -111,7 +111,6 @@ def render(view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
 
     renderpass.depthStencilAttachment = depthStencilAttachment
 
-    commands = wgpu.CommandBuffer()
     encoder: wgpu.CommandEncoder = device.create_command_encoder()
     pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
     pass_enc.set_pipeline(pipeline)

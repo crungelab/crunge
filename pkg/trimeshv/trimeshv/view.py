@@ -84,7 +84,6 @@ class View(Base):
             depth_stencil_attachment=depthStencilAttach,
         )
 
-        commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         self.scene.draw(self.camera, pass_enc)

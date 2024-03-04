@@ -380,7 +380,6 @@ class MeshTextureDemo(Demo):
             depth_stencil_attachment=depthStencilAttach,
         )
 
-        commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)

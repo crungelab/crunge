@@ -265,7 +265,6 @@ class ParticlesDemo(Demo):
             color_attachments=attachment,
         )
 
-        commands = wgpu.CommandBuffer()
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
 
         compute_pass = encoder.begin_compute_pass(compute_pass)

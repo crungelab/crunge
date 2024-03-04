@@ -2,11 +2,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from crunge import as_capsule
 from crunge import wgpu, sdl, engine, imgui
-from crunge.engine import Renderer
-
-import crunge.wgpu.utils as utils
 
 from ..scene_renderer import SceneRenderer
 from ..scene import Scene
@@ -44,7 +40,7 @@ class Demo(engine.App):
 
     def create_view(self):
         logger.debug("Creating view")
-        view = DemoView(self.scene, self.kWidth, self.kHeight).create(self)
+        view = DemoView(self.scene, self.width, self.height).create(self)
         self.show_view(view)
 
     def on_key(self, event: sdl.KeyboardEvent):
