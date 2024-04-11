@@ -1,0 +1,6 @@
+-e ../../pkg/core
+-e ../../pkg/imgui
+-e ../../pkg/implot
+-e ../../pkg/wgpu
+-e ../../pkg/sdl
+-e ../../pkg/engine

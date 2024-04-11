@@ -3,7 +3,6 @@ import sys
 
 from loguru import logger
 
-from crunge import as_capsule
 from crunge import wgpu, sdl, engine, imgui
 from crunge.engine import Renderer
 

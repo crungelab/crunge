@@ -1,8 +1,8 @@
 __version__ = '0.1.0'
 
-import crunge
+from crunge import core
 
-crunge.add_plugin(__file__)
+core.add_plugin(__file__)
 
 from ._wgpu import *
 from ._wgpu import create_proc_table

@@ -1,7 +1,0 @@
--e ../crunge
--e ../imgui
--e ../implot
--e ../imnodes
--e ../wgpu
--e ../sdl
--e ../engine

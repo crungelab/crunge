@@ -6,7 +6,7 @@ import glm
 from crunge import engine
 from crunge.engine import Renderer
 
-from crunge import as_capsule
+from crunge.core import as_capsule
 from crunge import sdl, wgpu, imgui
 import crunge.wgpu.utils as utils
 

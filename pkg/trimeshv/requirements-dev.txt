@@ -1,2 +1,2 @@
--e ../crunge
+-e ../core
 -e ../wgpu

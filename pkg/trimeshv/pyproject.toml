@@ -13,7 +13,7 @@ dependencies = [
     "click ==8.1.7",
     "glfw ==2.6.4",
     "PyGLM ==2.7.1",
-    "trimesh[easy] ==4.0.8",
+    "trimesh[easy] ==4.3.0",
 ]
 
 [project.scripts]
