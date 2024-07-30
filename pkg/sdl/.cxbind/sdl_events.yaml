@@ -16,4 +16,6 @@ flags: [
 # Internal / Ignored
 'function.SDL_GetEventFilter': {exclude: true}
 
+'field.SDL_TextEditingCandidatesEvent::candidates': {exclude: true}
+
 # Overloads

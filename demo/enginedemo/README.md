@@ -1,3 +1,3 @@
 ```bash
-python -m sdldemo.cube
+python -m enginedemo.cube
 ```

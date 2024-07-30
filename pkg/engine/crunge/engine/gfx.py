@@ -23,6 +23,7 @@ class Gfx:
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
         #logger.debug(f"Creating shader module from code: {code}")
+        logger.debug(f"Creating shader module")
         wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)

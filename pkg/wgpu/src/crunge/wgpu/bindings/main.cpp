@@ -35,6 +35,14 @@ void init_main(py::module &_wgpu, Registry &registry) {
     py::bind_vector<BindGroupEntries>(_wgpu, "BindGroupEntries", "BindGroupEntry Vector");
     py::bind_vector<VertexAttributes>(_wgpu, "VertexAttributes", "VertexAttribute Vector");
 
+    /*
+        TODO:
+        They have wgpu::DeviceDescriptor extending wgpu::detail::DeviceDescriptor.
+        wgpu::detail::DeviceDescriptor is inaccessible so I need to wrap it more here.
+    */
+    PYCLASS_BEGIN(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
+    PYCLASS_END(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
+
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
     Instance.def("request_adapter", [](const wgpu::Instance& self)
     {

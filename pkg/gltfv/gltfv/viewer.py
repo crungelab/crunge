@@ -16,9 +16,7 @@ from .view import View
 from .camera import Camera
 from .controller.camera import CameraController
 from .controller.camera.arcball import ArcballCameraController
-#from .controller.camera.arcball1 import ArcballCameraController
-#from .controller.camera.arcball2 import ArcballCameraController
-#from .controller.camera.arcball3 import ArcballCameraController
+
 
 class Viewer(Base):
     kWidth = 1024

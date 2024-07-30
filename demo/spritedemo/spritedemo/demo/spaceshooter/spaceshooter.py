@@ -114,7 +114,7 @@ class SpaceShooter(Demo):
         return camera_position
 
     def on_key(self, event: sdl.KeyboardEvent):
-        key = event.keysym.sym
+        key = event.key
         state = event.state
         if key == sdl.SDLK_s:
             if state == 1:

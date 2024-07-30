@@ -28,12 +28,25 @@ void init_sdl_properties(py::module &_sdl, Registry &registry) {
     _sdl.def("create_properties", &SDL_CreateProperties
     , py::return_value_policy::automatic_reference);
 
+    _sdl.def("copy_properties", &SDL_CopyProperties
+    , py::arg("src")
+    , py::arg("dst")
+    , py::return_value_policy::automatic_reference);
+
     _sdl.def("lock_properties", &SDL_LockProperties
     , py::arg("props")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("unlock_properties", &SDL_UnlockProperties
     , py::arg("props")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("set_property_with_cleanup", &SDL_SetPropertyWithCleanup
+    , py::arg("props")
+    , py::arg("name")
+    , py::arg("value")
+    , py::arg("cleanup")
+    , py::arg("userdata")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("set_property", &SDL_SetProperty
@@ -64,6 +77,11 @@ void init_sdl_properties(py::module &_sdl, Registry &registry) {
     , py::arg("props")
     , py::arg("name")
     , py::arg("value")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("has_property", &SDL_HasProperty
+    , py::arg("props")
+    , py::arg("name")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("get_property_type", &SDL_GetPropertyType
@@ -104,6 +122,12 @@ void init_sdl_properties(py::module &_sdl, Registry &registry) {
     _sdl.def("clear_property", &SDL_ClearProperty
     , py::arg("props")
     , py::arg("name")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("enumerate_properties", &SDL_EnumerateProperties
+    , py::arg("props")
+    , py::arg("callback")
+    , py::arg("userdata")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("destroy_properties", &SDL_DestroyProperties

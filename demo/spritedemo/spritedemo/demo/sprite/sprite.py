@@ -33,6 +33,10 @@ class SpriteDemo(Demo):
 
         self.scene.add_child(self.node)
 
+    def kill(self):
+        self.node.destroy()
+        self.node = None
+        
     def reset(self):
         self.angle = 0
         self.scale = 1.0
@@ -41,7 +45,6 @@ class SpriteDemo(Demo):
         self.color = 1, 1, 1
 
     def draw(self, renderer: Renderer):
-        # imgui.set_next_window_position(288, 32, imgui.ONCE)
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
         imgui.set_next_window_size((256, 256), imgui.COND_ONCE)
 
@@ -52,11 +55,13 @@ class SpriteDemo(Demo):
             "Angle",
             self.angle,
         )
-        self.node.angle = self.angle
+        if changed:
+            self.node.angle = self.angle
 
         # Scale
         changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
-        self.node.scale = glm.vec2(self.scale, self.scale)
+        if changed:
+            self.node.scale = glm.vec2(self.scale, self.scale)
 
         #TODO: Implement alpha and color
         '''
@@ -79,6 +84,8 @@ class SpriteDemo(Demo):
 
         if imgui.button("Reset"):
             self.reset()
+        if imgui.button("Kill"):
+            self.kill()
 
         imgui.end()
 

@@ -34,10 +34,38 @@ defaults:
 'field.wgpu::QueueWorkDoneCallbackInfo::callback': {exclude: true}
 'field.wgpu::RequestAdapterCallbackInfo::callback': {exclude: true}
 'field.wgpu::RequestDeviceCallbackInfo::callback': {exclude: true}
-'field.wgpu::DeviceDescriptor::deviceLostCallback': {exclude: true}
-
 'field.wgpu::CreateComputePipelineAsyncCallbackInfo::callback': {exclude: true}
 'field.wgpu::CreateRenderPipelineAsyncCallbackInfo::callback': {exclude: true}
+
+'field.wgpu::PopErrorScopeCallbackInfo::callback': {exclude: true}
+'field.wgpu::PopErrorScopeCallbackInfo::oldCallback': {exclude: true}
+
+'field.wgpu::UncapturedErrorCallbackInfo::callback': {exclude: true}
+
+'field.wgpu::DeviceLostCallbackInfo::callback': {exclude: true}
+'struct.wgpu::DawnCacheDeviceDescriptor': {exclude: true}
+
+# Implemented in main.cpp
+
+'struct.wgpu::detail::DeviceDescriptor': {exclude: true}
+'struct.wgpu::DeviceDescriptor': {exclude: true}
+#'field.wgpu::detail::DeviceDescriptor::deviceLostCallback': {exclude: true}
+
+'method.wgpu::Queue::OnSubmittedWorkDone': {exclude: true}
+'method.wgpu::ShaderModule::GetCompilationInfo': {exclude: true}
+'method.wgpu::Device::PopErrorScope': {exclude: true}
+'method.wgpu::Device::CreateRenderPipelineAsync': {exclude: true}
+'method.wgpu::Device::CreateComputePipelineAsync': {exclude: true}
+'method.wgpu::Buffer::MapAsync': {exclude: true}
+'method.wgpu::Adapter::RequestDevice': {exclude: true}
+
+'field.wgpu::CompilationInfoCallbackInfo::callback': {exclude: true}
+
+# Deleted Constructors
+'ctor.wgpu::SurfaceCapabilities::SurfaceCapabilities': {exclude: true}
+'ctor.wgpu::AdaptorInfo::AdaptorInfo': {exclude: true}
+'ctor.wgpu::SharedBufferMemoryEndAccessState::SharedBufferMemoryEndAccessState': {exclude: true}
+'ctor.wgpu::DrmFormatCapabilities::DrmFormatCapabilities': {exclude: true}
 
 # These have this signature:  const char* const * 
 'field.wgpu::DawnInstanceDescriptor::additionalRuntimeSearchPaths': {exclude: true}

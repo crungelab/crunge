@@ -44,7 +44,6 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         .value("WINDOW_FOCUS_GAINED", SDL_EventType::SDL_EVENT_WINDOW_FOCUS_GAINED)
         .value("WINDOW_FOCUS_LOST", SDL_EventType::SDL_EVENT_WINDOW_FOCUS_LOST)
         .value("WINDOW_CLOSE_REQUESTED", SDL_EventType::SDL_EVENT_WINDOW_CLOSE_REQUESTED)
-        .value("WINDOW_TAKE_FOCUS", SDL_EventType::SDL_EVENT_WINDOW_TAKE_FOCUS)
         .value("WINDOW_HIT_TEST", SDL_EventType::SDL_EVENT_WINDOW_HIT_TEST)
         .value("WINDOW_ICCPROF_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_ICCPROF_CHANGED)
         .value("WINDOW_DISPLAY_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_DISPLAY_CHANGED)
@@ -55,6 +54,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         .value("WINDOW_DESTROYED", SDL_EventType::SDL_EVENT_WINDOW_DESTROYED)
         .value("WINDOW_PEN_ENTER", SDL_EventType::SDL_EVENT_WINDOW_PEN_ENTER)
         .value("WINDOW_PEN_LEAVE", SDL_EventType::SDL_EVENT_WINDOW_PEN_LEAVE)
+        .value("WINDOW_HDR_STATE_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_HDR_STATE_CHANGED)
         .value("WINDOW_FIRST", SDL_EventType::SDL_EVENT_WINDOW_FIRST)
         .value("WINDOW_LAST", SDL_EventType::SDL_EVENT_WINDOW_LAST)
         .value("KEY_DOWN", SDL_EventType::SDL_EVENT_KEY_DOWN)
@@ -62,11 +62,17 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         .value("TEXT_EDITING", SDL_EventType::SDL_EVENT_TEXT_EDITING)
         .value("TEXT_INPUT", SDL_EventType::SDL_EVENT_TEXT_INPUT)
         .value("KEYMAP_CHANGED", SDL_EventType::SDL_EVENT_KEYMAP_CHANGED)
+        .value("KEYBOARD_ADDED", SDL_EventType::SDL_EVENT_KEYBOARD_ADDED)
+        .value("KEYBOARD_REMOVED", SDL_EventType::SDL_EVENT_KEYBOARD_REMOVED)
+        .value("TEXT_EDITING_CANDIDATES", SDL_EventType::SDL_EVENT_TEXT_EDITING_CANDIDATES)
         .value("MOUSE_MOTION", SDL_EventType::SDL_EVENT_MOUSE_MOTION)
         .value("MOUSE_BUTTON_DOWN", SDL_EventType::SDL_EVENT_MOUSE_BUTTON_DOWN)
         .value("MOUSE_BUTTON_UP", SDL_EventType::SDL_EVENT_MOUSE_BUTTON_UP)
         .value("MOUSE_WHEEL", SDL_EventType::SDL_EVENT_MOUSE_WHEEL)
+        .value("MOUSE_ADDED", SDL_EventType::SDL_EVENT_MOUSE_ADDED)
+        .value("MOUSE_REMOVED", SDL_EventType::SDL_EVENT_MOUSE_REMOVED)
         .value("JOYSTICK_AXIS_MOTION", SDL_EventType::SDL_EVENT_JOYSTICK_AXIS_MOTION)
+        .value("JOYSTICK_BALL_MOTION", SDL_EventType::SDL_EVENT_JOYSTICK_BALL_MOTION)
         .value("JOYSTICK_HAT_MOTION", SDL_EventType::SDL_EVENT_JOYSTICK_HAT_MOTION)
         .value("JOYSTICK_BUTTON_DOWN", SDL_EventType::SDL_EVENT_JOYSTICK_BUTTON_DOWN)
         .value("JOYSTICK_BUTTON_UP", SDL_EventType::SDL_EVENT_JOYSTICK_BUTTON_UP)
@@ -104,20 +110,27 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         .value("PEN_MOTION", SDL_EventType::SDL_EVENT_PEN_MOTION)
         .value("PEN_BUTTON_DOWN", SDL_EventType::SDL_EVENT_PEN_BUTTON_DOWN)
         .value("PEN_BUTTON_UP", SDL_EventType::SDL_EVENT_PEN_BUTTON_UP)
+        .value("CAMERA_DEVICE_ADDED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_ADDED)
+        .value("CAMERA_DEVICE_REMOVED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_REMOVED)
+        .value("CAMERA_DEVICE_APPROVED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_APPROVED)
+        .value("CAMERA_DEVICE_DENIED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_DENIED)
         .value("RENDER_TARGETS_RESET", SDL_EventType::SDL_EVENT_RENDER_TARGETS_RESET)
         .value("RENDER_DEVICE_RESET", SDL_EventType::SDL_EVENT_RENDER_DEVICE_RESET)
         .value("POLL_SENTINEL", SDL_EventType::SDL_EVENT_POLL_SENTINEL)
         .value("USER", SDL_EventType::SDL_EVENT_USER)
         .value("LAST", SDL_EventType::SDL_EVENT_LAST)
+        .value("ENUM_PADDING", SDL_EventType::SDL_EVENT_ENUM_PADDING)
         .export_values();
 
     PYCLASS_BEGIN(_sdl, SDL_CommonEvent, CommonEvent)
         CommonEvent.def_readwrite("type", &SDL_CommonEvent::type);
+        CommonEvent.def_readwrite("reserved", &SDL_CommonEvent::reserved);
         CommonEvent.def_readwrite("timestamp", &SDL_CommonEvent::timestamp);
     PYCLASS_END(_sdl, SDL_CommonEvent, CommonEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_DisplayEvent, DisplayEvent)
         DisplayEvent.def_readwrite("type", &SDL_DisplayEvent::type);
+        DisplayEvent.def_readwrite("reserved", &SDL_DisplayEvent::reserved);
         DisplayEvent.def_readwrite("timestamp", &SDL_DisplayEvent::timestamp);
         DisplayEvent.def_readwrite("display_id", &SDL_DisplayEvent::displayID);
         DisplayEvent.def_readwrite("data1", &SDL_DisplayEvent::data1);
@@ -125,47 +138,78 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_WindowEvent, WindowEvent)
         WindowEvent.def_readwrite("type", &SDL_WindowEvent::type);
+        WindowEvent.def_readwrite("reserved", &SDL_WindowEvent::reserved);
         WindowEvent.def_readwrite("timestamp", &SDL_WindowEvent::timestamp);
         WindowEvent.def_readwrite("window_id", &SDL_WindowEvent::windowID);
         WindowEvent.def_readwrite("data1", &SDL_WindowEvent::data1);
         WindowEvent.def_readwrite("data2", &SDL_WindowEvent::data2);
     PYCLASS_END(_sdl, SDL_WindowEvent, WindowEvent)
 
+    PYCLASS_BEGIN(_sdl, SDL_KeyboardDeviceEvent, KeyboardDeviceEvent)
+        KeyboardDeviceEvent.def_readwrite("type", &SDL_KeyboardDeviceEvent::type);
+        KeyboardDeviceEvent.def_readwrite("reserved", &SDL_KeyboardDeviceEvent::reserved);
+        KeyboardDeviceEvent.def_readwrite("timestamp", &SDL_KeyboardDeviceEvent::timestamp);
+        KeyboardDeviceEvent.def_readwrite("which", &SDL_KeyboardDeviceEvent::which);
+    PYCLASS_END(_sdl, SDL_KeyboardDeviceEvent, KeyboardDeviceEvent)
+
     PYCLASS_BEGIN(_sdl, SDL_KeyboardEvent, KeyboardEvent)
         KeyboardEvent.def_readwrite("type", &SDL_KeyboardEvent::type);
+        KeyboardEvent.def_readwrite("reserved", &SDL_KeyboardEvent::reserved);
         KeyboardEvent.def_readwrite("timestamp", &SDL_KeyboardEvent::timestamp);
         KeyboardEvent.def_readwrite("window_id", &SDL_KeyboardEvent::windowID);
+        KeyboardEvent.def_readwrite("which", &SDL_KeyboardEvent::which);
+        KeyboardEvent.def_readwrite("scancode", &SDL_KeyboardEvent::scancode);
+        KeyboardEvent.def_readwrite("key", &SDL_KeyboardEvent::key);
+        KeyboardEvent.def_readwrite("mod", &SDL_KeyboardEvent::mod);
+        KeyboardEvent.def_readwrite("raw", &SDL_KeyboardEvent::raw);
         KeyboardEvent.def_readwrite("state", &SDL_KeyboardEvent::state);
         KeyboardEvent.def_readwrite("repeat", &SDL_KeyboardEvent::repeat);
-        KeyboardEvent.def_readwrite("padding2", &SDL_KeyboardEvent::padding2);
-        KeyboardEvent.def_readwrite("padding3", &SDL_KeyboardEvent::padding3);
-        KeyboardEvent.def_readwrite("keysym", &SDL_KeyboardEvent::keysym);
     PYCLASS_END(_sdl, SDL_KeyboardEvent, KeyboardEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_TextEditingEvent, TextEditingEvent)
         TextEditingEvent.def_readwrite("type", &SDL_TextEditingEvent::type);
+        TextEditingEvent.def_readwrite("reserved", &SDL_TextEditingEvent::reserved);
         TextEditingEvent.def_readwrite("timestamp", &SDL_TextEditingEvent::timestamp);
         TextEditingEvent.def_readwrite("window_id", &SDL_TextEditingEvent::windowID);
         TextEditingEvent.def_property("text",
             [](const SDL_TextEditingEvent& self){ return self.text; },
-            [](SDL_TextEditingEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.text = c; }
+            [](SDL_TextEditingEvent& self, const char* source){ self.text = strdup(source); }
         );
         TextEditingEvent.def_readwrite("start", &SDL_TextEditingEvent::start);
         TextEditingEvent.def_readwrite("length", &SDL_TextEditingEvent::length);
     PYCLASS_END(_sdl, SDL_TextEditingEvent, TextEditingEvent)
 
+    PYCLASS_BEGIN(_sdl, SDL_TextEditingCandidatesEvent, TextEditingCandidatesEvent)
+        TextEditingCandidatesEvent.def_readwrite("type", &SDL_TextEditingCandidatesEvent::type);
+        TextEditingCandidatesEvent.def_readwrite("reserved", &SDL_TextEditingCandidatesEvent::reserved);
+        TextEditingCandidatesEvent.def_readwrite("timestamp", &SDL_TextEditingCandidatesEvent::timestamp);
+        TextEditingCandidatesEvent.def_readwrite("window_id", &SDL_TextEditingCandidatesEvent::windowID);
+        TextEditingCandidatesEvent.def_readwrite("num_candidates", &SDL_TextEditingCandidatesEvent::num_candidates);
+        TextEditingCandidatesEvent.def_readwrite("selected_candidate", &SDL_TextEditingCandidatesEvent::selected_candidate);
+        TextEditingCandidatesEvent.def_readwrite("horizontal", &SDL_TextEditingCandidatesEvent::horizontal);
+    PYCLASS_END(_sdl, SDL_TextEditingCandidatesEvent, TextEditingCandidatesEvent)
+
     PYCLASS_BEGIN(_sdl, SDL_TextInputEvent, TextInputEvent)
         TextInputEvent.def_readwrite("type", &SDL_TextInputEvent::type);
+        TextInputEvent.def_readwrite("reserved", &SDL_TextInputEvent::reserved);
         TextInputEvent.def_readwrite("timestamp", &SDL_TextInputEvent::timestamp);
         TextInputEvent.def_readwrite("window_id", &SDL_TextInputEvent::windowID);
         TextInputEvent.def_property("text",
             [](const SDL_TextInputEvent& self){ return self.text; },
-            [](SDL_TextInputEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.text = c; }
+            [](SDL_TextInputEvent& self, const char* source){ self.text = strdup(source); }
         );
     PYCLASS_END(_sdl, SDL_TextInputEvent, TextInputEvent)
 
+    PYCLASS_BEGIN(_sdl, SDL_MouseDeviceEvent, MouseDeviceEvent)
+        MouseDeviceEvent.def_readwrite("type", &SDL_MouseDeviceEvent::type);
+        MouseDeviceEvent.def_readwrite("reserved", &SDL_MouseDeviceEvent::reserved);
+        MouseDeviceEvent.def_readwrite("timestamp", &SDL_MouseDeviceEvent::timestamp);
+        MouseDeviceEvent.def_readwrite("which", &SDL_MouseDeviceEvent::which);
+    PYCLASS_END(_sdl, SDL_MouseDeviceEvent, MouseDeviceEvent)
+
     PYCLASS_BEGIN(_sdl, SDL_MouseMotionEvent, MouseMotionEvent)
         MouseMotionEvent.def_readwrite("type", &SDL_MouseMotionEvent::type);
+        MouseMotionEvent.def_readwrite("reserved", &SDL_MouseMotionEvent::reserved);
         MouseMotionEvent.def_readwrite("timestamp", &SDL_MouseMotionEvent::timestamp);
         MouseMotionEvent.def_readwrite("window_id", &SDL_MouseMotionEvent::windowID);
         MouseMotionEvent.def_readwrite("which", &SDL_MouseMotionEvent::which);
@@ -178,6 +222,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_MouseButtonEvent, MouseButtonEvent)
         MouseButtonEvent.def_readwrite("type", &SDL_MouseButtonEvent::type);
+        MouseButtonEvent.def_readwrite("reserved", &SDL_MouseButtonEvent::reserved);
         MouseButtonEvent.def_readwrite("timestamp", &SDL_MouseButtonEvent::timestamp);
         MouseButtonEvent.def_readwrite("window_id", &SDL_MouseButtonEvent::windowID);
         MouseButtonEvent.def_readwrite("which", &SDL_MouseButtonEvent::which);
@@ -191,18 +236,20 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_MouseWheelEvent, MouseWheelEvent)
         MouseWheelEvent.def_readwrite("type", &SDL_MouseWheelEvent::type);
+        MouseWheelEvent.def_readwrite("reserved", &SDL_MouseWheelEvent::reserved);
         MouseWheelEvent.def_readwrite("timestamp", &SDL_MouseWheelEvent::timestamp);
         MouseWheelEvent.def_readwrite("window_id", &SDL_MouseWheelEvent::windowID);
         MouseWheelEvent.def_readwrite("which", &SDL_MouseWheelEvent::which);
         MouseWheelEvent.def_readwrite("x", &SDL_MouseWheelEvent::x);
         MouseWheelEvent.def_readwrite("y", &SDL_MouseWheelEvent::y);
         MouseWheelEvent.def_readwrite("direction", &SDL_MouseWheelEvent::direction);
-        MouseWheelEvent.def_readwrite("mouse_x", &SDL_MouseWheelEvent::mouseX);
-        MouseWheelEvent.def_readwrite("mouse_y", &SDL_MouseWheelEvent::mouseY);
+        MouseWheelEvent.def_readwrite("mouse_x", &SDL_MouseWheelEvent::mouse_x);
+        MouseWheelEvent.def_readwrite("mouse_y", &SDL_MouseWheelEvent::mouse_y);
     PYCLASS_END(_sdl, SDL_MouseWheelEvent, MouseWheelEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_JoyAxisEvent, JoyAxisEvent)
         JoyAxisEvent.def_readwrite("type", &SDL_JoyAxisEvent::type);
+        JoyAxisEvent.def_readwrite("reserved", &SDL_JoyAxisEvent::reserved);
         JoyAxisEvent.def_readwrite("timestamp", &SDL_JoyAxisEvent::timestamp);
         JoyAxisEvent.def_readwrite("which", &SDL_JoyAxisEvent::which);
         JoyAxisEvent.def_readwrite("axis", &SDL_JoyAxisEvent::axis);
@@ -213,8 +260,22 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         JoyAxisEvent.def_readwrite("padding4", &SDL_JoyAxisEvent::padding4);
     PYCLASS_END(_sdl, SDL_JoyAxisEvent, JoyAxisEvent)
 
+    PYCLASS_BEGIN(_sdl, SDL_JoyBallEvent, JoyBallEvent)
+        JoyBallEvent.def_readwrite("type", &SDL_JoyBallEvent::type);
+        JoyBallEvent.def_readwrite("reserved", &SDL_JoyBallEvent::reserved);
+        JoyBallEvent.def_readwrite("timestamp", &SDL_JoyBallEvent::timestamp);
+        JoyBallEvent.def_readwrite("which", &SDL_JoyBallEvent::which);
+        JoyBallEvent.def_readwrite("ball", &SDL_JoyBallEvent::ball);
+        JoyBallEvent.def_readwrite("padding1", &SDL_JoyBallEvent::padding1);
+        JoyBallEvent.def_readwrite("padding2", &SDL_JoyBallEvent::padding2);
+        JoyBallEvent.def_readwrite("padding3", &SDL_JoyBallEvent::padding3);
+        JoyBallEvent.def_readwrite("xrel", &SDL_JoyBallEvent::xrel);
+        JoyBallEvent.def_readwrite("yrel", &SDL_JoyBallEvent::yrel);
+    PYCLASS_END(_sdl, SDL_JoyBallEvent, JoyBallEvent)
+
     PYCLASS_BEGIN(_sdl, SDL_JoyHatEvent, JoyHatEvent)
         JoyHatEvent.def_readwrite("type", &SDL_JoyHatEvent::type);
+        JoyHatEvent.def_readwrite("reserved", &SDL_JoyHatEvent::reserved);
         JoyHatEvent.def_readwrite("timestamp", &SDL_JoyHatEvent::timestamp);
         JoyHatEvent.def_readwrite("which", &SDL_JoyHatEvent::which);
         JoyHatEvent.def_readwrite("hat", &SDL_JoyHatEvent::hat);
@@ -225,6 +286,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_JoyButtonEvent, JoyButtonEvent)
         JoyButtonEvent.def_readwrite("type", &SDL_JoyButtonEvent::type);
+        JoyButtonEvent.def_readwrite("reserved", &SDL_JoyButtonEvent::reserved);
         JoyButtonEvent.def_readwrite("timestamp", &SDL_JoyButtonEvent::timestamp);
         JoyButtonEvent.def_readwrite("which", &SDL_JoyButtonEvent::which);
         JoyButtonEvent.def_readwrite("button", &SDL_JoyButtonEvent::button);
@@ -235,19 +297,23 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_JoyDeviceEvent, JoyDeviceEvent)
         JoyDeviceEvent.def_readwrite("type", &SDL_JoyDeviceEvent::type);
+        JoyDeviceEvent.def_readwrite("reserved", &SDL_JoyDeviceEvent::reserved);
         JoyDeviceEvent.def_readwrite("timestamp", &SDL_JoyDeviceEvent::timestamp);
         JoyDeviceEvent.def_readwrite("which", &SDL_JoyDeviceEvent::which);
     PYCLASS_END(_sdl, SDL_JoyDeviceEvent, JoyDeviceEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_JoyBatteryEvent, JoyBatteryEvent)
         JoyBatteryEvent.def_readwrite("type", &SDL_JoyBatteryEvent::type);
+        JoyBatteryEvent.def_readwrite("reserved", &SDL_JoyBatteryEvent::reserved);
         JoyBatteryEvent.def_readwrite("timestamp", &SDL_JoyBatteryEvent::timestamp);
         JoyBatteryEvent.def_readwrite("which", &SDL_JoyBatteryEvent::which);
-        JoyBatteryEvent.def_readwrite("level", &SDL_JoyBatteryEvent::level);
+        JoyBatteryEvent.def_readwrite("state", &SDL_JoyBatteryEvent::state);
+        JoyBatteryEvent.def_readwrite("percent", &SDL_JoyBatteryEvent::percent);
     PYCLASS_END(_sdl, SDL_JoyBatteryEvent, JoyBatteryEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_GamepadAxisEvent, GamepadAxisEvent)
         GamepadAxisEvent.def_readwrite("type", &SDL_GamepadAxisEvent::type);
+        GamepadAxisEvent.def_readwrite("reserved", &SDL_GamepadAxisEvent::reserved);
         GamepadAxisEvent.def_readwrite("timestamp", &SDL_GamepadAxisEvent::timestamp);
         GamepadAxisEvent.def_readwrite("which", &SDL_GamepadAxisEvent::which);
         GamepadAxisEvent.def_readwrite("axis", &SDL_GamepadAxisEvent::axis);
@@ -260,6 +326,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_GamepadButtonEvent, GamepadButtonEvent)
         GamepadButtonEvent.def_readwrite("type", &SDL_GamepadButtonEvent::type);
+        GamepadButtonEvent.def_readwrite("reserved", &SDL_GamepadButtonEvent::reserved);
         GamepadButtonEvent.def_readwrite("timestamp", &SDL_GamepadButtonEvent::timestamp);
         GamepadButtonEvent.def_readwrite("which", &SDL_GamepadButtonEvent::which);
         GamepadButtonEvent.def_readwrite("button", &SDL_GamepadButtonEvent::button);
@@ -270,12 +337,14 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_GamepadDeviceEvent, GamepadDeviceEvent)
         GamepadDeviceEvent.def_readwrite("type", &SDL_GamepadDeviceEvent::type);
+        GamepadDeviceEvent.def_readwrite("reserved", &SDL_GamepadDeviceEvent::reserved);
         GamepadDeviceEvent.def_readwrite("timestamp", &SDL_GamepadDeviceEvent::timestamp);
         GamepadDeviceEvent.def_readwrite("which", &SDL_GamepadDeviceEvent::which);
     PYCLASS_END(_sdl, SDL_GamepadDeviceEvent, GamepadDeviceEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_GamepadTouchpadEvent, GamepadTouchpadEvent)
         GamepadTouchpadEvent.def_readwrite("type", &SDL_GamepadTouchpadEvent::type);
+        GamepadTouchpadEvent.def_readwrite("reserved", &SDL_GamepadTouchpadEvent::reserved);
         GamepadTouchpadEvent.def_readwrite("timestamp", &SDL_GamepadTouchpadEvent::timestamp);
         GamepadTouchpadEvent.def_readwrite("which", &SDL_GamepadTouchpadEvent::which);
         GamepadTouchpadEvent.def_readwrite("touchpad", &SDL_GamepadTouchpadEvent::touchpad);
@@ -287,6 +356,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_GamepadSensorEvent, GamepadSensorEvent)
         GamepadSensorEvent.def_readwrite("type", &SDL_GamepadSensorEvent::type);
+        GamepadSensorEvent.def_readwrite("reserved", &SDL_GamepadSensorEvent::reserved);
         GamepadSensorEvent.def_readwrite("timestamp", &SDL_GamepadSensorEvent::timestamp);
         GamepadSensorEvent.def_readwrite("which", &SDL_GamepadSensorEvent::which);
         GamepadSensorEvent.def_readwrite("sensor", &SDL_GamepadSensorEvent::sensor);
@@ -296,19 +366,28 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_AudioDeviceEvent, AudioDeviceEvent)
         AudioDeviceEvent.def_readwrite("type", &SDL_AudioDeviceEvent::type);
+        AudioDeviceEvent.def_readwrite("reserved", &SDL_AudioDeviceEvent::reserved);
         AudioDeviceEvent.def_readwrite("timestamp", &SDL_AudioDeviceEvent::timestamp);
         AudioDeviceEvent.def_readwrite("which", &SDL_AudioDeviceEvent::which);
-        AudioDeviceEvent.def_readwrite("iscapture", &SDL_AudioDeviceEvent::iscapture);
+        AudioDeviceEvent.def_readwrite("recording", &SDL_AudioDeviceEvent::recording);
         AudioDeviceEvent.def_readwrite("padding1", &SDL_AudioDeviceEvent::padding1);
         AudioDeviceEvent.def_readwrite("padding2", &SDL_AudioDeviceEvent::padding2);
         AudioDeviceEvent.def_readwrite("padding3", &SDL_AudioDeviceEvent::padding3);
     PYCLASS_END(_sdl, SDL_AudioDeviceEvent, AudioDeviceEvent)
 
+    PYCLASS_BEGIN(_sdl, SDL_CameraDeviceEvent, CameraDeviceEvent)
+        CameraDeviceEvent.def_readwrite("type", &SDL_CameraDeviceEvent::type);
+        CameraDeviceEvent.def_readwrite("reserved", &SDL_CameraDeviceEvent::reserved);
+        CameraDeviceEvent.def_readwrite("timestamp", &SDL_CameraDeviceEvent::timestamp);
+        CameraDeviceEvent.def_readwrite("which", &SDL_CameraDeviceEvent::which);
+    PYCLASS_END(_sdl, SDL_CameraDeviceEvent, CameraDeviceEvent)
+
     PYCLASS_BEGIN(_sdl, SDL_TouchFingerEvent, TouchFingerEvent)
         TouchFingerEvent.def_readwrite("type", &SDL_TouchFingerEvent::type);
+        TouchFingerEvent.def_readwrite("reserved", &SDL_TouchFingerEvent::reserved);
         TouchFingerEvent.def_readwrite("timestamp", &SDL_TouchFingerEvent::timestamp);
-        TouchFingerEvent.def_readwrite("touch_id", &SDL_TouchFingerEvent::touchId);
-        TouchFingerEvent.def_readwrite("finger_id", &SDL_TouchFingerEvent::fingerId);
+        TouchFingerEvent.def_readwrite("touch_id", &SDL_TouchFingerEvent::touchID);
+        TouchFingerEvent.def_readwrite("finger_id", &SDL_TouchFingerEvent::fingerID);
         TouchFingerEvent.def_readwrite("x", &SDL_TouchFingerEvent::x);
         TouchFingerEvent.def_readwrite("y", &SDL_TouchFingerEvent::y);
         TouchFingerEvent.def_readwrite("dx", &SDL_TouchFingerEvent::dx);
@@ -319,6 +398,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_PenTipEvent, PenTipEvent)
         PenTipEvent.def_readwrite("type", &SDL_PenTipEvent::type);
+        PenTipEvent.def_readwrite("reserved", &SDL_PenTipEvent::reserved);
         PenTipEvent.def_readwrite("timestamp", &SDL_PenTipEvent::timestamp);
         PenTipEvent.def_readwrite("window_id", &SDL_PenTipEvent::windowID);
         PenTipEvent.def_readwrite("which", &SDL_PenTipEvent::which);
@@ -332,6 +412,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_PenMotionEvent, PenMotionEvent)
         PenMotionEvent.def_readwrite("type", &SDL_PenMotionEvent::type);
+        PenMotionEvent.def_readwrite("reserved", &SDL_PenMotionEvent::reserved);
         PenMotionEvent.def_readwrite("timestamp", &SDL_PenMotionEvent::timestamp);
         PenMotionEvent.def_readwrite("window_id", &SDL_PenMotionEvent::windowID);
         PenMotionEvent.def_readwrite("which", &SDL_PenMotionEvent::which);
@@ -345,6 +426,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_PenButtonEvent, PenButtonEvent)
         PenButtonEvent.def_readwrite("type", &SDL_PenButtonEvent::type);
+        PenButtonEvent.def_readwrite("reserved", &SDL_PenButtonEvent::reserved);
         PenButtonEvent.def_readwrite("timestamp", &SDL_PenButtonEvent::timestamp);
         PenButtonEvent.def_readwrite("window_id", &SDL_PenButtonEvent::windowID);
         PenButtonEvent.def_readwrite("which", &SDL_PenButtonEvent::which);
@@ -358,27 +440,30 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_DropEvent, DropEvent)
         DropEvent.def_readwrite("type", &SDL_DropEvent::type);
+        DropEvent.def_readwrite("reserved", &SDL_DropEvent::reserved);
         DropEvent.def_readwrite("timestamp", &SDL_DropEvent::timestamp);
         DropEvent.def_readwrite("window_id", &SDL_DropEvent::windowID);
         DropEvent.def_readwrite("x", &SDL_DropEvent::x);
         DropEvent.def_readwrite("y", &SDL_DropEvent::y);
         DropEvent.def_property("source",
             [](const SDL_DropEvent& self){ return self.source; },
-            [](SDL_DropEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.source = c; }
+            [](SDL_DropEvent& self, const char* source){ self.source = strdup(source); }
         );
         DropEvent.def_property("data",
             [](const SDL_DropEvent& self){ return self.data; },
-            [](SDL_DropEvent& self, std::string source){ char* c = (char *)malloc(source.size() + 1); strcpy(c, source.c_str()); self.data = c; }
+            [](SDL_DropEvent& self, const char* source){ self.data = strdup(source); }
         );
     PYCLASS_END(_sdl, SDL_DropEvent, DropEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_ClipboardEvent, ClipboardEvent)
         ClipboardEvent.def_readwrite("type", &SDL_ClipboardEvent::type);
+        ClipboardEvent.def_readwrite("reserved", &SDL_ClipboardEvent::reserved);
         ClipboardEvent.def_readwrite("timestamp", &SDL_ClipboardEvent::timestamp);
     PYCLASS_END(_sdl, SDL_ClipboardEvent, ClipboardEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_SensorEvent, SensorEvent)
         SensorEvent.def_readwrite("type", &SDL_SensorEvent::type);
+        SensorEvent.def_readwrite("reserved", &SDL_SensorEvent::reserved);
         SensorEvent.def_readwrite("timestamp", &SDL_SensorEvent::timestamp);
         SensorEvent.def_readwrite("which", &SDL_SensorEvent::which);
         SensorEvent.def_readonly("data", &SDL_SensorEvent::data);
@@ -387,11 +472,13 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     PYCLASS_BEGIN(_sdl, SDL_QuitEvent, QuitEvent)
         QuitEvent.def_readwrite("type", &SDL_QuitEvent::type);
+        QuitEvent.def_readwrite("reserved", &SDL_QuitEvent::reserved);
         QuitEvent.def_readwrite("timestamp", &SDL_QuitEvent::timestamp);
     PYCLASS_END(_sdl, SDL_QuitEvent, QuitEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_UserEvent, UserEvent)
         UserEvent.def_readwrite("type", &SDL_UserEvent::type);
+        UserEvent.def_readwrite("reserved", &SDL_UserEvent::reserved);
         UserEvent.def_readwrite("timestamp", &SDL_UserEvent::timestamp);
         UserEvent.def_readwrite("window_id", &SDL_UserEvent::windowID);
         UserEvent.def_readwrite("code", &SDL_UserEvent::code);
@@ -402,10 +489,10 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
     _sdl.def("pump_events", &SDL_PumpEvents
     , py::return_value_policy::automatic_reference);
 
-    py::enum_<SDL_eventaction>(_sdl, "SDL_eventaction", py::arithmetic())
-        .value("ADDEVENT", SDL_eventaction::SDL_ADDEVENT)
-        .value("PEEKEVENT", SDL_eventaction::SDL_PEEKEVENT)
-        .value("GETEVENT", SDL_eventaction::SDL_GETEVENT)
+    py::enum_<SDL_EventAction>(_sdl, "EventAction", py::arithmetic())
+        .value("ADDEVENT", SDL_EventAction::SDL_ADDEVENT)
+        .value("PEEKEVENT", SDL_EventAction::SDL_PEEKEVENT)
+        .value("GETEVENT", SDL_EventAction::SDL_GETEVENT)
         .export_values();
 
     _sdl.def("peep_events", &SDL_PeepEvents
@@ -445,6 +532,26 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     _sdl.def("push_event", &SDL_PushEvent
     , py::arg("event")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("set_event_filter", &SDL_SetEventFilter
+    , py::arg("filter")
+    , py::arg("userdata")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("add_event_watch", &SDL_AddEventWatch
+    , py::arg("filter")
+    , py::arg("userdata")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("del_event_watch", &SDL_DelEventWatch
+    , py::arg("filter")
+    , py::arg("userdata")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("filter_events", &SDL_FilterEvents
+    , py::arg("filter")
+    , py::arg("userdata")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("set_event_enabled", &SDL_SetEventEnabled

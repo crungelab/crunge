@@ -19,7 +19,7 @@ class Meteor(DynamicModel2D):
         super().__init__(position, geom=BallGeom)
         path = ResourceKit().root / "spaceshooter" / "sheet.xml"
         atlas = TextureAtlasKit().load_xml(path)
-        logger.debug(f"atlas: {atlas}")
+        #logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get(name)
 

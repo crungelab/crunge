@@ -139,7 +139,7 @@ class PhysicsModel2D(Model2D):
             self.add_shape(shape)
 
     def add_shape(self, shape):
-        logger.debug(f"shape: {shape}")
+        #logger.debug(f"shape: {shape}")
         #shape.collision_type = self.physics.kind
         #logger.debug(f"shape.collision_type: {shape.collision_type}")
         globals.physics_engine.space.add(self.body, shape)

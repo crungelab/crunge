@@ -20,10 +20,10 @@ class DynamicPhysics(Physics, metaclass=PhysicsMeta):
 
     def create_body(self, model, offset=None):
         mass = model.mass
-        logger.debug(f"mass: {mass}")
+        #logger.debug(f"mass: {mass}")
         #moment = pymunk.moment_for_box(mass, (self.width, self.height))
         moment = model.geom.get_moment(model)
-        logger.debug(f"moment: {moment}")
+        #logger.debug(f"moment: {moment}")
         body = pymunk.Body(mass, moment)
         body.model = model
 
@@ -33,7 +33,7 @@ class DynamicPhysics(Physics, metaclass=PhysicsMeta):
 
         else:
             position = model.position
-        logger.debug(f"position: {position}")
+        #logger.debug(f"position: {position}")
         body.position = Vec2d(position.x, position.y)
         body.angle = math.radians(model.angle)
         return body

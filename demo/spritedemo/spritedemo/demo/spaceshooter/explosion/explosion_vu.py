@@ -112,7 +112,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 class ExplosionProgram(Program):
     def __init__(self):
         super().__init__()
-
+        logger.debug("ExplosionProgram.__init__")
         self.cs_module = self.gfx.create_shader_module(cs_code)
         self.vs_module = self.gfx.create_shader_module(vs_code)
         self.fs_module = self.gfx.create_shader_module(fs_code)
@@ -123,7 +123,7 @@ class ExplosionProgram(Program):
         self.create_compute_pipeline()
 
     def create_render_bind_group_layouts(self):
-        # Camera Bind Group Layout Entries
+        logger.debug("create_render_bind_group_layouts")
         camera_bgl_entries = wgpu.BindGroupLayoutEntries(
             [
                 wgpu.BindGroupLayoutEntry(
@@ -368,7 +368,7 @@ class ExplosionVu(Vu2D):
         self.render_bind_group = self.device.create_bind_group(render_bind_group_desc)
 
     def draw(self, renderer: SceneRenderer):
-        #logger.debug("Drawing explosion")
+        logger.debug("Drawing explosion")
 
         mesh_uniform = MeshUniform()
         mesh_uniform.model.data = cast_matrix4(self.transform)

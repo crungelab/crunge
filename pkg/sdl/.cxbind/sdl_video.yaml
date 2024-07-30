@@ -36,5 +36,14 @@ flags: [
 #no known conversion for argument 1 from ‘std::__tuple_element_t<0, std::tuple<const SDL_DisplayMode**, int*> >’ {aka ‘const SDL_DisplayMode**’} to ‘const pybind11::detail::type_caster_base<SDL_DisplayMode>::itype*’ {aka ‘const SDL_DisplayMode*’}
 'function.SDL_GetFullscreenDisplayModes': {exclude: true}
 
+'function.SDL_GL_MakeCurrent': {exclude: true}
+'function.SDL_GL_DeleteContext': {exclude: true}
+'function.SDL_GL_GetCurrentContext': {exclude: true}
+'function.SDL_GL_CreateContext': {exclude: true}
+
+#callback
+'function.SDL_SetWindowHitTest': {exclude: true}
+#SDL_Window **SDLCALL SDL_GetWindows(int *count)
+'function.SDL_GetWindows': {exclude: true}
 
 # Overloads

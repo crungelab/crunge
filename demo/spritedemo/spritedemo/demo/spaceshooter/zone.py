@@ -46,12 +46,12 @@ class Zone():
         sampler = PoissonDisk(d=2, radius=.1)
 
         samples = sampler.random(num_asteroids)
-        logger.debug(f"samples: {samples}")
+        #logger.debug(f"samples: {samples}")
 
         # 4. Create asteroids within original bounds
         for sample in samples:
             xi, yi = sample
-            logger.debug(f"xi: {xi}, yi: {yi}")
+            #logger.debug(f"xi: {xi}, yi: {yi}")
             x = (self.position.x - self.width) + (xi * self.width * 2)
             y = (self.position.y - self.height) + (yi * self.height * 2)
             point = glm.vec2(x, y)

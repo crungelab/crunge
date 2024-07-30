@@ -40,7 +40,7 @@ class Demo(engine.App):
         self.show_view(view)
 
     def on_key(self, event: sdl.KeyboardEvent):
-        key = event.keysym.sym
+        key = event.key
         state = event.state
         if key == sdl.SDLK_ESCAPE and state == 1:
             self.quit()

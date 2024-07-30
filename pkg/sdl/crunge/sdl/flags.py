@@ -1,6 +1,6 @@
 from enum import IntFlag
 
-class WindowFlags(IntFlag   ):
+class WindowFlags(IntFlag):
     FULLSCREEN = 0x00000001  # window is in fullscreen mode
     OPENGL = 0x00000002  # window usable with OpenGL context
     OCCLUDED = 0x00000004  # window is occluded

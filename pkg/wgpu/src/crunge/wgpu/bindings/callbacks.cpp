@@ -26,16 +26,32 @@ void ErrorCallback(WGPUErrorType type, const char *msg, void *userdata)
     }
 }
 
+/*
+typedef enum WGPUDeviceLostReason {
+    WGPUDeviceLostReason_Unknown = 0x00000001,
+    WGPUDeviceLostReason_Destroyed = 0x00000002,
+    WGPUDeviceLostReason_InstanceDropped = 0x00000003,
+    WGPUDeviceLostReason_FailedCreation = 0x00000004,
+    WGPUDeviceLostReason_Force32 = 0x7FFFFFFF
+} WGPUDeviceLostReason WGPU_ENUM_ATTRIBUTE;
+*/
+
 void DeviceLostCallback(WGPUDeviceLostReason reason, char const *msg, void *userdata)
 {
     std::cerr << "[Device Lost]: ";
     switch (reason)
     {
-    case WGPUDeviceLostReason_Undefined:
-        std::cerr << "Undefined: " << msg << std::endl;
+    case WGPUDeviceLostReason_Unknown:
+        std::cerr << "Unknown: " << msg << std::endl;
         break;
     case WGPUDeviceLostReason_Destroyed:
         std::cerr << "Destroyed: " << msg << std::endl;
+        break;
+    case WGPUDeviceLostReason_InstanceDropped:
+        std::cerr << "InstanceDropped: " << msg << std::endl;
+        break;
+    case WGPUDeviceLostReason_FailedCreation:
+        std::cerr << "FailedCreation: " << msg << std::endl;
         break;
     case WGPUDeviceLostReason_Force32:
         std::cerr << "Force32: " << msg << std::endl;
