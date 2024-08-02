@@ -1,6 +1,7 @@
 from typing import List
 
 from loguru import logger
+import glm
 
 from .dispatcher import Dispatcher
 from .controller import Controller
@@ -16,6 +17,9 @@ class Widget(Dispatcher):
         self.children: List["Widget"] = []
         self.controller: Controller = None
         self.vu: Vu = None
+
+    def resize(self, size: glm.ivec2):
+        self.width, self.height = size
 
     @property
     def gfx(self):

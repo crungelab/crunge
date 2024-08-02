@@ -1,3 +1,3 @@
--e ../core
--e ../wgpu
--e ../gltf
+-e ../../pkg/core
+-e ../../pkg/wgpu
+-e ../../pkg/gltf

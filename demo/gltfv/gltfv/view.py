@@ -10,6 +10,7 @@ from .base import Base
 from .scene import Scene
 from .camera import Camera
 
+
 class View(Base):
     scene: Scene = None
     surface: wgpu.Surface = None
@@ -52,17 +53,18 @@ class View(Base):
         self.draw(backbufferView)
         self.swap_chain.present()
 
-
     def draw(self, view: wgpu.TextureView):
-        #self.camera.update()
-        
-        attachment = wgpu.RenderPassColorAttachment(
-            view=view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-            #clear_value=wgpu.Color(.5, .5, .5, 1),
-        )
+        # self.camera.update()
+
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+                # clear_value=wgpu.Color(.5, .5, .5, 1),
+            )
+        ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
             view=self.depthTexture.create_view(),
@@ -74,7 +76,7 @@ class View(Base):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
 
@@ -85,4 +87,4 @@ class View(Base):
         commands = encoder.finish()
 
         self.device.queue.submit(1, commands)
-        #exit()
+        # exit()

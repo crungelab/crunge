@@ -1,4 +1,5 @@
 from loguru import logger
+import glm
 
 from .widget import Widget
 from .view import View
@@ -8,6 +9,11 @@ class Frame(Widget):
     def __init__(self, width=0, height=0, view: View = None) -> None:
         super().__init__(width, height)
         self.view = view
+
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        if self.view is not None:
+            self.view.resize(size)
 
     def create(self):
         logger.debug("Frame.create")

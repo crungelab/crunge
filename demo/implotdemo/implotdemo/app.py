@@ -7,7 +7,7 @@ from loguru import logger
 import glm
 
 from crunge import sdl, wgpu
-import crunge.wgpu.utils as utils
+from crunge.wgpu import utils
 
 from crunge import imgui, implot
 

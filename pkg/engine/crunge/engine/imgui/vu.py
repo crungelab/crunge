@@ -25,6 +25,7 @@ from .uniforms import (
     Uniforms,
 )
 
+
 class ImDrawVert(Structure):
     _fields_ = [
         ("pos", c_float * 2),
@@ -86,6 +87,7 @@ fn main(in: VertexOutput) -> @location(0) vec4<f32> {
     return vec4<f32>(corrected_color, color.a);
 }
 """
+
 
 @singleton_producer
 class ImGuiVu(Vu):
@@ -191,8 +193,8 @@ class ImGuiVu(Vu):
             wgpu.Extent3D(width, height, 1),
         )
 
-        #self.io.fonts.set_tex_id(as_capsule(self.texture_view))
-        #self.io.fonts.set_tex_id(self.texture_view)
+        # self.io.fonts.set_tex_id(as_capsule(self.texture_view))
+        # self.io.fonts.set_tex_id(self.texture_view)
         self.io.fonts.clear_tex_data()
 
     def create_pipeline(self):
@@ -201,29 +203,29 @@ class ImGuiVu(Vu):
         vs_module = self.gfx.create_shader_module(vs_shader_code)
         fs_module = self.gfx.create_shader_module(fs_shader_code)
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=ImDrawVert.uv.offset,
-                    shader_location=1,
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.UNORM8X4,
-                    offset=ImDrawVert.col.offset,
-                    shader_location=2,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=ImDrawVert.uv.offset,
+                shader_location=1,
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.UNORM8X4,
+                offset=ImDrawVert.col.offset,
+                shader_location=2,
+            ),
+        ]
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=sizeof(ImDrawVert),
-            attribute_count=len(vertAttributes),
-            attributes=vertAttributes[0],
-        )
+        vertBufferLayouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=sizeof(ImDrawVert),
+                attribute_count=len(vertAttributes),
+                attributes=vertAttributes,
+            )
+        ]
 
         blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
@@ -238,60 +240,58 @@ class ImGuiVu(Vu):
             ),
         )
 
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
-            write_mask=wgpu.ColorWriteMask.ALL,
-        )
+        color_targets = [
+            wgpu.ColorTargetState(
+                format=wgpu.TextureFormat.BGRA8_UNORM,
+                blend=blend_state,
+                write_mask=wgpu.ColorWriteMask.ALL,
+            )
+        ]
 
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vertBufferLayouts,
         )
 
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
+        bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=2,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                texture=wgpu.TextureBindingLayout(
+                    sample_type=wgpu.TextureSampleType.FLOAT,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-            ]
-        )
+            ),
+        ]
 
         bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
+            entry_count=len(bgl_entries), entries=bgl_entries
         )
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
+            bind_group_layout_count=1, bind_group_layouts=[bgl]
         )
 
         primitive = wgpu.PrimitiveState(
@@ -327,21 +327,19 @@ class ImGuiVu(Vu):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
-                ),
-                wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
-                wgpu.BindGroupEntry(binding=2, texture_view=self.texture_view),
-            ]
-        )
+        bindgroup_entries = [
+            wgpu.BindGroupEntry(
+                binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
+            ),
+            wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=2, texture_view=self.texture_view),
+        ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
+            entries=bindgroup_entries,
         )
 
         self.bindGroup = self.device.create_bind_group(bindGroupDesc)
@@ -360,9 +358,9 @@ class ImGuiVu(Vu):
         if (fbWidth <= 0 || fbHeight <= 0)
             return;
         """
-        #sc_width = self.width
+        # sc_width = self.width
         sc_width = self.wnd.width
-        #sc_height = self.height
+        # sc_height = self.height
         sc_height = self.wnd.height
         fb_width = draw_data.display_size[0] * draw_data.framebuffer_scale[0]
         fb_height = draw_data.display_size[1] * draw_data.framebuffer_scale[1]
@@ -372,10 +370,12 @@ class ImGuiVu(Vu):
         const ImVec2 clipPos = drawData.DisplayPos;         // (0,0) unless using multi-viewports
         const ImVec2 clipScale = drawData.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
         """
-        #clip_pos = draw_data.display_pos
+        # clip_pos = draw_data.display_pos
         clip_pos = glm.vec2(draw_data.display_pos[0], draw_data.display_pos[1])
-        #clip_scale = draw_data.framebuffer_scale
-        clip_scale = glm.vec2(draw_data.framebuffer_scale[0], draw_data.framebuffer_scale[1])
+        # clip_scale = draw_data.framebuffer_scale
+        clip_scale = glm.vec2(
+            draw_data.framebuffer_scale[0], draw_data.framebuffer_scale[1]
+        )
 
         vtx_offset = 0
         idx_offset = 0
@@ -385,7 +385,7 @@ class ImGuiVu(Vu):
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
-                #utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
+                # utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
                 vtx_offset * imgui.VERTEX_SIZE,
                 commands.vtx_buffer_data,
                 commands.vtx_buffer_size * imgui.VERTEX_SIZE,
@@ -394,7 +394,7 @@ class ImGuiVu(Vu):
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
-                #utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
+                # utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
                 idx_offset * imgui.INDEX_SIZE,
                 commands.idx_buffer_data,
                 commands.idx_buffer_size * imgui.INDEX_SIZE,
@@ -406,7 +406,7 @@ class ImGuiVu(Vu):
                         self, draw_data, commands, command, command.user_callback_data
                     )
                 else:
-                    #TODO: Need to figure out how to handle custom textures
+                    # TODO: Need to figure out how to handle custom textures
                     """
                     gl.glBindTexture(gl.GL_TEXTURE_2D, command.texture_id)
                     """
@@ -446,11 +446,22 @@ class ImGuiVu(Vu):
                     auto clipWidth = (uint32_t)(clipMax.x - clipMin.x);
                     auto clipHeight = (uint32_t)(clipMax.y - clipMin.y);
                     """
-                    clip_rect = glm.vec4(command.clip_rect[0], command.clip_rect[1], command.clip_rect[2], command.clip_rect[3])
-                    #clip_min = glm.vec2((command.clip_rect.x - clip_pos.x) * clip_scale.x, (command.clip_rect.y - clip_pos.y) * clip_scale.y)
-                    clip_min = glm.vec2((clip_rect.x - clip_pos.x) * clip_scale.x, (clip_rect.y - clip_pos.y) * clip_scale.y)
-                    #clip_max = glm.vec2((command.clip_rect.z - clip_pos.x) * clip_scale.x, (command.clip_rect.w - clip_pos.y) * clip_scale.y)
-                    clip_max = glm.vec2((clip_rect.z - clip_pos.x) * clip_scale.x, (clip_rect.w - clip_pos.y) * clip_scale.y)
+                    clip_rect = glm.vec4(
+                        command.clip_rect[0],
+                        command.clip_rect[1],
+                        command.clip_rect[2],
+                        command.clip_rect[3],
+                    )
+                    # clip_min = glm.vec2((command.clip_rect.x - clip_pos.x) * clip_scale.x, (command.clip_rect.y - clip_pos.y) * clip_scale.y)
+                    clip_min = glm.vec2(
+                        (clip_rect.x - clip_pos.x) * clip_scale.x,
+                        (clip_rect.y - clip_pos.y) * clip_scale.y,
+                    )
+                    # clip_max = glm.vec2((command.clip_rect.z - clip_pos.x) * clip_scale.x, (command.clip_rect.w - clip_pos.y) * clip_scale.y)
+                    clip_max = glm.vec2(
+                        (clip_rect.z - clip_pos.x) * clip_scale.x,
+                        (clip_rect.w - clip_pos.y) * clip_scale.y,
+                    )
                     if clip_max.x <= clip_min.x or clip_max.y <= clip_min.y:
                         continue
 
@@ -477,7 +488,7 @@ class ImGuiVu(Vu):
             idx_offset += commands.idx_buffer_size
 
     def post_draw(self, renderer: Renderer):
-        #logger.debug("ImGuiRenderer.post_draw")
+        # logger.debug("ImGuiRenderer.post_draw")
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -505,18 +516,20 @@ class ImGuiVu(Vu):
 
         draw_data.scale_clip_rects(fb_scale)
 
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            #load_op=wgpu.LoadOp.CLEAR,
-            load_op=wgpu.LoadOp.LOAD,
-            store_op=wgpu.StoreOp.STORE,
-            #clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=renderer.texture_view,
+                # load_op=wgpu.LoadOp.CLEAR,
+                load_op=wgpu.LoadOp.LOAD,
+                store_op=wgpu.StoreOp.STORE,
+                # clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()

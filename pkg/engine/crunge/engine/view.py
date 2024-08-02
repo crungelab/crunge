@@ -4,6 +4,7 @@ if TYPE_CHECKING:
     from .window import Window
 
 from loguru import logger
+import glm
 
 from .widget import Widget
 from .layer import Layer
@@ -15,6 +16,11 @@ class View(Widget):
         self.layers: Dict[str, Layer] = {}
         for layer in layers:
             self.add_layer(layer)
+
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        for layer in self.layers.values():
+            layer.resize(size)
 
     def create(self, window: "Window"):
         logger.debug("View.create")
