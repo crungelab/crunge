@@ -32,13 +32,13 @@ class TriangleShaderDemo(Demo):
 
         shader_module = self.create_shader_module(shader_code)
 
-        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
+        color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
 
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         depthStencilState = wgpu.DepthStencilState(
@@ -71,12 +71,14 @@ class TriangleShaderDemo(Demo):
         self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
     def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
             view=depthStencilView,
@@ -88,7 +90,7 @@ class TriangleShaderDemo(Demo):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depth_stencil_attachment,
         )
 
@@ -101,12 +103,13 @@ class TriangleShaderDemo(Demo):
 
         self.queue.submit(1, commands)
 
-    '''
+    """
     def frame(self):
         backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         self.render(backbuffer, self.depth_stencil_view)
         self.swap_chain.present()
-    '''
+    """
+
 
 def main():
     TriangleShaderDemo().run()

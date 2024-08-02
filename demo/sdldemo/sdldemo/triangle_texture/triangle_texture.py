@@ -81,70 +81,70 @@ class TriangleTextureDemo(Demo):
         vs_module = self.create_shader_module(vs_shader_code)
         fs_module = self.create_shader_module(fs_shader_code)
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=4 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4, offset=0, shader_location=0
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4,
+                offset=4 * sizeof(c_float),
+                shader_location=1,
+            ),
+        ]
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=8 * sizeof(c_float),
-            attribute_count=2,
-            attributes=vertAttributes[0],
-        )
+        vertBufferLayouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=8 * sizeof(c_float),
+                attribute_count=2,
+                attributes=vertAttributes,
+            )
+        ]
 
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-        )
+        color_targets = [
+            wgpu.ColorTargetState(
+                format=wgpu.TextureFormat.BGRA8_UNORM,
+            )
+        ]
 
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vertBufferLayouts,
         )
 
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
+        bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                texture=wgpu.TextureBindingLayout(
+                    sample_type=wgpu.TextureSampleType.FLOAT,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
-            ]
-        )
+            ),
+        ]
 
         bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
+            entry_count=len(bgl_entries), entries=bgl_entries
         )
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
+            bind_group_layout_count=1, bind_group_layouts=[bgl]
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(
@@ -158,18 +158,16 @@ class TriangleTextureDemo(Demo):
 
         view: wgpu.TextureView = self.texture.create_view()
 
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=view),
-            ]
-        )
+        bindgroup_entries = [
+            wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=1, texture_view=view),
+        ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=2,
-            entries=bindgroup_entries[0],
+            entries=bindgroup_entries,
         )
 
         self.bindGroup = self.device.create_bind_group(bindGroupDesc)
@@ -225,17 +223,19 @@ class TriangleTextureDemo(Demo):
         )
 
     def render(self, view: wgpu.TextureView):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
@@ -251,10 +251,10 @@ class TriangleTextureDemo(Demo):
         self.queue.submit(1, commands)
 
     def frame(self):
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        backbuffer: wgpu.TextureView = self.get_surface_view()
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
-        self.swap_chain.present()
+        self.surface.present()
 
 
 def main():
