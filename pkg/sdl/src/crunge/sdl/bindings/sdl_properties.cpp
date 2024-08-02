@@ -41,7 +41,7 @@ void init_sdl_properties(py::module &_sdl, Registry &registry) {
     , py::arg("props")
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("set_property_with_cleanup", &SDL_SetPropertyWithCleanup
+    _sdl.def("set_pointer_property_with_cleanup", &SDL_SetPointerPropertyWithCleanup
     , py::arg("props")
     , py::arg("name")
     , py::arg("value")
@@ -49,7 +49,7 @@ void init_sdl_properties(py::module &_sdl, Registry &registry) {
     , py::arg("userdata")
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("set_property", &SDL_SetProperty
+    _sdl.def("set_pointer_property", &SDL_SetPointerProperty
     , py::arg("props")
     , py::arg("name")
     , py::arg("value")
@@ -89,7 +89,7 @@ void init_sdl_properties(py::module &_sdl, Registry &registry) {
     , py::arg("name")
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("get_property", &SDL_GetProperty
+    _sdl.def("get_pointer_property", &SDL_GetPointerProperty
     , py::arg("props")
     , py::arg("name")
     , py::arg("default_value")

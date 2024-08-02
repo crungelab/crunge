@@ -27,6 +27,8 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         .value("DISPLAY_ADDED", SDL_EventType::SDL_EVENT_DISPLAY_ADDED)
         .value("DISPLAY_REMOVED", SDL_EventType::SDL_EVENT_DISPLAY_REMOVED)
         .value("DISPLAY_MOVED", SDL_EventType::SDL_EVENT_DISPLAY_MOVED)
+        .value("DISPLAY_DESKTOP_MODE_CHANGED", SDL_EventType::SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED)
+        .value("DISPLAY_CURRENT_MODE_CHANGED", SDL_EventType::SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED)
         .value("DISPLAY_CONTENT_SCALE_CHANGED", SDL_EventType::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED)
         .value("DISPLAY_FIRST", SDL_EventType::SDL_EVENT_DISPLAY_FIRST)
         .value("DISPLAY_LAST", SDL_EventType::SDL_EVENT_DISPLAY_LAST)
@@ -36,6 +38,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         .value("WINDOW_MOVED", SDL_EventType::SDL_EVENT_WINDOW_MOVED)
         .value("WINDOW_RESIZED", SDL_EventType::SDL_EVENT_WINDOW_RESIZED)
         .value("WINDOW_PIXEL_SIZE_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED)
+        .value("WINDOW_METAL_VIEW_RESIZED", SDL_EventType::SDL_EVENT_WINDOW_METAL_VIEW_RESIZED)
         .value("WINDOW_MINIMIZED", SDL_EventType::SDL_EVENT_WINDOW_MINIMIZED)
         .value("WINDOW_MAXIMIZED", SDL_EventType::SDL_EVENT_WINDOW_MAXIMIZED)
         .value("WINDOW_RESTORED", SDL_EventType::SDL_EVENT_WINDOW_RESTORED)
@@ -48,6 +51,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         .value("WINDOW_ICCPROF_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_ICCPROF_CHANGED)
         .value("WINDOW_DISPLAY_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_DISPLAY_CHANGED)
         .value("WINDOW_DISPLAY_SCALE_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED)
+        .value("WINDOW_SAFE_AREA_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_SAFE_AREA_CHANGED)
         .value("WINDOW_OCCLUDED", SDL_EventType::SDL_EVENT_WINDOW_OCCLUDED)
         .value("WINDOW_ENTER_FULLSCREEN", SDL_EventType::SDL_EVENT_WINDOW_ENTER_FULLSCREEN)
         .value("WINDOW_LEAVE_FULLSCREEN", SDL_EventType::SDL_EVENT_WINDOW_LEAVE_FULLSCREEN)
@@ -134,6 +138,7 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
         DisplayEvent.def_readwrite("timestamp", &SDL_DisplayEvent::timestamp);
         DisplayEvent.def_readwrite("display_id", &SDL_DisplayEvent::displayID);
         DisplayEvent.def_readwrite("data1", &SDL_DisplayEvent::data1);
+        DisplayEvent.def_readwrite("data2", &SDL_DisplayEvent::data2);
     PYCLASS_END(_sdl, SDL_DisplayEvent, DisplayEvent)
 
     PYCLASS_BEGIN(_sdl, SDL_WindowEvent, WindowEvent)
@@ -565,10 +570,6 @@ void init_sdl_events(py::module &_sdl, Registry &registry) {
 
     _sdl.def("register_events", &SDL_RegisterEvents
     , py::arg("numevents")
-    , py::return_value_policy::automatic_reference);
-
-    _sdl.def("allocate_event_memory", &SDL_AllocateEventMemory
-    , py::arg("size")
     , py::return_value_policy::automatic_reference);
 
 

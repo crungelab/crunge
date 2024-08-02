@@ -31,18 +31,29 @@ def main():
     shader_module = utils.create_shader_module(device, shader_code)
     logger.debug(shader_module)
 
-    logger.debug("Creating colorTargetState")
-    colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
-    logger.debug(colorTargetState)
+    #logger.debug("Creating colorTargetState")
+    #colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
+    #logger.debug(colorTargetState)
+
+    colorTargetStates = wgpu.ColorTargetStates(
+        [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
+    )
+    logger.debug(colorTargetStates)
+    logger.debug(colorTargetStates[0].format)
+    logger.debug(colorTargetStates[0].format.value)
 
     logger.debug("Creating fragmentState")
     fragmentState = wgpu.FragmentState(
         module=shader_module,
         entry_point="fs_main",
         target_count=1,
-        targets=colorTargetState,
+        #targets=colorTargetState,
+        targets=colorTargetStates,
     )
+    #fragmentState.targets=colorTargetStates[0]
+
     logger.debug(fragmentState)
+    logger.debug(fragmentState.entry_point)
 
     logger.debug("Creating depthStencilState")
     depthStencilState = wgpu.DepthStencilState(
@@ -61,24 +72,16 @@ def main():
     )
     logger.debug(vertex_state)
 
+    logger.debug("Creating multisample")
     multisample = wgpu.MultisampleState(
         count=1,
         mask=0xFFFFFFFF,
         alpha_to_coverage_enabled=False,
     )
-    logger.debug(multisample)
-    """
-    struct RenderPipelineDescriptor {
-        ChainedStruct const * nextInChain = nullptr;
-        char const * label = nullptr;
-        PipelineLayout layout = nullptr;
-        VertexState vertex;
-        PrimitiveState primitive;
-        DepthStencilState const * depthStencil = nullptr;
-        MultisampleState multisample;
-        FragmentState const * fragment = nullptr;
-    };
-    """
+    #multisample.alpha_to_coverage_enabled = False
+    logger.debug(multisample.count)
+    logger.debug(hex(multisample.mask))
+    logger.debug(multisample.alpha_to_coverage_enabled)
 
     logger.debug("Creating render pipeline descriptor")
     descriptor = wgpu.RenderPipelineDescriptor(
@@ -92,6 +95,8 @@ def main():
         fragment=fragmentState,
     )
     logger.debug(descriptor)
+    #logger.debug(descriptor.fragment.targets[0].format)
+    logger.debug(descriptor.fragment.targets.format)
 
     logger.debug("Creating render pipeline")
     pipeline = device.create_render_pipeline(descriptor)

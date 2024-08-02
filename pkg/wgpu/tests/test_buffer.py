@@ -5,7 +5,7 @@ import numpy as np
 from loguru import logger
 
 from crunge import wgpu
-from crunge import as_capsule
+from crunge.core import as_capsule
 from crunge.wgpu import BackendType
 
 
@@ -29,6 +29,7 @@ def main():
     descriptor.size = size
     descriptor.usage = usage | wgpu.BufferUsage.COPY_DST
     buffer: wgpu.Buffer = device.create_buffer(descriptor)
+    logger.debug(buffer)
 
     device.queue.write_buffer(buffer, 0, data, size)
 

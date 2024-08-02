@@ -17,7 +17,7 @@ function(USES_DAWN THIS)
         #dawn_glfw
         dawn_native
         dawn_wire
-        dawn_utils
+        #dawn_utils
         #glfw
     )
 endfunction()

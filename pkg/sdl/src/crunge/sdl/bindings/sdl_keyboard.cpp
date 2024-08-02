@@ -24,7 +24,7 @@ void init_sdl_keyboard(py::module &_sdl, Registry &registry) {
     , py::arg("count")
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("get_keyboard_instance_name", &SDL_GetKeyboardInstanceName
+    _sdl.def("get_keyboard_name_for_id", &SDL_GetKeyboardNameForID
     , py::arg("instance_id")
     , py::return_value_policy::automatic_reference);
 

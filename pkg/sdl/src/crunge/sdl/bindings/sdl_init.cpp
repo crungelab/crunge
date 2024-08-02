@@ -31,5 +31,20 @@ void init_sdl_init(py::module &_sdl, Registry &registry) {
     _sdl.def("quit", &SDL_Quit
     , py::return_value_policy::automatic_reference);
 
+    _sdl.def("set_app_metadata", &SDL_SetAppMetadata
+    , py::arg("appname")
+    , py::arg("appversion")
+    , py::arg("appidentifier")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("set_app_metadata_property", &SDL_SetAppMetadataProperty
+    , py::arg("name")
+    , py::arg("value")
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("get_app_metadata_property", &SDL_GetAppMetadataProperty
+    , py::arg("name")
+    , py::return_value_policy::automatic_reference);
+
 
 }

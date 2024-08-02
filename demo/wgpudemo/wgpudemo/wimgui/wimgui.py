@@ -10,9 +10,10 @@ import glm
 
 from crunge.core import as_capsule
 from crunge import wgpu
-import crunge.wgpu.utils as utils
+from crunge.wgpu import utils
 
-from crunge import imgui
+# from crunge import imgui
+from imgui_bundle import imgui
 
 from ..common import Demo
 
@@ -22,18 +23,6 @@ from .uniforms import (
     cast_vec3,
     Uniforms,
 )
-
-"""
-struct ImDrawVert
-{
-    ImVec2  pos;
-    ImVec2  uv;
-    ImU32   col;
-};
-#else
-// You can override the vertex format layout by defining IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT in imconfig.h
-// The code expect ImVec2 pos (8 bytes), ImVec2 uv (8 bytes), ImU32 col (4 bytes)
-"""
 
 
 class ImDrawVert(Structure):
@@ -103,12 +92,13 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
     win_width, win_height = window_size
     fb_width, fb_height = frame_buffer_size
 
-    if win_width != 0 and win_width != 0:
+    if win_width != 0 and win_height != 0:
         return fb_width / win_width, fb_height / win_height
 
     return 1.0, 1.0
 
 
+#TODO: Looks bad when resizing the window. The text is not sharp.
 class WImGuiDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
     index_buffer: wgpu.Buffer = None
@@ -129,6 +119,10 @@ class WImGuiDemo(Demo):
 
         io = imgui.get_io()
         self.io = io
+
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        self._set_pixel_ratio()
 
     def _set_pixel_ratio(self):
         window_size = glfw.get_window_size(self.window)
@@ -165,11 +159,11 @@ class WImGuiDemo(Demo):
 
     def on_mouse_button(self, window, button: int, action: int, mods: int):
         if button < 3:
-            #self.io.mouse_down[button] = action == glfw.PRESS
+            # self.io.mouse_down[button] = action == glfw.PRESS
             self.io.add_mouse_button_event(button, action == glfw.PRESS)
 
     def on_scroll(self, window, x: float, y: float):
-        #self.io.mouse_wheel = y
+        # self.io.mouse_wheel = y
         self.io.add_mouse_wheel_event(x, y)
 
     def create_buffers(self):
@@ -190,10 +184,17 @@ class WImGuiDemo(Demo):
 
     def create_textures(self):
         io = self.io
-        pixels, width, height, bpp = io.fonts.get_tex_data_as_rgba32()
+        # pixels, width, height, bpp = io.fonts.get_tex_data_as_rgba32()
+        font_matrix: np.ndarray = self.io.fonts.get_tex_data_as_rgba32()
+        width = font_matrix.shape[1]
+        height = font_matrix.shape[0]
+        pixels = font_matrix.data
+        # bpp = pixels.itemsize
+        bpp = font_matrix.shape[2]
+
         logger.debug(f"width: {width}")
         logger.debug(f"height: {height}")
-        logger.debug(f"bpp: {bpp}")
+        logger.debug(f"pixels: {pixels}")
 
         texture_desc = wgpu.TextureDescriptor(
             label="Dear ImGui Font Texture",
@@ -284,11 +285,13 @@ class WImGuiDemo(Demo):
             ]
         )
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=sizeof(ImDrawVert),
-            attribute_count=len(vertAttributes),
-            attributes=vertAttributes[0],
-        )
+        vertBufferLayouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=sizeof(ImDrawVert),
+                attribute_count=len(vertAttributes),
+                attributes=vertAttributes,
+            )
+        ]
 
         blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
@@ -303,60 +306,58 @@ class WImGuiDemo(Demo):
             ),
         )
 
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
-            write_mask=wgpu.ColorWriteMask.ALL,
-        )
+        color_targets = [
+            wgpu.ColorTargetState(
+                format=wgpu.TextureFormat.BGRA8_UNORM,
+                blend=blend_state,
+                write_mask=wgpu.ColorWriteMask.ALL,
+            )
+        ]
 
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vertBufferLayouts,
         )
 
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
+        bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=2,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                texture=wgpu.TextureBindingLayout(
+                    sample_type=wgpu.TextureSampleType.FLOAT,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-            ]
-        )
+            ),
+        ]
 
         bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
+            entry_count=len(bgl_entries), entries=bgl_entries
         )
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
+            bind_group_layout_count=1, bind_group_layouts=[bgl]
         )
 
         primitive = wgpu.PrimitiveState(
@@ -392,27 +393,25 @@ class WImGuiDemo(Demo):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
-                ),
-                wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
-                wgpu.BindGroupEntry(binding=2, texture_view=self.texture_view),
-            ]
-        )
+        bindgroup_entries = [
+            wgpu.BindGroupEntry(
+                binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
+            ),
+            wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=2, texture_view=self.texture_view),
+        ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=len(bindgroup_entries),
-            entries=bindgroup_entries[0],
+            entries=bindgroup_entries,
         )
 
         self.bindGroup = self.device.create_bind_group(bindGroupDesc)
 
     def render_draw_data(
-        self, draw_data: imgui.DrawData, pass_enc: wgpu.RenderPassEncoder
+        self, draw_data: imgui.ImDrawData, pass_enc: wgpu.RenderPassEncoder
     ):
         # logger.debug("render_draw_data")
         vtx_offset = 0
@@ -422,47 +421,51 @@ class WImGuiDemo(Demo):
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
-                #utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
+                # utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
                 vtx_offset * imgui.VERTEX_SIZE,
-                commands.vtx_buffer_data,
-                commands.vtx_buffer_size * imgui.VERTEX_SIZE,
+                # commands.vtx_buffer_data,
+                commands.vtx_buffer.data_address(),
+                # commands.vtx_buffer_size * imgui.VERTEX_SIZE,
+                commands.vtx_buffer.size() * imgui.VERTEX_SIZE,
             )
             # logger.debug('write index_buffer')
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
-                #utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
+                # utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
                 idx_offset * imgui.INDEX_SIZE,
-                commands.idx_buffer_data,
-                commands.idx_buffer_size * imgui.INDEX_SIZE,
+                # commands.idx_buffer_data,
+                commands.idx_buffer.data_address(),
+                # commands.idx_buffer_size * imgui.INDEX_SIZE,
+                commands.idx_buffer.size() * imgui.INDEX_SIZE,
             )
 
-            for command in commands:
-                if command.user_callback:
-                    command.user_callback(
-                        self, draw_data, commands, command, command.user_callback_data
-                    )
-                else:
-                    """
-                    wgpuRenderPassEncoderSetScissorRect(pass_encoder, (uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
-                    wgpuRenderPassEncoderDrawIndexed(pass_encoder, pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
-                    """
-                    pass_enc.set_scissor_rect(
-                        int(command.clip_rect[0]),
-                        int(command.clip_rect[1]),
-                        int(command.clip_rect[2] - command.clip_rect[0]),
-                        int(command.clip_rect[3] - command.clip_rect[1]),
-                    )
-                    pass_enc.draw_indexed(
-                        command.elem_count,
-                        1,
-                        command.idx_offset + idx_offset,
-                        command.vtx_offset + vtx_offset,
-                        0,
-                    )
+            # for command in commands:
+            for command in commands.cmd_buffer:
+                """
+                wgpuRenderPassEncoderSetScissorRect(pass_encoder, (uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
+                wgpuRenderPassEncoderDrawIndexed(pass_encoder, pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
+                """
 
-            vtx_offset += commands.vtx_buffer_size
-            idx_offset += commands.idx_buffer_size
+                pass_enc.set_scissor_rect(
+                    int(command.clip_rect[0]),
+                    int(command.clip_rect[1]),
+                    int(command.clip_rect[2] - command.clip_rect[0]),
+                    int(command.clip_rect[3] - command.clip_rect[1]),
+                )
+
+                pass_enc.draw_indexed(
+                    command.elem_count,
+                    1,
+                    command.idx_offset + idx_offset,
+                    command.vtx_offset + vtx_offset,
+                    0,
+                )
+
+            # vtx_offset += commands.vtx_buffer_size
+            vtx_offset += commands.vtx_buffer.size()
+            # idx_offset += commands.idx_buffer_size
+            idx_offset += commands.idx_buffer.size()
 
     def render(self, view: wgpu.TextureView):
         # logger.debug("render")
@@ -493,17 +496,19 @@ class WImGuiDemo(Demo):
 
         draw_data.scale_clip_rects(fb_scale)
 
-        attachment = wgpu.RenderPassColorAttachment(
-            view=view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
@@ -537,13 +542,18 @@ class WImGuiDemo(Demo):
         self.draw_buttons()
         self.draw_more_buttons()
         imgui.show_demo_window()
-        
+
         imgui.end_frame()
 
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        self.render(backbuffer)
-        self.swap_chain.present()
+        #backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        surface_texture = wgpu.SurfaceTexture()
+        self.surface.get_current_texture(surface_texture)
+        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
+
+        backbufferView.set_label("Back Buffer Texture View")
+        self.render(backbufferView)
+        #self.swap_chain.present()
+        self.surface.present()
 
 
 def main():

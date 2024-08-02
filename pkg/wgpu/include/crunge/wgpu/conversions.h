@@ -1,5 +1,6 @@
 #pragma once
 #include <dawn/webgpu_cpp.h>
+//#include <wgpu.h>
 #include <pybind11/pybind11.h>
 
 namespace py = pybind11;
@@ -10,13 +11,15 @@ template <> struct type_caster<wgpu::Bool> {
 public:
     PYBIND11_TYPE_CASTER(wgpu::Bool, _("Bool"));
     bool load(handle src, bool implicit) {
-        //value.mValue = PyBool_Check(src.ptr());
-        value = wgpu::Bool{static_cast<bool>(PyBool_Check(src.ptr()))};
-        return !PyErr_Occurred();
+        if (!PyBool_Check(src.ptr())) {
+            return false;
+        }
+        value = wgpu::Bool{src.cast<bool>()};
+        return true;
     }
-    static handle cast(wgpu::Bool src, return_value_policy, handle) {
-        //return PyBool_FromLong(src.mValue);
-        return PyBool_FromLong(src);
+    
+    static handle cast(wgpu::Bool src, return_value_policy /* policy */, handle /* parent */) {
+        return PyBool_FromLong(static_cast<long>(src));
     }
 };
 

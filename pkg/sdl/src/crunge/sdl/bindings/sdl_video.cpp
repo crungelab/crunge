@@ -27,7 +27,8 @@ void init_sdl_video(py::module &_sdl, Registry &registry) {
         DisplayMode.def_readwrite("h", &SDL_DisplayMode::h);
         DisplayMode.def_readwrite("pixel_density", &SDL_DisplayMode::pixel_density);
         DisplayMode.def_readwrite("refresh_rate", &SDL_DisplayMode::refresh_rate);
-        DisplayMode.def_readwrite("driverdata", &SDL_DisplayMode::driverdata);
+        DisplayMode.def_readwrite("refresh_rate_numerator", &SDL_DisplayMode::refresh_rate_numerator);
+        DisplayMode.def_readwrite("refresh_rate_denominator", &SDL_DisplayMode::refresh_rate_denominator);
     PYCLASS_END(_sdl, SDL_DisplayMode, DisplayMode)
 
     py::enum_<SDL_DisplayOrientation>(_sdl, "DisplayOrientation", py::arithmetic())
@@ -158,6 +159,7 @@ void init_sdl_video(py::module &_sdl, Registry &registry) {
     , py::arg("h")
     , py::arg("refresh_rate")
     , py::arg("include_high_density_modes")
+    , py::arg("mode")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("get_desktop_display_mode", &SDL_GetDesktopDisplayMode
@@ -370,6 +372,15 @@ void init_sdl_video(py::module &_sdl, Registry &registry) {
     , py::arg("window")
     , py::arg("w") = 0
     , py::arg("h") = 0
+    , py::return_value_policy::automatic_reference);
+
+    _sdl.def("get_window_safe_area", [](SDLWindowWrapper * window, SDL_Rect * rect)
+    {
+        auto ret = SDL_GetWindowSafeArea(window->get(), rect);
+        return ret;
+    }
+    , py::arg("window")
+    , py::arg("rect")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("set_window_aspect_ratio", [](SDLWindowWrapper * window, float min_aspect, float max_aspect)
@@ -673,13 +684,12 @@ void init_sdl_video(py::module &_sdl, Registry &registry) {
     , py::arg("opacity")
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("get_window_opacity", [](SDLWindowWrapper * window, float * out_opacity)
+    _sdl.def("get_window_opacity", [](SDLWindowWrapper * window)
     {
-        auto ret = SDL_GetWindowOpacity(window->get(), out_opacity);
-        return std::make_tuple(ret, out_opacity);
+        auto ret = SDL_GetWindowOpacity(window->get());
+        return ret;
     }
     , py::arg("window")
-    , py::arg("out_opacity")
     , py::return_value_policy::automatic_reference);
 
     _sdl.def("set_window_modal_for", [](SDLWindowWrapper * modal_window, SDLWindowWrapper * parent_window)
@@ -793,21 +803,21 @@ void init_sdl_video(py::module &_sdl, Registry &registry) {
     }
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("egl_get_current_egl_display", &SDL_EGL_GetCurrentEGLDisplay
+    _sdl.def("egl_get_current_display", &SDL_EGL_GetCurrentDisplay
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("egl_get_current_egl_config", &SDL_EGL_GetCurrentEGLConfig
+    _sdl.def("egl_get_current_config", &SDL_EGL_GetCurrentConfig
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("egl_get_window_egl_surface", [](SDLWindowWrapper * window)
+    _sdl.def("egl_get_window_surface", [](SDLWindowWrapper * window)
     {
-        auto ret = SDL_EGL_GetWindowEGLSurface(window->get());
+        auto ret = SDL_EGL_GetWindowSurface(window->get());
         return ret;
     }
     , py::arg("window")
     , py::return_value_policy::automatic_reference);
 
-    _sdl.def("egl_set_egl_attribute_callbacks", &SDL_EGL_SetEGLAttributeCallbacks
+    _sdl.def("egl_set_attribute_callbacks", &SDL_EGL_SetAttributeCallbacks
     , py::arg("platform_attrib_callback")
     , py::arg("surface_attrib_callback")
     , py::arg("context_attrib_callback")

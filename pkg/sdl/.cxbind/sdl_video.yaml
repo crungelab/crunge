@@ -40,10 +40,13 @@ flags: [
 'function.SDL_GL_DeleteContext': {exclude: true}
 'function.SDL_GL_GetCurrentContext': {exclude: true}
 'function.SDL_GL_CreateContext': {exclude: true}
+'function.SDL_GL_DestroyContext': {exclude: true}
 
 #callback
 'function.SDL_SetWindowHitTest': {exclude: true}
 #SDL_Window **SDLCALL SDL_GetWindows(int *count)
 'function.SDL_GetWindows': {exclude: true}
+
+'field.SDL_DisplayMode::internal': {exclude: true}
 
 # Overloads

@@ -11,7 +11,7 @@ project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
 find_package(Python COMPONENTS Interpreter Development)
 
-pybind11_add_module(${THIS} SHARED src/crunge/wgpu/bindings/init.cpp)
+pybind11_add_module(${THIS} SHARED src/init.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
@@ -19,20 +19,17 @@ USES_PYBIND11(${THIS})
 USES_CORE(${THIS})
 USES_DAWN(${THIS})
 
-# install(TARGETS ${THIS} LIBRARY DESTINATION aimgui)
-
-# target_compile_definitions(${THIS} PRIVATE IMGUI_USER_CONFIG=<crunge/imgui/imconfig.h>)
 set(SOURCES
-    src/crunge/wgpu/bindings/chained_struct.cpp
-    src/crunge/wgpu/bindings/wgpu.cpp
-    src/crunge/wgpu/bindings/main.cpp
-    src/crunge/wgpu/bindings/callbacks.cpp
+    src/chained_struct.cpp
+    src/wgpu.cpp
+    src/wgpu_py.cpp
+    src/main.cpp
+    src/callbacks.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})
 
 # add include files
-# target_sources(${THIS} PRIVATE ${AIMGUI_INCLUDE}) # for intellisense
 target_include_directories(${THIS}
     PUBLIC
     $<INSTALL_INTERFACE:include>

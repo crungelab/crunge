@@ -13,7 +13,7 @@ import imageio.v3 as iio
 
 from crunge.core import as_capsule
 from crunge import wgpu
-import crunge.wgpu.utils as utils
+from crunge.wgpu import utils
 
 from ..common import Demo
 
@@ -70,151 +70,25 @@ class CubeTextureDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        self.create_depth_stencil_view()
+
+    def create_device_objects(self):
+        self.create_depth_stencil_view()
         self.create_buffers()
         self.create_textures()
         self.create_pipeline()
 
-    def create_pipeline(self):
-        shader_module = self.create_shader_module(shader_code)
-        
-        # Pipeline creation
-
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=self.kPositionByteOffset,
-                    shader_location=0,
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=self.kUVByteOffset,
-                    shader_location=1,
-                ),
-            ]
-        )
-
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=self.kCubeDataStride * sizeof(c_float),
-            attribute_count=2,
-            attributes=vertAttributes[0],
-        )
-
-        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
-
-        fragmentState = wgpu.FragmentState(
-            module=shader_module,
-            entry_point="fs_main",
-            target_count=1,
-            targets=colorTargetState,
-        )
-
-        depthStencilState = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH24_PLUS,
-            depth_write_enabled=True,
-            depth_compare=wgpu.CompareFunction.LESS,
-        )
-
-        primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
-
-        vertex_state = wgpu.VertexState(
-            module=shader_module,
-            entry_point="vs_main",
-            buffer_count=1,
-            buffers=vertBufferLayout,
-        )
-
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
-                ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-            ]
-        )
-
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
-        )
-        bgl = self.device.create_bind_group_layout(bgl_desc)
-
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
-        )
-
-        rp_descriptor = wgpu.RenderPipelineDescriptor(
-            label="Main Render Pipeline",
-            layout=self.device.create_pipeline_layout(pl_desc),
-            vertex=vertex_state,
-            primitive=primitive,
-            depth_stencil=depthStencilState,
-            fragment=fragmentState,
-        )
-
-        self.pipeline = self.device.create_render_pipeline(rp_descriptor)
-
-        # Create depth texture
+    def create_depth_stencil_view(self):
         self.depthTexture = utils.create_texture(
             self.device,
             "Depth texture",
-            wgpu.Extent3D(self.kWidth, self.kHeight),
+            wgpu.Extent3D(self.size.x, self.size.y),
             wgpu.TextureFormat.DEPTH24_PLUS,
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
-
-        view: wgpu.TextureView = self.texture.create_view()
-
-        bg_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=view),
-                wgpu.BindGroupEntry(
-                    binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize
-                ),
-            ]
-        )
-
-        bindGroupDesc = wgpu.BindGroupDescriptor(
-            label="Texture+Uniform bind group",
-            layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bg_entries),
-            entries=bg_entries[0],
-        )
-
-        self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
-
-        aspect = float(self.kWidth) / float(self.kHeight)
-        fov_y_radians = (2.0 * math.pi) / 5.0
-        self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
-        # exit()
-
-    @property
-    def transform_matrix(self):
-        now = time.time()
-        ms = round(now * 1000) / 1000
-        # print(ms)
-        viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
-        rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
-        rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
-        return self.projectionMatrix * viewMatrix * rotMatrix
+        self.depth_stencil_view = self.depthTexture.create_view()
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
@@ -280,16 +154,146 @@ class CubeTextureDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    def render(self, view: wgpu.TextureView):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
+    def create_pipeline(self):
+        shader_module = self.create_shader_module(shader_code)
+
+        # Pipeline creation
+
+        vertAttributes = wgpu.VertexAttributes(
+            [
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X4,
+                    offset=self.kPositionByteOffset,
+                    shader_location=0,
+                ),
+                wgpu.VertexAttribute(
+                    format=wgpu.VertexFormat.FLOAT32X2,
+                    offset=self.kUVByteOffset,
+                    shader_location=1,
+                ),
+            ]
         )
 
+        vertBufferLayouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=self.kCubeDataStride * sizeof(c_float),
+                attribute_count=2,
+                attributes=vertAttributes,
+            )
+        ]
+
+        color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
+
+        fragmentState = wgpu.FragmentState(
+            module=shader_module,
+            entry_point="fs_main",
+            target_count=1,
+            targets=color_targets,
+        )
+
+        depthStencilState = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
+            depth_write_enabled=True,
+            depth_compare=wgpu.CompareFunction.LESS,
+        )
+
+        primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
+
+        vertex_state = wgpu.VertexState(
+            module=shader_module,
+            entry_point="vs_main",
+            buffer_count=1,
+            buffers=vertBufferLayouts,
+        )
+
+        bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
+                ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                texture=wgpu.TextureBindingLayout(
+                    sample_type=wgpu.TextureSampleType.FLOAT,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
+                ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=2,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(bgl_entries), entries=bgl_entries
+        )
+        bgl = self.device.create_bind_group_layout(bgl_desc)
+
+        pl_desc = wgpu.PipelineLayoutDescriptor(
+            bind_group_layout_count=1, bind_group_layouts=[bgl]
+        )
+
+        rp_descriptor = wgpu.RenderPipelineDescriptor(
+            label="Main Render Pipeline",
+            layout=self.device.create_pipeline_layout(pl_desc),
+            vertex=vertex_state,
+            primitive=primitive,
+            depth_stencil=depthStencilState,
+            fragment=fragmentState,
+        )
+
+        self.pipeline = self.device.create_render_pipeline(rp_descriptor)
+
+        view: wgpu.TextureView = self.texture.create_view()
+
+        bg_entries = [
+            wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=1, texture_view=view),
+            wgpu.BindGroupEntry(
+                binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize
+            ),
+        ]
+
+        bindGroupDesc = wgpu.BindGroupDescriptor(
+            label="Texture+Uniform bind group",
+            layout=self.pipeline.get_bind_group_layout(0),
+            entry_count=len(bg_entries),
+            entries=bg_entries,
+        )
+
+        self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
+
+        aspect = float(self.kWidth) / float(self.kHeight)
+        fov_y_radians = (2.0 * math.pi) / 5.0
+        self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
+
+    @property
+    def transform_matrix(self):
+        now = time.time()
+        ms = round(now * 1000) / 1000
+        # print(ms)
+        viewMatrix = glm.translate(glm.mat4(1.0), glm.vec3(0, 0, -4))
+        rotMatrix = glm.rotate(glm.mat4(1.0), math.sin(ms), WORLD_AXIS_X)
+        rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
+        return self.projectionMatrix * viewMatrix * rotMatrix
+
+    def render(self, view: wgpu.TextureView):
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
+
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depthTexture.create_view(),
+            view=self.depth_stencil_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
@@ -298,7 +302,7 @@ class CubeTextureDemo(Demo):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
 
@@ -321,10 +325,13 @@ class CubeTextureDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        surface_texture = wgpu.SurfaceTexture()
+        self.surface.get_current_texture(surface_texture)
+        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
+
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
-        self.swap_chain.present()
+        self.surface.present()
 
 
 def main():

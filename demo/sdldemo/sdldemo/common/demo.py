@@ -54,7 +54,7 @@ class Demo:
         elif sys.platform == "linux":
             wsd = wgpu.SurfaceDescriptorFromXlibWindow()
             handle = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
-            display = sdl.get_property(properties, "SDL.window.x11.display", None)
+            display = sdl.get_pointer_property(properties, "SDL.window.x11.display", None)
             wsd.window = handle
             wsd.display = display
 

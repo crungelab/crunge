@@ -2,8 +2,11 @@
 requires = ["cxbuild==0.2", "setuptools", "wheel"]
 build-backend = "cxbuild.backend"
 
+[tool.setuptools]
+packages = []
+
 [project]
-name = "crunge"
+name = "crunge-root"
 version = "0.1.0"
 description = 'Creative coding extensions for Python'
 readme = "README.md"
