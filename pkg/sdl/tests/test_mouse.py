@@ -48,7 +48,7 @@ PYCLASS_END(_sdl, SDL_MouseWheelEvent, MouseWheelEvent)
 '''
 
 success = sdl.init(sdl.InitFlags.INIT_VIDEO)
-logger.info(f"SDL_Init: {success}")
+logger.debug(f"SDL_Init: {success}")
 
 sdl.create_window("Test Keyboard", 640, 480, sdl.WindowFlags.RESIZABLE)
 

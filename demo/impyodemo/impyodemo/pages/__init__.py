@@ -73,7 +73,7 @@ class Page(ImGuiView):
         pass
 
     def create_server(self):
-        logger.info("Creating server")
+        logger.debug("Creating server")
         self.server = s = Server()
         s.setMidiInputDevice(4)
         s.boot()

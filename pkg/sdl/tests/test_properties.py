@@ -5,13 +5,13 @@ from loguru import logger
 from crunge import sdl
 
 success = sdl.init(sdl.InitFlags.INIT_VIDEO)
-logger.info(f"SDL_Init: {success}")
+logger.debug(f"SDL_Init: {success}")
 
 window = sdl.create_window("Test Properties", 640, 480, 0)
 
 properties = sdl.get_window_properties(window)
 
-logger.info(f"window properties: {properties}")
+logger.debug(f"window properties: {properties}")
 
 # Display
 display = sdl.get_property(properties, "SDL.window.x11.display", None)

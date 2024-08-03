@@ -30,7 +30,8 @@ from .uniforms import (
     Mat4,
 )
 
-#from .camera_2d import Camera2D
+# from .camera_2d import Camera2D
+
 
 class SceneRenderer(engine.Renderer):
     camera_uniform_buffer: wgpu.Buffer = None
@@ -54,38 +55,33 @@ class SceneRenderer(engine.Renderer):
         )
 
     def create_bind_groups(self):
-        camera_bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-            ]
-        )
+        camera_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
         camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries[0]
+            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
         )
         camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
         logger.debug(f"camera_bgl: {camera_bgl}")
 
-        camera_bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.camera_uniform_buffer,
-                    size=self.camera_uniform_buffer_size,
-                ),
-            ]
-        )
+        camera_bindgroup_entries = [
+            wgpu.BindGroupEntry(
+                binding=0,
+                buffer=self.camera_uniform_buffer,
+                size=self.camera_uniform_buffer_size,
+            ),
+        ]
 
         camera_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Camera bind group",
             layout=camera_bgl,
             entry_count=len(camera_bindgroup_entries),
-            entries=camera_bindgroup_entries[0],
+            entries=camera_bindgroup_entries,
         )
 
         self.camera_bind_group = self.device.create_bind_group(camera_bind_group_desc)
@@ -93,7 +89,7 @@ class SceneRenderer(engine.Renderer):
     def __enter__(self):
         self.begin()
         return self
-    
+
     def __exit__(self, exc_type, exc_value, traceback):
         self.end()
 
@@ -112,12 +108,14 @@ class SceneRenderer(engine.Renderer):
             self.camera_uniform_buffer_size,
         )
 
-        attachment = wgpu.RenderPassColorAttachment(
-            view=self.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=self.texture_view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
             view=self.depth_stencil_view,
@@ -129,12 +127,14 @@ class SceneRenderer(engine.Renderer):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
 
         self.encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
-        self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(renderpass)
+        self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(
+            renderpass
+        )
         self.pass_enc.set_bind_group(0, self.camera_bind_group)
 
     def end(self):

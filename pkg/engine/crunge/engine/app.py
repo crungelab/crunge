@@ -16,7 +16,7 @@ class App(Window):
 
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
-        logger.info(f"SDL_Init: {success}")
+        logger.debug(f"SDL_Init: {success}")
         super().create_window()
 
     def schedule_once(self, callback, delay):

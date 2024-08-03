@@ -94,61 +94,54 @@ class SpriteProgram(Program):
         self.create_render_pipeline()
 
     def create_render_bind_group_layouts(self):
-        camera_bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-            ]
-        )
+        camera_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
         camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries[0]
+            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
         )
         camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
         logger.debug(f"camera_bgl: {camera_bgl}")
 
-        material_bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
+        material_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                texture=wgpu.TextureBindingLayout(
+                    sample_type=wgpu.TextureSampleType.FLOAT,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
-            ]
-        )
+            ),
+        ]
+
         material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(material_bgl_entries), entries=material_bgl_entries[0]
+            entry_count=len(material_bgl_entries), entries=material_bgl_entries
         )
         material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
         logger.debug(f"material_bgl: {material_bgl}")
 
-        mesh_bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-            ]
-        )
+        mesh_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
         mesh_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(mesh_bgl_entries), entries=mesh_bgl_entries[0]
+            entry_count=len(mesh_bgl_entries), entries=mesh_bgl_entries
         )
         mesh_bgl = self.device.create_bind_group_layout(mesh_bgl_desc)
         logger.debug(f"mesh_bgl: {mesh_bgl}")
@@ -160,24 +153,24 @@ class SpriteProgram(Program):
     def create_render_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=2 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=2 * sizeof(c_float),
+                shader_location=1,
+            ),
+        ]
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=4 * sizeof(c_float),
-            attribute_count=len(vertAttributes),
-            attributes=vertAttributes[0],
-        )
+        vertBufferLayouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=4 * sizeof(c_float),
+                attribute_count=len(vertAttributes),
+                attributes=vertAttributes,
+            )
+        ]
 
         blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
@@ -192,35 +185,37 @@ class SpriteProgram(Program):
             ),
         )
 
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            blend=blend_state,
-            write_mask=wgpu.ColorWriteMask.ALL,
-        )
+        color_targets = [
+            wgpu.ColorTargetState(
+                format=wgpu.TextureFormat.BGRA8_UNORM,
+                blend=blend_state,
+                write_mask=wgpu.ColorWriteMask.ALL,
+            )
+        ]
 
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vertBufferLayouts,
         )
 
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
         )
 
-
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(self.bind_group_layouts), bind_group_layouts=self.bind_group_layouts[0]
+            bind_group_layout_count=len(self.bind_group_layouts),
+            bind_group_layouts=self.bind_group_layouts,
         )
-        
+
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
             layout=self.device.create_pipeline_layout(pl_desc),
@@ -228,7 +223,7 @@ class SpriteProgram(Program):
             fragment=fragmentState,
             depth_stencil=depth_stencil_state,
         )
-        
+
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
 
@@ -321,10 +316,12 @@ class Sprite(Vu2D):
             label="Material bind group",
             layout=self.program.pipeline.get_bind_group_layout(1),
             entry_count=len(material_bindgroup_entries),
-            entries=material_bindgroup_entries[0],
+            entries=material_bindgroup_entries,
         )
 
-        self.material_bind_group = self.device.create_bind_group(material_bind_group_desc)
+        self.material_bind_group = self.device.create_bind_group(
+            material_bind_group_desc
+        )
 
         mesh_bindgroup_entries = wgpu.BindGroupEntries(
             [
@@ -340,7 +337,7 @@ class Sprite(Vu2D):
             label="Mesh bind group",
             layout=self.program.pipeline.get_bind_group_layout(2),
             entry_count=len(mesh_bindgroup_entries),
-            entries=mesh_bindgroup_entries[0],
+            entries=mesh_bindgroup_entries,
         )
 
         self.mesh_bind_group = self.device.create_bind_group(mesh_bind_group_desc)

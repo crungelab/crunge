@@ -68,7 +68,7 @@ class TiledDemo(Demo):
             elif isinstance(layer, TiledObjectGroup):
                 # iterate over all the objects in the layer
                 for obj in layer:
-                    logger.info(obj)
+                    logger.debug(obj)
 
                     # objects with points are polygons or lines
                     if hasattr(obj, "points"):

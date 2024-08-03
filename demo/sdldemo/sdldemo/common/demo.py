@@ -36,7 +36,7 @@ class Demo:
 
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
-        logger.info(f"SDL_Init: {success}")
+        logger.debug(f"SDL_Init: {success}")
         self.window = sdl.create_window(self.name, self.size.x, self.size.y, sdl.WindowFlags.RESIZABLE)
 
     def create_device_objects(self):

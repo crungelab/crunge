@@ -35,6 +35,7 @@ class BoxesDemo(Demo):
         if button == 1 and action:
             x = self.last_mouse.x
             y = self.height - self.last_mouse.y
+            logger.debug(f"Creating box at {x}, {y}")
             self.create_box(glm.vec2(x, y))
 
 
