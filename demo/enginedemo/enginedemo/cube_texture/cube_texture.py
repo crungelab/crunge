@@ -75,37 +75,37 @@ class CubeTextureDemo(Demo):
 
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
-        
+
         # Pipeline creation
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=self.kPositionByteOffset,
-                    shader_location=0,
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=self.kUVByteOffset,
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4,
+                offset=self.kPositionByteOffset,
+                shader_location=0,
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=self.kUVByteOffset,
+                shader_location=1,
+            ),
+        ]
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=self.kCubeDataStride * sizeof(c_float),
-            attribute_count=2,
-            attributes=vertAttributes[0],
-        )
+        vb_layouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=self.kCubeDataStride * sizeof(c_float),
+                attribute_count=2,
+                attributes=vertAttributes,
+            )
+        ]
 
-        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
+        color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
 
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         depthStencilState = wgpu.DepthStencilState(
@@ -120,43 +120,39 @@ class CubeTextureDemo(Demo):
             module=shader_module,
             entry_point="vs_main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vb_layouts,
         )
 
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
+        bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                texture=wgpu.TextureBindingLayout(
+                    sample_type=wgpu.TextureSampleType.FLOAT,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=2,
-                    visibility=wgpu.ShaderStage.VERTEX,
-                    buffer=wgpu.BufferBindingLayout(
-                        type=wgpu.BufferBindingType.UNIFORM
-                    ),
-                ),
-            ]
-        )
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=2,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
 
         bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
+            entry_count=len(bgl_entries), entries=bgl_entries
         )
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
+            bind_group_layout_count=1, bind_group_layouts=[bgl]
         )
 
         rp_descriptor = wgpu.RenderPipelineDescriptor(
@@ -181,21 +177,19 @@ class CubeTextureDemo(Demo):
 
         view: wgpu.TextureView = self.texture.create_view()
 
-        bg_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=view),
-                wgpu.BindGroupEntry(
-                    binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize
-                ),
-            ]
-        )
+        bg_entries = [
+            wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=1, texture_view=view),
+            wgpu.BindGroupEntry(
+                binding=2, buffer=self.uniformBuffer, size=self.uniformBufferSize
+            ),
+        ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture+Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=len(bg_entries),
-            entries=bg_entries[0],
+            entries=bg_entries,
         )
 
         self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
@@ -280,12 +274,14 @@ class CubeTextureDemo(Demo):
         )
 
     def draw(self, renderer: Renderer):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=renderer.texture_view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
             view=self.depthTexture.create_view(),
@@ -297,7 +293,7 @@ class CubeTextureDemo(Demo):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
 
@@ -323,6 +319,7 @@ class CubeTextureDemo(Demo):
             self.uniformBufferSize,
         )
         super().frame()
+
 
 def main():
     CubeTextureDemo().create().run()

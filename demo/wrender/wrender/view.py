@@ -14,7 +14,8 @@ from .scene import Scene
 from .scene_renderer import SceneRenderer
 from .camera import Camera
 
-#class View(engine.View):
+
+# class View(engine.View):
 class View(ImGuiView):
     def __init__(self, scene: Scene, width: int, height: int) -> None:
         super().__init__()
@@ -32,15 +33,17 @@ class View(ImGuiView):
         )
 
     def draw(self, renderer: SceneRenderer):
-        #logger.debug("View.draw()")
+        # logger.debug("View.draw()")
 
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-            #clear_value=wgpu.Color(.5, .5, .5, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=renderer.texture_view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+                # clear_value=wgpu.Color(.5, .5, .5, 1),
+            )
+        ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
             view=self.depth_texture.create_view(),
@@ -52,7 +55,7 @@ class View(ImGuiView):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
 

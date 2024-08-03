@@ -32,13 +32,13 @@ class TriangleShaderLayer(DemoLayer):
         super().create(view)
         self.shader_module = self.gfx.create_shader_module(shader_code)
 
-        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
+        color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
 
         fragmentState = wgpu.FragmentState(
             module=self.shader_module,
             entry_point="fs_main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_LIST)
@@ -63,13 +63,15 @@ class TriangleShaderLayer(DemoLayer):
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def draw(self, renderer: Renderer):
-        #logger.debug("draw")
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        # logger.debug("draw")
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=renderer.texture_view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
             view=renderer.depth_stencil_view,
@@ -81,7 +83,7 @@ class TriangleShaderLayer(DemoLayer):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depth_stencil_attachment,
         )
 
@@ -108,7 +110,10 @@ class TriangleShaderDemo(Demo):
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.DEPTH32_FLOAT,
         )
-        self.renderer.depth_stencil_view = self.device.create_texture(descriptor).create_view()
+        self.renderer.depth_stencil_view = self.device.create_texture(
+            descriptor
+        ).create_view()
+
 
 def main():
     TriangleShaderDemo(DemoView(layers=[TriangleShaderLayer()])).create().run()

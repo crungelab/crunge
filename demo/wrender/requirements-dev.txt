@@ -1,6 +1,6 @@
--e ../core
--e ../sdl
--e ../wgpu
--e ../imgui
--e ../engine
--e ../gltf
+-e ../../pkg/core
+-e ../../pkg/sdl
+-e ../../pkg/wgpu
+-e ../../pkg/imgui
+-e ../../pkg/engine
+-e ../../pkg/gltf

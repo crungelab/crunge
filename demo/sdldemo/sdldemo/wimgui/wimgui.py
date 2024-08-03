@@ -12,7 +12,7 @@ from crunge.core import as_capsule
 from crunge import sdl
 
 from crunge import wgpu
-import crunge.wgpu.utils as utils
+from crunge.wgpu import utils
 
 from crunge import imgui
 

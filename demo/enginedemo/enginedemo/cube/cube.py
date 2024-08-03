@@ -10,7 +10,7 @@ import numpy as np
 
 from crunge.core import as_capsule
 from crunge import wgpu
-import crunge.wgpu.utils as utils
+from crunge.wgpu import utils
 from crunge.engine import Renderer
 
 from ..demo import Demo
@@ -71,34 +71,34 @@ class CubeDemo(Demo):
 
         # Pipeline creation
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=self.kPositionByteOffset,
-                    shader_location=0,
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=self.kUVByteOffset,
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4,
+                offset=self.kPositionByteOffset,
+                shader_location=0,
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=self.kUVByteOffset,
+                shader_location=1,
+            ),
+        ]
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=self.kCubeDataStride * sizeof(c_float),
-            attribute_count=2,
-            attributes=vertAttributes[0],
-        )
+        vertBufferLayouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=self.kCubeDataStride * sizeof(c_float),
+                attribute_count=2,
+                attributes=vertAttributes,
+            )
+        ]
 
-        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
+        color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
 
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         depthStencilState = wgpu.DepthStencilState(
@@ -113,7 +113,7 @@ class CubeDemo(Demo):
             module=shader_module,
             entry_point="vs_main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vertBufferLayouts,
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(
@@ -135,15 +135,17 @@ class CubeDemo(Demo):
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
 
-        bindEntry = wgpu.BindGroupEntry(
-            binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize
-        )
+        bg_entries = [
+            wgpu.BindGroupEntry(
+                binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize
+            )
+        ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=1,
-            entries=bindEntry,
+            entries=bg_entries,
         )
 
         self.uniformBindGroup = self.device.create_bind_group(bindGroupDesc)
@@ -174,12 +176,14 @@ class CubeDemo(Demo):
         )
 
     def draw(self, renderer: Renderer):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=renderer.texture_view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
+            )
+        ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
             view=self.depthTexture.create_view(),
@@ -191,7 +195,7 @@ class CubeDemo(Demo):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
 
@@ -217,6 +221,7 @@ class CubeDemo(Demo):
             self.uniformBufferSize,
         )
         super().frame()
+
 
 def main():
     CubeDemo().create().run()

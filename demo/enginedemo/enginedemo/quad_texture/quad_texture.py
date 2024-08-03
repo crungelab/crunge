@@ -34,10 +34,22 @@ index_data = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
 
 vertex_data = np.array(
     [
-        -0.5,  0.5,  0.0, 1.0, # top-left
-        -0.5, -0.5,  0.0, 0.0, # bottom-left
-        0.5, -0.5,  1.0, 0.0, # bottom-right
-        0.5,  0.5,  1.0, 1.0, # top-right
+        -0.5,
+        0.5,
+        0.0,
+        1.0,  # top-left
+        -0.5,
+        -0.5,
+        0.0,
+        0.0,  # bottom-left
+        0.5,
+        -0.5,
+        1.0,
+        0.0,  # bottom-right
+        0.5,
+        0.5,
+        1.0,
+        1.0,  # top-right
     ],
     dtype=np.float32,
 )
@@ -75,57 +87,59 @@ class QuadTextureDemo(Demo):
             ]
         )
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=4 * sizeof(c_float),
-            attribute_count=2,
-            attributes=vertAttributes[0],
-        )
+        vb_layouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=4 * sizeof(c_float),
+                attribute_count=2,
+                attributes=vertAttributes,
+            )
+        ]
 
-        colorTargetState = wgpu.ColorTargetState(
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-        )
+        color_targets = [
+            wgpu.ColorTargetState(
+                format=wgpu.TextureFormat.BGRA8_UNORM,
+            )
+        ]
 
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vb_layouts,
         )
 
-        bgl_entries = wgpu.BindGroupLayoutEntries(
-            [
-                wgpu.BindGroupLayoutEntry(
-                    binding=0,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
+        bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
                 ),
-                wgpu.BindGroupLayoutEntry(
-                    binding=1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
-                    ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                texture=wgpu.TextureBindingLayout(
+                    sample_type=wgpu.TextureSampleType.FLOAT,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
-            ]
-        )
+            ),
+        ]
 
         bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries[0]
+            entry_count=len(bgl_entries), entries=bgl_entries
         )
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=bgl
+            bind_group_layout_count=1, bind_group_layouts=[bgl]
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(
@@ -139,18 +153,16 @@ class QuadTextureDemo(Demo):
 
         view: wgpu.TextureView = self.texture.create_view()
 
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=view),
-            ]
-        )
+        bindgroup_entries = [
+            wgpu.BindGroupEntry(binding=0, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=1, texture_view=view),
+        ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=2,
-            entries=bindgroup_entries[0],
+            entries=bindgroup_entries,
         )
 
         self.bindGroup = self.device.create_bind_group(bindGroupDesc)
@@ -206,17 +218,19 @@ class QuadTextureDemo(Demo):
         )
 
     def draw(self, renderer: Renderer):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=renderer.texture_view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()

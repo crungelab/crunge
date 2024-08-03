@@ -74,26 +74,28 @@ class QuadVertexDemo(Demo):
             ]
         )
 
-        vertBufferLayout = wgpu.VertexBufferLayout(
-            array_stride=5 * sizeof(c_float),
-            attribute_count=2,
-            attributes=vertAttributes[0],
-        )
+        vb_layouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=5 * sizeof(c_float),
+                attribute_count=2,
+                attributes=vertAttributes,
+            )
+        ]
 
-        colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
+        color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
 
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
             target_count=1,
-            targets=colorTargetState,
+            targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
             buffer_count=1,
-            buffers=vertBufferLayout,
+            buffers=vb_layouts,
         )
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline", vertex=vertex_state, fragment=fragmentState
@@ -102,24 +104,26 @@ class QuadVertexDemo(Demo):
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def draw(self, renderer: Renderer):
-        attachment = wgpu.RenderPassColorAttachment(
-            view=renderer.texture_view,
-            load_op=wgpu.LoadOp.CLEAR,
-            store_op=wgpu.StoreOp.STORE,
-            clear_value=wgpu.Color(0, 0, 0, 1),
-        )
+        color_attachments = [
+            wgpu.RenderPassColorAttachment(
+                view=renderer.texture_view,
+                load_op=wgpu.LoadOp.CLEAR,
+                store_op=wgpu.StoreOp.STORE,
+                clear_value=wgpu.Color(0, 0, 0, 1),
+            )
+        ]
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachment_count=1,
-            color_attachments=attachment,
+            color_attachments=color_attachments,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        #pass_enc.draw(3)
+        # pass_enc.draw(3)
         pass_enc.draw(6)
         pass_enc.end()
         commands = encoder.finish()
@@ -127,6 +131,7 @@ class QuadVertexDemo(Demo):
         self.queue.submit(1, commands)
 
         super().draw(renderer)
+
 
 def main():
     QuadVertexDemo().create().run()

@@ -3,7 +3,7 @@ import glm
 import numpy as np
 
 from crunge import wgpu
-import crunge.wgpu.utils as utils
+from crunge.wgpu import utils
 
 from .constants import *
 from .base import Base
