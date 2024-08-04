@@ -22,15 +22,23 @@ class View(ImGuiView):
         self.scene = scene
         self.width = width
         self.height = height
+        self.size = glm.ivec2(width, height)
         self.camera = Camera(width, height)
+        self.create_depth_stencil_view()
 
-        self.depth_texture = utils.create_texture(
+    def create_depth_stencil_view(self):
+        self.depthTexture = utils.create_texture(
             self.device,
             "Depth texture",
-            wgpu.Extent3D(width, height),
+            wgpu.Extent3D(self.size.x, self.size.y),
             wgpu.TextureFormat.DEPTH24_PLUS,
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
+        self.depth_stencil_view = self.depthTexture.create_view()
+
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        self.create_depth_stencil_view()
 
     def draw(self, renderer: SceneRenderer):
         # logger.debug("View.draw()")
@@ -46,7 +54,7 @@ class View(ImGuiView):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depth_texture.create_view(),
+            view=self.depth_stencil_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
