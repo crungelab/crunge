@@ -76,9 +76,12 @@ class TriangleTextureDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
+        self.create_pipeline()
 
+    def create_pipeline(self):
         vs_module = self.create_shader_module(vs_shader_code)
         fs_module = self.create_shader_module(fs_shader_code)
 
@@ -178,8 +181,6 @@ class TriangleTextureDemo(Demo):
 
         self.bindGroup = self.device.create_bind_group(bindGroupDesc)
         logger.debug(self.bindGroup)
-
-        # exit()
 
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(

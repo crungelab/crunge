@@ -18,7 +18,6 @@ class Demo:
     pipeline: wgpu.RenderPipeline = None
 
     surface: wgpu.Surface = None
-    #swap_chain: wgpu.SwapChain = None
 
     depth_stencil_view: wgpu.TextureView = None
 
@@ -58,7 +57,6 @@ class Demo:
             present_mode=wgpu.PresentMode.FIFO,
             #present_mode=wgpu.PresentMode.MAILBOX,
             view_format_count=0,
-            #view_formats=None,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)
@@ -98,40 +96,6 @@ class Demo:
         logger.debug(self.surface)
         self.configure_surface(self.size)
 
-    '''
-    def create_swapchain(self):
-        properties = sdl.get_window_properties(self.window)
-        if sys.platform == "darwin":
-            handle = glfw.get_cocoa_window(self.window)
-        elif sys.platform == "win32":
-            wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-            handle = glfw.get_win32_window(self.window)
-            wsd.hwnd = as_capsule(handle)
-            wsd.hinstance = None
-
-        elif sys.platform == "linux":
-            wsd = wgpu.SurfaceDescriptorFromXlibWindow()
-            handle = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
-            display = sdl.get_pointer_property(properties, "SDL.window.x11.display", None)
-            wsd.window = handle
-            wsd.display = display
-
-        sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
-        self.surface = self.instance.create_surface(sd)
-        logger.debug(self.surface)
-
-        scDesc = wgpu.SwapChainDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            width=self.kWidth,
-            height=self.kHeight,
-            present_mode=wgpu.PresentMode.MAILBOX,
-        )
-
-        self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
-        logger.debug(self.swap_chain)
-    '''
-
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
         wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
@@ -142,12 +106,6 @@ class Demo:
         pass
 
     def frame(self):
-        '''
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        self.render(backbuffer, self.depth_stencil_view)
-        self.swap_chain.present()
-        '''
-        #self.present()
         backbuffer: wgpu.TextureView = self.get_surface_view()
         self.render(backbuffer, self.depth_stencil_view)
         self.surface.present()
@@ -157,19 +115,6 @@ class Demo:
         self.surface.get_current_texture(surface_texture)
         surface_view: wgpu.TextureView = surface_texture.texture.create_view()
         return surface_view
-    
-    '''
-    def present(self):
-        #backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        surface_view: wgpu.TextureView = surface_texture.texture.create_view()
-
-        surface_view.set_label("Surface Texture View")
-        self.render(surface_view)
-        #self.swap_chain.present()
-        self.surface.present()
-    '''
 
     def dispatch(self, event):
         #logger.debug(event)
@@ -218,7 +163,6 @@ class Demo:
     def run(self):
         self.create_window()
         self.create_device_objects()
-        #self.create_swapchain()
         self.create_surface()
 
         last_time = time.perf_counter()

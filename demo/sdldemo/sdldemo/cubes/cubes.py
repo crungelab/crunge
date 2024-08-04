@@ -61,7 +61,8 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 
 shader_code = shader_code.replace("{{NUM_INSTANCES}}", str(num_instances))
 
-#TODO: Use code from enginedemo/cubes/cubes.py
+# TODO: Use code from enginedemo/cubes/cubes.py
+
 
 class CubesDemo(Demo):
     depth_stencil_view: wgpu.TextureView = None
@@ -74,19 +75,6 @@ class CubesDemo(Demo):
 
     def __init__(self):
         super().__init__()
-        """
-        std::array<dusk::Mat4, num_instances> model_matrices;
-        std::array<dusk::Mat4, num_instances> mvp_matrices;
-        """
-        """
-        self.model_matrices = np.empty(num_instances, dtype=glm.mat4)
-        for i in range(num_instances):
-            self.model_matrices[i] = glm.mat4(1.0)
-
-        self.mvp_matrices = np.empty(num_instances, dtype=glm.mat4)
-        for i in range(num_instances):
-            self.mvp_matrices[i] = glm.mat4(1.0)
-        """
         self.model_matrices = glm.array.zeros(num_instances, glm.mat4)
         for i in range(num_instances):
             self.model_matrices[i] = glm.mat4(1.0)
@@ -104,23 +92,27 @@ class CubesDemo(Demo):
                 self.model_matrices[(x * y_count) + y] = glm.translate(
                     glm.mat4(1), glm.vec3(step * (x - half_x), step * (y - half_y), 0)
                 )
-        """
-        constexpr float step = 4.f;
 
-        float half_x = (x_count / 2.f) + .5f;
-        float half_y = (y_count / 2.f) + .5f;
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        self.create_depth_stencil_view()
 
-        // Initialize matrix data for each cube instance
-        for (size_t x = 0; x < x_count; x++) {
-            for (size_t y = 0; y < y_count; y++) {
-            model_matrices[(x * y_count) + y] = dusk::Mat4::Translation(dusk::Vec3(
-                step * (float(x) - half_x), step * (float(y) - half_y), 0));
-            }
-        }
-        """
-
+    def create_device_objects(self):
+        self.create_depth_stencil_view()
         self.create_buffers()
+        self.create_pipeline()
 
+    def create_depth_stencil_view(self):
+        self.depthTexture = utils.create_texture(
+            self.device,
+            "Depth texture",
+            wgpu.Extent3D(self.size.x, self.size.y),
+            wgpu.TextureFormat.DEPTH24_PLUS,
+            wgpu.TextureUsage.RENDER_ATTACHMENT,
+        )
+        self.depth_stencil_view = self.depthTexture.create_view()
+
+    def create_pipeline(self):
         shader_module = self.create_shader_module(shader_code)
 
         # Pipeline creation
@@ -179,15 +171,6 @@ class CubesDemo(Demo):
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
-
-        # Create depth texture
-        self.depthTexture = utils.create_texture(
-            self.device,
-            "Depth texture",
-            wgpu.Extent3D(self.kWidth, self.kHeight),
-            wgpu.TextureFormat.DEPTH24_PLUS,
-            wgpu.TextureUsage.RENDER_ATTACHMENT,
-        )
 
         bg_entries = [
             wgpu.BindGroupEntry(
@@ -297,7 +280,7 @@ class CubesDemo(Demo):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depthTexture.create_view(),
+            view=self.depth_stencil_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,

@@ -80,6 +80,7 @@ class TriangleIndexDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def create_device_objects(self):
         self.create_buffers()
         self.create_pipeline()
 
@@ -99,7 +100,7 @@ class TriangleIndexDemo(Demo):
             ),
         ]
 
-        vertBufferLayouts = [
+        vb_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=8 * sizeof(c_float),
                 attribute_count=2,
@@ -120,7 +121,7 @@ class TriangleIndexDemo(Demo):
             module=shader_module,
             entry_point="vs_main",
             buffer_count=1,
-            buffers=vertBufferLayouts,
+            buffers=vb_layouts,
         )
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline", vertex=vertex_state, fragment=fragmentState

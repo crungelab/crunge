@@ -98,7 +98,6 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
     return 1.0, 1.0
 
 
-#TODO: Looks bad when resizing the window. The text is not sharp.
 class WImGuiDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
     index_buffer: wgpu.Buffer = None
@@ -442,11 +441,6 @@ class WImGuiDemo(Demo):
 
             # for command in commands:
             for command in commands.cmd_buffer:
-                """
-                wgpuRenderPassEncoderSetScissorRect(pass_encoder, (uint32_t)clip_min.x, (uint32_t)clip_min.y, (uint32_t)(clip_max.x - clip_min.x), (uint32_t)(clip_max.y - clip_min.y));
-                wgpuRenderPassEncoderDrawIndexed(pass_encoder, pcmd->ElemCount, 1, pcmd->IdxOffset + global_idx_offset, pcmd->VtxOffset + global_vtx_offset, 0);
-                """
-
                 pass_enc.set_scissor_rect(
                     int(command.clip_rect[0]),
                     int(command.clip_rect[1]),
@@ -545,14 +539,12 @@ class WImGuiDemo(Demo):
 
         imgui.end_frame()
 
-        #backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
 
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
-        #self.swap_chain.present()
         self.surface.present()
 
 

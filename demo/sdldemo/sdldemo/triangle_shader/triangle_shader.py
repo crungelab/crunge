@@ -2,6 +2,7 @@ import time
 import sys
 
 from loguru import logger
+import glm
 
 from crunge import wgpu
 from crunge.core import as_capsule
@@ -28,8 +29,23 @@ class TriangleShaderDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
         self.create_depth_stencil_view()
 
+    def create_device_objects(self):
+        self.create_depth_stencil_view()
+        self.create_pipeline()
+
+    def create_depth_stencil_view(self):
+        descriptor = wgpu.TextureDescriptor(
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            size=wgpu.Extent3D(self.size.x, self.size.y, 1),
+            format=wgpu.TextureFormat.DEPTH32_FLOAT,
+        )
+        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
+
+    def create_pipeline(self):
         shader_module = self.create_shader_module(shader_code)
 
         color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
@@ -61,14 +77,6 @@ class TriangleShaderDemo(Demo):
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
-
-    def create_depth_stencil_view(self):
-        descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            size=wgpu.Extent3D(self.kWidth, self.kHeight, 1),
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
-        )
-        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
     def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
         color_attachments = [

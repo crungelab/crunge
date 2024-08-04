@@ -61,9 +61,25 @@ class CubeDemo(Demo):
 
     def __init__(self):
         super().__init__()
-
+        
+    def create_device_objects(self):
+        self.create_depth_stencil_view()
         self.create_buffers()
         self.create_pipeline()
+
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        self.create_depth_stencil_view()
+
+    def create_depth_stencil_view(self):
+        self.depthTexture = utils.create_texture(
+            self.device,
+            "Depth texture",
+            wgpu.Extent3D(self.size.x, self.size.y),
+            wgpu.TextureFormat.DEPTH24_PLUS,
+            wgpu.TextureUsage.RENDER_ATTACHMENT,
+        )
+        self.depth_stencil_view = self.depthTexture.create_view()
 
     def create_pipeline(self):
         shader_module = self.create_shader_module(shader_code)
@@ -125,15 +141,6 @@ class CubeDemo(Demo):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-        # Create depth texture
-        self.depthTexture = utils.create_texture(
-            self.device,
-            "Depth texture",
-            wgpu.Extent3D(self.kWidth, self.kHeight),
-            wgpu.TextureFormat.DEPTH24_PLUS,
-            wgpu.TextureUsage.RENDER_ATTACHMENT,
-        )
-
         bind_entries = [
             wgpu.BindGroupEntry(
                 binding=0, buffer=self.uniformBuffer, size=self.uniformBufferSize
@@ -185,7 +192,7 @@ class CubeDemo(Demo):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depthTexture.create_view(),
+            view=self.depth_stencil_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
@@ -218,11 +225,9 @@ class CubeDemo(Demo):
             self.uniformBufferSize,
         )
 
-        #backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         backbuffer: wgpu.TextureView = self.get_surface_view()
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
-        #self.swap_chain.present()
         self.surface.present()
 
 
