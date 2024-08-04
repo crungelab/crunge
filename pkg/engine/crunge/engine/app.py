@@ -19,7 +19,7 @@ class App(Window):
         logger.debug(f"SDL_Init: {success}")
         super().create_window()
 
-    def schedule_once(self, callback, delay):
+    def schedule_once(self, callback, delay = 0):
         # self.callbacks.append((callback, delay))
         self.callbacks.append(callback)
 
