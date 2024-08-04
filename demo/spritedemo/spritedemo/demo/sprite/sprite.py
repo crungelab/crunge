@@ -84,6 +84,7 @@ class SpriteDemo(Demo):
 
         if imgui.button("Reset"):
             self.reset()
+
         if imgui.button("Kill"):
             self.kill()
 

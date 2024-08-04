@@ -30,8 +30,6 @@ from .uniforms import (
     Mat4,
 )
 
-# from .camera_2d import Camera2D
-
 
 class SceneRenderer(engine.Renderer):
     camera_uniform_buffer: wgpu.Buffer = None

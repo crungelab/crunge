@@ -21,17 +21,26 @@ class DemoView(ImGuiView):
         self.scene = scene
         self.width = width
         self.height = height
+        self.size = glm.ivec2(width, height)
 
-        self.depth_texture = utils.create_texture(
+        self.create_depth_stencil_view()
+        self.create_camera()
+        self.create_renderer()
+
+    def create_depth_stencil_view(self):
+        self.depthTexture = utils.create_texture(
             self.device,
             "Depth texture",
-            wgpu.Extent3D(width, height),
+            wgpu.Extent3D(self.size.x, self.size.y),
             wgpu.TextureFormat.DEPTH24_PLUS,
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
+        self.depth_stencil_view = self.depthTexture.create_view()
 
-        self.create_camera()
-        self.create_renderer()
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        self.create_depth_stencil_view()
+        self.renderer = self.create_renderer()
 
     def create_camera(self):
         self.camera = Camera2D(
@@ -40,7 +49,8 @@ class DemoView(ImGuiView):
 
     def create_renderer(self):
         self.renderer = SceneRenderer(self.camera)
-        self.renderer.depth_stencil_view = self.depth_texture.create_view()
+        self.renderer.depth_stencil_view = self.depth_stencil_view
+        return self.renderer
 
     def draw(self, renderer: SceneRenderer):
         # logger.debug("DemoView.draw()")

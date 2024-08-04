@@ -19,6 +19,7 @@ class Widget(Dispatcher):
         self.vu: Vu = None
 
     def resize(self, size: glm.ivec2):
+        self.size = size
         self.width, self.height = size
 
     @property
