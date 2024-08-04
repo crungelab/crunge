@@ -2,6 +2,7 @@ import time
 import sys
 
 from loguru import logger
+import glm
 
 from crunge import wgpu, imgui
 from crunge.core import as_capsule
@@ -131,6 +132,10 @@ class QuadShaderDemo(Demo):
         self.renderer.depth_stencil_view = self.device.create_texture(
             descriptor
         ).create_view()
+
+    def resize(self, size: glm.ivec2):
+        super().resize(size)
+        self.create_depth_stencil_view()
 
 
 def main():

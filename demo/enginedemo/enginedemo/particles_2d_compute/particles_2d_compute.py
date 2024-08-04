@@ -111,6 +111,8 @@ class ParticlesDemo(Demo):
         self.fs_module = self.gfx.create_shader_module(fs_code)
 
         self.num_particles = 32
+
+    def create_device_objects(self):
         self.create_particles()
         self.create_buffers()
         self.create_pipeline()

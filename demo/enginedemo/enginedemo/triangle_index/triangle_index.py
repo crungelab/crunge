@@ -52,6 +52,7 @@ class TriangleIndexDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def create_device_objects(self):
         self.create_buffers()
         self.create_pipeline()
 

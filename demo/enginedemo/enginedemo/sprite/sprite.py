@@ -84,9 +84,12 @@ class SpriteDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
+        self.create_pipeline()
 
+    def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
 
         vertAttributes = wgpu.VertexAttributes(
@@ -156,6 +159,7 @@ class SpriteDemo(Demo):
         bgl_desc = wgpu.BindGroupLayoutDescriptor(
             entry_count=len(bgl_entries), entries=bgl_entries
         )
+
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(

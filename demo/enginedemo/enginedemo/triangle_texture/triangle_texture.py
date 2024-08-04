@@ -49,9 +49,12 @@ class TriangleTextureDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
+        self.create_pipeline()
 
+    def create_pipeline(self):
         vs_module = self.gfx.create_shader_module(vs_shader_code)
         fs_module = self.gfx.create_shader_module(fs_shader_code)
 
