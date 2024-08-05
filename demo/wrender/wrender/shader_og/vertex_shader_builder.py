@@ -30,7 +30,7 @@ class VertexShaderBuilder(ShaderBuilder):
         logger.debug("Building vertex shader")
         self.build_return()
         super().build()
-        logger.debug(f"vertex_shader_code:\n{self.shader_code}")
+        #logger.debug(f"vertex_shader_code:\n{self.shader_code}")
         shader_module: wgpu.ShaderModule = utils.create_shader_module(
             self.device, self.shader_code
         )

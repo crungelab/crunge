@@ -191,7 +191,7 @@ class FragmentShaderBuilder(ShaderBuilder):
             
         self('}')
 
-        logger.debug(f"fragment_shader_code:\n{self.shader_code}")
+        #logger.debug(f"fragment_shader_code:\n{self.shader_code}")
 
         shader_module: wgpu.ShaderModule = utils.create_shader_module(
             self.device, self.shader_code

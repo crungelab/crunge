@@ -25,6 +25,7 @@ class Node(Base):
     @property
     def transform(self):
         transform = glm.mat4(1.0)
+        transform = glm.translate(transform, glm.vec3(*self.translation))
         transform = transform * glm.mat4_cast(self.rotation)
         transform = glm.scale(transform, glm.vec3(*self.scale))
         transform = transform * self.matrix

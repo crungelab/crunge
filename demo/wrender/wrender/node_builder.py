@@ -26,6 +26,7 @@ class NodeBuilder(ModelBuilder):
         self.node = Node()
 
     def build_node(self):
+        print(f"NodeBuilder.build_node: {self.tf_node.name}")
         transform = glm.mat4(1.0)
 
         if len(self.tf_node.translation) == 3:
@@ -59,16 +60,17 @@ class NodeBuilder(ModelBuilder):
             child = self.build_child(self.tf_model.nodes[tf_child])
             self.node.add_child(child)
 
+    '''
     def build_child(self, child: gltf.Node) -> Node:
         from .poly_node_builder import PolyNodeBuilder
         builder = PolyNodeBuilder(self.context, child)
         return builder.build()
     '''
+
     def build_child(self, child: gltf.Node) -> Node:
-        if (self.tf_node.mesh >= 0) and (self.tf_node.mesh < len(self.tf_model.meshes)):
+        if (child.mesh >= 0) and (child.mesh < len(self.tf_model.meshes)):
             from .mesh_builder import MeshBuilder
-            builder = MeshBuilder(self.tf_model, child)
+            builder = MeshBuilder(self.context, child)
         else:
-            builder = NodeBuilder(self.tf_model, child)
+            builder = NodeBuilder(self.context, child)
         return builder.build()
-    '''
