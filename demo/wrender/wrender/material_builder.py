@@ -7,6 +7,7 @@ from crunge import gltf
 
 from .debug import debug_texture_info
 from .model_builder import ModelBuilder
+from .builder_context import BuilderContext
 from .material import Material
 from .texture_builder import TextureBuilder
 from .texture import Texture
@@ -15,8 +16,8 @@ from .texture import Texture
 class MaterialBuilder(ModelBuilder):
     material: Material = None
 
-    def __init__(self, tf_model: gltf.Model, tf_material: gltf.Material) -> None:
-        super().__init__(tf_model)
+    def __init__(self, context: BuilderContext, tf_material: gltf.Material) -> None:
+        super().__init__(context)
         self.tf_material = tf_material
         self.material = Material()
 
@@ -78,5 +79,5 @@ class MaterialBuilder(ModelBuilder):
         if texture_info.index < 0:
             logger.debug(f"texture_info.index < 0: {texture_info.index}")
             return
-        texture = TextureBuilder(name, self.tf_model, texture_info).build()
+        texture = TextureBuilder(name, self.context, texture_info).build()
         self.material.add_texture(texture)

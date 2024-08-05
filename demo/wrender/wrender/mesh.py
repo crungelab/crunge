@@ -1,3 +1,5 @@
+from typing import List
+
 from ctypes import (
     Structure,
     c_float,
@@ -28,26 +30,13 @@ from .uniforms import (
     CameraUniform,
     LightUniform,
 )
+from .primitive import Primitive
 
 class Mesh(Node):
-    pipeline: wgpu.RenderPipeline = None
-    bind_group: wgpu.BindGroup = None
-
-    vertex_data: np.ndarray = None
-    vertex_buffer: wgpu.Buffer = None
-
-    index_data: np.ndarray = None
-    index_buffer: wgpu.Buffer = None
-    index_format: wgpu.IndexFormat = None
-
-    camera_uniform_buffer: wgpu.Buffer = None
-    camera_uniform_buffer_size: int = 0
-
-    light_uniform_buffer: wgpu.Buffer = None
-    light_uniform_buffer_size: int = 0
-
     def __init__(self) -> None:
         super().__init__()
+        self.primitives: List[Primitive] = []
+
         # Uniform Buffers
         self.camera_uniform_buffer_size = sizeof(CameraUniform)
         self.camera_uniform_buffer = self.gfx.create_buffer(
@@ -61,6 +50,9 @@ class Mesh(Node):
             self.light_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
+
+    def add_primitive(self, primitive: Primitive):
+        self.primitives.append(primitive)
 
     def draw(self, renderer: SceneRenderer):
         camera = renderer.camera
@@ -109,8 +101,7 @@ class Mesh(Node):
             self.light_uniform_buffer_size,
         )
 
-        pass_enc.set_pipeline(self.pipeline)
-        pass_enc.set_bind_group(0, self.bind_group)
-        pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.set_index_buffer(self.index_buffer, self.index_format)
-        pass_enc.draw_indexed(len(self.index_data))
+        for primitive in self.primitives:
+            primitive.draw(renderer)
+
+        super().draw(renderer)

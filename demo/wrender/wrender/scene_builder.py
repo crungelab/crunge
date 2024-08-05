@@ -9,6 +9,7 @@ import crunge.wgpu.utils as utils
 from crunge import gltf
 
 from .builder import Builder
+from .builder_context import BuilderContext
 from .scene import Scene
 #from .node_builder import NodeBuilder
 from .poly_node_builder import PolyNodeBuilder
@@ -16,11 +17,9 @@ from .poly_node_builder import PolyNodeBuilder
 from .debug import debug_node
 
 class SceneBuilder(Builder):
-    scene: Scene
-    tf_scene: gltf.Scene
-
     def __init__(self) -> None:
         self.scene = Scene()
+        self.tf_scene: gltf.Scene = None
     
     def build(self, scene_path:Path):
         self.scene = scene = Scene()
@@ -30,6 +29,7 @@ class SceneBuilder(Builder):
 
         self.tf_model = tf_model = gltf.Model()
         logger.debug(f"tf_model_: {tf_model}")
+        self.context = BuilderContext(self.scene, tf_model)
 
         res, err, warn = loader.load_ascii_from_file(tf_model, str(scene_path))
 
@@ -62,6 +62,6 @@ class SceneBuilder(Builder):
     def build_node(self, tf_node):
         logger.debug(f"tf_node: {tf_node}")
         #node_builder = NodeBuilder(self.tf_model, tf_node)
-        node_builder = PolyNodeBuilder(self.tf_model, tf_node)
+        node_builder = PolyNodeBuilder(self.context, tf_node)
         node = node_builder.build()
         self.scene.add_child(node)

@@ -13,8 +13,8 @@ import crunge.wgpu.utils as utils
 from .scene_builder import SceneBuilder
 from .viewer import Viewer
 
-models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
-#models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
+#models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
+models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class WRender:
     def __init__(self):
@@ -36,10 +36,11 @@ class WRender:
         #model = "BoxTextured"
         #model = "BoomBox"
         #model = "Buggy"
-        #model = "CesiumMilkTruck"
+        #model = "CesiumMan"
+        model = "CesiumMilkTruck"
         #model = "Cube"
         #model = "Corset"
-        model = "DamagedHelmet"
+        #model = "DamagedHelmet"
         #model = "Duck"
         #model = "FlightHelmet"
         #model = "Fox" #No normals, no indices

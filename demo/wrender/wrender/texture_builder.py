@@ -8,6 +8,7 @@ from crunge import gltf
 
 from .debug import debug_texture, debug_image
 from .model_builder import ModelBuilder
+from .builder_context import BuilderContext
 from .texture import Texture
 
 
@@ -15,8 +16,8 @@ class TextureBuilder(ModelBuilder):
     name: str = None
     texture: Texture = None
 
-    def __init__(self, name: str, tf_model: gltf.Model, texture_info: gltf.TextureInfo) -> None:
-        super().__init__(tf_model)
+    def __init__(self, name: str, context: BuilderContext, texture_info: gltf.TextureInfo) -> None:
+        super().__init__(context)
         self.texture_info = texture_info
         self.texture = Texture(name)
 

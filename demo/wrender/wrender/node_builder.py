@@ -5,12 +5,13 @@ import glm
 from crunge import gltf
 
 from .model_builder import ModelBuilder
+from .builder_context import BuilderContext
 from .node import Node
 from .debug import debug_node
 
 class NodeBuilder(ModelBuilder):
-    def __init__(self, tf_model: gltf.Model, tf_node: gltf.Node) -> None:
-        super().__init__(tf_model)
+    def __init__(self, context: BuilderContext, tf_node: gltf.Node) -> None:
+        super().__init__(context)
         self.tf_node = tf_node
         self.node = None
 
@@ -51,7 +52,7 @@ class NodeBuilder(ModelBuilder):
             self.node.matrix = matrix
             transform = transform * matrix
 
-        self.node.transform = transform
+        #self.node.transform = transform
 
     def build_children(self):
         for tf_child in self.tf_node.children:
@@ -60,7 +61,7 @@ class NodeBuilder(ModelBuilder):
 
     def build_child(self, child: gltf.Node) -> Node:
         from .poly_node_builder import PolyNodeBuilder
-        builder = PolyNodeBuilder(self.tf_model, child)
+        builder = PolyNodeBuilder(self.context, child)
         return builder.build()
     '''
     def build_child(self, child: gltf.Node) -> Node:
