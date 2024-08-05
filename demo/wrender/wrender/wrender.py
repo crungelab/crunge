@@ -1,13 +1,6 @@
 import os
-import time
-import sys
-import math
 from pathlib import Path
-import tkinter
-import tkinter.filedialog
-import glm
 
-from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from .scene_builder import SceneBuilder
@@ -51,7 +44,6 @@ class WRender:
         scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Binary" / f"{model}.glb"
-        #scene_path = tkinter.filedialog.askopenfilename(initialdir = models_root, title = "Select file", filetypes = (("gltf files","*.gltf"),("glb files","*.glb"),("all files","*.*")))
         scene = SceneBuilder().build(scene_path)
         #exit()
         #Viewer().create().show(scene)

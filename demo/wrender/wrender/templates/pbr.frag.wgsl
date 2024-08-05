@@ -73,7 +73,6 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% endif %}
 
   {% if material.has_base_color_texture %}
-  //let baseColorMap = textureSample(baseColorTexture, baseColorSampler, uv);
   let baseColorMap = linearSample(baseColorTexture, baseColorSampler, uv);
   surface.baseColor = baseColor * baseColorMap;
   {% else %}
@@ -83,6 +82,8 @@ fn GetSurface(input : VertexOutput) -> Surface {
 
   {% if material.has_metallic_roughness_texture %}
   let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
+  //let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv).rgb;
+  //let metalRough = linearSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
   surface.metallic = material.metallicFactor * metalRough.b;
   surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
   {% else %}
@@ -121,7 +122,8 @@ fn GetSurface(input : VertexOutput) -> Surface {
 fn GetLight(input : VertexOutput) -> Light {
   var light : Light;
   light.kind = LightKind_Spot;
-  light.v = normalize(lightUniform.position - input.frag_pos);
+  //light.v = normalize(lightUniform.position - input.frag_pos);
+  light.v = lightUniform.position - input.frag_pos;
   light.color = lightUniform.color;
   //light.range = lightUniform.range;
   light.range = 10.0;

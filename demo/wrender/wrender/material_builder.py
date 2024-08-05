@@ -63,8 +63,8 @@ class MaterialBuilder(ModelBuilder):
             self.occlusion_strength = tf_material.occlusion_texture.strength
             self.build_texture('occlusion', tf_material.occlusion_texture)
 
-        #emissive_factor = tf_material.emissiveFactor if tf_material.emissiveFactor else (1, 1, 1)
-        emissive_factor = (0, 0, 0) if not tf_material.emissive_factor else tf_material.emissive_factor
+        emissive_factor = tf_material.emissive_factor if tf_material.emissive_factor else (1, 1, 1)
+        #emissive_factor = (0, 0, 0) if not tf_material.emissive_factor else tf_material.emissive_factor
         material.emissive_factor = emissive_factor
         logger.debug(f"emissive_factor: {emissive_factor}")
 
@@ -76,8 +76,10 @@ class MaterialBuilder(ModelBuilder):
     
     def build_texture(self, name: str, texture_info: gltf.TextureInfo) -> None:
         debug_texture_info(texture_info)
+        '''
         if texture_info.index < 0:
             logger.debug(f"texture_info.index < 0: {texture_info.index}")
             return
-        texture = TextureBuilder(name, self.context, texture_info).build()
+        '''
+        texture = TextureBuilder(self.context, name, texture_info).build()
         self.material.add_texture(texture)

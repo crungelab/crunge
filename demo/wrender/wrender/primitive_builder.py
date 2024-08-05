@@ -26,8 +26,8 @@ from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, Tangen
 from .material_builder import MaterialBuilder
 from .material import Material
 
-#from .shader import VertexShaderBuilder, FragmentShaderBuilder
-from .shader_og import VertexShaderBuilder, FragmentShaderBuilder
+from .shader import VertexShaderBuilder, FragmentShaderBuilder
+#from .shader_og import VertexShaderBuilder, FragmentShaderBuilder
 
 from .normals import compute_normals
 from .tangents import compute_tangents
@@ -132,7 +132,6 @@ class PrimitiveBuilder(ModelBuilder):
                 logger.debug(f"range_values: {range_values}")
                 data = data / range_values
                 # logger.debug(data)
-                # exit()
             self.vertex_table.add_column(UvColumn("uv", data))
         elif name == "COLOR_0":
             self.vertex_table.add_column(RgbaColumn("color", data))

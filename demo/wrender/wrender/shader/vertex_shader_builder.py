@@ -1,7 +1,6 @@
 from loguru import logger
 
 from crunge import wgpu
-import crunge.wgpu.utils as utils
 
 from ..vertex_table import VertexTable
 from .shader_builder import ShaderBuilder

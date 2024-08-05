@@ -16,7 +16,7 @@ class TextureBuilder(ModelBuilder):
     name: str = None
     texture: Texture = None
 
-    def __init__(self, name: str, context: BuilderContext, texture_info: gltf.TextureInfo) -> None:
+    def __init__(self, context: BuilderContext, name: str, texture_info: gltf.TextureInfo) -> None:
         super().__init__(context)
         self.texture_info = texture_info
         self.texture = Texture(name)
