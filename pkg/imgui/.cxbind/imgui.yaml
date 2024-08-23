@@ -1,0 +1,115 @@
+source: '../../depot/imgui/imgui.h'
+target: 'src/crunge/imgui/bindings/generated.cpp'
+
+prefixes: [ImGui, Im]
+
+module: _imgui
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
+  '-DIMGUI_DISABLE_OBSOLETE_KEYIO=1',
+]
+
+defaults:
+  'out_h': '0'
+  'out_s': '0'
+  'out_v': '0'
+  'out_r': '0'
+  'out_g': '0'
+  'out_b': '0'
+  'out_ini_size': '0'
+
+
+# Wrapped
+
+#TODO:  I can probably generate the next four if I use a wrapper for the opaque type.
+'function.ImGui::CreateContext': {exclude: true}
+'function.ImGui::DestroyContext': {exclude: true}
+'function.ImGui::GetCurrentContext': {exclude: true}
+'function.ImGui::SetCurrentContext': {exclude: true}
+
+'function.ImGui::SetDragDropPayload': {exclude: true}
+'function.ImGui::Combo': {exclude: true}
+'function.ImGui::MenuItem': {exclude: true}
+'function.ImGui::Selectable': {exclude: true}
+'function.ImGui::ListBox': {exclude: true}
+'function.ImGui::InputText': {exclude: true}
+'function.ImGui::InputTextMultiline': {exclude: true}
+'function.ImGui::CollapsingHeader': {exclude: true}
+'function.ImGui::PlotLines': {exclude: true}
+'function.ImGui::PlotHistogram': {exclude: true}
+'field.ImDrawData::CmdLists': {exclude: true}
+'function.ImGui::AddPolyline': {exclude: true}
+'field.ImGui::MouseDown': {exclude: true}
+'field.ImGui::KeysDown': {exclude: true}
+'field.ImGui::KeyMap': {exclude: true}
+'field.ImGui::InputCharacters': {exclude: true} #TODO: renamed?
+'field.ImGui::NavInputs': {exclude: true} #TODO: renamed?
+'method.ImFontAtlas::AddFontFromFileTTF': {exclude: true}
+'method.ImFontAtlas::GetTexDataAsAlpha8': {exclude: true}
+'method.ImFontAtlas::GetTexDataAsRGBA32': {exclude: true}
+'field.ImGuiStyle::Colors': {exclude: true}
+
+# Internal / Ignored
+
+'function.ImGui::TableGetColumnName': {exclude: true} #TODO: wrap or something
+'field.ImGuiTableColumnSortSpecs::SortDirection': {exclude: true}
+'field.ImFontGlyph::Colored': {exclude: true}
+'function.ImGui::GetAllocatorFunctions': {exclude: true}
+'field.ImGuiTextFilter::Filters': {exclude: true}
+'field.ImGuiStorage::Data': {exclude: true}
+'field.ImFontAtlas::TexPixelsAlpha8': {exclude: true}
+'field.ImFontAtlas::TexPixelsRGBA32': {exclude: true}
+'field.ImFontAtlas::TexWidth': {exclude: true}
+'field.ImFontAtlas::TexHeight': {exclude: true}
+'field.ImFontAtlas::TexUvScale': {exclude: true}
+'field.ImFontAtlas::TexUvWhitePixel': {exclude: true}
+'field.ImFontAtlas::Fonts': {exclude: true}
+'field.ImFontAtlas::CustomRects': {exclude: true}
+'field.ImFontAtlas::ConfigData': {exclude: true}
+'field.ImFontAtlas::CustomRectIds': {exclude: true}
+'method.ImFontAtlas::AddCustomRectRegular': {exclude: true}
+'method.ImFontAtlas::AddCustomRectFontGlyph': {exclude: true}
+'method.ImFontAtlas::GetCustomRectByIndex': {exclude: true}
+'method.ImFontAtlas::CalcCustomRectUV': {exclude: true}
+'method.ImFontAtlas::GetMouseCursorTexData': {exclude: true}
+'field.ImFontGlyph::Codepoint': {exclude: true}
+'field.ImFontGlyph::Visible': {exclude: true}
+'method.ImFont::CalcTextSizeA': {exclude: true}
+'function.ImGui::SetNextWindowSizeConstraints': {exclude: true}
+'function.ImGui::SetAllocatorFunctions': {exclude: true}
+'function.ImGui::MemAlloc': {exclude: true}
+'function.ImGui::MemFree': {exclude: true}
+'method.ImGuiIO::GetClipboardTextFn': {exclude: true}
+'method.ImGuiIO::SetClipboardTextFn': {exclude: true}
+'method.ImGuiIO::ImeSetInputScreenPosFn': {exclude: true}
+'field.ImDrawCmd::UserCallback': {exclude: true}
+'field.ImColor::HSV': {exclude: true}
+'struct.ImGuiTextBuffer': {exclude: true} #TODO:Is this causing the link error? ImGuiTextBuffer::EmptyString
+'struct.CustomRect': {exclude: true}
+'struct.ImGuiPlatformIO': {exclude: true}
+'struct.ImGuiPlatformMonitor': {exclude: true}
+'struct.ImGuiDockContext': {exclude: true}
+'struct.ImGuiDockNodeSettings': {exclude: true}
+'struct.ImGuiListClipper': {exclude: true}
+'struct.ImGuiContext': {exclude: true}
+'field.ImGuiIO::SetPlatformImeDataFn': {exclude: true}
+'field.ImGuiIO::Ctx': {exclude: true}
+'struct.ImGuiDockRequest': {exclude: true}
+'field.ImGuiInputTextCallbackData::Ctx': {exclude: true}
+
+# Overloads
+
+'function.ImGui::IsPopupOpen': {overload: true}
+'function.ImGui::SetScrollX': {overload: true}
+'function.ImGui::SetScrollY': {overload: true}
+'function.ImGui::SetScrollFromPosX': {overload: true}
+'function.ImGui::SetScrollFromPosY': {overload: true}
+'function.ImGui::IsKeyDown': {overload: true}
+'function.ImGui::IsKeyPressed': {overload: true}
+'function.ImGui::IsKeyReleased': {overload: true}
+'function.ImGui::IsMouseDown': {overload: true}
+'function.ImGui::IsMouseClicked': {overload: true}
+'function.ImGui::IsMouseReleased': {overload: true}

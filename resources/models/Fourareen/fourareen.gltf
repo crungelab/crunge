@@ -1,0 +1,228 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 59664,
+      "max": [
+        3.198452949523926,
+        0.0646980032324791,
+        0.9727750420570374
+      ],
+      "min": [
+        -3.0631918907165527,
+        -1.5655109882354736,
+        -1.0775970220565796
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 715968,
+      "componentType": 5126,
+      "count": 59664,
+      "max": [
+        1.0,
+        0.999972403049469,
+        1.0
+      ],
+      "min": [
+        -1.0,
+        -0.9999976754188538,
+        -1.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 59664,
+      "max": [
+        1.0,
+        0.9999993443489075,
+        1.0,
+        1.0
+      ],
+      "min": [
+        -1.0,
+        -1.0,
+        -1.0,
+        -1.0
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 59664,
+      "max": [
+        0.9965276122093201,
+        0.9999381303787231
+      ],
+      "min": [
+        6.695019692415372e-05,
+        6.127350206952542e-05
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 59664,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Scottish Maritime Museum (https://sketchfab.com/ScottishMaritimeMuseum)",
+      "license": "CC0-1.0 (http://creativecommons.org/publicdomain/zero/1.0/)",
+      "source": "https://sketchfab.com/3d-models/venus-a-shetland-fourareen-with-base-4c903a14567f47fcb9d1bbf3e38ca502",
+      "title": "\"Venus\", a Shetland fourareen (with base)"
+    },
+    "generator": "Sketchfab-12.67.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 238656,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 477312,
+      "byteOffset": 238656,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1431936,
+      "byteOffset": 715968,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 954624,
+      "byteOffset": 2147904,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 3102528,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/ShetlandBoat20K_2_Material_baseColor.png"
+    },
+    {
+      "uri": "textures/ShetlandBoat20K_2_Material_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "ShetlandBoat20K_2_Material",
+      "normalTexture": {
+        "index": 1
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 4,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -0.9993295669555664,
+        0.03661139309406258,
+        0.0,
+        0.0,
+        0.03661139309406258,
+        0.9993295669555664,
+        0.0,
+        0.135284423828125,
+        -0.800398647785187,
+        0.8302589654922483,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "ShetlandBoat20K.obj.cleaner.materialmerger.gles"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_2"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+import math
+
+from loguru import logger
+import glm
+
+from ...sprite import Sprite
+from ...node_2d import Node2D
+from ...model_2d import DynamicModel2D
+from ...texture_atlas_kit import TextureAtlasKit
+from ...resource_kit import ResourceKit
+from ...geom import BoxGeom
+from .collision_type import CollisionType
+
+class Laser(DynamicModel2D):
+    def __init__(self, position: glm.vec2, angle: float, speed: glm.vec2) -> None:
+        super().__init__(position, geom=BoxGeom)
+        self.angle = angle
+        self.speed = speed
+        path = ResourceKit().root / "spaceshooter" / "sheet.xml"
+        atlas = TextureAtlasKit().load_xml(path)
+        logger.debug(f"atlas: {atlas}")
+        
+        texture = atlas.get("laserBlue01.png")
+
+        self.vu = Sprite(texture)
+        self.size = texture.size
+
+    def add_shape(self, shape):
+        shape.collision_type = CollisionType.LASER
+        super().add_shape(shape)
+
+    def update(self, dt):
+        super().update(dt)
+        #self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
+        rotation = self._rotation + math.pi / 2
+        direction = glm.vec2(math.cos(rotation), math.sin(rotation))
+        self.body.velocity = tuple(direction * self.speed)

@@ -1,0 +1,7 @@
+export CMAKE_GENERATOR=Ninja
+export CMAKE_C_COMPILER=/usr/bin/clang
+export CMAKE_CXX_COMPILER=/usr/bin/clang++
+export CMAKE_CXX_FLAGS=-stdlib=libc++
+
+#export CXX=clang++
+#export LDFLAGS=-fuse-ld=lld

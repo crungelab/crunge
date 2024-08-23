@@ -1,0 +1,8 @@
+Model Information:
+* title:	"Venus", a Shetland fourareen (with base)
+* source:	https://sketchfab.com/3d-models/venus-a-shetland-fourareen-with-base-4c903a14567f47fcb9d1bbf3e38ca502
+* author:	Scottish Maritime Museum (https://sketchfab.com/ScottishMaritimeMuseum)
+
+Model License:
+* license type:	CC0-1.0 (http://creativecommons.org/publicdomain/zero/1.0/)
+* requirements:	Credit is not mandatory. Commercial use is allowed.

@@ -1,0 +1,4 @@
+-e ./tool/dawny
+-e ../procure
+-e ../cxbind
+-e ../cxbuild

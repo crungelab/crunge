@@ -1,0 +1,28 @@
+source: '../../depot/gltf/tiny_gltf.h'
+target: 'src/crunge/gltf/bindings/generated.cpp'
+
+module: _gltf
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+]
+
+# Wrapped
+# These write to err and warn.  Not good
+'function.tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
+
+# Internal / Ignored
+
+'struct.tinygltf::FsCallbacks': {exclude: true}
+'struct.tinygltf::URICallbacks': {exclude: true}
+#'class.tinygltf::Value': {exclude: true}
+'function.tinygltf::Value::Get': {exclude: true}
+
+# Not sure why it's choking on the last void*
+'function.tinygltf::GetFileSizeInBytes': {exclude: true}
+# std::ostream& ??
+'function.tinygltf::TinyGLTF::WriteGltfSceneToStream': {exclude: true}
+
+
+# Overloads

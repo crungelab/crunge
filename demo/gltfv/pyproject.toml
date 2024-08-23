@@ -1,0 +1,23 @@
+[tool.setuptools]
+packages = ["gltfv"]
+
+[project]
+name = "gltfv"
+version = "0.1.0"
+description = 'Crunge WebGPU/GLTF Demo'
+requires-python = ">=3.8"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "loguru ==0.7.2",
+    "click ==8.1.7",
+    "glfw ==2.7.0",
+    "PyGLM ==2.7.1",
+
+    "Jinja2 ==3.1.4",
+    #"numpy ==2.0.1",
+    #"imageio ==2.33.1",
+]
+
+[project.scripts]
+gltfv = 'gltfv.cli:cli'

@@ -1,0 +1,140 @@
+# TODO: We need to get this from CMake info somehow ...
+source: '/home/kurt/Dev/crunge/_cxbuild/build/depot/dawn/gen/include/dawn/webgpu_cpp.h'
+
+target: 'src/crunge/wgpu/bindings/wgpu.cpp'
+
+module: _wgpu
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-I../../depot/dawn/include',
+  '-I/home/kurt/Dev/crunge/_cxbuild/build/depot/dawn/gen/include',
+]
+
+defaults:
+  size: WGPU_WHOLE_SIZE
+
+# Internal / Ignored
+
+ #TODO: Should skip templates in the transpiler
+'class.wgpu::IsWGPUBitmask': {exclude: true}
+
+
+# mValue is private
+'class.wgpu::Bool': {exclude: true}
+# ?
+'class.std::hash': {exclude: true}
+
+# Function pointers and callbacks.  TODO!
+'function.wgpu::GetProcAddress': {exclude: true}
+
+'field.wgpu::BufferHostMappedPointer::disposeCallback': {exclude: true}
+'field.wgpu::BufferMapCallbackInfo::callback': {exclude: true}
+'field.wgpu::QueueWorkDoneCallbackInfo::callback': {exclude: true}
+'field.wgpu::RequestAdapterCallbackInfo::callback': {exclude: true}
+'field.wgpu::RequestDeviceCallbackInfo::callback': {exclude: true}
+'field.wgpu::CreateComputePipelineAsyncCallbackInfo::callback': {exclude: true}
+'field.wgpu::CreateRenderPipelineAsyncCallbackInfo::callback': {exclude: true}
+
+'field.wgpu::PopErrorScopeCallbackInfo::callback': {exclude: true}
+'field.wgpu::PopErrorScopeCallbackInfo::oldCallback': {exclude: true}
+
+'field.wgpu::UncapturedErrorCallbackInfo::callback': {exclude: true}
+
+'field.wgpu::DeviceLostCallbackInfo::callback': {exclude: true}
+'struct.wgpu::DawnCacheDeviceDescriptor': {exclude: true}
+
+# Implemented in main.cpp
+
+'struct.wgpu::detail::DeviceDescriptor': {exclude: true}
+'struct.wgpu::DeviceDescriptor': {exclude: true}
+#'field.wgpu::detail::DeviceDescriptor::deviceLostCallback': {exclude: true}
+
+'method.wgpu::Queue::OnSubmittedWorkDone': {exclude: true}
+'method.wgpu::ShaderModule::GetCompilationInfo': {exclude: true}
+'method.wgpu::Device::PopErrorScope': {exclude: true}
+'method.wgpu::Device::CreateRenderPipelineAsync': {exclude: true}
+'method.wgpu::Device::CreateComputePipelineAsync': {exclude: true}
+'method.wgpu::Buffer::MapAsync': {exclude: true}
+'method.wgpu::Adapter::RequestDevice': {exclude: true}
+
+'field.wgpu::CompilationInfoCallbackInfo::callback': {exclude: true}
+
+# Deleted Constructors
+'ctor.wgpu::SurfaceCapabilities::SurfaceCapabilities': {exclude: true}
+'ctor.wgpu::AdaptorInfo::AdaptorInfo': {exclude: true}
+'ctor.wgpu::SharedBufferMemoryEndAccessState::SharedBufferMemoryEndAccessState': {exclude: true}
+'ctor.wgpu::DrmFormatCapabilities::DrmFormatCapabilities': {exclude: true}
+
+# These have this signature:  const char* const * 
+'field.wgpu::DawnInstanceDescriptor::additionalRuntimeSearchPaths': {exclude: true}
+
+'field.wgpu::DawnTogglesDeviceDescriptor::forceEnabledToggles': {exclude: true}
+'field.wgpu::DawnTogglesDeviceDescriptor::forceDisabledToggles': {exclude: true}
+
+'field.wgpu::DawnTogglesDescriptor::enabledToggles': {exclude: true}
+'field.wgpu::DawnTogglesDescriptor::disabledToggles': {exclude: true}
+
+'field.wgpu::DawnWGSLBlocklist::blocklistedFeatures': {exclude: true}
+
+# Wrapped
+'method.wgpu::RenderPassEncoder::SetBindGroup': {exclude: true} #TODO: Signatures match but got a TypeError. Strange.
+'method.wgpu::ComputePassEncoder::SetBindGroup': {exclude: true} #TODO: Signatures match but got a TypeError. Strange.
+'method.wgpu::Instance::RequestAdapter': {exclude: true}
+'method.wgpu::Adapter::GetProperties': {exclude: true}
+
+# Read Only
+# error: use of deleted function ‘wgpu::AdapterProperties::AdapterProperties(const wgpu::AdapterProperties&)’
+'struct.wgpu::AdapterProperties': {readonly: true}
+'struct.wgpu::AdapterPropertiesMemoryHeaps': {readonly: true}
+'struct.wgpu::SharedTextureMemoryEndAccessState': {readonly: true}
+
+# Need initializers
+'struct.wgpu::BindGroupLayoutDescriptor': {gen_kw_init: true}
+'struct.wgpu::BindGroupLayoutEntry': {gen_kw_init: true}
+'struct.wgpu::SamplerBindingLayout': {gen_kw_init: true}
+'struct.wgpu::TextureBindingLayout': {gen_kw_init: true}
+'struct.wgpu::BufferBindingLayout': {gen_kw_init: true}
+'struct.wgpu::BindGroupDescriptor': {gen_kw_init: true}
+'struct.wgpu::ShaderModuleDescriptor': {gen_kw_init: true}
+'struct.wgpu::ShaderModuleWGSLDescriptor': {gen_kw_init: true}
+'struct.wgpu::TextureDescriptor': {gen_kw_init: true}
+'struct.wgpu::BufferDescriptor': {gen_init: true}
+'struct.wgpu::PipelineLayoutDescriptor': {gen_kw_init: true}
+'struct.wgpu::ColorTargetState': {gen_kw_init: true}
+'struct.wgpu::FragmentState': {gen_kw_init: true}
+'struct.wgpu::VertexState': {gen_kw_init: true}
+'struct.wgpu::DepthStencilState': {gen_kw_init: true}
+'struct.wgpu::RenderPipelineDescriptor': {gen_kw_init: true}
+'struct.wgpu::RenderPassColorAttachment': {gen_kw_init: true}
+'struct.wgpu::RenderPassDescriptor': {gen_kw_init: true}
+'struct.wgpu::RenderPassDepthStencilAttachment': {gen_kw_init: true}
+'struct.wgpu::CommandBuffer': {gen_init: true}
+'struct.wgpu::SurfaceDescriptorFromWindowsHWND': {gen_kw_init: true}
+'struct.wgpu::SurfaceDescriptor': {gen_kw_init: true}
+'struct.wgpu::SwapChainDescriptor': {gen_kw_init: true}
+'struct.wgpu::ImageCopyBuffer': {gen_init: true}
+'struct.wgpu::ImageCopyTexture': {gen_kw_init: true}
+'struct.wgpu::TextureDataLayout': {gen_kw_init: true}
+'struct.wgpu::VertexAttribute': {gen_kw_init: true}
+'struct.wgpu::VertexBufferLayout': {gen_kw_init: true}
+'struct.wgpu::PrimitiveState': {gen_kw_init: true}
+'struct.wgpu::BindGroupEntry': {gen_kw_init: true}
+'struct.wgpu::Extent3D': {gen_init: true}
+'struct.wgpu::BlendState': {gen_kw_init: true}
+'struct.wgpu::BlendComponent': {gen_kw_init: true}
+'struct.wgpu::SamplerDescriptor': {gen_kw_init: true}
+'struct.wgpu::TextureViewDescriptor': {gen_kw_init: true}
+'struct.wgpu::StencilFaceState': {gen_kw_init: true}
+'struct.wgpu::MultisampleState': {gen_kw_init: true}
+
+'struct.wgpu::ComputePipelineDescriptor': {gen_kw_init: true}
+'struct.wgpu::ProgrammableStageDescriptor': {gen_kw_init: true}
+'struct.wgpu::ComputePassDescriptor': {gen_kw_init: true}
+
+# Overloaded
+#'method.wgpu::Adapter::RequestDevice': {overload: true}
+
+# Holders
+#'class.wgpu::Buffer': {holder: wgpu::Ref}

@@ -1,0 +1,21 @@
+source: '../../depot/sdl/include/SDL3/SDL_events.h'
+target: 'src/crunge/sdl/bindings/sdl_events.cpp'
+
+prefixes: [SDL_EVENT_, SDL_]
+
+module: _sdl
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-I../../depot/sdl/include',
+]
+
+# Wrapped
+'function.SDL_PollEvent': {exclude: true}
+# Internal / Ignored
+'function.SDL_GetEventFilter': {exclude: true}
+
+'field.SDL_TextEditingCandidatesEvent::candidates': {exclude: true}
+
+# Overloads

@@ -1,0 +1,31 @@
+[tool.setuptools]
+packages = ["trimeshv"]
+
+[project]
+name = "trimeshv"
+version = "0.1.0"
+description = 'Crunge WebGPU/Trimesh Demo'
+requires-python = ">=3.10"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "loguru ==0.7.2",
+    "click ==8.1.7",
+    "glfw ==2.7.0",
+    "PyGLM ==2.7.1",
+    "trimesh[easy] ==4.4.3",
+]
+
+[project.scripts]
+trimeshv = 'trimeshv.cli:cli'
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+  "debugpy",
+]
+
+[tool.hatch.envs.default.scripts]
+cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=ragamuffin --cov=tests {args}"
+no-cov = "cov --no-cov {args}"

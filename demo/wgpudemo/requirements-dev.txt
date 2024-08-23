@@ -1,0 +1,2 @@
+-e ../../pkg/core
+-e ../../pkg/wgpu

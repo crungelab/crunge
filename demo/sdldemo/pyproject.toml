@@ -1,0 +1,16 @@
+[tool.setuptools]
+packages = ["sdldemo"]
+
+[project]
+name = "sdldemo"
+version = "0.1.0"
+description = 'Crunge SDL Demo'
+requires-python = ">=3.10"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "loguru ==0.7.2",
+    "PyGLM ==2.7.1",
+    "trimesh ==4.4.3",
+    "imageio ==2.34.2",
+]
