@@ -44,10 +44,10 @@ class CameraController(Controller):
         self.process_mouse_movement(event.x, event.y)
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        logger.debug(f"mouse button: button={event.button}, state={event.state}")
+        #logger.debug(f"mouse button: button={event.button}, state={event.state}")
         if event.button == 1:
             if event.state:
-                logger.debug("Capturing mouse")
+                #logger.debug("Capturing mouse")
                 self.mouse_captured = True
                 self.first_mouse = True
             else:
@@ -57,7 +57,7 @@ class CameraController(Controller):
         pass
 
     def on_key(self, event: sdl.KeyboardEvent):
-        logger.debug(f"key: {event.key}")
+        #logger.debug(f"key: {event.key}")
         key = event.key
         state = event.state
         if key == sdl.SDLK_w and (state == 1 or event.repeat):

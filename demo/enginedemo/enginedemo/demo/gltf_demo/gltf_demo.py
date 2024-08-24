@@ -1,18 +1,20 @@
 import os
 from pathlib import Path
 
-
 from crunge.engine.gltf import GltfImporter
 
 from .viewer import Viewer
 
-models_root = Path(__file__).parent.parent.parent.parent.parent / "resources" / "models"
-#models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class GltfDemo:
     def __init__(self, scene_path: Path):
         self.scene_path = scene_path
+        self.create_importer()
+
+    def create_importer(self):
+        return GltfImporter()
 
     def run(self):
-        scene = GltfImporter().load(self.scene_path)
+        importer = self.create_importer()
+        scene = importer.load(self.scene_path)
         Viewer().create().show(scene).run()

@@ -92,18 +92,6 @@ fn reflectionToEquirectangularUV(normal: vec3<f32>, viewDir: vec3<f32>) -> vec2<
     return vec2<f32>(u, v);
 }
 
-/*fn reflectionToEquirectangularUV(r: vec3<f32>) -> vec2<f32> {
-    // Calculate spherical coordinates
-    let theta = atan2(r.z, r.x); // Longitude [-π, π]
-    let phi = asin(r.y);             // Latitude [-π/2, π/2]
-
-    // Map spherical coordinates to texture coordinates
-    let u = (theta / (2.0 * pi)) + 0.5;
-    let v = (phi / pi) + 0.5;
-
-    return vec2<f32>(u, v);
-}*/
-
 @fragment
 fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
 """
@@ -201,8 +189,6 @@ class FragmentShaderBuilder(ShaderBuilder):
 
             if material.has_texture("environment"):
                 self.out("""
-                let reflectionVector = normalize(reflect(-viewDir, normal));
-                //let envUv = reflectionToEquirectangularUV(reflectionVector);
                 let envUv = reflectionToEquirectangularUV(normal, -viewDir);
                 let envColor = textureSample(environmentTexture, environmentSampler, envUv).rgb;
                 // Adjust environment contribution based on roughness

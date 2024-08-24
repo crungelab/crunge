@@ -1,12 +1,9 @@
+from loguru import logger
+
 from ..builder import Builder
 from ..builder_context import BuilderContext
 from ..vertex_table import VertexTable
 
-from jinja2 import Environment, PackageLoader, select_autoescape
-env = Environment(
-    loader=PackageLoader("crunge.engine.gltf", "templates"),
-    autoescape=select_autoescape()
-)
 
 class Attribute:
     def __init__(self, name: str, type: str, location: int) -> None:
@@ -58,5 +55,6 @@ class ShaderBuilder(Builder):
             self.vertex_output.add_attribute(Attribute('bitangent', 'vec3<f32>', location))
 
     def generate(self, template_name: str):
-        template = env.get_template(template_name)
+
+        template = self.context.template_env.get_template(template_name)
         return template.render(self.__dict__)

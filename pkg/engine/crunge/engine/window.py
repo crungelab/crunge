@@ -125,7 +125,7 @@ class Window(Frame):
         self.surface.present()
 
     def on_window(self, event: sdl.WindowEvent):
-        logger.debug("window event")
+        #logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
                 self.resize(glm.ivec2(event.data1, event.data2))

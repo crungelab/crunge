@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from jinja2 import Environment, FileSystemLoader
 
 from crunge.engine.gltf import GltfImporter
 
@@ -8,7 +9,12 @@ from ..demo.gltf_demo import GltfDemo
 
 
 class AmbientLightDemo(GltfDemo):
-    pass
+    def create_importer(self):
+        importer = GltfImporter()
+        module_path = Path(__file__).resolve()
+        template_dir = module_path.parent / 'templates'
+        importer.push_template_loader(FileSystemLoader(template_dir))
+        return importer
 
 
 def main():
@@ -52,12 +58,14 @@ def main():
     # scene_path = models_root / "Character" / "Character.gltf"
     # scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
-    # scene_path = models_root / "sphere.gltf"
+    scene_path = models_root / "sphere.gltf"
     # scene_path = models_root / "teapot.gltf"
     # scene_path = models_root / "torusknot.gltf"
-    scene_path = models_root / "Fourareen" / "fourareen.gltf"
+    # scene_path = models_root / "Fourareen" / "fourareen.gltf"
 
-    AmbientLightDemo(scene_path=scene_path).run()
+    #AmbientLightDemo(scene_path=scene_path).run()
+    demo = AmbientLightDemo(scene_path=scene_path)
+    demo.run()
 
 
 if __name__ == "__main__":
