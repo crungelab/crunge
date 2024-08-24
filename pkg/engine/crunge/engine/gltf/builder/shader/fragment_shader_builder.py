@@ -44,7 +44,7 @@ class FragmentShaderBuilder(ShaderBuilder):
             self.add_binding(Binding(f'{texture.name}Texture', 'texture_2d<f32>', i*2+TEXTURE_BINDING_START+1, 0))
 
         shader_code = self.generate('fragment.wgsl')
-        logger.debug(f"fragment_shader_code:\n{shader_code}")
+        #logger.debug(f"fragment_shader_code:\n{shader_code}")
 
         shader_module: wgpu.ShaderModule = self.gfx.create_shader_module(shader_code)
 

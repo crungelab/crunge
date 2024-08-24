@@ -9,4 +9,4 @@ from .wrender import WRender
 def cli(ctx):
     ctx.ensure_object(dict)
     if ctx.invoked_subcommand is None:
-        WRender().run()
+        WRender().create().run()

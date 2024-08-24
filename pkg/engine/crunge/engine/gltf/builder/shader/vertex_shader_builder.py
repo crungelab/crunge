@@ -24,8 +24,7 @@ class VertexShaderBuilder(ShaderBuilder):
         self.create_assignments()
         super().build()
         shader_code = self.generate('vertex.wgsl')
-        logger.debug(f"vertex_shader_code:\n{shader_code}")
-        #exit()
+        #logger.debug(f"vertex_shader_code:\n{shader_code}")
         shader_module: wgpu.ShaderModule = self.gfx.create_shader_module(shader_code)
         return shader_module
 

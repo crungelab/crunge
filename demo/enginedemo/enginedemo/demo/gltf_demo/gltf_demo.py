@@ -6,8 +6,9 @@ from crunge.engine.gltf import GltfImporter
 from .viewer import Viewer
 
 
-class GltfDemo:
+class GltfDemo(Viewer):
     def __init__(self, scene_path: Path):
+        super().__init__()
         self.scene_path = scene_path
         self.create_importer()
 
@@ -17,4 +18,6 @@ class GltfDemo:
     def run(self):
         importer = self.create_importer()
         scene = importer.load(self.scene_path)
-        Viewer().create().show(scene).run()
+        #Viewer().create().show(scene).run()
+        self.show(scene)
+        super().run()

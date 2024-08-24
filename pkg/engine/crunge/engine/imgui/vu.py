@@ -6,10 +6,13 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from crunge import engine
 
 from crunge.core import as_capsule
-from crunge import sdl, wgpu
+
+from crunge import sdl
+from crunge import wgpu
+from crunge import engine
+
 import crunge.wgpu.utils as utils
 
 from crunge import imgui

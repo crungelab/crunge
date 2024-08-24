@@ -27,13 +27,12 @@ class App(Window):
         self.running = False
 
     def run(self):
+        self.running = True
+
         last_time = time.perf_counter()
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
-        self.running = True
         while self.running:
-            # TODO: !wasAlreadyWaited
-            # self.instance.process_events()
             self.instance.process_events()
 
             while event := sdl.poll_event():

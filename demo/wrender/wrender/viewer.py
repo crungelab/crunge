@@ -7,7 +7,11 @@ import tkinter.filedialog
 from loguru import logger
 import glm
 
-from crunge import wgpu, sdl, engine, imgui
+from crunge import sdl
+from crunge import wgpu
+from crunge import imgui
+from crunge import engine
+
 from crunge.engine import Renderer
 
 from crunge.engine.gltf import GltfImporter
@@ -58,7 +62,6 @@ class Viewer(engine.App):
         self.controller = ArcballCameraController(self, self.camera)
         self.controller.activate()
 
-        #self.run()
         return self
 
     def draw(self, renderer: Renderer):

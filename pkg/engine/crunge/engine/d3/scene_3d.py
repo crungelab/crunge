@@ -24,7 +24,8 @@ class Scene3D(Node3D):
         super().__init__()
         self.scene = self
 
-        self.ambient_light: AmbientLight = AmbientLight(glm.vec3(0.0, 0.502, 1.0), 1.0)
+        self.ambient_light = AmbientLight()
+        
         # Uniform Buffers
         self.ambient_light_uniform_buffer_size = sizeof(AmbientLightUniform)
         self.ambient_light_uniform_buffer = self.gfx.create_buffer(

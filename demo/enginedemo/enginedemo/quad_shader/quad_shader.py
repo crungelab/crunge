@@ -4,7 +4,8 @@ import sys
 from loguru import logger
 import glm
 
-from crunge import wgpu, imgui
+from crunge import wgpu
+from crunge import imgui
 from crunge.core import as_capsule
 from crunge.engine import Renderer
 

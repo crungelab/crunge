@@ -7,7 +7,10 @@ from crunge import engine
 from crunge.engine import Renderer
 
 from crunge.core import as_capsule
-from crunge import sdl, wgpu, imgui
+from crunge import sdl
+from crunge import wgpu
+from crunge import imgui
+
 import crunge.wgpu.utils as utils
 
 from ..layer import Layer

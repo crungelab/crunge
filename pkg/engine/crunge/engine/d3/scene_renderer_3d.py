@@ -1,4 +1,5 @@
-from crunge import wgpu, engine
+from crunge import wgpu
+from crunge import engine
 
 from .camera_3d import Camera3D
 

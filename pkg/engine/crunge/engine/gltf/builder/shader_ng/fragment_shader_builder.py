@@ -16,12 +16,18 @@ from .shader_builder import ShaderBuilder
 
 
 shader_code_fragment = """
+struct AmbientLight {
+    color: vec3<f32>,
+    energy: f32,
+}
+@group(0) @binding(1) var<uniform> ambientLight : AmbientLight;
+
 struct Light {
     position: vec3<f32>,
     color: vec3<f32>,
     energy: f32,
 }
-@group(0) @binding(1) var<uniform> light : Light;
+@group(0) @binding(2) var<uniform> light : Light;
 
 // Utility function for gamma correction
 const GAMMA = 2.200000048;

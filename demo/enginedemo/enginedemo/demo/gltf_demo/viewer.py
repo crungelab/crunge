@@ -7,7 +7,11 @@ import tkinter.filedialog
 from loguru import logger
 import glm
 
-from crunge import wgpu, sdl, engine, imgui
+from crunge import wgpu
+from crunge import sdl
+from crunge import engine
+from crunge import imgui
+
 from crunge.engine import Renderer
 
 from crunge.engine.gltf import GltfImporter

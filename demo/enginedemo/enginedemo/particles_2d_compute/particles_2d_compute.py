@@ -9,7 +9,9 @@ import numpy as np
 import glm
 
 from crunge.core import as_capsule
-from crunge import wgpu, imgui
+from crunge import wgpu
+from crunge import imgui
+
 import crunge.wgpu.utils as utils
 
 from crunge.engine import Renderer

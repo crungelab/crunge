@@ -4,7 +4,8 @@ import glm
 
 
 from crunge.core import as_capsule
-from crunge import sdl, wgpu
+from crunge import sdl
+from crunge import wgpu
 from crunge.wgpu import utils
 
 from .frame import Frame

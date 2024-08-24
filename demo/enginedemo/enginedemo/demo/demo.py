@@ -3,11 +3,7 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from crunge import sdl, engine
-from crunge.engine import Renderer
-
-from crunge import wgpu, imgui
-import crunge.wgpu.utils as utils
+from crunge import engine
 
 from .demo_view import DemoView
 

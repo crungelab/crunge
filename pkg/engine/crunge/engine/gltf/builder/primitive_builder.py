@@ -25,7 +25,6 @@ from crunge.engine.material import Material
 
 '''
 #from .shader import VertexShaderBuilder, FragmentShaderBuilder
-#from .shader_og import VertexShaderBuilder, FragmentShaderBuilder
 from .shader_ng import VertexShaderBuilder, FragmentShaderBuilder
 '''
 

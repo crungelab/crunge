@@ -9,9 +9,9 @@ from .viewer import Viewer
 #models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
 models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
-class WRender(Viewer):
+class WRender:
     def __init__(self):
-        super().__init__()
+        pass
 
     def run(self):
         #scene_path = models_root / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
@@ -56,12 +56,10 @@ class WRender(Viewer):
         scene = GltfImporter().load(scene_path)
 
         #Viewer().create().show(scene)
-        #Viewer().create().show(scene).run()
-        self.show(scene)
-        super().run()
+        Viewer().create().show(scene).run()
 
 def main():
-    WRender().create().run()
+    WRender().run()
 
 if __name__ == "__main__":
     main()

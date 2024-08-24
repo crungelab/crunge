@@ -2,7 +2,11 @@ import os
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
+import glm
 
+from crunge import imgui
+
+from crunge.engine.renderer import Renderer
 from crunge.engine.gltf import GltfImporter
 
 from ..demo.gltf_demo import GltfDemo
@@ -15,6 +19,17 @@ class AmbientLightDemo(GltfDemo):
         template_dir = module_path.parent / 'templates'
         importer.push_template_loader(FileSystemLoader(template_dir))
         return importer
+
+    def draw(self, renderer: Renderer):
+        imgui.begin("Ambient Light Demo")
+
+        changed, newColor = imgui.color_edit3("Ambient Color", list(self.scene.ambient_light.color))
+        if changed:
+            self.scene.ambient_light.color = glm.vec3(newColor)
+
+        imgui.end()
+
+        super().draw(renderer)
 
 
 def main():
@@ -58,14 +73,14 @@ def main():
     # scene_path = models_root / "Character" / "Character.gltf"
     # scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
-    scene_path = models_root / "sphere.gltf"
+    # scene_path = models_root / "sphere.gltf"
     # scene_path = models_root / "teapot.gltf"
     # scene_path = models_root / "torusknot.gltf"
-    # scene_path = models_root / "Fourareen" / "fourareen.gltf"
+    scene_path = models_root / "Fourareen" / "fourareen.gltf"
 
     #AmbientLightDemo(scene_path=scene_path).run()
     demo = AmbientLightDemo(scene_path=scene_path)
-    demo.run()
+    demo.create().run()
 
 
 if __name__ == "__main__":
