@@ -262,13 +262,21 @@ class PrimitiveBuilder(Builder):
         primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
 
         bgl_entries = [
+            # Camera
             wgpu.BindGroupLayoutEntry(
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
+            # Ambient Light
             wgpu.BindGroupLayoutEntry(
                 binding=1,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+            # Light
+            wgpu.BindGroupLayoutEntry(
+                binding=2,
                 visibility=wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
@@ -331,6 +339,11 @@ class PrimitiveBuilder(Builder):
             ),
             wgpu.BindGroupEntry(
                 binding=1,
+                buffer=self.scene.ambient_light_uniform_buffer,
+                size=self.scene.ambient_light_uniform_buffer_size,
+            ),
+            wgpu.BindGroupEntry(
+                binding=2,
                 buffer=self.mesh.light_uniform_buffer,
                 size=self.mesh.light_uniform_buffer_size,
             ),

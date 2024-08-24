@@ -14,8 +14,6 @@ from loguru import logger
 import numpy as np
 import glm
 
-# MAT4_SIZE = 4 * 4 * 4
-
 
 class Vec3(Structure):
     _fields_ = [
@@ -54,7 +52,7 @@ class CameraUniform(Structure):
     _fields_ = [
         ("model_matrix", Mat4),
         ("transform_matrix", Mat4),
-        #("normal_matrix", Mat3),
+        # ("normal_matrix", Mat3),
         ("normal_matrix", Mat4),
         ("position", Vec3),
     ]
@@ -63,30 +61,45 @@ class CameraUniform(Structure):
 assert sizeof(CameraUniform) % 16 == 0
 
 
+class AmbientLightUniform(Structure):
+    _fields_ = [
+        ("color", Vec3),
+        ("energy", c_float),
+        ("_pad2", c_float * 7),
+        
+    ]
+    # 48 bytes
+
+
+assert sizeof(AmbientLightUniform) % 16 == 0
+logger.debug(f"sizeof(AmbientLightUniform): {sizeof(AmbientLightUniform)}")
+assert sizeof(AmbientLightUniform) == 48
+
+
 class LightUniform(Structure):
     _fields_ = [
         ("position", Vec3),
         ("color", Vec3),
         ("range", c_float),
         ("_pad1", c_float),
-        ("intensity", c_float),
+        ("energy", c_float),
         ("_pad2", c_float),
-        #("_pad1", c_float * 2),
+        # ("_pad1", c_float * 2),
     ]
 
 
 assert sizeof(LightUniform) % 16 == 0
 
 
-def cast_matrix4(matrix):
+def cast_matrix4(matrix: glm.mat4):
     ptr = glm.value_ptr(matrix)
     return cast(ptr, POINTER(c_float * 16)).contents
 
 
-def cast_matrix3(matrix):
+def cast_matrix3(matrix: glm.mat3):
     ptr = glm.value_ptr(matrix)
     return cast(ptr, POINTER(c_float * 9)).contents
 
 
-def cast_vec3(vec):
+def cast_vec3(vec: glm.vec3):
     return Vec3(vec.x, vec.y, vec.z, 0.0)

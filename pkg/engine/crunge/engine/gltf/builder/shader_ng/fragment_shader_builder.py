@@ -19,7 +19,7 @@ shader_code_fragment = """
 struct Light {
     position: vec3<f32>,
     color: vec3<f32>,
-    intensity: f32,
+    energy: f32,
 }
 @group(0) @binding(1) var<uniform> light : Light;
 
@@ -182,7 +182,7 @@ class FragmentShaderBuilder(ShaderBuilder):
             let viewDir = normalize(cameraPos - fragPos);
             //let viewDir = normalize(fragPos - cameraPos);
                                                  
-            //let lightColor = light.color * light.intensity;
+            //let lightColor = light.color * light.energy;
             let lightColor = light.color * 5.0;
             let reflection = brdf(albedo.rgb, metallic, roughness, lightDir, -viewDir, normal);
             """)

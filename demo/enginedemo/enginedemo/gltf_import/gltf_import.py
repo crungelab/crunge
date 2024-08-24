@@ -12,7 +12,7 @@ def main():
     models_root = (
         Path(__file__).parent.parent.parent.parent.parent / "resources" / "models"
     )
-    models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
+    #models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
     # model = "2CylinderEngine"
     # model = "Avocado"
@@ -52,7 +52,7 @@ def main():
     # scene_path = models_root / "sphere.gltf"
     # scene_path = models_root / "teapot.gltf"
     # scene_path = models_root / "torusknot.gltf"
-    # scene_path = models_root / "Fourareen" / "fourareen.gltf"
+    scene_path = models_root / "Fourareen" / "fourareen.gltf"
 
     GltfImportDemo(scene_path=scene_path).run()
 

@@ -82,7 +82,7 @@ class Mesh(Node3D):
         light_uniform.color.z = 1.0
 
         light_uniform.range = 10.0
-        light_uniform.intensity = 10.0
+        light_uniform.energy = 10.0
 
         self.device.queue.write_buffer(
             self.light_uniform_buffer,

@@ -118,6 +118,14 @@ fn GetSurface(input : VertexOutput) -> Surface {
   return surface;
 }
 
+fn GetAmbientLight() -> AmbientLight {
+  var light : AmbientLight;
+  light.color = ambientLightUniform.color;
+  //light.energy = ambientLightUniform.energy;
+  light.energy = 10.0;
+  return light;
+}
+
 fn GetLight(input : VertexOutput) -> Light {
   var light : Light;
   //light.kind = LightKind_Spot;
@@ -128,20 +136,23 @@ fn GetLight(input : VertexOutput) -> Light {
   light.color = lightUniform.color;
   //light.range = lightUniform.range;
   light.range = 10.0;
-  //light.intensity = lightUniform.intensity;
-  light.intensity = 10.0;
+  //light.energy = lightUniform.energy;
+  light.energy = 10.0;
   return light;
 }
 
 @fragment
 fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
   var surface = GetSurface(input);
+  var ambientLight = GetAmbientLight();
   var light = GetLight(input);
 
   let reflection = lightRadiance(light, surface);
   //let ambient = surface.albedo * surface.ao;
-  let ambient = vec3<f32>(0.0, 0.502, 1.0);
-  let rgb = reflection + ambient + surface.emissive;
+  //let ambient = vec3<f32>(0.0, 0.502, 1.0);
+  let ambient = surface.albedo * ambientLight.color;
+  //let rgb = reflection + ambient + surface.emissive;
+  let rgb = ambient;
   let finalColor = linearToSRGB(rgb);
   return vec4<f32>(finalColor, surface.baseColor.a);             
 }

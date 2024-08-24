@@ -128,8 +128,8 @@ fn GetLight(input : VertexOutput) -> Light {
   light.color = lightUniform.color;
   //light.range = lightUniform.range;
   light.range = 10.0;
-  //light.intensity = lightUniform.intensity;
-  light.intensity = 10.0;
+  //light.energy = lightUniform.energy;
+  light.energy = 10.0;
   return light;
 }
 
