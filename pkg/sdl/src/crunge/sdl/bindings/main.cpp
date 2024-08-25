@@ -16,8 +16,6 @@
 
 namespace py = pybind11;
 
-// SDLWindowWrapper::SDLWindowWrapper(SDL_Window *window) : window(window) {}
-
 // Define an enum that mimics the old SDL initialization flags
 enum class InitFlags : SDL_InitFlags {
     INIT_TIMER      = SDL_INIT_TIMER,

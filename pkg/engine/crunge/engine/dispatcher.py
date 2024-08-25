@@ -1,18 +1,27 @@
+from typing import TypeAlias
+
 from crunge import sdl
 
 from loguru import logger
 
 from .base import Base
 
+DispatchResult: TypeAlias = bool | None
+
 class Dispatcher(Base):
+    EVENT_HANDLED = True
+    EVENT_UNHANDLED = None
+
     def __init__(self) -> None:
         pass
 
-    def dispatch(self, event) -> bool:
+    def dispatch(self, event) -> DispatchResult:
         #logger.debug(event)
         match event.__class__:
             case sdl.WindowEvent:
                 return self.on_window(event)
+            case sdl.TextInputEvent:
+                return self.on_text(event)
             case sdl.KeyboardEvent:
                 return self.on_key(event)
             case sdl.MouseMotionEvent:
@@ -32,8 +41,12 @@ class Dispatcher(Base):
             case _:
                 pass
     
+    def on_text(self, event: sdl.TextInputEvent):
+        #logger.debug(f"text: {event.text}")
+        pass
+
     def on_key(self, event: sdl.KeyboardEvent):
-        #logger.debug(f"key: {event.keysym.sym}")
+        #logger.debug(f"key: {event.key}")
         pass
 
     def on_mouse_enter(self, event: sdl.WindowEvent):
@@ -44,14 +57,14 @@ class Dispatcher(Base):
         #logger.debug("mouse leave")
         pass
 
-    def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> bool:
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> DispatchResult:
         #logger.debug(f"mouse motion: x={event.x}, y={event.y}")
         pass
 
-    def on_mouse_button(self, event: sdl.MouseButtonEvent) -> bool:
+    def on_mouse_button(self, event: sdl.MouseButtonEvent) -> DispatchResult:
         #logger.debug(f"mouse button: button={event.button}, state={event.state}")
         pass
 
-    def on_mouse_wheel(self, event: sdl.MouseWheelEvent) -> bool:
+    def on_mouse_wheel(self, event: sdl.MouseWheelEvent) -> DispatchResult:
         #logger.debug(f"mouse wheel: x={event.x}, y={event.y}")
         pass

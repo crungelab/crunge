@@ -16,6 +16,8 @@ import crunge.wgpu.utils as utils
 from ..layer import Layer
 
 from .vu import ImGuiVu
+from .keymap import keymap
+
 
 def compute_framebuffer_scale(window_size, frame_buffer_size):
     win_width, win_height = window_size
@@ -70,6 +72,19 @@ class ImGuiLayer(Layer):
         imgui.end_frame()
         super().post_draw(renderer)
 
+    def on_text(self, event: sdl.TextInputEvent):
+        logger.debug(f"text: {event.text}")
+        self.io.add_input_characters_utf8(event.text)
+
+    def on_key(self, event: sdl.KeyboardEvent):
+        #logger.debug(f"key: {event.key}")
+        if event.key in keymap:
+            self.io.add_key_event(keymap.get(event.key), event.state == 1)
+        else:
+            logger.debug(f"key not mapped: {event.key}")
+        if self.io.want_capture_keyboard:
+            return self.EVENT_HANDLED
+
     def on_mouse_enter(self, event: sdl.WindowEvent):
         super().on_mouse_enter(event)
         self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
@@ -86,7 +101,7 @@ class ImGuiLayer(Layer):
         self.io.add_mouse_pos_event(x, y)
         self.last_mouse = glm.vec2(x, y)
         if self.io.want_capture_mouse:
-            return True
+            return self.EVENT_HANDLED
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         super().on_mouse_button(event)
@@ -100,11 +115,11 @@ class ImGuiLayer(Layer):
         if button < 3:
             self.io.add_mouse_button_event(button, action)
         if self.io.want_capture_mouse:
-            return True
+            return self.EVENT_HANDLED
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
         x, y = event.x, event.y
         self.io.add_mouse_wheel_event(x, y)
         if self.io.want_capture_mouse:
-            return True
+            return self.EVENT_HANDLED
             

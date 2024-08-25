@@ -2,6 +2,8 @@ from loguru import logger
 
 from crunge import sdl
 
+from ....dispatcher import DispatchResult
+
 from ..controller import Controller
 from ...camera_3d import Camera3D
 
@@ -39,7 +41,7 @@ class CameraController(Controller):
     def process_mouse_movement(self, xpos, ypos):
         pass
 
-    def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> bool:
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> DispatchResult:
         if not self.mouse_captured:
             return
         self.process_mouse_movement(event.x, event.y)
