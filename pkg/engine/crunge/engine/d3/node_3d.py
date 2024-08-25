@@ -34,25 +34,20 @@ class Node3D(Base):
         return transform
 
     def attach(self, child: "Node3D"):
-        self.add_child(child)
+        child.parent = self
+        child.scene = self.scene
+        self.children.append(child)
+        child.on_attached()
 
     def on_attached(self):
         pass
 
     def detach(self, child: "Node3D"):
-        self.remove_child(child)
-        child.on_detach()
-
-    def on_detach(self):
-        pass
-
-    def add_child(self, child: "Node3D"):
-        child.parent = self
-        child.scene = self.scene
-        self.children.append(child)
-
-    def remove_child(self, child: "Node3D"):
         self.children.remove(child)
+        child.on_detached()
+
+    def on_detached(self):
+        pass
 
     def draw(self, renderer: Renderer3D):
         for child in self.children:

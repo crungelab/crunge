@@ -2,7 +2,6 @@ from .dispatcher import Dispatcher
 
 class Controller(Dispatcher):
     def __init__(self):
-        self.mouse_captured = False
         self.delta_time = 0
 
     def activate(self):

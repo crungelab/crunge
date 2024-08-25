@@ -85,6 +85,8 @@ class ImGuiLayer(Layer):
         x, y = event.x, event.y
         self.io.add_mouse_pos_event(x, y)
         self.last_mouse = glm.vec2(x, y)
+        if self.io.want_capture_mouse:
+            return True
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         super().on_mouse_button(event)
@@ -97,8 +99,12 @@ class ImGuiLayer(Layer):
         action = event.state == 1
         if button < 3:
             self.io.add_mouse_button_event(button, action)
+        if self.io.want_capture_mouse:
+            return True
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
         x, y = event.x, event.y
         self.io.add_mouse_wheel_event(x, y)
+        if self.io.want_capture_mouse:
+            return True
             

@@ -36,7 +36,8 @@ class App(Window):
             self.instance.process_events()
 
             while event := sdl.poll_event():
-                if not self.dispatch(event):
+                self.dispatch(event)
+                if event.type == sdl.EventType.QUIT:
                     self.running = False
 
             now = time.perf_counter()
@@ -60,4 +61,4 @@ class App(Window):
 
             self.update(frame_time)
 
-        self.device.destroy()
+        #self.device.destroy()

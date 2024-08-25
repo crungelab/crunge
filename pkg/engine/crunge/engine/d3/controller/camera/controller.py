@@ -10,6 +10,7 @@ class CameraController(Controller):
     def __init__(self, window, camera: Camera3D):
         super().__init__(window)
         self.camera = camera
+        self.mouse_captured = False
 
     @property
     def width(self):
@@ -38,7 +39,7 @@ class CameraController(Controller):
     def process_mouse_movement(self, xpos, ypos):
         pass
 
-    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> bool:
         if not self.mouse_captured:
             return
         self.process_mouse_movement(event.x, event.y)

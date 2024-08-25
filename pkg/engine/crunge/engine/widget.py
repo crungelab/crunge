@@ -55,9 +55,10 @@ class Widget(Dispatcher):
 
     def dispatch(self, event):
         #logger.debug(f"Widget.dispatch: {self}, {self.children}")
-        for child in self.children:
-            if not child.dispatch(event):
-                return False
+        #for child in self.children:
+        for child in self.children[::-1]:
+            if child.dispatch(event):
+                return True
         if self.controller is not None:
             return self.controller.dispatch(event) and super().dispatch(event)
         return super().dispatch(event)
