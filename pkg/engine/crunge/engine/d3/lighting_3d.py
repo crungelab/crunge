@@ -12,6 +12,6 @@ class Lighting3D:
     def remove_light(self, light: Light3D):
         self.lights.remove(light)
 
-    def apply(self, renderer):
+    def apply(self):
         for light in self.lights:
             light.apply()

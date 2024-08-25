@@ -10,12 +10,12 @@ from .renderer_3d import Renderer3D
 
 
 class Node3D(Base):
-    def __init__(self) -> None:
+    def __init__(self, translation = glm.vec3()) -> None:
         super().__init__()
         self.parent: "Node3D" = None
         self.scene: "Scene3D" = None
         self.children: List["Node3D"] = []
-        self.translation = glm.vec3(0.0)
+        self.translation = translation
         #self.rotation = glm.mat4(1.0)
         self.rotation = glm.quat(1.0, 0.0, 0.0, 0.0)
         self.scale = glm.vec3(1.0)

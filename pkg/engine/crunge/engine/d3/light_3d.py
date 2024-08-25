@@ -24,10 +24,10 @@ class Light3D(Node3D):
         self.energy = 1.0
         self.range = 10.0
 
-        self.light_uniform_buffer_size = sizeof(LightUniform)
-        self.light_uniform_buffer = self.gfx.create_buffer(
+        self.uniform_buffer_size = sizeof(LightUniform)
+        self.uniform_buffer = self.gfx.create_buffer(
             "Light Uniform Buffer",
-            self.light_uniform_buffer_size,
+            self.uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
 
@@ -48,10 +48,10 @@ class Light3D(Node3D):
         light_uniform.energy = self.energy
 
         self.device.queue.write_buffer(
-            self.light_uniform_buffer,
+            self.uniform_buffer,
             0,
             as_capsule(light_uniform),
-            self.light_uniform_buffer_size,
+            self.uniform_buffer_size,
         )
 
 class OmniLight3D(Light3D):
