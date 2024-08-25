@@ -58,7 +58,7 @@ class NodeBuilder(Builder):
     def build_children(self):
         for tf_child in self.tf_node.children:
             child = self.build_child(self.tf_model.nodes[tf_child])
-            self.node.add_child(child)
+            self.node.attach(child)
 
     '''
     def build_child(self, child: gltf.Node) -> Node:

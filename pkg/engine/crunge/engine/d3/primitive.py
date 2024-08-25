@@ -3,7 +3,7 @@ import numpy as np
 
 from crunge import wgpu
 
-from .scene_renderer_3d import SceneRenderer3D
+from .renderer_3d import Renderer3D
 
 
 class Primitive:
@@ -20,7 +20,7 @@ class Primitive:
     def __init__(self) -> None:
         super().__init__()
 
-    def draw(self, renderer: SceneRenderer3D):
+    def draw(self, renderer: Renderer3D):
         pass_enc = renderer.pass_enc
 
         pass_enc.set_pipeline(self.pipeline)

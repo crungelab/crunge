@@ -17,7 +17,7 @@ from .uniforms import (
 )
 
 from .node_3d import Node3D
-from .scene_renderer_3d import SceneRenderer3D
+from .renderer_3d import Renderer3D
 
 class Scene3D(Node3D):
     def __init__(self) -> None:
@@ -25,7 +25,7 @@ class Scene3D(Node3D):
         self.scene = self
 
         self.ambient_light = AmbientLight()
-        
+
         # Uniform Buffers
         self.ambient_light_uniform_buffer_size = sizeof(AmbientLightUniform)
         self.ambient_light_uniform_buffer = self.gfx.create_buffer(
@@ -34,7 +34,7 @@ class Scene3D(Node3D):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def draw(self, renderer: SceneRenderer3D):
+    def draw(self, renderer: Renderer3D):
             ambient_light = self.ambient_light
 
             ambient_light_uniform = AmbientLightUniform()

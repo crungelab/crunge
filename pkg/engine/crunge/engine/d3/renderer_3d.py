@@ -3,7 +3,7 @@ from crunge import engine
 
 from .camera_3d import Camera3D
 
-class SceneRenderer3D(engine.Renderer):
+class Renderer3D(engine.Renderer):
     def __init__(self) -> None:
         super().__init__()
         self.pass_enc: wgpu.RenderPassEncoder = None

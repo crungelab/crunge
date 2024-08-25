@@ -1,8 +1,6 @@
 from typing import List
 
-from ctypes import (
-    sizeof,
-)
+from ctypes import sizeof
 
 from loguru import logger
 import glm
@@ -10,7 +8,7 @@ import glm
 from crunge.core import as_capsule
 from crunge import wgpu
 
-from .scene_renderer_3d import SceneRenderer3D
+from .renderer_3d import Renderer3D
 from .node_3d import Node3D
 from .uniforms import (
     cast_matrix3,
@@ -44,7 +42,7 @@ class Mesh(Node3D):
     def add_primitive(self, primitive: Primitive):
         self.primitives.append(primitive)
 
-    def draw(self, renderer: SceneRenderer3D):
+    def draw(self, renderer: Renderer3D):
         camera = renderer.camera
 
         model_matrix = self.transform

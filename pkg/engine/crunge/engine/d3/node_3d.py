@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 import glm
 
 from crunge.engine.base import Base
-from .scene_renderer_3d import SceneRenderer3D
+from .renderer_3d import Renderer3D
 
 
 class Node3D(Base):
@@ -33,11 +33,27 @@ class Node3D(Base):
             transform = self.parent.transform * transform
         return transform
 
+    def attach(self, child: "Node3D"):
+        self.add_child(child)
+
+    def on_attached(self):
+        pass
+
+    def detach(self, child: "Node3D"):
+        self.remove_child(child)
+        child.on_detach()
+
+    def on_detach(self):
+        pass
+
     def add_child(self, child: "Node3D"):
         child.parent = self
         child.scene = self.scene
         self.children.append(child)
 
-    def draw(self, renderer: SceneRenderer3D):
+    def remove_child(self, child: "Node3D"):
+        self.children.remove(child)
+
+    def draw(self, renderer: Renderer3D):
         for child in self.children:
             child.draw(renderer)

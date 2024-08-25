@@ -188,6 +188,7 @@ class PrimitiveBuilder(Builder):
 
     def build_pipeline(self):
         logger.debug("Creating pipeline")
+
         vs_module: wgpu.ShaderModule = self.context.vertex_shader_builder_class(
             self.context, self.vertex_table
         ).build()

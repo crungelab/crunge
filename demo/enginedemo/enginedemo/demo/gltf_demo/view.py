@@ -6,7 +6,7 @@ from crunge import wgpu
 from crunge.engine.imgui import ImGuiView
 
 from crunge.engine.d3.scene_3d import Scene3D
-from crunge.engine.d3.scene_renderer_3d import SceneRenderer3D
+from crunge.engine.d3.renderer_3d import Renderer3D
 from crunge.engine.d3.camera_3d import Camera3D
 
 from crunge.engine.gltf.constants import SAMPLE_COUNT
@@ -54,7 +54,7 @@ class View(ImGuiView):
     def resize_camera(self, size: glm.ivec2):
         self.camera.size = size
 
-    def draw(self, renderer: SceneRenderer3D):
+    def draw(self, renderer: Renderer3D):
         # logger.debug("View.draw()")
 
         color_attachments = [

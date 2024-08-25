@@ -24,7 +24,6 @@ class GltfImporter:
         loaders = list(reversed(self.template_loader_stack))
         logger.debug(f"loaders: {loaders}")
         template_env = Environment(
-            #loader=PackageLoader("crunge.engine.gltf", "templates"),
             loader = ChoiceLoader(loaders),
             autoescape=select_autoescape()
         )
@@ -35,11 +34,9 @@ class GltfImporter:
         loader = gltf.TinyGLTF()
         logger.debug(f"loader: {loader}")
 
-        #self.tf_model = tf_model = gltf.Model()
         self.tf_model = tf_model = gltf.Model()
         logger.debug(f"tf_model_: {self.tf_model}")
 
-        #self.context = BuilderContext(Scene3D(), self.tf_model)
         self.create_context()
 
         res, err, warn = loader.load_ascii_from_file(tf_model, str(scene_path))

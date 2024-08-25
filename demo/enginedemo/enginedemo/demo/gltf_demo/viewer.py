@@ -7,7 +7,6 @@ import tkinter.filedialog
 from loguru import logger
 import glm
 
-from crunge import wgpu
 from crunge import sdl
 from crunge import engine
 from crunge import imgui
@@ -16,7 +15,7 @@ from crunge.engine import Renderer
 
 from crunge.engine.gltf import GltfImporter
 
-from crunge.engine.d3.scene_renderer_3d import SceneRenderer3D
+from crunge.engine.d3.renderer_3d import Renderer3D
 from crunge.engine.d3.scene_3d import Scene3D
 from crunge.engine.d3.camera_3d import Camera3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
@@ -28,7 +27,7 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 
 class Viewer(engine.App):
-    renderer: SceneRenderer3D
+    renderer: Renderer3D
     kWidth = 1024
     kHeight = 768
 
@@ -38,7 +37,7 @@ class Viewer(engine.App):
         self.delta_time = 0
 
     def create_renderer(self):
-        self.renderer = SceneRenderer3D()
+        self.renderer = Renderer3D()
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")

@@ -12,7 +12,7 @@ from crunge.engine.gltf import GltfImporter
 from ..demo.gltf_demo import GltfDemo
 
 
-class AmbientLightDemo(GltfDemo):
+class DiffuseLightDemo(GltfDemo):
     def create_importer(self):
         importer = GltfImporter()
         module_path = Path(__file__).resolve()
@@ -78,7 +78,7 @@ def main():
     # scene_path = models_root / "torusknot.gltf"
     scene_path = models_root / "Fourareen" / "fourareen.gltf"
 
-    AmbientLightDemo(scene_path=scene_path).create().run()
+    DiffuseLightDemo(scene_path=scene_path).create().run()
 
 
 if __name__ == "__main__":
