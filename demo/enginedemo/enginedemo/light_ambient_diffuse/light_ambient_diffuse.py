@@ -22,9 +22,15 @@ class DiffuseLightDemo(GltfDemo):
     def draw(self, renderer: Renderer):
         imgui.begin("Diffuse Light Demo")
 
-        changed, newColor = imgui.color_edit3("Ambient Color", list(self.scene.ambient_light.color))
+        ambient_light = self.scene.ambient_light
+        changed, newColor = imgui.color_edit3("Ambient Color", list(ambient_light.color))
         if changed:
-            self.scene.ambient_light.color = glm.vec3(newColor)
+            ambient_light.color = glm.vec3(newColor)
+
+        diffuse_light = self.scene.lighting.lights[0]
+        changed, newColor = imgui.color_edit3("Diffuse Color", list(diffuse_light.color))
+        if changed:
+            diffuse_light.color = glm.vec3(newColor)
 
         imgui.end()
 

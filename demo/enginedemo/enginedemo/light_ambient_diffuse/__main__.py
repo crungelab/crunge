@@ -1,2 +1,2 @@
-from . import light_diffuse
-light_diffuse.main()
+from . import light_ambient_diffuse
+light_ambient_diffuse.main()

@@ -148,15 +148,8 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
   let ambientLight = GetAmbientLight();
   let light = GetLight(input);
 
-  //let reflection = lightRadiance(light, surface);
-  //let ambient = surface.albedo * ambientLight.color;
-  //let rgb = ambient;
-  //let finalColor = linearToSRGB(rgb);
-  //return vec4<f32>(finalColor, surface.baseColor.a);
-
-  let ambient = surface.albedo * ambientLight.color * ambientLight.energy;
-
   let color = surface.baseColor;
+  let ambient = color.rgb * ambientLight.color * ambientLight.energy;
 
   let normal = surface.normal;
   let N = normalize(normal);
