@@ -19,7 +19,7 @@ class Scene3D(Node3D):
         self.scene = self
         self.ambient_light = AmbientLight()
         self.lighting = Lighting3D()
-        self.attach(OmniLight3D())
+        self.attach(OmniLight3D(translation=glm.vec3(2.0, 2.0, 2.0)))
 
     def draw(self, renderer: Renderer3D):
             self.ambient_light.apply()

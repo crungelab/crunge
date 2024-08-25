@@ -344,8 +344,10 @@ class PrimitiveBuilder(Builder):
             ),
             wgpu.BindGroupEntry(
                 binding=2,
-                buffer=self.mesh.light_uniform_buffer,
-                size=self.mesh.light_uniform_buffer_size,
+                #buffer=self.mesh.light_uniform_buffer,
+                buffer=self.scene.lighting.lights[0].uniform_buffer,
+                #size=self.mesh.light_uniform_buffer_size,
+                size=self.scene.lighting.lights[0].uniform_buffer_size,
             ),
         ]
 
