@@ -14,10 +14,9 @@ from ..demo.gltf_demo import GltfDemo
 
 class AmbientLightDemo(GltfDemo):
     def create_importer(self):
-        importer = GltfImporter()
         module_path = Path(__file__).resolve()
         template_dir = module_path.parent / 'templates'
-        importer.push_template_loader(FileSystemLoader(template_dir))
+        importer = GltfImporter(template_loaders=[FileSystemLoader(template_dir)])
         return importer
 
     def draw(self, renderer: Renderer):

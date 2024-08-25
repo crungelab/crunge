@@ -25,6 +25,7 @@ const LightKind_Directional = 2u;
 
 struct Light {
   kind : u32,
+  position: vec3<f32>,
   v : vec3<f32>,
   color : vec3<f32>,
   range : f32,

@@ -10,6 +10,7 @@ from crunge.core import as_capsule
 from crunge import sdl
 from crunge import wgpu
 from crunge import imgui
+from crunge.imgui import Key
 
 import crunge.wgpu.utils as utils
 
@@ -77,13 +78,21 @@ class ImGuiLayer(Layer):
         self.io.add_input_characters_utf8(event.text)
 
     def on_key(self, event: sdl.KeyboardEvent):
-        #logger.debug(f"key: {event.key}")
+        logger.debug(f"key: {event.key}")
         if event.key in keymap:
             self.io.add_key_event(keymap.get(event.key), event.state == 1)
         else:
             logger.debug(f"key not mapped: {event.key}")
+        self.update_modifiers()
         if self.io.want_capture_keyboard:
             return self.EVENT_HANDLED
+
+    def update_modifiers(self):
+        mod_state = sdl.get_mod_state()
+        self.io.add_key_event(Key.MOD_CTRL, mod_state & sdl.KMOD_CTRL)
+        self.io.add_key_event(Key.MOD_SHIFT, mod_state & sdl.KMOD_SHIFT)
+        self.io.add_key_event(Key.MOD_ALT, mod_state & sdl.KMOD_ALT)
+        self.io.add_key_event(Key.MOD_SUPER, mod_state & sdl.KMOD_GUI)
 
     def on_mouse_enter(self, event: sdl.WindowEvent):
         super().on_mouse_enter(event)

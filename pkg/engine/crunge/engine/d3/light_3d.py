@@ -8,7 +8,7 @@ from crunge import wgpu
 from .renderer_3d import Renderer3D
 from .node_3d import Node3D
 
-from .uniforms import (
+from ..uniforms import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
@@ -31,17 +31,18 @@ class Light3D(Node3D):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def draw(self, renderer: Renderer3D):
+    def apply(self):
         light_uniform = LightUniform()
 
         light_uniform.position.x = self.translation.x
         light_uniform.position.y = self.translation.y
         light_uniform.position.z = self.translation.z
-        # light_uniform.position = cast_vec3(glm.vec3(2.0, 2.0, 2.0))
+        # light_uniform.position = cast_vec3(self.translation)
 
         light_uniform.color.x = self.color.x
         light_uniform.color.y = self.color.y
         light_uniform.color.z = self.color.z
+        # light_uniform.color = cast_vec3(self.color)
 
         light_uniform.range = self.range
         light_uniform.energy = self.energy
@@ -52,11 +53,6 @@ class Light3D(Node3D):
             as_capsule(light_uniform),
             self.light_uniform_buffer_size,
         )
-
-        for primitive in self.primitives:
-            primitive.draw(renderer)
-
-        super().draw(renderer)
 
 class OmniLight3D(Light3D):
     def __init__(self) -> None:

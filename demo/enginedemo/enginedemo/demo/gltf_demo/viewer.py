@@ -96,6 +96,7 @@ class Viewer(engine.App):
             imgui.end_main_menu_bar()
 
     def on_key(self, event: sdl.KeyboardEvent):
+        super().on_key(event)
         key = event.key
         state = event.state
         if key == sdl.SDLK_ESCAPE and state == 1:

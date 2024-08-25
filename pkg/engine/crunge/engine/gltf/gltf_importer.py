@@ -13,8 +13,9 @@ from .builder.scene_builder import SceneBuilder
 
 
 class GltfImporter:
-    def __init__(self) -> None:
+    def __init__(self, template_loaders: List[BaseLoader] = []) -> None:
         self.template_loader_stack: List[BaseLoader] = [PackageLoader("crunge.engine.gltf", "templates")]
+        self.template_loader_stack.extend(template_loaders)
         self.tf_model = None
 
     def push_template_loader(self, loader: BaseLoader):

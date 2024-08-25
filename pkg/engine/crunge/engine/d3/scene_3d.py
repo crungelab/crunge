@@ -8,16 +8,9 @@ from crunge import wgpu
 
 from ..light import AmbientLight
 
-from .uniforms import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
-    AmbientLightUniform,
-    LightUniform,
-)
-
 from .node_3d import Node3D
 from .renderer_3d import Renderer3D
+from .lighting_3d import Lighting3D
 
 class Scene3D(Node3D):
     def __init__(self) -> None:
@@ -26,31 +19,9 @@ class Scene3D(Node3D):
 
         self.ambient_light = AmbientLight()
 
-        # Uniform Buffers
-        self.ambient_light_uniform_buffer_size = sizeof(AmbientLightUniform)
-        self.ambient_light_uniform_buffer = self.gfx.create_buffer(
-            "Ambient Light Uniform Buffer",
-            self.ambient_light_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
+        self.lighting = Lighting3D()
 
     def draw(self, renderer: Renderer3D):
-            ambient_light = self.ambient_light
-
-            ambient_light_uniform = AmbientLightUniform()
-
-            #0.0, 0.502, 1.0
-            ambient_light_uniform.color.x = ambient_light.color.x
-            ambient_light_uniform.color.y = ambient_light.color.y
-            ambient_light_uniform.color.z = ambient_light.color.z
-
-            ambient_light_uniform.energy = 1.0
-
-            self.device.queue.write_buffer(
-                self.ambient_light_uniform_buffer,
-                0,
-                as_capsule(ambient_light_uniform),
-                self.ambient_light_uniform_buffer_size,
-            )
+            self.ambient_light.apply()
 
             super().draw(renderer)

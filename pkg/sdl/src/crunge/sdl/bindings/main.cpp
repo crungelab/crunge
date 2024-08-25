@@ -64,6 +64,11 @@ void init_main(py::module &_sdl, Registry &registry)
                 SDL_QuitEvent quitEvent = event.quit;
                 return py::cast(quitEvent);
             }
+            case SDL_EVENT_TEXT_INPUT:
+            {
+                SDL_TextInputEvent textInputEvent = event.text;
+                return py::cast(textInputEvent);
+            }
             case SDL_EVENT_KEY_DOWN:
             case SDL_EVENT_KEY_UP:
             {
