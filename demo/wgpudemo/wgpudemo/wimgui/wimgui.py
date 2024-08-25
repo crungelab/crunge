@@ -24,6 +24,7 @@ from .uniforms import (
     Uniforms,
 )
 
+from .key_map import key_map
 
 class ImDrawVert(Structure):
     _fields_ = [
@@ -138,6 +139,8 @@ class WImGuiDemo(Demo):
 
     def create_window(self):
         super().create_window()
+        glfw.set_key_callback(self.window, self.on_key)
+        glfw.set_char_callback(self.window, self.char_callback)
         glfw.set_cursor_enter_callback(self.window, self.on_cursor_enter)
         glfw.set_cursor_pos_callback(self.window, self.on_cursor_pos)
         glfw.set_mouse_button_callback(self.window, self.on_mouse_button)
@@ -151,6 +154,27 @@ class WImGuiDemo(Demo):
             last_mouse = self.io.mouse_pos
             self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
             self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
+
+    def on_key(self, window, key: int, scancode: int, action: int, mods: int):
+        if key == glfw.KEY_ESCAPE:
+            self.exit()
+
+        if key not in key_map:
+            return
+
+        if action == glfw.PRESS:
+            logger.debug(f"key down: {key}")
+            self.io.add_key_event(key_map[key], 1)
+            #self.io.add_input_character(key)
+        elif action == glfw.RELEASE:
+            logger.debug(f"key up: {key}")
+            self.io.add_key_event(key_map[key], 0)
+
+    def char_callback(self, window, char):
+        io = imgui.get_io()
+
+        if 0 < char < 0x10000:
+            io.add_input_character(char)
 
     def on_cursor_pos(self, window, x: float, y: float):
         self.io.add_mouse_pos_event(x, y)
