@@ -1,7 +1,7 @@
 from crunge import sdl
 from crunge.imgui import Key
 
-keymap = {
+key_map = {
     # Alphanumeric keys
     sdl.SDLK_a: Key.KEY_A,
     sdl.SDLK_b: Key.KEY_B,

@@ -6,4 +6,4 @@ from .flags import WindowFlags
 from .properties import WindowProperties
 
 from .keycode import *
-from .scancode import *
+#from .scancode import *

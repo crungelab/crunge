@@ -32,6 +32,8 @@ class App(Window):
         last_time = time.perf_counter()
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
+        sdl.start_text_input(self.window)
+
         while self.running:
             self.instance.process_events()
 
@@ -61,4 +63,5 @@ class App(Window):
 
             self.update(frame_time)
 
+        sdl.stop_text_input(self.window)
         #self.device.destroy()

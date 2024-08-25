@@ -10,12 +10,10 @@ from crunge import sdl
 from crunge import imgui
 from crunge.imgui import Key
 
-import crunge.wgpu.utils as utils
-
 from ..layer import Layer
 
 from .vu import ImGuiVu
-from .keymap import keymap
+from .key_map import key_map
 
 
 def compute_framebuffer_scale(window_size, frame_buffer_size):
@@ -76,14 +74,32 @@ class ImGuiLayer(Layer):
         self.io.add_input_characters_utf8(event.text)
 
     def on_key(self, event: sdl.KeyboardEvent):
+        logger.debug(f"scan code: {event.scancode}")
+        if not event.scancode in key_map:
+            logger.debug(f"scan code not mapped: {event.scancode}")
+            return
+
+        down = event.type == sdl.EventType.KEY_DOWN
+
+        self.update_modifiers()
+
+        self.io.add_key_event(key_map[event.scancode], down)
+        #self.io.add_key_event(key_map[event.scancode], event.state == 1)
+
+        if self.io.want_capture_keyboard:
+            return self.EVENT_HANDLED
+
+    '''
+    def on_key(self, event: sdl.KeyboardEvent):
         logger.debug(f"key: {event.key}")
-        if event.key in keymap:
-            self.io.add_key_event(keymap.get(event.key), event.state == 1)
+        if event.key in key_map:
+            self.io.add_key_event(key_map.get(event.key), event.state == 1)
         else:
             logger.debug(f"key not mapped: {event.key}")
         self.update_modifiers()
         if self.io.want_capture_keyboard:
             return self.EVENT_HANDLED
+    '''
 
     def update_modifiers(self):
         mod_state = sdl.get_mod_state()
