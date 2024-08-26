@@ -11,4 +11,4 @@ from .layer import Layer
 from .renderer import Renderer
 from .vu import Vu
 
-from .geometry.rect import RectI, RectF
+from .math.rect import RectI, RectF

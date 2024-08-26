@@ -24,11 +24,6 @@ COORDS = [
 
 
 class Texture(Base):
-    name: str
-    texture: wgpu.Texture
-    view: wgpu.TextureView
-    sampler: wgpu.Sampler
-
     def __init__(
         self,
         name: str,
@@ -38,6 +33,8 @@ class Texture(Base):
     ):
         self.name = name
         self.texture = texture
+        self.view: wgpu.TextureView = None
+        self.sampler: wgpu.Sampler = None
 
         self.rect = rect
         self.parent = parent

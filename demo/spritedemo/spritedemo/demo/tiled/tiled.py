@@ -57,10 +57,9 @@ class TiledDemo(Demo):
                     rect = image[1]
                     if rect:
                         tx, ty, tw, th = rect
-                        # texture = Texture(atlas.texture, int(tx), int(ty), int(tw), int(th), atlas)
                         texture = Texture(
                             name,
-                            RectI(int(tx), int(ty), int(tw), int(th)),
+                            RectI(tx, ty, tw, th),
                             atlas.texture,
                             atlas,
                         )
@@ -73,22 +72,18 @@ class TiledDemo(Demo):
                     self.scene.add_child(node)
 
             elif isinstance(layer, TiledObjectGroup):
-                # iterate over all the objects in the layer
                 for obj in layer:
                     logger.debug(obj)
 
                     # objects with points are polygons or lines
                     if hasattr(obj, "points"):
-                        # draw_lines(poly_color, obj.closed, obj.points, 3)
                         pass
 
-                    # some object have an image
                     elif obj.image:
                         logger.debug(f"obj.image: {obj.image}")
 
                         image = obj.image
                         x = obj.x
-                        # y = mh - obj.y
                         y = pixel_height - obj.y
                         path = image[0]
                         atlas = TextureKit().load(path)
@@ -97,10 +92,9 @@ class TiledDemo(Demo):
                         rect = image[1]
                         if rect:
                             tx, ty, tw, th = rect
-                            # texture = Texture(atlas.texture, int(tx), int(ty), int(tw), int(th), atlas)
                             texture = Texture(
                                 name,
-                                RectI(int(tx), int(ty), int(tw), int(th)),
+                                RectI(tx, ty, tw, th),
                                 atlas.texture,
                                 atlas,
                             )
@@ -118,7 +112,6 @@ class TiledDemo(Demo):
                         pass
 
     def draw(self, renderer: Renderer):
-        # imgui.set_next_window_position(288, 32, imgui.ONCE)
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
         imgui.set_next_window_size((256, 256), imgui.COND_ONCE)
 
