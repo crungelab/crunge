@@ -5,7 +5,7 @@ import glm
 from crunge.core import as_capsule
 from crunge import wgpu
 
-from .uniforms import (
+from .d3.uniforms_3d import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,

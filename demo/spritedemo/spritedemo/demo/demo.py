@@ -3,12 +3,14 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from crunge import wgpu, sdl, engine, imgui
+from crunge import sdl
+from crunge import engine
 
-from ..scene_renderer import SceneRenderer
-from ..scene import Scene
+from crunge.engine.d2.renderer_2d import Renderer2D
+from crunge.engine.d2.scene_2d import Scene2D
+from crunge.engine.d2.camera_2d import Camera2D
+
 from .demo_view import DemoView
-from ..camera_2d import Camera2D
 
 
 class Demo(engine.App):
@@ -24,7 +26,7 @@ class Demo(engine.App):
         self.resource_root = (
             Path(__file__).parent.parent.parent.parent.parent / "resources"
         )
-        self.scene = Scene()
+        self.scene = Scene2D()
 
     @property
     def camera(self) -> Camera2D:

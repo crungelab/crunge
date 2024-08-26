@@ -5,7 +5,7 @@ from loguru import logger
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from crunge.engine.material import Material
+from crunge.engine.resource.material import Material
 
 from ...constants import TEXTURE_BINDING_START
 

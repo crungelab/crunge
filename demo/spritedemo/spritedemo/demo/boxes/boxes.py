@@ -1,7 +1,8 @@
 from loguru import logger
 import glm
 
-from crunge import sdl, imgui
+from crunge import sdl
+from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo

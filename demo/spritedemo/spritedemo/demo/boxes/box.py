@@ -1,10 +1,10 @@
 import glm
 
-from ...sprite import Sprite
-#from ...node_2d import Node2D
+from crunge.engine.d2.sprite import Sprite
+from crunge.engine.resource.texture_kit import TextureKit
+from crunge.engine.resource.resource_kit import ResourceKit
+
 from ...model_2d import DynamicModel2D
-from ...texture_kit import TextureKit
-from ...resource_kit import ResourceKit
 from ...geom import BoxGeom
 
 class Box(DynamicModel2D):
@@ -14,5 +14,4 @@ class Box(DynamicModel2D):
         texture = TextureKit().load(path)
         self.vu = Sprite(texture)
         self.position = position
-        self.size = texture.size * .25
-        #self.size = texture.size
+        self.size = glm.vec2(texture.size.x, texture.size.y) * .25

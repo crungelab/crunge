@@ -12,7 +12,7 @@ from crunge import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ....scene_renderer import SceneRenderer
+from ....renderer_2d import Renderer2D
 
 from ....vu_2d import Vu2D
 from ....uniforms import (
@@ -328,7 +328,7 @@ class ExplosionVu(Vu2D):
 
         self.render_bind_group = self.device.create_bind_group(render_bind_group_desc)
 
-    def draw(self, renderer: SceneRenderer):
+    def draw(self, renderer: Renderer2D):
         #logger.debug("Drawing explosion")
         camera = renderer.camera
         pass_enc = renderer.pass_enc

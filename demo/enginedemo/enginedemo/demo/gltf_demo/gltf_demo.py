@@ -18,6 +18,5 @@ class GltfDemo(Viewer):
     def run(self):
         importer = self.create_importer()
         scene = importer.load(self.scene_path)
-        #Viewer().create().show(scene).run()
         self.show(scene)
         super().run()

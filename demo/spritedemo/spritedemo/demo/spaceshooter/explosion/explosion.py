@@ -1,6 +1,6 @@
 import glm
 
-from ....node_2d import Node2D
+from crunge.engine.d2.node_2d import Node2D
 
 from .explosion_vu import ExplosionVu
 

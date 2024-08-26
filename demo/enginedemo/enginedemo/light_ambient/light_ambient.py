@@ -13,6 +13,7 @@ from ..demo.gltf_demo import GltfDemo
 
 
 class AmbientLightDemo(GltfDemo):
+    title = "Ambient Light Demo"
     def create_importer(self):
         module_path = Path(__file__).resolve()
         template_dir = module_path.parent / 'templates'
@@ -20,7 +21,7 @@ class AmbientLightDemo(GltfDemo):
         return importer
 
     def draw(self, renderer: Renderer):
-        imgui.begin("Ambient Light Demo")
+        imgui.begin(self.title)
 
         changed, newColor = imgui.color_edit3("Ambient Color", list(self.scene.ambient_light.color))
         if changed:

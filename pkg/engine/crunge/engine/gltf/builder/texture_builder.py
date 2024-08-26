@@ -6,7 +6,8 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge import gltf
 
-from crunge.engine.texture import Texture
+from crunge.engine import RectI
+from crunge.engine.resource.texture import Texture
 
 from ..debug import debug_texture, debug_image
 from . import Builder
@@ -17,10 +18,13 @@ class TextureBuilder(Builder):
     name: str = None
     texture: Texture = None
 
-    def __init__(self, context: BuilderContext, name: str, texture_info: gltf.TextureInfo) -> None:
+    def __init__(
+        self, context: BuilderContext, name: str, texture_info: gltf.TextureInfo
+    ) -> None:
         super().__init__(context)
+        self.name = name
         self.texture_info = texture_info
-        self.texture = Texture(name)
+        self.texture: Texture = None
 
     def build(self) -> Texture:
         tf_texture = self.tf_model.textures[self.texture_info.index]
@@ -30,8 +34,8 @@ class TextureBuilder(Builder):
         debug_image(tf_image)
 
         # This was too slow.
-        #im = np.array(tf_image.image, dtype=np.uint8)
-        #im = np.array(tf_image.image, dtype=np.uint8, copy=False)
+        # im = np.array(tf_image.image, dtype=np.uint8)
+        # im = np.array(tf_image.image, dtype=np.uint8, copy=False)
 
         im = tf_image.get_array()
 
@@ -43,11 +47,11 @@ class TextureBuilder(Builder):
         logger.debug(f"im.itemsize: {im.itemsize}")
         logger.debug(f"im.ndim: {im.ndim}")
         logger.debug(f"im.strides: {im.strides}")
-        #logger.debug(im)
+        # logger.debug(im)
 
-        #im_width = shape[0]
+        # im_width = shape[0]
         im_width = tf_image.width
-        #im_height = shape[1]
+        # im_height = shape[1]
         im_height = tf_image.height
         im_depth = 1
         # Has to be a multiple of 256
@@ -55,16 +59,17 @@ class TextureBuilder(Builder):
         logger.debug(f"im.size: {size}")
 
         descriptor = wgpu.TextureDescriptor(
-            dimension = wgpu.TextureDimension.E2D,
+            dimension=wgpu.TextureDimension.E2D,
             size=wgpu.Extent3D(im_width, im_height, im_depth),
-            sample_count = 1,
-            format = wgpu.TextureFormat.RGBA8_UNORM,
-            mip_level_count = 1,
+            sample_count=1,
+            format=wgpu.TextureFormat.RGBA8_UNORM,
+            mip_level_count=1,
             usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
         )
 
         wgpu_texture = self.gfx.device.create_texture(descriptor)
-        self.texture.texture = wgpu_texture
+        #self.texture.texture = wgpu_texture
+        self.texture = Texture(self.name, RectI(0, 0, im_width, im_height), wgpu_texture)
         self.texture.view = wgpu_texture.create_view()
 
         sampler_desc = wgpu.SamplerDescriptor(
@@ -79,9 +84,9 @@ class TextureBuilder(Builder):
             compare=wgpu.CompareFunction.UNDEFINED,
             anisotropy=16,
         )
-        
+
         self.texture.sampler = self.gfx.device.create_sampler(sampler_desc)
-        
+
         bytes_per_row = 4 * im_width
         logger.debug(f"bytes_per_row: {bytes_per_row}")
         rows_per_image = im_height
@@ -104,8 +109,8 @@ class TextureBuilder(Builder):
                 bytes_per_row=bytes_per_row,
                 rows_per_image=rows_per_image,
             ),
-            #The texture size
+            # The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
-        #exit()
+        # exit()
         return self.texture

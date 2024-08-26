@@ -7,9 +7,9 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from ...sprite import Sprite
-from ...node_2d import Node2D
-from ...texture_kit import TextureKit
+from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.node_2d import Node2D
+from crunge.engine.resource.texture_kit import TextureKit
 
 
 class SpriteDemo(Demo):

@@ -1,18 +1,14 @@
-from pathlib import Path
-
 from loguru import logger
 import glm
-import pymunk
 
-from crunge import sdl, imgui
+from crunge import sdl
+from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from ...sprite import Sprite
-from ...node_2d import Node2D
-from ...texture_kit import TextureKit
+from crunge.engine.resource.texture_atlas_kit import TextureAtlasKit
+
 from ...physics import DynamicPhysicsEngine
-from ...texture_atlas_kit import TextureAtlasKit
 
 from .thing import Thing
 from .floor import Floor

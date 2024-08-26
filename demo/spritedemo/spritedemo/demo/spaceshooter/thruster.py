@@ -2,7 +2,7 @@ from loguru import logger
 
 import glm
 
-from ...node_2d import Node2D
+from crunge.engine.d2.node_2d import Node2D
 
 class Thruster(Node2D):
     def __init__(self, body, position: glm.vec2, force: glm.vec2, angular_velocity: float = 0) -> None:

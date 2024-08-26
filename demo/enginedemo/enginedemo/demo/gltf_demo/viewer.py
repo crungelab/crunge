@@ -27,12 +27,13 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 
 class Viewer(engine.App):
+    title = "Gltf Viewer"
     renderer: Renderer3D
     kWidth = 1024
     kHeight = 768
 
     def __init__(self):
-        super().__init__(glm.ivec2(self.kWidth, self.kHeight), "Gltf Demo", resizable=True)
+        super().__init__(glm.ivec2(self.kWidth, self.kHeight), self.title, resizable=True)
         self.camera: Camera3D = None
         self.delta_time = 0
 
@@ -61,7 +62,6 @@ class Viewer(engine.App):
         self.controller = ArcballCameraController(self, self.camera)
         self.controller.activate()
 
-        #self.run()
         return self
 
     def draw(self, renderer: Renderer):

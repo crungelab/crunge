@@ -5,7 +5,7 @@ import glm
 
 from loguru import logger
 
-from .constants import *
+#from .constants import *
 from .node_2d import Node2D
 
 class Camera2D(Node2D):

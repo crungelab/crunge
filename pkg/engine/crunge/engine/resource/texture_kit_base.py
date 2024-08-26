@@ -4,12 +4,11 @@ from pathlib import Path
 import imageio as iio
 from loguru import logger
 
-from crunge.core import klass
 from crunge import wgpu
 from crunge.wgpu import utils
-from .base import Base
-from .texture import Texture
-from .texture_atlas import TextureAtlas
+from crunge.engine import Base
+
+from crunge.engine.resource.texture import Texture
 
 
 class TextureKitBase(Base):
@@ -18,7 +17,6 @@ class TextureKitBase(Base):
         self.textures: Dict[Path, Texture] = {}
     
     def load_wgpu_texture(self, path: Path) -> Texture:
-        #im = iio.imread(path)
         im = iio.imread(path, pilmode='RGBA')
         shape = im.shape
         logger.debug(f"shape: {shape}")
@@ -39,9 +37,6 @@ class TextureKitBase(Base):
 
         texture = self.device.create_texture(descriptor)
 
-        #sampler = self.device.create_sampler()
-
-        #bytes_per_row = 4 * im_width
         bytes_per_row = im_channels * im_width
         logger.debug(f"bytes_per_row: {bytes_per_row}")
         rows_per_image = im_height
@@ -68,6 +63,4 @@ class TextureKitBase(Base):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-        #texture = Texture(texture, 0, 0, im_width, im_height)
-        #self.textures[path] = texture
         return texture, im_width, im_height

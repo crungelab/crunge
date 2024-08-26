@@ -12,7 +12,8 @@ from crunge.engine.gltf import GltfImporter
 from ..demo.gltf_demo import GltfDemo
 
 
-class DiffuseLightDemo(GltfDemo):
+class AmbientDiffuseLightDemo(GltfDemo):
+    title = "Ambient Diffuse Light Demo"
     def create_importer(self):
         module_path = Path(__file__).resolve()
         template_dir = module_path.parent / 'templates'
@@ -20,17 +21,22 @@ class DiffuseLightDemo(GltfDemo):
         return importer
 
     def draw(self, renderer: Renderer):
-        imgui.begin("Diffuse Light Demo")
+        imgui.begin(self.title)
 
+        imgui.begin_group()
         ambient_light = self.scene.ambient_light
         changed, newColor = imgui.color_edit3("Ambient Color", list(ambient_light.color))
         if changed:
             ambient_light.color = glm.vec3(newColor)
+        imgui.end_group()
 
-        diffuse_light = self.scene.lighting.lights[0]
-        changed, newColor = imgui.color_edit3("Diffuse Color", list(diffuse_light.color))
-        if changed:
-            diffuse_light.color = glm.vec3(newColor)
+        for diffuse_light in self.scene.lighting.lights:
+            imgui.begin_group()
+            #diffuse_light = self.scene.lighting.lights[0]
+            changed, newColor = imgui.color_edit3("Diffuse Color", list(diffuse_light.color))
+            if changed:
+                diffuse_light.color = glm.vec3(newColor)
+            imgui.end_group()
 
         imgui.end()
 
@@ -83,7 +89,7 @@ def main():
     # scene_path = models_root / "torusknot.gltf"
     scene_path = models_root / "Fourareen" / "fourareen.gltf"
 
-    DiffuseLightDemo(scene_path=scene_path).create().run()
+    AmbientDiffuseLightDemo(scene_path=scene_path).create().run()
 
 
 if __name__ == "__main__":

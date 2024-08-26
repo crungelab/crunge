@@ -18,10 +18,10 @@ from loguru import logger
 import glm
 
 from crunge.core import as_capsule
-from crunge import wgpu, engine
-import crunge.wgpu.utils as utils
+from crunge import wgpu
+from crunge import engine
 
-from .uniforms import (
+from .uniforms_2d import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
@@ -31,7 +31,7 @@ from .uniforms import (
 )
 
 
-class SceneRenderer(engine.Renderer):
+class Renderer2D(engine.Renderer):
     camera_uniform_buffer: wgpu.Buffer = None
     camera_uniform_buffer_size: int = 0
 

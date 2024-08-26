@@ -16,8 +16,8 @@ class Dispatcher(Base):
         pass
 
     def dispatch(self, event) -> DispatchResult:
-        logger.debug(event)
-        logger.debug(event.type)
+        #logger.debug(event)
+        #logger.debug(event.type)
         match event.__class__:
             case sdl.WindowEvent:
                 return self.on_window(event)
@@ -43,7 +43,7 @@ class Dispatcher(Base):
                 pass
     
     def on_text(self, event: sdl.TextInputEvent):
-        logger.debug(f"text: {event.text}")
+        #logger.debug(f"text: {event.text}")
         pass
 
     def on_key(self, event: sdl.KeyboardEvent):

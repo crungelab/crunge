@@ -1,12 +1,18 @@
+from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
+
+if TYPE_CHECKING:
+    from .scene_2d import Scene2D
+
 from loguru import logger
 import glm
 
 from .vu_2d import Vu2D
 
-from .node import Node
+from ..node import Node
 
 
 class Node2D(Node):
+    scene: "Scene2D"
     def __init__(
         self,
         position=glm.vec2(),

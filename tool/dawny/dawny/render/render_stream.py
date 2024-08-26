@@ -6,10 +6,10 @@ class RenderStream:
         self.indentation = 0
         self.text = ""
 
-    def write(self, text: str):
+    def write(self, text: str) -> None:
         self.text += text
 
-    def write_indented(self, text: str):
+    def write_indented(self, text: str) -> None:
         self.write(" " * self.indentation * 4)
         self.write(text)
 
@@ -20,6 +20,7 @@ class RenderStream:
             for line in text:
                 self.write_indented(line)
                 self.write("\n")
+        return self
 
     def __lshift__(self, text: str):
         if len(text):

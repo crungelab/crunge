@@ -54,7 +54,7 @@ def main():
     # scene_path = models_root / "torusknot.gltf"
     scene_path = models_root / "Fourareen" / "fourareen.gltf"
 
-    GltfImportDemo(scene_path=scene_path).run()
+    GltfImportDemo(scene_path=scene_path).create().run()
 
 
 if __name__ == "__main__":

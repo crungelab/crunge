@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ....material import Material
+from ....resource.material import Material
 
 from ...constants import TEXTURE_BINDING_START
 

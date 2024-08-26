@@ -13,7 +13,7 @@ from crunge.imgui import Key
 from ..layer import Layer
 
 from .vu import ImGuiVu
-from .key_map import key_map
+from .scancode_map import scancode_map
 
 
 def compute_framebuffer_scale(window_size, frame_buffer_size):
@@ -31,8 +31,6 @@ class ImGuiLayer(Layer):
 
     def __init__(self):
         super().__init__("ImGuiLayer")
-        logger.debug("ImGuiLayer.__init__")
-        
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
     def create(self, view: engine.View):
@@ -70,12 +68,12 @@ class ImGuiLayer(Layer):
         super().post_draw(renderer)
 
     def on_text(self, event: sdl.TextInputEvent):
-        logger.debug(f"text: {event.text}")
+        #logger.debug(f"text: {event.text}")
         self.io.add_input_characters_utf8(event.text)
 
     def on_key(self, event: sdl.KeyboardEvent):
-        logger.debug(f"scan code: {event.scancode}")
-        if not event.scancode in key_map:
+        #logger.debug(f"scan code: {event.scancode}")
+        if not event.scancode in scancode_map:
             logger.debug(f"scan code not mapped: {event.scancode}")
             return
 
@@ -83,8 +81,7 @@ class ImGuiLayer(Layer):
 
         self.update_modifiers()
 
-        self.io.add_key_event(key_map[event.scancode], down)
-        #self.io.add_key_event(key_map[event.scancode], event.state == 1)
+        self.io.add_key_event(scancode_map[event.scancode], down)
 
         if self.io.want_capture_keyboard:
             return self.EVENT_HANDLED

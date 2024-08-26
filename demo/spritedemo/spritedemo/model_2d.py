@@ -4,12 +4,13 @@ import math
 import glm
 import pymunk
 
+from crunge.engine.d2.node_2d import Node2D
+from crunge.engine.d2.vu_2d import Vu2D
+
 from .constants import *
 from . import globals
 from . import physics
 from . import geom
-from .node_2d import Node2D
-from .vu_2d import Vu2D
 
 
 class Model2D(Node2D):

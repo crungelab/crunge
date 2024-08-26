@@ -1,10 +1,10 @@
 import glm
 
-from ...sprite import Sprite
-#from ...node_2d import Node2D
+from crunge.engine.d2.sprite import Sprite
+from crunge.engine.resource.texture_kit import TextureKit
+from crunge.engine.resource.resource_kit import ResourceKit
+
 from ...model_2d import StaticModel2D
-from ...texture_kit import TextureKit
-from ...resource_kit import ResourceKit
 from ...geom import BoxGeom
 
 class Floor(StaticModel2D):

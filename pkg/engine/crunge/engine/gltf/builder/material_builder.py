@@ -9,8 +9,9 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge import gltf
 
-from crunge.engine.material import Material
-from crunge.engine.texture import Texture
+from crunge.engine import RectI
+from crunge.engine.resource.material import Material
+from crunge.engine.resource.texture import Texture
 
 from ..debug import debug_texture_info
 from . import Builder
@@ -87,7 +88,6 @@ class MaterialBuilder(Builder):
         self.material.add_texture(texture)
 
     def build_environment_texture(self) -> Texture:
-        texture = Texture('environment')
         #path = Path('resources/textures/environment.jpg')
         path = importlib.resources.path('crunge.engine.resources.textures', 'environment.hdr')
         #im = iio.imread(path, pilmode='RGBA')
@@ -129,7 +129,7 @@ class MaterialBuilder(Builder):
             usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
         )
         wgpu_texture = self.gfx.device.create_texture(descriptor)
-        texture.texture = wgpu_texture
+        texture = Texture('environment', RectI(0, 0, im_width, im_height), wgpu_texture)
         texture.view = wgpu_texture.create_view()
 
         '''

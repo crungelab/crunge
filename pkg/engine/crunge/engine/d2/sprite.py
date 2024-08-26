@@ -19,16 +19,17 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from .scene_renderer import SceneRenderer
-from .vu_2d import Vu2D
-from .uniforms import (
+from crunge.engine.d2.renderer_2d import Renderer2D
+
+from crunge.engine.d2.vu_2d import Vu2D
+from crunge.engine.d2.uniforms_2d import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
     MeshUniform,
 )
-from .program import Program
-from .texture import Texture
+from ..program import Program
+from crunge.engine.resource.texture import Texture
 
 shader_code = """
 struct Camera {
@@ -262,15 +263,15 @@ class Sprite(Vu2D):
         self.update_vertices()
 
     @property
-    def size(self):
+    def size(self) -> glm.ivec2:
         return self.texture.size
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self.texture.width
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self.texture.height
 
     def create_vertices(self):
@@ -342,7 +343,7 @@ class Sprite(Vu2D):
 
         self.mesh_bind_group = self.device.create_bind_group(mesh_bind_group_desc)
 
-    def draw(self, renderer: SceneRenderer):
+    def draw(self, renderer: Renderer2D):
         # logger.debug("Drawing sprite")
         mesh_uniform = MeshUniform()
         mesh_uniform.model.data = cast_matrix4(self.transform)

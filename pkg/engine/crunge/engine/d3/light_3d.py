@@ -8,7 +8,7 @@ from crunge import wgpu
 from .renderer_3d import Renderer3D
 from .node_3d import Node3D
 
-from ..uniforms import (
+from .uniforms_3d import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,

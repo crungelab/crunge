@@ -3,11 +3,12 @@ import math
 from loguru import logger
 import glm
 
-from ...sprite import Sprite
-from ...node_2d import Node2D
+from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.node_2d import Node2D
+from crunge.engine.resource.texture_atlas_kit import TextureAtlasKit
+from crunge.engine.resource.resource_kit import ResourceKit
+
 from ...model_2d import DynamicModel2D
-from ...texture_atlas_kit import TextureAtlasKit
-from ...resource_kit import ResourceKit
 from ...geom import BallGeom
 
 from .collision_type import CollisionType

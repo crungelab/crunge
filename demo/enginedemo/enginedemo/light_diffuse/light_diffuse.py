@@ -13,6 +13,7 @@ from ..demo.gltf_demo import GltfDemo
 
 
 class DiffuseLightDemo(GltfDemo):
+    title = "Diffuse Light Demo"
     def create_importer(self):
         module_path = Path(__file__).resolve()
         template_dir = module_path.parent / 'templates'
@@ -20,7 +21,7 @@ class DiffuseLightDemo(GltfDemo):
         return importer
 
     def draw(self, renderer: Renderer):
-        imgui.begin("Diffuse Light Demo")
+        imgui.begin(self.title)
         light = self.scene.lighting.lights[0]
         changed, newColor = imgui.color_edit3("Diffuse Color", list(light.color))
         if changed:

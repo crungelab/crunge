@@ -7,12 +7,13 @@ from pytmx import TiledMap, TiledTileLayer, TiledObjectGroup
 from crunge import imgui
 from crunge.engine import Renderer
 
+from crunge.engine import RectI
+from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.node_2d import Node2D
+from crunge.engine.resource.texture_kit import TextureKit
+from crunge.engine.resource.texture import Texture
+
 from ..demo import Demo
-from ...sprite import Sprite
-from ...node_2d import Node2D
-from ...texture_kit import TextureKit
-from ...texture_atlas_kit import TextureAtlasKit
-from ...texture import Texture
 
 
 class TiledDemo(Demo):
@@ -27,13 +28,13 @@ class TiledDemo(Demo):
         self.scene.clear()
         self.create_map()
 
-
     def create_view(self):
         super().create_view()
-        self.camera.zoom = .5
+        self.camera.zoom = 0.5
 
     def create_map(self):
 
+        name = self.tmx_data.filename
         tw = self.tmx_data.tilewidth
         th = self.tmx_data.tileheight
         mw = self.tmx_data.width
@@ -48,7 +49,7 @@ class TiledDemo(Demo):
                     x = x * tw
                     y = y * th
                     logger.debug(f"Tile: {x}, {y}, {image}")
-                
+
                     path = image[0]
                     atlas = TextureKit().load(path)
                     logger.debug(f"atlas: {atlas}")
@@ -56,13 +57,19 @@ class TiledDemo(Demo):
                     rect = image[1]
                     if rect:
                         tx, ty, tw, th = rect
-                        texture = Texture(atlas.texture, int(tx), int(ty), int(tw), int(th), atlas)
+                        # texture = Texture(atlas.texture, int(tx), int(ty), int(tw), int(th), atlas)
+                        texture = Texture(
+                            name,
+                            RectI(int(tx), int(ty), int(tw), int(th)),
+                            atlas.texture,
+                            atlas,
+                        )
                         logger.debug(f"texture: {texture}")
                     else:
                         texture = atlas
 
                     sprite = Sprite(texture)
-                    node = Node2D(glm.vec2(x ,y), vu=sprite)
+                    node = Node2D(glm.vec2(x, y), vu=sprite)
                     self.scene.add_child(node)
 
             elif isinstance(layer, TiledObjectGroup):
@@ -72,7 +79,7 @@ class TiledDemo(Demo):
 
                     # objects with points are polygons or lines
                     if hasattr(obj, "points"):
-                        #draw_lines(poly_color, obj.closed, obj.points, 3)
+                        # draw_lines(poly_color, obj.closed, obj.points, 3)
                         pass
 
                     # some object have an image
@@ -81,7 +88,7 @@ class TiledDemo(Demo):
 
                         image = obj.image
                         x = obj.x
-                        #y = mh - obj.y
+                        # y = mh - obj.y
                         y = pixel_height - obj.y
                         path = image[0]
                         atlas = TextureKit().load(path)
@@ -90,20 +97,25 @@ class TiledDemo(Demo):
                         rect = image[1]
                         if rect:
                             tx, ty, tw, th = rect
-                            texture = Texture(atlas.texture, int(tx), int(ty), int(tw), int(th), atlas)
+                            # texture = Texture(atlas.texture, int(tx), int(ty), int(tw), int(th), atlas)
+                            texture = Texture(
+                                name,
+                                RectI(int(tx), int(ty), int(tw), int(th)),
+                                atlas.texture,
+                                atlas,
+                            )
                             logger.debug(f"texture: {texture}")
                         else:
                             texture = atlas
 
                         sprite = Sprite(texture)
-                        node = Node2D(glm.vec2(x ,y), vu=sprite)
+                        node = Node2D(glm.vec2(x, y), vu=sprite)
                         self.scene.add_child(node)
 
                     # draw a rect for everything else
                     else:
-                        #draw_rect(rect_color, (obj.x, obj.y, obj.width, obj.height), 3)
+                        # draw_rect(rect_color, (obj.x, obj.y, obj.width, obj.height), 3)
                         pass
-
 
     def draw(self, renderer: Renderer):
         # imgui.set_next_window_position(288, 32, imgui.ONCE)
@@ -118,6 +130,7 @@ class TiledDemo(Demo):
         imgui.end()
 
         super().draw(renderer)
+
 
 def main():
     TiledDemo().create().run()

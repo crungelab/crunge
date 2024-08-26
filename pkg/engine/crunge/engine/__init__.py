@@ -10,3 +10,5 @@ from .view import View
 from .layer import Layer
 from .renderer import Renderer
 from .vu import Vu
+
+from .geometry.rect import RectI, RectF
