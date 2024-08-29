@@ -51,3 +51,7 @@ class Material:
     @property
     def has_emissive_texture(self):
         return self.has_texture('emissive')
+
+    @property
+    def has_environment_texture(self):
+        return self.has_texture('environment')

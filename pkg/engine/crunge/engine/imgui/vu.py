@@ -8,6 +8,7 @@ import glm
 
 
 from crunge.core import as_capsule
+from crunge.core import klass
 
 from crunge import sdl
 from crunge import wgpu
@@ -19,7 +20,6 @@ from crunge import imgui
 
 from ..renderer import Renderer
 from ..vu import Vu
-from ..utils import singleton_producer
 
 from .uniforms import (
     cast_matrix3,
@@ -92,7 +92,7 @@ fn main(in: VertexOutput) -> @location(0) vec4<f32> {
 """
 
 
-@singleton_producer
+@klass.singleton_producer
 class ImGuiVu(Vu):
     def __init__(self) -> None:
         super().__init__()

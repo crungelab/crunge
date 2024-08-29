@@ -4,13 +4,13 @@ import imageio.v3 as iio
 
 from loguru import logger
 
+from crunge.core import klass
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from .utils import singleton
 from . import globals
 
-@singleton
+@klass.singleton
 class Gfx:
     def __init__(self) -> None:
         logger.debug("Creating Gfx")

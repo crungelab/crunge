@@ -3,7 +3,7 @@ import importlib.resources
 
 from loguru import logger
 import numpy as np
-import imageio as iio
+import imageio.v3 as iio
 
 from crunge import wgpu
 import crunge.wgpu.utils as utils

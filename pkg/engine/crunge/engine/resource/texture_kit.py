@@ -21,7 +21,6 @@ class TextureKit(TextureKitBase):
         if path in self.textures:
             return self.textures[path]
         wgpu_texture, width, height = self.load_wgpu_texture(path)
-        #texture = Texture(path, wgpu_texture, glm.ivec2(0, 0), glm.ivec2(width, height))
         texture = Texture(path, RectI(0, 0, width, height), wgpu_texture)
         self.textures[path] = texture
         return texture

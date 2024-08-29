@@ -30,7 +30,7 @@ class VertexShaderBuilder(ShaderBuilder):
 
     def create_assignments(self):
         if self.vertex_table.has('tangent'):
-            self.add_assignment(Assignment('tangent', 'normalize(camera.normalMatrix * input.tangent.xyz)'))
+            self.add_assignment(Assignment('tangent', 'normalize(camera.normalMatrix * input.tangent).xyz'))
             self.add_assignment(Assignment('bitangent', '(cross(output.normal, output.tangent) * input.tangent.w)'))
 
         for column in self.vertex_table.columns:

@@ -1,7 +1,7 @@
 from typing import Dict
 from pathlib import Path
 
-import imageio as iio
+import imageio.v3 as iio
 from loguru import logger
 
 from crunge import wgpu
