@@ -9,7 +9,8 @@ from crunge.engine import Renderer
 from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.resource.texture_kit import TextureKit
+#from crunge.engine.resource.texture_kit import TextureKit
+from crunge.engine.loader.texture_loader import TextureLoader
 
 
 class SpriteDemo(Demo):
@@ -21,8 +22,10 @@ class SpriteDemo(Demo):
         self.color_enabled = True
         self.color = 1, 1, 1
 
-        path = self.resource_root / "images" / "playerShip1_orange.png"
-        texture = TextureKit().load(path)
+        #path = self.resource_root / "images" / "playerShip1_orange.png"
+        path = "{images}/playerShip1_orange.png"
+        #texture = TextureKit().load(path)
+        texture = TextureLoader().load(path)
         sprite = self.sprite = Sprite(texture)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2

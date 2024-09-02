@@ -7,7 +7,7 @@ import glm
 from crunge import imgui
 
 from crunge.engine.renderer import Renderer
-from crunge.engine.gltf import GltfImporter
+from crunge.engine.loader.gltf import GltfLoader
 
 from ..demo.gltf_demo import GltfDemo
 
@@ -17,7 +17,7 @@ class IblEquirectangularDemo(GltfDemo):
     def create_importer(self):
         module_path = Path(__file__).resolve()
         template_dir = module_path.parent / 'templates'
-        importer = GltfImporter(template_loaders=[FileSystemLoader(template_dir)])
+        importer = GltfLoader(template_loaders=[FileSystemLoader(template_dir)])
         return importer
 
     def draw(self, renderer: Renderer):
@@ -49,7 +49,7 @@ def main():
     # model = "CesiumMilkTruck"
     # model = "Cube"
     # model = "Corset"
-    #model = "DamagedHelmet"
+    model = "DamagedHelmet"
     # model = "Duck"
     # model = "EnvironmentTest"
     # model = "FlightHelmet"
@@ -58,7 +58,7 @@ def main():
     # model = "Lantern"
     # model = "MetalRoughSpheres"
     # model = "SimpleMeshes"
-    model = "Suzanne"
+    #model = "Suzanne"
 
     scene_path = models_root / model / "glTF" / f"{model}.gltf"
     # scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"

@@ -6,15 +6,18 @@ from jinja2 import Environment, BaseLoader, ChoiceLoader, PackageLoader, select_
 
 from crunge import gltf
 
-from ..d3.scene_3d import Scene3D
+from ...d3.scene_3d import Scene3D
+
+from ..loader import Loader
 
 from .builder.builder_context import BuilderContext
 from .builder.scene_builder import SceneBuilder
 
 
-class GltfImporter:
+class GltfLoader(Loader):
     def __init__(self, template_loaders: List[BaseLoader] = []) -> None:
-        self.template_loader_stack: List[BaseLoader] = [PackageLoader("crunge.engine.gltf", "templates")]
+        super().__init__()
+        self.template_loader_stack: List[BaseLoader] = [PackageLoader("crunge.engine.loader.gltf", "templates")]
         self.template_loader_stack.extend(template_loaders)
         self.tf_model = None
 
@@ -29,7 +32,8 @@ class GltfImporter:
             autoescape=select_autoescape()
         )
 
-        self.context = BuilderContext(Scene3D(), self.tf_model, template_env)
+        scene = Scene3D()
+        self.context = BuilderContext(scene, self.tf_model, template_env)
 
     def load(self, scene_path:Path) -> Scene3D:
         loader = gltf.TinyGLTF()

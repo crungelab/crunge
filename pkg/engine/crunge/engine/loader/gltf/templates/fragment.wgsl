@@ -2,6 +2,7 @@
 {% include '_camera.wgsl' %}
 {% include '_light.wgsl' %}
 {% include '_lighting.wgsl' %}
+{% include '_environment.wgsl' %}
 {% include '_bindings.wgsl' %}
 
 // Utility function for gamma correction
@@ -54,6 +55,7 @@ struct Surface {
   ao : f32,
   emissive : vec3<f32>,
   v : vec3<f32>,
+  ambient : vec3<f32>,
 }
 
 fn GetSurface(input : VertexOutput) -> Surface {
@@ -61,6 +63,7 @@ fn GetSurface(input : VertexOutput) -> Surface {
   var material = GetMaterial();
 
   surface.position = input.frag_pos;
+  surface.v = normalize(camera.position - input.frag_pos);
 
   {% if vertex_table.has_uv %}
   let uv = input.uv;
@@ -97,8 +100,8 @@ fn GetSurface(input : VertexOutput) -> Surface {
   let normalMap = textureSample(normalTexture, normalSampler, uv).rgb;
   surface.normal = normalize((tbn * ((2.0 * normalMap) - vec3(1.0))));
   {% else %}
-  //surface.normal = normalize(input.normal);
-  surface.normal = input.normal;
+  surface.normal = normalize(input.normal);
+  //surface.normal = input.normal;
   {% endif %}
 
   {% if material.has_occlusion_texture %}
@@ -114,7 +117,25 @@ fn GetSurface(input : VertexOutput) -> Surface {
   surface.emissive = material.emissiveFactor;
   {% endif %}
 
-  surface.v = normalize(camera.position - input.frag_pos);
+  {% if material.has_environment_texture %}
+  let envUv = reflectionToEquirectangularUV(surface.v, surface.normal);
+  let envColor = textureSample(environmentTexture, environmentSampler, envUv).rgb;
+  // Adjust environment contribution based on roughness
+  let envRoughness = mix(1.0, 0.0, surface.roughness);
+  let envContribution = envColor * envRoughness;
+
+  // Combine direct and indirect lighting
+  let diffuseColor = mix(surface.albedo, vec3(0.0), surface.metallic);
+  let specularColor = mix(vec3(0.04), surface.albedo, surface.metallic);
+
+  surface.ambient =
+      ((diffuseColor * envContribution * surface.metallic) +
+      (specularColor * envContribution));
+
+  {% else %}
+  surface.ambient = surface.albedo;
+  {% endif %}
+
   return surface;
 }
 
@@ -125,7 +146,8 @@ fn GetLight(input : VertexOutput) -> Light {
   light.kind = LightKind_Point;
   //light.v = normalize(lightUniform.position - input.frag_pos);
   light.v = lightUniform.position - input.frag_pos;
-  light.color = lightUniform.color;
+  //light.color = lightUniform.color;
+  light.color = vec3<f32>(1.0, 1.0, 1.0);
   //light.range = lightUniform.range;
   light.range = 10.0;
   //light.energy = lightUniform.energy;
@@ -139,7 +161,7 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
   var light = GetLight(input);
 
   let reflection = lightRadiance(light, surface);
-  let ambient = surface.albedo * surface.ao;
+  let ambient = surface.ambient * surface.ao;
   let rgb = reflection + ambient + surface.emissive;
   let finalColor = linearToSRGB(rgb);
   return vec4<f32>(finalColor, surface.baseColor.a);             

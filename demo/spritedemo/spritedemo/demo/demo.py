@@ -6,6 +6,7 @@ import glm
 from crunge import sdl
 from crunge import engine
 
+from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.d2.renderer_2d import Renderer2D
 from crunge.engine.d2.scene_2d import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
@@ -20,12 +21,21 @@ class Demo(engine.App):
 
     def __init__(self):
         super().__init__(
-            glm.ivec2(self.kWidth, self.kHeight), self.__class__.__name__, resizable=True
+            glm.ivec2(self.kWidth, self.kHeight),
+            self.__class__.__name__,
+            resizable=True,
         )
         self.delta_time = 0
+
         self.resource_root = (
             Path(__file__).parent.parent.parent.parent.parent / "resources"
         )
+
+        ResourceManager().add_path_variables(
+            resources=self.resource_root,
+            images=self.resource_root / "images",
+        )
+
         self.scene = Scene2D()
 
     @property

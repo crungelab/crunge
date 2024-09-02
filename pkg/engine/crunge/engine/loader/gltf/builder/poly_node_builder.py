@@ -2,7 +2,7 @@ from crunge import gltf
 
 from . import Builder
 from .builder_context import BuilderContext
-from ...d3.node_3d import Node3D
+from ....d3.node_3d import Node3D
 from ..debug import debug_node
 
 class PolyNodeBuilder(Builder):

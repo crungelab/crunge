@@ -1,9 +1,5 @@
 import glm
 
-from crunge.engine.d2.sprite import Sprite
-from crunge.engine.resource.texture_kit import TextureKit
-from crunge.engine.resource.resource_kit import ResourceKit
-
 from ...model_2d import StaticModel2D
 from ...geom import BoxGeom
 

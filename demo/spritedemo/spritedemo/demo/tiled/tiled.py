@@ -10,6 +10,7 @@ from crunge.engine import Renderer
 from crunge.engine import RectI
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.d2.node_2d import Node2D
+from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.resource.texture_kit import TextureKit
 from crunge.engine.resource.texture import Texture
 
@@ -20,7 +21,8 @@ class TiledDemo(Demo):
     def __init__(self):
         super().__init__()
 
-        tmx_path = self.resource_root / "tiled" / "level1.tmx"
+        #tmx_path = self.resource_root / "tiled" / "level1.tmx"
+        tmx_path = ResourceManager().resolve_path("{resources}/tiled/level1.tmx")
         self.tmx_data = TiledMap(tmx_path)
         self.reset()
 

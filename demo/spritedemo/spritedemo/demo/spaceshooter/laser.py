@@ -4,8 +4,7 @@ from loguru import logger
 import glm
 
 from crunge.engine.d2.sprite import Sprite
-from crunge.engine.resource.texture_atlas_kit import TextureAtlasKit
-from crunge.engine.resource.resource_kit import ResourceKit
+from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
 
 from ...model_2d import DynamicModel2D
 from ...geom import BoxGeom
@@ -16,8 +15,7 @@ class Laser(DynamicModel2D):
         super().__init__(position, geom=BoxGeom)
         self.angle = angle
         self.speed = speed
-        path = ResourceKit().root / "spaceshooter" / "sheet.xml"
-        atlas = TextureAtlasKit().load_xml(path)
+        atlas = TextureAtlasLoader().load("{resources}/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get("laserBlue01.png")

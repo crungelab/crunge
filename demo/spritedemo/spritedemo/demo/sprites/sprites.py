@@ -9,10 +9,11 @@ from crunge.engine import Renderer
 from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.resource.texture_kit import TextureKit
+#from crunge.engine.resource.texture_kit import TextureKit
+from crunge.engine.loader.texture_loader import TextureLoader
 
 
-class SpriteDemo(Demo):
+class SpritesDemo(Demo):
     def __init__(self):
         super().__init__()
         self.angle = 0
@@ -21,8 +22,10 @@ class SpriteDemo(Demo):
         self.color_enabled = True
         self.color = 1, 1, 1
         # Ship1
-        path = self.resource_root / "images" / "playerShip1_orange.png"
-        texture = TextureKit().load(path)
+        #path = self.resource_root / "images" / "playerShip1_orange.png"
+        path = "{images}/playerShip1_orange.png"
+        #texture = TextureKit().load(path)
+        texture = TextureLoader().load(path)
         sprite = self.sprite = Sprite(texture)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 4
@@ -34,8 +37,10 @@ class SpriteDemo(Demo):
         self.scene.add_child(self.node)
 
         # Ship2
-        path = self.resource_root / "images" / "playerShip1_blue.png"
-        texture = TextureKit().load(path)
+        #path = self.resource_root / "images" / "playerShip1_blue.png"
+        path = "{images}/playerShip1_blue.png"
+        #texture = TextureKit().load(path)
+        texture = TextureLoader().load(path)
         sprite = self.sprite = Sprite(texture)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
@@ -97,7 +102,7 @@ class SpriteDemo(Demo):
         super().draw(renderer)
 
 def main():
-    SpriteDemo().create().run()
+    SpritesDemo().create().run()
 
 
 if __name__ == "__main__":

@@ -5,11 +5,11 @@ import glm
 
 from crunge import imgui
 from crunge.engine import Renderer
-
-from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.resource.texture_atlas_kit import TextureAtlasKit
+from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
+
+from ..demo import Demo
 
 
 class TextureAtlasDemo(Demo):
@@ -21,8 +21,7 @@ class TextureAtlasDemo(Demo):
         self.color_enabled = True
         self.color = 1, 1, 1
 
-        path = self.resource_root / "platformer" / "Spritesheets" / "spritesheet_tiles.xml"
-        atlas = self.atlas = TextureAtlasKit().load_xml(path)
+        atlas = self.atlas  = TextureAtlasLoader().load("{resources}/platformer/Spritesheets/spritesheet_tiles.xml")
         logger.debug(f"atlas: {atlas}")
         
         texture = self.texture = atlas.get("bomb.png")

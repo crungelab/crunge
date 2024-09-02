@@ -5,9 +5,9 @@ from crunge import sdl
 from crunge import imgui
 from crunge.engine import Renderer
 
-from ..demo import Demo
-from crunge.engine.resource.texture_atlas_kit import TextureAtlasKit
+from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
 
+from ..demo import Demo
 from ...physics import DynamicPhysicsEngine
 
 from .thing import Thing
@@ -21,8 +21,7 @@ class ThingsDemo(Demo):
         self.physics_engine.create()
         self.create_floor()
 
-        path = self.resource_root / "platformer" / "Spritesheets" / "spritesheet_tiles.xml"
-        atlas = self.atlas = TextureAtlasKit().load_xml(path)
+        atlas = self.atlas  = TextureAtlasLoader().load("{resources}/platformer/Spritesheets/spritesheet_tiles.xml")
         logger.debug(f"atlas: {atlas}")
 
         self.texture = atlas.get("bomb.png")

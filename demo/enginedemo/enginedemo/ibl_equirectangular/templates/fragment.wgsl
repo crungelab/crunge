@@ -23,20 +23,74 @@ fn linearSample(texture: texture_2d<f32>, texSampler: sampler, uv: vec2<f32>) ->
 
 const pi: f32 = 3.141592653589793;
 
-// Convert a reflection vector to equirectangular coordinates
-fn reflectionToEquirectangularUV(normal: vec3<f32>, viewDir: vec3<f32>) -> vec2<f32> {
-    let reflection = normalize(reflect(viewDir, normal));
-
+fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
     // Calculate spherical coordinates
-    let theta = atan2(reflection.z, reflection.x); // Longitude [-π, π]
-    let phi = asin(reflection.y);                  // Latitude [-π/2, π/2]
+    let theta = atan2(direction.z, direction.x); // Longitude [-π, π]
+    let phi = asin(direction.y);                  // Latitude [-π/2, π/2]
 
     // Map spherical coordinates to texture coordinates
     let u = (theta / (2.0 * pi)) + 0.5;
     let v = (phi / pi) + 0.5;
-
     return vec2<f32>(u, v);
 }
+
+/*fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
+  let inv_atan = vec2<f32>(0.1591, 0.3183);
+  // Calculate spherical coordinates
+  let theta = atan2(direction.z, direction.x); // Longitude [-π, π]
+  let phi = asin(direction.y);                  // Latitude [-π/2, π/2]
+
+  // Map spherical coordinates to texture coordinates
+  var uv = vec2<f32>(
+      atan2(direction.z, direction.x),
+      asin(direction.y)
+  ) * inv_atan + 0.5;
+  
+  return uv;
+}*/
+
+/*fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
+
+    let phi = atan2(direction.z, direction.x);
+    //let theta = asin(direction.y);
+    let theta = asin(clamp(direction.y, -1.0, 1.0));
+    
+    var uv = vec2<f32>(
+        0.5 + 0.5 * phi / 3.14159265359,
+        0.5 - theta / 3.14159265359
+    );
+    
+    // Ensure UV coordinates wrap properly
+    uv = fract(uv);
+    
+    return uv;
+}*/
+
+/*fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
+
+    let phi = atan2(direction.z, direction.x);
+    //let theta = asin(direction.y);
+    let theta = asin(clamp(direction.y, -1.0, 1.0));
+    
+    // Calculate the initial UV coordinates
+    var u = 0.5 + phi / (2.0 * PI);
+    var v = 0.5 - theta / PI;
+
+    // Conditional logic to handle edge cases:
+    // 1. Ensure v is within [0, 1] range.
+    // 2. Correct for flipping at the poles by checking the y component of the direction.
+    if (direction.y > 0.99) {
+        // Near the north pole
+        u = 0.5 + phi / (2.0 * PI);  // Wrap around horizontally
+        v = 0.0;                     // Fix v at the top edge
+    } else if (direction.y < -0.99) {
+        // Near the south pole
+        u = 0.5 + phi / (2.0 * PI);  // Wrap around horizontally
+        v = 1.0;                     // Fix v at the bottom edge
+    }
+
+    return vec2<f32>(fract(u), clamp(v, 0.0, 1.0));
+}*/
 
 struct Material {
   baseColorFactor : vec4<f32>,
@@ -77,7 +131,8 @@ fn GetSurface(input : VertexOutput) -> Surface {
   var material = GetMaterial();
 
   surface.position = input.frag_pos;
-  surface.v = normalize(camera.position - input.frag_pos);
+  //surface.v = normalize(camera.position - input.frag_pos);
+  surface.v = camera.position - input.frag_pos;
 
   {% if vertex_table.has_uv %}
   let uv = input.uv;
@@ -132,7 +187,9 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% endif %}
 
   {% if material.has_environment_texture %}
-  let envUv = reflectionToEquirectangularUV(surface.normal, -surface.v);
+  let envDir = normalize(-reflect(surface.v, surface.normal));
+  //let envDir = surface.normal;
+  let envUv = directionToEquirectangularUV(envDir);
   surface.environment = textureSample(environmentTexture, environmentSampler, envUv).rgb;
   {% else %}
   surface.environment = vec3(0.0);
@@ -148,7 +205,7 @@ fn GetLight(input : VertexOutput) -> Light {
   light.kind = LightKind_Point;
   //light.v = normalize(lightUniform.position - input.frag_pos);
   light.position = lightUniform.position;
-  light.v = lightUniform.position - input.frag_pos;
+  light.v = normalize(lightUniform.position - input.frag_pos);
   light.color = lightUniform.color;
   //light.range = lightUniform.range;
   light.range = 10.0;
@@ -164,6 +221,6 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
 
   let color = surface.baseColor;
 
-  let finalColor = surface.environment;
+  let finalColor = color.rgb * surface.environment;
   return vec4<f32>(linearToSRGB(finalColor), color.a);
 }

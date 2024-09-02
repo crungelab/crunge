@@ -26,6 +26,7 @@ class MaterialBuilder(Builder):
         super().__init__(context)
         self.tf_material = tf_material
         self.material = Material()
+        self.use_environment_map = False
 
     def build(self) -> None:
         tf_material = self.tf_material
@@ -57,8 +58,7 @@ class MaterialBuilder(Builder):
         # Metallic Roughness Texture
         if pbr.metallic_roughness_texture.index >= 0:
             self.build_texture('metallicRoughness', pbr.metallic_roughness_texture)
-            self.build_environment_map()
-
+            self.use_environment_map = True
         # Normal Texture
         if tf_material.normal_texture.index >= 0:
             self.build_texture('normal', tf_material.normal_texture)
@@ -75,6 +75,9 @@ class MaterialBuilder(Builder):
         # Emissive Texture
         if tf_material.emissive_texture.index >= 0:
             self.build_texture('emissive', tf_material.emissive_texture)
+
+        if self.use_environment_map:
+            self.build_environment_map()
 
         return self.material
     
@@ -134,9 +137,9 @@ class MaterialBuilder(Builder):
 
         '''
         sampler_desc = wgpu.SamplerDescriptor(
-            address_mode_u=wgpu.AddressMode.REPEAT,
-            address_mode_v=wgpu.AddressMode.REPEAT,
-            address_mode_w=wgpu.AddressMode.REPEAT,
+            address_mode_u=wgpu.AddressMode.MIRROR_REPEAT,
+            address_mode_v=wgpu.AddressMode.MIRROR_REPEAT,
+            address_mode_w=wgpu.AddressMode.MIRROR_REPEAT,
             mag_filter=wgpu.FilterMode.LINEAR,
             min_filter=wgpu.FilterMode.LINEAR,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,

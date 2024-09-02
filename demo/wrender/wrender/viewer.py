@@ -13,7 +13,7 @@ from crunge import engine
 
 from crunge.engine import Renderer
 
-from crunge.engine.gltf import GltfImporter
+from crunge.engine.loader.gltf import GltfLoader
 
 from crunge.engine.d3.renderer_3d import Renderer3D
 from crunge.engine.d3.scene_3d import Scene3D
@@ -49,7 +49,7 @@ class Viewer(engine.App):
         scene_path = tkinter.filedialog.askopenfilename(initialdir = models_root, title = "Select file", filetypes = (("gltf files","*.gltf"),("glb files","*.glb"),("all files","*.*")))
         if not scene_path:
             return
-        scene = GltfImporter().load(scene_path)
+        scene = GltfLoader().load(scene_path)
         self.schedule_once(lambda dt: self.show(scene))
 
     def show(self, scene: Scene3D):

@@ -2,7 +2,7 @@ from jinja2 import Environment
 
 from crunge import gltf
 
-from ...d3.scene_3d import Scene3D
+from ....d3.scene_3d import Scene3D
 
 
 class BuilderContext:

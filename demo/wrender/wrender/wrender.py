@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 
-from crunge.engine.gltf import GltfImporter
+from crunge.engine.loader.gltf import GltfLoader
 
 from .viewer import Viewer
 
@@ -53,7 +53,7 @@ class WRender(Viewer):
         #scene_path = models_root / "teapot.gltf"
         #scene_path = models_root / "torusknot.gltf"
 
-        scene = GltfImporter().load(scene_path)
+        scene = GltfLoader().load(scene_path)
 
         #Viewer().create().show(scene)
         #Viewer().create().show(scene).run()

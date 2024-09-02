@@ -6,7 +6,7 @@ from crunge import gltf
 
 from . import Builder
 from .builder_context import BuilderContext
-from ...d3.scene_3d import Scene3D
+from ....d3.scene_3d import Scene3D
 #from .node_builder import NodeBuilder
 from .poly_node_builder import PolyNodeBuilder
 

@@ -6,16 +6,18 @@ from loguru import logger
 
 from crunge import wgpu
 from crunge.wgpu import utils
-from crunge.engine import Base
+#from crunge.engine import Base
+
 
 from crunge.engine.resource.texture import Texture
+from .resource_kit import ResourceKit
 
-
-class TextureKitBase(Base):
+class TextureKitBase(ResourceKit[Texture]):
     def __init__(self):
         super().__init__()
         self.textures: Dict[Path, Texture] = {}
     
+    '''
     def load_wgpu_texture(self, path: Path) -> Texture:
         im = iio.imread(path, pilmode='RGBA')
         shape = im.shape
@@ -64,3 +66,4 @@ class TextureKitBase(Base):
         )
 
         return texture, im_width, im_height
+    '''

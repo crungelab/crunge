@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from crunge.engine.gltf import GltfImporter
+from crunge.engine.loader.gltf import GltfLoader
 
 from .viewer import Viewer
 
@@ -13,7 +13,7 @@ class GltfDemo(Viewer):
         self.create_importer()
 
     def create_importer(self):
-        return GltfImporter()
+        return GltfLoader()
 
     def run(self):
         importer = self.create_importer()

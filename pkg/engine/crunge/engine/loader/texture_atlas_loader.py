@@ -1,26 +1,25 @@
-from typing import Dict
 from pathlib import Path
 
 from loguru import logger
 from lxml import etree
-import glm
 
-from crunge.core import klass
 from crunge.engine import RectI
 
-from .texture_kit_base import TextureKitBase
-from .texture import Texture
-from .texture_atlas import TextureAtlas
+from .texture_loader_base import TextureLoaderBase
 
-@klass.singleton
-class TextureAtlasKit(TextureKitBase):
-    def __init__(self):
+from ..resource.resource_manager import ResourceManager
+from ..resource.texture import Texture
+from ..resource.texture_atlas import TextureAtlas
+
+
+class TextureAtlasLoader(TextureLoaderBase):
+    def __init__(self) -> None:
         super().__init__()
-
-    '''
-    def load_xml(self, path: Path) -> TextureAtlas:
-        if path in self.textures:
-            return self.textures[path]
+    
+    def load(self, path: Path, name: str = "") -> TextureAtlas:
+        path = ResourceManager().resolve_path(path)
+        if texture:= self.kit.get(path):
+            return texture
 
         # Load the XML file
         if not path.exists():
@@ -38,10 +37,10 @@ class TextureAtlasKit(TextureKitBase):
                 raise Exception(f'Image file not found: {image_path}')
         logger.debug(f"Image Path: {image_path}")
 
-        wgpu_texture, width, height = self.load_wgpu_texture(image_path)
+        wgpu_texture, width, height = self.load_wgpu_texture([image_path])
         #atlas = TextureAtlas(wgpu_texture, width, height)
         atlas = TextureAtlas(str(path.stem), RectI(0, 0, width, height), wgpu_texture)
-        self.textures[path] = atlas
+        self.kit.add(atlas)
 
         # Iterate over each SubTexture element
         for sub_texture in root.findall('SubTexture'):
@@ -57,4 +56,4 @@ class TextureAtlasKit(TextureKitBase):
             atlas.add(texture)
 
         return atlas
-    '''
+    

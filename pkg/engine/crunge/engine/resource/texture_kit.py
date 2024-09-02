@@ -16,7 +16,7 @@ class TextureKit(TextureKitBase):
     def __init__(self):
         super().__init__()
 
-
+    '''
     def load(self, path: Path) -> Texture:
         if path in self.textures:
             return self.textures[path]
@@ -24,3 +24,4 @@ class TextureKit(TextureKitBase):
         texture = Texture(path, RectI(0, 0, width, height), wgpu_texture)
         self.textures[path] = texture
         return texture
+    '''

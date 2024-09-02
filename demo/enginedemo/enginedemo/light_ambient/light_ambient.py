@@ -7,7 +7,7 @@ import glm
 from crunge import imgui
 
 from crunge.engine.renderer import Renderer
-from crunge.engine.gltf import GltfImporter
+from crunge.engine.loader.gltf import GltfLoader
 
 from ..demo.gltf_demo import GltfDemo
 
@@ -17,7 +17,7 @@ class AmbientLightDemo(GltfDemo):
     def create_importer(self):
         module_path = Path(__file__).resolve()
         template_dir = module_path.parent / 'templates'
-        importer = GltfImporter(template_loaders=[FileSystemLoader(template_dir)])
+        importer = GltfLoader(template_loaders=[FileSystemLoader(template_dir)])
         return importer
 
     def draw(self, renderer: Renderer):

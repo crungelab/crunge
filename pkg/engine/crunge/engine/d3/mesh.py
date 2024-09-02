@@ -32,14 +32,6 @@ class Mesh(Node3D):
             self.camera_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
-        '''
-        self.light_uniform_buffer_size = sizeof(LightUniform)
-        self.light_uniform_buffer = self.gfx.create_buffer(
-            "Light Uniform Buffer",
-            self.light_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-        '''
 
     def add_primitive(self, primitive: Primitive):
         self.primitives.append(primitive)
@@ -62,6 +54,7 @@ class Mesh(Node3D):
         # camera_uniform.position.y = camera.position.y
         # camera_uniform.position.z = camera.position.z
         camera_uniform.position = cast_vec3(camera.position)
+        #logger.debug(f"camera_uniform.position: {camera_uniform.position.x}, {camera_uniform.position.y}, {camera_uniform.position.z}")
 
         self.device.queue.write_buffer(
             self.camera_uniform_buffer,
@@ -69,29 +62,6 @@ class Mesh(Node3D):
             as_capsule(camera_uniform),
             self.camera_uniform_buffer_size,
         )
-
-        '''
-        light_uniform = LightUniform()
-
-        light_uniform.position.x = 2.0
-        light_uniform.position.y = 2.0
-        light_uniform.position.z = 2.0
-        # light_uniform.position = cast_vec3(glm.vec3(2.0, 2.0, 2.0))
-
-        light_uniform.color.x = 1.0
-        light_uniform.color.y = 1.0
-        light_uniform.color.z = 1.0
-
-        light_uniform.range = 10.0
-        light_uniform.energy = 10.0
-
-        self.device.queue.write_buffer(
-            self.light_uniform_buffer,
-            0,
-            as_capsule(light_uniform),
-            self.light_uniform_buffer_size,
-        )
-        '''
 
         for primitive in self.primitives:
             primitive.draw(renderer)
