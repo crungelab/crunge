@@ -34,64 +34,6 @@ fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
     return vec2<f32>(u, v);
 }
 
-/*fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
-  let inv_atan = vec2<f32>(0.1591, 0.3183);
-  // Calculate spherical coordinates
-  let theta = atan2(direction.z, direction.x); // Longitude [-π, π]
-  let phi = asin(direction.y);                  // Latitude [-π/2, π/2]
-
-  // Map spherical coordinates to texture coordinates
-  var uv = vec2<f32>(
-      atan2(direction.z, direction.x),
-      asin(direction.y)
-  ) * inv_atan + 0.5;
-  
-  return uv;
-}*/
-
-/*fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
-
-    let phi = atan2(direction.z, direction.x);
-    //let theta = asin(direction.y);
-    let theta = asin(clamp(direction.y, -1.0, 1.0));
-    
-    var uv = vec2<f32>(
-        0.5 + 0.5 * phi / 3.14159265359,
-        0.5 - theta / 3.14159265359
-    );
-    
-    // Ensure UV coordinates wrap properly
-    uv = fract(uv);
-    
-    return uv;
-}*/
-
-/*fn directionToEquirectangularUV(direction: vec3<f32>) -> vec2<f32> {
-
-    let phi = atan2(direction.z, direction.x);
-    //let theta = asin(direction.y);
-    let theta = asin(clamp(direction.y, -1.0, 1.0));
-    
-    // Calculate the initial UV coordinates
-    var u = 0.5 + phi / (2.0 * PI);
-    var v = 0.5 - theta / PI;
-
-    // Conditional logic to handle edge cases:
-    // 1. Ensure v is within [0, 1] range.
-    // 2. Correct for flipping at the poles by checking the y component of the direction.
-    if (direction.y > 0.99) {
-        // Near the north pole
-        u = 0.5 + phi / (2.0 * PI);  // Wrap around horizontally
-        v = 0.0;                     // Fix v at the top edge
-    } else if (direction.y < -0.99) {
-        // Near the south pole
-        u = 0.5 + phi / (2.0 * PI);  // Wrap around horizontally
-        v = 1.0;                     // Fix v at the bottom edge
-    }
-
-    return vec2<f32>(fract(u), clamp(v, 0.0, 1.0));
-}*/
-
 struct Material {
   baseColorFactor : vec4<f32>,
   emissiveFactor : vec3<f32>,
@@ -155,7 +97,8 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% if material.has_metallic_roughness_texture %}
   let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
   surface.metallic = material.metallicFactor * metalRough.b;
-  surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
+  //surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
+  surface.roughness = material.roughnessFactor * metalRough.g;
   {% else %}
   surface.metallic = material.metallicFactor;
   surface.roughness = material.roughnessFactor;
@@ -187,7 +130,7 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% endif %}
 
   {% if material.has_environment_texture %}
-  let envDir = normalize(reflect(surface.v, surface.normal));
+  let envDir = normalize(-reflect(surface.v, surface.normal));
   //let envDir = surface.normal;
   //let envUv = directionToEquirectangularUV(envDir);
   //surface.environment = textureSample(environmentTexture, environmentSampler, envUv).rgb;

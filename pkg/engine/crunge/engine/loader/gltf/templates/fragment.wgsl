@@ -86,7 +86,9 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% if material.has_metallic_roughness_texture %}
   let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
   surface.metallic = material.metallicFactor * metalRough.b;
-  surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
+  //surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
+  surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.1, 1.0); // Adjust the lower bound
+
   {% else %}
   surface.metallic = material.metallicFactor;
   surface.roughness = material.roughnessFactor;
@@ -118,8 +120,12 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% endif %}
 
   {% if material.has_environment_texture %}
-  let envUv = reflectionToEquirectangularUV(surface.v, surface.normal);
-  let envColor = textureSample(environmentTexture, environmentSampler, envUv).rgb;
+  let envDir = normalize(-reflect(surface.v, surface.normal));
+  //let envUv = directionToEquirectangularUV(envDir);
+  //surface.environment = textureSample(environmentTexture, environmentSampler, envUv).rgb;
+  //let envColor = textureSample(environmentTexture, environmentSampler, envUv).rgb;
+  let envColor = textureSample(environmentTexture, environmentSampler, envDir).rgb;
+
   // Adjust environment contribution based on roughness
   let envRoughness = mix(1.0, 0.0, surface.roughness);
   let envContribution = envColor * envRoughness;
@@ -131,6 +137,17 @@ fn GetSurface(input : VertexOutput) -> Surface {
   surface.ambient =
       ((diffuseColor * envContribution * surface.metallic) +
       (specularColor * envContribution));
+
+  /*
+  let envRoughness = mix(0.5, 1.0, surface.roughness); // Adjust this mix to reduce shine
+  let envContribution = envColor * envRoughness;
+
+  let diffuseColor = mix(surface.albedo, vec3(0.0), surface.metallic);
+  let specularColor = mix(vec3(0.04), surface.albedo, surface.metallic) * envRoughness;
+
+  surface.ambient = ((diffuseColor * envContribution * (1.0 - surface.metallic)) +
+                    (specularColor * envContribution));
+  */
 
   {% else %}
   surface.ambient = surface.albedo;
@@ -160,7 +177,11 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
   var surface = GetSurface(input);
   var light = GetLight(input);
 
-  let reflection = lightRadiance(light, surface);
+  // Calculate Fresnel factor
+  let fresnelFactor = pow(1.0 - dot(surface.v, surface.normal), 5.0);
+  let fresnel = mix(surface.f0, vec3(1.0), fresnelFactor);
+
+  let reflection = lightRadiance(light, surface) * fresnel;
   let ambient = surface.ambient * surface.ao;
   let rgb = reflection + ambient + surface.emissive;
   let finalColor = linearToSRGB(rgb);

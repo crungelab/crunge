@@ -33,6 +33,7 @@ class ArcballCameraController(CameraController):
         self.mouse_sensitivity = 20.0
         self.first_mouse = True
 
+    
         dir = target - self.position
         z_axis = glm.normalize(dir)
         x_axis = glm.normalize(glm.cross(z_axis, glm.normalize(self.camera.up)))
@@ -42,7 +43,6 @@ class ArcballCameraController(CameraController):
         self.target_translation = glm.inverse(glm.translate(glm.mat4(1.0), target))
         self.translation = glm.translate(glm.mat4(1.0), glm.vec3(0.0, 0.0, -glm.length(dir)))
         self.orientation = glm.normalize(glm.quat_cast(glm.transpose(glm.mat3(x_axis, y_axis, -z_axis))))
-        self.position = self.target + self.orientation * glm.vec3(0, 0, -1) * self.distance
 
         self.update_camera()
 
@@ -75,6 +75,8 @@ class ArcballCameraController(CameraController):
     
     def update_camera(self):
         self.camera.view_matrix = self.translation * glm.mat4_cast(self.orientation) * self.target_translation
+        inverse_view_matrix = glm.inverse(self.camera.view_matrix)
+        self.camera.position = glm.vec3(inverse_view_matrix[3])
 
     def process_mouse_movement(self, xpos, ypos):
         #logger.debug(f"Mouse movement: {xpos}, {ypos}")
@@ -84,8 +86,6 @@ class ArcballCameraController(CameraController):
             self.first_mouse = False
         # Perform the rotation
         self.rotate(self.prev_mouse, transform_mouse(glm.vec2(xpos, ypos), self.width, self.height))
-
-        self.position = self.target + self.orientation * glm.vec3(0, 0, -1) * self.distance
 
         #logger.debug(f"Camera position: {self.camera.position}")
         #logger.debug(f"Camera orientation: {self.camera.orientation}")
@@ -99,15 +99,11 @@ class ArcballCameraController(CameraController):
         logger.debug(f"Velocity: {velocity}")
         self.camera.update_camera_vectors()
         if direction == "FORWARD":
-            #self.position += self.camera.front * velocity
             self.zoom(velocity)
         if direction == "BACKWARD":
-            #self.position -= self.camera.front * velocity
             self.zoom(-velocity)
         if direction == "LEFT":
-            #self.position -= self.camera.right * velocity
             self.pan(glm.vec2(-velocity, 0))
         if direction == "RIGHT":
-            #self.position += self.camera.right * velocity
             self.pan(glm.vec2(velocity, 0))
         self.update_camera()

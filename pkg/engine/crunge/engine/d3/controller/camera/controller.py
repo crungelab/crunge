@@ -28,6 +28,7 @@ class CameraController(Controller):
     
     @position.setter
     def position(self, value):
+        logger.debug(f"Setting camera position: x={value.x}, y={value.y}, z={value.z}")
         self.camera.position = value
 
     @property
