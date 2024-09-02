@@ -10,8 +10,13 @@ import crunge.wgpu.utils as utils
 from crunge import gltf
 
 from crunge.engine import RectI
+
 from crunge.engine.resource.material import Material
 from crunge.engine.resource.texture import Texture
+
+from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.loader.cube_texture_loader import CubeTextureLoader
+from crunge.engine.loader.image_loader import HdrImageLoader
 
 from ..debug import debug_texture_info
 from . import Builder
@@ -87,9 +92,40 @@ class MaterialBuilder(Builder):
         self.material.add_texture(texture)
 
     def build_environment_map(self) -> None:
-        texture = self.build_environment_texture()
+        #texture = self.build_environment_texture()
+        texture = self.build_cube_environment_texture()
         self.material.add_texture(texture)
 
+    def build_environment_texture(self) -> Texture:
+        path = importlib.resources.path('crunge.engine.resources.textures', 'environment.hdr')
+        texture = TextureLoader(image_loader=HdrImageLoader()).load(path, name="environment")
+        texture.view = texture.texture.create_view()
+        texture.sampler = self.gfx.device.create_sampler()
+        return texture
+
+    def build_cube_environment_texture(self) -> Texture:
+        root = importlib.resources.path('crunge.engine.resources.textures.cubemaps', '')
+        #name = "bridge2"
+        #ext = "jpg"
+        name = "gcanyon_cube"
+        ext = "png"
+        paths = [
+            root / f"{name}_px.{ext}",
+            root / f"{name}_nx.{ext}",
+            root / f"{name}_py.{ext}",
+            root / f"{name}_ny.{ext}",
+            root / f"{name}_pz.{ext}",
+            root / f"{name}_nz.{ext}",
+        ]
+        texture = CubeTextureLoader().load(paths, name="environment")
+        texture_view_desc = wgpu.TextureViewDescriptor(
+            dimension=wgpu.TextureViewDimension.CUBE,
+        )
+        texture.view = texture.texture.create_view(texture_view_desc)
+        texture.sampler = self.gfx.device.create_sampler()
+        return texture
+
+    """
     def build_environment_texture(self) -> Texture:
         #path = Path('resources/textures/environment.jpg')
         path = importlib.resources.path('crunge.engine.resources.textures', 'environment.hdr')
@@ -182,3 +218,4 @@ class MaterialBuilder(Builder):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
         return texture
+    """

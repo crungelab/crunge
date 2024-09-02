@@ -10,10 +10,7 @@ from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
 
 
-class TextureLoader(TextureLoaderBase):
-    def __init__(self) -> None:
-        super().__init__()
-
+class TextureLoader(TextureLoaderBase[Texture]):
     def load(self, path: Path, name: str = None) -> Texture:
         path = ResourceManager().resolve_path(path)
         if not name:

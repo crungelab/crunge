@@ -16,17 +16,13 @@ from ..debug import (
 
 from crunge.engine.d3.mesh import Mesh
 from crunge.engine.d3.primitive import Primitive
+from crunge.engine.resource.cube_texture import CubeTexture
 
 from .vertex_table import VertexTable
 from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, TangentColumn
 
 from .material_builder import MaterialBuilder
 from crunge.engine.resource.material import Material
-
-'''
-#from .shader import VertexShaderBuilder, FragmentShaderBuilder
-from .shader_ng import VertexShaderBuilder, FragmentShaderBuilder
-'''
 
 from ..normals import compute_normals
 from ..tangents import compute_tangents
@@ -196,15 +192,6 @@ class PrimitiveBuilder(Builder):
             self.context, self.vertex_table, self.material
         ).build()
 
-        '''
-        vs_module: wgpu.ShaderModule = VertexShaderBuilder(
-            self.context, self.vertex_table
-        ).build()
-        fs_module: wgpu.ShaderModule = FragmentShaderBuilder(
-            self.context, self.vertex_table, self.material
-        ).build()
-        '''
-
         vertAttributes = self.build_vertex_attributes()
 
         vertBufferLayouts = [
@@ -283,6 +270,10 @@ class PrimitiveBuilder(Builder):
         ]
 
         for i, texture in enumerate(self.material.textures):
+            view_dimension = wgpu.TextureViewDimension.E2D
+            if isinstance(texture, CubeTexture):
+                view_dimension = wgpu.TextureViewDimension.CUBE
+
             bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
                     binding=i * 2 + TEXTURE_BINDING_START,
@@ -298,7 +289,8 @@ class PrimitiveBuilder(Builder):
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=wgpu.TextureViewDimension.E2D,
+                        #view_dimension=wgpu.TextureViewDimension.E2D,
+                        view_dimension=view_dimension,
                     ),
                 )
             )

@@ -187,10 +187,11 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% endif %}
 
   {% if material.has_environment_texture %}
-  let envDir = normalize(-reflect(surface.v, surface.normal));
+  let envDir = normalize(reflect(surface.v, surface.normal));
   //let envDir = surface.normal;
-  let envUv = directionToEquirectangularUV(envDir);
-  surface.environment = textureSample(environmentTexture, environmentSampler, envUv).rgb;
+  //let envUv = directionToEquirectangularUV(envDir);
+  //surface.environment = textureSample(environmentTexture, environmentSampler, envUv).rgb;
+  surface.environment = textureSample(environmentTexture, environmentSampler, envDir).rgb;
   {% else %}
   surface.environment = vec3(0.0);
   {% endif %}

@@ -7,7 +7,6 @@ from crunge.core import klass
 @klass.singleton
 class ResourceManager:
     def __init__(self) -> None:
-        # self.root = Path(__file__).parent.parent.parent.parent.parent.parent / "resources"
         self.path_variables: Dict[str, Path] = {}
 
     def add_path_variable(self, name: str, value: any):
@@ -21,10 +20,10 @@ class ResourceManager:
         for name, value in path_variables.items():
             self.add_path_variable(name, value)
 
-    def resolve_path(self, path: str) -> Path:
+    def resolve_path(self, path: str | Path) -> Path:
+        if isinstance(path, Path):
+            return path
         return Path(path.format(**self.path_variables))
-    
-    '''
-    def path(self, path: Path) -> Path:
-        return self.root / path
-    '''
+
+    def resolve_paths(self, *paths: str | Path) -> Path:
+        return [self.resolve_path(path) for path in paths]

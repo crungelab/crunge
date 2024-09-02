@@ -12,7 +12,7 @@ from ..resource.texture import Texture
 from ..resource.texture_atlas import TextureAtlas
 
 
-class TextureAtlasLoader(TextureLoaderBase):
+class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
     def __init__(self) -> None:
         super().__init__()
     
@@ -20,11 +20,12 @@ class TextureAtlasLoader(TextureLoaderBase):
         path = ResourceManager().resolve_path(path)
         if not name:
             name = str(path)
-        logger.debug(f"Loading TextureAtlas: {name}")
         if atlas:= self.kit.get(name):
             return atlas
 
         # Load the XML file
+        logger.debug(f"Loading TextureAtlas: {name}")
+
         if not path.exists():
             raise Exception(f'XML file not found: {path}')
 
@@ -34,10 +35,12 @@ class TextureAtlasLoader(TextureLoaderBase):
         # Extract the imagePath attribute from the TextureAtlas element
         image_path = root.attrib['imagePath']
         image_path = path.parent / Path(image_path)
+
         if not image_path.exists():
             image_path = path.parent / Path(path.stem + '.png')
             if not image_path.exists():
                 raise Exception(f'Image file not found: {image_path}')
+
         logger.debug(f"Image Path: {image_path}")
 
         wgpu_texture, width, height = self.load_wgpu_texture([image_path])

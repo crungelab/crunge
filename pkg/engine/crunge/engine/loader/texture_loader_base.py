@@ -18,14 +18,16 @@ from ..resource.image import Image
 T_Resource = TypeVar("T_Resource", bound=Texture)
 
 class TextureLoaderBase(ResourceLoader[T_Resource]):
-    def __init__(self, kit: TextureKit = TextureKit()) -> None:
+    def __init__(self, kit: TextureKit = TextureKit(), image_loader=ImageLoader()) -> None:
         super().__init__(kit)
+        self.image_loader = image_loader
 
     def load_wgpu_texture(self, paths: List[Path]) -> wgpu.Texture:
         images: List[Image] = []
 
         for path in paths:
-            image = ImageLoader(path).load()
+            #image = ImageLoader().load(path)
+            image = self.image_loader.load(path)
             images.append(image)
 
         descriptor = wgpu.TextureDescriptor(

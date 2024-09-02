@@ -4,6 +4,7 @@ from loguru import logger
 
 from crunge import wgpu
 
+from crunge.engine.resource.cube_texture import CubeTexture
 from .....resource.material import Material
 
 from ...constants import TEXTURE_BINDING_START
@@ -39,9 +40,14 @@ class FragmentShaderBuilder(ShaderBuilder):
         super().build()
         logger.debug("Building fragment shader")
         material = self.material
+
         for i, texture in enumerate(material.textures):
+            texture_type = 'texture_2d<f32>'
+            if isinstance(texture, CubeTexture):
+                texture_type = 'texture_cube<f32>'
+
             self.add_binding(Binding(f'{texture.name}Sampler', 'sampler', i*2+TEXTURE_BINDING_START, 0))
-            self.add_binding(Binding(f'{texture.name}Texture', 'texture_2d<f32>', i*2+TEXTURE_BINDING_START+1, 0))
+            self.add_binding(Binding(f'{texture.name}Texture', texture_type, i*2+TEXTURE_BINDING_START+1, 0))
 
         shader_code = self.generate('fragment.wgsl')
         #logger.debug(f"fragment_shader_code:\n{shader_code}")

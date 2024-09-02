@@ -12,7 +12,7 @@ from ..resource.cube_texture import CubeTexture
 
 
 class CubeTextureLoader(TextureLoaderBase):
-    def __init__() -> None:
+    def __init__(self) -> None:
         super().__init__()
 
     def load(self, paths: List[Path], name: str = "") -> CubeTexture:
