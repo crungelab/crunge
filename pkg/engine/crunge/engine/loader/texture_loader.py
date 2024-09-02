@@ -14,9 +14,12 @@ class TextureLoader(TextureLoaderBase):
     def __init__(self) -> None:
         super().__init__()
 
-    def load(self, path: Path, name: str = "") -> Texture:
+    def load(self, path: Path, name: str = None) -> Texture:
         path = ResourceManager().resolve_path(path)
-        if texture:= self.kit.get(path):
+        if not name:
+            name = str(path)
+
+        if texture:= self.kit.get(name):
             return texture
         
         wgpu_texture, im_width, im_height = self.load_wgpu_texture([path])

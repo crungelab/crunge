@@ -16,10 +16,13 @@ class TextureAtlasLoader(TextureLoaderBase):
     def __init__(self) -> None:
         super().__init__()
     
-    def load(self, path: Path, name: str = "") -> TextureAtlas:
+    def load(self, path: Path, name: str = None) -> TextureAtlas:
         path = ResourceManager().resolve_path(path)
-        if texture:= self.kit.get(path):
-            return texture
+        if not name:
+            name = str(path)
+        logger.debug(f"Loading TextureAtlas: {name}")
+        if atlas:= self.kit.get(name):
+            return atlas
 
         # Load the XML file
         if not path.exists():
@@ -38,8 +41,7 @@ class TextureAtlasLoader(TextureLoaderBase):
         logger.debug(f"Image Path: {image_path}")
 
         wgpu_texture, width, height = self.load_wgpu_texture([image_path])
-        #atlas = TextureAtlas(wgpu_texture, width, height)
-        atlas = TextureAtlas(str(path.stem), RectI(0, 0, width, height), wgpu_texture)
+        atlas = TextureAtlas(name, RectI(0, 0, width, height), wgpu_texture)
         self.kit.add(atlas)
 
         # Iterate over each SubTexture element
