@@ -16,6 +16,10 @@ from .floor import Floor
 class ThingsDemo(Demo):
     def __init__(self):
         super().__init__()
+        self.reset()
+
+    def reset(self):
+        self.scene.clear()
         self.last_mouse = glm.vec2(0, 0)
         self.physics_engine = DynamicPhysicsEngine()
         self.physics_engine.create()
@@ -54,12 +58,13 @@ class ThingsDemo(Demo):
         box.create()
         self.scene.add_child(box)
 
-    def reset(self):
-        pass
 
     def draw(self, renderer: Renderer):
         imgui.begin("Shapes")
         imgui.text("Click to create shapes")
+
+        if imgui.button("Reset"):
+            self.reset()
 
         if imgui.begin_list_box("Textures", (-1, -1)):
 

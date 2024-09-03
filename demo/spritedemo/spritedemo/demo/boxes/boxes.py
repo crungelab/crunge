@@ -14,6 +14,10 @@ from .floor import Floor
 class BoxesDemo(Demo):
     def __init__(self):
         super().__init__()
+        self.reset()
+
+    def reset(self):
+        self.scene.clear()
         self.last_mouse = glm.vec2(0, 0)
         self.physics_engine = DynamicPhysicsEngine()
         self.physics_engine.create()
@@ -47,12 +51,13 @@ class BoxesDemo(Demo):
         box.create()
         self.scene.add_child(box)
 
-    def reset(self):
-        pass
-
     def draw(self, renderer: Renderer):
         imgui.begin("Boxes Demo")
         imgui.text("Click to create boxes")
+
+        if imgui.button("Reset"):
+            self.reset()
+
         imgui.end()
         super().draw(renderer)
 

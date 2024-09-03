@@ -7,7 +7,6 @@ from crunge import sdl
 from crunge import engine
 
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.d2.renderer_2d import Renderer2D
 from crunge.engine.d2.scene_2d import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
 

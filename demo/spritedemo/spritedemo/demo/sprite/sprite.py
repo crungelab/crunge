@@ -15,22 +15,7 @@ from crunge.engine.loader.texture_loader import TextureLoader
 class SpriteDemo(Demo):
     def __init__(self):
         super().__init__()
-        self.angle = 0
-        self.scale = 1.0
-        self.alpha = 255
-        self.color_enabled = True
-        self.color = 1, 1, 1
-
-        texture = TextureLoader().load("{images}/playerShip1_orange.png")
-        sprite = self.sprite = Sprite(texture)
-        node = self.node = Node2D(vu=sprite)
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-        #node.angle = 45
-        #node.size = glm.vec2(200, 200)
-
-        self.scene.add_child(self.node)
+        self.reset()
 
     def kill(self):
         self.node.destroy()
@@ -42,6 +27,19 @@ class SpriteDemo(Demo):
         self.alpha = 255
         self.color_enabled = True
         self.color = 1, 1, 1
+
+        self.scene.clear()
+
+        texture = TextureLoader().load("{images}/playerShip1_orange.png")
+        sprite = self.sprite = Sprite(texture)
+        node = self.node = Node2D(vu=sprite)
+        x = self.width / 2
+        y = self.height / 2
+        node.position = glm.vec2(x, y)
+
+        self.scene.add_child(self.node)
+
+
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)

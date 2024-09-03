@@ -19,16 +19,20 @@ class Node(Base):
         self.children.clear()
 
     def destroy(self):
+        if self.parent:
+            self.parent.remove_child(self)
         for child in self.children:
             child.destroy()
-        if self.parent:
-            self.parent.children.remove(self)
         self.clear()
 
     def add_child(self, child: "Node"):
         child.parent = self
         child.scene = self.scene
         self.children.append(child)
+
+    def remove_child(self, child: "Node"):
+        child.parent = None
+        self.children.remove(child)
 
     def draw(self, renderer: Renderer2D):
         if self.vu is not None:

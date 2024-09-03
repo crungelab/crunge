@@ -87,7 +87,7 @@ fn GetSurface(input : VertexOutput) -> Surface {
   let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
   surface.metallic = material.metallicFactor * metalRough.b;
   //surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
-  surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.1, 1.0); // Adjust the lower bound
+  surface.roughness = material.roughnessFactor * metalRough.g;
 
   {% else %}
   surface.metallic = material.metallicFactor;
@@ -138,17 +138,6 @@ fn GetSurface(input : VertexOutput) -> Surface {
       ((diffuseColor * envContribution * surface.metallic) +
       (specularColor * envContribution));
 
-  /*
-  let envRoughness = mix(0.5, 1.0, surface.roughness); // Adjust this mix to reduce shine
-  let envContribution = envColor * envRoughness;
-
-  let diffuseColor = mix(surface.albedo, vec3(0.0), surface.metallic);
-  let specularColor = mix(vec3(0.04), surface.albedo, surface.metallic) * envRoughness;
-
-  surface.ambient = ((diffuseColor * envContribution * (1.0 - surface.metallic)) +
-                    (specularColor * envContribution));
-  */
-
   {% else %}
   surface.ambient = surface.albedo;
   {% endif %}
@@ -161,8 +150,8 @@ fn GetLight(input : VertexOutput) -> Light {
   //light.kind = LightKind_Spot;
   //light.kind = LightKind_Directional;
   light.kind = LightKind_Point;
-  //light.v = normalize(lightUniform.position - input.frag_pos);
-  light.v = lightUniform.position - input.frag_pos;
+  light.v = normalize(lightUniform.position - input.frag_pos);
+  //light.v = lightUniform.position - input.frag_pos;
   //light.color = lightUniform.color;
   light.color = vec3<f32>(1.0, 1.0, 1.0);
   //light.range = lightUniform.range;
@@ -185,5 +174,5 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
   let ambient = surface.ambient * surface.ao;
   let rgb = reflection + ambient + surface.emissive;
   let finalColor = linearToSRGB(rgb);
-  return vec4<f32>(finalColor, surface.baseColor.a);             
+  return vec4<f32>(finalColor, surface.baseColor.a);
 }

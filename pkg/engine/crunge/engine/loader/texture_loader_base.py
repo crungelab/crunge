@@ -10,6 +10,7 @@ from crunge.wgpu import utils
 from .resource_loader import ResourceLoader
 from .image_loader import ImageLoader
 
+from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
 from ..resource.texture_kit import TextureKit
 from ..resource.image import Image
@@ -18,7 +19,7 @@ from ..resource.image import Image
 T_Resource = TypeVar("T_Resource", bound=Texture)
 
 class TextureLoaderBase(ResourceLoader[T_Resource]):
-    def __init__(self, kit: TextureKit = TextureKit(), image_loader=ImageLoader()) -> None:
+    def __init__(self, kit: TextureKit = ResourceManager().texture_kit, image_loader=ImageLoader()) -> None:
         super().__init__(kit)
         self.image_loader = image_loader
 

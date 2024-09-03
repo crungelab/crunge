@@ -3,10 +3,12 @@ from pathlib import Path
 
 from crunge.core import klass
 
+from .resource_group import ResourceGroup
 
 @klass.singleton
-class ResourceManager:
+class ResourceManager(ResourceGroup):
     def __init__(self) -> None:
+        super().__init__()
         self.path_variables: Dict[str, Path] = {}
 
     def add_path_variable(self, name: str, value: any):

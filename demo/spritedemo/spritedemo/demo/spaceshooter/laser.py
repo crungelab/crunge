@@ -22,6 +22,7 @@ class Laser(DynamicModel2D):
 
         self.vu = Sprite(texture)
         self.size = texture.size
+        self.ttl = 0.5
 
     def add_shape(self, shape):
         shape.collision_type = CollisionType.LASER
@@ -29,6 +30,9 @@ class Laser(DynamicModel2D):
 
     def update(self, dt):
         super().update(dt)
+        self.ttl = self.ttl - dt
+        if self.ttl <= 0:
+            self.destroy()
         #self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
         rotation = self._rotation + math.pi / 2
         direction = glm.vec2(math.cos(rotation), math.sin(rotation))

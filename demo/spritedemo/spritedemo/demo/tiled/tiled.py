@@ -11,7 +11,6 @@ from crunge.engine import RectI
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.resource.resource_manager import ResourceManager
-#from crunge.engine.resource.texture_kit import TextureKit
 from crunge.engine.loader.texture_loader import TextureLoader
 from crunge.engine.resource.texture import Texture
 
@@ -54,7 +53,6 @@ class TiledDemo(Demo):
                     logger.debug(f"Tile: {x}, {y}, {image}")
 
                     path = image[0]
-                    #atlas = TextureKit().load(path)
                     atlas = TextureLoader().load(path)
                     logger.debug(f"atlas: {atlas}")
 
@@ -90,7 +88,6 @@ class TiledDemo(Demo):
                         x = obj.x
                         y = pixel_height - obj.y
                         path = image[0]
-                        #atlas = TextureKit().load(path)
                         atlas = TextureLoader().load(path)
                         logger.debug(f"atlas: {atlas}")
 
