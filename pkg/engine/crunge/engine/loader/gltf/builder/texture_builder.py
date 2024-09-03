@@ -68,7 +68,9 @@ class TextureBuilder(Builder):
         )
 
         wgpu_texture = self.gfx.device.create_texture(descriptor)
-        self.texture = Texture(self.name, RectI(0, 0, im_width, im_height), wgpu_texture)
+        self.texture = Texture(RectI(0, 0, im_width, im_height), wgpu_texture).set_name(
+            self.name
+        )
         self.texture.view = wgpu_texture.create_view()
 
         sampler_desc = wgpu.SamplerDescriptor(

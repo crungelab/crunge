@@ -8,8 +8,8 @@ from .texture import Texture
 
 
 class TextureAtlas(Texture):
-    def __init__(self, name, rect: RectI, texture):
-        super().__init__(name, rect, texture)
+    def __init__(self, rect: RectI, texture):
+        super().__init__(rect, texture)
         self.textures: Dict[str, Texture] = {}
 
     def add(self, texture: Texture):

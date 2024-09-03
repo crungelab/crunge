@@ -1,27 +1,20 @@
+from .resource import Resource
 from .texture import Texture
 
-class Material:
+class Material(Resource):
     textures: list[Texture] = None
     texture_set: set = None
 
     alpha_mode: str = 'BLEND'
-    # (3,) or (4,) float with RGBA colors
-    #base_color_factor: tuple = (0, 0, 0, 0)
     base_color_factor: tuple = (1, 1, 1, 1)
-    #base_color_texture: Texture = None
 
     metallic_factor: float = 0
     roughness_factor: float = 0
-    #metallic_roughness_texture: Texture = None
-
-    #normal_texure: Texture = None
-    #occlusion_texure: Texture = None
     occlusion_strength: float = 1
-    # (3,) float
     emissive_factor: tuple = (0, 0, 0)
-    #emissive_texture: Texture = None
 
     def __init__(self) -> None:
+        super().__init__()
         self.textures = []
         self.texture_set = set()
 

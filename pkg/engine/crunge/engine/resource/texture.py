@@ -6,6 +6,7 @@ import glm
 from crunge import wgpu
 
 from .. import Base, RectI
+from .resource import Resource
 
 
 class TextureCoord(Structure):
@@ -23,15 +24,14 @@ COORDS = [
 ]
 
 
-class Texture(Base):
+class Texture(Resource):
     def __init__(
         self,
-        name: str,
         rect: RectI,
         texture: wgpu.Texture = None,
         parent: "Texture" = None,
     ):
-        self.name = name
+        super().__init__()
         self.texture = texture
         self.view: wgpu.TextureView = None
         self.sampler: wgpu.Sampler = None

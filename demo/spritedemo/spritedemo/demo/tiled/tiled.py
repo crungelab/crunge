@@ -60,11 +60,10 @@ class TiledDemo(Demo):
                     if rect:
                         tx, ty, tw, th = rect
                         texture = Texture(
-                            name,
                             RectI(tx, ty, tw, th),
                             atlas.texture,
                             atlas,
-                        )
+                        ).set_name(name)
                         logger.debug(f"texture: {texture}")
                     else:
                         texture = atlas
@@ -95,11 +94,10 @@ class TiledDemo(Demo):
                         if rect:
                             tx, ty, tw, th = rect
                             texture = Texture(
-                                name,
                                 RectI(tx, ty, tw, th),
                                 atlas.texture,
                                 atlas,
-                            )
+                            ).set_name(name)
                             logger.debug(f"texture: {texture}")
                         else:
                             texture = atlas

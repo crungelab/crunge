@@ -15,50 +15,51 @@ from ..resource.texture_atlas import TextureAtlas
 class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
     def __init__(self) -> None:
         super().__init__()
-    
+
     def load(self, path: Path, name: str = None) -> TextureAtlas:
         path = ResourceManager().resolve_path(path)
         if not name:
             name = str(path)
-        if atlas:= self.kit.get(name):
+        if atlas := self.kit.get_by_path(path):
             return atlas
 
         # Load the XML file
         logger.debug(f"Loading TextureAtlas: {name}")
 
         if not path.exists():
-            raise Exception(f'XML file not found: {path}')
+            raise Exception(f"XML file not found: {path}")
 
         tree = etree.parse(path)
         root = tree.getroot()
 
         # Extract the imagePath attribute from the TextureAtlas element
-        image_path = root.attrib['imagePath']
+        image_path = root.attrib["imagePath"]
         image_path = path.parent / Path(image_path)
 
         if not image_path.exists():
-            image_path = path.parent / Path(path.stem + '.png')
+            image_path = path.parent / Path(path.stem + ".png")
             if not image_path.exists():
-                raise Exception(f'Image file not found: {image_path}')
+                raise Exception(f"Image file not found: {image_path}")
 
         logger.debug(f"Image Path: {image_path}")
 
         wgpu_texture, width, height = self.load_wgpu_texture([image_path])
-        atlas = TextureAtlas(name, RectI(0, 0, width, height), wgpu_texture)
+        atlas = TextureAtlas(RectI(0, 0, width, height), wgpu_texture).set_name(name).set_path(path)
         self.kit.add(atlas)
 
         # Iterate over each SubTexture element
-        for sub_texture in root.findall('SubTexture'):
+        for sub_texture in root.findall("SubTexture"):
             # Extract attributes
-            name = sub_texture.get('name')
-            x = sub_texture.get('x')
-            y = sub_texture.get('y')
-            width = sub_texture.get('width')
-            height = sub_texture.get('height')
+            name = sub_texture.get("name")
+            x = sub_texture.get("x")
+            y = sub_texture.get("y")
+            width = sub_texture.get("width")
+            height = sub_texture.get("height")
 
             # Create a new texture
-            texture = Texture(name, RectI(int(x), int(y), int(width), int(height)), wgpu_texture, atlas)
+            texture = Texture(
+                RectI(int(x), int(y), int(width), int(height)), wgpu_texture, atlas
+            ).set_name(name)
             atlas.add(texture)
 
         return atlas
-    
