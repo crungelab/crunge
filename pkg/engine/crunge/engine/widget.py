@@ -61,7 +61,7 @@ class Widget(Dispatcher):
     def queue(self):
         return self.gfx.queue
 
-    def create(self):
+    def _create(self):
         pass
 
     def add_child(self, child: "Widget"):
@@ -74,6 +74,9 @@ class Widget(Dispatcher):
 
     def remove_child(self, child: "Widget"):
         self.children.remove(child)
+
+    def clear(self):
+        self.children.clear()
 
     def dispatch(self, event):
         #logger.debug(f"Widget.dispatch: {self}, {self.children}")

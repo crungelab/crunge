@@ -12,9 +12,6 @@ class DynamicPhysics(Physics, metaclass=PhysicsMeta):
     def __init__(self):
         super().__init__(PT_DYNAMIC)
 
-    def create(self):
-        super().create()
-
     def update(self, model, delta_time=1/60.0):
         pass
 

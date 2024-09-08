@@ -1,8 +1,25 @@
+#from typing import Self
+#from typing_extensions import Self
 from . import globals
 from .gfx import Gfx
 
 class Base:
     def __init__(self) -> None:
+        self.created = False
+
+    #def create(self) -> Self:
+    def create(self):
+        if self.created:
+            return
+        self._create()
+        self.on_create()
+        self.created = True
+        return self
+
+    def _create(self):
+        pass
+
+    def on_create(self):
         pass
 
     @property
@@ -31,9 +48,3 @@ class Base:
     @property
     def wnd(self):
         return globals.current_window
-
-    '''
-    @property
-    def ctx(self):
-        return globals.current_context
-    '''

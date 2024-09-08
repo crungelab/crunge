@@ -12,34 +12,58 @@ from .layer import Layer
 class View(Widget):
     def __init__(self, size=glm.ivec2(), layers=[]) -> None:
         super().__init__(size)
-        self.window = None
+        self.window: "Window" = None
         self.layers: Dict[str, Layer] = {}
         for layer in layers:
             self.add_layer(layer)
+
+    def set_window(self, window: "Window"):
+        self.window = window
+        return self
 
     def resize(self, size: glm.ivec2):
         super().resize(size)
         for layer in self.layers.values():
             layer.resize(size)
 
+
+    def create(self, window: "Window"):
+        self._create(window)
+        self.on_create()
+        return self
+
+    def _create(self, window: "Window"):
+        logger.debug("View.create")
+        super()._create()
+        self.window = window
+        self.size = window.size
+        for layer in self.layers.values():
+            layer.create()
+        self.create_device_objects()
+        return self
+
+    '''
     def create(self, window: "Window"):
         logger.debug("View.create")
         super().create()
         self.window = window
         self.size = window.size
         for layer in self.layers.values():
-            layer.create(self)
+            layer.create()
         self.create_device_objects()
         return self
+    '''
 
     def create_device_objects(self):
         pass
 
     def add_layer(self, layer: Layer):
+        layer.view = self
         self.layers[layer.name] = layer
         self.add_child(layer)
 
     def remove_layer(self, layer: Layer):
+        layer.view = None
         self.layers.pop(layer.name)
         self.remove_child(layer)
 

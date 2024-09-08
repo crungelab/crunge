@@ -17,27 +17,27 @@ class Layer(Widget):
         self.view: "View" = None
         self.vu: Vu = vu
 
+    def set_view(self, view):
+        self.view = view
+        return self
+
     def create(self, view: "View"):
+        self._create(view)
+        self.on_create()
+        return self
+    
+    def _create(self, view: "View"):
         logger.debug("Layer.create")
         self.view = view
         self.size = view.size
 
     '''
-    def pre_draw(self, renderer: Renderer):
-        if self.vu is not None:
-            self.vu.pre_draw(renderer)
-        super().pre_draw(renderer)
-
-    def draw(self, renderer: Renderer):
-        if self.vu is not None:
-            self.vu.draw(renderer)
-        super().draw(renderer)
-
-    def post_draw(self, renderer: Renderer):
-        if self.vu is not None:
-            self.vu.post_draw(renderer)
-        super().post_draw(renderer)
+    def create(self, view: "View"):
+        logger.debug("Layer.create")
+        self.view = view
+        self.size = view.size
     '''
+
     @property
     def window(self):
         return self.view.window

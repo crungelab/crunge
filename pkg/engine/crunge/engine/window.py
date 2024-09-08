@@ -25,13 +25,13 @@ class Window(Frame):
 
         globals.set_current_window(self)
 
-    def create(self):
+    def _create(self):
         logger.debug("Window.create")
         self.create_window()
         self.create_renderer()
         self.create_device_objects()
         self.create_surface()
-        return super().create()
+        return super()._create()
 
     def create_window(self):
         self.window = sdl.create_window(

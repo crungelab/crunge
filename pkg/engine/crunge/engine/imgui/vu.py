@@ -98,7 +98,7 @@ class ImGuiVu(Vu):
         super().__init__()
         self.io = imgui.get_io()
 
-    def create(self):
+    def _create(self):
         self.create_device_objects()
         return self
 

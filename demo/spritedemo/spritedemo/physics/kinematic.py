@@ -102,7 +102,7 @@ class KinematicPhysicsEngine(PhysicsEngine):
     def __init__(self, gravity=GRAVITY):
         super().__init__(gravity)
     '''
-    def create(self):
+    def _create(self):
         self.kinematic_static_handler = KinematicStaticHandler(self.space.add_collision_handler(PT_KINEMATIC, PT_STATIC))
         self.kinematic_static_handler = KinematicKinematicHandler(self.space.add_collision_handler(PT_KINEMATIC, PT_KINEMATIC))
         self.kinematic_dynamic_handler = KinematicDynamicHandler(self.space.add_collision_handler(PT_KINEMATIC, PT_DYNAMIC))

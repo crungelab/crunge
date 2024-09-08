@@ -12,9 +12,6 @@ class Dispatcher(Base):
     EVENT_HANDLED = True
     EVENT_UNHANDLED = None
 
-    def __init__(self) -> None:
-        pass
-
     def dispatch(self, event) -> DispatchResult:
         #logger.debug(event)
         #logger.debug(event.type)

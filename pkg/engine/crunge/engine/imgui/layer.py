@@ -35,6 +35,20 @@ class ImGuiLayer(Layer):
         # self.vu: ImGuiVu = None
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
+
+    def _create(self, view: engine.View):
+        super()._create(view)
+        if not self.context:
+            ImGuiLayer.context = imgui.create_context()
+            imgui.set_current_context(self.context)
+            imgui.style_colors_dark()
+
+        self.io = imgui.get_io()
+        self.vu = ImGuiVu()
+        self._set_pixel_ratio()
+        return self
+
+    '''
     def create(self, view: engine.View):
         super().create(view)
         if not self.context:
@@ -46,6 +60,7 @@ class ImGuiLayer(Layer):
         self.vu = ImGuiVu()
         self._set_pixel_ratio()
         return self
+    '''
 
     def resize(self, size: glm.ivec2):
         super().resize(size)

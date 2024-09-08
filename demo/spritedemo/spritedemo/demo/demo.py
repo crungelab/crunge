@@ -41,8 +41,8 @@ class Demo(engine.App):
     def camera(self) -> Camera2D:
         return self.view.camera
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         self.create_view()
         return self
 

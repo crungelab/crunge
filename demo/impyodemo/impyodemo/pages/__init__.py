@@ -47,10 +47,12 @@ class Page(ImGuiView):
         page.reset()
         return page
 
+    '''
     @property
     def gui(self):
         return self.window.gui
-
+    '''
+    
     @property
     def resource_path(self):
         return self.window.resource_path

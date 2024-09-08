@@ -3,10 +3,13 @@ from scipy.stats.qmc import PoissonDisk
 from loguru import logger
 import glm
 
+from crunge.engine import Base
+
 from .meteor import Meteor, MeteorGreyBig1
 
-class Zone():
+class Zone(Base):
     def __init__(self, scene, position: glm.vec2, size: glm.vec2, safe_radius: float = 400.0):
+        super().__init__()
         self.scene = scene
         self.position = position
         self.size = size
@@ -20,9 +23,8 @@ class Zone():
     def height(self):
         return self.size.y
     
-    def create(self) -> "Zone":
+    def _create(self) -> None:
         self.create_meteors(100)
-        return self
 
     def create_meteor(self, position: glm.vec2):
         meteor = MeteorGreyBig1(position).create()

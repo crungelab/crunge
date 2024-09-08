@@ -15,3 +15,6 @@ dependencies = [
     "scipy ==1.14.0",
     "PyTMX ==3.32",
 ]
+
+[tool.hatch.envs.default]
+python="3.10.11"

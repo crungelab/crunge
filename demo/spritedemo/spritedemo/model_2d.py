@@ -26,20 +26,6 @@ class Model2D(Node2D):
         self.layer = None
         self.brain = brain
 
-    def create(self):
-        self._create()
-        self.post_create()
-        return self
-
-    def _create(self):
-        pass
-
-    def post_create(self):
-        pass
-
-    def _create(self):
-        pass
-
     def update(self, delta_time: float):
         super().update(delta_time)
         self.update_brain(delta_time)
@@ -115,7 +101,7 @@ class PhysicsModel2D(Model2D):
         self.body = self.create_body()
         self.shapes = self.create_shapes()
 
-    def post_create(self):
+    def on_create(self):
         self.add_shapes()
 
     def destroy(self):
@@ -192,9 +178,6 @@ class PhysicsGroup2D(PhysicsModel2D):
             model.gid = self.id
             # model.physics = self.physics
             self.layer.add_model(model)
-
-    def post_create(self):
-        pass
 
 
 class StaticModel2D(PhysicsModel2D):

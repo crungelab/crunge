@@ -12,8 +12,8 @@ import gltfv.globals
 from .scene_builder import SceneBuilder
 from .viewer import Viewer
 
-models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
-#models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
+#models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
+models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class GltfV:
     def __init__(self):
@@ -46,7 +46,7 @@ class GltfV:
         #model = "CesiumMilkTruck"
         #model = "Cube"
         #model = "Corset"
-        #model = "DamagedHelmet"
+        model = "DamagedHelmet"
         #model = "Duck"
         #model = "FlightHelmet"
         #model = "Fox" #No normals, no indices
@@ -54,8 +54,7 @@ class GltfV:
         #model = "Lantern"
         #model = "SimpleMeshes"
 
-        #scene_path = models_root / model / "glTF" / f"{model}.gltf"
-        scene_path = models_root / "Cerberus" / "cerberus.gltf"
+        scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Binary" / f"{model}.glb"
         scene = SceneBuilder().build(scene_path)
