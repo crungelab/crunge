@@ -30,7 +30,7 @@ class SpritesDemo(Demo):
         node.angle = 45
         node.size = glm.vec2(200, 200)
 
-        self.scene.add_child(self.node)
+        self.scene.root.attach(self.node)
 
         # Ship2
         texture = TextureLoader().load("{images}/playerShip1_blue.png")
@@ -42,7 +42,7 @@ class SpritesDemo(Demo):
         node.angle = 45
         node.size = glm.vec2(200, 200)
 
-        self.scene.add_child(self.node)
+        self.scene.root.attach(self.node)
 
     def reset(self):
         self.angle = 0

@@ -1,19 +1,18 @@
+from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
 
 from crunge.engine import Base, Vu
 from crunge.engine.d2.renderer_2d import Renderer2D
 
-T_Node = TypeVar("T_Node")
-T_Scene = TypeVar("T_Scene")
-T_Renderer = TypeVar("T_Renderer")
+T_Dimension = TypeVar("T_Dimension")
 
-class Node(Base, Generic[T_Node, T_Scene, T_Renderer]):
+class Node(Base, Generic[T_Dimension]):
     def __init__(self, vu: Vu = None) -> None:
         super().__init__()
         self.vu = vu
-        self.scene: T_Scene = None
-        self.parent: "Node[T_Node]" = None
-        self.children: List["Node[T_Node]"] = []
+        self.scene: "Scene[T_Dimension]" = None
+        self.parent: "Node[T_Dimension]" = None
+        self.children: List["Node[T_Dimension]"] = []
 
     def clear(self):
         for child in self.children:
@@ -22,41 +21,21 @@ class Node(Base, Generic[T_Node, T_Scene, T_Renderer]):
 
     def destroy(self):
         if self.parent:
-            #self.parent.remove_child(self)
-            self.parent.detach(self)
+            self.parent.remove_child(self)
         for child in self.children:
             child.destroy()
         self.clear()
 
-    def attach(self, child: "Node[T_Node]"):
-        child.parent = self
-        child.scene = self.scene
-        self.children.append(child)
-        child.on_attached()
-
-    def on_attached(self):
-        pass
-
-    def detach(self, child: "Node[T_Node]"):
-        child.parent = None
-        self.children.remove(child)
-        child.on_detached()
-
-    def on_detached(self):
-        pass
-
-    """
-    def add_child(self, child: "Node[T_Node]"):
+    def add_child(self, child: "Node"):
         child.parent = self
         child.scene = self.scene
         self.children.append(child)
 
-    def remove_child(self, child: "Node[T_Node]"):
+    def remove_child(self, child: "Node"):
         child.parent = None
         self.children.remove(child)
-    """
 
-    def draw(self, renderer: T_Renderer):
+    def draw(self, renderer: Renderer2D):
         if self.vu is not None:
             self.vu.draw(renderer)
         for child in self.children:

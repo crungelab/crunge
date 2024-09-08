@@ -37,7 +37,7 @@ class SpriteDemo(Demo):
         y = self.height / 2
         node.position = glm.vec2(x, y)
 
-        self.scene.add_child(self.node)
+        self.scene.root.attach(self.node)
 
 
 

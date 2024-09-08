@@ -70,7 +70,7 @@ class TiledDemo(Demo):
 
                     sprite = Sprite(texture)
                     node = Node2D(glm.vec2(x, y), vu=sprite)
-                    self.scene.add_child(node)
+                    self.scene.root.attach(node)
 
             elif isinstance(layer, TiledObjectGroup):
                 for obj in layer:
@@ -104,7 +104,7 @@ class TiledDemo(Demo):
 
                         sprite = Sprite(texture)
                         node = Node2D(glm.vec2(x, y), vu=sprite)
-                        self.scene.add_child(node)
+                        self.scene.root.attach(node)
 
                     # draw a rect for everything else
                     else:

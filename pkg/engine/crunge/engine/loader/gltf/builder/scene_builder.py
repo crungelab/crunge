@@ -31,4 +31,4 @@ class SceneBuilder(Builder):
         #node_builder = NodeBuilder(self.tf_model, tf_node)
         node_builder = PolyNodeBuilder(self.context, tf_node)
         node = node_builder.build()
-        self.scene.attach(node)
+        self.scene.root.attach(node)

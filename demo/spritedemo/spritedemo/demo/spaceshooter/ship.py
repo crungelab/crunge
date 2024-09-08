@@ -58,16 +58,16 @@ class Ship(DynamicModel2D):
     def _create(self):
         super()._create()
         self.front_thruster = Thruster(self.body, glm.vec2(0, self.size.y / 2), glm.vec2(0, -100))
-        self.add_child(self.front_thruster)
+        self.attach(self.front_thruster)
 
         self.rear_thruster = Thruster(self.body, glm.vec2(0, -self.size.y / 2), glm.vec2(0, 100))
-        self.add_child(self.rear_thruster)
+        self.attach(self.rear_thruster)
 
         self.left_thruster = Thruster(self.body, glm.vec2(-self.size.x / 2, 0), glm.vec2(-100, 0), 5)
-        self.add_child(self.left_thruster)
+        self.attach(self.left_thruster)
 
         self.right_thruster = Thruster(self.body, glm.vec2(self.size.x / 2, 0), glm.vec2(100, 0), -5)
-        self.add_child(self.right_thruster)
+        self.attach(self.right_thruster)
 
     def update(self, delta_time: float):
         super().update(delta_time)
@@ -84,4 +84,4 @@ class Ship(DynamicModel2D):
         position = self.position + direction * spawn_distance
 
         laser = Laser(position, self.angle, missile_speed).create()
-        self.scene.add_child(laser)
+        self.scene.root.attach(laser)

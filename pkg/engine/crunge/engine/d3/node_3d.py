@@ -5,16 +5,17 @@ if TYPE_CHECKING:
 
 import glm
 
-from crunge.engine.base import Base
+#from crunge.engine.base import Base
+from ..node import Node
 from .renderer_3d import Renderer3D
 
 
-class Node3D(Base):
+class Node3D(Node["Node3D", "Scene3D", Renderer3D]):
     def __init__(self, translation = glm.vec3()) -> None:
         super().__init__()
-        self.parent: "Node3D" = None
-        self.scene: "Scene3D" = None
-        self.children: List["Node3D"] = []
+        #self.parent: "Node3D" = None
+        #self.scene: "Scene3D" = None
+        #self.children: List["Node3D"] = []
         self.translation = translation
         #self.rotation = glm.mat4(1.0)
         self.rotation = glm.quat(1.0, 0.0, 0.0, 0.0)
@@ -33,6 +34,7 @@ class Node3D(Base):
             transform = self.parent.transform * transform
         return transform
 
+    """
     def attach(self, child: "Node3D"):
         child.parent = self
         child.scene = self.scene
@@ -48,7 +50,10 @@ class Node3D(Base):
 
     def on_detached(self):
         pass
+    """
 
+    """
     def draw(self, renderer: Renderer3D):
         for child in self.children:
             child.draw(renderer)
+    """
