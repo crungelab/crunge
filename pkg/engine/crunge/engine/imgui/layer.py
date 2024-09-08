@@ -25,12 +25,14 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
 
     return 1.0, 1.0
 
+
 class ImGuiLayer(Layer):
     context = None
-    vu = None
+    vu: ImGuiVu = None
 
     def __init__(self):
         super().__init__("ImGuiLayer")
+        # self.vu: ImGuiVu = None
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
     def create(self, view: engine.View):
@@ -58,21 +60,21 @@ class ImGuiLayer(Layer):
         self.io.display_framebuffer_scale = pixel_ratio
 
     def pre_draw(self, renderer: Renderer):
-        #logger.debug("ImGuiLayer.pre_draw")
+        # logger.debug("ImGuiLayer.pre_draw")
         imgui.new_frame()
         super().pre_draw(renderer)
 
     def post_draw(self, renderer: Renderer):
-        #logger.debug("ImGuiLayer.post_draw")
+        # logger.debug("ImGuiLayer.post_draw")
         imgui.end_frame()
         super().post_draw(renderer)
 
     def on_text(self, event: sdl.TextInputEvent):
-        #logger.debug(f"text: {event.text}")
+        # logger.debug(f"text: {event.text}")
         self.io.add_input_characters_utf8(event.text)
 
     def on_key(self, event: sdl.KeyboardEvent):
-        #logger.debug(f"scan code: {event.scancode}")
+        # logger.debug(f"scan code: {event.scancode}")
         if not event.scancode in scancode_map:
             logger.debug(f"scan code not mapped: {event.scancode}")
             return
@@ -86,7 +88,7 @@ class ImGuiLayer(Layer):
         if self.io.want_capture_keyboard:
             return self.EVENT_HANDLED
 
-    '''
+    """
     def on_key(self, event: sdl.KeyboardEvent):
         logger.debug(f"key: {event.key}")
         if event.key in key_map:
@@ -96,7 +98,7 @@ class ImGuiLayer(Layer):
         self.update_modifiers()
         if self.io.want_capture_keyboard:
             return self.EVENT_HANDLED
-    '''
+    """
 
     def update_modifiers(self):
         mod_state = sdl.get_mod_state()
@@ -142,4 +144,3 @@ class ImGuiLayer(Layer):
         self.io.add_mouse_wheel_event(x, y)
         if self.io.want_capture_mouse:
             return self.EVENT_HANDLED
-            

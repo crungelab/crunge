@@ -45,3 +45,9 @@ class View(Widget):
 
     def get_layer(self, name: str) -> Layer:
         return self.layers[name]
+    
+    def on_show(self):
+        pass
+
+    def on_hide(self):
+        pass

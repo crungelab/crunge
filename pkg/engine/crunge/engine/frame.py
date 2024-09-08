@@ -9,6 +9,7 @@ class Frame(Widget):
     def __init__(self, size=glm.ivec2(), view: View = None) -> None:
         super().__init__(size)
         self.view = view
+        self.view_stack: list[View] = []
 
     def resize(self, size: glm.ivec2):
         super().resize(size)
@@ -26,3 +27,14 @@ class Frame(Widget):
         self.view = view
         self.children.clear()
         self.add_child(view)
+        view.on_show()
+
+    def push_view(self, new_view):
+        #print('push_view')
+        self.view_stack.append(self.current_view)
+        self.show_view(new_view)
+
+    def pop_view(self):
+        #print('pop_view')
+        self.view.on_hide()
+        self.show_view(self.view_stack.pop())

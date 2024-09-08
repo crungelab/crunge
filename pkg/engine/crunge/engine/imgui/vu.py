@@ -346,6 +346,7 @@ class ImGuiVu(Vu):
         )
 
         self.bindGroup = self.device.create_bind_group(bindGroupDesc)
+        logger.debug("create_pipeline done")
 
     def render_draw_data(
         self, draw_data: imgui.DrawData, pass_enc: wgpu.RenderPassEncoder

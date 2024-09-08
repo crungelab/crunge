@@ -8,8 +8,10 @@ from .layer import ImGuiLayer
 class ImGuiView(View):
     def __init__(self, size=glm.ivec2(), layers=[]):
         super().__init__(size, layers=layers)
+        self.gui: ImGuiLayer = None
 
     def create(self, window):
         super().create(window)
-        self.add_layer(ImGuiLayer().create(self))
+        self.gui = ImGuiLayer().create(self)
+        self.add_layer(self.gui)
         return self

@@ -12,7 +12,6 @@ from .vu_2d import Vu2D
 from ..node import Node
 
 class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
-    #scene: "Scene2D"
     def __init__(
         self,
         position=glm.vec2(),

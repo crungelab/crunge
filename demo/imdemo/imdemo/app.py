@@ -1,6 +1,4 @@
-import os, sys
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+import os
 from pathlib import Path
 
 from loguru import logger
@@ -8,18 +6,14 @@ import glm
 
 from crunge import engine
 
-from crunge.core import as_capsule
-from crunge import sdl, wgpu
-import crunge.wgpu.utils as utils
-
-from crunge import imgui
+from .page import Page
 
 class App(engine.App):
     kWidth = 1280
     kHeight = 640
     def __init__(self):
         super().__init__(glm.ivec2(self.kWidth, self.kHeight), "ImGui Demo", resizable=True)
-        self.pages = {}
+        self.pages: dict[str, Page] = {}
         self.show_metrics = False
         self.show_style_editor = False
         self.resource_path = Path(__file__).parent.parent / 'resources'

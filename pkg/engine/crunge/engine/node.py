@@ -45,17 +45,6 @@ class Node(Base, Generic[T_Node, T_Scene, T_Renderer]):
     def on_detached(self):
         pass
 
-    """
-    def add_child(self, child: "Node[T_Node]"):
-        child.parent = self
-        child.scene = self.scene
-        self.children.append(child)
-
-    def remove_child(self, child: "Node[T_Node]"):
-        child.parent = None
-        self.children.remove(child)
-    """
-
     def draw(self, renderer: T_Renderer):
         if self.vu is not None:
             self.vu.draw(renderer)

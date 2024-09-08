@@ -1,9 +1,8 @@
-from typing import List
-
 from loguru import logger
 import glm
 
 from .dispatcher import Dispatcher
+from .part import Part
 from .controller import Controller
 from .renderer import Renderer
 from .vu import Vu
@@ -13,17 +12,35 @@ class Widget(Dispatcher):
     def __init__(self, size = glm.ivec2()) -> None:
         super().__init__()
         self.size = size
-        self.children: List["Widget"] = []
+        self.parent = None
+        self.children: list["Widget"] = []
         self.controller: Controller = None
         self.vu: Vu = None
+        self.parts: list[Part] = []
+
+    @property
+    def parent(self):
+        return self._parent
+
+    @parent.setter
+    def parent(self, parent):
+        self._parent = parent
 
     @property
     def width(self):
         return self.size.x
     
+    @width.setter
+    def width(self, value):
+        self.size.x = value
+    
     @property
     def height(self):
         return self.size.y
+    
+    @height.setter
+    def height(self, value):
+        self.size.y = value
 
     def resize(self, size: glm.ivec2):
         self.size = size
@@ -48,7 +65,12 @@ class Widget(Dispatcher):
         pass
 
     def add_child(self, child: "Widget"):
+        child.parent = self
         self.children.append(child)
+
+    def add_children(self, children):
+        for child in children:
+            self.add_child(child)
 
     def remove_child(self, child: "Widget"):
         self.children.remove(child)
@@ -75,7 +97,11 @@ class Widget(Dispatcher):
         if self.vu is not None:
             self.vu.draw(renderer)
         for child in self.children:
-            child.draw(renderer)
+            #child.draw(renderer)
+            self.draw_child(renderer, child)
+
+    def draw_child(self, renderer: Renderer, child: "Widget"):
+        child.draw(renderer)
 
     def post_draw(self, renderer: Renderer):
         # logger.debug("Widget.post_draw")
@@ -90,3 +116,17 @@ class Widget(Dispatcher):
             self.controller.update(delta_time)
         for child in self.children:
             child.update(delta_time)
+
+    def add_part(self, part: Part):
+        self.parts.append(part)
+        part.widget = self
+
+    def remove_part(self, part: Part):
+        self.parts.remove(part)
+        part.widget = None
+
+    def get_part(self, part_type: type[Part]):
+        for part in self.parts:
+            if isinstance(part, part_type):
+                return part
+        return None

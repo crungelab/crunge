@@ -4,6 +4,7 @@
 
 from .base import Base
 from .controller import Controller
+from .widget import Widget
 from .window import Window
 from .app import App
 from .view import View
