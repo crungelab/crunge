@@ -8,8 +8,8 @@ SPRITE_SCALING = 0.5
 FBSIZE = (512, 256)
 
 class FramebufferPage(Page):
-    def __init__(self, window, name, title):
-        super().__init__(window, name, title)
+    def __init__(self, name, title):
+        super().__init__(name, title)
         self.fullwidth = self.fullheight = True
         self.sprite = ludi.Sprite(
             ":resources:images/space_shooter/playerShip1_orange.png",

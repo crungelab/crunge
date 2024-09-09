@@ -26,12 +26,3 @@ class Widget(engine.Widget):
         for child in self.children:
             child.create(gui)
         return self
-
-    '''
-    def create(self, gui):
-        super().create()
-        self.gui = gui
-        for child in self.children:
-            child.create(gui)
-        return self
-    '''

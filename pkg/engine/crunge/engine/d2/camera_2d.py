@@ -27,6 +27,10 @@ class Camera2D(Node2D):
         #self.update_matrices()
         self.update_transform()
 
+    def resize(self, size: glm.ivec2) -> None:
+        self.size = glm.vec2(size)
+        self.update_transform()
+
     def update_transform(self):
         super().update_transform()
         ortho_left = (self.x - (self.width / self.zoom) / 2)

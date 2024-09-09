@@ -4,22 +4,12 @@ from .sprite import Sprite
 class SpriteList:
     def __init__(self):
         self.sprites: list[Sprite] = []
-        self.sprites_by_id = {}
-        self.sprites_by_name = {}
 
-    def add(self, sprite):
+    def append(self, sprite):
         self.sprites.append(sprite)
-        self.sprites_by_id[sprite.id] = sprite
-        self.sprites_by_name[sprite.name] = sprite
 
-    def get_by_id(self, id):
-        return self.sprites_by_id.get(id)
-
-    def get_by_name(self, name):
-        return self.sprites_by_name.get(name)
-
-    def get_by_index(self, index):
-        return self.sprites[index]
+    def clear(self):
+        self.sprites.clear()
 
     def __len__(self):
         return len(self.sprites)
@@ -52,3 +42,7 @@ class SpriteList:
     def draw(self, renderer: Renderer):
         for sprite in self.sprites:
             sprite.draw(renderer)
+
+    def update(self, delta_time: float):
+        for sprite in self.sprites:
+            sprite.update(delta_time)

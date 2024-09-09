@@ -1,4 +1,4 @@
-from ..builder import Builder
+from ..gltf_builder import GltfBuilder
 from ..builder_context import BuilderContext
 from ..vertex_table import VertexTable
 
@@ -16,7 +16,7 @@ struct Camera {
 """
 
 
-class ShaderBuilder(Builder):
+class ShaderBuilder(GltfBuilder):
     def __init__(self, context: BuilderContext, vertex_table: VertexTable) -> None:
         super().__init__(context)
         self.vertex_table = vertex_table

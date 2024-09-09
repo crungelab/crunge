@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge import gltf
 
-from . import Builder
+from . import GltfBuilder
 from .builder_context import BuilderContext
 from ....d3.scene_3d import Scene3D
 #from .node_builder import NodeBuilder
@@ -12,7 +12,7 @@ from .poly_node_builder import PolyNodeBuilder
 
 from ..debug import debug_node
 
-class SceneBuilder(Builder):
+class SceneBuilder(GltfBuilder):
     def __init__(self, context: BuilderContext, tf_scene: gltf.Scene) -> None:
         super().__init__(context)
         self.tf_scene = tf_scene

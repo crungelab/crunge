@@ -7,7 +7,7 @@ from imdemo.page import Page
 class ImagePage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
-        image_path = self.wnd.resource_path / 'robocute.png'
+        image_path = self.wnd.resource_root / 'robocute.png'
         self.texture = self.gfx.load_texture(image_path)
         self.texture_view = self.texture.create_view()
 

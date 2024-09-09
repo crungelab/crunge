@@ -19,12 +19,12 @@ from crunge.engine.loader.cube_texture_loader import CubeTextureLoader
 from crunge.engine.loader.image_loader import HdrImageLoader
 
 from ..debug import debug_texture_info
-from . import Builder
+from . import GltfBuilder
 from .builder_context import BuilderContext
 from .texture_builder import TextureBuilder
 
 
-class MaterialBuilder(Builder):
+class MaterialBuilder(GltfBuilder):
     material: Material = None
 
     def __init__(self, context: BuilderContext, tf_material: gltf.Material) -> None:

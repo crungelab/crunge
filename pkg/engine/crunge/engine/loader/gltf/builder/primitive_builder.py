@@ -7,7 +7,7 @@ from crunge.wgpu import utils
 from crunge import gltf
 
 from ..constants import TEXTURE_BINDING_START
-from . import Builder
+from . import GltfBuilder
 from .builder_context import BuilderContext
 from ..debug import (
     debug_accessor,
@@ -28,7 +28,7 @@ from ..normals import compute_normals
 from ..tangents import compute_tangents
 
 
-class PrimitiveBuilder(Builder):
+class PrimitiveBuilder(GltfBuilder):
     def __init__(
         self, context: BuilderContext, mesh: Mesh, tf_primitive: gltf.Primitive
     ) -> None:

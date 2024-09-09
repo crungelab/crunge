@@ -10,11 +10,11 @@ from crunge.engine import RectI
 from crunge.engine.resource.texture import Texture
 
 from ..debug import debug_texture, debug_image
-from . import Builder
+from . import GltfBuilder
 from .builder_context import BuilderContext
 
 
-class TextureBuilder(Builder):
+class TextureBuilder(GltfBuilder):
     name: str = None
     texture: Texture = None
 

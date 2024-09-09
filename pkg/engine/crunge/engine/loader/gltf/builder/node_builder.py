@@ -4,12 +4,12 @@ import glm
 
 from crunge import gltf
 
-from . import Builder
+from . import GltfBuilder
 from .builder_context import BuilderContext
 from crunge.engine.d3.node_3d import Node3D
 from ..debug import debug_node
 
-class NodeBuilder(Builder):
+class NodeBuilder(GltfBuilder):
     def __init__(self, context: BuilderContext, tf_node: gltf.Node) -> None:
         super().__init__(context)
         self.tf_node = tf_node

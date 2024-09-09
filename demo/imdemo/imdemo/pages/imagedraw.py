@@ -5,9 +5,9 @@ from imdemo.page import Page
 
 
 class ImageDraw(Page):
-    def __init__(self, window, name, title):
-        super().__init__(window, name, title)
-        image_path = window.resource_path / 'robocute.png'
+    def __init__(self, name, title):
+        super().__init__(name, title)
+        image_path = window.resource_root / 'robocute.png'
         self.texture = window.ctx.load_texture(image_path, flip=False)
 
     def draw(self):

@@ -97,6 +97,7 @@ class ImGuiVu(Vu):
     def __init__(self) -> None:
         super().__init__()
         self.io = imgui.get_io()
+        self._font_texture = None
 
     def _create(self):
         self.create_device_objects()
@@ -108,7 +109,14 @@ class ImGuiVu(Vu):
         self.create_pipeline()
 
     def refresh_font_texture(self):
-        self.create_device_objects()
+        self.create_textures()
+        '''
+        width, height, pixels = self.io.fonts.get_tex_data_as_rgba32()
+        # Old font texture will be GCed if exist
+        self._font_texture = self._ctx.texture((width, height), components=4, data=pixels)
+        self.io.fonts.texture_id = self._font_texture.glo
+        self.io.fonts.clear_tex_data()
+        '''
 
     def create_buffers(self):
         logger.debug("create_buffers")
@@ -196,8 +204,8 @@ class ImGuiVu(Vu):
             wgpu.Extent3D(width, height, 1),
         )
 
-        # self.io.fonts.set_tex_id(as_capsule(self.texture_view))
-        # self.io.fonts.set_tex_id(self.texture_view)
+        #self.io.fonts.set_tex_id(as_capsule(self.texture_view))
+        self.io.fonts.set_tex_id(self.texture_view)
         self.io.fonts.clear_tex_data()
 
     def create_pipeline(self):

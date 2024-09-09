@@ -65,3 +65,4 @@ class App(Window):
 
         sdl.stop_text_input(self.window)
         #self.device.destroy()
+        return self

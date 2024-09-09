@@ -5,7 +5,7 @@ from loguru import logger
 import glm
 
 from crunge import engine
-
+from crunge.engine.resource.resource_manager import ResourceManager
 from .page import Page
 
 class App(engine.App):
@@ -16,7 +16,11 @@ class App(engine.App):
         self.pages: dict[str, Page] = {}
         self.show_metrics = False
         self.show_style_editor = False
-        self.resource_path = Path(__file__).parent.parent / 'resources'
+        self.resource_root = Path(__file__).parent.parent / 'resources'
+        ResourceManager().add_path_variables(
+            resources=self.resource_root,
+        )
+
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 

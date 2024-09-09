@@ -42,18 +42,6 @@ class View(Widget):
         self.create_device_objects()
         return self
 
-    '''
-    def create(self, window: "Window"):
-        logger.debug("View.create")
-        super().create()
-        self.window = window
-        self.size = window.size
-        for layer in self.layers.values():
-            layer.create()
-        self.create_device_objects()
-        return self
-    '''
-
     def create_device_objects(self):
         pass
 

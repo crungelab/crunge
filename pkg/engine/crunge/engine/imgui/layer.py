@@ -1,4 +1,5 @@
 import os, sys
+from pathlib import Path
 
 from loguru import logger
 import glm
@@ -14,7 +15,7 @@ from ..layer import Layer
 
 from .vu import ImGuiVu
 from .scancode_map import scancode_map
-
+from .board import Clipboard, Dropboard
 
 def compute_framebuffer_scale(window_size, frame_buffer_size):
     win_width, win_height = window_size
@@ -32,7 +33,9 @@ class ImGuiLayer(Layer):
 
     def __init__(self):
         super().__init__("ImGuiLayer")
-        # self.vu: ImGuiVu = None
+        self.default_font = None
+        self.clipboard = Clipboard()
+        self.dropboard = Dropboard()
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
 
@@ -47,20 +50,6 @@ class ImGuiLayer(Layer):
         self.vu = ImGuiVu()
         self._set_pixel_ratio()
         return self
-
-    '''
-    def create(self, view: engine.View):
-        super().create(view)
-        if not self.context:
-            ImGuiLayer.context = imgui.create_context()
-            imgui.set_current_context(self.context)
-            imgui.style_colors_dark()
-
-        self.io = imgui.get_io()
-        self.vu = ImGuiVu()
-        self._set_pixel_ratio()
-        return self
-    '''
 
     def resize(self, size: glm.ivec2):
         super().resize(size)
@@ -77,10 +66,16 @@ class ImGuiLayer(Layer):
     def pre_draw(self, renderer: Renderer):
         # logger.debug("ImGuiLayer.pre_draw")
         imgui.new_frame()
+        if self.default_font:
+            imgui.push_font(self.default_font)
+
         super().pre_draw(renderer)
 
     def post_draw(self, renderer: Renderer):
         # logger.debug("ImGuiLayer.post_draw")
+        if self.default_font:
+            imgui.pop_font()
+
         imgui.end_frame()
         super().post_draw(renderer)
 
@@ -159,3 +154,24 @@ class ImGuiLayer(Layer):
         self.io.add_mouse_wheel_event(x, y)
         if self.io.want_capture_mouse:
             return self.EVENT_HANDLED
+
+    def load_font(self, font_path: Path, font_pixel_size, font_config=None, glyph_ranges=None):
+        logger.debug(f"loading font: {font_path}")
+        io = imgui.get_io()
+        #font = io.fonts.add_font_from_file_ttf(str(font_path), font_pixel_size, font_config, glyph_ranges)
+        font = io.fonts.add_font_from_file_ttf(str(font_path), font_pixel_size)
+        self.vu.refresh_font_texture()
+        return font
+
+    def load_default_font(self, font_path: Path, font_pixel_size):
+        font = self.load_font(font_path, font_pixel_size)
+        self.default_font = font
+        return font
+
+    def load_icon_font(self, font_path: Path, font_pixel_size, glyph_ranges=None):
+        #TODO: add keyword initializer to FontConfig
+        #font_config = imgui.FontConfig(merge_mode=True)
+        font_config = imgui.FontConfig()
+        font_config.merge_mode = True
+        font = self.load_font(font_path, font_pixel_size, font_config, glyph_ranges)
+        return font

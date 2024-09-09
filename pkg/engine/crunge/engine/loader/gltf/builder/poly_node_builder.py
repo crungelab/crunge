@@ -1,11 +1,11 @@
 from crunge import gltf
 
-from . import Builder
+from . import GltfBuilder
 from .builder_context import BuilderContext
 from ....d3.node_3d import Node3D
 from ..debug import debug_node
 
-class PolyNodeBuilder(Builder):
+class PolyNodeBuilder(GltfBuilder):
     def __init__(self, context: BuilderContext, tf_node: gltf.Node) -> None:
         super().__init__(context)
         self.tf_node = tf_node

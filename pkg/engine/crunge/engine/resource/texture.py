@@ -28,17 +28,29 @@ class Texture(Resource):
     def __init__(
         self,
         rect: RectI,
-        texture: wgpu.Texture = None,
+        #texture: wgpu.Texture = None,
+        texture: wgpu.Texture,
         parent: "Texture" = None,
     ):
         super().__init__()
         self.texture = texture
-        self.view: wgpu.TextureView = None
+        #self.view: wgpu.TextureView = None
+        self._view: wgpu.TextureView = None
         self.sampler: wgpu.Sampler = None
 
         self.rect = rect
         self.parent = parent
         self.update_coords()
+
+    @property
+    def view(self) -> wgpu.TextureView:
+        if self._view is None:
+            self._view = self.texture.create_view()
+        return self._view
+    
+    @view.setter
+    def view(self, view: wgpu.TextureView):
+        self._view = view
 
     def update_coords(self):
         if self.parent is not None:

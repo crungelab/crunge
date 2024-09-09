@@ -1,9 +1,9 @@
 from crunge import gltf
 
-from crunge.engine.base import Base
+from crunge.engine.builder import Builder
 from .builder_context import BuilderContext
 
-class Builder(Base):
+class GltfBuilder(Builder):
     def __init__(self, context: BuilderContext) -> None:
         super().__init__()
         self.context = context

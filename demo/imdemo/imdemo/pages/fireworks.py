@@ -159,8 +159,8 @@ class RocketEmitter(ludi.Emitter):
         self.change_y += -0.05
 
 class FireworksPage(Page):
-    def __init__(self, window, name, title):
-        super().__init__(window, name, title)
+    def __init__(self, name, title):
+        super().__init__(name, title)
         # Set the working directory (where we expect to find files) to the same
         # directory this .py file is in. You can leave this out of your own
         # code, but it is needed to easily run the examples using "python -m"
