@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .resource_group import ResourceGroup
+
 from pathlib import Path
 
 from .. import Base
+#from .resource_group import ResourceGroup
 
 class Resource(Base):
     def __init__(self):
@@ -24,6 +29,10 @@ class Resource(Base):
     
     def set_path(self, path: Path):
         self.path = path
+        return self
+    
+    def add_to_group(self, group: "ResourceGroup"):
+        group.texture_kit.add(self)
         return self
 
     '''

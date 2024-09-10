@@ -21,7 +21,8 @@ namespace py = pybind11;
 #define IMGUI_DISABLE_OBSOLETE_KEYIO
 #define IMGUI_DEFINE_MATH_OPERATORS
 
-//#define ImTextureID unsigned int
+#define ImTextureID unsigned int
+//#define ImTextureID py::object
 
 #define ImDrawIdx  unsigned int
 

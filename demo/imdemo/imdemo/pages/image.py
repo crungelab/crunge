@@ -1,5 +1,9 @@
 from crunge import imgui
+
 from crunge.engine import Renderer
+from crunge.engine.resource.resource_manager import ResourceManager
+from crunge.engine.loader.texture_loader import TextureLoader
+
 
 from imdemo.page import Page
 
@@ -7,14 +11,13 @@ from imdemo.page import Page
 class ImagePage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
-        image_path = self.wnd.resource_root / 'robocute.png'
-        self.texture = self.gfx.load_texture(image_path)
-        self.texture_view = self.texture.create_view()
+        image_path = ResourceManager().resolve_path(":resources:/robocute.png")
+        self.texture = TextureLoader().load(image_path)
 
     def draw(self, renderer: Renderer):
         imgui.begin(self.title)
-        size = self.texture.get_width(), self.texture.get_height()
-        imgui.image(self.texture_view, size)
+        size = self.texture.width, self.texture.height
+        imgui.image(self.texture.id, size)
         imgui.end()
         super().draw(renderer)
 

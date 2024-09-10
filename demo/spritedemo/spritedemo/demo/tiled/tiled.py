@@ -22,7 +22,7 @@ class TiledDemo(Demo):
         super().__init__()
 
         #tmx_path = self.resource_root / "tiled" / "level1.tmx"
-        tmx_path = ResourceManager().resolve_path("{resources}/tiled/level1.tmx")
+        tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
         self.tmx_data = TiledMap(tmx_path)
         self.reset()
 
@@ -60,8 +60,8 @@ class TiledDemo(Demo):
                     if rect:
                         tx, ty, tw, th = rect
                         texture = Texture(
-                            RectI(tx, ty, tw, th),
                             atlas.texture,
+                            RectI(tx, ty, tw, th),
                             atlas,
                         ).set_name(name)
                         logger.debug(f"texture: {texture}")
@@ -94,8 +94,8 @@ class TiledDemo(Demo):
                         if rect:
                             tx, ty, tw, th = rect
                             texture = Texture(
-                                RectI(tx, ty, tw, th),
                                 atlas.texture,
+                                RectI(tx, ty, tw, th),
                                 atlas,
                             ).set_name(name)
                             logger.debug(f"texture: {texture}")

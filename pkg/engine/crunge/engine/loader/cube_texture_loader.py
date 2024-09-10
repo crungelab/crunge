@@ -17,4 +17,4 @@ class CubeTextureLoader(TextureLoaderBase):
 
     def load(self, paths: List[Path], name: str = "") -> CubeTexture:
         texture, im_width, im_height = self.load_wgpu_texture(paths)
-        return CubeTexture(RectI(0, 0, im_width, im_height), texture).set_name(name)
+        return CubeTexture(texture, RectI(0, 0, im_width, im_height)).set_name(name)

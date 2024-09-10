@@ -15,7 +15,7 @@ class Laser(DynamicModel2D):
         super().__init__(position, geom=BoxGeom)
         self.angle = angle
         self.speed = speed
-        atlas = TextureAtlasLoader().load("{resources}/spaceshooter/sheet.xml")
+        atlas = TextureAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get("laserBlue01.png")

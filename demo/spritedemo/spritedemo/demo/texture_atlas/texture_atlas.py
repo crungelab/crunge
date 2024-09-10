@@ -21,7 +21,7 @@ class TextureAtlasDemo(Demo):
         self.color_enabled = True
         self.color = 1, 1, 1
 
-        atlas = self.atlas  = TextureAtlasLoader().load("{resources}/platformer/Spritesheets/spritesheet_tiles.xml")
+        atlas = self.atlas  = TextureAtlasLoader().load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
         logger.debug(f"atlas: {atlas}")
         
         texture = self.texture = atlas.get("bomb.png")

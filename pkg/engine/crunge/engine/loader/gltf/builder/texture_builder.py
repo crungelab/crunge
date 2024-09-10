@@ -68,7 +68,7 @@ class TextureBuilder(GltfBuilder):
         )
 
         wgpu_texture = self.gfx.device.create_texture(descriptor)
-        self.texture = Texture(RectI(0, 0, im_width, im_height), wgpu_texture).set_name(
+        self.texture = Texture(wgpu_texture, RectI(0, 0, im_width, im_height)).set_name(
             self.name
         )
         self.texture.view = wgpu_texture.create_view()

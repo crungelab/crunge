@@ -25,7 +25,7 @@ class ThingsDemo(Demo):
         self.physics_engine.create()
         self.create_floor()
 
-        atlas = self.atlas  = TextureAtlasLoader().load("{resources}/platformer/Spritesheets/spritesheet_tiles.xml")
+        atlas = self.atlas  = TextureAtlasLoader().load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
         logger.debug(f"atlas: {atlas}")
 
         self.texture = atlas.get("bomb.png")

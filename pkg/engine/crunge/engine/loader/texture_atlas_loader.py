@@ -44,7 +44,7 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
         logger.debug(f"Image Path: {image_path}")
 
         wgpu_texture, width, height = self.load_wgpu_texture([image_path])
-        atlas = TextureAtlas(RectI(0, 0, width, height), wgpu_texture).set_name(name).set_path(path)
+        atlas = TextureAtlas(wgpu_texture, RectI(0, 0, width, height)).set_name(name).set_path(path)
         self.kit.add(atlas)
 
         # Iterate over each SubTexture element
@@ -58,7 +58,7 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
 
             # Create a new texture
             texture = Texture(
-                RectI(int(x), int(y), int(width), int(height)), wgpu_texture, atlas
+                wgpu_texture, RectI(int(x), int(y), int(width), int(height)), atlas
             ).set_name(name)
             atlas.add(texture)
 

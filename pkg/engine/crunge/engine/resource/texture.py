@@ -27,9 +27,8 @@ COORDS = [
 class Texture(Resource):
     def __init__(
         self,
-        rect: RectI,
-        #texture: wgpu.Texture = None,
         texture: wgpu.Texture,
+        rect: RectI,
         parent: "Texture" = None,
     ):
         super().__init__()

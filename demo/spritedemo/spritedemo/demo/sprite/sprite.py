@@ -30,7 +30,7 @@ class SpriteDemo(Demo):
 
         self.scene.clear()
 
-        texture = TextureLoader().load("{images}/playerShip1_orange.png")
+        texture = TextureLoader().load(":images:/playerShip1_orange.png")
         sprite = self.sprite = Sprite(texture)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2

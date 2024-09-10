@@ -3,7 +3,7 @@ __version__ = '0.1.0'
 import sys
 from pathlib import Path
 
-from .utils import as_capsule
+from .utils import as_capsule, from_capsule
 
 def add_plugin(location):
     LIB_PATH = Path(location).parent

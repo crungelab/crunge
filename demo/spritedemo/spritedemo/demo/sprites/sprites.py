@@ -21,7 +21,7 @@ class SpritesDemo(Demo):
         self.color_enabled = True
         self.color = 1, 1, 1
         # Ship1
-        texture = TextureLoader().load("{images}/playerShip1_orange.png")
+        texture = TextureLoader().load(":images:/playerShip1_orange.png")
         sprite = self.sprite = Sprite(texture)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 4
@@ -33,7 +33,7 @@ class SpritesDemo(Demo):
         self.scene.root.attach(self.node)
 
         # Ship2
-        texture = TextureLoader().load("{images}/playerShip1_blue.png")
+        texture = TextureLoader().load(":images:/playerShip1_blue.png")
         sprite = self.sprite = Sprite(texture)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2

@@ -58,6 +58,10 @@ app.use('tree')
 app.use('windowmenu')
 app.use('windowdraw')
 
-app.show('index')
+#app.show('index')
+#app.show('imagebutton')
+#app.show('imagedraw')
+#app.show('drawcallback')
+app.show('image')
 
 app.run()

@@ -38,7 +38,7 @@ class Thruster(Node2D):
 class Ship(DynamicModel2D):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, geom=BallGeom)
-        atlas = TextureAtlasLoader().load("{resources}/spaceshooter/sheet.xml")
+        atlas = TextureAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get("playerShip1_orange.png")

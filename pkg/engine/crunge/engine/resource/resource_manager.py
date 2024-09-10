@@ -25,7 +25,13 @@ class ResourceManager(ResourceGroup):
     def resolve_path(self, path: str | Path) -> Path:
         if isinstance(path, Path):
             return path
-        return Path(path.format(**self.path_variables))
+        return Path(replace_with_dict(path, self.path_variables))
 
     def resolve_paths(self, *paths: str | Path) -> Path:
         return [self.resolve_path(path) for path in paths]
+    
+def replace_with_dict(text: str, replacements: dict):
+    for key, value in replacements.items():
+        placeholder = f":{key}:"
+        text = text.replace(placeholder, str(value))
+    return text

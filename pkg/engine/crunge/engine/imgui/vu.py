@@ -7,18 +7,20 @@ from loguru import logger
 import glm
 
 
-from crunge.core import as_capsule
+from crunge.core import as_capsule, from_capsule
 from crunge.core import klass
 
 from crunge import sdl
 from crunge import wgpu
 from crunge import engine
-
+from crunge.engine import RectI
 import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
 from ..renderer import Renderer
+from ..resource.resource_manager import ResourceManager
+from ..resource.texture import Texture
 from ..vu import Vu
 
 from .uniforms import (
@@ -97,7 +99,8 @@ class ImGuiVu(Vu):
     def __init__(self) -> None:
         super().__init__()
         self.io = imgui.get_io()
-        self._font_texture = None
+        self.texture: Texture = None
+        self.image_bind_groups = {}
 
     def _create(self):
         self.create_device_objects()
@@ -151,7 +154,10 @@ class ImGuiVu(Vu):
             mip_level_count=1,
             usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
         )
-        self.texture = self.device.create_texture(texture_desc)
+        #self.texture = self.device.create_texture(texture_desc)
+        wgpu_texture = self.device.create_texture(texture_desc)
+        self.texture = Texture(wgpu_texture, RectI(0, 0, width, height))
+        ResourceManager().add(self.texture)
 
         texture_view_desc = wgpu.TextureViewDescriptor(
             format=wgpu.TextureFormat.RGBA8_UNORM,
@@ -163,7 +169,9 @@ class ImGuiVu(Vu):
             aspect=wgpu.TextureAspect.ALL,
         )
 
-        self.texture_view = self.texture.create_view(texture_view_desc)
+        #self.texture_view = self.texture.create_view(texture_view_desc)
+        wgpu_texture_view = wgpu_texture.create_view(texture_view_desc)
+        self.texture.view = wgpu_texture_view
 
         sampler_desc = wgpu.SamplerDescriptor(
             min_filter=wgpu.FilterMode.LINEAR,
@@ -184,7 +192,8 @@ class ImGuiVu(Vu):
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             wgpu.ImageCopyTexture(
-                texture=self.texture,
+                #texture=self.texture,
+                texture=self.texture.texture,
                 mip_level=0,
                 origin=wgpu.Origin3D(0, 0, 0),
                 aspect=wgpu.TextureAspect.ALL,
@@ -205,7 +214,8 @@ class ImGuiVu(Vu):
         )
 
         #self.io.fonts.set_tex_id(as_capsule(self.texture_view))
-        self.io.fonts.set_tex_id(self.texture_view)
+        #self.io.fonts.set_tex_id(self.texture_view)
+        self.io.fonts.set_tex_id(self.texture.id)
         self.io.fonts.clear_tex_data()
 
     def create_pipeline(self):
@@ -343,7 +353,8 @@ class ImGuiVu(Vu):
                 binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
             ),
             wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
-            wgpu.BindGroupEntry(binding=2, texture_view=self.texture_view),
+            #wgpu.BindGroupEntry(binding=2, texture_view=self.texture_view),
+            wgpu.BindGroupEntry(binding=2, texture_view=self.texture.view),
         ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
@@ -355,6 +366,27 @@ class ImGuiVu(Vu):
 
         self.bindGroup = self.device.create_bind_group(bindGroupDesc)
         logger.debug("create_pipeline done")
+
+    def create_image_bind_group(self, tex_id):
+        logger.debug("create_image_bind_group")
+        texture = ResourceManager().texture_kit.get(tex_id)
+        tex_view = texture.view
+        bindgroup_entries = [
+            wgpu.BindGroupEntry(
+                binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
+            ),
+            wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=2, texture_view=tex_view),
+        ]
+
+        bindGroupDesc = wgpu.BindGroupDescriptor(
+            label="Texture bind group",
+            layout=self.pipeline.get_bind_group_layout(0),
+            entry_count=len(bindgroup_entries),
+            entries=bindgroup_entries,
+        )
+
+        return self.device.create_bind_group(bindGroupDesc)
 
     def render_draw_data(
         self, draw_data: imgui.DrawData, pass_enc: wgpu.RenderPassEncoder
@@ -419,10 +451,16 @@ class ImGuiVu(Vu):
                     )
                 else:
                     # TODO: Need to figure out how to handle custom textures
-                    """
-                    gl.glBindTexture(gl.GL_TEXTURE_2D, command.texture_id)
-                    """
-
+                    tex_id = command.texture_id
+                    #tex_id = command.get_tex_id()
+                    #logger.debug(f"tex_id: {tex_id}")
+                    bind_group = self.image_bind_groups.get(tex_id)
+                    if bind_group is None:
+                        bind_group = self.create_image_bind_group(tex_id)
+                        self.image_bind_groups[tex_id] = bind_group
+                    else:
+                        pass_enc.set_bind_group(0, bind_group)
+                    
                     """
                     // Bind custom texture
                     ImTextureID tex_id = pcmd->GetTexID();
