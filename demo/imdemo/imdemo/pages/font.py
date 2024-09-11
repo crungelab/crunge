@@ -11,10 +11,9 @@ class FontPage(Page):
         io = imgui.get_io()
         font_path = self.window.resource_root / 'DroidSans.ttf'
         #self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0)
-        font_config = imgui.FontConfig()
-        self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0, font_config, 0)
+        self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0)
         #self.window.gui.renderer.refresh_font_texture()
-        layer = self.window.view.get_layer("ImGuiLayer")
+        layer = self.get_layer("ImGuiLayer")
         layer.vu.refresh_font_texture()
 
     def draw(self, renderer: Renderer):

@@ -62,10 +62,10 @@ defaults:
 'field.ImGuiStorage::Data': {exclude: true}
 'field.ImFontAtlas::TexPixelsAlpha8': {exclude: true}
 'field.ImFontAtlas::TexPixelsRGBA32': {exclude: true}
-'field.ImFontAtlas::TexWidth': {exclude: true}
-'field.ImFontAtlas::TexHeight': {exclude: true}
-'field.ImFontAtlas::TexUvScale': {exclude: true}
-'field.ImFontAtlas::TexUvWhitePixel': {exclude: true}
+#'field.ImFontAtlas::TexWidth': {exclude: true}
+#'field.ImFontAtlas::TexHeight': {exclude: true}
+#'field.ImFontAtlas::TexUvScale': {exclude: true}
+#'field.ImFontAtlas::TexUvWhitePixel': {exclude: true}
 'field.ImFontAtlas::Fonts': {exclude: true}
 'field.ImFontAtlas::CustomRects': {exclude: true}
 'field.ImFontAtlas::ConfigData': {exclude: true}

@@ -3514,6 +3514,10 @@ void init_generated(py::module &_imgui, Registry &registry) {
         FontAtlas.def_readwrite("user_data", &ImFontAtlas::UserData);
         FontAtlas.def_readwrite("tex_ready", &ImFontAtlas::TexReady);
         FontAtlas.def_readwrite("tex_pixels_use_colors", &ImFontAtlas::TexPixelsUseColors);
+        FontAtlas.def_readwrite("tex_width", &ImFontAtlas::TexWidth);
+        FontAtlas.def_readwrite("tex_height", &ImFontAtlas::TexHeight);
+        FontAtlas.def_readwrite("tex_uv_scale", &ImFontAtlas::TexUvScale);
+        FontAtlas.def_readwrite("tex_uv_white_pixel", &ImFontAtlas::TexUvWhitePixel);
         FontAtlas.def_readonly("tex_uv_lines", &ImFontAtlas::TexUvLines);
         FontAtlas.def_readwrite("font_builder_io", &ImFontAtlas::FontBuilderIO);
         FontAtlas.def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags);

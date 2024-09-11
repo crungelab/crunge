@@ -213,8 +213,6 @@ class ImGuiVu(Vu):
             wgpu.Extent3D(width, height, 1),
         )
 
-        #self.io.fonts.set_tex_id(as_capsule(self.texture_view))
-        #self.io.fonts.set_tex_id(self.texture_view)
         self.io.fonts.set_tex_id(self.texture.id)
         self.io.fonts.clear_tex_data()
 
@@ -429,7 +427,6 @@ class ImGuiVu(Vu):
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
-                # utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
                 vtx_offset * imgui.VERTEX_SIZE,
                 commands.vtx_buffer_data,
                 commands.vtx_buffer_size * imgui.VERTEX_SIZE,
@@ -438,7 +435,6 @@ class ImGuiVu(Vu):
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
-                # utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
                 idx_offset * imgui.INDEX_SIZE,
                 commands.idx_buffer_data,
                 commands.idx_buffer_size * imgui.INDEX_SIZE,
@@ -450,7 +446,6 @@ class ImGuiVu(Vu):
                         self, draw_data, commands, command, command.user_callback_data
                     )
                 else:
-                    # TODO: Need to figure out how to handle custom textures
                     tex_id = command.texture_id
                     #tex_id = command.get_tex_id()
                     #logger.debug(f"tex_id: {tex_id}")
@@ -458,56 +453,21 @@ class ImGuiVu(Vu):
                     if bind_group is None:
                         bind_group = self.create_image_bind_group(tex_id)
                         self.image_bind_groups[tex_id] = bind_group
-                    else:
-                        pass_enc.set_bind_group(0, bind_group)
-                    
-                    """
-                    // Bind custom texture
-                    ImTextureID tex_id = pcmd->GetTexID();
-                    ImGuiID tex_id_hash = ImHashData(&tex_id, sizeof(tex_id));
-                    auto it = renderResources.ImageBindGroups.find(tex_id_hash);
-                    if (it != renderResources.ImageBindGroups.end())
-                    {
-                        auto bind_group = it->second;
-                        passEncoder.SetBindGroup(1, bind_group, 0, nullptr);
-                    }
-                    else
-                    {
-                        wgpu::BindGroup image_bind_group = CreateImageBindGroup(renderResources.ImageBindGroupLayout, (WGPUTextureView)tex_id);
-                        renderResources.ImageBindGroups[tex_id_hash] = image_bind_group;
-                        passEncoder.SetBindGroup(1, image_bind_group, 0, nullptr);
-                    }
-                    """
 
-                    """
-                    // Project scissor/clipping rectangles into framebuffer space
-                    ImVec2 clipMin((pcmd->ClipRect.x - clipPos.x) * clipScale.x, (pcmd->ClipRect.y - clipPos.y) * clipScale.y);
-                    ImVec2 clipMax((pcmd->ClipRect.z - clipPos.x) * clipScale.x, (pcmd->ClipRect.w - clipPos.y) * clipScale.y);
-                    if (clipMax.x <= clipMin.x || clipMax.y <= clipMin.y)
-                        continue;
-
-                    if (clipMax.x > scWidth)
-                        clipMax.x = scWidth;
-                    if (clipMax.y > scHeight)
-                        clipMax.y = scHeight;
+                    pass_enc.set_bind_group(0, bind_group)
                     
-                    auto clipX = (uint32_t)clipMin.x;
-                    auto clipY = (uint32_t)clipMin.y;
-                    auto clipWidth = (uint32_t)(clipMax.x - clipMin.x);
-                    auto clipHeight = (uint32_t)(clipMax.y - clipMin.y);
-                    """
+                    # Project scissor/clipping rectangles into framebuffer space
+
                     clip_rect = glm.vec4(
                         command.clip_rect[0],
                         command.clip_rect[1],
                         command.clip_rect[2],
                         command.clip_rect[3],
                     )
-                    # clip_min = glm.vec2((command.clip_rect.x - clip_pos.x) * clip_scale.x, (command.clip_rect.y - clip_pos.y) * clip_scale.y)
                     clip_min = glm.vec2(
                         (clip_rect.x - clip_pos.x) * clip_scale.x,
                         (clip_rect.y - clip_pos.y) * clip_scale.y,
                     )
-                    # clip_max = glm.vec2((command.clip_rect.z - clip_pos.x) * clip_scale.x, (command.clip_rect.w - clip_pos.y) * clip_scale.y)
                     clip_max = glm.vec2(
                         (clip_rect.z - clip_pos.x) * clip_scale.x,
                         (clip_rect.w - clip_pos.y) * clip_scale.y,
@@ -569,10 +529,8 @@ class ImGuiVu(Vu):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=renderer.texture_view,
-                # load_op=wgpu.LoadOp.CLEAR,
                 load_op=wgpu.LoadOp.LOAD,
                 store_op=wgpu.StoreOp.STORE,
-                # clear_value=wgpu.Color(0, 0, 0, 1),
             )
         ]
 

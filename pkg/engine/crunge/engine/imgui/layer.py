@@ -171,14 +171,12 @@ class ImGuiLayer(Layer):
         font = io.fonts.add_font_from_file_ttf(
             str(font_path), font_pixel_size, font_config, glyph_ranges
         )
-        # font = io.fonts.add_font_from_file_ttf(str(font_path), font_pixel_size)
         self.vu.refresh_font_texture()
         return font
 
     def load_default_font(self, font_path: Path, font_pixel_size):
         logger.debug(f"loading default font: {font_path}")
-        font_config = imgui.FontConfig()
-        font = self.load_font(font_path, font_pixel_size, font_config)
+        font = self.load_font(font_path, font_pixel_size)
         self.default_font = font
         return font
 
