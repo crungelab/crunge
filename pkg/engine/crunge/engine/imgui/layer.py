@@ -17,6 +17,7 @@ from .vu import ImGuiVu
 from .scancode_map import scancode_map
 from .board import Clipboard, Dropboard
 
+
 def compute_framebuffer_scale(window_size, frame_buffer_size):
     win_width, win_height = window_size
     fb_width, fb_height = frame_buffer_size
@@ -37,7 +38,6 @@ class ImGuiLayer(Layer):
         self.clipboard = Clipboard()
         self.dropboard = Dropboard()
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
-
 
     def _create(self, view: engine.View):
         super()._create(view)
@@ -155,22 +155,37 @@ class ImGuiLayer(Layer):
         if self.io.want_capture_mouse:
             return self.EVENT_HANDLED
 
-    def load_font(self, font_path: Path, font_pixel_size, font_config=None, glyph_ranges=None):
+    def load_font(
+        self,
+        font_path: Path,
+        font_pixel_size: float,
+        font_config: imgui.FontConfig = imgui.FontConfig(),
+        glyph_ranges: imgui.GlyphRanges = imgui.GlyphRanges(),
+    ):
         logger.debug(f"loading font: {font_path}")
+        logger.debug(f"font_pixel_size: {font_pixel_size}")
+        logger.debug(f"font_config: {font_config}")
+        logger.debug(f"glyph_ranges: {glyph_ranges}")
+
         io = imgui.get_io()
-        #font = io.fonts.add_font_from_file_ttf(str(font_path), font_pixel_size, font_config, glyph_ranges)
-        font = io.fonts.add_font_from_file_ttf(str(font_path), font_pixel_size)
+        font = io.fonts.add_font_from_file_ttf(
+            str(font_path), font_pixel_size, font_config, glyph_ranges
+        )
+        # font = io.fonts.add_font_from_file_ttf(str(font_path), font_pixel_size)
         self.vu.refresh_font_texture()
         return font
 
     def load_default_font(self, font_path: Path, font_pixel_size):
-        font = self.load_font(font_path, font_pixel_size)
+        logger.debug(f"loading default font: {font_path}")
+        font_config = imgui.FontConfig()
+        font = self.load_font(font_path, font_pixel_size, font_config)
         self.default_font = font
         return font
 
-    def load_icon_font(self, font_path: Path, font_pixel_size, glyph_ranges=None):
-        #TODO: add keyword initializer to FontConfig
-        #font_config = imgui.FontConfig(merge_mode=True)
+    def load_icon_font(self, font_path: Path, font_pixel_size: float, glyph_ranges: imgui.GlyphRanges = imgui.GlyphRanges()):
+        logger.debug(f"loading icon font: {font_path}")
+        # TODO: add keyword initializer to FontConfig
+        # font_config = imgui.FontConfig(merge_mode=True)
         font_config = imgui.FontConfig()
         font_config.merge_mode = True
         font = self.load_font(font_path, font_pixel_size, font_config, glyph_ranges)

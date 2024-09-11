@@ -1,8 +1,10 @@
 #include <limits>
 #include <filesystem>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
+#include <pybind11/stl_bind.h>
 #include <pybind11/numpy.h>
 
 #define BUILDING_DLL
@@ -23,7 +25,14 @@ ImGuiContext* GetGImGui() {
 }*/
 ImGuiContext* TImGui;  // Current implicit context pointer
 
+PYBIND11_MAKE_OPAQUE(std::vector<ImWchar>);
+//PYBIND11_MAKE_OPAQUE(std::vector<ImDrawCmd>);
+//PYBIND11_MAKE_OPAQUE(std::vector<ImDrawVert>);
+//PYBIND11_MAKE_OPAQUE(std::vector<ImFontGlyph>);
+
 void init_main(py::module &_imgui, Registry &registry) {
+    py::bind_vector<std::vector<ImWchar>>(_imgui, "GlyphRanges", "ImGui Glyph Range Vector");
+
     template_ImVector<char>(_imgui, "Vector_char");
     template_ImVector<float>(_imgui, "Vector_float");
     template_ImVector<unsigned char>(_imgui, "Vector_unsignedchar");
@@ -279,18 +288,17 @@ void init_main(py::module &_imgui, Registry &registry) {
     PYEXTEND_END
 
     PYEXTEND_BEGIN(ImFontAtlas, FontAtlas)
-    //ImFont* ImFontAtlas::AddFontFromFileTTF(const char* filename, float size_pixels, const ImFontConfig* font_cfg_template, const ImWchar* glyph_ranges)
-    //FontAtlas.def("add_font_from_file_ttf", [](ImFontAtlas& self, std::string filename, float size_pixels, const ImFontConfig* font_cfg_template, const ImWchar* glyph_ranges)
-    FontAtlas.def("add_font_from_file_ttf", [](ImFontAtlas& self, std::string filename, float size_pixels)
+    FontAtlas.def("add_font_from_file_ttf", [](ImFontAtlas& self, const std::string& filename, float size_pixels, const ImFontConfig* font_cfg_template, const std::vector<ImWchar>& glyph_ranges)
     {
-        //return self.AddFontFromFileTTF(filename.c_str(), size_pixels, font_cfg_template, glyph_ranges);
-        return self.AddFontFromFileTTF(filename.c_str(), size_pixels);
+        const ImWchar* glyph_ranges_ptr = glyph_ranges.empty() ? nullptr : glyph_ranges.data();
+        return self.AddFontFromFileTTF(filename.c_str(), size_pixels, font_cfg_template, glyph_ranges_ptr);
     }
     , py::arg("filename")
     , py::arg("size_pixels")
-    //, py::arg("font_cfg") = nullptr
-    //, py::arg("glyph_ranges") = nullptr
+    , py::arg("font_cfg") = nullptr
+    , py::arg("glyph_ranges") = std::vector<ImWchar>()  // Default empty vector
     , py::return_value_policy::automatic_reference);
+
     FontAtlas.def("get_tex_data_as_alpha8", [](ImFontAtlas& self)
     {
         unsigned char* pixels;
