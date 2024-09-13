@@ -17,22 +17,6 @@ class SpriteList:
     def __iter__(self):
         return iter(self.sprites)
 
-    def __getitem__(self, key):
-        if isinstance(key, int):
-            return self.get_by_index(key)
-        elif isinstance(key, str):
-            return self.get_by_name(key)
-        else:
-            raise TypeError("key must be int or str")
-
-    def __contains__(self, key):
-        if isinstance(key, int):
-            return key < len(self)
-        elif isinstance(key, str):
-            return key in self.sprites_by_name
-        else:
-            raise TypeError("key must be int or str")
-
     def __repr__(self):
         return f"<SpriteList: {len(self)} sprites>"
 

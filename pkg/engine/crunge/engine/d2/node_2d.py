@@ -25,7 +25,7 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         self._rotation = 0.0  # radians
         self._size = size
         self._scale = scale
-        self.transform = glm.mat4(1.0)
+        self._transform = glm.mat4(1.0)
 
         if vu is not None:
             self._size = vu.size
@@ -118,6 +118,19 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         self._scale = value
         self.update_transform()
 
+    @property
+    def transform(self):
+        return self._transform
+    
+    @transform.setter
+    def transform(self, value):
+        self._transform = value
+        self.on_transform()
+
+    def on_transform(self):
+        if self.vu is not None:
+            self.vu.transform = self.transform
+
     def update_transform(self):
         x = self._position.x
         y = self._position.y
@@ -131,6 +144,7 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
             glm.vec3(self._size.x * self._scale.x, self._size.y * self._scale.y, 1),
         )
         self.transform = model
-
+        '''
         if self.vu is not None:
             self.vu.transform = self.transform
+        '''

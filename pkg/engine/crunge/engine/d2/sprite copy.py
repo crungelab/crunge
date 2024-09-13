@@ -266,14 +266,13 @@ class Sprite(Vu2D):
     def __init__(self, texture: Texture, color = glm.vec4(1.0, 1.0, 1.0, 1.0)) -> None:
         super().__init__()
         self._texture = texture
+        self.color = color
         self.indices = INDICES
         self.points = POINTS
         self.program = SpriteProgram()
         self.create_vertices()
         self.create_buffers()
         self.create_bind_groups()
-
-        self.color = color
 
     @property
     def texture(self):
@@ -284,26 +283,6 @@ class Sprite(Vu2D):
         self._texture = value
         logger.debug(f"Setting texture: {value}")
         self.update_vertices()
-
-    @property
-    def color(self):
-        return self._color
-    
-    @color.setter
-    def color(self, value):
-        self._color = value
-        self.on_color()
-
-    def on_color(self):
-        material_uniform = MaterialUniform()
-        material_uniform.color = cast_vec4(self.color)
-
-        self.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            as_capsule(material_uniform),
-            self.material_uniform_buffer_size,
-        )
 
     @property
     def size(self) -> glm.ivec2:
@@ -398,20 +377,8 @@ class Sprite(Vu2D):
 
         self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
 
-    def on_transform(self):
-        model_uniform = ModelUniform()
-        model_uniform.transform.data = cast_matrix4(self.transform)
-
-        self.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            as_capsule(model_uniform),
-            self.model_uniform_buffer_size,
-        )
-
     def draw(self, renderer: Renderer2D):
         # logger.debug("Drawing sprite")
-        '''
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
@@ -421,9 +388,7 @@ class Sprite(Vu2D):
             as_capsule(model_uniform),
             self.model_uniform_buffer_size,
         )
-        '''
 
-        '''
         material_uniform = MaterialUniform()
         material_uniform.color = cast_vec4(self.color)
 
@@ -433,7 +398,6 @@ class Sprite(Vu2D):
             as_capsule(material_uniform),
             self.material_uniform_buffer_size,
         )
-        '''
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
