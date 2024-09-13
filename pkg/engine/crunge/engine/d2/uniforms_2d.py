@@ -14,8 +14,14 @@ from loguru import logger
 import numpy as np
 import glm
 
-# MAT4_SIZE = 4 * 4 * 4
+class Vec2(Structure):
+    _fields_ = [
+        ("x", c_float),
+        ("y", c_float),
+    ]
 
+#assert sizeof(Vec2) % 16 == 0
+#assert sizeof(Vec2) == 16
 
 class Vec3(Structure):
     _fields_ = [
@@ -29,6 +35,19 @@ class Vec3(Structure):
 assert sizeof(Vec3) % 16 == 0
 assert sizeof(Vec3) == 16
 
+class Vec4(Structure):
+    _fields_ = [
+        ("x", c_float),
+        ("y", c_float),
+        ("z", c_float),
+        ("w", c_float),
+    ]  # Padding to ensure 16-byte alignment
+
+
+assert sizeof(Vec4) % 16 == 0
+assert sizeof(Vec4) == 16
+
+# MAT4_SIZE = 4 * 4 * 4
 
 class Mat4(Structure):
     _fields_ = [("data", c_float * 16)]  # GLM uses column-major order
@@ -60,12 +79,20 @@ class CameraUniform(Structure):
 
 assert sizeof(CameraUniform) % 16 == 0
 
-class MeshUniform(Structure):
+class ModelUniform(Structure):
     _fields_ = [
-        ("model", Mat4),
+        ("transform", Mat4),
     ]
 
-assert sizeof(MeshUniform) % 16 == 0
+assert sizeof(ModelUniform) % 16 == 0
+
+
+class MaterialUniform(Structure):
+    _fields_ = [
+        ("color", Vec4),
+    ]
+
+assert sizeof(ModelUniform) % 16 == 0
 
 class LightUniform(Structure):
     _fields_ = [
@@ -90,5 +117,8 @@ def cast_matrix3(matrix):
     return cast(ptr, POINTER(c_float * 9)).contents
 
 
-def cast_vec3(vec):
+def cast_vec3(vec: glm.vec3):
     return Vec3(vec.x, vec.y, vec.z, 0.0)
+
+def cast_vec4(vec: glm.vec4):
+    return Vec4(vec.x, vec.y, vec.z, vec.w)

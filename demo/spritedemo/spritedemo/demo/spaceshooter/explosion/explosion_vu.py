@@ -21,7 +21,8 @@ from crunge.engine.d2.uniforms_2d import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
-    MeshUniform,
+    cast_vec4,
+    ModelUniform,
 )
 
 from .data import vertex_data
@@ -280,14 +281,15 @@ class ExplosionProgram(Program):
 
 
 class ExplosionVu(Vu2D):
-    mesh_uniform_buffer: wgpu.Buffer = None
-    mesh_uniform_buffer_size: int = 0
+    model_uniform_buffer: wgpu.Buffer = None
+    model_uniform_buffer_size: int = 0
 
     vertex_buffer: wgpu.Buffer = None
     particles_buffer: wgpu.Buffer = None
 
-    def __init__(self):
+    def __init__(self, color: glm.vec4 = glm.vec4(0.0, 0.0, 1.0, 1.0)):
         super().__init__()
+        self.color = color
         self.program = ExplosionProgram()
 
         self.num_particles = 32
@@ -307,7 +309,8 @@ class ExplosionVu(Vu2D):
             self.particles[i].velocity = Vec2(
                 random.uniform(-1, 1), random.uniform(-1, 1)
             )
-            self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
+            #self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
+            self.particles[i].color = cast_vec4(self.color)
             self.particles[i].age = 0.0
             self.particles[i].lifespan = 100.0
 
@@ -320,10 +323,10 @@ class ExplosionVu(Vu2D):
             self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
         )
         # Uniform Buffers
-        self.mesh_uniform_buffer_size = sizeof(MeshUniform)
-        self.mesh_uniform_buffer = self.gfx.create_buffer(
-            "Mesh Buffer",
-            self.mesh_uniform_buffer_size,
+        self.model_uniform_buffer_size = sizeof(ModelUniform)
+        self.model_uniform_buffer = self.gfx.create_buffer(
+            "Model Buffer",
+            self.model_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
 
@@ -345,8 +348,8 @@ class ExplosionVu(Vu2D):
         render_bindgroup_entries = [
             wgpu.BindGroupEntry(
                 binding=0,
-                buffer=self.mesh_uniform_buffer,
-                size=self.mesh_uniform_buffer_size,
+                buffer=self.model_uniform_buffer,
+                size=self.model_uniform_buffer_size,
             ),
             wgpu.BindGroupEntry(binding=1, buffer=self.particles_buffer),
         ]
@@ -363,13 +366,13 @@ class ExplosionVu(Vu2D):
     def draw(self, renderer: Renderer2D):
         #logger.debug("Drawing explosion")
 
-        mesh_uniform = MeshUniform()
-        mesh_uniform.model.data = cast_matrix4(self.transform)
+        model_uniform = ModelUniform()
+        model_uniform.transform.data = cast_matrix4(self.transform)
         renderer.device.queue.write_buffer(
-            self.mesh_uniform_buffer,
+            self.model_uniform_buffer,
             0,
-            as_capsule(mesh_uniform),
-            self.mesh_uniform_buffer_size,
+            as_capsule(model_uniform),
+            self.model_uniform_buffer_size,
         )
 
         pass_enc = renderer.pass_enc

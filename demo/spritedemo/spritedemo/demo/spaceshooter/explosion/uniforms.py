@@ -14,6 +14,9 @@ from loguru import logger
 import numpy as np
 import glm
 
+from crunge.engine.d2.uniforms_2d import Vec2, Vec4
+
+'''
 # MAT4_SIZE = 4 * 4 * 4
 
 class Vec2(Structure):
@@ -78,7 +81,7 @@ class Uniforms(Structure):
     ]
 
 assert sizeof(Uniforms) % 16 == 0
-
+'''
 class Particle(Structure):
     _fields_ = [
         ("position", Vec2),
@@ -91,6 +94,7 @@ class Particle(Structure):
 
 assert sizeof(Particle) % 16 == 0
 
+'''
 def cast_matrix4(matrix):
     ptr = glm.value_ptr(matrix)
     return cast(ptr, POINTER(c_float * 16)).contents
@@ -103,3 +107,4 @@ def cast_matrix3(matrix):
 
 def cast_vec3(vec):
     return Vec3(vec.x, vec.y, vec.z, 0.0)
+'''
