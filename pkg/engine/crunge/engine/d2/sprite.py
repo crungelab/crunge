@@ -411,29 +411,6 @@ class Sprite(Vu2D):
 
     def draw(self, renderer: Renderer2D):
         # logger.debug("Drawing sprite")
-        '''
-        model_uniform = ModelUniform()
-        model_uniform.transform.data = cast_matrix4(self.transform)
-
-        renderer.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            as_capsule(model_uniform),
-            self.model_uniform_buffer_size,
-        )
-        '''
-
-        '''
-        material_uniform = MaterialUniform()
-        material_uniform.color = cast_vec4(self.color)
-
-        renderer.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            as_capsule(material_uniform),
-            self.material_uniform_buffer_size,
-        )
-        '''
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)

@@ -9,6 +9,7 @@ import glm
 from .renderer_2d import Renderer2D
 from .vu_2d import Vu2D
 
+from ..math.rect import RectF
 from ..node import Node
 
 class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
@@ -148,3 +149,36 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         if self.vu is not None:
             self.vu.transform = self.transform
         '''
+
+    def get_local_aabb(self) -> RectF:
+        half_width = self.size.x / 2
+        half_height = self.size.y / 2
+        return RectF(-half_width, -half_height, self.size.x, self.size.y)
+
+    def get_world_aabb(self) -> RectF:
+        """Create the transformed RectF for the sprite."""
+        # Get the local bounding box
+        local_rect = self.get_local_aabb()
+
+        # Get the sprite's transformation matrix (position, scale, rotation)
+        transform = self.transform  # This should be a 3x3 or 4x4 matrix that applies position, scale, and rotation
+
+        # Get the four corners of the local rectangle
+        corners = [
+            glm.vec2(local_rect.x, local_rect.y),
+            glm.vec2(local_rect.x + local_rect.width, local_rect.y),
+            glm.vec2(local_rect.x, local_rect.y + local_rect.height),
+            glm.vec2(local_rect.x + local_rect.width, local_rect.y + local_rect.height),
+        ]
+
+        # Transform each corner by the sprite's transform matrix
+        transformed_corners = [glm.vec2(transform * glm.vec4(corner, 0, 1)) for corner in corners]
+
+        # Calculate the AABB (axis-aligned bounding box) from the transformed corners
+        min_x = min(corner.x for corner in transformed_corners)
+        max_x = max(corner.x for corner in transformed_corners)
+        min_y = min(corner.y for corner in transformed_corners)
+        max_y = max(corner.y for corner in transformed_corners)
+
+        # Return the new AABB in world space
+        return RectF(min_x, min_y, max_x - min_x, max_y - min_y)
