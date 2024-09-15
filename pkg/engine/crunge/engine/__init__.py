@@ -8,7 +8,7 @@ from .widget import Widget
 from .window import Window
 from .app import App
 from .view import View
-from .layer import Layer
+from .view_layer import ViewLayer
 from .renderer import Renderer
 from .vu import Vu
 

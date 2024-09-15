@@ -1,3 +1,5 @@
+from typing import Any, Callable
+
 from loguru import logger
 import glm
 
@@ -17,6 +19,7 @@ class Widget(Dispatcher):
         self.controller: Controller = None
         self.vu: Vu = None
         self.parts: list[Part] = []
+        self.priority = 0
 
     @property
     def parent(self):
@@ -77,6 +80,15 @@ class Widget(Dispatcher):
 
     def clear(self):
         self.children.clear()
+
+    def sort_children(self, key: Callable[["Widget"], Any], reverse: bool = False) -> None:
+        """
+        Sorts the children list based on a key function.
+
+        :param key: A lambda function that defines the sorting key.
+        :param reverse: Whether to sort in reverse order. Default is False.
+        """
+        self.children.sort(key=key, reverse=reverse)
 
     def dispatch(self, event):
         #logger.debug(f"Widget.dispatch: {self}, {self.children}")

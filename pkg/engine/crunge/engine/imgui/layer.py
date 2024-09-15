@@ -11,7 +11,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge.imgui import Key
 
-from ..layer import Layer
+from ..view_layer import ViewLayer
 
 from .vu import ImGuiVu
 from .scancode_map import scancode_map
@@ -28,7 +28,7 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
     return 1.0, 1.0
 
 
-class ImGuiLayer(Layer):
+class ImGuiLayer(ViewLayer):
     context = None
     vu: ImGuiVu = None
 

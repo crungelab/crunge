@@ -1,5 +1,5 @@
-from crunge.engine import Layer
+from crunge.engine import ViewLayer
 
-class DemoLayer(Layer):
+class DemoLayer(ViewLayer):
     def __init__(self):
         super().__init__("DemoLayer")

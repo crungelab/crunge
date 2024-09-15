@@ -9,15 +9,22 @@ from crunge.engine.imgui import ImGuiView
 from .renderer_2d import Renderer2D
 from .camera_2d import Camera2D
 
+from .scratch_layer import ScratchLayer
 
 class View2D(ImGuiView):
-    renderer: Renderer2D = None
+    #renderer: Renderer2D = None
 
     def __init__(self, size=glm.ivec2()) -> None:
         super().__init__(size)
+        self.scratch: ScratchLayer = None
+        self.depthTexture: wgpu.Texture = None
+        self.depth_stencil_view: wgpu.TextureView = None
 
     def _create(self, window):
         super()._create(window)
+        self.scratch = ScratchLayer().create(self)
+        self.add_layer(self.scratch)
+
         self.create_depth_stencil_view()
         self.create_camera()
         self.create_renderer()
@@ -53,5 +60,6 @@ class View2D(ImGuiView):
         self.renderer.texture_view = renderer.texture_view
         with self.renderer:
             self.scene.draw(self.renderer)
+            super().draw(self.renderer)
 
-        super().draw(renderer)
+        #super().draw(renderer)

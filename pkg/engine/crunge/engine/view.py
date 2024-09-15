@@ -7,23 +7,29 @@ from loguru import logger
 import glm
 
 from .widget import Widget
-from .layer import Layer
+from .view_layer import ViewLayer
 
 class View(Widget):
-    def __init__(self, size=glm.ivec2(), layers=[]) -> None:
+    def __init__(self, size=glm.ivec2(), layers: list[ViewLayer]=[]) -> None:
         super().__init__(size)
         self.window: "Window" = None
-        self.layers: Dict[str, Layer] = {}
+        #self.layers: list[ViewLayer] = []
+        self.layers_by_name: Dict[str, ViewLayer] = {}
+
         for layer in layers:
             self.add_layer(layer)
 
+    @property
+    def layers(self) -> List[ViewLayer]:
+        return self.children
+    
     def set_window(self, window: "Window"):
         self.window = window
         return self
 
     def resize(self, size: glm.ivec2):
         super().resize(size)
-        for layer in self.layers.values():
+        for layer in self.layers:
             layer.resize(size)
 
 
@@ -37,7 +43,7 @@ class View(Widget):
         super()._create()
         self.window = window
         self.size = window.size
-        for layer in self.layers.values():
+        for layer in self.layers:
             layer.create()
         self.create_device_objects()
         return self
@@ -45,18 +51,19 @@ class View(Widget):
     def create_device_objects(self):
         pass
 
-    def add_layer(self, layer: Layer):
+    def add_layer(self, layer: ViewLayer):
         layer.view = self
-        self.layers[layer.name] = layer
+        self.layers_by_name[layer.name] = layer
         self.add_child(layer)
+        self.sort_children(key=lambda child: child.priority)
 
-    def remove_layer(self, layer: Layer):
+    def remove_layer(self, layer: ViewLayer):
         layer.view = None
-        self.layers.pop(layer.name)
+        self.layers_by_name.pop(layer.name)
         self.remove_child(layer)
-
-    def get_layer(self, name: str) -> Layer:
-        return self.layers[name]
+        
+    def get_layer(self, name: str) -> ViewLayer:
+        return self.layers_by_name[name]
     
     def on_show(self):
         pass

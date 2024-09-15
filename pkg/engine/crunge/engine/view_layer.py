@@ -10,12 +10,13 @@ from .renderer import Renderer
 from .vu import Vu
 
 
-class Layer(Widget):
-    def __init__(self, name: str, vu: Vu = None) -> None:
+class ViewLayer(Widget):
+    def __init__(self, name: str, priority:int = 0, vu: Vu = None) -> None:
         super().__init__()
         self.name = name
+        self.priority = priority
         self.view: "View" = None
-        self.vu: Vu = vu
+        self.vu = vu
 
     def set_view(self, view):
         self.view = view
@@ -30,13 +31,6 @@ class Layer(Widget):
         logger.debug("Layer.create")
         self.view = view
         self.size = view.size
-
-    '''
-    def create(self, view: "View"):
-        logger.debug("Layer.create")
-        self.view = view
-        self.size = view.size
-    '''
 
     @property
     def window(self):
