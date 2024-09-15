@@ -6,6 +6,8 @@ import glm
 from loguru import logger
 
 from .node_2d import Node2D
+from ..math.rect import RectF
+
 
 class Camera2D(Node2D):
     def __init__(
@@ -36,6 +38,8 @@ class Camera2D(Node2D):
         ortho_right = (self.x + (self.width / self.zoom) / 2)
         ortho_bottom = (self.y - (self.height / self.zoom) / 2)
         ortho_top = (self.y + (self.height / self.zoom) / 2)
+
+        self.frustrum = RectF(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
 
         ortho_near = -1  # Near clipping plane
         ortho_far = 1    # Far clipping plane

@@ -45,16 +45,16 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
         for i, image in enumerate(images):
             im = image.data
             shape = im.shape
-            logger.debug(f"shape: {shape}")
+            #logger.debug(f"shape: {shape}")
             im_height, im_width, im_channels = shape
             im_depth = 1
             # Has to be a multiple of 256
             size = utils.divround_up(im.nbytes, 256)
-            logger.debug(f"size: {size}")
+            #logger.debug(f"size: {size}")
 
 
             bytes_per_row = im_channels * im_width
-            logger.debug(f"bytes_per_row: {bytes_per_row}")
+            #logger.debug(f"bytes_per_row: {bytes_per_row}")
             rows_per_image = im_height
 
             self.queue.write_texture(

@@ -399,6 +399,7 @@ class Sprite(Vu2D):
         self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
 
     def on_transform(self):
+        super().on_transform()
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 

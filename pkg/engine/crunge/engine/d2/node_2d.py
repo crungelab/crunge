@@ -27,6 +27,7 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         self._size = size
         self._scale = scale
         self._transform = glm.mat4(1.0)
+        self.aabb = RectF(0, 0, 0, 0)
 
         if vu is not None:
             self._size = vu.size
@@ -149,6 +150,7 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         if self.vu is not None:
             self.vu.transform = self.transform
         '''
+        self.aabb = self.get_world_aabb()
 
     def get_local_aabb(self) -> RectF:
         half_width = self.size.x / 2

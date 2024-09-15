@@ -78,6 +78,13 @@ class RectF:
         return (self.x <= point.x < self.x + self.width and
                 self.y <= point.y < self.y + self.height)
 
+    def contains_rect(self, other: 'RectF') -> bool:
+        """Check if the rectangle completely contains another rectangle."""
+        return (self.x <= other.x and
+                self.x + self.width >= other.x + other.width and
+                self.y <= other.y and
+                self.y + self.height >= other.y + other.height)
+
     def intersects(self, other: 'RectF') -> bool:
         return not (self.x + self.width <= other.x or
                     other.x + other.width <= self.x or

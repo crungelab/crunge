@@ -366,7 +366,7 @@ class ImGuiVu(Vu):
         logger.debug("create_pipeline done")
 
     def create_image_bind_group(self, tex_id):
-        logger.debug("create_image_bind_group")
+        #logger.debug("create_image_bind_group")
         texture = ResourceManager().texture_kit.get(tex_id)
         tex_view = texture.view
         bindgroup_entries = [
