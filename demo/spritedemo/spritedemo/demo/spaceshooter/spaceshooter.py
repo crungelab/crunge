@@ -53,7 +53,7 @@ class SpaceShooter(Demo):
 
     def create_view(self):
         super().create_view()
-        self.camera.zoom = .5
+        self.camera.zoom = 2
         self.camera.position = glm.vec2(0, 0)
 
     def create_ship(self, position):

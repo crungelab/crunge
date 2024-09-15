@@ -17,6 +17,8 @@ class Camera2D(Node2D):
     ):
         self._zoom = 1.0
         super().__init__(position, size)
+        self.viewport = RectF()
+        self.projection = RectF()
 
     @property
     def zoom(self):
@@ -34,12 +36,16 @@ class Camera2D(Node2D):
 
     def update_transform(self):
         super().update_transform()
-        ortho_left = (self.x - (self.width / self.zoom) / 2)
-        ortho_right = (self.x + (self.width / self.zoom) / 2)
-        ortho_bottom = (self.y - (self.height / self.zoom) / 2)
-        ortho_top = (self.y + (self.height / self.zoom) / 2)
+        ortho_left = (self.x - (self.width * self.zoom) / 2)
+        ortho_right = (self.x + (self.width * self.zoom) / 2)
+        ortho_bottom = (self.y - (self.height * self.zoom) / 2)
+        ortho_top = (self.y + (self.height * self.zoom) / 2)
 
-        self.frustrum = RectF(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
+        #self.viewport = RectF(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
+        #self.projection = RectF(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
+        #self.projection = RectF(0, 0, self.width, self.height)
+        self.viewport = RectF(0, 0, self.width, self.height)
+        self.projection = RectF(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
 
         ortho_near = -1  # Near clipping plane
         ortho_far = 1    # Far clipping plane

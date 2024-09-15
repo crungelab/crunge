@@ -32,7 +32,7 @@ class TiledDemo(Demo):
 
     def create_view(self):
         super().create_view()
-        self.camera.zoom = 0.5
+        self.camera.zoom = 2
 
     def create_map(self):
 

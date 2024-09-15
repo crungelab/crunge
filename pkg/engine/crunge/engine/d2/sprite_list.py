@@ -23,9 +23,16 @@ class SpriteList:
     def __str__(self):
         return repr(self)
     
+    '''
     def draw(self, renderer: Renderer):
         for sprite in self.sprites:
             sprite.draw(renderer)
+    '''
+    def draw(self, renderer: Renderer):
+        for sprite in self.sprites:
+            projection = renderer.camera.projection
+            if sprite.aabb.intersects(projection):
+                sprite.draw(renderer)
 
     def update(self, delta_time: float):
         for sprite in self.sprites:

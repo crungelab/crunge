@@ -1,7 +1,7 @@
 import glm
 
 class RectI:
-    def __init__(self, x: int, y: int, width: int, height: int):
+    def __init__(self, x: int = 0, y: int = 0, width: int = 0, height: int = 0):
         self.position = glm.ivec2(x, y)
         self.size = glm.ivec2(width, height)
 
@@ -48,7 +48,7 @@ class RectI:
         return f"RectI(x={self.x}, y={self.y}, width={self.width}, height={self.height})"
 
 class RectF:
-    def __init__(self, x: float, y: float, width: float, height: float):
+    def __init__(self, x: float = 0.0, y: float = 0.0, width: float = 0.0, height: float = 0.0):
         self.position = glm.vec2(x, y)
         self.size = glm.vec2(width, height)
 
