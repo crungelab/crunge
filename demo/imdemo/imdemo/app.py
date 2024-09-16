@@ -5,6 +5,7 @@ from loguru import logger
 import glm
 
 from crunge import engine
+from crunge.engine import Scheduler
 from crunge.engine.resource.resource_manager import ResourceManager
 from .page import Page
 
@@ -42,4 +43,4 @@ class App(engine.App):
             entry = self.pages[name]
             self.page = page = entry['klass'].produce(self, name, entry['title'])
             self.show_view(page)
-        self.schedule_once(callback, 0)
+        Scheduler().schedule_once(callback, 0)

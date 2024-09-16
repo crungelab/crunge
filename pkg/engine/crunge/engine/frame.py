@@ -31,7 +31,7 @@ class Frame(Widget):
 
     def push_view(self, new_view):
         #print('push_view')
-        self.view_stack.append(self.current_view)
+        self.view_stack.append(self.view)
         self.show_view(new_view)
 
     def pop_view(self):

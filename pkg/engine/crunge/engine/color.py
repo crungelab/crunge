@@ -2,7 +2,7 @@ from enum import Enum
 import glm
 
 
-class Colors(Enum):
+class Color(Enum):
     def __new__(cls, r, g, b, a=1.0):
         obj = object.__new__(cls)
         obj._value_ = glm.vec4(r, g, b, a)

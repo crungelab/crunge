@@ -45,11 +45,24 @@ class SpaceShooter(Demo):
             self.scene.root.attach(explosion)
             return False
 
+        def ship_asteroid_collision(arbiter, space, data):
+            ship_shape, asteroid_shape = arbiter.shapes
+            ship_model = ship_shape.body.model
+            asteroid_model = asteroid_shape.body.model
+            ship_model.destroy()
+            asteroid_model.destroy()
+            explosion = Explosion(asteroid_model.position, glm.vec2(100, 100), glm.vec4(1.0, 0.0, 0.0, 1.0))
+            self.scene.root.attach(explosion)
+            return False
+
         handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.LASER)  # Replace with your collision types
         handler.begin = laser_laser_collision
 
         handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.METEOR)  # Replace with your collision types
         handler.begin = laser_asteroid_collision
+
+        handler = engine.space.add_collision_handler(CollisionType.SHIP, CollisionType.METEOR)  # Replace with your collision types
+        handler.begin = ship_asteroid_collision
 
     def create_view(self):
         super().create_view()

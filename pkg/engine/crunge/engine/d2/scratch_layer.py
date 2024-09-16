@@ -5,7 +5,7 @@ from .vu_2d import Vu2D
 from .line_2d import Line2D
 from .renderer_2d import Renderer2D
 
-from ..colors import Colors
+from ..color import Color
 
 class ScratchLayer(ViewLayer):
     def __init__(self):
@@ -23,7 +23,7 @@ class ScratchLayer(ViewLayer):
         self.vu_list.remove(vu)
     
     #def draw_line(self, begin: glm.vec2, end: glm.vec2, color=glm.vec4(1.0, 1.0, 1.0, 1.0)):
-    def draw_line(self, begin: glm.vec2, end: glm.vec2, color=Colors.WHITE):
+    def draw_line(self, begin: glm.vec2, end: glm.vec2, color=Color.WHITE):
         line = Line2D(begin, end, color)
         self.add_vu(line)
     

@@ -10,6 +10,7 @@ from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.color import Color
 
 
 class SpriteDemo(Demo):
@@ -24,7 +25,8 @@ class SpriteDemo(Demo):
     def reset(self):
         self.angle = 0
         self.scale = 1.0
-        self.color = 1.0, 1.0, 1.0, 1.0
+        #self.color = 1.0, 1.0, 1.0, 1.0
+        self.color = tuple(Color.WHITE.value)
 
         self.scene.clear()
 
