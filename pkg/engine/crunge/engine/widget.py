@@ -90,9 +90,9 @@ class Widget(Dispatcher):
         """
         self.children.sort(key=key, reverse=reverse)
 
+    
     def dispatch(self, event):
         #logger.debug(f"Widget.dispatch: {self}, {self.children}")
-        #for child in self.children:
         for child in self.children[::-1]:
             if child.dispatch(event):
                 return True
@@ -108,10 +108,10 @@ class Widget(Dispatcher):
             if child.dispatch(event):
                 return True
         if self.controller is not None:
-            #return self.controller.dispatch(event) and super().dispatch(event)
-            return super().dispatch(event) and self.controller.dispatch(event)
+            return self.controller.dispatch(event) and super().dispatch(event)
         return super().dispatch(event)
     '''
+
     def pre_draw(self, renderer: Renderer):
         # logger.debug("Widget.pre_draw")
         if self.vu is not None:

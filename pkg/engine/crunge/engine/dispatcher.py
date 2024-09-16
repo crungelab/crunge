@@ -19,7 +19,7 @@ class Dispatcher(Base):
             case sdl.WindowEvent:
                 return self.on_window(event)
             case sdl.TextInputEvent:
-                return self.on_text(event)
+                return self.on_text_input(event)
             case sdl.KeyboardEvent:
                 return self.on_key(event)
             case sdl.MouseMotionEvent:
@@ -39,7 +39,7 @@ class Dispatcher(Base):
             case _:
                 pass
     
-    def on_text(self, event: sdl.TextInputEvent):
+    def on_text_input(self, event: sdl.TextInputEvent):
         #logger.debug(f"text: {event.text}")
         pass
 

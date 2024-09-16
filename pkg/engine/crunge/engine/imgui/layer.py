@@ -79,7 +79,7 @@ class ImGuiLayer(ViewLayer):
         imgui.end_frame()
         super().post_draw(renderer)
 
-    def on_text(self, event: sdl.TextInputEvent):
+    def on_text_input(self, event: sdl.TextInputEvent):
         # logger.debug(f"text: {event.text}")
         self.io.add_input_characters_utf8(event.text)
 
