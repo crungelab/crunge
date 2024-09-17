@@ -11,7 +11,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge import engine
 
-from crunge.engine import Renderer
+from crunge.engine import Renderer, Scheduler
 
 from crunge.engine.loader.gltf import GltfLoader
 
@@ -41,8 +41,9 @@ class Viewer(engine.App):
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
-        view = View(scene, self.size).create(self)
-        self.show_view(view)
+        #view = View(scene, self.size).create(self)
+        #self.show_view(view)
+        self.view = View(scene, self.size).create(self)
 
     def open(self):
         logger.debug("Opening scene")
@@ -50,7 +51,7 @@ class Viewer(engine.App):
         if not scene_path:
             return
         scene = GltfLoader().load(scene_path)
-        self.schedule_once(lambda dt: self.show(scene))
+        Scheduler().schedule_once(lambda dt: self.show(scene))
 
     def show(self, scene: Scene3D):
         logger.debug("Showing scene")

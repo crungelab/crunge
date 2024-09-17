@@ -7,6 +7,10 @@ import glm
 from crunge import implot
 
 from crunge import engine
+from crunge.engine import Scheduler
+
+from .pages import Page
+
 
 class App(engine.App):
     kWidth = 1280
@@ -21,6 +25,14 @@ class App(engine.App):
         os.chdir(file_path)
 
         implot.create_context()
+
+    @property
+    def page(self) -> Page:
+        return self.view
+    
+    @page.setter
+    def page(self, value: Page) -> None:
+        self.view = value
 
     def use(self, name):
         logger.debug(f"use {name}")
@@ -39,5 +51,5 @@ class App(engine.App):
         def callback(delta_time):
             entry = self.pages[name]
             self.page = page = entry['klass'].produce(self, name, entry['title'])
-            self.show_view(page)
-        self.schedule_once(callback, 0)
+            #self.show_view(page)
+        Scheduler().schedule_once(callback, 0)

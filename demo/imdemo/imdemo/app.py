@@ -25,6 +25,14 @@ class App(engine.App):
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
 
+    @property
+    def page(self) -> Page:
+        return self.view
+    
+    @page.setter
+    def page(self, value: Page) -> None:
+        self.view = value
+
     def use(self, name):
         logger.debug(f"use {name}")
         import importlib.util
@@ -41,6 +49,6 @@ class App(engine.App):
         logger.debug(f"show {name}")
         def callback(delta_time):
             entry = self.pages[name]
-            self.page = page = entry['klass'].produce(self, name, entry['title'])
-            self.show_view(page)
+            self.page = entry['klass'].produce(self, name, entry['title'])
+            #self.show_view(page)
         Scheduler().schedule_once(callback, 0)

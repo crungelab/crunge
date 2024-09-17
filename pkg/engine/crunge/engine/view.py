@@ -65,8 +65,10 @@ class View(Widget):
     def get_layer(self, name: str) -> ViewLayer:
         return self.layers_by_name[name]
     
+    '''
     def on_show(self):
         pass
 
     def on_hide(self):
         pass
+    '''

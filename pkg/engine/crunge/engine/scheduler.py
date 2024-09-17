@@ -43,7 +43,7 @@ class Scheduler:
         self.tasks.append(task)
         print(f"Scheduled repeating task {func.__name__} every {interval} seconds.")
 
-    def schedule_once(self, func: Callable[[float], Any], delay: float) -> None:
+    def schedule_once(self, func: Callable[[float], Any], delay: float = 0.0) -> None:
         """
         Schedule a function to be called once after `delay` seconds.
         The function will receive `delta_time` as an argument.

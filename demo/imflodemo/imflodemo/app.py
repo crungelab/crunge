@@ -6,12 +6,17 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from crunge import sdl, wgpu
-import crunge.wgpu.utils as utils
+from crunge import sdl
+from crunge import wgpu
+from crunge.wgpu import utils
 
-from crunge import imgui, imnodes
+from crunge import imgui
+from crunge import imnodes
 
 from crunge import engine
+from crunge.engine import Scheduler
+
+from imflo.page import Page
 
 class App(engine.App):
     kWidth = 1280
@@ -31,6 +36,14 @@ class App(engine.App):
         #io = imnodes.get_io()
         #io.link_detach_with_modifier_click.modifier = imgui.get_io().key_ctrl
 
+    @property
+    def page(self) -> Page:
+        return self.view
+    
+    @page.setter
+    def page(self, value: Page) -> None:
+        self.view = value
+
     def use(self, name):
         logger.debug(f"use {name}")
         import importlib.util
@@ -48,5 +61,6 @@ class App(engine.App):
         def callback(delta_time):
             entry = self.pages[name]
             self.page = page = entry['klass'].produce(self, name, entry['title'])
-            self.show_view(page)
-        self.schedule_once(callback, 0)
+            #self.show_view(page)
+        #self.schedule_once(callback, 0)
+        Scheduler().schedule_once(callback, 0)

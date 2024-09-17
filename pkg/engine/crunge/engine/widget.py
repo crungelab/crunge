@@ -16,7 +16,7 @@ class Widget(Dispatcher):
         self.size = size
         self.parent = None
         self.children: list["Widget"] = []
-        self.controller: Controller = None
+        self._controller: Controller = None
         self.vu: Vu = None
         self.parts: list[Part] = []
         self.priority = 0
@@ -28,6 +28,19 @@ class Widget(Dispatcher):
     @parent.setter
     def parent(self, parent):
         self._parent = parent
+
+    @property
+    def controller(self) -> Controller:
+        return self._controller
+
+    @controller.setter
+    def controller(self, controller: Controller):
+        if controller == self._controller:
+            return
+        if self._controller:
+            self._controller.disable()
+        self._controller = controller
+        controller.enable()
 
     @property
     def width(self):
@@ -64,19 +77,30 @@ class Widget(Dispatcher):
     def queue(self):
         return self.gfx.queue
 
-    def _create(self):
-        pass
+    def enable(self):
+        super().enable()
+        if self.controller is not None:
+            self.controller.enable()
+
+    def disable(self):
+        super().disable()
+        if self.controller is not None:
+            self.controller.disable()
 
     def add_child(self, child: "Widget"):
         child.parent = self
         self.children.append(child)
 
-    def add_children(self, children):
+    def add_children(self, children: list["Widget"]):
         for child in children:
             self.add_child(child)
 
     def remove_child(self, child: "Widget"):
         self.children.remove(child)
+
+    def remove_children(self, children: list["Widget"]):
+        for child in children:
+            self.remove_child(child)
 
     def clear(self):
         self.children.clear()

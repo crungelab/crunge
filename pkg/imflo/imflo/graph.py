@@ -1,3 +1,5 @@
+from loguru import logger
+
 from crunge import imgui, imnodes
 
 from imflo.wire import Wire
@@ -63,25 +65,26 @@ class Graph:
         for wire in self.wires:
             wire.draw()
 
-        #TODO:Need a working binding
         def cb (node, data):
-            print(node, data)
+            #print(node, data)
+            pass
+
         cb_data = True
         imnodes.mini_map(.1, imnodes.MINI_MAP_LOCATION_TOP_LEFT, cb, cb_data)
         #imnodes.mini_map()
         imnodes.end_node_editor()
 
         if (result := imnodes.is_link_created(0,0))[0]:
-            print(result)
+            logger.debug(result)
             output = self.pin_map[result[1]]
             input = self.pin_map[result[2]]
-            print('output:  {output}')
-            print('input:  {input}')
+            logger.debug('output:  {output}')
+            logger.debug('input:  {input}')
             self.connect(output, input)
 
         if (result := imnodes.is_link_destroyed(0))[0]:
             wire = self.wire_map[result[1]]
-            print('destroyed: ', wire)
+            logger.debug('destroyed: ', wire)
             self.disconnect(wire)
 
         imgui.end()

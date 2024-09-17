@@ -6,6 +6,8 @@ from .gfx import Gfx
 class Base:
     def __init__(self) -> None:
         self.created = False
+        self.enabled = True
+        #self.enabled = False
 
     #def create(self) -> Self:
     def create(self):
@@ -14,6 +16,7 @@ class Base:
         self._create()
         self.on_create()
         self.created = True
+        #self.enable()
         return self
 
     def _create(self):
@@ -21,6 +24,25 @@ class Base:
 
     def on_create(self):
         pass
+
+    def destroy(self):
+        if not self.created:
+            return
+        self._destroy()
+        self.on_destroy()
+        self.created = False
+
+    def _destroy(self):
+        pass
+
+    def on_destroy(self):
+        pass
+
+    def enable(self):
+        self.enabled = True
+
+    def disable(self):
+        self.enabled = False
 
     @property
     def gfx(self):
