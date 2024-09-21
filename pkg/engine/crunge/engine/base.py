@@ -10,17 +10,21 @@ class Base:
         #self.enabled = False
 
     #def create(self) -> Self:
-    def create(self):
+    def create(self, enabled=True):
         if self.created:
             return
         self._create()
-        self.on_create()
-        self.created = True
-        #self.enable()
-        return self
+        return self._post_create(enabled)
 
     def _create(self):
         pass
+
+    def _post_create(self, enabled=True):
+        self.created = True
+        self.on_create()
+        if enabled:
+            self.enable()
+        return self
 
     def on_create(self):
         pass

@@ -1,5 +1,5 @@
-from ..renderer import Renderer
-from .sprite import Sprite
+from ...renderer import Renderer
+from . import Sprite
 
 class SpriteList:
     def __init__(self):
