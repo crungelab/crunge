@@ -10,7 +10,7 @@ class ColorsPage(Page):
         
         imgui.begin("Colors")
         imgui.columns(4)
-        for color in range(0, imgui.COL_COUNT):
+        for color in range(0, imgui.Col.COUNT):
             imgui.text(f"Color: {color}")
             imgui.color_button(f"color#{color}", style.colors[color])
             imgui.next_column()

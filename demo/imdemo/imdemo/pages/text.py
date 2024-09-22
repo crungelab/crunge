@@ -8,8 +8,9 @@ class DrawTextPage(Page):
     def draw(self, renderer: Renderer):
         imgui.begin(self.title)
         draw_list = imgui.get_window_draw_list()
+        color = int.from_bytes(b'\xFF\xFF\x00\xFF', 'little')
         p1 = rel(100, 60)
-        draw_list.add_text(p1, imgui.get_color_u32((1,1,0,1)), "Hello!")
+        draw_list.add_text(p1, color, "Hello!")
         imgui.end()
         super().draw(renderer)
 

@@ -65,6 +65,10 @@ app.use('windowdraw')
 #app.show('image')
 #app.show('font')
 #app.show('fontimage')
-app.show('selectable')
+#app.show('selectable')
+#app.show('circle')
+#app.show('circlefilled')
+app.show('windowdraw')
 
 app.run()
+

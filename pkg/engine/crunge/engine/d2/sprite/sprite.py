@@ -156,53 +156,6 @@ class Sprite(Vu2D):
     def create_bind_groups(self):
         self.create_material_bind_group()
         self.create_model_bind_group()
-        '''
-        sampler = SpriteSampler().sampler
-
-        material_bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(binding=0, sampler=sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=self.texture.view),
-                wgpu.BindGroupEntry(
-                    binding=2,
-                    buffer=self.material_uniform_buffer,
-                    size=self.material_uniform_buffer_size,
-                ),
-            ]
-        )
-
-        material_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Material bind group",
-            layout=self.program.pipeline.get_bind_group_layout(1),
-            entry_count=len(material_bindgroup_entries),
-            entries=material_bindgroup_entries,
-        )
-
-        self.material_bind_group = self.device.create_bind_group(
-            material_bind_group_desc
-        )
-        '''
-
-        '''
-        model_bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.model_uniform_buffer,
-                    size=self.model_uniform_buffer_size,
-                ),
-            ]
-        )
-
-        model_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Mesh bind group",
-            layout=self.program.pipeline.get_bind_group_layout(2),
-            entry_count=len(model_bindgroup_entries),
-            entries=model_bindgroup_entries,
-        )
-
-        self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
-        '''
 
     def create_material_bind_group(self):
         sampler = SpriteSampler().sampler

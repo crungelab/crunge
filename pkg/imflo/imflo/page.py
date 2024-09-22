@@ -40,16 +40,16 @@ class Page(ImGuiView):
         self.draw_mainmenu()
         self.draw_navbar()
 
-        imgui.set_next_window_pos((288, 32), imgui.COND_ONCE)
-        imgui.set_next_window_size((512, 512), imgui.COND_ONCE)
+        imgui.set_next_window_pos((288, 32), imgui.Cond.ONCE)
+        imgui.set_next_window_size((512, 512), imgui.Cond.ONCE)
 
         self.graph.draw()
         
         super().draw(renderer)
 
     def draw_navbar(self):
-        imgui.set_next_window_pos((16, 32), imgui.COND_ONCE)
-        imgui.set_next_window_size((256, self.window.height-32-16), imgui.COND_ONCE)
+        imgui.set_next_window_pos((16, 32), imgui.Cond.ONCE)
+        imgui.set_next_window_size((256, self.window.height-32-16), imgui.Cond.ONCE)
         
         imgui.begin("Examples")
 

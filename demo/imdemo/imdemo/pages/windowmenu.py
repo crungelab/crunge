@@ -6,7 +6,7 @@ from imdemo.page import Page
 
 class WindowMenu(Page):
     def draw(self, renderer: Renderer):
-        flags = imgui.WINDOW_FLAGS_MENU_BAR
+        flags = imgui.WindowFlags.MENU_BAR
 
         imgui.begin("Child Window - File Browser", flags=flags)
 

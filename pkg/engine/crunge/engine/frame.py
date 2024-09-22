@@ -31,7 +31,7 @@ class Frame(Widget):
         logger.debug("Frame.create")
         if self.view is not None:
             self.view.create(self)
-            self.show_view(self.view)
+            #self.show_view(self.view)
         return self
 
     '''

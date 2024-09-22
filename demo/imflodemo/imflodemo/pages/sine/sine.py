@@ -42,7 +42,7 @@ class SineNode(Node):
         width = 20
         height = 100
 
-        imgui.set_next_window_size((160, 160), imgui.COND_ONCE)
+        imgui.set_next_window_size((160, 160), imgui.Cond.ONCE)
 
         imgui.begin("Sin")
         changed, freq = imgui.v_slider_int(

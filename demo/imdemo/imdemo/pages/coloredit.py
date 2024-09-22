@@ -32,7 +32,7 @@ class ColorEdit4(Page):
         #       in currently processed frame and second element is current value
         #       of color and alpha
         _, self.color = imgui.color_edit4("Alpha", self.color)
-        _, self.color = imgui.color_edit4("No alpha", self.color, imgui.COLOR_EDIT_FLAGS_NO_ALPHA)
+        _, self.color = imgui.color_edit4("No Alpha", self.color, imgui.ColorEditFlags.NO_ALPHA)
 
         imgui.end()
         super().draw(renderer)

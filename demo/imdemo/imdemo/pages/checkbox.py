@@ -26,24 +26,29 @@ class Checkbox(Page):
 
 class CheckboxFlags(Page):
     def reset(self):
-        self.flags = imgui.WINDOW_FLAGS_NO_RESIZE | imgui.WINDOW_FLAGS_NO_MOVE
+        #self.flags = imgui.WINDOW_FLAGS_NO_RESIZE | imgui.WINDOW_FLAGS_NO_MOVE
+        self.flags = imgui.WindowFlags.NO_RESIZE | imgui.WindowFlags.NO_MOVE
 
     def draw(self, renderer: Renderer):
         imgui.begin("Example: checkboxes for flags", flags=self.flags)
 
         clicked, self.flags = imgui.checkbox_flags(
-            "No resize", self.flags, imgui.WINDOW_FLAGS_NO_RESIZE
+            #"No resize", self.flags, imgui.WINDOW_FLAGS_NO_RESIZE
+            "No resize", self.flags, imgui.WindowFlags.NO_RESIZE
         )
         clicked, self.flags = imgui.checkbox_flags(
-            "No move", self.flags, imgui.WINDOW_FLAGS_NO_MOVE
+            #"No move", self.flags, imgui.WINDOW_FLAGS_NO_MOVE
+            "No move", self.flags, imgui.WindowFlags.NO_MOVE
         )
         clicked, self.flags = imgui.checkbox_flags(
-            "No collapse", self.flags, imgui.WINDOW_FLAGS_NO_COLLAPSE
+            #"No collapse", self.flags, imgui.WINDOW_FLAGS_NO_COLLAPSE
+            "No collapse", self.flags, imgui.WindowFlags.NO_COLLAPSE
         )
         # note: it also allows to use multiple flags at once
         clicked, self.flags = imgui.checkbox_flags(
             "No resize & no move", self.flags,
-            imgui.WINDOW_FLAGS_NO_RESIZE | imgui.WINDOW_FLAGS_NO_MOVE
+            #imgui.WINDOW_FLAGS_NO_RESIZE | imgui.WINDOW_FLAGS_NO_MOVE
+            imgui.WindowFlags.NO_RESIZE | imgui.WindowFlags.NO_MOVE
         )
         imgui.text("Current flags value: {0:b}".format(self.flags))
         imgui.end()

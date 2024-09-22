@@ -32,9 +32,9 @@ class Page(ImGuiView):
         self.draw_mainmenu()
         self.draw_navbar()
 
-        #gui.set_next_window_pos((288, 32), imgui.COND_ONCE)
-        #gui.set_next_window_pos((self.window.width - 512 - 32, 32), imgui.COND_ONCE)
-        #gui.set_next_window_size((256, 512), imgui.COND_ONCE)
+        #gui.set_next_window_pos((288, 32), imgui.Cond.ONCE)
+        #gui.set_next_window_pos((self.window.width - 512 - 32, 32), imgui.Cond.ONCE)
+        #gui.set_next_window_size((256, 512), imgui.Cond.ONCE)
         if self.fullwidth:
             x = self.window.width - (512+256) - 32
             width = 512
@@ -49,16 +49,16 @@ class Page(ImGuiView):
             y = 32
             height = (self.window.height-32-16)/2
 
-        #gui.set_next_window_pos((self.window.width - (512+256) - 32, 32), imgui.COND_ONCE)
-        #gui.set_next_window_size((512, self.window.height-32-16), imgui.COND_ONCE)
+        #gui.set_next_window_pos((self.window.width - (512+256) - 32, 32), imgui.Cond.ONCE)
+        #gui.set_next_window_size((512, self.window.height-32-16), imgui.Cond.ONCE)
 
-        imgui.set_next_window_pos((x, y), imgui.COND_ONCE)
-        imgui.set_next_window_size((width, height), imgui.COND_ONCE)
+        imgui.set_next_window_pos((x, y), imgui.Cond.ONCE)
+        imgui.set_next_window_size((width, height), imgui.Cond.ONCE)
         
     def draw_navbar(self):
-        #gui.set_next_window_pos((16, 32), imgui.COND_ONCE)
-        imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.COND_ONCE)
-        imgui.set_next_window_size((256, self.window.height-32-16), imgui.COND_ONCE)
+        #gui.set_next_window_pos((16, 32), imgui.Cond.ONCE)
+        imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.Cond.ONCE)
+        imgui.set_next_window_size((256, self.window.height-32-16), imgui.Cond.ONCE)
         
         imgui.begin("Examples")
 

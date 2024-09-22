@@ -28,7 +28,7 @@ ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 class DockingPage(Page):
     def reset(self):
         io = imgui.get_io()
-        io.config_flags |= imgui.CONFIG_FLAGS_DOCKING_ENABLE
+        io.config_flags |= imgui.ConfigFlags.DOCKING_ENABLE
 
     def draw(self, renderer: Renderer):
         #gui.begin(self.title, True, imgui.WINDOW_FLAGS_DOCK_NODE_HOST)
@@ -37,7 +37,7 @@ class DockingPage(Page):
         dockspace_id = imgui.get_id(self.title)
         #ImGui::DockSpace(dockspaceID , ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None|ImGuiDockNodeFlags_PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
         #gui.dock_space(dockspace_id , imgui.Vec2(0., 0.), imgui.DOCK_NODE_FLAGS_NONE|imgui.DOCK_NODE_FLAGS_PASSTHRU_CENTRAL_NODE)
-        dockspace_flags = imgui.DOCK_NODE_FLAGS_NONE|imgui.DOCK_NODE_FLAGS_PASSTHRU_CENTRAL_NODE
+        dockspace_flags = imgui.DockNodeFlags.NONE|imgui.DockNodeFlags.PASSTHRU_CENTRAL_NODE
         #dockspace_flags = imgui.DOCK_NODE_FLAGS_NONE
         imgui.dock_space(dockspace_id , (0., 0.), dockspace_flags)
 
@@ -45,7 +45,7 @@ class DockingPage(Page):
 
 
         #ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
-        imgui.set_next_window_dock_id(dockspace_id , imgui.COND_FIRST_USE_EVER)
+        imgui.set_next_window_dock_id(dockspace_id , imgui.Cond.FIRST_USE_EVER)
 
 
         imgui.begin('Dockable Window')
