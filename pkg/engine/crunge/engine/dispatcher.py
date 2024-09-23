@@ -60,7 +60,7 @@ class Dispatcher(Base):
         pass
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent) -> DispatchResult:
-        #logger.debug(f"mouse button: button={event.button}, state={event.state}")
+        #logger.debug(f"mouse button: button={event.button}, down={event.down}")
         pass
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent) -> DispatchResult:

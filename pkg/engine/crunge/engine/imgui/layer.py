@@ -98,18 +98,6 @@ class ImGuiLayer(ViewLayer):
         if self.io.want_capture_keyboard:
             return self.EVENT_HANDLED
 
-    """
-    def on_key(self, event: sdl.KeyboardEvent):
-        logger.debug(f"key: {event.key}")
-        if event.key in key_map:
-            self.io.add_key_event(key_map.get(event.key), event.state == 1)
-        else:
-            logger.debug(f"key not mapped: {event.key}")
-        self.update_modifiers()
-        if self.io.want_capture_keyboard:
-            return self.EVENT_HANDLED
-    """
-
     def update_modifiers(self):
         mod_state = sdl.get_mod_state()
         self.io.add_key_event(Key.MOD_CTRL, mod_state & sdl.KMOD_CTRL)
@@ -143,9 +131,9 @@ class ImGuiLayer(ViewLayer):
             button = 1
         elif event.button == 2:
             button = 2
-        action = event.state == 1
+
         if button < 3:
-            self.io.add_mouse_button_event(button, action)
+            self.io.add_mouse_button_event(button, event.down)
         if self.io.want_capture_mouse:
             return self.EVENT_HANDLED
 
@@ -180,7 +168,12 @@ class ImGuiLayer(ViewLayer):
         self.default_font = font
         return font
 
-    def load_icon_font(self, font_path: Path, font_pixel_size: float, glyph_ranges: imgui.GlyphRanges = imgui.GlyphRanges()):
+    def load_icon_font(
+        self,
+        font_path: Path,
+        font_pixel_size: float,
+        glyph_ranges: imgui.GlyphRanges = imgui.GlyphRanges(),
+    ):
         logger.debug(f"loading icon font: {font_path}")
         # TODO: add keyword initializer to FontConfig
         # font_config = imgui.FontConfig(merge_mode=True)

@@ -1,5 +1,5 @@
 source: '../../depot/implot/implot.h'
-target: 'src/crunge/implot/bindings/generated.cpp'
+target: 'src/generated.cpp'
 
 prefixes: [ImPlot, Im]
 

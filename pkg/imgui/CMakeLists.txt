@@ -20,8 +20,8 @@ set(IMGUI_HEADERS
 )
 
 set(IMGUI_SRC
-    src/crunge/imgui/bindings/generated.cpp
-    src/crunge/imgui/bindings/main.cpp
+    src/generated.cpp
+    src/main.cpp
     ${IMGUI_ROOT}/imgui_demo.cpp
     ${IMGUI_ROOT}/imgui_draw.cpp
     ${IMGUI_ROOT}/imgui_tables.cpp
@@ -29,8 +29,8 @@ set(IMGUI_SRC
     ${IMGUI_ROOT}/imgui.cpp
 )
 
-#pybind11_add_module(${THIS} MODULE src/crunge/imgui/bindings/init.cpp)
-pybind11_add_module(${THIS} SHARED src/crunge/imgui/bindings/init.cpp)
+#pybind11_add_module(${THIS} MODULE src/init.cpp)
+pybind11_add_module(${THIS} SHARED src/init.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 

@@ -68,7 +68,8 @@ app.use('windowdraw')
 #app.show('selectable')
 #app.show('circle')
 #app.show('circlefilled')
-app.show('windowdraw')
+#app.show('windowdraw')
+app.show('drawcallback')
 
 app.run()
 

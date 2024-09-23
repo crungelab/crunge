@@ -1,5 +1,5 @@
 source: '../../depot/gltf/tiny_gltf.h'
-target: 'src/crunge/gltf/bindings/generated.cpp'
+target: 'src/generated.cpp'
 
 module: _gltf
 

@@ -21,7 +21,6 @@ class LinePlotPage(Page):
         if implot.begin_plot("My Plot"):
             implot.plot_line("A", self.a, 10)
             implot.plot_line("B", self.b, 10)
-            #implot.plot_bars("B", self.values, 10)
             implot.end_plot()
 
         imgui.end()

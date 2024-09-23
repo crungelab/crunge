@@ -262,8 +262,7 @@ void init_sdl_scancode(py::module &_sdl, Registry &registry) {
         .value("SCANCODE_CALL", SDL_Scancode::SDL_SCANCODE_CALL)
         .value("SCANCODE_ENDCALL", SDL_Scancode::SDL_SCANCODE_ENDCALL)
         .value("SCANCODE_RESERVED", SDL_Scancode::SDL_SCANCODE_RESERVED)
-        .value("NUM_SCANCODES", SDL_Scancode::SDL_NUM_SCANCODES)
+        .value("SCANCODE_COUNT", SDL_Scancode::SDL_SCANCODE_COUNT)
         .export_values();
-
 
 }

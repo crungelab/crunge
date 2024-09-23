@@ -9,7 +9,8 @@ class Child(Page):
         imgui.begin("Example: child region")
 
         #imgui.begin_child("region", (150, -50), border=True)
-        imgui.begin_child("region", border=True)
+        #imgui.begin_child("region", border=True)
+        imgui.begin_child("region", (150, -50), imgui.ChildFlags.BORDERS)
         imgui.text("inside region")
         imgui.end_child()
 

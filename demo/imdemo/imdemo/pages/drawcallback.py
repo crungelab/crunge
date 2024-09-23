@@ -10,7 +10,7 @@ class DrawCallbackPage(Page):
     def draw(self, renderer: Renderer):
         imgui.begin(self.title)
 
-        def draw_text(renderer, draw_data, draw_list, cmd, user_data):
+        def draw_text(draw_list, cmd):
             clip = cmd.clip_rect
             left = clip[0]
             bottom = self.window.height - clip[3]

@@ -1,5 +1,5 @@
 source: '../../depot/imnodes/imnodes.h'
-target: 'src/crunge/imnodes/bindings/generated.cpp'
+target: 'src/generated.cpp'
 
 prefixes: [ImNodes, Im]
 

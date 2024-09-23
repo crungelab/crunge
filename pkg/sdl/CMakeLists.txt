@@ -15,16 +15,16 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/crunge/sdl/bindings/sdl_init.cpp
-    src/crunge/sdl/bindings/sdl_video.cpp
-    src/crunge/sdl/bindings/sdl_events.cpp
-    src/crunge/sdl/bindings/sdl_keyboard.cpp
-    src/crunge/sdl/bindings/sdl_scancode.cpp
-    src/crunge/sdl/bindings/sdl_properties.cpp
-    src/crunge/sdl/bindings/main.cpp
+    src/sdl_init.cpp
+    src/sdl_video.cpp
+    src/sdl_events.cpp
+    src/sdl_keyboard.cpp
+    src/sdl_scancode.cpp
+    src/sdl_properties.cpp
+    src/main.cpp
 )
 
-pybind11_add_module(${THIS} MODULE src/crunge/sdl/bindings/init.cpp)
+pybind11_add_module(${THIS} MODULE src/init.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 

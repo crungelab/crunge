@@ -26,7 +26,9 @@ namespace py = pybind11;
 
 #define ImDrawIdx  unsigned int
 
-#define ImDrawCallback py::function
+//typedef void (*ImDrawCallback)(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+//#define ImDrawCallback py::function
+#define ImDrawCallback std::function<void(const ImDrawList*, const ImDrawCmd*)>
 
 #define IMGUI_API PYBIND11_EXPORT
 

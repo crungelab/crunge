@@ -445,7 +445,8 @@ class ImGuiVu(Vu):
             for command in commands:
                 if command.user_callback:
                     command.user_callback(
-                        self, draw_data, commands, command, command.user_callback_data
+                        #self, draw_data, commands, command, command.user_callback_data
+                        commands, command
                     )
                 else:
                     tex_id = command.texture_id
@@ -483,9 +484,17 @@ class ImGuiVu(Vu):
                         clip_max.y = sc_height
 
                     clip_x = int(clip_min.x)
+                    if clip_x < 0:
+                        clip_x = 0
                     clip_y = int(clip_min.y)
+                    if clip_y < 0:
+                        clip_y = 0
                     clip_width = int(clip_max.x - clip_min.x)
+                    if clip_width > sc_width:
+                        clip_width = sc_width
                     clip_height = int(clip_max.y - clip_min.y)
+                    if clip_height > sc_height:
+                        clip_height = sc_height
 
                     pass_enc.set_scissor_rect(clip_x, clip_y, clip_width, clip_height)
                     pass_enc.draw_indexed(

@@ -38,8 +38,8 @@ class LineDemo(Demo):
 
 
     def draw(self, renderer: Renderer):
-        imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
-        imgui.set_next_window_size((256, 256), imgui.COND_ONCE)
+        imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
+        imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
         imgui.begin("Ship")
 

@@ -99,6 +99,6 @@ class Viewer(engine.App):
     def on_key(self, event: sdl.KeyboardEvent):
         super().on_key(event)
         key = event.key
-        state = event.state
-        if key == sdl.SDLK_ESCAPE and state == 1:
+        down = event.down
+        if key == sdl.SDLK_ESCAPE and down:
             self.quit()

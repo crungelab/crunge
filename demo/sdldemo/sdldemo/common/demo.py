@@ -155,7 +155,7 @@ class Demo:
         logger.debug(f"mouse motion: x={event.x}, y={event.y}")
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        logger.debug(f"mouse button: button={event.button}, state={event.state}")
+        logger.debug(f"mouse button: button={event.button}, down={event.down}")
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
         logger.debug(f"mouse wheel: x={event.x}, y={event.y}")

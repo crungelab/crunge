@@ -30,8 +30,8 @@ class BoxesDemo(Demo):
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         super().on_mouse_button(event)
         button = event.button
-        action = event.state == 1
-        if button == 1 and action:
+        down = event.down
+        if button == 1 and down:
             x = self.last_mouse.x
             y = self.height - self.last_mouse.y
             logger.debug(f"Creating box at {x}, {y}")

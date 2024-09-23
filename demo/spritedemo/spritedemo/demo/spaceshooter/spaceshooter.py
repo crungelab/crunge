@@ -75,8 +75,8 @@ class SpaceShooter(Demo):
         self.scene.root.attach(ship)
 
     def draw(self, renderer: Renderer):
-        imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.COND_ONCE)
-        imgui.set_next_window_size((256, 256), imgui.COND_ONCE)
+        imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
+        imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
         imgui.begin("Ship")
 
@@ -124,30 +124,31 @@ class SpaceShooter(Demo):
         return camera_position
 
     def on_key(self, event: sdl.KeyboardEvent):
+        super().on_key(event)
         key = event.key
-        state = event.state
+        down = event.down
         if key == sdl.SDLK_s:
-            if state == 1:
+            if down:
                 self.ship.front_thruster.on()
             else:
                 self.ship.front_thruster.off()
         if key == sdl.SDLK_w:
-            if state == 1:
+            if down:
                 self.ship.rear_thruster.on()
             else:
                 self.ship.rear_thruster.off()
         elif key == sdl.SDLK_a:
-            if state == 1:
+            if down:
                 self.ship.left_thruster.on()
             else:
                 self.ship.left_thruster.off()
         elif key == sdl.SDLK_d:
-            if state == 1:
+            if down:
                 self.ship.right_thruster.on()
             else:
                 self.ship.right_thruster.off()
         elif key == sdl.SDLK_SPACE:
-            if state == 1:
+            if down:
                 self.ship.fire()
 
 

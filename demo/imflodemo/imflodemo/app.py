@@ -31,7 +31,7 @@ class App(engine.App):
         os.chdir(file_path)
 
         imnodes.create_context()
-        imnodes.push_attribute_flag(imnodes.ATTRIBUTE_FLAGS_ENABLE_LINK_DETACH_WITH_DRAG_CLICK)
+        imnodes.push_attribute_flag(imnodes.AttributeFlags.ENABLE_LINK_DETACH_WITH_DRAG_CLICK)
         #TODO:Looks too scary to wrap.
         #io = imnodes.get_io()
         #io.link_detach_with_modifier_click.modifier = imgui.get_io().key_ctrl

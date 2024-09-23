@@ -48,9 +48,9 @@ class CameraController(Controller):
         self.process_mouse_movement(event.x, event.y)
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        #logger.debug(f"mouse button: button={event.button}, state={event.state}")
+        #logger.debug(f"mouse button: button={event.button}, down={event.down}")
         if event.button == 1:
-            if event.state:
+            if event.down:
                 #logger.debug("Capturing mouse")
                 self.mouse_captured = True
                 self.first_mouse = True
@@ -63,12 +63,13 @@ class CameraController(Controller):
     def on_key(self, event: sdl.KeyboardEvent):
         #logger.debug(f"key: {event.key}")
         key = event.key
-        state = event.state
-        if key == sdl.SDLK_w and (state == 1 or event.repeat):
+        down = event.down
+        repeat = event.repeat
+        if key == sdl.SDLK_w and (down or repeat):
             self.process_keyboard('FORWARD', self.delta_time)
-        elif key == sdl.SDLK_s and (state == 1 or event.repeat):
+        elif key == sdl.SDLK_s and (down or repeat):
             self.process_keyboard('BACKWARD', self.delta_time)
-        elif key == sdl.SDLK_a and (state == 1 or event.repeat):
+        elif key == sdl.SDLK_a and (down or repeat):
             self.process_keyboard('LEFT', self.delta_time)
-        elif key == sdl.SDLK_d and (state == 1 or event.repeat):
+        elif key == sdl.SDLK_d and (down or repeat):
             self.process_keyboard('RIGHT', self.delta_time)

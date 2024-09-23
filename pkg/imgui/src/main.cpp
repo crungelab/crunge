@@ -168,6 +168,7 @@ void init_main(py::module &_imgui, Registry &registry) {
     }, py::arg("key"), py::arg("value"));*/
     PYEXTEND_END
 
+    /*
     PYEXTEND_BEGIN(ImDrawCmd, DrawCmd)
     DrawCmd.def_property("user_callback",
         [](const ImDrawCmd& self) {
@@ -182,6 +183,7 @@ void init_main(py::module &_imgui, Registry &registry) {
         }
     );
     PYEXTEND_END
+    */
 
     PYEXTEND_BEGIN(ImDrawList, DrawList)
 
@@ -275,15 +277,18 @@ void init_main(py::module &_imgui, Registry &registry) {
     PYEXTEND_BEGIN(ImDrawVert, DrawVert)
     DrawVert.def_property_readonly_static("pos_offset", [](py::object)
     {
-        return IM_OFFSETOF(ImDrawVert, pos);
+        //return IM_OFFSETOF(ImDrawVert, pos);
+        return offsetof(ImDrawVert, pos);
     });
     DrawVert.def_property_readonly_static("uv_offset", [](py::object)
     {
-        return IM_OFFSETOF(ImDrawVert, uv);
+        //return IM_OFFSETOF(ImDrawVert, uv);
+        return offsetof(ImDrawVert, uv);
     });
     DrawVert.def_property_readonly_static("col_offset", [](py::object)
     {
-        return IM_OFFSETOF(ImDrawVert, col);
+        //return IM_OFFSETOF(ImDrawVert, col);
+        return offsetof(ImDrawVert, col);
     });
     PYEXTEND_END
 

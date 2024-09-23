@@ -65,7 +65,7 @@ while running:
             case sdl.MouseMotionEvent:
                 logger.debug(f"mouse motion: x={event.x}, y={event.y}")
             case sdl.MouseButtonEvent:
-                logger.debug(f"mouse button: button={event.button}, state={event.state}")
+                logger.debug(f"mouse button: button={event.button}, down={event.down}")
             case sdl.MouseWheelEvent:
                 logger.debug(f"mouse wheel: x={event.x}, y={event.y}")
             case _:

@@ -1,5 +1,5 @@
 source: '../../depot/imgui/imgui.h'
-target: 'src/crunge/imgui/bindings/generated.cpp'
+target: 'src/generated.cpp'
 
 prefixes: [ImGui, Im]
 
@@ -50,6 +50,8 @@ defaults:
 'method.ImFontAtlas::AddFontFromFileTTF': {exclude: true}
 'method.ImFontAtlas::GetTexDataAsAlpha8': {exclude: true}
 'method.ImFontAtlas::GetTexDataAsRGBA32': {exclude: true}
+'field.ImFontAtlas::FontBuilderIO': {exclude: true} #Internal
+
 'field.ImGuiStyle::Colors': {exclude: true}
 
 # Internal / Ignored
@@ -85,7 +87,7 @@ defaults:
 'method.ImGuiIO::GetClipboardTextFn': {exclude: true}
 'method.ImGuiIO::SetClipboardTextFn': {exclude: true}
 'method.ImGuiIO::ImeSetInputScreenPosFn': {exclude: true}
-'field.ImDrawCmd::UserCallback': {exclude: true}
+#'field.ImDrawCmd::UserCallback': {exclude: true}
 'field.ImColor::HSV': {exclude: true}
 'struct.ImGuiTextBuffer': {exclude: true} #TODO:Is this causing the link error? ImGuiTextBuffer::EmptyString
 'struct.CustomRect': {exclude: true}
@@ -100,6 +102,12 @@ defaults:
 'struct.ImGuiDockRequest': {exclude: true}
 'field.ImGuiInputTextCallbackData::Ctx': {exclude: true}
 
+'struct.ImGuiSelectionBasicStorage': {exclude: true}
+'struct.ImGuiSelectionExternalStorage': {exclude: true}
+
+'ctor.ImDrawList::ImDrawList': {exclude: true}
+
+'function.ImGui::GetDrawListSharedData': {exclude: true}
 # Overloads
 
 'function.ImGui::IsPopupOpen': {overload: true}

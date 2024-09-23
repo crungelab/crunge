@@ -49,7 +49,7 @@ def debug_accessor(accessor):
     logger.debug(f"accessor.type: {accessor.type}")
     logger.debug(f"accessor.max_values: {accessor.max_values}")
     logger.debug(f"accessor.min_values: {accessor.min_values}")
-    logger.debug(f"accessor.sparse: {accessor.sparse}")
+    #logger.debug(f"accessor.sparse: {accessor.sparse}")
     logger.debug(f"accessor.extensions: {accessor.extensions}")
     logger.debug(f"accessor.extras: {accessor.extras}")
     logger.debug(f"accessor.extras_json_string: {accessor.extras_json_string}")

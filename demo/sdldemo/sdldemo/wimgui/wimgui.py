@@ -181,9 +181,9 @@ class WImGuiDemo(Demo):
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         super().on_mouse_button(event)
         button = event.button - 1  # SDL starts at 1, ImGui starts at 0
-        action = event.state == 1
+        down = event.down
         if button < 3:
-            self.io.add_mouse_button_event(button, action)
+            self.io.add_mouse_button_event(button, down)
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
         x, y = event.x, event.y

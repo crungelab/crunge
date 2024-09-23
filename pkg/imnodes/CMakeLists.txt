@@ -12,17 +12,17 @@ find_package(Python COMPONENTS Interpreter Development)
 set(IMNODES_HEADERS
     ${IMNODES_ROOT}/imnodes.h
     ${IMNODES_ROOT}/imnodes_internal.h
-    src/crunge/imnodes/imnodes_config.h
+    include/crunge/imnodes/imnodes_config.h
 )
 
 set(IMNODES_SRC
     ${IMNODES_ROOT}/imnodes.cpp
-    src/crunge/imnodes/bindings/generated.cpp
-    src/crunge/imnodes/bindings/main.cpp
+    src/generated.cpp
+    src/main.cpp
 )
 
 pybind11_add_module(${THIS} MODULE
-    src/crunge/imnodes/bindings/init.cpp
+    src/init.cpp
 )
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
@@ -37,7 +37,6 @@ target_include_directories(${THIS}
     PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${AIMGUI_ROOT}/include>
     $<BUILD_INTERFACE:${IMGUI_ROOT}>
     $<BUILD_INTERFACE:${IMNODES_ROOT}>
     PRIVATE

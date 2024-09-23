@@ -8,10 +8,10 @@ class Pybind11(GitSolution):
 
 class ImGui(GitSolution):
     path = "depot/imgui"
-    # url = 'https://github.com/ocornut/imgui'
-    url = "https://github.com/crungelab/imgui"
-    # branch = 'docking'
-    branch = "crunge"
+    url = 'https://github.com/ocornut/imgui'
+    branch = 'docking'
+    # url = "https://github.com/crungelab/imgui"
+    # branch = "crunge"
 
 
 class ImPlot(GitSolution):
@@ -21,8 +21,8 @@ class ImPlot(GitSolution):
 
 class ImNodes(GitSolution):
     path = "depot/imnodes"
-    # url = 'https://github.com/Nelarius/imnodes'
-    url = "https://github.com/crungelab/imnodes"
+    url = 'https://github.com/Nelarius/imnodes'
+    # url = "https://github.com/crungelab/imnodes"
     # branch = 'crunge'
 
 

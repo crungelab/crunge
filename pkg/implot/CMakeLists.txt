@@ -15,15 +15,15 @@ set(IMPLOT_HEADERS
 )
 
 set(IMPLOT_SRC
-    src/crunge/implot/bindings/generated.cpp
-    src/crunge/implot/bindings/main.cpp
+    src/generated.cpp
+    src/main.cpp
     ${IMPLOT_ROOT}/implot_demo.cpp
     ${IMPLOT_ROOT}/implot_items.cpp
     ${IMPLOT_ROOT}/implot.cpp
 )
 
 pybind11_add_module(${THIS} MODULE
-    src/crunge/implot/bindings/init.cpp
+    src/init.cpp
 )
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
@@ -38,7 +38,6 @@ target_include_directories(${THIS}
     PUBLIC
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${AIMGUI_ROOT}/include>
     $<BUILD_INTERFACE:${IMGUI_ROOT}>
     $<BUILD_INTERFACE:${IMPLOT_ROOT}>
     PRIVATE

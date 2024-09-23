@@ -1,7 +1,7 @@
 source: '../../depot/sdl/include/SDL3/SDL_init.h'
-target: 'src/crunge/sdl/bindings/sdl_init.cpp'
+target: 'src/sdl_init.cpp'
 
-prefixes: SDL_
+prefixes: [SDL_]
 
 module: _sdl
 

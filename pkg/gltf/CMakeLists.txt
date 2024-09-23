@@ -15,11 +15,11 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/crunge/gltf/bindings/generated.cpp
-    src/crunge/gltf/bindings/main.cpp
+    src/generated.cpp
+    src/main.cpp
 )
 
-pybind11_add_module(${THIS} MODULE src/crunge/gltf/bindings/init.cpp)
+pybind11_add_module(${THIS} MODULE src/init.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 

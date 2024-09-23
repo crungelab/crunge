@@ -66,11 +66,12 @@ class Graph:
             wire.draw()
 
         def cb (node, data):
-            #print(node, data)
-            pass
+            print(node, data)
+            #pass
 
         cb_data = True
-        imnodes.mini_map(.1, imnodes.MINI_MAP_LOCATION_TOP_LEFT, cb, cb_data)
+        #imnodes.mini_map(.1, imnodes.MINI_MAP_LOCATION_TOP_LEFT, cb, cb_data)
+        imnodes.mini_map(.1, imnodes.MiniMapLocation.TOP_LEFT, cb, cb_data)
         #imnodes.mini_map()
         imnodes.end_node_editor()
 

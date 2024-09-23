@@ -49,7 +49,8 @@ class DockingPage(Page):
 
 
         imgui.begin('Dockable Window')
-        imgui.begin_child("region", (150, -50), border=True)
+        #imgui.begin_child("region", (150, -50), border=True)
+        imgui.begin_child("region", (150, -50), imgui.ChildFlags.BORDERS)
         imgui.text("inside region")
         imgui.end_child()
         imgui.text("outside region")

@@ -1,7 +1,7 @@
 source: '../../depot/sdl/include/SDL3/SDL_video.h'
-target: 'src/crunge/sdl/bindings/sdl_video.cpp'
+target: 'src/sdl_video.cpp'
 
-prefixes: SDL_
+prefixes: [SDL_]
 
 module: _sdl
 
