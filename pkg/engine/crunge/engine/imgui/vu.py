@@ -21,6 +21,7 @@ from crunge import imgui
 from ..renderer import Renderer
 from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
+from ..resource.sampler import DefaultSampler
 from ..vu import Vu
 
 from .uniforms import (
@@ -100,6 +101,7 @@ class ImGuiVu(Vu):
         super().__init__()
         self.io = imgui.get_io()
         self.texture: Texture = None
+        self.sampler = DefaultSampler()
         self.image_bind_groups = {}
 
     def _create(self):
@@ -161,6 +163,7 @@ class ImGuiVu(Vu):
         self.texture = Texture(wgpu_texture, RectI(0, 0, width, height))
         ResourceManager().add(self.texture)
 
+        '''
         texture_view_desc = wgpu.TextureViewDescriptor(
             format=wgpu.TextureFormat.RGBA8_UNORM,
             dimension=wgpu.TextureViewDimension.E2D,
@@ -171,10 +174,11 @@ class ImGuiVu(Vu):
             aspect=wgpu.TextureAspect.ALL,
         )
 
-        #self.texture_view = self.texture.create_view(texture_view_desc)
         wgpu_texture_view = wgpu_texture.create_view(texture_view_desc)
         self.texture.view = wgpu_texture_view
+        '''
 
+        '''
         sampler_desc = wgpu.SamplerDescriptor(
             min_filter=wgpu.FilterMode.LINEAR,
             mag_filter=wgpu.FilterMode.LINEAR,
@@ -186,6 +190,9 @@ class ImGuiVu(Vu):
         )
 
         self.sampler = self.device.create_sampler(sampler_desc)
+        '''
+
+        #self.sampler = self.device.create_sampler()
 
         # size = utils.divround_up(pixels.nbytes, 256)
         # size = utils.divround_up(width * height * bpp, 256)
@@ -352,8 +359,8 @@ class ImGuiVu(Vu):
             wgpu.BindGroupEntry(
                 binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
             ),
-            wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
-            #wgpu.BindGroupEntry(binding=2, texture_view=self.texture_view),
+            #wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=1, sampler=self.sampler.sampler),
             wgpu.BindGroupEntry(binding=2, texture_view=self.texture.view),
         ]
 
@@ -370,13 +377,13 @@ class ImGuiVu(Vu):
     def create_image_bind_group(self, tex_id):
         #logger.debug("create_image_bind_group")
         texture = ResourceManager().texture_kit.get(tex_id)
-        tex_view = texture.view
         bindgroup_entries = [
             wgpu.BindGroupEntry(
                 binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
             ),
-            wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
-            wgpu.BindGroupEntry(binding=2, texture_view=tex_view),
+            #wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+            wgpu.BindGroupEntry(binding=1, sampler=self.sampler.sampler),
+            wgpu.BindGroupEntry(binding=2, texture_view=texture.view),
         ]
 
         bindGroupDesc = wgpu.BindGroupDescriptor(
@@ -410,13 +417,8 @@ class ImGuiVu(Vu):
         fb_height = draw_data.display_size[1] * draw_data.framebuffer_scale[1]
         if fb_width <= 0 or fb_height <= 0:
             return
-        """
-        const ImVec2 clipPos = drawData.DisplayPos;         // (0,0) unless using multi-viewports
-        const ImVec2 clipScale = drawData.FramebufferScale; // (1,1) unless using retina display which are often (2,2)
-        """
-        # clip_pos = draw_data.display_pos
+
         clip_pos = glm.vec2(draw_data.display_pos[0], draw_data.display_pos[1])
-        # clip_scale = draw_data.framebuffer_scale
         clip_scale = glm.vec2(
             draw_data.framebuffer_scale[0], draw_data.framebuffer_scale[1]
         )

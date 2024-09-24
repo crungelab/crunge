@@ -3,8 +3,8 @@ import glm
 
 from crunge import wgpu
 
-from .. import RectI
-from .resource import Resource
+from ... import RectI
+from ..resource import Resource
 
 
 class Sampler(Resource):

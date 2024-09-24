@@ -42,8 +42,9 @@ void init_main(py::module &_sdl, Registry &registry)
         .value("INIT_CAMERA", InitFlags::INIT_CAMERA)
         .export_values();
 
-    PYCLASS_BEGIN(_sdl, SDLWindowWrapper, Window)
-    PYCLASS_END(_sdl, SDLWindowWrapper, Window)
+    PYCLASS(_sdl, SDLWindowWrapper, Window);
+    /*PYCLASS_BEGIN(_sdl, SDLWindowWrapper, Window)
+    PYCLASS_END(_sdl, SDLWindowWrapper, Window)*/
 
     _sdl.def(
         "poll_event", []()
