@@ -13,6 +13,6 @@
 
 namespace py = pybind11;
 
-void init_sdl_video(py::module &_sdl, Registry &registry) {
+void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
 {{body}}
 }

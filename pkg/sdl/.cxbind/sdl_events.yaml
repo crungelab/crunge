@@ -1,5 +1,5 @@
 source: '../../depot/sdl/include/SDL3/SDL_events.h'
-target: 'src/sdl_events.cpp'
+target: 'src/sdl_events_auto.cpp'
 
 prefixes: [SDL_EVENT_, SDL_]
 

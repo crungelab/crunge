@@ -12,6 +12,6 @@
 
 namespace py = pybind11;
 
-void init_sdl_scancode(py::module &_sdl, Registry &registry) {
+void init_sdl_scancode_auto(py::module &_sdl, Registry &registry) {
 {{body}}
 }

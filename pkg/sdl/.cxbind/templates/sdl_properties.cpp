@@ -12,6 +12,6 @@
 
 namespace py = pybind11;
 
-void init_sdl_properties(py::module &_sdl, Registry &registry) {
+void init_sdl_properties_auto(py::module &_sdl, Registry &registry) {
 {{body}}
 }

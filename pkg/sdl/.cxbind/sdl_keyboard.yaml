@@ -1,5 +1,5 @@
 source: '../../depot/sdl/include/SDL3/SDL_keyboard.h'
-target: 'src/sdl_keyboard.cpp'
+target: 'src/sdl_keyboard_auto.cpp'
 
 prefixes: [SDL_EVENT_, SDL_]
 

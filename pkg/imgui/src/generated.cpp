@@ -14,565 +14,574 @@ namespace py = pybind11;
 void init_generated(py::module &_imgui, Registry &registry) {
     PYCLASS(_imgui, ImVec2, Vec2)
         .def_readwrite("x", &ImVec2::x)
+
         .def_readwrite("y", &ImVec2::y)
+
         .def(py::init<>())
     ;
+
     PYCLASS(_imgui, ImVec4, Vec4)
         .def_readwrite("x", &ImVec4::x)
+
         .def_readwrite("y", &ImVec4::y)
+
         .def_readwrite("z", &ImVec4::z)
+
         .def_readwrite("w", &ImVec4::w)
+
         .def(py::init<>())
     ;
-    _imgui.def("get_io", &ImGui::GetIO
-        , py::return_value_policy::reference);
-        
-    _imgui.def("get_platform_io", &ImGui::GetPlatformIO
-        , py::return_value_policy::reference);
-        
-    _imgui.def("get_style", &ImGui::GetStyle
-        , py::return_value_policy::reference);
-        
-    _imgui.def("new_frame", &ImGui::NewFrame
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_frame", &ImGui::EndFrame
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("render", &ImGui::Render
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_draw_data", &ImGui::GetDrawData
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_demo_window", [](bool * p_open)
-    {
-        ImGui::ShowDemoWindow(p_open);
-        return p_open;
-    }
+
+    _imgui
+    .def("get_io", &ImGui::GetIO
+        , py::return_value_policy::reference)
+
+    .def("get_platform_io", &ImGui::GetPlatformIO
+        , py::return_value_policy::reference)
+
+    .def("get_style", &ImGui::GetStyle
+        , py::return_value_policy::reference)
+
+    .def("new_frame", &ImGui::NewFrame
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_frame", &ImGui::EndFrame
+        , py::return_value_policy::automatic_reference)
+
+    .def("render", &ImGui::Render
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_draw_data", &ImGui::GetDrawData
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_demo_window", [](bool * p_open)
+        {
+            ImGui::ShowDemoWindow(p_open);
+            return p_open;
+        }
         , py::arg("p_open") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_metrics_window", [](bool * p_open)
-    {
-        ImGui::ShowMetricsWindow(p_open);
-        return p_open;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_metrics_window", [](bool * p_open)
+        {
+            ImGui::ShowMetricsWindow(p_open);
+            return p_open;
+        }
         , py::arg("p_open") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_debug_log_window", [](bool * p_open)
-    {
-        ImGui::ShowDebugLogWindow(p_open);
-        return p_open;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_debug_log_window", [](bool * p_open)
+        {
+            ImGui::ShowDebugLogWindow(p_open);
+            return p_open;
+        }
         , py::arg("p_open") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_id_stack_tool_window", [](bool * p_open)
-    {
-        ImGui::ShowIDStackToolWindow(p_open);
-        return p_open;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_id_stack_tool_window", [](bool * p_open)
+        {
+            ImGui::ShowIDStackToolWindow(p_open);
+            return p_open;
+        }
         , py::arg("p_open") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_about_window", [](bool * p_open)
-    {
-        ImGui::ShowAboutWindow(p_open);
-        return p_open;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_about_window", [](bool * p_open)
+        {
+            ImGui::ShowAboutWindow(p_open);
+            return p_open;
+        }
         , py::arg("p_open") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_style_editor", &ImGui::ShowStyleEditor
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_style_editor", &ImGui::ShowStyleEditor
         , py::arg("ref") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_style_selector", &ImGui::ShowStyleSelector
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_style_selector", &ImGui::ShowStyleSelector
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_font_selector", &ImGui::ShowFontSelector
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_font_selector", &ImGui::ShowFontSelector
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("show_user_guide", &ImGui::ShowUserGuide
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_version", &ImGui::GetVersion
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("style_colors_dark", &ImGui::StyleColorsDark
+        , py::return_value_policy::automatic_reference)
+
+    .def("show_user_guide", &ImGui::ShowUserGuide
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_version", &ImGui::GetVersion
+        , py::return_value_policy::automatic_reference)
+
+    .def("style_colors_dark", &ImGui::StyleColorsDark
         , py::arg("dst") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("style_colors_light", &ImGui::StyleColorsLight
+        , py::return_value_policy::automatic_reference)
+
+    .def("style_colors_light", &ImGui::StyleColorsLight
         , py::arg("dst") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("style_colors_classic", &ImGui::StyleColorsClassic
+        , py::return_value_policy::automatic_reference)
+
+    .def("style_colors_classic", &ImGui::StyleColorsClassic
         , py::arg("dst") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin", [](const char * name, bool * p_open, int flags)
-    {
-        auto ret = ImGui::Begin(name, p_open, flags);
-        return std::make_tuple(ret, p_open);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin", [](const char * name, bool * p_open, int flags)
+        {
+            auto ret = ImGui::Begin(name, p_open, flags);
+            return std::make_tuple(ret, p_open);
+        }
         , py::arg("name")
         , py::arg("p_open") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end", &ImGui::End
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_child", py::overload_cast<const char *, const ImVec2 &, int, int>(&ImGui::BeginChild)
+        , py::return_value_policy::automatic_reference)
+
+    .def("end", &ImGui::End
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_child", py::overload_cast<const char *, const ImVec2 &, int, int>(&ImGui::BeginChild)
         , py::arg("str_id")
         , py::arg("size") = ImVec2(0,0)
         , py::arg("child_flags") = 0
         , py::arg("window_flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_child", &ImGui::EndChild
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_window_appearing", &ImGui::IsWindowAppearing
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_window_collapsed", &ImGui::IsWindowCollapsed
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_window_focused", &ImGui::IsWindowFocused
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_child", &ImGui::EndChild
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_window_appearing", &ImGui::IsWindowAppearing
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_window_collapsed", &ImGui::IsWindowCollapsed
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_window_focused", &ImGui::IsWindowFocused
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_window_hovered", &ImGui::IsWindowHovered
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_window_hovered", &ImGui::IsWindowHovered
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_draw_list", &ImGui::GetWindowDrawList
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_dpi_scale", &ImGui::GetWindowDpiScale
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_pos", &ImGui::GetWindowPos
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_size", &ImGui::GetWindowSize
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_width", &ImGui::GetWindowWidth
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_height", &ImGui::GetWindowHeight
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_viewport", &ImGui::GetWindowViewport
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_pos", &ImGui::SetNextWindowPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_draw_list", &ImGui::GetWindowDrawList
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_dpi_scale", &ImGui::GetWindowDpiScale
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_pos", &ImGui::GetWindowPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_size", &ImGui::GetWindowSize
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_width", &ImGui::GetWindowWidth
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_height", &ImGui::GetWindowHeight
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_viewport", &ImGui::GetWindowViewport
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_pos", &ImGui::SetNextWindowPos
         , py::arg("pos")
         , py::arg("cond") = 0
         , py::arg("pivot") = ImVec2(0,0)
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_size", &ImGui::SetNextWindowSize
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_size", &ImGui::SetNextWindowSize
         , py::arg("size")
         , py::arg("cond") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_content_size", &ImGui::SetNextWindowContentSize
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_content_size", &ImGui::SetNextWindowContentSize
         , py::arg("size")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_collapsed", &ImGui::SetNextWindowCollapsed
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_collapsed", &ImGui::SetNextWindowCollapsed
         , py::arg("collapsed")
         , py::arg("cond") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_focus", &ImGui::SetNextWindowFocus
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_scroll", &ImGui::SetNextWindowScroll
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_focus", &ImGui::SetNextWindowFocus
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_scroll", &ImGui::SetNextWindowScroll
         , py::arg("scroll")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_bg_alpha", &ImGui::SetNextWindowBgAlpha
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_bg_alpha", &ImGui::SetNextWindowBgAlpha
         , py::arg("alpha")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_viewport", &ImGui::SetNextWindowViewport
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_viewport", &ImGui::SetNextWindowViewport
         , py::arg("viewport_id")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_window_pos", py::overload_cast<const ImVec2 &, int>(&ImGui::SetWindowPos)
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_window_pos", py::overload_cast<const ImVec2 &, int>(&ImGui::SetWindowPos)
         , py::arg("pos")
         , py::arg("cond") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_window_size", py::overload_cast<const ImVec2 &, int>(&ImGui::SetWindowSize)
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_window_size", py::overload_cast<const ImVec2 &, int>(&ImGui::SetWindowSize)
         , py::arg("size")
         , py::arg("cond") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_window_collapsed", py::overload_cast<bool, int>(&ImGui::SetWindowCollapsed)
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_window_collapsed", py::overload_cast<bool, int>(&ImGui::SetWindowCollapsed)
         , py::arg("collapsed")
         , py::arg("cond") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_window_focus", py::overload_cast<>(&ImGui::SetWindowFocus)
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_window_font_scale", &ImGui::SetWindowFontScale
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_window_focus", py::overload_cast<>(&ImGui::SetWindowFocus)
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_window_font_scale", &ImGui::SetWindowFontScale
         , py::arg("scale")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_scroll_x", &ImGui::GetScrollX
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_scroll_y", &ImGui::GetScrollY
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_scroll_x", py::overload_cast<float>(&ImGui::SetScrollX)
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_scroll_x", &ImGui::GetScrollX
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_scroll_y", &ImGui::GetScrollY
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_scroll_x", py::overload_cast<float>(&ImGui::SetScrollX)
         , py::arg("scroll_x")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_scroll_y", py::overload_cast<float>(&ImGui::SetScrollY)
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_scroll_y", py::overload_cast<float>(&ImGui::SetScrollY)
         , py::arg("scroll_y")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_scroll_max_x", &ImGui::GetScrollMaxX
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_scroll_max_y", &ImGui::GetScrollMaxY
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_scroll_here_x", &ImGui::SetScrollHereX
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_scroll_max_x", &ImGui::GetScrollMaxX
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_scroll_max_y", &ImGui::GetScrollMaxY
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_scroll_here_x", &ImGui::SetScrollHereX
         , py::arg("center_x_ratio") = 0.5f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_scroll_here_y", &ImGui::SetScrollHereY
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_scroll_here_y", &ImGui::SetScrollHereY
         , py::arg("center_y_ratio") = 0.5f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_scroll_from_pos_x", py::overload_cast<float, float>(&ImGui::SetScrollFromPosX)
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_scroll_from_pos_x", py::overload_cast<float, float>(&ImGui::SetScrollFromPosX)
         , py::arg("local_x")
         , py::arg("center_x_ratio") = 0.5f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_scroll_from_pos_y", py::overload_cast<float, float>(&ImGui::SetScrollFromPosY)
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_scroll_from_pos_y", py::overload_cast<float, float>(&ImGui::SetScrollFromPosY)
         , py::arg("local_y")
         , py::arg("center_y_ratio") = 0.5f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_font", &ImGui::PushFont
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_font", &ImGui::PushFont
         , py::arg("font")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_font", &ImGui::PopFont
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_style_color", py::overload_cast<int, unsigned int>(&ImGui::PushStyleColor)
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_font", &ImGui::PopFont
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_style_color", py::overload_cast<int, unsigned int>(&ImGui::PushStyleColor)
         , py::arg("idx")
         , py::arg("col")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_style_color", &ImGui::PopStyleColor
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_style_color", &ImGui::PopStyleColor
         , py::arg("count") = 1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_style_var", py::overload_cast<int, float>(&ImGui::PushStyleVar)
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_style_var", py::overload_cast<int, float>(&ImGui::PushStyleVar)
         , py::arg("idx")
         , py::arg("val")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_style_var_x", &ImGui::PushStyleVarX
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_style_var_x", &ImGui::PushStyleVarX
         , py::arg("idx")
         , py::arg("val_x")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_style_var_y", &ImGui::PushStyleVarY
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_style_var_y", &ImGui::PushStyleVarY
         , py::arg("idx")
         , py::arg("val_y")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_style_var", &ImGui::PopStyleVar
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_style_var", &ImGui::PopStyleVar
         , py::arg("count") = 1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_item_flag", &ImGui::PushItemFlag
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_item_flag", &ImGui::PushItemFlag
         , py::arg("option")
         , py::arg("enabled")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_item_flag", &ImGui::PopItemFlag
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_item_width", &ImGui::PushItemWidth
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_item_flag", &ImGui::PopItemFlag
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_item_width", &ImGui::PushItemWidth
         , py::arg("item_width")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_item_width", &ImGui::PopItemWidth
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_item_width", &ImGui::SetNextItemWidth
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_item_width", &ImGui::PopItemWidth
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_item_width", &ImGui::SetNextItemWidth
         , py::arg("item_width")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("calc_item_width", &ImGui::CalcItemWidth
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_text_wrap_pos", &ImGui::PushTextWrapPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("calc_item_width", &ImGui::CalcItemWidth
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_text_wrap_pos", &ImGui::PushTextWrapPos
         , py::arg("wrap_local_pos_x") = 0.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_text_wrap_pos", &ImGui::PopTextWrapPos
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_font", &ImGui::GetFont
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_font_size", &ImGui::GetFontSize
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_font_tex_uv_white_pixel", &ImGui::GetFontTexUvWhitePixel
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_color_u32", py::overload_cast<int, float>(&ImGui::GetColorU32)
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_text_wrap_pos", &ImGui::PopTextWrapPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_font", &ImGui::GetFont
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_font_size", &ImGui::GetFontSize
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_font_tex_uv_white_pixel", &ImGui::GetFontTexUvWhitePixel
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_color_u32", py::overload_cast<int, float>(&ImGui::GetColorU32)
         , py::arg("idx")
         , py::arg("alpha_mul") = 1.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_style_color_vec4", &ImGui::GetStyleColorVec4
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_style_color_vec4", &ImGui::GetStyleColorVec4
         , py::arg("idx")
-        , py::return_value_policy::reference);
-        
-    _imgui.def("get_cursor_screen_pos", &ImGui::GetCursorScreenPos
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_cursor_screen_pos", &ImGui::SetCursorScreenPos
+        , py::return_value_policy::reference)
+
+    .def("get_cursor_screen_pos", &ImGui::GetCursorScreenPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_cursor_screen_pos", &ImGui::SetCursorScreenPos
         , py::arg("pos")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_content_region_avail", &ImGui::GetContentRegionAvail
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_cursor_pos", &ImGui::GetCursorPos
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_cursor_pos_x", &ImGui::GetCursorPosX
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_cursor_pos_y", &ImGui::GetCursorPosY
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_cursor_pos", &ImGui::SetCursorPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_content_region_avail", &ImGui::GetContentRegionAvail
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_cursor_pos", &ImGui::GetCursorPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_cursor_pos_x", &ImGui::GetCursorPosX
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_cursor_pos_y", &ImGui::GetCursorPosY
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_cursor_pos", &ImGui::SetCursorPos
         , py::arg("local_pos")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_cursor_pos_x", &ImGui::SetCursorPosX
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_cursor_pos_x", &ImGui::SetCursorPosX
         , py::arg("local_x")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_cursor_pos_y", &ImGui::SetCursorPosY
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_cursor_pos_y", &ImGui::SetCursorPosY
         , py::arg("local_y")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_cursor_start_pos", &ImGui::GetCursorStartPos
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("separator", &ImGui::Separator
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("same_line", &ImGui::SameLine
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_cursor_start_pos", &ImGui::GetCursorStartPos
+        , py::return_value_policy::automatic_reference)
+
+    .def("separator", &ImGui::Separator
+        , py::return_value_policy::automatic_reference)
+
+    .def("same_line", &ImGui::SameLine
         , py::arg("offset_from_start_x") = 0.0f
         , py::arg("spacing") = -1.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("new_line", &ImGui::NewLine
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("spacing", &ImGui::Spacing
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("dummy", &ImGui::Dummy
+        , py::return_value_policy::automatic_reference)
+
+    .def("new_line", &ImGui::NewLine
+        , py::return_value_policy::automatic_reference)
+
+    .def("spacing", &ImGui::Spacing
+        , py::return_value_policy::automatic_reference)
+
+    .def("dummy", &ImGui::Dummy
         , py::arg("size")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("indent", &ImGui::Indent
+        , py::return_value_policy::automatic_reference)
+
+    .def("indent", &ImGui::Indent
         , py::arg("indent_w") = 0.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("unindent", &ImGui::Unindent
+        , py::return_value_policy::automatic_reference)
+
+    .def("unindent", &ImGui::Unindent
         , py::arg("indent_w") = 0.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_group", &ImGui::BeginGroup
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_group", &ImGui::EndGroup
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("align_text_to_frame_padding", &ImGui::AlignTextToFramePadding
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_text_line_height", &ImGui::GetTextLineHeight
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_text_line_height_with_spacing", &ImGui::GetTextLineHeightWithSpacing
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_frame_height", &ImGui::GetFrameHeight
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_frame_height_with_spacing", &ImGui::GetFrameHeightWithSpacing
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_id", py::overload_cast<const char *>(&ImGui::PushID)
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_group", &ImGui::BeginGroup
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_group", &ImGui::EndGroup
+        , py::return_value_policy::automatic_reference)
+
+    .def("align_text_to_frame_padding", &ImGui::AlignTextToFramePadding
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_text_line_height", &ImGui::GetTextLineHeight
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_text_line_height_with_spacing", &ImGui::GetTextLineHeightWithSpacing
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_frame_height", &ImGui::GetFrameHeight
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_frame_height_with_spacing", &ImGui::GetFrameHeightWithSpacing
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_id", py::overload_cast<const char *>(&ImGui::PushID)
         , py::arg("str_id")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_id", &ImGui::PopID
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_id", py::overload_cast<const char *>(&ImGui::GetID)
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_id", &ImGui::PopID
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_id", py::overload_cast<const char *>(&ImGui::GetID)
         , py::arg("str_id")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("text_unformatted", &ImGui::TextUnformatted
+        , py::return_value_policy::automatic_reference)
+
+    .def("text_unformatted", &ImGui::TextUnformatted
         , py::arg("text")
         , py::arg("text_end") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("text", [](const char * fmt)
-    {
-        ImGui::Text(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("text", [](const char * fmt)
+        {
+            ImGui::Text(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("text_colored", [](const ImVec4 & col, const char * fmt)
-    {
-        ImGui::TextColored(col, fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("text_colored", [](const ImVec4 & col, const char * fmt)
+        {
+            ImGui::TextColored(col, fmt);
+            return ;
+        }
         , py::arg("col")
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("text_disabled", [](const char * fmt)
-    {
-        ImGui::TextDisabled(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("text_disabled", [](const char * fmt)
+        {
+            ImGui::TextDisabled(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("text_wrapped", [](const char * fmt)
-    {
-        ImGui::TextWrapped(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("text_wrapped", [](const char * fmt)
+        {
+            ImGui::TextWrapped(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("label_text", [](const char * label, const char * fmt)
-    {
-        ImGui::LabelText(label, fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("label_text", [](const char * label, const char * fmt)
+        {
+            ImGui::LabelText(label, fmt);
+            return ;
+        }
         , py::arg("label")
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("bullet_text", [](const char * fmt)
-    {
-        ImGui::BulletText(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("bullet_text", [](const char * fmt)
+        {
+            ImGui::BulletText(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("separator_text", &ImGui::SeparatorText
+        , py::return_value_policy::automatic_reference)
+
+    .def("separator_text", &ImGui::SeparatorText
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("button", &ImGui::Button
+        , py::return_value_policy::automatic_reference)
+
+    .def("button", &ImGui::Button
         , py::arg("label")
         , py::arg("size") = ImVec2(0,0)
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("small_button", &ImGui::SmallButton
+        , py::return_value_policy::automatic_reference)
+
+    .def("small_button", &ImGui::SmallButton
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("invisible_button", &ImGui::InvisibleButton
+        , py::return_value_policy::automatic_reference)
+
+    .def("invisible_button", &ImGui::InvisibleButton
         , py::arg("str_id")
         , py::arg("size")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("arrow_button", &ImGui::ArrowButton
+        , py::return_value_policy::automatic_reference)
+
+    .def("arrow_button", &ImGui::ArrowButton
         , py::arg("str_id")
         , py::arg("dir")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("checkbox", [](const char * label, bool * v)
-    {
-        auto ret = ImGui::Checkbox(label, v);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("checkbox", [](const char * label, bool * v)
+        {
+            auto ret = ImGui::Checkbox(label, v);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("checkbox_flags", [](const char * label, int * flags, int flags_value)
-    {
-        auto ret = ImGui::CheckboxFlags(label, flags, flags_value);
-        return std::make_tuple(ret, flags);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("checkbox_flags", [](const char * label, int * flags, int flags_value)
+        {
+            auto ret = ImGui::CheckboxFlags(label, flags, flags_value);
+            return std::make_tuple(ret, flags);
+        }
         , py::arg("label")
         , py::arg("flags")
         , py::arg("flags_value")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("radio_button", py::overload_cast<const char *, bool>(&ImGui::RadioButton)
+        , py::return_value_policy::automatic_reference)
+
+    .def("radio_button", py::overload_cast<const char *, bool>(&ImGui::RadioButton)
         , py::arg("label")
         , py::arg("active")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("progress_bar", &ImGui::ProgressBar
+        , py::return_value_policy::automatic_reference)
+
+    .def("progress_bar", &ImGui::ProgressBar
         , py::arg("fraction")
         , py::arg("size_arg") = ImVec2(-FLT_MIN,0)
         , py::arg("overlay") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("bullet", &ImGui::Bullet
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("text_link", &ImGui::TextLink
+        , py::return_value_policy::automatic_reference)
+
+    .def("bullet", &ImGui::Bullet
+        , py::return_value_policy::automatic_reference)
+
+    .def("text_link", &ImGui::TextLink
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("text_link_open_url", &ImGui::TextLinkOpenURL
+        , py::return_value_policy::automatic_reference)
+
+    .def("text_link_open_url", &ImGui::TextLinkOpenURL
         , py::arg("label")
         , py::arg("url") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("image", &ImGui::Image
+        , py::return_value_policy::automatic_reference)
+
+    .def("image", &ImGui::Image
         , py::arg("user_texture_id")
         , py::arg("image_size")
         , py::arg("uv0") = ImVec2(0,0)
         , py::arg("uv1") = ImVec2(1,1)
         , py::arg("tint_col") = ImVec4(1,1,1,1)
         , py::arg("border_col") = ImVec4(0,0,0,0)
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("image_button", &ImGui::ImageButton
+        , py::return_value_policy::automatic_reference)
+
+    .def("image_button", &ImGui::ImageButton
         , py::arg("str_id")
         , py::arg("user_texture_id")
         , py::arg("image_size")
@@ -580,22 +589,22 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("uv1") = ImVec2(1,1)
         , py::arg("bg_col") = ImVec4(0,0,0,0)
         , py::arg("tint_col") = ImVec4(1,1,1,1)
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_combo", &ImGui::BeginCombo
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_combo", &ImGui::BeginCombo
         , py::arg("label")
         , py::arg("preview_value")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_combo", &ImGui::EndCombo
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_float", [](const char * label, float * v, float v_speed, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragFloat(label, v, v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_combo", &ImGui::EndCombo
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_float", [](const char * label, float * v, float v_speed, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragFloat(label, v, v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -603,13 +612,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0.0f
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_float2", [](const char * label, std::array<float, 2>& v, float v_speed, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragFloat2(label, &v[0], v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_float2", [](const char * label, std::array<float, 2>& v, float v_speed, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragFloat2(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -617,13 +626,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0.0f
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_float3", [](const char * label, std::array<float, 3>& v, float v_speed, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragFloat3(label, &v[0], v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_float3", [](const char * label, std::array<float, 3>& v, float v_speed, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragFloat3(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -631,13 +640,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0.0f
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_float4", [](const char * label, std::array<float, 4>& v, float v_speed, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragFloat4(label, &v[0], v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_float4", [](const char * label, std::array<float, 4>& v, float v_speed, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragFloat4(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -645,13 +654,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0.0f
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_float_range2", [](const char * label, float * v_current_min, float * v_current_max, float v_speed, float v_min, float v_max, const char * format, const char * format_max, int flags)
-    {
-        auto ret = ImGui::DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
-        return std::make_tuple(ret, v_current_min, v_current_max);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_float_range2", [](const char * label, float * v_current_min, float * v_current_max, float v_speed, float v_min, float v_max, const char * format, const char * format_max, int flags)
+        {
+            auto ret = ImGui::DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
+            return std::make_tuple(ret, v_current_min, v_current_max);
+        }
         , py::arg("label")
         , py::arg("v_current_min")
         , py::arg("v_current_max")
@@ -661,13 +670,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("format") = nullptr
         , py::arg("format_max") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_int", [](const char * label, int * v, float v_speed, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragInt(label, v, v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_int", [](const char * label, int * v, float v_speed, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragInt(label, v, v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -675,13 +684,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_int2", [](const char * label, std::array<int, 2>& v, float v_speed, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragInt2(label, &v[0], v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_int2", [](const char * label, std::array<int, 2>& v, float v_speed, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragInt2(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -689,13 +698,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_int3", [](const char * label, std::array<int, 3>& v, float v_speed, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragInt3(label, &v[0], v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_int3", [](const char * label, std::array<int, 3>& v, float v_speed, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragInt3(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -703,13 +712,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_int4", [](const char * label, std::array<int, 4>& v, float v_speed, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::DragInt4(label, &v[0], v_speed, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_int4", [](const char * label, std::array<int, 4>& v, float v_speed, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::DragInt4(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_speed") = 1.0f
@@ -717,13 +726,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max") = 0
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_int_range2", [](const char * label, int * v_current_min, int * v_current_max, float v_speed, int v_min, int v_max, const char * format, const char * format_max, int flags)
-    {
-        auto ret = ImGui::DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
-        return std::make_tuple(ret, v_current_min, v_current_max);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_int_range2", [](const char * label, int * v_current_min, int * v_current_max, float v_speed, int v_min, int v_max, const char * format, const char * format_max, int flags)
+        {
+            auto ret = ImGui::DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
+            return std::make_tuple(ret, v_current_min, v_current_max);
+        }
         , py::arg("label")
         , py::arg("v_current_min")
         , py::arg("v_current_max")
@@ -733,9 +742,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("format") = nullptr
         , py::arg("format_max") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_scalar", &ImGui::DragScalar
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_scalar", &ImGui::DragScalar
         , py::arg("label")
         , py::arg("data_type")
         , py::arg("p_data")
@@ -744,9 +753,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("p_max") = nullptr
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("drag_scalar_n", &ImGui::DragScalarN
+        , py::return_value_policy::automatic_reference)
+
+    .def("drag_scalar_n", &ImGui::DragScalarN
         , py::arg("label")
         , py::arg("data_type")
         , py::arg("p_data")
@@ -756,126 +765,126 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("p_max") = nullptr
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_float", [](const char * label, float * v, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderFloat(label, v, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_float", [](const char * label, float * v, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderFloat(label, v, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_float2", [](const char * label, std::array<float, 2>& v, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderFloat2(label, &v[0], v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_float2", [](const char * label, std::array<float, 2>& v, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderFloat2(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_float3", [](const char * label, std::array<float, 3>& v, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderFloat3(label, &v[0], v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_float3", [](const char * label, std::array<float, 3>& v, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderFloat3(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_float4", [](const char * label, std::array<float, 4>& v, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderFloat4(label, &v[0], v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_float4", [](const char * label, std::array<float, 4>& v, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderFloat4(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_angle", [](const char * label, float * v_rad, float v_degrees_min, float v_degrees_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags);
-        return std::make_tuple(ret, v_rad);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_angle", [](const char * label, float * v_rad, float v_degrees_min, float v_degrees_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags);
+            return std::make_tuple(ret, v_rad);
+        }
         , py::arg("label")
         , py::arg("v_rad")
         , py::arg("v_degrees_min") = -360.0f
         , py::arg("v_degrees_max") = +360.0f
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_int", [](const char * label, int * v, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderInt(label, v, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_int", [](const char * label, int * v, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderInt(label, v, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_int2", [](const char * label, std::array<int, 2>& v, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderInt2(label, &v[0], v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_int2", [](const char * label, std::array<int, 2>& v, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderInt2(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_int3", [](const char * label, std::array<int, 3>& v, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderInt3(label, &v[0], v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_int3", [](const char * label, std::array<int, 3>& v, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderInt3(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_int4", [](const char * label, std::array<int, 4>& v, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::SliderInt4(label, &v[0], v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_int4", [](const char * label, std::array<int, 4>& v, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::SliderInt4(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("v_min")
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_scalar", &ImGui::SliderScalar
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_scalar", &ImGui::SliderScalar
         , py::arg("label")
         , py::arg("data_type")
         , py::arg("p_data")
@@ -883,9 +892,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("p_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("slider_scalar_n", &ImGui::SliderScalarN
+        , py::return_value_policy::automatic_reference)
+
+    .def("slider_scalar_n", &ImGui::SliderScalarN
         , py::arg("label")
         , py::arg("data_type")
         , py::arg("p_data")
@@ -894,13 +903,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("p_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("v_slider_float", [](const char * label, const ImVec2 & size, float * v, float v_min, float v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::VSliderFloat(label, size, v, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("v_slider_float", [](const char * label, const ImVec2 & size, float * v, float v_min, float v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::VSliderFloat(label, size, v, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("size")
         , py::arg("v")
@@ -908,13 +917,13 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("v_slider_int", [](const char * label, const ImVec2 & size, int * v, int v_min, int v_max, const char * format, int flags)
-    {
-        auto ret = ImGui::VSliderInt(label, size, v, v_min, v_max, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("v_slider_int", [](const char * label, const ImVec2 & size, int * v, int v_min, int v_max, const char * format, int flags)
+        {
+            auto ret = ImGui::VSliderInt(label, size, v, v_min, v_max, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("size")
         , py::arg("v")
@@ -922,9 +931,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("v_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("v_slider_scalar", &ImGui::VSliderScalar
+        , py::return_value_policy::automatic_reference)
+
+    .def("v_slider_scalar", &ImGui::VSliderScalar
         , py::arg("label")
         , py::arg("size")
         , py::arg("data_type")
@@ -933,9 +942,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("p_max")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_text_with_hint", &ImGui::InputTextWithHint
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_text_with_hint", &ImGui::InputTextWithHint
         , py::arg("label")
         , py::arg("hint")
         , py::arg("buf")
@@ -943,110 +952,110 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("flags") = 0
         , py::arg("callback") = NULL
         , py::arg("user_data") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_float", [](const char * label, float * v, float step, float step_fast, const char * format, int flags)
-    {
-        auto ret = ImGui::InputFloat(label, v, step, step_fast, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_float", [](const char * label, float * v, float step, float step_fast, const char * format, int flags)
+        {
+            auto ret = ImGui::InputFloat(label, v, step, step_fast, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("step") = 0.0f
         , py::arg("step_fast") = 0.0f
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_float2", [](const char * label, std::array<float, 2>& v, const char * format, int flags)
-    {
-        auto ret = ImGui::InputFloat2(label, &v[0], format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_float2", [](const char * label, std::array<float, 2>& v, const char * format, int flags)
+        {
+            auto ret = ImGui::InputFloat2(label, &v[0], format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_float3", [](const char * label, std::array<float, 3>& v, const char * format, int flags)
-    {
-        auto ret = ImGui::InputFloat3(label, &v[0], format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_float3", [](const char * label, std::array<float, 3>& v, const char * format, int flags)
+        {
+            auto ret = ImGui::InputFloat3(label, &v[0], format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_float4", [](const char * label, std::array<float, 4>& v, const char * format, int flags)
-    {
-        auto ret = ImGui::InputFloat4(label, &v[0], format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_float4", [](const char * label, std::array<float, 4>& v, const char * format, int flags)
+        {
+            auto ret = ImGui::InputFloat4(label, &v[0], format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_int", [](const char * label, int * v, int step, int step_fast, int flags)
-    {
-        auto ret = ImGui::InputInt(label, v, step, step_fast, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_int", [](const char * label, int * v, int step, int step_fast, int flags)
+        {
+            auto ret = ImGui::InputInt(label, v, step, step_fast, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("step") = 1
         , py::arg("step_fast") = 100
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_int2", [](const char * label, std::array<int, 2>& v, int flags)
-    {
-        auto ret = ImGui::InputInt2(label, &v[0], flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_int2", [](const char * label, std::array<int, 2>& v, int flags)
+        {
+            auto ret = ImGui::InputInt2(label, &v[0], flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_int3", [](const char * label, std::array<int, 3>& v, int flags)
-    {
-        auto ret = ImGui::InputInt3(label, &v[0], flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_int3", [](const char * label, std::array<int, 3>& v, int flags)
+        {
+            auto ret = ImGui::InputInt3(label, &v[0], flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_int4", [](const char * label, std::array<int, 4>& v, int flags)
-    {
-        auto ret = ImGui::InputInt4(label, &v[0], flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_int4", [](const char * label, std::array<int, 4>& v, int flags)
+        {
+            auto ret = ImGui::InputInt4(label, &v[0], flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_double", [](const char * label, double * v, double step, double step_fast, const char * format, int flags)
-    {
-        auto ret = ImGui::InputDouble(label, v, step, step_fast, format, flags);
-        return std::make_tuple(ret, v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_double", [](const char * label, double * v, double step, double step_fast, const char * format, int flags)
+        {
+            auto ret = ImGui::InputDouble(label, v, step, step_fast, format, flags);
+            return std::make_tuple(ret, v);
+        }
         , py::arg("label")
         , py::arg("v")
         , py::arg("step") = 0.0
         , py::arg("step_fast") = 0.0
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_scalar", &ImGui::InputScalar
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_scalar", &ImGui::InputScalar
         , py::arg("label")
         , py::arg("data_type")
         , py::arg("p_data")
@@ -1054,9 +1063,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("p_step_fast") = nullptr
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("input_scalar_n", &ImGui::InputScalarN
+        , py::return_value_policy::automatic_reference)
+
+    .def("input_scalar_n", &ImGui::InputScalarN
         , py::arg("label")
         , py::arg("data_type")
         , py::arg("p_data")
@@ -1065,730 +1074,730 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("p_step_fast") = nullptr
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_edit3", [](const char * label, std::array<float, 3>& col, int flags)
-    {
-        auto ret = ImGui::ColorEdit3(label, &col[0], flags);
-        return std::make_tuple(ret, col);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_edit3", [](const char * label, std::array<float, 3>& col, int flags)
+        {
+            auto ret = ImGui::ColorEdit3(label, &col[0], flags);
+            return std::make_tuple(ret, col);
+        }
         , py::arg("label")
         , py::arg("col")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_edit4", [](const char * label, std::array<float, 4>& col, int flags)
-    {
-        auto ret = ImGui::ColorEdit4(label, &col[0], flags);
-        return std::make_tuple(ret, col);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_edit4", [](const char * label, std::array<float, 4>& col, int flags)
+        {
+            auto ret = ImGui::ColorEdit4(label, &col[0], flags);
+            return std::make_tuple(ret, col);
+        }
         , py::arg("label")
         , py::arg("col")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_picker3", [](const char * label, std::array<float, 3>& col, int flags)
-    {
-        auto ret = ImGui::ColorPicker3(label, &col[0], flags);
-        return std::make_tuple(ret, col);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_picker3", [](const char * label, std::array<float, 3>& col, int flags)
+        {
+            auto ret = ImGui::ColorPicker3(label, &col[0], flags);
+            return std::make_tuple(ret, col);
+        }
         , py::arg("label")
         , py::arg("col")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_picker4", [](const char * label, std::array<float, 4>& col, int flags, const float * ref_col)
-    {
-        auto ret = ImGui::ColorPicker4(label, &col[0], flags, ref_col);
-        return std::make_tuple(ret, col);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_picker4", [](const char * label, std::array<float, 4>& col, int flags, const float * ref_col)
+        {
+            auto ret = ImGui::ColorPicker4(label, &col[0], flags, ref_col);
+            return std::make_tuple(ret, col);
+        }
         , py::arg("label")
         , py::arg("col")
         , py::arg("flags") = 0
         , py::arg("ref_col") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_button", &ImGui::ColorButton
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_button", &ImGui::ColorButton
         , py::arg("desc_id")
         , py::arg("col")
         , py::arg("flags") = 0
         , py::arg("size") = ImVec2(0,0)
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_color_edit_options", &ImGui::SetColorEditOptions
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_color_edit_options", &ImGui::SetColorEditOptions
         , py::arg("flags")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("tree_node", py::overload_cast<const char *>(&ImGui::TreeNode)
+        , py::return_value_policy::automatic_reference)
+
+    .def("tree_node", py::overload_cast<const char *>(&ImGui::TreeNode)
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("tree_node_ex", py::overload_cast<const char *, int>(&ImGui::TreeNodeEx)
+        , py::return_value_policy::automatic_reference)
+
+    .def("tree_node_ex", py::overload_cast<const char *, int>(&ImGui::TreeNodeEx)
         , py::arg("label")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("tree_push", py::overload_cast<const char *>(&ImGui::TreePush)
+        , py::return_value_policy::automatic_reference)
+
+    .def("tree_push", py::overload_cast<const char *>(&ImGui::TreePush)
         , py::arg("str_id")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("tree_pop", &ImGui::TreePop
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_tree_node_to_label_spacing", &ImGui::GetTreeNodeToLabelSpacing
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_item_open", &ImGui::SetNextItemOpen
+        , py::return_value_policy::automatic_reference)
+
+    .def("tree_pop", &ImGui::TreePop
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_tree_node_to_label_spacing", &ImGui::GetTreeNodeToLabelSpacing
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_item_open", &ImGui::SetNextItemOpen
         , py::arg("is_open")
         , py::arg("cond") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_item_storage_id", &ImGui::SetNextItemStorageID
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_item_storage_id", &ImGui::SetNextItemStorageID
         , py::arg("storage_id")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_multi_select", &ImGui::BeginMultiSelect
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_multi_select", &ImGui::BeginMultiSelect
         , py::arg("flags")
         , py::arg("selection_size") = -1
         , py::arg("items_count") = -1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_multi_select", &ImGui::EndMultiSelect
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_item_selection_user_data", &ImGui::SetNextItemSelectionUserData
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_multi_select", &ImGui::EndMultiSelect
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_item_selection_user_data", &ImGui::SetNextItemSelectionUserData
         , py::arg("selection_user_data")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_toggled_selection", &ImGui::IsItemToggledSelection
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_list_box", &ImGui::BeginListBox
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_toggled_selection", &ImGui::IsItemToggledSelection
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_list_box", &ImGui::BeginListBox
         , py::arg("label")
         , py::arg("size") = ImVec2(0,0)
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_list_box", &ImGui::EndListBox
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("value", py::overload_cast<const char *, bool>(&ImGui::Value)
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_list_box", &ImGui::EndListBox
+        , py::return_value_policy::automatic_reference)
+
+    .def("value", py::overload_cast<const char *, bool>(&ImGui::Value)
         , py::arg("prefix")
         , py::arg("b")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_menu_bar", &ImGui::BeginMenuBar
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_menu_bar", &ImGui::EndMenuBar
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_main_menu_bar", &ImGui::BeginMainMenuBar
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_main_menu_bar", &ImGui::EndMainMenuBar
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_menu", &ImGui::BeginMenu
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_menu_bar", &ImGui::BeginMenuBar
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_menu_bar", &ImGui::EndMenuBar
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_main_menu_bar", &ImGui::BeginMainMenuBar
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_main_menu_bar", &ImGui::EndMainMenuBar
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_menu", &ImGui::BeginMenu
         , py::arg("label")
         , py::arg("enabled") = true
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_menu", &ImGui::EndMenu
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_tooltip", &ImGui::BeginTooltip
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_tooltip", &ImGui::EndTooltip
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_tooltip", [](const char * fmt)
-    {
-        ImGui::SetTooltip(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_menu", &ImGui::EndMenu
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_tooltip", &ImGui::BeginTooltip
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_tooltip", &ImGui::EndTooltip
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_tooltip", [](const char * fmt)
+        {
+            ImGui::SetTooltip(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_item_tooltip", &ImGui::BeginItemTooltip
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_item_tooltip", [](const char * fmt)
-    {
-        ImGui::SetItemTooltip(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_item_tooltip", &ImGui::BeginItemTooltip
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_item_tooltip", [](const char * fmt)
+        {
+            ImGui::SetItemTooltip(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_popup", &ImGui::BeginPopup
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_popup", &ImGui::BeginPopup
         , py::arg("str_id")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_popup_modal", [](const char * name, bool * p_open, int flags)
-    {
-        auto ret = ImGui::BeginPopupModal(name, p_open, flags);
-        return std::make_tuple(ret, p_open);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_popup_modal", [](const char * name, bool * p_open, int flags)
+        {
+            auto ret = ImGui::BeginPopupModal(name, p_open, flags);
+            return std::make_tuple(ret, p_open);
+        }
         , py::arg("name")
         , py::arg("p_open") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_popup", &ImGui::EndPopup
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("open_popup", py::overload_cast<const char *, int>(&ImGui::OpenPopup)
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_popup", &ImGui::EndPopup
+        , py::return_value_policy::automatic_reference)
+
+    .def("open_popup", py::overload_cast<const char *, int>(&ImGui::OpenPopup)
         , py::arg("str_id")
         , py::arg("popup_flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("open_popup_on_item_click", &ImGui::OpenPopupOnItemClick
+        , py::return_value_policy::automatic_reference)
+
+    .def("open_popup_on_item_click", &ImGui::OpenPopupOnItemClick
         , py::arg("str_id") = nullptr
         , py::arg("popup_flags") = 1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("close_current_popup", &ImGui::CloseCurrentPopup
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_popup_context_item", &ImGui::BeginPopupContextItem
+        , py::return_value_policy::automatic_reference)
+
+    .def("close_current_popup", &ImGui::CloseCurrentPopup
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_popup_context_item", &ImGui::BeginPopupContextItem
         , py::arg("str_id") = nullptr
         , py::arg("popup_flags") = 1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_popup_context_window", &ImGui::BeginPopupContextWindow
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_popup_context_window", &ImGui::BeginPopupContextWindow
         , py::arg("str_id") = nullptr
         , py::arg("popup_flags") = 1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_popup_context_void", &ImGui::BeginPopupContextVoid
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_popup_context_void", &ImGui::BeginPopupContextVoid
         , py::arg("str_id") = nullptr
         , py::arg("popup_flags") = 1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_popup_open", py::overload_cast<const char *, int>(&ImGui::IsPopupOpen)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_popup_open", py::overload_cast<const char *, int>(&ImGui::IsPopupOpen)
         , py::arg("str_id")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_table", &ImGui::BeginTable
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_table", &ImGui::BeginTable
         , py::arg("str_id")
         , py::arg("columns")
         , py::arg("flags") = 0
         , py::arg("outer_size") = ImVec2(0.0f,0.0f)
         , py::arg("inner_width") = 0.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_table", &ImGui::EndTable
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_next_row", &ImGui::TableNextRow
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_table", &ImGui::EndTable
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_next_row", &ImGui::TableNextRow
         , py::arg("row_flags") = 0
         , py::arg("min_row_height") = 0.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_next_column", &ImGui::TableNextColumn
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_set_column_index", &ImGui::TableSetColumnIndex
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_next_column", &ImGui::TableNextColumn
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_set_column_index", &ImGui::TableSetColumnIndex
         , py::arg("column_n")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_setup_column", &ImGui::TableSetupColumn
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_setup_column", &ImGui::TableSetupColumn
         , py::arg("label")
         , py::arg("flags") = 0
         , py::arg("init_width_or_weight") = 0.0f
         , py::arg("user_id") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_setup_scroll_freeze", &ImGui::TableSetupScrollFreeze
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_setup_scroll_freeze", &ImGui::TableSetupScrollFreeze
         , py::arg("cols")
         , py::arg("rows")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_header", &ImGui::TableHeader
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_header", &ImGui::TableHeader
         , py::arg("label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_headers_row", &ImGui::TableHeadersRow
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_angled_headers_row", &ImGui::TableAngledHeadersRow
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_get_sort_specs", &ImGui::TableGetSortSpecs
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_get_column_count", &ImGui::TableGetColumnCount
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_get_column_index", &ImGui::TableGetColumnIndex
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_get_row_index", &ImGui::TableGetRowIndex
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_get_column_flags", &ImGui::TableGetColumnFlags
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_headers_row", &ImGui::TableHeadersRow
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_angled_headers_row", &ImGui::TableAngledHeadersRow
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_get_sort_specs", &ImGui::TableGetSortSpecs
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_get_column_count", &ImGui::TableGetColumnCount
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_get_column_index", &ImGui::TableGetColumnIndex
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_get_row_index", &ImGui::TableGetRowIndex
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_get_column_flags", &ImGui::TableGetColumnFlags
         , py::arg("column_n") = -1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_set_column_enabled", &ImGui::TableSetColumnEnabled
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_set_column_enabled", &ImGui::TableSetColumnEnabled
         , py::arg("column_n")
         , py::arg("v")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_get_hovered_column", &ImGui::TableGetHoveredColumn
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("table_set_bg_color", &ImGui::TableSetBgColor
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_get_hovered_column", &ImGui::TableGetHoveredColumn
+        , py::return_value_policy::automatic_reference)
+
+    .def("table_set_bg_color", &ImGui::TableSetBgColor
         , py::arg("target")
         , py::arg("color")
         , py::arg("column_n") = -1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("columns", &ImGui::Columns
+        , py::return_value_policy::automatic_reference)
+
+    .def("columns", &ImGui::Columns
         , py::arg("count") = 1
         , py::arg("id") = nullptr
         , py::arg("borders") = true
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("next_column", &ImGui::NextColumn
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_column_index", &ImGui::GetColumnIndex
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_column_width", &ImGui::GetColumnWidth
+        , py::return_value_policy::automatic_reference)
+
+    .def("next_column", &ImGui::NextColumn
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_column_index", &ImGui::GetColumnIndex
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_column_width", &ImGui::GetColumnWidth
         , py::arg("column_index") = -1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_column_width", &ImGui::SetColumnWidth
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_column_width", &ImGui::SetColumnWidth
         , py::arg("column_index")
         , py::arg("width")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_column_offset", &ImGui::GetColumnOffset
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_column_offset", &ImGui::GetColumnOffset
         , py::arg("column_index") = -1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_column_offset", &ImGui::SetColumnOffset
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_column_offset", &ImGui::SetColumnOffset
         , py::arg("column_index")
         , py::arg("offset_x")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_columns_count", &ImGui::GetColumnsCount
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_tab_bar", &ImGui::BeginTabBar
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_columns_count", &ImGui::GetColumnsCount
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_tab_bar", &ImGui::BeginTabBar
         , py::arg("str_id")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_tab_bar", &ImGui::EndTabBar
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_tab_item", [](const char * label, bool * p_open, int flags)
-    {
-        auto ret = ImGui::BeginTabItem(label, p_open, flags);
-        return std::make_tuple(ret, p_open);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_tab_bar", &ImGui::EndTabBar
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_tab_item", [](const char * label, bool * p_open, int flags)
+        {
+            auto ret = ImGui::BeginTabItem(label, p_open, flags);
+            return std::make_tuple(ret, p_open);
+        }
         , py::arg("label")
         , py::arg("p_open") = nullptr
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_tab_item", &ImGui::EndTabItem
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("tab_item_button", &ImGui::TabItemButton
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_tab_item", &ImGui::EndTabItem
+        , py::return_value_policy::automatic_reference)
+
+    .def("tab_item_button", &ImGui::TabItemButton
         , py::arg("label")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_tab_item_closed", &ImGui::SetTabItemClosed
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_tab_item_closed", &ImGui::SetTabItemClosed
         , py::arg("tab_or_docked_window_label")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("dock_space", &ImGui::DockSpace
+        , py::return_value_policy::automatic_reference)
+
+    .def("dock_space", &ImGui::DockSpace
         , py::arg("dockspace_id")
         , py::arg("size") = ImVec2(0,0)
         , py::arg("flags") = 0
         , py::arg("window_class") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("dock_space_over_viewport", &ImGui::DockSpaceOverViewport
+        , py::return_value_policy::automatic_reference)
+
+    .def("dock_space_over_viewport", &ImGui::DockSpaceOverViewport
         , py::arg("dockspace_id") = 0
         , py::arg("viewport") = nullptr
         , py::arg("flags") = 0
         , py::arg("window_class") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_dock_id", &ImGui::SetNextWindowDockID
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_dock_id", &ImGui::SetNextWindowDockID
         , py::arg("dock_id")
         , py::arg("cond") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_window_class", &ImGui::SetNextWindowClass
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_window_class", &ImGui::SetNextWindowClass
         , py::arg("window_class")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_window_dock_id", &ImGui::GetWindowDockID
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_window_docked", &ImGui::IsWindowDocked
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("log_to_tty", &ImGui::LogToTTY
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_dock_id", &ImGui::GetWindowDockID
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_window_docked", &ImGui::IsWindowDocked
+        , py::return_value_policy::automatic_reference)
+
+    .def("log_to_tty", &ImGui::LogToTTY
         , py::arg("auto_open_depth") = -1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("log_to_file", &ImGui::LogToFile
+        , py::return_value_policy::automatic_reference)
+
+    .def("log_to_file", &ImGui::LogToFile
         , py::arg("auto_open_depth") = -1
         , py::arg("filename") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("log_to_clipboard", &ImGui::LogToClipboard
+        , py::return_value_policy::automatic_reference)
+
+    .def("log_to_clipboard", &ImGui::LogToClipboard
         , py::arg("auto_open_depth") = -1
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("log_finish", &ImGui::LogFinish
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("log_buttons", &ImGui::LogButtons
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("log_text", [](const char * fmt)
-    {
-        ImGui::LogText(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("log_finish", &ImGui::LogFinish
+        , py::return_value_policy::automatic_reference)
+
+    .def("log_buttons", &ImGui::LogButtons
+        , py::return_value_policy::automatic_reference)
+
+    .def("log_text", [](const char * fmt)
+        {
+            ImGui::LogText(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_drag_drop_source", &ImGui::BeginDragDropSource
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_drag_drop_source", &ImGui::BeginDragDropSource
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_drag_drop_source", &ImGui::EndDragDropSource
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_drag_drop_target", &ImGui::BeginDragDropTarget
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("accept_drag_drop_payload", &ImGui::AcceptDragDropPayload
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_drag_drop_source", &ImGui::EndDragDropSource
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_drag_drop_target", &ImGui::BeginDragDropTarget
+        , py::return_value_policy::automatic_reference)
+
+    .def("accept_drag_drop_payload", &ImGui::AcceptDragDropPayload
         , py::arg("type")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_drag_drop_target", &ImGui::EndDragDropTarget
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_drag_drop_payload", &ImGui::GetDragDropPayload
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("begin_disabled", &ImGui::BeginDisabled
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_drag_drop_target", &ImGui::EndDragDropTarget
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_drag_drop_payload", &ImGui::GetDragDropPayload
+        , py::return_value_policy::automatic_reference)
+
+    .def("begin_disabled", &ImGui::BeginDisabled
         , py::arg("disabled") = true
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("end_disabled", &ImGui::EndDisabled
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("push_clip_rect", &ImGui::PushClipRect
+        , py::return_value_policy::automatic_reference)
+
+    .def("end_disabled", &ImGui::EndDisabled
+        , py::return_value_policy::automatic_reference)
+
+    .def("push_clip_rect", &ImGui::PushClipRect
         , py::arg("clip_rect_min")
         , py::arg("clip_rect_max")
         , py::arg("intersect_with_current_clip_rect")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("pop_clip_rect", &ImGui::PopClipRect
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_item_default_focus", &ImGui::SetItemDefaultFocus
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_keyboard_focus_here", &ImGui::SetKeyboardFocusHere
+        , py::return_value_policy::automatic_reference)
+
+    .def("pop_clip_rect", &ImGui::PopClipRect
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_item_default_focus", &ImGui::SetItemDefaultFocus
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_keyboard_focus_here", &ImGui::SetKeyboardFocusHere
         , py::arg("offset") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_item_allow_overlap", &ImGui::SetNextItemAllowOverlap
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_hovered", &ImGui::IsItemHovered
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_item_allow_overlap", &ImGui::SetNextItemAllowOverlap
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_hovered", &ImGui::IsItemHovered
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_active", &ImGui::IsItemActive
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_focused", &ImGui::IsItemFocused
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_clicked", &ImGui::IsItemClicked
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_active", &ImGui::IsItemActive
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_focused", &ImGui::IsItemFocused
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_clicked", &ImGui::IsItemClicked
         , py::arg("mouse_button") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_visible", &ImGui::IsItemVisible
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_edited", &ImGui::IsItemEdited
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_activated", &ImGui::IsItemActivated
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_deactivated", &ImGui::IsItemDeactivated
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_deactivated_after_edit", &ImGui::IsItemDeactivatedAfterEdit
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_item_toggled_open", &ImGui::IsItemToggledOpen
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_any_item_hovered", &ImGui::IsAnyItemHovered
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_any_item_active", &ImGui::IsAnyItemActive
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_any_item_focused", &ImGui::IsAnyItemFocused
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_item_id", &ImGui::GetItemID
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_item_rect_min", &ImGui::GetItemRectMin
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_item_rect_max", &ImGui::GetItemRectMax
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_item_rect_size", &ImGui::GetItemRectSize
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_main_viewport", &ImGui::GetMainViewport
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_background_draw_list", &ImGui::GetBackgroundDrawList
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_visible", &ImGui::IsItemVisible
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_edited", &ImGui::IsItemEdited
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_activated", &ImGui::IsItemActivated
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_deactivated", &ImGui::IsItemDeactivated
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_deactivated_after_edit", &ImGui::IsItemDeactivatedAfterEdit
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_item_toggled_open", &ImGui::IsItemToggledOpen
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_any_item_hovered", &ImGui::IsAnyItemHovered
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_any_item_active", &ImGui::IsAnyItemActive
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_any_item_focused", &ImGui::IsAnyItemFocused
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_item_id", &ImGui::GetItemID
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_item_rect_min", &ImGui::GetItemRectMin
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_item_rect_max", &ImGui::GetItemRectMax
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_item_rect_size", &ImGui::GetItemRectSize
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_main_viewport", &ImGui::GetMainViewport
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_background_draw_list", &ImGui::GetBackgroundDrawList
         , py::arg("viewport") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_foreground_draw_list", &ImGui::GetForegroundDrawList
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_foreground_draw_list", &ImGui::GetForegroundDrawList
         , py::arg("viewport") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_rect_visible", py::overload_cast<const ImVec2 &>(&ImGui::IsRectVisible)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_rect_visible", py::overload_cast<const ImVec2 &>(&ImGui::IsRectVisible)
         , py::arg("size")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_time", &ImGui::GetTime
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_frame_count", &ImGui::GetFrameCount
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_style_color_name", &ImGui::GetStyleColorName
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_time", &ImGui::GetTime
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_frame_count", &ImGui::GetFrameCount
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_style_color_name", &ImGui::GetStyleColorName
         , py::arg("idx")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_state_storage", &ImGui::SetStateStorage
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_state_storage", &ImGui::SetStateStorage
         , py::arg("storage")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_state_storage", &ImGui::GetStateStorage
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("calc_text_size", &ImGui::CalcTextSize
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_state_storage", &ImGui::GetStateStorage
+        , py::return_value_policy::automatic_reference)
+
+    .def("calc_text_size", &ImGui::CalcTextSize
         , py::arg("text")
         , py::arg("text_end") = nullptr
         , py::arg("hide_text_after_double_hash") = false
         , py::arg("wrap_width") = -1.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_convert_u32_to_float4", &ImGui::ColorConvertU32ToFloat4
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_convert_u32_to_float4", &ImGui::ColorConvertU32ToFloat4
         , py::arg("in")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_convert_float4_to_u32", &ImGui::ColorConvertFloat4ToU32
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_convert_float4_to_u32", &ImGui::ColorConvertFloat4ToU32
         , py::arg("in")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_convert_rg_bto_hsv", [](float r, float g, float b, float & out_h, float & out_s, float & out_v)
-    {
-        ImGui::ColorConvertRGBtoHSV(r, g, b, out_h, out_s, out_v);
-        return std::make_tuple(out_h, out_s, out_v);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_convert_rg_bto_hsv", [](float r, float g, float b, float & out_h, float & out_s, float & out_v)
+        {
+            ImGui::ColorConvertRGBtoHSV(r, g, b, out_h, out_s, out_v);
+            return std::make_tuple(out_h, out_s, out_v);
+        }
         , py::arg("r")
         , py::arg("g")
         , py::arg("b")
         , py::arg("out_h") = 0
         , py::arg("out_s") = 0
         , py::arg("out_v") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("color_convert_hs_vto_rgb", [](float h, float s, float v, float & out_r, float & out_g, float & out_b)
-    {
-        ImGui::ColorConvertHSVtoRGB(h, s, v, out_r, out_g, out_b);
-        return std::make_tuple(out_r, out_g, out_b);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("color_convert_hs_vto_rgb", [](float h, float s, float v, float & out_r, float & out_g, float & out_b)
+        {
+            ImGui::ColorConvertHSVtoRGB(h, s, v, out_r, out_g, out_b);
+            return std::make_tuple(out_r, out_g, out_b);
+        }
         , py::arg("h")
         , py::arg("s")
         , py::arg("v")
         , py::arg("out_r") = 0
         , py::arg("out_g") = 0
         , py::arg("out_b") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_key_down", py::overload_cast<ImGuiKey>(&ImGui::IsKeyDown)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_key_down", py::overload_cast<ImGuiKey>(&ImGui::IsKeyDown)
         , py::arg("key")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_key_pressed", py::overload_cast<ImGuiKey, bool>(&ImGui::IsKeyPressed)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_key_pressed", py::overload_cast<ImGuiKey, bool>(&ImGui::IsKeyPressed)
         , py::arg("key")
         , py::arg("repeat") = true
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_key_released", py::overload_cast<ImGuiKey>(&ImGui::IsKeyReleased)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_key_released", py::overload_cast<ImGuiKey>(&ImGui::IsKeyReleased)
         , py::arg("key")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_key_chord_pressed", &ImGui::IsKeyChordPressed
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_key_chord_pressed", &ImGui::IsKeyChordPressed
         , py::arg("key_chord")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_key_pressed_amount", &ImGui::GetKeyPressedAmount
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_key_pressed_amount", &ImGui::GetKeyPressedAmount
         , py::arg("key")
         , py::arg("repeat_delay")
         , py::arg("rate")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_key_name", &ImGui::GetKeyName
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_key_name", &ImGui::GetKeyName
         , py::arg("key")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_frame_want_capture_keyboard", &ImGui::SetNextFrameWantCaptureKeyboard
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_frame_want_capture_keyboard", &ImGui::SetNextFrameWantCaptureKeyboard
         , py::arg("want_capture_keyboard")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("shortcut", &ImGui::Shortcut
+        , py::return_value_policy::automatic_reference)
+
+    .def("shortcut", &ImGui::Shortcut
         , py::arg("key_chord")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_item_shortcut", &ImGui::SetNextItemShortcut
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_item_shortcut", &ImGui::SetNextItemShortcut
         , py::arg("key_chord")
         , py::arg("flags") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_item_key_owner", &ImGui::SetItemKeyOwner
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_item_key_owner", &ImGui::SetItemKeyOwner
         , py::arg("key")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_mouse_down", py::overload_cast<int>(&ImGui::IsMouseDown)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_mouse_down", py::overload_cast<int>(&ImGui::IsMouseDown)
         , py::arg("button")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_mouse_clicked", py::overload_cast<int, bool>(&ImGui::IsMouseClicked)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_mouse_clicked", py::overload_cast<int, bool>(&ImGui::IsMouseClicked)
         , py::arg("button")
         , py::arg("repeat") = false
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_mouse_released", py::overload_cast<int>(&ImGui::IsMouseReleased)
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_mouse_released", py::overload_cast<int>(&ImGui::IsMouseReleased)
         , py::arg("button")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_mouse_double_clicked", &ImGui::IsMouseDoubleClicked
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_mouse_double_clicked", &ImGui::IsMouseDoubleClicked
         , py::arg("button")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_mouse_clicked_count", &ImGui::GetMouseClickedCount
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_mouse_clicked_count", &ImGui::GetMouseClickedCount
         , py::arg("button")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_mouse_hovering_rect", &ImGui::IsMouseHoveringRect
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_mouse_hovering_rect", &ImGui::IsMouseHoveringRect
         , py::arg("r_min")
         , py::arg("r_max")
         , py::arg("clip") = true
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_mouse_pos_valid", &ImGui::IsMousePosValid
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_mouse_pos_valid", &ImGui::IsMousePosValid
         , py::arg("mouse_pos") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_any_mouse_down", &ImGui::IsAnyMouseDown
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_mouse_pos", &ImGui::GetMousePos
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_mouse_pos_on_opening_current_popup", &ImGui::GetMousePosOnOpeningCurrentPopup
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("is_mouse_dragging", &ImGui::IsMouseDragging
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_any_mouse_down", &ImGui::IsAnyMouseDown
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_mouse_pos", &ImGui::GetMousePos
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_mouse_pos_on_opening_current_popup", &ImGui::GetMousePosOnOpeningCurrentPopup
+        , py::return_value_policy::automatic_reference)
+
+    .def("is_mouse_dragging", &ImGui::IsMouseDragging
         , py::arg("button")
         , py::arg("lock_threshold") = -1.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_mouse_drag_delta", &ImGui::GetMouseDragDelta
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_mouse_drag_delta", &ImGui::GetMouseDragDelta
         , py::arg("button") = 0
         , py::arg("lock_threshold") = -1.0f
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("reset_mouse_drag_delta", &ImGui::ResetMouseDragDelta
+        , py::return_value_policy::automatic_reference)
+
+    .def("reset_mouse_drag_delta", &ImGui::ResetMouseDragDelta
         , py::arg("button") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_mouse_cursor", &ImGui::GetMouseCursor
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_mouse_cursor", &ImGui::SetMouseCursor
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_mouse_cursor", &ImGui::GetMouseCursor
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_mouse_cursor", &ImGui::SetMouseCursor
         , py::arg("cursor_type")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_next_frame_want_capture_mouse", &ImGui::SetNextFrameWantCaptureMouse
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_next_frame_want_capture_mouse", &ImGui::SetNextFrameWantCaptureMouse
         , py::arg("want_capture_mouse")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("get_clipboard_text", &ImGui::GetClipboardText
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("set_clipboard_text", &ImGui::SetClipboardText
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_clipboard_text", &ImGui::GetClipboardText
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_clipboard_text", &ImGui::SetClipboardText
         , py::arg("text")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("load_ini_settings_from_disk", &ImGui::LoadIniSettingsFromDisk
+        , py::return_value_policy::automatic_reference)
+
+    .def("load_ini_settings_from_disk", &ImGui::LoadIniSettingsFromDisk
         , py::arg("ini_filename")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("load_ini_settings_from_memory", &ImGui::LoadIniSettingsFromMemory
+        , py::return_value_policy::automatic_reference)
+
+    .def("load_ini_settings_from_memory", &ImGui::LoadIniSettingsFromMemory
         , py::arg("ini_data")
         , py::arg("ini_size") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("save_ini_settings_to_disk", &ImGui::SaveIniSettingsToDisk
+        , py::return_value_policy::automatic_reference)
+
+    .def("save_ini_settings_to_disk", &ImGui::SaveIniSettingsToDisk
         , py::arg("ini_filename")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("save_ini_settings_to_memory", [](unsigned long * out_ini_size)
-    {
-        auto ret = ImGui::SaveIniSettingsToMemory(out_ini_size);
-        return std::make_tuple(ret, out_ini_size);
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("save_ini_settings_to_memory", [](unsigned long * out_ini_size)
+        {
+            auto ret = ImGui::SaveIniSettingsToMemory(out_ini_size);
+            return std::make_tuple(ret, out_ini_size);
+        }
         , py::arg("out_ini_size") = 0
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("debug_text_encoding", &ImGui::DebugTextEncoding
+        , py::return_value_policy::automatic_reference)
+
+    .def("debug_text_encoding", &ImGui::DebugTextEncoding
         , py::arg("text")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("debug_flash_style_color", &ImGui::DebugFlashStyleColor
+        , py::return_value_policy::automatic_reference)
+
+    .def("debug_flash_style_color", &ImGui::DebugFlashStyleColor
         , py::arg("idx")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("debug_start_item_picker", &ImGui::DebugStartItemPicker
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("debug_check_version_and_data_layout", &ImGui::DebugCheckVersionAndDataLayout
+        , py::return_value_policy::automatic_reference)
+
+    .def("debug_start_item_picker", &ImGui::DebugStartItemPicker
+        , py::return_value_policy::automatic_reference)
+
+    .def("debug_check_version_and_data_layout", &ImGui::DebugCheckVersionAndDataLayout
         , py::arg("version_str")
         , py::arg("sz_io")
         , py::arg("sz_style")
@@ -1796,35 +1805,36 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("sz_vec4")
         , py::arg("sz_drawvert")
         , py::arg("sz_drawidx")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("debug_log", [](const char * fmt)
-    {
-        ImGui::DebugLog(fmt);
-        return ;
-    }
+        , py::return_value_policy::automatic_reference)
+
+    .def("debug_log", [](const char * fmt)
+        {
+            ImGui::DebugLog(fmt);
+            return ;
+        }
         , py::arg("fmt")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("update_platform_windows", &ImGui::UpdatePlatformWindows
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("render_platform_windows_default", &ImGui::RenderPlatformWindowsDefault
+        , py::return_value_policy::automatic_reference)
+
+    .def("update_platform_windows", &ImGui::UpdatePlatformWindows
+        , py::return_value_policy::automatic_reference)
+
+    .def("render_platform_windows_default", &ImGui::RenderPlatformWindowsDefault
         , py::arg("platform_render_arg") = nullptr
         , py::arg("renderer_render_arg") = nullptr
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("destroy_platform_windows", &ImGui::DestroyPlatformWindows
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("find_viewport_by_id", &ImGui::FindViewportByID
+        , py::return_value_policy::automatic_reference)
+
+    .def("destroy_platform_windows", &ImGui::DestroyPlatformWindows
+        , py::return_value_policy::automatic_reference)
+
+    .def("find_viewport_by_id", &ImGui::FindViewportByID
         , py::arg("id")
-        , py::return_value_policy::automatic_reference);
-        
-    _imgui.def("find_viewport_by_platform_handle", &ImGui::FindViewportByPlatformHandle
+        , py::return_value_policy::automatic_reference)
+
+    .def("find_viewport_by_platform_handle", &ImGui::FindViewportByPlatformHandle
         , py::arg("platform_handle")
-        , py::return_value_policy::automatic_reference);
-        
+        , py::return_value_policy::automatic_reference)
+
+    ;
     py::enum_<ImGuiWindowFlags_>(_imgui, "WindowFlags", py::arithmetic())
         .value("NONE", ImGuiWindowFlags_::ImGuiWindowFlags_None)
         .value("NO_TITLE_BAR", ImGuiWindowFlags_::ImGuiWindowFlags_NoTitleBar)
@@ -1856,7 +1866,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("MODAL", ImGuiWindowFlags_::ImGuiWindowFlags_Modal)
         .value("CHILD_MENU", ImGuiWindowFlags_::ImGuiWindowFlags_ChildMenu)
         .value("DOCK_NODE_HOST", ImGuiWindowFlags_::ImGuiWindowFlags_DockNodeHost)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiChildFlags_>(_imgui, "ChildFlags", py::arithmetic())
         .value("NONE", ImGuiChildFlags_::ImGuiChildFlags_None)
         .value("BORDERS", ImGuiChildFlags_::ImGuiChildFlags_Borders)
@@ -1868,7 +1880,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("ALWAYS_AUTO_RESIZE", ImGuiChildFlags_::ImGuiChildFlags_AlwaysAutoResize)
         .value("FRAME_STYLE", ImGuiChildFlags_::ImGuiChildFlags_FrameStyle)
         .value("NAV_FLATTENED", ImGuiChildFlags_::ImGuiChildFlags_NavFlattened)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiItemFlags_>(_imgui, "ItemFlags", py::arithmetic())
         .value("NONE", ImGuiItemFlags_::ImGuiItemFlags_None)
         .value("NO_TAB_STOP", ImGuiItemFlags_::ImGuiItemFlags_NoTabStop)
@@ -1877,7 +1891,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("BUTTON_REPEAT", ImGuiItemFlags_::ImGuiItemFlags_ButtonRepeat)
         .value("AUTO_CLOSE_POPUPS", ImGuiItemFlags_::ImGuiItemFlags_AutoClosePopups)
         .value("ALLOW_DUPLICATE_ID", ImGuiItemFlags_::ImGuiItemFlags_AllowDuplicateId)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiInputTextFlags_>(_imgui, "InputTextFlags", py::arithmetic())
         .value("NONE", ImGuiInputTextFlags_::ImGuiInputTextFlags_None)
         .value("CHARS_DECIMAL", ImGuiInputTextFlags_::ImGuiInputTextFlags_CharsDecimal)
@@ -1903,7 +1919,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("CALLBACK_CHAR_FILTER", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackCharFilter)
         .value("CALLBACK_RESIZE", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackResize)
         .value("CALLBACK_EDIT", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackEdit)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiTreeNodeFlags_>(_imgui, "TreeNodeFlags", py::arithmetic())
         .value("NONE", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_None)
         .value("SELECTED", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Selected)
@@ -1923,7 +1941,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("SPAN_ALL_COLUMNS", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanAllColumns)
         .value("NAV_LEFT_JUMPS_BACK_HERE", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_NavLeftJumpsBackHere)
         .value("COLLAPSING_HEADER", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_CollapsingHeader)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiPopupFlags_>(_imgui, "PopupFlags", py::arithmetic())
         .value("NONE", ImGuiPopupFlags_::ImGuiPopupFlags_None)
         .value("MOUSE_BUTTON_LEFT", ImGuiPopupFlags_::ImGuiPopupFlags_MouseButtonLeft)
@@ -1937,7 +1957,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("ANY_POPUP_ID", ImGuiPopupFlags_::ImGuiPopupFlags_AnyPopupId)
         .value("ANY_POPUP_LEVEL", ImGuiPopupFlags_::ImGuiPopupFlags_AnyPopupLevel)
         .value("ANY_POPUP", ImGuiPopupFlags_::ImGuiPopupFlags_AnyPopup)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiSelectableFlags_>(_imgui, "SelectableFlags", py::arithmetic())
         .value("NONE", ImGuiSelectableFlags_::ImGuiSelectableFlags_None)
         .value("NO_AUTO_CLOSE_POPUPS", ImGuiSelectableFlags_::ImGuiSelectableFlags_NoAutoClosePopups)
@@ -1946,7 +1968,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DISABLED", ImGuiSelectableFlags_::ImGuiSelectableFlags_Disabled)
         .value("ALLOW_OVERLAP", ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowOverlap)
         .value("HIGHLIGHT", ImGuiSelectableFlags_::ImGuiSelectableFlags_Highlight)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiComboFlags_>(_imgui, "ComboFlags", py::arithmetic())
         .value("NONE", ImGuiComboFlags_::ImGuiComboFlags_None)
         .value("POPUP_ALIGN_LEFT", ImGuiComboFlags_::ImGuiComboFlags_PopupAlignLeft)
@@ -1958,7 +1982,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("NO_PREVIEW", ImGuiComboFlags_::ImGuiComboFlags_NoPreview)
         .value("WIDTH_FIT_PREVIEW", ImGuiComboFlags_::ImGuiComboFlags_WidthFitPreview)
         .value("HEIGHT_MASK", ImGuiComboFlags_::ImGuiComboFlags_HeightMask_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiTabBarFlags_>(_imgui, "TabBarFlags", py::arithmetic())
         .value("NONE", ImGuiTabBarFlags_::ImGuiTabBarFlags_None)
         .value("REORDERABLE", ImGuiTabBarFlags_::ImGuiTabBarFlags_Reorderable)
@@ -1972,7 +1998,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("FITTING_POLICY_SCROLL", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyScroll)
         .value("FITTING_POLICY_MASK", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyMask_)
         .value("FITTING_POLICY_DEFAULT", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyDefault_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiTabItemFlags_>(_imgui, "TabItemFlags", py::arithmetic())
         .value("NONE", ImGuiTabItemFlags_::ImGuiTabItemFlags_None)
         .value("UNSAVED_DOCUMENT", ImGuiTabItemFlags_::ImGuiTabItemFlags_UnsavedDocument)
@@ -1984,7 +2012,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("LEADING", ImGuiTabItemFlags_::ImGuiTabItemFlags_Leading)
         .value("TRAILING", ImGuiTabItemFlags_::ImGuiTabItemFlags_Trailing)
         .value("NO_ASSUMED_CLOSURE", ImGuiTabItemFlags_::ImGuiTabItemFlags_NoAssumedClosure)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiFocusedFlags_>(_imgui, "FocusedFlags", py::arithmetic())
         .value("NONE", ImGuiFocusedFlags_::ImGuiFocusedFlags_None)
         .value("CHILD_WINDOWS", ImGuiFocusedFlags_::ImGuiFocusedFlags_ChildWindows)
@@ -1993,7 +2023,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("NO_POPUP_HIERARCHY", ImGuiFocusedFlags_::ImGuiFocusedFlags_NoPopupHierarchy)
         .value("DOCK_HIERARCHY", ImGuiFocusedFlags_::ImGuiFocusedFlags_DockHierarchy)
         .value("ROOT_AND_CHILD_WINDOWS", ImGuiFocusedFlags_::ImGuiFocusedFlags_RootAndChildWindows)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiHoveredFlags_>(_imgui, "HoveredFlags", py::arithmetic())
         .value("NONE", ImGuiHoveredFlags_::ImGuiHoveredFlags_None)
         .value("CHILD_WINDOWS", ImGuiHoveredFlags_::ImGuiHoveredFlags_ChildWindows)
@@ -2016,7 +2048,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DELAY_SHORT", ImGuiHoveredFlags_::ImGuiHoveredFlags_DelayShort)
         .value("DELAY_NORMAL", ImGuiHoveredFlags_::ImGuiHoveredFlags_DelayNormal)
         .value("NO_SHARED_DELAY", ImGuiHoveredFlags_::ImGuiHoveredFlags_NoSharedDelay)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiDockNodeFlags_>(_imgui, "DockNodeFlags", py::arithmetic())
         .value("NONE", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_None)
         .value("KEEP_ALIVE_ONLY", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_KeepAliveOnly)
@@ -2026,7 +2060,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("NO_RESIZE", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_NoResize)
         .value("AUTO_HIDE_TAB_BAR", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_AutoHideTabBar)
         .value("NO_UNDOCKING", ImGuiDockNodeFlags_::ImGuiDockNodeFlags_NoUndocking)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiDragDropFlags_>(_imgui, "DragDropFlags", py::arithmetic())
         .value("NONE", ImGuiDragDropFlags_::ImGuiDragDropFlags_None)
         .value("SOURCE_NO_PREVIEW_TOOLTIP", ImGuiDragDropFlags_::ImGuiDragDropFlags_SourceNoPreviewTooltip)
@@ -2041,7 +2077,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("ACCEPT_NO_DRAW_DEFAULT_RECT", ImGuiDragDropFlags_::ImGuiDragDropFlags_AcceptNoDrawDefaultRect)
         .value("ACCEPT_NO_PREVIEW_TOOLTIP", ImGuiDragDropFlags_::ImGuiDragDropFlags_AcceptNoPreviewTooltip)
         .value("ACCEPT_PEEK_ONLY", ImGuiDragDropFlags_::ImGuiDragDropFlags_AcceptPeekOnly)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiDataType_>(_imgui, "DataType", py::arithmetic())
         .value("S8", ImGuiDataType_::ImGuiDataType_S8)
         .value("U8", ImGuiDataType_::ImGuiDataType_U8)
@@ -2055,7 +2093,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DOUBLE", ImGuiDataType_::ImGuiDataType_Double)
         .value("BOOL", ImGuiDataType_::ImGuiDataType_Bool)
         .value("COUNT", ImGuiDataType_::ImGuiDataType_COUNT)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiDir>(_imgui, "Dir", py::arithmetic())
         .value("DIR_NONE", ImGuiDir::ImGuiDir_None)
         .value("DIR_LEFT", ImGuiDir::ImGuiDir_Left)
@@ -2063,12 +2103,16 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DIR_UP", ImGuiDir::ImGuiDir_Up)
         .value("DIR_DOWN", ImGuiDir::ImGuiDir_Down)
         .value("DIR_COUNT", ImGuiDir::ImGuiDir_COUNT)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiSortDirection>(_imgui, "SortDirection", py::arithmetic())
         .value("SORT_DIRECTION_NONE", ImGuiSortDirection::ImGuiSortDirection_None)
         .value("SORT_DIRECTION_ASCENDING", ImGuiSortDirection::ImGuiSortDirection_Ascending)
         .value("SORT_DIRECTION_DESCENDING", ImGuiSortDirection::ImGuiSortDirection_Descending)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiKey>(_imgui, "Key", py::arithmetic())
         .value("KEY_NONE", ImGuiKey::ImGuiKey_None)
         .value("KEY_TAB", ImGuiKey::ImGuiKey_Tab)
@@ -2237,7 +2281,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("KEY_NAMED_KEY_COUNT", ImGuiKey::ImGuiKey_NamedKey_COUNT)
         .value("KEY_KEYS_DATA_SIZE", ImGuiKey::ImGuiKey_KeysData_SIZE)
         .value("KEY_KEYS_DATA_OFFSET", ImGuiKey::ImGuiKey_KeysData_OFFSET)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiInputFlags_>(_imgui, "InputFlags", py::arithmetic())
         .value("NONE", ImGuiInputFlags_::ImGuiInputFlags_None)
         .value("REPEAT", ImGuiInputFlags_::ImGuiInputFlags_Repeat)
@@ -2250,7 +2296,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("ROUTE_UNLESS_BG_FOCUSED", ImGuiInputFlags_::ImGuiInputFlags_RouteUnlessBgFocused)
         .value("ROUTE_FROM_ROOT_WINDOW", ImGuiInputFlags_::ImGuiInputFlags_RouteFromRootWindow)
         .value("TOOLTIP", ImGuiInputFlags_::ImGuiInputFlags_Tooltip)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiConfigFlags_>(_imgui, "ConfigFlags", py::arithmetic())
         .value("NONE", ImGuiConfigFlags_::ImGuiConfigFlags_None)
         .value("NAV_ENABLE_KEYBOARD", ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableKeyboard)
@@ -2266,7 +2314,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DPI_ENABLE_SCALE_FONTS", ImGuiConfigFlags_::ImGuiConfigFlags_DpiEnableScaleFonts)
         .value("IS_SRGB", ImGuiConfigFlags_::ImGuiConfigFlags_IsSRGB)
         .value("IS_TOUCH_SCREEN", ImGuiConfigFlags_::ImGuiConfigFlags_IsTouchScreen)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiBackendFlags_>(_imgui, "BackendFlags", py::arithmetic())
         .value("NONE", ImGuiBackendFlags_::ImGuiBackendFlags_None)
         .value("HAS_GAMEPAD", ImGuiBackendFlags_::ImGuiBackendFlags_HasGamepad)
@@ -2276,7 +2326,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("PLATFORM_HAS_VIEWPORTS", ImGuiBackendFlags_::ImGuiBackendFlags_PlatformHasViewports)
         .value("HAS_MOUSE_HOVERED_VIEWPORT", ImGuiBackendFlags_::ImGuiBackendFlags_HasMouseHoveredViewport)
         .value("RENDERER_HAS_VIEWPORTS", ImGuiBackendFlags_::ImGuiBackendFlags_RendererHasViewports)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiCol_>(_imgui, "Col", py::arithmetic())
         .value("TEXT", ImGuiCol_::ImGuiCol_Text)
         .value("TEXT_DISABLED", ImGuiCol_::ImGuiCol_TextDisabled)
@@ -2337,7 +2389,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("NAV_WINDOWING_DIM_BG", ImGuiCol_::ImGuiCol_NavWindowingDimBg)
         .value("MODAL_WINDOW_DIM_BG", ImGuiCol_::ImGuiCol_ModalWindowDimBg)
         .value("COUNT", ImGuiCol_::ImGuiCol_COUNT)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiStyleVar_>(_imgui, "StyleVar", py::arithmetic())
         .value("ALPHA", ImGuiStyleVar_::ImGuiStyleVar_Alpha)
         .value("DISABLED_ALPHA", ImGuiStyleVar_::ImGuiStyleVar_DisabledAlpha)
@@ -2374,14 +2428,18 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("SEPARATOR_TEXT_PADDING", ImGuiStyleVar_::ImGuiStyleVar_SeparatorTextPadding)
         .value("DOCKING_SEPARATOR_SIZE", ImGuiStyleVar_::ImGuiStyleVar_DockingSeparatorSize)
         .value("COUNT", ImGuiStyleVar_::ImGuiStyleVar_COUNT)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiButtonFlags_>(_imgui, "ButtonFlags", py::arithmetic())
         .value("NONE", ImGuiButtonFlags_::ImGuiButtonFlags_None)
         .value("MOUSE_BUTTON_LEFT", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonLeft)
         .value("MOUSE_BUTTON_RIGHT", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonRight)
         .value("MOUSE_BUTTON_MIDDLE", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonMiddle)
         .value("MOUSE_BUTTON_MASK", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonMask_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiColorEditFlags_>(_imgui, "ColorEditFlags", py::arithmetic())
         .value("NONE", ImGuiColorEditFlags_::ImGuiColorEditFlags_None)
         .value("NO_ALPHA", ImGuiColorEditFlags_::ImGuiColorEditFlags_NoAlpha)
@@ -2412,7 +2470,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("DATA_TYPE_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_DataTypeMask_)
         .value("PICKER_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_PickerMask_)
         .value("INPUT_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_InputMask_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiSliderFlags_>(_imgui, "SliderFlags", py::arithmetic())
         .value("NONE", ImGuiSliderFlags_::ImGuiSliderFlags_None)
         .value("ALWAYS_CLAMP", ImGuiSliderFlags_::ImGuiSliderFlags_AlwaysClamp)
@@ -2421,13 +2481,17 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("NO_INPUT", ImGuiSliderFlags_::ImGuiSliderFlags_NoInput)
         .value("WRAP_AROUND", ImGuiSliderFlags_::ImGuiSliderFlags_WrapAround)
         .value("INVALID_MASK", ImGuiSliderFlags_::ImGuiSliderFlags_InvalidMask_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiMouseButton_>(_imgui, "MouseButton", py::arithmetic())
         .value("LEFT", ImGuiMouseButton_::ImGuiMouseButton_Left)
         .value("RIGHT", ImGuiMouseButton_::ImGuiMouseButton_Right)
         .value("MIDDLE", ImGuiMouseButton_::ImGuiMouseButton_Middle)
         .value("COUNT", ImGuiMouseButton_::ImGuiMouseButton_COUNT)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiMouseCursor_>(_imgui, "MouseCursor", py::arithmetic())
         .value("NONE", ImGuiMouseCursor_::ImGuiMouseCursor_None)
         .value("ARROW", ImGuiMouseCursor_::ImGuiMouseCursor_Arrow)
@@ -2440,20 +2504,26 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("HAND", ImGuiMouseCursor_::ImGuiMouseCursor_Hand)
         .value("NOT_ALLOWED", ImGuiMouseCursor_::ImGuiMouseCursor_NotAllowed)
         .value("COUNT", ImGuiMouseCursor_::ImGuiMouseCursor_COUNT)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiMouseSource>(_imgui, "MouseSource", py::arithmetic())
         .value("MOUSE_SOURCE_MOUSE", ImGuiMouseSource::ImGuiMouseSource_Mouse)
         .value("MOUSE_SOURCE_TOUCH_SCREEN", ImGuiMouseSource::ImGuiMouseSource_TouchScreen)
         .value("MOUSE_SOURCE_PEN", ImGuiMouseSource::ImGuiMouseSource_Pen)
         .value("MOUSE_SOURCE_COUNT", ImGuiMouseSource::ImGuiMouseSource_COUNT)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiCond_>(_imgui, "Cond", py::arithmetic())
         .value("NONE", ImGuiCond_::ImGuiCond_None)
         .value("ALWAYS", ImGuiCond_::ImGuiCond_Always)
         .value("ONCE", ImGuiCond_::ImGuiCond_Once)
         .value("FIRST_USE_EVER", ImGuiCond_::ImGuiCond_FirstUseEver)
         .value("APPEARING", ImGuiCond_::ImGuiCond_Appearing)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiTableFlags_>(_imgui, "TableFlags", py::arithmetic())
         .value("NONE", ImGuiTableFlags_::ImGuiTableFlags_None)
         .value("RESIZABLE", ImGuiTableFlags_::ImGuiTableFlags_Resizable)
@@ -2492,7 +2562,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("SORT_TRISTATE", ImGuiTableFlags_::ImGuiTableFlags_SortTristate)
         .value("HIGHLIGHT_HOVERED_COLUMN", ImGuiTableFlags_::ImGuiTableFlags_HighlightHoveredColumn)
         .value("SIZING_MASK", ImGuiTableFlags_::ImGuiTableFlags_SizingMask_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiTableColumnFlags_>(_imgui, "TableColumnFlags", py::arithmetic())
         .value("NONE", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_None)
         .value("DISABLED", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_Disabled)
@@ -2522,337 +2594,574 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("INDENT_MASK", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_IndentMask_)
         .value("STATUS_MASK", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_StatusMask_)
         .value("NO_DIRECT_RESIZE", ImGuiTableColumnFlags_::ImGuiTableColumnFlags_NoDirectResize_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiTableRowFlags_>(_imgui, "TableRowFlags", py::arithmetic())
         .value("NONE", ImGuiTableRowFlags_::ImGuiTableRowFlags_None)
         .value("HEADERS", ImGuiTableRowFlags_::ImGuiTableRowFlags_Headers)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImGuiTableBgTarget_>(_imgui, "TableBgTarget", py::arithmetic())
         .value("NONE", ImGuiTableBgTarget_::ImGuiTableBgTarget_None)
         .value("ROW_BG0", ImGuiTableBgTarget_::ImGuiTableBgTarget_RowBg0)
         .value("ROW_BG1", ImGuiTableBgTarget_::ImGuiTableBgTarget_RowBg1)
         .value("CELL_BG", ImGuiTableBgTarget_::ImGuiTableBgTarget_CellBg)
-        .export_values();
+        .export_values()
+    ;
+
     PYCLASS(_imgui, ImGuiTableSortSpecs, TableSortSpecs)
         .def_readwrite("specs", &ImGuiTableSortSpecs::Specs)
+
         .def_readwrite("specs_count", &ImGuiTableSortSpecs::SpecsCount)
+
         .def_readwrite("specs_dirty", &ImGuiTableSortSpecs::SpecsDirty)
+
         .def(py::init<>())
     ;
+
     PYCLASS(_imgui, ImGuiTableColumnSortSpecs, TableColumnSortSpecs)
         .def_readwrite("column_user_id", &ImGuiTableColumnSortSpecs::ColumnUserID)
+
         .def_readwrite("column_index", &ImGuiTableColumnSortSpecs::ColumnIndex)
+
         .def_readwrite("sort_order", &ImGuiTableColumnSortSpecs::SortOrder)
+
         .def(py::init<>())
     ;
+
     PYCLASS(_imgui, ImNewWrapper, NewWrapper)
     ;
+
     PYCLASS(_imgui, ImGuiStyle, Style)
         .def_readwrite("alpha", &ImGuiStyle::Alpha)
+
         .def_readwrite("disabled_alpha", &ImGuiStyle::DisabledAlpha)
+
         .def_readwrite("window_padding", &ImGuiStyle::WindowPadding)
+
         .def_readwrite("window_rounding", &ImGuiStyle::WindowRounding)
+
         .def_readwrite("window_border_size", &ImGuiStyle::WindowBorderSize)
+
         .def_readwrite("window_min_size", &ImGuiStyle::WindowMinSize)
+
         .def_readwrite("window_title_align", &ImGuiStyle::WindowTitleAlign)
+
         .def_readwrite("window_menu_button_position", &ImGuiStyle::WindowMenuButtonPosition)
+
         .def_readwrite("child_rounding", &ImGuiStyle::ChildRounding)
+
         .def_readwrite("child_border_size", &ImGuiStyle::ChildBorderSize)
+
         .def_readwrite("popup_rounding", &ImGuiStyle::PopupRounding)
+
         .def_readwrite("popup_border_size", &ImGuiStyle::PopupBorderSize)
+
         .def_readwrite("frame_padding", &ImGuiStyle::FramePadding)
+
         .def_readwrite("frame_rounding", &ImGuiStyle::FrameRounding)
+
         .def_readwrite("frame_border_size", &ImGuiStyle::FrameBorderSize)
+
         .def_readwrite("item_spacing", &ImGuiStyle::ItemSpacing)
+
         .def_readwrite("item_inner_spacing", &ImGuiStyle::ItemInnerSpacing)
+
         .def_readwrite("cell_padding", &ImGuiStyle::CellPadding)
+
         .def_readwrite("touch_extra_padding", &ImGuiStyle::TouchExtraPadding)
+
         .def_readwrite("indent_spacing", &ImGuiStyle::IndentSpacing)
+
         .def_readwrite("columns_min_spacing", &ImGuiStyle::ColumnsMinSpacing)
+
         .def_readwrite("scrollbar_size", &ImGuiStyle::ScrollbarSize)
+
         .def_readwrite("scrollbar_rounding", &ImGuiStyle::ScrollbarRounding)
+
         .def_readwrite("grab_min_size", &ImGuiStyle::GrabMinSize)
+
         .def_readwrite("grab_rounding", &ImGuiStyle::GrabRounding)
+
         .def_readwrite("log_slider_deadzone", &ImGuiStyle::LogSliderDeadzone)
+
         .def_readwrite("tab_rounding", &ImGuiStyle::TabRounding)
+
         .def_readwrite("tab_border_size", &ImGuiStyle::TabBorderSize)
+
         .def_readwrite("tab_min_width_for_close_button", &ImGuiStyle::TabMinWidthForCloseButton)
+
         .def_readwrite("tab_bar_border_size", &ImGuiStyle::TabBarBorderSize)
+
         .def_readwrite("tab_bar_overline_size", &ImGuiStyle::TabBarOverlineSize)
+
         .def_readwrite("table_angled_headers_angle", &ImGuiStyle::TableAngledHeadersAngle)
+
         .def_readwrite("table_angled_headers_text_align", &ImGuiStyle::TableAngledHeadersTextAlign)
+
         .def_readwrite("color_button_position", &ImGuiStyle::ColorButtonPosition)
+
         .def_readwrite("button_text_align", &ImGuiStyle::ButtonTextAlign)
+
         .def_readwrite("selectable_text_align", &ImGuiStyle::SelectableTextAlign)
+
         .def_readwrite("separator_text_border_size", &ImGuiStyle::SeparatorTextBorderSize)
+
         .def_readwrite("separator_text_align", &ImGuiStyle::SeparatorTextAlign)
+
         .def_readwrite("separator_text_padding", &ImGuiStyle::SeparatorTextPadding)
+
         .def_readwrite("display_window_padding", &ImGuiStyle::DisplayWindowPadding)
+
         .def_readwrite("display_safe_area_padding", &ImGuiStyle::DisplaySafeAreaPadding)
+
         .def_readwrite("docking_separator_size", &ImGuiStyle::DockingSeparatorSize)
+
         .def_readwrite("mouse_cursor_scale", &ImGuiStyle::MouseCursorScale)
+
         .def_readwrite("anti_aliased_lines", &ImGuiStyle::AntiAliasedLines)
+
         .def_readwrite("anti_aliased_lines_use_tex", &ImGuiStyle::AntiAliasedLinesUseTex)
+
         .def_readwrite("anti_aliased_fill", &ImGuiStyle::AntiAliasedFill)
+
         .def_readwrite("curve_tessellation_tol", &ImGuiStyle::CurveTessellationTol)
+
         .def_readwrite("circle_tessellation_max_error", &ImGuiStyle::CircleTessellationMaxError)
+
         .def_readwrite("hover_stationary_delay", &ImGuiStyle::HoverStationaryDelay)
+
         .def_readwrite("hover_delay_short", &ImGuiStyle::HoverDelayShort)
+
         .def_readwrite("hover_delay_normal", &ImGuiStyle::HoverDelayNormal)
+
         .def_readwrite("hover_flags_for_tooltip_mouse", &ImGuiStyle::HoverFlagsForTooltipMouse)
+
         .def_readwrite("hover_flags_for_tooltip_nav", &ImGuiStyle::HoverFlagsForTooltipNav)
+
         .def(py::init<>())
         .def("scale_all_sizes", &ImGuiStyle::ScaleAllSizes
             , py::arg("scale_factor")
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImGuiKeyData, KeyData)
         .def_readwrite("down", &ImGuiKeyData::Down)
+
         .def_readwrite("down_duration", &ImGuiKeyData::DownDuration)
+
         .def_readwrite("down_duration_prev", &ImGuiKeyData::DownDurationPrev)
+
         .def_readwrite("analog_value", &ImGuiKeyData::AnalogValue)
+
     ;
+
     PYCLASS(_imgui, ImGuiIO, IO)
         .def_readwrite("config_flags", &ImGuiIO::ConfigFlags)
+
         .def_readwrite("backend_flags", &ImGuiIO::BackendFlags)
+
         .def_readwrite("display_size", &ImGuiIO::DisplaySize)
+
         .def_readwrite("delta_time", &ImGuiIO::DeltaTime)
+
         .def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate)
+
         .def_property("ini_filename",
             [](const ImGuiIO& self){ return self.IniFilename; },
             [](ImGuiIO& self, const char* source){ self.IniFilename = strdup(source); }
         )
+
         .def_property("log_filename",
             [](const ImGuiIO& self){ return self.LogFilename; },
             [](ImGuiIO& self, const char* source){ self.LogFilename = strdup(source); }
         )
+
         .def_readwrite("user_data", &ImGuiIO::UserData)
+
         .def_readwrite("fonts", &ImGuiIO::Fonts)
+
         .def_readwrite("font_global_scale", &ImGuiIO::FontGlobalScale)
+
         .def_readwrite("font_allow_user_scaling", &ImGuiIO::FontAllowUserScaling)
+
         .def_readwrite("font_default", &ImGuiIO::FontDefault)
+
         .def_readwrite("display_framebuffer_scale", &ImGuiIO::DisplayFramebufferScale)
+
         .def_readwrite("config_docking_no_split", &ImGuiIO::ConfigDockingNoSplit)
+
         .def_readwrite("config_docking_with_shift", &ImGuiIO::ConfigDockingWithShift)
+
         .def_readwrite("config_docking_always_tab_bar", &ImGuiIO::ConfigDockingAlwaysTabBar)
+
         .def_readwrite("config_docking_transparent_payload", &ImGuiIO::ConfigDockingTransparentPayload)
+
         .def_readwrite("config_viewports_no_auto_merge", &ImGuiIO::ConfigViewportsNoAutoMerge)
+
         .def_readwrite("config_viewports_no_task_bar_icon", &ImGuiIO::ConfigViewportsNoTaskBarIcon)
+
         .def_readwrite("config_viewports_no_decoration", &ImGuiIO::ConfigViewportsNoDecoration)
+
         .def_readwrite("config_viewports_no_default_parent", &ImGuiIO::ConfigViewportsNoDefaultParent)
+
         .def_readwrite("mouse_draw_cursor", &ImGuiIO::MouseDrawCursor)
+
         .def_readwrite("config_mac_osx_behaviors", &ImGuiIO::ConfigMacOSXBehaviors)
+
         .def_readwrite("config_nav_swap_gamepad_buttons", &ImGuiIO::ConfigNavSwapGamepadButtons)
+
         .def_readwrite("config_input_trickle_event_queue", &ImGuiIO::ConfigInputTrickleEventQueue)
+
         .def_readwrite("config_input_text_cursor_blink", &ImGuiIO::ConfigInputTextCursorBlink)
+
         .def_readwrite("config_input_text_enter_keep_active", &ImGuiIO::ConfigInputTextEnterKeepActive)
+
         .def_readwrite("config_drag_click_to_input_text", &ImGuiIO::ConfigDragClickToInputText)
+
         .def_readwrite("config_windows_resize_from_edges", &ImGuiIO::ConfigWindowsResizeFromEdges)
+
         .def_readwrite("config_windows_move_from_title_bar_only", &ImGuiIO::ConfigWindowsMoveFromTitleBarOnly)
+
         .def_readwrite("config_scrollbar_scroll_by_page", &ImGuiIO::ConfigScrollbarScrollByPage)
+
         .def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer)
+
         .def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime)
+
         .def_readwrite("mouse_double_click_max_dist", &ImGuiIO::MouseDoubleClickMaxDist)
+
         .def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold)
+
         .def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay)
+
         .def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate)
+
         .def_readwrite("config_debug_is_debugger_present", &ImGuiIO::ConfigDebugIsDebuggerPresent)
+
         .def_readwrite("config_debug_highlight_id_conflicts", &ImGuiIO::ConfigDebugHighlightIdConflicts)
+
         .def_readwrite("config_debug_begin_return_value_once", &ImGuiIO::ConfigDebugBeginReturnValueOnce)
+
         .def_readwrite("config_debug_begin_return_value_loop", &ImGuiIO::ConfigDebugBeginReturnValueLoop)
+
         .def_readwrite("config_debug_ignore_focus_loss", &ImGuiIO::ConfigDebugIgnoreFocusLoss)
+
         .def_readwrite("config_debug_ini_settings", &ImGuiIO::ConfigDebugIniSettings)
+
         .def_property("backend_platform_name",
             [](const ImGuiIO& self){ return self.BackendPlatformName; },
             [](ImGuiIO& self, const char* source){ self.BackendPlatformName = strdup(source); }
         )
+
         .def_property("backend_renderer_name",
             [](const ImGuiIO& self){ return self.BackendRendererName; },
             [](ImGuiIO& self, const char* source){ self.BackendRendererName = strdup(source); }
         )
+
         .def_readwrite("backend_platform_user_data", &ImGuiIO::BackendPlatformUserData)
+
         .def_readwrite("backend_renderer_user_data", &ImGuiIO::BackendRendererUserData)
+
         .def_readwrite("backend_language_user_data", &ImGuiIO::BackendLanguageUserData)
+
         .def("add_key_event", &ImGuiIO::AddKeyEvent
             , py::arg("key")
             , py::arg("down")
             , py::return_value_policy::automatic_reference)
+
         .def("add_key_analog_event", &ImGuiIO::AddKeyAnalogEvent
             , py::arg("key")
             , py::arg("down")
             , py::arg("v")
             , py::return_value_policy::automatic_reference)
+
         .def("add_mouse_pos_event", &ImGuiIO::AddMousePosEvent
             , py::arg("x")
             , py::arg("y")
             , py::return_value_policy::automatic_reference)
+
         .def("add_mouse_button_event", &ImGuiIO::AddMouseButtonEvent
             , py::arg("button")
             , py::arg("down")
             , py::return_value_policy::automatic_reference)
+
         .def("add_mouse_wheel_event", &ImGuiIO::AddMouseWheelEvent
             , py::arg("wheel_x")
             , py::arg("wheel_y")
             , py::return_value_policy::automatic_reference)
+
         .def("add_mouse_source_event", &ImGuiIO::AddMouseSourceEvent
             , py::arg("source")
             , py::return_value_policy::automatic_reference)
+
         .def("add_mouse_viewport_event", &ImGuiIO::AddMouseViewportEvent
             , py::arg("id")
             , py::return_value_policy::automatic_reference)
+
         .def("add_focus_event", &ImGuiIO::AddFocusEvent
             , py::arg("focused")
             , py::return_value_policy::automatic_reference)
+
         .def("add_input_character", &ImGuiIO::AddInputCharacter
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
+
         .def("add_input_character_utf16", &ImGuiIO::AddInputCharacterUTF16
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
+
         .def("add_input_characters_utf8", &ImGuiIO::AddInputCharactersUTF8
             , py::arg("str")
             , py::return_value_policy::automatic_reference)
+
         .def("set_key_event_native_data", &ImGuiIO::SetKeyEventNativeData
             , py::arg("key")
             , py::arg("native_keycode")
             , py::arg("native_scancode")
             , py::arg("native_legacy_index") = -1
             , py::return_value_policy::automatic_reference)
+
         .def("set_app_accepting_events", &ImGuiIO::SetAppAcceptingEvents
             , py::arg("accepting_events")
             , py::return_value_policy::automatic_reference)
+
         .def("clear_events_queue", &ImGuiIO::ClearEventsQueue
             , py::return_value_policy::automatic_reference)
+
         .def("clear_input_keys", &ImGuiIO::ClearInputKeys
             , py::return_value_policy::automatic_reference)
+
         .def("clear_input_mouse", &ImGuiIO::ClearInputMouse
             , py::return_value_policy::automatic_reference)
+
         .def_readwrite("want_capture_mouse", &ImGuiIO::WantCaptureMouse)
+
         .def_readwrite("want_capture_keyboard", &ImGuiIO::WantCaptureKeyboard)
+
         .def_readwrite("want_text_input", &ImGuiIO::WantTextInput)
+
         .def_readwrite("want_set_mouse_pos", &ImGuiIO::WantSetMousePos)
+
         .def_readwrite("want_save_ini_settings", &ImGuiIO::WantSaveIniSettings)
+
         .def_readwrite("nav_active", &ImGuiIO::NavActive)
+
         .def_readwrite("nav_visible", &ImGuiIO::NavVisible)
+
         .def_readwrite("framerate", &ImGuiIO::Framerate)
+
         .def_readwrite("metrics_render_vertices", &ImGuiIO::MetricsRenderVertices)
+
         .def_readwrite("metrics_render_indices", &ImGuiIO::MetricsRenderIndices)
+
         .def_readwrite("metrics_render_windows", &ImGuiIO::MetricsRenderWindows)
+
         .def_readwrite("metrics_active_windows", &ImGuiIO::MetricsActiveWindows)
+
         .def_readwrite("mouse_delta", &ImGuiIO::MouseDelta)
+
         .def_readwrite("mouse_pos", &ImGuiIO::MousePos)
+
         .def_readonly("mouse_down", &ImGuiIO::MouseDown)
+
         .def_readwrite("mouse_wheel", &ImGuiIO::MouseWheel)
+
         .def_readwrite("mouse_wheel_h", &ImGuiIO::MouseWheelH)
+
         .def_readwrite("mouse_source", &ImGuiIO::MouseSource)
+
         .def_readwrite("mouse_hovered_viewport", &ImGuiIO::MouseHoveredViewport)
+
         .def_readwrite("key_ctrl", &ImGuiIO::KeyCtrl)
+
         .def_readwrite("key_shift", &ImGuiIO::KeyShift)
+
         .def_readwrite("key_alt", &ImGuiIO::KeyAlt)
+
         .def_readwrite("key_super", &ImGuiIO::KeySuper)
+
         .def_readwrite("key_mods", &ImGuiIO::KeyMods)
+
         .def_readonly("keys_data", &ImGuiIO::KeysData)
+
         .def_readwrite("want_capture_mouse_unless_popup_close", &ImGuiIO::WantCaptureMouseUnlessPopupClose)
+
         .def_readwrite("mouse_pos_prev", &ImGuiIO::MousePosPrev)
+
         .def_readonly("mouse_clicked_pos", &ImGuiIO::MouseClickedPos)
+
         .def_readonly("mouse_clicked_time", &ImGuiIO::MouseClickedTime)
+
         .def_readonly("mouse_clicked", &ImGuiIO::MouseClicked)
+
         .def_readonly("mouse_double_clicked", &ImGuiIO::MouseDoubleClicked)
+
         .def_readonly("mouse_clicked_count", &ImGuiIO::MouseClickedCount)
+
         .def_readonly("mouse_clicked_last_count", &ImGuiIO::MouseClickedLastCount)
+
         .def_readonly("mouse_released", &ImGuiIO::MouseReleased)
+
         .def_readonly("mouse_down_owned", &ImGuiIO::MouseDownOwned)
+
         .def_readonly("mouse_down_owned_unless_popup_close", &ImGuiIO::MouseDownOwnedUnlessPopupClose)
+
         .def_readwrite("mouse_wheel_request_axis_swap", &ImGuiIO::MouseWheelRequestAxisSwap)
+
         .def_readwrite("mouse_ctrl_left_as_right_click", &ImGuiIO::MouseCtrlLeftAsRightClick)
+
         .def_readonly("mouse_down_duration", &ImGuiIO::MouseDownDuration)
+
         .def_readonly("mouse_down_duration_prev", &ImGuiIO::MouseDownDurationPrev)
+
         .def_readonly("mouse_drag_max_distance_abs", &ImGuiIO::MouseDragMaxDistanceAbs)
+
         .def_readonly("mouse_drag_max_distance_sqr", &ImGuiIO::MouseDragMaxDistanceSqr)
+
         .def_readwrite("pen_pressure", &ImGuiIO::PenPressure)
+
         .def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost)
+
         .def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents)
+
         .def_readwrite("backend_using_legacy_key_arrays", &ImGuiIO::BackendUsingLegacyKeyArrays)
+
         .def_readwrite("backend_using_legacy_nav_input_array", &ImGuiIO::BackendUsingLegacyNavInputArray)
+
         .def_readwrite("input_queue_surrogate", &ImGuiIO::InputQueueSurrogate)
+
         .def_readwrite("input_queue_characters", &ImGuiIO::InputQueueCharacters)
+
         .def(py::init<>())
     ;
+
     PYCLASS(_imgui, ImGuiInputTextCallbackData, InputTextCallbackData)
         .def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag)
+
         .def_readwrite("flags", &ImGuiInputTextCallbackData::Flags)
+
         .def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData)
+
         .def_readwrite("event_char", &ImGuiInputTextCallbackData::EventChar)
+
         .def_readwrite("event_key", &ImGuiInputTextCallbackData::EventKey)
+
         .def_property("buf",
             [](const ImGuiInputTextCallbackData& self){ return self.Buf; },
             [](ImGuiInputTextCallbackData& self, const char* source){ self.Buf = strdup(source); }
         )
+
         .def_readwrite("buf_text_len", &ImGuiInputTextCallbackData::BufTextLen)
+
         .def_readwrite("buf_size", &ImGuiInputTextCallbackData::BufSize)
+
         .def_readwrite("buf_dirty", &ImGuiInputTextCallbackData::BufDirty)
+
         .def_readwrite("cursor_pos", &ImGuiInputTextCallbackData::CursorPos)
+
         .def_readwrite("selection_start", &ImGuiInputTextCallbackData::SelectionStart)
+
         .def_readwrite("selection_end", &ImGuiInputTextCallbackData::SelectionEnd)
+
         .def(py::init<>())
         .def("delete_chars", &ImGuiInputTextCallbackData::DeleteChars
             , py::arg("pos")
             , py::arg("bytes_count")
             , py::return_value_policy::automatic_reference)
+
         .def("insert_chars", &ImGuiInputTextCallbackData::InsertChars
             , py::arg("pos")
             , py::arg("text")
             , py::arg("text_end") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("select_all", &ImGuiInputTextCallbackData::SelectAll
             , py::return_value_policy::automatic_reference)
+
         .def("clear_selection", &ImGuiInputTextCallbackData::ClearSelection
             , py::return_value_policy::automatic_reference)
+
         .def("has_selection", &ImGuiInputTextCallbackData::HasSelection
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImGuiSizeCallbackData, SizeCallbackData)
         .def_readwrite("user_data", &ImGuiSizeCallbackData::UserData)
+
         .def_readwrite("pos", &ImGuiSizeCallbackData::Pos)
+
         .def_readwrite("current_size", &ImGuiSizeCallbackData::CurrentSize)
+
         .def_readwrite("desired_size", &ImGuiSizeCallbackData::DesiredSize)
+
     ;
+
     PYCLASS(_imgui, ImGuiWindowClass, WindowClass)
         .def_readwrite("class_id", &ImGuiWindowClass::ClassId)
+
         .def_readwrite("parent_viewport_id", &ImGuiWindowClass::ParentViewportId)
+
         .def_readwrite("focus_route_parent_window_id", &ImGuiWindowClass::FocusRouteParentWindowId)
+
         .def_readwrite("viewport_flags_override_set", &ImGuiWindowClass::ViewportFlagsOverrideSet)
+
         .def_readwrite("viewport_flags_override_clear", &ImGuiWindowClass::ViewportFlagsOverrideClear)
+
         .def_readwrite("tab_item_flags_override_set", &ImGuiWindowClass::TabItemFlagsOverrideSet)
+
         .def_readwrite("dock_node_flags_override_set", &ImGuiWindowClass::DockNodeFlagsOverrideSet)
+
         .def_readwrite("docking_always_tab_bar", &ImGuiWindowClass::DockingAlwaysTabBar)
+
         .def_readwrite("docking_allow_unclassed", &ImGuiWindowClass::DockingAllowUnclassed)
+
         .def(py::init<>())
     ;
+
     PYCLASS(_imgui, ImGuiPayload, Payload)
         .def_readwrite("data", &ImGuiPayload::Data)
+
         .def_readwrite("data_size", &ImGuiPayload::DataSize)
+
         .def_readwrite("source_id", &ImGuiPayload::SourceId)
+
         .def_readwrite("source_parent_id", &ImGuiPayload::SourceParentId)
+
         .def_readwrite("data_frame_count", &ImGuiPayload::DataFrameCount)
+
         .def_readonly("data_type", &ImGuiPayload::DataType)
+
         .def_readwrite("preview", &ImGuiPayload::Preview)
+
         .def_readwrite("delivery", &ImGuiPayload::Delivery)
+
         .def(py::init<>())
         .def("clear", &ImGuiPayload::Clear
             , py::return_value_policy::automatic_reference)
+
         .def("is_data_type", &ImGuiPayload::IsDataType
             , py::arg("type")
             , py::return_value_policy::automatic_reference)
+
         .def("is_preview", &ImGuiPayload::IsPreview
             , py::return_value_policy::automatic_reference)
+
         .def("is_delivery", &ImGuiPayload::IsDelivery
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImGuiOnceUponAFrame, OnceUponAFrame)
         .def(py::init<>())
         .def_readwrite("ref_frame", &ImGuiOnceUponAFrame::RefFrame)
+
     ;
+
     PYCLASS(_imgui, ImGuiTextFilter, TextFilter)
         .def(py::init<const char *>()
         , py::arg("default_filter") = nullptr
@@ -2861,84 +3170,111 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("label") = nullptr
             , py::arg("width") = 0.0f
             , py::return_value_policy::automatic_reference)
+
         .def("pass_filter", &ImGuiTextFilter::PassFilter
             , py::arg("text")
             , py::arg("text_end") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("build", &ImGuiTextFilter::Build
             , py::return_value_policy::automatic_reference)
+
         .def("clear", &ImGuiTextFilter::Clear
             , py::return_value_policy::automatic_reference)
+
         .def("is_active", &ImGuiTextFilter::IsActive
             , py::return_value_policy::automatic_reference)
+
         .def_readonly("input_buf", &ImGuiTextFilter::InputBuf)
+
         .def_readwrite("count_grep", &ImGuiTextFilter::CountGrep)
+
     ;
+
     PYCLASS(_imgui, ImGuiStoragePair, StoragePair)
         .def_readwrite("key", &ImGuiStoragePair::key)
+
         .def(py::init<unsigned int, int>()
         , py::arg("_key")
         , py::arg("_val")
         )
     ;
+
     PYCLASS(_imgui, ImGuiStorage, Storage)
         .def("clear", &ImGuiStorage::Clear
             , py::return_value_policy::automatic_reference)
+
         .def("get_int", &ImGuiStorage::GetInt
             , py::arg("key")
             , py::arg("default_val") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("set_int", &ImGuiStorage::SetInt
             , py::arg("key")
             , py::arg("val")
             , py::return_value_policy::automatic_reference)
+
         .def("get_bool", &ImGuiStorage::GetBool
             , py::arg("key")
             , py::arg("default_val") = false
             , py::return_value_policy::automatic_reference)
+
         .def("set_bool", &ImGuiStorage::SetBool
             , py::arg("key")
             , py::arg("val")
             , py::return_value_policy::automatic_reference)
+
         .def("get_float", &ImGuiStorage::GetFloat
             , py::arg("key")
             , py::arg("default_val") = 0.0f
             , py::return_value_policy::automatic_reference)
+
         .def("set_float", &ImGuiStorage::SetFloat
             , py::arg("key")
             , py::arg("val")
             , py::return_value_policy::automatic_reference)
+
         .def("get_void_ptr", &ImGuiStorage::GetVoidPtr
             , py::arg("key")
             , py::return_value_policy::automatic_reference)
+
         .def("set_void_ptr", &ImGuiStorage::SetVoidPtr
             , py::arg("key")
             , py::arg("val")
             , py::return_value_policy::automatic_reference)
+
         .def("get_int_ref", &ImGuiStorage::GetIntRef
             , py::arg("key")
             , py::arg("default_val") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("get_bool_ref", &ImGuiStorage::GetBoolRef
             , py::arg("key")
             , py::arg("default_val") = false
             , py::return_value_policy::automatic_reference)
+
         .def("get_float_ref", &ImGuiStorage::GetFloatRef
             , py::arg("key")
             , py::arg("default_val") = 0.0f
             , py::return_value_policy::automatic_reference)
+
         .def("get_void_ptr_ref", &ImGuiStorage::GetVoidPtrRef
             , py::arg("key")
             , py::arg("default_val") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("build_sort_by_key", &ImGuiStorage::BuildSortByKey
             , py::return_value_policy::automatic_reference)
+
         .def("set_all_int", &ImGuiStorage::SetAllInt
             , py::arg("val")
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImColor, Color)
         .def_readwrite("value", &ImColor::Value)
+
         .def(py::init<>())
         .def("set_hsv", &ImColor::SetHSV
             , py::arg("h")
@@ -2946,7 +3282,9 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("v")
             , py::arg("a") = 1.0f
             , py::return_value_policy::automatic_reference)
+
     ;
+
     py::enum_<ImGuiMultiSelectFlags_>(_imgui, "MultiSelectFlags", py::arithmetic())
         .value("NONE", ImGuiMultiSelectFlags_::ImGuiMultiSelectFlags_None)
         .value("SINGLE_SELECT", ImGuiMultiSelectFlags_::ImGuiMultiSelectFlags_SingleSelect)
@@ -2965,69 +3303,110 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("SELECT_ON_CLICK", ImGuiMultiSelectFlags_::ImGuiMultiSelectFlags_SelectOnClick)
         .value("SELECT_ON_CLICK_RELEASE", ImGuiMultiSelectFlags_::ImGuiMultiSelectFlags_SelectOnClickRelease)
         .value("NAV_WRAP_X", ImGuiMultiSelectFlags_::ImGuiMultiSelectFlags_NavWrapX)
-        .export_values();
+        .export_values()
+    ;
+
     PYCLASS(_imgui, ImGuiMultiSelectIO, MultiSelectIO)
         .def_readwrite("requests", &ImGuiMultiSelectIO::Requests)
+
         .def_readwrite("range_src_item", &ImGuiMultiSelectIO::RangeSrcItem)
+
         .def_readwrite("nav_id_item", &ImGuiMultiSelectIO::NavIdItem)
+
         .def_readwrite("nav_id_selected", &ImGuiMultiSelectIO::NavIdSelected)
+
         .def_readwrite("range_src_reset", &ImGuiMultiSelectIO::RangeSrcReset)
+
         .def_readwrite("items_count", &ImGuiMultiSelectIO::ItemsCount)
+
     ;
+
     py::enum_<ImGuiSelectionRequestType>(_imgui, "SelectionRequestType", py::arithmetic())
         .value("SELECTION_REQUEST_TYPE_NONE", ImGuiSelectionRequestType::ImGuiSelectionRequestType_None)
         .value("SELECTION_REQUEST_TYPE_SET_ALL", ImGuiSelectionRequestType::ImGuiSelectionRequestType_SetAll)
         .value("SELECTION_REQUEST_TYPE_SET_RANGE", ImGuiSelectionRequestType::ImGuiSelectionRequestType_SetRange)
-        .export_values();
+        .export_values()
+    ;
+
     PYCLASS(_imgui, ImGuiSelectionRequest, SelectionRequest)
         .def_readwrite("type", &ImGuiSelectionRequest::Type)
+
         .def_readwrite("selected", &ImGuiSelectionRequest::Selected)
+
         .def_readwrite("range_direction", &ImGuiSelectionRequest::RangeDirection)
+
         .def_readwrite("range_first_item", &ImGuiSelectionRequest::RangeFirstItem)
+
         .def_readwrite("range_last_item", &ImGuiSelectionRequest::RangeLastItem)
+
     ;
+
     PYCLASS(_imgui, ImDrawCmd, DrawCmd)
         .def_readwrite("clip_rect", &ImDrawCmd::ClipRect)
+
         .def_readwrite("texture_id", &ImDrawCmd::TextureId)
+
         .def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset)
+
         .def_readwrite("idx_offset", &ImDrawCmd::IdxOffset)
+
         .def_readwrite("elem_count", &ImDrawCmd::ElemCount)
+
         .def_readwrite("user_callback", &ImDrawCmd::UserCallback)
+
         .def_readwrite("user_callback_data", &ImDrawCmd::UserCallbackData)
+
         .def(py::init<>())
         .def("get_tex_id", &ImDrawCmd::GetTexID
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImDrawVert, DrawVert)
         .def_readwrite("pos", &ImDrawVert::pos)
+
         .def_readwrite("uv", &ImDrawVert::uv)
+
         .def_readwrite("col", &ImDrawVert::col)
+
     ;
+
     PYCLASS(_imgui, ImDrawCmdHeader, DrawCmdHeader)
         .def_readwrite("clip_rect", &ImDrawCmdHeader::ClipRect)
+
         .def_readwrite("texture_id", &ImDrawCmdHeader::TextureId)
+
         .def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset)
+
     ;
+
     PYCLASS(_imgui, ImDrawChannel, DrawChannel)
     ;
+
     PYCLASS(_imgui, ImDrawListSplitter, DrawListSplitter)
         .def(py::init<>())
         .def("clear", &ImDrawListSplitter::Clear
             , py::return_value_policy::automatic_reference)
+
         .def("clear_free_memory", &ImDrawListSplitter::ClearFreeMemory
             , py::return_value_policy::automatic_reference)
+
         .def("split", &ImDrawListSplitter::Split
             , py::arg("draw_list")
             , py::arg("count")
             , py::return_value_policy::automatic_reference)
+
         .def("merge", &ImDrawListSplitter::Merge
             , py::arg("draw_list")
             , py::return_value_policy::automatic_reference)
+
         .def("set_current_channel", &ImDrawListSplitter::SetCurrentChannel
             , py::arg("draw_list")
             , py::arg("channel_idx")
             , py::return_value_policy::automatic_reference)
+
     ;
+
     py::enum_<ImDrawFlags_>(_imgui, "DrawFlags", py::arithmetic())
         .value("NONE", ImDrawFlags_::ImDrawFlags_None)
         .value("CLOSED", ImDrawFlags_::ImDrawFlags_Closed)
@@ -3043,43 +3422,59 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("ROUND_CORNERS_ALL", ImDrawFlags_::ImDrawFlags_RoundCornersAll)
         .value("ROUND_CORNERS_DEFAULT", ImDrawFlags_::ImDrawFlags_RoundCornersDefault_)
         .value("ROUND_CORNERS_MASK", ImDrawFlags_::ImDrawFlags_RoundCornersMask_)
-        .export_values();
+        .export_values()
+    ;
+
     py::enum_<ImDrawListFlags_>(_imgui, "DrawListFlags", py::arithmetic())
         .value("NONE", ImDrawListFlags_::ImDrawListFlags_None)
         .value("ANTI_ALIASED_LINES", ImDrawListFlags_::ImDrawListFlags_AntiAliasedLines)
         .value("ANTI_ALIASED_LINES_USE_TEX", ImDrawListFlags_::ImDrawListFlags_AntiAliasedLinesUseTex)
         .value("ANTI_ALIASED_FILL", ImDrawListFlags_::ImDrawListFlags_AntiAliasedFill)
         .value("ALLOW_VTX_OFFSET", ImDrawListFlags_::ImDrawListFlags_AllowVtxOffset)
-        .export_values();
+        .export_values()
+    ;
+
     PYCLASS(_imgui, ImDrawList, DrawList)
         .def_readwrite("cmd_buffer", &ImDrawList::CmdBuffer)
+
         .def_readwrite("idx_buffer", &ImDrawList::IdxBuffer)
+
         .def_readwrite("vtx_buffer", &ImDrawList::VtxBuffer)
+
         .def_readwrite("flags", &ImDrawList::Flags)
+
         .def("push_clip_rect", &ImDrawList::PushClipRect
             , py::arg("clip_rect_min")
             , py::arg("clip_rect_max")
             , py::arg("intersect_with_current_clip_rect") = false
             , py::return_value_policy::automatic_reference)
+
         .def("push_clip_rect_full_screen", &ImDrawList::PushClipRectFullScreen
             , py::return_value_policy::automatic_reference)
+
         .def("pop_clip_rect", &ImDrawList::PopClipRect
             , py::return_value_policy::automatic_reference)
+
         .def("push_texture_id", &ImDrawList::PushTextureID
             , py::arg("texture_id")
             , py::return_value_policy::automatic_reference)
+
         .def("pop_texture_id", &ImDrawList::PopTextureID
             , py::return_value_policy::automatic_reference)
+
         .def("get_clip_rect_min", &ImDrawList::GetClipRectMin
             , py::return_value_policy::automatic_reference)
+
         .def("get_clip_rect_max", &ImDrawList::GetClipRectMax
             , py::return_value_policy::automatic_reference)
+
         .def("add_line", &ImDrawList::AddLine
             , py::arg("p1")
             , py::arg("p2")
             , py::arg("col")
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("add_rect", &ImDrawList::AddRect
             , py::arg("p_min")
             , py::arg("p_max")
@@ -3088,6 +3483,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("flags") = 0
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("add_rect_filled", &ImDrawList::AddRectFilled
             , py::arg("p_min")
             , py::arg("p_max")
@@ -3095,6 +3491,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("rounding") = 0.0f
             , py::arg("flags") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("add_rect_filled_multi_color", &ImDrawList::AddRectFilledMultiColor
             , py::arg("p_min")
             , py::arg("p_max")
@@ -3103,6 +3500,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("col_bot_right")
             , py::arg("col_bot_left")
             , py::return_value_policy::automatic_reference)
+
         .def("add_quad", &ImDrawList::AddQuad
             , py::arg("p1")
             , py::arg("p2")
@@ -3111,6 +3509,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("col")
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("add_quad_filled", &ImDrawList::AddQuadFilled
             , py::arg("p1")
             , py::arg("p2")
@@ -3118,6 +3517,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("p4")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("add_triangle", &ImDrawList::AddTriangle
             , py::arg("p1")
             , py::arg("p2")
@@ -3125,12 +3525,14 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("col")
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("add_triangle_filled", &ImDrawList::AddTriangleFilled
             , py::arg("p1")
             , py::arg("p2")
             , py::arg("p3")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("add_circle", &ImDrawList::AddCircle
             , py::arg("center")
             , py::arg("radius")
@@ -3138,12 +3540,14 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("num_segments") = 0
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("add_circle_filled", &ImDrawList::AddCircleFilled
             , py::arg("center")
             , py::arg("radius")
             , py::arg("col")
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("add_ngon", &ImDrawList::AddNgon
             , py::arg("center")
             , py::arg("radius")
@@ -3151,12 +3555,14 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("num_segments")
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("add_ngon_filled", &ImDrawList::AddNgonFilled
             , py::arg("center")
             , py::arg("radius")
             , py::arg("col")
             , py::arg("num_segments")
             , py::return_value_policy::automatic_reference)
+
         .def("add_ellipse", &ImDrawList::AddEllipse
             , py::arg("center")
             , py::arg("radius")
@@ -3165,6 +3571,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("num_segments") = 0
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("add_ellipse_filled", &ImDrawList::AddEllipseFilled
             , py::arg("center")
             , py::arg("radius")
@@ -3172,12 +3579,14 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("rot") = 0.0f
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("add_text", py::overload_cast<const ImVec2 &, unsigned int, const char *, const char *>(&ImDrawList::AddText)
             , py::arg("pos")
             , py::arg("col")
             , py::arg("text_begin")
             , py::arg("text_end") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("add_bezier_cubic", &ImDrawList::AddBezierCubic
             , py::arg("p1")
             , py::arg("p2")
@@ -3187,6 +3596,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("thickness")
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("add_bezier_quadratic", &ImDrawList::AddBezierQuadratic
             , py::arg("p1")
             , py::arg("p2")
@@ -3195,6 +3605,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("thickness")
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("add_polyline", &ImDrawList::AddPolyline
             , py::arg("points")
             , py::arg("num_points")
@@ -3202,16 +3613,19 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("flags")
             , py::arg("thickness")
             , py::return_value_policy::automatic_reference)
+
         .def("add_convex_poly_filled", &ImDrawList::AddConvexPolyFilled
             , py::arg("points")
             , py::arg("num_points")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("add_concave_poly_filled", &ImDrawList::AddConcavePolyFilled
             , py::arg("points")
             , py::arg("num_points")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("add_image", &ImDrawList::AddImage
             , py::arg("user_texture_id")
             , py::arg("p_min")
@@ -3220,6 +3634,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("uv_max") = ImVec2(1,1)
             , py::arg("col") = IM_COL32_WHITE
             , py::return_value_policy::automatic_reference)
+
         .def("add_image_quad", &ImDrawList::AddImageQuad
             , py::arg("user_texture_id")
             , py::arg("p1")
@@ -3232,6 +3647,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("uv4") = ImVec2(0,1)
             , py::arg("col") = IM_COL32_WHITE
             , py::return_value_policy::automatic_reference)
+
         .def("add_image_rounded", &ImDrawList::AddImageRounded
             , py::arg("user_texture_id")
             , py::arg("p_min")
@@ -3242,25 +3658,32 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("rounding")
             , py::arg("flags") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("path_clear", &ImDrawList::PathClear
             , py::return_value_policy::automatic_reference)
+
         .def("path_line_to", &ImDrawList::PathLineTo
             , py::arg("pos")
             , py::return_value_policy::automatic_reference)
+
         .def("path_line_to_merge_duplicate", &ImDrawList::PathLineToMergeDuplicate
             , py::arg("pos")
             , py::return_value_policy::automatic_reference)
+
         .def("path_fill_convex", &ImDrawList::PathFillConvex
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("path_fill_concave", &ImDrawList::PathFillConcave
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("path_stroke", &ImDrawList::PathStroke
             , py::arg("col")
             , py::arg("flags") = 0
             , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
+
         .def("path_arc_to", &ImDrawList::PathArcTo
             , py::arg("center")
             , py::arg("radius")
@@ -3268,12 +3691,14 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("a_max")
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("path_arc_to_fast", &ImDrawList::PathArcToFast
             , py::arg("center")
             , py::arg("radius")
             , py::arg("a_min_of_12")
             , py::arg("a_max_of_12")
             , py::return_value_policy::automatic_reference)
+
         .def("path_elliptical_arc_to", &ImDrawList::PathEllipticalArcTo
             , py::arg("center")
             , py::arg("radius")
@@ -3282,52 +3707,65 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("a_max")
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("path_bezier_cubic_curve_to", &ImDrawList::PathBezierCubicCurveTo
             , py::arg("p2")
             , py::arg("p3")
             , py::arg("p4")
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("path_bezier_quadratic_curve_to", &ImDrawList::PathBezierQuadraticCurveTo
             , py::arg("p2")
             , py::arg("p3")
             , py::arg("num_segments") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("path_rect", &ImDrawList::PathRect
             , py::arg("rect_min")
             , py::arg("rect_max")
             , py::arg("rounding") = 0.0f
             , py::arg("flags") = 0
             , py::return_value_policy::automatic_reference)
+
         .def("add_callback", &ImDrawList::AddCallback
             , py::arg("callback")
             , py::arg("callback_data")
             , py::return_value_policy::automatic_reference)
+
         .def("add_draw_cmd", &ImDrawList::AddDrawCmd
             , py::return_value_policy::automatic_reference)
+
         .def("clone_output", &ImDrawList::CloneOutput
             , py::return_value_policy::automatic_reference)
+
         .def("channels_split", &ImDrawList::ChannelsSplit
             , py::arg("count")
             , py::return_value_policy::automatic_reference)
+
         .def("channels_merge", &ImDrawList::ChannelsMerge
             , py::return_value_policy::automatic_reference)
+
         .def("channels_set_current", &ImDrawList::ChannelsSetCurrent
             , py::arg("n")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_reserve", &ImDrawList::PrimReserve
             , py::arg("idx_count")
             , py::arg("vtx_count")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_unreserve", &ImDrawList::PrimUnreserve
             , py::arg("idx_count")
             , py::arg("vtx_count")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_rect", &ImDrawList::PrimRect
             , py::arg("a")
             , py::arg("b")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_rect_uv", &ImDrawList::PrimRectUV
             , py::arg("a")
             , py::arg("b")
@@ -3335,6 +3773,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("uv_b")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_quad_uv", &ImDrawList::PrimQuadUV
             , py::arg("a")
             , py::arg("b")
@@ -3346,127 +3785,199 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("uv_d")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_write_vtx", &ImDrawList::PrimWriteVtx
             , py::arg("pos")
             , py::arg("uv")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_write_idx", &ImDrawList::PrimWriteIdx
             , py::arg("idx")
             , py::return_value_policy::automatic_reference)
+
         .def("prim_vtx", &ImDrawList::PrimVtx
             , py::arg("pos")
             , py::arg("uv")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImDrawData, DrawData)
         .def_readwrite("valid", &ImDrawData::Valid)
+
         .def_readwrite("cmd_lists_count", &ImDrawData::CmdListsCount)
+
         .def_readwrite("total_idx_count", &ImDrawData::TotalIdxCount)
+
         .def_readwrite("total_vtx_count", &ImDrawData::TotalVtxCount)
+
         .def_readwrite("display_pos", &ImDrawData::DisplayPos)
+
         .def_readwrite("display_size", &ImDrawData::DisplaySize)
+
         .def_readwrite("framebuffer_scale", &ImDrawData::FramebufferScale)
+
         .def_readwrite("owner_viewport", &ImDrawData::OwnerViewport)
+
         .def(py::init<>())
         .def("clear", &ImDrawData::Clear
             , py::return_value_policy::automatic_reference)
+
         .def("add_draw_list", &ImDrawData::AddDrawList
             , py::arg("draw_list")
             , py::return_value_policy::automatic_reference)
+
         .def("de_index_all_buffers", &ImDrawData::DeIndexAllBuffers
             , py::return_value_policy::automatic_reference)
+
         .def("scale_clip_rects", &ImDrawData::ScaleClipRects
             , py::arg("fb_scale")
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImFontConfig, FontConfig)
         .def_readwrite("font_data", &ImFontConfig::FontData)
+
         .def_readwrite("font_data_size", &ImFontConfig::FontDataSize)
+
         .def_readwrite("font_data_owned_by_atlas", &ImFontConfig::FontDataOwnedByAtlas)
+
         .def_readwrite("font_no", &ImFontConfig::FontNo)
+
         .def_readwrite("size_pixels", &ImFontConfig::SizePixels)
+
         .def_readwrite("oversample_h", &ImFontConfig::OversampleH)
+
         .def_readwrite("oversample_v", &ImFontConfig::OversampleV)
+
         .def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH)
+
         .def_readwrite("glyph_extra_spacing", &ImFontConfig::GlyphExtraSpacing)
+
         .def_readwrite("glyph_offset", &ImFontConfig::GlyphOffset)
+
         .def_readwrite("glyph_ranges", &ImFontConfig::GlyphRanges)
+
         .def_readwrite("glyph_min_advance_x", &ImFontConfig::GlyphMinAdvanceX)
+
         .def_readwrite("glyph_max_advance_x", &ImFontConfig::GlyphMaxAdvanceX)
+
         .def_readwrite("merge_mode", &ImFontConfig::MergeMode)
+
         .def_readwrite("font_builder_flags", &ImFontConfig::FontBuilderFlags)
+
         .def_readwrite("rasterizer_multiply", &ImFontConfig::RasterizerMultiply)
+
         .def_readwrite("rasterizer_density", &ImFontConfig::RasterizerDensity)
+
         .def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar)
+
         .def_readonly("name", &ImFontConfig::Name)
+
         .def_readwrite("dst_font", &ImFontConfig::DstFont)
+
         .def(py::init<>())
     ;
+
     PYCLASS(_imgui, ImFontGlyph, FontGlyph)
         .def_readwrite("advance_x", &ImFontGlyph::AdvanceX)
+
         .def_readwrite("x0", &ImFontGlyph::X0)
+
         .def_readwrite("y0", &ImFontGlyph::Y0)
+
         .def_readwrite("x1", &ImFontGlyph::X1)
+
         .def_readwrite("y1", &ImFontGlyph::Y1)
+
         .def_readwrite("u0", &ImFontGlyph::U0)
+
         .def_readwrite("v0", &ImFontGlyph::V0)
+
         .def_readwrite("u1", &ImFontGlyph::U1)
+
         .def_readwrite("v1", &ImFontGlyph::V1)
+
     ;
+
     PYCLASS(_imgui, ImFontGlyphRangesBuilder, FontGlyphRangesBuilder)
         .def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars)
+
         .def(py::init<>())
         .def("clear", &ImFontGlyphRangesBuilder::Clear
             , py::return_value_policy::automatic_reference)
+
         .def("get_bit", &ImFontGlyphRangesBuilder::GetBit
             , py::arg("n")
             , py::return_value_policy::automatic_reference)
+
         .def("set_bit", &ImFontGlyphRangesBuilder::SetBit
             , py::arg("n")
             , py::return_value_policy::automatic_reference)
+
         .def("add_char", &ImFontGlyphRangesBuilder::AddChar
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
+
         .def("add_text", &ImFontGlyphRangesBuilder::AddText
             , py::arg("text")
             , py::arg("text_end") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("add_ranges", &ImFontGlyphRangesBuilder::AddRanges
             , py::arg("ranges")
             , py::return_value_policy::automatic_reference)
+
         .def("build_ranges", &ImFontGlyphRangesBuilder::BuildRanges
             , py::arg("out_ranges")
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImFontAtlasCustomRect, FontAtlasCustomRect)
         .def_readwrite("width", &ImFontAtlasCustomRect::Width)
+
         .def_readwrite("height", &ImFontAtlasCustomRect::Height)
+
         .def_readwrite("x", &ImFontAtlasCustomRect::X)
+
         .def_readwrite("y", &ImFontAtlasCustomRect::Y)
+
         .def_readwrite("glyph_id", &ImFontAtlasCustomRect::GlyphID)
+
         .def_readwrite("glyph_advance_x", &ImFontAtlasCustomRect::GlyphAdvanceX)
+
         .def_readwrite("glyph_offset", &ImFontAtlasCustomRect::GlyphOffset)
+
         .def_readwrite("font", &ImFontAtlasCustomRect::Font)
+
         .def(py::init<>())
         .def("is_packed", &ImFontAtlasCustomRect::IsPacked
             , py::return_value_policy::automatic_reference)
+
     ;
+
     py::enum_<ImFontAtlasFlags_>(_imgui, "FontAtlasFlags", py::arithmetic())
         .value("NONE", ImFontAtlasFlags_::ImFontAtlasFlags_None)
         .value("NO_POWER_OF_TWO_HEIGHT", ImFontAtlasFlags_::ImFontAtlasFlags_NoPowerOfTwoHeight)
         .value("NO_MOUSE_CURSORS", ImFontAtlasFlags_::ImFontAtlasFlags_NoMouseCursors)
         .value("NO_BAKED_LINES", ImFontAtlasFlags_::ImFontAtlasFlags_NoBakedLines)
-        .export_values();
+        .export_values()
+    ;
+
     PYCLASS(_imgui, ImFontAtlas, FontAtlas)
         .def(py::init<>())
         .def("add_font", &ImFontAtlas::AddFont
             , py::arg("font_cfg")
             , py::return_value_policy::automatic_reference)
+
         .def("add_font_default", &ImFontAtlas::AddFontDefault
             , py::arg("font_cfg") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("add_font_from_memory_ttf", &ImFontAtlas::AddFontFromMemoryTTF
             , py::arg("font_data")
             , py::arg("font_data_size")
@@ -3474,6 +3985,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("font_cfg") = nullptr
             , py::arg("glyph_ranges") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("add_font_from_memory_compressed_ttf", &ImFontAtlas::AddFontFromMemoryCompressedTTF
             , py::arg("compressed_font_data")
             , py::arg("compressed_font_data_size")
@@ -3481,103 +3993,164 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("font_cfg") = nullptr
             , py::arg("glyph_ranges") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("add_font_from_memory_compressed_base85ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
             , py::arg("compressed_font_data_base85")
             , py::arg("size_pixels")
             , py::arg("font_cfg") = nullptr
             , py::arg("glyph_ranges") = nullptr
             , py::return_value_policy::automatic_reference)
+
         .def("clear_input_data", &ImFontAtlas::ClearInputData
             , py::return_value_policy::automatic_reference)
+
         .def("clear_tex_data", &ImFontAtlas::ClearTexData
             , py::return_value_policy::automatic_reference)
+
         .def("clear_fonts", &ImFontAtlas::ClearFonts
             , py::return_value_policy::automatic_reference)
+
         .def("clear", &ImFontAtlas::Clear
             , py::return_value_policy::automatic_reference)
+
         .def("build", &ImFontAtlas::Build
             , py::return_value_policy::automatic_reference)
+
         .def("is_built", &ImFontAtlas::IsBuilt
             , py::return_value_policy::automatic_reference)
+
         .def("set_tex_id", &ImFontAtlas::SetTexID
             , py::arg("id")
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_default", &ImFontAtlas::GetGlyphRangesDefault
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_greek", &ImFontAtlas::GetGlyphRangesGreek
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_korean", &ImFontAtlas::GetGlyphRangesKorean
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_japanese", &ImFontAtlas::GetGlyphRangesJapanese
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_chinese_full", &ImFontAtlas::GetGlyphRangesChineseFull
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_chinese_simplified_common", &ImFontAtlas::GetGlyphRangesChineseSimplifiedCommon
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_cyrillic", &ImFontAtlas::GetGlyphRangesCyrillic
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_thai", &ImFontAtlas::GetGlyphRangesThai
             , py::return_value_policy::automatic_reference)
+
         .def("get_glyph_ranges_vietnamese", &ImFontAtlas::GetGlyphRangesVietnamese
             , py::return_value_policy::automatic_reference)
+
         .def_readwrite("flags", &ImFontAtlas::Flags)
+
         .def_readwrite("tex_id", &ImFontAtlas::TexID)
+
         .def_readwrite("tex_desired_width", &ImFontAtlas::TexDesiredWidth)
+
         .def_readwrite("tex_glyph_padding", &ImFontAtlas::TexGlyphPadding)
+
         .def_readwrite("locked", &ImFontAtlas::Locked)
+
         .def_readwrite("user_data", &ImFontAtlas::UserData)
+
         .def_readwrite("tex_ready", &ImFontAtlas::TexReady)
+
         .def_readwrite("tex_pixels_use_colors", &ImFontAtlas::TexPixelsUseColors)
+
         .def_readwrite("tex_width", &ImFontAtlas::TexWidth)
+
         .def_readwrite("tex_height", &ImFontAtlas::TexHeight)
+
         .def_readwrite("tex_uv_scale", &ImFontAtlas::TexUvScale)
+
         .def_readwrite("tex_uv_white_pixel", &ImFontAtlas::TexUvWhitePixel)
+
         .def_readonly("tex_uv_lines", &ImFontAtlas::TexUvLines)
+
         .def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags)
+
         .def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors)
+
         .def_readwrite("pack_id_lines", &ImFontAtlas::PackIdLines)
+
     ;
+
     PYCLASS(_imgui, ImFont, Font)
         .def_readwrite("index_advance_x", &ImFont::IndexAdvanceX)
+
         .def_readwrite("fallback_advance_x", &ImFont::FallbackAdvanceX)
+
         .def_readwrite("font_size", &ImFont::FontSize)
+
         .def_readwrite("index_lookup", &ImFont::IndexLookup)
+
         .def_readwrite("glyphs", &ImFont::Glyphs)
+
         .def_readwrite("fallback_glyph", &ImFont::FallbackGlyph)
+
         .def_readwrite("container_atlas", &ImFont::ContainerAtlas)
+
         .def_readwrite("config_data", &ImFont::ConfigData)
+
         .def_readwrite("config_data_count", &ImFont::ConfigDataCount)
+
         .def_readwrite("fallback_char", &ImFont::FallbackChar)
+
         .def_readwrite("ellipsis_char", &ImFont::EllipsisChar)
+
         .def_readwrite("ellipsis_char_count", &ImFont::EllipsisCharCount)
+
         .def_readwrite("ellipsis_width", &ImFont::EllipsisWidth)
+
         .def_readwrite("ellipsis_char_step", &ImFont::EllipsisCharStep)
+
         .def_readwrite("dirty_lookup_tables", &ImFont::DirtyLookupTables)
+
         .def_readwrite("scale", &ImFont::Scale)
+
         .def_readwrite("ascent", &ImFont::Ascent)
+
         .def_readwrite("descent", &ImFont::Descent)
+
         .def_readwrite("metrics_total_surface", &ImFont::MetricsTotalSurface)
+
         .def_readonly("used4k_pages_map", &ImFont::Used4kPagesMap)
+
         .def(py::init<>())
         .def("find_glyph", &ImFont::FindGlyph
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
+
         .def("find_glyph_no_fallback", &ImFont::FindGlyphNoFallback
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
+
         .def("get_char_advance", &ImFont::GetCharAdvance
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
+
         .def("is_loaded", &ImFont::IsLoaded
             , py::return_value_policy::automatic_reference)
+
         .def("get_debug_name", &ImFont::GetDebugName
             , py::return_value_policy::automatic_reference)
+
         .def("calc_word_wrap_position_a", &ImFont::CalcWordWrapPositionA
             , py::arg("scale")
             , py::arg("text")
             , py::arg("text_end")
             , py::arg("wrap_width")
             , py::return_value_policy::automatic_reference)
+
         .def("render_char", &ImFont::RenderChar
             , py::arg("draw_list")
             , py::arg("size")
@@ -3585,6 +4158,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("col")
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
+
         .def("render_text", &ImFont::RenderText
             , py::arg("draw_list")
             , py::arg("size")
@@ -3596,13 +4170,17 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("wrap_width") = 0.0f
             , py::arg("cpu_fine_clip") = false
             , py::return_value_policy::automatic_reference)
+
         .def("build_lookup_table", &ImFont::BuildLookupTable
             , py::return_value_policy::automatic_reference)
+
         .def("clear_output_data", &ImFont::ClearOutputData
             , py::return_value_policy::automatic_reference)
+
         .def("grow_index", &ImFont::GrowIndex
             , py::arg("new_size")
             , py::return_value_policy::automatic_reference)
+
         .def("add_glyph", &ImFont::AddGlyph
             , py::arg("src_cfg")
             , py::arg("c")
@@ -3616,20 +4194,25 @@ void init_generated(py::module &_imgui, Registry &registry) {
             , py::arg("v1")
             , py::arg("advance_x")
             , py::return_value_policy::automatic_reference)
+
         .def("add_remap_char", &ImFont::AddRemapChar
             , py::arg("dst")
             , py::arg("src")
             , py::arg("overwrite_dst") = true
             , py::return_value_policy::automatic_reference)
+
         .def("set_glyph_visible", &ImFont::SetGlyphVisible
             , py::arg("c")
             , py::arg("visible")
             , py::return_value_policy::automatic_reference)
+
         .def("is_glyph_range_unused", &ImFont::IsGlyphRangeUnused
             , py::arg("c_begin")
             , py::arg("c_last")
             , py::return_value_policy::automatic_reference)
+
     ;
+
     py::enum_<ImGuiViewportFlags_>(_imgui, "ViewportFlags", py::arithmetic())
         .value("NONE", ImGuiViewportFlags_::ImGuiViewportFlags_None)
         .value("IS_PLATFORM_WINDOW", ImGuiViewportFlags_::ImGuiViewportFlags_IsPlatformWindow)
@@ -3646,36 +4229,62 @@ void init_generated(py::module &_imgui, Registry &registry) {
         .value("CAN_HOST_OTHER_WINDOWS", ImGuiViewportFlags_::ImGuiViewportFlags_CanHostOtherWindows)
         .value("IS_MINIMIZED", ImGuiViewportFlags_::ImGuiViewportFlags_IsMinimized)
         .value("IS_FOCUSED", ImGuiViewportFlags_::ImGuiViewportFlags_IsFocused)
-        .export_values();
+        .export_values()
+    ;
+
     PYCLASS(_imgui, ImGuiViewport, Viewport)
         .def_readwrite("id", &ImGuiViewport::ID)
+
         .def_readwrite("flags", &ImGuiViewport::Flags)
+
         .def_readwrite("pos", &ImGuiViewport::Pos)
+
         .def_readwrite("size", &ImGuiViewport::Size)
+
         .def_readwrite("work_pos", &ImGuiViewport::WorkPos)
+
         .def_readwrite("work_size", &ImGuiViewport::WorkSize)
+
         .def_readwrite("dpi_scale", &ImGuiViewport::DpiScale)
+
         .def_readwrite("parent_viewport_id", &ImGuiViewport::ParentViewportId)
+
         .def_readwrite("draw_data", &ImGuiViewport::DrawData)
+
         .def_readwrite("renderer_user_data", &ImGuiViewport::RendererUserData)
+
         .def_readwrite("platform_user_data", &ImGuiViewport::PlatformUserData)
+
         .def_readwrite("platform_handle", &ImGuiViewport::PlatformHandle)
+
         .def_readwrite("platform_handle_raw", &ImGuiViewport::PlatformHandleRaw)
+
         .def_readwrite("platform_window_created", &ImGuiViewport::PlatformWindowCreated)
+
         .def_readwrite("platform_request_move", &ImGuiViewport::PlatformRequestMove)
+
         .def_readwrite("platform_request_resize", &ImGuiViewport::PlatformRequestResize)
+
         .def_readwrite("platform_request_close", &ImGuiViewport::PlatformRequestClose)
+
         .def(py::init<>())
         .def("get_center", &ImGuiViewport::GetCenter
             , py::return_value_policy::automatic_reference)
+
         .def("get_work_center", &ImGuiViewport::GetWorkCenter
             , py::return_value_policy::automatic_reference)
+
     ;
+
     PYCLASS(_imgui, ImGuiPlatformImeData, PlatformImeData)
         .def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible)
+
         .def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos)
+
         .def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight)
+
         .def(py::init<>())
     ;
+
 
 }

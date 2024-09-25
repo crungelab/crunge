@@ -1,5 +1,5 @@
 source: '../../depot/sdl/include/SDL3/SDL_video.h'
-target: 'src/sdl_video.cpp'
+target: 'src/sdl_video_auto.cpp'
 
 prefixes: [SDL_]
 

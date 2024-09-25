@@ -15,12 +15,12 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/sdl_init.cpp
-    src/sdl_video.cpp
-    src/sdl_events.cpp
-    src/sdl_keyboard.cpp
-    src/sdl_scancode.cpp
-    src/sdl_properties.cpp
+    src/sdl_init_auto.cpp
+    src/sdl_video_auto.cpp
+    src/sdl_events_auto.cpp
+    src/sdl_keyboard_auto.cpp
+    src/sdl_scancode_auto.cpp
+    src/sdl_properties_auto.cpp
     src/main.cpp
 )
 
