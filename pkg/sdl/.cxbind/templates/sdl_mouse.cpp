@@ -4,7 +4,6 @@
 #include <limits>
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_video.h>
 #include <iostream>
 
 #include <cxbind/cxbind.h>
@@ -14,6 +13,6 @@
 
 namespace py = pybind11;
 
-void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_mouse_auto(py::module &_sdl, Registry &registry) {
 {{body}}
 }

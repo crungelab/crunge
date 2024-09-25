@@ -43,6 +43,7 @@ void init_main(py::module &_sdl, Registry &registry)
         .export_values();
 
     PYCLASS(_sdl, SDLWindowWrapper, Window);
+    PYCLASS(_sdl, SDLCursorWrapper, Cursor);
     /*PYCLASS_BEGIN(_sdl, SDLWindowWrapper, Window)
     PYCLASS_END(_sdl, SDLWindowWrapper, Window)*/
 

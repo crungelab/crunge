@@ -19,6 +19,7 @@ set(SOURCES
     src/sdl_video_auto.cpp
     src/sdl_events_auto.cpp
     src/sdl_keyboard_auto.cpp
+    src/sdl_mouse_auto.cpp
     src/sdl_scancode_auto.cpp
     src/sdl_properties_auto.cpp
     src/main.cpp

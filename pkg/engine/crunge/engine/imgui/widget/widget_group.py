@@ -16,7 +16,6 @@ class WidgetGroup(Widget):
         hovered_index = -1
         for i, child in enumerate(self.children):
             self.draw_child(renderer, child)
-            #if imgui.is_item_hovered(imgui.HOVERED_RECT_ONLY):
             if imgui.is_item_hovered(imgui.HoveredFlags.RECT_ONLY):
                 hovered_index = i
 
