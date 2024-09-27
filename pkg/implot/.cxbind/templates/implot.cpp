@@ -5,7 +5,7 @@
 #include <pybind11/stl.h>
 
 #include "implot.h"
-#include "implot_internal.h"
+//#include "implot_internal.h"
 
 #include <cxbind/cxbind.h>
 #include <crunge/imgui/crunge-imgui.h>

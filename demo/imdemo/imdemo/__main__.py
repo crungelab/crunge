@@ -58,7 +58,7 @@ app.use('tree')
 app.use('windowmenu')
 app.use('windowdraw')
 
-#app.show('index')
+app.show('index')
 #app.show('imagebutton')
 #app.show('imagedraw')
 #app.show('drawcallback')
@@ -69,7 +69,7 @@ app.use('windowdraw')
 #app.show('circle')
 #app.show('circlefilled')
 #app.show('windowdraw')
-app.show('drawcallback')
+#app.show('drawcallback')
 
 app.run()
 

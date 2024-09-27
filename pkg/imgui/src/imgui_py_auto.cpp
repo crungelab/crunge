@@ -11,7 +11,7 @@
 
 namespace py = pybind11;
 
-void init_generated(py::module &_imgui, Registry &registry) {
+void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     PYCLASS(_imgui, ImVec2, Vec2)
         .def_readwrite("x", &ImVec2::x)
 
@@ -33,6 +33,37 @@ void init_generated(py::module &_imgui, Registry &registry) {
     ;
 
     _imgui
+    .def("create_context", [](ImFontAtlas * shared_font_atlas)
+        {
+            auto ret = py::capsule(ImGui::CreateContext(shared_font_atlas), "ImGuiContext");
+            return ret;
+        }
+        , py::arg("shared_font_atlas") = nullptr
+        , py::return_value_policy::automatic_reference)
+
+    .def("destroy_context", [](const py::capsule& ctx)
+        {
+            ImGui::DestroyContext(ctx);
+            return ;
+        }
+        , py::arg("ctx") = nullptr
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_current_context", []()
+        {
+            auto ret = py::capsule(ImGui::GetCurrentContext(), "ImGuiContext");
+            return ret;
+        }
+        , py::return_value_policy::automatic_reference)
+
+    .def("set_current_context", [](const py::capsule& ctx)
+        {
+            ImGui::SetCurrentContext(ctx);
+            return ;
+        }
+        , py::arg("ctx")
+        , py::return_value_policy::automatic_reference)
+
     .def("get_io", &ImGui::GetIO
         , py::return_value_policy::reference)
 
@@ -245,11 +276,11 @@ void init_generated(py::module &_imgui, Registry &registry) {
     .def("get_scroll_y", &ImGui::GetScrollY
         , py::return_value_policy::automatic_reference)
 
-    .def("set_scroll_x", py::overload_cast<float>(&ImGui::SetScrollX)
+    .def("set_scroll_x", &ImGui::SetScrollX
         , py::arg("scroll_x")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_scroll_y", py::overload_cast<float>(&ImGui::SetScrollY)
+    .def("set_scroll_y", &ImGui::SetScrollY
         , py::arg("scroll_y")
         , py::return_value_policy::automatic_reference)
 
@@ -267,12 +298,12 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("center_y_ratio") = 0.5f
         , py::return_value_policy::automatic_reference)
 
-    .def("set_scroll_from_pos_x", py::overload_cast<float, float>(&ImGui::SetScrollFromPosX)
+    .def("set_scroll_from_pos_x", &ImGui::SetScrollFromPosX
         , py::arg("local_x")
         , py::arg("center_x_ratio") = 0.5f
         , py::return_value_policy::automatic_reference)
 
-    .def("set_scroll_from_pos_y", py::overload_cast<float, float>(&ImGui::SetScrollFromPosY)
+    .def("set_scroll_from_pos_y", &ImGui::SetScrollFromPosY
         , py::arg("local_y")
         , py::arg("center_y_ratio") = 0.5f
         , py::return_value_policy::automatic_reference)
@@ -1276,7 +1307,7 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("popup_flags") = 1
         , py::return_value_policy::automatic_reference)
 
-    .def("is_popup_open", py::overload_cast<const char *, int>(&ImGui::IsPopupOpen)
+    .def("is_popup_open", &ImGui::IsPopupOpen
         , py::arg("str_id")
         , py::arg("flags") = 0
         , py::return_value_policy::automatic_reference)
@@ -1648,16 +1679,16 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("out_b") = 0
         , py::return_value_policy::automatic_reference)
 
-    .def("is_key_down", py::overload_cast<ImGuiKey>(&ImGui::IsKeyDown)
+    .def("is_key_down", &ImGui::IsKeyDown
         , py::arg("key")
         , py::return_value_policy::automatic_reference)
 
-    .def("is_key_pressed", py::overload_cast<ImGuiKey, bool>(&ImGui::IsKeyPressed)
+    .def("is_key_pressed", &ImGui::IsKeyPressed
         , py::arg("key")
         , py::arg("repeat") = true
         , py::return_value_policy::automatic_reference)
 
-    .def("is_key_released", py::overload_cast<ImGuiKey>(&ImGui::IsKeyReleased)
+    .def("is_key_released", &ImGui::IsKeyReleased
         , py::arg("key")
         , py::return_value_policy::automatic_reference)
 
@@ -1693,16 +1724,16 @@ void init_generated(py::module &_imgui, Registry &registry) {
         , py::arg("key")
         , py::return_value_policy::automatic_reference)
 
-    .def("is_mouse_down", py::overload_cast<int>(&ImGui::IsMouseDown)
+    .def("is_mouse_down", &ImGui::IsMouseDown
         , py::arg("button")
         , py::return_value_policy::automatic_reference)
 
-    .def("is_mouse_clicked", py::overload_cast<int, bool>(&ImGui::IsMouseClicked)
+    .def("is_mouse_clicked", &ImGui::IsMouseClicked
         , py::arg("button")
         , py::arg("repeat") = false
         , py::return_value_policy::automatic_reference)
 
-    .def("is_mouse_released", py::overload_cast<int>(&ImGui::IsMouseReleased)
+    .def("is_mouse_released", &ImGui::IsMouseReleased
         , py::arg("button")
         , py::return_value_policy::automatic_reference)
 

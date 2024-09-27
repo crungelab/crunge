@@ -196,59 +196,59 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_display_for_window", [](SDLWindowWrapper * window)
+    .def("get_display_for_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetDisplayForWindow(window->get());
+            auto ret = SDL_GetDisplayForWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_pixel_density", [](SDLWindowWrapper * window)
+    .def("get_window_pixel_density", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowPixelDensity(window->get());
+            auto ret = SDL_GetWindowPixelDensity(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_display_scale", [](SDLWindowWrapper * window)
+    .def("get_window_display_scale", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowDisplayScale(window->get());
+            auto ret = SDL_GetWindowDisplayScale(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_fullscreen_mode", [](SDLWindowWrapper * window, const SDL_DisplayMode * mode)
+    .def("set_window_fullscreen_mode", [](const SDLWindowWrapper& window, const SDL_DisplayMode * mode)
         {
-            auto ret = SDL_SetWindowFullscreenMode(window->get(), mode);
+            auto ret = SDL_SetWindowFullscreenMode(window, mode);
             return ret;
         }
         , py::arg("window")
         , py::arg("mode")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_fullscreen_mode", [](SDLWindowWrapper * window)
+    .def("get_window_fullscreen_mode", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowFullscreenMode(window->get());
+            auto ret = SDL_GetWindowFullscreenMode(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_icc_profile", [](SDLWindowWrapper * window, unsigned long * size)
+    .def("get_window_icc_profile", [](const SDLWindowWrapper& window, unsigned long * size)
         {
-            auto ret = SDL_GetWindowICCProfile(window->get(), size);
+            auto ret = SDL_GetWindowICCProfile(window, size);
             return std::make_tuple(ret, size);
         }
         , py::arg("window")
         , py::arg("size")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_pixel_format", [](SDLWindowWrapper * window)
+    .def("get_window_pixel_format", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowPixelFormat(window->get());
+            auto ret = SDL_GetWindowPixelFormat(window);
             return ret;
         }
         , py::arg("window")
@@ -256,7 +256,7 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
 
     .def("create_window", [](const char * title, int w, int h, unsigned long flags)
         {
-            auto ret = new SDLWindowWrapper(SDL_CreateWindow(title, w, h, flags));
+            auto ret = SDLWindowWrapper(SDL_CreateWindow(title, w, h, flags));
             return ret;
         }
         , py::arg("title")
@@ -265,9 +265,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("flags")
         , py::return_value_policy::automatic_reference)
 
-    .def("create_popup_window", [](SDLWindowWrapper * parent, int offset_x, int offset_y, int w, int h, unsigned long flags)
+    .def("create_popup_window", [](const SDLWindowWrapper& parent, int offset_x, int offset_y, int w, int h, unsigned long flags)
         {
-            auto ret = new SDLWindowWrapper(SDL_CreatePopupWindow(parent->get(), offset_x, offset_y, w, h, flags));
+            auto ret = SDLWindowWrapper(SDL_CreatePopupWindow(parent, offset_x, offset_y, w, h, flags));
             return ret;
         }
         , py::arg("parent")
@@ -280,15 +280,15 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
 
     .def("create_window_with_properties", [](unsigned int props)
         {
-            auto ret = new SDLWindowWrapper(SDL_CreateWindowWithProperties(props));
+            auto ret = SDLWindowWrapper(SDL_CreateWindowWithProperties(props));
             return ret;
         }
         , py::arg("props")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_id", [](SDLWindowWrapper * window)
+    .def("get_window_id", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowID(window->get());
+            auto ret = SDL_GetWindowID(window);
             return ret;
         }
         , py::arg("window")
@@ -296,65 +296,65 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
 
     .def("get_window_from_id", [](unsigned int id)
         {
-            auto ret = new SDLWindowWrapper(SDL_GetWindowFromID(id));
+            auto ret = SDLWindowWrapper(SDL_GetWindowFromID(id));
             return ret;
         }
         , py::arg("id")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_parent", [](SDLWindowWrapper * window)
+    .def("get_window_parent", [](const SDLWindowWrapper& window)
         {
-            auto ret = new SDLWindowWrapper(SDL_GetWindowParent(window->get()));
+            auto ret = SDLWindowWrapper(SDL_GetWindowParent(window));
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_properties", [](SDLWindowWrapper * window)
+    .def("get_window_properties", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowProperties(window->get());
+            auto ret = SDL_GetWindowProperties(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_flags", [](SDLWindowWrapper * window)
+    .def("get_window_flags", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowFlags(window->get());
+            auto ret = SDL_GetWindowFlags(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_title", [](SDLWindowWrapper * window, const char * title)
+    .def("set_window_title", [](const SDLWindowWrapper& window, const char * title)
         {
-            auto ret = SDL_SetWindowTitle(window->get(), title);
+            auto ret = SDL_SetWindowTitle(window, title);
             return ret;
         }
         , py::arg("window")
         , py::arg("title")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_title", [](SDLWindowWrapper * window)
+    .def("get_window_title", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowTitle(window->get());
+            auto ret = SDL_GetWindowTitle(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_icon", [](SDLWindowWrapper * window, SDL_Surface * icon)
+    .def("set_window_icon", [](const SDLWindowWrapper& window, SDL_Surface * icon)
         {
-            auto ret = SDL_SetWindowIcon(window->get(), icon);
+            auto ret = SDL_SetWindowIcon(window, icon);
             return ret;
         }
         , py::arg("window")
         , py::arg("icon")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_position", [](SDLWindowWrapper * window, int x, int y)
+    .def("set_window_position", [](const SDLWindowWrapper& window, int x, int y)
         {
-            auto ret = SDL_SetWindowPosition(window->get(), x, y);
+            auto ret = SDL_SetWindowPosition(window, x, y);
             return ret;
         }
         , py::arg("window")
@@ -362,9 +362,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("y")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_position", [](SDLWindowWrapper * window, int * x, int * y)
+    .def("get_window_position", [](const SDLWindowWrapper& window, int * x, int * y)
         {
-            auto ret = SDL_GetWindowPosition(window->get(), x, y);
+            auto ret = SDL_GetWindowPosition(window, x, y);
             return std::make_tuple(ret, x, y);
         }
         , py::arg("window")
@@ -372,9 +372,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("y")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_size", [](SDLWindowWrapper * window, int w, int h)
+    .def("set_window_size", [](const SDLWindowWrapper& window, int w, int h)
         {
-            auto ret = SDL_SetWindowSize(window->get(), w, h);
+            auto ret = SDL_SetWindowSize(window, w, h);
             return ret;
         }
         , py::arg("window")
@@ -382,9 +382,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_size", [](SDLWindowWrapper * window, int * w, int * h)
+    .def("get_window_size", [](const SDLWindowWrapper& window, int * w, int * h)
         {
-            auto ret = SDL_GetWindowSize(window->get(), w, h);
+            auto ret = SDL_GetWindowSize(window, w, h);
             return std::make_tuple(w, h);
         }
         , py::arg("window")
@@ -392,18 +392,18 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h") = 0
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_safe_area", [](SDLWindowWrapper * window, SDL_Rect * rect)
+    .def("get_window_safe_area", [](const SDLWindowWrapper& window, SDL_Rect * rect)
         {
-            auto ret = SDL_GetWindowSafeArea(window->get(), rect);
+            auto ret = SDL_GetWindowSafeArea(window, rect);
             return ret;
         }
         , py::arg("window")
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_aspect_ratio", [](SDLWindowWrapper * window, float min_aspect, float max_aspect)
+    .def("set_window_aspect_ratio", [](const SDLWindowWrapper& window, float min_aspect, float max_aspect)
         {
-            auto ret = SDL_SetWindowAspectRatio(window->get(), min_aspect, max_aspect);
+            auto ret = SDL_SetWindowAspectRatio(window, min_aspect, max_aspect);
             return ret;
         }
         , py::arg("window")
@@ -411,9 +411,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("max_aspect")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_aspect_ratio", [](SDLWindowWrapper * window, float * min_aspect, float * max_aspect)
+    .def("get_window_aspect_ratio", [](const SDLWindowWrapper& window, float * min_aspect, float * max_aspect)
         {
-            auto ret = SDL_GetWindowAspectRatio(window->get(), min_aspect, max_aspect);
+            auto ret = SDL_GetWindowAspectRatio(window, min_aspect, max_aspect);
             return std::make_tuple(ret, min_aspect, max_aspect);
         }
         , py::arg("window")
@@ -421,9 +421,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("max_aspect")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_borders_size", [](SDLWindowWrapper * window, int * top, int * left, int * bottom, int * right)
+    .def("get_window_borders_size", [](const SDLWindowWrapper& window, int * top, int * left, int * bottom, int * right)
         {
-            auto ret = SDL_GetWindowBordersSize(window->get(), top, left, bottom, right);
+            auto ret = SDL_GetWindowBordersSize(window, top, left, bottom, right);
             return std::make_tuple(ret, top, left, bottom, right);
         }
         , py::arg("window")
@@ -433,9 +433,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("right")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_size_in_pixels", [](SDLWindowWrapper * window, int * w, int * h)
+    .def("get_window_size_in_pixels", [](const SDLWindowWrapper& window, int * w, int * h)
         {
-            auto ret = SDL_GetWindowSizeInPixels(window->get(), w, h);
+            auto ret = SDL_GetWindowSizeInPixels(window, w, h);
             return std::make_tuple(w, h);
         }
         , py::arg("window")
@@ -443,9 +443,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h") = 0
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_minimum_size", [](SDLWindowWrapper * window, int min_w, int min_h)
+    .def("set_window_minimum_size", [](const SDLWindowWrapper& window, int min_w, int min_h)
         {
-            auto ret = SDL_SetWindowMinimumSize(window->get(), min_w, min_h);
+            auto ret = SDL_SetWindowMinimumSize(window, min_w, min_h);
             return ret;
         }
         , py::arg("window")
@@ -453,9 +453,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("min_h")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_minimum_size", [](SDLWindowWrapper * window, int * w, int * h)
+    .def("get_window_minimum_size", [](const SDLWindowWrapper& window, int * w, int * h)
         {
-            auto ret = SDL_GetWindowMinimumSize(window->get(), w, h);
+            auto ret = SDL_GetWindowMinimumSize(window, w, h);
             return std::make_tuple(ret, w, h);
         }
         , py::arg("window")
@@ -463,9 +463,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_maximum_size", [](SDLWindowWrapper * window, int max_w, int max_h)
+    .def("set_window_maximum_size", [](const SDLWindowWrapper& window, int max_w, int max_h)
         {
-            auto ret = SDL_SetWindowMaximumSize(window->get(), max_w, max_h);
+            auto ret = SDL_SetWindowMaximumSize(window, max_w, max_h);
             return ret;
         }
         , py::arg("window")
@@ -473,9 +473,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("max_h")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_maximum_size", [](SDLWindowWrapper * window, int * w, int * h)
+    .def("get_window_maximum_size", [](const SDLWindowWrapper& window, int * w, int * h)
         {
-            auto ret = SDL_GetWindowMaximumSize(window->get(), w, h);
+            auto ret = SDL_GetWindowMaximumSize(window, w, h);
             return std::make_tuple(ret, w, h);
         }
         , py::arg("window")
@@ -483,143 +483,143 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_bordered", [](SDLWindowWrapper * window, bool bordered)
+    .def("set_window_bordered", [](const SDLWindowWrapper& window, bool bordered)
         {
-            auto ret = SDL_SetWindowBordered(window->get(), bordered);
+            auto ret = SDL_SetWindowBordered(window, bordered);
             return ret;
         }
         , py::arg("window")
         , py::arg("bordered")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_resizable", [](SDLWindowWrapper * window, bool resizable)
+    .def("set_window_resizable", [](const SDLWindowWrapper& window, bool resizable)
         {
-            auto ret = SDL_SetWindowResizable(window->get(), resizable);
+            auto ret = SDL_SetWindowResizable(window, resizable);
             return ret;
         }
         , py::arg("window")
         , py::arg("resizable")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_always_on_top", [](SDLWindowWrapper * window, bool on_top)
+    .def("set_window_always_on_top", [](const SDLWindowWrapper& window, bool on_top)
         {
-            auto ret = SDL_SetWindowAlwaysOnTop(window->get(), on_top);
+            auto ret = SDL_SetWindowAlwaysOnTop(window, on_top);
             return ret;
         }
         , py::arg("window")
         , py::arg("on_top")
         , py::return_value_policy::automatic_reference)
 
-    .def("show_window", [](SDLWindowWrapper * window)
+    .def("show_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_ShowWindow(window->get());
+            auto ret = SDL_ShowWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("hide_window", [](SDLWindowWrapper * window)
+    .def("hide_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_HideWindow(window->get());
+            auto ret = SDL_HideWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("raise_window", [](SDLWindowWrapper * window)
+    .def("raise_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_RaiseWindow(window->get());
+            auto ret = SDL_RaiseWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("maximize_window", [](SDLWindowWrapper * window)
+    .def("maximize_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_MaximizeWindow(window->get());
+            auto ret = SDL_MaximizeWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("minimize_window", [](SDLWindowWrapper * window)
+    .def("minimize_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_MinimizeWindow(window->get());
+            auto ret = SDL_MinimizeWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("restore_window", [](SDLWindowWrapper * window)
+    .def("restore_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_RestoreWindow(window->get());
+            auto ret = SDL_RestoreWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_fullscreen", [](SDLWindowWrapper * window, bool fullscreen)
+    .def("set_window_fullscreen", [](const SDLWindowWrapper& window, bool fullscreen)
         {
-            auto ret = SDL_SetWindowFullscreen(window->get(), fullscreen);
+            auto ret = SDL_SetWindowFullscreen(window, fullscreen);
             return ret;
         }
         , py::arg("window")
         , py::arg("fullscreen")
         , py::return_value_policy::automatic_reference)
 
-    .def("sync_window", [](SDLWindowWrapper * window)
+    .def("sync_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_SyncWindow(window->get());
+            auto ret = SDL_SyncWindow(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("window_has_surface", [](SDLWindowWrapper * window)
+    .def("window_has_surface", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_WindowHasSurface(window->get());
+            auto ret = SDL_WindowHasSurface(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_surface", [](SDLWindowWrapper * window)
+    .def("get_window_surface", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowSurface(window->get());
+            auto ret = SDL_GetWindowSurface(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_surface_v_sync", [](SDLWindowWrapper * window, int vsync)
+    .def("set_window_surface_v_sync", [](const SDLWindowWrapper& window, int vsync)
         {
-            auto ret = SDL_SetWindowSurfaceVSync(window->get(), vsync);
+            auto ret = SDL_SetWindowSurfaceVSync(window, vsync);
             return ret;
         }
         , py::arg("window")
         , py::arg("vsync")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_surface_v_sync", [](SDLWindowWrapper * window, int * vsync)
+    .def("get_window_surface_v_sync", [](const SDLWindowWrapper& window, int * vsync)
         {
-            auto ret = SDL_GetWindowSurfaceVSync(window->get(), vsync);
+            auto ret = SDL_GetWindowSurfaceVSync(window, vsync);
             return std::make_tuple(ret, vsync);
         }
         , py::arg("window")
         , py::arg("vsync")
         , py::return_value_policy::automatic_reference)
 
-    .def("update_window_surface", [](SDLWindowWrapper * window)
+    .def("update_window_surface", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_UpdateWindowSurface(window->get());
+            auto ret = SDL_UpdateWindowSurface(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("update_window_surface_rects", [](SDLWindowWrapper * window, const SDL_Rect * rects, int numrects)
+    .def("update_window_surface_rects", [](const SDLWindowWrapper& window, const SDL_Rect * rects, int numrects)
         {
-            auto ret = SDL_UpdateWindowSurfaceRects(window->get(), rects, numrects);
+            auto ret = SDL_UpdateWindowSurfaceRects(window, rects, numrects);
             return ret;
         }
         , py::arg("window")
@@ -627,43 +627,43 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("numrects")
         , py::return_value_policy::automatic_reference)
 
-    .def("destroy_window_surface", [](SDLWindowWrapper * window)
+    .def("destroy_window_surface", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_DestroyWindowSurface(window->get());
+            auto ret = SDL_DestroyWindowSurface(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_keyboard_grab", [](SDLWindowWrapper * window, bool grabbed)
+    .def("set_window_keyboard_grab", [](const SDLWindowWrapper& window, bool grabbed)
         {
-            auto ret = SDL_SetWindowKeyboardGrab(window->get(), grabbed);
-            return ret;
-        }
-        , py::arg("window")
-        , py::arg("grabbed")
-        , py::return_value_policy::automatic_reference)
-
-    .def("set_window_mouse_grab", [](SDLWindowWrapper * window, bool grabbed)
-        {
-            auto ret = SDL_SetWindowMouseGrab(window->get(), grabbed);
+            auto ret = SDL_SetWindowKeyboardGrab(window, grabbed);
             return ret;
         }
         , py::arg("window")
         , py::arg("grabbed")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_keyboard_grab", [](SDLWindowWrapper * window)
+    .def("set_window_mouse_grab", [](const SDLWindowWrapper& window, bool grabbed)
         {
-            auto ret = SDL_GetWindowKeyboardGrab(window->get());
+            auto ret = SDL_SetWindowMouseGrab(window, grabbed);
+            return ret;
+        }
+        , py::arg("window")
+        , py::arg("grabbed")
+        , py::return_value_policy::automatic_reference)
+
+    .def("get_window_keyboard_grab", [](const SDLWindowWrapper& window)
+        {
+            auto ret = SDL_GetWindowKeyboardGrab(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_mouse_grab", [](SDLWindowWrapper * window)
+    .def("get_window_mouse_grab", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowMouseGrab(window->get());
+            auto ret = SDL_GetWindowMouseGrab(window);
             return ret;
         }
         , py::arg("window")
@@ -671,75 +671,75 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
 
     .def("get_grabbed_window", []()
         {
-            auto ret = new SDLWindowWrapper(SDL_GetGrabbedWindow());
+            auto ret = SDLWindowWrapper(SDL_GetGrabbedWindow());
             return ret;
         }
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_mouse_rect", [](SDLWindowWrapper * window, const SDL_Rect * rect)
+    .def("set_window_mouse_rect", [](const SDLWindowWrapper& window, const SDL_Rect * rect)
         {
-            auto ret = SDL_SetWindowMouseRect(window->get(), rect);
+            auto ret = SDL_SetWindowMouseRect(window, rect);
             return ret;
         }
         , py::arg("window")
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_mouse_rect", [](SDLWindowWrapper * window)
+    .def("get_window_mouse_rect", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowMouseRect(window->get());
+            auto ret = SDL_GetWindowMouseRect(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_opacity", [](SDLWindowWrapper * window, float opacity)
+    .def("set_window_opacity", [](const SDLWindowWrapper& window, float opacity)
         {
-            auto ret = SDL_SetWindowOpacity(window->get(), opacity);
+            auto ret = SDL_SetWindowOpacity(window, opacity);
             return ret;
         }
         , py::arg("window")
         , py::arg("opacity")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_window_opacity", [](SDLWindowWrapper * window)
+    .def("get_window_opacity", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GetWindowOpacity(window->get());
+            auto ret = SDL_GetWindowOpacity(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_parent", [](SDLWindowWrapper * window, SDLWindowWrapper * parent)
+    .def("set_window_parent", [](const SDLWindowWrapper& window, const SDLWindowWrapper& parent)
         {
-            auto ret = SDL_SetWindowParent(window->get(), parent->get());
+            auto ret = SDL_SetWindowParent(window, parent);
             return ret;
         }
         , py::arg("window")
         , py::arg("parent")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_modal", [](SDLWindowWrapper * window, bool modal)
+    .def("set_window_modal", [](const SDLWindowWrapper& window, bool modal)
         {
-            auto ret = SDL_SetWindowModal(window->get(), modal);
+            auto ret = SDL_SetWindowModal(window, modal);
             return ret;
         }
         , py::arg("window")
         , py::arg("modal")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_window_focusable", [](SDLWindowWrapper * window, bool focusable)
+    .def("set_window_focusable", [](const SDLWindowWrapper& window, bool focusable)
         {
-            auto ret = SDL_SetWindowFocusable(window->get(), focusable);
+            auto ret = SDL_SetWindowFocusable(window, focusable);
             return ret;
         }
         , py::arg("window")
         , py::arg("focusable")
         , py::return_value_policy::automatic_reference)
 
-    .def("show_window_system_menu", [](SDLWindowWrapper * window, int x, int y)
+    .def("show_window_system_menu", [](const SDLWindowWrapper& window, int x, int y)
         {
-            auto ret = SDL_ShowWindowSystemMenu(window->get(), x, y);
+            auto ret = SDL_ShowWindowSystemMenu(window, x, y);
             return ret;
         }
         , py::arg("window")
@@ -763,27 +763,27 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
     ;
 
     _sdl
-    .def("set_window_shape", [](SDLWindowWrapper * window, SDL_Surface * shape)
+    .def("set_window_shape", [](const SDLWindowWrapper& window, SDL_Surface * shape)
         {
-            auto ret = SDL_SetWindowShape(window->get(), shape);
+            auto ret = SDL_SetWindowShape(window, shape);
             return ret;
         }
         , py::arg("window")
         , py::arg("shape")
         , py::return_value_policy::automatic_reference)
 
-    .def("flash_window", [](SDLWindowWrapper * window, SDL_FlashOperation operation)
+    .def("flash_window", [](const SDLWindowWrapper& window, SDL_FlashOperation operation)
         {
-            auto ret = SDL_FlashWindow(window->get(), operation);
+            auto ret = SDL_FlashWindow(window, operation);
             return ret;
         }
         , py::arg("window")
         , py::arg("operation")
         , py::return_value_policy::automatic_reference)
 
-    .def("destroy_window", [](SDLWindowWrapper * window)
+    .def("destroy_window", [](const SDLWindowWrapper& window)
         {
-            SDL_DestroyWindow(window->get());
+            SDL_DestroyWindow(window);
             return ;
         }
         , py::arg("window")
@@ -828,7 +828,7 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
 
     .def("gl_get_current_window", []()
         {
-            auto ret = new SDLWindowWrapper(SDL_GL_GetCurrentWindow());
+            auto ret = SDLWindowWrapper(SDL_GL_GetCurrentWindow());
             return ret;
         }
         , py::return_value_policy::automatic_reference)
@@ -839,9 +839,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
     .def("egl_get_current_config", &SDL_EGL_GetCurrentConfig
         , py::return_value_policy::automatic_reference)
 
-    .def("egl_get_window_surface", [](SDLWindowWrapper * window)
+    .def("egl_get_window_surface", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_EGL_GetWindowSurface(window->get());
+            auto ret = SDL_EGL_GetWindowSurface(window);
             return ret;
         }
         , py::arg("window")
@@ -865,9 +865,9 @@ void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
         , py::arg("interval")
         , py::return_value_policy::automatic_reference)
 
-    .def("gl_swap_window", [](SDLWindowWrapper * window)
+    .def("gl_swap_window", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_GL_SwapWindow(window->get());
+            auto ret = SDL_GL_SwapWindow(window);
             return ret;
         }
         , py::arg("window")

@@ -23,6 +23,7 @@ void init_main(py::module &_implot, Registry &registry) {
         ImPlotContext needs to be an opaque type.  Wrap it with PyCapsule
     */
     //IMPLOT_API ImPlotContext* CreateContext();
+    /*
     _implot.def("create_context", []()
     {
         return py::capsule(ImPlot::CreateContext(), "ImPlotContext");
@@ -51,6 +52,7 @@ void init_main(py::module &_implot, Registry &registry) {
     }
     , py::arg("ctx")
     , py::return_value_policy::automatic_reference);
+    */
 
     //template <typename T> IMPLOT_API void PlotLine(const char* label_id, const T* values, int count, double xscale=1, double x0=0, int offset=0, int stride=sizeof(T));
     _implot.def("plot_line", [](const char* label_id, const py::array_t<double>& values, int count)

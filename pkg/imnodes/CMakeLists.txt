@@ -17,12 +17,12 @@ set(IMNODES_HEADERS
 
 set(IMNODES_SRC
     ${IMNODES_ROOT}/imnodes.cpp
-    src/generated.cpp
-    src/main.cpp
+    src/imnodes_py_auto.cpp
+    src/imnodes_py.cpp
 )
 
 pybind11_add_module(${THIS} MODULE
-    src/init.cpp
+    src/imnodes_py_module.cpp
 )
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})

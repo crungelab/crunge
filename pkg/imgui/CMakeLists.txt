@@ -20,8 +20,8 @@ set(IMGUI_HEADERS
 )
 
 set(IMGUI_SRC
-    src/generated.cpp
-    src/main.cpp
+    src/imgui_py_auto.cpp
+    src/imgui_py.cpp
     ${IMGUI_ROOT}/imgui_demo.cpp
     ${IMGUI_ROOT}/imgui_draw.cpp
     ${IMGUI_ROOT}/imgui_tables.cpp
@@ -30,7 +30,7 @@ set(IMGUI_SRC
 )
 
 #pybind11_add_module(${THIS} MODULE src/init.cpp)
-pybind11_add_module(${THIS} SHARED src/init.cpp)
+pybind11_add_module(${THIS} SHARED src/imgui_py_module.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 

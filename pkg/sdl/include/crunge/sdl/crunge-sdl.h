@@ -9,6 +9,11 @@ public:
         // Add custom resource deallocation if needed, like SDL_DestroyWindow for SDL_Window
     }
 
+    // Implicit conversion operator to T*
+    operator T*() const {
+        return value;
+    }
+
     T* get() const {
         return value;
     }

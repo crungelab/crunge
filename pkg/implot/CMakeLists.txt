@@ -15,15 +15,15 @@ set(IMPLOT_HEADERS
 )
 
 set(IMPLOT_SRC
-    src/generated.cpp
-    src/main.cpp
+    src/implot_py_auto.cpp
+    src/implot_py.cpp
     ${IMPLOT_ROOT}/implot_demo.cpp
     ${IMPLOT_ROOT}/implot_items.cpp
     ${IMPLOT_ROOT}/implot.cpp
 )
 
 pybind11_add_module(${THIS} MODULE
-    src/init.cpp
+    src/implot_py_module.cpp
 )
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})

@@ -1,5 +1,5 @@
 source: '../../depot/implot/implot.h'
-target: 'src/generated.cpp'
+target: 'src/implot_py_auto.cpp'
 
 prefixes: [ImPlot, Im]
 
@@ -14,11 +14,16 @@ flags: [
 ]
 
 # Wrapped
+'struct.ImGuiContext':
+  wrapper: 'py::capsule'
 
-'function.ImPlot::CreateContext': {exclude: true}
-'function.ImPlot::DestroyContext': {exclude: true}
-'function.ImPlot::GetCurrentContext': {exclude: true}
-'function.ImPlot::SetCurrentContext': {exclude: true}
+'struct.ImPlotContext':
+  wrapper: 'py::capsule'
+
+#'function.ImPlot::CreateContext': {exclude: true}
+#'function.ImPlot::DestroyContext': {exclude: true}
+#'function.ImPlot::GetCurrentContext': {exclude: true}
+#'function.ImPlot::SetCurrentContext': {exclude: true}
 
 # Internal / Ignored
 

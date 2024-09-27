@@ -1,5 +1,5 @@
 source: '../../depot/imgui/imgui.h'
-target: 'src/generated.cpp'
+target: 'src/imgui_py_auto.cpp'
 
 prefixes: [ImGui, Im]
 
@@ -24,11 +24,15 @@ defaults:
 
 # Wrapped
 
+'struct.ImGuiContext':
+  wrapper: 'py::capsule'
+
 #TODO:  I can probably generate the next four if I use a wrapper for the opaque type.
-'function.ImGui::CreateContext': {exclude: true}
-'function.ImGui::DestroyContext': {exclude: true}
-'function.ImGui::GetCurrentContext': {exclude: true}
-'function.ImGui::SetCurrentContext': {exclude: true}
+#'struct.ImGuiContext': {exclude: true}
+#'function.ImGui::CreateContext': {exclude: true}
+#'function.ImGui::DestroyContext': {exclude: true}
+#'function.ImGui::GetCurrentContext': {exclude: true}
+#'function.ImGui::SetCurrentContext': {exclude: true}
 
 'function.ImGui::SetDragDropPayload': {exclude: true}
 'function.ImGui::Combo': {exclude: true}
@@ -96,7 +100,6 @@ defaults:
 'struct.ImGuiDockContext': {exclude: true}
 'struct.ImGuiDockNodeSettings': {exclude: true}
 'struct.ImGuiListClipper': {exclude: true}
-'struct.ImGuiContext': {exclude: true}
 'field.ImGuiIO::SetPlatformImeDataFn': {exclude: true}
 'field.ImGuiIO::Ctx': {exclude: true}
 'struct.ImGuiDockRequest': {exclude: true}
@@ -110,14 +113,14 @@ defaults:
 'function.ImGui::GetDrawListSharedData': {exclude: true}
 # Overloads
 
-'function.ImGui::IsPopupOpen': {overload: true}
-'function.ImGui::SetScrollX': {overload: true}
-'function.ImGui::SetScrollY': {overload: true}
-'function.ImGui::SetScrollFromPosX': {overload: true}
-'function.ImGui::SetScrollFromPosY': {overload: true}
-'function.ImGui::IsKeyDown': {overload: true}
-'function.ImGui::IsKeyPressed': {overload: true}
-'function.ImGui::IsKeyReleased': {overload: true}
-'function.ImGui::IsMouseDown': {overload: true}
-'function.ImGui::IsMouseClicked': {overload: true}
-'function.ImGui::IsMouseReleased': {overload: true}
+#'function.ImGui::IsPopupOpen': {overload: true}
+#'function.ImGui::SetScrollX': {overload: true}
+#'function.ImGui::SetScrollY': {overload: true}
+#'function.ImGui::SetScrollFromPosX': {overload: true}
+#'function.ImGui::SetScrollFromPosY': {overload: true}
+#'function.ImGui::IsKeyDown': {overload: true}
+#'function.ImGui::IsKeyPressed': {overload: true}
+#'function.ImGui::IsKeyReleased': {overload: true}
+#'function.ImGui::IsMouseDown': {overload: true}
+#'function.ImGui::IsMouseClicked': {overload: true}
+#'function.ImGui::IsMouseReleased': {overload: true}

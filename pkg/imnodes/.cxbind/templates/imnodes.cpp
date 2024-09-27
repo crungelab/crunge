@@ -5,14 +5,14 @@
 #include <pybind11/stl.h>
 
 #include "imgui.h"
-#include "imgui_internal.h"
+//#include "imgui_internal.h"
 
 #include <crunge/imgui/crunge-imgui.h>
 #include <crunge/imgui/conversions.h>
 #include <cxbind/cxbind.h>
 
 #include "imnodes.h"
-#include "imnodes_internal.h"
+//#include "imnodes_internal.h"
 
 namespace py = pybind11;
 

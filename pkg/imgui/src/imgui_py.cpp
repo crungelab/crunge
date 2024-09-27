@@ -30,7 +30,7 @@ PYBIND11_MAKE_OPAQUE(std::vector<ImWchar>);
 //PYBIND11_MAKE_OPAQUE(std::vector<ImDrawVert>);
 //PYBIND11_MAKE_OPAQUE(std::vector<ImFontGlyph>);
 
-void init_main(py::module &_imgui, Registry &registry) {
+void init_imgui_py(py::module &_imgui, Registry &registry) {
     py::bind_vector<std::vector<ImWchar>>(_imgui, "GlyphRanges", "ImGui Glyph Range Vector");
 
     template_ImVector<char>(_imgui, "Vector_char");
@@ -44,6 +44,7 @@ void init_main(py::module &_imgui, Registry &registry) {
     /*
         ImGuiContext needs to be an opaque type.  Wrap it with PyCapsule
     */
+   /*
     //ImGuiContext* ImGui::CreateContext(ImFontAtlas* shared_font_atlas)
     _imgui.def("create_context", [](ImFontAtlas* shared_font_atlas)
     {
@@ -76,6 +77,7 @@ void init_main(py::module &_imgui, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
     //bool ImGui::SetDragDropPayload(const char* type, const void* data, size_t data_size, ImGuiCond cond)
+    */
     _imgui.def("set_drag_drop_payload", [](std::string type, std::string data, ImGuiCond cond)
     {
         return ImGui::SetDragDropPayload(type.c_str(), data.c_str(), data.length(), cond);

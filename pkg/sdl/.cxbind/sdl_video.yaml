@@ -25,8 +25,7 @@ flags: [
 
 # Wrapped
 'struct.SDL_Window':
-  gen_wrapper:
-    type: 'SDLWindowWrapper'
+  wrapper: 'SDLWindowWrapper'
 
 # Internal / Ignored
 # error: invalid conversion from ‘void (*)()’ to ‘const void*

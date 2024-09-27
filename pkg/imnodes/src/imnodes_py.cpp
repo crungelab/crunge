@@ -7,14 +7,14 @@
 #include <pybind11/numpy.h>
 
 #include "imgui.h"
-#include "imgui_internal.h"
+//#include "imgui_internal.h"
 
 #include <crunge/imgui/crunge-imgui.h>
 #include <crunge/imgui/conversions.h>
 #include <cxbind/cxbind.h>
 
 #include "imnodes.h"
-#include "imnodes_internal.h"
+//#include "imnodes_internal.h"
 
 //TODO:Why did I have to put this here?  Getting an external reference error
 char ImGuiTextBuffer::EmptyString[1] = { 0 };
@@ -27,6 +27,7 @@ void init_main(py::module &_imnodes, Registry &registry) {
         ImNodesContext needs to be an opaque type.  Wrap it with PyCapsule
     */
     //ImNodesContext* CreateContext();
+    /*
     _imnodes.def("create_context", []()
     {
         return py::capsule(ImNodes::CreateContext(), "ImNodesContext");
@@ -79,6 +80,7 @@ void init_main(py::module &_imnodes, Registry &registry) {
     }
     , py::arg("ctx")
     , py::return_value_policy::automatic_reference);
+    */
 
 /*
 void MiniMap(

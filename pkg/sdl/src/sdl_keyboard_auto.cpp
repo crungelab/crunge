@@ -31,7 +31,7 @@ void init_sdl_keyboard_auto(py::module &_sdl, Registry &registry) {
 
     .def("get_keyboard_focus", []()
         {
-            auto ret = new SDLWindowWrapper(SDL_GetKeyboardFocus());
+            auto ret = SDLWindowWrapper(SDL_GetKeyboardFocus());
             return ret;
         }
         , py::return_value_policy::automatic_reference)
@@ -90,9 +90,9 @@ void init_sdl_keyboard_auto(py::module &_sdl, Registry &registry) {
         , py::arg("name")
         , py::return_value_policy::automatic_reference)
 
-    .def("start_text_input", [](SDLWindowWrapper * window)
+    .def("start_text_input", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_StartTextInput(window->get());
+            auto ret = SDL_StartTextInput(window);
             return ret;
         }
         , py::arg("window")
@@ -121,42 +121,42 @@ void init_sdl_keyboard_auto(py::module &_sdl, Registry &registry) {
     ;
 
     _sdl
-    .def("start_text_input_with_properties", [](SDLWindowWrapper * window, unsigned int props)
+    .def("start_text_input_with_properties", [](const SDLWindowWrapper& window, unsigned int props)
         {
-            auto ret = SDL_StartTextInputWithProperties(window->get(), props);
+            auto ret = SDL_StartTextInputWithProperties(window, props);
             return ret;
         }
         , py::arg("window")
         , py::arg("props")
         , py::return_value_policy::automatic_reference)
 
-    .def("text_input_active", [](SDLWindowWrapper * window)
+    .def("text_input_active", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_TextInputActive(window->get());
+            auto ret = SDL_TextInputActive(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("stop_text_input", [](SDLWindowWrapper * window)
+    .def("stop_text_input", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_StopTextInput(window->get());
+            auto ret = SDL_StopTextInput(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("clear_composition", [](SDLWindowWrapper * window)
+    .def("clear_composition", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_ClearComposition(window->get());
+            auto ret = SDL_ClearComposition(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
 
-    .def("set_text_input_area", [](SDLWindowWrapper * window, const SDL_Rect * rect, int cursor)
+    .def("set_text_input_area", [](const SDLWindowWrapper& window, const SDL_Rect * rect, int cursor)
         {
-            auto ret = SDL_SetTextInputArea(window->get(), rect, cursor);
+            auto ret = SDL_SetTextInputArea(window, rect, cursor);
             return ret;
         }
         , py::arg("window")
@@ -164,9 +164,9 @@ void init_sdl_keyboard_auto(py::module &_sdl, Registry &registry) {
         , py::arg("cursor")
         , py::return_value_policy::automatic_reference)
 
-    .def("get_text_input_area", [](SDLWindowWrapper * window, SDL_Rect * rect, int * cursor)
+    .def("get_text_input_area", [](const SDLWindowWrapper& window, SDL_Rect * rect, int * cursor)
         {
-            auto ret = SDL_GetTextInputArea(window->get(), rect, cursor);
+            auto ret = SDL_GetTextInputArea(window, rect, cursor);
             return std::make_tuple(ret, cursor);
         }
         , py::arg("window")
@@ -177,9 +177,9 @@ void init_sdl_keyboard_auto(py::module &_sdl, Registry &registry) {
     .def("has_screen_keyboard_support", &SDL_HasScreenKeyboardSupport
         , py::return_value_policy::automatic_reference)
 
-    .def("screen_keyboard_shown", [](SDLWindowWrapper * window)
+    .def("screen_keyboard_shown", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_ScreenKeyboardShown(window->get());
+            auto ret = SDL_ScreenKeyboardShown(window);
             return ret;
         }
         , py::arg("window")

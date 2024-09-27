@@ -46,20 +46,16 @@ class Page(ImGuiView):
             y = 32
             height = (self.window.height-32-16)/2
 
-        #imgui.set_next_window_pos((x, y), imgui.COND_ONCE)
         imgui.set_next_window_pos((x, y), imgui.Cond.ONCE)
         imgui.set_next_window_size((width, height), imgui.Cond.ONCE)
         
     def draw_navbar(self):
-        #gui.set_next_window_pos((16, 32), imgui.COND_ONCE)
-        #imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.COND_ONCE)
         imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.Cond.ONCE)
-        #imgui.set_next_window_size((256, self.window.height-32-16), imgui.COND_ONCE)
         imgui.set_next_window_size((256, self.window.height-32-16), imgui.Cond.ONCE)
         
         imgui.begin("Examples")
 
-        if imgui.begin_list_box("Examples", (-1, -1)):
+        if imgui.begin_list_box(f"##{id(self)}", (-1, -1)):
 
             for entry in self.window.pages.values():
                 opened, selected = imgui.selectable(entry['title'], entry['name'] == self.window.page.name)

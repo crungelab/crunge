@@ -11,6 +11,6 @@
 
 namespace py = pybind11;
 
-void init_generated(py::module &_imgui, Registry &registry) {
+void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
 {{body}}
 }

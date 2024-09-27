@@ -56,7 +56,8 @@ class Page(ImGuiView):
         titles = [page['title'] for page in self.window.pages.values()]
         names = [page['name'] for page in self.window.pages.values()]
 
-        if imgui.begin_list_box("Examples", (-1, -1)):
+        #if imgui.begin_list_box("Examples", (-1, -1)):
+        if imgui.begin_list_box(f"##{id(self)}", (-1, -1)):
 
             for entry in self.window.pages.values():
                 opened, selected = imgui.selectable(entry['title'], entry['name'] == self.window.page.name)

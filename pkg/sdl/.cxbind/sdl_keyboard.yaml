@@ -15,8 +15,7 @@ flags: [
 
 #TODO: Need to have an include for yaml and merge dictionaries.
 'struct.SDL_Window':
-  gen_wrapper:
-    type: 'SDLWindowWrapper'
+  wrapper: 'SDLWindowWrapper'
 
 # Internal / Ignored
 
