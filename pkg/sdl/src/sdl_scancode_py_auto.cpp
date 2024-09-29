@@ -12,7 +12,7 @@
 
 namespace py = pybind11;
 
-void init_sdl_scancode_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_scancode_py_auto(py::module &_sdl, Registry &registry) {
     py::enum_<SDL_Scancode>(_sdl, "Scancode", py::arithmetic())
         .value("SCANCODE_UNKNOWN", SDL_Scancode::SDL_SCANCODE_UNKNOWN)
         .value("SCANCODE_A", SDL_Scancode::SDL_SCANCODE_A)

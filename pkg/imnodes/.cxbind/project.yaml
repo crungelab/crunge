@@ -1,0 +1,15 @@
+module: _imnodes
+
+flags: [
+    '-x', 'c++',
+    '-std=c++17',
+    '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
+    '-DIMGUI_DISABLE_OBSOLETE_KEYIO=1',
+    '-I../../depot/imgui',
+    '-I./src'
+]
+
+prefixes: [ImNodes, Im]
+
+unit_files:
+  - path: imnodes.yaml

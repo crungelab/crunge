@@ -1,16 +1,16 @@
 source: '../../depot/imgui/imgui.h'
 target: 'src/imgui_py_auto.cpp'
 
-prefixes: [ImGui, Im]
+#module: _imgui
 
-module: _imgui
+#flags: [
+#  '-x', 'c++',
+#  '-std=c++17',
+#  '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
+#  '-DIMGUI_DISABLE_OBSOLETE_KEYIO=1',
+#]
 
-flags: [
-  '-x', 'c++',
-  '-std=c++17',
-  '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
-  '-DIMGUI_DISABLE_OBSOLETE_KEYIO=1',
-]
+#prefixes: [ImGui, Im]
 
 defaults:
   'out_h': '0'
@@ -111,16 +111,5 @@ defaults:
 'ctor.ImDrawList::ImDrawList': {exclude: true}
 
 'function.ImGui::GetDrawListSharedData': {exclude: true}
-# Overloads
 
-#'function.ImGui::IsPopupOpen': {overload: true}
-#'function.ImGui::SetScrollX': {overload: true}
-#'function.ImGui::SetScrollY': {overload: true}
-#'function.ImGui::SetScrollFromPosX': {overload: true}
-#'function.ImGui::SetScrollFromPosY': {overload: true}
-#'function.ImGui::IsKeyDown': {overload: true}
-#'function.ImGui::IsKeyPressed': {overload: true}
-#'function.ImGui::IsKeyReleased': {overload: true}
-#'function.ImGui::IsMouseDown': {overload: true}
-#'function.ImGui::IsMouseClicked': {overload: true}
-#'function.ImGui::IsMouseReleased': {overload: true}
+# Overloads

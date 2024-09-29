@@ -11,7 +11,7 @@
 
 namespace py = pybind11;
 
-void init_sdl_events_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
     py::enum_<SDL_EventType>(_sdl, "EventType", py::arithmetic())
         .value("FIRST", SDL_EventType::SDL_EVENT_FIRST)
         .value("QUIT", SDL_EventType::SDL_EVENT_QUIT)

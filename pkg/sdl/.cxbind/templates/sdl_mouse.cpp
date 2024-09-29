@@ -13,6 +13,6 @@
 
 namespace py = pybind11;
 
-void init_sdl_mouse_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
 {{body}}
 }

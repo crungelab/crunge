@@ -11,7 +11,7 @@
 
 namespace py = pybind11;
 
-void init_sdl_init_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_init_py_auto(py::module &_sdl, Registry &registry) {
     py::enum_<SDL_AppResult>(_sdl, "AppResult", py::arithmetic())
         .value("APP_CONTINUE", SDL_AppResult::SDL_APP_CONTINUE)
         .value("APP_SUCCESS", SDL_AppResult::SDL_APP_SUCCESS)

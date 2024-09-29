@@ -1,19 +1,21 @@
 source: '../../depot/implot/implot.h'
 target: 'src/implot_py_auto.cpp'
 
-prefixes: [ImPlot, Im]
+#module: _implot
 
-module: _implot
+#flags: [
+#  '-x', 'c++',
+#  '-std=c++17',
+#  '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
+#  '-DIMPLOT_DISABLE_OBSOLETE_FUNCTIONS=1',
+#  '-I../../depot/imgui'
+#]
 
-flags: [
-  '-x', 'c++',
-  '-std=c++17',
-  '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
-  '-DIMPLOT_DISABLE_OBSOLETE_FUNCTIONS=1',
-  '-I../../depot/imgui'
-]
+#prefixes: [ImPlot, Im]
 
 # Wrapped
+
+# TODO: include imgui_inc.yaml from imgui's .cxbind directory?
 'struct.ImGuiContext':
   wrapper: 'py::capsule'
 

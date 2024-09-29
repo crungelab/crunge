@@ -1,0 +1,13 @@
+module: _imgui
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
+  '-DIMGUI_DISABLE_OBSOLETE_KEYIO=1',
+]
+
+prefixes: [ImGui, Im]
+
+unit_files:
+  - path: imgui.yaml

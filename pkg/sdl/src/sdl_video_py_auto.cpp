@@ -14,7 +14,7 @@
 
 namespace py = pybind11;
 
-void init_sdl_video_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
     py::enum_<SDL_SystemTheme>(_sdl, "SystemTheme", py::arithmetic())
         .value("SYSTEM_THEME_UNKNOWN", SDL_SystemTheme::SDL_SYSTEM_THEME_UNKNOWN)
         .value("SYSTEM_THEME_LIGHT", SDL_SystemTheme::SDL_SYSTEM_THEME_LIGHT)

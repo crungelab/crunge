@@ -12,6 +12,6 @@
 
 namespace py = pybind11;
 
-void init_sdl_keyboard_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
 {{body}}
 }

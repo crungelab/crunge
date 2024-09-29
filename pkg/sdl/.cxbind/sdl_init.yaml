@@ -1,15 +1,15 @@
 source: '../../depot/sdl/include/SDL3/SDL_init.h'
-target: 'src/sdl_init_auto.cpp'
+target: 'src/sdl_init_py_auto.cpp'
 
-prefixes: [SDL_]
+#module: _sdl
 
-module: _sdl
+#flags: [
+#  '-x', 'c++',
+#  '-std=c++17',
+#  '-I../../depot/sdl/include',
+#]
 
-flags: [
-  '-x', 'c++',
-  '-std=c++17',
-  '-I../../depot/sdl/include',
-]
+#prefixes: [SDL_]
 
 # Wrapped
 # These write to err and warn.  Not good

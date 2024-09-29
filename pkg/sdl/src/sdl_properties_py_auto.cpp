@@ -12,7 +12,7 @@
 
 namespace py = pybind11;
 
-void init_sdl_properties_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_properties_py_auto(py::module &_sdl, Registry &registry) {
     py::enum_<SDL_PropertyType>(_sdl, "PropertyType", py::arithmetic())
         .value("INVALID", SDL_PropertyType::SDL_PROPERTY_TYPE_INVALID)
         .value("POINTER", SDL_PropertyType::SDL_PROPERTY_TYPE_POINTER)

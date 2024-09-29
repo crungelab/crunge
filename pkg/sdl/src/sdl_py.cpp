@@ -28,7 +28,7 @@ enum class InitFlags : SDL_InitFlags {
     INIT_CAMERA     = SDL_INIT_CAMERA
 };
 
-void init_main(py::module &_sdl, Registry &registry)
+void init_sdl_py(py::module &_sdl, Registry &registry)
 {
 
     py::enum_<InitFlags>(_sdl, "InitFlags", py::arithmetic())

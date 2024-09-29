@@ -12,7 +12,7 @@
 
 namespace py = pybind11;
 
-void init_sdl_keyboard_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
     _sdl
     .def("has_keyboard", &SDL_HasKeyboard
         , py::return_value_policy::automatic_reference)

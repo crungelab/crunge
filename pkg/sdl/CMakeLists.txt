@@ -15,17 +15,17 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/sdl_init_auto.cpp
-    src/sdl_video_auto.cpp
-    src/sdl_events_auto.cpp
-    src/sdl_keyboard_auto.cpp
-    src/sdl_mouse_auto.cpp
-    src/sdl_scancode_auto.cpp
-    src/sdl_properties_auto.cpp
-    src/main.cpp
+    src/sdl_init_py_auto.cpp
+    src/sdl_video_py_auto.cpp
+    src/sdl_events_py_auto.cpp
+    src/sdl_keyboard_py_auto.cpp
+    src/sdl_mouse_py_auto.cpp
+    src/sdl_scancode_py_auto.cpp
+    src/sdl_properties_py_auto.cpp
+    src/sdl_py.cpp
 )
 
-pybind11_add_module(${THIS} MODULE src/init.cpp)
+pybind11_add_module(${THIS} MODULE src/sdl_py_module.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 

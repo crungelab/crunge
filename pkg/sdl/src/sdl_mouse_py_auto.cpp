@@ -13,7 +13,7 @@
 
 namespace py = pybind11;
 
-void init_sdl_mouse_auto(py::module &_sdl, Registry &registry) {
+void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
     py::enum_<SDL_SystemCursor>(_sdl, "SystemCursor", py::arithmetic())
         .value("SYSTEM_CURSOR_DEFAULT", SDL_SystemCursor::SDL_SYSTEM_CURSOR_DEFAULT)
         .value("SYSTEM_CURSOR_TEXT", SDL_SystemCursor::SDL_SYSTEM_CURSOR_TEXT)

@@ -15,11 +15,11 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/generated.cpp
-    src/main.cpp
+    src/gltf_py_auto.cpp
+    src/gltf_py.cpp
 )
 
-pybind11_add_module(${THIS} MODULE src/init.cpp)
+pybind11_add_module(${THIS} MODULE src/gltf_py_module.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 

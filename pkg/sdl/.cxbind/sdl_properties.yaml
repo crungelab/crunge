@@ -1,15 +1,16 @@
 source: '../../depot/sdl/include/SDL3/SDL_properties.h'
-target: 'src/sdl_properties_auto.cpp'
+target: 'src/sdl_properties_py_auto.cpp'
 
-prefixes: [SDL_PROPERTY_TYPE_, SDL_]
+#module: _sdl
 
-module: _sdl
+#flags: [
+#  '-x', 'c++',
+#  '-std=c++17',
+#  '-I../../depot/sdl/include',
+#]
 
-flags: [
-  '-x', 'c++',
-  '-std=c++17',
-  '-I../../depot/sdl/include',
-]
+#prefixes: [SDL_PROPERTY_TYPE_, SDL_]
+prefixes: [SDL_PROPERTY_TYPE_]
 
 # Wrapped
 
