@@ -1,15 +1,13 @@
-module: _implot
+module: _imgui
 
 flags: [
   '-x', 'c++',
   '-std=c++17',
   '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
   '-DIMGUI_DISABLE_OBSOLETE_KEYIO=1',
-  '-DIMPLOT_DISABLE_OBSOLETE_FUNCTIONS=1',
-  '-I../../depot/imgui'
 ]
 
-prefixes: [ImPlot, Im]
+prefixes: [ImGui, Im]
 
 unit_files:
-  - path: implot.yaml
+  - path: imgui.unit.yaml

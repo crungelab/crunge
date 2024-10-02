@@ -200,7 +200,7 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
 
     .def("cursor_visible", &SDL_CursorVisible
         , py::return_value_policy::automatic_reference)
-
     ;
+
 
 }

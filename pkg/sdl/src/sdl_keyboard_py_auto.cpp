@@ -97,8 +97,8 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     ;
+
     py::enum_<SDL_TextInputType>(_sdl, "TextInputType", py::arithmetic())
         .value("TEXTINPUT_TYPE_TEXT", SDL_TextInputType::SDL_TEXTINPUT_TYPE_TEXT)
         .value("TEXTINPUT_TYPE_TEXT_NAME", SDL_TextInputType::SDL_TEXTINPUT_TYPE_TEXT_NAME)
@@ -184,7 +184,7 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     ;
+
 
 }

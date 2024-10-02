@@ -1,0 +1,38 @@
+source: '../../depot/implot/implot.h'
+target: 'src/implot_py_auto.cpp'
+
+#module: _implot
+
+#flags: [
+#  '-x', 'c++',
+#  '-std=c++17',
+#  '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',
+#  '-DIMPLOT_DISABLE_OBSOLETE_FUNCTIONS=1',
+#  '-I../../depot/imgui'
+#]
+
+#prefixes: [ImPlot, Im]
+
+nodes:
+  # Wrapped
+
+  # TODO: include imgui_inc.yaml from imgui's .cxbind directory?
+  'struct.ImGuiContext':
+    wrapper: 'py::capsule'
+
+  'struct.ImPlotContext':
+    wrapper: 'py::capsule'
+
+  #'function.ImPlot::CreateContext': {exclude: true}
+  #'function.ImPlot::DestroyContext': {exclude: true}
+  #'function.ImPlot::GetCurrentContext': {exclude: true}
+  #'function.ImPlot::SetCurrentContext': {exclude: true}
+
+  # Internal / Ignored
+
+  'function.ImPlot::PixelsToPlot': {exclude: true}
+  'function.ImPlot::SetNextPlotTicksX': {exclude: true}
+  'function.ImPlot::SetNextPlotTicksY': {exclude: true}
+  'function.ImPlot::SetupAxisTicks': {exclude: true} #TODO: need to wrap this
+
+  'method.ImPlotRect::Contains': {exclude: true}  #TODO: overload problems

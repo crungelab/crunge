@@ -53,7 +53,7 @@ void init_sdl_init_py_auto(py::module &_sdl, Registry &registry) {
     .def("get_app_metadata_property", &SDL_GetAppMetadataProperty
         , py::arg("name")
         , py::return_value_policy::automatic_reference)
-
     ;
+
 
 }

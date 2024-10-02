@@ -102,6 +102,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
 
         .def_readwrite("auto_panning_speed", &ImNodesIO::AutoPanningSpeed)
 
+
         .def(py::init<>())
     ;
 
@@ -139,6 +140,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .def_readwrite("flags", &ImNodesStyle::Flags)
 
         .def_readonly("colors", &ImNodesStyle::Colors)
+
 
         .def(py::init<>())
     ;
@@ -528,7 +530,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         , py::arg("editor")
         , py::arg("file_name")
         , py::return_value_policy::automatic_reference)
-
     ;
+
 
 }

@@ -12,4 +12,4 @@ flags: [
 prefixes: [ImNodes, Im]
 
 unit_files:
-  - path: imnodes.yaml
+  - path: imnodes.unit.yaml

@@ -15,11 +15,12 @@ prefixes: [SDL_EVENT_]
 # Wrapped
 
 #TODO: Need to have an include for yaml and merge dictionaries.
-'struct.SDL_Window':
-  wrapper: 'SDLWindowWrapper'
+#'struct.SDL_Window':
+#  wrapper: 'SDLWindowWrapper'
 
-'struct.SDL_Cursor':
-  wrapper: 'SDLCursorWrapper'
+nodes:
+  'struct.SDL_Cursor':
+    wrapper: 'SDLCursorWrapper'
 
 # Internal / Ignored
 

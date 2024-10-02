@@ -362,6 +362,7 @@ void init_generated(py::module &_implot, Registry &registry) {
 
         .def_readwrite("y", &ImPlotPoint::y)
 
+
         .def(py::init<>())
     ;
 
@@ -370,7 +371,9 @@ void init_generated(py::module &_implot, Registry &registry) {
 
         .def_readwrite("max", &ImPlotRange::Max)
 
+
         .def(py::init<>())
+
         .def("contains", &ImPlotRange::Contains
             , py::arg("value")
             , py::return_value_policy::automatic_reference)
@@ -381,7 +384,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .def("clamp", &ImPlotRange::Clamp
             , py::arg("value")
             , py::return_value_policy::automatic_reference)
-
     ;
 
     PYCLASS(_implot, ImPlotRect, Rect)
@@ -389,7 +391,9 @@ void init_generated(py::module &_implot, Registry &registry) {
 
         .def_readwrite("y", &ImPlotRect::Y)
 
+
         .def(py::init<>())
+
         .def("size", &ImPlotRect::Size
             , py::return_value_policy::automatic_reference)
 
@@ -402,7 +406,6 @@ void init_generated(py::module &_implot, Registry &registry) {
 
         .def("max", &ImPlotRect::Max
             , py::return_value_policy::automatic_reference)
-
     ;
 
     PYCLASS(_implot, ImPlotStyle, Style)
@@ -470,6 +473,7 @@ void init_generated(py::module &_implot, Registry &registry) {
 
         .def_readwrite("use24_hour_clock", &ImPlotStyle::Use24HourClock)
 
+
         .def(py::init<>())
     ;
 
@@ -497,6 +501,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         .def_readwrite("zoom_mod", &ImPlotInputMap::ZoomMod)
 
         .def_readwrite("zoom_rate", &ImPlotInputMap::ZoomRate)
+
 
         .def(py::init<>())
     ;
@@ -1147,7 +1152,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         }
         , py::arg("p_open") = nullptr
         , py::return_value_policy::automatic_reference)
-
     ;
+
 
 }

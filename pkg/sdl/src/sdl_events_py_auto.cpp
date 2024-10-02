@@ -779,8 +779,8 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
     _sdl
     .def("pump_events", &SDL_PumpEvents
         , py::return_value_policy::automatic_reference)
-
     ;
+
     py::enum_<SDL_EventAction>(_sdl, "EventAction", py::arithmetic())
         .value("ADDEVENT", SDL_EventAction::SDL_ADDEVENT)
         .value("PEEKEVENT", SDL_EventAction::SDL_PEEKEVENT)
@@ -860,7 +860,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
     .def("register_events", &SDL_RegisterEvents
         , py::arg("numevents")
         , py::return_value_policy::automatic_reference)
-
     ;
+
 
 }

@@ -6,4 +6,4 @@ flags: [
 ]
 
 unit_files:
-  - path: gltf.yaml
+  - path: gltf.unit.yaml

@@ -135,7 +135,7 @@ void init_sdl_properties_py_auto(py::module &_sdl, Registry &registry) {
     .def("destroy_properties", &SDL_DestroyProperties
         , py::arg("props")
         , py::return_value_policy::automatic_reference)
-
     ;
+
 
 }

@@ -56,10 +56,12 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("req_bytes")
         , py::arg("check_size")
         , py::return_value_policy::automatic_reference)
-
     ;
+
     PYCLASS(_gltf, tinygltf::Value, Value )
+
         .def(py::init<>())
+
         .def("type", &tinygltf::Value::Type
             , py::return_value_policy::automatic_reference)
 
@@ -105,7 +107,6 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def("size", &tinygltf::Value::Size
             , py::return_value_policy::automatic_reference)
-
     ;
 
     PYCLASS(_gltf, tinygltf::Parameter, Parameter)
@@ -120,6 +121,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("json_double_value", &tinygltf::Parameter::json_double_value)
 
         .def_readwrite("number_value", &tinygltf::Parameter::number_value)
+
 
         .def("texture_index", &tinygltf::Parameter::TextureIndex
             , py::return_value_policy::automatic_reference)
@@ -165,6 +167,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("target_extensions_json_string", &tinygltf::AnimationChannel::target_extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -183,6 +186,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::AnimationSampler::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -200,6 +204,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extras_json_string", &tinygltf::Animation::extras_json_string)
 
         .def_readwrite("extensions_json_string", &tinygltf::Animation::extensions_json_string)
+
 
         .def(py::init<>())
     ;
@@ -220,6 +225,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extras_json_string", &tinygltf::Skin::extras_json_string)
 
         .def_readwrite("extensions_json_string", &tinygltf::Skin::extensions_json_string)
+
 
         .def(py::init<>())
     ;
@@ -242,6 +248,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extras_json_string", &tinygltf::Sampler::extras_json_string)
 
         .def_readwrite("extensions_json_string", &tinygltf::Sampler::extensions_json_string)
+
 
         .def(py::init<>())
     ;
@@ -277,6 +284,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("as_is", &tinygltf::Image::as_is)
 
+
         .def(py::init<>())
     ;
 
@@ -295,6 +303,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::Texture::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -310,6 +319,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extras_json_string", &tinygltf::TextureInfo::extras_json_string)
 
         .def_readwrite("extensions_json_string", &tinygltf::TextureInfo::extensions_json_string)
+
 
         .def(py::init<>())
     ;
@@ -329,6 +339,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::NormalTextureInfo::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -346,6 +357,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extras_json_string", &tinygltf::OcclusionTextureInfo::extras_json_string)
 
         .def_readwrite("extensions_json_string", &tinygltf::OcclusionTextureInfo::extensions_json_string)
+
 
         .def(py::init<>())
     ;
@@ -368,6 +380,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extras_json_string", &tinygltf::PbrMetallicRoughness::extras_json_string)
 
         .def_readwrite("extensions_json_string", &tinygltf::PbrMetallicRoughness::extensions_json_string)
+
 
         .def(py::init<>())
     ;
@@ -403,6 +416,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::Material::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -428,6 +442,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::BufferView::extensions_json_string)
 
         .def_readwrite("draco_decoded", &tinygltf::BufferView::dracoDecoded)
+
 
         .def(py::init<>())
     ;
@@ -461,6 +476,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("sparse", &tinygltf::Accessor::sparse)
 
+
         .def("byte_stride", &tinygltf::Accessor::ByteStride
             , py::arg("buffer_view_object")
             , py::return_value_policy::automatic_reference)
@@ -476,6 +492,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("zfar", &tinygltf::PerspectiveCamera::zfar)
 
         .def_readwrite("znear", &tinygltf::PerspectiveCamera::znear)
+
 
         .def(py::init<>())
         .def_readwrite("extensions", &tinygltf::PerspectiveCamera::extensions)
@@ -497,6 +514,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("znear", &tinygltf::OrthographicCamera::znear)
 
+
         .def(py::init<>())
         .def_readwrite("extensions", &tinygltf::OrthographicCamera::extensions)
 
@@ -516,6 +534,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("perspective", &tinygltf::Camera::perspective)
 
         .def_readwrite("orthographic", &tinygltf::Camera::orthographic)
+
 
         .def(py::init<>())
         .def_readwrite("extensions", &tinygltf::Camera::extensions)
@@ -547,6 +566,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::Primitive::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -565,10 +585,12 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::Mesh::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
     PYCLASS(_gltf, tinygltf::Node, Node )
+
         .def(py::init<>())
         .def_readwrite("camera", &tinygltf::Node::camera)
 
@@ -619,6 +641,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::Buffer::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -639,6 +662,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::Asset::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -657,6 +681,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("extensions_json_string", &tinygltf::Scene::extensions_json_string)
 
+
         .def(py::init<>())
     ;
 
@@ -664,6 +689,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("inner_cone_angle", &tinygltf::SpotLight::innerConeAngle)
 
         .def_readwrite("outer_cone_angle", &tinygltf::SpotLight::outerConeAngle)
+
 
         .def(py::init<>())
         .def_readwrite("extensions", &tinygltf::SpotLight::extensions)
@@ -689,6 +715,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("spot", &tinygltf::Light::spot)
 
+
         .def(py::init<>())
         .def_readwrite("extensions", &tinygltf::Light::extensions)
 
@@ -712,6 +739,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("ref_distance", &tinygltf::PositionalEmitter::refDistance)
 
         .def_readwrite("rolloff_factor", &tinygltf::PositionalEmitter::rolloffFactor)
+
 
         .def(py::init<>())
         .def_readwrite("extensions", &tinygltf::PositionalEmitter::extensions)
@@ -741,6 +769,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("source", &tinygltf::AudioEmitter::source)
 
+
         .def(py::init<>())
         .def_readwrite("extensions", &tinygltf::AudioEmitter::extensions)
 
@@ -761,6 +790,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def_readwrite("mime_type", &tinygltf::AudioSource::mimeType)
 
+
         .def(py::init<>())
         .def_readwrite("extras", &tinygltf::AudioSource::extras)
 
@@ -773,6 +803,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
     ;
 
     PYCLASS(_gltf, tinygltf::Model, Model )
+
         .def(py::init<>())
         .def_readwrite("accessors", &tinygltf::Model::accessors)
 
@@ -825,6 +856,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
     ;
 
         ;
+
         py::enum_<tinygltf::SectionCheck::Enum>(_gltf, "Enum", py::arithmetic())
             .value("NO_REQUIRE", tinygltf::SectionCheck::Enum::NO_REQUIRE)
             .value("REQUIRE_VERSION", tinygltf::SectionCheck::Enum::REQUIRE_VERSION)
@@ -892,10 +924,12 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("contents")
         , py::arg("")
         , py::return_value_policy::automatic_reference)
-
     ;
+
     PYCLASS(_gltf, tinygltf::TinyGLTF, TinyGLTF )
+
         .def(py::init<>())
+
         .def("load_ascii_from_string", &tinygltf::TinyGLTF::LoadASCIIFromString
             , py::arg("model")
             , py::arg("err")
@@ -985,7 +1019,6 @@ void init_generated(py::module &_gltf, Registry &registry) {
 
         .def("get_preserve_image_channels", &tinygltf::TinyGLTF::GetPreserveImageChannels
             , py::return_value_policy::automatic_reference)
-
     ;
 
 

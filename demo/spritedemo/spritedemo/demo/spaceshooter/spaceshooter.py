@@ -127,6 +127,7 @@ class SpaceShooter(Demo):
         super().on_key(event)
         key = event.key
         down = event.down
+        repeat = event.repeat
         if key == sdl.SDLK_s:
             if down:
                 self.ship.front_thruster.on()
@@ -148,7 +149,7 @@ class SpaceShooter(Demo):
             else:
                 self.ship.right_thruster.off()
         elif key == sdl.SDLK_SPACE:
-            if down:
+            if down and not repeat:
                 self.ship.fire()
 
 
