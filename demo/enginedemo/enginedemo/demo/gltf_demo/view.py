@@ -45,6 +45,13 @@ class View(ImGuiView):
             descriptor
         ).create_view()
 
+    def on_size(self):
+        super().on_size()
+        self.camera.size = self.size
+        self.create_depth_stencil_view()
+        self.create_msaa_view()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.resize_camera(size)
@@ -53,6 +60,7 @@ class View(ImGuiView):
 
     def resize_camera(self, size: glm.ivec2):
         self.camera.size = size
+    '''
 
     def draw(self, renderer: Renderer3D):
         # logger.debug("View.draw()")

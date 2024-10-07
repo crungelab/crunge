@@ -13,13 +13,49 @@ from .gfx import Gfx
 class Widget(Dispatcher):
     def __init__(self, size = glm.ivec2()) -> None:
         super().__init__()
-        self.size = size
+        #self.size = size
+        self._size = size
         self.parent = None
         self.children: list["Widget"] = []
         self._controller: Controller = None
         self.vu: Vu = None
         self.parts: list[Part] = []
         self.priority = 0
+
+    @property
+    def size(self):
+        return self._size
+    
+    @size.setter
+    def size(self, value: glm.ivec2):
+        changed = self._size != value
+        self._size = value
+        if changed:
+            self.on_size()
+
+    def on_size(self):
+        pass
+
+    @property
+    def width(self):
+        return self.size.x
+    
+    @width.setter
+    def width(self, value):
+        self.size.x = value
+    
+    @property
+    def height(self):
+        return self.size.y
+    
+    @height.setter
+    def height(self, value):
+        self.size.y = value
+
+    '''
+    def resize(self, size: glm.ivec2):
+        self.size = size
+    '''
 
     @property
     def parent(self):
@@ -41,25 +77,6 @@ class Widget(Dispatcher):
             self._controller.disable()
         self._controller = controller
         controller.enable()
-
-    @property
-    def width(self):
-        return self.size.x
-    
-    @width.setter
-    def width(self, value):
-        self.size.x = value
-    
-    @property
-    def height(self):
-        return self.size.y
-    
-    @height.setter
-    def height(self, value):
-        self.size.y = value
-
-    def resize(self, size: glm.ivec2):
-        self.size = size
 
     @property
     def gfx(self):

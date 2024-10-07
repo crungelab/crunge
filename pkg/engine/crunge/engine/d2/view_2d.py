@@ -19,6 +19,7 @@ class View2D(ImGuiView):
         self.scratch: ScratchLayer = None
         self.depthTexture: wgpu.Texture = None
         self.depth_stencil_view: wgpu.TextureView = None
+        self.camera: Camera2D = None
 
     def _create(self, window):
         super()._create(window)
@@ -39,11 +40,21 @@ class View2D(ImGuiView):
         )
         self.depth_stencil_view = self.depthTexture.create_view()
 
+    def on_size(self):
+        super().on_size()
+        size = self.size
+        if self.camera is not None:
+            self.camera.size = glm.vec2(size)
+        self.create_depth_stencil_view()
+        self.renderer = self.create_renderer()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.camera.size = glm.vec2(size)
         self.create_depth_stencil_view()
         self.renderer = self.create_renderer()
+    '''
 
     def create_camera(self):
         self.camera = Camera2D(

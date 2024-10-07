@@ -66,10 +66,17 @@ class CubeDemo(Demo):
         self.create_buffers()
         self.create_pipeline()
 
+    def on_size(self):
+        super().on_size()
+        self.resize_camera(self.size)
+        self.create_depth_stencil_view()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.resize_camera(self.size)
         self.create_depth_stencil_view()
+    '''
 
     def resize_camera(self, size: glm.ivec2):
         aspect = float(size.x) / float(size.y)

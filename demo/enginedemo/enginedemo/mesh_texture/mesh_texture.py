@@ -107,9 +107,15 @@ class MeshTextureDemo(Demo):
     def __init__(self):
         super().__init__()
 
+    def on_size(self):
+        super().on_size()
+        self.create_depth_stencil_view()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.create_depth_stencil_view()
+    '''
 
     def create_device_objects(self):
         self.create_depth_stencil_view()

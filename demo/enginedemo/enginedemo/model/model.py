@@ -77,19 +77,25 @@ class ModelDemo(Demo):
     kUVByteOffset = 3 * sizeof(c_float)
     kVertexDataStride = 5
 
-
     def __init__(self):
         super().__init__()
         self.resize_camera(self.size)
 
+    def on_size(self):
+        super().on_size()
+        self.resize_camera(self.size)
+        self.create_depth_stencil_view()
+
+    """
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.resize_camera(self.size)
         self.create_depth_stencil_view()
+    """
 
     def resize_camera(self, size: glm.ivec2):
         aspect = float(size.x) / float(size.y)
-        #fov_y_radians = (2.0 * math.pi) / 5.0
+        # fov_y_radians = (2.0 * math.pi) / 5.0
         fov_y_radians = glm.radians(60.0)
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
 
@@ -108,7 +114,6 @@ class ModelDemo(Demo):
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
         self.depth_stencil_view = self.depthTexture.create_view()
-
 
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -239,15 +244,8 @@ class ModelDemo(Demo):
         return self.projectionMatrix * viewMatrix * rotMatrix
 
     def create_meshes(self):
-        # mesh_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
-        # mesh_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
-        # mesh_path = resource_root / "models" / "CesiumMilkTruck" / "glTF" / "CesiumMilkTruck.gltf"
         logger.debug(self.resource_root)
-        mesh_path = (
-            self.resource_root / "models" / "DamagedHelmet" / "glTF" / "DamagedHelmet.gltf"
-            #self.resource_root / "models" / "teapot.gltf"
-            #self.resource_root / "models" / "fireplace.gltf"
-        )
+        mesh_path = self.resource_root / "models" / "Fourareen" / "fourareen.gltf"
         scene = tm.load(str(mesh_path))
         geometries = list(scene.geometry.values())
         logger.debug(geometries)
@@ -338,10 +336,10 @@ class ModelDemo(Demo):
             mag_filter=wgpu.FilterMode.LINEAR,
             min_filter=wgpu.FilterMode.LINEAR,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
-            #lod_min_clamp=0,
-            #lod_max_clamp=100,
-            #compare=wgpu.CompareFunction.UNDEFINED,
-            #anisotropy=16,
+            # lod_min_clamp=0,
+            # lod_max_clamp=100,
+            # compare=wgpu.CompareFunction.UNDEFINED,
+            # anisotropy=16,
         )
 
         self.sampler = self.device.create_sampler(sampler_desc)
@@ -418,14 +416,14 @@ class ModelDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        #backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
+        # backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
 
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
-        #self.swap_chain.present()
+        # self.swap_chain.present()
         self.surface.present()
 
 

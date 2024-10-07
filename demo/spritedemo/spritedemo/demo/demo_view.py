@@ -33,11 +33,19 @@ class DemoView(ImGuiView):
         )
         self.depth_stencil_view = self.depthTexture.create_view()
 
+    def on_size(self):
+        super().on_size()
+        self.camera.size = self.size
+        self.create_depth_stencil_view()
+        self.renderer = self.create_renderer()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.camera.size = glm.vec2(size)
         self.create_depth_stencil_view()
         self.renderer = self.create_renderer()
+    '''
 
     def create_camera(self):
         self.camera = Camera2D(

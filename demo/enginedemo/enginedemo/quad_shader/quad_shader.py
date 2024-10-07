@@ -134,10 +134,15 @@ class QuadShaderDemo(Demo):
             descriptor
         ).create_view()
 
+    def on_size(self):
+        super().on_size()
+        self.create_depth_stencil_view()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.create_depth_stencil_view()
-
+    '''
 
 def main():
     QuadShaderDemo(DemoView(layers=[QuadShaderLayer()])).create().run()

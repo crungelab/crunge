@@ -34,6 +34,13 @@ class ImGuiLayer(ViewLayer):
 
     def __init__(self):
         super().__init__("ImGuiLayer")
+        if not self.context:
+            ImGuiLayer.context = imgui.create_context()
+            imgui.set_current_context(self.context)
+            imgui.style_colors_dark()
+
+        self.io = imgui.get_io()
+
         self.default_font = None
         self.clipboard = Clipboard()
         self.dropboard = Dropboard()
@@ -41,19 +48,27 @@ class ImGuiLayer(ViewLayer):
 
     def _create(self, view: engine.View):
         super()._create(view)
+        '''
         if not self.context:
             ImGuiLayer.context = imgui.create_context()
             imgui.set_current_context(self.context)
             imgui.style_colors_dark()
 
         self.io = imgui.get_io()
+        '''
         self.vu = ImGuiVu()
         self._set_pixel_ratio()
         return self
 
+    def on_size(self):
+        super().on_size()
+        self._set_pixel_ratio()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self._set_pixel_ratio()
+    '''
 
     def _set_pixel_ratio(self):
         window_size = self.window.get_size()

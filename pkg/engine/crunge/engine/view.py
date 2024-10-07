@@ -27,11 +27,17 @@ class View(Widget):
         self.window = window
         return self
 
+    def on_size(self):
+        super().on_size()
+        for layer in self.layers:
+            layer.size = self.size
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         for layer in self.layers:
             layer.resize(size)
-
+    '''
 
     def create(self, window: "Window"):
         self._create(window)
@@ -44,7 +50,7 @@ class View(Widget):
         self.window = window
         self.size = window.size
         for layer in self.layers:
-            layer.create()
+            layer.create(self)
         self.create_device_objects()
         return self
 

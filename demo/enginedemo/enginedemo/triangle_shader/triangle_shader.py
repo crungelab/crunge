@@ -117,10 +117,15 @@ class TriangleShaderDemo(Demo):
             descriptor
         ).create_view()
 
+    def on_size(self):
+        super().on_size()
+        self.create_depth_stencil_view()
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         self.create_depth_stencil_view()
-
+    '''
 
 def main():
     TriangleShaderDemo(DemoView(layers=[TriangleShaderLayer()])).create().run()

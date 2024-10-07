@@ -41,6 +41,17 @@ class Window(Frame):
     def create_renderer(self):
         self.renderer = Renderer()
 
+    def on_size(self):
+        super().on_size()
+        size = self.size
+        logger.debug(f"Resizing to {size}")
+        if not size.x or not size.y:
+            return
+        self.configure_surface(size)
+        #super().on_size()
+        logger.debug(f"Resized to {size}")
+
+    '''
     def resize(self, size: glm.ivec2):
         # super().resize(size)
         logger.debug(f"Resizing to {size}")
@@ -52,6 +63,7 @@ class Window(Frame):
         self.configure_surface(size)
         super().resize(size)
         logger.debug(f"Resized to {size}")
+    '''
 
     def get_size(self):
         return sdl.get_window_size(self.window)
@@ -129,7 +141,8 @@ class Window(Frame):
         #logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
-                self.resize(glm.ivec2(event.data1, event.data2))
+                #self.resize(glm.ivec2(event.data1, event.data2))
+                self.size = glm.ivec2(event.data1, event.data2)
             case _:
                 # pass
                 return super().on_window(event)

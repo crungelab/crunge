@@ -22,15 +22,23 @@ class Frame(Widget):
         self.add_child(view)
         view.enable()
 
+    def on_size(self):
+        super().on_size()
+        if self.view is not None:
+            self.view.size = self.size
+
+    '''
     def resize(self, size: glm.ivec2):
         super().resize(size)
         if self.view is not None:
             self.view.resize(size)
+    '''
 
     def _create(self):
         logger.debug("Frame.create")
-        if self.view is not None:
-            self.view.create(self)
+        if self._view is not None:
+            self._view.create(self)
+            self.view = self._view
             #self.show_view(self.view)
         return self
 
