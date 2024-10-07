@@ -69,7 +69,8 @@ class TriangleShaderLayer(DemoLayer):
         # logger.debug("draw")
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.texture_view,
+                #view=renderer.texture_view,
+                view = renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),

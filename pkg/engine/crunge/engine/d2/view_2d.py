@@ -2,7 +2,7 @@ from loguru import logger
 import glm
 
 from crunge import wgpu
-import crunge.wgpu.utils as utils
+from crunge.wgpu import utils
 
 from crunge.engine.imgui import ImGuiView
 
@@ -17,8 +17,8 @@ class View2D(ImGuiView):
     def __init__(self, size=glm.ivec2()) -> None:
         super().__init__(size)
         self.scratch: ScratchLayer = None
-        self.depthTexture: wgpu.Texture = None
-        self.depth_stencil_view: wgpu.TextureView = None
+        #self.depthTexture: wgpu.Texture = None
+        #self.depth_stencil_view: wgpu.TextureView = None
         self.camera: Camera2D = None
 
     def _create(self, window):
@@ -26,10 +26,11 @@ class View2D(ImGuiView):
         self.scratch = ScratchLayer().create(self)
         self.add_layer(self.scratch)
 
-        self.create_depth_stencil_view()
+        #self.create_depth_stencil_view()
         self.create_camera()
         self.create_renderer()
 
+    '''
     def create_depth_stencil_view(self):
         self.depthTexture = utils.create_texture(
             self.device,
@@ -39,13 +40,14 @@ class View2D(ImGuiView):
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
         self.depth_stencil_view = self.depthTexture.create_view()
+    '''
 
     def on_size(self):
         super().on_size()
         size = self.size
         if self.camera is not None:
             self.camera.size = glm.vec2(size)
-        self.create_depth_stencil_view()
+        #self.create_depth_stencil_view()
         self.renderer = self.create_renderer()
 
     '''
@@ -63,12 +65,13 @@ class View2D(ImGuiView):
 
     def create_renderer(self):
         self.renderer = Renderer2D(self.camera)
-        self.renderer.depth_stencil_view = self.depth_stencil_view
+        #self.renderer.depth_stencil_view = self.depth_stencil_view
         return self.renderer
 
     def draw(self, renderer: Renderer2D):
         # logger.debug("DemoView.draw()")
-        self.renderer.texture_view = renderer.texture_view
+        #self.renderer.texture_view = renderer.texture_view
+        self.renderer.viewport = renderer.viewport
         with self.renderer:
             self.scene.draw(self.renderer)
             super().draw(self.renderer)

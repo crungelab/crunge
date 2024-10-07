@@ -9,7 +9,7 @@ from crunge.engine.d3.scene_3d import Scene3D
 from crunge.engine.d3.renderer_3d import Renderer3D
 from crunge.engine.d3.camera_3d import Camera3D
 
-from crunge.engine.loader.gltf.constants import SAMPLE_COUNT
+#from crunge.engine.loader.gltf.constants import SAMPLE_COUNT
 
 
 class View(ImGuiView):
@@ -18,6 +18,7 @@ class View(ImGuiView):
         self.scene = scene
         self.camera = Camera3D(size)
 
+    '''
     def create_device_objects(self):
         self.create_depth_stencil_view()
         self.create_msaa_view()
@@ -44,12 +45,13 @@ class View(ImGuiView):
         self.window.renderer.msaa_view = self.device.create_texture(
             descriptor
         ).create_view()
+    '''
 
     def on_size(self):
         super().on_size()
         self.camera.size = self.size
-        self.create_depth_stencil_view()
-        self.create_msaa_view()
+        #self.create_depth_stencil_view()
+        #self.create_msaa_view()
 
     '''
     def resize(self, size: glm.ivec2):
@@ -64,11 +66,14 @@ class View(ImGuiView):
 
     def draw(self, renderer: Renderer3D):
         # logger.debug("View.draw()")
-        if SAMPLE_COUNT > 1:
+        #if SAMPLE_COUNT > 1:
+        if renderer.viewport.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
-                    view=renderer.msaa_view,
-                    resolve_target=renderer.texture_view,
+                    #view=renderer.msaa_view,
+                    view=renderer.viewport.msaa_texture_view,
+                    #resolve_target=renderer.texture_view,
+                    resolve_target=renderer.viewport.color_texture_view,
                     load_op=wgpu.LoadOp.CLEAR,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
@@ -77,7 +82,8 @@ class View(ImGuiView):
         else:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
-                    view=renderer.texture_view,
+                    #view=renderer.texture_view,
+                    view=renderer.viewport.color_texture_view,
                     # view=renderer.msaa_view,
                     # resolve_target=renderer.texture_view,
                     load_op=wgpu.LoadOp.CLEAR,
@@ -101,7 +107,8 @@ class View(ImGuiView):
         ]
         '''
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.depth_stencil_view,
+            #view=renderer.depth_stencil_view,
+            view=renderer.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,

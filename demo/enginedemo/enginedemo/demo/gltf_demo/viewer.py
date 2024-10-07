@@ -12,6 +12,7 @@ from crunge import engine
 from crunge import imgui
 
 from crunge.engine import Renderer
+from crunge.engine.viewport import SurfaceViewport
 
 from crunge.engine.loader.gltf import GltfLoader
 
@@ -36,6 +37,10 @@ class Viewer(engine.App):
         super().__init__(glm.ivec2(self.kWidth, self.kHeight), self.title, resizable=True)
         self.camera: Camera3D = None
         self.delta_time = 0
+
+    def create_viewport(self):
+        #self.viewport = SurfaceViewport(self.width, self.height, self.window)
+        self.viewport = SurfaceViewport(self.width, self.height, self.window, use_depth_stencil=True, use_msaa=True)
 
     def create_renderer(self):
         self.renderer = Renderer3D()

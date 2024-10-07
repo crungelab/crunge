@@ -108,7 +108,8 @@ class Renderer2D(engine.Renderer):
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=self.texture_view,
+                #view=self.texture_view,
+                view=self.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -116,7 +117,8 @@ class Renderer2D(engine.Renderer):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depth_stencil_view,
+            #view=self.depth_stencil_view,
+            view=self.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,

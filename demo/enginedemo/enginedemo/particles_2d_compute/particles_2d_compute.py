@@ -97,6 +97,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
+#TODO: hanging on resize
 
 class ParticlesDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
@@ -319,7 +320,8 @@ class ParticlesDemo(Demo):
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.texture_view,
+                #view=renderer.texture_view,
+                view = renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),

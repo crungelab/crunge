@@ -541,7 +541,8 @@ class ImGuiVu(Vu):
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.texture_view,
+                #view=renderer.texture_view,
+                view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.LOAD,
                 store_op=wgpu.StoreOp.STORE,
             )
