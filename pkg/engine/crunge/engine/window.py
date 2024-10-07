@@ -31,6 +31,7 @@ class Window(Frame):
         self.create_renderer()
         self.create_device_objects()
         self.create_surface()
+        #self.create_renderer()
         return super()._create()
 
     def create_window(self):

@@ -64,7 +64,30 @@ class View(ImGuiView):
 
     def draw(self, renderer: Renderer3D):
         # logger.debug("View.draw()")
+        if SAMPLE_COUNT > 1:
+            color_attachments = [
+                wgpu.RenderPassColorAttachment(
+                    view=renderer.msaa_view,
+                    resolve_target=renderer.texture_view,
+                    load_op=wgpu.LoadOp.CLEAR,
+                    store_op=wgpu.StoreOp.STORE,
+                    clear_value=wgpu.Color(0, 0, 0, 1),
+                )
+            ]
+        else:
+            color_attachments = [
+                wgpu.RenderPassColorAttachment(
+                    view=renderer.texture_view,
+                    # view=renderer.msaa_view,
+                    # resolve_target=renderer.texture_view,
+                    load_op=wgpu.LoadOp.CLEAR,
+                    store_op=wgpu.StoreOp.STORE,
+                    clear_value=wgpu.Color(0, 0, 0, 1),
+                    # clear_value=wgpu.Color(.5, .5, .5, 1),
+                )
+            ]
 
+        '''
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=renderer.texture_view,
@@ -76,7 +99,7 @@ class View(ImGuiView):
                 # clear_value=wgpu.Color(.5, .5, .5, 1),
             )
         ]
-
+        '''
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
             view=renderer.depth_stencil_view,
             depth_load_op=wgpu.LoadOp.CLEAR,

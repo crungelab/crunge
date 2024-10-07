@@ -6,7 +6,7 @@ from crunge import wgpu
 from crunge.wgpu import utils
 from crunge import gltf
 
-from ..constants import TEXTURE_BINDING_START
+from ..constants import TEXTURE_BINDING_START, SAMPLE_COUNT
 from . import GltfBuilder
 from .builder_context import BuilderContext
 from ..debug import (
@@ -305,8 +305,7 @@ class PrimitiveBuilder(GltfBuilder):
         )
 
         multisample = wgpu.MultisampleState(
-            count=1,
-            #count=4,
+            count=SAMPLE_COUNT,
         )
 
         rp_descriptor = wgpu.RenderPipelineDescriptor(
