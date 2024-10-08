@@ -38,16 +38,13 @@ class Viewer(engine.App):
         self.delta_time = 0
 
     def create_viewport(self):
-        #self.viewport = SurfaceViewport(self.width, self.height, self.window)
         self.viewport = SurfaceViewport(self.width, self.height, self.window, use_depth_stencil=True, use_msaa=True)
 
     def create_renderer(self):
-        self.renderer = Renderer3D()
+        self.renderer = Renderer3D(self.viewport)
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
-        #view = View(scene, self.size).create(self)
-        #self.show_view(view)
         self.view = View(scene, self.size).create(self)
 
     def open(self):

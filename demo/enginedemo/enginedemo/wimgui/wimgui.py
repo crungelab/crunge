@@ -149,16 +149,6 @@ class WImGuiDemo(Demo):
         super().create_window()
         self._set_pixel_ratio()
 
-    """
-    def on_cursor_enter(self, window, entered: int):
-        if entered:
-            self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)
-        else:
-            last_mouse = self.io.mouse_pos
-            self.last_mouse = glm.vec2(last_mouse[0], last_mouse[1])
-            self.io.add_mouse_pos_event(-sys.float_info.max, -sys.float_info.max)
-    """
-
     def on_mouse_enter(self, event: sdl.WindowEvent):
         super().on_mouse_enter(event)
         self.io.add_mouse_pos_event(self.last_mouse.x, self.last_mouse.y)

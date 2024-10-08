@@ -70,38 +70,16 @@ class Viewport(Base):
             format=wgpu.TextureFormat.DEPTH24_PLUS,
             sample_count=self.sample_count,
         )
-        '''
-        self.window.renderer.depth_stencil_view = self.device.create_texture(
-            descriptor
-        ).create_view()
-        '''
         self.depth_stencil_texture = self.device.create_texture(descriptor)
         self.depth_stencil_texture_view = self.depth_stencil_texture.create_view()
-
-    '''
-    def create_depth_stencil(self):
-        self.depth_stencil_texture = utils.create_texture(
-            self.device,
-            "Depth texture",
-            wgpu.Extent3D(self.size.x, self.size.y),
-            wgpu.TextureFormat.DEPTH24_PLUS,
-            wgpu.TextureUsage.RENDER_ATTACHMENT,
-        )
-        self.depth_stencil_texture_view = self.depth_stencil_texture.create_view()
-    '''
 
     def create_msaa(self):
         descriptor = wgpu.TextureDescriptor(
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             size=wgpu.Extent3D(self.width, self.height, 1),
-            sample_count=self.sample_count,
             format=wgpu.TextureFormat.BGRA8_UNORM,
+            sample_count=self.sample_count,
             mip_level_count=1,
         )
-        '''
-        self.window.renderer.msaa_view = self.device.create_texture(
-            descriptor
-        ).create_view()
-        '''
         self.msaa_texture = self.device.create_texture(descriptor)
         self.msaa_texture_view = self.msaa_texture.create_view()

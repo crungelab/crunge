@@ -68,8 +68,6 @@ class UvCoord(Structure):
 
 
 class ModelDemo(Demo):
-    depth_stencil_view: wgpu.TextureView = None
-
     vertex_data: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
 
@@ -84,14 +82,6 @@ class ModelDemo(Demo):
     def on_size(self):
         super().on_size()
         self.resize_camera(self.size)
-        self.create_depth_stencil_view()
-
-    """
-    def resize(self, size: glm.ivec2):
-        super().resize(size)
-        self.resize_camera(self.size)
-        self.create_depth_stencil_view()
-    """
 
     def resize_camera(self, size: glm.ivec2):
         aspect = float(size.x) / float(size.y)
@@ -100,20 +90,9 @@ class ModelDemo(Demo):
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
 
     def create_device_objects(self):
-        self.create_depth_stencil_view()
         self.create_meshes()
         self.create_buffers()
         self.create_pipeline()
-
-    def create_depth_stencil_view(self):
-        self.depthTexture = utils.create_texture(
-            self.device,
-            "Depth texture",
-            wgpu.Extent3D(self.size.x, self.size.y),
-            wgpu.TextureFormat.DEPTH24_PLUS,
-            wgpu.TextureUsage.RENDER_ATTACHMENT,
-        )
-        self.depth_stencil_view = self.depthTexture.create_view()
 
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -382,7 +361,7 @@ class ModelDemo(Demo):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depth_stencil_view,
+            view=self.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
@@ -416,15 +395,13 @@ class ModelDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        # backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
         surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
+        self.viewport.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
 
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
-        # self.swap_chain.present()
-        self.surface.present()
+        self.viewport.present()
 
 
 def main():

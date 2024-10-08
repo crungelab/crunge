@@ -19,7 +19,8 @@ import glm
 
 from crunge.core import as_capsule
 from crunge import wgpu
-from crunge import engine
+from ..renderer import Renderer
+from ..viewport import Viewport
 
 from .uniforms_2d import (
     cast_matrix3,
@@ -31,12 +32,12 @@ from .uniforms_2d import (
 )
 
 
-class Renderer2D(engine.Renderer):
+class Renderer2D(Renderer):
     camera_uniform_buffer: wgpu.Buffer = None
     camera_uniform_buffer_size: int = 0
 
-    def __init__(self, camera: "Camera2D") -> None:
-        super().__init__()
+    def __init__(self, viewport: Viewport, camera: "Camera2D") -> None:
+        super().__init__(viewport)
         self.camera = camera
         self.encoder: wgpu.CommandEncoder = None
         self.pass_enc: wgpu.RenderPassEncoder = None

@@ -52,6 +52,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 
 class CubeDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
+
     kVertexCount = 36
     kPositionByteOffset = 0
     kUVByteOffset = 4 * sizeof(c_float)
@@ -62,37 +63,18 @@ class CubeDemo(Demo):
         self.resize_camera(self.size)
 
     def create_device_objects(self):
-        self.create_depth_stencil_view()
         self.create_buffers()
         self.create_pipeline()
 
     def on_size(self):
         super().on_size()
         self.resize_camera(self.size)
-        self.create_depth_stencil_view()
-
-    '''
-    def resize(self, size: glm.ivec2):
-        super().resize(size)
-        self.resize_camera(self.size)
-        self.create_depth_stencil_view()
-    '''
 
     def resize_camera(self, size: glm.ivec2):
         aspect = float(size.x) / float(size.y)
         # fov_y_radians = (2.0 * math.pi) / 5.0
         fov_y_radians = glm.radians(60.0)
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
-
-    def create_depth_stencil_view(self):
-        self.depthTexture = utils.create_texture(
-            self.device,
-            "Depth texture",
-            wgpu.Extent3D(self.size.x, self.size.y),
-            wgpu.TextureFormat.DEPTH24_PLUS,
-            wgpu.TextureUsage.RENDER_ATTACHMENT,
-        )
-        self.depth_stencil_view = self.depthTexture.create_view()
 
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -191,7 +173,6 @@ class CubeDemo(Demo):
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
                 view = renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
@@ -200,7 +181,7 @@ class CubeDemo(Demo):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depth_stencil_view,
+            view=renderer.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,

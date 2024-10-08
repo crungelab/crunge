@@ -62,7 +62,7 @@ class QuadShaderLayer(DemoLayer):
         )
 
         depthStencilState = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
         )
 
         primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_STRIP)
@@ -86,7 +86,6 @@ class QuadShaderLayer(DemoLayer):
         # logger.debug("render")
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
                 view = renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
@@ -95,7 +94,7 @@ class QuadShaderLayer(DemoLayer):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.depth_stencil_view,
+            view=renderer.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -121,29 +120,7 @@ class QuadShaderLayer(DemoLayer):
 
 
 class QuadShaderDemo(Demo):
-    def create_device_objects(self):
-        super().create_device_objects()
-        self.create_depth_stencil_view()
-
-    def create_depth_stencil_view(self):
-        descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            size=wgpu.Extent3D(self.width, self.height, 1),
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
-        )
-        self.renderer.depth_stencil_view = self.device.create_texture(
-            descriptor
-        ).create_view()
-
-    def on_size(self):
-        super().on_size()
-        self.create_depth_stencil_view()
-
-    '''
-    def resize(self, size: glm.ivec2):
-        super().resize(size)
-        self.create_depth_stencil_view()
-    '''
+    pass
 
 def main():
     QuadShaderDemo(DemoView(layers=[QuadShaderLayer()])).create().run()

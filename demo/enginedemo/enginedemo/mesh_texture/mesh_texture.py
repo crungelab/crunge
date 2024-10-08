@@ -96,8 +96,6 @@ kVertexDataStride = sizeof(Vertex)
 
 
 class MeshTextureDemo(Demo):
-    depth_stencil_view: wgpu.TextureView = None
-
     vertex_data: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
 
@@ -109,30 +107,12 @@ class MeshTextureDemo(Demo):
 
     def on_size(self):
         super().on_size()
-        self.create_depth_stencil_view()
-
-    '''
-    def resize(self, size: glm.ivec2):
-        super().resize(size)
-        self.create_depth_stencil_view()
-    '''
 
     def create_device_objects(self):
-        self.create_depth_stencil_view()
         self.create_meshes()
         self.create_buffers()
         self.create_textures()
         self.create_pipeline()
-
-    def create_depth_stencil_view(self):
-        self.depthTexture = utils.create_texture(
-            self.device,
-            "Depth texture",
-            wgpu.Extent3D(self.size.x, self.size.y),
-            wgpu.TextureFormat.DEPTH24_PLUS,
-            wgpu.TextureUsage.RENDER_ATTACHMENT,
-        )
-        self.depth_stencil_view = self.depthTexture.create_view()
 
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -378,7 +358,7 @@ class MeshTextureDemo(Demo):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.depth_stencil_view,
+            view=renderer.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,

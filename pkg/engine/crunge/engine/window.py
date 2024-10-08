@@ -20,8 +20,6 @@ class Window(Frame):
         self.name = title
 
         self.window: sdl.Window = None
-
-        #self.surface: wgpu.Surface = None
         self.viewport: SurfaceViewport = None
         self.renderer: Renderer = None
 
@@ -30,11 +28,9 @@ class Window(Frame):
     def _create(self):
         logger.debug("Window.create")
         self.create_window()
-        self.create_renderer()
         self.create_device_objects()
-        #self.create_surface()
         self.create_viewport()
-        #self.create_renderer()
+        self.create_renderer()
         return super()._create()
 
     def create_window(self):
@@ -43,7 +39,7 @@ class Window(Frame):
         )
 
     def create_renderer(self):
-        self.renderer = Renderer()
+        self.renderer = Renderer(self.viewport)
 
     def on_size(self):
         super().on_size()
@@ -51,24 +47,8 @@ class Window(Frame):
         logger.debug(f"Resizing to {size}")
         if not size.x or not size.y:
             return
-        #self.configure_surface(size)
         self.viewport.size = size
-        #super().on_size()
         logger.debug(f"Resized to {size}")
-
-    '''
-    def resize(self, size: glm.ivec2):
-        # super().resize(size)
-        logger.debug(f"Resizing to {size}")
-        if not size.x or not size.y:
-            return
-        if self.size == size:
-            return
-        self.size = size
-        self.configure_surface(size)
-        super().resize(size)
-        logger.debug(f"Resized to {size}")
-    '''
 
     def get_size(self):
         return sdl.get_window_size(self.window)
@@ -82,80 +62,21 @@ class Window(Frame):
     def create_viewport(self):
         #self.viewport = SurfaceViewport(self.width, self.height, self.window)
         self.viewport = SurfaceViewport(self.width, self.height, self.window, use_depth_stencil=True)
-    '''
-    def create_surface(self):
-        logger.debug("Creating surface")
-        properties = sdl.get_window_properties(self.window)
-        if sys.platform == "darwin":
-            handle = glfw.get_cocoa_window(self.window)
-        elif sys.platform == "win32":
-            wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-            handle = glfw.get_win32_window(self.window)
-            wsd.hwnd = as_capsule(handle)
-            wsd.hinstance = None
-
-        elif sys.platform == "linux":
-            wsd = wgpu.SurfaceDescriptorFromXlibWindow()
-            handle = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
-            display = sdl.get_pointer_property(
-                properties, "SDL.window.x11.display", None
-            )
-            wsd.window = handle
-            wsd.display = display
-
-        sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
-        self.surface = self.instance.create_surface(sd)
-        logger.debug(self.surface)
-        self.configure_surface(self.size)
-
-    def configure_surface(self, size: glm.ivec2):
-        logger.debug("Configuring surface")
-
-        if not size.x or not size.y:
-            return
-
-        logger.debug("Creating surface configuration")
-        config = wgpu.SurfaceConfiguration(
-            device=self.device,
-            width=size.x,
-            height=size.y,
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            present_mode=wgpu.PresentMode.FIFO,
-            # present_mode=wgpu.PresentMode.MAILBOX,
-            view_format_count=0,
-            # view_formats=None,
-            alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
-        )
-        logger.debug(config)
-        self.surface.configure(config)
-        logger.debug(f"Surface configured to size: {size}")
-
-    def get_surface_view(self) -> wgpu.TextureView:
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        surface_view: wgpu.TextureView = surface_texture.texture.create_view()
-        return surface_view
-    '''
 
     def frame(self):
-        #self.renderer.texture_view = self.get_surface_view()
         self.viewport.frame()
-        #self.renderer.texture_view = self.viewport.color_texture_view
         self.renderer.viewport = self.viewport
 
         self.pre_draw(self.renderer)
         self.draw(self.renderer)
         self.post_draw(self.renderer)
 
-        #self.surface.present()
         self.viewport.present()
 
     def on_window(self, event: sdl.WindowEvent):
         #logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
-                #self.resize(glm.ivec2(event.data1, event.data2))
                 self.size = glm.ivec2(event.data1, event.data2)
             case _:
                 # pass

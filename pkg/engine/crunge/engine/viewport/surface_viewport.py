@@ -66,7 +66,6 @@ class SurfaceViewport(Viewport):
             format=wgpu.TextureFormat.BGRA8_UNORM,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
-            # present_mode=wgpu.PresentMode.MAILBOX,
             view_format_count=0,
             # view_formats=None,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,

@@ -9,7 +9,7 @@ from crunge import imgui
 
 from crunge.core import as_capsule
 from crunge.engine import Renderer
-
+from crunge.engine.viewport import SurfaceViewport
 
 from ..demo import Demo, DemoView, DemoLayer
 
@@ -52,7 +52,7 @@ class TriangleMsaaLayer(DemoLayer):
         )
 
         depthStencilState = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
         )
 
         multisample = wgpu.MultisampleState(
@@ -74,8 +74,8 @@ class TriangleMsaaLayer(DemoLayer):
         # logger.debug("draw")
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.msaa_view,
-                resolve_target=renderer.texture_view,
+                view=renderer.viewport.msaa_texture_view,
+                resolve_target=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -83,7 +83,7 @@ class TriangleMsaaLayer(DemoLayer):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.depth_stencil_view,
+            view=renderer.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -109,45 +109,8 @@ class TriangleMsaaLayer(DemoLayer):
 
 
 class TriangleMsaaDemo(Demo):
-    def create_device_objects(self):
-        super().create_device_objects()
-        self.create_depth_stencil_view()
-        self.create_msaa_view()
-
-    def create_depth_stencil_view(self):
-        descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            size=wgpu.Extent3D(self.width, self.height, 1),
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
-            sample_count=4,
-        )
-        self.renderer.depth_stencil_view = self.device.create_texture(
-            descriptor
-        ).create_view()
-
-    def create_msaa_view(self):
-        descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            size=wgpu.Extent3D(self.width, self.height, 1),
-            sample_count=4,
-            format=wgpu.TextureFormat.BGRA8_UNORM,
-            mip_level_count=1,
-        )
-        self.renderer.msaa_view = self.device.create_texture(
-            descriptor
-        ).create_view()
-
-    def on_size(self):
-        super().on_size()
-        self.create_depth_stencil_view()
-        self.create_msaa_view()
-
-    '''
-    def resize(self, size: glm.ivec2):
-        super().resize(size)
-        self.create_depth_stencil_view()
-        self.create_msaa_view()
-    '''
+    def create_viewport(self):
+        self.viewport = SurfaceViewport(self.width, self.height, self.window, use_depth_stencil=True, use_msaa=True)
 
 def main():
     TriangleMsaaDemo(DemoView(layers=[TriangleMsaaLayer()])).create().run()
