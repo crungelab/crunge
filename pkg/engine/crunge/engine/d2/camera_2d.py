@@ -1,25 +1,70 @@
-import time
-import math
+from ctypes import (
+    Structure,
+    c_float,
+    c_uint32,
+    sizeof,
+    c_bool,
+    c_int,
+    c_void_p,
+    cast,
+    POINTER,
+)
 
 import glm
 
 from loguru import logger
 
-from .node_2d import Node2D
+from crunge import wgpu
+from crunge.core import as_capsule
+from crunge.core.event_source import Subscription
+
 from ..math.rect import RectF
+from ..viewport import Viewport
+from ..camera import CameraAdapter
+
+from .node_2d import Node2D
+from .uniforms_2d import (
+    cast_matrix3,
+    cast_matrix4,
+    cast_vec3,
+    CameraUniform,
+    LightUniform,
+    Mat4,
+)
 
 
 class Camera2D(Node2D):
     def __init__(
         self,
         position=glm.vec3(0.0, 0.0, 2),
-        size=glm.vec2(1.0),
+        size=glm.vec2(1.0)
     ):
         self._zoom = 1.0
+        self.uniform_buffer: wgpu.Buffer = None
+        self.uniform_buffer_size: int = 0
+
+        self.create_buffers()
+        self.create_bind_groups()
+
         super().__init__(position, size)
-        self.viewport = RectF()
+        self._viewport: Viewport = None,
+        self.viewport_size_subscription: Subscription[glm.ivec2] = None
+
         self.projection = RectF()
 
+
+    @property
+    def viewport(self):
+        return self._viewport
+    
+    @viewport.setter
+    def viewport(self, viewport: Viewport):
+        self._viewport = viewport
+        if viewport is not None:
+            #viewport.camera_2d = self
+            #viewport.camera_adapter = CameraAdapter2D(self)
+            self.viewport_size_subscription = viewport.size_events.subscribe(self.on_viewport_size)
+    
     @property
     def zoom(self):
         return self._zoom
@@ -29,15 +74,53 @@ class Camera2D(Node2D):
         self._zoom = value
         self.update_transform()
 
+    def create_buffers(self):
+        # Uniform Buffers
+        self.uniform_buffer_size = sizeof(CameraUniform)
+        self.uniform_buffer = self.gfx.create_buffer(
+            "Camera Uniform Buffer",
+            self.uniform_buffer_size,
+            wgpu.BufferUsage.UNIFORM,
+        )
+
+    def create_bind_groups(self):
+        camera_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
+        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
+        )
+        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
+        logger.debug(f"camera_bgl: {camera_bgl}")
+
+        camera_bindgroup_entries = [
+            wgpu.BindGroupEntry(
+                binding=0,
+                buffer=self.uniform_buffer,
+                size=self.uniform_buffer_size,
+            ),
+        ]
+
+        camera_bind_group_desc = wgpu.BindGroupDescriptor(
+            label="Camera bind group",
+            layout=camera_bgl,
+            entry_count=len(camera_bindgroup_entries),
+            entries=camera_bindgroup_entries,
+        )
+
+        self.bind_group = self.device.create_bind_group(camera_bind_group_desc)
+
+    def on_viewport_size(self, size: glm.ivec2):
+        self.size = glm.vec2(size.x, size.y)
+
     def on_size(self) -> None:
         super().on_size()
         self.update_transform()
-
-    '''
-    def resize(self, size: glm.ivec2) -> None:
-        self.size = glm.vec2(size)
-        self.update_transform()
-    '''
     
     def update_transform(self):
         super().update_transform()
@@ -46,10 +129,6 @@ class Camera2D(Node2D):
         ortho_bottom = (self.y - (self.height * self.zoom) / 2)
         ortho_top = (self.y + (self.height * self.zoom) / 2)
 
-        #self.viewport = RectF(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
-        #self.projection = RectF(self.viewport.x, self.viewport.y, self.viewport.width, self.viewport.height)
-        #self.projection = RectF(0, 0, self.width, self.height)
-        self.viewport = RectF(0, 0, self.width, self.height)
         self.projection = RectF(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
 
         ortho_near = -1  # Near clipping plane
@@ -58,8 +137,33 @@ class Camera2D(Node2D):
         self.projection_matrix = glm.ortho(ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far)
         self.view_matrix = glm.mat4(1.0)
         #logger.debug(f"Camera2D: {self.position}, {self.width}x{self.height}")
+        self.update_gpu()
+
+    def update_gpu(self):
+        camera_uniform = CameraUniform()
+        camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
+        camera_uniform.view.data = cast_matrix4(self.view_matrix)
+        camera_uniform.position = cast_vec3(
+            glm.vec3(self.position.x, self.position.y, 0)
+        )
+
+        self.device.queue.write_buffer(
+            self.uniform_buffer,
+            0,
+            as_capsule(camera_uniform),
+            self.uniform_buffer_size,
+        )
 
 
     @property
     def transform_matrix(self):
         return self.projection_matrix * self.view_matrix
+
+    def bind(self, pass_enc: wgpu.RenderPassEncoder):
+        pass_enc.set_bind_group(0, self.bind_group)
+
+'''
+class CameraAdapter2D(CameraAdapter[Camera2D]):
+    def bind(self, pass_enc: wgpu.RenderPassEncoder):
+        self.camera.bind(pass_enc)
+'''

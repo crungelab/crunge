@@ -22,7 +22,6 @@ class Node(Base, Generic[T_Node, T_Scene, T_Renderer]):
 
     def destroy(self):
         if self.parent:
-            #self.parent.remove_child(self)
             self.parent.detach(self)
         for child in self.children:
             child.destroy()

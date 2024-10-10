@@ -13,7 +13,6 @@ class View(Widget):
     def __init__(self, size=glm.ivec2(), layers: list[ViewLayer]=[]) -> None:
         super().__init__(size)
         self.window: "Window" = None
-        #self.layers: list[ViewLayer] = []
         self.layers_by_name: Dict[str, ViewLayer] = {}
 
         for layer in layers:
@@ -23,10 +22,6 @@ class View(Widget):
     def layers(self) -> List[ViewLayer]:
         return self.children
     
-    def set_window(self, window: "Window"):
-        self.window = window
-        return self
-
     def on_size(self):
         super().on_size()
         for layer in self.layers:
@@ -45,10 +40,14 @@ class View(Widget):
         for layer in self.layers:
             layer.create(self)
         self.create_device_objects()
+        self.create_camera()
         self.create_renderer()
         return self
 
     def create_device_objects(self):
+        pass
+
+    def create_camera(self):
         pass
 
     def create_renderer(self):

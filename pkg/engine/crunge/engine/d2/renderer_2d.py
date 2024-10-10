@@ -33,57 +33,12 @@ from .uniforms_2d import (
 
 
 class Renderer2D(Renderer):
-    camera_uniform_buffer: wgpu.Buffer = None
-    camera_uniform_buffer_size: int = 0
-
     def __init__(self, viewport: Viewport, camera: "Camera2D") -> None:
         super().__init__(viewport)
+        camera.viewport = viewport
         self.camera = camera
         self.encoder: wgpu.CommandEncoder = None
         self.pass_enc: wgpu.RenderPassEncoder = None
-        self.create_buffers()
-        self.create_bind_groups()
-
-    def create_buffers(self):
-        # Uniform Buffers
-        self.camera_uniform_buffer_size = sizeof(CameraUniform)
-        self.camera_uniform_buffer = self.gfx.create_buffer(
-            "Camera Uniform Buffer",
-            self.camera_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-
-    def create_bind_groups(self):
-        camera_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
-        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
-        logger.debug(f"camera_bgl: {camera_bgl}")
-
-        camera_bindgroup_entries = [
-            wgpu.BindGroupEntry(
-                binding=0,
-                buffer=self.camera_uniform_buffer,
-                size=self.camera_uniform_buffer_size,
-            ),
-        ]
-
-        camera_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Camera bind group",
-            layout=camera_bgl,
-            entry_count=len(camera_bindgroup_entries),
-            entries=camera_bindgroup_entries,
-        )
-
-        self.camera_bind_group = self.device.create_bind_group(camera_bind_group_desc)
 
     def __enter__(self):
         self.begin()
@@ -93,23 +48,8 @@ class Renderer2D(Renderer):
         self.end()
 
     def begin(self):
-        camera_uniform = CameraUniform()
-        camera_uniform.projection.data = cast_matrix4(self.camera.projection_matrix)
-        camera_uniform.view.data = cast_matrix4(self.camera.view_matrix)
-        camera_uniform.position = cast_vec3(
-            glm.vec3(self.camera.position.x, self.camera.position.y, 0)
-        )
-
-        self.device.queue.write_buffer(
-            self.camera_uniform_buffer,
-            0,
-            as_capsule(camera_uniform),
-            self.camera_uniform_buffer_size,
-        )
-
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=self.texture_view,
                 view=self.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
@@ -118,7 +58,6 @@ class Renderer2D(Renderer):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            #view=self.depth_stencil_view,
             view=self.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
@@ -136,7 +75,9 @@ class Renderer2D(Renderer):
         self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(
             renderpass
         )
-        self.pass_enc.set_bind_group(0, self.camera_bind_group)
+        #self.pass_enc.set_bind_group(0, self.camera.bind_group)
+        #self.viewport.camera_adapter.bind(self.pass_enc)
+        self.camera.bind(self.pass_enc)
 
     def end(self):
         self.pass_enc.end()

@@ -90,6 +90,36 @@ class SpaceShooter(Demo):
     def update(self, delta_time: float):
         self.physics_engine.update(1 / 60)
         self.scene.update(delta_time)
+        base_lerp_factor = 5.0  # Base speed of camera movement
+        #speed_factor = 0.01      # Factor to scale with ship's speed
+        speed_factor = 0.001      # Factor to scale with ship's speed
+
+
+        # Get the ship's speed
+        ship_speed = glm.length(self.ship.body.velocity)
+
+        #threshold_distance = 200.0
+        threshold_distance = 400.0
+
+
+        # Calculate the target position based on the ship's position and the dead zone
+        self.camera_target = self.calculate_target_position(
+            self.camera.position, self.ship.position, threshold_distance
+        )
+
+        # Adjust lerp_factor based on the ship's speed
+        lerp_factor = base_lerp_factor + ship_speed * speed_factor
+
+        # Update the camera position towards the target
+        self.camera.position = self.update_camera(
+            self.camera.position, self.camera_target, lerp_factor, delta_time
+        )
+        super().update(delta_time)
+
+    '''
+    def update(self, delta_time: float):
+        self.physics_engine.update(1 / 60)
+        self.scene.update(delta_time)
         threshold_distance = 200.0
         lerp_factor = 10  # Speed of camera movement towards the target
 
@@ -103,6 +133,7 @@ class SpaceShooter(Demo):
             self.camera.position, self.camera_target, lerp_factor, delta_time
         )
         super().update(delta_time)
+    '''
 
     def calculate_target_position(
         self, camera_position, ship_position, threshold_distance
@@ -119,8 +150,6 @@ class SpaceShooter(Demo):
         camera_position = glm.lerp(
             camera_position, target_position, lerp_factor * delta_time
         )
-        camera_position.x = round(camera_position.x, 2)
-        camera_position.y = round(camera_position.y, 2)
         return camera_position
 
     def on_key(self, event: sdl.KeyboardEvent):

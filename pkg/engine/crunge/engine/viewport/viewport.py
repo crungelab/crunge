@@ -1,9 +1,18 @@
+'''
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..d2.camera_2d import Camera2D
+    from ..d3.camera_3d import Camera3D
+'''
+
 import glm
 
+from crunge.core.event_source import EventSource
 from crunge import wgpu
-from crunge.wgpu import utils
 
 from ..base import Base
+#from ..camera import CameraAdapter
 
 
 class Viewport(Base):
@@ -15,6 +24,8 @@ class Viewport(Base):
         use_msaa: bool = False,
     ):
         self._size = glm.ivec2(width, height)
+        self.size_events = EventSource[glm.ivec2]()
+
         self.use_depth_stencil = use_depth_stencil
         self.use_msaa = use_msaa
         self.sample_count = 4 if use_msaa else 1
@@ -26,11 +37,11 @@ class Viewport(Base):
         self.msaa_texture: wgpu.Texture = None
         self.msaa_texture_view: wgpu.TextureView = None
 
-        if use_depth_stencil:
-            self.create_depth_stencil()
+        self.create_device_objects()
 
-        if use_msaa:
-            self.create_msaa()
+        #self.camera_2d: "Camera2D" = None
+        #self.camera_3d: "Camera3D" = None
+        #self.camera_adapter: CameraAdapter = None
 
     @property
     def size(self) -> glm.ivec2:
@@ -44,10 +55,8 @@ class Viewport(Base):
             self.on_size()
 
     def on_size(self):
-        if self.use_depth_stencil:
-            self.create_depth_stencil()
-        if self.use_msaa:
-            self.create_msaa()
+        self.create_device_objects()
+        self.size_events.publish(self._size)
 
     @property
     def width(self) -> int:
@@ -62,6 +71,12 @@ class Viewport(Base):
 
     def present(self):
         pass
+
+    def create_device_objects(self):
+        if self.use_depth_stencil:
+            self.create_depth_stencil()
+        if self.use_msaa:
+            self.create_msaa()
 
     def create_depth_stencil(self):
         descriptor = wgpu.TextureDescriptor(

@@ -7,5 +7,4 @@ from .viewport import Viewport
 class Renderer(Base):
     def __init__(self, viewport: Viewport) -> None:
         super().__init__()
-        #self.viewport: Viewport = None
         self.viewport = viewport

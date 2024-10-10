@@ -18,16 +18,25 @@ class DemoView(ImGuiView):
     def __init__(self, scene: Scene2D, size=glm.ivec2()) -> None:
         super().__init__(size)
         self.scene = scene
+        #self.create_camera()
 
+    '''
+    def _create(self, window):
+        #self.create_camera()
+        super()._create(window)
         self.create_camera()
+    '''
 
     def on_size(self):
         super().on_size()
+        '''
         self.camera.size = self.size
+        '''
 
     def create_camera(self):
         self.camera = Camera2D(
-            glm.vec2(self.width / 2, self.height / 2), glm.vec2(self.width, self.height)
+            glm.vec2(self.width / 2, self.height / 2),
+            glm.vec2(self.width, self.height)
         )
 
     def create_renderer(self):
