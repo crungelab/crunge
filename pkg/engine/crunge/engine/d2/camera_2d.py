@@ -18,7 +18,8 @@ from crunge import wgpu
 from crunge.core import as_capsule
 from crunge.core.event_source import Subscription
 
-from ..math.rect import RectF
+from ..math import Point3, Size2, Size2i
+from ..math.rect import Rect2
 from ..viewport import Viewport
 from ..camera import CameraAdapter
 
@@ -36,8 +37,8 @@ from .uniforms_2d import (
 class Camera2D(Node2D):
     def __init__(
         self,
-        position=glm.vec3(0.0, 0.0, 2),
-        size=glm.vec2(1.0)
+        position=Point3(0.0, 0.0, 2),
+        size=Size2(1.0)
     ):
         self._zoom = 1.0
         self.uniform_buffer: wgpu.Buffer = None
@@ -48,9 +49,9 @@ class Camera2D(Node2D):
 
         super().__init__(position, size)
         self._viewport: Viewport = None,
-        self.viewport_size_subscription: Subscription[glm.ivec2] = None
+        self.viewport_size_subscription: Subscription[Size2i] = None
 
-        self.projection = RectF()
+        self.projection = Rect2()
 
 
     @property
@@ -115,8 +116,8 @@ class Camera2D(Node2D):
 
         self.bind_group = self.device.create_bind_group(camera_bind_group_desc)
 
-    def on_viewport_size(self, size: glm.ivec2):
-        self.size = glm.vec2(size.x, size.y)
+    def on_viewport_size(self, size: Size2i):
+        self.size = Size2(size.x, size.y)
 
     def on_size(self) -> None:
         super().on_size()
@@ -129,7 +130,7 @@ class Camera2D(Node2D):
         ortho_bottom = (self.y - (self.height * self.zoom) / 2)
         ortho_top = (self.y + (self.height * self.zoom) / 2)
 
-        self.projection = RectF(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
+        self.projection = Rect2(ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom)
 
         ortho_near = -1  # Near clipping plane
         ortho_far = 1    # Far clipping plane
@@ -144,7 +145,7 @@ class Camera2D(Node2D):
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
         camera_uniform.position = cast_vec3(
-            glm.vec3(self.position.x, self.position.y, 0)
+            Point3(self.position.x, self.position.y, 0)
         )
 
         self.device.queue.write_buffer(

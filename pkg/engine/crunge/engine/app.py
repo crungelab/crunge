@@ -1,15 +1,15 @@
 import sys, time
 
 from loguru import logger
-import glm
 
 from crunge import sdl
 
+from .math import Size2i
 from .window import Window
 from .scheduler import Scheduler
 
 class App(Window):
-    def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
+    def __init__(self, size=Size2i(), title="", view=None, resizable=False):
         super().__init__(size, title, view=view, resizable=resizable)
         self.running = False
         #self.callbacks = []

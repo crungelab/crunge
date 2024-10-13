@@ -7,7 +7,7 @@ from pytmx import TiledMap, TiledTileLayer, TiledObjectGroup
 from crunge import imgui
 from crunge.engine import Renderer
 
-from crunge.engine import RectI
+from crunge.engine.math import Point2, Rect2i
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.resource.resource_manager import ResourceManager
@@ -32,7 +32,7 @@ class TiledDemo(Demo):
 
     def create_view(self):
         super().create_view()
-        self.camera.zoom = 2
+        self.camera.zoom = 2.0
 
     def create_map(self):
 
@@ -61,7 +61,7 @@ class TiledDemo(Demo):
                         tx, ty, tw, th = rect
                         texture = Texture(
                             atlas.texture,
-                            RectI(tx, ty, tw, th),
+                            Rect2i(tx, ty, tw, th),
                             atlas,
                         ).set_name(name)
                         logger.debug(f"texture: {texture}")
@@ -69,7 +69,7 @@ class TiledDemo(Demo):
                         texture = atlas
 
                     sprite = Sprite(texture)
-                    node = Node2D(glm.vec2(x, y), vu=sprite)
+                    node = Node2D(Point2(x, y), vu=sprite)
                     self.scene.root.attach(node)
 
             elif isinstance(layer, TiledObjectGroup):
@@ -95,7 +95,7 @@ class TiledDemo(Demo):
                             tx, ty, tw, th = rect
                             texture = Texture(
                                 atlas.texture,
-                                RectI(tx, ty, tw, th),
+                                Rect2i(tx, ty, tw, th),
                                 atlas,
                             ).set_name(name)
                             logger.debug(f"texture: {texture}")

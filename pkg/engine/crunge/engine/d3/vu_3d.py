@@ -2,13 +2,13 @@ import glm
 from loguru import logger
 
 from crunge.engine import Vu
-from ..math import Size2, Rect2
+from ..math import Size3, Rect2
 
-class Vu2D(Vu):
+class Vu3D(Vu):
     def __init__(self) -> None:
         super().__init__()
         self._transform = glm.mat4(1.0)
-        self.aabb = Rect2(0, 0, 0, 0)
+        #self.aabb = Rect2(0, 0, 0, 0)
 
     @property
     def transform(self) -> glm.mat4:
@@ -25,9 +25,10 @@ class Vu2D(Vu):
         #logger.debug(f"Vu2D: {self.aabb}")
 
     @property
-    def size(self) -> Size2:
+    def size(self) -> Size3:
         raise NotImplementedError
 
+    '''
     def get_local_aabb(self) -> Rect2:
         half_width = self.size.x / 2
         half_height = self.size.y / 2
@@ -61,3 +62,4 @@ class Vu2D(Vu):
 
         # Return the new AABB in world space
         return Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+    '''

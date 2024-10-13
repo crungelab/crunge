@@ -1,12 +1,13 @@
 from loguru import logger
 import glm
 
+from ..math import Size2i
 from ..view import View
 
 from .layer import ImGuiLayer
 
 class ImGuiView(View):
-    def __init__(self, size=glm.ivec2(), layers=[]):
+    def __init__(self, size=Size2i(), layers=[]):
         super().__init__(size, layers=layers)
         self.gui: ImGuiLayer = None
 

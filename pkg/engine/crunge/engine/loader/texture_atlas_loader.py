@@ -3,13 +3,12 @@ from pathlib import Path
 from loguru import logger
 from lxml import etree
 
-from crunge.engine import RectI
-
-from .texture_loader_base import TextureLoaderBase
-
+from ..math import Rect2i
 from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
 from ..resource.texture_atlas import TextureAtlas
+
+from .texture_loader_base import TextureLoaderBase
 
 
 class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
@@ -44,7 +43,11 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
         logger.debug(f"Image Path: {image_path}")
 
         wgpu_texture, width, height = self.load_wgpu_texture([image_path])
-        atlas = TextureAtlas(wgpu_texture, RectI(0, 0, width, height)).set_name(name).set_path(path)
+        atlas = (
+            TextureAtlas(wgpu_texture, Rect2i(0, 0, width, height))
+            .set_name(name)
+            .set_path(path)
+        )
         self.kit.add(atlas)
 
         # Iterate over each SubTexture element
@@ -58,7 +61,7 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
 
             # Create a new texture
             texture = Texture(
-                wgpu_texture, RectI(int(x), int(y), int(width), int(height)), atlas
+                wgpu_texture, Rect2i(int(x), int(y), int(width), int(height)), atlas
             ).set_name(name)
             atlas.add(texture)
 

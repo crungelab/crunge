@@ -7,9 +7,9 @@ import glm
 
 from ..node import Node
 from .renderer_3d import Renderer3D
+from .vu_3d import Vu3D
 
-
-class Node3D(Node["Node3D", "Scene3D", Renderer3D]):
+class Node3D(Node["Node3D", Vu3D, "Scene3D", Renderer3D]):
     def __init__(self, translation = glm.vec3()) -> None:
         super().__init__()
         self.translation = translation

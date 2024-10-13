@@ -3,6 +3,8 @@ import glm
 
 from crunge.engine.imgui import ImGuiView
 
+from ..math import Size2i
+
 from .renderer_2d import Renderer2D
 from .camera_2d import Camera2D
 
@@ -10,7 +12,7 @@ from .scratch_layer import ScratchLayer
 
 
 class View2D(ImGuiView):
-    def __init__(self, size=glm.ivec2()) -> None:
+    def __init__(self, size=Size2i()) -> None:
         super().__init__(size)
         self.scratch: ScratchLayer = None
         self.camera: Camera2D = None

@@ -10,14 +10,12 @@ import glm
 from crunge.core import as_capsule, from_capsule
 from crunge.core import klass
 
-from crunge import sdl
 from crunge import wgpu
-from crunge import engine
-from crunge.engine import RectI
 import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
+from ..math import Rect2i
 from ..renderer import Renderer
 from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
@@ -160,7 +158,7 @@ class ImGuiVu(Vu):
         )
         #self.texture = self.device.create_texture(texture_desc)
         wgpu_texture = self.device.create_texture(texture_desc)
-        self.texture = Texture(wgpu_texture, RectI(0, 0, width, height))
+        self.texture = Texture(wgpu_texture, Rect2i(0, 0, width, height))
         ResourceManager().add(self.texture)
 
         '''

@@ -11,6 +11,7 @@ import glm
 from crunge.core.event_source import EventSource
 from crunge import wgpu
 
+from ..math import Size2i
 from ..base import Base
 #from ..camera import CameraAdapter
 
@@ -23,8 +24,8 @@ class Viewport(Base):
         use_depth_stencil: bool = False,
         use_msaa: bool = False,
     ):
-        self._size = glm.ivec2(width, height)
-        self.size_events = EventSource[glm.ivec2]()
+        self._size = Size2i(width, height)
+        self.size_events = EventSource[Size2i]()
 
         self.use_depth_stencil = use_depth_stencil
         self.use_msaa = use_msaa
@@ -44,11 +45,11 @@ class Viewport(Base):
         #self.camera_adapter: CameraAdapter = None
 
     @property
-    def size(self) -> glm.ivec2:
+    def size(self) -> Size2i:
         return self._size
 
     @size.setter
-    def size(self, value: glm.ivec2):
+    def size(self, value: Size2i):
         changed = self._size != value
         self._size = value
         if changed:

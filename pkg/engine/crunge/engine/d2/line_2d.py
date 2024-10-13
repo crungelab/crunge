@@ -19,10 +19,13 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from crunge.engine.d2.renderer_2d import Renderer2D
+from ..math import Point2, Size2
+from ..program import Program
+from ..resource.texture import Texture
 
-from crunge.engine.d2.vu_2d import Vu2D
-from crunge.engine.d2.uniforms_2d import (
+from .renderer_2d import Renderer2D
+from .vu_2d import Vu2D
+from .uniforms_2d import (
     cast_matrix3,
     cast_matrix4,
     cast_vec3,
@@ -30,8 +33,6 @@ from crunge.engine.d2.uniforms_2d import (
     ModelUniform,
     MaterialUniform,
 )
-from ..program import Program
-from crunge.engine.resource.texture import Texture
 
 shader_code = """
 struct Camera {
@@ -240,8 +241,8 @@ class Line2D(Vu2D):
         self.create_bind_groups()
 
     @property
-    def size(self) -> glm.ivec2:
-        return glm.ivec2(1.0, 1.0)
+    def size(self) -> Size2:
+        return Size2(1.0, 1.0)
 
     @property
     def width(self) -> int:

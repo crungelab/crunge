@@ -9,15 +9,15 @@ import glm
 from .renderer_2d import Renderer2D
 from .vu_2d import Vu2D
 
-from ..math.rect import RectF
+from ..math import Vector2, Point2, Size2, Rect2
 from ..node import Node
 
-class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
+class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     def __init__(
         self,
-        position=glm.vec2(),
-        size=glm.vec2(1.0),
-        scale=glm.vec2(1.0),
+        position=Point2(),
+        size=Size2(1.0),
+        scale=Vector2(1.0),
         vu: Vu2D = None,
     ) -> None:
         super().__init__(vu)
@@ -27,7 +27,7 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         self._size = size
         self._scale = scale
         self._transform = glm.mat4(1.0)
-        self.aabb = RectF(0, 0, 0, 0)
+        self.aabb = Rect2(0, 0, 0, 0)
 
         if vu is not None:
             self._size = vu.size
@@ -152,13 +152,13 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         '''
         self.aabb = self.get_world_aabb()
 
-    def get_local_aabb(self) -> RectF:
+    def get_local_aabb(self) -> Rect2:
         half_width = self.size.x / 2
         half_height = self.size.y / 2
-        return RectF(-half_width, -half_height, self.size.x, self.size.y)
+        return Rect2(-half_width, -half_height, self.size.x, self.size.y)
 
-    def get_world_aabb(self) -> RectF:
-        """Create the transformed RectF for the sprite."""
+    def get_world_aabb(self) -> Rect2:
+        """Create the transformed Rect2 for the sprite."""
         # Get the local bounding box
         local_rect = self.get_local_aabb()
 
@@ -183,4 +183,4 @@ class Node2D(Node["Node2D", "Scene2D", Renderer2D]):
         max_y = max(corner.y for corner in transformed_corners)
 
         # Return the new AABB in world space
-        return RectF(min_x, min_y, max_x - min_x, max_y - min_y)
+        return Rect2(min_x, min_y, max_x - min_x, max_y - min_y)

@@ -1,9 +1,7 @@
 from loguru import logger
-import glm
 
 from crunge import wgpu
 
-from ... import RectI
 from ..resource import Resource
 
 

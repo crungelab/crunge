@@ -64,12 +64,6 @@ class ImGuiLayer(ViewLayer):
         super().on_size()
         self._set_pixel_ratio()
 
-    '''
-    def resize(self, size: glm.ivec2):
-        super().resize(size)
-        self._set_pixel_ratio()
-    '''
-
     def _set_pixel_ratio(self):
         window_size = self.window.get_size()
         self.io.display_size = window_size

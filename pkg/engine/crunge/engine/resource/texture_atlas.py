@@ -2,13 +2,13 @@ from typing import Dict
 
 import glm
 
-from .. import RectI
+from ..math import Rect2i
 
 from .texture import Texture
 
 
 class TextureAtlas(Texture):
-    def __init__(self, texture, rect: RectI):
+    def __init__(self, texture, rect: Rect2i):
         super().__init__(texture, rect)
         self.textures: Dict[str, Texture] = {}
 

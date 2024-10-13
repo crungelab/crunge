@@ -1,11 +1,10 @@
 from ctypes import Structure, c_float
 
 from loguru import logger
-import glm
 
 from crunge import wgpu
 
-from .. import RectI
+from ..math import Rect2i
 from .resource import Resource
 
 
@@ -28,7 +27,7 @@ class Texture(Resource):
     def __init__(
         self,
         texture: wgpu.Texture,
-        rect: RectI,
+        rect: Rect2i,
         parent: "Texture" = None,
     ):
         super().__init__()

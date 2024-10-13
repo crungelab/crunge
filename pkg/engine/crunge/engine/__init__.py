@@ -12,5 +12,3 @@ from .view import View
 from .view_layer import ViewLayer
 from .renderer import Renderer
 from .vu import Vu
-
-from .math.rect import RectI, RectF

@@ -9,7 +9,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge import gltf
 
-from crunge.engine import RectI
+from crunge.engine.math import Rect2i
 
 from crunge.engine.resource.material import Material
 from crunge.engine.resource.texture import Texture

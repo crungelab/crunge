@@ -2,7 +2,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from crunge.engine import RectI
+from crunge.engine import Rect2i
 
 from .texture_builder_base import TextureBuilderBase
 
@@ -18,6 +18,6 @@ class TextureBuilder(TextureBuilderBase[Texture]):
             return texture
         
         wgpu_texture, im_width, im_height = self.load_wgpu_texture([path])
-        texture = Texture(wgpu_texture, RectI(0, 0, im_width, im_height)).set_name(name).set_path(path)
+        texture = Texture(wgpu_texture, Rect2i(0, 0, im_width, im_height)).set_name(name).set_path(path)
         self.kit.add(texture)
         return texture

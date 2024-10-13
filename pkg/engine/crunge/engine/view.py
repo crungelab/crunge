@@ -6,11 +6,12 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
+from .math import Size2i
 from .widget import Widget
 from .view_layer import ViewLayer
 
 class View(Widget):
-    def __init__(self, size=glm.ivec2(), layers: list[ViewLayer]=[]) -> None:
+    def __init__(self, size=Size2i(), layers: list[ViewLayer]=[]) -> None:
         super().__init__(size)
         self.window: "Window" = None
         self.layers_by_name: Dict[str, ViewLayer] = {}

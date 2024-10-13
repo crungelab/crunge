@@ -1,8 +1,8 @@
 from typing import Any, Callable
 
 from loguru import logger
-import glm
 
+from .math import Size2i
 from .dispatcher import Dispatcher
 from .part import Part
 from .controller import Controller
@@ -11,7 +11,7 @@ from .vu import Vu
 from .gfx import Gfx
 
 class Widget(Dispatcher):
-    def __init__(self, size = glm.ivec2()) -> None:
+    def __init__(self, size = Size2i()) -> None:
         super().__init__()
         #self.size = size
         self._size = size
@@ -27,7 +27,7 @@ class Widget(Dispatcher):
         return self._size
     
     @size.setter
-    def size(self, value: glm.ivec2):
+    def size(self, value: Size2i):
         changed = self._size != value
         self._size = value
         if changed:
@@ -51,11 +51,6 @@ class Widget(Dispatcher):
     @height.setter
     def height(self, value):
         self.size.y = value
-
-    '''
-    def resize(self, size: glm.ivec2):
-        self.size = size
-    '''
 
     @property
     def parent(self):

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from crunge.engine import RectI
+from crunge.engine.math import Rect2i
 
 from .texture_loader_base import TextureLoaderBase
 
@@ -17,4 +17,4 @@ class CubeTextureLoader(TextureLoaderBase):
 
     def load(self, paths: List[Path], name: str = "") -> CubeTexture:
         texture, im_width, im_height = self.load_wgpu_texture(paths)
-        return CubeTexture(texture, RectI(0, 0, im_width, im_height)).set_name(name)
+        return CubeTexture(texture, Rect2i(0, 0, im_width, im_height)).set_name(name)

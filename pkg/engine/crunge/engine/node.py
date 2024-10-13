@@ -4,13 +4,14 @@ from crunge.engine import Base, Vu
 from crunge.engine.d2.renderer_2d import Renderer2D
 
 T_Node = TypeVar("T_Node")
+T_Vu = TypeVar("T_Vu")
 T_Scene = TypeVar("T_Scene")
 T_Renderer = TypeVar("T_Renderer")
 
-class Node(Base, Generic[T_Node, T_Scene, T_Renderer]):
+class Node(Base, Generic[T_Node, T_Vu, T_Scene, T_Renderer]):
     def __init__(self, vu: Vu = None) -> None:
         super().__init__()
-        self.vu = vu
+        self.vu: T_Vu = vu
         self.scene: T_Scene = None
         self.parent: "Node[T_Node]" = None
         self.children: List["Node[T_Node]"] = []

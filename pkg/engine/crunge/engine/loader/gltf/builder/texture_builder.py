@@ -6,7 +6,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge import gltf
 
-from crunge.engine import RectI
+from crunge.engine.math import Rect2i
 from crunge.engine.resource.texture import Texture
 
 from ..debug import debug_texture, debug_image
@@ -68,7 +68,7 @@ class TextureBuilder(GltfBuilder):
         )
 
         wgpu_texture = self.gfx.device.create_texture(descriptor)
-        self.texture = Texture(wgpu_texture, RectI(0, 0, im_width, im_height)).set_name(
+        self.texture = Texture(wgpu_texture, Rect2i(0, 0, im_width, im_height)).set_name(
             self.name
         )
         self.texture.view = wgpu_texture.create_view()
