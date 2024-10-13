@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 from crunge import wgpu
+
 from ..renderer import Renderer
 from ..viewport import Viewport
 
-from .camera_3d import Camera3D
+if TYPE_CHECKING:
+    from .camera_3d import Camera3D
 
 class Renderer3D(Renderer):
     def __init__(self, viewport: Viewport) -> None:

@@ -2,25 +2,28 @@ from loguru import logger
 
 from crunge import gltf
 
-from ..builder import GltfBuilder
+from .node_builder import NodeBuilder
 from .builder_context import BuilderContext
 from ..debug import (
     debug_mesh,
 )
 
-from crunge.engine.resource.mesh import Mesh
+from crunge.engine.d3.mesh import Mesh
 
 from .primitive_builder import PrimitiveBuilder
 
 
-class MeshBuilder(GltfBuilder):
-    def __init__(self, context: BuilderContext, tf_mesh: gltf.Mesh) -> None:
-        super().__init__(context)
-        self.tf_mesh = tf_mesh
-        # TODO: create from resource kit
-        self.mesh: Mesh = Mesh()
+class MeshBuilder(NodeBuilder):
+    def __init__(self, context: BuilderContext, tf_node: gltf.Node) -> None:
+        super().__init__(context, tf_node)
+        self.tf_mesh = self.tf_model.meshes[self.tf_node.mesh]
+        self.mesh: Mesh = None
 
-    def build(self):
+    def create_node(self):
+        self.node = self.mesh = Mesh()
+
+    def build_node(self):
+        super().build_node()
         debug_mesh(self.tf_mesh)
         self.build_primitives()
 

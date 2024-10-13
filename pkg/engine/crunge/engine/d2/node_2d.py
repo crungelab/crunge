@@ -26,13 +26,13 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
         self._rotation = 0.0  # radians
         self._size = size
         self._scale = scale
-        self._transform = glm.mat4(1.0)
+        self._matrix = glm.mat4(1.0)
         self.aabb = Rect2(0, 0, 0, 0)
 
         if vu is not None:
             self._size = vu.size
 
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def position(self):
@@ -41,7 +41,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @position.setter
     def position(self, value: glm.vec2):
         self._position = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def x(self):
@@ -50,7 +50,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @x.setter
     def x(self, value: float):
         self._position.x = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def y(self):
@@ -59,7 +59,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @y.setter
     def y(self, value: float):
         self._position.y = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def depth(self):
@@ -68,7 +68,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @depth.setter
     def depth(self, value: float):
         self._depth = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def angle(self):
@@ -78,7 +78,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     def angle(self, value: float):
         self._rotation = glm.radians(value)
         # logger.debug(f"class: {self.__class__}, angle: {value}, rotation: {self._rotation}")
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def size(self):
@@ -87,7 +87,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @size.setter
     def size(self, value: glm.vec2):
         self._size = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def width(self):
@@ -96,7 +96,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @width.setter
     def width(self, value: float):
         self._size.x = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def height(self):
@@ -105,7 +105,7 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @height.setter
     def height(self, value: float):
         self._size.y = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
     def radius(self):
@@ -118,21 +118,45 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
     @scale.setter
     def scale(self, value: float):
         self._scale = value
-        self.update_transform()
+        self.update_matrix()
 
     @property
-    def transform(self):
-        return self._transform
+    def matrix(self):
+        return self._matrix
     
-    @transform.setter
-    def transform(self, value):
-        self._transform = value
+    @matrix.setter
+    def matrix(self, value):
+        self._matrix = value
         self.on_transform()
 
+    @property
+    def transform(self) -> glm.mat4:
+        transform = self.matrix
+        if self.parent:
+            transform = self.parent.transform * transform
+        return transform
+
     def on_transform(self):
+        self.aabb = self.get_world_aabb()
+
         if self.vu is not None:
             self.vu.transform = self.transform
 
+    def update_matrix(self):
+        x = self._position.x
+        y = self._position.y
+        z = self._depth
+
+        matrix = glm.mat4(1.0)  # Identity matrix
+        matrix = glm.translate(matrix, glm.vec3(x, y, z))
+        matrix = glm.rotate(matrix, self._rotation, glm.vec3(0, 0, 1))
+        matrix = glm.scale(
+            matrix,
+            glm.vec3(self._size.x * self._scale.x, self._size.y * self._scale.y, 1),
+        )
+        self.matrix = matrix
+
+    '''
     def update_transform(self):
         x = self._position.x
         y = self._position.y
@@ -146,11 +170,9 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
             glm.vec3(self._size.x * self._scale.x, self._size.y * self._scale.y, 1),
         )
         self.transform = model
-        '''
-        if self.vu is not None:
-            self.vu.transform = self.transform
-        '''
+
         self.aabb = self.get_world_aabb()
+    '''
 
     def get_local_aabb(self) -> Rect2:
         half_width = self.size.x / 2

@@ -31,7 +31,7 @@ class NodeBuilder(GltfBuilder):
 
         if len(self.tf_node.translation) == 3:
             translation = glm.vec3(self.tf_node.translation)
-            self.node.translation = translation
+            self.node.position = translation
             transform = glm.translate(transform, glm.vec3(*translation))
 
 
@@ -39,7 +39,7 @@ class NodeBuilder(GltfBuilder):
             tf_rotation = self.tf_node.rotation
             #rotation = glm.quat(self.tf_node.rotation)
             rotation = glm.quat(tf_rotation[3], tf_rotation[0], tf_rotation[1], tf_rotation[2])
-            self.node.rotation = rotation
+            self.node.orientation = rotation
             #q = glm.quat(rotation[3], rotation[0], rotation[1], rotation[2])
             transform = transform * glm.mat4_cast(rotation)
 
@@ -69,8 +69,12 @@ class NodeBuilder(GltfBuilder):
 
     def build_child(self, child: gltf.Node) -> Node3D:
         if (child.mesh >= 0) and (child.mesh < len(self.tf_model.meshes)):
+            from .mesh_node_builder import MeshNodeBuilder
+            builder = MeshNodeBuilder(self.context, child)
+            '''
             from .mesh_builder import MeshBuilder
             builder = MeshBuilder(self.context, child)
+            '''
         else:
             builder = NodeBuilder(self.context, child)
         return builder.build()

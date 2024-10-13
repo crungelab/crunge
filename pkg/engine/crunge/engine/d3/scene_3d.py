@@ -3,8 +3,6 @@ from ctypes import sizeof
 from loguru import logger
 import glm
 
-from crunge.core import as_capsule
-from crunge import wgpu
 
 from ..light import AmbientLight
 
@@ -19,14 +17,12 @@ class Scene3D(Scene[Node3D, Renderer3D]):
         super().__init__()
         self.root = Node3D()
         self.root.scene = self
-        #self.scene = self
         self.ambient_light = AmbientLight()
         self.lighting = Lighting3D()
-        self.root.attach(OmniLight3D(translation=glm.vec3(2.0, 2.0, 2.0)))
+        self.root.attach(OmniLight3D(position=glm.vec3(2.0, 2.0, 2.0)))
 
     def draw(self, renderer: Renderer3D):
             self.ambient_light.apply()
             self.lighting.apply()
             
-            #self.root.draw(renderer)
             super().draw(renderer)
