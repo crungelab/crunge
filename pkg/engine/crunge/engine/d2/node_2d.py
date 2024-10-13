@@ -156,24 +156,6 @@ class Node2D(Node["Node2D", Vu2D, "Scene2D", Renderer2D]):
         )
         self.matrix = matrix
 
-    '''
-    def update_transform(self):
-        x = self._position.x
-        y = self._position.y
-        z = self._depth
-
-        model = glm.mat4(1.0)  # Identity matrix
-        model = glm.translate(model, glm.vec3(x, y, z))
-        model = glm.rotate(model, self._rotation, glm.vec3(0, 0, 1))
-        model = glm.scale(
-            model,
-            glm.vec3(self._size.x * self._scale.x, self._size.y * self._scale.y, 1),
-        )
-        self.transform = model
-
-        self.aabb = self.get_world_aabb()
-    '''
-
     def get_local_aabb(self) -> Rect2:
         half_width = self.size.x / 2
         half_height = self.size.y / 2

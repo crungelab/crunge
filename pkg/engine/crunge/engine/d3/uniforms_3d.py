@@ -50,10 +50,10 @@ assert sizeof(Mat3) == 48
 
 class CameraUniform(Structure):
     _fields_ = [
-        ("model_matrix", Mat4),
+        #("model_matrix", Mat4),
         ("transform_matrix", Mat4),
         # ("normal_matrix", Mat3),
-        ("normal_matrix", Mat4),
+        #("normal_matrix", Mat4),
         ("position", Vec3),
     ]
 
@@ -61,12 +61,22 @@ class CameraUniform(Structure):
 assert sizeof(CameraUniform) % 16 == 0
 
 
+class ModelUniform(Structure):
+    _fields_ = [
+        ("model_matrix", Mat4),
+        # ("normal_matrix", Mat3),
+        ("normal_matrix", Mat4),
+    ]
+
+
+assert sizeof(ModelUniform) % 16 == 0
+
+
 class AmbientLightUniform(Structure):
     _fields_ = [
         ("color", Vec3),
         ("energy", c_float),
         ("_pad2", c_float * 7),
-        
     ]
     # 48 bytes
 

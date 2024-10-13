@@ -12,7 +12,6 @@ class BuilderContext:
         self.template_env = template_env
 
         from .shader import VertexShaderBuilder, FragmentShaderBuilder
-        #from .shader_ng import VertexShaderBuilder, FragmentShaderBuilder
 
         self.vertex_shader_builder_class = VertexShaderBuilder
         self.fragment_shader_builder_class = FragmentShaderBuilder

@@ -7,12 +7,11 @@ from crunge import wgpu
 from crunge.engine.resource.cube_texture import CubeTexture
 from .....resource.material import Material
 
-from ...constants import TEXTURE_BINDING_START
-
 from ..vertex_table import VertexTable
 from ..builder_context import BuilderContext
 from .shader_builder import ShaderBuilder
 
+MATERIAL_GROUP_INDEX = 2
 
 class Binding:
     def __init__(self, name: str, type: str, index: int, group: int) -> None:
@@ -46,8 +45,8 @@ class FragmentShaderBuilder(ShaderBuilder):
             if isinstance(texture, CubeTexture):
                 texture_type = 'texture_cube<f32>'
 
-            self.add_binding(Binding(f'{texture.name}Sampler', 'sampler', i*2+TEXTURE_BINDING_START, 0))
-            self.add_binding(Binding(f'{texture.name}Texture', texture_type, i*2+TEXTURE_BINDING_START+1, 0))
+            self.add_binding(Binding(f'{texture.name}Sampler', 'sampler', i * 2, MATERIAL_GROUP_INDEX))
+            self.add_binding(Binding(f'{texture.name}Texture', texture_type, i * 2 + 1, MATERIAL_GROUP_INDEX))
 
         shader_code = self.generate('fragment.wgsl')
         #logger.debug(f"fragment_shader_code:\n{shader_code}")

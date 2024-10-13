@@ -2,7 +2,7 @@ struct AmbientLightUniform {
     color: vec3<f32>,
     energy: f32,
 }
-@group(0) @binding(1) var<uniform> ambientLightUniform : AmbientLightUniform;
+@group(1) @binding(0) var<uniform> ambientLightUniform : AmbientLightUniform;
 
 struct AmbientLight {
   color : vec3<f32>,
@@ -15,7 +15,7 @@ struct LightUniform {
     range: f32,
     energy: f32,
 }
-@group(0) @binding(2) var<uniform> lightUniform : LightUniform;
+@group(1) @binding(1) var<uniform> lightUniform : LightUniform;
 
 const LightKind_Point = 0u;
 

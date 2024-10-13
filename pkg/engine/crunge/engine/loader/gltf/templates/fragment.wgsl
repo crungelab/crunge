@@ -1,5 +1,6 @@
 {% include '_vertex_output.wgsl' %}
 {% include '_camera.wgsl' %}
+{% include '_model.wgsl' %}
 {% include '_light.wgsl' %}
 {% include '_lighting.wgsl' %}
 {% include '_environment.wgsl' %}

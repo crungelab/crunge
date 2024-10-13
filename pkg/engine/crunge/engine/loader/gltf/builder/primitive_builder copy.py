@@ -6,7 +6,7 @@ from crunge import wgpu
 from crunge.wgpu import utils
 from crunge import gltf
 
-from ..constants import SAMPLE_COUNT
+from ..constants import TEXTURE_BINDING_START, SAMPLE_COUNT
 from . import GltfBuilder
 from .builder_context import BuilderContext
 from ..debug import (
@@ -14,7 +14,7 @@ from ..debug import (
     debug_material,
 )
 
-from crunge.engine.d3.mesh_node_3d import MeshNode3D
+from crunge.engine.d3.mesh import Mesh
 from crunge.engine.d3.primitive import Primitive
 from crunge.engine.resource.cube_texture import CubeTexture
 
@@ -30,7 +30,7 @@ from ..tangents import compute_tangents
 
 class PrimitiveBuilder(GltfBuilder):
     def __init__(
-        self, context: BuilderContext, mesh: MeshNode3D, tf_primitive: gltf.Primitive
+        self, context: BuilderContext, mesh: Mesh, tf_primitive: gltf.Primitive
     ) -> None:
         super().__init__(context)
         self.mesh = mesh
@@ -45,7 +45,7 @@ class PrimitiveBuilder(GltfBuilder):
         self.build_material()
         self.build_attributes()
         self.build_pipeline()
-        self.build_bindgroups()
+        self.build_bindgroup()
 
         vertex_data = self.vertex_table.data
 
@@ -248,96 +248,60 @@ class PrimitiveBuilder(GltfBuilder):
 
         primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
 
-        # Camera
-        camera_bgl_entries = [
+        bgl_entries = [
+            # Camera
             wgpu.BindGroupLayoutEntry(
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
-        ]
-
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
-        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
-
-        # Light
-        light_bgl_entries = [
             # Ambient Light
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-            # Light
             wgpu.BindGroupLayoutEntry(
                 binding=1,
                 visibility=wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
+            # Light
+            wgpu.BindGroupLayoutEntry(
+                binding=2,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
         ]
-
-        light_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(light_bgl_entries), entries=light_bgl_entries
-        )
-        light_bgl = self.device.create_bind_group_layout(light_bgl_desc)
-
-        # Material
-        material_bgl_entries = []
 
         for i, texture in enumerate(self.material.textures):
             view_dimension = wgpu.TextureViewDimension.E2D
             if isinstance(texture, CubeTexture):
                 view_dimension = wgpu.TextureViewDimension.CUBE
 
-            # Sampler
-            material_bgl_entries.append(
+            bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i * 2,
+                    binding=i * 2 + TEXTURE_BINDING_START,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     sampler=wgpu.SamplerBindingLayout(
                         type=wgpu.SamplerBindingType.FILTERING
                     ),
                 )
             )
-
-            # Texture
-            material_bgl_entries.append(
+            bgl_entries.append(
                 wgpu.BindGroupLayoutEntry(
-                    binding=i * 2 + 1,
+                    binding=i * 2 + TEXTURE_BINDING_START + 1,
                     visibility=wgpu.ShaderStage.FRAGMENT,
                     texture=wgpu.TextureBindingLayout(
                         sample_type=wgpu.TextureSampleType.FLOAT,
+                        #view_dimension=wgpu.TextureViewDimension.E2D,
                         view_dimension=view_dimension,
                     ),
                 )
             )
 
-        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(material_bgl_entries), entries=material_bgl_entries
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(bgl_entries), entries=bgl_entries
         )
-        material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
-
-        # Model
-        model_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(model_bgl_entries), entries=model_bgl_entries
-        )
-        model_bgl = self.device.create_bind_group_layout(model_bgl_desc)
-
-        bind_group_layouts = [camera_bgl, light_bgl, material_bgl, model_bgl]
+        bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(bind_group_layouts),
-            bind_group_layouts=bind_group_layouts,
+            bind_group_layout_count=1, bind_group_layouts=[bgl]
         )
 
         multisample = wgpu.MultisampleState(
@@ -356,86 +320,43 @@ class PrimitiveBuilder(GltfBuilder):
         logger.debug("Creating render pipeline")
         self.primitive.pipeline = self.device.create_render_pipeline(rp_descriptor)
 
-    def build_bindgroups(self):
-        logger.debug("Creating bind groups")
-        # Camera
-        camera_bg_entries = [
+    def build_bindgroup(self):
+        logger.debug("Creating bind group")
+        bg_entries = [
             wgpu.BindGroupEntry(
                 binding=0,
                 buffer=self.mesh.camera_uniform_buffer,
                 size=self.mesh.camera_uniform_buffer_size,
             ),
-        ]
-
-        camera_bg_desc = wgpu.BindGroupDescriptor(
-            label="Camera Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(0),
-            entry_count=len(camera_bg_entries),
-            entries=camera_bg_entries,
-        )
-
-        self.primitive.camera_bind_group = self.device.create_bind_group(camera_bg_desc)
-
-        # Light
-        light_bg_entries = [
             wgpu.BindGroupEntry(
-                binding=0,
+                binding=1,
                 buffer=self.scene.ambient_light.uniform_buffer,
                 size=self.scene.ambient_light.uniform_buffer_size,
             ),
             wgpu.BindGroupEntry(
-                binding=1,
+                binding=2,
                 buffer=self.scene.lighting.lights[0].uniform_buffer,
                 size=self.scene.lighting.lights[0].uniform_buffer_size,
             ),
         ]
 
-        light_bg_desc = wgpu.BindGroupDescriptor(
-            label="Light Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(1),
-            entry_count=len(light_bg_entries),
-            entries=light_bg_entries,
-        )
-
-        self.primitive.light_bind_group = self.device.create_bind_group(light_bg_desc)
-
-        # Material
-        material_bg_entries = []
         for i, texture in enumerate(self.material.textures):
-            material_bg_entries.append(
+            bg_entries.append(
                 wgpu.BindGroupEntry(
-                    binding=i * 2, sampler=texture.sampler
+                    binding=i * 2 + TEXTURE_BINDING_START, sampler=texture.sampler
                 )
             )
-            material_bg_entries.append(
+            bg_entries.append(
                 wgpu.BindGroupEntry(
-                    binding=i * 2 + 1, texture_view=texture.view
+                    binding=i * 2 + TEXTURE_BINDING_START + 1, texture_view=texture.view
                 )
             )
 
-        material_bg_desc = wgpu.BindGroupDescriptor(
-            label="Material Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(2),
-            entry_count=len(material_bg_entries),
-            entries=material_bg_entries,
+        bindGroupDesc = wgpu.BindGroupDescriptor(
+            label="Uniform bind group",
+            layout=self.primitive.pipeline.get_bind_group_layout(0),
+            entry_count=len(bg_entries),
+            entries=bg_entries,
         )
 
-        self.primitive.material_bind_group = self.device.create_bind_group(material_bg_desc)
-
-        # Model
-        model_bg_entries = [
-            wgpu.BindGroupEntry(
-                binding=0,
-                buffer=self.mesh.model_uniform_buffer,
-                size=self.mesh.model_uniform_buffer_size,
-            ),
-        ]
-
-        model_bg_desc = wgpu.BindGroupDescriptor(
-            label="Model Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(3),
-            entry_count=len(model_bg_entries),
-            entries=model_bg_entries,
-        )
-
-        self.primitive.model_bind_group = self.device.create_bind_group(model_bg_desc)
+        self.primitive.bind_group = self.device.create_bind_group(bindGroupDesc)

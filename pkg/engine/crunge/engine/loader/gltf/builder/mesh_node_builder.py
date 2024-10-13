@@ -8,7 +8,7 @@ from ..debug import (
     debug_mesh,
 )
 
-from crunge.engine.d3.mesh import Mesh
+from crunge.engine.d3.mesh_node_3d import MeshNode3D
 
 from .primitive_builder import PrimitiveBuilder
 
@@ -17,10 +17,10 @@ class MeshNodeBuilder(NodeBuilder):
     def __init__(self, context: BuilderContext, tf_node: gltf.Node) -> None:
         super().__init__(context, tf_node)
         self.tf_mesh = self.tf_model.meshes[self.tf_node.mesh]
-        self.mesh: Mesh = None
+        self.mesh: MeshNode3D = None
 
     def create_node(self):
-        self.node = self.mesh = Mesh()
+        self.node = self.mesh = MeshNode3D()
 
     def build_node(self):
         super().build_node()
