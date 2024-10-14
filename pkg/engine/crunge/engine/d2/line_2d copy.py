@@ -20,6 +20,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ..math import Point2, Size2
+from ..program import Program
 
 from .renderer_2d import Renderer2D
 from .vu_2d import Vu2D
@@ -29,7 +30,7 @@ from .uniforms_2d import (
     ModelUniform,
     MaterialUniform,
 )
-from .program_2d import Program2D
+from .scene_2d_program import Scene2DProgram
 
 shader_code = """
 struct Camera {
@@ -81,14 +82,32 @@ vertex_dtype = np.dtype(
 
 
 @klass.singleton
-class LineProgram2D(Program2D):
+class Line2DProgram(Program):
     pipeline: wgpu.RenderPipeline = None
 
     def __init__(self):
         super().__init__()
+        self.create_render_bind_group_layouts()
         self.create_render_pipeline()
 
-    def create_material_bindgroup_layout(self):
+    def create_render_bind_group_layouts(self):
+        '''
+        camera_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
+        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
+        )
+        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
+        logger.debug(f"camera_bgl: {camera_bgl}")
+        '''
+        camera_bgl = Scene2DProgram().camera_bindgroup_layout
+
         material_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
                 binding=0,
@@ -100,8 +119,29 @@ class LineProgram2D(Program2D):
         material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
             entry_count=len(material_bgl_entries), entries=material_bgl_entries
         )
-        self._material_bindgroup_layout = self.device.create_bind_group_layout(material_bgl_desc)
-        logger.debug(f"material_bgl: {self._material_bindgroup_layout}")
+        material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
+        logger.debug(f"material_bgl: {material_bgl}")
+
+        '''
+        model_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
+        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(model_bgl_entries), entries=model_bgl_entries
+        )
+        model_bgl = self.device.create_bind_group_layout(model_bgl_desc)
+        logger.debug(f"model_bgl: {model_bgl}")
+        '''
+        model_bgl = Scene2DProgram().model_bindgroup_layout
+
+        self.bind_group_layouts = wgpu.BindGroupLayouts(
+            [camera_bgl, material_bgl, model_bgl]
+        )
 
     def create_render_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -199,7 +239,7 @@ class Line2D(Vu2D):
         self.end = end
         self.points = [begin, end]
         self.color = color
-        self.program = LineProgram2D()
+        self.program = Line2DProgram()
         self.create_vertices()
         self.create_buffers()
         self.create_bind_groups()

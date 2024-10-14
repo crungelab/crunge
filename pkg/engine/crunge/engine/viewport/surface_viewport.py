@@ -23,11 +23,11 @@ class SurfaceViewport(Viewport):
         self.surface: wgpu.Surface = None
         self.create_surface()
 
-    def on_size(self):
+    def on_size(self) -> None:
         super().on_size()
         self.configure_surface()
 
-    def create_surface(self):
+    def create_surface(self) -> None:
         logger.debug("Creating surface")
         properties = sdl.get_window_properties(self.window)
         if sys.platform == "darwin":
@@ -52,7 +52,7 @@ class SurfaceViewport(Viewport):
         logger.debug(self.surface)
         self.configure_surface()
 
-    def configure_surface(self):
+    def configure_surface(self) -> None:
         logger.debug("Configuring surface")
         size = self.size
         if not size.x or not size.y:

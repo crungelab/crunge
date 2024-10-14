@@ -1,7 +1,3 @@
-from typing import Dict
-
-import glm
-
 from ..math import Rect2i
 
 from .texture import Texture

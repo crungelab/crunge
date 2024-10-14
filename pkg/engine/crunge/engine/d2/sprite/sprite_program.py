@@ -15,7 +15,7 @@ from loguru import logger
 from crunge.core import klass
 from crunge import wgpu
 
-from ...program import Program
+from ..program_2d import Program2D
 
 shader_code = """
 struct Camera {
@@ -66,75 +66,12 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 
 
 @klass.singleton
-class SpriteProgram(Program):
+class SpriteProgram(Program2D):
     pipeline: wgpu.RenderPipeline = None
 
     def __init__(self):
         super().__init__()
-        self.create_render_bind_group_layouts()
         self.create_render_pipeline()
-
-    def create_render_bind_group_layouts(self):
-        camera_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
-        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
-        logger.debug(f"camera_bgl: {camera_bgl}")
-
-        material_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                sampler=wgpu.SamplerBindingLayout(
-                    type=wgpu.SamplerBindingType.FILTERING
-                ),
-            ),
-            wgpu.BindGroupLayoutEntry(
-                binding=1,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                texture=wgpu.TextureBindingLayout(
-                    sample_type=wgpu.TextureSampleType.FLOAT,
-                    view_dimension=wgpu.TextureViewDimension.E2D,
-                ),
-            ),
-            wgpu.BindGroupLayoutEntry(
-                binding=2,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(material_bgl_entries), entries=material_bgl_entries
-        )
-        material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
-        logger.debug(f"material_bgl: {material_bgl}")
-
-        model_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(model_bgl_entries), entries=model_bgl_entries
-        )
-        model_bgl = self.device.create_bind_group_layout(model_bgl_desc)
-        logger.debug(f"model_bgl: {model_bgl}")
-
-        self.bind_group_layouts = wgpu.BindGroupLayouts(
-            [camera_bgl, material_bgl, model_bgl]
-        )
 
     def create_render_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)

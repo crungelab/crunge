@@ -16,6 +16,7 @@ from loguru import logger
 
 from crunge import wgpu
 from crunge.core import as_capsule
+from crunge.core import klass
 from crunge.core.event_source import Subscription
 
 from ..math import Point3, Size2, Size2i
@@ -29,7 +30,11 @@ from .uniforms_2d import (
     cast_vec3,
     CameraUniform,
 )
+from .program_2d import Program2D
 
+@klass.singleton
+class CameraProgram2D(Program2D):
+    pass
 
 class Camera2D(Node2D):
     def __init__(self, position=Point3(0.0, 0.0, 2), size=Size2(1.0)):
@@ -55,8 +60,6 @@ class Camera2D(Node2D):
     def viewport(self, viewport: Viewport):
         self._viewport = viewport
         if viewport is not None:
-            # viewport.camera_2d = self
-            # viewport.camera_adapter = CameraAdapter2D(self)
             self.viewport_size_subscription = viewport.size_events.subscribe(
                 self.on_viewport_size
             )
@@ -80,20 +83,6 @@ class Camera2D(Node2D):
         )
 
     def create_bind_groups(self):
-        camera_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
-        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
-        logger.debug(f"camera_bgl: {camera_bgl}")
-
         camera_bindgroup_entries = [
             wgpu.BindGroupEntry(
                 binding=0,
@@ -104,7 +93,8 @@ class Camera2D(Node2D):
 
         camera_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Camera bind group",
-            layout=camera_bgl,
+            #layout=camera_bgl,
+            layout=CameraProgram2D().camera_bindgroup_layout,
             entry_count=len(camera_bindgroup_entries),
             entries=camera_bindgroup_entries,
         )
@@ -135,8 +125,6 @@ class Camera2D(Node2D):
         self.projection_matrix = glm.ortho(
             ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far
         )
-        #self.view_matrix = glm.mat4(1.0)
-        # logger.debug(f"Camera2D: {self.position}, {self.width}x{self.height}")
         self.update_gpu()
 
     def update_gpu(self):
