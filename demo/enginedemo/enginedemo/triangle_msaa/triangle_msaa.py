@@ -110,7 +110,7 @@ class TriangleMsaaLayer(DemoLayer):
 
 class TriangleMsaaDemo(Demo):
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.width, self.height, self.window, use_depth_stencil=True, use_msaa=True)
+        self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True, use_msaa=True)
 
 def main():
     TriangleMsaaDemo(DemoView(layers=[TriangleMsaaLayer()])).create().run()

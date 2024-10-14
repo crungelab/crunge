@@ -1,30 +1,18 @@
-'''
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ..d2.camera_2d import Camera2D
-    from ..d3.camera_3d import Camera3D
-'''
-
-import glm
-
 from crunge.core.event_source import EventSource
 from crunge import wgpu
 
 from ..math import Size2i
 from ..base import Base
-#from ..camera import CameraAdapter
 
 
 class Viewport(Base):
     def __init__(
         self,
-        width: int,
-        height: int,
+        size: Size2i,
         use_depth_stencil: bool = False,
         use_msaa: bool = False,
     ):
-        self._size = Size2i(width, height)
+        self._size = size
         self.size_events = EventSource[Size2i]()
 
         self.use_depth_stencil = use_depth_stencil
@@ -40,10 +28,6 @@ class Viewport(Base):
 
         self.create_device_objects()
 
-        #self.camera_2d: "Camera2D" = None
-        #self.camera_3d: "Camera3D" = None
-        #self.camera_adapter: CameraAdapter = None
-
     @property
     def size(self) -> Size2i:
         return self._size
@@ -55,7 +39,7 @@ class Viewport(Base):
         if changed:
             self.on_size()
 
-    def on_size(self):
+    def on_size(self) -> None:
         self.create_device_objects()
         self.size_events.publish(self._size)
 
@@ -67,19 +51,19 @@ class Viewport(Base):
     def height(self) -> int:
         return self._size.y
 
-    def frame(self):
+    def frame(self) -> None:
         pass
 
-    def present(self):
+    def present(self) -> None:
         pass
 
-    def create_device_objects(self):
+    def create_device_objects(self) -> None:
         if self.use_depth_stencil:
             self.create_depth_stencil()
         if self.use_msaa:
             self.create_msaa()
 
-    def create_depth_stencil(self):
+    def create_depth_stencil(self) -> None:
         descriptor = wgpu.TextureDescriptor(
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             size=wgpu.Extent3D(self.width, self.height, 1),
@@ -89,7 +73,7 @@ class Viewport(Base):
         self.depth_stencil_texture = self.device.create_texture(descriptor)
         self.depth_stencil_texture_view = self.depth_stencil_texture.create_view()
 
-    def create_msaa(self):
+    def create_msaa(self) -> None:
         descriptor = wgpu.TextureDescriptor(
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             size=wgpu.Extent3D(self.width, self.height, 1),

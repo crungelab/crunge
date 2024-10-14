@@ -35,5 +35,3 @@ class View2D(ImGuiView):
         with self.renderer:
             self.scene.draw(self.renderer)
             super().draw(self.renderer)
-
-        # super().draw(renderer)

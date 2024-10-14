@@ -8,6 +8,7 @@ from ..viewport import Viewport
 if TYPE_CHECKING:
     from .camera_3d import Camera3D
 
+
 class Renderer3D(Renderer):
     def __init__(self, viewport: Viewport, camera: "Camera3D") -> None:
         super().__init__(viewport)
@@ -28,7 +29,6 @@ class Renderer3D(Renderer):
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.msaa_texture_view,
                     resolve_target=self.viewport.color_texture_view,
-
                     load_op=wgpu.LoadOp.CLEAR,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
@@ -59,7 +59,7 @@ class Renderer3D(Renderer):
             depth_stencil_attachment=depthStencilAttach,
         )
 
-        '''
+        """
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=self.viewport.color_texture_view,
@@ -82,14 +82,12 @@ class Renderer3D(Renderer):
             color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
-        '''
+        """
 
         self.encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(
             renderpass
         )
-        #self.pass_enc.set_bind_group(0, self.camera.bind_group)
-        #self.viewport.camera_adapter.bind(self.pass_enc)
         self.camera.bind(self.pass_enc)
 
     def end(self):

@@ -75,8 +75,6 @@ class Renderer2D(Renderer):
         self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(
             renderpass
         )
-        #self.pass_enc.set_bind_group(0, self.camera.bind_group)
-        #self.viewport.camera_adapter.bind(self.pass_enc)
         self.camera.bind(self.pass_enc)
 
     def end(self):

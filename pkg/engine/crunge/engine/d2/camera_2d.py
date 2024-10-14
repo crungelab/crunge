@@ -21,7 +21,6 @@ from crunge.core.event_source import Subscription
 from ..math import Point3, Size2, Size2i
 from ..math.rect import Rect2
 from ..viewport import Viewport
-from ..camera import CameraAdapter
 
 from .node_2d import Node2D
 from .uniforms_2d import (
@@ -155,10 +154,3 @@ class Camera2D(Node2D):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(0, self.bind_group)
-
-
-"""
-class CameraAdapter2D(CameraAdapter[Camera2D]):
-    def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        self.camera.bind(pass_enc)
-"""

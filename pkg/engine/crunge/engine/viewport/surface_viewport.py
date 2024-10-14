@@ -8,17 +8,17 @@ from .viewport import Viewport
 from crunge import wgpu
 from crunge import sdl
 
+from ..math import Size2i
 
 class SurfaceViewport(Viewport):
     def __init__(
         self,
-        width: int,
-        height: int,
+        size: Size2i,
         window: sdl.Window,
         use_depth_stencil: bool = False,
         use_msaa: bool = False,
     ):
-        super().__init__(width, height, use_depth_stencil, use_msaa)
+        super().__init__(size, use_depth_stencil, use_msaa)
         self.window = window
         self.surface: wgpu.Surface = None
         self.create_surface()
