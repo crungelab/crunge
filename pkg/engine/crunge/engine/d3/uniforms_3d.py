@@ -50,10 +50,8 @@ assert sizeof(Mat3) == 48
 
 class CameraUniform(Structure):
     _fields_ = [
-        #("model_matrix", Mat4),
-        ("transform_matrix", Mat4),
-        # ("normal_matrix", Mat3),
-        #("normal_matrix", Mat4),
+        ("projection", Mat4),
+        ("view", Mat4),
         ("position", Vec3),
     ]
 

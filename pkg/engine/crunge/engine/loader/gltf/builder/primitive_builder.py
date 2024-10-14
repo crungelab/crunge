@@ -358,6 +358,7 @@ class PrimitiveBuilder(GltfBuilder):
 
     def build_bindgroups(self):
         logger.debug("Creating bind groups")
+        '''
         # Camera
         camera_bg_entries = [
             wgpu.BindGroupEntry(
@@ -375,6 +376,7 @@ class PrimitiveBuilder(GltfBuilder):
         )
 
         self.primitive.camera_bind_group = self.device.create_bind_group(camera_bg_desc)
+        '''
 
         # Light
         light_bg_entries = [

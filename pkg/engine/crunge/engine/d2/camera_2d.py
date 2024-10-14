@@ -37,15 +37,16 @@ class Camera2D(Node2D):
         self._zoom = 1.0
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
+        self.view_matrix = glm.mat4(1.0)
+
+        self._viewport: Viewport = None
+        self.viewport_size_subscription: Subscription[Size2i] = None
+        self.projection = Rect2()
 
         self.create_buffers()
         self.create_bind_groups()
 
         super().__init__(position, size)
-        self._viewport: Viewport = (None,)
-        self.viewport_size_subscription: Subscription[Size2i] = None
-
-        self.projection = Rect2()
 
     @property
     def viewport(self):
@@ -135,7 +136,7 @@ class Camera2D(Node2D):
         self.projection_matrix = glm.ortho(
             ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far
         )
-        self.view_matrix = glm.mat4(1.0)
+        #self.view_matrix = glm.mat4(1.0)
         # logger.debug(f"Camera2D: {self.position}, {self.width}x{self.height}")
         self.update_gpu()
 
@@ -151,10 +152,6 @@ class Camera2D(Node2D):
             as_capsule(camera_uniform),
             self.uniform_buffer_size,
         )
-
-    @property
-    def transform_matrix(self):
-        return self.projection_matrix * self.view_matrix
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(0, self.bind_group)

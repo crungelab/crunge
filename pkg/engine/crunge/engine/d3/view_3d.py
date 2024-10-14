@@ -10,16 +10,25 @@ from crunge.engine.d3.renderer_3d import Renderer3D
 from crunge.engine.d3.camera_3d import Camera3D
 
 
-class View(ImGuiView):
+class View3D(ImGuiView):
     def __init__(self, scene: Scene3D, size=glm.ivec2()) -> None:
         super().__init__(size)
         self.scene = scene
         self.camera = Camera3D(size)
 
+    def create_renderer(self):
+        self.renderer = Renderer3D(self.window.viewport, self.camera)
+
     def on_size(self):
         super().on_size()
         self.camera.size = self.size
 
+    def draw(self, renderer: Renderer3D):
+        with self.renderer:
+            self.scene.draw(self.renderer)
+            super().draw(self.renderer)
+
+    '''
     def draw(self, renderer: Renderer3D):
         if renderer.viewport.use_msaa:
             color_attachments = [
@@ -68,3 +77,4 @@ class View(ImGuiView):
         self.device.queue.submit(1, commands)
 
         super().draw(renderer)
+        '''

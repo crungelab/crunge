@@ -23,22 +23,20 @@ class Camera3D(Node3D):
         position=Point3(0.0, 0.0, 4.0),
         up=Vector3(0.0, 1.0, 0.0),
     ):
-        super().__init__(position)
-        #self.position = position
-        #self.orientation = glm.quat()
+        #super().__init__(position)
         self.view_matrix = glm.mat4(1.0)
         self.projection_matrix = glm.mat4(1.0)
-        self.size = size
+        self._size = size
         self.zoom = 45.0
 
         self.up = up
         self.front = glm.vec3(0.0, 0.0, -1.0)
         self.right = glm.vec3(1.0, 0.0, 0.0)
 
-        self.update_camera_vectors()
+        self.create_buffers()
+        self.create_bind_groups()
 
-        #self.create_buffers()
-        #self.create_bind_groups()
+        super().__init__(position)
 
     @property
     def size(self):
@@ -47,9 +45,7 @@ class Camera3D(Node3D):
     @size.setter
     def size(self, size: glm.ivec2):
         self._size = size
-        aspect = float(size.x) / float(size.y)
-        fovy = glm.radians(60.0)
-        self.projection_matrix = glm.perspective(fovy, aspect, .1, 100.0)
+        self.update_matrix()
 
     @property
     def transform_matrix(self):
@@ -68,7 +64,8 @@ class Camera3D(Node3D):
         camera_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
                 binding=0,
-                visibility=wgpu.ShaderStage.VERTEX,
+                #visibility=wgpu.ShaderStage.VERTEX,
+                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
         ]
@@ -88,7 +85,7 @@ class Camera3D(Node3D):
         ]
 
         camera_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Camera bind group",
+            label="Camera Bind Group",
             layout=camera_bgl,
             entry_count=len(camera_bindgroup_entries),
             entries=camera_bindgroup_entries,
@@ -112,22 +109,29 @@ class Camera3D(Node3D):
         super().on_size()
         self.update_matrix()
 
+    def update_matrix(self):
+        super().update_matrix()
+        self.update_camera_vectors()
+        size = self.size
+        aspect = float(size.x) / float(size.y)
+        fovy = glm.radians(60.0)
+        self.projection_matrix = glm.perspective(fovy, aspect, .1, 100.0)
+
+        self.update_gpu()
+
     def update_gpu(self):
         camera_uniform = CameraUniform()
-        camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
-        camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
-        #camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
-        camera_uniform.normal_matrix.data = cast_matrix4(normal_matrix)
-
-        # camera_uniform.position.x = camera.position.x
-        # camera_uniform.position.y = camera.position.y
-        # camera_uniform.position.z = camera.position.z
-        camera_uniform.position = cast_vec3(camera.position)
+        camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
+        camera_uniform.view.data = cast_matrix4(self.view_matrix)
+        camera_uniform.position = cast_vec3(self.position)
         #logger.debug(f"camera_uniform.position: {camera_uniform.position.x}, {camera_uniform.position.y}, {camera_uniform.position.z}")
 
         self.device.queue.write_buffer(
-            self.camera_uniform_buffer,
+            self.uniform_buffer,
             0,
             as_capsule(camera_uniform),
-            self.camera_uniform_buffer_size,
+            self.uniform_buffer_size,
         )
+
+    def bind(self, pass_enc: wgpu.RenderPassEncoder):
+        pass_enc.set_bind_group(0, self.bind_group)

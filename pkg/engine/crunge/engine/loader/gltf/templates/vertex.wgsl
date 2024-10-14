@@ -7,7 +7,7 @@
 fn vs_main(input : VertexInput) -> VertexOutput {
     var output : VertexOutput;
     output.frag_pos = (model.modelMatrix * input.pos).xyz;
-    output.vertex_pos = camera.transformMatrix * input.pos;
+    output.vertex_pos = camera.projection * camera.view * model.modelMatrix * input.pos;
     //output.normal = camera.normalMatrix * input.normal;
     output.normal = normalize((model.normalMatrix * vec4<f32>(input.normal, 0.0)).xyz);
 

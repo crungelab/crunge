@@ -33,12 +33,14 @@ class MeshInstance3D(Node3D):
             wgpu.BufferUsage.UNIFORM,
         )
 
+        '''
         self.camera_uniform_buffer_size = sizeof(CameraUniform)
         self.camera_uniform_buffer = self.gfx.create_buffer(
             "Camera Uniform Buffer",
             self.camera_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
+        '''
 
     def add_primitive(self, primitive: Primitive):
         self.primitives.append(primitive)
@@ -53,16 +55,13 @@ class MeshInstance3D(Node3D):
         model_uniform.model_matrix.data = cast_matrix4(model_matrix)
         model_uniform.normal_matrix.data = cast_matrix4(normal_matrix)
 
-        transform_matrix = camera.transform_matrix * self.transform
-        normal_matrix = glm.mat4(glm.transpose(glm.inverse(glm.mat3(model_matrix))))
-
         self.device.queue.write_buffer(
             self.model_uniform_buffer,
             0,
             as_capsule(model_uniform),
             self.model_uniform_buffer_size,
         )
-
+        '''
         camera_uniform = CameraUniform()
         camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
 
@@ -78,6 +77,7 @@ class MeshInstance3D(Node3D):
             as_capsule(camera_uniform),
             self.camera_uniform_buffer_size,
         )
+        '''
 
         for primitive in self.primitives:
             primitive.draw(renderer)
