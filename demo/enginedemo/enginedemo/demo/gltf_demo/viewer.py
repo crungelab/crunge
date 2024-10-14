@@ -29,21 +29,29 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 
 class Viewer(engine.App):
+    #renderer: Renderer3D
+    view: View3D
+
     title = "Gltf Viewer"
-    renderer: Renderer3D
     kWidth = 1024
     kHeight = 768
 
     def __init__(self):
         super().__init__(glm.ivec2(self.kWidth, self.kHeight), self.title, resizable=True)
-        self.camera: Camera3D = None
+        #self.camera: Camera3D = None
         self.delta_time = 0
+
+    @property
+    def camera(self):
+        return self.view.camera
 
     def create_viewport(self):
         self.viewport = SurfaceViewport(self.width, self.height, self.window, use_depth_stencil=True, use_msaa=True)
 
+    '''
     def create_renderer(self):
         self.renderer = Renderer3D(self.viewport, self.camera)
+    '''
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
@@ -62,7 +70,7 @@ class Viewer(engine.App):
         self.scene = scene
         self.create_view(scene)
 
-        self.camera = self.view.camera
+        #self.camera = self.view.camera
         self.controller = ArcballCameraController(self, self.camera)
         self.controller.activate()
 

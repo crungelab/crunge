@@ -4,9 +4,13 @@ from loguru import logger
 import glm
 
 from crunge.core import as_capsule
+from crunge.core.event_source import Subscription
+
 from crunge import wgpu
 
 from ..math import Size2, Size2i, Vector3,Point3
+from ..viewport import Viewport
+
 from .node_3d import Node3D
 from .uniforms_3d import (
     cast_matrix3,
@@ -33,10 +37,28 @@ class Camera3D(Node3D):
         self.front = glm.vec3(0.0, 0.0, -1.0)
         self.right = glm.vec3(1.0, 0.0, 0.0)
 
+        self._viewport: Viewport = None
+        self.viewport_size_subscription: Subscription[Size2i] = None
+
         self.create_buffers()
         self.create_bind_groups()
 
         super().__init__(position)
+
+    @property
+    def viewport(self):
+        return self._viewport
+
+    @viewport.setter
+    def viewport(self, viewport: Viewport):
+        self._viewport = viewport
+        if viewport is not None:
+            self.viewport_size_subscription = viewport.size_events.subscribe(
+                self.on_viewport_size
+            )
+
+    def on_viewport_size(self, size: Size2i):
+        self.size = size
 
     @property
     def size(self):
@@ -64,7 +86,6 @@ class Camera3D(Node3D):
         camera_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
                 binding=0,
-                #visibility=wgpu.ShaderStage.VERTEX,
                 visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),

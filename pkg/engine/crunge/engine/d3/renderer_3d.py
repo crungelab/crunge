@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 class Renderer3D(Renderer):
     def __init__(self, viewport: Viewport, camera: "Camera3D") -> None:
         super().__init__(viewport)
+        camera.viewport = viewport
         self.pass_enc: wgpu.RenderPassEncoder = None
         self.camera = camera
 

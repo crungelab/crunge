@@ -38,10 +38,10 @@ class Camera2D(Node2D):
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
         self.view_matrix = glm.mat4(1.0)
+        self.projection = Rect2()
 
         self._viewport: Viewport = None
         self.viewport_size_subscription: Subscription[Size2i] = None
-        self.projection = Rect2()
 
         self.create_buffers()
         self.create_bind_groups()

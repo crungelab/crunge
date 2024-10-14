@@ -19,9 +19,11 @@ class View3D(ImGuiView):
     def create_renderer(self):
         self.renderer = Renderer3D(self.window.viewport, self.camera)
 
+    '''
     def on_size(self):
         super().on_size()
         self.camera.size = self.size
+    '''
 
     def draw(self, renderer: Renderer3D):
         with self.renderer:
