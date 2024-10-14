@@ -20,7 +20,7 @@ from .uniforms_3d import (
 from .primitive import Primitive
 
 
-class MeshNode3D(Node3D):
+class MeshInstance3D(Node3D):
     def __init__(self) -> None:
         super().__init__()
         self.primitives: List[Primitive] = []

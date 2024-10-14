@@ -14,7 +14,7 @@ from ..debug import (
     debug_material,
 )
 
-from crunge.engine.d3.mesh_node_3d import MeshNode3D
+from crunge.engine.d3.mesh_instance_3d import MeshInstance3D
 from crunge.engine.d3.primitive import Primitive
 from crunge.engine.resource.cube_texture import CubeTexture
 
@@ -30,7 +30,7 @@ from ..tangents import compute_tangents
 
 class PrimitiveBuilder(GltfBuilder):
     def __init__(
-        self, context: BuilderContext, mesh: MeshNode3D, tf_primitive: gltf.Primitive
+        self, context: BuilderContext, mesh: MeshInstance3D, tf_primitive: gltf.Primitive
     ) -> None:
         super().__init__(context)
         self.mesh = mesh

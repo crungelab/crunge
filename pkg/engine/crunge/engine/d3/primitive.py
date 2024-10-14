@@ -8,7 +8,7 @@ from .renderer_3d import Renderer3D
 
 class Primitive:
     pipeline: wgpu.RenderPipeline = None
-    #bind_group: wgpu.BindGroup = None
+
     camera_bind_group: wgpu.BindGroup = None
     light_bind_group: wgpu.BindGroup = None
     material_bind_group: wgpu.BindGroup = None
@@ -28,7 +28,6 @@ class Primitive:
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.pipeline)
 
-        #pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_bind_group(0, self.camera_bind_group)
         pass_enc.set_bind_group(1, self.light_bind_group)
         pass_enc.set_bind_group(2, self.material_bind_group)
