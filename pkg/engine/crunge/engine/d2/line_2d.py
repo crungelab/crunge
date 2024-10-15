@@ -20,6 +20,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ..math import Point2, Size2
+from ..resource.bind_group_layout import BindGroupLayout
 
 from .renderer_2d import Renderer2D
 from .vu_2d import Vu2D
@@ -81,14 +82,8 @@ vertex_dtype = np.dtype(
 
 
 @klass.singleton
-class LineProgram2D(Program2D):
-    pipeline: wgpu.RenderPipeline = None
-
-    def __init__(self):
-        super().__init__()
-        self.create_render_pipeline()
-
-    def create_material_bindgroup_layout(self):
+class MaterialBindGroupLayout(BindGroupLayout):
+    def __init__(self) -> None:
         material_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
                 binding=0,
@@ -100,8 +95,22 @@ class LineProgram2D(Program2D):
         material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
             entry_count=len(material_bgl_entries), entries=material_bgl_entries
         )
-        self._material_bindgroup_layout = self.device.create_bind_group_layout(material_bgl_desc)
-        logger.debug(f"material_bgl: {self._material_bindgroup_layout}")
+        bind_group_layout = self.device.create_bind_group_layout(material_bgl_desc)
+        logger.debug(f"material_bgl: {bind_group_layout}")
+        super().__init__(bind_group_layout)
+
+
+@klass.singleton
+class LineProgram2D(Program2D):
+    pipeline: wgpu.RenderPipeline = None
+
+    def __init__(self):
+        super().__init__()
+        self.create_render_pipeline()
+
+    @property
+    def material_bind_group_layout(self):
+        return MaterialBindGroupLayout().get()
 
     def create_render_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)

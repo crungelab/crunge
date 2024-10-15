@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from .resource_group import ResourceGroup
 
 from pathlib import Path
 
 from .. import Base
-#from .resource_group import ResourceGroup
+
+if TYPE_CHECKING:
+    from .resource_group import ResourceGroup
 
 class Resource(Base):
     def __init__(self):
@@ -32,8 +32,7 @@ class Resource(Base):
         return self
     
     def add_to_group(self, group: "ResourceGroup"):
-        group.texture_kit.add(self)
-        return self
+        raise NotImplementedError()
 
     '''
     def __eq__(self, other):
