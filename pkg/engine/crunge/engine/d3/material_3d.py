@@ -1,11 +1,11 @@
 from crunge import wgpu
 
-from .resource import Resource
-from .texture import Texture
+from ..resource.material import Material
+from ..resource.texture import Texture
 #from .bind_group_layout import BindGroupLayout
 
 
-class Material(Resource):
+class Material3D(Material):
     textures: list[Texture] = None
     texture_set: set = None
 

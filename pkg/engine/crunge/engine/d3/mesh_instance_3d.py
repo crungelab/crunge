@@ -5,10 +5,11 @@ from ctypes import sizeof
 from loguru import logger
 import glm
 
-from crunge.core import as_capsule
+from crunge.core import klass, as_capsule
 from crunge import wgpu
 
 from .renderer_3d import Renderer3D
+from .program_3d import Program3D
 from .node_3d import Node3D
 from .uniforms_3d import (
     cast_matrix3,
@@ -19,10 +20,15 @@ from .uniforms_3d import (
 )
 from .primitive import Primitive
 
+@klass.singleton
+class MeshInstance3DProgram(Program3D):
+    pass
 
 class MeshInstance3D(Node3D):
     def __init__(self) -> None:
-        super().__init__()
+        #super().__init__()
+        self.program = MeshInstance3DProgram()
+        self.model_bind_group: wgpu.BindGroup = None
         self.primitives: List[Primitive] = []
 
         # Uniform Buffers
@@ -32,22 +38,34 @@ class MeshInstance3D(Node3D):
             self.model_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
+        self.build_bindgroup()
+        super().__init__()
 
-        '''
-        self.camera_uniform_buffer_size = sizeof(CameraUniform)
-        self.camera_uniform_buffer = self.gfx.create_buffer(
-            "Camera Uniform Buffer",
-            self.camera_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
+    def build_bindgroup(self):
+        logger.debug("Creating bind group")
+
+        # Model
+        model_bg_entries = [
+            wgpu.BindGroupEntry(
+                binding=0,
+                buffer=self.model_uniform_buffer,
+                size=self.model_uniform_buffer_size,
+            ),
+        ]
+
+        model_bg_desc = wgpu.BindGroupDescriptor(
+            label="Model Bind Group",
+            layout=self.program.model_bind_group_layout,
+            entry_count=len(model_bg_entries),
+            entries=model_bg_entries,
         )
-        '''
+
+        self.model_bind_group = self.device.create_bind_group(model_bg_desc)
 
     def add_primitive(self, primitive: Primitive):
         self.primitives.append(primitive)
 
-    def draw(self, renderer: Renderer3D):
-        camera = renderer.camera
-
+    def gpu_update_model(self):
         model_matrix = self.transform
         normal_matrix = glm.mat4(glm.transpose(glm.inverse(glm.mat3(model_matrix))))
 
@@ -61,60 +79,14 @@ class MeshInstance3D(Node3D):
             as_capsule(model_uniform),
             self.model_uniform_buffer_size,
         )
-        '''
-        camera_uniform = CameraUniform()
-        camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
 
-        # camera_uniform.position.x = camera.position.x
-        # camera_uniform.position.y = camera.position.y
-        # camera_uniform.position.z = camera.position.z
-        camera_uniform.position = cast_vec3(camera.position)
-        #logger.debug(f"camera_uniform.position: {camera_uniform.position.x}, {camera_uniform.position.y}, {camera_uniform.position.z}")
-
-        self.device.queue.write_buffer(
-            self.camera_uniform_buffer,
-            0,
-            as_capsule(camera_uniform),
-            self.camera_uniform_buffer_size,
-        )
-        '''
-
-        for primitive in self.primitives:
-            primitive.draw(renderer)
-
-        super().draw(renderer)
-
-
-    '''
     def draw(self, renderer: Renderer3D):
-        camera = renderer.camera
-
-        model_matrix = self.transform
-        transform_matrix = camera.transform_matrix * self.transform
-        #normal_matrix = glm.transpose(glm.inverse(glm.mat3(model_matrix)))
-        normal_matrix = glm.mat4(glm.transpose(glm.inverse(glm.mat3(model_matrix))))
-
-        camera_uniform = CameraUniform()
-        camera_uniform.model_matrix.data = cast_matrix4(model_matrix)
-        camera_uniform.transform_matrix.data = cast_matrix4(transform_matrix)
-        #camera_uniform.normal_matrix.data = cast_matrix3(normal_matrix)
-        camera_uniform.normal_matrix.data = cast_matrix4(normal_matrix)
-
-        # camera_uniform.position.x = camera.position.x
-        # camera_uniform.position.y = camera.position.y
-        # camera_uniform.position.z = camera.position.z
-        camera_uniform.position = cast_vec3(camera.position)
-        #logger.debug(f"camera_uniform.position: {camera_uniform.position.x}, {camera_uniform.position.y}, {camera_uniform.position.z}")
-
-        self.device.queue.write_buffer(
-            self.camera_uniform_buffer,
-            0,
-            as_capsule(camera_uniform),
-            self.camera_uniform_buffer_size,
-        )
-
+        pass_enc = renderer.pass_enc
+        self.bind(pass_enc)
         for primitive in self.primitives:
             primitive.draw(renderer)
 
         super().draw(renderer)
-        '''
+
+    def bind(self, pass_enc: wgpu.RenderPassEncoder):
+        pass_enc.set_bind_group(3, self.model_bind_group)

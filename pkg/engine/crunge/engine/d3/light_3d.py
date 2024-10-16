@@ -19,7 +19,7 @@ from .uniforms_3d import (
 class Light3D(Node3D):
     def __init__(self, position=Point3()) -> None:
         super().__init__(position=position)
-        self.color = glm.vec3(1.0, 1.0, 1.0)
+        self._color = glm.vec3(1.0, 1.0, 1.0)
         self.energy = 1.0
         self.range = 10.0
 
@@ -29,6 +29,16 @@ class Light3D(Node3D):
             self.uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
+        self.gpu_update_light()
+
+    @property
+    def color(self):
+        return self._color
+    
+    @color.setter
+    def color(self, color: glm.vec3):
+        self._color = color
+        self.gpu_update_light()
 
     def on_attached(self):
         self.scene.lighting.add_light(self)
@@ -36,7 +46,7 @@ class Light3D(Node3D):
     def on_detached(self):
         self.scene.lighting.remove_light(self)
 
-    def apply(self):
+    def gpu_update_light(self):
         light_uniform = LightUniform()
 
         #light_uniform.position.x = self.position.x

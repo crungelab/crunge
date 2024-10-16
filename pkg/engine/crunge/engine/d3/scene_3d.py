@@ -17,12 +17,13 @@ class Scene3D(Scene[Node3D, Renderer3D]):
         super().__init__()
         self.root = Node3D()
         self.root.scene = self
-        self.ambient_light = AmbientLight()
         self.lighting = Lighting3D()
         self.root.attach(OmniLight3D(position=glm.vec3(2.0, 2.0, 2.0)))
 
+    @property
+    def ambient_light(self):
+        return self.lighting.ambient_light
+
     def draw(self, renderer: Renderer3D):
-            self.ambient_light.apply()
-            self.lighting.apply()
-            
+            self.lighting.bind(renderer.pass_enc)
             super().draw(renderer)

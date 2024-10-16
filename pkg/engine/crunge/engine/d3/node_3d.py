@@ -17,6 +17,7 @@ class Node3D(Node["Node3D", Vu3D, "Scene3D", Renderer3D]):
         self._orientation = glm.quat(1.0, 0.0, 0.0, 0.0)
         self._scale = Vector3(1.0)
         self._matrix = glm.mat4(1.0)
+        self._transform = glm.mat4(1.0)
         self.update_matrix()
 
     @property
@@ -53,6 +54,19 @@ class Node3D(Node["Node3D", Vu3D, "Scene3D", Renderer3D]):
     @matrix.setter
     def matrix(self, value: glm.mat4):
         self._matrix = value
+        self.update_transform()
+
+    @property
+    def transform(self) -> glm.mat4:
+        return self._transform
+    
+    @transform.setter
+    def transform(self, value: glm.mat4):
+        self._transform = value
+        self.on_transform()
+
+    def on_attached(self):
+        self.update_transform()
 
     def update_matrix(self):
         matrix = glm.mat4(1.0)
@@ -60,21 +74,17 @@ class Node3D(Node["Node3D", Vu3D, "Scene3D", Renderer3D]):
         matrix = matrix * glm.mat4_cast(self.orientation)
         matrix = glm.scale(matrix, glm.vec3(*self.scale))
         self.matrix = matrix
-        
-    @property
-    def transform(self) -> glm.mat4:
+
+    def update_transform(self):
         transform = self.matrix
         if self.parent:
             transform = self.parent.transform * transform
-        return transform
+        self.transform = transform
+        for child in self.children:
+            child.update_transform()
 
-        '''
-        transform = glm.mat4(1.0)
-        transform = glm.translate(transform, glm.vec3(*self.position))
-        transform = transform * glm.mat4_cast(self.orientation)
-        transform = glm.scale(transform, glm.vec3(*self.scale))
-        transform = transform * self.matrix
-        if self.parent:
-            transform = self.parent.transform * transform
-        return transform
-        '''
+    def on_transform(self):
+        self.gpu_update_model()
+
+    def gpu_update_model(self):
+        pass

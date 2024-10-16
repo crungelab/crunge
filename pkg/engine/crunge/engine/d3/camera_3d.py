@@ -4,6 +4,7 @@ from loguru import logger
 import glm
 
 from crunge.core import as_capsule
+from crunge.core import klass
 from crunge.core.event_source import Subscription
 
 from crunge import wgpu
@@ -17,8 +18,14 @@ from .uniforms_3d import (
     cast_matrix4,
     cast_vec3,
     CameraUniform,
-    LightUniform,
 )
+from .program_3d import Program3D
+
+
+@klass.singleton
+class CameraProgram3D(Program3D):
+    pass
+
 
 class Camera3D(Node3D):
     def __init__(
@@ -41,7 +48,7 @@ class Camera3D(Node3D):
         self.viewport_size_subscription: Subscription[Size2i] = None
 
         self.create_buffers()
-        self.create_bind_groups()
+        self.create_bind_group()
 
         super().__init__(position)
 
@@ -82,21 +89,7 @@ class Camera3D(Node3D):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def create_bind_groups(self):
-        camera_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
-        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
-        logger.debug(f"camera_bgl: {camera_bgl}")
-
+    def create_bind_group(self):
         camera_bindgroup_entries = [
             wgpu.BindGroupEntry(
                 binding=0,
@@ -107,7 +100,8 @@ class Camera3D(Node3D):
 
         camera_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Camera Bind Group",
-            layout=camera_bgl,
+            #layout=camera_bgl,
+            layout=CameraProgram3D().camera_bind_group_layout,
             entry_count=len(camera_bindgroup_entries),
             entries=camera_bindgroup_entries,
         )

@@ -15,8 +15,7 @@ from ..debug import (
 )
 
 from crunge.engine.d3.mesh_instance_3d import MeshInstance3D
-from crunge.engine.d3.primitive import Primitive
-from crunge.engine.resource.cube_texture import CubeTexture
+from crunge.engine.d3.primitive import Primitive, PrimitiveProgram
 
 from .vertex_table import VertexTable
 from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, TangentColumn
@@ -36,6 +35,7 @@ class PrimitiveBuilder(GltfBuilder):
         self.mesh = mesh
         self.tf_primitive = tf_primitive
         self.primitive = Primitive()
+        self.program = PrimitiveProgram()
         self.material = Material()
 
         self.vertex_table = VertexTable()
@@ -44,8 +44,7 @@ class PrimitiveBuilder(GltfBuilder):
         self.build_indices()
         self.build_material()
         self.build_attributes()
-        self.build_pipeline()
-        self.build_bindgroups()
+        self.build_program()
 
         vertex_data = self.vertex_table.data
 
@@ -180,10 +179,11 @@ class PrimitiveBuilder(GltfBuilder):
         tf_material = self.tf_model.materials[tf_primitive.material]
         debug_material(tf_material)
         self.material = MaterialBuilder(self.context, tf_material).build()
+        self.primitive.material = self.material
         # exit()
 
-    def build_pipeline(self):
-        logger.debug("Creating pipeline")
+    def build_program(self):
+        logger.debug("Creating Program")
 
         vs_module: wgpu.ShaderModule = self.context.vertex_shader_builder_class(
             self.context, self.vertex_table
@@ -248,90 +248,13 @@ class PrimitiveBuilder(GltfBuilder):
 
         primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
 
-        # Camera
-        camera_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
+        camera_bgl = self.program.camera_bind_group_layout
 
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
-        camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
+        light_bgl = self.program.light_bind_group_layout
 
-        # Light
-        light_bgl_entries = [
-            # Ambient Light
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-            # Light
-            wgpu.BindGroupLayoutEntry(
-                binding=1,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
+        material_bgl = self.material.bind_group_layout
 
-        light_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(light_bgl_entries), entries=light_bgl_entries
-        )
-        light_bgl = self.device.create_bind_group_layout(light_bgl_desc)
-
-        # Material
-        material_bgl_entries = []
-
-        for i, texture in enumerate(self.material.textures):
-            view_dimension = wgpu.TextureViewDimension.E2D
-            if isinstance(texture, CubeTexture):
-                view_dimension = wgpu.TextureViewDimension.CUBE
-
-            # Sampler
-            material_bgl_entries.append(
-                wgpu.BindGroupLayoutEntry(
-                    binding=i * 2,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    sampler=wgpu.SamplerBindingLayout(
-                        type=wgpu.SamplerBindingType.FILTERING
-                    ),
-                )
-            )
-
-            # Texture
-            material_bgl_entries.append(
-                wgpu.BindGroupLayoutEntry(
-                    binding=i * 2 + 1,
-                    visibility=wgpu.ShaderStage.FRAGMENT,
-                    texture=wgpu.TextureBindingLayout(
-                        sample_type=wgpu.TextureSampleType.FLOAT,
-                        view_dimension=view_dimension,
-                    ),
-                )
-            )
-
-        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(material_bgl_entries), entries=material_bgl_entries
-        )
-        material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
-
-        # Model
-        model_bgl_entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(model_bgl_entries), entries=model_bgl_entries
-        )
-        model_bgl = self.device.create_bind_group_layout(model_bgl_desc)
+        model_bgl = self.program.model_bind_group_layout
 
         bind_group_layouts = [camera_bgl, light_bgl, material_bgl, model_bgl]
 
@@ -354,90 +277,5 @@ class PrimitiveBuilder(GltfBuilder):
             fragment=fragmentState,
         )
         logger.debug("Creating render pipeline")
-        self.primitive.pipeline = self.device.create_render_pipeline(rp_descriptor)
-
-    def build_bindgroups(self):
-        logger.debug("Creating bind groups")
-        '''
-        # Camera
-        camera_bg_entries = [
-            wgpu.BindGroupEntry(
-                binding=0,
-                buffer=self.mesh.camera_uniform_buffer,
-                size=self.mesh.camera_uniform_buffer_size,
-            ),
-        ]
-
-        camera_bg_desc = wgpu.BindGroupDescriptor(
-            label="Camera Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(0),
-            entry_count=len(camera_bg_entries),
-            entries=camera_bg_entries,
-        )
-
-        self.primitive.camera_bind_group = self.device.create_bind_group(camera_bg_desc)
-        '''
-
-        # Light
-        light_bg_entries = [
-            wgpu.BindGroupEntry(
-                binding=0,
-                buffer=self.scene.ambient_light.uniform_buffer,
-                size=self.scene.ambient_light.uniform_buffer_size,
-            ),
-            wgpu.BindGroupEntry(
-                binding=1,
-                buffer=self.scene.lighting.lights[0].uniform_buffer,
-                size=self.scene.lighting.lights[0].uniform_buffer_size,
-            ),
-        ]
-
-        light_bg_desc = wgpu.BindGroupDescriptor(
-            label="Light Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(1),
-            entry_count=len(light_bg_entries),
-            entries=light_bg_entries,
-        )
-
-        self.primitive.light_bind_group = self.device.create_bind_group(light_bg_desc)
-
-        # Material
-        material_bg_entries = []
-        for i, texture in enumerate(self.material.textures):
-            material_bg_entries.append(
-                wgpu.BindGroupEntry(
-                    binding=i * 2, sampler=texture.sampler
-                )
-            )
-            material_bg_entries.append(
-                wgpu.BindGroupEntry(
-                    binding=i * 2 + 1, texture_view=texture.view
-                )
-            )
-
-        material_bg_desc = wgpu.BindGroupDescriptor(
-            label="Material Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(2),
-            entry_count=len(material_bg_entries),
-            entries=material_bg_entries,
-        )
-
-        self.primitive.material_bind_group = self.device.create_bind_group(material_bg_desc)
-
-        # Model
-        model_bg_entries = [
-            wgpu.BindGroupEntry(
-                binding=0,
-                buffer=self.mesh.model_uniform_buffer,
-                size=self.mesh.model_uniform_buffer_size,
-            ),
-        ]
-
-        model_bg_desc = wgpu.BindGroupDescriptor(
-            label="Model Bind Group",
-            layout=self.primitive.pipeline.get_bind_group_layout(3),
-            entry_count=len(model_bg_entries),
-            entries=model_bg_entries,
-        )
-
-        self.primitive.model_bind_group = self.device.create_bind_group(model_bg_desc)
+        self.program.pipeline = self.device.create_render_pipeline(rp_descriptor)
+        self.primitive.program = self.program

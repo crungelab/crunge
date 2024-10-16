@@ -13,6 +13,7 @@ from crunge.engine.math import Rect2i
 
 from crunge.engine.resource.material import Material
 from crunge.engine.resource.texture import Texture
+from crunge.engine.resource.cube_texture import CubeTexture
 
 from crunge.engine.loader.texture_loader import TextureLoader
 from crunge.engine.loader.cube_texture_loader import CubeTextureLoader
@@ -84,6 +85,9 @@ class MaterialBuilder(GltfBuilder):
         if self.use_environment_map:
             self.build_environment_map()
 
+        self.build_bind_group_layout()
+        self.build_bind_group()
+
         return self.material
     
     def build_texture(self, name: str, texture_info: gltf.TextureInfo) -> None:
@@ -105,8 +109,6 @@ class MaterialBuilder(GltfBuilder):
 
     def build_cube_environment_texture(self) -> Texture:
         root = importlib.resources.path('crunge.engine.resources.textures.cubemaps', '')
-        #name = "bridge2"
-        #ext = "jpg"
         name = "gcanyon_cube"
         ext = "png"
         paths = [
@@ -125,97 +127,62 @@ class MaterialBuilder(GltfBuilder):
         texture.sampler = self.gfx.device.create_sampler()
         return texture
 
-    """
-    def build_environment_texture(self) -> Texture:
-        #path = Path('resources/textures/environment.jpg')
-        path = importlib.resources.path('crunge.engine.resources.textures', 'environment.hdr')
-        #im = iio.imread(path, pilmode='RGBA')
-        #im = iio.imread(path, pilmode='HDR-FI')
-        #im = iio.imread(path, format='HDR-FI')
-        #im = iio.imread(path, format='opencv')
-        im = iio.imread(path)
-        #im = np.flipud(im)
-        shape = im.shape
-        logger.debug(f"im.shape: {shape}")
-        logger.debug(f"im.dtype: {im.dtype}")
-        logger.debug(f"im.nbytes: {im.nbytes}")
-        logger.debug(f"im.size: {im.size}")
-        logger.debug(f"im.itemsize: {im.itemsize}")
-        logger.debug(f"im.ndim: {im.ndim}")
-        logger.debug(f"im.strides: {im.strides}")
-        #logger.debug(im)
-        im_height, im_width, im_channels = shape
-        im_depth = 1
+    def build_bind_group_layout(self) -> wgpu.BindGroupLayout:
+        material_bgl_entries = []
 
-        # Since .hdr files don't have an alpha channel, we manually add it
-        if im_channels == 3:
-            # Add an alpha channel
-            im = np.concatenate([im, np.ones((im_height, im_width, 1), dtype=im.dtype)], axis=-1)
+        for i, texture in enumerate(self.material.textures):
+            view_dimension = wgpu.TextureViewDimension.E2D
+            if isinstance(texture, CubeTexture):
+                view_dimension = wgpu.TextureViewDimension.CUBE
 
-        # Has to be a multiple of 256
-        size = utils.divround_up(im.nbytes, 256)
-        logger.debug(f"size: {size}")
+            # Sampler
+            material_bgl_entries.append(
+                wgpu.BindGroupLayoutEntry(
+                    binding=i * 2,
+                    visibility=wgpu.ShaderStage.FRAGMENT,
+                    sampler=wgpu.SamplerBindingLayout(
+                        type=wgpu.SamplerBindingType.FILTERING
+                    ),
+                )
+            )
 
+            # Texture
+            material_bgl_entries.append(
+                wgpu.BindGroupLayoutEntry(
+                    binding=i * 2 + 1,
+                    visibility=wgpu.ShaderStage.FRAGMENT,
+                    texture=wgpu.TextureBindingLayout(
+                        sample_type=wgpu.TextureSampleType.FLOAT,
+                        view_dimension=view_dimension,
+                    ),
+                )
+            )
 
-        descriptor = wgpu.TextureDescriptor(
-            dimension = wgpu.TextureDimension.E2D,
-            size=wgpu.Extent3D(im_width, im_height, im_depth),
-            sample_count = 1,
-            format = wgpu.TextureFormat.RGBA8_UNORM,
-            #format = wgpu.TextureFormat.RGBA16_FLOAT,
-            #format = wgpu.TextureFormat.RGBA32_FLOAT,
-            mip_level_count = 1,
-            usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
+        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(material_bgl_entries), entries=material_bgl_entries
         )
-        wgpu_texture = self.gfx.device.create_texture(descriptor)
-        texture = Texture('environment', RectI(0, 0, im_width, im_height), wgpu_texture)
-        texture.view = wgpu_texture.create_view()
+        material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
+        self.material.bind_group_layout = material_bgl
 
-        '''
-        sampler_desc = wgpu.SamplerDescriptor(
-            address_mode_u=wgpu.AddressMode.MIRROR_REPEAT,
-            address_mode_v=wgpu.AddressMode.MIRROR_REPEAT,
-            address_mode_w=wgpu.AddressMode.MIRROR_REPEAT,
-            mag_filter=wgpu.FilterMode.LINEAR,
-            min_filter=wgpu.FilterMode.LINEAR,
-            mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
-            lod_min_clamp=0,
-            lod_max_clamp=100,
-            compare=wgpu.CompareFunction.UNDEFINED,
-            anisotropy=16,
-        )
-        texture.sampler = self.gfx.device.create_sampler(sampler_desc)
-        '''
-        texture.sampler = self.gfx.device.create_sampler()
-        
-        bytes_per_row = 4 * im_width
-        #bytes_per_row = 8 * im_width
-        #bytes_per_row = 16 * im_width
-        #bytes_per_row = 6 * im_width
-        #bytes_per_row = 12 * im_width
-        logger.debug(f"bytes_per_row: {bytes_per_row}")
-        rows_per_image = im_height
+    def build_bind_group(self) -> wgpu.BindGroup:
+        material_bg_entries = []
+        for i, texture in enumerate(self.material.textures):
+            material_bg_entries.append(
+                wgpu.BindGroupEntry(
+                    binding=i * 2, sampler=texture.sampler
+                )
+            )
+            material_bg_entries.append(
+                wgpu.BindGroupEntry(
+                    binding=i * 2 + 1, texture_view=texture.view
+                )
+            )
 
-        self.gfx.device.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.ImageCopyTexture(
-                texture=texture.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(im),
-            # Data size
-            size,
-            # The layout of the texture
-            wgpu.TextureDataLayout(
-                offset=0,
-                bytes_per_row=bytes_per_row,
-                rows_per_image=rows_per_image,
-            ),
-            #The texture size
-            wgpu.Extent3D(im_width, im_height, im_depth),
+        material_bg_desc = wgpu.BindGroupDescriptor(
+            label="Material Bind Group",
+            layout=self.material.bind_group_layout,
+            entry_count=len(material_bg_entries),
+            entries=material_bg_entries,
         )
-        return texture
-    """
+
+        self.material.bind_group = self.device.create_bind_group(material_bg_desc)

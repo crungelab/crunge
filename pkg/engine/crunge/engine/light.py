@@ -16,7 +16,7 @@ from .d3.uniforms_3d import (
 from .base import Base
 class AmbientLight(Base):
     def __init__(self, color=glm.vec3(1.0, 1.0, 1.0), energy=1.0):
-        self.color = color
+        self._color = color
         self.energy = energy
 
         # Uniform Buffers
@@ -26,8 +26,18 @@ class AmbientLight(Base):
             self.uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
+        self.gpu_update_light()
 
-    def apply(self):
+    @property
+    def color(self):
+        return self._color
+    
+    @color.setter
+    def color(self, color: glm.vec3):
+        self._color = color
+        self.gpu_update_light()
+
+    def gpu_update_light(self):
         uniform = AmbientLightUniform()
 
         uniform.color.x = self.color.x
