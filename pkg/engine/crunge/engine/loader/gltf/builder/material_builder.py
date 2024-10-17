@@ -11,7 +11,8 @@ from crunge import gltf
 
 from crunge.engine.math import Rect2i
 
-from crunge.engine.resource.material import Material
+#from crunge.engine.resource.material import Material
+from crunge.engine.d3.material_3d import Material3D
 from crunge.engine.resource.texture import Texture
 from crunge.engine.resource.cube_texture import CubeTexture
 
@@ -26,18 +27,20 @@ from .texture_builder import TextureBuilder
 
 
 class MaterialBuilder(GltfBuilder):
-    material: Material = None
-
-    def __init__(self, context: BuilderContext, tf_material: gltf.Material) -> None:
+    def __init__(self, context: BuilderContext, index: int) -> None:
         super().__init__(context)
-        self.tf_material = tf_material
-        self.material = Material()
+        self.index = index
+        self.tf_material: gltf.Material = None
+        self.material: Material3D = None
         self.use_environment_map = False
 
     def build(self) -> None:
-        tf_material = self.tf_material
+        if self.index in self.context.material_cache:
+            return self.context.material_cache[self.index]
+        
+        self.tf_material = tf_material = self.tf_model.materials[self.index]
         logger.debug(tf_material)
-        material = self.material
+        self.material = material = Material3D()
 
         pbr = tf_material.pbr_metallic_roughness
         logger.debug(pbr)
@@ -88,10 +91,11 @@ class MaterialBuilder(GltfBuilder):
         self.build_bind_group_layout()
         self.build_bind_group()
 
+        self.context.material_cache[self.index] = material
         return self.material
     
     def build_texture(self, name: str, texture_info: gltf.TextureInfo) -> None:
-        debug_texture_info(texture_info)
+        #debug_texture_info(texture_info)
         texture = TextureBuilder(self.context, name, texture_info).build()
         self.material.add_texture(texture)
 

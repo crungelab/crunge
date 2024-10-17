@@ -2,23 +2,11 @@ from crunge import wgpu
 
 from .resource import Resource
 from .texture import Texture
-#from .bind_group_layout import BindGroupLayout
 
 
 class Material(Resource):
     textures: list[Texture] = None
     texture_set: set = None
-
-    bind_group_layout: wgpu.BindGroupLayout = None
-    bind_group: wgpu.BindGroup = None
-
-    alpha_mode: str = 'BLEND'
-    base_color_factor: tuple = (1, 1, 1, 1)
-
-    metallic_factor: float = 0
-    roughness_factor: float = 0
-    occlusion_strength: float = 1
-    emissive_factor: tuple = (0, 0, 0)
 
     def __init__(self) -> None:
         super().__init__()
@@ -55,6 +43,3 @@ class Material(Resource):
     @property
     def has_environment_texture(self):
         return self.has_texture('environment')
-
-    def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        pass_enc.set_bind_group(2, self.bind_group)

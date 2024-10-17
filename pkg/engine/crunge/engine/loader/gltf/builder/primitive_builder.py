@@ -7,21 +7,22 @@ from crunge.wgpu import utils
 from crunge import gltf
 
 from ..constants import SAMPLE_COUNT
-from . import GltfBuilder
-from .builder_context import BuilderContext
 from ..debug import (
     debug_accessor,
     debug_material,
 )
 
-from crunge.engine.d3.mesh_instance_3d import MeshInstance3D
-from crunge.engine.d3.primitive import Primitive, PrimitiveProgram
+from crunge.engine.d3.primitive_3d import Primitive3D, Primitive3DProgram
+
+from . import GltfBuilder
+from .builder_context import BuilderContext
 
 from .vertex_table import VertexTable
 from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, TangentColumn
 
 from .material_builder import MaterialBuilder
-from crunge.engine.resource.material import Material
+#from crunge.engine.resource.material import Material
+from crunge.engine.d3.material_3d import Material3D
 
 from ..normals import compute_normals
 from ..tangents import compute_tangents
@@ -29,15 +30,13 @@ from ..tangents import compute_tangents
 
 class PrimitiveBuilder(GltfBuilder):
     def __init__(
-        self, context: BuilderContext, mesh: MeshInstance3D, tf_primitive: gltf.Primitive
+        self, context: BuilderContext, tf_primitive: gltf.Primitive
     ) -> None:
         super().__init__(context)
-        self.mesh = mesh
         self.tf_primitive = tf_primitive
-        self.primitive = Primitive()
-        self.program = PrimitiveProgram()
-        self.material = Material()
-
+        self.primitive = Primitive3D()
+        self.program = Primitive3DProgram()
+        self.material:Material3D = None
         self.vertex_table = VertexTable()
 
     def build(self):
@@ -82,25 +81,10 @@ class PrimitiveBuilder(GltfBuilder):
                 self.vertex_table.add_column(TangentColumn("tangent", tangents))
 
     def build_attribute(self, attribute: tuple):
-        name, value = attribute
-        logger.debug(f"primitive.attributes[{name}]: {value}")
-        accessor = self.tf_model.accessors[value]
-        debug_accessor(accessor)
+        name, index = attribute
+        logger.debug(f"primitive.attributes[{name}]: {index}")
 
-        buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
-        buffer = self.tf_model.buffers[buffer_view.buffer]
-        logger.debug(f"buffer_view: {buffer_view}")
-        logger.debug(f"buffer: {buffer}")
-
-        component_type = accessor.component_type
-        logger.debug(f"component_type: {component_type}")
-        count = accessor.count
-        logger.debug(f"count: {count}")
-        type = accessor.type
-        logger.debug(f"type: {type}")
-        data = buffer.get_array(
-            buffer_view.byte_offset + accessor.byte_offset, count, type, component_type
-        )
+        data = self.build_attribute_array(index)
 
         if name == "POSITION":
             self.vertex_table.add_column(PosColumn("pos", data))
@@ -122,11 +106,57 @@ class PrimitiveBuilder(GltfBuilder):
 
         # logger.debug(f"data: {data}")
 
+    def build_attribute_array(self, index):
+        if index in self.context.array_cache:
+            return self.context.array_cache[index]
+
+        accessor = self.tf_model.accessors[index]
+        #debug_accessor(accessor)
+
+        buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
+        buffer = self.tf_model.buffers[buffer_view.buffer]
+        logger.debug(f"buffer_view: {buffer_view}")
+        logger.debug(f"buffer: {buffer}")
+
+        component_type = accessor.component_type
+        logger.debug(f"component_type: {component_type}")
+        count = accessor.count
+        logger.debug(f"count: {count}")
+        type = accessor.type
+        logger.debug(f"type: {type}")
+        data = buffer.get_array(
+            buffer_view.byte_offset + accessor.byte_offset, count, type, component_type
+        )
+        self.context.array_cache[index] = data
+        return data
+
     def build_indices(self):
         tf_primitive = self.tf_primitive
         logger.debug(f"primitive.indices: {tf_primitive.indices}")
         accessor = self.tf_model.accessors[tf_primitive.indices]
-        debug_accessor(accessor)
+        #debug_accessor(accessor)
+
+        component_type = accessor.component_type
+        logger.debug(f"component_type: {component_type}")
+        if component_type == gltf.ComponentType.UNSIGNED_SHORT:
+            self.primitive.index_format = wgpu.IndexFormat.UINT16
+        elif component_type == gltf.ComponentType.UNSIGNED_INT:
+            self.primitive.index_format = wgpu.IndexFormat.UINT32
+
+        indices = self.build_indices_array(tf_primitive.indices)
+        # logger.debug(f"indices: {indices}")
+
+        self.primitive.index_data = indices
+        self.primitive.index_buffer = self.gfx.create_buffer_from_ndarray(
+            "INDEX", indices, wgpu.BufferUsage.INDEX
+        )
+
+    def build_indices_array(self, index: int):
+        if index in self.context.array_cache:
+            return self.context.array_cache[index]
+
+        accessor = self.tf_model.accessors[index]
+        #debug_accessor(accessor)
 
         buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
         buffer = self.tf_model.buffers[buffer_view.buffer]
@@ -138,23 +168,14 @@ class PrimitiveBuilder(GltfBuilder):
 
         component_type = accessor.component_type
         logger.debug(f"component_type: {component_type}")
-        if component_type == gltf.ComponentType.UNSIGNED_SHORT:
-            self.primitive.index_format = wgpu.IndexFormat.UINT16
-        elif component_type == gltf.ComponentType.UNSIGNED_INT:
-            self.primitive.index_format = wgpu.IndexFormat.UINT32
 
         count = accessor.count
         logger.debug(f"count: {count}")
         indices = buffer.get_array(
             buffer_view.byte_offset + accessor.byte_offset, count, type, component_type
         )
-
-        # logger.debug(f"indices: {indices}")
-
-        self.primitive.index_data = indices
-        self.primitive.index_buffer = self.gfx.create_buffer_from_ndarray(
-            "INDEX", indices, wgpu.BufferUsage.INDEX
-        )
+        self.context.array_cache[index] = indices
+        return indices
 
     def build_vertex_attributes(self):
         logger.debug("Creating vertex attributes")
@@ -176,11 +197,8 @@ class PrimitiveBuilder(GltfBuilder):
             return
         tf_primitive = self.tf_primitive
         logger.debug(f"primitive.material: {tf_primitive.material}")
-        tf_material = self.tf_model.materials[tf_primitive.material]
-        debug_material(tf_material)
-        self.material = MaterialBuilder(self.context, tf_material).build()
+        self.material = MaterialBuilder(self.context, tf_primitive.material).build()
         self.primitive.material = self.material
-        # exit()
 
     def build_program(self):
         logger.debug("Creating Program")

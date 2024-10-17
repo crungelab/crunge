@@ -11,6 +11,7 @@ from crunge import wgpu
 from .renderer_3d import Renderer3D
 from .program_3d import Program3D
 from .node_3d import Node3D
+from .vu_3d import Vu3D
 from .uniforms_3d import (
     cast_matrix3,
     cast_matrix4,
@@ -18,20 +19,18 @@ from .uniforms_3d import (
     CameraUniform,
     ModelUniform,
 )
-from .mesh_3d import Mesh3D
 from .primitive_3d import Primitive3D
 
 @klass.singleton
-class MeshInstance3DProgram(Program3D):
+class MeshVu3DProgram(Program3D):
     pass
 
-class MeshInstance3D(Node3D):
+class MeshVu3D(Vu3D):
     def __init__(self) -> None:
         #super().__init__()
-        self.program = MeshInstance3DProgram()
+        self.program = MeshVu3DProgram()
         self.model_bind_group: wgpu.BindGroup = None
-        #self.primitives: List[Primitive3D] = []
-        self.mesh: Mesh3D = None
+        self.primitives: List[Primitive3D] = []
 
         # Uniform Buffers
         self.model_uniform_buffer_size = sizeof(ModelUniform)
@@ -64,10 +63,8 @@ class MeshInstance3D(Node3D):
 
         self.model_bind_group = self.device.create_bind_group(model_bg_desc)
 
-    '''
     def add_primitive(self, primitive: Primitive3D):
         self.primitives.append(primitive)
-    '''
 
     def gpu_update_model(self):
         model_matrix = self.transform
@@ -87,20 +84,10 @@ class MeshInstance3D(Node3D):
     def draw(self, renderer: Renderer3D):
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
-        for primitive in self.mesh.primitives:
-            primitive.draw(renderer)
-
-        super().draw(renderer)
-
-    '''
-    def draw(self, renderer: Renderer3D):
-        pass_enc = renderer.pass_enc
-        self.bind(pass_enc)
         for primitive in self.primitives:
             primitive.draw(renderer)
 
         super().draw(renderer)
-    '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(3, self.model_bind_group)

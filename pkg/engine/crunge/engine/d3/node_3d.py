@@ -65,6 +65,12 @@ class Node3D(Node["Node3D", Vu3D, "Scene3D", Renderer3D]):
         self._transform = value
         self.on_transform()
 
+    def on_transform(self):
+        self.gpu_update_model()
+
+    def gpu_update_model(self):
+        pass
+
     def on_attached(self):
         self.update_transform()
 
@@ -82,9 +88,3 @@ class Node3D(Node["Node3D", Vu3D, "Scene3D", Renderer3D]):
         self.transform = transform
         for child in self.children:
             child.update_transform()
-
-    def on_transform(self):
-        self.gpu_update_model()
-
-    def gpu_update_model(self):
-        pass

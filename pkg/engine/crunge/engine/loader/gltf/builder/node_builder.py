@@ -16,7 +16,7 @@ class NodeBuilder(GltfBuilder):
         self.node = None
 
     def build(self) -> Node3D:
-        debug_node(self.tf_model, self.tf_node)
+        #debug_node(self.tf_model, self.tf_node)
         self.create_node()
         self.build_node()
         self.build_children()
@@ -71,10 +71,6 @@ class NodeBuilder(GltfBuilder):
         if (child.mesh >= 0) and (child.mesh < len(self.tf_model.meshes)):
             from .mesh_node_builder import MeshNodeBuilder
             builder = MeshNodeBuilder(self.context, child)
-            '''
-            from .mesh_builder import MeshBuilder
-            builder = MeshBuilder(self.context, child)
-            '''
         else:
             builder = NodeBuilder(self.context, child)
         return builder.build()

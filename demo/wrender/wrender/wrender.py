@@ -31,7 +31,7 @@ class WRender(Viewer):
         #model = "BoomBox"
         #model = "Buggy"
         #model = "CesiumMan"
-        model = "CesiumMilkTruck"
+        #model = "CesiumMilkTruck"
         #model = "Cube"
         #model = "Corset"
         #model = "DamagedHelmet"
@@ -41,7 +41,7 @@ class WRender(Viewer):
         #model = "Fox" #No normals, no indices
         #model = "GearboxAssy"
         #model = "Lantern"
-        #model = "MetalRoughSpheres"
+        model = "MetalRoughSpheres"
         #model = "SimpleMeshes"
         #model = "Suzanne"
 

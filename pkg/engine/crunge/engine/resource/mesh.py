@@ -1,12 +1,6 @@
 from typing import List
 
-from ctypes import sizeof
-
 from loguru import logger
-import glm
-
-from crunge.core import as_capsule
-from crunge import wgpu
 
 from .primitive import Primitive
 

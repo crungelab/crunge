@@ -28,10 +28,10 @@ class TextureBuilder(GltfBuilder):
 
     def build(self) -> Texture:
         tf_texture = self.tf_model.textures[self.texture_info.index]
-        debug_texture(tf_texture)
+        #debug_texture(tf_texture)
 
         tf_image = self.tf_model.images[tf_texture.source]
-        debug_image(tf_image)
+        #debug_image(tf_image)
 
         # This was too slow.
         # im = np.array(tf_image.image, dtype=np.uint8)
