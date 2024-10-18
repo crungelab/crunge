@@ -81,10 +81,11 @@ class PrimitiveBuilder(GltfBuilder):
                 self.vertex_table.add_column(TangentColumn("tangent", tangents))
 
     def build_attribute(self, attribute: tuple):
-        name, index = attribute
-        logger.debug(f"primitive.attributes[{name}]: {index}")
+        name, accessor_index = attribute
+        logger.debug(f"primitive.attributes[{name}]: {accessor_index}")
 
-        data = self.build_attribute_array(index)
+        #data = self.build_attribute_array(index)
+        data = self.build_array(accessor_index)
 
         if name == "POSITION":
             self.vertex_table.add_column(PosColumn("pos", data))
@@ -106,35 +107,15 @@ class PrimitiveBuilder(GltfBuilder):
 
         # logger.debug(f"data: {data}")
 
-    def build_attribute_array(self, index):
-        if index in self.context.array_cache:
-            return self.context.array_cache[index]
-
-        accessor = self.tf_model.accessors[index]
-        #debug_accessor(accessor)
-
-        buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
-        buffer = self.tf_model.buffers[buffer_view.buffer]
-        logger.debug(f"buffer_view: {buffer_view}")
-        logger.debug(f"buffer: {buffer}")
-
-        component_type = accessor.component_type
-        logger.debug(f"component_type: {component_type}")
-        count = accessor.count
-        logger.debug(f"count: {count}")
-        type = accessor.type
-        logger.debug(f"type: {type}")
-        data = buffer.get_array(
-            buffer_view.byte_offset + accessor.byte_offset, count, type, component_type
-        )
-        self.context.array_cache[index] = data
-        return data
-
     def build_indices(self):
         tf_primitive = self.tf_primitive
         logger.debug(f"primitive.indices: {tf_primitive.indices}")
         accessor = self.tf_model.accessors[tf_primitive.indices]
         #debug_accessor(accessor)
+
+
+        indices = self.build_array(tf_primitive.indices)
+        # logger.debug(f"indices: {indices}")
 
         component_type = accessor.component_type
         logger.debug(f"component_type: {component_type}")
@@ -142,20 +123,20 @@ class PrimitiveBuilder(GltfBuilder):
             self.primitive.index_format = wgpu.IndexFormat.UINT16
         elif component_type == gltf.ComponentType.UNSIGNED_INT:
             self.primitive.index_format = wgpu.IndexFormat.UINT32
-
-        indices = self.build_indices_array(tf_primitive.indices)
-        # logger.debug(f"indices: {indices}")
+        elif component_type == gltf.ComponentType.UNSIGNED_BYTE:
+            indices = np.array(indices, dtype=np.uint16)
+            self.primitive.index_format = wgpu.IndexFormat.UINT16
 
         self.primitive.index_data = indices
         self.primitive.index_buffer = self.gfx.create_buffer_from_ndarray(
             "INDEX", indices, wgpu.BufferUsage.INDEX
         )
 
-    def build_indices_array(self, index: int):
-        if index in self.context.array_cache:
-            return self.context.array_cache[index]
+    def build_array(self, accessor_index: int):
+        if accessor_index in self.context.array_cache:
+            return self.context.array_cache[accessor_index]
 
-        accessor = self.tf_model.accessors[index]
+        accessor = self.tf_model.accessors[accessor_index]
         #debug_accessor(accessor)
 
         buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
@@ -171,11 +152,11 @@ class PrimitiveBuilder(GltfBuilder):
 
         count = accessor.count
         logger.debug(f"count: {count}")
-        indices = buffer.get_array(
+        array = buffer.get_array(
             buffer_view.byte_offset + accessor.byte_offset, count, type, component_type
         )
-        self.context.array_cache[index] = indices
-        return indices
+        self.context.array_cache[accessor_index] = array
+        return array
 
     def build_vertex_attributes(self):
         logger.debug("Creating vertex attributes")

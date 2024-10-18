@@ -27,28 +27,46 @@ from .texture_builder import TextureBuilder
 
 
 class MaterialBuilder(GltfBuilder):
-    def __init__(self, context: BuilderContext, index: int) -> None:
+    def __init__(self, context: BuilderContext, material_index: int) -> None:
         super().__init__(context)
-        self.index = index
+        self.material_index = material_index
         self.tf_material: gltf.Material = None
         self.material: Material3D = None
         self.use_environment_map = False
 
     def build(self) -> None:
-        if self.index in self.context.material_cache:
-            return self.context.material_cache[self.index]
+        if self.material_index in self.context.material_cache:
+            return self.context.material_cache[self.material_index]
         
-        self.tf_material = tf_material = self.tf_model.materials[self.index]
+        self.tf_material = tf_material = self.tf_model.materials[self.material_index]
         logger.debug(tf_material)
         self.material = material = Material3D()
 
+        material.name = tf_material.name
+
+        # Alpha Mode
+        alpha_mode = tf_material.alpha_mode
+        logger.debug(f"Alpha Mode: {alpha_mode}")
+        material.alpha_mode = alpha_mode
+
+        # Alpha Cutoff
+        alpha_cutoff = tf_material.alpha_cutoff
+        logger.debug(f"Alpha Cutoff: {alpha_cutoff}")
+        material.alpha_cutoff = alpha_cutoff
+
+        # Double Sided
+        double_sided = tf_material.double_sided
+        logger.debug(f"Double Sided: {double_sided}")
+        material.double_sided = double_sided
+
+        # PBR Metallic Roughness
         pbr = tf_material.pbr_metallic_roughness
         logger.debug(pbr)
 
         # Base Color Factor
         base_color_factor = pbr.base_color_factor
-        material.base_color_factor = base_color_factor
         logger.debug(f"Base Color Factor: {base_color_factor}")
+        material.base_color_factor = base_color_factor
 
         # Base Color Texture
         if pbr.base_color_texture.index >= 0:
@@ -56,42 +74,45 @@ class MaterialBuilder(GltfBuilder):
 
         # Metallic Factor
         metallic_factor = pbr.metallic_factor
-        material.metallic_factor = metallic_factor
         logger.debug(f"metallic_factor: {metallic_factor}")
+        material.metallic_factor = metallic_factor
 
         # Roughness Factor
         roughness_factor = pbr.roughness_factor
-        material.roughness_factor = roughness_factor
         logger.debug(f"roughness_factor: {roughness_factor}")
+        material.roughness_factor = roughness_factor
 
         # Metallic Roughness Texture
         if pbr.metallic_roughness_texture.index >= 0:
             self.build_texture('metallicRoughness', pbr.metallic_roughness_texture)
             self.use_environment_map = True
+
         # Normal Texture
         if tf_material.normal_texture.index >= 0:
             self.build_texture('normal', tf_material.normal_texture)
 
         # Occlusion Texture
         if tf_material.occlusion_texture.index >= 0:
-            self.occlusion_strength = tf_material.occlusion_texture.strength
+            material.occlusion_strength = tf_material.occlusion_texture.strength
             self.build_texture('occlusion', tf_material.occlusion_texture)
 
+        # Emissive Factor
         emissive_factor = tf_material.emissive_factor
-        material.emissive_factor = emissive_factor
         logger.debug(f"emissive_factor: {emissive_factor}")
+        material.emissive_factor = emissive_factor
 
         # Emissive Texture
         if tf_material.emissive_texture.index >= 0:
             self.build_texture('emissive', tf_material.emissive_texture)
 
+        # Environment Map
         if self.use_environment_map:
             self.build_environment_map()
 
         self.build_bind_group_layout()
         self.build_bind_group()
 
-        self.context.material_cache[self.index] = material
+        self.context.material_cache[self.material_index] = material
         return self.material
     
     def build_texture(self, name: str, texture_info: gltf.TextureInfo) -> None:

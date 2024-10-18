@@ -24,6 +24,7 @@ class WRender(Viewer):
         #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
         #model = "2CylinderEngine"
+        #model = "AlphaBlendModeTest"
         #model = "Avocado"
         #model = "Box"
         #model = "BoxVertexColors"
@@ -34,14 +35,14 @@ class WRender(Viewer):
         #model = "CesiumMilkTruck"
         #model = "Cube"
         #model = "Corset"
-        #model = "DamagedHelmet"
+        model = "DamagedHelmet"
         #model = "Duck"
         #model = "EnvironmentTest"
         #model = "FlightHelmet"
         #model = "Fox" #No normals, no indices
         #model = "GearboxAssy"
         #model = "Lantern"
-        model = "MetalRoughSpheres"
+        #model = "MetalRoughSpheres"
         #model = "SimpleMeshes"
         #model = "Suzanne"
 

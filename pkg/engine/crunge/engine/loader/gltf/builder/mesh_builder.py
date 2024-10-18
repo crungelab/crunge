@@ -23,8 +23,8 @@ class MeshBuilder(GltfBuilder):
 
     def build(self) -> Mesh3D:
         if self.index in self.context.mesh_cache:
-            self.mesh = self.context.mesh_cache[self.index]
-            return self.mesh
+            mesh = self.context.mesh_cache[self.index]
+            return mesh
 
         self.tf_mesh: gltf.Mesh = self.tf_model.meshes[self.index]
         self.mesh = Mesh3D()
