@@ -57,7 +57,7 @@ class View(Widget):
     def add_layer(self, layer: ViewLayer):
         layer.view = self
         self.layers_by_name[layer.name] = layer
-        self.add_child(layer)
+        self.attach(layer)
         self.sort_children(key=lambda child: child.priority)
 
     def remove_layer(self, layer: ViewLayer):

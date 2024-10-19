@@ -19,13 +19,6 @@ class Widget(engine.Widget):
         self._create(gui)
         return self._post_create(enabled)
 
-    '''
-    def create(self, gui):
-        self._create(gui)
-        self.on_create()
-        return self
-    '''
-
     def _create(self, gui):
         super()._create()
         self.gui = gui

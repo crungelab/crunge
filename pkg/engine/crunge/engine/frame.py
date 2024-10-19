@@ -18,7 +18,7 @@ class Frame(Widget):
     def view(self, view: View):
         self._view = view
         self.children.clear()
-        self.add_child(view)
+        self.attach(view)
         view.enable()
 
     def on_size(self):

@@ -1,5 +1,3 @@
-from crunge import wgpu
-
 from .base import Base
 
 from .viewport import Viewport

@@ -6,11 +6,11 @@ if TYPE_CHECKING:
 import glm
 
 from ..math import Vector3, Point3
-from ..node import Node
+from ..scene_node import SceneNode
 from .renderer_3d import Renderer3D
 from .vu_3d import Vu3D
 
-class Node3D(Node["Node3D", Vu3D, "Scene3D", Renderer3D]):
+class Node3D(SceneNode["Node3D", Vu3D, "Scene3D", Renderer3D]):
     def __init__(self, position = Point3()) -> None:
         super().__init__()
         self._position = position

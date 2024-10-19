@@ -3,22 +3,18 @@ from typing import Any, Callable
 from loguru import logger
 
 from .math import Size2i
-from .dispatcher import Dispatcher
+from .node import Node
 from .part import Part
 from .controller import Controller
 from .renderer import Renderer
 from .vu import Vu
-from .gfx import Gfx
 
-class Widget(Dispatcher):
+
+class Widget(Node["Widget", Vu, Renderer]):
     def __init__(self, size = Size2i()) -> None:
         super().__init__()
-        #self.size = size
         self._size = size
-        self.parent = None
-        self.children: list["Widget"] = []
         self._controller: Controller = None
-        self.vu: Vu = None
         self.parts: list[Part] = []
         self.priority = 0
 
@@ -53,14 +49,6 @@ class Widget(Dispatcher):
         self.size.y = value
 
     @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self, parent):
-        self._parent = parent
-
-    @property
     def controller(self) -> Controller:
         return self._controller
 
@@ -73,22 +61,6 @@ class Widget(Dispatcher):
         self._controller = controller
         controller.enable()
 
-    @property
-    def gfx(self):
-        return Gfx()
-
-    @property
-    def instance(self):
-        return self.gfx.instance
-
-    @property
-    def device(self):
-        return self.gfx.device
-
-    @property
-    def queue(self):
-        return self.gfx.queue
-
     def enable(self):
         super().enable()
         if self.controller is not None:
@@ -98,34 +70,6 @@ class Widget(Dispatcher):
         super().disable()
         if self.controller is not None:
             self.controller.disable()
-
-    def add_child(self, child: "Widget"):
-        child.parent = self
-        self.children.append(child)
-
-    def add_children(self, children: list["Widget"]):
-        for child in children:
-            self.add_child(child)
-
-    def remove_child(self, child: "Widget"):
-        self.children.remove(child)
-
-    def remove_children(self, children: list["Widget"]):
-        for child in children:
-            self.remove_child(child)
-
-    def clear(self):
-        self.children.clear()
-
-    def sort_children(self, key: Callable[["Widget"], Any], reverse: bool = False) -> None:
-        """
-        Sorts the children list based on a key function.
-
-        :param key: A lambda function that defines the sorting key.
-        :param reverse: Whether to sort in reverse order. Default is False.
-        """
-        self.children.sort(key=key, reverse=reverse)
-
     
     def dispatch(self, event):
         #logger.debug(f"Widget.dispatch: {self}, {self.children}")
@@ -135,25 +79,6 @@ class Widget(Dispatcher):
         if self.controller is not None:
             self.controller.dispatch(event)
         return super().dispatch(event)
-
-    '''
-    def dispatch(self, event):
-        #logger.debug(f"Widget.dispatch: {self}, {self.children}")
-        #for child in self.children:
-        for child in self.children[::-1]:
-            if child.dispatch(event):
-                return True
-        if self.controller is not None:
-            return self.controller.dispatch(event) and super().dispatch(event)
-        return super().dispatch(event)
-    '''
-
-    def pre_draw(self, renderer: Renderer):
-        # logger.debug("Widget.pre_draw")
-        if self.vu is not None:
-            self.vu.pre_draw(renderer)
-        for child in self.children:
-            child.pre_draw(renderer)
 
     def draw(self, renderer: Renderer):
         # logger.debug("Widget.draw")
@@ -165,13 +90,6 @@ class Widget(Dispatcher):
 
     def draw_child(self, renderer: Renderer, child: "Widget"):
         child.draw(renderer)
-
-    def post_draw(self, renderer: Renderer):
-        # logger.debug("Widget.post_draw")
-        if self.vu is not None:
-            self.vu.post_draw(renderer)
-        for child in self.children:
-            child.post_draw(renderer)
 
     def update(self, delta_time: float):
         # logger.debug("Widget.update")
