@@ -1,10 +1,11 @@
 import glm
 from loguru import logger
 
-from crunge.engine import Vu
 from ..math import Size3, Rect2
+from ..vu import Vu
+from .node_3d import Node3D
 
-class Vu3D(Vu):
+class Vu3D(Vu[Node3D]):
     def __init__(self) -> None:
         super().__init__()
         self._transform = glm.mat4(1.0)

@@ -1,13 +1,15 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
 
-#if TYPE_CHECKING:
-from .vu import Vu
+if TYPE_CHECKING:
+    from .vu import Vu
+    from .d2.vu_2d import Vu2D
+    from .d3.vu_3d import Vu3D
 
 from .dispatcher import Dispatcher
 
 
 T_Node = TypeVar("T_Node")
-T_Vu = TypeVar("T_Vu", "Vu", None)
+T_Vu = TypeVar("T_Vu", "Vu", "Vu2D", "Vu3D")
 T_Renderer = TypeVar("T_Renderer")
 
 class Node(Dispatcher, Generic[T_Node, T_Vu, T_Renderer]):

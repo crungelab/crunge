@@ -2,23 +2,24 @@ from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
 
 if TYPE_CHECKING:
     from .scene_2d import Scene2D
+    from .vu_2d import Vu2D
 
 from loguru import logger
 import glm
 
 from .renderer_2d import Renderer2D
-from .vu_2d import Vu2D
+#from .vu_2d import Vu2D
 
 from ..math import Vector2, Point2, Size2, Rect2
 from ..scene_node import SceneNode
 
-class Node2D(SceneNode["Node2D", Vu2D, "Scene2D", Renderer2D]):
+class Node2D(SceneNode["Node2D", "Vu2D", "Scene2D", Renderer2D]):
     def __init__(
         self,
         position=Point2(),
         size=Size2(1.0),
         scale=Vector2(1.0),
-        vu: Vu2D = None,
+        vu: "Vu2D" = None,
     ) -> None:
         super().__init__(vu)
         self._position = position

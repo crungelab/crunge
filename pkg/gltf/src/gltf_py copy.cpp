@@ -17,7 +17,7 @@
 namespace py = pybind11;
 
 template<typename T>
-py::array_t<T> get_typed_array(const std::vector<unsigned char>& buffer, size_t byte_offset, const std::array<size_t, 2>& shape) {
+pybind11::array_t<T> get_typed_array(const std::vector<unsigned char>& buffer, size_t byte_offset, const std::array<size_t, 2>& shape) {
     // Ensure the byte offset is aligned with the size of T
     if (byte_offset % alignof(T) != 0) {
         throw std::invalid_argument("Byte offset is not aligned with the size of the data type");
@@ -31,21 +31,25 @@ py::array_t<T> get_typed_array(const std::vector<unsigned char>& buffer, size_t 
         throw std::out_of_range("Requested slice is out of bounds");
     }
 
-    // Create a memory view from the buffer data
-    const T* buffer_ptr = reinterpret_cast<const T*>(buffer.data() + byte_offset);
-    auto mem_view = py::memoryview::from_buffer(
-        buffer_ptr,                                        // Pointer to data
-        sizeof(T),                                         // Size of each element
-        py::format_descriptor<T>::format().c_str(),                // Format descriptor for NumPy
-        {shape[0], shape[1]},                              // Shape of the array
-        {sizeof(T) * shape[1], sizeof(T)}                  // Strides
-    );
+    // Create a new NumPy array with the specified shape
+    auto result = pybind11::array_t<T>({shape[0], shape[1]});
 
-    // Return NumPy array from memory view
-    return py::array_t<T>(mem_view);
+    // Obtain a pointer to the array's data
+    T* result_ptr = static_cast<T*>(result.request().ptr);
+
+    // Reinterpret the buffer slice as an array of type T and copy the data
+    const T* buffer_ptr = reinterpret_cast<const T*>(buffer.data() + byte_offset);
+    std::copy(buffer_ptr, buffer_ptr + total_elements, result_ptr);
+    /*
+    // Basically the same thing...
+    size_t total_size = total_elements * sizeof(T);
+    const unsigned char* buffer_start = buffer.data() + byte_offset;
+    std::memcpy(result_ptr, buffer_start, total_size);
+    */
+    return result;
 }
 
-py::object get_buffer_array(const tinygltf::Buffer& self, size_t byte_offset, size_t count, uint32_t type, uint32_t componentType) {
+pybind11::object get_buffer_array(const tinygltf::Buffer& self, size_t byte_offset, size_t count, uint32_t type, uint32_t componentType) {
     size_t componentCount = tinygltf::GetNumComponentsInType(type);
     std::array<size_t, 2> shape = {count, componentCount};
     switch (componentType) {
@@ -63,6 +67,7 @@ py::object get_buffer_array(const tinygltf::Buffer& self, size_t byte_offset, si
             return get_typed_array<float>(self.data, byte_offset, shape);
         case TINYGLTF_COMPONENT_TYPE_DOUBLE:
             return get_typed_array<double>(self.data, byte_offset, shape);
+        // Add more cases as needed for different data types
         default:
             throw std::invalid_argument("Unsupported componentType");
     }
@@ -71,14 +76,9 @@ py::object get_buffer_array(const tinygltf::Buffer& self, size_t byte_offset, si
 py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
     auto data = self.image.data();
     auto size = self.image.size();
-    // Create a memory view of the existing image data
-    return py::array_t<unsigned char>(py::memoryview::from_buffer(
-        data,                                              // Pointer to data
-        sizeof(unsigned char),                             // Size of each element
-        py::format_descriptor<unsigned char>::format().c_str(),    // Format descriptor for NumPy
-        {size},                                            // Shape (1D)
-        {sizeof(unsigned char)}                            // Strides
-    ));
+    // Create a NumPy array that views the existing memory
+    // TODO:  May want to copy the data instead of using a view
+    return py::array(size, data);
 }
 
 // Wrapper function
@@ -112,3 +112,4 @@ void init_main(py::module &_gltf, Registry &registry) {
         , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION);
     PYEXTEND_END
 }
+

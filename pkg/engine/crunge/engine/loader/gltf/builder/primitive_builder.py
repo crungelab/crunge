@@ -175,6 +175,8 @@ class PrimitiveBuilder(GltfBuilder):
 
     def build_material(self):
         if self.tf_primitive.material < 0:
+            #self.material = Material3D()
+            #self.primitive.material = self.material
             return
         tf_primitive = self.tf_primitive
         logger.debug(f"primitive.material: {tf_primitive.material}")

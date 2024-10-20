@@ -27,8 +27,8 @@ class WRender(Viewer):
         #model = "AlphaBlendModeTest"
         #model = "Avocado"
         #model = "Box"
-        #model = "BoxVertexColors"
-        #model = "BoxTextured" #Need samplers
+        #model = "BoxVertexColors" #TODO: No Material
+        #model = "BoxTextured"
         #model = "BoomBox"
         #model = "Buggy"
         #model = "CesiumMan"

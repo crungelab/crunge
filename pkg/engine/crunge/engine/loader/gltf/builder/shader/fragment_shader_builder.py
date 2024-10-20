@@ -31,6 +31,7 @@ class FragmentShaderBuilder(ShaderBuilder):
         self.roughness_factor = material.roughness_factor
         self.occlusion_strength = material.occlusion_strength
         self.emissive_factor = material.emissive_factor
+        self.alpha_cutoff = material.alpha_cutoff
 
     def add_binding(self, binding: Binding):
         self.bindings.append(binding)
