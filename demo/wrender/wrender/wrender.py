@@ -24,7 +24,9 @@ class WRender(Viewer):
         #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
         #model = "2CylinderEngine"
-        #model = "AlphaBlendModeTest"
+        #model = "ABeautifulGame"
+        #model = "AlphaBlendModeTest" # TODO: Alpha mask not working properly
+        #model = "AttenuationTest" # TODO: Needs extensions: KHR_materials_transmission and KHR_materials_volume
         #model = "Avocado"
         #model = "Box"
         #model = "BoxVertexColors" #TODO: No Material

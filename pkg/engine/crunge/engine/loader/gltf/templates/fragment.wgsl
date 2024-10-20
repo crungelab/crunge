@@ -56,7 +56,6 @@ struct Surface {
   ao : f32,
   emissive : vec3<f32>,
   v : vec3<f32>,
-  //ambient : vec3<f32>,
 }
 
 fn GetSurface(input : VertexOutput) -> Surface {
@@ -76,6 +75,13 @@ fn GetSurface(input : VertexOutput) -> Surface {
   let baseColor = material.baseColorFactor;
   {% endif %}
 
+  {%if alpha_mode == 'MASK' %}
+  if ((surface.baseColor.a < material.alphaCutoff)) {
+    // Violates uniformity analysis:
+    discard;
+  }
+  {% endif %}
+
   {% if material.has_base_color_texture %}
   let baseColorMap = linearSample(baseColorTexture, baseColorSampler, uv);
   surface.baseColor = baseColor * baseColorMap;
@@ -87,8 +93,8 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% if material.has_metallic_roughness_texture %}
   let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
   surface.metallic = material.metallicFactor * metalRough.b;
-  surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
-  //surface.roughness = material.roughnessFactor * metalRough.g;
+  //surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
+  surface.roughness = material.roughnessFactor * metalRough.g;
 
   {% else %}
   surface.metallic = material.metallicFactor;
@@ -162,14 +168,9 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
     var surface = GetSurface(input);
     var light = GetLight(input);
 
-    // Calculate Fresnel factor using Schlick approximation
-    let fresnel = FresnelSchlick(dot(surface.v, surface.normal), surface.f0);
+    let Lo = lightRadiance(light, surface);
 
-    // Direct lighting: Diffuse (Lambertian) and Specular
-    let diffuse = (1.0 - surface.metallic) * lightRadiance(light, surface);
-    let specular = fresnel * lightRadiance(light, surface);
-
-    // Environment reflection with reduced shininess on rough surfaces
+    // Environment reflection
     {% if material.has_environment_texture %}
     let environmentReflection = getEnvironmentReflection(surface);
     {% else %}
@@ -177,59 +178,11 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
     {% endif %}
 
     // Ambient lighting scaled by occlusion
-    //let ambient = surface.ambient * surface.ao;
     let ambientStrength = .1;
     let ambient = surface.albedo * surface.ao * ambientStrength;
 
     // Combine all components: Ambient, Diffuse, Specular, Environment, and Emissive
-    let rgb = ambient + diffuse + specular + environmentReflection + surface.emissive;
+    let rgb = ambient + Lo + environmentReflection + surface.emissive;
     let finalColor = linearToSRGB(rgb);
     return vec4<f32>(finalColor, surface.baseColor.a);
 }
-
-/*@fragment
-fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
-    var surface = GetSurface(input);
-    var light = GetLight(input);
-
-    // Calculate Fresnel factor using Schlick approximation
-    let fresnel = fresnelSchlick(dot(surface.v, surface.normal), surface.f0);
-
-    // Direct lighting: Diffuse (Lambertian) and Specular
-    let diffuse = (1.0 - surface.metallic) * lightRadiance(light, surface);
-    let specular = fresnel * lightRadiance(light, surface);
-
-    // Environment reflection
-    let environmentReflection = getEnvironmentReflection(surface);
-
-    // Ambient lighting scaled by occlusion
-    let ambient = surface.ambient * surface.ao;
-
-    // Combine all components: Diffuse, Specular, Environment, Ambient, and Emissive
-    let rgb = diffuse + specular + environmentReflection + ambient + surface.emissive;
-    let finalColor = linearToSRGB(rgb);
-    return vec4<f32>(finalColor, surface.baseColor.a);
-}*/
-
-
-/*@fragment
-fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
-    var surface = GetSurface(input);
-    var light = GetLight(input);
-
-    // Calculate Fresnel factor
-    let fresnelFactor = pow(1.0 - dot(surface.v, surface.normal), 5.0);
-    let fresnel = mix(surface.f0, vec3(1.0), fresnelFactor);
-
-    // Calculate diffuse reflection using Lambertian model
-    let diffuse = (1.0 - surface.metallic) * lightRadiance(light, surface);
-    let reflection = diffuse + fresnel * lightRadiance(light, surface);
-
-    // Ambient component
-    let ambient = surface.ambient * surface.ao;
-
-    // Combine reflection and ambient with emissive
-    let rgb = reflection + ambient + surface.emissive;
-    let finalColor = linearToSRGB(rgb);
-    return vec4<f32>(finalColor, surface.baseColor.a);
-}*/

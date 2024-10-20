@@ -9,7 +9,6 @@ class Material3D(Material):
     bind_group_layout: wgpu.BindGroupLayout = None
     bind_group: wgpu.BindGroup = None
 
-    #alpha_mode: str = 'BLEND'
     alpha_mode: str = 'OPAQUE'
     alpha_cutoff: float = 0.5
     double_sided: bool = False
