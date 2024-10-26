@@ -1,6 +1,7 @@
 from loguru import logger
 
 import numpy as np
+import glm
 
 from crunge import wgpu
 from crunge.wgpu import utils
@@ -80,15 +81,22 @@ class PrimitiveBuilder(GltfBuilder):
                 )
                 self.vertex_table.add_column(TangentColumn("tangent", tangents))
 
-    def build_attribute(self, attribute: tuple):
+    def build_attribute(self, attribute: tuple[str, int]):
         name, accessor_index = attribute
         logger.debug(f"primitive.attributes[{name}]: {accessor_index}")
-
+        accessor = self.tf_model.accessors[accessor_index]
         #data = self.build_attribute_array(index)
         data = self.build_array(accessor_index)
 
         if name == "POSITION":
             self.vertex_table.add_column(PosColumn("pos", data))
+            min_values = accessor.min_values
+            max_values = accessor.max_values
+            min = glm.vec3(min_values[0], min_values[1], min_values[2])
+            max = glm.vec3(max_values[0], max_values[1], max_values[2])
+            self.primitive.bounds.min = min
+            self.primitive.bounds.max = max
+
         elif name == "NORMAL":
             self.vertex_table.add_column(NormalColumn("normal", data))
         elif name == "TANGENT":

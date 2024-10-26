@@ -19,6 +19,10 @@ set(GLTF_ROOT ${CRUNGE_ROOT}/depot/gltf)
 
 set(SDL_ROOT ${CRUNGE_ROOT}/depot/sdl)
 
+set(BVH_ROOT ${CRUNGE_ROOT}/depot/bvh)
+
+set(NANORT_ROOT ${CRUNGE_ROOT}/depot/nanort)
+
 set(CRUNGE_COMPILE_DEFS 
     NOMINMAX=1
 )

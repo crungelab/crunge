@@ -21,3 +21,4 @@ Size3: TypeAlias = glm.vec3
 Size3i: TypeAlias = glm.ivec3
 
 from .rect import Rect2, Rect2i
+from .bounds3 import Bounds3

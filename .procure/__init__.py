@@ -48,6 +48,11 @@ class IconFontCppHeaders(GitSolution):
     url = "https://github.com/juliettef/IconFontCppHeaders"
 
 
+class Nanort(GitSolution):
+    path = "depot/nanort"
+    url = "https://github.com/lighttransport/nanort"
+
+
 solutions = [
     Pybind11,
     ImGui,

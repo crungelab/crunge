@@ -27,10 +27,11 @@ class MeshBuilder(GltfBuilder):
             return mesh
 
         self.tf_mesh: gltf.Mesh = self.tf_model.meshes[self.index]
-        self.mesh = Mesh3D()
+        self.mesh = mesh =Mesh3D()
         self.build_primitives()
-        self.context.mesh_cache[self.index] = self.mesh
-        return self.mesh
+        #mesh.compute_bounds()
+        self.context.mesh_cache[self.index] = mesh
+        return mesh
 
     def build_primitives(self):
         for tf_primitive in self.tf_mesh.primitives:

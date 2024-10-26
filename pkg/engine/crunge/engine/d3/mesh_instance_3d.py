@@ -30,8 +30,8 @@ class MeshInstance3D(Node3D):
         #super().__init__()
         self.program = MeshInstance3DProgram()
         self.model_bind_group: wgpu.BindGroup = None
-        #self.primitives: List[Primitive3D] = []
-        self.mesh: Mesh3D = None
+        #self.mesh: Mesh3D = None
+        self._mesh: Mesh3D = None
 
         # Uniform Buffers
         self.model_uniform_buffer_size = sizeof(ModelUniform)
@@ -43,6 +43,21 @@ class MeshInstance3D(Node3D):
         self.build_bindgroup()
         super().__init__()
 
+    @property
+    def mesh(self) -> Mesh3D:
+        return self._mesh
+    
+    @mesh.setter
+    def mesh(self, mesh: Mesh3D):
+        self._mesh = mesh
+        self.bounds = mesh.bounds
+        self.gpu_update_model()
+
+    def update_bounds(self):
+        if self.mesh:
+            self.bounds = self.mesh.bounds.to_global(self.transform)
+        return super().update_bounds()
+    
     def build_bindgroup(self):
         logger.debug("Creating bind group")
 
@@ -63,11 +78,6 @@ class MeshInstance3D(Node3D):
         )
 
         self.model_bind_group = self.device.create_bind_group(model_bg_desc)
-
-    '''
-    def add_primitive(self, primitive: Primitive3D):
-        self.primitives.append(primitive)
-    '''
 
     def gpu_update_model(self):
         model_matrix = self.transform
@@ -91,16 +101,6 @@ class MeshInstance3D(Node3D):
             primitive.draw(renderer)
 
         super().draw(renderer)
-
-    '''
-    def draw(self, renderer: Renderer3D):
-        pass_enc = renderer.pass_enc
-        self.bind(pass_enc)
-        for primitive in self.primitives:
-            primitive.draw(renderer)
-
-        super().draw(renderer)
-    '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(3, self.model_bind_group)

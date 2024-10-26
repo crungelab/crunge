@@ -1,5 +1,6 @@
 import time
 import os, sys
+import math
 from pathlib import Path
 import tkinter
 import tkinter.filedialog
@@ -61,7 +62,45 @@ class Viewer(engine.App):
         self.scene = scene
         self.create_view(scene)
 
-        self.controller = ArcballCameraController(self, self.camera)
+        # Step 1: Calculate the size and center of the model
+        size = self.scene.root.bounds.size
+        center = self.scene.root.bounds.center
+
+        # Step 2: Determine the maximum extent of the model
+        max_extent = max(size.x, size.y, size.z)
+        logger.debug(f"Model size: {size}, center: {center}, max extent: {max_extent}")
+
+        # Step 3: Set up the camera's field of view (FOV) in radians
+        fov = glm.radians(45.0)  # 45 degrees
+
+        # Step 4: Calculate the camera distance
+        camera_distance = max_extent / (2 * math.tan(fov / 2))
+
+        # Optional: Add some padding factor to move the camera further back
+        padding_factor = 1.5
+        camera_distance *= padding_factor
+
+        # Step 5: Position the camera along the z-axis, looking at the model
+        camera_position = glm.vec3(center.x, center.y, center.z + camera_distance)
+        logger.debug(f"Camera position: {camera_position}")
+        target = center
+
+        # Step 6: Define the near and far planes
+        # Set near plane based on a fraction of camera distance or a minimum value
+        #near_plane = max(0.1, camera_distance * 0.01)
+        near_plane = max_extent * 0.01
+
+        # Calculate distance to farthest point from the camera to determine the far plane
+        # We assume the model is centered around the origin and the farthest point is at `global_max`
+        #farthest_point = global_max - center
+        farthest_point = max_extent - center
+        #far_plane = glm.length(camera_position - (center + farthest_point)) + max_extent
+        far_plane = max_extent * 100
+
+        self.camera.position = camera_position
+        self.camera.near = near_plane
+        self.camera.far = far_plane
+        self.controller = ArcballCameraController(self, self.camera, target, max_extent)
         self.controller.activate()
 
         return self

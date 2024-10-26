@@ -13,6 +13,8 @@ class CameraController(Controller):
         super().__init__(window)
         self.camera = camera
         self.mouse_captured = False
+        self.first_mouse = True
+        self.mouse_button = 0
 
     @property
     def width(self):
@@ -49,11 +51,13 @@ class CameraController(Controller):
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         #logger.debug(f"mouse button: button={event.button}, down={event.down}")
-        if event.button == 1:
+        #if event.button == 1:
+        if event.button > 0:
             if event.down:
                 #logger.debug("Capturing mouse")
                 self.mouse_captured = True
                 self.first_mouse = True
+                self.mouse_button = event.button
             else:
                 self.mouse_captured = False
 

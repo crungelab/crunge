@@ -1,0 +1,9 @@
+module: _nanort
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+]
+
+unit_files:
+  - path: nanort.unit.yaml

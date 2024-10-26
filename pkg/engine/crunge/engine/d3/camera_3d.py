@@ -33,6 +33,8 @@ class Camera3D(Node3D):
         size=Size2i(),
         position=Point3(0.0, 0.0, 4.0),
         up=Vector3(0.0, 1.0, 0.0),
+        near=0.1,
+        far=100.0,
     ):
         #super().__init__(position)
         self.view_matrix = glm.mat4(1.0)
@@ -44,6 +46,9 @@ class Camera3D(Node3D):
         self.front = glm.vec3(0.0, 0.0, -1.0)
         self.right = glm.vec3(1.0, 0.0, 0.0)
 
+        self._near = near
+        self._far = far
+
         self._viewport: Viewport = None
         self.viewport_size_subscription: Subscription[Size2i] = None
 
@@ -51,6 +56,24 @@ class Camera3D(Node3D):
         self.create_bind_group()
 
         super().__init__(position)
+
+    @property
+    def near(self):
+        return self._near
+    
+    @near.setter
+    def near(self, value):
+        self._near = value
+        self.update_matrix()
+
+    @property
+    def far(self):
+        return self._far
+    
+    @far.setter
+    def far(self, value):
+        self._far = value
+        self.update_matrix()
 
     @property
     def viewport(self):
@@ -130,7 +153,7 @@ class Camera3D(Node3D):
         size = self.size
         aspect = float(size.x) / float(size.y)
         fovy = glm.radians(60.0)
-        self.projection_matrix = glm.perspective(fovy, aspect, .1, 100.0)
+        self.projection_matrix = glm.perspective(fovy, aspect, self.near, self.far)
 
         self.update_gpu()
 

@@ -48,6 +48,7 @@ add_subdirectory(depot/gltf)
 set_target_properties(tinygltf PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pkg/gltf)
+
 #
 # Dawn
 #
@@ -77,3 +78,9 @@ add_subdirectory(depot/sdl)
 set_target_properties(SDL3-static PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pkg/sdl)
+
+#
+# Nanort
+#
+add_subdirectory(pkg/nanort)
+

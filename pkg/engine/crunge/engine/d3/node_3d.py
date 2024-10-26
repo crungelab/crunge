@@ -4,9 +4,10 @@ if TYPE_CHECKING:
     from .scene_3d import Scene3D
     from .vu_3d import Vu3D
 
+from loguru import logger
 import glm
 
-from ..math import Vector3, Point3
+from ..math import Vector3, Point3, Bounds3
 from ..scene_node import SceneNode
 from .renderer_3d import Renderer3D
 #from .vu_3d import Vu3D
@@ -14,6 +15,7 @@ from .renderer_3d import Renderer3D
 class Node3D(SceneNode["Node3D", "Vu3D", "Scene3D", Renderer3D]):
     def __init__(self, position = Point3()) -> None:
         super().__init__()
+        self.bounds = Bounds3()
         self._position = position
         self._orientation = glm.quat(1.0, 0.0, 0.0, 0.0)
         self._scale = Vector3(1.0)
@@ -66,7 +68,12 @@ class Node3D(SceneNode["Node3D", "Vu3D", "Scene3D", Renderer3D]):
         self._transform = value
         self.on_transform()
 
+    def on_attached(self):
+        self.parent.update_global_bounds()
+        super().on_attached()
+
     def on_transform(self):
+        self.update_bounds()
         self.gpu_update_model()
 
     def gpu_update_model(self):
@@ -74,6 +81,8 @@ class Node3D(SceneNode["Node3D", "Vu3D", "Scene3D", Renderer3D]):
 
     def on_attached(self):
         self.update_transform()
+        self.update_bounds()
+        self.parent.update_bounds()
 
     def update_matrix(self):
         matrix = glm.mat4(1.0)
@@ -89,3 +98,37 @@ class Node3D(SceneNode["Node3D", "Vu3D", "Scene3D", Renderer3D]):
         self.transform = transform
         for child in self.children:
             child.update_transform()
+
+    def update_bounds(self):
+        for child in self.children:
+            self.bounds.merge(child.bounds)
+        logger.debug(f"{self.__class__.__name__} bounds: {self.bounds}")
+    '''
+    def update_bounds(self):
+        """Updates the global (world-space) axis-aligned bounding box."""
+        self.global_bounds = self.bounds_to_global(self.transform)
+
+        # Recursively update children
+        for child in self.children:
+            child.update_global_bounds()
+    '''
+
+    def bounds_to_global(self, transform):
+        """Transforms local bounds to a global (world-space) axis-aligned bounding box."""
+        corners = [
+            glm.vec3(self.bounds.min.x, self.bounds.min.y, self.bounds.min.z),
+            glm.vec3(self.bounds.max.x, self.bounds.min.y, self.bounds.min.z),
+            glm.vec3(self.bounds.min.x, self.bounds.max.y, self.bounds.min.z),
+            glm.vec3(self.bounds.max.x, self.bounds.max.y, self.bounds.min.z),
+            glm.vec3(self.bounds.min.x, self.bounds.min.y, self.bounds.max.z),
+            glm.vec3(self.bounds.max.x, self.bounds.min.y, self.bounds.max.z),
+            glm.vec3(self.bounds.min.x, self.bounds.max.y, self.bounds.max.z),
+            glm.vec3(self.bounds.max.x, self.bounds.max.y, self.bounds.max.z),
+        ]
+
+        transformed_bounds = Bounds3()
+        for corner in corners:
+            world_corner = glm.vec3(transform * glm.vec4(corner, 1.0))
+            transformed_bounds.expand(world_corner)
+
+        return transformed_bounds

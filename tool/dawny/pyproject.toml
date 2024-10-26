@@ -27,7 +27,7 @@ classifiers = [
 dependencies = [
   "loguru ~=0.7.2",
   "click ~=8.1.7",
-  "pydantic ~=2.8.2",
+  "pydantic ~=2.9.2",
   "Jinja2 ~=3.1.4",
   "networkx ~=3.3",
 ]
