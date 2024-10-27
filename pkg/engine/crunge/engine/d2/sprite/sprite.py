@@ -21,77 +21,26 @@ from ..uniforms_2d import (
     MaterialUniform,
     Vec4,
 )
-from ..material_2d import Material2D
 
 from .sprite_program import SpriteProgram
 from .sprite_sampler import SpriteSampler
+from .sprite_material import SpriteMaterial
 
 
 class Sprite(Vu2D):
-    #def __init__(self, texture: Texture, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> None:
-    def __init__(self, material: Material2D) -> None:
+    def __init__(self, material: SpriteMaterial) -> None:
         super().__init__()
         self.material = material
-        '''
-        self._texture = texture
-        self._color = color
-        '''
 
-        #self.material_bind_group: wgpu.BindGroup = None
         self.model_bind_group: wgpu.BindGroup = None
 
         self.model_uniform_buffer: wgpu.Buffer = None
         self.model_uniform_buffer_size: int = 0
 
-        #self.material_uniform_buffer: wgpu.Buffer = None
-        #self.material_uniform_buffer_size: int = 0
-
         self.program = SpriteProgram()
         self.create_buffers()
         self.create_bind_groups()
 
-        #self.update_material()
-
-    '''
-    @property
-    def texture(self):
-        return self._texture
-
-    @texture.setter
-    def texture(self, value: Texture):
-        old_texture = self._texture
-        self._texture = value
-        if old_texture is not None and old_texture.texture != value.texture:
-            self.create_material_bind_group()
-        # logger.debug(f"Setting texture: {value}")
-        self.update_material()
-
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, value):
-        self._color = value
-        self.update_material()
-
-    def update_material(self):
-        material_uniform = MaterialUniform()
-        material_uniform.color = cast_vec4(self.color)
-
-        # Need to reorder because we are using a triangle strip
-        material_uniform.uvs[0] = self.texture.coords[1]  # Top-left
-        material_uniform.uvs[1] = self.texture.coords[2]  # Bottom-left
-        material_uniform.uvs[2] = self.texture.coords[0]  # Top-right
-        material_uniform.uvs[3] = self.texture.coords[3]  # Bottom-right
-
-        self.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            as_capsule(material_uniform),
-            self.material_uniform_buffer_size,
-        )
-    '''
     @property
     def size(self) -> Size2:
         #return self.texture.size
@@ -113,48 +62,8 @@ class Sprite(Vu2D):
             self.model_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
-        '''
-        self.material_uniform_buffer_size = sizeof(MaterialUniform)
-        self.material_uniform_buffer = self.gfx.create_buffer(
-            "Material Buffer",
-            self.material_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-        '''
 
     def create_bind_groups(self):
-        #self.create_material_bind_group()
-        self.create_model_bind_group()
-
-    '''
-    def create_material_bind_group(self):
-        sampler = SpriteSampler().sampler
-
-        material_bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(binding=0, sampler=sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=self.texture.view),
-                wgpu.BindGroupEntry(
-                    binding=2,
-                    buffer=self.material_uniform_buffer,
-                    size=self.material_uniform_buffer_size,
-                ),
-            ]
-        )
-
-        material_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Material Bind Group",
-            layout=self.program.pipeline.get_bind_group_layout(1),
-            entry_count=len(material_bindgroup_entries),
-            entries=material_bindgroup_entries,
-        )
-
-        self.material_bind_group = self.device.create_bind_group(
-            material_bind_group_desc
-        )
-    '''
-
-    def create_model_bind_group(self):
         model_bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(

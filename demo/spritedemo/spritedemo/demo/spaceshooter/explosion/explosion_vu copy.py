@@ -78,19 +78,13 @@ struct VertexOutput {
 }
 
 @vertex
-fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) instanceIndex: u32) -> VertexOutput {
+fn vs_main(@location(0) pos: vec2f, @builtin(instance_index) index: u32) -> VertexOutput {
     var output: VertexOutput;
-
-    let x = f32((vertexIndex & 1u) << 1) - 1.0; // Generates -1.0 or 1.0
-    let y = f32((vertexIndex & 2u) >> 1) * 2.0 - 1.0; // Generates -1.0 or 1.0
-
-    let pos = vec2<f32>(x * 0.5, y * 0.5); // Scale quad by 0.5
-
-    let vert_pos = pos + particles[instanceIndex].position;
+    let vert_pos = pos + particles[index].position;
     output.position = camera.projection * camera.view * model * vec4<f32>(vert_pos.x, vert_pos.y, 0.0, 1.0);
-    output.color = particles[instanceIndex].color;
-    output.age = particles[instanceIndex].age;
-    output.lifespan = particles[instanceIndex].lifespan;
+    output.color = particles[index].color;
+    output.age = particles[index].age;
+    output.lifespan = particles[index].lifespan;
     return output;
 }
 """
@@ -133,7 +127,6 @@ class ExplosionProgram(Program):
         logger.debug("create_render_bind_group_layouts")
         camera_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
-                label="Camera Buffer",
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
@@ -149,7 +142,6 @@ class ExplosionProgram(Program):
         # Render Bind Group Layout Entries
         render_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
-                label="Model Buffer",
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(
@@ -158,7 +150,6 @@ class ExplosionProgram(Program):
                 ),
             ),
             wgpu.BindGroupLayoutEntry(
-                label="Particle Buffer",
                 binding=1,
                 visibility=wgpu.ShaderStage.COMPUTE | wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(
@@ -170,7 +161,6 @@ class ExplosionProgram(Program):
 
         # Render Bind Group Layout
         render_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            label="Render Bind Group Layout",
             entry_count=len(render_bgl_entries), entries=render_bgl_entries
         )
         render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
@@ -178,6 +168,20 @@ class ExplosionProgram(Program):
         self.render_bind_group_layouts = [camera_bgl, render_bgl]
 
     def create_render_pipeline(self):
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+            ),
+        ]
+
+        vertBufferLayouts = [
+            wgpu.VertexBufferLayout(
+                array_stride=2 * sizeof(c_float),
+                attribute_count=1,
+                attributes=vertAttributes,
+            )
+        ]
+
         blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
                 operation=wgpu.BlendOperation.ADD,
@@ -209,9 +213,9 @@ class ExplosionProgram(Program):
         vertex_state = wgpu.VertexState(
             module=self.vs_module,
             entry_point="vs_main",
+            buffer_count=1,
+            buffers=vertBufferLayouts,
         )
-
-        primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_STRIP)
 
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
@@ -227,7 +231,6 @@ class ExplosionProgram(Program):
             label="Main Render Pipeline",
             layout=self.device.create_pipeline_layout(render_pll_desc),
             vertex=vertex_state,
-            primitive=primitive,
             fragment=fragmentState,
             depth_stencil=depth_stencil_state,
         )
@@ -240,7 +243,6 @@ class ExplosionProgram(Program):
         # Compute Bind Group Layout Entries
         compute_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
-                label="Particle Buffer",
                 binding=0,
                 visibility=wgpu.ShaderStage.COMPUTE,
                 buffer=wgpu.BufferBindingLayout(
@@ -282,6 +284,7 @@ class ExplosionVu(Vu2D):
     model_uniform_buffer: wgpu.Buffer = None
     model_uniform_buffer_size: int = 0
 
+    vertex_buffer: wgpu.Buffer = None
     particles_buffer: wgpu.Buffer = None
 
     def __init__(self, color: glm.vec4 = glm.vec4(0.0, 0.0, 1.0, 1.0)):
@@ -313,6 +316,9 @@ class ExplosionVu(Vu2D):
 
     def create_buffers(self):
         logger.debug("create_buffers")
+        self.vertex_buffer = utils.create_buffer_from_ndarray(
+            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
+        )
         self.particles_buffer = utils.create_buffer_from_ctypes_array(
             self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
         )
@@ -372,7 +378,8 @@ class ExplosionVu(Vu2D):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline)
         pass_enc.set_bind_group(1, self.render_bind_group)
-        pass_enc.draw(4, self.num_particles)
+        pass_enc.set_vertex_buffer(0, self.vertex_buffer)
+        pass_enc.draw(6, self.num_particles)
 
     def update(self, delta_time: float):
         # logger.debug("explosion update")

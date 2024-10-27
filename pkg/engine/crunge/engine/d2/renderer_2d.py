@@ -1,32 +1,10 @@
 from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
 
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
 from loguru import logger
-import glm
 
-from crunge.core import as_capsule
 from crunge import wgpu
 from ..renderer import Renderer
 from ..viewport import Viewport
-
-from .uniforms_2d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
-    CameraUniform,
-    LightUniform,
-    Mat4,
-)
 
 if TYPE_CHECKING:
     from .camera_2d import Camera2D
