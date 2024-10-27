@@ -59,7 +59,8 @@ class MaterialBindGroupLayout(BindGroupLayout):
             ),
             wgpu.BindGroupLayoutEntry(
                 binding=2,
-                visibility=wgpu.ShaderStage.FRAGMENT,
+                #visibility=wgpu.ShaderStage.FRAGMENT,
+                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
         ]

@@ -20,12 +20,13 @@ from ..uniforms_2d import (
     cast_vec4,
     ModelUniform,
     MaterialUniform,
+    Vec4,
 )
 
 from .sprite_program import SpriteProgram
 from .sprite_sampler import SpriteSampler
 
-
+'''
 INDICES = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint16)
 
 POINTS = [
@@ -42,18 +43,18 @@ vertex_dtype = np.dtype(
         ("texcoord", np.float32, (2,)),  # Texture coordinates (u, v)
     ]
 )
-
+'''
 
 class Sprite(Vu2D):
     material_bind_group: wgpu.BindGroup = None
     model_bind_group: wgpu.BindGroup = None
 
-    vertices: np.ndarray = None
-    vertex_buffer: wgpu.Buffer = None
+    #vertices: np.ndarray = None
+    #vertex_buffer: wgpu.Buffer = None
 
-    indices: np.ndarray = None
-    index_buffer: wgpu.Buffer = None
-    index_format: wgpu.IndexFormat = wgpu.IndexFormat.UINT16
+    #indices: np.ndarray = None
+    #index_buffer: wgpu.Buffer = None
+    #index_format: wgpu.IndexFormat = wgpu.IndexFormat.UINT16
 
     model_uniform_buffer: wgpu.Buffer = None
     model_uniform_buffer_size: int = 0
@@ -64,10 +65,10 @@ class Sprite(Vu2D):
     def __init__(self, texture: Texture, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> None:
         super().__init__()
         self._texture = texture
-        self.indices = INDICES
-        self.points = POINTS
+        #self.indices = INDICES
+        #self.points = POINTS
         self.program = SpriteProgram()
-        self.create_vertices()
+        #self.create_vertices()
         self.create_buffers()
         self.create_bind_groups()
 
@@ -84,7 +85,8 @@ class Sprite(Vu2D):
         if old_texture is not None and old_texture.texture != value.texture:
             self.create_material_bind_group()
         # logger.debug(f"Setting texture: {value}")
-        self.update_vertices()
+        #self.update_vertices()
+        self.update_material()
 
     @property
     def color(self):
@@ -93,11 +95,44 @@ class Sprite(Vu2D):
     @color.setter
     def color(self, value):
         self._color = value
-        self.on_color()
+        #self.on_color()
+        self.update_material()
 
+    '''
     def on_color(self):
         material_uniform = MaterialUniform()
         material_uniform.color = cast_vec4(self.color)
+
+        self.device.queue.write_buffer(
+            self.material_uniform_buffer,
+            0,
+            as_capsule(material_uniform),
+            self.material_uniform_buffer_size,
+        )
+    '''
+    def update_material(self):
+        material_uniform = MaterialUniform()
+        material_uniform.color = cast_vec4(self.color)
+
+        # Need to reorder because we are using a triangle strip
+        material_uniform.uvs[0] = self.texture.coords[1]  # Top-left
+        material_uniform.uvs[1] = self.texture.coords[2]  # Bottom-left
+        material_uniform.uvs[2] = self.texture.coords[0]  # Top-right
+        material_uniform.uvs[3] = self.texture.coords[3]  # Bottom-right
+
+        '''
+        material_uniform.uvs[0] = self.texture.coords[0]
+        material_uniform.uvs[1] = self.texture.coords[1]
+        material_uniform.uvs[2] = self.texture.coords[2]
+        material_uniform.uvs[3] = self.texture.coords[3]
+        '''
+        
+        '''
+        material_uniform.uvs[0] = Vec4(self.texture.coords[0][0], self.texture.coords[0][1], 0.0, 0.0)
+        material_uniform.uvs[1] = Vec4(self.texture.coords[1][0], self.texture.coords[1][1], 0.0, 0.0)
+        material_uniform.uvs[2] = Vec4(self.texture.coords[2][0], self.texture.coords[2][1], 0.0, 0.0)
+        material_uniform.uvs[3] = Vec4(self.texture.coords[3][0], self.texture.coords[3][1], 0.0, 0.0)
+        '''
 
         self.device.queue.write_buffer(
             self.material_uniform_buffer,
@@ -119,6 +154,7 @@ class Sprite(Vu2D):
     def height(self) -> int:
         return self.texture.height
 
+    '''
     def create_vertices(self):
         # Create an empty array with the structured dtype
         self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
@@ -132,14 +168,16 @@ class Sprite(Vu2D):
         utils.write_buffer(
             self.gfx.device, self.vertex_buffer, 0, self.vertices, self.vertices.nbytes
         )
-
+    '''
     def create_buffers(self):
+        '''
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.gfx.device, "VERTEX", self.vertices, wgpu.BufferUsage.VERTEX
         )
         self.index_buffer = utils.create_buffer_from_ndarray(
             self.gfx.device, "INDEX", self.indices, wgpu.BufferUsage.INDEX
         )
+        '''
         # Uniform Buffers
         self.model_uniform_buffer_size = sizeof(ModelUniform)
         self.model_uniform_buffer = self.gfx.create_buffer(
@@ -224,6 +262,9 @@ class Sprite(Vu2D):
         pass_enc.set_pipeline(self.program.pipeline)
         pass_enc.set_bind_group(1, self.material_bind_group)
         pass_enc.set_bind_group(2, self.model_bind_group)
+        '''
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, self.index_format)
         pass_enc.draw_indexed(len(self.indices))
+        '''
+        pass_enc.draw(4)

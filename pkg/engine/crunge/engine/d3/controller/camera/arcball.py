@@ -12,7 +12,7 @@ class ArcballCameraController(CameraController):
         self.target = target
         self.max_extent = max_extent
         self.zoom_speed = max_extent * 0.1
-        self.pan_speed = max_extent * 0.05
+        self.pan_speed = max_extent * 0.01
         self.orbit_radius = max_extent * 1.5
 
         self.movement_speed = 10.0
@@ -59,6 +59,8 @@ class ArcballCameraController(CameraController):
     def pan(self, mouse_delta):
         zoom_amount = abs(glm.length(self.camera_position - self.camera_target_position)) * self.pan_speed
         motion = glm.vec3(mouse_delta.x * zoom_amount, mouse_delta.y * zoom_amount, 0.0)
+        #motion = glm.vec3(-mouse_delta.x * zoom_amount, -mouse_delta.y * zoom_amount, 0.0)
+
         self.next_position += motion
         #self.camera_target_position += motion
 

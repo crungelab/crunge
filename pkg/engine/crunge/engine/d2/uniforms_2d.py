@@ -90,6 +90,7 @@ assert sizeof(ModelUniform) % 16 == 0
 class MaterialUniform(Structure):
     _fields_ = [
         ("color", Vec4),
+        ("uvs", Vec4 * 4),
     ]
 
 assert sizeof(ModelUniform) % 16 == 0

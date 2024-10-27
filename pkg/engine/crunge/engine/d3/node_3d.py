@@ -102,33 +102,4 @@ class Node3D(SceneNode["Node3D", "Vu3D", "Scene3D", Renderer3D]):
     def update_bounds(self):
         for child in self.children:
             self.bounds.merge(child.bounds)
-        logger.debug(f"{self.__class__.__name__} bounds: {self.bounds}")
-    '''
-    def update_bounds(self):
-        """Updates the global (world-space) axis-aligned bounding box."""
-        self.global_bounds = self.bounds_to_global(self.transform)
-
-        # Recursively update children
-        for child in self.children:
-            child.update_global_bounds()
-    '''
-
-    def bounds_to_global(self, transform):
-        """Transforms local bounds to a global (world-space) axis-aligned bounding box."""
-        corners = [
-            glm.vec3(self.bounds.min.x, self.bounds.min.y, self.bounds.min.z),
-            glm.vec3(self.bounds.max.x, self.bounds.min.y, self.bounds.min.z),
-            glm.vec3(self.bounds.min.x, self.bounds.max.y, self.bounds.min.z),
-            glm.vec3(self.bounds.max.x, self.bounds.max.y, self.bounds.min.z),
-            glm.vec3(self.bounds.min.x, self.bounds.min.y, self.bounds.max.z),
-            glm.vec3(self.bounds.max.x, self.bounds.min.y, self.bounds.max.z),
-            glm.vec3(self.bounds.min.x, self.bounds.max.y, self.bounds.max.z),
-            glm.vec3(self.bounds.max.x, self.bounds.max.y, self.bounds.max.z),
-        ]
-
-        transformed_bounds = Bounds3()
-        for corner in corners:
-            world_corner = glm.vec3(transform * glm.vec4(corner, 1.0))
-            transformed_bounds.expand(world_corner)
-
-        return transformed_bounds
+        #logger.debug(f"{self.__class__.__name__} bounds: {self.bounds}")
