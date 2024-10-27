@@ -8,7 +8,7 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from crunge.engine.math import Point2, Rect2i
-from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.sprite import Sprite, SpriteMaterial
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.texture_loader import TextureLoader
@@ -68,7 +68,9 @@ class TiledDemo(Demo):
                     else:
                         texture = atlas
 
-                    sprite = Sprite(texture)
+                    material = SpriteMaterial(texture)
+
+                    sprite = Sprite(material)
                     node = Node2D(Point2(x, y), vu=sprite)
                     self.scene.root.attach(node)
 
@@ -101,8 +103,8 @@ class TiledDemo(Demo):
                             logger.debug(f"texture: {texture}")
                         else:
                             texture = atlas
-
-                        sprite = Sprite(texture)
+                        material = SpriteMaterial(texture)
+                        sprite = Sprite(material)
                         node = Node2D(glm.vec2(x, y), vu=sprite)
                         self.scene.root.attach(node)
 

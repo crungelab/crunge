@@ -3,7 +3,7 @@ import math
 from loguru import logger
 import glm
 
-from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.sprite import Sprite, SpriteMaterial
 from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
 
 from ...model_2d import DynamicModel2D
@@ -19,8 +19,9 @@ class Laser(DynamicModel2D):
         logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get("laserBlue01.png")
+        material = SpriteMaterial(texture)
 
-        self.vu = Sprite(texture)
+        self.vu = Sprite(material)
         self.size = texture.size
         self.ttl = 0.5
 

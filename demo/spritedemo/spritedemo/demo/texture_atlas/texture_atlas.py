@@ -5,7 +5,7 @@ import glm
 
 from crunge import imgui
 from crunge.engine import Renderer
-from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.sprite import Sprite, SpriteMaterial
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
 
@@ -25,10 +25,12 @@ class TextureAtlasDemo(Demo):
         logger.debug(f"atlas: {atlas}")
         
         texture = self.texture = atlas.get("bomb.png")
-
         logger.debug(f"texture: {texture}")
+
+        material = SpriteMaterial(texture)
+
         #exit()
-        sprite = self.sprite = Sprite(texture)
+        sprite = self.sprite = Sprite(material)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
         y = self.height / 2
@@ -97,7 +99,7 @@ class TextureAtlasDemo(Demo):
                 if opened:
                     logger.debug(f"Selected: {name}")
                     self.texture = texture
-                    self.sprite.texture = texture
+                    self.sprite.material.texture = texture
 
             imgui.end_list_box()
         

@@ -7,7 +7,7 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.sprite import Sprite, SpriteMaterial
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture_loader import TextureLoader
 
@@ -22,7 +22,8 @@ class SpritesDemo(Demo):
         self.color = 1, 1, 1
         # Ship1
         texture = TextureLoader().load(":images:/playerShip1_orange.png")
-        sprite = self.sprite = Sprite(texture)
+        material = SpriteMaterial(texture)
+        sprite = self.sprite = Sprite(material)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 4
         y = self.height / 4
@@ -34,7 +35,8 @@ class SpritesDemo(Demo):
 
         # Ship2
         texture = TextureLoader().load(":images:/playerShip1_blue.png")
-        sprite = self.sprite = Sprite(texture)
+        material = SpriteMaterial(texture)
+        sprite = self.sprite = Sprite(material)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
         y = self.height / 2

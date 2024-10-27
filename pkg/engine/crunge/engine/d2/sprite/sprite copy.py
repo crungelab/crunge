@@ -6,6 +6,7 @@ import glm
 
 from crunge.core import as_capsule
 from crunge import wgpu
+import crunge.wgpu.utils as utils
 
 from ...math import Size2
 from ...resource.texture import Texture
@@ -21,38 +22,32 @@ from ..uniforms_2d import (
     MaterialUniform,
     Vec4,
 )
-from ..material_2d import Material2D
 
 from .sprite_program import SpriteProgram
 from .sprite_sampler import SpriteSampler
 
 
 class Sprite(Vu2D):
-    #def __init__(self, texture: Texture, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> None:
-    def __init__(self, material: Material2D) -> None:
+    def __init__(self, texture: Texture, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> None:
         super().__init__()
-        self.material = material
-        '''
         self._texture = texture
         self._color = color
-        '''
 
-        #self.material_bind_group: wgpu.BindGroup = None
+        self.material_bind_group: wgpu.BindGroup = None
         self.model_bind_group: wgpu.BindGroup = None
 
         self.model_uniform_buffer: wgpu.Buffer = None
         self.model_uniform_buffer_size: int = 0
 
-        #self.material_uniform_buffer: wgpu.Buffer = None
-        #self.material_uniform_buffer_size: int = 0
+        self.material_uniform_buffer: wgpu.Buffer = None
+        self.material_uniform_buffer_size: int = 0
 
         self.program = SpriteProgram()
         self.create_buffers()
         self.create_bind_groups()
 
-        #self.update_material()
+        self.update_material()
 
-    '''
     @property
     def texture(self):
         return self._texture
@@ -91,7 +86,7 @@ class Sprite(Vu2D):
             as_capsule(material_uniform),
             self.material_uniform_buffer_size,
         )
-    '''
+
     @property
     def size(self) -> Size2:
         #return self.texture.size
@@ -99,11 +94,11 @@ class Sprite(Vu2D):
 
     @property
     def width(self) -> int:
-        return self.material.texture.width
+        return self.texture.width
 
     @property
     def height(self) -> int:
-        return self.material.texture.height
+        return self.texture.height
 
     def create_buffers(self):
         # Uniform Buffers
@@ -113,20 +108,18 @@ class Sprite(Vu2D):
             self.model_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
-        '''
+
         self.material_uniform_buffer_size = sizeof(MaterialUniform)
         self.material_uniform_buffer = self.gfx.create_buffer(
             "Material Buffer",
             self.material_uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
-        '''
 
     def create_bind_groups(self):
-        #self.create_material_bind_group()
+        self.create_material_bind_group()
         self.create_model_bind_group()
 
-    '''
     def create_material_bind_group(self):
         sampler = SpriteSampler().sampler
 
@@ -152,7 +145,6 @@ class Sprite(Vu2D):
         self.material_bind_group = self.device.create_bind_group(
             material_bind_group_desc
         )
-    '''
 
     def create_model_bind_group(self):
         model_bindgroup_entries = wgpu.BindGroupEntries(
@@ -191,7 +183,6 @@ class Sprite(Vu2D):
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
-        #pass_enc.set_bind_group(1, self.material_bind_group)
-        self.material.bind(pass_enc)
+        pass_enc.set_bind_group(1, self.material_bind_group)
         pass_enc.set_bind_group(2, self.model_bind_group)
         pass_enc.draw(4)

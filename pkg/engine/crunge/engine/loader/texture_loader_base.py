@@ -27,7 +27,6 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
         images: List[Image] = []
 
         for path in paths:
-            #image = ImageLoader().load(path)
             image = self.image_loader.load(path)
             images.append(image)
 

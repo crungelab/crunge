@@ -3,7 +3,7 @@ import math
 from loguru import logger
 import glm
 
-from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.sprite import Sprite, SpriteMaterial
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
 
@@ -42,8 +42,9 @@ class Ship(DynamicModel2D):
         logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get("playerShip1_orange.png")
+        material = SpriteMaterial(texture)
 
-        self.vu = Sprite(texture)
+        self.vu = Sprite(material)
         self.size = texture.size
 
         self.rear_thruster: Thruster = None

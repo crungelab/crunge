@@ -1,2 +1,4 @@
+from .sprite_program import SpriteProgram
+from .sprite_material import SpriteMaterial
 from .sprite import Sprite
-from ...renderer import Renderer
+#from ...renderer import Renderer
