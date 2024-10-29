@@ -21,12 +21,17 @@ class Sprite(Vu2D):
         super().__init__()
         self.material = material
 
-        self.model_bind_group: wgpu.BindGroup = None
-        self.model_uniform_buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
-        logger.debug(f"Model Uniform Buffer: {self.model_uniform_buffer}")
+        self.bind_group: wgpu.BindGroup = None
+        #self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
+        self.buffer: UniformBuffer[ModelUniform] = None
+        #logger.debug(f"Model Uniform Buffer: {self.model_uniform_buffer}")
 
-        self.program = SpriteProgram()
-        self.create_bind_groups()
+        #self.program = SpriteProgram()
+        self.program: SpriteProgram = None
+
+        self.create_program()
+        self.create_buffer()
+        self.create_bind_group()
 
     @property
     def size(self) -> Size2:
@@ -41,25 +46,31 @@ class Sprite(Vu2D):
     def height(self) -> int:
         return self.material.texture.height
 
-    def create_bind_groups(self):
-        model_bindgroup_entries = wgpu.BindGroupEntries(
+    def create_program(self):
+        self.program = SpriteProgram()
+
+    def create_buffer(self):
+        self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
+
+    def create_bind_group(self):
+        bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
                     binding=0,
-                    buffer=self.model_uniform_buffer.get(),
-                    size=self.model_uniform_buffer.size,
+                    buffer=self.buffer.get(),
+                    size=self.buffer.size,
                 ),
             ]
         )
 
-        model_bind_group_desc = wgpu.BindGroupDescriptor(
+        bind_group_desc = wgpu.BindGroupDescriptor(
             label="Model Bind Group",
             layout=self.program.pipeline.get_bind_group_layout(2),
-            entry_count=len(model_bindgroup_entries),
-            entries=model_bindgroup_entries,
+            entry_count=len(bindgroup_entries),
+            entries=bindgroup_entries,
         )
 
-        self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
+        self.bind_group = self.device.create_bind_group(bind_group_desc)
 
     def on_transform(self):
         super().on_transform()
@@ -69,22 +80,16 @@ class Sprite(Vu2D):
 
         self.model_uniform_buffer[0] = model_uniform
         '''
-        self.model_uniform_buffer[0].transform.data = cast_matrix4(self.transform)
-        self.model_uniform_buffer.upload()
+        self.buffer[0].transform.data = cast_matrix4(self.transform)
+        self.buffer.upload()
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)
         self.material.bind(pass_enc)
-        pass_enc.set_bind_group(2, self.model_bind_group)
+        pass_enc.set_bind_group(2, self.bind_group)
 
     def draw(self, renderer: Renderer2D):
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
-        '''
-        pass_enc.set_pipeline(self.program.pipeline)
-        #pass_enc.set_bind_group(1, self.material_bind_group)
-        self.material.bind(pass_enc)
-        pass_enc.set_bind_group(2, self.model_bind_group)
-        '''
         self.bind(pass_enc)
         pass_enc.draw(4)

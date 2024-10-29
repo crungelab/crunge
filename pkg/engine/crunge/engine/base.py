@@ -1,13 +1,14 @@
 #from typing import Self
 #from typing_extensions import Self
+
 from . import globals
 from .gfx import Gfx
 
 class Base:
     def __init__(self) -> None:
         self.created = False
-        self.enabled = True
-        #self.enabled = False
+        #self.enabled = True
+        self.enabled = False
 
     #def create(self) -> Self:
     def create(self, enabled=True):

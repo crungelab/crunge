@@ -26,11 +26,11 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
         self.count = count
         #self.data = (data_type * count)()
         self.data: ctypes.Array[TDataType] = (data_type * count)()
-        logger.debug(f"Creating ctypes buffer for {data_type} x {count}")
-        logger.debug(f"Size of data: {ctypes.sizeof(data_type)}")
+        #logger.debug(f"Creating ctypes buffer for {data_type} x {count}")
+        #logger.debug(f"Size of data type: {ctypes.sizeof(data_type)}")
         size = ctypes.sizeof(data_type) * count
-        logger.debug(f"size: {size}")
-        logger.debug(f"data: {self.data}")
+        #logger.debug(f"size: {size}")
+        #logger.debug(f"data: {self.data}")
 
         super().__init__(size, usage, label)
 

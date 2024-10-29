@@ -1,12 +1,19 @@
 from ...renderer import Renderer
 from . import Sprite
 
-class SpriteList:
+class SpriteGroup:
     def __init__(self):
         self.sprites: list[Sprite] = []
+        self.is_render_group = False
 
     def append(self, sprite):
         self.sprites.append(sprite)
+
+    def extend(self, sprites):
+        self.sprites.extend(sprites)
+
+    def remove(self, sprite):
+        self.sprites.remove(sprite)
 
     def clear(self):
         self.sprites.clear()
@@ -23,11 +30,6 @@ class SpriteList:
     def __str__(self):
         return repr(self)
     
-    '''
-    def draw(self, renderer: Renderer):
-        for sprite in self.sprites:
-            sprite.draw(renderer)
-    '''
     def draw(self, renderer: Renderer):
         for sprite in self.sprites:
             projection = renderer.camera.projection
