@@ -32,7 +32,7 @@ class SpriteDemo(Demo):
 
         texture = TextureLoader().load(":images:/playerShip1_orange.png")
         material = SpriteMaterial(texture, color=glm.vec4(self.color))
-        sprite = self.sprite = Sprite(material)
+        sprite = self.sprite = Sprite(material).create()
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
         y = self.height / 2

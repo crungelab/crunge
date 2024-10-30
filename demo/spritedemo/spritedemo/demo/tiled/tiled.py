@@ -50,11 +50,11 @@ class TiledDemo(Demo):
                     y = mh - y
                     x = x * tw
                     y = y * th
-                    logger.debug(f"Tile: {x}, {y}, {image}")
+                    #logger.debug(f"Tile: {x}, {y}, {image}")
 
                     path = image[0]
                     atlas = TextureLoader().load(path)
-                    logger.debug(f"atlas: {atlas}")
+                    #logger.debug(f"atlas: {atlas}")
 
                     rect = image[1]
                     if rect:
@@ -64,33 +64,33 @@ class TiledDemo(Demo):
                             Rect2i(tx, ty, tw, th),
                             atlas,
                         ).set_name(name)
-                        logger.debug(f"texture: {texture}")
+                        #logger.debug(f"texture: {texture}")
                     else:
                         texture = atlas
 
                     material = SpriteMaterial(texture)
 
-                    sprite = Sprite(material)
+                    sprite = Sprite(material).create()
                     node = Node2D(Point2(x, y), vu=sprite)
                     self.scene.root.attach(node)
 
             elif isinstance(layer, TiledObjectGroup):
                 for obj in layer:
-                    logger.debug(obj)
+                    #logger.debug(obj)
 
                     # objects with points are polygons or lines
                     if hasattr(obj, "points"):
                         pass
 
                     elif obj.image:
-                        logger.debug(f"obj.image: {obj.image}")
+                        #logger.debug(f"obj.image: {obj.image}")
 
                         image = obj.image
                         x = obj.x
                         y = pixel_height - obj.y
                         path = image[0]
                         atlas = TextureLoader().load(path)
-                        logger.debug(f"atlas: {atlas}")
+                        #logger.debug(f"atlas: {atlas}")
 
                         rect = image[1]
                         if rect:
@@ -100,11 +100,11 @@ class TiledDemo(Demo):
                                 Rect2i(tx, ty, tw, th),
                                 atlas,
                             ).set_name(name)
-                            logger.debug(f"texture: {texture}")
+                            #logger.debug(f"texture: {texture}")
                         else:
                             texture = atlas
                         material = SpriteMaterial(texture)
-                        sprite = Sprite(material)
+                        sprite = Sprite(material).create()
                         node = Node2D(glm.vec2(x, y), vu=sprite)
                         self.scene.root.attach(node)
 

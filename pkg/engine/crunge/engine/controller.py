@@ -1,3 +1,4 @@
+from .base import Base
 from .dispatcher import Dispatcher
 
 class Controller(Dispatcher):

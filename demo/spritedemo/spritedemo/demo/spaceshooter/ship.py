@@ -44,7 +44,7 @@ class Ship(DynamicModel2D):
         texture = atlas.get("playerShip1_orange.png")
         material = SpriteMaterial(texture)
 
-        self.vu = Sprite(material)
+        self.vu = Sprite(material).create()
         self.size = texture.size
 
         self.rear_thruster: Thruster = None

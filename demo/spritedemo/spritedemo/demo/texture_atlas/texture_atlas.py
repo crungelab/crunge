@@ -30,7 +30,7 @@ class TextureAtlasDemo(Demo):
         material = SpriteMaterial(texture)
 
         #exit()
-        sprite = self.sprite = Sprite(material)
+        sprite = self.sprite = Sprite(material).create()
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
         y = self.height / 2

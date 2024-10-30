@@ -23,7 +23,7 @@ class SpritesDemo(Demo):
         # Ship1
         texture = TextureLoader().load(":images:/playerShip1_orange.png")
         material = SpriteMaterial(texture)
-        sprite = self.sprite = Sprite(material)
+        sprite = self.sprite = Sprite(material).create()
         node = self.node = Node2D(vu=sprite)
         x = self.width / 4
         y = self.height / 4
@@ -36,7 +36,7 @@ class SpritesDemo(Demo):
         # Ship2
         texture = TextureLoader().load(":images:/playerShip1_blue.png")
         material = SpriteMaterial(texture)
-        sprite = self.sprite = Sprite(material)
+        sprite = self.sprite = Sprite(material).create()
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
         y = self.height / 2

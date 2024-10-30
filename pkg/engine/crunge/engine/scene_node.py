@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
 
-from crunge.engine import Base, Vu
+from crunge.engine import Vu
 
 from .node import Node, T_Node, T_Vu, T_Renderer
 

@@ -11,6 +11,6 @@ class Box(DynamicModel2D):
         super().__init__(geom=BoxGeom)
         texture = TextureLoader().load(":images:/boxCrate.png")
         material = SpriteMaterial(texture)
-        self.vu = Sprite(material)
+        self.vu = Sprite(material).create()
         self.position = position
         self.size = glm.vec2(texture.size.x, texture.size.y) * .25

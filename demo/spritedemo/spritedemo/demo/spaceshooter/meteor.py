@@ -22,7 +22,7 @@ class Meteor(DynamicModel2D):
         
         texture = atlas.get(name)
         material = SpriteMaterial(texture)
-        self.vu = Sprite(material)
+        self.vu = Sprite(material).create()
         self.size = texture.size
 
     @classmethod

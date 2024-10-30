@@ -7,13 +7,15 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine.d2.sprite import Sprite
+from crunge.engine.d2.sprite import Sprite, SpriteMaterial
+from crunge.engine.d2.sprite.render_group.sprite_render_group import SpriteRenderGroup
+
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture_strip_loader import TextureStripLoader
+from crunge.engine.loader.texture_loader import TextureLoader
 from crunge.engine.color import Color
 
 
-class AnimatedSpriteDemo(Demo):
+class InstancingDemo(Demo):
     def __init__(self):
         super().__init__()
         self.reset()
@@ -23,6 +25,8 @@ class AnimatedSpriteDemo(Demo):
         self.node = None
         
     def reset(self):
+        self.render_group = SpriteRenderGroup()
+
         self.angle = 0
         self.scale = 1.0
         #self.color = 1.0, 1.0, 1.0, 1.0
@@ -30,8 +34,10 @@ class AnimatedSpriteDemo(Demo):
 
         self.scene.clear()
 
-        texture = TextureStripLoader().load(":images:/playerShip1_orange.png")
-        sprite = self.sprite = Sprite(texture).create()
+        texture = TextureLoader().load(":images:/playerShip1_orange.png")
+        material = SpriteMaterial(texture, color=glm.vec4(self.color))
+        #sprite = self.sprite = Sprite(material).create()
+        sprite = self.sprite = Sprite(material).create(self.render_group)
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
         y = self.height / 2
@@ -62,7 +68,7 @@ class AnimatedSpriteDemo(Demo):
 
         changed, self.color = imgui.color_edit4("Tint", self.color)
         if changed:
-            self.sprite.color = glm.vec4(self.color)
+            self.sprite.material.color = glm.vec4(self.color)
 
         if imgui.button("Reset"):
             self.reset()
@@ -72,10 +78,13 @@ class AnimatedSpriteDemo(Demo):
 
         imgui.end()
 
+        #self.render_group.draw(renderer)
+        self.render_group.draw(self.view.renderer)
+
         super().draw(renderer)
 
 def main():
-    AnimatedSpriteDemo().create().run()
+    InstancingDemo().create().run()
 
 
 if __name__ == "__main__":

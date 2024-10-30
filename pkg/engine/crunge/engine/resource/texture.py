@@ -121,4 +121,4 @@ class Texture(Resource):
             (u1, v1_flipped),  # top-right
         ]
 
-        logger.debug(f"Texture coords updated: {self.coords}")
+        #logger.debug(f"Texture coords updated: {self.coords}")

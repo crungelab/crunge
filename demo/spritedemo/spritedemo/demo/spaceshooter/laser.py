@@ -21,7 +21,7 @@ class Laser(DynamicModel2D):
         texture = atlas.get("laserBlue01.png")
         material = SpriteMaterial(texture)
 
-        self.vu = Sprite(material)
+        self.vu = Sprite(material).create()
         self.size = texture.size
         self.ttl = 0.5
 

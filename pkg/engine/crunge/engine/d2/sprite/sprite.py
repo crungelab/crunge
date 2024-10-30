@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from loguru import logger
 
 from crunge import wgpu
@@ -15,6 +17,9 @@ from ..uniforms_2d import (
 from .sprite_program import SpriteProgram
 from .sprite_material import SpriteMaterial
 
+if TYPE_CHECKING:
+    from .sprite_group import SpriteGroup
+
 
 class Sprite(Vu2D):
     def __init__(self, material: SpriteMaterial) -> None:
@@ -22,20 +27,24 @@ class Sprite(Vu2D):
         self.material = material
 
         self.bind_group: wgpu.BindGroup = None
-        #self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
+        # self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
         self.buffer: UniformBuffer[ModelUniform] = None
-        #logger.debug(f"Model Uniform Buffer: {self.model_uniform_buffer}")
+        # logger.debug(f"Model Uniform Buffer: {self.model_uniform_buffer}")
+        self.buffer_index = 0
 
-        #self.program = SpriteProgram()
+        # self.program = SpriteProgram()
         self.program: SpriteProgram = None
-
+        self.group: "SpriteGroup" = None
+        '''
         self.create_program()
         self.create_buffer()
         self.create_bind_group()
+        '''
+        self.manual_draw = True
 
     @property
     def size(self) -> Size2:
-        #return self.texture.size
+        # return self.texture.size
         return Size2(self.width, self.height)
 
     @property
@@ -45,6 +54,26 @@ class Sprite(Vu2D):
     @property
     def height(self) -> int:
         return self.material.texture.height
+
+    def create(self, group: "SpriteGroup" = None, enabled=True):
+        self._create(group)
+        return self._post_create(enabled)
+
+    def _create(self, group: "SpriteGroup"):
+        super()._create()
+        self.group = group
+        if group is not None:
+            group.append(self)
+            if group.is_render_group:
+                self.manual_draw = False
+
+        if not self.manual_draw:
+            return
+
+        self.create_program()
+        self.create_buffer()
+        self.create_bind_group()
+        return self
 
     def create_program(self):
         self.program = SpriteProgram()
@@ -74,13 +103,14 @@ class Sprite(Vu2D):
 
     def on_transform(self):
         super().on_transform()
-        '''
+        """
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
         self.model_uniform_buffer[0] = model_uniform
-        '''
-        self.buffer[0].transform.data = cast_matrix4(self.transform)
+        """
+        #self.buffer[0].transform.data = cast_matrix4(self.transform)
+        self.buffer[self.buffer_index].transform.data = cast_matrix4(self.transform)
         self.buffer.upload()
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
@@ -89,6 +119,8 @@ class Sprite(Vu2D):
         pass_enc.set_bind_group(2, self.bind_group)
 
     def draw(self, renderer: Renderer2D):
+        if not self.manual_draw:
+            return
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)

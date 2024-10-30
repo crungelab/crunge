@@ -13,12 +13,15 @@ from ...uniforms_2d import (
     ModelUniform,
 )
 
-from ..sprite_program import SpriteProgram
 from ..sprite_material import SpriteMaterial
+from ..sprite_group import SpriteGroup
+from ..sprite import Sprite
+
+from .sprite_render_group_program import SpriteRenderGroupProgram
 
 ELEMENTS = 32
 
-class SpriteRenderGroup(Base):
+class SpriteRenderGroup(SpriteGroup):
     def __init__(self, size: int = ELEMENTS) -> None:
         super().__init__()
         self.is_render_group = True
@@ -29,10 +32,15 @@ class SpriteRenderGroup(Base):
         self.buffer = UniformBuffer(ModelUniform, size, label="SpriteRenderGroup Buffer")
         logger.debug(f"Model Uniform Buffer: {self.buffer}")
 
-        self.program = SpriteProgram()
-        self.create_bind_groups()
+        self.program = SpriteRenderGroupProgram()
+        self.create_bind_group()
 
-    def create_bind_groups(self):
+    def append(self, sprite: Sprite) -> None:
+        super().append(sprite)
+        sprite.buffer = self.buffer
+        sprite.buffer_index = len(self.sprites) - 1
+
+    def create_bind_group(self):
         model_bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
