@@ -17,9 +17,12 @@ class View2D(ImGuiView):
         self.scratch: ScratchLayer = None
         self.camera: Camera2D = None
 
-    def _create(self, window):
-        super()._create(window)
-        self.scratch = ScratchLayer().create(self)
+    #def _create(self, window):
+    def _create(self):
+        #super()._create(window)
+        super()._create()
+        #self.scratch = ScratchLayer().create(self)
+        self.scratch = ScratchLayer().config(view=self).create()
         self.add_layer(self.scratch)
 
     def create_camera(self):

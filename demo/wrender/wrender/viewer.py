@@ -48,7 +48,8 @@ class Viewer(engine.App):
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
-        self.view = View3D(scene, self.size).create(self)
+        #self.view = View3D(scene, self.size).create(self)
+        self.view = View3D(scene, self.size).config(window=self).create()
 
     def open(self):
         logger.debug("Opening scene")

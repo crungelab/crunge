@@ -3,6 +3,7 @@ from .dispatcher import Dispatcher
 
 class Controller(Dispatcher):
     def __init__(self):
+        super().__init__()
         self.delta_time = 0
 
     def activate(self):

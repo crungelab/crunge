@@ -22,6 +22,11 @@ class ViewLayer(Widget):
         self.view = view
         return self
 
+    def _create(self):
+        logger.debug("Layer.create")
+        self.size = self.view.size
+
+    '''
     def create(self, view: "View"):
         self._create(view)
         self.on_create()
@@ -31,6 +36,7 @@ class ViewLayer(Widget):
         logger.debug("Layer.create")
         self.view = view
         self.size = view.size
+    '''
 
     @property
     def window(self):

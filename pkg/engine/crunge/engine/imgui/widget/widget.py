@@ -15,13 +15,21 @@ class Widget(engine.Widget):
         self.gui = gui
         return self
 
+    def _create(self):
+        super()._create()
+        for child in self.children:
+            child.create()
+        return self
+
+    '''
     def create(self, gui, enabled=True):
         self._create(gui)
         return self._post_create(enabled)
-
+    
     def _create(self, gui):
         super()._create()
         self.gui = gui
         for child in self.children:
             child.create(gui)
         return self
+    '''

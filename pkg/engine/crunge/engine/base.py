@@ -7,25 +7,45 @@ from .gfx import Gfx
 class Base:
     def __init__(self) -> None:
         self.created = False
-        #self.enabled = True
         self.enabled = False
 
+    def config(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        return self
+
+    #def create(self) -> Self:
+    def create(self):
+        if self.created:
+            return
+        self._create()
+        return self._post_create()
+
+    '''
     #def create(self) -> Self:
     def create(self, enabled=True):
         if self.created:
             return
         self._create()
         return self._post_create(enabled)
+    '''
 
     def _create(self):
         pass
 
+    def _post_create(self):
+        self.created = True
+        self.on_create()
+        return self
+
+    '''
     def _post_create(self, enabled=True):
         self.created = True
         self.on_create()
         if enabled:
             self.enable()
         return self
+    '''
 
     def on_create(self):
         pass
@@ -44,7 +64,20 @@ class Base:
         pass
 
     def enable(self):
-        self.enabled = True
+        #self.enabled = True
+        if not self.created:
+            self.create()  # Ensure the object is created
+        else:
+            self.enabled = True
+
+    '''
+    def enable(self):
+        #self.enabled = True
+        if not self.created:
+            self.create(enabled=True)  # Ensure the object is created
+        else:
+            self.enabled = True
+    '''
 
     def disable(self):
         self.enabled = False

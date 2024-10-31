@@ -18,7 +18,8 @@ class Page(ImGuiView):
 
     @classmethod
     def produce(cls, app, name, title):
-        page = cls(name, title).create(app)
+        #page = cls(name, title).create(app)
+        page = cls(name, title).config(window=app).create()
         page.reset()
         return page
 

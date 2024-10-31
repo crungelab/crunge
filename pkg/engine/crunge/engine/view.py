@@ -23,21 +23,34 @@ class View(Widget):
     def layers(self) -> List[ViewLayer]:
         return self.children
     
+    '''
+    def config(self, **kwargs):
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        return self
+    '''
+
     def on_size(self):
         super().on_size()
         for layer in self.layers:
             layer.size = self.size
 
+    '''
     def create(self, window: "Window"):
         self._create(window)
         self.on_create()
         return self
+    '''
 
-    def _create(self, window: "Window"):
+    #def _create(self, window: "Window"):
+    def _create(self):
         logger.debug("View.create")
         super()._create()
-        self.window = window
-        self.size = window.size
+        #self.window = window
+        #self.size = window.size
+        if not self.window:
+            raise ValueError("View.window is not set")
+        self.size = self.window.size
         for layer in self.layers:
             layer.create(self)
         self.create_device_objects()

@@ -55,6 +55,23 @@ class Sprite(Vu2D):
     def height(self) -> int:
         return self.material.texture.height
 
+    def _create(self):
+        super()._create()
+        group = self.group
+        if group is not None:
+            group.append(self)
+            if group.is_render_group:
+                self.manual_draw = False
+
+        if not self.manual_draw:
+            return
+
+        self.create_program()
+        self.create_buffer()
+        self.create_bind_group()
+        return self
+
+    '''
     def create(self, group: "SpriteGroup" = None, enabled=True):
         self._create(group)
         return self._post_create(enabled)
@@ -74,6 +91,7 @@ class Sprite(Vu2D):
         self.create_buffer()
         self.create_bind_group()
         return self
+    '''
 
     def create_program(self):
         self.program = SpriteProgram()

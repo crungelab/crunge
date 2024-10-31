@@ -26,10 +26,12 @@ class Frame(Widget):
         if self.view is not None:
             self.view.size = self.size
 
+    #def _create(self, window: "Window"):
     def _create(self):
         logger.debug("Frame.create")
         if self._view is not None:
-            self._view.create(self)
+            #self._view.create(self)
+            self._view.config(window=self).create(self)
             self.view = self._view
         return self
 
