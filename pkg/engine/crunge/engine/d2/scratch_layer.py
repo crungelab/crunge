@@ -1,9 +1,10 @@
 import glm
 
+from ..renderer import Renderer
 from ..view_layer import ViewLayer
+
 from .vu_2d import Vu2D
 from .line_2d import Line2D
-from .renderer_2d import Renderer2D
 
 from ..color import Color
 
@@ -29,14 +30,14 @@ class ScratchLayer(ViewLayer):
         line = Line2D(begin, end, color)
         self.add_vu(line)
     
-    def draw(self, renderer: Renderer2D):
+    def draw(self, renderer: Renderer):
         # logger.debug("DemoView.draw()")
         for vu in self.vu_list:
             vu.draw(renderer)
 
         super().draw(renderer)
 
-    def post_draw(self, renderer: Renderer2D):
+    def post_draw(self, renderer: Renderer):
         self.vu_list.clear()
         super().post_draw(renderer)
 

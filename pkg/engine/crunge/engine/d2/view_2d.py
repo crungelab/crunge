@@ -4,8 +4,8 @@ import glm
 from crunge.engine.imgui import ImGuiView
 
 from ..math import Size2i
+from ..renderer import Renderer
 
-from .renderer_2d import Renderer2D
 from .camera_2d import Camera2D
 
 from .scratch_layer import ScratchLayer
@@ -32,9 +32,9 @@ class View2D(ImGuiView):
         )
 
     def create_renderer(self):
-        self.renderer = Renderer2D(self.window.viewport, self.camera)
+        self.renderer = Renderer(self.window.viewport, camera_2d=self.camera)
 
-    def draw(self, renderer: Renderer2D):
+    def draw(self, renderer: Renderer):
         with self.renderer:
             self.scene.draw(self.renderer)
             super().draw(self.renderer)

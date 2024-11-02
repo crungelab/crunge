@@ -7,13 +7,13 @@ import crunge.wgpu.utils as utils
 from crunge.engine.imgui import ImGuiView
 
 from ..constants import *
+from crunge.engine import Renderer
 from crunge.engine.d2.scene_2d import Scene2D
-from crunge.engine.d2.renderer_2d import Renderer2D
 from crunge.engine.d2.camera_2d import Camera2D
 
 
 class DemoView(ImGuiView):
-    renderer: Renderer2D = None
+    renderer: Renderer = None
 
     def __init__(self, scene: Scene2D, size=glm.ivec2()) -> None:
         super().__init__(size)
@@ -40,9 +40,9 @@ class DemoView(ImGuiView):
         )
 
     def create_renderer(self):
-        self.renderer = Renderer2D(self.window.viewport, self.camera)
+        self.renderer = Renderer(self.window.viewport, camera_2d=self.camera)
 
-    def draw(self, renderer: Renderer2D):
+    def draw(self, renderer: Renderer):
         with self.renderer:
             self.scene.draw(self.renderer)
 

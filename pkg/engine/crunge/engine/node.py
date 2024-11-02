@@ -6,13 +6,12 @@ if TYPE_CHECKING:
     from .d3.vu_3d import Vu3D
 
 from .dispatcher import Dispatcher
-
+from .renderer import Renderer
 
 T_Node = TypeVar("T_Node")
 T_Vu = TypeVar("T_Vu", "Vu", "Vu2D", "Vu3D")
-T_Renderer = TypeVar("T_Renderer")
 
-class Node(Dispatcher, Generic[T_Node, T_Vu, T_Renderer]):
+class Node(Dispatcher, Generic[T_Node, T_Vu]):
     def __init__(self, vu: T_Vu = None) -> None:
         super().__init__()
         self.vu: T_Vu = vu
@@ -76,20 +75,20 @@ class Node(Dispatcher, Generic[T_Node, T_Vu, T_Renderer]):
         self.children.sort(key=key, reverse=reverse)
 
 
-    def pre_draw(self, renderer: T_Renderer):
+    def pre_draw(self, renderer: Renderer):
         # logger.debug("Node.pre_draw")
         if self.vu is not None:
             self.vu.pre_draw(renderer)
         for child in self.children:
             child.pre_draw(renderer)
 
-    def draw(self, renderer: T_Renderer):
+    def draw(self, renderer: Renderer):
         if self.vu is not None:
             self.vu.draw(renderer)
         for child in self.children:
             child.draw(renderer)
 
-    def post_draw(self, renderer: T_Renderer):
+    def post_draw(self, renderer: Renderer):
         # logger.debug("Widget.post_draw")
         if self.vu is not None:
             self.vu.post_draw(renderer)

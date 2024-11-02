@@ -7,13 +7,10 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
-from .renderer_2d import Renderer2D
-#from .vu_2d import Vu2D
-
 from ..math import Vector2, Point2, Size2, Rect2
 from ..scene_node import SceneNode
 
-class Node2D(SceneNode["Node2D", "Vu2D", "Scene2D", Renderer2D]):
+class Node2D(SceneNode["Node2D", "Vu2D", "Scene2D"]):
     def __init__(
         self,
         position=Point2(),

@@ -8,7 +8,8 @@ import glm
 from crunge.core import klass, as_capsule
 from crunge import wgpu
 
-from .renderer_3d import Renderer3D
+from ..renderer import Renderer
+
 from .program_3d import Program3D
 from .node_3d import Node3D
 from .vu_3d import Vu3D
@@ -81,7 +82,7 @@ class MeshVu3D(Vu3D):
             self.model_uniform_buffer_size,
         )
 
-    def draw(self, renderer: Renderer3D):
+    def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
         for primitive in self.primitives:

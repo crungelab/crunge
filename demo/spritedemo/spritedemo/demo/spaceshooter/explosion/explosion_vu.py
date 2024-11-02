@@ -13,7 +13,7 @@ from crunge.core import klass
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from crunge.engine.d2.renderer_2d import Renderer2D
+from crunge.engine import Renderer
 
 from crunge.engine.program import Program
 from crunge.engine.d2.vu_2d import Vu2D
@@ -357,7 +357,7 @@ class ExplosionVu(Vu2D):
 
         self.render_bind_group = self.device.create_bind_group(render_bind_group_desc)
 
-    def draw(self, renderer: Renderer2D):
+    def draw(self, renderer: Renderer):
         #logger.debug("Drawing explosion")
 
         model_uniform = ModelUniform()

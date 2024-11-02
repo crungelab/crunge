@@ -2,6 +2,8 @@ import time
 import threading
 from typing import Callable, Any, List, Optional
 
+from loguru import logger
+
 class Task:
     def __init__(
         self,
@@ -41,7 +43,7 @@ class Scheduler:
         next_run = time.time() + interval
         task = Task(func, next_run, interval=interval, repeat=True)
         self.tasks.append(task)
-        print(f"Scheduled repeating task {func.__name__} every {interval} seconds.")
+        logger.debug(f"Scheduled repeating task {func.__name__} every {interval} seconds.")
 
     def schedule_once(self, func: Callable[[float], Any], delay: float = 0.0) -> None:
         """
@@ -51,7 +53,7 @@ class Scheduler:
         next_run = time.time() + delay
         task = Task(func, next_run, repeat=False)
         self.tasks.append(task)
-        print(f"Scheduled one-time task {func.__name__} after {delay} seconds.")
+        logger.debug(f"Scheduled one-time task {func.__name__} after {delay} seconds.")
 
     def update(self, delta_time: float) -> None:
         """
@@ -63,14 +65,14 @@ class Scheduler:
             if now >= task.next_run:
                 delta_time = now - (task.last_run if task.last_run is not None else task.next_run - (task.interval if task.interval else 0))
                 task.last_run = now
-                print(f"Executing task {task.func.__name__} with delta_time {delta_time:.2f}s")
+                logger.debug(f"Executing task {task.func.__name__} with delta_time {delta_time:.2f}s")
                 task.func(delta_time)
                 if task.repeat and task.interval is not None:
                     task.next_run = now + task.interval
-                    print(f"Rescheduled repeating task {task.func.__name__}")
+                    logger.debug(f"Rescheduled repeating task {task.func.__name__}")
                 else:
                     self.tasks.remove(task)
-                    print(f"Removed one-time task {task.func.__name__}")
+                    logger.debug(f"Removed one-time task {task.func.__name__}")
 
 '''
 # Example usage:

@@ -4,10 +4,10 @@ from loguru import logger
 from crunge import wgpu
 
 from ....math import Size2
+from ....renderer import Renderer
 from ....buffer import UniformBuffer
 from ....base import Base
 
-from ...renderer_2d import Renderer2D
 from ...uniforms_2d import (
     cast_matrix4,
     ModelUniform,
@@ -65,7 +65,7 @@ class SpriteRenderGroup(SpriteGroup):
         self.material.bind(pass_enc)
         pass_enc.set_bind_group(2, self.bind_group)
 
-    def draw(self, renderer: Renderer2D):
+    def draw(self, renderer: Renderer):
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
         '''

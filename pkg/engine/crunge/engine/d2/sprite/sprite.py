@@ -5,9 +5,9 @@ from loguru import logger
 from crunge import wgpu
 
 from ...math import Size2
+from ...renderer import Renderer
 from ...buffer import UniformBuffer
 
-from ..renderer_2d import Renderer2D
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     cast_matrix4,
@@ -136,7 +136,7 @@ class Sprite(Vu2D):
         self.material.bind(pass_enc)
         pass_enc.set_bind_group(2, self.bind_group)
 
-    def draw(self, renderer: Renderer2D):
+    def draw(self, renderer: Renderer):
         if not self.manual_draw:
             return
         # logger.debug("Drawing sprite")

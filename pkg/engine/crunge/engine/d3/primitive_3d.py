@@ -3,11 +3,11 @@ import numpy as np
 
 from crunge import wgpu
 
+from ..renderer import Renderer
 from ..resource.primitive import Primitive
 
 from .material_3d import Material3D
 
-from .renderer_3d import Renderer3D
 from .program_3d import Program3D
 
 
@@ -23,7 +23,7 @@ class Primitive3D(Primitive):
         self.program: Primitive3DProgram = None
         self.material: Material3D = None
 
-    def draw(self, renderer: Renderer3D):
+    def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
         self.material.bind(pass_enc)

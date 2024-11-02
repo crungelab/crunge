@@ -19,10 +19,10 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
+from ..renderer import Renderer
 from ..math import Point2, Size2
 from ..resource.bind_group_layout import BindGroupLayout
 
-from .renderer_2d import Renderer2D
 from .vu_2d import Vu2D
 from .uniforms_2d import (
     cast_matrix4,
@@ -297,7 +297,7 @@ class Line2D(Vu2D):
 
         self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
 
-    def draw(self, renderer: Renderer2D):
+    def draw(self, renderer: Renderer):
         # logger.debug("Drawing sprite")
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)

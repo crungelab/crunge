@@ -16,7 +16,6 @@ from crunge.engine.viewport import SurfaceViewport
 
 from crunge.engine.loader.gltf import GltfLoader
 
-from crunge.engine.d3.renderer_3d import Renderer3D
 from crunge.engine.d3.scene_3d import Scene3D
 from crunge.engine.d3.camera_3d import Camera3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
@@ -29,7 +28,6 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 
 class Viewer(engine.App):
-    #renderer: Renderer3D
     view: View3D
 
     title = "Gltf Viewer"
@@ -48,14 +46,10 @@ class Viewer(engine.App):
     def create_viewport(self):
         self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True, use_msaa=True)
 
-    '''
-    def create_renderer(self):
-        self.renderer = Renderer3D(self.viewport, self.camera)
-    '''
-
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
-        self.view = View3D(scene, self.size).create(self)
+        #self.view = View3D(scene, self.size).create(self)
+        self.view = View3D(scene, self.size).config(window=self).create()
 
     def open(self):
         logger.debug("Opening scene")
