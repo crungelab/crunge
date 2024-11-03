@@ -7,10 +7,9 @@ from .node import Node
 from .part import Part
 from .controller import Controller
 from .renderer import Renderer
-from .vu import Vu
 
 
-class Widget(Node["Widget", Vu]):
+class Widget(Node["Widget"]):
     def __init__(self, size = Size2i()) -> None:
         super().__init__()
         self._size = size

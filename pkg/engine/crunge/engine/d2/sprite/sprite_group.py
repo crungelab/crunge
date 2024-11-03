@@ -34,7 +34,7 @@ class SpriteGroup(Base):
     
     def draw(self, renderer: Renderer) -> None:
         for sprite in self.sprites:
-            projection = renderer.camera.projection
+            projection = renderer.camera_2d.projection
             if sprite.aabb.intersects(projection):
                 sprite.draw(renderer)
 

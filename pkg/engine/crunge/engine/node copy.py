@@ -2,11 +2,14 @@ from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
 
 if TYPE_CHECKING:
     from .vu import Vu
+    from .d2.vu_2d import Vu2D
+    from .d3.vu_3d import Vu3D
 
 from .dispatcher import Dispatcher
 from .renderer import Renderer
 
 T_Node = TypeVar("T_Node")
+T_Vu = TypeVar("T_Vu", "Vu", "Vu2D", "Vu3D")
 
 class NodeListener(Generic[T_Node]):
     def on_node_attached(self, node: "Node[T_Node]") -> None:
@@ -18,23 +21,23 @@ class NodeListener(Generic[T_Node]):
     def on_node_transform(self, node: "Node[T_Node]") -> None:
         pass
 
-class Node(Dispatcher, Generic[T_Node]):
-    def __init__(self, vu: "Vu" = None) -> None:
+class Node(Dispatcher, Generic[T_Node, T_Vu]):
+    def __init__(self, vu: T_Vu = None) -> None:
         super().__init__()
         #self.vu: T_Vu = vu
-        self._vu: "Vu" = None
+        self._vu: T_Vu = None
         self.parent: "Node[T_Node]" = None
         self.children: List["Node[T_Node]"] = []
         self.listeners: List[NodeListener[T_Node]] = []
-
+        
         self.vu = vu
 
     @property
-    def vu(self) -> "Vu":
+    def vu(self) -> T_Vu:
         return self._vu
     
     @vu.setter
-    def vu(self, value: "Vu"):
+    def vu(self, value: T_Vu):
         self._vu = value
         if value is not None:
             value.node = self

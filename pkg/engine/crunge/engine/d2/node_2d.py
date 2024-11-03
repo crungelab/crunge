@@ -10,7 +10,7 @@ import glm
 from ..math import Vector2, Point2, Size2, Rect2
 from ..scene_node import SceneNode
 
-class Node2D(SceneNode["Node2D", "Vu2D", "Scene2D"]):
+class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
         position=Point2(),
@@ -137,8 +137,12 @@ class Node2D(SceneNode["Node2D", "Vu2D", "Scene2D"]):
     def on_transform(self):
         self.aabb = self.get_world_aabb()
 
+        '''
         if self.vu is not None:
             self.vu.transform = self.transform
+        '''
+        for listener in self.listeners:
+            listener.on_node_transform(self)
 
     def update_matrix(self):
         x = self._position.x

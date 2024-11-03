@@ -29,6 +29,9 @@ class Vu3D(Vu[Node3D]):
     def size(self) -> Size3:
         raise NotImplementedError
 
+    def on_node_transform(self, node: Node3D) -> None:
+        self.transform = node.transform
+
     '''
     def get_local_aabb(self) -> Rect2:
         half_width = self.size.x / 2
