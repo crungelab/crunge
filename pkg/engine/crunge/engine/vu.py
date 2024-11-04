@@ -4,7 +4,8 @@ from .renderer import Renderer
 from .base import Base
 from .node import Node, NodeListener
 
-T_Node = TypeVar("T_Node", Node, None)
+#T_Node = TypeVar("T_Node", Node, None)
+T_Node = TypeVar("T_Node")
 
 class Vu(Base, NodeListener, Generic[T_Node]):
     def __init__(self) -> None:

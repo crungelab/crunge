@@ -16,6 +16,7 @@ from crunge.core import klass
 from crunge import wgpu
 
 from ...program_2d import Program2D
+from ....resource.bind_group_layout import BindGroupLayout
 
 shader_code = """
 struct Camera {
@@ -39,7 +40,7 @@ struct Material {
 @group(1) @binding(1) var myTexture : texture_2d<f32>;
 @group(1) @binding(2) var<uniform> material : Material;
 
-@group(2) @binding(0) var<uniform> model : Model;
+@group(2) @binding(0) var<storage, read> models: array<Model>;
 
 struct VertexOutput {
   @builtin(position) vertex_pos : vec4<f32>,
@@ -47,15 +48,15 @@ struct VertexOutput {
 }
 
 @vertex
-fn vs_main(@builtin(vertex_index) idx: u32) -> VertexOutput {
-    let x = f32((idx & 1u) << 1) - 1.0; // Generates -1.0 or 1.0
-    let y = f32((idx & 2u) >> 1) * 2.0 - 1.0; // Generates -1.0 or 1.0
+fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) instanceIndex: u32) -> VertexOutput {
+    let x = f32((vertexIndex & 1u) << 1) - 1.0; // Generates -1.0 or 1.0
+    let y = f32((vertexIndex & 2u) >> 1) * 2.0 - 1.0; // Generates -1.0 or 1.0
 
     let quad_pos = vec4<f32>(x * 0.5, y * 0.5, 0.0, 1.0); // Scale quad by 0.5
-    let vert_pos = camera.projection * camera.view * model.transform * quad_pos;
+    let vert_pos = camera.projection * camera.view * models[instanceIndex].transform * quad_pos;
 
     // Extract UV coordinates from the vec4 (only use x and y)
-    let uv = material.uvs[idx].xy;
+    let uv = material.uvs[vertexIndex].xy;
 
     return VertexOutput(vert_pos, uv);
 }
@@ -69,12 +70,35 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
 """
 
 @klass.singleton
-class SpriteRenderGroupProgram(Program2D):
+class ModelBindGroupLayout(BindGroupLayout):
+    def __init__(self) -> None:
+        model_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                #buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.READ_ONLY_STORAGE),
+            ),
+        ]
+
+        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(model_bgl_entries), entries=model_bgl_entries
+        )
+        bind_group_layout = self.device.create_bind_group_layout(model_bgl_desc)
+        logger.debug(f"model_bgl: {bind_group_layout}")
+        super().__init__(bind_group_layout)
+
+@klass.singleton
+class InstancedSpriteGroupProgram(Program2D):
     pipeline: wgpu.RenderPipeline = None
 
     def __init__(self):
         super().__init__()
         self.create_render_pipeline()
+
+    @property
+    def model_bind_group_layout(self):
+        return ModelBindGroupLayout().get()
 
     def create_render_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)

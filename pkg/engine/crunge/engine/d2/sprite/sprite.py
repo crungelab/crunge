@@ -18,7 +18,7 @@ from .sprite_program import SpriteProgram
 from .sprite_material import SpriteMaterial
 
 if TYPE_CHECKING:
-    from .sprite_group import SpriteGroup
+    from .group.sprite_group import SpriteGroup
 
 
 class Sprite(Vu2D):
@@ -121,6 +121,11 @@ class Sprite(Vu2D):
 
     def on_transform(self):
         super().on_transform()
+        model_uniform = ModelUniform()
+        model_uniform.transform.data = cast_matrix4(self.transform)
+
+        self.buffer[self.buffer_index] = model_uniform
+
         """
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
@@ -128,8 +133,8 @@ class Sprite(Vu2D):
         self.model_uniform_buffer[0] = model_uniform
         """
         #self.buffer[0].transform.data = cast_matrix4(self.transform)
-        self.buffer[self.buffer_index].transform.data = cast_matrix4(self.transform)
-        self.buffer.upload()
+        #self.buffer[self.buffer_index].transform.data = cast_matrix4(self.transform)
+        #self.buffer.upload()
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)

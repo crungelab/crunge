@@ -31,7 +31,7 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
         size = ctypes.sizeof(data_type) * count
         #logger.debug(f"size: {size}")
         #logger.debug(f"data: {self.data}")
-
+        self.dirty = False
         super().__init__(size, usage, label)
 
     # List-like behavior
@@ -51,6 +51,8 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
         if index < 0 or index >= self.count:
             raise IndexError("Index out of range")
         self.data[index] = value
+        self.dirty = True
+        self.upload()
 
     def __iter__(self) -> Iterator[TDataType]:
         return iter(self.data)
@@ -69,12 +71,14 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
         """
         Upload the data to the GPU buffer.
         """
+        logger.debug(f"Uploading {self.data} to buffer")
         self.device.queue.write_buffer(
             self.buffer,
             0,
             as_capsule(self.data),
             self.size,
         )
+        self.dirty = False
 
 
 class UniformBuffer(CtypesBuffer[TDataType], Generic[TDataType]):

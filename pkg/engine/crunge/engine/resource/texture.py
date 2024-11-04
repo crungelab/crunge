@@ -109,6 +109,14 @@ class Texture(Resource):
         v0 = y / p_height
         v1 = (y + height) / p_height
 
+        '''
+        self.coords = [
+            (u0, v1),  # top-left
+            (u0, v0),  # bottom-left
+            (u1, v0),  # bottom-right
+            (u1, v1),  # top-right
+        ]
+        '''
         # Flip V coordinate because texture coordinates start from bottom-left
         v0_flipped = 1.0 - v1
         v1_flipped = 1.0 - v0

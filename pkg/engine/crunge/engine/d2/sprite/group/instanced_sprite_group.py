@@ -14,14 +14,14 @@ from ...uniforms_2d import (
 )
 
 from ..sprite_material import SpriteMaterial
-from ..sprite_group import SpriteGroup
 from ..sprite import Sprite
 
-from .sprite_render_group_program import SpriteRenderGroupProgram
+from .sprite_group import SpriteGroup
+from .instanced_sprite_group_program import InstancedSpriteGroupProgram
 
 ELEMENTS = 32
 
-class SpriteRenderGroup(SpriteGroup):
+class InstancedSpriteGroup(SpriteGroup):
     def __init__(self, size: int = ELEMENTS) -> None:
         super().__init__()
         self.is_render_group = True
@@ -29,16 +29,17 @@ class SpriteRenderGroup(SpriteGroup):
         self.size = size
 
         self.bind_group: wgpu.BindGroup = None
-        self.buffer = UniformBuffer(ModelUniform, size, label="SpriteRenderGroup Buffer")
+        #self.buffer = UniformBuffer(ModelUniform, size, label="SpriteRenderGroup Buffer")
+        self.buffer = UniformBuffer(ModelUniform, size, wgpu.BufferUsage.STORAGE, label="SpriteRenderGroup Buffer")
         logger.debug(f"Model Uniform Buffer: {self.buffer}")
 
-        self.program = SpriteRenderGroupProgram()
+        self.program = InstancedSpriteGroupProgram()
         self.create_bind_group()
 
     def append(self, sprite: Sprite) -> None:
         super().append(sprite)
         sprite.buffer = self.buffer
-        sprite.buffer_index = len(self.sprites) - 1
+        sprite.buffer_index = len(self.members) - 1
 
     def create_bind_group(self):
         model_bindgroup_entries = wgpu.BindGroupEntries(
@@ -62,17 +63,14 @@ class SpriteRenderGroup(SpriteGroup):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)
-        self.material.bind(pass_enc)
+        #self.material.bind(pass_enc)
+        self.members[0].material.bind(pass_enc)
         pass_enc.set_bind_group(2, self.bind_group)
 
     def draw(self, renderer: Renderer):
-        # logger.debug("Drawing sprite")
+        # logger.debug("Drawing sprites")
         pass_enc = renderer.pass_enc
-        '''
-        pass_enc.set_pipeline(self.program.pipeline)
-        #pass_enc.set_bind_group(1, self.material_bind_group)
-        self.material.bind(pass_enc)
-        pass_enc.set_bind_group(2, self.model_bind_group)
-        '''
         self.bind(pass_enc)
-        pass_enc.draw(4)
+        #logger.debug(f"Drawing {len(self.members)} sprites")
+        #exit()
+        pass_enc.draw(4, len(self.members))

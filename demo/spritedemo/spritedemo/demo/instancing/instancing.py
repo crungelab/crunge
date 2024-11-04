@@ -8,7 +8,7 @@ from crunge.engine import Renderer
 
 from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite, SpriteMaterial
-from crunge.engine.d2.sprite.render_group.sprite_render_group import SpriteRenderGroup
+from crunge.engine.d2.sprite.group.instanced_sprite_group import InstancedSpriteGroup
 
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture_loader import TextureLoader
@@ -25,7 +25,7 @@ class InstancingDemo(Demo):
         self.node = None
         
     def reset(self):
-        self.render_group = SpriteRenderGroup()
+        self.render_group = InstancedSpriteGroup()
 
         self.angle = 0
         self.scale = 1.0
@@ -36,8 +36,7 @@ class InstancingDemo(Demo):
 
         texture = TextureLoader().load(":images:/playerShip1_orange.png")
         material = SpriteMaterial(texture, color=glm.vec4(self.color))
-        #sprite = self.sprite = Sprite(material).create()
-        sprite = self.sprite = Sprite(material).create(self.render_group)
+        sprite = self.sprite = Sprite(material).config(group=self.render_group).create()
         node = self.node = Node2D(vu=sprite)
         x = self.width / 2
         y = self.height / 2
@@ -78,10 +77,11 @@ class InstancingDemo(Demo):
 
         imgui.end()
 
-        #self.render_group.draw(renderer)
-        self.render_group.draw(self.view.renderer)
-
         super().draw(renderer)
+
+        with self.view.renderer as renderer:
+            self.render_group.draw(renderer)
+
 
 def main():
     InstancingDemo().create().run()
