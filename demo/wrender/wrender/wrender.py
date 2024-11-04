@@ -38,7 +38,7 @@ class WRender(Viewer):
         #model = "CesiumMilkTruck"
         #model = "Cube"
         #model = "Corset"
-        #model = "DamagedHelmet"
+        model = "DamagedHelmet"
         #model = "Duck"
         #model = "EnvironmentTest"
         #model = "FlightHelmet"
@@ -47,7 +47,7 @@ class WRender(Viewer):
         #model = "Lantern"
         #model = "MetalRoughSpheres"
         #model = "SimpleMeshes"
-        model = "Suzanne"
+        #model = "Suzanne"
 
         #scene_path = models_root / model / "glTF" / f"{model}.gltf"
         scene_path = models_root / "Models" / model / "glTF" / f"{model}.gltf"

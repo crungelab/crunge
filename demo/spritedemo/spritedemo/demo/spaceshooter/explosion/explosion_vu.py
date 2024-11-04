@@ -17,11 +17,8 @@ from crunge.engine import Renderer
 
 from crunge.engine.program import Program
 from crunge.engine.d2.vu_2d import Vu2D
+from crunge.engine.uniforms import cast_matrix4, cast_vec4
 from crunge.engine.d2.uniforms_2d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
-    cast_vec4,
     ModelUniform,
 )
 

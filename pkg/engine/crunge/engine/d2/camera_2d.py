@@ -21,13 +21,11 @@ from crunge.core.event_source import Subscription
 
 from ..math import Point3, Size2, Size2i
 from ..math.rect import Rect2
+from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport
 
 from .node_2d import Node2D
 from .uniforms_2d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
     CameraUniform,
 )
 from .program_2d import Program2D

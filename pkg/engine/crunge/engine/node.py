@@ -63,6 +63,8 @@ class Node(Dispatcher, Generic[T_Node]):
     def destroy(self):
         if self.parent:
             self.parent.detach(self)
+        if self.vu:
+            self.vu.destroy()
         for child in self.children:
             child.destroy()
         self.clear()

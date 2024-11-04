@@ -11,12 +11,10 @@ from crunge import wgpu
 
 from ..math import Size2, Size2i, Vector3,Point3
 from ..viewport import Viewport
+from ..uniforms import cast_vec3, cast_matrix4
 
 from .node_3d import Node3D
 from .uniforms_3d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
     CameraUniform,
 )
 from .program_3d import Program3D

@@ -5,14 +5,9 @@ import glm
 from crunge.core import as_capsule
 from crunge import wgpu
 
+from ..uniforms import cast_vec4
 from .uniforms_2d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
-    cast_vec4,
-    ModelUniform,
     MaterialUniform,
-    Vec4,
 )
 
 from ..resource.material import Material

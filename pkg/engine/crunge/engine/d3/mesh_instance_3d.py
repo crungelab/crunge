@@ -9,13 +9,11 @@ from crunge.core import klass, as_capsule
 from crunge import wgpu
 
 from ..renderer import Renderer
+from ..uniforms import cast_vec3, cast_matrix4
 
 from .program_3d import Program3D
 from .node_3d import Node3D
 from .uniforms_3d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
     CameraUniform,
     ModelUniform,
 )

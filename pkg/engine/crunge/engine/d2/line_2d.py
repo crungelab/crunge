@@ -21,12 +21,11 @@ import crunge.wgpu.utils as utils
 
 from ..renderer import Renderer
 from ..math import Point2, Size2
+from ..uniforms import cast_matrix4, cast_vec4
 from ..resource.bind_group_layout import BindGroupLayout
 
 from .vu_2d import Vu2D
 from .uniforms_2d import (
-    cast_matrix4,
-    cast_vec4,
     ModelUniform,
     MaterialUniform,
 )

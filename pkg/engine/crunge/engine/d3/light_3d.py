@@ -6,12 +6,10 @@ from crunge.core import as_capsule
 from crunge import wgpu
 
 from ..math import Point3
+from ..uniforms import cast_vec3
 from .node_3d import Node3D
 
 from .uniforms_3d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
     LightUniform,
 )
 

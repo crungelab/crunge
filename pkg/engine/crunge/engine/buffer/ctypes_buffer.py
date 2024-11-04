@@ -16,7 +16,7 @@ TDataType = TypeVar("TDataType", bound=ctypes.Structure)
 class CtypesBuffer(Buffer, Generic[TDataType]):
     def __init__(
         self,
-        #data_type: ctypes.Structure,
+        # data_type: ctypes.Structure,
         data_type: Type[TDataType],
         count: int,
         usage: wgpu.BufferUsage = None,
@@ -24,13 +24,13 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
     ) -> None:
         self.data_type = data_type
         self.count = count
-        #self.data = (data_type * count)()
+        # self.data = (data_type * count)()
         self.data: ctypes.Array[TDataType] = (data_type * count)()
-        #logger.debug(f"Creating ctypes buffer for {data_type} x {count}")
-        #logger.debug(f"Size of data type: {ctypes.sizeof(data_type)}")
+        # logger.debug(f"Creating ctypes buffer for {data_type} x {count}")
+        # logger.debug(f"Size of data type: {ctypes.sizeof(data_type)}")
         size = ctypes.sizeof(data_type) * count
-        #logger.debug(f"size: {size}")
-        #logger.debug(f"data: {self.data}")
+        # logger.debug(f"size: {size}")
+        # logger.debug(f"data: {self.data}")
         self.dirty = False
         super().__init__(size, usage, label)
 
@@ -52,7 +52,15 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
             raise IndexError("Index out of range")
         self.data[index] = value
         self.dirty = True
-        self.upload()
+        # self.upload()
+        #logger.debug(f"Uploading {self.data} to buffer")
+        self.device.queue.write_buffer(
+            self.buffer,
+            index * ctypes.sizeof(self.data_type),
+            #as_capsule(self.data),
+            as_capsule(value),
+            ctypes.sizeof(self.data_type)
+        )
 
     def __iter__(self) -> Iterator[TDataType]:
         return iter(self.data)
@@ -67,6 +75,7 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
         self.data[index] = new_data
     """
 
+    '''
     def upload(self) -> None:
         """
         Upload the data to the GPU buffer.
@@ -79,12 +88,12 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
             self.size,
         )
         self.dirty = False
-
+    '''
 
 class UniformBuffer(CtypesBuffer[TDataType], Generic[TDataType]):
     def __init__(
         self,
-        #data_type: ctypes.Structure,
+        # data_type: ctypes.Structure,
         data_type: Type[TDataType],
         count: int,
         usage: wgpu.BufferUsage = wgpu.BufferUsage.UNIFORM,

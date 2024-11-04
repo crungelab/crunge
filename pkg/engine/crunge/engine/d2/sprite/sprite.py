@@ -5,12 +5,12 @@ from loguru import logger
 from crunge import wgpu
 
 from ...math import Size2
+from ...uniforms import cast_matrix4
 from ...renderer import Renderer
 from ...buffer import UniformBuffer
 
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
-    cast_matrix4,
     ModelUniform,
 )
 
@@ -70,6 +70,16 @@ class Sprite(Vu2D):
         self.create_buffer()
         self.create_bind_group()
         return self
+
+    def destroy(self):
+        if self.group is not None:
+            self.group.remove(self)
+
+    '''
+    def __del__(self):
+        if self.group is not None:
+            self.group.remove(self)
+    '''
 
     '''
     def create(self, group: "SpriteGroup" = None, enabled=True):

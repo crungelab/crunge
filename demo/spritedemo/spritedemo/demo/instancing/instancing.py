@@ -14,37 +14,54 @@ from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture_loader import TextureLoader
 from crunge.engine.color import Color
 
+INITIAL_SCALE = 0.5
 
 class InstancingDemo(Demo):
     def __init__(self):
         super().__init__()
+        self.nodes: list[Node2D] = []
+        texture = TextureLoader().load(":images:/playerShip1_orange.png")
+        self.color = tuple(Color.WHITE.value)
+        self.material = SpriteMaterial(texture, color=glm.vec4(self.color))
         self.reset()
 
     def kill(self):
-        self.node.destroy()
-        self.node = None
+        for node in self.nodes:
+            node.destroy()
+        self.nodes.clear()
         
     def reset(self):
-        self.render_group = InstancedSpriteGroup()
+        self.render_group = InstancedSpriteGroup(1024)
 
         self.angle = 0
-        self.scale = 1.0
+        self.scale = INITIAL_SCALE
         #self.color = 1.0, 1.0, 1.0, 1.0
         self.color = tuple(Color.WHITE.value)
 
         self.scene.clear()
 
-        texture = TextureLoader().load(":images:/playerShip1_orange.png")
-        material = SpriteMaterial(texture, color=glm.vec4(self.color))
-        sprite = self.sprite = Sprite(material).config(group=self.render_group).create()
-        node = self.node = Node2D(vu=sprite)
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-
-        self.scene.root.attach(self.node)
+        self.create_sprites()
 
 
+    def create_sprites(self):
+        # Set grid size and spacing
+        grid_size = 10
+        spacing = 64  # Adjust spacing between sprites as needed
+
+        for row in range(grid_size):
+            for col in range(grid_size):
+                #texture = TextureLoader().load(":images:/playerShip1_orange.png")
+                #material = SpriteMaterial(texture, color=glm.vec4(self.color))
+                sprite = Sprite(self.material).config(group=self.render_group).create()
+                node = Node2D(vu=sprite).config(scale=glm.vec2(self.scale, self.scale))
+                
+                # Calculate position based on grid and spacing
+                x = col * spacing - (grid_size * spacing) / 2 + self.width / 2
+                y = row * spacing - (grid_size * spacing) / 2 + self.height / 2
+                
+                node.position = glm.vec2(x, y)
+                self.nodes.append(node)
+                self.scene.root.attach(node)
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
@@ -58,16 +75,25 @@ class InstancingDemo(Demo):
             self.angle,
         )
         if changed:
-            self.node.angle = self.angle
+            #self.node.angle = self.angle
+            for node in self.nodes:
+                node.angle = self.angle
 
         # Scale
         changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
         if changed:
-            self.node.scale = glm.vec2(self.scale, self.scale)
+            #self.node.scale = glm.vec2(self.scale, self.scale)
+            for node in self.nodes:
+                node.scale = glm.vec2(self.scale, self.scale)
 
         changed, self.color = imgui.color_edit4("Tint", self.color)
         if changed:
-            self.sprite.material.color = glm.vec4(self.color)
+            #self.sprite.material.color = glm.vec4(self.color)
+            self.material.color = glm.vec4(self.color)
+            '''
+            for node in self.nodes:
+                node.vu.material.color = glm.vec4(self.color)
+            '''
 
         if imgui.button("Reset"):
             self.reset()
