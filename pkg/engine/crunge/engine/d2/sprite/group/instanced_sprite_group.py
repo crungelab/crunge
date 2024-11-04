@@ -19,24 +19,24 @@ ELEMENTS = 32
 
 
 class InstancedSpriteBatch:
-    def __init__(self, material: SpriteMaterial, instance_count: int, first_instance: int) -> None:
+    def __init__(self, material: SpriteMaterial, first_instance: int) -> None:
         self.material = material
-        self.instance_count = instance_count
         self.first_instance = first_instance
+        self.instance_count = 1
 
 
 class InstancedSpriteGroup(SpriteGroup):
-    def __init__(self, size: int = ELEMENTS) -> None:
+    def __init__(self, count: int = ELEMENTS) -> None:
         super().__init__()
         self.is_render_group = True
-        self.size = size
+        self.count = count
         self.batches: list[InstancedSpriteBatch] = []
 
         self.bind_group: wgpu.BindGroup = None
         # self.buffer = UniformBuffer(ModelUniform, size, label="SpriteRenderGroup Buffer")
         self.buffer = UniformBuffer(
             ModelUniform,
-            size,
+            count,
             wgpu.BufferUsage.STORAGE,
             label="SpriteRenderGroup Buffer",
         )
@@ -45,13 +45,41 @@ class InstancedSpriteGroup(SpriteGroup):
         self.program = InstancedSpriteGroupProgram()
         self.create_bind_group()
 
+    def clear(self):
+        super().clear()
+        #self.batch()
+        self.batches.clear()
+
     def append(self, sprite: Sprite) -> None:
         super().append(sprite)
         sprite.buffer = self.buffer
         sprite.buffer_index = len(self.members) - 1
         self.batch()
 
+    def remove(self, vu):
+        super().remove(vu)
+        self.batch()
+
     def batch(self):
+        self.batches.clear()
+        for member in self.members:
+        #for i, member in enumerate(self.members):
+            #member.buffer_index = i
+            # Hack this until I start registering materials
+            if len(self.batches) == 0 or self.batches[-1].material.texture != member.material.texture:
+            #if len(self.batches) == 0 or self.batches[-1].material != member.material:
+                self.batches.append(
+                    #InstancedSpriteBatch(member.material, i)
+                    InstancedSpriteBatch(member.material, member.buffer_index)
+                )
+            else:
+                self.batches[-1].instance_count += 1
+
+        logger.debug(f"Batched {len(self.batches)} batches")
+
+    '''
+    def batch(self):
+        self.batches.clear()
         for member in self.members:
             if len(self.batches) == 0 or self.batches[-1].material != member.material:
                 self.batches.append(
@@ -59,6 +87,7 @@ class InstancedSpriteGroup(SpriteGroup):
                 )
             else:
                 self.batches[-1].instance_count += 1
+    '''
 
     def create_bind_group(self):
         model_bindgroup_entries = wgpu.BindGroupEntries(
@@ -86,6 +115,16 @@ class InstancedSpriteGroup(SpriteGroup):
         #self.members[0].material.bind(pass_enc)
         pass_enc.set_bind_group(2, self.bind_group)
 
+    def draw(self, renderer: Renderer):
+        if len(self.batches) == 0:
+            return
+        # logger.debug("Drawing sprites")
+        pass_enc = renderer.pass_enc
+        self.bind(pass_enc)
+        for batch in self.batches:
+            batch.material.bind(pass_enc)
+            pass_enc.draw(4, batch.instance_count, 0, batch.first_instance)
+
     '''
     def draw(self, renderer: Renderer):
         if len(self.members) == 0:
@@ -97,12 +136,3 @@ class InstancedSpriteGroup(SpriteGroup):
         # exit()
         pass_enc.draw(4, len(self.members))
     '''
-    def draw(self, renderer: Renderer):
-        if len(self.batches) == 0:
-            return
-        # logger.debug("Drawing sprites")
-        pass_enc = renderer.pass_enc
-        self.bind(pass_enc)
-        for batch in self.batches:
-            batch.material.bind(pass_enc)
-            pass_enc.draw(4, batch.instance_count, 0, batch.first_instance)

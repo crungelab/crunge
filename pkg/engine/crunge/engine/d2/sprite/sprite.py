@@ -30,7 +30,7 @@ class Sprite(Vu2D):
         # self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
         self.buffer: UniformBuffer[ModelUniform] = None
         # logger.debug(f"Model Uniform Buffer: {self.model_uniform_buffer}")
-        self.buffer_index = 0
+        self._buffer_index = 0
 
         # self.program = SpriteProgram()
         self.program: SpriteProgram = None
@@ -41,6 +41,15 @@ class Sprite(Vu2D):
         self.create_bind_group()
         '''
         self.manual_draw = True
+
+    @property
+    def buffer_index(self) -> int:
+        return self._buffer_index
+    
+    @buffer_index.setter
+    def buffer_index(self, value: int):
+        self._buffer_index = value
+        self.on_transform()
 
     @property
     def size(self) -> Size2:
