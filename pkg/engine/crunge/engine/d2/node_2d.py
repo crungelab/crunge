@@ -7,15 +7,15 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
-from ..math import Vector2, Point2, Size2, Rect2, Bounds2
+from ..math import Rect2, Bounds2
 from ..scene_node import SceneNode
 
 class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
-        position=Point2(),
-        size=Size2(1.0),
-        scale=Vector2(1.0),
+        position=glm.vec2(),
+        size=glm.vec2(1.0),
+        scale=glm.vec2(1.0),
         vu: "Vu2D" = None,
     ) -> None:
         super().__init__(vu)

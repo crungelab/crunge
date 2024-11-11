@@ -12,7 +12,6 @@ from crunge import sdl
 from crunge import imgui
 from crunge import engine
 
-from crunge.engine.math import Size2i
 from crunge.engine.viewport import SurfaceViewport
 from crunge.engine import Renderer, Scheduler
 
@@ -34,7 +33,7 @@ class Viewer(engine.App):
     kHeight = 768
 
     def __init__(self):
-        super().__init__(Size2i(self.kWidth, self.kHeight), "WRender", resizable=True)
+        super().__init__(glm.ivec2(self.kWidth, self.kHeight), "WRender", resizable=True)
         self.delta_time = 0
 
     @property
@@ -46,7 +45,6 @@ class Viewer(engine.App):
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
-        #self.view = View3D(scene, self.size).create(self)
         self.view = View3D(scene, self.size).config(window=self).create()
 
     def open(self):

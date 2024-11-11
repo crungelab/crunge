@@ -7,17 +7,17 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
-from ..math import Vector3, Point3, Bounds3
+from ..math import Bounds3
 from ..scene_node import SceneNode
 #from .vu_3d import Vu3D
 
 class Node3D(SceneNode["Node3D", "Scene3D"]):
-    def __init__(self, position = Point3()) -> None:
+    def __init__(self, position = glm.vec3()) -> None:
         super().__init__()
         self.bounds = Bounds3()
         self._position = position
         self._orientation = glm.quat(1.0, 0.0, 0.0, 0.0)
-        self._scale = Vector3(1.0)
+        self._scale = glm.vec3(1.0)
         self._matrix = glm.mat4(1.0)
         self._transform = glm.mat4(1.0)
         self.update_matrix()

@@ -8,12 +8,11 @@ from .viewport import Viewport
 from crunge import wgpu
 from crunge import sdl
 
-from ..math import Size2i
 
 class SurfaceViewport(Viewport):
     def __init__(
         self,
-        size: Size2i,
+        size: glm.ivec2,
         window: sdl.Window,
         use_depth_stencil: bool = False,
         use_msaa: bool = False,

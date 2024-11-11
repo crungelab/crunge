@@ -3,7 +3,7 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from ..math import Size2i, Rect2i
+from ..math import Rect2i
 from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
 from ..resource.texture_strip import TextureStrip
@@ -15,7 +15,7 @@ class TextureStripLoader(TextureLoaderBase[TextureStrip]):
     def __init__(self) -> None:
         super().__init__()
 
-    def load(self, path: Path, frame_size: Size2i, frames: int, name: str = None) -> TextureStrip:
+    def load(self, path: Path, frame_size: glm.ivec2, frames: int, name: str = None) -> TextureStrip:
         path = ResourceManager().resolve_path(path)
         if not name:
             name = str(path)

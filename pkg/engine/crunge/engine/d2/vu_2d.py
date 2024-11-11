@@ -1,7 +1,7 @@
-import glm
 from loguru import logger
+import glm
 
-from ..math import Size2, Rect2, Bounds2
+from ..math import Rect2, Bounds2
 
 from ..vu import Vu
 
@@ -29,7 +29,7 @@ class Vu2D(Vu[Node2D]):
         #logger.debug(f"Vu2D: {self.aabb}")
 
     @property
-    def size(self) -> Size2:
+    def size(self) -> glm.vec2:
         raise NotImplementedError
 
     def on_node_transform(self, node: Node2D) -> None:

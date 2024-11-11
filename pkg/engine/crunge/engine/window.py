@@ -1,16 +1,16 @@
 from loguru import logger
+import glm
 
 from crunge import sdl
 
 from . import globals
-from .math import Size2i
 from .frame import Frame
 from .viewport import SurfaceViewport
 from .renderer import Renderer
 
 
 class Window(Frame):
-    def __init__(self, size=Size2i(), title="", view=None, resizable=False):
+    def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
         super().__init__(size, view=view)
         self.name = title
 
@@ -72,7 +72,7 @@ class Window(Frame):
         #logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
-                self.size = Size2i(event.data1, event.data2)
+                self.size = glm.ivec2(event.data1, event.data2)
             case _:
                 # pass
                 return super().on_window(event)

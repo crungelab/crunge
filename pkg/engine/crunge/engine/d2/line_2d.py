@@ -20,7 +20,6 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ..renderer import Renderer
-from ..math import Point2, Size2
 from ..uniforms import cast_matrix4, cast_vec4
 from ..resource.bind_group_layout import BindGroupLayout
 
@@ -213,8 +212,8 @@ class Line2D(Vu2D):
         self.create_bind_groups()
 
     @property
-    def size(self) -> Size2:
-        return Size2(1.0, 1.0)
+    def size(self) -> glm.vec2:
+        return glm.vec2(1.0, 1.0)
 
     @property
     def width(self) -> int:

@@ -8,7 +8,7 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ...math import Size2
+from ...math import glm.vec2
 from ...resource.texture import Texture
 
 from ..renderer_2d import Renderer2D
@@ -88,9 +88,9 @@ class Sprite(Vu2D):
         )
 
     @property
-    def size(self) -> Size2:
+    def size(self) -> glm.vec2:
         #return self.texture.size
-        return Size2(self.width, self.height)
+        return glm.vec2(self.width, self.height)
 
     @property
     def width(self) -> int:

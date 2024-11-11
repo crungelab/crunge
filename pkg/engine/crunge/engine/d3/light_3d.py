@@ -5,7 +5,6 @@ import glm
 from crunge.core import as_capsule
 from crunge import wgpu
 
-from ..math import Point3
 from ..uniforms import cast_vec3
 from .node_3d import Node3D
 
@@ -15,7 +14,7 @@ from .uniforms_3d import (
 
 
 class Light3D(Node3D):
-    def __init__(self, position=Point3()) -> None:
+    def __init__(self, position=glm.vec3()) -> None:
         super().__init__(position=position)
         self._color = glm.vec3(1.0, 1.0, 1.0)
         self.energy = 1.0

@@ -1,11 +1,11 @@
 from loguru import logger
+import glm
 
-from .math import Size2i
 from .widget import Widget
 from .view import View
 
 class Frame(Widget):
-    def __init__(self, size=Size2i(), view: View = None) -> None:
+    def __init__(self, size=glm.ivec2(), view: View = None) -> None:
         super().__init__(size)
         self._view = view
         self.view_stack: list[View] = []
@@ -30,7 +30,6 @@ class Frame(Widget):
     def _create(self):
         logger.debug("Frame.create")
         if self._view is not None:
-            #self._view.create(self)
             self._view.config(window=self).create()
             self.view = self._view
         return self

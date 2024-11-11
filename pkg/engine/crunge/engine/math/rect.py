@@ -1,10 +1,10 @@
-from . import Point2, Size2, Point2i, Size2i
+import glm
 
 
 class Rect2i:
     def __init__(self, x: int = 0, y: int = 0, width: int = 0, height: int = 0):
-        self.position = Point2i(x, y)
-        self.size = Size2i(width, height)
+        self.position = glm.ivec2(x, y)
+        self.size = glm.ivec2(width, height)
 
     @property
     def x(self) -> int:
@@ -22,13 +22,13 @@ class Rect2i:
     def height(self) -> int:
         return self.size.y
 
-    def get_center(self) -> Point2i:
+    def get_center(self) -> glm.ivec2:
         return self.position + self.size // 2
 
     def get_area(self) -> int:
         return self.width * self.height
 
-    def contains_point(self, point: Point2i) -> bool:
+    def contains_point(self, point: glm.ivec2) -> bool:
         return (self.x <= point.x < self.x + self.width and
                 self.y <= point.y < self.y + self.height)
 
@@ -50,8 +50,8 @@ class Rect2i:
 
 class Rect2:
     def __init__(self, x: float = 0.0, y: float = 0.0, width: float = 0.0, height: float = 0.0):
-        self.position = Point2(x, y)
-        self.size = Size2(width, height)
+        self.position = glm.vec2(x, y)
+        self.size = glm.vec2(width, height)
 
     @property
     def x(self) -> float:
@@ -69,13 +69,13 @@ class Rect2:
     def height(self) -> float:
         return self.size.y
 
-    def get_center(self) -> Point2:
+    def get_center(self) -> glm.vec2:
         return self.position + self.size * 0.5
 
     def get_area(self) -> float:
         return self.width * self.height
 
-    def contains_point(self, point: Point2) -> bool:
+    def contains_point(self, point: glm.vec2) -> bool:
         return (self.x <= point.x < self.x + self.width and
                 self.y <= point.y < self.y + self.height)
 

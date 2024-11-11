@@ -1,19 +1,20 @@
+import glm
+
 from crunge.core.event_source import EventSource
 from crunge import wgpu
 
-from ..math import Size2i
 from ..base import Base
 
 
 class Viewport(Base):
     def __init__(
         self,
-        size: Size2i,
+        size: glm.ivec2,
         use_depth_stencil: bool = False,
         use_msaa: bool = False,
     ):
         self._size = size
-        self.size_events = EventSource[Size2i]()
+        self.size_events = EventSource[glm.ivec2]()
 
         self.use_depth_stencil = use_depth_stencil
         self.use_msaa = use_msaa
@@ -29,11 +30,11 @@ class Viewport(Base):
         self.create_device_objects()
 
     @property
-    def size(self) -> Size2i:
+    def size(self) -> glm.ivec2:
         return self._size
 
     @size.setter
-    def size(self, value: Size2i):
+    def size(self, value: glm.ivec2):
         changed = self._size != value
         self._size = value
         if changed:

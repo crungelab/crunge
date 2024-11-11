@@ -9,7 +9,6 @@ from crunge.core.event_source import Subscription
 
 from crunge import wgpu
 
-from ..math import Size2, Size2i, Vector3,Point3
 from ..viewport import Viewport
 from ..uniforms import cast_vec3, cast_matrix4
 
@@ -28,9 +27,9 @@ class CameraProgram3D(Program3D):
 class Camera3D(Node3D):
     def __init__(
         self,
-        size=Size2i(),
-        position=Point3(0.0, 0.0, 4.0),
-        up=Vector3(0.0, 1.0, 0.0),
+        size=glm.ivec2(),
+        position=glm.vec3(0.0, 0.0, 4.0),
+        up=glm.vec3(0.0, 1.0, 0.0),
         near=0.1,
         far=100.0,
     ):
@@ -48,7 +47,7 @@ class Camera3D(Node3D):
         self._far = far
 
         self._viewport: Viewport = None
-        self.viewport_size_subscription: Subscription[Size2i] = None
+        self.viewport_size_subscription: Subscription[glm.ivec2] = None
 
         self.create_buffers()
         self.create_bind_group()
@@ -85,7 +84,7 @@ class Camera3D(Node3D):
                 self.on_viewport_size
             )
 
-    def on_viewport_size(self, size: Size2i):
+    def on_viewport_size(self, size: glm.ivec2):
         self.size = size
 
     @property
@@ -138,8 +137,8 @@ class Camera3D(Node3D):
         self.right = self.orientation * glm.vec3(1.0, 0.0, 0.0)
         self.up = self.orientation * glm.vec3(0.0, 1.0, 0.0)
 
-    def on_viewport_size(self, size: Size2i):
-        self.size = Size2(size.x, size.y)
+    def on_viewport_size(self, size: glm.ivec2):
+        self.size = glm.vec2(size.x, size.y)
 
     def on_size(self) -> None:
         super().on_size()

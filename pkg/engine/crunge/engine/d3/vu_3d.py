@@ -1,7 +1,7 @@
-import glm
 from loguru import logger
+import glm
 
-from ..math import Size3, Rect2
+from ..math import Rect2
 from ..vu import Vu
 from .node_3d import Node3D
 
@@ -26,7 +26,7 @@ class Vu3D(Vu[Node3D]):
         #logger.debug(f"Vu2D: {self.aabb}")
 
     @property
-    def size(self) -> Size3:
+    def size(self) -> glm.vec3:
         raise NotImplementedError
 
     def on_node_transform(self, node: Node3D) -> None:

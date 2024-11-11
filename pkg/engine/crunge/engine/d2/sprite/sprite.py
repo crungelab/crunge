@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING
 
 from loguru import logger
+import glm
 
 from crunge import wgpu
 
-from ...math import Size2
 from ...uniforms import cast_matrix4
 from ...renderer import Renderer
 from ...buffer import UniformBuffer
@@ -53,9 +53,9 @@ class Sprite(Vu2D):
         self.on_transform()
 
     @property
-    def size(self) -> Size2:
+    def size(self) -> glm.vec2:
         # return self.texture.size
-        return Size2(self.width, self.height)
+        return glm.vec2(self.width, self.height)
 
     @property
     def width(self) -> int:

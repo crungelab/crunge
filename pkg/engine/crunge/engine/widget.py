@@ -1,8 +1,8 @@
 from typing import Any, Callable
 
 from loguru import logger
+import glm
 
-from .math import Size2i
 from .node import Node
 from .part import Part
 from .controller import Controller
@@ -10,7 +10,7 @@ from .renderer import Renderer
 
 
 class Widget(Node["Widget"]):
-    def __init__(self, size = Size2i()) -> None:
+    def __init__(self, size = glm.ivec2()) -> None:
         super().__init__()
         self._size = size
         self._controller: Controller = None
@@ -22,7 +22,7 @@ class Widget(Node["Widget"]):
         return self._size
     
     @size.setter
-    def size(self, value: Size2i):
+    def size(self, value: glm.ivec2):
         changed = self._size != value
         self._size = value
         if changed:

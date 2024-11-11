@@ -1,13 +1,12 @@
 from loguru import logger
 import glm
 
-from ..math import Size2i
 from ..view import View
 
 from .layer import ImGuiLayer
 
 class ImGuiView(View):
-    def __init__(self, size=Size2i(), layers=[]):
+    def __init__(self, size=glm.ivec2(), layers=[]):
         super().__init__(size, layers=layers)
         self.gui: ImGuiLayer = None
 
@@ -16,11 +15,3 @@ class ImGuiView(View):
         self.gui = ImGuiLayer().config(view=self).create()
         self.add_layer(self.gui)
         return self
-
-    '''
-    def _create(self, window):
-        super()._create(window)
-        self.gui = ImGuiLayer().create(self)
-        self.add_layer(self.gui)
-        return self
-    '''
