@@ -101,7 +101,8 @@ class PhysicsModel2D(Model2D):
         self.body = self.create_body()
         self.shapes = self.create_shapes()
 
-    def on_create(self):
+    def _post_create(self):
+        super()._post_create()
         self.add_shapes()
 
     def destroy(self):

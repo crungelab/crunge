@@ -19,7 +19,7 @@ from crunge.core import as_capsule
 from crunge.core import klass
 from crunge.core.event_source import Subscription
 
-from ..math import Point3, Size2, Size2i
+from ..math import Point3, Size2, Size2i, Bounds2
 from ..math.rect import Rect2
 from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport
@@ -39,8 +39,12 @@ class Camera2D(Node2D):
         self._zoom = 1.0
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
+
+        self.projection_matrix = glm.mat4(1.0)
         self.view_matrix = glm.mat4(1.0)
-        self.projection = Rect2()
+
+        self.frustrum: Bounds2 = None
+        #self.projection = Rect2()
 
         self._viewport: Viewport = None
         self.viewport_size_subscription: Subscription[Size2i] = None
@@ -49,6 +53,20 @@ class Camera2D(Node2D):
         self.create_bind_groups()
 
         super().__init__(position, size)
+
+    '''
+    @property
+    def frustrum(self) -> Bounds2:
+        half_width = (self.width / 2) * self.zoom
+        half_height = (self.height / 2) * self.zoom
+        min_x = self.position.x - half_width
+        max_x = self.position.x + half_width
+        min_y = self.position.y - half_height
+        max_y = self.position.y + half_height
+        bounds = Bounds2(glm.vec2(min_x, min_y), glm.vec2(max_x, max_y))
+        logger.debug(f"Camera frustrum: {bounds}")
+        return bounds
+    '''
 
     @property
     def viewport(self):
@@ -113,9 +131,12 @@ class Camera2D(Node2D):
         ortho_bottom = self.y - (self.height * self.zoom) / 2
         ortho_top = self.y + (self.height * self.zoom) / 2
 
+        '''
         self.projection = Rect2(
             ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom
         )
+        '''
+        self.frustrum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
 
         ortho_near = -1  # Near clipping plane
         ortho_far = 1  # Far clipping plane

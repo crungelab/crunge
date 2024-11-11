@@ -1,3 +1,5 @@
+from loguru import logger
+
 from ....renderer import Renderer
 from ....vu_group import VuGroup
 
@@ -11,9 +13,18 @@ class SpriteGroup(VuGroup[Sprite]):
 
     def draw(self, renderer: Renderer) -> None:
         for sprite in self.members:
+            #logger.debug(f"SpriteGroup.draw: {sprite}")
+            frustrum = renderer.camera_2d.frustrum
+            if sprite.bounds.intersects(frustrum):
+                sprite.draw(renderer)
+
+    '''
+    def draw(self, renderer: Renderer) -> None:
+        for sprite in self.members:
             projection = renderer.camera_2d.projection
             if sprite.aabb.intersects(projection):
                 sprite.draw(renderer)
+    '''
 
     def update(self, delta_time: float) -> None:
         for sprite in self.members:

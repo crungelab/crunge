@@ -45,6 +45,13 @@ class Texture(Resource):
 
         self.update_coords()
 
+    def __str__(self):
+        #return f"Texture(id={self.id}, name={self.name}, path={self.path})"
+        return f"Texture(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, rect={self.rect}, coords={self.coords})"
+
+    def __repr__(self):
+        return str(self)
+
     @property
     def view(self) -> wgpu.TextureView:
         if self._view is None:

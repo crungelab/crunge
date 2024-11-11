@@ -10,8 +10,9 @@ from .math import Size2i
 from .widget import Widget
 from .view_layer import ViewLayer
 
+
 class View(Widget):
-    def __init__(self, size=Size2i(), layers: list[ViewLayer]=[]) -> None:
+    def __init__(self, size=Size2i(), layers: list[ViewLayer] = []) -> None:
         super().__init__(size)
         self.window: "Window" = None
         self.layers_by_name: Dict[str, ViewLayer] = {}
@@ -22,37 +23,30 @@ class View(Widget):
     @property
     def layers(self) -> List[ViewLayer]:
         return self.children
-    
-    '''
+
+    """
     def config(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
         return self
-    '''
+    """
 
     def on_size(self):
         super().on_size()
         for layer in self.layers:
             layer.size = self.size
 
-    '''
-    def create(self, window: "Window"):
-        self._create(window)
-        self.on_create()
-        return self
-    '''
-
-    #def _create(self, window: "Window"):
+    # def _create(self, window: "Window"):
     def _create(self):
         logger.debug("View.create")
         super()._create()
-        #self.window = window
-        #self.size = window.size
+        # self.window = window
+        # self.size = window.size
         if not self.window:
             raise ValueError("View.window is not set")
         self.size = self.window.size
         for layer in self.layers:
-            layer.create(self)
+            layer.config(view=self).create()
         self.create_device_objects()
         self.create_camera()
         self.create_renderer()
@@ -67,16 +61,17 @@ class View(Widget):
     def create_renderer(self):
         pass
 
-    def add_layer(self, layer: ViewLayer):
+    def add_layer(self, layer: ViewLayer) -> ViewLayer:
         layer.view = self
         self.layers_by_name[layer.name] = layer
         self.attach(layer)
         self.sort_children(key=lambda child: child.priority)
+        return layer
 
     def remove_layer(self, layer: ViewLayer):
         layer.view = None
         self.layers_by_name.pop(layer.name)
         self.remove_child(layer)
-        
+
     def get_layer(self, name: str) -> ViewLayer:
         return self.layers_by_name[name]

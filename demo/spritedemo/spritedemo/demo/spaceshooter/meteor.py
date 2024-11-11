@@ -5,7 +5,7 @@ from loguru import logger
 import glm
 
 from crunge.engine.d2.sprite import Sprite, SpriteMaterial
-from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
+from crunge.engine.loader.xml_texture_atlas_loader import XmlTextureAtlasLoader
 
 from ...model_2d import DynamicModel2D
 from ...geom import BallGeom
@@ -17,7 +17,7 @@ class Meteor(DynamicModel2D):
 
     def __init__(self, position: glm.vec2, name: str) -> None:
         super().__init__(position, geom=BallGeom)
-        atlas = TextureAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        atlas = XmlTextureAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
         #logger.debug(f"atlas: {atlas}")
         
         texture = atlas.get(name)

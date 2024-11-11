@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
-from ..math import Vector2, Point2, Size2, Rect2
+from ..math import Vector2, Point2, Size2, Rect2, Bounds2
 from ..scene_node import SceneNode
 
 class Node2D(SceneNode["Node2D", "Scene2D"]):
@@ -25,7 +25,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._size = size
         self._scale = scale
         self._matrix = glm.mat4(1.0)
-        self.aabb = Rect2(0, 0, 0, 0)
+        #self.aabb = Rect2(0, 0, 0, 0)
+        self.bounds = Bounds2()
 
         if vu is not None:
             self._size = vu.size
@@ -130,12 +131,16 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @property
     def transform(self) -> glm.mat4:
         transform = self.matrix
-        if self.parent:
+        if self.parent is not None:
             transform = self.parent.transform * transform
         return transform
 
     def on_transform(self):
-        self.aabb = self.get_world_aabb()
+        #self.aabb = self.get_world_aabb()
+        local_bounds = self.get_local_bounds()
+        #logger.debug(f"class: {self.__class__}, local_bounds: {local_bounds}")
+        self.bounds = local_bounds.to_global(self.transform)
+        #logger.debug(f"class: {self.__class__}, bounds: {self.bounds}")
 
         '''
         if self.vu is not None:
@@ -147,6 +152,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def update_matrix(self):
         x = self._position.x
         y = self._position.y
+        #logger.debug(f"class: {self.__class__}, x: {x}, y: {y}")
         z = self._depth
 
         matrix = glm.mat4(1.0)  # Identity matrix
@@ -158,6 +164,12 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         )
         self.matrix = matrix
 
+    def get_local_bounds(self) -> Bounds2:
+        half_width = self.size.x / 2
+        half_height = self.size.y / 2
+        return Bounds2(-half_width, -half_height, half_width, half_height)
+
+    '''
     def get_local_aabb(self) -> Rect2:
         half_width = self.size.x / 2
         half_height = self.size.y / 2
@@ -190,3 +202,4 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
         # Return the new AABB in world space
         return Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+    '''

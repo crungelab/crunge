@@ -75,7 +75,8 @@ class Node(Dispatcher, Generic[T_Node]):
         child.on_attached()
 
     def on_attached(self):
-        pass
+        #pass
+        self.enable()
 
     def detach(self, child: "Node[T_Node]"):
         child.parent = None

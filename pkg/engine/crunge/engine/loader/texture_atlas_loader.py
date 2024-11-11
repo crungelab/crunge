@@ -15,34 +15,14 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
     def __init__(self) -> None:
         super().__init__()
 
-    def load(self, path: Path, name: str = None) -> TextureAtlas:
+    def load(self, path: Path, rectangles: list[Rect2i], name: str = None) -> TextureAtlas:
         path = ResourceManager().resolve_path(path)
         if not name:
             name = str(path)
         if atlas := self.kit.get_by_path(path):
             return atlas
 
-        # Load the XML file
-        logger.debug(f"Loading TextureAtlas: {name}")
-
-        if not path.exists():
-            raise Exception(f"XML file not found: {path}")
-
-        tree = etree.parse(path)
-        root = tree.getroot()
-
-        # Extract the imagePath attribute from the TextureAtlas element
-        image_path = root.attrib["imagePath"]
-        image_path = path.parent / Path(image_path)
-
-        if not image_path.exists():
-            image_path = path.parent / Path(path.stem + ".png")
-            if not image_path.exists():
-                raise Exception(f"Image file not found: {image_path}")
-
-        logger.debug(f"Image Path: {image_path}")
-
-        wgpu_texture, width, height = self.load_wgpu_texture([image_path])
+        wgpu_texture, width, height = self.load_wgpu_texture([path])
         atlas = (
             TextureAtlas(wgpu_texture, Rect2i(0, 0, width, height))
             .set_name(name)
@@ -51,18 +31,11 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
         self.kit.add(atlas)
 
         # Iterate over each SubTexture element
-        for sub_texture in root.findall("SubTexture"):
-            # Extract attributes
-            name = sub_texture.get("name")
-            x = sub_texture.get("x")
-            y = sub_texture.get("y")
-            width = sub_texture.get("width")
-            height = sub_texture.get("height")
-
+        for rectangle in rectangles:
             # Create a new texture
             texture = Texture(
-                wgpu_texture, Rect2i(int(x), int(y), int(width), int(height)), atlas
-            ).set_name(name)
+                wgpu_texture, rectangle, atlas
+            )
             atlas.add(texture)
 
         return atlas

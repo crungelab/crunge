@@ -5,7 +5,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge.engine import Renderer
 
-from crunge.engine.loader.texture_atlas_loader import TextureAtlasLoader
+from crunge.engine.loader.xml_texture_atlas_loader import XmlTextureAtlasLoader
 
 from ..demo import Demo
 from ...physics import DynamicPhysicsEngine
@@ -25,7 +25,7 @@ class ThingsDemo(Demo):
         self.physics_engine.create()
         self.create_floor()
 
-        atlas = self.atlas  = TextureAtlasLoader().load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
+        atlas = self.atlas  = XmlTextureAtlasLoader().load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
         logger.debug(f"atlas: {atlas}")
 
         self.texture = atlas.get("bomb.png")
@@ -68,7 +68,7 @@ class ThingsDemo(Demo):
 
         if imgui.begin_list_box("Textures", (-1, -1)):
 
-            for name, texture in self.atlas.textures.items():
+            for name, texture in self.atlas.texture_map.items():
                 opened, selected = imgui.selectable(name, texture == self.texture)
                 if opened:
                     logger.debug(f"Selected: {name}")

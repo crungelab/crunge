@@ -22,7 +22,8 @@ if TYPE_CHECKING:
 
 
 class Sprite(Vu2D):
-    def __init__(self, material: SpriteMaterial) -> None:
+    # def __init__(self, material: SpriteMaterial) -> None:
+    def __init__(self, material: SpriteMaterial = None) -> None:
         super().__init__()
         self.material = material
 
@@ -35,17 +36,17 @@ class Sprite(Vu2D):
         # self.program = SpriteProgram()
         self.program: SpriteProgram = None
         self.group: "SpriteGroup" = None
-        '''
+        """
         self.create_program()
         self.create_buffer()
         self.create_bind_group()
-        '''
+        """
         self.manual_draw = True
 
     @property
     def buffer_index(self) -> int:
         return self._buffer_index
-    
+
     @buffer_index.setter
     def buffer_index(self, value: int):
         self._buffer_index = value
@@ -84,33 +85,11 @@ class Sprite(Vu2D):
         if self.group is not None:
             self.group.remove(self)
 
-    '''
+    """
     def __del__(self):
         if self.group is not None:
             self.group.remove(self)
-    '''
-
-    '''
-    def create(self, group: "SpriteGroup" = None, enabled=True):
-        self._create(group)
-        return self._post_create(enabled)
-
-    def _create(self, group: "SpriteGroup"):
-        super()._create()
-        self.group = group
-        if group is not None:
-            group.append(self)
-            if group.is_render_group:
-                self.manual_draw = False
-
-        if not self.manual_draw:
-            return
-
-        self.create_program()
-        self.create_buffer()
-        self.create_bind_group()
-        return self
-    '''
+    """
 
     def create_program(self):
         self.program = SpriteProgram()
@@ -151,9 +130,9 @@ class Sprite(Vu2D):
 
         self.model_uniform_buffer[0] = model_uniform
         """
-        #self.buffer[0].transform.data = cast_matrix4(self.transform)
-        #self.buffer[self.buffer_index].transform.data = cast_matrix4(self.transform)
-        #self.buffer.upload()
+        # self.buffer[0].transform.data = cast_matrix4(self.transform)
+        # self.buffer[self.buffer_index].transform.data = cast_matrix4(self.transform)
+        # self.buffer.upload()
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)

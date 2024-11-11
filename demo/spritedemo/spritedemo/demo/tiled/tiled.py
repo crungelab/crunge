@@ -23,7 +23,7 @@ class TiledDemo(Demo):
 
         #tmx_path = self.resource_root / "tiled" / "level1.tmx"
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
-        self.tmx_data = TiledMap(tmx_path)
+        self.map = TiledMap(tmx_path)
         self.reset()
 
     def reset(self):
@@ -36,14 +36,14 @@ class TiledDemo(Demo):
 
     def create_map(self):
 
-        name = self.tmx_data.filename
-        tw = self.tmx_data.tilewidth
-        th = self.tmx_data.tileheight
-        mw = self.tmx_data.width
-        mh = self.tmx_data.height - 1
+        name = self.map.filename
+        tw = self.map.tilewidth
+        th = self.map.tileheight
+        mw = self.map.width
+        mh = self.map.height - 1
         pixel_height = mh * th
 
-        for i, layer in enumerate(self.tmx_data.visible_layers):
+        for i, layer in enumerate(self.map.visible_layers):
             if isinstance(layer, TiledTileLayer):
                 # iterate over the tiles in the layer
                 for x, y, image in layer.tiles():

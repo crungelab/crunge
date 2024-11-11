@@ -1,7 +1,7 @@
 import glm
 from loguru import logger
 
-from ..math import Size2, Rect2
+from ..math import Size2, Rect2, Bounds2
 
 from ..vu import Vu
 
@@ -11,7 +11,8 @@ class Vu2D(Vu[Node2D]):
     def __init__(self) -> None:
         super().__init__()
         self._transform = glm.mat4(1.0)
-        self.aabb = Rect2(0, 0, 0, 0)
+        #self.aabb = Rect2(0, 0, 0, 0)
+        self.bounds = Bounds2()
 
     @property
     def transform(self) -> glm.mat4:
@@ -33,7 +34,10 @@ class Vu2D(Vu[Node2D]):
 
     def on_node_transform(self, node: Node2D) -> None:
         self.transform = node.transform
+        #logger.debug(f"Vu2D: {self.transform}")
+        self.bounds = node.bounds
 
+    '''
     def get_local_aabb(self) -> Rect2:
         half_width = self.size.x / 2
         half_height = self.size.y / 2
@@ -67,3 +71,4 @@ class Vu2D(Vu[Node2D]):
 
         # Return the new AABB in world space
         return Rect2(min_x, min_y, max_x - min_x, max_y - min_y)
+    '''

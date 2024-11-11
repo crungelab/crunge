@@ -19,65 +19,33 @@ class Base:
         if self.created:
             return
         self._create()
-        return self._post_create()
-
-    '''
-    #def create(self) -> Self:
-    def create(self, enabled=True):
-        if self.created:
-            return
-        self._create()
-        return self._post_create(enabled)
-    '''
-
-    def _create(self):
-        pass
-
-    def _post_create(self):
         self.created = True
-        self.on_create()
+        self._post_create()
         return self
 
-    '''
-    def _post_create(self, enabled=True):
-        self.created = True
-        self.on_create()
-        if enabled:
-            self.enable()
-        return self
-    '''
-
-    def on_create(self):
+    def _create(self) -> None:
         pass
 
-    def destroy(self):
+    def _post_create(self) -> None:
+        pass
+
+    def destroy(self) -> None:
         if not self.created:
             return
         self._destroy()
         self.on_destroy()
         self.created = False
 
-    def _destroy(self):
+    def _destroy(self) -> None:
         pass
 
-    def on_destroy(self):
+    def on_destroy(self) -> None:
         pass
 
-    def enable(self):
-        #self.enabled = True
+    def enable(self) -> None:
         if not self.created:
             self.create()  # Ensure the object is created
-        else:
-            self.enabled = True
-
-    '''
-    def enable(self):
-        #self.enabled = True
-        if not self.created:
-            self.create(enabled=True)  # Ensure the object is created
-        else:
-            self.enabled = True
-    '''
+        self.enabled = True
 
     def disable(self):
         self.enabled = False

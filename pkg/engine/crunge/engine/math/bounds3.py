@@ -16,27 +16,23 @@ class Bounds3:
         """Returns the center point of the bounding box."""
         return (self.min + self.max) * 0.5
 
-    def expand(self, point) -> None:
+    def expand(self, point: glm.vec3) -> None:
         """Expands the bounding box to include the given point."""
-        '''
-        self.min = glm.min(self.min, point)
-        self.max = glm.max(self.max, point)
-        '''
         self.min = glm.vec3(min(self.min.x, point.x), min(self.min.y, point.y), min(self.min.z, point.z))
         self.max = glm.vec3(max(self.max.x, point.x), max(self.max.y, point.y), max(self.max.z, point.z))
 
-    def merge(self, other) -> None:
+    def merge(self, other: "Bounds3") -> None:
         """Expands the bounding box to include another bounding box."""
         self.expand(other.min)
         self.expand(other.max)
 
-    def contains(self, point) -> bool:
+    def contains(self, point: glm.vec3) -> bool:
         """Checks if the bounding box contains a given point."""
         return (self.min.x <= point.x <= self.max.x and
                 self.min.y <= point.y <= self.max.y and
                 self.min.z <= point.z <= self.max.z)
 
-    def intersects(self, other) -> bool:
+    def intersects(self, other: "Bounds3") -> bool:
         """Checks if this bounding box intersects with another bounding box."""
         return (self.min.x <= other.max.x and self.max.x >= other.min.x and
                 self.min.y <= other.max.y and self.max.y >= other.min.y and
@@ -74,4 +70,4 @@ class Bounds3:
         return transformed_bounds
 
     def __repr__(self) -> str:
-        return f"Bounds3D(min={self.min}, max={self.max})"
+        return f"Bounds3(min={self.min}, max={self.max})"

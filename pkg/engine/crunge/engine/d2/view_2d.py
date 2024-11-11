@@ -34,7 +34,9 @@ class View2D(ImGuiView):
     def create_renderer(self):
         self.renderer = Renderer(self.window.viewport, camera_2d=self.camera)
 
+    '''
     def draw(self, renderer: Renderer):
         with self.renderer:
             self.scene.draw(self.renderer)
             super().draw(self.renderer)
+    '''

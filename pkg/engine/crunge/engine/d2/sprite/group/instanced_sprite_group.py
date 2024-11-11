@@ -47,20 +47,35 @@ class InstancedSpriteGroup(SpriteGroup):
 
     def clear(self):
         super().clear()
-        #self.batch()
         self.batches.clear()
 
     def append(self, sprite: Sprite) -> None:
         super().append(sprite)
         sprite.buffer = self.buffer
         sprite.buffer_index = len(self.members) - 1
-        self.batch()
+        #self.batch_all()
+        self.batch(sprite)
 
     def remove(self, vu):
         super().remove(vu)
-        self.batch()
+        self.batch_all()
 
-    def batch(self):
+    def batch(self, member: Sprite):
+        # Compare by texture until I start registering materials
+        if len(self.batches) == 0 or self.batches[-1].material.texture != member.material.texture:
+            self.batches.append(
+                InstancedSpriteBatch(member.material, member.buffer_index)
+            )
+        else:
+            self.batches[-1].instance_count += 1
+
+    def batch_all(self):
+        self.batches.clear()
+        for member in self.members:
+            self.batch(member)
+
+    '''
+    def batch_all(self):
         self.batches.clear()
         for member in self.members:
         #for i, member in enumerate(self.members):
@@ -76,6 +91,7 @@ class InstancedSpriteGroup(SpriteGroup):
                 self.batches[-1].instance_count += 1
 
         logger.debug(f"Batched {len(self.batches)} batches")
+    '''
 
     '''
     def batch(self):
