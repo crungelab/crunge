@@ -37,7 +37,7 @@ class View(Widget):
 
     # def _create(self, window: "Window"):
     def _create(self):
-        logger.debug("View.create")
+        #logger.debug("View.create")
         super()._create()
         # self.window = window
         # self.size = window.size

@@ -39,7 +39,7 @@ class TextureAtlasDemo(Demo):
         #TODO: Need to set size based on texture size
         node.size = glm.vec2(200, 200)
 
-        self.scene.root.attach(self.node)
+        self.scene.attach(self.node)
 
     def reset(self):
         self.angle = 0

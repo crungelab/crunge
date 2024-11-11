@@ -42,7 +42,7 @@ class SpaceShooter(Demo):
             laser_model.destroy()
             asteroid_model.destroy()
             explosion = Explosion(asteroid_model.position, glm.vec2(100, 100))
-            self.scene.root.attach(explosion)
+            self.scene.attach(explosion)
             return False
 
         def ship_asteroid_collision(arbiter, space, data):
@@ -52,7 +52,7 @@ class SpaceShooter(Demo):
             ship_model.destroy()
             asteroid_model.destroy()
             explosion = Explosion(asteroid_model.position, glm.vec2(100, 100), glm.vec4(1.0, 0.0, 0.0, 1.0))
-            self.scene.root.attach(explosion)
+            self.scene.attach(explosion)
             return False
 
         handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.LASER)  # Replace with your collision types
@@ -72,7 +72,7 @@ class SpaceShooter(Demo):
     def create_ship(self, position):
         ship = self.ship = Ship(position).create()
         self.node = ship
-        self.scene.root.attach(ship)
+        self.scene.attach(ship)
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)

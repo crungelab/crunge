@@ -160,7 +160,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         matrix = glm.rotate(matrix, self._rotation, glm.vec3(0, 0, 1))
         matrix = glm.scale(
             matrix,
-            glm.vec3(self._size.x * self._scale.x, self._size.y * self._scale.y, 1),
+            #glm.vec3(self._size.x * self._scale.x, self._size.y * self._scale.y, 1),
+            glm.vec3(self._scale.x, self._scale.y, 1),
         )
         self.matrix = matrix
 

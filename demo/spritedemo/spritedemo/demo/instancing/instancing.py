@@ -61,7 +61,7 @@ class InstancingDemo(Demo):
                 
                 node.position = glm.vec2(x, y)
                 self.nodes.append(node)
-                self.scene.root.attach(node)
+                self.scene.attach(node)
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)

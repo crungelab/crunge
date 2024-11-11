@@ -23,7 +23,7 @@ class ViewLayer(Widget):
         return self
 
     def _create(self):
-        logger.debug("Layer.create")
+        #logger.debug("Layer.create")
         self.size = self.view.size
 
     @property

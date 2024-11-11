@@ -7,7 +7,7 @@ from pytmx import TiledMap, TiledTileLayer, TiledObjectGroup
 from crunge import imgui
 from crunge.engine import Renderer
 
-from crunge.engine.math import Point2, Rect2i
+from crunge.engine.math import Rect2i
 from crunge.engine.d2.sprite import Sprite, SpriteMaterial
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.resource.resource_manager import ResourceManager
@@ -71,8 +71,8 @@ class TiledDemo(Demo):
                     material = SpriteMaterial(texture)
 
                     sprite = Sprite(material).create()
-                    node = Node2D(Point2(x, y), vu=sprite)
-                    self.scene.root.attach(node)
+                    node = Node2D(glm.vec2(x, y), vu=sprite)
+                    self.scene.attach(node)
 
             elif isinstance(layer, TiledObjectGroup):
                 for obj in layer:
@@ -106,7 +106,7 @@ class TiledDemo(Demo):
                         material = SpriteMaterial(texture)
                         sprite = Sprite(material).create()
                         node = Node2D(glm.vec2(x, y), vu=sprite)
-                        self.scene.root.attach(node)
+                        self.scene.attach(node)
 
                     # draw a rect for everything else
                     else:

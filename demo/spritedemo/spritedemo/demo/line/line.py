@@ -33,7 +33,7 @@ class LineDemo(Demo):
         y = self.height / 2
         node.position = glm.vec2(x, y)
 
-        self.scene.root.attach(self.node)
+        self.scene.attach(self.node)
 
 
 

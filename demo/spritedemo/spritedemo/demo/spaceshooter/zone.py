@@ -28,7 +28,7 @@ class Zone(Base):
 
     def create_meteor(self, position: glm.vec2):
         meteor = MeteorGreyBig1(position).create()
-        self.scene.root.attach(meteor)
+        self.scene.attach(meteor)
 
     def create_meteors(self, num_asteroids):
         """

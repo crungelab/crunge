@@ -41,7 +41,7 @@ class BoxesDemo(Demo):
     def create_box(self, position):
         box = Box(position)
         box.create()
-        self.scene.root.attach(box)
+        self.scene.attach(box)
 
     def create_floor(self):
         x = self.width / 2
@@ -49,7 +49,7 @@ class BoxesDemo(Demo):
         position = glm.vec2(x, y)
         box = Floor(position, glm.vec2(self.width, 20))
         box.create()
-        self.scene.root.attach(box)
+        self.scene.attach(box)
 
     def draw(self, renderer: Renderer):
         imgui.begin("Boxes Demo")
