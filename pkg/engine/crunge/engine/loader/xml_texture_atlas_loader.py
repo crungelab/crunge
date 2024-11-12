@@ -42,9 +42,9 @@ class XmlTextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
 
         logger.debug(f"Image Path: {image_path}")
 
-        wgpu_texture, width, height = self.load_wgpu_texture([image_path])
+        details = self.load_wgpu_texture([image_path])
         atlas = (
-            TextureAtlas(wgpu_texture, Rect2i(0, 0, width, height))
+            TextureAtlas(details.texture, Rect2i(0, 0, details.width, details.height))
             .set_name(name)
             .set_path(path)
         )
@@ -61,7 +61,7 @@ class XmlTextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
 
             # Create a new texture
             texture = Texture(
-                wgpu_texture, Rect2i(int(x), int(y), int(width), int(height)), atlas
+                details.texture, Rect2i(int(x), int(y), int(width), int(height)), atlas
             ).set_name(name)
             atlas.add(texture)
 

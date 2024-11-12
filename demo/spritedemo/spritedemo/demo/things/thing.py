@@ -12,3 +12,4 @@ class Thing(DynamicModel2D):
         self.vu = Sprite(material).create()
         self.position = position
         self.size = glm.vec2(texture.size.x, texture.size.y) * .25
+        self.scale = glm.vec2(.25, .25)

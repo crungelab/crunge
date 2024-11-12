@@ -27,10 +27,9 @@ class TextureStripLoader(TextureLoaderBase[TextureStrip]):
         if not path.exists():
             raise Exception(f"Image file not found: {path}")
 
-        wgpu_texture, width, height = self.load_wgpu_texture([path])
-        logger.debug(f"Image Path: {path}")
-        logger.debug(f"Image Size: {width}x{height}")
-        atlas = TextureStrip(wgpu_texture, Rect2i(0, 0, width, height)).set_name(name).set_path(path)
+        details = self.load_wgpu_texture([path])
+
+        atlas = TextureStrip(details.texture, Rect2i(0, 0, details.width, details.height)).set_name(name).set_path(path)
         self.kit.add(atlas)
 
         # Iterate over each SubTexture element
@@ -46,8 +45,7 @@ class TextureStripLoader(TextureLoaderBase[TextureStrip]):
             logger.debug(f"Frame {i}: {rect}")
             # Create a new texture
             texture = Texture(
-                #wgpu_texture, RectI(int(x), int(y), int(w), int(h)), atlas
-                wgpu_texture, rect, atlas
+                details.texture, rect, atlas
 
             ).set_name(name)
             atlas.add(texture)

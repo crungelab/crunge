@@ -35,8 +35,8 @@ class CameraProgram2D(Program2D):
     pass
 
 class Camera2D(Node2D):
-    def __init__(self, position=glm.vec3(0.0, 0.0, 2), size=glm.vec2(1.0)):
-        self._zoom = 1.0
+    def __init__(self, position=glm.vec3(0.0, 0.0, 2), size=glm.vec2(1.0), zoom=1.0):
+        self._zoom = zoom
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
 

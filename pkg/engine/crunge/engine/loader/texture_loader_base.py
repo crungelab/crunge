@@ -18,12 +18,18 @@ from ..resource.image import Image
 
 T_Resource = TypeVar("T_Resource", bound=Texture)
 
+class TextureDetails:
+    def __init__(self, texture: wgpu.Texture, width: int, height: int) -> None:
+        self.texture = texture
+        self.width = width
+        self.height = height
+
 class TextureLoaderBase(ResourceLoader[T_Resource]):
     def __init__(self, kit: TextureKit = ResourceManager().texture_kit, image_loader=ImageLoader()) -> None:
         super().__init__(kit)
         self.image_loader = image_loader
 
-    def load_wgpu_texture(self, paths: List[Path]) -> wgpu.Texture:
+    def load_wgpu_texture(self, paths: List[Path]) -> TextureDetails:
         images: List[Image] = []
 
         for path in paths:
@@ -78,4 +84,5 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
                 wgpu.Extent3D(im_width, im_height, im_depth),
             )
 
-        return texture, im_width, im_height
+        #return texture, im_width, im_height
+        return TextureDetails(texture, im_width, im_height)

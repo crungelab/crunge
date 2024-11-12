@@ -110,11 +110,25 @@ class Texture(Resource):
         if p_width <= 0 or p_height <= 0:
             raise ValueError("Parent width and height must be positive.")
 
+        '''
+        def get_texel_coords(x, y, tex_width, tex_height)
+            u = (x + 0.5) / tex_width
+            v = (y + 0.5) / tex_height
+            return u, v
+        '''
+
         # Compute normalized texture coordinates (u, v)
+        u0 = (x + 0.5) / p_width
+        u1 = (x + width - 0.5) / p_width
+        v0 = (y + 0.5) / p_height
+        v1 = (y + height - 0.5) / p_height
+
+        '''
         u0 = x / p_width
         u1 = (x + width) / p_width
         v0 = y / p_height
         v1 = (y + height) / p_height
+        '''
 
         '''
         self.coords = [

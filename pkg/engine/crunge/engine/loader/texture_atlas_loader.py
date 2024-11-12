@@ -17,14 +17,19 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
 
     def load(self, path: Path, rectangles: list[Rect2i], name: str = None) -> TextureAtlas:
         path = ResourceManager().resolve_path(path)
-        if not name:
-            name = str(path)
+        #if atlas := self.kit.get_by_path(path):
+        if atlas := self.kit.get_by_name(name):
+            return atlas
         if atlas := self.kit.get_by_path(path):
             return atlas
 
-        wgpu_texture, width, height = self.load_wgpu_texture([path])
+        if name is None:
+            name = str(path)
+
+        details = self.load_wgpu_texture([path])
+
         atlas = (
-            TextureAtlas(wgpu_texture, Rect2i(0, 0, width, height))
+            TextureAtlas(details.texture, Rect2i(0, 0, details.width, details.height))
             .set_name(name)
             .set_path(path)
         )
@@ -34,7 +39,7 @@ class TextureAtlasLoader(TextureLoaderBase[TextureAtlas]):
         for rectangle in rectangles:
             # Create a new texture
             texture = Texture(
-                wgpu_texture, rectangle, atlas
+                details.texture, rectangle, atlas
             )
             atlas.add(texture)
 
