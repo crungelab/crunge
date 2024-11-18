@@ -1,21 +1,14 @@
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
+from ctypes import sizeof, c_float
 
 from loguru import logger
 
 from crunge.core import klass
 from crunge import wgpu
 
-from ..program_2d import Program2D
+from crunge.engine.d2.program_2d import Program2D
+
+from ...resource.bind_group_layout import BindGroupLayout
+
 
 shader_code = """
 struct Camera {
@@ -34,44 +27,60 @@ struct Material {
 
 @group(0) @binding(0) var<uniform> camera : Camera;
 
-@group(1) @binding(0) var mySampler: sampler;
-@group(1) @binding(1) var myTexture : texture_2d<f32>;
-@group(1) @binding(2) var<uniform> material : Material;
+@group(1) @binding(0) var<uniform> material : Material;
 
 @group(2) @binding(0) var<uniform> model : Model;
 
 struct VertexInput {
   @location(0) pos: vec4<f32>,
-  @location(1) uv: vec2<f32>,
 }
 
 struct VertexOutput {
   @builtin(position) vertex_pos : vec4<f32>,
-  @location(0) uv: vec2<f32>,
 }
 
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
   let vert_pos = camera.projection * camera.view * model.transform * in.pos;
-  return VertexOutput(vert_pos, in.uv);
+  return VertexOutput(vert_pos);
 }
 
 @fragment
 fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
-    let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y);
-    let color = textureSample(myTexture, mySampler, uv);
-    return color * material.color;
+    return material.color;
 }
 """
 
+@klass.singleton
+class MaterialBindGroupLayout(BindGroupLayout):
+    def __init__(self) -> None:
+        material_bgl_entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
+        ]
+
+        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
+            entry_count=len(material_bgl_entries), entries=material_bgl_entries
+        )
+        bind_group_layout = self.device.create_bind_group_layout(material_bgl_desc)
+        logger.debug(f"material_bgl: {bind_group_layout}")
+        super().__init__(bind_group_layout)
+
 
 @klass.singleton
-class SpriteProgram(Program2D):
+class PolygonProgram2D(Program2D):
     pipeline: wgpu.RenderPipeline = None
 
     def __init__(self):
         super().__init__()
         self.create_render_pipeline()
+
+    @property
+    def material_bind_group_layout(self):
+        return MaterialBindGroupLayout().get()
 
     def create_render_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -80,16 +89,11 @@ class SpriteProgram(Program2D):
             wgpu.VertexAttribute(
                 format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
             ),
-            wgpu.VertexAttribute(
-                format=wgpu.VertexFormat.FLOAT32X2,
-                offset=2 * sizeof(c_float),
-                shader_location=1,
-            ),
         ]
 
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
-                array_stride=4 * sizeof(c_float),
+                array_stride=2 * sizeof(c_float),
                 attribute_count=len(vertAttributes),
                 attributes=vertAttributes,
             )
@@ -139,8 +143,12 @@ class SpriteProgram(Program2D):
             bind_group_layouts=self.bind_group_layouts,
         )
 
+        #primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.LINE_LIST)
+        primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.LINE_STRIP)
+
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
+            primitive=primitive,
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             fragment=fragmentState,

@@ -1,14 +1,4 @@
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
+from ctypes import sizeof, c_float
 
 from loguru import logger
 
@@ -17,7 +7,7 @@ from crunge import wgpu
 
 from crunge.engine.d2.program_2d import Program2D
 
-from ..resource.bind_group_layout import BindGroupLayout
+from ...resource.bind_group_layout import BindGroupLayout
 
 
 shader_code = """

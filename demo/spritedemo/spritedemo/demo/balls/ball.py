@@ -12,7 +12,6 @@ class Ball(DynamicModel2D):
         texture = ImageTextureLoader().load(":resources:/tiled/items/coinGold.png")
         sprite = Sprite(texture)
         vu = SpriteVu(sprite).create()
-        #scale = glm.vec2(.25, .25)
         scale = glm.vec2(.5, .5)
         super().__init__(position, scale=scale, vu=vu, geom=BallGeom)
         self.size = self.size * .5

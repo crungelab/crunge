@@ -8,52 +8,30 @@ from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ...math import glm.vec2
-from ...resource.texture import Texture
+from ...renderer import Renderer
+from ...uniforms import cast_matrix4, cast_vec4
 
-from ..renderer_2d import Renderer2D
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
-    cast_matrix3,
-    cast_matrix4,
-    cast_vec3,
-    cast_vec4,
     ModelUniform,
     MaterialUniform,
 )
 
-from .sprite_program import SpriteProgram
-from .sprite_sampler import SpriteSampler
-
-
-INDICES = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint16)
-
-POINTS = [
-    (-0.5, 0.5),  # top-left
-    (-0.5, -0.5),  # bottom-left
-    (0.5, -0.5),  # bottom-right
-    (0.5, 0.5),  # top-right
-]
+from .line_program_2d import LineProgram2D
 
 # Define the structured dtype for the combined data
 vertex_dtype = np.dtype(
     [
         ("position", np.float32, (2,)),  # Points (x, y)
-        ("texcoord", np.float32, (2,)),  # Texture coordinates (u, v)
     ]
 )
 
-
-class Sprite(Vu2D):
+class Line2D(Vu2D):
     material_bind_group: wgpu.BindGroup = None
     model_bind_group: wgpu.BindGroup = None
 
     vertices: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
-
-    indices: np.ndarray = None
-    index_buffer: wgpu.Buffer = None
-    index_format: wgpu.IndexFormat = wgpu.IndexFormat.UINT16
 
     model_uniform_buffer: wgpu.Buffer = None
     model_uniform_buffer_size: int = 0
@@ -61,71 +39,36 @@ class Sprite(Vu2D):
     material_uniform_buffer: wgpu.Buffer = None
     material_uniform_buffer_size: int = 0
 
-    def __init__(self, texture: Texture, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> None:
+    def __init__(
+        self, begin: glm.vec2, end: glm.vec2, color=glm.vec4(1.0, 1.0, 1.0, 1.0)
+    ) -> None:
         super().__init__()
-        self._texture = texture
-        self.indices = INDICES
-        self.points = POINTS
-        self.program = SpriteProgram()
+        self.begin = begin
+        self.end = end
+        self.points = [begin, end]
+        self.color = color
+        self.program = LineProgram2D()
         self.create_vertices()
         self.create_buffers()
         self.create_bind_groups()
 
-        self.color = color
-
-    @property
-    def texture(self):
-        return self._texture
-
-    @texture.setter
-    def texture(self, value: Texture):
-        old_texture = self._texture
-        self._texture = value
-        if old_texture is not None and old_texture.texture != value.texture:
-            self.create_material_bind_group()
-        # logger.debug(f"Setting texture: {value}")
-        self.update_vertices()
-
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, value):
-        self._color = value
-        self.on_color()
-
-    def on_color(self):
-        material_uniform = MaterialUniform()
-        material_uniform.color = cast_vec4(self.color)
-
-        self.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            as_capsule(material_uniform),
-            self.material_uniform_buffer_size,
-        )
-
     @property
     def size(self) -> glm.vec2:
-        #return self.texture.size
-        return glm.vec2(self.width, self.height)
+        return glm.vec2(1.0, 1.0)
 
     @property
     def width(self) -> int:
-        return self.texture.width
+        return self.size.x
 
     @property
     def height(self) -> int:
-        return self.texture.height
+        return self.size.y
 
     def create_vertices(self):
         # Create an empty array with the structured dtype
         self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
         # Fill the array with data
         self.vertices["position"] = self.points
-        self.vertices["texcoord"] = self.texture.coords
-        # logger.debug(f"Vertices: {self.vertices}")
 
     def update_vertices(self):
         self.create_vertices()
@@ -136,9 +79,6 @@ class Sprite(Vu2D):
     def create_buffers(self):
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.gfx.device, "VERTEX", self.vertices, wgpu.BufferUsage.VERTEX
-        )
-        self.index_buffer = utils.create_buffer_from_ndarray(
-            self.gfx.device, "INDEX", self.indices, wgpu.BufferUsage.INDEX
         )
         # Uniform Buffers
         self.model_uniform_buffer_size = sizeof(ModelUniform)
@@ -156,18 +96,10 @@ class Sprite(Vu2D):
         )
 
     def create_bind_groups(self):
-        self.create_material_bind_group()
-        self.create_model_bind_group()
-
-    def create_material_bind_group(self):
-        sampler = SpriteSampler().sampler
-
         material_bindgroup_entries = wgpu.BindGroupEntries(
             [
-                wgpu.BindGroupEntry(binding=0, sampler=sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=self.texture.view),
                 wgpu.BindGroupEntry(
-                    binding=2,
+                    binding=0,
                     buffer=self.material_uniform_buffer,
                     size=self.material_uniform_buffer_size,
                 ),
@@ -185,7 +117,6 @@ class Sprite(Vu2D):
             material_bind_group_desc
         )
 
-    def create_model_bind_group(self):
         model_bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
@@ -205,25 +136,31 @@ class Sprite(Vu2D):
 
         self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
 
-    def on_transform(self):
-        super().on_transform()
+    def draw(self, renderer: Renderer):
+        # logger.debug("Drawing sprite")
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
-        self.device.queue.write_buffer(
+        renderer.device.queue.write_buffer(
             self.model_uniform_buffer,
             0,
             as_capsule(model_uniform),
             self.model_uniform_buffer_size,
         )
 
-    def draw(self, renderer: Renderer2D):
-        # logger.debug("Drawing sprite")
+        material_uniform = MaterialUniform()
+        material_uniform.color = cast_vec4(self.color)
+
+        renderer.device.queue.write_buffer(
+            self.material_uniform_buffer,
+            0,
+            as_capsule(material_uniform),
+            self.material_uniform_buffer_size,
+        )
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
         pass_enc.set_bind_group(1, self.material_bind_group)
         pass_enc.set_bind_group(2, self.model_bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.set_index_buffer(self.index_buffer, self.index_format)
-        pass_enc.draw_indexed(len(self.indices))
+        pass_enc.draw(2, 1, 0, 0)  # Drawing 2 vertices (a single line)

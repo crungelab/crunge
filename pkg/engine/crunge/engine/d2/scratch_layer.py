@@ -4,8 +4,8 @@ from ..renderer import Renderer
 from ..view_layer import ViewLayer
 
 from .vu_2d import Vu2D
-from .line_2d import Line2D
-from .polygon_2d import Polygon2D
+from .shape.line_2d import Line2D
+from .shape.polygon_2d import Polygon2D
 
 from ..color import Color
 
