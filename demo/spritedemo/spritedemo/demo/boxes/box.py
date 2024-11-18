@@ -3,11 +3,11 @@ import glm
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
-from ...model_2d import DynamicModel2D
-from ...geom import BoxGeom
+from crunge.engine.d2.physics_entity_2d import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BoxGeom
 
 
-class Box(DynamicModel2D):
+class Box(DynamicEntity2D):
     def __init__(self, position: glm.vec2) -> None:
         texture = ImageTextureLoader().load(":images:/boxCrate.png")
         sprite = Sprite(texture)

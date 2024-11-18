@@ -3,7 +3,7 @@ import math
 import pymunk
 from pymunk.vec2d import Vec2d
 
-from ..constants import *
+from .constants import *
 from . import Physics, PhysicsMeta, PhysicsEngine
 
 class KinematicPhysics(Physics, metaclass=PhysicsMeta):

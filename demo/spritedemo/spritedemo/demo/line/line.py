@@ -7,7 +7,7 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine.d2.line_2d import Line2D
+from crunge.engine.d2.shape.line_2d import Line2D
 from crunge.engine.d2.node_2d import Node2D
 
 

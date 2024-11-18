@@ -1,67 +1,21 @@
-from loguru import logger
-
 import math
+
+from loguru import logger
 import glm
 import pymunk
 
-from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.d2.vu_2d import Vu2D
 
-from .constants import *
-from . import globals
+from .physics.constants import DEFAULT_MASS, GRAVITY, TILE_SCALING
+from .physics import globals
+
+from .entity_2d import Entity2D
+
 from . import physics
-from . import geom
+from .physics import geom
 
 
-class Model2D(Node2D):
-    def __init__(
-        self,
-        position=glm.vec2(),
-        size=glm.vec2(1.0),
-        scale=glm.vec2(1.0),
-        vu: Vu2D = None,
-        brain=None,
-    ):
-        super().__init__(position, size, scale, vu)
-        self.layer = None
-        self.brain = brain
-
-    def update(self, delta_time: float):
-        super().update(delta_time)
-        self.update_brain(delta_time)
-        self.update_physics(delta_time)
-        # self.update_sprite(delta_time)
-
-    def update_brain(self, delta_time):
-        if self.brain:
-            self.brain.update(delta_time)
-
-    def update_physics(self, delta_time):
-        pass
-
-
-class Group2D(Model2D):
-    id_counter = 1
-
-    def __init__(self, position=(0, 0)):
-        super().__init__(position)
-        self.id_counter += 1
-        self.id = self.id_counter
-        self.models = []
-
-    def add_model(self, model):
-        model.parent = self
-        self.models.append(model)
-        return model
-
-    def _create(self):
-        super()._create()
-        for model in self.models:
-            model.gid = self.id
-            self.layer.add_model(model)
-
-
-class PhysicsModel2D(Model2D):
+class PhysicsEntity2D(Entity2D):
     def __init__(
         self,
         position=glm.vec2(),
@@ -108,7 +62,11 @@ class PhysicsModel2D(Model2D):
     def destroy(self):
         self.remove_shapes()
         super().destroy()
-        
+
+    def update(self, delta_time: float):
+        super().update(delta_time)
+        self.update_physics(delta_time)
+
     def update_physics(self, delta_time=1 / 60):
         if self.body:
             self.position = glm.vec2(self.body.position.x, self.body.position.y)
@@ -127,9 +85,9 @@ class PhysicsModel2D(Model2D):
             self.add_shape(shape)
 
     def add_shape(self, shape):
-        #logger.debug(f"shape: {shape}")
-        #shape.collision_type = self.physics.kind
-        #logger.debug(f"shape.collision_type: {shape.collision_type}")
+        # logger.debug(f"shape: {shape}")
+        # shape.collision_type = self.physics.kind
+        # logger.debug(f"shape.collision_type: {shape.collision_type}")
         globals.physics_engine.space.add(self.body, shape)
 
     def remove_shapes(self):
@@ -151,18 +109,18 @@ class PhysicsModel2D(Model2D):
             print("No vu")
             return None
         # a = sprite.width / sprite.texture.width
-        #a = self.width * self.scale.x
+        # a = self.width * self.scale.x
         a = self.scale.x
         # d = sprite.height / sprite.texture.height
-        #d = self.height / vu.height
-        #d = self.height * self.scale.y
+        # d = self.height / vu.height
+        # d = self.height * self.scale.y
         d = self.scale.y
         t = pymunk.Transform(a=a, d=d)
         logger.debug(f"t: {t}")
         return t
 
 
-class PhysicsGroup2D(PhysicsModel2D):
+class PhysicsGroup2D(PhysicsEntity2D):
     id_counter = 1
 
     def __init__(
@@ -186,7 +144,7 @@ class PhysicsGroup2D(PhysicsModel2D):
             self.layer.add_model(model)
 
 
-class StaticModel2D(PhysicsModel2D):
+class StaticEntity2D(PhysicsEntity2D):
     def __init__(
         self,
         position=glm.vec2(),
@@ -200,7 +158,7 @@ class StaticModel2D(PhysicsModel2D):
         super().__init__(position, size, scale, vu, brain, physics, geom)
 
 
-class DynamicModel2D(PhysicsModel2D):
+class DynamicEntity2D(PhysicsEntity2D):
     def __init__(
         self,
         position=glm.vec2(),
@@ -214,7 +172,7 @@ class DynamicModel2D(PhysicsModel2D):
         super().__init__(position, size, scale, vu, brain, physics, geom)
 
 
-class KinematicModel(PhysicsModel2D):
+class KinematicEntity2D(PhysicsEntity2D):
     def __init__(
         self,
         position=glm.vec2(),
@@ -245,8 +203,3 @@ class KinematicModel(PhysicsModel2D):
         body.position = position
         body.model = self
         return body
-
-
-class ModelFactory:
-    def __init__(self, layer):
-        self.layer = layer

@@ -67,6 +67,12 @@ class GroupGeom(Geom):
 class PolyGeom(Geom):
     def __init__(self):
         super().__init__()
+
+    def get_moment(self, model):
+        size = model.size * model.scale
+        return pymunk.moment_for_box(model.mass, tuple(size))
+        #return pymunk.moment_for_poly(model.mass, model.sprite.points.tolist())
+
     '''
     def get_moment(self, model):
         #return pymunk.moment_for_box(model.mass, (model.width, model.height))

@@ -3,9 +3,9 @@ import pymunk
 
 from crunge.engine import Base
 
-from .. import globals
+from . import globals
 
-from ..constants import *
+from .constants import GRAVITY
 
 from .draw_options import DrawOptions
 

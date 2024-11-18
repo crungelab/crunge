@@ -3,11 +3,11 @@ import glm
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
-from ...model_2d import DynamicModel2D
-from ...geom import BallGeom
+from crunge.engine.d2.physics_entity_2d import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BallGeom
 
 
-class Ball(DynamicModel2D):
+class Ball(DynamicEntity2D):
     def __init__(self, position: glm.vec2) -> None:
         texture = ImageTextureLoader().load(":resources:/tiled/items/coinGold.png")
         sprite = Sprite(texture)

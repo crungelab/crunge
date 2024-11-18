@@ -4,9 +4,9 @@ import glm
 from crunge import sdl
 from crunge import imgui
 from crunge.engine import Renderer
+from crunge.engine.d2.physics import DynamicPhysicsEngine
 
 from ..demo import Demo
-from ...physics import DynamicPhysicsEngine
 
 from .box import Box
 from .floor import Floor

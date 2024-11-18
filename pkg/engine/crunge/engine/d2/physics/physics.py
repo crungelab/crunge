@@ -1,6 +1,4 @@
-import pymunk
-
-from ..constants import *
+from .constants import *
 
 
 class PhysicsMeta(type):

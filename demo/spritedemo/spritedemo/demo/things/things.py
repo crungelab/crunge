@@ -6,10 +6,10 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
+from crunge.engine.d2.physics import DynamicPhysicsEngine
+from crunge.engine.d2.physics.draw_options import DrawOptions
 
 from ..demo import Demo
-from ...physics import DynamicPhysicsEngine
-from ...physics.draw_options import DrawOptions
 
 from .thing import Thing
 from .floor import Floor

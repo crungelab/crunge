@@ -5,7 +5,7 @@ from loguru import logger
 import pymunk
 from pymunk.vec2d import Vec2d
 
-from ..constants import *
+from .constants import PT_DYNAMIC, GRAVITY
 from . import Physics, PhysicsMeta, PhysicsEngine
 from .draw_options import DrawOptions
 

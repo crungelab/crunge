@@ -4,14 +4,15 @@ from loguru import logger
 
 import glm
 
-from crunge.engine.d2.sprite import Sprite, SpriteVu
+from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from ...model_2d import DynamicModel2D
-from ...geom import BallGeom
+from crunge.engine.d2.physics_entity_2d import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BallGeom
+
 from .collision_type import CollisionType
 
-class Meteor(DynamicModel2D):
+class Meteor(DynamicEntity2D):
     linear_velocity_range=((-100, 100), (-100, 100))
     angular_velocity_range=(-2, 2)
 

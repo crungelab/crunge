@@ -2,7 +2,7 @@ import math
 
 import pymunk
 
-from ..constants import *
+from .constants import PT_STATIC
 from .physics import Physics, PhysicsMeta
 
 class StaticPhysics(Physics, metaclass=PhysicsMeta):
