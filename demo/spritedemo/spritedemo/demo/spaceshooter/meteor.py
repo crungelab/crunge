@@ -4,8 +4,8 @@ from loguru import logger
 
 import glm
 
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
-from crunge.engine.loader.xml_texture_atlas_loader import XmlTextureAtlasLoader
+from crunge.engine.d2.sprite import Sprite, SpriteVu
+from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
 from ...model_2d import DynamicModel2D
 from ...geom import BallGeom
@@ -16,14 +16,12 @@ class Meteor(DynamicModel2D):
     angular_velocity_range=(-2, 2)
 
     def __init__(self, position: glm.vec2, name: str) -> None:
-        super().__init__(position, geom=BallGeom)
-        atlas = XmlTextureAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
         #logger.debug(f"atlas: {atlas}")
         
-        texture = atlas.get(name)
-        material = SpriteMaterial(texture)
-        self.vu = Sprite(material).create()
-        self.size = texture.size
+        sprite = atlas.get(name)
+        vu = SpriteVu(sprite).create()
+        super().__init__(position, vu=vu, geom=BallGeom)
 
     @classmethod
     def produce(cls, position: glm.vec2):

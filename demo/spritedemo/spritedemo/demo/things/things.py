@@ -5,10 +5,11 @@ from crunge import sdl
 from crunge import imgui
 from crunge.engine import Renderer
 
-from crunge.engine.loader.xml_texture_atlas_loader import XmlTextureAtlasLoader
+from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
 from ..demo import Demo
 from ...physics import DynamicPhysicsEngine
+from ...physics.draw_options import DrawOptions
 
 from .thing import Thing
 from .floor import Floor
@@ -16,19 +17,25 @@ from .floor import Floor
 class ThingsDemo(Demo):
     def __init__(self):
         super().__init__()
+        self.draw_options: DrawOptions = None
+        #self.reset()
+
+    def _create(self):
+        super()._create()
+        self.draw_options = DrawOptions(self.view.scratch)
         self.reset()
 
     def reset(self):
         self.scene.clear()
-        self.last_mouse = glm.vec2(0, 0)
-        self.physics_engine = DynamicPhysicsEngine()
+        self.last_mouse = glm.vec2()
+        self.physics_engine = DynamicPhysicsEngine(draw_options=self.draw_options)
         self.physics_engine.create()
         self.create_floor()
 
-        atlas = self.atlas  = XmlTextureAtlasLoader().load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
+        atlas = self.atlas  = XmlSpriteAtlasLoader().load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
         logger.debug(f"atlas: {atlas}")
 
-        self.texture = atlas.get("bomb.png")
+        self.sprite = atlas.get("bomb.png")
 
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
@@ -42,38 +49,38 @@ class ThingsDemo(Demo):
         if button == 1 and down:
             x = self.last_mouse.x
             y = self.height - self.last_mouse.y
-            self.create_box(glm.vec2(x, y))
+            self.create_thing(glm.vec2(x, y))
 
 
-    def create_box(self, position):
-        box = Thing(position, self.texture)
-        box.create()
-        self.scene.attach(box)
+    def create_thing(self, position):
+        thing = Thing(position, self.sprite)
+        thing.create()
+        self.scene.attach(thing)
 
     def create_floor(self):
         x = self.width / 2
         y = -10
         position = glm.vec2(x, y)
-        box = Floor(position, glm.vec2(self.width, 20))
-        box.create()
-        self.scene.attach(box)
+        floor = Floor(position, glm.vec2(self.width, 20))
+        floor.create()
+        self.scene.attach(floor)
 
 
     def draw(self, renderer: Renderer):
+        self.physics_engine.debug_draw(renderer)
         imgui.begin("Shapes")
         imgui.text("Click to create shapes")
 
         if imgui.button("Reset"):
             self.reset()
 
-        if imgui.begin_list_box("Textures", (-1, -1)):
+        if imgui.begin_list_box("##Sprites", (-1, -1)):
 
-            for name, texture in self.atlas.texture_map.items():
-                opened, selected = imgui.selectable(name, texture == self.texture)
+            for name, sprite in self.atlas.sprite_map.items():
+                opened, selected = imgui.selectable(name, sprite == self.sprite)
                 if opened:
                     logger.debug(f"Selected: {name}")
-                    self.texture = texture
-                    #self.sprite.texture = texture
+                    self.sprite = sprite
 
             imgui.end_list_box()
         

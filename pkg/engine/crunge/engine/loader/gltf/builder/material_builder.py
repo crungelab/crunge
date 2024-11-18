@@ -16,8 +16,8 @@ from crunge.engine.d3.material_3d import Material3D
 from crunge.engine.resource.texture import Texture
 from crunge.engine.resource.cube_texture import CubeTexture
 
-from crunge.engine.loader.texture_loader import TextureLoader
-from crunge.engine.loader.cube_texture_loader import CubeTextureLoader
+from crunge.engine.loader.texture.texture_2d_loader import Texture2DLoader
+from crunge.engine.loader.texture.cube_texture_loader import CubeTextureLoader
 from crunge.engine.loader.image_loader import HdrImageLoader
 
 from ..debug import debug_texture_info
@@ -127,7 +127,7 @@ class MaterialBuilder(GltfBuilder):
 
     def build_environment_texture(self) -> Texture:
         path = importlib.resources.path('crunge.engine.resources.textures', 'environment.hdr')
-        texture = TextureLoader(image_loader=HdrImageLoader()).load(path, name="environment")
+        texture = Texture2DLoader(image_loader=HdrImageLoader()).load(path, name="environment")
         texture.view = texture.texture.create_view()
         texture.sampler = self.gfx.device.create_sampler()
         return texture

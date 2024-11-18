@@ -1,1 +1,1 @@
-from .sprite import Sprite, SpriteGroup
+from .sprite import SpriteVu, SpriteVuGroup

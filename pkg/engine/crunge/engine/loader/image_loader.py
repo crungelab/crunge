@@ -13,7 +13,8 @@ class ImageLoader(Loader):
 
     def load(self, path: Path) -> Image:
         data = iio.imread(path, pilmode='RGBA')
-        return Image(data)
+        image = Image(data).set_name(path.name).set_path(path)
+        return image
 
 class HdrImageLoader(Loader):
     def __init__(self) -> None:
@@ -25,4 +26,4 @@ class HdrImageLoader(Loader):
         if im_channels == 3:
             # Add an alpha channel
             data = np.concatenate([data, np.ones((im_height, im_width, 1), dtype=data.dtype)], axis=-1)
-        return Image(data)
+        return Image(data).set_name(path.name).set_path(path)

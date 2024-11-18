@@ -1,4 +1,5 @@
 from loguru import logger
+import glm
 import numpy as np
 
 from crunge.core import as_capsule
@@ -68,7 +69,7 @@ class TextureBuilder(GltfBuilder):
         )
 
         wgpu_texture = self.gfx.device.create_texture(descriptor)
-        self.texture = Texture(wgpu_texture, Rect2i(0, 0, im_width, im_height)).set_name(
+        self.texture = Texture(wgpu_texture, glm.ivec3(im_width, im_height, im_depth)).set_name(
             self.name
         )
         self.texture.view = wgpu_texture.create_view()

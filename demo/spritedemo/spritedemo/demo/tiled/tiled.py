@@ -8,10 +8,10 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from crunge.engine.math import Rect2i
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
+from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 from crunge.engine.resource.texture import Texture
 
 from ..demo import Demo
@@ -52,25 +52,25 @@ class TiledDemo(Demo):
                     #logger.debug(f"Tile: {x}, {y}, {image}")
 
                     path = image[0]
-                    atlas = TextureLoader().load(path)
+                    atlas = ImageTextureLoader().load(path)
                     #logger.debug(f"atlas: {atlas}")
 
                     rect = image[1]
                     if rect:
                         tx, ty, tw, th = rect
-                        texture = Texture(
-                            atlas.texture,
-                            Rect2i(tx, ty, tw, th),
+                        sprite = Sprite(
                             atlas,
+                            Rect2i(tx, ty, tw, th),
                         ).set_name(name)
                         #logger.debug(f"texture: {texture}")
                     else:
-                        texture = atlas
+                        #texture = atlas
+                        sprite = Sprite(atlas).set_name(name)
 
-                    material = SpriteMaterial(texture)
+                    #sprite = Sprite(texture)
 
-                    sprite = Sprite(material).create()
-                    node = Node2D(glm.vec2(x, y), vu=sprite)
+                    vu = SpriteVu(sprite).create()
+                    node = Node2D(glm.vec2(x, y), vu=vu)
                     self.scene.attach(node)
 
             elif isinstance(layer, TiledObjectGroup):
@@ -88,7 +88,7 @@ class TiledDemo(Demo):
                         x = obj.x
                         y = pixel_height - obj.y
                         path = image[0]
-                        atlas = TextureLoader().load(path)
+                        atlas = ImageTextureLoader().load(path)
                         #logger.debug(f"atlas: {atlas}")
 
                         rect = image[1]
@@ -102,9 +102,9 @@ class TiledDemo(Demo):
                             #logger.debug(f"texture: {texture}")
                         else:
                             texture = atlas
-                        material = SpriteMaterial(texture)
-                        sprite = Sprite(material).create()
-                        node = Node2D(glm.vec2(x, y), vu=sprite)
+                        sprite = Sprite(texture)
+                        vu = SpriteVu(sprite).create()
+                        node = Node2D(glm.vec2(x, y), vu=vu)
                         self.scene.attach(node)
 
                     # draw a rect for everything else

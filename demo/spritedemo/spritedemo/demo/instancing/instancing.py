@@ -7,11 +7,11 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
-from crunge.engine.d2.sprite.group.instanced_sprite_group import InstancedSpriteGroup
+from crunge.engine.d2.sprite import Sprite, SpriteVu
+from crunge.engine.d2.sprite.group.instanced_sprite_vu_group import InstancedSpriteVuGroup
 
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 from crunge.engine.color import Color
 
 INITIAL_SCALE = 0.5
@@ -20,9 +20,9 @@ class InstancingDemo(Demo):
     def __init__(self):
         super().__init__()
         self.nodes: list[Node2D] = []
-        texture = TextureLoader().load(":images:/playerShip1_orange.png")
+        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         self.color = tuple(Color.WHITE.value)
-        self.material = SpriteMaterial(texture, color=glm.vec4(self.color))
+        self.sprite = Sprite(texture, color=glm.vec4(self.color))
         self.reset()
 
     def kill(self):
@@ -31,7 +31,7 @@ class InstancingDemo(Demo):
         self.nodes.clear()
         
     def reset(self):
-        self.render_group = InstancedSpriteGroup(1024)
+        self.sprite_vu_group = InstancedSpriteVuGroup(1024)
 
         self.angle = 0
         self.scale = INITIAL_SCALE
@@ -50,10 +50,8 @@ class InstancingDemo(Demo):
 
         for row in range(grid_size):
             for col in range(grid_size):
-                #texture = TextureLoader().load(":images:/playerShip1_orange.png")
-                #material = SpriteMaterial(texture, color=glm.vec4(self.color))
-                sprite = Sprite(self.material).config(group=self.render_group).create()
-                node = Node2D(vu=sprite).config(scale=glm.vec2(self.scale, self.scale))
+                vu = SpriteVu(self.sprite).config(group=self.sprite_vu_group).create()
+                node = Node2D(vu=vu).config(scale=glm.vec2(self.scale, self.scale))
                 
                 # Calculate position based on grid and spacing
                 x = col * spacing - (grid_size * spacing) / 2 + self.width / 2
@@ -75,25 +73,18 @@ class InstancingDemo(Demo):
             self.angle,
         )
         if changed:
-            #self.node.angle = self.angle
             for node in self.nodes:
                 node.angle = self.angle
 
         # Scale
         changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
         if changed:
-            #self.node.scale = glm.vec2(self.scale, self.scale)
             for node in self.nodes:
                 node.scale = glm.vec2(self.scale, self.scale)
 
         changed, self.color = imgui.color_edit4("Tint", self.color)
         if changed:
-            #self.sprite.material.color = glm.vec4(self.color)
-            self.material.color = glm.vec4(self.color)
-            '''
-            for node in self.nodes:
-                node.vu.material.color = glm.vec4(self.color)
-            '''
+            self.sprite.color = glm.vec4(self.color)
 
         if imgui.button("Reset"):
             self.reset()
@@ -106,7 +97,7 @@ class InstancingDemo(Demo):
         super().draw(renderer)
 
         with self.view.renderer as renderer:
-            self.render_group.draw(renderer)
+            self.sprite_vu_group.draw(renderer)
 
 
 def main():

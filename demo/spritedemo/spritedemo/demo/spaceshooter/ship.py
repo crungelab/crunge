@@ -3,9 +3,9 @@ import math
 from loguru import logger
 import glm
 
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
+from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.xml_texture_atlas_loader import XmlTextureAtlasLoader
+from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
 from ...model_2d import DynamicModel2D
 from ...geom import BallGeom
@@ -37,15 +37,14 @@ class Thruster(Node2D):
 
 class Ship(DynamicModel2D):
     def __init__(self, position: glm.vec2) -> None:
-        super().__init__(position, geom=BallGeom)
-        atlas = XmlTextureAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
-        texture = atlas.get("playerShip1_orange.png")
-        material = SpriteMaterial(texture)
+        sprite = atlas.get("playerShip1_orange.png")
 
-        self.vu = Sprite(material).create()
-        self.size = texture.size
+        vu = SpriteVu(sprite).create()
+
+        super().__init__(position, vu=vu, geom=BallGeom)
 
         self.rear_thruster: Thruster = None
         self.front_thruster: Thruster = None

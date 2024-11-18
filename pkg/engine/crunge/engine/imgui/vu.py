@@ -18,7 +18,7 @@ from crunge import imgui
 from ..math import Rect2i
 from ..renderer import Renderer
 from ..resource.resource_manager import ResourceManager
-from ..resource.texture import Texture
+from ..resource.texture import Texture2D
 from ..resource.sampler import DefaultSampler
 from ..vu import Vu
 
@@ -98,7 +98,7 @@ class ImGuiVu(Vu):
     def __init__(self) -> None:
         super().__init__()
         self.io = imgui.get_io()
-        self.texture: Texture = None
+        self.texture: Texture2D = None
         self.sampler = DefaultSampler()
         self.image_bind_groups = {}
 
@@ -113,13 +113,6 @@ class ImGuiVu(Vu):
 
     def refresh_font_texture(self):
         self.create_textures()
-        '''
-        width, height, pixels = self.io.fonts.get_tex_data_as_rgba32()
-        # Old font texture will be GCed if exist
-        self._font_texture = self._ctx.texture((width, height), components=4, data=pixels)
-        self.io.fonts.texture_id = self._font_texture.glo
-        self.io.fonts.clear_tex_data()
-        '''
 
     def create_buffers(self):
         logger.debug("create_buffers")
@@ -156,39 +149,9 @@ class ImGuiVu(Vu):
             mip_level_count=1,
             usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
         )
-        #self.texture = self.device.create_texture(texture_desc)
         wgpu_texture = self.device.create_texture(texture_desc)
-        self.texture = Texture(wgpu_texture, Rect2i(0, 0, width, height))
+        self.texture = Texture2D(wgpu_texture, glm.ivec2(width, height))
         ResourceManager().add(self.texture)
-
-        '''
-        texture_view_desc = wgpu.TextureViewDescriptor(
-            format=wgpu.TextureFormat.RGBA8_UNORM,
-            dimension=wgpu.TextureViewDimension.E2D,
-            base_mip_level=0,
-            mip_level_count=1,
-            base_array_layer=0,
-            array_layer_count=1,
-            aspect=wgpu.TextureAspect.ALL,
-        )
-
-        wgpu_texture_view = wgpu_texture.create_view(texture_view_desc)
-        self.texture.view = wgpu_texture_view
-        '''
-
-        '''
-        sampler_desc = wgpu.SamplerDescriptor(
-            min_filter=wgpu.FilterMode.LINEAR,
-            mag_filter=wgpu.FilterMode.LINEAR,
-            mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
-            address_mode_u=wgpu.AddressMode.REPEAT,
-            address_mode_v=wgpu.AddressMode.REPEAT,
-            address_mode_w=wgpu.AddressMode.REPEAT,
-            max_anisotropy=1,
-        )
-
-        self.sampler = self.device.create_sampler(sampler_desc)
-        '''
 
         #self.sampler = self.device.create_sampler()
 

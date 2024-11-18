@@ -1,29 +1,16 @@
 import glm
 
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
-from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.d2.sprite import Sprite, SpriteVu
+from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
 from ...model_2d import DynamicModel2D
 from ...geom import BoxGeom
 
+
 class Box(DynamicModel2D):
     def __init__(self, position: glm.vec2) -> None:
-        texture = TextureLoader().load(":images:/boxCrate.png")
-        material = SpriteMaterial(texture)
-        vu = Sprite(material).create()
-        super().__init__(geom=BoxGeom, vu=vu)
-        #self.vu = Sprite(material).create()
-        self.position = position
-        self.size = glm.vec2(texture.size.x, texture.size.y) * .25
-        self.scale = glm.vec2(.25, .25)
-'''
-class Box(DynamicModel2D):
-    def __init__(self, position: glm.vec2) -> None:
-        super().__init__(geom=BoxGeom)
-        texture = TextureLoader().load(":images:/boxCrate.png")
-        material = SpriteMaterial(texture)
-        self.vu = Sprite(material).create()
-        self.position = position
-        self.size = glm.vec2(texture.size.x, texture.size.y) * .25
-        self.scale = glm.vec2(.25, .25)
-'''
+        texture = ImageTextureLoader().load(":images:/boxCrate.png")
+        sprite = Sprite(texture)
+        vu = SpriteVu(sprite).create()
+        scale = glm.vec2(.25, .25)
+        super().__init__(position, scale=scale, vu=vu, geom=BoxGeom)

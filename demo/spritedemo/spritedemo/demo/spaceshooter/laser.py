@@ -3,8 +3,8 @@ import math
 from loguru import logger
 import glm
 
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
-from crunge.engine.loader.xml_texture_atlas_loader import XmlTextureAtlasLoader
+from crunge.engine.d2.sprite import Sprite, SpriteVu
+from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
 from ...model_2d import DynamicModel2D
 from ...geom import BoxGeom
@@ -15,14 +15,13 @@ class Laser(DynamicModel2D):
         super().__init__(position, geom=BoxGeom)
         self.angle = angle
         self.speed = speed
-        atlas = XmlTextureAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
-        texture = atlas.get("laserBlue01.png")
-        material = SpriteMaterial(texture)
+        sprite = atlas.get("laserBlue01.png")
 
-        self.vu = Sprite(material).create()
-        self.size = texture.size
+        self.vu = SpriteVu(sprite).create()
+        #self.size = glm.vec2(sprite.size)
         self.ttl = 0.5
 
     def add_shape(self, shape):

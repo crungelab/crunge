@@ -7,6 +7,7 @@ from pymunk.vec2d import Vec2d
 
 from ..constants import *
 from . import Physics, PhysicsMeta, PhysicsEngine
+from .draw_options import DrawOptions
 
 class DynamicPhysics(Physics, metaclass=PhysicsMeta):
     def __init__(self):
@@ -36,5 +37,5 @@ class DynamicPhysics(Physics, metaclass=PhysicsMeta):
         return body
 
 class DynamicPhysicsEngine(PhysicsEngine):
-    def __init__(self, gravity=GRAVITY, iterations=35):
-        super().__init__(gravity=gravity, iterations=iterations)
+    def __init__(self, gravity=GRAVITY, iterations=35, draw_options: DrawOptions = None):
+        super().__init__(gravity=gravity, iterations=iterations, draw_options=draw_options)

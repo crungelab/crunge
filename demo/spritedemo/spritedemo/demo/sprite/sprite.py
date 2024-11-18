@@ -7,9 +7,9 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
+from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 from crunge.engine.color import Color
 
 
@@ -30,10 +30,10 @@ class SpriteDemo(Demo):
 
         self.scene.clear()
 
-        texture = TextureLoader().load(":images:/playerShip1_orange.png")
-        material = SpriteMaterial(texture, color=glm.vec4(self.color))
-        sprite = self.sprite = Sprite(material).create()
-        node = self.node = Node2D(vu=sprite)
+        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
+        sprite = self.sprite = Sprite(texture, color=glm.vec4(self.color))
+        vu = SpriteVu(sprite).create()
+        node = self.node = Node2D(vu=vu)
         x = self.width / 2
         y = self.height / 2
         node.position = glm.vec2(x, y)
@@ -63,7 +63,7 @@ class SpriteDemo(Demo):
 
         changed, self.color = imgui.color_edit4("Tint", self.color)
         if changed:
-            self.sprite.material.color = glm.vec4(self.color)
+            self.sprite.color = glm.vec4(self.color)
 
         if imgui.button("Reset"):
             self.reset()

@@ -10,8 +10,7 @@ from .uniforms_2d import (
     MaterialUniform,
 )
 
-from ..resource.material import Material
-from ..resource.texture import Texture
+from ..resource import Material, Texture
 
 from .sprite.sprite_sampler import SpriteSampler
 from .sprite.sprite_program import SpriteProgram

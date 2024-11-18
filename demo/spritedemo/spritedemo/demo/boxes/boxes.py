@@ -18,7 +18,7 @@ class BoxesDemo(Demo):
 
     def reset(self):
         self.scene.clear()
-        self.last_mouse = glm.vec2(0, 0)
+        self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine()
         self.physics_engine.create()
         self.create_floor()
@@ -47,9 +47,9 @@ class BoxesDemo(Demo):
         x = self.width / 2
         y = -10
         position = glm.vec2(x, y)
-        box = Floor(position, glm.vec2(self.width, 20))
-        box.create()
-        self.scene.attach(box)
+        floor = Floor(position, glm.vec2(self.width, 20))
+        floor.create()
+        self.scene.attach(floor)
 
     def draw(self, renderer: Renderer):
         imgui.begin("Boxes Demo")

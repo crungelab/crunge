@@ -7,9 +7,9 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine.d2.sprite import Sprite, SpriteMaterial
+from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
 
 class SpritesDemo(Demo):
@@ -21,10 +21,10 @@ class SpritesDemo(Demo):
         self.color_enabled = True
         self.color = 1, 1, 1
         # Ship1
-        texture = TextureLoader().load(":images:/playerShip1_orange.png")
-        material = SpriteMaterial(texture)
-        sprite = self.sprite = Sprite(material).create()
-        node = self.node = Node2D(vu=sprite)
+        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
+        sprite = Sprite(texture)
+        vu = SpriteVu(sprite).create()
+        node = self.node = Node2D(vu=vu)
         x = self.width / 4
         y = self.height / 4
         node.position = glm.vec2(x, y)
@@ -34,10 +34,10 @@ class SpritesDemo(Demo):
         self.scene.attach(self.node)
 
         # Ship2
-        texture = TextureLoader().load(":images:/playerShip1_blue.png")
-        material = SpriteMaterial(texture)
-        sprite = self.sprite = Sprite(material).create()
-        node = self.node = Node2D(vu=sprite)
+        texture = ImageTextureLoader().load(":images:/playerShip1_blue.png")
+        sprite = Sprite(texture)
+        vu = SpriteVu(sprite).create()
+        node = self.node = Node2D(vu=vu)
         x = self.width / 2
         y = self.height / 2
         node.position = glm.vec2(x, y)
@@ -70,31 +70,13 @@ class SpritesDemo(Demo):
         changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
         self.node.scale = glm.vec2(self.scale, self.scale)
 
-        #TODO: Implement alpha and color
-        '''
-        # Alpha
-        changed, self.alpha = imgui.drag_int("Alpha", self.alpha, 1, 0, 255)
-        self.sprite.alpha = self.alpha
-
-        # Color
-        _, self.color_enabled = imgui.checkbox("Tint", self.color_enabled)
-        if self.color_enabled:
-            changed, self.color = imgui.color_edit3("Color", *self.color)
-            self.sprite.color = (
-                int(self.color[0] * 255),
-                int(self.color[1] * 255),
-                int(self.color[2] * 255),
-            )
-        else:
-            self.sprite.color = 255, 255, 255
-        '''
-
         if imgui.button("Reset"):
             self.reset()
 
         imgui.end()
 
         super().draw(renderer)
+
 
 def main():
     SpritesDemo().create().run()

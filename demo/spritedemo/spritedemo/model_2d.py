@@ -119,7 +119,7 @@ class PhysicsModel2D(Model2D):
     def create_body(self, offset=None):
         return self.physics.create_body(self, offset)
 
-    def create_shapes(self, transform=None):
+    def create_shapes(self):
         return self.geom.create_shapes(self)
 
     def add_shapes(self):
@@ -147,13 +147,18 @@ class PhysicsModel2D(Model2D):
 
     def create_geom_transform(self):
         vu = self.vu
-        if not vu:
+        if vu is None:
+            print("No vu")
             return None
         # a = sprite.width / sprite.texture.width
-        a = self.width / vu.width
+        #a = self.width * self.scale.x
+        a = self.scale.x
         # d = sprite.height / sprite.texture.height
-        d = self.height / vu.height
+        #d = self.height / vu.height
+        #d = self.height * self.scale.y
+        d = self.scale.y
         t = pymunk.Transform(a=a, d=d)
+        logger.debug(f"t: {t}")
         return t
 
 

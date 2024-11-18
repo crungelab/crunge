@@ -14,22 +14,32 @@ from loguru import logger
 import numpy as np
 import glm
 
-from crunge.core import klass
+#from crunge.core import klass
 from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ..renderer import Renderer
 from ..uniforms import cast_matrix4, cast_vec4
-from ..resource.bind_group_layout import BindGroupLayout
+#from ..resource.bind_group_layout import BindGroupLayout
 
 from .vu_2d import Vu2D
 from .uniforms_2d import (
     ModelUniform,
     MaterialUniform,
 )
-from .program_2d import Program2D
+#from .program_2d import Program2D
 
+from .line_program_2d import LineProgram2D
+
+# Define the structured dtype for the combined data
+vertex_dtype = np.dtype(
+    [
+        ("position", np.float32, (2,)),  # Points (x, y)
+    ]
+)
+
+'''
 shader_code = """
 struct Camera {
     projection : mat4x4<f32>,
@@ -77,8 +87,9 @@ vertex_dtype = np.dtype(
         ("position", np.float32, (2,)),  # Points (x, y)
     ]
 )
+'''
 
-
+'''
 @klass.singleton
 class MaterialBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
@@ -183,7 +194,7 @@ class LineProgram2D(Program2D):
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
-
+'''
 
 class Line2D(Vu2D):
     material_bind_group: wgpu.BindGroup = None
