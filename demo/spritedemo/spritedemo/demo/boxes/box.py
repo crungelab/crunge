@@ -3,7 +3,7 @@ import glm
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
-from crunge.engine.d2.physics_entity_2d import DynamicEntity2D
+from crunge.engine.d2.entity import DynamicEntity2D
 from crunge.engine.d2.physics.geom import BoxGeom
 
 

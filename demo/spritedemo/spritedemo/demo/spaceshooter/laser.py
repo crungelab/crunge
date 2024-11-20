@@ -6,7 +6,7 @@ import glm
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from crunge.engine.d2.physics_entity_2d import DynamicEntity2D
+from crunge.engine.d2.entity import DynamicEntity2D
 from crunge.engine.d2.physics.geom import BoxGeom
 
 from .collision_type import CollisionType

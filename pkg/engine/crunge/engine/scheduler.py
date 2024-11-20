@@ -73,27 +73,3 @@ class Scheduler:
                 else:
                     self.tasks.remove(task)
                     logger.debug(f"Removed one-time task {task.func.__name__}")
-
-'''
-# Example usage:
-if __name__ == "__main__":
-    scheduler = Scheduler()
-
-    def say_hello(delta_time: float) -> None:
-        print(f"Hello, world! Delta time since last call: {delta_time:.2f}s")
-
-    def say_goodbye(delta_time: float) -> None:
-        print(f"Goodbye, world! Delta time since last call: {delta_time:.2f}s")
-
-    # Schedule tasks
-    scheduler.schedule(say_hello, interval=5.0)    # Repeats every 5 seconds
-    scheduler.schedule_once(say_goodbye, delay=10.0)  # Executes once after 10 seconds
-
-    # Main loop
-    try:
-        while True:
-            scheduler.update()
-            time.sleep(1)  # Sleep to prevent high CPU usage
-    except KeyboardInterrupt:
-        print("Scheduler stopped.")
-'''

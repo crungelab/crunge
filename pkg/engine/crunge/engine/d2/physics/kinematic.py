@@ -5,6 +5,7 @@ from pymunk.vec2d import Vec2d
 
 from .constants import *
 from . import Physics, PhysicsMeta, PhysicsEngine
+from .draw_options import DrawOptions
 
 class KinematicPhysics(Physics, metaclass=PhysicsMeta):
     def __init__(self):
@@ -15,8 +16,8 @@ class KinematicPhysics(Physics, metaclass=PhysicsMeta):
 
     def create_body(self, model, offset=None):
         body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
-        body.model = model
-        body.position = model.position
+        body.node = model
+        body.position = tuple(model.position)
         body.angle = math.radians(model.angle)
         return body
 
@@ -39,14 +40,14 @@ class CollisionHandler:
 
     def separate(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
-        kshape.body.model.grounded = False
+        kshape.body.node.grounded = False
         pass
 
 class KinematicStaticHandler(CollisionHandler):
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
-        kbody.model.grounded = True
+        kbody.node.grounded = True
         velocity = kbody.velocity
         if velocity[1] < 0:
             velocity = Vec2d(velocity[0], 0)
@@ -61,7 +62,7 @@ class KinematicKinematicHandler(CollisionHandler):
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
-        kbody.model.grounded = True
+        kbody.node.grounded = True
         velocity = kbody.velocity
         if velocity[1] < 0:
             velocity = Vec2d(velocity[0], 0)
@@ -77,8 +78,8 @@ class KinematicDynamicHandler(CollisionHandler):
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
-        kmodel = kbody.model
-        kmodel.grounded = True
+        knode = kbody.node
+        knode.grounded = True
 
         velocity = kbody.velocity
         if velocity[1] < 0:
@@ -99,8 +100,8 @@ class KinematicDynamicHandler(CollisionHandler):
         return False
 
 class KinematicPhysicsEngine(PhysicsEngine):
-    def __init__(self, gravity=GRAVITY):
-        super().__init__(gravity)
+    def __init__(self, gravity=GRAVITY, draw_options: DrawOptions = None):
+        super().__init__(gravity, draw_options=draw_options)
     '''
     def _create(self):
         self.kinematic_static_handler = KinematicStaticHandler(self.space.add_collision_handler(PT_KINEMATIC, PT_STATIC))

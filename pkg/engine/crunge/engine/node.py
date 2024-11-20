@@ -19,10 +19,11 @@ class NodeListener(Generic[T_Node]):
         pass
 
 class Node(Dispatcher, Generic[T_Node]):
-    def __init__(self, vu: "Vu" = None) -> None:
+    def __init__(self, vu: "Vu" = None, model = None) -> None:
         super().__init__()
         #self.vu: T_Vu = vu
         self._vu: "Vu" = None
+        self.model = model
         self.parent: "Node[T_Node]" = None
         self.children: List["Node[T_Node]"] = []
         self.listeners: List[NodeListener[T_Node]] = []

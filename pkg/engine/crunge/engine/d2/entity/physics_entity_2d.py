@@ -6,13 +6,13 @@ import pymunk
 
 from crunge.engine.d2.vu_2d import Vu2D
 
-from .physics.constants import DEFAULT_MASS, GRAVITY, TILE_SCALING
-from .physics import globals
+from ..physics.constants import DEFAULT_MASS, GRAVITY, TILE_SCALING
+from ..physics import globe
 
 from .entity_2d import Entity2D
 
-from . import physics
-from .physics import geom
+from .. import physics
+from ..physics import geom
 
 
 class PhysicsEntity2D(Entity2D):
@@ -22,11 +22,12 @@ class PhysicsEntity2D(Entity2D):
         size=glm.vec2(1.0),
         scale=glm.vec2(1.0),
         vu: Vu2D = None,
+        model=None,
         brain=None,
         physics=physics.StaticPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, size, scale, vu, brain)
+        super().__init__(position, size, scale, vu, model, brain)
         self.body = None
         self.body_offset = None
         self.shapes = []
@@ -88,11 +89,11 @@ class PhysicsEntity2D(Entity2D):
         # logger.debug(f"shape: {shape}")
         # shape.collision_type = self.physics.kind
         # logger.debug(f"shape.collision_type: {shape.collision_type}")
-        globals.physics_engine.space.add(self.body, shape)
+        globe.physics_engine.space.add(self.body, shape)
 
     def remove_shapes(self):
         for shape in self.shapes:
-            globals.physics_engine.space.remove(self.body, shape)
+            globe.physics_engine.space.remove(self.body, shape)
 
     def get_tx_point(self, offset):
         body_pos = self.body.position
@@ -151,11 +152,12 @@ class StaticEntity2D(PhysicsEntity2D):
         size=glm.vec2(1.0),
         scale=glm.vec2(1.0),
         vu=None,
+        model=None,
         brain=None,
         physics=physics.StaticPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, size, scale, vu, brain, physics, geom)
+        super().__init__(position, size, scale, vu, model, brain, physics, geom)
 
 
 class DynamicEntity2D(PhysicsEntity2D):
@@ -165,11 +167,12 @@ class DynamicEntity2D(PhysicsEntity2D):
         size=glm.vec2(1.0),
         scale=glm.vec2(1.0),
         vu=None,
+        model=None,
         brain=None,
         physics=physics.DynamicPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, size, scale, vu, brain, physics, geom)
+        super().__init__(position, size, scale, vu, model, brain, physics, geom)
 
 
 class KinematicEntity2D(PhysicsEntity2D):
@@ -179,11 +182,18 @@ class KinematicEntity2D(PhysicsEntity2D):
         size=glm.vec2(1.0),
         scale=glm.vec2(1.0),
         vu=None,
+        model=None,
         brain=None,
         physics=physics.KinematicPhysics,
         geom=geom.HullGeom,
     ):
-        super().__init__(position, size, scale, vu, brain, physics, geom)
+        super().__init__(position, size, scale, vu, model, brain, physics, geom)
+        self.grounded = False
+        self.laddered = False
+        self.jumping = False
+        self.falling = False
+        self.mounted = False
+        self.punching = False
 
     def update(self, delta_time=1 / 60):
         super().update(delta_time)
@@ -201,5 +211,5 @@ class KinematicEntity2D(PhysicsEntity2D):
         # moment = pymunk.moment_for_poly(mass, points)
         self.body = body = pymunk.Body(mass, moment, body_type=pymunk.Body.KINEMATIC)
         body.position = position
-        body.model = self
+        body.node = self
         return body

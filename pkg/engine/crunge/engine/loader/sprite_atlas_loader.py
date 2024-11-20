@@ -8,14 +8,15 @@ from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
 from ..resource.texture.sprite_atlas import SpriteAtlas
 from ..d2.sprite import Sprite
-from ..builder.sprite import SpriteBuilder, SpriteAtlasBuilder
+from ..builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
 
 from .texture.texture_loader_base import TextureLoaderBase
 
 
 class SpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
-    def __init__(self) -> None:
+    def __init__(self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()) -> None:
         super().__init__()
+        self.sprite_builder = sprite_builder
 
     def load(
         self, path: Path, rectangles: list[Rect2i], name: str = None
@@ -34,20 +35,11 @@ class SpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
         atlas = SpriteAtlasBuilder().build(image)
         atlas.set_name(name).set_path(path)
 
-        '''
-        details = self.load_wgpu_texture([path])
-
-        atlas = (
-            SpriteAtlas(details.texture, glm.ivec2(details.width, details.height))
-            .set_name(name)
-            .set_path(path)
-        )
-        '''
-
         self.kit.add(atlas)
 
         for rectangle in rectangles:
-            sprite = Sprite(atlas, rectangle).set_name(name)
+            #sprite = Sprite(atlas, rectangle).set_name(name)
+            sprite = self.sprite_builder.build(atlas, rectangle)
             atlas.add(sprite)
 
         return atlas

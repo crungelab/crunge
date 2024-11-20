@@ -9,7 +9,7 @@ from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture
 from ..resource.texture.sprite_atlas import SpriteAtlas
 
-from ..builder.sprite import SpriteBuilder, SpriteAtlasBuilder
+from ..builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
 
 from ..d2.sprite import Sprite
 
@@ -17,8 +17,11 @@ from .texture.texture_loader_base import TextureLoaderBase
 
 
 class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
-    def __init__(self) -> None:
+    def __init__(
+        self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()
+    ) -> None:
         super().__init__()
+        self.sprite_builder = sprite_builder
 
     def load(self, path: Path, name: str = None) -> SpriteAtlas:
         path = ResourceManager().resolve_path(path)
@@ -53,18 +56,10 @@ class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
         # Create a new SpriteAtlas
         atlas = SpriteAtlasBuilder().build(image)
         atlas.set_name(name).set_path(path)
-        '''
-        details = self.load_wgpu_texture([image_path])
-        atlas = (
-            SpriteAtlas(details.texture, glm.ivec2(details.width, details.height))
-            .set_name(name)
-            .set_path(path)
-        )
-        '''
-        
+
         self.kit.add(atlas)
 
-        builder = SpriteBuilder()
+        #builder = CollidableSpriteBuilder()
 
         # Iterate over each SubTexture element
         for sub_texture in root.findall("SubTexture"):
@@ -75,12 +70,7 @@ class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
             width = sub_texture.get("width")
             height = sub_texture.get("height")
 
-            '''
-            sprite = Sprite(
-                atlas, Rect2i(int(x), int(y), int(width), int(height))
-            ).set_name(name)
-            '''
-            sprite = builder.build(
+            sprite = self.sprite_builder.build(
                 atlas, Rect2i(int(x), int(y), int(width), int(height))
             ).set_name(name)
 

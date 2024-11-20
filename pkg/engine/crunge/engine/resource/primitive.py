@@ -3,13 +3,11 @@ import numpy as np
 
 from crunge import wgpu
 
-from ..math.bounds3 import Bounds3
 from .resource import Resource
 
 class Primitive(Resource):
     def __init__(self) -> None:
         super().__init__()
-        self.bounds = Bounds3()
         self.pipeline: wgpu.RenderPipeline = None
         self.bind_group: wgpu.BindGroup = None
 

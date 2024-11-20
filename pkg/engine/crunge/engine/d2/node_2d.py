@@ -17,8 +17,9 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         size=glm.vec2(1.0),
         scale=glm.vec2(1.0),
         vu: "Vu2D" = None,
+        model=None,
     ) -> None:
-        super().__init__(vu)
+        super().__init__(vu, model)
         self._position = position
         self._depth = 0.0
         self._rotation = 0.0  # radians

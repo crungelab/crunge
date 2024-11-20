@@ -7,8 +7,8 @@ from .node import Node, T_Node
 T_Scene = TypeVar("T_Scene")
 
 class SceneNode(Node[T_Node], Generic[T_Node, T_Scene]):
-    def __init__(self, vu: Vu = None) -> None:
-        super().__init__(vu)
+    def __init__(self, vu: Vu = None, model=None) -> None:
+        super().__init__(vu, model)
         self.scene: T_Scene = None
 
     def attach(self, child: "SceneNode[T_Node]"):

@@ -24,7 +24,10 @@ class DrawOptions(pymunk.SpaceDebugDrawOptions):
 
     def draw_circle(self, pos, angle, radius, outline_color, fill_color):
         #pass
-        logger.debug(f"pos: {pos}, angle: {angle}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
+        #logger.debug(f"pos: {pos}, angle: {angle}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
+        outline_color = glm.vec4(outline_color.r, outline_color.g, outline_color.b, outline_color.a)
+        #self.scratch.draw_circle(pos, radius, outline_color, fill_color)
+        self.scratch.draw_circle(pos, radius, color=outline_color)
 
     def draw_segment(self, a, b, color):
         self.scratch.draw_line(a, b, color)

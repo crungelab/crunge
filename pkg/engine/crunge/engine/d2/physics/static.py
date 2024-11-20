@@ -15,10 +15,10 @@ class StaticPhysics(Physics, metaclass=PhysicsMeta):
     def update(self, model, delta_time=1/60.0):
         pass
 
-    def create_body(self, model, offset=None):
+    def create_body(self, node, offset=None):
         body = pymunk.Body(body_type=pymunk.Body.STATIC)
-        body.model = model
-        position = model.position
+        body.node = node
+        position = node.position
         body.position = pymunk.Vec2d(position.x, position.y)
-        body.angle = math.radians(model.angle)
+        body.angle = math.radians(node.angle)
         return body

@@ -19,8 +19,8 @@ class BallsDemo(Demo):
     def reset(self):
         self.scene.clear()
         self.last_mouse = glm.vec2()
-        self.physics_engine = DynamicPhysicsEngine()
-        self.physics_engine.create()
+        self.physics_engine = DynamicPhysicsEngine().create()
+        #self.physics_engine.create()
         self.create_floor()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):

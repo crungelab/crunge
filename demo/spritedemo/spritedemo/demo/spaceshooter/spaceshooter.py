@@ -37,21 +37,21 @@ class SpaceShooter(Demo):
         
         def laser_asteroid_collision(arbiter, space, data):
             laser_shape, asteroid_shape = arbiter.shapes
-            laser_model = laser_shape.body.model
-            asteroid_model = asteroid_shape.body.model
-            laser_model.destroy()
-            asteroid_model.destroy()
-            explosion = Explosion(asteroid_model.position, glm.vec2(100, 100))
+            laser_node = laser_shape.body.node
+            asteroid_node = asteroid_shape.body.node
+            laser_node.destroy()
+            asteroid_node.destroy()
+            explosion = Explosion(asteroid_node.position, glm.vec2(100, 100))
             self.scene.attach(explosion)
             return False
 
         def ship_asteroid_collision(arbiter, space, data):
             ship_shape, asteroid_shape = arbiter.shapes
-            ship_model = ship_shape.body.model
-            asteroid_model = asteroid_shape.body.model
-            ship_model.destroy()
-            asteroid_model.destroy()
-            explosion = Explosion(asteroid_model.position, glm.vec2(100, 100), glm.vec4(1.0, 0.0, 0.0, 1.0))
+            ship_node = ship_shape.body.node
+            asteroid_node = asteroid_shape.body.node
+            ship_node.destroy()
+            asteroid_node.destroy()
+            explosion = Explosion(asteroid_node.position, glm.vec2(100, 100), glm.vec4(1.0, 0.0, 0.0, 1.0))
             self.scene.attach(explosion)
             return False
 

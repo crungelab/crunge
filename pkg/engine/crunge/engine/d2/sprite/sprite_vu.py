@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 
 
 class SpriteVu(Vu2D):
-    # def __init__(self, material: SpriteMaterial) -> None:
     def __init__(self, sprite: Sprite = None) -> None:
         super().__init__()
         self.sprite = sprite
@@ -54,20 +53,14 @@ class SpriteVu(Vu2D):
 
     @property
     def size(self) -> glm.vec2:
-        # return self.texture.size
-        #return glm.vec2(self.width, self.height)
         return glm.vec2(self.sprite.size)
 
     @property
     def width(self) -> float:
-        #return self.sprite.texture.width
-        #return self.sprite.width
         return self.size.x
 
     @property
     def height(self) -> float:
-        #return self.sprite.texture.height
-        #return self.sprite.height
         return self.size.y
 
     def _create(self):

@@ -3,7 +3,7 @@ import pymunk
 
 from crunge.engine import Base
 
-from . import globals
+from . import globe
 
 from .constants import GRAVITY
 
@@ -16,7 +16,7 @@ class PhysicsEngine(Base):
     ):
         super().__init__()
         logger.debug("PhysicsEngine.__init__")
-        globals.physics_engine = self
+        globe.physics_engine = self
         self.gravity = gravity
         self.space = pymunk.Space()
         self.space.gravity = gravity

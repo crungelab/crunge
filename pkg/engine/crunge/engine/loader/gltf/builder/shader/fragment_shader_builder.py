@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge import wgpu
 
-from crunge.engine.resource.cube_texture import CubeTexture
+from crunge.engine.resource.texture.cube_texture import CubeTexture
 from .....resource.material import Material
 
 from ..vertex_table import VertexTable

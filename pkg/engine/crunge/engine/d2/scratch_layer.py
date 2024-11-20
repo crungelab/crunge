@@ -6,6 +6,7 @@ from ..view_layer import ViewLayer
 from .vu_2d import Vu2D
 from .shape.line_2d import Line2D
 from .shape.polygon_2d import Polygon2D
+from .shape.circle_2d import Circle2D
 
 from ..color import Color
 
@@ -39,6 +40,10 @@ class ScratchLayer(ViewLayer):
         polygon = Polygon2D(points, color)
         self.add_vu(polygon)
     
+    def draw_circle(self, center: glm.vec2, radius: float, segments: int = 32, color=Color.WHITE):
+        circle = Circle2D(center, radius, segments, color)
+        self.add_vu(circle)
+
     def draw(self, renderer: Renderer):
         # logger.debug("DemoView.draw()")
         for vu in self.vu_list:

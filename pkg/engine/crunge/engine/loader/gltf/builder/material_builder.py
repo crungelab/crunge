@@ -14,7 +14,7 @@ from crunge.engine.math import Rect2i
 #from crunge.engine.resource.material import Material
 from crunge.engine.d3.material_3d import Material3D
 from crunge.engine.resource.texture import Texture
-from crunge.engine.resource.cube_texture import CubeTexture
+from crunge.engine.resource.texture.cube_texture import CubeTexture
 
 from crunge.engine.loader.texture.texture_2d_loader import Texture2DLoader
 from crunge.engine.loader.texture.cube_texture_loader import CubeTextureLoader

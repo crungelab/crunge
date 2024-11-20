@@ -1,6 +1,6 @@
 import glm
 
-from crunge.engine.d2.physics_entity_2d import StaticEntity2D
+from crunge.engine.d2.entity import StaticEntity2D
 from crunge.engine.d2.physics.geom import BoxGeom
 
 class Floor(StaticEntity2D):

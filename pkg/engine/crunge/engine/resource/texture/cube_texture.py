@@ -1,4 +1,4 @@
-from .texture import Texture
+from . import Texture
 
 
 class CubeTexture(Texture):

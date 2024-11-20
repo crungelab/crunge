@@ -8,7 +8,7 @@ from crunge.engine.math import Rect2i
 
 from .texture_loader_base import TextureLoaderBase
 
-from ...resource.cube_texture import CubeTexture
+from ...resource.texture.cube_texture import CubeTexture
 
 
 class CubeTextureLoader(TextureLoaderBase):

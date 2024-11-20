@@ -33,17 +33,3 @@ def compute_normals(indices, vertices):
         normals[i] = glm.normalize(glm.vec3(*normals[i]))
 
     return normals
-
-"""
-# Example usage
-indices = [0, 1, 2, 2, 3, 0]  # Indices for two triangles
-vertices = [
-    [0.0, 0.0, 0.0],  # Vertex 0
-    [1.0, 0.0, 0.0],  # Vertex 1
-    [1.0, 1.0, 0.0],  # Vertex 2
-    [0.0, 1.0, 0.0]   # Vertex 3
-]
-
-normals = compute_normals(indices, vertices)
-print("Normals:", normals)
-"""

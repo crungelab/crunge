@@ -1,4 +1,4 @@
-from .geom import Geom, BoxGeom, BallGeom
+from .geom import Geom, BoxGeom, BallGeom, HullGeom, DecomposedGeom
 from .physics import Physics, PhysicsMeta, GroupPhysics
 from .engine import PhysicsEngine
 from .static import StaticPhysics

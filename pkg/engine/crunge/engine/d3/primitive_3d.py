@@ -3,6 +3,7 @@ import numpy as np
 
 from crunge import wgpu
 
+from ..math.bounds3 import Bounds3
 from ..renderer import Renderer
 from ..resource.primitive import Primitive
 
@@ -20,6 +21,7 @@ class Primitive3DProgram(Program3D):
 class Primitive3D(Primitive):
     def __init__(self) -> None:
         super().__init__()
+        self.bounds = Bounds3()
         self.program: Primitive3DProgram = None
         self.material: Material3D = None
 
