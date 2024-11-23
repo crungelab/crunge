@@ -138,7 +138,7 @@ class HullGeom(PolyGeom):
             return shapes
 
         points = node.model.points.tolist()
-
+        #logger.debug(f"points: {points}")
         points = to_convex_hull(points, SLOP)
 
         shape = pymunk.Poly(body, points, transform)

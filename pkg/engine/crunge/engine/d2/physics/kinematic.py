@@ -1,5 +1,6 @@
 import math
 
+from loguru import logger
 import pymunk
 from pymunk.vec2d import Vec2d
 
@@ -14,11 +15,12 @@ class KinematicPhysics(Physics, metaclass=PhysicsMeta):
     def update(self, model, delta_time=1/60.0):
         pass
 
-    def create_body(self, model, offset=None):
+    def create_body(self, node, offset=None):
+        logger.debug(f"KinematicPhysics.create_body: {node}")
         body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
-        body.node = model
-        body.position = tuple(model.position)
-        body.angle = math.radians(model.angle)
+        body.node = node
+        body.position = tuple(node.position)
+        body.angle = math.radians(node.angle)
         return body
 
 class CollisionHandler:
@@ -102,9 +104,9 @@ class KinematicDynamicHandler(CollisionHandler):
 class KinematicPhysicsEngine(PhysicsEngine):
     def __init__(self, gravity=GRAVITY, draw_options: DrawOptions = None):
         super().__init__(gravity, draw_options=draw_options)
-    '''
+
     def _create(self):
+        super()._create()
         self.kinematic_static_handler = KinematicStaticHandler(self.space.add_collision_handler(PT_KINEMATIC, PT_STATIC))
         self.kinematic_static_handler = KinematicKinematicHandler(self.space.add_collision_handler(PT_KINEMATIC, PT_KINEMATIC))
         self.kinematic_dynamic_handler = KinematicDynamicHandler(self.space.add_collision_handler(PT_KINEMATIC, PT_DYNAMIC))
-    '''
