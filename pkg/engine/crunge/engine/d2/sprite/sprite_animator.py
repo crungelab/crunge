@@ -33,10 +33,3 @@ class SpriteAnimator:
             self.current_animation.update(dt)
             if self.current_animation.playing:
                 self.node.model = self.current_animation.frames[self.current_animation.current_frame].sprite
-        '''
-        for animation in self.animations.values():
-            animation.update(dt)
-            if animation.playing:
-                self.node.model = animation.frames[animation.current_frame].sprite
-                break
-        '''

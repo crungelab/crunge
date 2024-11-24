@@ -18,8 +18,20 @@ class Entity2D(Node2D):
     ):
         super().__init__(position, size, scale, vu, model)
         self.layer = None
-        self.brain = brain
+        self._brain = None
+        if brain is not None:
+            self.brain = brain
         #logger.debug(f"Entity2D: {self}")
+
+    @property
+    def brain(self):
+        return self._brain
+    
+    @brain.setter
+    def brain(self, value):
+        self._brain = value
+        self._brain.node = self
+        value.enable()
 
     def _create(self):
         super()._create()

@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
-from ..math import Rect2, Bounds2
+from ..math import Bounds2
 from ..scene_node import SceneNode
 
 class Node2D(SceneNode["Node2D", "Scene2D"]):
@@ -26,11 +26,16 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._size = size
         self._scale = scale
         self._matrix = glm.mat4(1.0)
-        #self.aabb = Rect2(0, 0, 0, 0)
         self.bounds = Bounds2()
+        self.velocity = glm.vec2(0.0)
+        self.angular_velocity = 0.0 # radians per second
 
+        '''
         if vu is not None:
             self._size = vu.size
+        '''
+        if model is not None:
+            self._size = model.size
 
         self.update_matrix()
 
@@ -127,7 +132,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @matrix.setter
     def matrix(self, value):
         self._matrix = value
-        self.on_transform()
+        if self.enabled:
+            self.on_transform()
 
     @property
     def transform(self) -> glm.mat4:
