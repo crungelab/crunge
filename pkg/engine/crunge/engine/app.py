@@ -12,18 +12,11 @@ class App(Window):
     def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
         super().__init__(size, title, view=view, resizable=resizable)
         self.running = False
-        #self.callbacks = []
 
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
         logger.debug(f"SDL_Init: {success}")
         super().create_window()
-
-    '''
-    def schedule_once(self, callback, delay = 0):
-        # self.callbacks.append((callback, delay))
-        self.callbacks.append(callback)
-    '''
 
     def quit(self):
         self.running = False
@@ -57,9 +50,9 @@ class App(Window):
             # Update last_time for the next frame, considering the sleep
             last_time = time.perf_counter()
 
-            self.frame()
-            
             self.update(frame_time)
+
+            self.frame()
 
         sdl.stop_text_input(self.window)
         #self.device.destroy()
@@ -68,12 +61,3 @@ class App(Window):
     def update(self, delta_time: float):
         Scheduler().update(delta_time)
         super().update(delta_time)
-
-    '''
-    def update(self, delta_time: float):
-        for callback in self.callbacks:
-            callback(frame_time)
-        self.callbacks.clear()
-
-        super().update(delta_time)
-    '''

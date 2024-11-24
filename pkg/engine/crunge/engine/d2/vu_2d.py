@@ -29,7 +29,7 @@ class Vu2D(Vu[Node2D]):
     def size(self) -> glm.vec2:
         raise NotImplementedError
 
-    def on_node_transform(self, node: Node2D) -> None:
+    def on_node_transform_change(self, node: Node2D) -> None:
         matrix = glm.mat4(1.0)  # Identity matrix
         #matrix = glm.translate(matrix, glm.vec3(x, y, z))
         #matrix = glm.rotate(matrix, self._rotation, glm.vec3(0, 0, 1))

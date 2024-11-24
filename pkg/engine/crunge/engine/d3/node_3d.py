@@ -76,7 +76,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         self.gpu_update_model()
 
         for listener in self.listeners:
-            listener.on_node_transform(self)
+            listener.on_node_transform_change(self)
 
     def gpu_update_model(self):
         pass

@@ -3,14 +3,14 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from ..math import Rect2i
-from ..resource.resource_manager import ResourceManager
-from ..resource.texture import Texture
-from ..resource.texture.sprite_atlas import SpriteAtlas
-from ..d2.sprite import Sprite
-from ..builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
+from ...math import Rect2i
+from ...resource.resource_manager import ResourceManager
+from ...resource.texture import Texture
+from ...resource.texture.sprite_atlas import SpriteAtlas
+from ...d2.sprite import Sprite
+from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
 
-from .texture.texture_loader_base import TextureLoaderBase
+from ..texture.texture_loader_base import TextureLoaderBase
 
 
 class SpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):

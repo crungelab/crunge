@@ -9,6 +9,7 @@ from ...uniforms import cast_matrix4
 from ...renderer import Renderer
 from ...buffer import UniformBuffer
 
+from ..node_2d import Node2D
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
@@ -27,19 +28,13 @@ class SpriteVu(Vu2D):
         self.sprite = sprite
 
         self.bind_group: wgpu.BindGroup = None
-        # self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
         self.buffer: UniformBuffer[ModelUniform] = None
-        # logger.debug(f"Model Uniform Buffer: {self.model_uniform_buffer}")
         self._buffer_index = 0
 
         # self.program = SpriteProgram()
         self.program: SpriteProgram = None
         self.group: "SpriteVuGroup" = None
-        """
-        self.create_program()
-        self.create_buffer()
-        self.create_bind_group()
-        """
+
         self.manual_draw = True
 
     @property
@@ -62,6 +57,10 @@ class SpriteVu(Vu2D):
     @property
     def height(self) -> float:
         return self.size.y
+
+    def on_node_model_change(self, node: Node2D) -> None:
+        super().on_node_model_change(node)
+        self.sprite = node.model
 
     def _create(self):
         super()._create()

@@ -9,7 +9,8 @@ from crunge.engine import Renderer
 from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+#from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.color import Color
 
 
@@ -25,15 +26,22 @@ class SpriteDemo(Demo):
     def reset(self):
         self.angle = 0
         self.scale = 1.0
-        #self.color = 1.0, 1.0, 1.0, 1.0
         self.color = tuple(Color.WHITE.value)
 
         self.scene.clear()
 
-        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
-        sprite = self.sprite = Sprite(texture, color=glm.vec4(self.color))
+        #texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
+        #sprite = self.sprite = Sprite(texture, color=glm.vec4(self.color))
+        sprite = self.sprite = SpriteLoader().load(":images:/playerShip1_orange.png")
+
+        #vu = SpriteVu().create()
+        vu = SpriteVu()
+        node = self.node = Node2D(vu=vu, model=sprite)
+
+        '''
         vu = SpriteVu(sprite).create()
         node = self.node = Node2D(vu=vu)
+        '''
         x = self.width / 2
         y = self.height / 2
         node.position = glm.vec2(x, y)

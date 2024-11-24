@@ -5,7 +5,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge.engine import Renderer
 
-from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
+from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.d2.physics import DynamicPhysicsEngine
 from crunge.engine.d2.physics.draw_options import DrawOptions

@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
 
 if TYPE_CHECKING:
     from .vu import Vu
+    from .model import Model
 
 from .dispatcher import Dispatcher
 from .renderer import Renderer
@@ -15,7 +16,10 @@ class NodeListener(Generic[T_Node]):
     def on_node_detached(self, node: "Node[T_Node]") -> None:
         pass
 
-    def on_node_transform(self, node: "Node[T_Node]") -> None:
+    def on_node_transform_change(self, node: "Node[T_Node]") -> None:
+        pass
+
+    def on_node_model_change(self, node: "Node[T_Node]") -> None:
         pass
 
 class Node(Dispatcher, Generic[T_Node]):
@@ -23,12 +27,13 @@ class Node(Dispatcher, Generic[T_Node]):
         super().__init__()
         #self.vu: T_Vu = vu
         self._vu: "Vu" = None
-        self.model = model
+        self._model: "Model" = None
         self.parent: "Node[T_Node]" = None
         self.children: List["Node[T_Node]"] = []
         self.listeners: List[NodeListener[T_Node]] = []
 
         self.vu = vu
+        self.model = model
 
     @property
     def vu(self) -> "Vu":
@@ -37,8 +42,22 @@ class Node(Dispatcher, Generic[T_Node]):
     @vu.setter
     def vu(self, value: "Vu"):
         self._vu = value
-        if value is not None:
-            value.node = self
+        if value is None:
+            return
+        value.node = self
+        value.enable()
+
+    @property
+    def model(self) -> "Model":
+        return self._model
+    
+    @model.setter
+    def model(self, value: "Model"):
+        self._model = value
+        if value is None:
+            return
+        for listener in self.listeners:
+            listener.on_node_model_change(self)
 
     def add_listener(self, listener: NodeListener[T_Node]) -> None:
         self.listeners.append(listener)

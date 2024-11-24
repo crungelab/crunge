@@ -148,7 +148,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
             self.vu.transform = self.transform
         '''
         for listener in self.listeners:
-            listener.on_node_transform(self)
+            listener.on_node_transform_change(self)
 
     def update_matrix(self):
         x = self._position.x

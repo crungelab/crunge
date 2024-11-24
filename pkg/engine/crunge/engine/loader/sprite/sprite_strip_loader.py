@@ -3,13 +3,13 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from ..math import Rect2i
-from ..resource.resource_manager import ResourceManager
-from ..resource.texture import Texture
-from ..resource.texture.sprite_strip import SpriteStrip
-from ..d2.sprite import Sprite
+from ...math import Rect2i
+from ...resource.resource_manager import ResourceManager
+from ...resource.texture import Texture
+from ...resource.texture.sprite_strip import SpriteStrip
+from ...d2.sprite import Sprite
 
-from .texture.texture_loader_base import TextureLoaderBase
+from ..texture.texture_loader_base import TextureLoaderBase
 
 
 class SpriteStripLoader(TextureLoaderBase[SpriteStrip]):

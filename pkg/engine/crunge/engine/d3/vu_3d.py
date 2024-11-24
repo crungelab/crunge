@@ -29,7 +29,7 @@ class Vu3D(Vu[Node3D]):
     def size(self) -> glm.vec3:
         raise NotImplementedError
 
-    def on_node_transform(self, node: Node3D) -> None:
+    def on_node_transform_change(self, node: Node3D) -> None:
         self.transform = node.transform
 
     '''

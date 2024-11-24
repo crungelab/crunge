@@ -1,5 +1,6 @@
 from ctypes import sizeof
 
+from loguru import logger
 import glm
 
 from crunge.core import as_capsule
@@ -16,14 +17,14 @@ from ..uniforms_2d import (
 from .sprite_sampler import SpriteSampler
 from .sprite_program import SpriteProgram
 
-
+'''
 COORDS = [
     (0.0, 1.0),  # top-left
     (0.0, 0.0),  # bottom-left
     (1.0, 0.0),  # bottom-right
     (1.0, 1.0),  # top-right
 ]
-
+'''
 
 class Sprite(Material):
     def __init__(
@@ -31,7 +32,7 @@ class Sprite(Material):
         texture: ImageTexture,
         rect: Rect2i = None,
         color=glm.vec4(1.0, 1.0, 1.0, 1.0),
-        points=None,
+        points=None
     ) -> None:
         super().__init__()
         self._texture = texture
@@ -40,7 +41,9 @@ class Sprite(Material):
         self.rect = rect
         self._color = color
         self.points = points
-        self.coords = COORDS
+        #self.coords = COORDS
+        #self.coords = coords
+        self.coords: list[tuple[float, float]] = None,
         self.update_coords()
 
         self.program = SpriteProgram()
@@ -148,7 +151,7 @@ class Sprite(Material):
             (u1, v1_flipped),  # top-right
         ]
 
-        # logger.debug(f"Texture coords updated: {self.coords}")
+        logger.debug(f"Texture coords updated: {self.coords}")
 
     @property
     def color(self):
@@ -158,6 +161,76 @@ class Sprite(Material):
     def color(self, value):
         self._color = value
         self.update_gpu()
+
+    def clone(self):
+        return Sprite(
+            self.texture,
+            self.rect,
+            self.color,
+            self.points,
+        )
+
+    def mirror(self, horizontal: bool = False, vertical: bool = False):
+        return self.clone().flip(horizontal, vertical)
+
+    '''
+    COORDS = [
+        (0.0, 1.0),  # top-left
+        (0.0, 0.0),  # bottom-left
+        (1.0, 0.0),  # bottom-right
+        (1.0, 1.0),  # top-right
+    ]
+    '''
+
+    def flip(self, horizontal: bool = False, vertical: bool = False):
+        """
+        Flips the sprite's texture coordinates.
+        """
+        if horizontal:
+            self.coords = [
+                self.coords[3],  # top-left
+                self.coords[2],  # bottom-left
+                self.coords[1],  # bottom-right
+                self.coords[0],  # top-right
+            ]
+            logger.debug(f"Flipped horizontally: {self.coords}")
+        if vertical:
+            self.coords = [
+                self.coords[1],  # top-left
+                self.coords[0],  # bottom-left
+                self.coords[3],  # bottom-right
+                self.coords[2],  # top-right
+            ]
+            logger.debug(f"Flipped vertically: {self.coords}")
+
+        self.update_gpu()
+        return self
+
+    '''
+    def flip(self, horizontal: bool = False, vertical: bool = False):
+        """
+        Flips the sprite's texture coordinates.
+        """
+        if horizontal:
+            self.coords = [
+                self.coords[1],  # top-left
+                self.coords[0],  # bottom-left
+                self.coords[3],  # bottom-right
+                self.coords[2],  # top-right
+            ]
+            logger.debug(f"Flipped horizontally: {self.coords}")
+        if vertical:
+            self.coords = [
+                self.coords[2],  # top-left
+                self.coords[3],  # bottom-left
+                self.coords[0],  # bottom-right
+                self.coords[1],  # top-right
+            ]
+            logger.debug(f"Flipped vertically: {self.coords}")
+
+        self.update_gpu()
+        return self
+    '''
 
     def create_buffers(self):
         # Uniform Buffers

@@ -4,16 +4,16 @@ from loguru import logger
 import glm
 from lxml import etree
 
-from ..math import Rect2i
-from ..resource.resource_manager import ResourceManager
-from ..resource.texture import Texture
-from ..resource.texture.sprite_atlas import SpriteAtlas
+from ...math import Rect2i
+from ...resource.resource_manager import ResourceManager
+from ...resource.texture import Texture
+from ...resource.texture.sprite_atlas import SpriteAtlas
 
-from ..builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
+from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
 
-from ..d2.sprite import Sprite
+from ...d2.sprite import Sprite
 
-from .texture.texture_loader_base import TextureLoaderBase
+from ..texture.texture_loader_base import TextureLoaderBase
 
 
 class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):

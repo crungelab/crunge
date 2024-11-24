@@ -7,7 +7,7 @@ from crunge import imgui
 from crunge.engine import Renderer
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
+from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
 from ..demo import Demo
 
