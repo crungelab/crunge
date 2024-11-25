@@ -13,4 +13,4 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Scene]):
 
     def attach(self, child: "SceneNode[T_Node]"):
         child.scene = self.scene
-        super().attach(child)
+        return super().attach(child)

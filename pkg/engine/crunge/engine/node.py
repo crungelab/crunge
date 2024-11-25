@@ -93,6 +93,7 @@ class Node(Dispatcher, Generic[T_Node]):
         child.parent = self
         self.children.append(child)
         child.on_attached()
+        return child
 
     def on_attached(self):
         #pass

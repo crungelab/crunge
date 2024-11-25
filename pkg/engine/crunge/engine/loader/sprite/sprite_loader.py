@@ -35,5 +35,5 @@ class SpriteLoader(Loader):
             name = str(path)
 
         texture = self.texture_loader.load(path)
-        sprite = self.sprite_builder.build(texture, color=color)
+        sprite = self.sprite_builder.build(texture, Rect2i(0, 0, texture.width, texture.height), color=color)
         return sprite

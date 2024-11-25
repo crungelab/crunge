@@ -26,7 +26,6 @@ class SpriteAnimationDemo(Demo):
     def reset(self):
         self.angle = 0
         self.scale = 1.0
-        self.color = tuple(Color.WHITE.value)
 
         self.scene.clear()
 
@@ -109,10 +108,6 @@ class SpriteAnimationDemo(Demo):
         changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
-
-        changed, self.color = imgui.color_edit4("Tint", self.color)
-        if changed:
-            self.sprite.color = glm.vec4(self.color)
 
         if imgui.begin_list_box("Animations"):
 

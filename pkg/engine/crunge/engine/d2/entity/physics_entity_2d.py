@@ -79,6 +79,7 @@ class PhysicsEntity2D(Entity2D):
         return self.physics.create_body(self, offset)
 
     def create_shapes(self):
+        logger.debug(f"self: {self}")
         return self.geom.create_shapes(self)
 
     def add_shapes(self):
@@ -130,20 +131,19 @@ class PhysicsGroup2D(PhysicsEntity2D):
         super().__init__(position, physics=physics, geom=geom)
         self.id_counter += 1
         self.id = self.id_counter
-        self.models = []
+        self.nodes = []
 
-    def add_model(self, model):
-        model.parent = self
-        self.models.append(model)
-        return model
+    def add_node(self, node):
+        node.group = self
+        self.nodes.append(node)
+        return node
 
     def _create(self):
         super()._create()
-        for model in self.models:
-            model.gid = self.id
+        for node in self.nodes:
+            node.gid = self.id
             # model.physics = self.physics
-            self.layer.add_model(model)
-
+            self.layer.add_node(node)
 
 class StaticEntity2D(PhysicsEntity2D):
     def __init__(

@@ -54,15 +54,15 @@ class EntityGroup2D(Entity2D):
         super().__init__(position)
         self.id_counter += 1
         self.id = self.id_counter
-        self.models = []
+        self.nodes = []
 
-    def add_model(self, model):
-        # model.parent = self
-        self.models.append(model)
-        return model
+    def add_node(self, node):
+        node.group = self
+        self.nodes.append(node)
+        return node
 
     def _create(self):
         super()._create()
-        for model in self.models:
-            model.gid = self.id
-            self.layer.add_model(model)
+        for node in self.nodes:
+            node.gid = self.id
+            self.layer.add_node(node)
