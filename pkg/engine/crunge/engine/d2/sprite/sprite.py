@@ -151,7 +151,7 @@ class Sprite(Material):
             (u1, v1_flipped),  # top-right
         ]
 
-        logger.debug(f"Texture coords updated: {self.coords}")
+        #logger.debug(f"Texture coords updated: {self.coords}")
 
     @property
     def color(self):
@@ -193,7 +193,7 @@ class Sprite(Material):
                 self.coords[1],  # bottom-right
                 self.coords[0],  # top-right
             ]
-            logger.debug(f"Flipped horizontally: {self.coords}")
+            #logger.debug(f"Flipped horizontally: {self.coords}")
         if vertical:
             self.coords = [
                 self.coords[1],  # top-left
@@ -201,36 +201,10 @@ class Sprite(Material):
                 self.coords[3],  # bottom-right
                 self.coords[2],  # top-right
             ]
-            logger.debug(f"Flipped vertically: {self.coords}")
+            #logger.debug(f"Flipped vertically: {self.coords}")
 
         self.update_gpu()
         return self
-
-    '''
-    def flip(self, horizontal: bool = False, vertical: bool = False):
-        """
-        Flips the sprite's texture coordinates.
-        """
-        if horizontal:
-            self.coords = [
-                self.coords[1],  # top-left
-                self.coords[0],  # bottom-left
-                self.coords[3],  # bottom-right
-                self.coords[2],  # top-right
-            ]
-            logger.debug(f"Flipped horizontally: {self.coords}")
-        if vertical:
-            self.coords = [
-                self.coords[2],  # top-left
-                self.coords[3],  # bottom-left
-                self.coords[0],  # bottom-right
-                self.coords[1],  # top-right
-            ]
-            logger.debug(f"Flipped vertically: {self.coords}")
-
-        self.update_gpu()
-        return self
-    '''
 
     def create_buffers(self):
         # Uniform Buffers

@@ -29,7 +29,7 @@ class ImageTextureBuilder(TextureBuilder[ImageTexture]):
         )
 
     def build_wpgu_texture(self, image: Image) -> ImageTexture:
-        logger.debug(f"Building ImageTexture: {image.name}")
+        #logger.debug(f"Building ImageTexture: {image.name}")
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
             size=wgpu.Extent3D(image.width, image.height, 1),

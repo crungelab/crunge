@@ -30,14 +30,22 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self.velocity = glm.vec2(0.0)
         self.angular_velocity = 0.0 # radians per second
 
-        '''
         if vu is not None:
             self._size = vu.size
+
         '''
         if model is not None:
             self._size = model.size
+        '''
 
         self.update_matrix()
+
+    '''
+    def _create(self):
+        super()._create()
+        if self.vu is not None:
+            self.size = self.vu.size
+    '''
 
     @property
     def position(self):
@@ -132,9 +140,11 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @matrix.setter
     def matrix(self, value):
         self._matrix = value
+        self.on_transform()
+        '''
         if self.enabled:
             self.on_transform()
-
+        '''
     @property
     def transform(self) -> glm.mat4:
         transform = self.matrix
