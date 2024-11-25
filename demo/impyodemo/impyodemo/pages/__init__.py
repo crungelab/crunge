@@ -43,16 +43,9 @@ class Page(ImGuiView):
 
     @classmethod
     def produce(cls, app, name, title):
-        #page = cls(name, title).create(app)
         page = cls(name, title).config(window=app).create()
         page.reset()
         return page
-
-    '''
-    @property
-    def gui(self):
-        return self.window.gui
-    '''
     
     @property
     def resource_path(self):

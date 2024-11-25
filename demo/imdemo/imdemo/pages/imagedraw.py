@@ -3,7 +3,7 @@ from crunge.imgui import rel
 
 from crunge.engine import Renderer
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
 from imdemo.page import Page
 
@@ -12,7 +12,7 @@ class ImageDraw(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
         image_path = ResourceManager().resolve_path(":resources:/robocute.png")
-        self.texture = TextureLoader().load(image_path)
+        self.texture = ImageTextureLoader().load(image_path)
 
     def draw(self, renderer: Renderer):
         imgui.begin("Image example")

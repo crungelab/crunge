@@ -4,7 +4,7 @@ from crunge.core.utils import as_capsule
 
 from crunge.engine import Renderer
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.loader.texture_loader import TextureLoader
+from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
 from crunge import imgui
 
@@ -21,7 +21,7 @@ class ImageButton(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
         image_path = ResourceManager().resolve_path(":resources:/robocute.png")
-        self.texture = TextureLoader().load(image_path)
+        self.texture = ImageTextureLoader().load(image_path)
         self.message = ''
 
     def draw(self, renderer: Renderer):
