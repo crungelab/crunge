@@ -25,7 +25,8 @@ class Texture(Resource):
         self.sampler: wgpu.Sampler = None
 
     def __str__(self):
-        return f"Texture(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, size={self.size})"
+        #return f"Texture(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, size={self.size})"
+        return f"{self.__class__.__name__}(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, size={self.size})"
 
     def __repr__(self):
         return str(self)

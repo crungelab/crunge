@@ -13,7 +13,6 @@ class BuilderContext:
         self.tf_model = tf_model
         self.template_env = template_env
 
-        #self.buffer_cache: dict[int, bytes] = {}
         self.array_cache = {}
         self.mesh_cache: dict[int, Mesh3D] = {}
         self.material_cache: dict[int, Material] = {}
