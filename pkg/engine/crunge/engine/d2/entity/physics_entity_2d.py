@@ -142,7 +142,7 @@ class PhysicsGroup2D(PhysicsEntity2D):
         for node in self.nodes:
             node.gid = self.id
             # model.physics = self.physics
-            self.layer.add_node(node)
+            self.layer.attach(node)
 
 class StaticEntity2D(PhysicsEntity2D):
     def __init__(

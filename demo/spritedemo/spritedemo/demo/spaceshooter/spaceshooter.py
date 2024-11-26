@@ -14,6 +14,7 @@ from .explosion import Explosion
 
 from .collision_type import CollisionType
 
+
 class SpaceShooter(Demo):
     def __init__(self):
         super().__init__()
@@ -26,7 +27,9 @@ class SpaceShooter(Demo):
         self.create_physics_engine()
 
         self.create_ship(glm.vec2(0, 0))
-        zone = Zone(self.scene, glm.vec2(0, 0), glm.vec2(self.width * 2, self.height * 2)).create()
+        zone = Zone(
+            self.scene, glm.vec2(0, 0), glm.vec2(self.width * 2, self.height * 2)
+        ).create()
 
     def create_physics_engine(self):
         self.physics_engine = engine = DynamicPhysicsEngine(gravity=(0, 0))
@@ -34,7 +37,7 @@ class SpaceShooter(Demo):
 
         def laser_laser_collision(arbiter, space, data):
             return False
-        
+
         def laser_asteroid_collision(arbiter, space, data):
             laser_shape, asteroid_shape = arbiter.shapes
             laser_node = laser_shape.body.node
@@ -51,17 +54,25 @@ class SpaceShooter(Demo):
             asteroid_node = asteroid_shape.body.node
             ship_node.destroy()
             asteroid_node.destroy()
-            explosion = Explosion(asteroid_node.position, glm.vec2(100, 100), glm.vec4(1.0, 0.0, 0.0, 1.0))
+            explosion = Explosion(
+                asteroid_node.position, glm.vec2(100, 100), glm.vec4(1.0, 0.0, 0.0, 1.0)
+            )
             self.scene.attach(explosion)
             return False
 
-        handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.LASER)  # Replace with your collision types
+        handler = engine.space.add_collision_handler(
+            CollisionType.LASER, CollisionType.LASER
+        )  # Replace with your collision types
         handler.begin = laser_laser_collision
 
-        handler = engine.space.add_collision_handler(CollisionType.LASER, CollisionType.METEOR)  # Replace with your collision types
+        handler = engine.space.add_collision_handler(
+            CollisionType.LASER, CollisionType.METEOR
+        )  # Replace with your collision types
         handler.begin = laser_asteroid_collision
 
-        handler = engine.space.add_collision_handler(CollisionType.SHIP, CollisionType.METEOR)  # Replace with your collision types
+        handler = engine.space.add_collision_handler(
+            CollisionType.SHIP, CollisionType.METEOR
+        )  # Replace with your collision types
         handler.begin = ship_asteroid_collision
 
     def create_view(self):
@@ -89,18 +100,16 @@ class SpaceShooter(Demo):
 
     def update(self, delta_time: float):
         self.physics_engine.update(1 / 60)
-        self.scene.update(delta_time)
-        base_lerp_factor = 5.0  # Base speed of camera movement
-        #speed_factor = 0.01      # Factor to scale with ship's speed
-        speed_factor = 0.001      # Factor to scale with ship's speed
 
+        base_lerp_factor = 5.0  # Base speed of camera movement
+        # speed_factor = 0.01      # Factor to scale with ship's speed
+        speed_factor = 0.001  # Factor to scale with ship's speed
 
         # Get the ship's speed
         ship_speed = glm.length(self.ship.body.velocity)
 
-        #threshold_distance = 200.0
+        # threshold_distance = 200.0
         threshold_distance = 400.0
-
 
         # Calculate the target position based on the ship's position and the dead zone
         self.camera_target = self.calculate_target_position(
@@ -115,25 +124,6 @@ class SpaceShooter(Demo):
             self.camera.position, self.camera_target, lerp_factor, delta_time
         )
         super().update(delta_time)
-
-    '''
-    def update(self, delta_time: float):
-        self.physics_engine.update(1 / 60)
-        self.scene.update(delta_time)
-        threshold_distance = 200.0
-        lerp_factor = 10  # Speed of camera movement towards the target
-
-        # Calculate the target position based on the ship's position and the dead zone
-        self.camera_target = self.calculate_target_position(
-            self.camera.position, self.ship.position, threshold_distance
-        )
-
-        # Update the camera position towards the target
-        self.camera.position = self.update_camera(
-            self.camera.position, self.camera_target, lerp_factor, delta_time
-        )
-        super().update(delta_time)
-    '''
 
     def calculate_target_position(
         self, camera_position, ship_position, threshold_distance

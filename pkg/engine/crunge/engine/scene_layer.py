@@ -19,10 +19,15 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Scene]):
 '''
 
 class SceneLayer(Base, Generic[T_Node]):
-    def __init__(self) -> None:
+    def __init__(self, name: str) -> None:
         super().__init__()
+        self.name = name
         self.scene: Scene[T_Node] = None
         self.root: "SceneNode[T_Node]" = None
+
+    @property
+    def nodes(self):
+        return self.root.children
 
     def clear(self):
         self.root.clear()

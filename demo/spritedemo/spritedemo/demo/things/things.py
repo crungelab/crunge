@@ -21,6 +21,7 @@ class ThingsDemo(Demo):
         super().__init__()
         self.draw_options: DrawOptions = None
         self.physics_engine: DynamicPhysicsEngine = None
+        self.debug_draw_enabled = False
         self.sprite = None
         self.atlas = None
 
@@ -70,10 +71,10 @@ class ThingsDemo(Demo):
         self.scene.attach(floor)
 
     def draw(self, renderer: Renderer):
-        self.physics_engine.debug_draw(renderer)
-
         imgui.begin("Shapes")
         imgui.text("Click to create shapes")
+
+        _, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)
 
         if imgui.button("Reset"):
             self.reset()
@@ -90,12 +91,14 @@ class ThingsDemo(Demo):
 
         imgui.end()
 
+        if self.debug_draw_enabled:
+            self.physics_engine.debug_draw(renderer)
+
         super().draw(renderer)
 
     def update(self, delta_time: float):
-        super().update(delta_time)
-        self.scene.update(delta_time)
         self.physics_engine.update(1 / 60)
+        super().update(delta_time)
 
 
 def main():

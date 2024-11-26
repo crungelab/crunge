@@ -62,9 +62,9 @@ class BoxesDemo(Demo):
         super().draw(renderer)
 
     def update(self, delta_time: float):
-        super().update(delta_time)
-        self.scene.update(delta_time)
         self.physics_engine.update(1/60)
+        self.scene.update(delta_time)
+        super().update(delta_time)
 
 def main():
     BoxesDemo().create().run()

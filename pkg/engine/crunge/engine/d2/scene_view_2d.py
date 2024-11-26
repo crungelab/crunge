@@ -14,3 +14,7 @@ class SceneView2D(View2D):
         with self.renderer:
             self.scene.draw(self.renderer)
             super().draw(self.renderer)
+
+    def update(self, dt: float):
+        self.scene.update(dt)
+        super().update(dt)

@@ -22,34 +22,11 @@ from ..demo import Demo
 from .ball import Ball
 from .tile import Tile
 
-
-
-class CustomTiledMap(TiledMap):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._parse_layer_properties()
-
-    def _parse_layer_properties(self):
-        for layer in self.layers:
-            if hasattr(layer, "properties"):
-                continue
-            layer.properties = self._load_properties(layer)
-
-    def _load_properties(self, layer):
-        properties = {}
-        layer_element = self.layers[layer.id]
-        for property_element in layer_element.findall("properties/property"):
-            name = property_element.attrib.get("name")
-            value = property_element.attrib.get("value")
-            properties[name] = value
-        return properties
-
 class TiledPhysicsDemo(Demo):
     def __init__(self):
         super().__init__()
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
-        #self.map = TiledMap(tmx_path)
-        self.map = CustomTiledMap(tmx_path)
+        self.map = TiledMap(tmx_path)
         self.debug_draw_enabled = False
 
     def _create(self):
@@ -149,8 +126,6 @@ class TiledPhysicsDemo(Demo):
         super().draw(renderer)
 
     def update(self, delta_time: float):
-        #super().update(delta_time)
-        self.scene.update(delta_time)
         self.physics_engine.update(1/60)
         super().update(delta_time)
 

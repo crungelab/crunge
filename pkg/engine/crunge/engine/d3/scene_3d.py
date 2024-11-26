@@ -26,7 +26,7 @@ class Scene3D(Scene[Node3D]):
     '''
 
     def create_layers(self):
-        self.primary_layer = SceneLayer3D()
+        self.primary_layer = SceneLayer3D('primary')
         self.primary_layer.scene = self
         self.primary_layer.attach(OmniLight3D(position=glm.vec3(2.0, 2.0, 2.0)))
         self.add_layer(self.primary_layer)

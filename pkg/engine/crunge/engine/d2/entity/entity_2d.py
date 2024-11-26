@@ -67,4 +67,4 @@ class EntityGroup2D(Entity2D):
         super()._create()
         for node in self.nodes:
             node.gid = self.id
-            self.layer.add_node(node)
+            self.layer.attach(node)

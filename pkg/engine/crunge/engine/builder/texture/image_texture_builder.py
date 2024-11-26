@@ -76,12 +76,4 @@ class ImageTextureBuilder(TextureBuilder[ImageTexture]):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-        # return texture, im_width, im_height
-        '''
-        return (
-            ImageTexture(texture, image.size, image)
-            .set_name(image.name)
-            .set_path(image.path)
-        )
-        '''
         return texture
