@@ -1,14 +1,8 @@
 from loguru import logger
 import glm
 
-from crunge import wgpu
-import crunge.wgpu.utils as utils
-
-from crunge.engine.imgui import ImGuiView
-
 from ..renderer import Renderer
 from .scene_2d import Scene2D
-from .camera_2d import Camera2D
 from .view_2d import View2D
 
 class SceneView2D(View2D):

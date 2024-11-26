@@ -61,8 +61,10 @@ class Viewer(engine.App):
         self.create_view(scene)
 
         # Step 1: Calculate the size and center of the model
-        size = self.scene.root.bounds.size
-        center = self.scene.root.bounds.center
+        #size = self.scene.root.bounds.size
+        size = self.scene.primary_layer.root.bounds.size
+        #center = self.scene.root.bounds.center
+        center = self.scene.primary_layer.root.bounds.center
 
         # Step 2: Determine the maximum extent of the model
         max_extent = max(size.x, size.y, size.z)
@@ -92,8 +94,8 @@ class Viewer(engine.App):
         # We assume the model is centered around the origin and the farthest point is at `global_max`
         #farthest_point = global_max - center
         farthest_point = max_extent - center
-        #far_plane = glm.length(camera_position - (center + farthest_point)) + max_extent
-        far_plane = max_extent * 100
+        far_plane = glm.length(camera_position - (center + farthest_point)) + max_extent
+        #far_plane = max_extent * 100
 
         self.camera.position = camera_position
         self.camera.near = near_plane

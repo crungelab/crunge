@@ -35,7 +35,7 @@ class Demo(engine.App):
             images=self.resource_root / "images",
         )
 
-        self.scene = Scene2D()
+        self.scene = Scene2D().create()
 
     @property
     def camera(self) -> Camera2D:

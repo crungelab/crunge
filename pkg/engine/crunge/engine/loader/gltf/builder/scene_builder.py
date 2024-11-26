@@ -31,4 +31,4 @@ class SceneBuilder(GltfBuilder):
         #node_builder = NodeBuilder(self.tf_model, tf_node)
         node_builder = PolyNodeBuilder(self.context, tf_node)
         node = node_builder.build()
-        self.scene.root.attach(node)
+        self.scene.primary_layer.attach(node)

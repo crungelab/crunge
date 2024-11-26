@@ -32,7 +32,7 @@ class GltfLoader(Loader):
             autoescape=select_autoescape()
         )
 
-        scene = Scene3D()
+        scene = Scene3D().create()
         self.context = BuilderContext(scene, self.tf_model, template_env)
 
     def load(self, scene_path:Path) -> Scene3D:

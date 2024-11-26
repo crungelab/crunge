@@ -79,7 +79,6 @@ class PhysicsEntity2D(Entity2D):
         return self.physics.create_body(self, offset)
 
     def create_shapes(self):
-        logger.debug(f"self: {self}")
         return self.geom.create_shapes(self)
 
     def add_shapes(self):
@@ -87,9 +86,9 @@ class PhysicsEntity2D(Entity2D):
             self.add_shape(shape)
 
     def add_shape(self, shape):
-        logger.debug(f"shape: {shape}")
+        #logger.debug(f"shape: {shape}")
         # shape.collision_type = self.physics.kind
-        logger.debug(f"shape.collision_type: {shape.collision_type}")
+        #logger.debug(f"shape.collision_type: {shape.collision_type}")
         globe.physics_engine.space.add(self.body, shape)
 
     def remove_shapes(self):
@@ -118,7 +117,7 @@ class PhysicsEntity2D(Entity2D):
         # d = self.height * self.scale.y
         d = self.scale.y
         t = pymunk.Transform(a=a, d=d)
-        logger.debug(f"t: {t}")
+        #logger.debug(f"t: {t}")
         return t
 
 

@@ -84,4 +84,4 @@ class Ship(DynamicEntity2D):
         position = self.position + direction * spawn_distance
 
         laser = Laser(position, self.angle, missile_speed).create()
-        self.scene.attach(laser)
+        self.layer.attach(laser)

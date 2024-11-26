@@ -33,10 +33,12 @@ class Entity2D(Node2D):
         self._brain.node = self
         value.enable()
 
+    '''
     def _create(self):
         super()._create()
         if self.vu is not None and self.layer is not None:
             self.layer.add_sprite(self.vu)
+    '''
 
     def update(self, delta_time: float):
         super().update(delta_time)

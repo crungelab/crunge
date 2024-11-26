@@ -3,26 +3,50 @@ from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
 from . import Base, Vu, Renderer
 
 from .scene_node import SceneNode
+from .scene_layer import SceneLayer
 
 T_Node = TypeVar("T_Node")
 
 class Scene(Base, Generic[T_Node]):
     def __init__(self) -> None:
         super().__init__()
-        #self.root: "SceneNode[T_Node]" = SceneNode()
-        self.root: "SceneNode[T_Node]" = None
+        #self.root: "SceneNode[T_Node]" = None
+        self.primary_layer: "SceneLayer[T_Node]" = None
+        self.layers: List[SceneLayer[T_Node]] = []
+        #self.create_layers()
+
+    def _create(self):
+        super()._create()
+        self.create_layers()
+
+    def create_layers(self):
+        raise NotImplementedError
+
+    def add_layer(self, layer: SceneLayer[T_Node]):
+        self.layers.append(layer)
+        return layer
+    
+    def remove_layer(self, layer: SceneLayer[T_Node]):
+        self.layers.remove(layer)
+        return layer
 
     def clear(self):
-        self.root.clear()
+        #self.primary_layer.clear()
+        for layer in self.layers:
+            layer.clear()
 
     def draw(self, renderer: Renderer):
-        self.root.draw(renderer)
+        #self.primary_layer.draw(renderer)
+        for layer in self.layers:
+            layer.draw(renderer)
 
     def update(self, dt: float):
-        self.root.update(dt)
+        #self.primary_layer.update(dt)
+        for layer in self.layers:
+            layer.update(dt)
 
     def attach(self, node: T_Node):
-        self.root.attach(node)
+        self.primary_layer.attach(node)
 
     def detach(self, node: T_Node):
-        self.root.detach(node)
+        self.primary_layer.detach(node)
