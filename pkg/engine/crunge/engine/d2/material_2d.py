@@ -12,7 +12,7 @@ from .uniforms_2d import (
 
 from ..resource import Material, Texture
 
-from .sprite.sprite_sampler import SpriteSampler
+from .sprite.sprite_sampler import DefaultSpriteSampler
 from .sprite.sprite_program import SpriteProgram
 
 
@@ -62,7 +62,7 @@ class Material2D(Material):
         )
 
     def create_bind_group(self):
-        sampler = SpriteSampler().sampler
+        sampler = DefaultSpriteSampler().sampler
 
         bindgroup_entries = wgpu.BindGroupEntries(
             [

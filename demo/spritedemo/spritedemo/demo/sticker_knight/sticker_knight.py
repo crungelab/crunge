@@ -7,7 +7,6 @@ from crunge.engine import Renderer
 from crunge.engine.resource.resource_manager import ResourceManager
 
 from crunge.engine.loader.tiled.builder.builder_context import SceneBuilderContext
-from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 
 from ..demo import Demo
@@ -16,10 +15,6 @@ from ..demo import Demo
 class StickerKnightDemo(Demo):
     def __init__(self):
         super().__init__()
-        '''
-        tmx_path = ResourceManager().resolve_path(":resources:/sticker-knight/map/sandbox.tmx")
-        self.map = TiledMap(tmx_path)
-        '''
         self.reset()
 
     def reset(self):
@@ -32,8 +27,8 @@ class StickerKnightDemo(Demo):
 
     def create_map(self):
         context = SceneBuilderContext(scene=self.scene)
+        map_loader = TiledMapLoader(context)
         tmx_path = ResourceManager().resolve_path(":resources:/sticker-knight/map/sandbox.tmx")
-        map_loader = TiledMapLoader(context, map_builder=DefaultMapBuilder(context))
         map_loader.load(tmx_path)
 
     def draw(self, renderer: Renderer):

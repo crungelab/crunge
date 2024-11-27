@@ -6,10 +6,10 @@ from ..builder_context import BuilderContext
 
 
 class ObjectGroupBuilder(TiledBuilder):
-    def __init__(self, context: BuilderContext, object_builder: ObjectBuilder):
+    def __init__(self, context: BuilderContext):
         super().__init__(context)
-        self.object_builder = object_builder
 
     def build(self, layer: TiledObjectGroup):
+        self.context.opacity = layer.opacity
         for obj in layer:
-            self.object_builder.build(obj, layer.properties)
+            self.context.object_builder.build(obj, layer.properties)

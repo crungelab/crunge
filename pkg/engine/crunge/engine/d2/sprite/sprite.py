@@ -7,14 +7,14 @@ from crunge.core import as_capsule
 from crunge import wgpu
 
 from ...math import Rect2i
-from ...resource import ImageTexture, Material
+from ...resource import ImageTexture, Material, Sampler
 
 from ...uniforms import cast_vec4
 from ..uniforms_2d import (
     MaterialUniform,
 )
 
-from .sprite_sampler import SpriteSampler
+from .sprite_sampler import DefaultSpriteSampler
 from .sprite_program import SpriteProgram
 
 '''
@@ -31,6 +31,7 @@ class Sprite(Material):
         self,
         texture: ImageTexture,
         rect: Rect2i = None,
+        sampler: Sampler = None,
         color=glm.vec4(1.0, 1.0, 1.0, 1.0),
         points=None
     ) -> None:
@@ -39,6 +40,7 @@ class Sprite(Material):
         if rect is None:
             rect = Rect2i(0, 0, texture.width, texture.height)
         self.rect = rect
+        self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
         self._color = color
         self.points = points
         #self.coords = COORDS
@@ -166,6 +168,7 @@ class Sprite(Material):
         return Sprite(
             self.texture,
             self.rect,
+            self.sampler,
             self.color,
             self.points,
         )
@@ -216,7 +219,8 @@ class Sprite(Material):
         )
 
     def create_bind_group(self):
-        sampler = SpriteSampler().sampler
+        #sampler = DefaultSpriteSampler().sampler
+        sampler = self.sampler.sampler
 
         bindgroup_entries = wgpu.BindGroupEntries(
             [

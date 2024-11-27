@@ -9,8 +9,8 @@ from crunge.engine.d2.physics.draw_options import DrawOptions
 
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.tiled.builder.builder_context import SceneBuilderContext
-from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
+from crunge.engine.loader.tiled.builder.tile_builder import DefaultTileBuilder
 
 from ..demo import Demo
 
@@ -55,59 +55,15 @@ class TiledPhysicsDemo(Demo):
 
     def create_map(self):
         context = SceneBuilderContext(scene=self.scene)
+
+        def create_node_cb(position, sprite):
+            return Tile(position, sprite)
+
+        map_loader = TiledMapLoader(context, tile_builder=DefaultTileBuilder(context, create_node_cb=create_node_cb))
+        #map_loader = TiledMapLoader(context)
+
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
-        map_loader = TiledMapLoader(context, map_builder=DefaultMapBuilder(context))
         map_loader.load(tmx_path)
-
-    '''
-    def create_map(self):
-
-        name = self.map.filename
-        tw = self.map.tilewidth
-        th = self.map.tileheight
-        mw = self.map.width
-        mh = self.map.height - 1
-        pixel_height = mh * th
-
-        sprite_builder=CollidableSpriteBuilder()
-
-
-        #for layer in self.map.visible_layers:
-        for layer in self.map.layers:
-            if isinstance(layer, TiledTileLayer):
-                logger.debug(f"Layer: {layer}")
-                logger.debug(f"Layer properties: {layer.properties}")
-                layer_class = layer.properties.get("class", None)  # Access the 'class' property
-                if layer_class:
-                    print(f"Layer '{layer.name}' has class: {layer_class}")
-                # iterate over the tiles in the layer
-                for x, y, image in layer.tiles():
-                    y = mh - y
-                    x = x * tw
-                    y = y * th
-                    #logger.debug(f"Tile: {x}, {y}, {image}")
-
-                    path = image[0]
-                    atlas = ImageTextureLoader().load(path)
-                    #logger.debug(f"atlas: {atlas}")
-
-                    rect = image[1]
-                    if rect:
-                        tx, ty, tw, th = rect
-                        sprite = sprite_builder.build(atlas, Rect2i(tx, ty, tw, th))
-                    else:
-                        sprite = sprite_builder.build(atlas, Rect2i(0, 0, atlas.width, atlas.height))
-
-                    node = Tile(glm.vec2(x, y), sprite)
-                    self.scene.attach(node)
-
-            elif isinstance(layer, TiledObjectGroup):
-                pass
-                    # draw a rect for everything else
-            else:
-                # draw_rect(rect_color, (obj.x, obj.y, obj.width, obj.height), 3)
-                pass
-    '''
 
     def draw(self, renderer: Renderer):        
         imgui.begin("Tiled Physics Demo")

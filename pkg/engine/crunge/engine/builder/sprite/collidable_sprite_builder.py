@@ -7,12 +7,13 @@ import glm
 
 from ...math import Rect2i
 from ...resource.texture import ImageTexture
+from ...resource import Sampler
 from ...d2.sprite import Sprite
 
 from .sprite_builder import SpriteBuilder
 
 class CollidableSpriteBuilder(SpriteBuilder):
-    def build(self, texture: ImageTexture, rect: Rect2i = None, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> Sprite:
+    def build(self, texture: ImageTexture, rect: Rect2i = None, sampler:Sampler = None, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> Sprite:
         #logger.debug(f"Building Sprite: {texture.image.name}")
 
         x = rect.x
@@ -24,7 +25,7 @@ class CollidableSpriteBuilder(SpriteBuilder):
         #Extract the alpha channel
         if region.shape[2] < 4:
             logger.warning("Image does not have an alpha channel.")
-            return Sprite(texture, rect, color)  # Return without contours
+            return Sprite(texture, rect, sampler, color)  # Return without contours
 
         alpha_channel = region[:, :, 3]  # Extract the alpha channel
 
@@ -37,7 +38,7 @@ class CollidableSpriteBuilder(SpriteBuilder):
 
         # contours is a list of arrays; each array contains coordinates of a contour
         if len(contours) == 0:
-            return Sprite(texture, rect, color)
+            return Sprite(texture, rect, sampler, color)
 
         # Get the first contour and reshape it to a 2D float array
         points = contours[0].reshape(-1, 2).astype(float)
@@ -49,4 +50,4 @@ class CollidableSpriteBuilder(SpriteBuilder):
         #Flip the y-coordinates
         points[:, 1] = -points[:, 1]  # Negate the y-coordinates
 
-        return Sprite(texture, rect, color, points)
+        return Sprite(texture, rect, sampler, color, points)

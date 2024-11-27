@@ -1,7 +1,7 @@
 import glm
 
-from ..tiled_builder import TiledBuilder
 from ..builder_context import BuilderContext
+from ..tiled_builder import TiledBuilder
 
 class TileBuilder(TiledBuilder):
     def __init__(self, context: BuilderContext):
