@@ -38,6 +38,8 @@ class Window(Frame):
         self.view = view
 
     def add_channel(self, channel: Channel):
+        if channel.name in self.channels:
+            raise ValueError(f"Channel already exists for name: {channel.name}")
         self.channels[channel.name] = channel
     
     def show_channel(self, name: str):

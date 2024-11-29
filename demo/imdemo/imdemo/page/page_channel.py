@@ -5,5 +5,5 @@ from .page import Page
 
 
 class PageChannel(Channel):
-    def __init__(self, klass: type[Page], name, title = None):
+    def __init__(self, klass: type[Page], name: str, title: str = None):
         super().__init__(ClassFactory(klass), name, title)
