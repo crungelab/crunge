@@ -1,7 +1,7 @@
 from loguru import logger
 import glm
 
-
+from ..math import Bounds3
 from ..renderer import Renderer
 from ..scene import Scene
 
@@ -15,15 +15,9 @@ class Scene3D(Scene[Node3D]):
         super().__init__()
         self.lighting = Lighting3D()
 
-    '''
-    def __init__(self) -> None:
-        super().__init__()
-        self.primary_layer = SceneLayer3D()
-        self.primary_layer.scene = self
-        self.lighting = Lighting3D()
-        self.primary_layer.attach(OmniLight3D(position=glm.vec3(2.0, 2.0, 2.0)))
-        self.add_layer(self.primary_layer)
-    '''
+    @property
+    def bounds(self) -> Bounds3:
+        return self.primary_layer.bounds
 
     def create_layers(self):
         self.primary_layer = SceneLayer3D('primary')

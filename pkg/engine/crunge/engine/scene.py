@@ -13,12 +13,13 @@ class Scene(Base, Generic[T_Node]):
         #self.root: "SceneNode[T_Node]" = None
         self.primary_layer: "SceneLayer[T_Node]" = None
         self.layers: List[SceneLayer[T_Node]] = []
-        #self.create_layers()
 
+    '''
     @property
     def nodes(self):
         return self.primary_layer.nodes
-    
+    '''
+
     def _create(self):
         super()._create()
         self.create_layers()
@@ -28,6 +29,7 @@ class Scene(Base, Generic[T_Node]):
 
     def add_layer(self, layer: SceneLayer[T_Node]):
         self.layers.append(layer)
+        layer.enable()
         return layer
     
     def remove_layer(self, layer: SceneLayer[T_Node]):
@@ -35,17 +37,14 @@ class Scene(Base, Generic[T_Node]):
         return layer
 
     def clear(self):
-        #self.primary_layer.clear()
         for layer in self.layers:
             layer.clear()
 
     def draw(self, renderer: Renderer):
-        #self.primary_layer.draw(renderer)
         for layer in self.layers:
             layer.draw(renderer)
 
     def update(self, dt: float):
-        #self.primary_layer.update(dt)
         for layer in self.layers:
             layer.update(dt)
 

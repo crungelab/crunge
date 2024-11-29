@@ -45,7 +45,7 @@ class Viewer(engine.App):
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
-        self.view = View3D(scene, self.size).config(window=self).create()
+        self.view = View3D(scene).config(window=self).create()
 
     def open(self):
         logger.debug("Opening scene")
@@ -61,10 +61,10 @@ class Viewer(engine.App):
         self.create_view(scene)
 
         # Step 1: Calculate the size and center of the model
-        #size = self.scene.root.bounds.size
-        size = self.scene.primary_layer.root.bounds.size
+        bounds = self.scene.bounds
+        size = bounds.size
         #center = self.scene.root.bounds.center
-        center = self.scene.primary_layer.root.bounds.center
+        center = bounds.center
 
         # Step 2: Determine the maximum extent of the model
         max_extent = max(size.x, size.y, size.z)
@@ -91,11 +91,9 @@ class Viewer(engine.App):
         near_plane = max_extent * 0.01
 
         # Calculate distance to farthest point from the camera to determine the far plane
-        # We assume the model is centered around the origin and the farthest point is at `global_max`
-        #farthest_point = global_max - center
         farthest_point = max_extent - center
         far_plane = glm.length(camera_position - (center + farthest_point)) + max_extent
-        #far_plane = max_extent * 100
+        far_plane = far_plane * 10
 
         self.camera.position = camera_position
         self.camera.near = near_plane

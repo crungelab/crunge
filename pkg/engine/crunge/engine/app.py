@@ -1,3 +1,4 @@
+from typing import List
 import sys, time
 
 from loguru import logger
@@ -7,11 +8,21 @@ from crunge import sdl
 
 from .window import Window
 from .scheduler import Scheduler
+from .service import Service
+
 
 class App(Window):
     def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
         super().__init__(size, title, view=view, resizable=resizable)
         self.running = False
+        self.services: List[Service] = []
+        self.add_service(Scheduler())
+
+    def add_service(self, service: Service):
+        self.services.append(service)
+
+    def remove_service(self, service: Service):
+        self.services.remove(service)
 
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
@@ -55,9 +66,11 @@ class App(Window):
             self.frame()
 
         sdl.stop_text_input(self.window)
-        #self.device.destroy()
+        # self.device.destroy()
         return self
 
     def update(self, delta_time: float):
-        Scheduler().update(delta_time)
+        #Scheduler().update(delta_time)
+        for service in self.services:
+            service.update(delta_time)
         super().update(delta_time)

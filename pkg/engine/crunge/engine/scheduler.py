@@ -4,6 +4,9 @@ from typing import Callable, Any, List, Optional
 
 from loguru import logger
 
+from .service import Service
+
+
 class Task:
     def __init__(
         self,
@@ -19,7 +22,7 @@ class Task:
         self.repeat = repeat      # True if the task should repeat
         self.last_run = last_run  # Timestamp when the task was last run
 
-class Scheduler:
+class Scheduler(Service):
     _instance = None
     _lock = threading.Lock()  # For thread-safe singleton creation
 

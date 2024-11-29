@@ -11,8 +11,9 @@ from .view_layer import ViewLayer
 
 
 class View(Widget):
-    def __init__(self, size=glm.ivec2(), layers: list[ViewLayer] = []) -> None:
-        super().__init__(size)
+    def __init__(self, layers: list[ViewLayer] = []) -> None:
+        #super().__init__(size)
+        super().__init__()
         self.window: "Window" = None
         self.layers_by_name: Dict[str, ViewLayer] = {}
 
@@ -23,13 +24,6 @@ class View(Widget):
     def layers(self) -> List[ViewLayer]:
         return self.children
 
-    """
-    def config(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        return self
-    """
-
     def on_size(self):
         super().on_size()
         for layer in self.layers:
@@ -39,8 +33,6 @@ class View(Widget):
     def _create(self):
         #logger.debug("View.create")
         super()._create()
-        # self.window = window
-        # self.size = window.size
         if not self.window:
             raise ValueError("View.window is not set")
         self.size = self.window.size
@@ -70,7 +62,7 @@ class View(Widget):
     def remove_layer(self, layer: ViewLayer):
         layer.view = None
         self.layers_by_name.pop(layer.name)
-        self.remove_child(layer)
+        self.detach(layer)
 
     def get_layer(self, name: str) -> ViewLayer:
         return self.layers_by_name[name]

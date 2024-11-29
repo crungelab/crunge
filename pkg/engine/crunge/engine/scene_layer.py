@@ -25,9 +25,11 @@ class SceneLayer(Base, Generic[T_Node]):
         self.scene: Scene[T_Node] = None
         self.root: "SceneNode[T_Node]" = None
 
+    '''
     @property
     def nodes(self):
         return self.root.children
+    '''
 
     def clear(self):
         self.root.clear()

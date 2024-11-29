@@ -11,14 +11,12 @@ from .scratch_layer import ScratchLayer
 
 
 class View2D(ImGuiView):
-    def __init__(self, size=glm.ivec2()) -> None:
-        super().__init__(size)
+    def __init__(self) -> None:
+        super().__init__()
         self.scratch: ScratchLayer = None
         self.camera: Camera2D = None
 
-    #def _create(self, window):
     def _create(self):
-        #super()._create(window)
         super()._create()
         self.scratch = ScratchLayer().config(view=self).create()
         self.add_layer(self.scratch)

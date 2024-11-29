@@ -48,7 +48,7 @@ class Demo(engine.App):
 
     def create_view(self):
         logger.debug("Creating view")
-        self.view = DemoView(self.scene, self.size).config(window=self).create()
+        self.view = DemoView(self.scene).config(window=self).create()
 
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.key

@@ -6,8 +6,8 @@ from .scene_2d import Scene2D
 from .view_2d import View2D
 
 class SceneView2D(View2D):
-    def __init__(self, scene: Scene2D, size=glm.ivec2()) -> None:
-        super().__init__(size)
+    def __init__(self, scene: Scene2D) -> None:
+        super().__init__()
         self.scene = scene
 
     def draw(self, renderer: Renderer):
