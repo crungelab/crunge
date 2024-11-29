@@ -30,7 +30,7 @@ class TiledPhysicsDemo(Demo):
     def reset(self):
         self.scene.clear()
         self.last_mouse = glm.vec2()
-        self.physics_engine = DynamicPhysicsEngine(draw_options=self.draw_options).create()
+        self.physics_engine = DynamicPhysicsEngine().create()
         self.create_map()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
@@ -78,7 +78,7 @@ class TiledPhysicsDemo(Demo):
         imgui.end()
 
         if self.debug_draw_enabled:
-            self.physics_engine.debug_draw(renderer)
+            self.physics_engine.debug_draw(self.draw_options)
 
         super().draw(renderer)
 

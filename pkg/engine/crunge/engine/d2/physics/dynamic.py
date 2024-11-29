@@ -6,7 +6,7 @@ import pymunk
 from pymunk.vec2d import Vec2d
 
 from .constants import PT_DYNAMIC, GRAVITY
-from . import Physics, PhysicsMeta, PhysicsEngine
+from . import Physics, PhysicsMeta, PhysicsEngine2D
 from .draw_options import DrawOptions
 
 class DynamicPhysics(Physics, metaclass=PhysicsMeta):
@@ -36,6 +36,6 @@ class DynamicPhysics(Physics, metaclass=PhysicsMeta):
         body.angle = math.radians(node.angle)
         return body
 
-class DynamicPhysicsEngine(PhysicsEngine):
-    def __init__(self, gravity=GRAVITY, iterations=35, draw_options: DrawOptions = None):
-        super().__init__(gravity=gravity, iterations=iterations, draw_options=draw_options)
+class DynamicPhysicsEngine(PhysicsEngine2D):
+    def __init__(self, gravity=GRAVITY, iterations=35):
+        super().__init__(gravity=gravity, iterations=iterations)

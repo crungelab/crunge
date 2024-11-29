@@ -5,7 +5,7 @@ import pymunk
 from pymunk.vec2d import Vec2d
 
 from .constants import *
-from . import Physics, PhysicsMeta, PhysicsEngine
+from . import Physics, PhysicsMeta, PhysicsEngine2D
 from .draw_options import DrawOptions
 
 class KinematicPhysics(Physics, metaclass=PhysicsMeta):
@@ -101,9 +101,9 @@ class KinematicDynamicHandler(CollisionHandler):
         kbody.velocity = velocity
         return False
 
-class KinematicPhysicsEngine(PhysicsEngine):
-    def __init__(self, gravity=GRAVITY, draw_options: DrawOptions = None):
-        super().__init__(gravity, draw_options=draw_options)
+class KinematicPhysicsEngine(PhysicsEngine2D):
+    def __init__(self, gravity=GRAVITY):
+        super().__init__(gravity)
 
     def _create(self):
         super()._create()

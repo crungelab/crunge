@@ -33,7 +33,7 @@ class ThingsDemo(Demo):
     def reset(self):
         self.scene.clear()
         self.last_mouse = glm.vec2()
-        self.physics_engine = DynamicPhysicsEngine(draw_options=self.draw_options)
+        self.physics_engine = DynamicPhysicsEngine()
         self.physics_engine.create()
         self.create_floor()
 
@@ -92,7 +92,7 @@ class ThingsDemo(Demo):
         imgui.end()
 
         if self.debug_draw_enabled:
-            self.physics_engine.debug_draw(renderer)
+            self.physics_engine.debug_draw(self.draw_options)
 
         super().draw(renderer)
 
