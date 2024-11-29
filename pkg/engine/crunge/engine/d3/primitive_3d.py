@@ -5,7 +5,7 @@ from crunge import wgpu
 
 from ..math.bounds3 import Bounds3
 from ..renderer import Renderer
-from ..resource.primitive import Primitive
+from ..resource.mesh.primitive import Primitive
 
 from .material_3d import Material3D
 

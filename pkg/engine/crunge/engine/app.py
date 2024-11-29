@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 import sys, time
 
 from loguru import logger
@@ -9,6 +9,7 @@ from crunge import sdl
 from .window import Window
 from .scheduler import Scheduler
 from .service import Service
+#from .channel import Channel
 
 
 class App(Window):
@@ -23,7 +24,7 @@ class App(Window):
 
     def remove_service(self, service: Service):
         self.services.remove(service)
-
+    
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
         logger.debug(f"SDL_Init: {success}")

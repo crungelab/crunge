@@ -16,7 +16,7 @@ from crunge.core import klass
 from crunge import wgpu
 
 from ...program_2d import Program2D
-from ....resource.bind_group_layout import BindGroupLayout
+from ....resource.bind_group.bind_group_layout import BindGroupLayout
 
 shader_code = """
 struct Camera {

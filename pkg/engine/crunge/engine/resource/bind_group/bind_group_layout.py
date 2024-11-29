@@ -2,7 +2,7 @@ from loguru import logger
 
 from crunge import wgpu
 
-from .resource import Resource
+from ..resource import Resource
 
 
 class BindGroupLayout(Resource):

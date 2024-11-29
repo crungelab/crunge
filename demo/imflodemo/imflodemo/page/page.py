@@ -1,8 +1,7 @@
-from crunge import imgui, imnodes
+from crunge import imgui
 from crunge.engine.imgui import ImGuiView
 from crunge.engine import Renderer
 
-#from imflo.wire import Wire
 from imflo.graph import Graph
 
 class Page(ImGuiView):
@@ -12,15 +11,14 @@ class Page(ImGuiView):
         self.title = title
         self.dragged = None
         self.graph = Graph()
+        self.reset()
     
     def reset(self):
         self.graph.reset()
 
     @classmethod
     def produce(cls, app, name, title):
-        #page = cls(name, title).create(app)
         page = cls(name, title).config(window=app).create()
-        page.reset()
         return page
 
     def start_dnd(self, dragged):
@@ -54,16 +52,15 @@ class Page(ImGuiView):
         
         imgui.begin("Examples")
 
-        titles = [page['title'] for page in self.window.pages.values()]
-        names = [page['name'] for page in self.window.pages.values()]
-
-        #if imgui.begin_list_box("Examples", (-1, -1)):
         if imgui.begin_list_box(f"##{id(self)}", (-1, -1)):
 
-            for entry in self.window.pages.values():
-                opened, selected = imgui.selectable(entry['title'], entry['name'] == self.window.page.name)
+            #for entry in self.window.pages.values():
+            for entry in self.window.channels.values():
+                #opened, selected = imgui.selectable(entry['title'], entry['name'] == self.window.page.name)
+                opened, selected = imgui.selectable(entry.title, entry.name == self.window.channel.name)
                 if opened:
-                    self.window.show(entry['name'])
+                    #self.window.show(entry['name'])
+                    self.window.show_channel(entry.name)
 
             imgui.end_list_box()
         

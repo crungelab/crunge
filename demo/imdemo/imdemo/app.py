@@ -50,5 +50,4 @@ class App(engine.App):
         def callback(delta_time):
             entry = self.pages[name]
             self.page = entry['klass'].produce(self, name, entry['title'])
-            #self.show_view(page)
         Scheduler().schedule_once(callback, 0)

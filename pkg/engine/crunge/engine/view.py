@@ -29,7 +29,6 @@ class View(Widget):
         for layer in self.layers:
             layer.size = self.size
 
-    # def _create(self, window: "Window"):
     def _create(self):
         #logger.debug("View.create")
         super()._create()

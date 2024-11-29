@@ -4,6 +4,7 @@ import glm
 from .widget import Widget
 from .view import View
 
+
 class Frame(Widget):
     def __init__(self, size=glm.ivec2(), view: View = None) -> None:
         super().__init__(size)
@@ -26,7 +27,6 @@ class Frame(Widget):
         if self.view is not None:
             self.view.size = self.size
 
-    #def _create(self, window: "Window"):
     def _create(self):
         logger.debug("Frame.create")
         if self._view is not None:

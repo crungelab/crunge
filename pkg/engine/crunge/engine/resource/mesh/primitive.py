@@ -3,7 +3,7 @@ import numpy as np
 
 from crunge import wgpu
 
-from .resource import Resource
+from ..resource import Resource
 
 class Primitive(Resource):
     def __init__(self) -> None:

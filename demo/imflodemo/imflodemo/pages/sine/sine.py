@@ -1,9 +1,6 @@
-import time
-from math import sin
 import numpy as np
 from rx.subject import Subject
 
-import arcade
 from crunge import imgui
 
 from imflo.node import Node
@@ -12,8 +9,7 @@ from imflo.pin import Output
 sampling_rate = 44100
 freq = 440
 samples = 44100
-#x = np.arange(samples)
-#y = 100*np.sin(2 * np.pi * freq * x / sampling_rate)
+
 
 class SineNode(Node):
     def __init__(self, page):

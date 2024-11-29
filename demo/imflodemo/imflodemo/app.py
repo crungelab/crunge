@@ -16,14 +16,14 @@ from crunge import imnodes
 from crunge import engine
 from crunge.engine import Scheduler
 
-from imflo.page import Page
+from .page import Page
 
 class App(engine.App):
     kWidth = 1280
     kHeight = 640
     def __init__(self):
         super().__init__(glm.ivec2(self.kWidth, self.kHeight), "ImFlo Demo", resizable=True)
-        self.pages = {}
+        #self.pages = {}
         self.show_metrics = False
         self.show_style_editor = False
         self.resource_path = Path(__file__).parent.parent / 'resources'
@@ -53,6 +53,7 @@ class App(engine.App):
         module, install = module, module.install
         install(self)
 
+    '''
     def add_page(self, klass, name, title):
         self.pages[name] = { 'klass': klass, 'name': name, 'title': title }
 
@@ -64,3 +65,4 @@ class App(engine.App):
             #self.show_view(page)
         #self.schedule_once(callback, 0)
         Scheduler().schedule_once(callback, 0)
+    '''

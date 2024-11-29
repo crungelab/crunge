@@ -5,11 +5,12 @@ from crunge import imgui
 
 from imflo.particle import AnimatedAlphaParticle
 
-from imflo.page import Page
-
 from imflodemo.nodes.sine import SineNode
 from imflodemo.nodes.scope import ScopeNode
 from imflodemo.nodes.spark import SparkNode
+
+from ...page import Page
+
 
 class SparksPage(Page):
     def __init__(self, window, name, title):

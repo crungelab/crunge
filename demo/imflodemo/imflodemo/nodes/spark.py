@@ -14,7 +14,7 @@ from imflo.pin import Input
 
 from imflo.particle import AnimatedAlphaParticle
 
-from imflo.page import Page
+from ..page import Page
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600

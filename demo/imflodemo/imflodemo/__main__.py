@@ -11,6 +11,6 @@ app.use('connect')
 app.use('sine')
 #app.use('sparks')
 
-app.show('basic')
+app.show_channel('basic')
 
 app.run()

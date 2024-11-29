@@ -91,7 +91,7 @@ class SpriteAnimationDemo(Demo):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
-        imgui.begin("Ship")
+        imgui.begin("Sprite Animation")
 
         if imgui.button("Reset"):
             self.reset()
@@ -115,7 +115,6 @@ class SpriteAnimationDemo(Demo):
                 opened, selected = imgui.selectable(name, animation == self.animator.current_animation)
                 if opened:
                     logger.debug(f"Selected: {name}")
-                    #self.animation = animation
                     self.animator.play(name)
 
             imgui.end_list_box()

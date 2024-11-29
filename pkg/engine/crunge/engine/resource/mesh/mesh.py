@@ -3,7 +3,7 @@ from typing import List
 from loguru import logger
 
 from .primitive import Primitive
-from .resource import Resource
+from ..resource import Resource
 
 class Mesh(Resource):
     def __init__(self) -> None:

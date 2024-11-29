@@ -1,8 +1,4 @@
-from array import array
-from random import random
-from math import sin
-
-from crunge import imgui, imnodes
+from crunge import imgui
 
 from imflo.node import Node
 from imflo.pin import Input

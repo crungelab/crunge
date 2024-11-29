@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from loguru import logger
 import glm
 
@@ -7,18 +9,48 @@ from . import globals
 from .frame import Frame
 from .viewport import SurfaceViewport
 from .renderer import Renderer
+from .channel import Channel
 
 
 class Window(Frame):
     def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
         super().__init__(size, view=view)
+        globals.set_current_window(self)
         self.name = title
 
         self.window: sdl.Window = None
         self.viewport: SurfaceViewport = None
         self.renderer: Renderer = None
 
-        globals.set_current_window(self)
+        self._channel: Channel = None
+        self.channels: Dict[str, Channel] = {}
+
+    @property
+    def channel(self) -> Channel:
+        return self._channel
+    
+    @channel.setter
+    def channel(self, channel: Channel):
+        '''
+        if self._channel is not None:
+            self.services.remove(self._channel)
+        '''
+        self._channel = channel
+        #self.add_service(channel)
+        view = channel()
+        view.config(window=self)
+        self.view = view
+
+    def add_channel(self, channel: Channel):
+        self.channels[channel.name] = channel
+    
+    def show_channel(self, name: str):
+        channel = self.channels.get(name)
+        if channel is None:
+            raise ValueError(f"Channel not found for name: {name}")
+
+        self.channel = channel
+        return channel
 
     def _create(self):
         logger.debug("Window.create")
