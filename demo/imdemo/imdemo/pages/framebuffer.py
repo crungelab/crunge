@@ -1,7 +1,9 @@
 from crunge import engine
 from crunge import imgui
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 
 SPRITE_SCALING = 0.5
 

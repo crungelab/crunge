@@ -3,7 +3,8 @@ from crunge.engine import Renderer
 
 from crunge import imgui
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class DrawCallbackPage(Page):
@@ -24,5 +25,6 @@ class DrawCallbackPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(DrawCallbackPage, "drawcallback", "Draw Callback")
+def install(app: App):
+    #app.add_page(DrawCallbackPage, "drawcallback", "Draw Callback")
+    app.add_channel(PageChannel(DrawCallbackPage, "drawcallback", "Draw Callback"))

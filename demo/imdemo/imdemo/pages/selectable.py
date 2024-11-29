@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class SelectablePage(Page):
@@ -20,5 +21,6 @@ class SelectablePage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(SelectablePage, "selectable", "Selectable")
+def install(app: App):
+    #app.add_page(SelectablePage, "selectable", "Selectable")
+    app.add_channel(PageChannel(SelectablePage, "selectable", "Selectable"))

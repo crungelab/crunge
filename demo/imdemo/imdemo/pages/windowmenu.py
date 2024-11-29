@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class WindowMenu(Page):
@@ -20,5 +21,6 @@ class WindowMenu(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(WindowMenu, "windowmenu", "Window Menu")
+def install(app: App):
+    #app.add_page(WindowMenu, "windowmenu", "Window Menu")
+    app.add_channel(PageChannel(WindowMenu, "windowmenu", "Window Menu"))

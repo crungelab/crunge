@@ -4,7 +4,9 @@ from crunge import imgui
 from crunge.imgui import rel
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 
 class FontImage(Page):
     def draw(self, renderer: Renderer):
@@ -24,5 +26,6 @@ class FontImage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(FontImage, "fontimage", "Font Image")
+def install(app: App):
+    #app.add_page(FontImage, "fontimage", "Font Image")
+    app.add_channel(PageChannel(FontImage, "fontimage", "Font Image"))

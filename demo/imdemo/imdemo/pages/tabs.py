@@ -1,7 +1,9 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 
 lorem_ipsum = '''
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -60,5 +62,6 @@ class TabsPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(TabsPage, "tabs", "Tabs")
+def install(app: App):
+    #app.add_page(TabsPage, "tabs", "Tabs")
+    app.add_channel(PageChannel(TabsPage, "tabs", "Tabs"))

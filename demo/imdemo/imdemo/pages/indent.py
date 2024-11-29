@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class Indent(Page):
@@ -20,6 +21,6 @@ class Indent(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(Indent, "indent", "Indent")
-
+def install(app: App):
+    #app.add_page(Indent, "indent", "Indent")
+    app.add_channel(PageChannel(Indent, "indent", "Indent"))

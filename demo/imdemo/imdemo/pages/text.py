@@ -2,7 +2,9 @@ from crunge import imgui
 from crunge.imgui import rel
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 
 class DrawTextPage(Page):
     def draw(self, renderer: Renderer):
@@ -49,9 +51,14 @@ class LabelTextPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(DrawTextPage, "drawtext", "Draw Text")
-    app.add_page(TextPage, "text", "Text")
-    app.add_page(ColoredTextPage, "coloredtext", "Colored Text")
-    app.add_page(UnformattedTextPage, "unformattedtext", "Unformatted Text")
-    app.add_page(LabelTextPage, "labeltext", "Text with Label")
+def install(app: App):
+    #app.add_page(DrawTextPage, "drawtext", "Draw Text")
+    app.add_channel(PageChannel(DrawTextPage, "drawtext", "Draw Text"))
+    #app.add_page(TextPage, "text", "Text")
+    app.add_channel(PageChannel(TextPage, "text", "Text"))
+    #app.add_page(ColoredTextPage, "coloredtext", "Colored Text")
+    app.add_channel(PageChannel(ColoredTextPage, "coloredtext", "Colored Text"))
+    #app.add_page(UnformattedTextPage, "unformattedtext", "Unformatted Text")
+    app.add_channel(PageChannel(UnformattedTextPage, "unformattedtext", "Unformatted Text"))
+    #app.add_page(LabelTextPage, "labeltext", "Text with Label")
+    app.add_channel(PageChannel(LabelTextPage, "labeltext", "Text with Label"))

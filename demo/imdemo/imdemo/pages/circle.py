@@ -2,7 +2,8 @@ from crunge import imgui
 from crunge.imgui import rel
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class Circle(Page):
@@ -25,8 +26,10 @@ class CircleFilled(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(Circle, "circle", "Circle")
-    app.add_page(CircleFilled, "circlefilled", "Filled Circle")
+def install(app: App):
+    #app.add_page(Circle, "circle", "Circle")
+    app.add_channel(PageChannel(Circle, "circle", "Circle"))
+    #app.add_page(CircleFilled, "circlefilled", "Filled Circle")
+    app.add_channel(PageChannel(CircleFilled, "circlefilled", "Filled Circle"))
 
 

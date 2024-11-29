@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class Popup(Page):
@@ -63,9 +64,11 @@ class PopupModal(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(Popup, "popup", "Popup")
-    app.add_page(PopupContextView, "popupcontextview", "Popup Context View")
-    app.add_page(PopupContextWindow, "popupcontextwindow", "Popup Context Window")
-    app.add_page(PopupModal, "popupmodal", "Popup Modal")
+def install(app: App):
+    #app.add_page(Popup, "popup", "Popup")
+    app.add_channel(PageChannel(Popup, "popup", "Popup"))
+    #app.add_page(PopupContextView, "popupcontextview", "Popup Context View")
+    app.add_channel(PageChannel(PopupContextView, "popupcontextview", "Popup Context View"))
+    #app.add_page(PopupContextWindow, "popupcontextwindow", "Popup Context Window")
+    app.add_channel(PageChannel(PopupContextWindow, "popupcontextwindow", "Popup Context Window"))
 

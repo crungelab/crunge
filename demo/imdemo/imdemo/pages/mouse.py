@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class MousePage(Page):
@@ -17,5 +18,6 @@ class MousePage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(MousePage, "mouse", "Mouse")
+def install(app: App):
+    #app.add_page(MousePage, "mouse", "Mouse")
+    app.add_channel(PageChannel(MousePage, "mouse", "Mouse"))

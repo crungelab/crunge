@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class TreePage(Page):
@@ -14,5 +15,6 @@ class TreePage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(TreePage, "tree", "Tree")
+def install(app: App):
+    #app.add_page(TreePage, "tree", "Tree")
+    app.add_channel(PageChannel(TreePage, "tree", "Tree"))

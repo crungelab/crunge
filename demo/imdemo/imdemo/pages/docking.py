@@ -1,7 +1,9 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 
 '''
 mGuiViewport* viewport = ImGui::GetMainViewport();
@@ -57,5 +59,6 @@ class DockingPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(DockingPage, "docking", "Docking")
+def install(app: App):
+    #app.add_page(DockingPage, "docking", "Docking")
+    app.add_channel(PageChannel(DockingPage, "docking", "Docking"))

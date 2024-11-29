@@ -7,7 +7,9 @@ import pyglet
 
 from crunge import imgui
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 from imdemo.particle import AnimatedAlphaParticle
 
 SCREEN_WIDTH = 800

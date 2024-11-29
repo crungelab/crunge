@@ -2,7 +2,8 @@ from crunge import imgui
 from crunge.imgui import rel
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class WindowDraw(Page):
@@ -24,5 +25,6 @@ class WindowDraw(Page):
             draw_list.add_text(p1, rgba_color, name)
         super().draw(renderer)
 
-def install(app):
-    app.add_page(WindowDraw, "windowdraw", "Window Draw")
+def install(app: App):
+    #app.add_page(WindowDraw, "windowdraw", "Window Draw")
+    app.add_channel(PageChannel(WindowDraw, "windowdraw", "Window Draw"))

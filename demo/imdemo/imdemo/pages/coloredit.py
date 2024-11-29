@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class ColorEdit3(Page):
@@ -37,6 +38,8 @@ class ColorEdit4(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(ColorEdit3, "coloredit3", "Color Edit 3")
-    app.add_page(ColorEdit4, "coloredit4", "Color Edit 4")
+def install(app: App):
+    #app.add_page(ColorEdit3, "coloredit3", "Color Edit 3")
+    app.add_channel(PageChannel(ColorEdit3, "coloredit3", "Color Edit 3"))
+    #app.add_page(ColorEdit4, "coloredit4", "Color Edit 4")
+    app.add_channel(PageChannel(ColorEdit4, "coloredit4", "Color Edit 4"))

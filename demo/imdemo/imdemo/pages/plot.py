@@ -5,7 +5,8 @@ from math import sin
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class PlotHistogramPage(Page):
@@ -28,6 +29,8 @@ class PlotLinesPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(PlotHistogramPage, "plothistogram", "Plot - Histogram")
-    app.add_page(PlotLinesPage, "plotlines", "Plot - Lines")
+def install(app: App):
+    #app.add_page(PlotHistogramPage, "plothistogram", "Plot - Histogram")
+    app.add_channel(PageChannel(PlotHistogramPage, "plothistogram", "Plot - Histogram"))
+    #app.add_page(PlotLinesPage, "plotlines", "Plot - Lines")
+    app.add_channel(PageChannel(PlotLinesPage, "plotlines", "Plot - Lines"))

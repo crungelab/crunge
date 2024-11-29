@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class Checkbox(Page):
@@ -54,8 +55,10 @@ class CheckboxFlags(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(Checkbox, "checkbox", "Checkbox")
-    app.add_page(CheckboxFlags, "checkboxflags", "CheckboxFlags")
+def install(app: App):
+    #app.add_page(Checkbox, "checkbox", "Checkbox")
+    app.add_channel(PageChannel(Checkbox, "checkbox", "Checkbox"))
+    #app.add_page(CheckboxFlags, "checkboxflags", "CheckboxFlags")
+    app.add_channel(PageChannel(CheckboxFlags, "checkboxflags", "CheckboxFlags"))
 
 

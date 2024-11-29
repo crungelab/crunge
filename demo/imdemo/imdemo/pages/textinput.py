@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class TextInputPage(Page):
@@ -40,6 +41,8 @@ class MultiTextInputPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(TextInputPage, "textinput", "Text Input")
-    app.add_page(MultiTextInputPage, "multitextinput", "Multiline Text Input")
+def install(app: App):
+    #app.add_page(TextInputPage, "textinput", "Text Input")
+    app.add_channel(PageChannel(TextInputPage, "textinput", "Text Input"))
+    #app.add_page(MultiTextInputPage, "multitextinput", "Multiline Text Input")
+    app.add_channel(PageChannel(MultiTextInputPage, "multitextinput", "Multiline Text Input"))

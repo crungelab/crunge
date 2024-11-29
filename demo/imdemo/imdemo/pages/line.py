@@ -2,7 +2,8 @@ from crunge import imgui
 from crunge.imgui import rel
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class Line(Page):
@@ -35,6 +36,8 @@ class PolyLine(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(Line, "line", "Line")
-    app.add_page(PolyLine, "polyline", "Poly Line")
+def install(app: App):
+    #app.add_page(Line, "line", "Line")
+    app.add_channel(PageChannel(Line, "line", "Line"))
+    #app.add_page(PolyLine, "polyline", "Poly Line")
+    app.add_channel(PageChannel(PolyLine, "polyline", "Poly Line"))

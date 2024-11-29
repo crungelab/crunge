@@ -6,6 +6,7 @@ import glm
 from crunge import sdl
 
 from . import globals
+from .scheduler import Scheduler
 from .frame import Frame
 from .viewport import SurfaceViewport
 from .renderer import Renderer
@@ -31,12 +32,7 @@ class Window(Frame):
     
     @channel.setter
     def channel(self, channel: Channel):
-        '''
-        if self._channel is not None:
-            self.services.remove(self._channel)
-        '''
         self._channel = channel
-        #self.add_service(channel)
         view = channel()
         view.config(window=self)
         self.view = view
@@ -45,12 +41,23 @@ class Window(Frame):
         self.channels[channel.name] = channel
     
     def show_channel(self, name: str):
+        #logger.debug(f"show {name}")
+        def callback(delta_time: float):
+            channel = self.channels.get(name)
+            if channel is None:
+                raise ValueError(f"Channel not found for name: {name}")
+
+            self.channel = channel
+        Scheduler().schedule_once(callback, 0)
+
+    '''
+    def show_channel(self, name: str):
         channel = self.channels.get(name)
         if channel is None:
             raise ValueError(f"Channel not found for name: {name}")
 
         self.channel = channel
-        return channel
+    '''
 
     def _create(self):
         logger.debug("Window.create")

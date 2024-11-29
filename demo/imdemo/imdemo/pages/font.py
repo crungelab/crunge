@@ -3,7 +3,8 @@ from pathlib import Path
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class FontPage(Page):
@@ -31,5 +32,6 @@ class FontPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(FontPage, "font", "Font")
+def install(app: App):
+    #app.add_page(FontPage, "font", "Font")
+    app.add_channel(PageChannel(FontPage, "font", "Font"))

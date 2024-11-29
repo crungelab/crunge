@@ -2,7 +2,8 @@ from crunge import imgui
 from crunge.imgui import rel
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class Rect(Page):
@@ -33,6 +34,8 @@ class RectFilled(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(Rect, "rect", "Rectangle")
-    app.add_page(RectFilled, "rectfilled", "Rectangle Filled")
+def install(app: App):
+    #app.add_page(Rect, "rect", "Rectangle")
+    app.add_channel(PageChannel(Rect, "rect", "Rectangle"))
+    #app.add_page(RectFilled, "rectfilled", "Rectangle Filled")
+    app.add_channel(PageChannel(RectFilled, "rectfilled", "Rectangle Filled"))

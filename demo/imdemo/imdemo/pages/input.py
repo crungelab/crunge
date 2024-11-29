@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class Input(Page):
@@ -53,7 +54,10 @@ class InputFloat(Page):
         super().draw(renderer)
 
 
-def install(app):
-    app.add_page(Input, "input", "Input")
-    app.add_page(InputDouble, "inputdouble", "Input Double")
-    app.add_page(InputFloat, "inputfloat", "Input Float")
+def install(app: App):
+    #app.add_page(Input, "input", "Input")
+    app.add_channel(PageChannel(Input, "input", "Input"))
+    #app.add_page(InputDouble, "inputdouble", "Input Double")
+    app.add_channel(PageChannel(InputDouble, "inputdouble", "Input Double"))
+    #app.add_page(InputFloat, "inputfloat", "Input Float")
+    app.add_channel(PageChannel(InputFloat, "inputfloat", "Input Float"))

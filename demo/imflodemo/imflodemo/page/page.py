@@ -55,12 +55,12 @@ class Page(ImGuiView):
         if imgui.begin_list_box(f"##{id(self)}", (-1, -1)):
 
             #for entry in self.window.pages.values():
-            for entry in self.window.channels.values():
+            for channel in self.window.channels.values():
                 #opened, selected = imgui.selectable(entry['title'], entry['name'] == self.window.page.name)
-                opened, selected = imgui.selectable(entry.title, entry.name == self.window.channel.name)
+                opened, selected = imgui.selectable(channel.title, channel.name == self.window.channel.name)
                 if opened:
                     #self.window.show(entry['name'])
-                    self.window.show_channel(entry.name)
+                    self.window.show_channel(channel.name)
 
             imgui.end_list_box()
         

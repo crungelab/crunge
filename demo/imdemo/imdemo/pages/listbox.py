@@ -1,7 +1,9 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 
 OPTIONS = ["first", "second", "third"]
 
@@ -44,6 +46,8 @@ class CustomListboxPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(ListboxPage, "listbox", "Listbox")
-    app.add_page(CustomListboxPage, "customlistbox", "Listbox - Custom")
+def install(app: App):
+    #app.add_page(ListboxPage, "listbox", "Listbox")
+    app.add_channel(PageChannel(ListboxPage, "listbox", "Listbox"))
+    #app.add_page(CustomListboxPage, "customlistbox", "Listbox - Custom")
+    app.add_channel(PageChannel(CustomListboxPage, "customlistbox", "Listbox - Custom"))

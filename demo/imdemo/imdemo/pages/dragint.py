@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class DragInt(Page):
@@ -54,8 +55,12 @@ class DragInt4(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(DragInt, "dragint", "Drag Integer")
-    app.add_page(DragInt2, "dragint2", "Drag Integer 2")
-    app.add_page(DragInt3, "dragint3", "Drag Integer 3")
-    app.add_page(DragInt4, "dragint4", "Drag Integer 4")
+def install(app: App):
+    #app.add_page(DragInt, "dragint", "Drag Integer")
+    app.add_channel(PageChannel(DragInt, "dragint", "Drag Integer"))
+    #app.add_page(DragInt2, "dragint2", "Drag Integer 2")
+    app.add_channel(PageChannel(DragInt2, "dragint2", "Drag Integer 2"))
+    #app.add_page(DragInt3, "dragint3", "Drag Integer 3")
+    app.add_channel(PageChannel(DragInt3, "dragint3", "Drag Integer 3"))
+    #app.add_page(DragInt4, "dragint4", "Drag Integer 4")
+    app.add_channel(PageChannel(DragInt4, "dragint4", "Drag Integer 4"))

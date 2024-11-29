@@ -1,7 +1,8 @@
 from crunge import imgui
 from crunge.engine import Renderer
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class DnD(Page):
@@ -25,5 +26,6 @@ class DnD(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(DnD, "dnd", "Drag & Drop")
+def install(app: App):
+    #app.add_page(DnD, "dnd", "Drag & Drop")
+    app.add_channel(PageChannel(DnD, "dnd", "Drag & Drop"))

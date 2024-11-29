@@ -8,7 +8,9 @@ from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
 from crunge import imgui
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
+
 
 MESSAGES = [
     "Hey! That tickles!!!",
@@ -35,5 +37,6 @@ class ImageButton(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(ImageButton, "imagebutton", "Image Button")
+def install(app: App):
+    #app.add_page(ImageButton, "imagebutton", "Image Button")
+    app.add_channel(PageChannel(ImageButton, "imagebutton", "Image Button"))

@@ -10,6 +10,11 @@ class Page(ImGuiView):
         self.title = title
         self.fullwidth = True
         self.fullheight = True
+        #self.reset()
+
+    def _create(self):
+        super()._create()
+        self.reset()
 
     def reset(self):
         pass
@@ -18,7 +23,7 @@ class Page(ImGuiView):
     def produce(cls, app, name, title):
         #page = cls(name, title).create(app)
         page = cls(name, title).config(window=app).create()
-        page.reset()
+        #page.reset()
         return page
 
     def draw(self, renderer: Renderer):
@@ -58,10 +63,10 @@ class Page(ImGuiView):
 
         if imgui.begin_list_box(f"##Examples", (-1, -1)):
 
-            for entry in self.window.pages.values():
-                opened, selected = imgui.selectable(entry['title'], entry['name'] == self.window.page.name)
+            for channel in self.window.channels.values():
+                opened, selected = imgui.selectable(channel.title, channel.name == self.window.channel.name)
                 if opened:
-                    self.window.show(entry['name'])
+                    self.window.show_channel(channel.name)
 
             imgui.end_list_box()
         

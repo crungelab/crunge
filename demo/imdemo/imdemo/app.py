@@ -14,7 +14,7 @@ class App(engine.App):
     kHeight = 640
     def __init__(self):
         super().__init__(glm.ivec2(self.kWidth, self.kHeight), "ImGui Demo", resizable=True)
-        self.pages: dict[str, Page] = {}
+        #self.pages: dict[str, Page] = {}
         self.show_metrics = False
         self.show_style_editor = False
         self.resource_root = Path(__file__).parent.parent / 'resources'
@@ -42,6 +42,7 @@ class App(engine.App):
         module, install = module, module.install
         install(self)
 
+    '''
     def add_page(self, klass, name, title):
         self.pages[name] = { 'klass': klass, 'name': name, 'title': title }
 
@@ -51,3 +52,4 @@ class App(engine.App):
             entry = self.pages[name]
             self.page = entry['klass'].produce(self, name, entry['title'])
         Scheduler().schedule_once(callback, 0)
+    '''

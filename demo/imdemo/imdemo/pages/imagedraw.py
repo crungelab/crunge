@@ -5,7 +5,8 @@ from crunge.engine import Renderer
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
-from imdemo.page import Page
+from ..app import App
+from ..page import Page, PageChannel
 
 
 class ImageDraw(Page):
@@ -23,5 +24,6 @@ class ImageDraw(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(ImageDraw, "imagedraw", "Image Draw")
+def install(app: App):
+    #app.add_page(ImageDraw, "imagedraw", "Image Draw")
+    app.add_channel(PageChannel(ImageDraw, "imagedraw", "Image Draw"))
