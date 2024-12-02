@@ -13,6 +13,7 @@ class Scene(Base, Generic[T_Node]):
         #self.root: "SceneNode[T_Node]" = None
         self.primary_layer: "SceneLayer[T_Node]" = None
         self.layers: List[SceneLayer[T_Node]] = []
+        self.layers_by_name: Dict[str, SceneLayer[T_Node]] = {}
 
     '''
     @property
@@ -29,13 +30,18 @@ class Scene(Base, Generic[T_Node]):
 
     def add_layer(self, layer: SceneLayer[T_Node]):
         self.layers.append(layer)
+        self.layers_by_name[layer.name] = layer
         layer.enable()
         return layer
     
     def remove_layer(self, layer: SceneLayer[T_Node]):
         self.layers.remove(layer)
+        del self.layers_by_name[layer.name]
         return layer
 
+    def get_layer(self, name: str):
+        return self.layers_by_name.get(name)
+    
     def clear(self):
         for layer in self.layers:
             layer.clear()

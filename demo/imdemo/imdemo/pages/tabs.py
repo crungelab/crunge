@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from crunge import imgui
 from crunge.engine import Renderer
 
@@ -21,7 +23,6 @@ class TabItem:
         imgui.end_tab_item()
 '''
 
-from contextlib import contextmanager
 
 @contextmanager
 def tab_item(name, p_open):

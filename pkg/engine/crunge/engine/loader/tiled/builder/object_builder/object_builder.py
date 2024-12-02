@@ -5,6 +5,6 @@ from ..tiled_builder import TiledBuilder
 
 
 class ObjectBuilder(TiledBuilder):
-    def build(self, obj: TiledObject, properties: dict):
+    def build(self, obj: TiledObject):
         #raise NotImplementedError()
-        logger.debug(f"ObjectBuilder.build({obj}, {properties})")
+        logger.debug(f"ObjectBuilder.build({obj})")

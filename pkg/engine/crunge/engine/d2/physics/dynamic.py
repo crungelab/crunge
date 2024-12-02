@@ -1,6 +1,7 @@
 import math
 
 from loguru import logger
+import glm
 
 import pymunk
 from pymunk.vec2d import Vec2d
@@ -27,7 +28,7 @@ class DynamicPhysics(Physics, metaclass=PhysicsMeta):
 
         if offset:
             #print('offset', offset)
-            position = (node.position.x + offset[0], node.position.y + offset[1])
+            position = glm.vec2(node.position.x + offset[0], node.position.y + offset[1])
 
         else:
             position = node.position

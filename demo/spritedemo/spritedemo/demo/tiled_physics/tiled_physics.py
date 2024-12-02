@@ -10,6 +10,8 @@ from crunge.engine.d2.physics.draw_options import DrawOptions
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.tiled.builder.builder_context import SceneBuilderContext
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
+from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
+from crunge.engine.loader.tiled.builder.tile_layer_builder import DefaultTileLayerBuilder
 from crunge.engine.loader.tiled.builder.tile_builder import DefaultTileBuilder
 
 from ..demo import Demo
@@ -56,10 +58,12 @@ class TiledPhysicsDemo(Demo):
     def create_map(self):
         context = SceneBuilderContext(scene=self.scene)
 
-        def create_node_cb(position, sprite):
+        def create_node_cb(position, sprite, properties):
             return Tile(position, sprite)
 
-        map_loader = TiledMapLoader(context, tile_builder=DefaultTileBuilder(context, create_node_cb=create_node_cb))
+        tile_layer_builder = DefaultTileLayerBuilder(context, tile_builder=DefaultTileBuilder(context, create_node_cb=create_node_cb))
+        map_builder = DefaultMapBuilder(context, tile_layer_builder=tile_layer_builder)
+        map_loader = TiledMapLoader(context, map_builder=map_builder)
         #map_loader = TiledMapLoader(context)
 
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")

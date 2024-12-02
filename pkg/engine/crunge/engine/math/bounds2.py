@@ -82,12 +82,11 @@ class Bounds2:
         #self.max = glm.vec2(float('-inf'))
         self.max = glm.vec2()
 
-    '''
     def to_global(self, transform: glm.mat4) -> 'Bounds2':
         min = transform * glm.vec4(self.min, 0.0, 1.0)
-        logger.debug(f"class: {self.__class__}, min: {min}")
+        #logger.debug(f"class: {self.__class__}, min: {min}")
         max = transform * glm.vec4(self.max, 0.0, 1.0)
-        logger.debug(f"class: {self.__class__}, max: {max}")
+        #logger.debug(f"class: {self.__class__}, max: {max}")
         return Bounds2(min.x, min.y, max.x, max.y)
 
     '''
@@ -112,6 +111,7 @@ class Bounds2:
             transformed_bounds.expand(world_corner)
         
         return transformed_bounds
+    '''
 
     def __repr__(self) -> str:
         return f"Bounds2(min={self.min}, max={self.max})"

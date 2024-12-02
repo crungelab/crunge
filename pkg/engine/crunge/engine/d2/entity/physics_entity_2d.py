@@ -95,14 +95,14 @@ class PhysicsEntity2D(Entity2D):
         for shape in self.shapes:
             globe.physics_engine.space.remove(self.body, shape)
 
-    def get_tx_point(self, offset):
+    def get_tx_point(self, offset: glm.vec2):
         body_pos = self.body.position
         angle = self.body.angle
         tx = glm.mat4()
         tx = glm.rotate(tx, angle, glm.vec3(0, 0, 1))
-        rel_pos = tx * glm.vec4(offset[0], offset[1], 0, 1)
-        pos = rel_pos + glm.vec4(body_pos[0], body_pos[1], 0, 1)
-        return (pos[0], pos[1])
+        rel_pos = tx * glm.vec4(offset.x, offset.y, 0, 1)
+        pos = rel_pos + glm.vec4(body_pos.x, body_pos.y, 0, 1)
+        return pos
 
     def create_geom_transform(self):
         vu = self.vu

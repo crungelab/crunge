@@ -2,7 +2,7 @@ from loguru import logger
 import glm
 
 from crunge.engine.math import Rect2i
-from crunge.engine.d2.sprite import SpriteVu
+from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
@@ -35,17 +35,18 @@ class DefaultTileBuilder(TileBuilder):
         logger.debug(f"sprite: {sprite}")
 
         if self.create_node_cb is not None:
-            node = self.create_node_cb(position, sprite)
+            node = self.create_node_cb(position, sprite, properties)
         else:
-            node = self.create_node(position, sprite)
+            node = self.create_node(position, sprite, properties)
         '''
         vu = SpriteVu(sprite).create()
         size = glm.vec2(sprite.width, sprite.height)
         node = Node2D(position, size=size, vu=vu, model=sprite)
         '''
-        self.context.layer.attach(node)
+        if node is not None:
+            self.context.layer.attach(node)
 
-    def create_node(self, position: glm.vec2, sprite):
+    def create_node(self, position: glm.vec2, sprite: Sprite, properties: dict):
         vu = SpriteVu(sprite).create()
         size = glm.vec2(sprite.width, sprite.height)
         node = Node2D(position, size=size, vu=vu, model=sprite)
