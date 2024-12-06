@@ -27,7 +27,7 @@ class DefaultObjectBuilder(ObjectBuilder):
 
         elif obj.image:
             x = obj.x
-            y = self.context.pixel_height - obj.y
+            y = self.context.size.y - obj.y
             width = obj.width
             height = obj.height
             #lower_left = glm.vec2(x, y)

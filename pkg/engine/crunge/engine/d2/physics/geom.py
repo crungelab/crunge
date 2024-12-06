@@ -135,6 +135,7 @@ class HullGeom(PolyGeom):
         shapes = []
 
         if node.model.points is None:
+            logger.debug(f"model: {node.model}: no points")
             return shapes
 
         points = node.model.points.tolist()

@@ -42,7 +42,7 @@ class DefaultObjectBuilder(ObjectBuilder):
             rotated_center_x = center_x * cos_rotation - center_y * sin_rotation
             rotated_center_y = center_x * sin_rotation + center_y * cos_rotation
             #position = glm.vec2(x + rotated_center_x, y - rotated_center_y)
-            position = glm.vec2(x + rotated_center_x, self.context.pixel_height - (y + rotated_center_y))
+            position = glm.vec2(x + rotated_center_x, self.context.size - (y + rotated_center_y))
             #position = glm.vec2(x, y)
 
             # Load the texture atlas

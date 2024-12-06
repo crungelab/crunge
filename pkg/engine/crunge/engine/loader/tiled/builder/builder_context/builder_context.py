@@ -1,10 +1,11 @@
+import glm
 from pytmx import TiledMap
 
 
 class BuilderContext:
     def __init__(self):
         self._map: TiledMap = None
-        self.pixel_height: int = 0
+        self.size = glm.ivec2()
         self.opacity: float = 1.0
 
     @property
@@ -18,4 +19,4 @@ class BuilderContext:
         th = map.tileheight
         mw = map.width
         mh = map.height - 1
-        self.pixel_height = mh * th
+        self.size = glm.ivec2(mw * tw, mh * th)

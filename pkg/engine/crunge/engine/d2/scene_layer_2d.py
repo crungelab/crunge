@@ -7,12 +7,13 @@ from ..scene_layer import SceneLayer
 from .node_2d import Node2D
 
 class SceneLayer2D(SceneLayer[Node2D]):
-    def __init__(self, name: str, size=glm.ivec2()) -> None:
+    def __init__(self, name: str) -> None:
         super().__init__(name)
-        self.size = size
+        self.bounds = Bounds2()
         self.root = Node2D()
         self.root.layer = self
 
+    '''
     @property
     def width(self):
         return self.size.x
@@ -28,6 +29,23 @@ class SceneLayer2D(SceneLayer[Node2D]):
     @height.setter
     def height(self, value):
         self.size.y = value
+
+    @property
+    def top(self):
+        return self.size.y
+    
+    @property
+    def right(self):
+        return self.size.x
+    
+    @property
+    def bottom(self):
+        return 0
+    
+    @property
+    def left(self):
+        return 0
+    '''
 
     def query_intersection(self, bounds: Bounds2):
         result:list[Node2D] = []

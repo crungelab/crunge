@@ -29,7 +29,6 @@ class PhysicsEntity2D(Entity2D):
     ):
         super().__init__(position, size, scale, vu, model, brain)
         self.body = None
-        self.body_offset = None
         self.shapes = []
         self._physics = physics()
         self.geom = geom()
@@ -51,6 +50,7 @@ class PhysicsEntity2D(Entity2D):
         else:
             self._physics = physics
 
+    
     def _create(self):
         super()._create()
         self.body = self.create_body()
@@ -58,6 +58,10 @@ class PhysicsEntity2D(Entity2D):
 
     def _post_create(self):
         super()._post_create()
+        '''
+        if self.body is not None:
+            globe.physics_engine.space.add(self.body)
+        '''
         self.add_shapes()
 
     def destroy(self):
@@ -65,17 +69,14 @@ class PhysicsEntity2D(Entity2D):
         super().destroy()
 
     def update(self, delta_time: float):
-        super().update(delta_time)
-        self.update_physics(delta_time)
-
-    def update_physics(self, delta_time=1 / 60):
         if self.body:
             self.position = glm.vec2(self.body.position.x, self.body.position.y)
             self.angle = math.degrees(self.body.angle)
             # logger.debug(f"position: {self.position}")
             # logger.debug(f"angle: {self.angle}")
-
-    def create_body(self, offset=None):
+        super().update(delta_time)
+    
+    def create_body(self, offset=glm.vec2()):
         return self.physics.create_body(self, offset)
 
     def create_shapes(self):
@@ -90,6 +91,7 @@ class PhysicsEntity2D(Entity2D):
         # shape.collision_type = self.physics.kind
         #logger.debug(f"shape.collision_type: {shape.collision_type}")
         globe.physics_engine.space.add(self.body, shape)
+        #globe.physics_engine.space.add(shape)
 
     def remove_shapes(self):
         for shape in self.shapes:
@@ -102,19 +104,10 @@ class PhysicsEntity2D(Entity2D):
         tx = glm.rotate(tx, angle, glm.vec3(0, 0, 1))
         rel_pos = tx * glm.vec4(offset.x, offset.y, 0, 1)
         pos = rel_pos + glm.vec4(body_pos.x, body_pos.y, 0, 1)
-        return pos
+        return glm.vec2(pos)
 
     def create_geom_transform(self):
-        vu = self.vu
-        if vu is None:
-            print("No vu")
-            return None
-        # a = sprite.width / sprite.texture.width
-        # a = self.width * self.scale.x
         a = self.scale.x
-        # d = sprite.height / sprite.texture.height
-        # d = self.height / vu.height
-        # d = self.height * self.scale.y
         d = self.scale.y
         t = pymunk.Transform(a=a, d=d)
         #logger.debug(f"t: {t}")
@@ -143,6 +136,18 @@ class PhysicsGroup2D(PhysicsEntity2D):
             node.gid = self.id
             # model.physics = self.physics
             self.layer.attach(node)
+
+    def update(self, delta_time):
+        points = [node.position for node in self.nodes]
+        if points:
+            centroid = glm.vec2(
+                sum(point.x for point in points) / len(points),
+                sum(point.y for point in points) / len(points)
+            )
+        else:
+            centroid = glm.vec2(0, 0)  # Default centroid if the list is empty
+        self.position = centroid
+        return super().update(delta_time)
 
 class StaticEntity2D(PhysicsEntity2D):
     def __init__(
@@ -196,9 +201,10 @@ class KinematicEntity2D(PhysicsEntity2D):
 
     def update(self, delta_time=1 / 60):
         super().update(delta_time)
-        if not self.laddered:
+        if not self.laddered and not self.mounted:
             self.body.velocity += (0, int(GRAVITY[1] * delta_time))
 
+    '''
     def create_body(self):
         sprite = self.sprite
         position = sprite.position
@@ -212,3 +218,4 @@ class KinematicEntity2D(PhysicsEntity2D):
         body.position = position
         body.node = self
         return body
+    '''

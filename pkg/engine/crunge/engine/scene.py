@@ -29,6 +29,7 @@ class Scene(Base, Generic[T_Node]):
         raise NotImplementedError
 
     def add_layer(self, layer: SceneLayer[T_Node]):
+        layer.scene = self
         self.layers.append(layer)
         self.layers_by_name[layer.name] = layer
         layer.enable()

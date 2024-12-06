@@ -19,22 +19,12 @@ class TileLayerBuilder(TiledBuilder):
         half_tile_width = tile_width / 2
         half_tile_height = tile_height / 2
 
-        '''
-        for tx, ty, gid in layer.iter_data():
-            properties = map.get_tile_properties_by_gid(gid)
-            logger.debug(f"process_tile: {tx}, {ty}, {gid}, {properties}")
-            #y = layer.height - y
-            x = tx * tile_width + half_tile_width
-            y = ty * tile_height + half_tile_height
-            y = self.context.pixel_height - y
-            self.tile_builder.build(glm.vec2(x, y), map.get_tile_image_by_gid(gid), properties)
-        '''
         for x, y, image in layer.tiles():
             tile_gid = map.get_tile_gid(x, y, layer_id)
             properties = map.get_tile_properties_by_gid(tile_gid)
             #y = layer.height - y
             x = x * tile_width + half_tile_width
             y = y * tile_height + half_tile_height
-            y = self.context.pixel_height - y
+            y = self.context.size.y - y
             #self.tile_builder.build(glm.vec2(x, y), image, layer.properties)
             self.tile_builder.build(glm.vec2(x, y), image, properties)
