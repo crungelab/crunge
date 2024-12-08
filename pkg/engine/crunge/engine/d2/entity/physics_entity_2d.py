@@ -6,7 +6,7 @@ import pymunk
 
 from crunge.engine.d2.vu_2d import Vu2D
 
-from ..physics.constants import DEFAULT_MASS, GRAVITY, TILE_SCALING
+from ..physics.constants import DEFAULT_MASS, GRAVITY
 from ..physics import globe
 
 from .entity_2d import Entity2D
@@ -24,14 +24,14 @@ class PhysicsEntity2D(Entity2D):
         vu: Vu2D = None,
         model=None,
         brain=None,
-        physics=physics.StaticPhysics,
-        geom=geom.HullGeom,
+        physics=physics.StaticPhysics(),
+        geom=geom.HullGeom(),
     ):
         super().__init__(position, size, scale, vu, model, brain)
         self.body = None
         self.shapes = []
-        self._physics = physics()
-        self.geom = geom()
+        self._physics = physics
+        self.geom = geom
         self.mass = DEFAULT_MASS
         self.geom_transform = self.create_geom_transform()
 
@@ -118,7 +118,7 @@ class PhysicsGroup2D(PhysicsEntity2D):
     id_counter = 1
 
     def __init__(
-        self, position=glm.vec2(), physics=physics.GroupPhysics, geom=geom.GroupGeom
+        self, position=glm.vec2(), physics=physics.GroupPhysics(), geom=geom.GroupGeom()
     ):
         super().__init__(position, physics=physics, geom=geom)
         self.id_counter += 1
@@ -158,8 +158,8 @@ class StaticEntity2D(PhysicsEntity2D):
         vu=None,
         model=None,
         brain=None,
-        physics=physics.StaticPhysics,
-        geom=geom.HullGeom,
+        physics=physics.StaticPhysics(),
+        geom=geom.HullGeom(),
     ):
         super().__init__(position, size, scale, vu, model, brain, physics, geom)
 
@@ -173,8 +173,8 @@ class DynamicEntity2D(PhysicsEntity2D):
         vu=None,
         model=None,
         brain=None,
-        physics=physics.DynamicPhysics,
-        geom=geom.HullGeom,
+        physics=physics.DynamicPhysics(),
+        geom=geom.HullGeom(),
     ):
         super().__init__(position, size, scale, vu, model, brain, physics, geom)
 
@@ -188,8 +188,8 @@ class KinematicEntity2D(PhysicsEntity2D):
         vu=None,
         model=None,
         brain=None,
-        physics=physics.KinematicPhysics,
-        geom=geom.HullGeom,
+        physics=physics.KinematicPhysics(),
+        geom=geom.HullGeom(),
     ):
         super().__init__(position, size, scale, vu, model, brain, physics, geom)
         self.grounded = False

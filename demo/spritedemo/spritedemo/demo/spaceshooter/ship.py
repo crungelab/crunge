@@ -44,7 +44,7 @@ class Ship(DynamicEntity2D):
 
         vu = SpriteVu(sprite).create()
 
-        super().__init__(position, vu=vu, geom=BallGeom)
+        super().__init__(position, vu=vu, geom=BallGeom())
 
         self.rear_thruster: Thruster = None
         self.front_thruster: Thruster = None

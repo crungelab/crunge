@@ -6,11 +6,9 @@ import glm
 import pymunk
 
 from .constants import PT_DYNAMIC, GRAVITY
-#from . import Physics, PhysicsMeta, PhysicsEngine2D
 from . import Physics, PhysicsEngine2D
 from .draw_options import DrawOptions
 
-#class DynamicPhysics(Physics, metaclass=PhysicsMeta):
 class DynamicPhysics(Physics):
     def __init__(self):
         super().__init__(PT_DYNAMIC)

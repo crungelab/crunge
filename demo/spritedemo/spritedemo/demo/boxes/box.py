@@ -13,4 +13,4 @@ class Box(DynamicEntity2D):
         sprite = Sprite(texture)
         vu = SpriteVu(sprite).create()
         scale = glm.vec2(.25, .25)
-        super().__init__(position, scale=scale, vu=vu, geom=BoxGeom)
+        super().__init__(position, scale=scale, vu=vu, geom=BoxGeom())

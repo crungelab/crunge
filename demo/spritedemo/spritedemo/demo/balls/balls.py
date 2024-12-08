@@ -34,7 +34,7 @@ class BallsDemo(Demo):
         if button == 1 and down:
             x = self.last_mouse.x
             y = self.height - self.last_mouse.y
-            logger.debug(f"Creating box at {x}, {y}")
+            logger.debug(f"Creating ball at {x}, {y}")
             self.create_ball(glm.vec2(x, y))
 
 
