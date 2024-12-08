@@ -1,8 +1,6 @@
 from loguru import logger
 import pymunk
 
-from crunge.engine import Base
-
 from ...physics_engine import PhysicsEngine
 
 from . import globe

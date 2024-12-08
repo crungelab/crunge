@@ -9,12 +9,12 @@ from . import Physics, PhysicsEngine2D
 
 
 class KinematicPhysics(Physics):
-    def __init__(self):
-        super().__init__(PT_KINEMATIC)
+    def __init__(self, position=glm.vec2()):
+        super().__init__(PT_KINEMATIC, position)
 
-    def create_body(self, node, offset=glm.vec2()):
+    def create_body(self, node):
         logger.debug(f"KinematicPhysics.create_body: {node}")
-        position = node.position + offset
+        position = node.position + self.position
         body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
         body.node = node
         #body.position = tuple(node.position)

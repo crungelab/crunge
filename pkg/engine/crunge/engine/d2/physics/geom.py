@@ -99,7 +99,6 @@ class DecomposedGeom(PolyGeom):
         super().__init__()
 
     def create_shapes(self, node: "PhysicsEntity2D", transform: pymunk.Transform = None):
-        #transform = node.geom_transform
         transform = transform if transform is not None else node.geom_transform
 
         sprite = node.sprite
@@ -129,14 +128,14 @@ class HullGeom(PolyGeom):
     def create_shapes(
         self, node: "PhysicsEntity2D", transform: pymunk.Transform = None
     ):
-        # transform = node.geom_transform
         transform = transform if transform is not None else node.geom_transform
         body = node.body
         shapes = []
 
         if node.model.points is None:
-            logger.debug(f"model: {node.model}: no points")
-            return shapes
+            #logger.debug(f"model: {node.model}: no points")
+            #return shapes
+            raise ValueError(f"model: {node.model}: no points")
 
         points = node.model.points.tolist()
         #logger.debug(f"points: {points}")

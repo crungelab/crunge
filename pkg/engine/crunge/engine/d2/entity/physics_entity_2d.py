@@ -33,7 +33,7 @@ class PhysicsEntity2D(Entity2D):
         self._physics = physics
         self.geom = geom
         self.mass = DEFAULT_MASS
-        self.geom_transform = self.create_geom_transform()
+        #self.geom_transform = self.create_geom_transform()
 
     @property
     def physics(self):
@@ -70,14 +70,19 @@ class PhysicsEntity2D(Entity2D):
 
     def update(self, delta_time: float):
         if self.body:
-            self.position = glm.vec2(self.body.position.x, self.body.position.y)
+            body_position = glm.vec2(self.body.position.x, self.body.position.y)
+            #self.position = body_position
+            #self.position = body_position - self.physics.position
+            rotated_offset = glm.rotate(self.physics.position, self.body.angle)
+            self.position = body_position - rotated_offset
+
             self.angle = math.degrees(self.body.angle)
             # logger.debug(f"position: {self.position}")
             # logger.debug(f"angle: {self.angle}")
         super().update(delta_time)
     
-    def create_body(self, offset=glm.vec2()):
-        return self.physics.create_body(self, offset)
+    def create_body(self):
+        return self.physics.create_body(self)
 
     def create_shapes(self):
         return self.geom.create_shapes(self)
@@ -106,13 +111,30 @@ class PhysicsEntity2D(Entity2D):
         pos = rel_pos + glm.vec4(body_pos.x, body_pos.y, 0, 1)
         return glm.vec2(pos)
 
-    def create_geom_transform(self):
+    @property
+    def geom_transform(self):
         a = self.scale.x
         d = self.scale.y
-        t = pymunk.Transform(a=a, d=d)
+        position = -self.physics.position
+        tx = position.x
+        ty = position.y
+        #t = pymunk.Transform(a=a, d=d)
+        t = pymunk.Transform(a=a, d=d, tx=tx, ty=ty)
         #logger.debug(f"t: {t}")
         return t
 
+    '''
+    def create_geom_transform(self):
+        a = self.scale.x
+        d = self.scale.y
+        position = -self.physics.position
+        tx = position.x
+        ty = position.y
+        #t = pymunk.Transform(a=a, d=d)
+        t = pymunk.Transform(a=a, d=d, tx=tx, ty=ty)
+        #logger.debug(f"t: {t}")
+        return t
+    '''
 
 class PhysicsGroup2D(PhysicsEntity2D):
     id_counter = 1
@@ -203,19 +225,3 @@ class KinematicEntity2D(PhysicsEntity2D):
         super().update(delta_time)
         if not self.laddered and not self.mounted:
             self.body.velocity += (0, int(GRAVITY[1] * delta_time))
-
-    '''
-    def create_body(self):
-        sprite = self.sprite
-        position = sprite.position
-        width = sprite.texture.width * TILE_SCALING
-        height = sprite.texture.height * TILE_SCALING
-
-        mass = DEFAULT_MASS
-        moment = pymunk.moment_for_box(mass, (width, height))
-        # moment = pymunk.moment_for_poly(mass, points)
-        self.body = body = pymunk.Body(mass, moment, body_type=pymunk.Body.KINEMATIC)
-        body.position = position
-        body.node = self
-        return body
-    '''

@@ -6,8 +6,9 @@ from .constants import *
 
 
 class Physics(Base):
-    def __init__(self, kind):
+    def __init__(self, kind, position=glm.vec2()):
         self.kind = kind
+        self.position = position
 
 
 class GroupPhysics(Physics):
