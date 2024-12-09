@@ -5,7 +5,6 @@ import glm
 
 from ...math import Rect2i
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture import Texture
 from ...resource.texture.sprite_atlas import SpriteAtlas
 from ...d2.sprite import Sprite
 from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder

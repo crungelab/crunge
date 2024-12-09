@@ -8,6 +8,9 @@ class SpriteStrip(Texture):
         super().__init__(texture, size)
         self.sprites: list[Sprite] = []
 
+    def __getitem__(self, index: int) -> Sprite:
+        return self.sprites[index]
+
     def add(self, sprite: Sprite):
         self.sprites.append(sprite)
 

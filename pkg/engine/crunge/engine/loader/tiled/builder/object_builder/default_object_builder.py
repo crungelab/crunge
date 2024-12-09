@@ -28,6 +28,7 @@ class DefaultObjectBuilder(ObjectBuilder):
         elif obj.image:
             x = obj.x
             y = self.context.size.y - obj.y
+            lower_left = glm.vec2(x, y)
             width = obj.width
             height = obj.height
             #lower_left = glm.vec2(x, y)
@@ -35,22 +36,23 @@ class DefaultObjectBuilder(ObjectBuilder):
             size = glm.vec2(width, height)
 
             # Calculate half dimensions for centering
-            center = size / 2.0
+            #center = size / 2.0
+            center = glm.vec2(width // 2, height // 2)
             center.y = -center.y
             logger.debug(f"center: {center}")
             
             # Handle rotation in radians
             rotation = -glm.radians(obj.rotation)
 
+            rotated_offset = glm.rotate(center, rotation)
+            position = lower_left + rotated_offset
+            '''
             cos_rotation = glm.cos(rotation)
             sin_rotation = glm.sin(rotation)
             rotated_center_x = (center.x * cos_rotation) - (center.y * sin_rotation)
             rotated_center_y = (center.x * sin_rotation) + (center.y * cos_rotation)
             position = glm.vec2(x + rotated_center_x, y + rotated_center_y)
-            #position = glm.vec2(x + rotated_center_x, self.context.pixel_height - (y + rotated_center_y))
-            #position = glm.vec2(x, self.context.pixel_height - y)
-            #position = glm.vec2(x, y) + center
-            #position = glm.vec2(x + center.x, y + center.y)
+            '''
 
             # Load the texture atlas
             image = obj.image

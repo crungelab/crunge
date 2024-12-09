@@ -17,14 +17,20 @@ from ...resource.image import Image
 
 T_Resource = TypeVar("T_Resource", bound=Texture)
 
+
 class TextureDetails:
     def __init__(self, texture: wgpu.Texture, width: int, height: int) -> None:
         self.texture = texture
         self.width = width
         self.height = height
 
+
 class TextureLoaderBase(ResourceLoader[T_Resource]):
-    def __init__(self, kit: TextureKit = ResourceManager().texture_kit, image_loader=ImageLoader()) -> None:
+    def __init__(
+        self,
+        kit: TextureKit = ResourceManager().texture_kit,
+        image_loader=ImageLoader(),
+    ) -> None:
         super().__init__(kit)
         self.image_loader = image_loader
 
@@ -49,16 +55,15 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
         for i, image in enumerate(images):
             im = image.data
             shape = im.shape
-            #logger.debug(f"shape: {shape}")
+            # logger.debug(f"shape: {shape}")
             im_height, im_width, im_channels = shape
             im_depth = 1
             # Has to be a multiple of 256
             size = utils.divround_up(im.nbytes, 256)
-            #logger.debug(f"size: {size}")
-
+            # logger.debug(f"size: {size}")
 
             bytes_per_row = im_channels * im_width
-            #logger.debug(f"bytes_per_row: {bytes_per_row}")
+            # logger.debug(f"bytes_per_row: {bytes_per_row}")
             rows_per_image = im_height
 
             self.queue.write_texture(
@@ -83,5 +88,5 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
                 wgpu.Extent3D(im_width, im_height, im_depth),
             )
 
-        #return texture, im_width, im_height
+        # return texture, im_width, im_height
         return TextureDetails(texture, im_width, im_height)

@@ -29,6 +29,7 @@ class StickerKnightDemo(Demo):
         context = SceneBuilderContext(scene=self.scene)
         map_loader = TiledMapLoader(context)
         tmx_path = ResourceManager().resolve_path(":resources:/sticker-knight/map/sandbox.tmx")
+        #tmx_path = ResourceManager().resolve_path(":resources:/sticker-knight/map/sandbox2.tmx")
         map_loader.load(tmx_path)
 
     def draw(self, renderer: Renderer):

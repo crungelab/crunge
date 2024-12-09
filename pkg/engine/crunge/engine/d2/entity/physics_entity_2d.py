@@ -33,7 +33,6 @@ class PhysicsEntity2D(Entity2D):
         self._physics = physics
         self.geom = geom
         self.mass = DEFAULT_MASS
-        #self.geom_transform = self.create_geom_transform()
 
     @property
     def physics(self):
@@ -50,7 +49,6 @@ class PhysicsEntity2D(Entity2D):
         else:
             self._physics = physics
 
-    
     def _create(self):
         super()._create()
         self.body = self.create_body()
@@ -58,10 +56,10 @@ class PhysicsEntity2D(Entity2D):
 
     def _post_create(self):
         super()._post_create()
-        '''
+        """
         if self.body is not None:
             globe.physics_engine.space.add(self.body)
-        '''
+        """
         self.add_shapes()
 
     def destroy(self):
@@ -71,8 +69,8 @@ class PhysicsEntity2D(Entity2D):
     def update(self, delta_time: float):
         if self.body:
             body_position = glm.vec2(self.body.position.x, self.body.position.y)
-            #self.position = body_position
-            #self.position = body_position - self.physics.position
+            # self.position = body_position
+            # self.position = body_position - self.physics.position
             rotated_offset = glm.rotate(self.physics.position, self.body.angle)
             self.position = body_position - rotated_offset
 
@@ -80,7 +78,7 @@ class PhysicsEntity2D(Entity2D):
             # logger.debug(f"position: {self.position}")
             # logger.debug(f"angle: {self.angle}")
         super().update(delta_time)
-    
+
     def create_body(self):
         return self.physics.create_body(self)
 
@@ -92,11 +90,11 @@ class PhysicsEntity2D(Entity2D):
             self.add_shape(shape)
 
     def add_shape(self, shape):
-        #logger.debug(f"shape: {shape}")
+        # logger.debug(f"shape: {shape}")
         # shape.collision_type = self.physics.kind
-        #logger.debug(f"shape.collision_type: {shape.collision_type}")
+        # logger.debug(f"shape.collision_type: {shape.collision_type}")
         globe.physics_engine.space.add(self.body, shape)
-        #globe.physics_engine.space.add(shape)
+        # globe.physics_engine.space.add(shape)
 
     def remove_shapes(self):
         for shape in self.shapes:
@@ -118,23 +116,11 @@ class PhysicsEntity2D(Entity2D):
         position = -self.physics.position
         tx = position.x
         ty = position.y
-        #t = pymunk.Transform(a=a, d=d)
+        # t = pymunk.Transform(a=a, d=d)
         t = pymunk.Transform(a=a, d=d, tx=tx, ty=ty)
-        #logger.debug(f"t: {t}")
+        # logger.debug(f"t: {t}")
         return t
 
-    '''
-    def create_geom_transform(self):
-        a = self.scale.x
-        d = self.scale.y
-        position = -self.physics.position
-        tx = position.x
-        ty = position.y
-        #t = pymunk.Transform(a=a, d=d)
-        t = pymunk.Transform(a=a, d=d, tx=tx, ty=ty)
-        #logger.debug(f"t: {t}")
-        return t
-    '''
 
 class PhysicsGroup2D(PhysicsEntity2D):
     id_counter = 1
@@ -164,12 +150,13 @@ class PhysicsGroup2D(PhysicsEntity2D):
         if points:
             centroid = glm.vec2(
                 sum(point.x for point in points) / len(points),
-                sum(point.y for point in points) / len(points)
+                sum(point.y for point in points) / len(points),
             )
         else:
             centroid = glm.vec2(0, 0)  # Default centroid if the list is empty
         self.position = centroid
         return super().update(delta_time)
+
 
 class StaticEntity2D(PhysicsEntity2D):
     def __init__(
