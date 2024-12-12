@@ -17,14 +17,6 @@ from ..uniforms_2d import (
 from .sprite_sampler import DefaultSpriteSampler
 from .sprite_program import SpriteProgram
 
-'''
-COORDS = [
-    (0.0, 1.0),  # top-left
-    (0.0, 0.0),  # bottom-left
-    (1.0, 0.0),  # bottom-right
-    (1.0, 1.0),  # top-right
-]
-'''
 
 class Sprite(Material):
     def __init__(
@@ -39,14 +31,14 @@ class Sprite(Material):
         self._texture = texture
         if rect is None:
             rect = Rect2i(0, 0, texture.width, texture.height)
-        self.rect = rect
+        #self.rect = rect
         self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
         self._color = color
         self.points = points
-        #self.coords = COORDS
-        #self.coords = coords
         self.coords: list[tuple[float, float]] = None,
-        self.update_coords()
+        #self.update_coords()
+        #self._rect: Rect2i = None
+        #self.rect = rect
 
         self.program = SpriteProgram()
         self.bind_group: wgpu.BindGroup = None
@@ -55,6 +47,10 @@ class Sprite(Material):
 
         self.create_buffers()
         self.create_bind_group()
+
+        self._rect: Rect2i = None
+        self.rect = rect
+
         self.update_gpu()
 
     def __str__(self):
@@ -74,6 +70,16 @@ class Sprite(Material):
         if old_texture is not None and old_texture.texture != value.texture:
             self.create_bind_group()
         # logger.debug(f"Setting texture: {value}")
+        self.update_gpu()
+
+    @property
+    def rect(self):
+        return self._rect
+    
+    @rect.setter
+    def rect(self, value: Rect2i):
+        self._rect = value
+        self.update_coords()
         self.update_gpu()
 
     @property
@@ -113,34 +119,12 @@ class Sprite(Material):
         if p_width <= 0 or p_height <= 0:
             raise ValueError("Parent width and height must be positive.")
 
-        """
-        def get_texel_coords(x, y, tex_width, tex_height)
-            u = (x + 0.5) / tex_width
-            v = (y + 0.5) / tex_height
-            return u, v
-        """
-
-        # Compute normalized texture coordinates (u, v)
+        # Compute normalized texture coordinates (u, v) using half-pixel offset
         u0 = (x + 0.5) / p_width
         u1 = (x + width - 0.5) / p_width
         v0 = (y + 0.5) / p_height
         v1 = (y + height - 0.5) / p_height
 
-        """
-        u0 = x / p_width
-        u1 = (x + width) / p_width
-        v0 = y / p_height
-        v1 = (y + height) / p_height
-        """
-
-        """
-        self.coords = [
-            (u0, v1),  # top-left
-            (u0, v0),  # bottom-left
-            (u1, v0),  # bottom-right
-            (u1, v1),  # top-right
-        ]
-        """
         # Flip V coordinate because texture coordinates start from bottom-left
         v0_flipped = 1.0 - v1
         v1_flipped = 1.0 - v0

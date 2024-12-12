@@ -13,39 +13,12 @@ class SceneLayer2D(SceneLayer[Node2D]):
         self.root = Node2D()
         self.root.layer = self
 
-    '''
-    @property
-    def width(self):
-        return self.size.x
+    def __str__(self):
+        #return f"SceneLayer2D(name={self.name}, bounds={self.bounds})"
+        return f"SceneLayer2D(name={self.name})"
     
-    @width.setter
-    def width(self, value):
-        self.size.x = value
-
-    @property
-    def height(self):
-        return self.size.y
-    
-    @height.setter
-    def height(self, value):
-        self.size.y = value
-
-    @property
-    def top(self):
-        return self.size.y
-    
-    @property
-    def right(self):
-        return self.size.x
-    
-    @property
-    def bottom(self):
-        return 0
-    
-    @property
-    def left(self):
-        return 0
-    '''
+    def __repr__(self):
+        return str(self)
 
     def query_intersection(self, bounds: Bounds2):
         result:list[Node2D] = []

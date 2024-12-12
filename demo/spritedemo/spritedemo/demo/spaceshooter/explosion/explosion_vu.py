@@ -1,11 +1,7 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import sizeof
 import random
 
 from loguru import logger
-import numpy as np
 import glm
 
 from crunge.core import as_capsule
@@ -22,7 +18,6 @@ from crunge.engine.d2.uniforms_2d import (
     ModelUniform,
 )
 
-from .data import vertex_data
 from .uniforms import Particle, Vec2, Vec4
 
 cs_code = """
@@ -168,7 +163,8 @@ class ExplosionProgram(Program):
         # Render Bind Group Layout
         render_bgl_desc = wgpu.BindGroupLayoutDescriptor(
             label="Render Bind Group Layout",
-            entry_count=len(render_bgl_entries), entries=render_bgl_entries
+            entry_count=len(render_bgl_entries),
+            entries=render_bgl_entries,
         )
         render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
 
@@ -303,7 +299,6 @@ class ExplosionVu(Vu2D):
             self.particles[i].velocity = Vec2(
                 random.uniform(-1, 1), random.uniform(-1, 1)
             )
-            #self.particles[i].color = Vec4(0.0, 0.0, 1.0, 1.0)
             self.particles[i].color = cast_vec4(self.color)
             self.particles[i].age = 0.0
             self.particles[i].lifespan = 100.0
@@ -355,7 +350,7 @@ class ExplosionVu(Vu2D):
         self.render_bind_group = self.device.create_bind_group(render_bind_group_desc)
 
     def draw(self, renderer: Renderer):
-        #logger.debug("Drawing explosion")
+        # logger.debug("Drawing explosion")
 
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)

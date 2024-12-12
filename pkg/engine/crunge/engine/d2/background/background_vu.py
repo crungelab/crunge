@@ -15,14 +15,11 @@ from ..uniforms_2d import (
     ModelUniform,
 )
 
-from .sprite_program import SpriteProgram
-from .sprite import Sprite
-
-if TYPE_CHECKING:
-    from .group.sprite_vu_group import SpriteVuGroup
+from .background_program import BackgroundProgram
+from ..sprite import Sprite
 
 
-class SpriteVu(Vu2D):
+class BackgroundVu(Vu2D):
     def __init__(self, sprite: Sprite = None) -> None:
         super().__init__()
         self.sprite = sprite
@@ -31,10 +28,7 @@ class SpriteVu(Vu2D):
         self.buffer: UniformBuffer[ModelUniform] = None
         self._buffer_index = 0
 
-        self.program: SpriteProgram = None
-        self.group: "SpriteVuGroup" = None
-
-        self.manual_draw = True
+        self.program: BackgroundProgram = None
 
     @property
     def buffer_index(self) -> int:
@@ -72,32 +66,13 @@ class SpriteVu(Vu2D):
 
     def _create(self):
         super()._create()
-        group = self.group
-        if group is not None:
-            group.append(self)
-            if group.is_render_group:
-                self.manual_draw = False
-
-        if not self.manual_draw:
-            return
-
         self.create_program()
         self.create_buffer()
         self.create_bind_group()
         return self
 
-    def destroy(self):
-        if self.group is not None:
-            self.group.remove(self)
-
-    """
-    def __del__(self):
-        if self.group is not None:
-            self.group.remove(self)
-    """
-
     def create_program(self):
-        self.program = SpriteProgram()
+        self.program = BackgroundProgram()
 
     def create_buffer(self):
         self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
@@ -129,24 +104,12 @@ class SpriteVu(Vu2D):
 
         self.buffer[self.buffer_index] = model_uniform
 
-        """
-        model_uniform = ModelUniform()
-        model_uniform.transform.data = cast_matrix4(self.transform)
-
-        self.model_uniform_buffer[0] = model_uniform
-        """
-        # self.buffer[0].transform.data = cast_matrix4(self.transform)
-        # self.buffer[self.buffer_index].transform.data = cast_matrix4(self.transform)
-        # self.buffer.upload()
-
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)
         self.sprite.bind(pass_enc)
         pass_enc.set_bind_group(2, self.bind_group)
 
     def draw(self, renderer: Renderer):
-        if not self.manual_draw:
-            return
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)

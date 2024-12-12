@@ -27,6 +27,15 @@ class MapBuilder(TiledBuilder):
     def add_object_group_builders(self, builders: Dict[str, ObjectGroupBuilder]):
         self.object_group_builders.update(builders)
 
+    '''
+    def build(self):
+        layers = list(self.map.visible_layers)
+        reversed_layers = reversed(layers)
+        for layer_id, layer in enumerate(reversed_layers):
+            layer_id = len(layers) - layer_id - 1
+            self.build_layer(layer, layer_id)
+    '''
+
     def build(self):
         for layer_id, layer in enumerate(self.map.visible_layers):
             self.build_layer(layer, layer_id)

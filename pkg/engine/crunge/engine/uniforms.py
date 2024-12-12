@@ -49,41 +49,6 @@ class Vec4(Structure):
 assert sizeof(Vec4) % 16 == 0
 assert sizeof(Vec4) == 16
 
-"""
-# MAT4_SIZE = 4 * 4 * 4
-
-class Mat4(Structure):
-    _fields_ = [("data", c_float * 16)]  # GLM uses column-major order
-
-
-assert sizeof(Mat4) % 16 == 0
-assert sizeof(Mat4) == 64
-
-
-class Mat3(Structure):
-    _fields_ = [
-        ("data", c_float * 9),
-        ("_pad1", c_float * 3),
-    ]  # GLM uses column-major order
-    # _fields_ = [("data", c_float * 9), ("_pad1", c_float * 3)]  # Padding after each vec3
-
-
-assert sizeof(Mat3) % 16 == 0
-assert sizeof(Mat3) == 48
-
-class Vec3(Structure):
-    _fields_ = [
-        ("x", c_float),
-        ("y", c_float),
-        ("z", c_float),
-        ("_pad", c_float),
-    ]  # Padding to ensure 16-byte alignment
-
-
-assert sizeof(Vec3) % 16 == 0
-assert sizeof(Vec3) == 16
-"""
-
 
 class Mat3(Structure):
     _fields_ = [
@@ -104,20 +69,10 @@ class Mat4(Structure):
 assert sizeof(Mat4) % 16 == 0
 assert sizeof(Mat4) == 64
 
-
-'''
-def cast_matrix4(matrix):
-    ptr = glm.value_ptr(matrix)
-    return cast(ptr, POINTER(c_float * 16)).contents
-
-
-def cast_matrix3(matrix):
-    ptr = glm.value_ptr(matrix)
-    return cast(ptr, POINTER(c_float * 9)).contents
-'''
 
 def cast_vec3(vec: glm.vec3):
     return Vec3(vec.x, vec.y, vec.z, 0.0)
+
 
 def cast_vec4(vec: glm.vec4):
     return Vec4(vec.x, vec.y, vec.z, vec.w)
@@ -131,8 +86,3 @@ def cast_matrix4(matrix: glm.mat4):
 def cast_matrix3(matrix: glm.mat3):
     ptr = glm.value_ptr(matrix)
     return cast(ptr, POINTER(c_float * 9)).contents
-
-'''
-def cast_vec3(vec: glm.vec3):
-    return Vec3(vec.x, vec.y, vec.z, 0.0)
-'''
