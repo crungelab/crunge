@@ -70,6 +70,9 @@ assert sizeof(Mat4) % 16 == 0
 assert sizeof(Mat4) == 64
 
 
+def cast_vec2(vec: glm.vec2):
+    return Vec2(vec.x, vec.y)
+
 def cast_vec3(vec: glm.vec3):
     return Vec3(vec.x, vec.y, vec.z, 0.0)
 

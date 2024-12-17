@@ -22,6 +22,7 @@ shader_code = """
 struct Camera {
     projection : mat4x4<f32>,
     view : mat4x4<f32>,
+    viewport : vec2<f32>,
     position: vec3<f32>,
 }
 
@@ -31,7 +32,10 @@ struct Model {
 
 struct Material {
     color : vec4<f32>,
-    uvs : array<vec4<f32>, 4>, // Use vec4<f32> for proper alignment
+    spriteRect : vec4<f32>, // x, y, width, height
+    textureSize : vec2<f32>,
+    flipH : u32, // 1 = true, 0 = false
+    flipV : u32, // 1 = true, 0 = false
 }
 
 @group(0) @binding(0) var<uniform> camera : Camera;
@@ -47,6 +51,49 @@ struct VertexOutput {
   @location(0) uv: vec2<f32>,
 }
 
+// Function to compute UV coordinates with optional flipping
+fn compute_uv(idx: u32, rect: vec4<f32>, tex_size: vec2<f32>, flip_h: bool, flip_v: bool) -> vec2<f32> {
+    // Normalized texture coordinates with half-pixel offsets
+    let u0 = (rect.x + 0.5) / tex_size.x;
+    let u1 = (rect.x + rect.z - 0.5) / tex_size.x;
+    let v0 = (rect.y + 0.5) / tex_size.y;
+    let v1 = (rect.y + rect.w - 0.5) / tex_size.y;
+
+    // Flip the V coordinates
+    let v0_flipped = v1;
+    let v1_flipped = v0;
+
+    // Reorder UVs for triangle strip
+    var uvs = array<vec2<f32>, 4>(
+        vec2<f32>(u0, v0_flipped), // Bottom-left
+        vec2<f32>(u1, v0_flipped), // Bottom-right
+        vec2<f32>(u0, v1_flipped), // Top-left
+        vec2<f32>(u1, v1_flipped)  // Top-right
+    );
+
+    // Flip horizontally
+    if (flip_v) {
+        uvs = array<vec2<f32>, 4>(
+            uvs[3], // Top-left -> Top-right
+            uvs[2], // Bottom-left -> Bottom-right
+            uvs[1], // Bottom-right -> Bottom-left
+            uvs[0]  // Top-right -> Top-left
+        );
+    }
+
+    // Flip vertically
+    if (flip_h) {
+        uvs = array<vec2<f32>, 4>(
+            uvs[1], // Top-left -> Bottom-left
+            uvs[0], // Bottom-left -> Top-left
+            uvs[3], // Bottom-right -> Top-right
+            uvs[2]  // Top-right -> Bottom-right
+        );
+    }
+
+    return uvs[idx];
+}
+
 @vertex
 fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) instanceIndex: u32) -> VertexOutput {
     let x = f32((vertexIndex & 1u) << 1) - 1.0; // Generates -1.0 or 1.0
@@ -56,15 +103,21 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) ins
     let vert_pos = camera.projection * camera.view * models[instanceIndex].transform * quad_pos;
 
     // Extract UV coordinates from the vec4 (only use x and y)
-    let uv = material.uvs[vertexIndex].xy;
+    // Compute UV for the current vertex with flipping
+    let uv = compute_uv(
+        vertexIndex,
+        material.spriteRect,
+        material.textureSize,
+        material.flipH != 0u,
+        material.flipV != 0u
+    );
 
     return VertexOutput(vert_pos, uv);
 }
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    let uv = vec2<f32>(in.uv.x, 1.0 - in.uv.y); // Flip Y-axis for correct texture orientation
-    let color = textureSample(myTexture, mySampler, uv);
+    let color = textureSample(myTexture, mySampler, in.uv);
     return color * material.color;
 }
 """

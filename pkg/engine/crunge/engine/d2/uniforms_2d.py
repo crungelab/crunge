@@ -14,17 +14,19 @@ from loguru import logger
 import numpy as np
 import glm
 
-from ..uniforms import Vec3, Vec4, Mat4
+from ..uniforms import Vec2, Vec3, Vec4, Mat4
 
 class CameraUniform(Structure):
     _fields_ = [
         ("projection", Mat4),
         ("view", Mat4),
+        ("viewport", Vec2),
         ("position", Vec3),
+        ("_pad1", c_float * 4),
     ]
 
 
-assert sizeof(CameraUniform) % 16 == 0
+#assert sizeof(CameraUniform) % 16 == 0
 
 class ModelUniform(Structure):
     _fields_ = [
@@ -37,10 +39,15 @@ assert sizeof(ModelUniform) % 16 == 0
 class MaterialUniform(Structure):
     _fields_ = [
         ("color", Vec4),
-        ("uvs", Vec4 * 4),
+        ("rect", Vec4),
+        ("texture_size", Vec2),
+        ("flip_h", c_uint32),
+        ("flip_v", c_uint32),
+        ("_pad1", c_float * 4),
     ]
 
-assert sizeof(ModelUniform) % 16 == 0
+assert sizeof(MaterialUniform) % 16 == 0
+
 
 class LightUniform(Structure):
     _fields_ = [

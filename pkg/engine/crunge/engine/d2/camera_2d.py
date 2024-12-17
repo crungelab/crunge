@@ -21,7 +21,7 @@ from crunge.core.event_source import Subscription
 
 from ..math import Bounds2
 from ..math.rect import Rect2
-from ..uniforms import cast_matrix4, cast_vec3
+from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
 from ..viewport import Viewport
 
 from .node_2d import Node2D
@@ -150,6 +150,7 @@ class Camera2D(Node2D):
         camera_uniform = CameraUniform()
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
+        camera_uniform.viewport = cast_vec2(self.size)
         camera_uniform.position = cast_vec3(glm.vec3(self.position.x, self.position.y, 0))
 
         self.device.queue.write_buffer(

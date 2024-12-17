@@ -9,7 +9,7 @@ from crunge import wgpu
 from ...math import Rect2i
 from ...resource import ImageTexture, Material, Sampler
 
-from ...uniforms import cast_vec4
+from ...uniforms import cast_vec4, cast_vec2
 from ..uniforms_2d import (
     MaterialUniform,
 )
@@ -25,20 +25,22 @@ class Sprite(Material):
         rect: Rect2i = None,
         sampler: Sampler = None,
         color=glm.vec4(1.0, 1.0, 1.0, 1.0),
-        points=None
+        points=None,
     ) -> None:
         super().__init__()
         self._texture = texture
         if rect is None:
             rect = Rect2i(0, 0, texture.width, texture.height)
-        #self.rect = rect
+        self.flip_h = False
+        self.flip_v = False
+        # self.rect = rect
         self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
         self._color = color
         self.points = points
-        self.coords: list[tuple[float, float]] = None,
-        #self.update_coords()
-        #self._rect: Rect2i = None
-        #self.rect = rect
+        # self.coords: list[tuple[float, float]] = None,
+        # self.update_coords()
+        # self._rect: Rect2i = None
+        # self.rect = rect
 
         self.program = SpriteProgram()
         self.bind_group: wgpu.BindGroup = None
@@ -54,7 +56,7 @@ class Sprite(Material):
         self.update_gpu()
 
     def __str__(self):
-        return f"Sprite(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, rect={self.rect}, coords={self.coords})"
+        return f"Sprite(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, rect={self.rect})"
 
     def __repr__(self):
         return str(self)
@@ -75,11 +77,11 @@ class Sprite(Material):
     @property
     def rect(self):
         return self._rect
-    
+
     @rect.setter
     def rect(self, value: Rect2i):
         self._rect = value
-        self.update_coords()
+        # self.update_coords()
         self.update_gpu()
 
     @property
@@ -102,43 +104,6 @@ class Sprite(Material):
     def height(self):
         return self.rect.height
 
-    def update_coords(self):
-        """
-        Updates the texture coordinates based on the rectangle's position within the parent texture.
-        """
-        x = self.rect.x
-        y = self.rect.y
-        width = self.rect.width
-        height = self.rect.height
-        p_width = float(self.texture.width)
-        p_height = float(self.texture.height)
-
-        # Validate dimensions to prevent division by zero or negative coordinates
-        if width <= 0 or height <= 0:
-            raise ValueError("Rectangle width and height must be positive.")
-        if p_width <= 0 or p_height <= 0:
-            raise ValueError("Parent width and height must be positive.")
-
-        # Compute normalized texture coordinates (u, v) using half-pixel offset
-        u0 = (x + 0.5) / p_width
-        u1 = (x + width - 0.5) / p_width
-        v0 = (y + 0.5) / p_height
-        v1 = (y + height - 0.5) / p_height
-
-        # Flip V coordinate because texture coordinates start from bottom-left
-        v0_flipped = 1.0 - v1
-        v1_flipped = 1.0 - v0
-
-        # Assign texture coordinates in the correct order
-        self.coords = [
-            (u0, v1_flipped),  # top-left
-            (u0, v0_flipped),  # bottom-left
-            (u1, v0_flipped),  # bottom-right
-            (u1, v1_flipped),  # top-right
-        ]
-
-        #logger.debug(f"Texture coords updated: {self.coords}")
-
     @property
     def color(self):
         return self._color
@@ -160,36 +125,9 @@ class Sprite(Material):
     def mirror(self, horizontal: bool = False, vertical: bool = False):
         return self.clone().flip(horizontal, vertical)
 
-    '''
-    COORDS = [
-        (0.0, 1.0),  # top-left
-        (0.0, 0.0),  # bottom-left
-        (1.0, 0.0),  # bottom-right
-        (1.0, 1.0),  # top-right
-    ]
-    '''
-
     def flip(self, horizontal: bool = False, vertical: bool = False):
-        """
-        Flips the sprite's texture coordinates.
-        """
-        if horizontal:
-            self.coords = [
-                self.coords[3],  # top-left
-                self.coords[2],  # bottom-left
-                self.coords[1],  # bottom-right
-                self.coords[0],  # top-right
-            ]
-            #logger.debug(f"Flipped horizontally: {self.coords}")
-        if vertical:
-            self.coords = [
-                self.coords[1],  # top-left
-                self.coords[0],  # bottom-left
-                self.coords[3],  # bottom-right
-                self.coords[2],  # top-right
-            ]
-            #logger.debug(f"Flipped vertically: {self.coords}")
-
+        self.flip_h = horizontal
+        self.flip_v = vertical
         self.update_gpu()
         return self
 
@@ -203,7 +141,6 @@ class Sprite(Material):
         )
 
     def create_bind_group(self):
-        #sampler = DefaultSpriteSampler().sampler
         sampler = self.sampler.sampler
 
         bindgroup_entries = wgpu.BindGroupEntries(
@@ -231,11 +168,13 @@ class Sprite(Material):
         uniform = MaterialUniform()
         uniform.color = cast_vec4(self.color)
 
-        # Need to reorder because we are using a triangle strip
-        uniform.uvs[0] = self.coords[1]  # Top-left
-        uniform.uvs[1] = self.coords[2]  # Bottom-left
-        uniform.uvs[2] = self.coords[0]  # Top-right
-        uniform.uvs[3] = self.coords[3]  # Bottom-right
+        uniform.rect = cast_vec4(
+            glm.vec4(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
+        )
+        uniform.texture_size = cast_vec2(self.texture.size)
+
+        uniform.flip_h = 1 if self.flip_h else 0
+        uniform.flip_v = 1 if self.flip_v else 0
 
         self.device.queue.write_buffer(
             self.uniform_buffer,
