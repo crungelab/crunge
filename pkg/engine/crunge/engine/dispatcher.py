@@ -14,8 +14,7 @@ class Dispatcher(Base):
     EVENT_UNHANDLED = None
 
     def dispatch(self, event) -> DispatchResult:
-        # logger.debug(event)
-        # logger.debug(event.type)
+        # logger.debug(f"dispatch: {event} {event.type}")
         match event.__class__:
             case sdl.WindowEvent:
                 return self.on_window(event)

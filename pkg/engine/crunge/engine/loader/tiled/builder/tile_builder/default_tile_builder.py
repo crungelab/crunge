@@ -38,17 +38,12 @@ class DefaultTileBuilder(TileBuilder):
             node = self.create_node_cb(position, sprite, properties)
         else:
             node = self.create_node(position, sprite, properties)
-        '''
-        vu = SpriteVu(sprite).create()
-        size = glm.vec2(sprite.width, sprite.height)
-        node = Node2D(position, size=size, vu=vu, model=sprite)
-        '''
+
         if node is not None:
             self.context.layer.attach(node)
 
     def create_node(self, position: glm.vec2, sprite: Sprite, properties: dict):
-        vu = SpriteVu(sprite).create()
         size = glm.vec2(sprite.width, sprite.height)
-        node = Node2D(position, size=size, vu=vu, model=sprite)
+        node = Node2D(position, size=size, vu=SpriteVu(), model=sprite)
         return node
 

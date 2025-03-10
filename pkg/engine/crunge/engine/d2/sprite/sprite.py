@@ -33,14 +33,10 @@ class Sprite(Material):
             rect = Rect2i(0, 0, texture.width, texture.height)
         self.flip_h = False
         self.flip_v = False
-        # self.rect = rect
+
         self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
         self._color = color
         self.points = points
-        # self.coords: list[tuple[float, float]] = None,
-        # self.update_coords()
-        # self._rect: Rect2i = None
-        # self.rect = rect
 
         self.program = SpriteProgram()
         self.bind_group: wgpu.BindGroup = None

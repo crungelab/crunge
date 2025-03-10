@@ -71,7 +71,7 @@ class Widget(Node["Widget"]):
             self.controller.disable()
     
     def dispatch(self, event):
-        #logger.debug(f"Widget.dispatch: {self}, {self.children}")
+        #logger.debug(f"Widget.dispatch: {self}, {self.children}, {event}")
         for child in self.children[::-1]:
             if child.dispatch(event):
                 return True

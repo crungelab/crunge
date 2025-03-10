@@ -31,13 +31,8 @@ class BackgroundDemo(Demo):
 
         self.scene.clear()
 
-        #texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
-        #sprite = self.sprite = Sprite(texture, color=glm.vec4(self.color))
-        #sprite = self.sprite = SpriteLoader().load(":images:/backgroundColorGrass.png")
         sprite = self.sprite = SpriteLoader(sprite_builder=BackgroundSpriteBuilder()).load(":images:/backgroundColorGrass.png")
-        sprite.rect = Rect2i(0, 0, 1920, 1080)
-        vu = BackgroundVu()
-        node = self.node = Node2D(vu=vu, model=sprite)
+        self.node = Node2D(vu=BackgroundVu(), model=sprite)
         self.scene.attach(self.node)
 
 

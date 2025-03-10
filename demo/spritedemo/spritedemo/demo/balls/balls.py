@@ -20,7 +20,6 @@ class BallsDemo(Demo):
         self.scene.clear()
         self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine().create()
-        #self.physics_engine.create()
         self.create_floor()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
@@ -32,23 +31,21 @@ class BallsDemo(Demo):
         button = event.button
         down = event.down
         if button == 1 and down:
-            x = self.last_mouse.x
-            y = self.height - self.last_mouse.y
+            mouse_vec = glm.vec2(event.x, event.y)
+            world_vec = self.camera.unproject(mouse_vec)
+            x, y = world_vec.x, world_vec.y
             logger.debug(f"Creating ball at {x}, {y}")
-            self.create_ball(glm.vec2(x, y))
+            self.create_ball(world_vec)
 
 
     def create_ball(self, position):
-        ball = Ball(position)
-        ball.create()
-        self.scene.attach(ball)
+        self.scene.attach(Ball(position))
 
     def create_floor(self):
         x = self.width / 2
         y = -10
         position = glm.vec2(x, y)
         floor = Floor(position, glm.vec2(self.width, 20))
-        floor.create()
         self.scene.attach(floor)
 
     def draw(self, renderer: Renderer):

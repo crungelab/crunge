@@ -1,14 +1,4 @@
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
+from ctypes import sizeof
 
 import glm
 
@@ -20,19 +10,19 @@ from crunge.core import klass
 from crunge.core.event_source import Subscription
 
 from ..math import Bounds2
-from ..math.rect import Rect2
 from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
 from ..viewport import Viewport
 
 from .node_2d import Node2D
-from .uniforms_2d import (
-    CameraUniform,
-)
+from .uniforms_2d import CameraUniform
+
 from .program_2d import Program2D
+
 
 @klass.singleton
 class CameraProgram2D(Program2D):
     pass
+
 
 class Camera2D(Node2D):
     def __init__(self, position=glm.vec3(0.0, 0.0, 2), size=glm.vec2(1.0), zoom=1.0):
@@ -44,7 +34,6 @@ class Camera2D(Node2D):
         self.view_matrix = glm.mat4(1.0)
 
         self.frustrum: Bounds2 = None
-        #self.projection = Rect2()
 
         self._viewport: Viewport = None
         self.viewport_size_subscription: Subscription[glm.ivec2] = None
@@ -53,20 +42,6 @@ class Camera2D(Node2D):
         self.create_bind_groups()
 
         super().__init__(position, size)
-
-    '''
-    @property
-    def frustrum(self) -> Bounds2:
-        half_width = (self.width / 2) * self.zoom
-        half_height = (self.height / 2) * self.zoom
-        min_x = self.position.x - half_width
-        max_x = self.position.x + half_width
-        min_y = self.position.y - half_height
-        max_y = self.position.y + half_height
-        bounds = Bounds2(glm.vec2(min_x, min_y), glm.vec2(max_x, max_y))
-        logger.debug(f"Camera frustrum: {bounds}")
-        return bounds
-    '''
 
     @property
     def viewport(self):
@@ -109,7 +84,6 @@ class Camera2D(Node2D):
 
         camera_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Camera bind group",
-            #layout=camera_bgl,
             layout=CameraProgram2D().camera_bind_group_layout,
             entry_count=len(camera_bindgroup_entries),
             entries=camera_bindgroup_entries,
@@ -131,11 +105,6 @@ class Camera2D(Node2D):
         ortho_bottom = self.y - (self.height * self.zoom) / 2
         ortho_top = self.y + (self.height * self.zoom) / 2
 
-        '''
-        self.projection = Rect2(
-            ortho_left, ortho_bottom, ortho_right - ortho_left, ortho_top - ortho_bottom
-        )
-        '''
         self.frustrum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
 
         ortho_near = -1  # Near clipping plane
@@ -144,6 +113,7 @@ class Camera2D(Node2D):
         self.projection_matrix = glm.ortho(
             ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far
         )
+
         self.update_gpu()
 
     def update_gpu(self):
@@ -151,7 +121,9 @@ class Camera2D(Node2D):
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
         camera_uniform.viewport = cast_vec2(self.size)
-        camera_uniform.position = cast_vec3(glm.vec3(self.position.x, self.position.y, 0))
+        camera_uniform.position = cast_vec3(
+            glm.vec3(self.position.x, self.position.y, 0)
+        )
 
         self.device.queue.write_buffer(
             self.uniform_buffer,
@@ -162,3 +134,29 @@ class Camera2D(Node2D):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(0, self.bind_group)
+
+    def unproject(self, mouse_vec: glm.vec2):
+        mx = mouse_vec.x
+        my = mouse_vec.y
+        # Get viewport dimensions
+        viewport = self.viewport
+        viewportWidth = viewport.width
+        viewPortHeight = viewport.height
+
+        frustrum = self.frustrum
+        glOrthoWidth = frustrum.width
+        glOrthoHeight = frustrum.height
+
+        # Convert mouse coordinates to NDC
+        x_ndc = (2.0 * mx / viewportWidth) - 1.0
+        y_ndc = (2.0 * my / viewPortHeight) - 1.0
+        y_ndc = -y_ndc  # Flip Y for WebGPU's coordinate system
+
+        # Convert NDC to world coordinates using the adjusted projection size
+        x_world = x_ndc * (glOrthoWidth / 2.0)
+        y_world = y_ndc * (glOrthoHeight / 2.0)
+
+        # Adjust for camera position
+        x_world += self.x
+        y_world += self.y
+        return glm.vec2(x_world, y_world)

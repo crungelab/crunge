@@ -19,8 +19,7 @@ class BoxesDemo(Demo):
     def reset(self):
         self.scene.clear()
         self.last_mouse = glm.vec2()
-        self.physics_engine = DynamicPhysicsEngine()
-        self.physics_engine.create()
+        self.physics_engine = DynamicPhysicsEngine().create()
         self.create_floor()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
@@ -32,16 +31,16 @@ class BoxesDemo(Demo):
         button = event.button
         down = event.down
         if button == 1 and down:
-            x = self.last_mouse.x
-            y = self.height - self.last_mouse.y
+            mouse_vec = glm.vec2(event.x, event.y)
+            world_vec = self.camera.unproject(mouse_vec)
+            x, y = world_vec.x, world_vec.y
+
             logger.debug(f"Creating box at {x}, {y}")
-            self.create_box(glm.vec2(x, y))
+            self.create_box(world_vec)
 
 
     def create_box(self, position):
-        box = Box(position)
-        box.create()
-        self.scene.attach(box)
+        self.scene.attach(Box(position))
 
     def create_floor(self):
         x = self.width / 2

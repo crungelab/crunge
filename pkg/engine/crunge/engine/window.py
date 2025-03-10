@@ -80,7 +80,6 @@ class Window(Frame):
     def on_size(self):
         super().on_size()
         size = self.size
-        logger.debug(f"Resizing to {size}")
         if not size.x or not size.y:
             return
         self.viewport.size = size
