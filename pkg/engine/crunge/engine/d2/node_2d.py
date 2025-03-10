@@ -14,7 +14,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
         position=glm.vec2(),
-        size=glm.vec2(1.0),
+        rotation=0.0,
         scale=glm.vec2(1.0),
         vu: "Vu2D" = None,
         model=None,
@@ -22,30 +22,14 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         super().__init__(vu, model)
         self._position = position
         self._depth = 0.0
-        self._rotation = 0.0  # radians
-        self._size = size
+        self._rotation = rotation  # radians
         self._scale = scale
         self._matrix = glm.mat4(1.0)
         self.bounds = Bounds2()
         self.velocity = glm.vec2(0.0)
         self.angular_velocity = 0.0 # radians per second
 
-        if vu is not None:
-            self._size = vu.size
-
-        '''
-        if model is not None:
-            self._size = model.size
-        '''
-
         self.update_matrix()
-
-    '''
-    def _create(self):
-        super()._create()
-        if self.vu is not None:
-            self.size = self.vu.size
-    '''
 
     @property
     def position(self):
@@ -103,35 +87,29 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self.update_matrix()
 
     @property
-    def size(self):
-        return self._size
+    def size(self) -> glm.vec2:
+        if self.model is not None:
+            size = glm.vec2(self.model.size.x, self.model.size.y) * self.scale
+        elif self.vu is not None:
+            size = self.vu.size * self.scale
+        else:
+            size = glm.vec2(1.0) * self.scale
 
-    @size.setter
-    def size(self, value: glm.vec2):
-        self._size = value
-        self.update_matrix()
+        #logger.debug(f"class: {self.__class__}, size: {size}")
+
+        return size
 
     @property
     def width(self):
-        return self._size.x
-
-    @width.setter
-    def width(self, value: float):
-        self._size.x = value
-        self.update_matrix()
+        return self.size.x
 
     @property
     def height(self):
-        return self._size.y
-
-    @height.setter
-    def height(self, value: float):
-        self._size.y = value
-        self.update_matrix()
+        return self.size.y
 
     @property
     def radius(self):
-        return self._size.x / 2
+        return self.size.x / 2
 
     @property
     def scale(self):
@@ -150,10 +128,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def matrix(self, value):
         self._matrix = value
         self.on_transform()
-        '''
-        if self.enabled:
-            self.on_transform()
-        '''
+
     @property
     def transform(self) -> glm.mat4:
         transform = self.matrix
@@ -162,16 +137,11 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         return transform
 
     def on_transform(self):
-        #self.aabb = self.get_world_aabb()
         local_bounds = self.get_local_bounds()
         #logger.debug(f"class: {self.__class__}, local_bounds: {local_bounds}")
         self.bounds = local_bounds.to_global(self.transform)
         #logger.debug(f"class: {self.__class__}, bounds: {self.bounds}")
 
-        '''
-        if self.vu is not None:
-            self.vu.transform = self.transform
-        '''
         for listener in self.listeners:
             listener.on_node_transform_change(self)
 

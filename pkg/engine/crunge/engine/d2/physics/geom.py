@@ -18,7 +18,7 @@ class Geom:
         pass
 
     def get_moment(self, node: "PhysicsEntity2D"):
-        size = node.size * node.scale
+        size = node.size
         logger.debug(f"size: {size}")
         return pymunk.moment_for_box(node.mass, tuple(size))
 
@@ -30,8 +30,7 @@ class BoxGeom(Geom):
     def create_shapes(self, node: "PhysicsEntity2D", transform: pymunk.Transform = None):
         logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
         shapes = []
-        size = node.size * node.scale
-        # shape = pymunk.Poly.create_box(model.body, (model.width, model.height))
+        size = node.size
         shape = pymunk.Poly.create_box(node.body, tuple(size))
         shape.friction = 10
         shape.elasticity = 0.2
@@ -44,17 +43,17 @@ class BallGeom(Geom):
         super().__init__()
 
     def get_moment(self, node: "PhysicsEntity2D"):
-        size = node.size * node.scale
-        radius = size.x / 2
-        return pymunk.moment_for_circle(node.mass, 0, radius, (0, 0))
-        # return pymunk.moment_for_circle(model.mass, 0, model.radius, (0, 0))
+        #size = node.size
+        #radius = size.x / 2
+        radius = node.model.collision_rect.width / 2
+        return pymunk.moment_for_circle(node.mass, 0, radius)
 
     def create_shapes(self, node: "PhysicsEntity2D", transform: pymunk.Transform = None):
         shapes = []
-        size = node.size * node.scale
-        radius = size.x / 2
-        # shape = pymunk.Circle(model.body, model.radius, (0, 0))
-        shape = pymunk.Circle(node.body, radius, (0, 0))
+        #size = node.size
+        #radius = size.x / 2
+        radius = node.model.collision_rect.width / 2 * node.scale.x
+        shape = pymunk.Circle(node.body, radius)
         # shape.elasticity = 0.95
         shape.friction = 0.9
         shapes.append(shape)
@@ -77,9 +76,9 @@ class PolyGeom(Geom):
         super().__init__()
 
     def get_moment(self, node: "PhysicsEntity2D"):
-        size = node.size * node.scale
+        size = node.size
         return pymunk.moment_for_box(node.mass, tuple(size))
-        # return pymunk.moment_for_poly(model.mass, model.sprite.points.tolist())
+        #return pymunk.moment_for_poly(node.mass, node.model.points.tolist())
 
     """
     def get_moment(self, model):

@@ -9,7 +9,7 @@ from ...resource.resource_manager import ResourceManager
 from ...resource.texture import Texture
 from ...resource.texture.sprite_atlas import SpriteAtlas
 
-from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
+from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder, CollidableSpriteBuilder
 
 from ...d2.sprite import Sprite
 
@@ -18,7 +18,8 @@ from ..texture.texture_loader_base import TextureLoaderBase
 
 class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
     def __init__(
-        self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()
+        #self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()
+        self, sprite_builder: SpriteBuilder = CollidableSpriteBuilder()
     ) -> None:
         super().__init__()
         self.sprite_builder = sprite_builder

@@ -100,11 +100,6 @@ fn vs_main(@builtin(vertex_index) idx: u32) -> VertexOutput {
 
     let quad_pos = vec4<f32>(x, y, 0.0, 1.0);
     let vert_pos = camera.view * quad_pos;
-
-    let aspect_x = camera.projection[0][0];
-    let aspect_y = camera.projection[1][1];
-    let aspect_ratio = aspect_x / aspect_y;
-
     let rect = vec4<f32>(0, 0, camera.viewport.x, camera.viewport.y);
 
     let uv = compute_uv(

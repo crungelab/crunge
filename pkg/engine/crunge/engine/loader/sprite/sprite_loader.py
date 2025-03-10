@@ -6,7 +6,7 @@ import glm
 from ...math import Rect2i
 from ...resource.resource_manager import ResourceManager
 from ...d2.sprite import Sprite
-from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder
+from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, CollidableSpriteBuilder
 
 from ..loader import Loader
 from ..texture.image_texture_loader import ImageTextureLoader
@@ -16,7 +16,8 @@ class SpriteLoader(Loader):
     def __init__(
         self,
         texture_loader: ImageTextureLoader = ImageTextureLoader(),
-        sprite_builder: SpriteBuilder = DefaultSpriteBuilder(),
+        #sprite_builder: SpriteBuilder = DefaultSpriteBuilder(),
+        sprite_builder: SpriteBuilder = CollidableSpriteBuilder(),
     ) -> None:
         super().__init__()
         self.texture_loader = texture_loader

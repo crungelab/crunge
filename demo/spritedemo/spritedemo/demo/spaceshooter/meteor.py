@@ -21,8 +21,7 @@ class Meteor(DynamicEntity2D):
         #logger.debug(f"atlas: {atlas}")
         
         sprite = atlas.get(name)
-        vu = SpriteVu(sprite).create()
-        super().__init__(position, vu=vu, geom=BallGeom())
+        super().__init__(position, vu=SpriteVu(), model=sprite, geom=BallGeom())
 
     @classmethod
     def produce(cls, position: glm.vec2):

@@ -44,7 +44,7 @@ class SpaceShooter(Demo):
             asteroid_node = asteroid_shape.body.node
             laser_node.destroy()
             asteroid_node.destroy()
-            explosion = Explosion(asteroid_node.position, glm.vec2(100, 100))
+            explosion = Explosion(asteroid_node.position)
             self.scene.attach(explosion)
             return False
 
@@ -55,7 +55,7 @@ class SpaceShooter(Demo):
             ship_node.destroy()
             asteroid_node.destroy()
             explosion = Explosion(
-                asteroid_node.position, glm.vec2(100, 100), glm.vec4(1.0, 0.0, 0.0, 1.0)
+                asteroid_node.position, glm.vec4(1.0, 0.0, 0.0, 1.0)
             )
             self.scene.attach(explosion)
             return False

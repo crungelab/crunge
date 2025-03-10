@@ -25,7 +25,7 @@ class CameraProgram2D(Program2D):
 
 
 class Camera2D(Node2D):
-    def __init__(self, position=glm.vec3(0.0, 0.0, 2), size=glm.vec2(1.0), zoom=1.0):
+    def __init__(self, position=glm.vec3(0.0, 0.0, 2), viewport_size=glm.vec2(1024, 768), zoom=1.0):
         self._zoom = zoom
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
@@ -36,12 +36,14 @@ class Camera2D(Node2D):
         self.frustrum: Bounds2 = None
 
         self._viewport: Viewport = None
+        self.viewport_size = viewport_size
         self.viewport_size_subscription: Subscription[glm.ivec2] = None
 
         self.create_buffers()
         self.create_bind_groups()
 
-        super().__init__(position, size)
+        #super().__init__(position, size)
+        super().__init__(position)
 
     @property
     def viewport(self):
@@ -51,6 +53,7 @@ class Camera2D(Node2D):
     def viewport(self, viewport: Viewport):
         self._viewport = viewport
         if viewport is not None:
+            self.on_viewport_size(viewport.size)
             self.viewport_size_subscription = viewport.size_events.subscribe(
                 self.on_viewport_size
             )
@@ -92,12 +95,38 @@ class Camera2D(Node2D):
         self.bind_group = self.device.create_bind_group(camera_bind_group_desc)
 
     def on_viewport_size(self, size: glm.ivec2):
-        self.size = glm.vec2(size.x, size.y)
+        self.viewport_size = glm.vec2(size.x, size.y)
+        logger.debug(f"Camera2D: on_viewport_size: {size}")
+        self.update_matrix()
 
+    '''
     def on_size(self) -> None:
         super().on_size()
         self.update_matrix()
+    '''
 
+    def update_matrix(self):
+        super().update_matrix()
+        viewport_size = self.viewport_size
+        viewport_width = viewport_size.x
+        viewport_height = viewport_size.y
+        ortho_left = self.x - (viewport_width * self.zoom) / 2
+        ortho_right = self.x + (viewport_width * self.zoom) / 2
+        ortho_bottom = self.y - (viewport_height * self.zoom) / 2
+        ortho_top = self.y + (viewport_height * self.zoom) / 2
+
+        self.frustrum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
+
+        ortho_near = -1  # Near clipping plane
+        ortho_far = 1  # Far clipping plane
+
+        self.projection_matrix = glm.ortho(
+            ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far
+        )
+
+        self.update_gpu()
+
+    '''
     def update_matrix(self):
         super().update_matrix()
         ortho_left = self.x - (self.width * self.zoom) / 2
@@ -115,12 +144,13 @@ class Camera2D(Node2D):
         )
 
         self.update_gpu()
-
+    '''
+        
     def update_gpu(self):
         camera_uniform = CameraUniform()
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
-        camera_uniform.viewport = cast_vec2(self.size)
+        camera_uniform.viewport = cast_vec2(self.viewport_size)
         camera_uniform.position = cast_vec3(
             glm.vec3(self.position.x, self.position.y, 0)
         )

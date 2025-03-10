@@ -29,6 +29,10 @@ class TiledPhysicsDemo(Demo):
         self.draw_options = DrawOptions(self.view.scratch)
         self.reset()
 
+    def create_view(self):
+        super().create_view()
+        self.camera.zoom = 2.0
+
     def reset(self):
         self.scene.clear()
         self.last_mouse = glm.vec2()
@@ -44,10 +48,11 @@ class TiledPhysicsDemo(Demo):
         button = event.button
         down = event.down
         if button == 1 and down:
-            x = self.last_mouse.x
-            y = self.height - self.last_mouse.y
+            mouse_vec = glm.vec2(event.x, event.y)
+            world_vec = self.camera.unproject(mouse_vec)
+            x, y = world_vec.x, world_vec.y
             logger.debug(f"Creating ball at {x}, {y}")
-            self.create_ball(glm.vec2(x, y))
+            self.create_ball(world_vec)
 
 
     def create_ball(self, position):

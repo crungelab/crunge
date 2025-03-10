@@ -19,7 +19,7 @@ class PhysicsEntity2D(Entity2D):
     def __init__(
         self,
         position=glm.vec2(),
-        size=glm.vec2(1.0),
+        rotation=0.0,
         scale=glm.vec2(1.0),
         vu: Vu2D = None,
         model=None,
@@ -27,7 +27,7 @@ class PhysicsEntity2D(Entity2D):
         physics=physics.StaticPhysics(),
         geom=geom.HullGeom(),
     ):
-        super().__init__(position, size, scale, vu, model, brain)
+        super().__init__(position, rotation, scale, vu, model, brain)
         self.body = None
         self.shapes = []
         self._physics = physics
@@ -162,7 +162,7 @@ class StaticEntity2D(PhysicsEntity2D):
     def __init__(
         self,
         position=glm.vec2(),
-        size=glm.vec2(1.0),
+        rotation=0.0,
         scale=glm.vec2(1.0),
         vu=None,
         model=None,
@@ -170,14 +170,14 @@ class StaticEntity2D(PhysicsEntity2D):
         physics=physics.StaticPhysics(),
         geom=geom.HullGeom(),
     ):
-        super().__init__(position, size, scale, vu, model, brain, physics, geom)
+        super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
 
 
 class DynamicEntity2D(PhysicsEntity2D):
     def __init__(
         self,
         position=glm.vec2(),
-        size=glm.vec2(1.0),
+        rotation=0.0,
         scale=glm.vec2(1.0),
         vu=None,
         model=None,
@@ -185,14 +185,14 @@ class DynamicEntity2D(PhysicsEntity2D):
         physics=physics.DynamicPhysics(),
         geom=geom.HullGeom(),
     ):
-        super().__init__(position, size, scale, vu, model, brain, physics, geom)
+        super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
 
 
 class KinematicEntity2D(PhysicsEntity2D):
     def __init__(
         self,
         position=glm.vec2(),
-        size=glm.vec2(1.0),
+        rotation=0.0,
         scale=glm.vec2(1.0),
         vu=None,
         model=None,
@@ -200,7 +200,7 @@ class KinematicEntity2D(PhysicsEntity2D):
         physics=physics.KinematicPhysics(),
         geom=geom.HullGeom(),
     ):
-        super().__init__(position, size, scale, vu, model, brain, physics, geom)
+        super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
         self.grounded = False
         self.laddered = False
         self.jumping = False

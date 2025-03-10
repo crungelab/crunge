@@ -39,6 +39,10 @@ class CollidableSpriteBuilder(SpriteBuilder):
         # contours is a list of arrays; each array contains coordinates of a contour
         if len(contours) == 0:
             return Sprite(texture, rect, sampler, color)
+        
+        x, y, w, h = cv2.boundingRect(contours[0])
+        collision_rect = Rect2i(x, y, w, h)
+
 
         # Get the first contour and reshape it to a 2D float array
         points = contours[0].reshape(-1, 2).astype(float)
@@ -50,4 +54,4 @@ class CollidableSpriteBuilder(SpriteBuilder):
         #Flip the y-coordinates
         points[:, 1] = -points[:, 1]  # Negate the y-coordinates
 
-        return Sprite(texture, rect, sampler, color, points)
+        return Sprite(texture, rect, sampler, color, points, collision_rect)

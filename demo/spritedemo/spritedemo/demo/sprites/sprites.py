@@ -23,26 +23,22 @@ class SpritesDemo(Demo):
         # Ship1
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         sprite = Sprite(texture)
-        vu = SpriteVu(sprite).create()
-        node = self.node = Node2D(vu=vu)
         x = self.width / 4
         y = self.height / 4
-        node.position = glm.vec2(x, y)
+        position = glm.vec2(x, y)
+        node = self.node = Node2D(position, vu=SpriteVu(), model=sprite)
         node.angle = 45
-        node.size = glm.vec2(200, 200)
 
         self.scene.attach(self.node)
 
         # Ship2
         texture = ImageTextureLoader().load(":images:/playerShip1_blue.png")
         sprite = Sprite(texture)
-        vu = SpriteVu(sprite).create()
-        node = self.node = Node2D(vu=vu)
         x = self.width / 2
         y = self.height / 2
-        node.position = glm.vec2(x, y)
+        position = glm.vec2(x, y)
+        node = self.node = Node2D(position, vu=SpriteVu(), model=sprite)
         node.angle = 45
-        node.size = glm.vec2(200, 200)
 
         self.scene.attach(self.node)
 

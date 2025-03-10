@@ -42,8 +42,10 @@ class BackgroundVu(Vu2D):
     @property
     def size(self) -> glm.vec2:
         if self.sprite is None:
-            return glm.vec2()
-        return glm.vec2(self.sprite.size)
+            size = glm.vec2(1.0)
+        size = glm.vec2(self.sprite.size)
+        logger.debug(f"BackgroundVu: size: {size}")
+        return size
 
     '''
     @property

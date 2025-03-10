@@ -2,6 +2,7 @@ from ctypes import sizeof
 
 from loguru import logger
 import glm
+import cv2
 
 from crunge.core import as_capsule
 from crunge import wgpu
@@ -26,6 +27,7 @@ class Sprite(Material):
         sampler: Sampler = None,
         color=glm.vec4(1.0, 1.0, 1.0, 1.0),
         points=None,
+        collision_rect: Rect2i = None,
     ) -> None:
         super().__init__()
         self._texture = texture
@@ -37,7 +39,7 @@ class Sprite(Material):
         self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
         self._color = color
         self.points = points
-
+        self.collision_rect = collision_rect
         self.program = SpriteProgram()
         self.bind_group: wgpu.BindGroup = None
         self.uniform_buffer: wgpu.Buffer = None

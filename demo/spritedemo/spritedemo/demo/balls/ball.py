@@ -12,4 +12,3 @@ class Ball(DynamicEntity2D):
         sprite = SpriteLoader().load(":resources:/tiled/items/coinGold.png")
         scale = glm.vec2(.5, .5)
         super().__init__(position, scale=scale, vu=SpriteVu(), model=sprite, geom=BallGeom())
-        self.size = self.size * .5

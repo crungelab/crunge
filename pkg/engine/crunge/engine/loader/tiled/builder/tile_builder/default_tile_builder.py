@@ -43,7 +43,6 @@ class DefaultTileBuilder(TileBuilder):
             self.context.layer.attach(node)
 
     def create_node(self, position: glm.vec2, sprite: Sprite, properties: dict):
-        size = glm.vec2(sprite.width, sprite.height)
-        node = Node2D(position, size=size, vu=SpriteVu(), model=sprite)
+        node = Node2D(position, vu=SpriteVu(), model=sprite)
         return node
 

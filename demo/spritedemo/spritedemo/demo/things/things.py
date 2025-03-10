@@ -53,9 +53,11 @@ class ThingsDemo(Demo):
         button = event.button
         down = event.down
         if button == 1 and down:
-            x = self.last_mouse.x
-            y = self.height - self.last_mouse.y
-            self.create_thing(glm.vec2(x, y))
+            mouse_vec = glm.vec2(event.x, event.y)
+            world_vec = self.camera.unproject(mouse_vec)
+            x, y = world_vec.x, world_vec.y
+            logger.debug(f"Creating thing at {x}, {y}")
+            self.create_thing(world_vec)
 
     def create_thing(self, position):
         thing = Thing(position, self.sprite)

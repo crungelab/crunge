@@ -1,10 +1,8 @@
 from pathlib import Path
 
 from loguru import logger
-import glm
 
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture import Texture2D
 from ...resource.texture.image_texture import ImageTexture
 
 from ...builder.texture.image_texture_builder import ImageTextureBuilder
