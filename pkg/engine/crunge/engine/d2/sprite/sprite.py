@@ -82,6 +82,7 @@ class Sprite(Material):
         # self.update_coords()
         self.update_gpu()
 
+    '''
     @property
     def x(self):
         return self.rect.x
@@ -89,18 +90,29 @@ class Sprite(Material):
     @property
     def y(self):
         return self.rect.y
+    '''
 
     @property
     def size(self):
+        if self.collision_rect is not None:
+            return self.collision_rect.size
         return self.rect.size
+
+    '''
+    @property
+    def size(self):
+        return self.rect.size
+    '''
 
     @property
     def width(self):
-        return self.rect.width
+        #return self.rect.width
+        return self.size.x
 
     @property
     def height(self):
-        return self.rect.height
+        #return self.rect.height
+        return self.size.y
 
     @property
     def color(self):

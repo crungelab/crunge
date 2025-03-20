@@ -17,7 +17,7 @@ class Geom:
     def create_shapes(self, node: "PhysicsEntity2D"):
         pass
 
-    def get_moment(self, node: "PhysicsEntity2D"):
+    def get_moment(self, node: "PhysicsEntity2D") -> float:
         size = node.size
         logger.debug(f"size: {size}")
         return pymunk.moment_for_box(node.mass, tuple(size))
@@ -45,7 +45,8 @@ class BallGeom(Geom):
     def get_moment(self, node: "PhysicsEntity2D"):
         #size = node.size
         #radius = size.x / 2
-        radius = node.model.collision_rect.width / 2
+        radius = node.model.collision_rect.width / 2 * node.scale.x
+        #radius = node.radius
         return pymunk.moment_for_circle(node.mass, 0, radius)
 
     def create_shapes(self, node: "PhysicsEntity2D", transform: pymunk.Transform = None):
@@ -53,6 +54,7 @@ class BallGeom(Geom):
         #size = node.size
         #radius = size.x / 2
         radius = node.model.collision_rect.width / 2 * node.scale.x
+        #radius = node.radius
         shape = pymunk.Circle(node.body, radius)
         # shape.elasticity = 0.95
         shape.friction = 0.9

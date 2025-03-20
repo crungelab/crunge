@@ -35,6 +35,14 @@ class PhysicsEntity2D(Entity2D):
         self.mass = DEFAULT_MASS
 
     @property
+    def velocity(self):
+        return self.body.velocity
+    
+    @velocity.setter
+    def velocity(self, value: glm.vec2):
+        self.body.velocity = value
+
+    @property
     def physics(self):
         return self._physics
 

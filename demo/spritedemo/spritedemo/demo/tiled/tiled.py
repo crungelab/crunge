@@ -12,7 +12,7 @@ from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 from ..demo import Demo
 
 
-class TiledDemo(Demo):
+class TiledLoaderDemo(Demo):
     def __init__(self):
         super().__init__()
         self.reset()
@@ -31,87 +31,8 @@ class TiledDemo(Demo):
         map_loader = TiledMapLoader(context, map_builder=DefaultMapBuilder(context))
         map_loader.load(tmx_path)
 
-    '''
-    def create_map(self):
-
-        name = self.map.filename
-        tw = self.map.tilewidth
-        th = self.map.tileheight
-        mw = self.map.width
-        mh = self.map.height - 1
-        pixel_height = mh * th
-
-        for i, layer in enumerate(self.map.visible_layers):
-            if isinstance(layer, TiledTileLayer):
-                # iterate over the tiles in the layer
-                for x, y, image in layer.tiles():
-                    y = mh - y
-                    x = x * tw
-                    y = y * th
-                    #logger.debug(f"Tile: {x}, {y}, {image}")
-
-                    path = image[0]
-                    atlas = ImageTextureLoader().load(path)
-                    #logger.debug(f"atlas: {atlas}")
-
-                    rect = image[1]
-                    if rect:
-                        tx, ty, tw, th = rect
-                        sprite = Sprite(
-                            atlas,
-                            Rect2i(tx, ty, tw, th),
-                        ).set_name(name)
-                        #logger.debug(f"texture: {texture}")
-                    else:
-                        #texture = atlas
-                        sprite = Sprite(atlas).set_name(name)
-
-                    #sprite = Sprite(texture)
-
-                    vu = SpriteVu(sprite).create()
-                    node = Node2D(glm.vec2(x, y), vu=vu)
-                    self.scene.attach(node)
-
-            elif isinstance(layer, TiledObjectGroup):
-                for obj in layer:
-                    #logger.debug(obj)
-
-                    # objects with points are polygons or lines
-                    if hasattr(obj, "points"):
-                        pass
-
-                    elif obj.image:
-                        #logger.debug(f"obj.image: {obj.image}")
-
-                        image = obj.image
-                        x = obj.x
-                        y = pixel_height - obj.y
-                        path = image[0]
-                        atlas = ImageTextureLoader().load(path)
-                        #logger.debug(f"atlas: {atlas}")
-
-                        rect = image[1]
-                        if rect:
-                            tx, ty, tw, th = rect
-                            texture = Texture(
-                                atlas.texture,
-                                Rect2i(tx, ty, tw, th),
-                                atlas,
-                            ).set_name(name)
-                            #logger.debug(f"texture: {texture}")
-                        else:
-                            texture = atlas
-                        sprite = Sprite(texture)
-                        vu = SpriteVu(sprite).create()
-                        node = Node2D(glm.vec2(x, y), vu=vu)
-                        self.scene.attach(node)
-
-                    # draw a rect for everything else
-                    else:
-                        # draw_rect(rect_color, (obj.x, obj.y, obj.width, obj.height), 3)
-                        pass
-    '''
     def draw(self, renderer: Renderer):
+        self.view.scratch.draw_circle(glm.vec2(0, 0), 10, color=glm.vec4(1, 0, 0, 1))
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
@@ -126,7 +47,7 @@ class TiledDemo(Demo):
 
 
 def main():
-    TiledDemo().create().run()
+    TiledLoaderDemo().create().run()
 
 
 if __name__ == "__main__":

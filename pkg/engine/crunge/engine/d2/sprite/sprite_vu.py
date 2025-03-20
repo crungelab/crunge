@@ -49,7 +49,8 @@ class SpriteVu(Vu2D):
     def size(self) -> glm.vec2:
         if self.sprite is None:
             return glm.vec2(1.0)
-        return glm.vec2(self.sprite.size)
+        #return glm.vec2(self.sprite.size)
+        return glm.vec2(self.sprite.rect.size)
 
     '''
     @property

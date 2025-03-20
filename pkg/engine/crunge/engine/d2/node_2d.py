@@ -26,10 +26,19 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._scale = scale
         self._matrix = glm.mat4(1.0)
         self.bounds = Bounds2()
-        self.velocity = glm.vec2(0.0)
+        #self.velocity = glm.vec2(0.0)
+        self._velocity = glm.vec2(0.0)
         self.angular_velocity = 0.0 # radians per second
 
         self.update_matrix()
+
+    @property
+    def velocity(self):
+        return self._velocity
+    
+    @velocity.setter
+    def velocity(self, value: glm.vec2):
+        self._velocity = value
 
     @property
     def position(self):
@@ -86,6 +95,23 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         # logger.debug(f"class: {self.__class__}, angle: {value}, rotation: {self._rotation}")
         self.update_matrix()
 
+    '''
+    @property
+    def size(self) -> glm.vec2:
+        if self.model is not None:
+            if self.model.collision_rect is not None:
+                size = glm.vec2(self.model.collision_rect.width, self.model.collision_rect.height) * self.scale
+            else:
+                size = glm.vec2(self.model.size.x, self.model.size.y) * self.scale
+        elif self.vu is not None:
+            size = self.vu.size * self.scale
+        else:
+            size = glm.vec2(1.0) * self.scale
+
+        #logger.debug(f"class: {self.__class__}, size: {size}")
+
+        return size
+    '''
     @property
     def size(self) -> glm.vec2:
         if self.model is not None:

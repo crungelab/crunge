@@ -23,8 +23,7 @@ class DefaultObjectBuilder(ObjectBuilder):
         # Check if the object is a polygon or line
         if hasattr(obj, "points"):
             # Handle polygons or lines if needed
-            #pass
-            raise NotImplementedError("Polygon or line objects are not supported")
+            pass
 
         elif obj.image:
             # Load the texture atlas
@@ -34,24 +33,22 @@ class DefaultObjectBuilder(ObjectBuilder):
             atlas_size = glm.vec2(atlas.size.xy)
 
             x = obj.x
-            y = self.context.size.y - obj.y - obj.height
+            y = self.context.size.y - obj.y
             lower_left = glm.vec2(x, y)
             width = obj.width
             height = obj.height
-            logger.debug(f"lower_left: {lower_left}")
             #lower_left = glm.vec2(x, y)
 
             size = glm.vec2(width, height)
 
             # Calculate half dimensions for centering
-            center = size / 2.0
-            #center = glm.vec2(width / 2, height / 2)
-            #center.y = -center.y
+            #center = size / 2.0
+            center = glm.vec2(width // 2, height // 2)
+            center.y = -center.y
             logger.debug(f"center: {center}")
             
             # Handle rotation in radians
             rotation = -glm.radians(obj.rotation)
-            logger.debug(f"rotation: {rotation}")
 
             rotated_offset = glm.rotate(center, rotation)
             #rotated_offset = glm.vec2(0, 0)
@@ -59,12 +56,10 @@ class DefaultObjectBuilder(ObjectBuilder):
             rotated_offset = glm.vec2(
                 center.x * glm.cos(rotation) - center.y * glm.sin(rotation),
                 center.x * glm.sin(rotation) + center.y * glm.cos(rotation)
-            )'
+            )
             '''
             logger.debug(f"rotated_offset: {rotated_offset}")
             position = lower_left + rotated_offset
-            position.y = position.y + self.context.map.tileheight
-            logger.debug(f"position: {position}")
 
             # Calculate scale
             scale = glm.vec2(width / atlas_size.x, height / atlas_size.y)
