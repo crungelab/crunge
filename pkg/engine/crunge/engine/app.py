@@ -34,6 +34,7 @@ class App(Window):
         self.running = False
 
     def run(self):
+        self.enable()
         self.running = True
 
         last_time = time.perf_counter()

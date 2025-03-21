@@ -13,4 +13,8 @@ dependencies = [
     "PyGLM ==2.7.1",
     "trimesh ==4.4.3",
     "imageio ==2.34.2",
+
+    "freetype-py ==2.5.1",
+    "uharfbuzz ==0.46.0"
+
 ]

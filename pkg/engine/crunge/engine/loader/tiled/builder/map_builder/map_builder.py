@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from loguru import logger
 from pytmx import TiledTileLayer, TiledObjectGroup, TiledElement
 
 from ..tiled_builder import TiledBuilder
@@ -38,8 +39,9 @@ class MapBuilder(TiledBuilder):
 
     def build(self):
         for layer_id, layer in enumerate(self.map.visible_layers):
+            logger.debug(f"layer: {layer}")
             self.build_layer(layer, layer_id)
-
+    
     def build_layer(self, layer: TiledElement, layer_id: int):
         if isinstance(layer, TiledTileLayer):
             self.build_tile_layer(layer, layer_id)
