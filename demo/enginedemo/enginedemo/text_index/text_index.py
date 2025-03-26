@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from ctypes import c_float, sizeof
 
 from loguru import logger
@@ -26,8 +27,7 @@ fn main(@location(0) pos: vec2<f32>,
         @location(1) uv: vec2<f32>) -> VertexOutput {
     var out: VertexOutput;
     out.position = vec4<f32>(pos, 0.0, 1.0);
-    //out.uv = vec2<f32>(uv.x, 1.0 - uv.y);  // flip vertically
-    out.uv = uv;  // keep original UVs
+    out.uv = uv;
     return out;
 }
 """
@@ -43,32 +43,12 @@ fn main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
     //return vec4<f32>(1.0, 1.0, 1.0, 1.0);  // full white
 }
 """
-
-
-index_data = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
-
-vertex_data = np.array(
-    [
-        -0.5,
-        0.5,
-        0.0,
-        1.0,  # top-left
-        -0.5,
-        -0.5,
-        0.0,
-        0.0,  # bottom-left
-        0.5,
-        -0.5,
-        1.0,
-        0.0,  # bottom-right
-        0.5,
-        0.5,
-        1.0,
-        1.0,  # top-right
-    ],
-    dtype=np.float32,
-)
-
+@dataclass
+class GlyphData:
+    uv: tuple
+    size: tuple
+    offset: tuple
+    advance: tuple
 
 class TextDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
@@ -82,18 +62,19 @@ class TextDemo(Demo):
 
     def __init__(self):
         super().__init__()
-        self.glyph_map = {}  # Maps character code to UV + metrics
+        self.glyph_map: dict[int, GlyphData] = {}  # Maps character code to GlyphData
+        self.text = "Hello, WebGPU!"
 
     def create_device_objects(self):
         self.create_textures()
-        self.create_text_vertex_buffer("Hello, WebGPU!")
+        self.create_buffers()
         self.create_pipeline()
 
     def create_pipeline(self):
         vs_module = self.gfx.create_shader_module(vs_shader_code)
         fs_module = self.gfx.create_shader_module(fs_shader_code)
 
-        vertAttributes = wgpu.VertexAttributes(
+        vertex_attributes = wgpu.VertexAttributes(
             [
                 wgpu.VertexAttribute(
                     format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
@@ -110,7 +91,7 @@ class TextDemo(Demo):
             wgpu.VertexBufferLayout(
                 array_stride=4 * sizeof(c_float),
                 attribute_count=2,
-                attributes=vertAttributes,
+                attributes=vertex_attributes,
             )
         ]
 
@@ -177,25 +158,16 @@ class TextDemo(Demo):
             wgpu.BindGroupEntry(binding=1, texture_view=view),
         ]
 
-        bindGroupDesc = wgpu.BindGroupDescriptor(
+        bind_group_desc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entry_count=2,
             entries=bindgroup_entries,
         )
 
-        self.bindGroup = self.device.create_bind_group(bindGroupDesc)
-        logger.debug(self.bindGroup)
+        self.bind_group = self.device.create_bind_group(bind_group_desc)
+        logger.debug(self.bind_group)
 
-        # exit()
-
-    def create_buffers(self):
-        self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
-        )
-        self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
-        )
 
     def create_textures(self):
         path = self.wnd.resource_root / "fonts" / "DroidSans.ttf"
@@ -218,7 +190,7 @@ class TextDemo(Demo):
         row_height = 0
 
         for char_code in range(start_char, end_char):
-            face.load_char(chr(char_code))
+            face.load_char(char_code)
             bitmap = face.glyph.bitmap
             w, h = bitmap.width, bitmap.rows
 
@@ -231,20 +203,21 @@ class TextDemo(Demo):
                 raise RuntimeError("Font atlas too small")
 
             # Save UV and size info
-            glyph_index = face.get_char_index(chr(char_code))
+            glyph_index = face.get_char_index(char_code)
 
-            self.glyph_map[glyph_index] = {
-                "uv": (
+            self.glyph_map[glyph_index] = GlyphData(
+                uv=(
                     pen_x / atlas_size[0],
                     pen_y / atlas_size[1],
                     w / atlas_size[0],
                     h / atlas_size[1],
                 ),
-                "size": (w, h),
-                "offset": (face.glyph.bitmap_left, face.glyph.bitmap_top),
-                "advance": (face.glyph.advance.x / 64.0, face.glyph.advance.y / 64.0),
-            }
+                size=(w, h),
+                offset=(face.glyph.bitmap_left, face.glyph.bitmap_top),
+                advance=(face.glyph.advance.x / 64.0, face.glyph.advance.y / 64.0),
+            )
 
+            # Create the glyph image and paste it into the atlas
             glyph_image = PIL.Image.frombytes("L", (w, h), bytes(bitmap.buffer))
             atlas_image.paste(glyph_image, (pen_x, pen_y))
 
@@ -281,7 +254,6 @@ class TextDemo(Demo):
             wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
         )
 
-
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
@@ -302,10 +274,9 @@ class TextDemo(Demo):
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
-        pass_enc.set_bind_group(0, self.bindGroup)
+        pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        #pass_enc.draw_indexed(6)
         pass_enc.draw_indexed(self.index_count)
         pass_enc.end()
         commands = encoder.finish()
@@ -313,7 +284,6 @@ class TextDemo(Demo):
         self.queue.submit(1, commands)
 
         super().draw(renderer)
-
 
     def shape_text(self, text: str):
         # Load font data
@@ -336,9 +306,8 @@ class TextDemo(Demo):
 
         return infos, positions
 
-
-    def create_text_vertex_buffer(self, text: str):
-        infos, positions = self.shape_text(text)
+    def create_buffers(self):
+        infos, positions = self.shape_text(self.text)
 
         vertices = []
         indices = []
@@ -348,39 +317,41 @@ class TextDemo(Demo):
 
         for info, pos in zip(infos, positions):
             gid = info.codepoint
-            char_data = self.glyph_map.get(gid)
-            if not char_data:
+            glyph_data = self.glyph_map.get(gid)
+            if not glyph_data:
                 continue  # Skip missing
 
-            uv_x, uv_y, uv_w, uv_h = char_data["uv"]
-            size_x, size_y = char_data["size"]
-            offset_x, offset_y = char_data["offset"]
-            advance_x, advance_y = char_data["advance"]
+            uv_x, uv_y, uv_w, uv_h = glyph_data.uv
+            size_x, size_y = glyph_data.size
+            offset_x, offset_y = glyph_data.offset
+            advance_x, advance_y = glyph_data.advance
 
+            # Calculate vertex positions and UVs
             x0 = cursor_x + offset_x / self.kWidth
             y0 = cursor_y + offset_y / self.kHeight  # flip this
             x1 = x0 + size_x / self.kWidth
             y1 = y0 - size_y / self.kHeight  # height becomes negative
 
-            '''
-            x0 = cursor_x + offset_x / self.kWidth
-            y0 = cursor_y - offset_y / self.kHeight
-            x1 = x0 + size_x / self.kWidth
-            y1 = y0 + size_y / self.kHeight
-            '''
-
             # Vertex: pos (x, y), uv (u, v)
-            vertices.extend([
-                [x0, y0, uv_x, uv_y],
-                [x1, y0, uv_x + uv_w, uv_y],
-                [x1, y1, uv_x + uv_w, uv_y + uv_h],
-                [x0, y1, uv_x, uv_y + uv_h],
-            ])
+            vertices.extend(
+                [
+                    [x0, y0, uv_x, uv_y],
+                    [x1, y0, uv_x + uv_w, uv_y],
+                    [x1, y1, uv_x + uv_w, uv_y + uv_h],
+                    [x0, y1, uv_x, uv_y + uv_h],
+                ]
+            )
 
-            indices.extend([
-                index_offset, index_offset + 1, index_offset + 2,
-                index_offset + 2, index_offset + 3, index_offset
-            ])
+            indices.extend(
+                [
+                    index_offset,
+                    index_offset + 1,
+                    index_offset + 2,
+                    index_offset + 2,
+                    index_offset + 3,
+                    index_offset,
+                ]
+            )
             index_offset += 4
 
             cursor_x += advance_x / self.kWidth

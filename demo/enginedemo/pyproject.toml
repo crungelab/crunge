@@ -15,6 +15,6 @@ dependencies = [
     "imageio ==2.34.2",
 
     "freetype-py ==2.5.1",
-    "uharfbuzz ==0.46.0"
+    "uharfbuzz ==0.47.0"
 
 ]

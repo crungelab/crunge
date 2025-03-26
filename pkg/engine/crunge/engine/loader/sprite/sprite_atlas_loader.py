@@ -1,12 +1,10 @@
 from pathlib import Path
 
 from loguru import logger
-import glm
 
 from ...math import Rect2i
 from ...resource.resource_manager import ResourceManager
 from ...resource.texture.sprite_atlas import SpriteAtlas
-from ...d2.sprite import Sprite
 from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
 
 from ..texture.texture_loader_base import TextureLoaderBase
@@ -37,7 +35,6 @@ class SpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
         self.kit.add(atlas)
 
         for rectangle in rectangles:
-            #sprite = Sprite(atlas, rectangle).set_name(name)
             sprite = self.sprite_builder.build(atlas, rectangle)
             atlas.add(sprite)
 

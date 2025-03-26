@@ -2,7 +2,6 @@ from ctypes import sizeof
 
 from loguru import logger
 import glm
-import cv2
 
 from crunge.core import as_capsule
 from crunge import wgpu
@@ -79,7 +78,6 @@ class Sprite(Material):
     @rect.setter
     def rect(self, value: Rect2i):
         self._rect = value
-        # self.update_coords()
         self.update_gpu()
 
     '''
@@ -106,12 +104,10 @@ class Sprite(Material):
 
     @property
     def width(self):
-        #return self.rect.width
         return self.size.x
 
     @property
     def height(self):
-        #return self.rect.height
         return self.size.y
 
     @property

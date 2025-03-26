@@ -48,8 +48,8 @@ class QuadShaderLayer(DemoLayer):
     def __init__(self):
         super().__init__()
 
-    def create(self, view):
-        super().create(view)
+    def create(self):
+        super().create()
         shader_module = self.gfx.create_shader_module(shader_code)
 
         color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]

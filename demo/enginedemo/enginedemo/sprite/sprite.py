@@ -212,7 +212,6 @@ class SpriteDemo(Demo):
 
     def create_textures(self):
         path = self.wnd.resource_root / "images" / "playerShip1_orange.png"
-        # path = self.wnd.resource_root / "images" / "python_logo.png"
         im = iio.imread(path)
         shape = im.shape
         logger.debug(shape)
@@ -235,7 +234,6 @@ class SpriteDemo(Demo):
 
         self.sampler = self.device.create_sampler()
 
-        # bytes_per_row = 4 * im_width
         bytes_per_row = im_channels * im_width
         logger.debug(bytes_per_row)
         rows_per_image = im_height
@@ -265,7 +263,6 @@ class SpriteDemo(Demo):
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
                 view = renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
