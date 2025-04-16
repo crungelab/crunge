@@ -7,17 +7,29 @@ function(USES_DAWN THIS)
 
     target_include_directories(${THIS} PRIVATE
         ${DAWN_ROOT}/include
+        ${CRUNGE_ROOT}/pkg/wgpu/src # Override dawn/webgpu_cpp.h
+        ${SKIA_LIB_DIR}/gen/third_party/externals/dawn/include
     )
 
     target_link_libraries(${THIS} PRIVATE
-        dawn_internal_config
-        dawncpp
-        dawn_proc
-        dawn_common
+        ${SKIA_LIB_DIR}/libdawn_native.so
+        ${SKIA_LIB_DIR}/libdawn_proc.so
+        ${SKIA_LIB_DIR}/libwebgpu_dawn.so
+    )    
+
+    #target_include_directories(${THIS} PRIVATE
+    #    ${DAWN_ROOT}/include
+    #)
+
+    #target_link_libraries(${THIS} PRIVATE
+    #    dawn_internal_config
+    #    dawncpp
+    #    dawn_proc
+    #    dawn_common
         #dawn_glfw
-        dawn_native
-        dawn_wire
+    #    dawn_native
+    #    dawn_wire
         #dawn_utils
         #glfw
-    )
+    #)
 endfunction()

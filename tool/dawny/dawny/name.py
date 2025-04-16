@@ -1,3 +1,5 @@
+name_table = {}
+
 class Name:
     def __init__(self, name, native=False):
         self.native = native
@@ -9,6 +11,12 @@ class Name:
 
     def get(self):
         return self.name
+
+    @classmethod
+    def intern(cls, name: str, native: bool = False) -> 'Name':
+        if name not in name_table:
+            name_table[name] = cls(name, native)
+        return name_table[name]
 
     @staticmethod
     def CamelChunk(chunk: str) -> str:
@@ -58,6 +66,9 @@ class Name:
         if not isinstance(v, str):
             raise TypeError('string required')
         return cls(v)
+
+    def __str__(self):
+        return self.name
 
     def __repr__(self):
         return f"Name({self.name!r})"

@@ -37,7 +37,8 @@ def main():
         wsd.hwnd = as_capsule(handle)
         wsd.hinstance = None
     elif sys.platform == "linux":
-        wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+        #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+        wsd = wgpu.SurfaceSourceXlibWindow()
         handle = glfw.get_x11_window(window)
         display = glfw.get_x11_display()
         wsd.window = handle

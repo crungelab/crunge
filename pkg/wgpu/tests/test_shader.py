@@ -22,7 +22,8 @@ def main():
     print(device)
     device.enable_logging()
 
-    wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(source=shader_code)
+    #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(source=shader_code)
+    wgsl_desc = wgpu.ShaderSourceWGSL(code=shader_code)
     print(wgsl_desc)
     descriptor = wgpu.ShaderModuleDescriptor()
     descriptor.next_in_chain = wgsl_desc

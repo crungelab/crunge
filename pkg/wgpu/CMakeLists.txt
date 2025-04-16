@@ -39,4 +39,7 @@ target_include_directories(${THIS}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+set_target_properties(${THIS} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
+set_target_properties(${THIS} PROPERTIES INSTALL_RPATH "$ORIGIN/../core")
+
 install(TARGETS ${THIS} DESTINATION crunge/${MODULE})

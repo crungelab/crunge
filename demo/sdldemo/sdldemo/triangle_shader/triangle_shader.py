@@ -59,6 +59,7 @@ class TriangleShaderDemo(Demo):
 
         depthStencilState = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH32_FLOAT,
+            depth_write_enabled=False,
         )
 
         primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_LIST)

@@ -239,9 +239,9 @@ class CubeDemo(Demo):
         )
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
+        surface_texture_view: wgpu.TextureView = surface_texture.texture.create_view()
+        surface_texture_view.set_label("Back Buffer Texture View")
+        self.render(surface_texture_view)
         self.surface.present()
 
 

@@ -13,15 +13,4 @@ namespace wgpu {
                                                         : this->length);
     }
 
-    NullableStringView::operator std::optional<std::string_view>() const {
-        const bool isNull = this->data == nullptr;
-        const bool useStrlen = this->length == SIZE_MAX;
-        if (isNull && useStrlen) {
-            return std::nullopt;
-        }
-        return std::string_view(this->data, isNull      ? 0
-                                            : useStrlen ? std::strlen(this->data)
-                                                        : this->length);
-    }
-
 } //namespace wgpu

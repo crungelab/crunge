@@ -20,7 +20,7 @@ class StructureTypeHppRenderer(StructureTypeRenderer):
 
         if node.chained:
             for chain_root in node.chain_roots:
-                self.out(f"// Can be chained in {self.as_cppType(Name(chain_root))}")
+                self.out(f"// Can be chained in {self.as_cppType(Name.intern(chain_root))}")
 
             self.out(f"""\
             struct {self.as_cppType(self.node.name)} : ChainedStruct{Out} {{
@@ -34,6 +34,7 @@ class StructureTypeHppRenderer(StructureTypeRenderer):
                 self.out(f"{self.as_cppType(node.name)}() = default;")
 
         self.out.indent()
+
 
         if node.has_free_members_function:
             self.out(f"""\
@@ -54,16 +55,39 @@ class StructureTypeHppRenderer(StructureTypeRenderer):
             self.out(f"ChainedStruct{Out} {const} * nextInChain = nullptr;")
         '''
 
+        '''
+        {% if type.name.get() == "bind group layout entry" %}
+            {% if member.name.canonical_case() == "buffer" %}
+                {% set forced_default_value = "{ nullptr, BufferBindingType::BindingNotUsed, false, 0 }" %}
+            {% elif member.name.canonical_case() == "sampler" %}
+                {% set forced_default_value = "{ nullptr, SamplerBindingType::BindingNotUsed }" %}
+            {% elif member.name.canonical_case() == "texture" %}
+                {% set forced_default_value = "{ nullptr, TextureSampleType::BindingNotUsed, TextureViewDimension::e2D, false }" %}
+            {% elif member.name.canonical_case() == "storage texture" %}
+                {% set forced_default_value = "{ nullptr, StorageTextureAccess::BindingNotUsed, TextureFormat::Undefined, TextureViewDimension::e2D }" %}
+            {% endif %}
+        {% endif %}
+        '''
         #for member in node.members:
         for i, member in enumerate(node.members):
             if self.exclude_member(member):
                 continue
             member_type = self.lookup(member.type)
+            forced_default_value = None
+            if node.name.get() == "bind group layout entry":
+                if member.name.canonical_case() == "buffer":
+                    forced_default_value = "{ nullptr, BufferBindingType::BindingNotUsed, false, 0 }"
+                elif member.name.canonical_case() == "sampler":
+                    forced_default_value = "{ nullptr, SamplerBindingType::BindingNotUsed }"
+                elif member.name.canonical_case() == "texture":
+                    forced_default_value = "{ nullptr, TextureSampleType::BindingNotUsed, TextureViewDimension::e2D, false }"
+                elif member.name.canonical_case() == "storage texture":
+                    forced_default_value = "{ nullptr, StorageTextureAccess::BindingNotUsed, TextureFormat::Undefined, TextureViewDimension::e2D }"
 
             #cppType = self.as_annotated_cppType(member, node.has_free_members_function)
             cppType = self.as_annotated_cppMember(member, node.has_free_members_function)
             #logger.debug(f"cppType: {cppType}")
-            default_value = self.render_cpp_default_value(member, True, node.has_free_members_function)
+            default_value = self.render_cpp_default_value(member, True, node.has_free_members_function, forced_default_value)
             #logger.debug(f"default_value: {default_value}")
             member_declaration = f"{cppType}{default_value}"
 

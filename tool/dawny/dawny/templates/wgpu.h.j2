@@ -17,6 +17,7 @@
 namespace wgpu {
 
 namespace detail {
+
 constexpr size_t ConstexprMax(size_t a, size_t b) {
     return a > b ? a : b;
 }
@@ -25,6 +26,7 @@ template <typename T>
 static T& AsNonConstReference(const T& value) {
     return const_cast<T&>(value);
 }
+
 }  // namespace detail
 
 {{ hpp_code }}

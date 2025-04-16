@@ -20,7 +20,14 @@ class GltfV:
         pass
 
     def run(self):
-        self.instance = wgpu.create_instance()
+        instance_capabilities = wgpu.InstanceCapabilities()
+        instance_capabilities.timed_wait_any_enable = True
+
+        instance_descriptor = wgpu.InstanceDescriptor()
+        instance_descriptor.capabilities = instance_capabilities
+        self.instance = wgpu.create_instance(instance_descriptor)
+
+        #self.instance = wgpu.create_instance()
         gltfv.globals.instance = self.instance
         self.adapter = self.instance.request_adapter()
         self.device = self.adapter.create_device()

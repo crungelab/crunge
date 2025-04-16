@@ -14,7 +14,15 @@ from . import globals
 class Gfx:
     def __init__(self) -> None:
         logger.debug("Creating Gfx")
-        self.instance = wgpu.create_instance()
+
+        instance_capabilities = wgpu.InstanceCapabilities()
+        instance_capabilities.timed_wait_any_enable = True
+
+        instance_descriptor = wgpu.InstanceDescriptor()
+        instance_descriptor.capabilities = instance_capabilities
+        self.instance = wgpu.create_instance(instance_descriptor)
+        #self.instance = wgpu.create_instance()
+
         self.adapter = self.instance.request_adapter()
         self.device = self.adapter.create_device()
         self.device.set_label("Primary Device")
@@ -25,7 +33,8 @@ class Gfx:
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
         #logger.debug(f"Creating shader module from code: {code}")
         logger.debug(f"Creating shader module")
-        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
+        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
+        wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module

@@ -8,6 +8,7 @@ namespace wgpu {
 
 void ErrorCallback(WGPUErrorType type, const char* msg, void*);
 void DeviceLostCallback(WGPUDeviceLostReason reason, char const* msg, void*);
-void LoggingCallback(WGPULoggingType type, const char* msg, void*);
+//void LoggingCallback(WGPULoggingType type, const char* msg, void*);
+void LoggingCallback(WGPULoggingType type, WGPUStringView message);
 
 }}  // namespace crunge::wgpu

@@ -193,6 +193,9 @@ class InstancedSpriteVuGroupProgram(Program2D):
 
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
+            #depth_write_enabled=True,
+            depth_write_enabled=False,
+            #depth_compare = wgpu.CompareFunction.LESS,
         )
 
         pl_desc = wgpu.PipelineLayoutDescriptor(

@@ -38,7 +38,8 @@ class SurfaceViewport(Viewport):
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            wsd = wgpu.SurfaceSourceXlibWindow()
             handle = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
             display = sdl.get_pointer_property(
                 properties, "SDL.window.x11.display", None

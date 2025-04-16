@@ -32,6 +32,15 @@ class Method(Node):
     no_autolock: Optional[bool] = Field(alias="no autolock", default=None)
 
 
+class EnumValue(Node):
+    name: Name
+    value: int
+
+
+class BitmaskValue(Node):
+    name: Name
+    value: int
+
 class Entry(Node):
     category: str
     name: Optional[Name] = None
@@ -40,19 +49,15 @@ class Entry(Node):
         return hash(self.name)
 
 
-class EnumValue(Node):
-    name: Name
-    value: int
+class TypeDefinition(Entry):
+    category: Literal["typedef"]
+    type: Optional[str]
 
 
 class EnumType(Entry):
     category: Literal["enum"]
     values: List[EnumValue]
-
-
-class BitmaskValue(Node):
-    name: Name
-    value: int
+    emscripten_no_enum_table: Optional[bool] = False
 
 
 class BitmaskType(Entry):
@@ -66,13 +71,18 @@ class ObjectType(Entry):
     no_autolock: Optional[bool] = Field(alias="no autolock", default=None)
 
 
-class StructureType(Entry):
-    category: Literal["structure"]
+class StructureBase(Entry):
     members: List[RecordMember]
+
+#class StructureType(Entry):
+class StructureType(StructureBase):
+    category: Literal["structure"]
+    #members: List[RecordMember]
     extensible: Optional[Union[str, bool]] = None
     chained: Optional[str] = None
     chain_roots: Optional[List[str]] = Field(alias="chain roots", default=None)
     extensions: Optional[List[Any]] = Field(None, exclude=True, repr=False)
+    out: Optional[bool] = False
 
     def model_post_init(self, __context: Any) -> None:
         super().model_post_init(__context)
@@ -83,7 +93,7 @@ class StructureType(Entry):
 
         if self.chained:
             assert self.chained == "in" or self.chained == "out"
-            assert self.chain_roots
+            #assert self.chain_roots # See "dawn injected invalid s type"
             self.add_next_in_chain()
 
         if self.extensible:
@@ -95,7 +105,7 @@ class StructureType(Entry):
         self.members.insert(
             0,
             RecordMember(
-                name=Name("next in chain"),
+                name=Name.intern("next in chain"),
                 #type="const void*",
                 #type="chained struct",
                 type="chained struct" if not self.output else "chained struct out",
@@ -106,9 +116,33 @@ class StructureType(Entry):
             ),
         )
 
+    '''
+    @property
+    def output(self):
+        # self.out is a temporary way to express that this is an output structure
+        # without also making it extensible. See
+        # https://dawn-review.googlesource.com/c/dawn/+/212174/comment/2271690b_1fd82ea9/
+
+        if self.name and self.name.canonical_case() == "instance capabilities":
+            return False
+
+        return self.chained == "out" or self.extensible == "out" or self.out
+    '''
     @property
     def output(self):
         return self.chained == "out" or self.extensible == "out"
+
+    '''
+    @property
+    def has_free_members_function(self):
+        if not self.output:
+            return False
+        for m in self.members:
+            if m.annotation != 'value' \
+                or m.type.name.canonical_case() == 'string view':
+                return True
+        return False
+    '''
 
     @property
     def has_free_members_function(self):
@@ -121,10 +155,14 @@ class StructureType(Entry):
         return False
 
 
-class CallbackInfoType(StructureType):
+#class CallbackInfoType(StructureType):
+class CallbackInfoType(StructureBase):
+    category: Literal["callback info"]
+    '''
     category: Literal["callback info"] = Field(
         default="callback info", alias="callback info"
     )
+    '''
 
 
 class NativeType(Entry):
@@ -133,17 +171,23 @@ class NativeType(Entry):
 
 
 class FunctionPointerType(Entry):
+    category: Literal["function pointer"]
+    '''
     category: Literal["function pointer"] = Field(
         default="function pointer", alias="function pointer"
     )
+    '''
     returns: Optional[str] = None
     args: Optional[List[RecordMember]] = None
 
 
 class CallbackFunctionType(Entry):
+    category: Literal["callback function"]
+    '''
     category: Literal["callback function"] = Field(
         default="callback function", alias="callback function"
     )
+    '''
     args: Optional[List[RecordMember]] = None
 
 
@@ -151,6 +195,7 @@ class ConstantDefinition(Entry):
     category: Literal["constant"]
     type: str
     value: str
+    cpp_value: Optional[str] = None
 
 
 class FunctionDeclaration(Entry):
@@ -159,6 +204,23 @@ class FunctionDeclaration(Entry):
     args: Optional[List[RecordMember]] = None
 
 
+TypeUnion = Annotated[
+    Union[
+        ObjectType,
+        TypeDefinition,
+        EnumType,
+        BitmaskType,
+        StructureType,
+        NativeType,
+        FunctionPointerType,
+        ConstantDefinition,
+        FunctionDeclaration,
+        CallbackInfoType,
+        CallbackFunctionType,
+    ],
+    Field(discriminator="category")
+]
+'''
 TypeUnion = Union[
     ObjectType,
     EnumType,
@@ -171,6 +233,47 @@ TypeUnion = Union[
     CallbackInfoType,
     CallbackFunctionType,
 ]
+'''
+
+class Category:
+    NATIVE = "native"
+    OBJECT = "object"
+    ENUM = "enum"
+    BITMASK = "bitmask"
+    STRUCTURE = "structure"
+    FUNCTION_POINTER = "function pointer"
+    CONSTANT = "constant"
+    FUNCTION = "function"
+    CALLBACK_INFO = "callback info"
+    CALLBACK_FUNCTION = "callback function"
+
+    def __init__(self):
+        self.entries = {}
+
+    def add_entry(self, entry):
+        self.entries[entry.name] = entry
+
+    def find_entry(self, name):
+        return self.entries.get(name)
+
+class Catalog:
+    def __init__(self):
+        self.categories = {
+            Category.NATIVE: Category(),
+            Category.OBJECT: Category(),
+            Category.ENUM: Category(),
+            Category.BITMASK: Category(),
+            Category.STRUCTURE: Category(),
+            Category.FUNCTION_POINTER: Category(),
+            Category.CONSTANT: Category(),
+            Category.FUNCTION: Category(),
+            Category.CALLBACK_INFO: Category(),
+            Category.CALLBACK_FUNCTION: Category(),
+        }
+
+    def add_entry(self, entry):
+        if entry.category in self.categories:
+            self.categories[entry.category].add_entry(entry)
 
 
 class Root(RootModel):
@@ -183,14 +286,17 @@ class Root(RootModel):
         super().__init__(**data)
         for key, value in self.root.items():
             native = isinstance(value, NativeType)
-            value.name = Name(key, native=native)
+            value.name = Name.intern(key, native=native)
+
+        self.root["instance capabilities"].extensible = "in"
+        self.root["surface texture"].extensible = "in"
 
         self.root["chained struct"] = StructureType(
-            name=Name("chained struct"),
+            name=Name.intern("chained struct"),
             category="structure",
             members=[
                 RecordMember(
-                    name=Name("next_in_chain"),
+                    name=Name.intern("next_in_chain"),
                     #type="const void*",
                     type="chained struct",
                     #annotation="value",
@@ -201,11 +307,11 @@ class Root(RootModel):
         )
 
         self.root["chained struct out"] = StructureType(
-            name=Name("chained struct out"),
+            name=Name.intern("chained struct out"),
             category="structure",
             members=[
                 RecordMember(
-                    name=Name("next_in_chain"),
+                    name=Name.intern("next_in_chain"),
                     #type="const void*",
                     type="chained struct out",
                     #annotation="value",

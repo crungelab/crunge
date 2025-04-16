@@ -31,8 +31,8 @@ class Frontend(Processor):
         super().__init__(program)
 
     def run(self):
-        #path = Path("dawn.json")
-        path = Path("../../depot/dawn/src/dawn/dawn.json")
+        #path = Path("../../depot/dawn/src/dawn/dawn.json")
+        path = Path("../../depot/skia/third_party/externals/dawn/src/dawn/dawn.json")
         try:
             with open(path, "r") as f:
                 dawn_data = json.load(f)

@@ -96,8 +96,8 @@ def create_image_copy_buffer(
     offset: int,
     bytes_per_row: int = WGPU_COPY_STRIDE_UNDEFINED,
     rows_per_image: int = WGPU_COPY_STRIDE_UNDEFINED,
-) -> wgpu.ImageCopyBuffer:
-    image_copy_buffer = wgpu.ImageCopyBuffer()
+) -> wgpu.TexelCopyTextureInfo:
+    image_copy_buffer = wgpu.TexelCopyTextureInfo()
     image_copy_buffer.buffer = buffer
     image_copy_buffer.layout = create_texture_data_layout(
         offset, bytes_per_row, rows_per_image
@@ -111,8 +111,8 @@ def create_image_copy_texture(
     mip_level: int = 0,
     origin: wgpu.Origin3D = wgpu.Origin3D(0, 0, 0),
     aspect: wgpu.TextureAspect = wgpu.TextureAspect.ALL,
-) -> wgpu.ImageCopyTexture:
-    image_copy_texture = wgpu.ImageCopyTexture()
+) -> wgpu.TexelCopyTextureInfo:
+    image_copy_texture = wgpu.TexelCopyTextureInfo()
     image_copy_texture.texture = texture
     image_copy_texture.mip_level = mip_level
     image_copy_texture.origin = origin
@@ -121,9 +121,10 @@ def create_image_copy_texture(
     return image_copy_texture
 
 
-def create_shader_module(device: wgpu.Device, source: str) -> wgpu.ShaderModule:
-    wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
-    wgsl_desc.code = source
+def create_shader_module(device: wgpu.Device, code: str) -> wgpu.ShaderModule:
+    #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
+    wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
+    #wgsl_desc.code = source
     descriptor = wgpu.ShaderModuleDescriptor()
     descriptor.next_in_chain = wgsl_desc
     return device.create_shader_module(descriptor)
@@ -131,8 +132,8 @@ def create_shader_module(device: wgpu.Device, source: str) -> wgpu.ShaderModule:
 
 def create_texture_data_layout(
     offset: int, bytes_per_row: int, rows_per_image: int
-) -> wgpu.TextureDataLayout:
-    texture_data_layout = wgpu.TextureDataLayout()
+) -> wgpu.TexelCopyBufferLayout:
+    texture_data_layout = wgpu.TexelCopyBufferLayout()
     texture_data_layout.offset = offset
     texture_data_layout.bytes_per_row = bytes_per_row
     texture_data_layout.rows_per_image = rows_per_image

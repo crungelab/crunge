@@ -14,7 +14,7 @@ from .camera import Camera
 class View(Base):
     scene: Scene = None
     surface: wgpu.Surface = None
-    swap_chain: wgpu.SwapChain = None
+    #swap_chain: wgpu.SwapChain = None
     width: int = 0
     height: int = 0
 

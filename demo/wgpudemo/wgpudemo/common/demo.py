@@ -17,7 +17,7 @@ class Demo:
     pipeline: wgpu.RenderPipeline = None
 
     surface: wgpu.Surface = None
-    swap_chain: wgpu.SwapChain = None
+    #swap_chain: wgpu.SwapChain = None
 
     depth_stencil_view: wgpu.TextureView = None
 
@@ -26,7 +26,17 @@ class Demo:
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
 
-        self.instance = wgpu.create_instance()
+        '''
+        wgpu::InstanceDescriptor instanceDescriptor = {};
+        instanceDescriptor.capabilities.timedWaitAnyEnable = true;
+        '''
+        instance_descriptor = wgpu.InstanceDescriptor()
+        instance_capabilities = wgpu.InstanceCapabilities()
+        instance_capabilities.timed_wait_any_enable = True
+        instance_descriptor.capabilities = instance_capabilities
+        self.instance = wgpu.create_instance(instance_descriptor)
+        #self.instance = wgpu.create_instance()
+        
         logger.debug(f"instance: {self.instance}")
         self.adapter = self.instance.request_adapter()
         logger.debug(f"adapter: {self.adapter}")
@@ -99,7 +109,8 @@ class Demo:
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            wsd = wgpu.SurfaceSourceXlibWindow()
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
             wsd.window = handle
@@ -111,7 +122,8 @@ class Demo:
         self.configure_surface(self.size)
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
-        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
+        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
+        wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module

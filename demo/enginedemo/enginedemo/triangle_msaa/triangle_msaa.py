@@ -31,8 +31,8 @@ class TriangleMsaaLayer(DemoLayer):
     def __init__(self):
         super().__init__()
 
-    def create(self, view):
-        super().create(view)
+    def create(self):
+        super().create()
         self.shader_module = self.gfx.create_shader_module(shader_code)
 
         color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
@@ -53,6 +53,7 @@ class TriangleMsaaLayer(DemoLayer):
 
         depthStencilState = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
+            depth_write_enabled=False,
         )
 
         multisample = wgpu.MultisampleState(

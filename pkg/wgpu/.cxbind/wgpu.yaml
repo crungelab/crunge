@@ -115,8 +115,8 @@ defaults:
 'struct.wgpu::SurfaceDescriptor': {gen_kw_init: true}
 'struct.wgpu::SwapChainDescriptor': {gen_kw_init: true}
 'struct.wgpu::ImageCopyBuffer': {gen_init: true}
-'struct.wgpu::ImageCopyTexture': {gen_kw_init: true}
-'struct.wgpu::TextureDataLayout': {gen_kw_init: true}
+'struct.wgpu::TexelCopyTextureInfo': {gen_kw_init: true}
+'struct.wgpu::TexelCopyBufferLayout': {gen_kw_init: true}
 'struct.wgpu::VertexAttribute': {gen_kw_init: true}
 'struct.wgpu::VertexBufferLayout': {gen_kw_init: true}
 'struct.wgpu::PrimitiveState': {gen_kw_init: true}

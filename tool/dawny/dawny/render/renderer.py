@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
 
 import re
 
+from loguru import logger
+
 from ..node import Node, RecordMember, Entry
 from ..name import Name
 from .render_context import RenderContext
@@ -190,9 +192,18 @@ class Renderer(Generic[T_Node]):
     def as_annotated_cppMember(self, arg: RecordMember, make_const=False) -> str:
         return Renderer.annotated_member(self.as_cppType(self.lookup(arg.type).name), arg, make_const)
 
-    def render_cpp_default_value(self, member: RecordMember, is_struct: bool, force_default=False):
+    '''
+    {%- set constant = find_by_name(by_category["constant"], member.default_value) -%}
+    {%- if constant -%}
+        {{" "}}= k{{constant.name.CamelCase()}}
+    {%- else -%}
+        {{" "}}= {{member.default_value}}
+    '''
+    def render_cpp_default_value(self, member: RecordMember, is_struct: bool, force_default=False, forced_default_value=None) -> str:
         member_type = self.lookup(member.type)
-        if member.no_default is not None and member.no_default:
+        if forced_default_value is not None:
+            return f" = {forced_default_value}"
+        elif member.no_default is not None and member.no_default:
             pass
         elif member.annotation in ["*", "const*"] and member.optional or member.default_value == "nullptr":
             return " = nullptr"
@@ -201,7 +212,18 @@ class Renderer(Generic[T_Node]):
         elif member_type.category in ["enum", "bitmask"] and member.default_value is not None:
             return f" = {Renderer.as_cppType(member_type.name)}::{Renderer.as_cppEnum(Name(member.default_value))}"
         elif member_type.category == "native" and member.default_value is not None:
-            return f" = {member.default_value}"
+            #return f" = {member.default_value}"
+            #logger.debug(self.context.catalog.categories["constant"].entries)
+            #exit()
+            #constant = self.context.catalog.categories["constant"].entries[member.default_value]
+            constant = None
+            if isinstance(member.default_value, str):
+                constant = self.context.catalog.categories["constant"].find_entry(Name.intern(member.default_value))
+            if constant:
+                return f" = k{constant.name.CamelCase()}"
+            else:
+                return f" = {member.default_value}"
+            
         elif member.default_value is not None:
             return f" = {member.default_value}"
         #elif member_type.category == "structure" and member.annotation == "value" and is_struct:
@@ -213,9 +235,194 @@ class Renderer(Generic[T_Node]):
                 return " = {}"
         return ""
 
+    """
+{% macro wgpu_string_members(CppType) %}
+    inline constexpr {{CppType}}() noexcept = default;
+
+    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+    inline constexpr {{CppType}}(const std::string_view& sv) noexcept {
+        this->data = sv.data();
+        this->length = sv.length();
+    }
+
+    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+    inline constexpr {{CppType}}(const char* s) {
+        this->data = s;
+        this->length = WGPU_STRLEN;  // use strlen
+    }
+
+    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+    inline constexpr {{CppType}}(WGPUStringView s) {
+        this->data = s.data;
+        this->length = s.length;
+    }
+
+    inline constexpr {{CppType}}(const char* data, size_t length) {
+        this->data = data;
+        this->length = length;
+    }
+
+    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+    inline constexpr {{CppType}}(std::nullptr_t) {
+        this->data = nullptr;
+        this->length = WGPU_STRLEN;
+    }
+
+    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+    inline constexpr {{CppType}}(std::nullopt_t) {
+        this->data = nullptr;
+        this->length = WGPU_STRLEN;
+    }
+
+    bool IsUndefined() const {
+        return this->data == nullptr && this->length == wgpu::kStrlen;
+    }
+
+    // NOLINTNEXTLINE(runtime/explicit) allow implicit conversion
+    operator std::string_view() const {
+        if (this->length == wgpu::kStrlen) {
+            if (IsUndefined()) {
+                return {};
+            }
+            return {this->data};
+        }
+        return {this->data, this->length};
+    }
+
+    template <typename View,
+              typename = std::enable_if_t<std::is_constructible_v<View, const char*, size_t>>>
+    explicit operator View() const {
+        if (this->length == wgpu::kStrlen) {
+            if (IsUndefined()) {
+                return {};
+            }
+            return {this->data};
+        }
+        return {this->data, this->length};
+    }
+{% endmacro %}
+    """
+
+    @staticmethod
+    def wgpu_string_members(CppType: Node):
+        result = f'''\
+        inline constexpr {CppType}() noexcept = default;
+
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr {{CppType}}(const std::string_view& sv) noexcept {{
+            this->data = sv.data();
+            this->length = sv.length();
+        }}
+
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr {CppType}(const char* s) {{
+            this->data = s;
+            this->length = WGPU_STRLEN;  // use strlen
+        }}
+
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr {CppType}(WGPUStringView s) {{
+            this->data = s.data;
+            this->length = s.length;
+        }}
+
+        inline constexpr {CppType}(const char* data, size_t length) {{
+            this->data = data;
+            this->length = length;
+        }}
+
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr {CppType}(std::nullptr_t) {{
+            this->data = nullptr;
+            this->length = WGPU_STRLEN;
+        }}
+
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr {CppType}(std::nullopt_t) {{
+            this->data = nullptr;
+            this->length = WGPU_STRLEN;
+        }}
+
+        bool IsUndefined() const {{
+            return this->data == nullptr && this->length == wgpu::kStrlen;
+        }}
+
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit conversion
+        operator std::string_view() const {{
+            if (this->length == wgpu::kStrlen) {{
+                if (IsUndefined()) {{
+                    return {{}};
+                }}
+                return {{this->data}};
+            }}
+            return {{this->data, this->length}};
+        }}
+
+        template <typename View,
+                typename = std::enable_if_t<std::is_constructible_v<View, const char*, size_t>>>
+        explicit operator View() const {{
+            if (this->length == wgpu::kStrlen) {{
+                if (IsUndefined()) {{
+                    return {{}};
+                }}
+                return {{this->data}};
+            }}
+            return {{this->data, this->length}};
+        }}
+        '''
+        return result
+
     @staticmethod
     def wgpu_string_constructors(CppType: Node, is_nullable: bool):
         result = f'''\
+        inline constexpr StringView() noexcept = default;
+        
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr {CppType}(const std::string_view& sv) noexcept {{
+            this->data = sv.data();
+            this->length = sv.length();
+        }}
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr {CppType}(const char* s) {{
+            this->data = s;
+            this->length = SIZE_MAX;  // use strlen
+        }}
+
+        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+        inline constexpr StringView(WGPUStringView s) {{
+            this->data = s.data;
+            this->length = s.length;
+        }}
+
+        inline constexpr {CppType}(const char* data, size_t length) {{
+            this->data = data;
+            this->length = length;
+        }}
+        '''
+
+        if is_nullable:
+            result += f'''\
+            inline constexpr {CppType}() noexcept = default;
+
+            // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+            inline constexpr {CppType}(std::nullptr_t) {{
+                this->data = nullptr;
+                this->length = SIZE_MAX;
+            }}
+            // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
+            inline constexpr {CppType}(std::nullopt_t) {{
+                this->data = nullptr;
+                this->length = SIZE_MAX;
+            }}
+        '''
+        return result
+
+    """
+    @staticmethod
+    def wgpu_string_constructors(CppType: Node, is_nullable: bool):
+        result = f'''\
+        inline constexpr StringView() noexcept = default;
+        
         // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
         inline constexpr {CppType}(const std::string_view& sv) noexcept {{
             this->data = sv.data();
@@ -248,38 +455,8 @@ class Renderer(Generic[T_Node]):
             }}
         '''
         return result
-'''
-{% macro wgpu_string_constructors(CppType, is_nullable) %}
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-    inline constexpr {{CppType}}(const std::string_view& sv) noexcept {
-        this->data = sv.data();
-        this->length = sv.length();
-    }
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-    inline constexpr {{CppType}}(const char* s) {
-        this->data = s;
-        this->length = SIZE_MAX;  // use strlen
-    }
-    inline constexpr {{CppType}}(const char* data, size_t length) {
-        this->data = data;
-        this->length = length;
-    }
-    {% if is_nullable %}
-        inline constexpr {{CppType}}() noexcept = default;
+    """
 
-        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-        inline constexpr {{CppType}}(std::nullptr_t) {
-            this->data = nullptr;
-            this->length = SIZE_MAX;
-        }
-        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-        inline constexpr {{CppType}}(std::nullopt_t) {
-            this->data = nullptr;
-            this->length = SIZE_MAX;
-        }
-    {% endif %}
-{% endmacro %}
-'''
 class NullRenderer(Renderer[Node]):
     def render(self):
         pass

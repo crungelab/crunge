@@ -18,10 +18,9 @@ void init_wgpu(py::module &m, Registry &registry) {
 
 py::enum_<RequestAdapterStatus>(m, "RequestAdapterStatus", py::arithmetic())
     .value("SUCCESS", RequestAdapterStatus::Success)    
-    .value("INSTANCE_DROPPED", RequestAdapterStatus::InstanceDropped)    
+    .value("CALLBACK_CANCELLED", RequestAdapterStatus::CallbackCancelled)    
     .value("UNAVAILABLE", RequestAdapterStatus::Unavailable)    
     .value("ERROR", RequestAdapterStatus::Error)    
-    .value("UNKNOWN", RequestAdapterStatus::Unknown)    
 ;
 
 py::enum_<AdapterType>(m, "AdapterType", py::arithmetic())
@@ -51,6 +50,7 @@ py::enum_<BackendType>(m, "BackendType", py::arithmetic())
 ;
 
 py::enum_<BufferBindingType>(m, "BufferBindingType", py::arithmetic())
+    .value("BINDING_NOT_USED", BufferBindingType::BindingNotUsed)    
     .value("UNDEFINED", BufferBindingType::Undefined)    
     .value("UNIFORM", BufferBindingType::Uniform)    
     .value("STORAGE", BufferBindingType::Storage)    
@@ -58,6 +58,7 @@ py::enum_<BufferBindingType>(m, "BufferBindingType", py::arithmetic())
 ;
 
 py::enum_<SamplerBindingType>(m, "SamplerBindingType", py::arithmetic())
+    .value("BINDING_NOT_USED", SamplerBindingType::BindingNotUsed)    
     .value("UNDEFINED", SamplerBindingType::Undefined)    
     .value("FILTERING", SamplerBindingType::Filtering)    
     .value("NON_FILTERING", SamplerBindingType::NonFiltering)    
@@ -65,6 +66,7 @@ py::enum_<SamplerBindingType>(m, "SamplerBindingType", py::arithmetic())
 ;
 
 py::enum_<TextureSampleType>(m, "TextureSampleType", py::arithmetic())
+    .value("BINDING_NOT_USED", TextureSampleType::BindingNotUsed)    
     .value("UNDEFINED", TextureSampleType::Undefined)    
     .value("FLOAT", TextureSampleType::Float)    
     .value("UNFILTERABLE_FLOAT", TextureSampleType::UnfilterableFloat)    
@@ -74,6 +76,7 @@ py::enum_<TextureSampleType>(m, "TextureSampleType", py::arithmetic())
 ;
 
 py::enum_<StorageTextureAccess>(m, "StorageTextureAccess", py::arithmetic())
+    .value("BINDING_NOT_USED", StorageTextureAccess::BindingNotUsed)    
     .value("UNDEFINED", StorageTextureAccess::Undefined)    
     .value("WRITE_ONLY", StorageTextureAccess::WriteOnly)    
     .value("READ_ONLY", StorageTextureAccess::ReadOnly)    
@@ -110,25 +113,11 @@ py::enum_<BlendOperation>(m, "BlendOperation", py::arithmetic())
     .value("MAX", BlendOperation::Max)    
 ;
 
-py::enum_<BufferMapAsyncStatus>(m, "BufferMapAsyncStatus", py::arithmetic())
-    .value("SUCCESS", BufferMapAsyncStatus::Success)    
-    .value("INSTANCE_DROPPED", BufferMapAsyncStatus::InstanceDropped)    
-    .value("VALIDATION_ERROR", BufferMapAsyncStatus::ValidationError)    
-    .value("UNKNOWN", BufferMapAsyncStatus::Unknown)    
-    .value("DEVICE_LOST", BufferMapAsyncStatus::DeviceLost)    
-    .value("DESTROYED_BEFORE_CALLBACK", BufferMapAsyncStatus::DestroyedBeforeCallback)    
-    .value("UNMAPPED_BEFORE_CALLBACK", BufferMapAsyncStatus::UnmappedBeforeCallback)    
-    .value("MAPPING_ALREADY_PENDING", BufferMapAsyncStatus::MappingAlreadyPending)    
-    .value("OFFSET_OUT_OF_RANGE", BufferMapAsyncStatus::OffsetOutOfRange)    
-    .value("SIZE_OUT_OF_RANGE", BufferMapAsyncStatus::SizeOutOfRange)    
-;
-
 py::enum_<MapAsyncStatus>(m, "MapAsyncStatus", py::arithmetic())
     .value("SUCCESS", MapAsyncStatus::Success)    
-    .value("INSTANCE_DROPPED", MapAsyncStatus::InstanceDropped)    
+    .value("CALLBACK_CANCELLED", MapAsyncStatus::CallbackCancelled)    
     .value("ERROR", MapAsyncStatus::Error)    
     .value("ABORTED", MapAsyncStatus::Aborted)    
-    .value("UNKNOWN", MapAsyncStatus::Unknown)    
 ;
 
 py::enum_<BufferMapState>(m, "BufferMapState", py::arithmetic())
@@ -151,10 +140,7 @@ py::enum_<CompareFunction>(m, "CompareFunction", py::arithmetic())
 
 py::enum_<CompilationInfoRequestStatus>(m, "CompilationInfoRequestStatus", py::arithmetic())
     .value("SUCCESS", CompilationInfoRequestStatus::Success)    
-    .value("INSTANCE_DROPPED", CompilationInfoRequestStatus::InstanceDropped)    
-    .value("ERROR", CompilationInfoRequestStatus::Error)    
-    .value("DEVICE_LOST", CompilationInfoRequestStatus::DeviceLost)    
-    .value("UNKNOWN", CompilationInfoRequestStatus::Unknown)    
+    .value("CALLBACK_CANCELLED", CompilationInfoRequestStatus::CallbackCancelled)    
 ;
 
 py::enum_<CompilationMessageType>(m, "CompilationMessageType", py::arithmetic())
@@ -179,12 +165,9 @@ py::enum_<AlphaMode>(m, "AlphaMode", py::arithmetic())
 
 py::enum_<CreatePipelineAsyncStatus>(m, "CreatePipelineAsyncStatus", py::arithmetic())
     .value("SUCCESS", CreatePipelineAsyncStatus::Success)    
-    .value("INSTANCE_DROPPED", CreatePipelineAsyncStatus::InstanceDropped)    
+    .value("CALLBACK_CANCELLED", CreatePipelineAsyncStatus::CallbackCancelled)    
     .value("VALIDATION_ERROR", CreatePipelineAsyncStatus::ValidationError)    
     .value("INTERNAL_ERROR", CreatePipelineAsyncStatus::InternalError)    
-    .value("DEVICE_LOST", CreatePipelineAsyncStatus::DeviceLost)    
-    .value("DEVICE_DESTROYED", CreatePipelineAsyncStatus::DeviceDestroyed)    
-    .value("UNKNOWN", CreatePipelineAsyncStatus::Unknown)    
 ;
 
 py::enum_<CullMode>(m, "CullMode", py::arithmetic())
@@ -197,13 +180,14 @@ py::enum_<CullMode>(m, "CullMode", py::arithmetic())
 py::enum_<DeviceLostReason>(m, "DeviceLostReason", py::arithmetic())
     .value("UNKNOWN", DeviceLostReason::Unknown)    
     .value("DESTROYED", DeviceLostReason::Destroyed)    
-    .value("INSTANCE_DROPPED", DeviceLostReason::InstanceDropped)    
+    .value("CALLBACK_CANCELLED", DeviceLostReason::CallbackCancelled)    
     .value("FAILED_CREATION", DeviceLostReason::FailedCreation)    
 ;
 
 py::enum_<PopErrorScopeStatus>(m, "PopErrorScopeStatus", py::arithmetic())
     .value("SUCCESS", PopErrorScopeStatus::Success)    
-    .value("INSTANCE_DROPPED", PopErrorScopeStatus::InstanceDropped)    
+    .value("CALLBACK_CANCELLED", PopErrorScopeStatus::CallbackCancelled)    
+    .value("ERROR", PopErrorScopeStatus::Error)    
 ;
 
 py::enum_<ErrorFilter>(m, "ErrorFilter", py::arithmetic())
@@ -218,7 +202,6 @@ py::enum_<ErrorType>(m, "ErrorType", py::arithmetic())
     .value("OUT_OF_MEMORY", ErrorType::OutOfMemory)    
     .value("INTERNAL", ErrorType::Internal)    
     .value("UNKNOWN", ErrorType::Unknown)    
-    .value("DEVICE_LOST", ErrorType::DeviceLost)    
 ;
 
 py::enum_<LoggingType>(m, "LoggingType", py::arithmetic())
@@ -242,10 +225,17 @@ py::enum_<Status>(m, "Status", py::arithmetic())
 
 py::enum_<SharedFenceType>(m, "SharedFenceType", py::arithmetic())
     .value("VK_SEMAPHORE_OPAQUE_FD", SharedFenceType::VkSemaphoreOpaqueFD)    
-    .value("VK_SEMAPHORE_SYNC_FD", SharedFenceType::VkSemaphoreSyncFD)    
+    .value("SYNC_FD", SharedFenceType::SyncFD)    
     .value("VK_SEMAPHORE_ZIRCON_HANDLE", SharedFenceType::VkSemaphoreZirconHandle)    
     .value("DXGI_SHARED_HANDLE", SharedFenceType::DXGISharedHandle)    
     .value("MTL_SHARED_EVENT", SharedFenceType::MTLSharedEvent)    
+    .value("EGL_SYNC", SharedFenceType::EGLSync)    
+;
+
+py::enum_<FeatureLevel>(m, "FeatureLevel", py::arithmetic())
+    .value("UNDEFINED", FeatureLevel::Undefined)    
+    .value("COMPATIBILITY", FeatureLevel::Compatibility)    
+    .value("CORE", FeatureLevel::Core)    
 ;
 
 py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
@@ -253,28 +243,31 @@ py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
     .value("DEPTH32_FLOAT_STENCIL8", FeatureName::Depth32FloatStencil8)    
     .value("TIMESTAMP_QUERY", FeatureName::TimestampQuery)    
     .value("TEXTURE_COMPRESSION_BC", FeatureName::TextureCompressionBC)    
+    .value("TEXTURE_COMPRESSION_BC_SLICED3D", FeatureName::TextureCompressionBCSliced3D)    
     .value("TEXTURE_COMPRESSION_ETC2", FeatureName::TextureCompressionETC2)    
     .value("TEXTURE_COMPRESSION_ASTC", FeatureName::TextureCompressionASTC)    
+    .value("TEXTURE_COMPRESSION_ASTC_SLICED3D", FeatureName::TextureCompressionASTCSliced3D)    
     .value("INDIRECT_FIRST_INSTANCE", FeatureName::IndirectFirstInstance)    
     .value("SHADER_F16", FeatureName::ShaderF16)    
     .value("RG11B10_UFLOAT_RENDERABLE", FeatureName::RG11B10UfloatRenderable)    
     .value("BGRA8_UNORM_STORAGE", FeatureName::BGRA8UnormStorage)    
     .value("FLOAT32_FILTERABLE", FeatureName::Float32Filterable)    
+    .value("FLOAT32_BLENDABLE", FeatureName::Float32Blendable)    
+    .value("CLIP_DISTANCES", FeatureName::ClipDistances)    
+    .value("DUAL_SOURCE_BLENDING", FeatureName::DualSourceBlending)    
     .value("SUBGROUPS", FeatureName::Subgroups)    
-    .value("SUBGROUPS_F16", FeatureName::SubgroupsF16)    
+    .value("CORE_FEATURES_AND_LIMITS", FeatureName::CoreFeaturesAndLimits)    
     .value("DAWN_INTERNAL_USAGES", FeatureName::DawnInternalUsages)    
     .value("DAWN_MULTI_PLANAR_FORMATS", FeatureName::DawnMultiPlanarFormats)    
     .value("DAWN_NATIVE", FeatureName::DawnNative)    
     .value("CHROMIUM_EXPERIMENTAL_TIMESTAMP_QUERY_INSIDE_PASSES", FeatureName::ChromiumExperimentalTimestampQueryInsidePasses)    
     .value("IMPLICIT_DEVICE_SYNCHRONIZATION", FeatureName::ImplicitDeviceSynchronization)    
-    .value("SURFACE_CAPABILITIES", FeatureName::SurfaceCapabilities)    
+    .value("CHROMIUM_EXPERIMENTAL_IMMEDIATE_DATA", FeatureName::ChromiumExperimentalImmediateData)    
     .value("TRANSIENT_ATTACHMENTS", FeatureName::TransientAttachments)    
     .value("MSAA_RENDER_TO_SINGLE_SAMPLED", FeatureName::MSAARenderToSingleSampled)    
-    .value("DUAL_SOURCE_BLENDING", FeatureName::DualSourceBlending)    
+    .value("SUBGROUPS_F16", FeatureName::SubgroupsF16)    
     .value("D3D11_MULTITHREAD_PROTECTED", FeatureName::D3D11MultithreadProtected)    
     .value("ANGLE_TEXTURE_SHARING", FeatureName::ANGLETextureSharing)    
-    .value("CHROMIUM_EXPERIMENTAL_SUBGROUPS", FeatureName::ChromiumExperimentalSubgroups)    
-    .value("CHROMIUM_EXPERIMENTAL_SUBGROUP_UNIFORM_CONTROL_FLOW", FeatureName::ChromiumExperimentalSubgroupUniformControlFlow)    
     .value("PIXEL_LOCAL_STORAGE_COHERENT", FeatureName::PixelLocalStorageCoherent)    
     .value("PIXEL_LOCAL_STORAGE_NON_COHERENT", FeatureName::PixelLocalStorageNonCoherent)    
     .value("UNORM16_TEXTURE_FORMATS", FeatureName::Unorm16TextureFormats)    
@@ -290,8 +283,8 @@ py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
     .value("ADAPTER_PROPERTIES_D3D", FeatureName::AdapterPropertiesD3D)    
     .value("ADAPTER_PROPERTIES_VK", FeatureName::AdapterPropertiesVk)    
     .value("R8_UNORM_STORAGE", FeatureName::R8UnormStorage)    
-    .value("FORMAT_CAPABILITIES", FeatureName::FormatCapabilities)    
-    .value("DRM_FORMAT_CAPABILITIES", FeatureName::DrmFormatCapabilities)    
+    .value("DAWN_FORMAT_CAPABILITIES", FeatureName::DawnFormatCapabilities)    
+    .value("DAWN_DRM_FORMAT_CAPABILITIES", FeatureName::DawnDrmFormatCapabilities)    
     .value("NORM16_TEXTURE_FORMATS", FeatureName::Norm16TextureFormats)    
     .value("MULTI_PLANAR_FORMAT_NV16", FeatureName::MultiPlanarFormatNv16)    
     .value("MULTI_PLANAR_FORMAT_NV24", FeatureName::MultiPlanarFormatNv24)    
@@ -307,7 +300,7 @@ py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
     .value("SHARED_TEXTURE_MEMORY_IO_SURFACE", FeatureName::SharedTextureMemoryIOSurface)    
     .value("SHARED_TEXTURE_MEMORY_EGL_IMAGE", FeatureName::SharedTextureMemoryEGLImage)    
     .value("SHARED_FENCE_VK_SEMAPHORE_OPAQUE_FD", FeatureName::SharedFenceVkSemaphoreOpaqueFD)    
-    .value("SHARED_FENCE_VK_SEMAPHORE_SYNC_FD", FeatureName::SharedFenceVkSemaphoreSyncFD)    
+    .value("SHARED_FENCE_SYNC_FD", FeatureName::SharedFenceSyncFD)    
     .value("SHARED_FENCE_VK_SEMAPHORE_ZIRCON_HANDLE", FeatureName::SharedFenceVkSemaphoreZirconHandle)    
     .value("SHARED_FENCE_DXGI_SHARED_HANDLE", FeatureName::SharedFenceDXGISharedHandle)    
     .value("SHARED_FENCE_MTL_SHARED_EVENT", FeatureName::SharedFenceMTLSharedEvent)    
@@ -316,6 +309,12 @@ py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
     .value("Y_CB_CR_VULKAN_SAMPLERS", FeatureName::YCbCrVulkanSamplers)    
     .value("SHADER_MODULE_COMPILATION_OPTIONS", FeatureName::ShaderModuleCompilationOptions)    
     .value("DAWN_LOAD_RESOLVE_TEXTURE", FeatureName::DawnLoadResolveTexture)    
+    .value("DAWN_PARTIAL_LOAD_RESOLVE_TEXTURE", FeatureName::DawnPartialLoadResolveTexture)    
+    .value("MULTI_DRAW_INDIRECT", FeatureName::MultiDrawIndirect)    
+    .value("DAWN_TEXEL_COPY_BUFFER_ROW_ALIGNMENT", FeatureName::DawnTexelCopyBufferRowAlignment)    
+    .value("FLEXIBLE_TEXTURE_VIEWS", FeatureName::FlexibleTextureViews)    
+    .value("CHROMIUM_EXPERIMENTAL_SUBGROUP_MATRIX", FeatureName::ChromiumExperimentalSubgroupMatrix)    
+    .value("SHARED_FENCE_EGL_SYNC", FeatureName::SharedFenceEGLSync)    
 ;
 
 py::enum_<FilterMode>(m, "FilterMode", py::arithmetic())
@@ -345,23 +344,19 @@ py::enum_<CallbackMode>(m, "CallbackMode", py::arithmetic())
 py::enum_<WaitStatus>(m, "WaitStatus", py::arithmetic())
     .value("SUCCESS", WaitStatus::Success)    
     .value("TIMED_OUT", WaitStatus::TimedOut)    
-    .value("UNSUPPORTED_TIMEOUT", WaitStatus::UnsupportedTimeout)    
-    .value("UNSUPPORTED_COUNT", WaitStatus::UnsupportedCount)    
-    .value("UNSUPPORTED_MIXED_SOURCES", WaitStatus::UnsupportedMixedSources)    
-    .value("UNKNOWN", WaitStatus::Unknown)    
+    .value("ERROR", WaitStatus::Error)    
 ;
 
 py::enum_<VertexStepMode>(m, "VertexStepMode", py::arithmetic())
     .value("UNDEFINED", VertexStepMode::Undefined)    
-    .value("VERTEX_BUFFER_NOT_USED", VertexStepMode::VertexBufferNotUsed)    
     .value("VERTEX", VertexStepMode::Vertex)    
     .value("INSTANCE", VertexStepMode::Instance)    
 ;
 
 py::enum_<LoadOp>(m, "LoadOp", py::arithmetic())
     .value("UNDEFINED", LoadOp::Undefined)    
-    .value("CLEAR", LoadOp::Clear)    
     .value("LOAD", LoadOp::Load)    
+    .value("CLEAR", LoadOp::Clear)    
     .value("EXPAND_RESOLVE_TEXTURE", LoadOp::ExpandResolveTexture)    
 ;
 
@@ -384,6 +379,7 @@ py::enum_<PowerPreference>(m, "PowerPreference", py::arithmetic())
 ;
 
 py::enum_<PresentMode>(m, "PresentMode", py::arithmetic())
+    .value("UNDEFINED", PresentMode::Undefined)    
     .value("FIFO", PresentMode::Fifo)    
     .value("FIFO_RELAXED", PresentMode::FifoRelaxed)    
     .value("IMMEDIATE", PresentMode::Immediate)    
@@ -406,17 +402,14 @@ py::enum_<QueryType>(m, "QueryType", py::arithmetic())
 
 py::enum_<QueueWorkDoneStatus>(m, "QueueWorkDoneStatus", py::arithmetic())
     .value("SUCCESS", QueueWorkDoneStatus::Success)    
-    .value("INSTANCE_DROPPED", QueueWorkDoneStatus::InstanceDropped)    
+    .value("CALLBACK_CANCELLED", QueueWorkDoneStatus::CallbackCancelled)    
     .value("ERROR", QueueWorkDoneStatus::Error)    
-    .value("UNKNOWN", QueueWorkDoneStatus::Unknown)    
-    .value("DEVICE_LOST", QueueWorkDoneStatus::DeviceLost)    
 ;
 
 py::enum_<RequestDeviceStatus>(m, "RequestDeviceStatus", py::arithmetic())
     .value("SUCCESS", RequestDeviceStatus::Success)    
-    .value("INSTANCE_DROPPED", RequestDeviceStatus::InstanceDropped)    
+    .value("CALLBACK_CANCELLED", RequestDeviceStatus::CallbackCancelled)    
     .value("ERROR", RequestDeviceStatus::Error)    
-    .value("UNKNOWN", RequestDeviceStatus::Unknown)    
 ;
 
 py::enum_<StencilOperation>(m, "StencilOperation", py::arithmetic())
@@ -432,23 +425,24 @@ py::enum_<StencilOperation>(m, "StencilOperation", py::arithmetic())
 ;
 
 py::enum_<SType>(m, "SType", py::arithmetic())
-    .value("SHADER_MODULE_SPIRV_DESCRIPTOR", SType::ShaderModuleSPIRVDescriptor)    
-    .value("SHADER_MODULE_WGSL_DESCRIPTOR", SType::ShaderModuleWGSLDescriptor)    
-    .value("PRIMITIVE_DEPTH_CLIP_CONTROL", SType::PrimitiveDepthClipControl)    
-    .value("RENDER_PASS_DESCRIPTOR_MAX_DRAW_COUNT", SType::RenderPassDescriptorMaxDrawCount)    
+    .value("SHADER_SOURCE_SPIRV", SType::ShaderSourceSPIRV)    
+    .value("SHADER_SOURCE_WGSL", SType::ShaderSourceWGSL)    
+    .value("RENDER_PASS_MAX_DRAW_COUNT", SType::RenderPassMaxDrawCount)    
+    .value("SURFACE_SOURCE_METAL_LAYER", SType::SurfaceSourceMetalLayer)    
+    .value("SURFACE_SOURCE_WINDOWS_HWND", SType::SurfaceSourceWindowsHWND)    
+    .value("SURFACE_SOURCE_XLIB_WINDOW", SType::SurfaceSourceXlibWindow)    
+    .value("SURFACE_SOURCE_WAYLAND_SURFACE", SType::SurfaceSourceWaylandSurface)    
+    .value("SURFACE_SOURCE_ANDROID_NATIVE_WINDOW", SType::SurfaceSourceAndroidNativeWindow)    
+    .value("SURFACE_SOURCE_XCB_WINDOW", SType::SurfaceSourceXCBWindow)    
+    .value("SURFACE_COLOR_MANAGEMENT", SType::SurfaceColorManagement)    
+    .value("REQUEST_ADAPTER_WEB_XR_OPTIONS", SType::RequestAdapterWebXROptions)    
+    .value("ADAPTER_PROPERTIES_SUBGROUPS", SType::AdapterPropertiesSubgroups)    
     .value("TEXTURE_BINDING_VIEW_DIMENSION_DESCRIPTOR", SType::TextureBindingViewDimensionDescriptor)    
-    .value("SURFACE_DESCRIPTOR_FROM_CANVAS_HTML_SELECTOR", SType::SurfaceDescriptorFromCanvasHTMLSelector)    
-    .value("SURFACE_DESCRIPTOR_FROM_METAL_LAYER", SType::SurfaceDescriptorFromMetalLayer)    
-    .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_HWND", SType::SurfaceDescriptorFromWindowsHWND)    
-    .value("SURFACE_DESCRIPTOR_FROM_XLIB_WINDOW", SType::SurfaceDescriptorFromXlibWindow)    
-    .value("SURFACE_DESCRIPTOR_FROM_WAYLAND_SURFACE", SType::SurfaceDescriptorFromWaylandSurface)    
-    .value("SURFACE_DESCRIPTOR_FROM_ANDROID_NATIVE_WINDOW", SType::SurfaceDescriptorFromAndroidNativeWindow)    
-    .value("SURFACE_DESCRIPTOR_FROM_XCB_WINDOW", SType::SurfaceDescriptorFromXcbWindow)    
+    .value("EMSCRIPTEN_SURFACE_SOURCE_CANVAS_HTML_SELECTOR", SType::EmscriptenSurfaceSourceCanvasHTMLSelector)    
     .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_CORE_WINDOW", SType::SurfaceDescriptorFromWindowsCoreWindow)    
     .value("EXTERNAL_TEXTURE_BINDING_ENTRY", SType::ExternalTextureBindingEntry)    
     .value("EXTERNAL_TEXTURE_BINDING_LAYOUT", SType::ExternalTextureBindingLayout)    
-    .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_SWAP_CHAIN_PANEL", SType::SurfaceDescriptorFromWindowsSwapChainPanel)    
-    .value("DEPTH_STENCIL_STATE_DEPTH_WRITE_DEFINED_DAWN", SType::DepthStencilStateDepthWriteDefinedDawn)    
+    .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_UWP_SWAP_CHAIN_PANEL", SType::SurfaceDescriptorFromWindowsUWPSwapChainPanel)    
     .value("DAWN_TEXTURE_INTERNAL_USAGE_DESCRIPTOR", SType::DawnTextureInternalUsageDescriptor)    
     .value("DAWN_ENCODER_INTERNAL_USAGE_DESCRIPTOR", SType::DawnEncoderInternalUsageDescriptor)    
     .value("DAWN_INSTANCE_DESCRIPTOR", SType::DawnInstanceDescriptor)    
@@ -464,16 +458,15 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("RENDER_PASS_PIXEL_LOCAL_STORAGE", SType::RenderPassPixelLocalStorage)    
     .value("PIPELINE_LAYOUT_PIXEL_LOCAL_STORAGE", SType::PipelineLayoutPixelLocalStorage)    
     .value("BUFFER_HOST_MAPPED_POINTER", SType::BufferHostMappedPointer)    
-    .value("DAWN_EXPERIMENTAL_SUBGROUP_LIMITS", SType::DawnExperimentalSubgroupLimits)    
     .value("ADAPTER_PROPERTIES_MEMORY_HEAPS", SType::AdapterPropertiesMemoryHeaps)    
     .value("ADAPTER_PROPERTIES_D3D", SType::AdapterPropertiesD3D)    
     .value("ADAPTER_PROPERTIES_VK", SType::AdapterPropertiesVk)    
-    .value("DAWN_COMPUTE_PIPELINE_FULL_SUBGROUPS", SType::DawnComputePipelineFullSubgroups)    
     .value("DAWN_WIRE_WGSL_CONTROL", SType::DawnWireWGSLControl)    
     .value("DAWN_WGSL_BLOCKLIST", SType::DawnWGSLBlocklist)    
-    .value("DRM_FORMAT_CAPABILITIES", SType::DrmFormatCapabilities)    
+    .value("DAWN_DRM_FORMAT_CAPABILITIES", SType::DawnDrmFormatCapabilities)    
     .value("SHADER_MODULE_COMPILATION_OPTIONS", SType::ShaderModuleCompilationOptions)    
     .value("COLOR_TARGET_STATE_EXPAND_RESOLVE_TEXTURE_DAWN", SType::ColorTargetStateExpandResolveTextureDawn)    
+    .value("RENDER_PASS_DESCRIPTOR_EXPAND_RESOLVE_RECT", SType::RenderPassDescriptorExpandResolveRect)    
     .value("SHARED_TEXTURE_MEMORY_VK_DEDICATED_ALLOCATION_DESCRIPTOR", SType::SharedTextureMemoryVkDedicatedAllocationDescriptor)    
     .value("SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_DESCRIPTOR", SType::SharedTextureMemoryAHardwareBufferDescriptor)    
     .value("SHARED_TEXTURE_MEMORY_DMA_BUF_DESCRIPTOR", SType::SharedTextureMemoryDmaBufDescriptor)    
@@ -490,8 +483,8 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("SHARED_TEXTURE_MEMORY_D3D_SWAPCHAIN_BEGIN_STATE", SType::SharedTextureMemoryD3DSwapchainBeginState)    
     .value("SHARED_FENCE_VK_SEMAPHORE_OPAQUE_FD_DESCRIPTOR", SType::SharedFenceVkSemaphoreOpaqueFDDescriptor)    
     .value("SHARED_FENCE_VK_SEMAPHORE_OPAQUE_FD_EXPORT_INFO", SType::SharedFenceVkSemaphoreOpaqueFDExportInfo)    
-    .value("SHARED_FENCE_VK_SEMAPHORE_SYNC_FD_DESCRIPTOR", SType::SharedFenceVkSemaphoreSyncFDDescriptor)    
-    .value("SHARED_FENCE_VK_SEMAPHORE_SYNC_FD_EXPORT_INFO", SType::SharedFenceVkSemaphoreSyncFDExportInfo)    
+    .value("SHARED_FENCE_SYNC_FD_DESCRIPTOR", SType::SharedFenceSyncFDDescriptor)    
+    .value("SHARED_FENCE_SYNC_FD_EXPORT_INFO", SType::SharedFenceSyncFDExportInfo)    
     .value("SHARED_FENCE_VK_SEMAPHORE_ZIRCON_HANDLE_DESCRIPTOR", SType::SharedFenceVkSemaphoreZirconHandleDescriptor)    
     .value("SHARED_FENCE_VK_SEMAPHORE_ZIRCON_HANDLE_EXPORT_INFO", SType::SharedFenceVkSemaphoreZirconHandleExportInfo)    
     .value("SHARED_FENCE_DXGI_SHARED_HANDLE_DESCRIPTOR", SType::SharedFenceDXGISharedHandleDescriptor)    
@@ -503,15 +496,23 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("Y_CB_CR_VK_DESCRIPTOR", SType::YCbCrVkDescriptor)    
     .value("SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_PROPERTIES", SType::SharedTextureMemoryAHardwareBufferProperties)    
     .value("A_HARDWARE_BUFFER_PROPERTIES", SType::AHardwareBufferProperties)    
+    .value("DAWN_EXPERIMENTAL_IMMEDIATE_DATA_LIMITS", SType::DawnExperimentalImmediateDataLimits)    
+    .value("DAWN_TEXEL_COPY_BUFFER_ROW_ALIGNMENT_LIMITS", SType::DawnTexelCopyBufferRowAlignmentLimits)    
+    .value("ADAPTER_PROPERTIES_SUBGROUP_MATRIX_CONFIGS", SType::AdapterPropertiesSubgroupMatrixConfigs)    
+    .value("SHARED_FENCE_EGL_SYNC_DESCRIPTOR", SType::SharedFenceEGLSyncDescriptor)    
+    .value("SHARED_FENCE_EGL_SYNC_EXPORT_INFO", SType::SharedFenceEGLSyncExportInfo)    
+    .value("DAWN_INJECTED_INVALID_S_TYPE", SType::DawnInjectedInvalidSType)    
+    .value("DAWN_COMPILATION_MESSAGE_UTF16", SType::DawnCompilationMessageUtf16)    
+    .value("DAWN_FAKE_BUFFER_OOM_FOR_TESTING", SType::DawnFakeBufferOOMForTesting)    
+    .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_WIN_UI_SWAP_CHAIN_PANEL", SType::SurfaceDescriptorFromWindowsWinUISwapChainPanel)    
 ;
 
 py::enum_<SurfaceGetCurrentTextureStatus>(m, "SurfaceGetCurrentTextureStatus", py::arithmetic())
-    .value("SUCCESS", SurfaceGetCurrentTextureStatus::Success)    
+    .value("SUCCESS_OPTIMAL", SurfaceGetCurrentTextureStatus::SuccessOptimal)    
+    .value("SUCCESS_SUBOPTIMAL", SurfaceGetCurrentTextureStatus::SuccessSuboptimal)    
     .value("TIMEOUT", SurfaceGetCurrentTextureStatus::Timeout)    
     .value("OUTDATED", SurfaceGetCurrentTextureStatus::Outdated)    
     .value("LOST", SurfaceGetCurrentTextureStatus::Lost)    
-    .value("OUT_OF_MEMORY", SurfaceGetCurrentTextureStatus::OutOfMemory)    
-    .value("DEVICE_LOST", SurfaceGetCurrentTextureStatus::DeviceLost)    
     .value("ERROR", SurfaceGetCurrentTextureStatus::Error)    
 ;
 
@@ -656,22 +657,31 @@ py::enum_<TextureViewDimension>(m, "TextureViewDimension", py::arithmetic())
 ;
 
 py::enum_<VertexFormat>(m, "VertexFormat", py::arithmetic())
+    .value("UINT8", VertexFormat::Uint8)    
     .value("UINT8X2", VertexFormat::Uint8x2)    
     .value("UINT8X4", VertexFormat::Uint8x4)    
+    .value("SINT8", VertexFormat::Sint8)    
     .value("SINT8X2", VertexFormat::Sint8x2)    
     .value("SINT8X4", VertexFormat::Sint8x4)    
+    .value("UNORM8", VertexFormat::Unorm8)    
     .value("UNORM8X2", VertexFormat::Unorm8x2)    
     .value("UNORM8X4", VertexFormat::Unorm8x4)    
+    .value("SNORM8", VertexFormat::Snorm8)    
     .value("SNORM8X2", VertexFormat::Snorm8x2)    
     .value("SNORM8X4", VertexFormat::Snorm8x4)    
+    .value("UINT16", VertexFormat::Uint16)    
     .value("UINT16X2", VertexFormat::Uint16x2)    
     .value("UINT16X4", VertexFormat::Uint16x4)    
+    .value("SINT16", VertexFormat::Sint16)    
     .value("SINT16X2", VertexFormat::Sint16x2)    
     .value("SINT16X4", VertexFormat::Sint16x4)    
+    .value("UNORM16", VertexFormat::Unorm16)    
     .value("UNORM16X2", VertexFormat::Unorm16x2)    
     .value("UNORM16X4", VertexFormat::Unorm16x4)    
+    .value("SNORM16", VertexFormat::Snorm16)    
     .value("SNORM16X2", VertexFormat::Snorm16x2)    
     .value("SNORM16X4", VertexFormat::Snorm16x4)    
+    .value("FLOAT16", VertexFormat::Float16)    
     .value("FLOAT16X2", VertexFormat::Float16x2)    
     .value("FLOAT16X4", VertexFormat::Float16x4)    
     .value("FLOAT32", VertexFormat::Float32)    
@@ -687,18 +697,27 @@ py::enum_<VertexFormat>(m, "VertexFormat", py::arithmetic())
     .value("SINT32X3", VertexFormat::Sint32x3)    
     .value("SINT32X4", VertexFormat::Sint32x4)    
     .value("UNORM10_10_10_2", VertexFormat::Unorm10_10_10_2)    
+    .value("UNORM8X4BGRA", VertexFormat::Unorm8x4BGRA)    
 ;
 
-py::enum_<WGSLFeatureName>(m, "WGSLFeatureName", py::arithmetic())
-    .value("READONLY_AND_READWRITE_STORAGE_TEXTURES", WGSLFeatureName::ReadonlyAndReadwriteStorageTextures)    
-    .value("PACKED4X8_INTEGER_DOT_PRODUCT", WGSLFeatureName::Packed4x8IntegerDotProduct)    
-    .value("UNRESTRICTED_POINTER_PARAMETERS", WGSLFeatureName::UnrestrictedPointerParameters)    
-    .value("POINTER_COMPOSITE_ACCESS", WGSLFeatureName::PointerCompositeAccess)    
-    .value("CHROMIUM_TESTING_UNIMPLEMENTED", WGSLFeatureName::ChromiumTestingUnimplemented)    
-    .value("CHROMIUM_TESTING_UNSAFE_EXPERIMENTAL", WGSLFeatureName::ChromiumTestingUnsafeExperimental)    
-    .value("CHROMIUM_TESTING_EXPERIMENTAL", WGSLFeatureName::ChromiumTestingExperimental)    
-    .value("CHROMIUM_TESTING_SHIPPED_WITH_KILLSWITCH", WGSLFeatureName::ChromiumTestingShippedWithKillswitch)    
-    .value("CHROMIUM_TESTING_SHIPPED", WGSLFeatureName::ChromiumTestingShipped)    
+py::enum_<WGSLLanguageFeatureName>(m, "WGSLLanguageFeatureName", py::arithmetic())
+    .value("READONLY_AND_READWRITE_STORAGE_TEXTURES", WGSLLanguageFeatureName::ReadonlyAndReadwriteStorageTextures)    
+    .value("PACKED4X8_INTEGER_DOT_PRODUCT", WGSLLanguageFeatureName::Packed4x8IntegerDotProduct)    
+    .value("UNRESTRICTED_POINTER_PARAMETERS", WGSLLanguageFeatureName::UnrestrictedPointerParameters)    
+    .value("POINTER_COMPOSITE_ACCESS", WGSLLanguageFeatureName::PointerCompositeAccess)    
+    .value("SIZED_BINDING_ARRAY", WGSLLanguageFeatureName::SizedBindingArray)    
+    .value("CHROMIUM_TESTING_UNIMPLEMENTED", WGSLLanguageFeatureName::ChromiumTestingUnimplemented)    
+    .value("CHROMIUM_TESTING_UNSAFE_EXPERIMENTAL", WGSLLanguageFeatureName::ChromiumTestingUnsafeExperimental)    
+    .value("CHROMIUM_TESTING_EXPERIMENTAL", WGSLLanguageFeatureName::ChromiumTestingExperimental)    
+    .value("CHROMIUM_TESTING_SHIPPED_WITH_KILLSWITCH", WGSLLanguageFeatureName::ChromiumTestingShippedWithKillswitch)    
+    .value("CHROMIUM_TESTING_SHIPPED", WGSLLanguageFeatureName::ChromiumTestingShipped)    
+;
+
+py::enum_<SubgroupMatrixComponentType>(m, "SubgroupMatrixComponentType", py::arithmetic())
+    .value("F32", SubgroupMatrixComponentType::F32)    
+    .value("F16", SubgroupMatrixComponentType::F16)    
+    .value("U32", SubgroupMatrixComponentType::U32)    
+    .value("I32", SubgroupMatrixComponentType::I32)    
 ;
 
 py::enum_<BufferUsage>(m, "BufferUsage", py::arithmetic())
@@ -769,6 +788,7 @@ py::enum_<TextureUsage>(m, "TextureUsage", py::arithmetic())
     
 
 py::enum_<HeapProperty>(m, "HeapProperty", py::arithmetic())
+    .value("NONE", HeapProperty::None)    
     .value("DEVICE_LOCAL", HeapProperty::DeviceLocal)    
     .value("HOST_VISIBLE", HeapProperty::HostVisible)    
     .value("HOST_COHERENT", HeapProperty::HostCoherent)    
@@ -792,20 +812,16 @@ PYCLASS_BEGIN(m, wgpu::Adapter, Adapter) Adapter
         , py::arg("info")
         , py::return_value_policy::automatic_reference)
     
-    .def("get_properties", &wgpu::Adapter::GetProperties
-        , py::arg("properties")
-        , py::return_value_policy::automatic_reference)
-    
     .def("has_feature", &wgpu::Adapter::HasFeature
         , py::arg("feature")
         , py::return_value_policy::automatic_reference)
     
-    .def("enumerate_features", &wgpu::Adapter::EnumerateFeatures
+    .def("get_features", &wgpu::Adapter::GetFeatures
         , py::arg("features")
         , py::return_value_policy::automatic_reference)
     
     .def("request_device", &wgpu::Adapter::RequestDevice
-        , py::arg("descriptor"), py::arg("callback"), py::arg("userdata")
+        , py::arg("options"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("create_device", &wgpu::Adapter::CreateDevice
@@ -824,10 +840,6 @@ PYCLASS_BEGIN(m, wgpu::BindGroup, BindGroup) BindGroup
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::BindGroup::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::BindGroup, BindGroup)
 
@@ -836,31 +848,31 @@ PYCLASS_BEGIN(m, wgpu::BindGroupLayout, BindGroupLayout) BindGroupLayout
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::BindGroupLayout::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::BindGroupLayout, BindGroupLayout)
 
 PYCLASS_BEGIN(m, wgpu::Buffer, Buffer) Buffer
     .def("map_async", &wgpu::Buffer::MapAsync
-        , py::arg("mode"), py::arg("offset"), py::arg("size"), py::arg("callback"), py::arg("userdata")
+        , py::arg("mode"), py::arg("offset"), py::arg("size"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("get_mapped_range", &wgpu::Buffer::GetMappedRange
-        , py::arg("offset") = 0, py::arg("size") = WGPU_WHOLE_MAP_SIZE
+        , py::arg("offset") = 0, py::arg("size") = kWholeMapSize
         , py::return_value_policy::automatic_reference)
     
     .def("get_const_mapped_range", &wgpu::Buffer::GetConstMappedRange
-        , py::arg("offset") = 0, py::arg("size") = WGPU_WHOLE_MAP_SIZE
+        , py::arg("offset") = 0, py::arg("size") = kWholeMapSize
+        , py::return_value_policy::automatic_reference)
+    
+    .def("write_mapped_range", &wgpu::Buffer::WriteMappedRange
+        , py::arg("offset"), py::arg("data"), py::arg("size")
+        , py::return_value_policy::automatic_reference)
+    
+    .def("read_mapped_range", &wgpu::Buffer::ReadMappedRange
+        , py::arg("offset"), py::arg("data"), py::arg("size")
         , py::return_value_policy::automatic_reference)
     
     .def("set_label", &wgpu::Buffer::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::Buffer::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -884,10 +896,6 @@ PYCLASS_END(m, wgpu::Buffer, Buffer)
 
 PYCLASS_BEGIN(m, wgpu::CommandBuffer, CommandBuffer) CommandBuffer
     .def("set_label", &wgpu::CommandBuffer::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::CommandBuffer::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -924,14 +932,10 @@ PYCLASS_BEGIN(m, wgpu::CommandEncoder, CommandEncoder) CommandEncoder
         , py::return_value_policy::automatic_reference)
     
     .def("clear_buffer", &wgpu::CommandEncoder::ClearBuffer
-        , py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = WGPU_WHOLE_SIZE
+        , py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = kWholeSize
         , py::return_value_policy::automatic_reference)
     
     .def("inject_validation_error", &wgpu::CommandEncoder::InjectValidationError
-        , py::arg("message")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("inject_validation_error_2", &wgpu::CommandEncoder::InjectValidationError2
         , py::arg("message")
         , py::return_value_policy::automatic_reference)
     
@@ -939,18 +943,10 @@ PYCLASS_BEGIN(m, wgpu::CommandEncoder, CommandEncoder) CommandEncoder
         , py::arg("marker_label")
         , py::return_value_policy::automatic_reference)
     
-    .def("insert_debug_marker_2", &wgpu::CommandEncoder::InsertDebugMarker2
-        , py::arg("marker_label")
-        , py::return_value_policy::automatic_reference)
-    
     .def("pop_debug_group", &wgpu::CommandEncoder::PopDebugGroup
         , py::return_value_policy::automatic_reference)
     
     .def("push_debug_group", &wgpu::CommandEncoder::PushDebugGroup
-        , py::arg("group_label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("push_debug_group_2", &wgpu::CommandEncoder::PushDebugGroup2
         , py::arg("group_label")
         , py::return_value_policy::automatic_reference)
     
@@ -970,10 +966,6 @@ PYCLASS_BEGIN(m, wgpu::CommandEncoder, CommandEncoder) CommandEncoder
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::CommandEncoder::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::CommandEncoder, CommandEncoder)
 
@@ -982,18 +974,10 @@ PYCLASS_BEGIN(m, wgpu::ComputePassEncoder, ComputePassEncoder) ComputePassEncode
         , py::arg("marker_label")
         , py::return_value_policy::automatic_reference)
     
-    .def("insert_debug_marker_2", &wgpu::ComputePassEncoder::InsertDebugMarker2
-        , py::arg("marker_label")
-        , py::return_value_policy::automatic_reference)
-    
     .def("pop_debug_group", &wgpu::ComputePassEncoder::PopDebugGroup
         , py::return_value_policy::automatic_reference)
     
     .def("push_debug_group", &wgpu::ComputePassEncoder::PushDebugGroup
-        , py::arg("group_label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("push_debug_group_2", &wgpu::ComputePassEncoder::PushDebugGroup2
         , py::arg("group_label")
         , py::return_value_policy::automatic_reference)
     
@@ -1024,8 +1008,8 @@ PYCLASS_BEGIN(m, wgpu::ComputePassEncoder, ComputePassEncoder) ComputePassEncode
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::ComputePassEncoder::SetLabel2
-        , py::arg("label")
+    .def("set_immediate_data", &wgpu::ComputePassEncoder::SetImmediateData
+        , py::arg("offset"), py::arg("data"), py::arg("size")
         , py::return_value_policy::automatic_reference)
     
         ;
@@ -1037,10 +1021,6 @@ PYCLASS_BEGIN(m, wgpu::ComputePipeline, ComputePipeline) ComputePipeline
         , py::return_value_policy::automatic_reference)
     
     .def("set_label", &wgpu::ComputePipeline::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::ComputePipeline::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1073,7 +1053,7 @@ PYCLASS_BEGIN(m, wgpu::Device, Device) Device
         , py::return_value_policy::automatic_reference)
     
     .def("create_compute_pipeline_async", &wgpu::Device::CreateComputePipelineAsync
-        , py::arg("descriptor"), py::arg("callback"), py::arg("userdata")
+        , py::arg("descriptor"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("create_external_texture", &wgpu::Device::CreateExternalTexture
@@ -1092,7 +1072,7 @@ PYCLASS_BEGIN(m, wgpu::Device, Device) Device
         , py::return_value_policy::automatic_reference)
     
     .def("create_render_pipeline_async", &wgpu::Device::CreateRenderPipelineAsync
-        , py::arg("descriptor"), py::arg("callback"), py::arg("userdata")
+        , py::arg("descriptor"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("create_render_bundle_encoder", &wgpu::Device::CreateRenderBundleEncoder
@@ -1113,14 +1093,6 @@ PYCLASS_BEGIN(m, wgpu::Device, Device) Device
     
     .def("create_error_shader_module", &wgpu::Device::CreateErrorShaderModule
         , py::arg("descriptor"), py::arg("error_message")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("create_error_shader_module_2", &wgpu::Device::CreateErrorShaderModule2
-        , py::arg("descriptor"), py::arg("error_message")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("create_swap_chain", &wgpu::Device::CreateSwapChain
-        , py::arg("surface"), py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
     
     .def("create_texture", &wgpu::Device::CreateTexture
@@ -1154,12 +1126,19 @@ PYCLASS_BEGIN(m, wgpu::Device, Device) Device
         , py::arg("limits")
         , py::return_value_policy::automatic_reference)
     
+    .def("get_lost_future", &wgpu::Device::GetLostFuture
+        , py::return_value_policy::automatic_reference)
+    
     .def("has_feature", &wgpu::Device::HasFeature
         , py::arg("feature")
         , py::return_value_policy::automatic_reference)
     
-    .def("enumerate_features", &wgpu::Device::EnumerateFeatures
+    .def("get_features", &wgpu::Device::GetFeatures
         , py::arg("features")
+        , py::return_value_policy::automatic_reference)
+    
+    .def("get_adapter_info", &wgpu::Device::GetAdapterInfo
+        , py::arg("adapter_info")
         , py::return_value_policy::automatic_reference)
     
     .def("get_adapter", &wgpu::Device::GetAdapter
@@ -1172,31 +1151,15 @@ PYCLASS_BEGIN(m, wgpu::Device, Device) Device
         , py::arg("type"), py::arg("message")
         , py::return_value_policy::automatic_reference)
     
-    .def("inject_error_2", &wgpu::Device::InjectError2
-        , py::arg("type"), py::arg("message")
-        , py::return_value_policy::automatic_reference)
-    
     .def("force_loss", &wgpu::Device::ForceLoss
-        , py::arg("type"), py::arg("message")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("force_loss_2", &wgpu::Device::ForceLoss2
         , py::arg("type"), py::arg("message")
         , py::return_value_policy::automatic_reference)
     
     .def("tick", &wgpu::Device::Tick
         , py::return_value_policy::automatic_reference)
     
-    .def("set_uncaptured_error_callback", &wgpu::Device::SetUncapturedErrorCallback
-        , py::arg("callback"), py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
-    
     .def("set_logging_callback", &wgpu::Device::SetLoggingCallback
-        , py::arg("callback"), py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_device_lost_callback", &wgpu::Device::SetDeviceLostCallback
-        , py::arg("callback"), py::arg("userdata")
+        , py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("push_error_scope", &wgpu::Device::PushErrorScope
@@ -1204,14 +1167,10 @@ PYCLASS_BEGIN(m, wgpu::Device, Device) Device
         , py::return_value_policy::automatic_reference)
     
     .def("pop_error_scope", &wgpu::Device::PopErrorScope
-        , py::arg("old_callback"), py::arg("userdata")
+        , py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("set_label", &wgpu::Device::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::Device::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1219,19 +1178,11 @@ PYCLASS_BEGIN(m, wgpu::Device, Device) Device
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
     
-    .def("get_supported_surface_usage", &wgpu::Device::GetSupportedSurfaceUsage
-        , py::arg("surface")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::Device, Device)
 
 PYCLASS_BEGIN(m, wgpu::ExternalTexture, ExternalTexture) ExternalTexture
     .def("set_label", &wgpu::ExternalTexture::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::ExternalTexture::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1249,10 +1200,6 @@ PYCLASS_END(m, wgpu::ExternalTexture, ExternalTexture)
 
 PYCLASS_BEGIN(m, wgpu::SharedBufferMemory, SharedBufferMemory) SharedBufferMemory
     .def("set_label", &wgpu::SharedBufferMemory::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::SharedBufferMemory::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1280,10 +1227,6 @@ PYCLASS_END(m, wgpu::SharedBufferMemory, SharedBufferMemory)
 
 PYCLASS_BEGIN(m, wgpu::SharedTextureMemory, SharedTextureMemory) SharedTextureMemory
     .def("set_label", &wgpu::SharedTextureMemory::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::SharedTextureMemory::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1333,7 +1276,7 @@ PYCLASS_BEGIN(m, wgpu::Instance, Instance) Instance
         , py::arg("feature")
         , py::return_value_policy::automatic_reference)
     
-    .def("enumerate_WGSL_language_features", &wgpu::Instance::EnumerateWGSLLanguageFeatures
+    .def("get_WGSL_language_features", &wgpu::Instance::GetWGSLLanguageFeatures
         , py::arg("features")
         , py::return_value_policy::automatic_reference)
     
@@ -1345,19 +1288,11 @@ PYCLASS_BEGIN(m, wgpu::PipelineLayout, PipelineLayout) PipelineLayout
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::PipelineLayout::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::PipelineLayout, PipelineLayout)
 
 PYCLASS_BEGIN(m, wgpu::QuerySet, QuerySet) QuerySet
     .def("set_label", &wgpu::QuerySet::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::QuerySet::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1376,6 +1311,10 @@ PYCLASS_END(m, wgpu::QuerySet, QuerySet)
 PYCLASS_BEGIN(m, wgpu::Queue, Queue) Queue
     .def("submit", &wgpu::Queue::Submit
         , py::arg("command_count"), py::arg("commands")
+        , py::return_value_policy::automatic_reference)
+    
+    .def("on_submitted_work_done", &wgpu::Queue::OnSubmittedWorkDone
+        , py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("write_buffer", &wgpu::Queue::WriteBuffer
@@ -1398,19 +1337,11 @@ PYCLASS_BEGIN(m, wgpu::Queue, Queue) Queue
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::Queue::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::Queue, Queue)
 
 PYCLASS_BEGIN(m, wgpu::RenderBundle, RenderBundle) RenderBundle
     .def("set_label", &wgpu::RenderBundle::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::RenderBundle::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1446,10 +1377,6 @@ PYCLASS_BEGIN(m, wgpu::RenderBundleEncoder, RenderBundleEncoder) RenderBundleEnc
         , py::arg("marker_label")
         , py::return_value_policy::automatic_reference)
     
-    .def("insert_debug_marker_2", &wgpu::RenderBundleEncoder::InsertDebugMarker2
-        , py::arg("marker_label")
-        , py::return_value_policy::automatic_reference)
-    
     .def("pop_debug_group", &wgpu::RenderBundleEncoder::PopDebugGroup
         , py::return_value_policy::automatic_reference)
     
@@ -1457,16 +1384,12 @@ PYCLASS_BEGIN(m, wgpu::RenderBundleEncoder, RenderBundleEncoder) RenderBundleEnc
         , py::arg("group_label")
         , py::return_value_policy::automatic_reference)
     
-    .def("push_debug_group_2", &wgpu::RenderBundleEncoder::PushDebugGroup2
-        , py::arg("group_label")
-        , py::return_value_policy::automatic_reference)
-    
     .def("set_vertex_buffer", &wgpu::RenderBundleEncoder::SetVertexBuffer
-        , py::arg("slot"), py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = WGPU_WHOLE_SIZE
+        , py::arg("slot"), py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = kWholeSize
         , py::return_value_policy::automatic_reference)
     
     .def("set_index_buffer", &wgpu::RenderBundleEncoder::SetIndexBuffer
-        , py::arg("buffer"), py::arg("format"), py::arg("offset") = 0, py::arg("size") = WGPU_WHOLE_SIZE
+        , py::arg("buffer"), py::arg("format"), py::arg("offset") = 0, py::arg("size") = kWholeSize
         , py::return_value_policy::automatic_reference)
     
     .def("finish", &wgpu::RenderBundleEncoder::Finish
@@ -1477,8 +1400,8 @@ PYCLASS_BEGIN(m, wgpu::RenderBundleEncoder, RenderBundleEncoder) RenderBundleEnc
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::RenderBundleEncoder::SetLabel2
-        , py::arg("label")
+    .def("set_immediate_data", &wgpu::RenderBundleEncoder::SetImmediateData
+        , py::arg("offset"), py::arg("data"), py::arg("size")
         , py::return_value_policy::automatic_reference)
     
         ;
@@ -1509,6 +1432,14 @@ PYCLASS_BEGIN(m, wgpu::RenderPassEncoder, RenderPassEncoder) RenderPassEncoder
         , py::arg("indirect_buffer"), py::arg("indirect_offset")
         , py::return_value_policy::automatic_reference)
     
+    .def("multi_draw_indirect", &wgpu::RenderPassEncoder::MultiDrawIndirect
+        , py::arg("indirect_buffer"), py::arg("indirect_offset"), py::arg("max_draw_count"), py::arg("draw_count_buffer"), py::arg("draw_count_buffer_offset") = 0
+        , py::return_value_policy::automatic_reference)
+    
+    .def("multi_draw_indexed_indirect", &wgpu::RenderPassEncoder::MultiDrawIndexedIndirect
+        , py::arg("indirect_buffer"), py::arg("indirect_offset"), py::arg("max_draw_count"), py::arg("draw_count_buffer"), py::arg("draw_count_buffer_offset") = 0
+        , py::return_value_policy::automatic_reference)
+    
     .def("execute_bundles", &wgpu::RenderPassEncoder::ExecuteBundles
         , py::arg("bundle_count"), py::arg("bundles")
         , py::return_value_policy::automatic_reference)
@@ -1517,18 +1448,10 @@ PYCLASS_BEGIN(m, wgpu::RenderPassEncoder, RenderPassEncoder) RenderPassEncoder
         , py::arg("marker_label")
         , py::return_value_policy::automatic_reference)
     
-    .def("insert_debug_marker_2", &wgpu::RenderPassEncoder::InsertDebugMarker2
-        , py::arg("marker_label")
-        , py::return_value_policy::automatic_reference)
-    
     .def("pop_debug_group", &wgpu::RenderPassEncoder::PopDebugGroup
         , py::return_value_policy::automatic_reference)
     
     .def("push_debug_group", &wgpu::RenderPassEncoder::PushDebugGroup
-        , py::arg("group_label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("push_debug_group_2", &wgpu::RenderPassEncoder::PushDebugGroup2
         , py::arg("group_label")
         , py::return_value_policy::automatic_reference)
     
@@ -1549,11 +1472,11 @@ PYCLASS_BEGIN(m, wgpu::RenderPassEncoder, RenderPassEncoder) RenderPassEncoder
         , py::return_value_policy::automatic_reference)
     
     .def("set_vertex_buffer", &wgpu::RenderPassEncoder::SetVertexBuffer
-        , py::arg("slot"), py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = WGPU_WHOLE_SIZE
+        , py::arg("slot"), py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = kWholeSize
         , py::return_value_policy::automatic_reference)
     
     .def("set_index_buffer", &wgpu::RenderPassEncoder::SetIndexBuffer
-        , py::arg("buffer"), py::arg("format"), py::arg("offset") = 0, py::arg("size") = WGPU_WHOLE_SIZE
+        , py::arg("buffer"), py::arg("format"), py::arg("offset") = 0, py::arg("size") = kWholeSize
         , py::return_value_policy::automatic_reference)
     
     .def("begin_occlusion_query", &wgpu::RenderPassEncoder::BeginOcclusionQuery
@@ -1577,8 +1500,8 @@ PYCLASS_BEGIN(m, wgpu::RenderPassEncoder, RenderPassEncoder) RenderPassEncoder
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::RenderPassEncoder::SetLabel2
-        , py::arg("label")
+    .def("set_immediate_data", &wgpu::RenderPassEncoder::SetImmediateData
+        , py::arg("offset"), py::arg("data"), py::arg("size")
         , py::return_value_policy::automatic_reference)
     
         ;
@@ -1593,10 +1516,6 @@ PYCLASS_BEGIN(m, wgpu::RenderPipeline, RenderPipeline) RenderPipeline
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::RenderPipeline::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::RenderPipeline, RenderPipeline)
 
@@ -1605,23 +1524,15 @@ PYCLASS_BEGIN(m, wgpu::Sampler, Sampler) Sampler
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::Sampler::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::Sampler, Sampler)
 
 PYCLASS_BEGIN(m, wgpu::ShaderModule, ShaderModule) ShaderModule
     .def("get_compilation_info", &wgpu::ShaderModule::GetCompilationInfo
-        , py::arg("callback"), py::arg("userdata")
+        , py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("set_label", &wgpu::ShaderModule::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::ShaderModule::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1641,10 +1552,6 @@ PYCLASS_BEGIN(m, wgpu::Surface, Surface) Surface
         , py::arg("surface_texture")
         , py::return_value_policy::automatic_reference)
     
-    .def("get_preferred_format", &wgpu::Surface::GetPreferredFormat
-        , py::arg("adapter")
-        , py::return_value_policy::automatic_reference)
-    
     .def("present", &wgpu::Surface::Present
         , py::return_value_policy::automatic_reference)
     
@@ -1655,25 +1562,8 @@ PYCLASS_BEGIN(m, wgpu::Surface, Surface) Surface
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::Surface::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::Surface, Surface)
-
-PYCLASS_BEGIN(m, wgpu::SwapChain, SwapChain) SwapChain
-    .def("get_current_texture_view", &wgpu::SwapChain::GetCurrentTextureView
-        , py::return_value_policy::automatic_reference)
-    
-    .def("get_current_texture", &wgpu::SwapChain::GetCurrentTexture
-        , py::return_value_policy::automatic_reference)
-    
-    .def("present", &wgpu::SwapChain::Present
-        , py::return_value_policy::automatic_reference)
-    
-        ;
-PYCLASS_END(m, wgpu::SwapChain, SwapChain)
 
 PYCLASS_BEGIN(m, wgpu::Texture, Texture) Texture
     .def("create_view", &wgpu::Texture::CreateView
@@ -1685,10 +1575,6 @@ PYCLASS_BEGIN(m, wgpu::Texture, Texture) Texture
         , py::return_value_policy::automatic_reference)
     
     .def("set_label", &wgpu::Texture::SetLabel
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("set_label_2", &wgpu::Texture::SetLabel2
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
@@ -1727,28 +1613,30 @@ PYCLASS_BEGIN(m, wgpu::TextureView, TextureView) TextureView
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_label_2", &wgpu::TextureView::SetLabel2
-        , py::arg("label")
-        , py::return_value_policy::automatic_reference)
-    
         ;
 PYCLASS_END(m, wgpu::TextureView, TextureView)
 
-PYCLASS_BEGIN(m, wgpu::INTERNAL__HAVE_EMDAWNWEBGPU_HEADER, INTERNAL__HAVE_EMDAWNWEBGPU_HEADER) INTERNAL__HAVE_EMDAWNWEBGPU_HEADER
+PYCLASS_BEGIN(m, wgpu::INTERNAL_HAVE_EMDAWNWEBGPU_HEADER, INTERNAL_HAVE_EMDAWNWEBGPU_HEADER) INTERNAL_HAVE_EMDAWNWEBGPU_HEADER
+    .def_readwrite("unused", &wgpu::INTERNAL_HAVE_EMDAWNWEBGPU_HEADER::unused)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::INTERNAL__HAVE_EMDAWNWEBGPU_HEADER obj{};        
+        wgpu::INTERNAL_HAVE_EMDAWNWEBGPU_HEADER obj{};        
+        if (kwargs.contains("unused"))        
+        {        
+            auto value = kwargs["unused"].cast<wgpu::Bool>();            
+            obj.unused = value;            
+        }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::INTERNAL__HAVE_EMDAWNWEBGPU_HEADER, INTERNAL__HAVE_EMDAWNWEBGPU_HEADER)
+PYCLASS_END(m, wgpu::INTERNAL_HAVE_EMDAWNWEBGPU_HEADER, INTERNAL_HAVE_EMDAWNWEBGPU_HEADER)
 
 PYCLASS_BEGIN(m, wgpu::RequestAdapterOptions, RequestAdapterOptions) RequestAdapterOptions
     .def_readwrite("next_in_chain", &wgpu::RequestAdapterOptions::nextInChain)    
-    .def_readwrite("compatible_surface", &wgpu::RequestAdapterOptions::compatibleSurface)    
+    .def_readwrite("feature_level", &wgpu::RequestAdapterOptions::featureLevel)    
     .def_readwrite("power_preference", &wgpu::RequestAdapterOptions::powerPreference)    
-    .def_readwrite("backend_type", &wgpu::RequestAdapterOptions::backendType)    
     .def_readwrite("force_fallback_adapter", &wgpu::RequestAdapterOptions::forceFallbackAdapter)    
-    .def_readwrite("compatibility_mode", &wgpu::RequestAdapterOptions::compatibilityMode)    
+    .def_readwrite("backend_type", &wgpu::RequestAdapterOptions::backendType)    
+    .def_readwrite("compatible_surface", &wgpu::RequestAdapterOptions::compatibleSurface)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::RequestAdapterOptions obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -1756,61 +1644,35 @@ PYCLASS_BEGIN(m, wgpu::RequestAdapterOptions, RequestAdapterOptions) RequestAdap
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
             obj.nextInChain = value;            
         }        
-        if (kwargs.contains("compatible_surface"))        
+        if (kwargs.contains("feature_level"))        
         {        
-            auto value = kwargs["compatible_surface"].cast<wgpu::Surface>();            
-            obj.compatibleSurface = value;            
+            auto value = kwargs["feature_level"].cast<wgpu::FeatureLevel>();            
+            obj.featureLevel = value;            
         }        
         if (kwargs.contains("power_preference"))        
         {        
             auto value = kwargs["power_preference"].cast<wgpu::PowerPreference>();            
             obj.powerPreference = value;            
         }        
-        if (kwargs.contains("backend_type"))        
-        {        
-            auto value = kwargs["backend_type"].cast<wgpu::BackendType>();            
-            obj.backendType = value;            
-        }        
         if (kwargs.contains("force_fallback_adapter"))        
         {        
             auto value = kwargs["force_fallback_adapter"].cast<wgpu::Bool>();            
             obj.forceFallbackAdapter = value;            
         }        
-        if (kwargs.contains("compatibility_mode"))        
+        if (kwargs.contains("backend_type"))        
         {        
-            auto value = kwargs["compatibility_mode"].cast<wgpu::Bool>();            
-            obj.compatibilityMode = value;            
+            auto value = kwargs["backend_type"].cast<wgpu::BackendType>();            
+            obj.backendType = value;            
+        }        
+        if (kwargs.contains("compatible_surface"))        
+        {        
+            auto value = kwargs["compatible_surface"].cast<wgpu::Surface>();            
+            obj.compatibleSurface = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
 PYCLASS_END(m, wgpu::RequestAdapterOptions, RequestAdapterOptions)
-
-PYCLASS_BEGIN(m, wgpu::RequestAdapterCallbackInfo, RequestAdapterCallbackInfo) RequestAdapterCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::RequestAdapterCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::RequestAdapterCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::RequestAdapterCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::RequestAdapterCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::RequestAdapterCallbackInfo, RequestAdapterCallbackInfo)
 
 PYCLASS_BEGIN(m, wgpu::AdapterInfo, AdapterInfo) AdapterInfo
     .def_readonly("next_in_chain", &wgpu::AdapterInfo::nextInChain)    
@@ -1822,43 +1684,20 @@ PYCLASS_BEGIN(m, wgpu::AdapterInfo, AdapterInfo) AdapterInfo
     .def_readonly("adapter_type", &wgpu::AdapterInfo::adapterType)    
     .def_readonly("vendor_id", &wgpu::AdapterInfo::vendorID)    
     .def_readonly("device_id", &wgpu::AdapterInfo::deviceID)    
-    .def_readonly("compatibility_mode", &wgpu::AdapterInfo::compatibilityMode)    
+    .def_readonly("subgroup_min_size", &wgpu::AdapterInfo::subgroupMinSize)    
+    .def_readonly("subgroup_max_size", &wgpu::AdapterInfo::subgroupMaxSize)    
 ;
 PYCLASS_END(m, wgpu::AdapterInfo, AdapterInfo)
 
-PYCLASS_BEGIN(m, wgpu::AdapterProperties, AdapterProperties) AdapterProperties
-    .def_readonly("next_in_chain", &wgpu::AdapterProperties::nextInChain)    
-    .def_readonly("vendor_id", &wgpu::AdapterProperties::vendorID)    
-    .def_readonly("vendor_name", &wgpu::AdapterProperties::vendorName)    
-    .def_readonly("architecture", &wgpu::AdapterProperties::architecture)    
-    .def_readonly("device_id", &wgpu::AdapterProperties::deviceID)    
-    .def_readonly("name", &wgpu::AdapterProperties::name)    
-    .def_readonly("driver_description", &wgpu::AdapterProperties::driverDescription)    
-    .def_readonly("adapter_type", &wgpu::AdapterProperties::adapterType)    
-    .def_readonly("backend_type", &wgpu::AdapterProperties::backendType)    
-    .def_readonly("compatibility_mode", &wgpu::AdapterProperties::compatibilityMode)    
-;
-PYCLASS_END(m, wgpu::AdapterProperties, AdapterProperties)
-
 PYCLASS_BEGIN(m, wgpu::DeviceDescriptor, DeviceDescriptor) DeviceDescriptor
     .def_readwrite("next_in_chain", &wgpu::DeviceDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::DeviceDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::DeviceDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::DeviceDescriptor::label)    
     .def_readwrite("required_feature_count", &wgpu::DeviceDescriptor::requiredFeatureCount)    
     .def_readwrite("required_features", &wgpu::DeviceDescriptor::requiredFeatures)    
     .def_readwrite("required_limits", &wgpu::DeviceDescriptor::requiredLimits)    
     .def_readwrite("default_queue", &wgpu::DeviceDescriptor::defaultQueue)    
-    .def_readwrite("device_lost_userdata", &wgpu::DeviceDescriptor::deviceLostUserdata)    
     .def_readwrite("device_lost_callback_info", &wgpu::DeviceDescriptor::deviceLostCallbackInfo)    
     .def_readwrite("uncaptured_error_callback_info", &wgpu::DeviceDescriptor::uncapturedErrorCallbackInfo)    
-    .def_readwrite("device_lost_callback_info_2", &wgpu::DeviceDescriptor::deviceLostCallbackInfo2)    
-    .def_readwrite("uncaptured_error_callback_info_2", &wgpu::DeviceDescriptor::uncapturedErrorCallbackInfo2)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::DeviceDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -1868,8 +1707,8 @@ PYCLASS_BEGIN(m, wgpu::DeviceDescriptor, DeviceDescriptor) DeviceDescriptor
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("required_feature_count"))        
         {        
@@ -1886,18 +1725,13 @@ PYCLASS_BEGIN(m, wgpu::DeviceDescriptor, DeviceDescriptor) DeviceDescriptor
         }        
         if (kwargs.contains("required_limits"))        
         {        
-            auto value = kwargs["required_limits"].cast<wgpu::RequiredLimits const *>();            
+            auto value = kwargs["required_limits"].cast<wgpu::Limits const *>();            
             obj.requiredLimits = value;            
         }        
         if (kwargs.contains("default_queue"))        
         {        
             auto value = kwargs["default_queue"].cast<wgpu::QueueDescriptor>();            
             obj.defaultQueue = value;            
-        }        
-        if (kwargs.contains("device_lost_userdata"))        
-        {        
-            auto value = kwargs["device_lost_userdata"].cast<void *>();            
-            obj.deviceLostUserdata = value;            
         }        
         if (kwargs.contains("device_lost_callback_info"))        
         {        
@@ -1908,16 +1742,6 @@ PYCLASS_BEGIN(m, wgpu::DeviceDescriptor, DeviceDescriptor) DeviceDescriptor
         {        
             auto value = kwargs["uncaptured_error_callback_info"].cast<wgpu::UncapturedErrorCallbackInfo>();            
             obj.uncapturedErrorCallbackInfo = value;            
-        }        
-        if (kwargs.contains("device_lost_callback_info_2"))        
-        {        
-            auto value = kwargs["device_lost_callback_info_2"].cast<wgpu::DeviceLostCallbackInfo2>();            
-            obj.deviceLostCallbackInfo2 = value;            
-        }        
-        if (kwargs.contains("uncaptured_error_callback_info_2"))        
-        {        
-            auto value = kwargs["uncaptured_error_callback_info_2"].cast<wgpu::UncapturedErrorCallbackInfo2>();            
-            obj.uncapturedErrorCallbackInfo2 = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -1952,14 +1776,7 @@ PYCLASS_END(m, wgpu::DawnTogglesDescriptor, DawnTogglesDescriptor)
 
 PYSUBCLASS_BEGIN(m, wgpu::DawnCacheDeviceDescriptor, ChainedStruct, DawnCacheDeviceDescriptor) DawnCacheDeviceDescriptor
     .def_readwrite("next_in_chain", &wgpu::DawnCacheDeviceDescriptor::nextInChain)    
-    .def_property("isolation_key",    
-        [](const wgpu::DawnCacheDeviceDescriptor& self) {        
-            return self.isolationKey;            
-        },        
-        [](wgpu::DawnCacheDeviceDescriptor& self, char const *  source) {        
-            self.isolationKey = strdup(source);            
-        }        
-    )    
+    .def_readwrite("isolation_key", &wgpu::DawnCacheDeviceDescriptor::isolationKey)    
     .def_readwrite("function_userdata", &wgpu::DawnCacheDeviceDescriptor::functionUserdata)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::DawnCacheDeviceDescriptor obj{};        
@@ -1970,8 +1787,8 @@ PYSUBCLASS_BEGIN(m, wgpu::DawnCacheDeviceDescriptor, ChainedStruct, DawnCacheDev
         }        
         if (kwargs.contains("isolation_key"))        
         {        
-            auto value = kwargs["isolation_key"].cast<std::string>();            
-            obj.isolationKey = strdup(value.c_str());            
+            auto value = kwargs["isolation_key"].cast<wgpu::StringView>();            
+            obj.isolationKey = value;            
         }        
         if (kwargs.contains("function_userdata"))        
         {        
@@ -2055,14 +1872,7 @@ PYCLASS_END(m, wgpu::BindGroupEntry, BindGroupEntry)
 
 PYCLASS_BEGIN(m, wgpu::BindGroupDescriptor, BindGroupDescriptor) BindGroupDescriptor
     .def_readwrite("next_in_chain", &wgpu::BindGroupDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::BindGroupDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::BindGroupDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::BindGroupDescriptor::label)    
     .def_readwrite("layout", &wgpu::BindGroupDescriptor::layout)    
     .def_readwrite("entry_count", &wgpu::BindGroupDescriptor::entryCount)    
     .def_readwrite("entries", &wgpu::BindGroupDescriptor::entries)    
@@ -2075,8 +1885,8 @@ PYCLASS_BEGIN(m, wgpu::BindGroupDescriptor, BindGroupDescriptor) BindGroupDescri
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("layout"))        
         {        
@@ -2228,11 +2038,11 @@ PYCLASS_BEGIN(m, wgpu::SurfaceConfiguration, SurfaceConfiguration) SurfaceConfig
     .def_readwrite("device", &wgpu::SurfaceConfiguration::device)    
     .def_readwrite("format", &wgpu::SurfaceConfiguration::format)    
     .def_readwrite("usage", &wgpu::SurfaceConfiguration::usage)    
+    .def_readwrite("width", &wgpu::SurfaceConfiguration::width)    
+    .def_readwrite("height", &wgpu::SurfaceConfiguration::height)    
     .def_readwrite("view_format_count", &wgpu::SurfaceConfiguration::viewFormatCount)    
     .def_readwrite("view_formats", &wgpu::SurfaceConfiguration::viewFormats)    
     .def_readwrite("alpha_mode", &wgpu::SurfaceConfiguration::alphaMode)    
-    .def_readwrite("width", &wgpu::SurfaceConfiguration::width)    
-    .def_readwrite("height", &wgpu::SurfaceConfiguration::height)    
     .def_readwrite("present_mode", &wgpu::SurfaceConfiguration::presentMode)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::SurfaceConfiguration obj{};        
@@ -2256,6 +2066,16 @@ PYCLASS_BEGIN(m, wgpu::SurfaceConfiguration, SurfaceConfiguration) SurfaceConfig
             auto value = kwargs["usage"].cast<wgpu::TextureUsage>();            
             obj.usage = value;            
         }        
+        if (kwargs.contains("width"))        
+        {        
+            auto value = kwargs["width"].cast<uint32_t>();            
+            obj.width = value;            
+        }        
+        if (kwargs.contains("height"))        
+        {        
+            auto value = kwargs["height"].cast<uint32_t>();            
+            obj.height = value;            
+        }        
         if (kwargs.contains("view_format_count"))        
         {        
             auto value = kwargs["view_format_count"].cast<size_t>();            
@@ -2273,16 +2093,6 @@ PYCLASS_BEGIN(m, wgpu::SurfaceConfiguration, SurfaceConfiguration) SurfaceConfig
         {        
             auto value = kwargs["alpha_mode"].cast<wgpu::CompositeAlphaMode>();            
             obj.alphaMode = value;            
-        }        
-        if (kwargs.contains("width"))        
-        {        
-            auto value = kwargs["width"].cast<uint32_t>();            
-            obj.width = value;            
-        }        
-        if (kwargs.contains("height"))        
-        {        
-            auto value = kwargs["height"].cast<uint32_t>();            
-            obj.height = value;            
         }        
         if (kwargs.contains("present_mode"))        
         {        
@@ -2412,14 +2222,7 @@ PYCLASS_END(m, wgpu::BindGroupLayoutEntry, BindGroupLayoutEntry)
 
 PYCLASS_BEGIN(m, wgpu::BindGroupLayoutDescriptor, BindGroupLayoutDescriptor) BindGroupLayoutDescriptor
     .def_readwrite("next_in_chain", &wgpu::BindGroupLayoutDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::BindGroupLayoutDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::BindGroupLayoutDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::BindGroupLayoutDescriptor::label)    
     .def_readwrite("entry_count", &wgpu::BindGroupLayoutDescriptor::entryCount)    
     .def_readwrite("entries", &wgpu::BindGroupLayoutDescriptor::entries)    
     .def(py::init([](const py::kwargs& kwargs) {    
@@ -2431,8 +2234,8 @@ PYCLASS_BEGIN(m, wgpu::BindGroupLayoutDescriptor, BindGroupLayoutDescriptor) Bin
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("entry_count"))        
         {        
@@ -2480,14 +2283,7 @@ PYCLASS_END(m, wgpu::BlendComponent, BlendComponent)
 
 PYCLASS_BEGIN(m, wgpu::BufferDescriptor, BufferDescriptor) BufferDescriptor
     .def_readwrite("next_in_chain", &wgpu::BufferDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::BufferDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::BufferDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::BufferDescriptor::label)    
     .def_readwrite("usage", &wgpu::BufferDescriptor::usage)    
     .def_readwrite("size", &wgpu::BufferDescriptor::size)    
     .def_readwrite("mapped_at_creation", &wgpu::BufferDescriptor::mappedAtCreation)    
@@ -2500,8 +2296,8 @@ PYCLASS_BEGIN(m, wgpu::BufferDescriptor, BufferDescriptor) BufferDescriptor
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("usage"))        
         {        
@@ -2549,32 +2345,6 @@ PYSUBCLASS_BEGIN(m, wgpu::BufferHostMappedPointer, ChainedStruct, BufferHostMapp
 ;
 PYCLASS_END(m, wgpu::BufferHostMappedPointer, BufferHostMappedPointer)
 
-PYCLASS_BEGIN(m, wgpu::BufferMapCallbackInfo, BufferMapCallbackInfo) BufferMapCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::BufferMapCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::BufferMapCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::BufferMapCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::BufferMapCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::BufferMapCallbackInfo, BufferMapCallbackInfo)
-
 PYCLASS_BEGIN(m, wgpu::Color, Color) Color
     .def_readwrite("r", &wgpu::Color::r)    
     .def_readwrite("g", &wgpu::Color::g)    
@@ -2609,14 +2379,7 @@ PYCLASS_END(m, wgpu::Color, Color)
 
 PYCLASS_BEGIN(m, wgpu::ConstantEntry, ConstantEntry) ConstantEntry
     .def_readwrite("next_in_chain", &wgpu::ConstantEntry::nextInChain)    
-    .def_property("key",    
-        [](const wgpu::ConstantEntry& self) {        
-            return self.key;            
-        },        
-        [](wgpu::ConstantEntry& self, char const *  source) {        
-            self.key = strdup(source);            
-        }        
-    )    
+    .def_readwrite("key", &wgpu::ConstantEntry::key)    
     .def_readwrite("value", &wgpu::ConstantEntry::value)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::ConstantEntry obj{};        
@@ -2627,8 +2390,8 @@ PYCLASS_BEGIN(m, wgpu::ConstantEntry, ConstantEntry) ConstantEntry
         }        
         if (kwargs.contains("key"))        
         {        
-            auto value = kwargs["key"].cast<std::string>();            
-            obj.key = strdup(value.c_str());            
+            auto value = kwargs["key"].cast<wgpu::StringView>();            
+            obj.key = value;            
         }        
         if (kwargs.contains("value"))        
         {        
@@ -2642,14 +2405,7 @@ PYCLASS_END(m, wgpu::ConstantEntry, ConstantEntry)
 
 PYCLASS_BEGIN(m, wgpu::CommandBufferDescriptor, CommandBufferDescriptor) CommandBufferDescriptor
     .def_readwrite("next_in_chain", &wgpu::CommandBufferDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::CommandBufferDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::CommandBufferDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::CommandBufferDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::CommandBufferDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -2659,8 +2415,8 @@ PYCLASS_BEGIN(m, wgpu::CommandBufferDescriptor, CommandBufferDescriptor) Command
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -2669,14 +2425,7 @@ PYCLASS_END(m, wgpu::CommandBufferDescriptor, CommandBufferDescriptor)
 
 PYCLASS_BEGIN(m, wgpu::CommandEncoderDescriptor, CommandEncoderDescriptor) CommandEncoderDescriptor
     .def_readwrite("next_in_chain", &wgpu::CommandEncoderDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::CommandEncoderDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::CommandEncoderDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::CommandEncoderDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::CommandEncoderDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -2686,8 +2435,8 @@ PYCLASS_BEGIN(m, wgpu::CommandEncoderDescriptor, CommandEncoderDescriptor) Comma
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -2723,50 +2472,14 @@ PYCLASS_BEGIN(m, wgpu::CompilationInfo, CompilationInfo) CompilationInfo
 ;
 PYCLASS_END(m, wgpu::CompilationInfo, CompilationInfo)
 
-PYCLASS_BEGIN(m, wgpu::CompilationInfoCallbackInfo, CompilationInfoCallbackInfo) CompilationInfoCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::CompilationInfoCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::CompilationInfoCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::CompilationInfoCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::CompilationInfoCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::CompilationInfoCallbackInfo, CompilationInfoCallbackInfo)
-
 PYCLASS_BEGIN(m, wgpu::CompilationMessage, CompilationMessage) CompilationMessage
     .def_readwrite("next_in_chain", &wgpu::CompilationMessage::nextInChain)    
-    .def_property("message",    
-        [](const wgpu::CompilationMessage& self) {        
-            return self.message;            
-        },        
-        [](wgpu::CompilationMessage& self, char const *  source) {        
-            self.message = strdup(source);            
-        }        
-    )    
+    .def_readwrite("message", &wgpu::CompilationMessage::message)    
     .def_readwrite("type", &wgpu::CompilationMessage::type)    
     .def_readwrite("line_num", &wgpu::CompilationMessage::lineNum)    
     .def_readwrite("line_pos", &wgpu::CompilationMessage::linePos)    
     .def_readwrite("offset", &wgpu::CompilationMessage::offset)    
     .def_readwrite("length", &wgpu::CompilationMessage::length)    
-    .def_readwrite("utf16_line_pos", &wgpu::CompilationMessage::utf16LinePos)    
-    .def_readwrite("utf16_offset", &wgpu::CompilationMessage::utf16Offset)    
-    .def_readwrite("utf16_length", &wgpu::CompilationMessage::utf16Length)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::CompilationMessage obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -2776,8 +2489,8 @@ PYCLASS_BEGIN(m, wgpu::CompilationMessage, CompilationMessage) CompilationMessag
         }        
         if (kwargs.contains("message"))        
         {        
-            auto value = kwargs["message"].cast<std::string>();            
-            obj.message = strdup(value.c_str());            
+            auto value = kwargs["message"].cast<wgpu::StringView>();            
+            obj.message = value;            
         }        
         if (kwargs.contains("type"))        
         {        
@@ -2804,36 +2517,46 @@ PYCLASS_BEGIN(m, wgpu::CompilationMessage, CompilationMessage) CompilationMessag
             auto value = kwargs["length"].cast<uint64_t>();            
             obj.length = value;            
         }        
-        if (kwargs.contains("utf16_line_pos"))        
-        {        
-            auto value = kwargs["utf16_line_pos"].cast<uint64_t>();            
-            obj.utf16LinePos = value;            
-        }        
-        if (kwargs.contains("utf16_offset"))        
-        {        
-            auto value = kwargs["utf16_offset"].cast<uint64_t>();            
-            obj.utf16Offset = value;            
-        }        
-        if (kwargs.contains("utf16_length"))        
-        {        
-            auto value = kwargs["utf16_length"].cast<uint64_t>();            
-            obj.utf16Length = value;            
-        }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
 PYCLASS_END(m, wgpu::CompilationMessage, CompilationMessage)
 
+PYSUBCLASS_BEGIN(m, wgpu::DawnCompilationMessageUtf16, ChainedStruct, DawnCompilationMessageUtf16) DawnCompilationMessageUtf16
+    .def_readwrite("next_in_chain", &wgpu::DawnCompilationMessageUtf16::nextInChain)    
+    .def_readwrite("line_pos", &wgpu::DawnCompilationMessageUtf16::linePos)    
+    .def_readwrite("offset", &wgpu::DawnCompilationMessageUtf16::offset)    
+    .def_readwrite("length", &wgpu::DawnCompilationMessageUtf16::length)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::DawnCompilationMessageUtf16 obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
+        if (kwargs.contains("line_pos"))        
+        {        
+            auto value = kwargs["line_pos"].cast<uint64_t>();            
+            obj.linePos = value;            
+        }        
+        if (kwargs.contains("offset"))        
+        {        
+            auto value = kwargs["offset"].cast<uint64_t>();            
+            obj.offset = value;            
+        }        
+        if (kwargs.contains("length"))        
+        {        
+            auto value = kwargs["length"].cast<uint64_t>();            
+            obj.length = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::DawnCompilationMessageUtf16, DawnCompilationMessageUtf16)
+
 PYCLASS_BEGIN(m, wgpu::ComputePassDescriptor, ComputePassDescriptor) ComputePassDescriptor
     .def_readwrite("next_in_chain", &wgpu::ComputePassDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::ComputePassDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::ComputePassDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::ComputePassDescriptor::label)    
     .def_readwrite("timestamp_writes", &wgpu::ComputePassDescriptor::timestampWrites)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::ComputePassDescriptor obj{};        
@@ -2844,12 +2567,12 @@ PYCLASS_BEGIN(m, wgpu::ComputePassDescriptor, ComputePassDescriptor) ComputePass
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("timestamp_writes"))        
         {        
-            auto value = kwargs["timestamp_writes"].cast<wgpu::ComputePassTimestampWrites const *>();            
+            auto value = kwargs["timestamp_writes"].cast<wgpu::PassTimestampWrites const *>();            
             obj.timestampWrites = value;            
         }        
         return obj;        
@@ -2857,42 +2580,9 @@ PYCLASS_BEGIN(m, wgpu::ComputePassDescriptor, ComputePassDescriptor) ComputePass
 ;
 PYCLASS_END(m, wgpu::ComputePassDescriptor, ComputePassDescriptor)
 
-PYCLASS_BEGIN(m, wgpu::ComputePassTimestampWrites, ComputePassTimestampWrites) ComputePassTimestampWrites
-    .def_readwrite("query_set", &wgpu::ComputePassTimestampWrites::querySet)    
-    .def_readwrite("beginning_of_pass_write_index", &wgpu::ComputePassTimestampWrites::beginningOfPassWriteIndex)    
-    .def_readwrite("end_of_pass_write_index", &wgpu::ComputePassTimestampWrites::endOfPassWriteIndex)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::ComputePassTimestampWrites obj{};        
-        if (kwargs.contains("query_set"))        
-        {        
-            auto value = kwargs["query_set"].cast<wgpu::QuerySet>();            
-            obj.querySet = value;            
-        }        
-        if (kwargs.contains("beginning_of_pass_write_index"))        
-        {        
-            auto value = kwargs["beginning_of_pass_write_index"].cast<uint32_t>();            
-            obj.beginningOfPassWriteIndex = value;            
-        }        
-        if (kwargs.contains("end_of_pass_write_index"))        
-        {        
-            auto value = kwargs["end_of_pass_write_index"].cast<uint32_t>();            
-            obj.endOfPassWriteIndex = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::ComputePassTimestampWrites, ComputePassTimestampWrites)
-
 PYCLASS_BEGIN(m, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor) ComputePipelineDescriptor
     .def_readwrite("next_in_chain", &wgpu::ComputePipelineDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::ComputePipelineDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::ComputePipelineDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::ComputePipelineDescriptor::label)    
     .def_readwrite("layout", &wgpu::ComputePipelineDescriptor::layout)    
     .def_readwrite("compute", &wgpu::ComputePipelineDescriptor::compute)    
     .def(py::init([](const py::kwargs& kwargs) {    
@@ -2904,8 +2594,8 @@ PYCLASS_BEGIN(m, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor) Com
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("layout"))        
         {        
@@ -2914,33 +2604,13 @@ PYCLASS_BEGIN(m, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor) Com
         }        
         if (kwargs.contains("compute"))        
         {        
-            auto value = kwargs["compute"].cast<wgpu::ProgrammableStageDescriptor>();            
+            auto value = kwargs["compute"].cast<wgpu::ComputeState>();            
             obj.compute = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
 PYCLASS_END(m, wgpu::ComputePipelineDescriptor, ComputePipelineDescriptor)
-
-PYSUBCLASS_BEGIN(m, wgpu::DawnComputePipelineFullSubgroups, ChainedStruct, DawnComputePipelineFullSubgroups) DawnComputePipelineFullSubgroups
-    .def_readwrite("next_in_chain", &wgpu::DawnComputePipelineFullSubgroups::nextInChain)    
-    .def_readwrite("requires_full_subgroups", &wgpu::DawnComputePipelineFullSubgroups::requiresFullSubgroups)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::DawnComputePipelineFullSubgroups obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("requires_full_subgroups"))        
-        {        
-            auto value = kwargs["requires_full_subgroups"].cast<wgpu::Bool>();            
-            obj.requiresFullSubgroups = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::DawnComputePipelineFullSubgroups, DawnComputePipelineFullSubgroups)
 
 PYCLASS_BEGIN(m, wgpu::CopyTextureForBrowserOptions, CopyTextureForBrowserOptions) CopyTextureForBrowserOptions
     .def_readwrite("next_in_chain", &wgpu::CopyTextureForBrowserOptions::nextInChain)    
@@ -3013,58 +2683,6 @@ PYCLASS_BEGIN(m, wgpu::CopyTextureForBrowserOptions, CopyTextureForBrowserOption
 ;
 PYCLASS_END(m, wgpu::CopyTextureForBrowserOptions, CopyTextureForBrowserOptions)
 
-PYCLASS_BEGIN(m, wgpu::CreateComputePipelineAsyncCallbackInfo, CreateComputePipelineAsyncCallbackInfo) CreateComputePipelineAsyncCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::CreateComputePipelineAsyncCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::CreateComputePipelineAsyncCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::CreateComputePipelineAsyncCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::CreateComputePipelineAsyncCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::CreateComputePipelineAsyncCallbackInfo, CreateComputePipelineAsyncCallbackInfo)
-
-PYCLASS_BEGIN(m, wgpu::CreateRenderPipelineAsyncCallbackInfo, CreateRenderPipelineAsyncCallbackInfo) CreateRenderPipelineAsyncCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::CreateRenderPipelineAsyncCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::CreateRenderPipelineAsyncCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::CreateRenderPipelineAsyncCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::CreateRenderPipelineAsyncCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::CreateRenderPipelineAsyncCallbackInfo, CreateRenderPipelineAsyncCallbackInfo)
-
 PYCLASS_BEGIN(m, wgpu::AHardwareBufferProperties, AHardwareBufferProperties) AHardwareBufferProperties
     .def_readwrite("y_cb_cr_info", &wgpu::AHardwareBufferProperties::yCbCrInfo)    
     .def(py::init([](const py::kwargs& kwargs) {    
@@ -3079,310 +2697,110 @@ PYCLASS_BEGIN(m, wgpu::AHardwareBufferProperties, AHardwareBufferProperties) AHa
 ;
 PYCLASS_END(m, wgpu::AHardwareBufferProperties, AHardwareBufferProperties)
 
-PYCLASS_BEGIN(m, wgpu::DeviceLostCallbackInfo, DeviceLostCallbackInfo) DeviceLostCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::DeviceLostCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::DeviceLostCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::DeviceLostCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::DeviceLostCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::DeviceLostCallbackInfo, DeviceLostCallbackInfo)
-
-PYCLASS_BEGIN(m, wgpu::UncapturedErrorCallbackInfo, UncapturedErrorCallbackInfo) UncapturedErrorCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::UncapturedErrorCallbackInfo::nextInChain)    
-    .def_readwrite("userdata", &wgpu::UncapturedErrorCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::UncapturedErrorCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::UncapturedErrorCallbackInfo, UncapturedErrorCallbackInfo)
-
-PYCLASS_BEGIN(m, wgpu::PopErrorScopeCallbackInfo, PopErrorScopeCallbackInfo) PopErrorScopeCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::PopErrorScopeCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::PopErrorScopeCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::PopErrorScopeCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::PopErrorScopeCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::PopErrorScopeCallbackInfo, PopErrorScopeCallbackInfo)
-
 PYCLASS_BEGIN(m, wgpu::Limits, Limits) Limits
-    .def_readwrite("max_texture_dimension_1d", &wgpu::Limits::maxTextureDimension1D)    
-    .def_readwrite("max_texture_dimension_2d", &wgpu::Limits::maxTextureDimension2D)    
-    .def_readwrite("max_texture_dimension_3d", &wgpu::Limits::maxTextureDimension3D)    
-    .def_readwrite("max_texture_array_layers", &wgpu::Limits::maxTextureArrayLayers)    
-    .def_readwrite("max_bind_groups", &wgpu::Limits::maxBindGroups)    
-    .def_readwrite("max_bind_groups_plus_vertex_buffers", &wgpu::Limits::maxBindGroupsPlusVertexBuffers)    
-    .def_readwrite("max_bindings_per_bind_group", &wgpu::Limits::maxBindingsPerBindGroup)    
-    .def_readwrite("max_dynamic_uniform_buffers_per_pipeline_layout", &wgpu::Limits::maxDynamicUniformBuffersPerPipelineLayout)    
-    .def_readwrite("max_dynamic_storage_buffers_per_pipeline_layout", &wgpu::Limits::maxDynamicStorageBuffersPerPipelineLayout)    
-    .def_readwrite("max_sampled_textures_per_shader_stage", &wgpu::Limits::maxSampledTexturesPerShaderStage)    
-    .def_readwrite("max_samplers_per_shader_stage", &wgpu::Limits::maxSamplersPerShaderStage)    
-    .def_readwrite("max_storage_buffers_per_shader_stage", &wgpu::Limits::maxStorageBuffersPerShaderStage)    
-    .def_readwrite("max_storage_textures_per_shader_stage", &wgpu::Limits::maxStorageTexturesPerShaderStage)    
-    .def_readwrite("max_uniform_buffers_per_shader_stage", &wgpu::Limits::maxUniformBuffersPerShaderStage)    
-    .def_readwrite("max_uniform_buffer_binding_size", &wgpu::Limits::maxUniformBufferBindingSize)    
-    .def_readwrite("max_storage_buffer_binding_size", &wgpu::Limits::maxStorageBufferBindingSize)    
-    .def_readwrite("min_uniform_buffer_offset_alignment", &wgpu::Limits::minUniformBufferOffsetAlignment)    
-    .def_readwrite("min_storage_buffer_offset_alignment", &wgpu::Limits::minStorageBufferOffsetAlignment)    
-    .def_readwrite("max_vertex_buffers", &wgpu::Limits::maxVertexBuffers)    
-    .def_readwrite("max_buffer_size", &wgpu::Limits::maxBufferSize)    
-    .def_readwrite("max_vertex_attributes", &wgpu::Limits::maxVertexAttributes)    
-    .def_readwrite("max_vertex_buffer_array_stride", &wgpu::Limits::maxVertexBufferArrayStride)    
-    .def_readwrite("max_inter_stage_shader_components", &wgpu::Limits::maxInterStageShaderComponents)    
-    .def_readwrite("max_inter_stage_shader_variables", &wgpu::Limits::maxInterStageShaderVariables)    
-    .def_readwrite("max_color_attachments", &wgpu::Limits::maxColorAttachments)    
-    .def_readwrite("max_color_attachment_bytes_per_sample", &wgpu::Limits::maxColorAttachmentBytesPerSample)    
-    .def_readwrite("max_compute_workgroup_storage_size", &wgpu::Limits::maxComputeWorkgroupStorageSize)    
-    .def_readwrite("max_compute_invocations_per_workgroup", &wgpu::Limits::maxComputeInvocationsPerWorkgroup)    
-    .def_readwrite("max_compute_workgroup_size_x", &wgpu::Limits::maxComputeWorkgroupSizeX)    
-    .def_readwrite("max_compute_workgroup_size_y", &wgpu::Limits::maxComputeWorkgroupSizeY)    
-    .def_readwrite("max_compute_workgroup_size_z", &wgpu::Limits::maxComputeWorkgroupSizeZ)    
-    .def_readwrite("max_compute_workgroups_per_dimension", &wgpu::Limits::maxComputeWorkgroupsPerDimension)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::Limits obj{};        
-        if (kwargs.contains("max_texture_dimension_1d"))        
-        {        
-            auto value = kwargs["max_texture_dimension_1d"].cast<uint32_t>();            
-            obj.maxTextureDimension1D = value;            
-        }        
-        if (kwargs.contains("max_texture_dimension_2d"))        
-        {        
-            auto value = kwargs["max_texture_dimension_2d"].cast<uint32_t>();            
-            obj.maxTextureDimension2D = value;            
-        }        
-        if (kwargs.contains("max_texture_dimension_3d"))        
-        {        
-            auto value = kwargs["max_texture_dimension_3d"].cast<uint32_t>();            
-            obj.maxTextureDimension3D = value;            
-        }        
-        if (kwargs.contains("max_texture_array_layers"))        
-        {        
-            auto value = kwargs["max_texture_array_layers"].cast<uint32_t>();            
-            obj.maxTextureArrayLayers = value;            
-        }        
-        if (kwargs.contains("max_bind_groups"))        
-        {        
-            auto value = kwargs["max_bind_groups"].cast<uint32_t>();            
-            obj.maxBindGroups = value;            
-        }        
-        if (kwargs.contains("max_bind_groups_plus_vertex_buffers"))        
-        {        
-            auto value = kwargs["max_bind_groups_plus_vertex_buffers"].cast<uint32_t>();            
-            obj.maxBindGroupsPlusVertexBuffers = value;            
-        }        
-        if (kwargs.contains("max_bindings_per_bind_group"))        
-        {        
-            auto value = kwargs["max_bindings_per_bind_group"].cast<uint32_t>();            
-            obj.maxBindingsPerBindGroup = value;            
-        }        
-        if (kwargs.contains("max_dynamic_uniform_buffers_per_pipeline_layout"))        
-        {        
-            auto value = kwargs["max_dynamic_uniform_buffers_per_pipeline_layout"].cast<uint32_t>();            
-            obj.maxDynamicUniformBuffersPerPipelineLayout = value;            
-        }        
-        if (kwargs.contains("max_dynamic_storage_buffers_per_pipeline_layout"))        
-        {        
-            auto value = kwargs["max_dynamic_storage_buffers_per_pipeline_layout"].cast<uint32_t>();            
-            obj.maxDynamicStorageBuffersPerPipelineLayout = value;            
-        }        
-        if (kwargs.contains("max_sampled_textures_per_shader_stage"))        
-        {        
-            auto value = kwargs["max_sampled_textures_per_shader_stage"].cast<uint32_t>();            
-            obj.maxSampledTexturesPerShaderStage = value;            
-        }        
-        if (kwargs.contains("max_samplers_per_shader_stage"))        
-        {        
-            auto value = kwargs["max_samplers_per_shader_stage"].cast<uint32_t>();            
-            obj.maxSamplersPerShaderStage = value;            
-        }        
-        if (kwargs.contains("max_storage_buffers_per_shader_stage"))        
-        {        
-            auto value = kwargs["max_storage_buffers_per_shader_stage"].cast<uint32_t>();            
-            obj.maxStorageBuffersPerShaderStage = value;            
-        }        
-        if (kwargs.contains("max_storage_textures_per_shader_stage"))        
-        {        
-            auto value = kwargs["max_storage_textures_per_shader_stage"].cast<uint32_t>();            
-            obj.maxStorageTexturesPerShaderStage = value;            
-        }        
-        if (kwargs.contains("max_uniform_buffers_per_shader_stage"))        
-        {        
-            auto value = kwargs["max_uniform_buffers_per_shader_stage"].cast<uint32_t>();            
-            obj.maxUniformBuffersPerShaderStage = value;            
-        }        
-        if (kwargs.contains("max_uniform_buffer_binding_size"))        
-        {        
-            auto value = kwargs["max_uniform_buffer_binding_size"].cast<uint64_t>();            
-            obj.maxUniformBufferBindingSize = value;            
-        }        
-        if (kwargs.contains("max_storage_buffer_binding_size"))        
-        {        
-            auto value = kwargs["max_storage_buffer_binding_size"].cast<uint64_t>();            
-            obj.maxStorageBufferBindingSize = value;            
-        }        
-        if (kwargs.contains("min_uniform_buffer_offset_alignment"))        
-        {        
-            auto value = kwargs["min_uniform_buffer_offset_alignment"].cast<uint32_t>();            
-            obj.minUniformBufferOffsetAlignment = value;            
-        }        
-        if (kwargs.contains("min_storage_buffer_offset_alignment"))        
-        {        
-            auto value = kwargs["min_storage_buffer_offset_alignment"].cast<uint32_t>();            
-            obj.minStorageBufferOffsetAlignment = value;            
-        }        
-        if (kwargs.contains("max_vertex_buffers"))        
-        {        
-            auto value = kwargs["max_vertex_buffers"].cast<uint32_t>();            
-            obj.maxVertexBuffers = value;            
-        }        
-        if (kwargs.contains("max_buffer_size"))        
-        {        
-            auto value = kwargs["max_buffer_size"].cast<uint64_t>();            
-            obj.maxBufferSize = value;            
-        }        
-        if (kwargs.contains("max_vertex_attributes"))        
-        {        
-            auto value = kwargs["max_vertex_attributes"].cast<uint32_t>();            
-            obj.maxVertexAttributes = value;            
-        }        
-        if (kwargs.contains("max_vertex_buffer_array_stride"))        
-        {        
-            auto value = kwargs["max_vertex_buffer_array_stride"].cast<uint32_t>();            
-            obj.maxVertexBufferArrayStride = value;            
-        }        
-        if (kwargs.contains("max_inter_stage_shader_components"))        
-        {        
-            auto value = kwargs["max_inter_stage_shader_components"].cast<uint32_t>();            
-            obj.maxInterStageShaderComponents = value;            
-        }        
-        if (kwargs.contains("max_inter_stage_shader_variables"))        
-        {        
-            auto value = kwargs["max_inter_stage_shader_variables"].cast<uint32_t>();            
-            obj.maxInterStageShaderVariables = value;            
-        }        
-        if (kwargs.contains("max_color_attachments"))        
-        {        
-            auto value = kwargs["max_color_attachments"].cast<uint32_t>();            
-            obj.maxColorAttachments = value;            
-        }        
-        if (kwargs.contains("max_color_attachment_bytes_per_sample"))        
-        {        
-            auto value = kwargs["max_color_attachment_bytes_per_sample"].cast<uint32_t>();            
-            obj.maxColorAttachmentBytesPerSample = value;            
-        }        
-        if (kwargs.contains("max_compute_workgroup_storage_size"))        
-        {        
-            auto value = kwargs["max_compute_workgroup_storage_size"].cast<uint32_t>();            
-            obj.maxComputeWorkgroupStorageSize = value;            
-        }        
-        if (kwargs.contains("max_compute_invocations_per_workgroup"))        
-        {        
-            auto value = kwargs["max_compute_invocations_per_workgroup"].cast<uint32_t>();            
-            obj.maxComputeInvocationsPerWorkgroup = value;            
-        }        
-        if (kwargs.contains("max_compute_workgroup_size_x"))        
-        {        
-            auto value = kwargs["max_compute_workgroup_size_x"].cast<uint32_t>();            
-            obj.maxComputeWorkgroupSizeX = value;            
-        }        
-        if (kwargs.contains("max_compute_workgroup_size_y"))        
-        {        
-            auto value = kwargs["max_compute_workgroup_size_y"].cast<uint32_t>();            
-            obj.maxComputeWorkgroupSizeY = value;            
-        }        
-        if (kwargs.contains("max_compute_workgroup_size_z"))        
-        {        
-            auto value = kwargs["max_compute_workgroup_size_z"].cast<uint32_t>();            
-            obj.maxComputeWorkgroupSizeZ = value;            
-        }        
-        if (kwargs.contains("max_compute_workgroups_per_dimension"))        
-        {        
-            auto value = kwargs["max_compute_workgroups_per_dimension"].cast<uint32_t>();            
-            obj.maxComputeWorkgroupsPerDimension = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
+    .def_readonly("next_in_chain", &wgpu::Limits::nextInChain)    
+    .def_readonly("max_texture_dimension_1d", &wgpu::Limits::maxTextureDimension1D)    
+    .def_readonly("max_texture_dimension_2d", &wgpu::Limits::maxTextureDimension2D)    
+    .def_readonly("max_texture_dimension_3d", &wgpu::Limits::maxTextureDimension3D)    
+    .def_readonly("max_texture_array_layers", &wgpu::Limits::maxTextureArrayLayers)    
+    .def_readonly("max_bind_groups", &wgpu::Limits::maxBindGroups)    
+    .def_readonly("max_bind_groups_plus_vertex_buffers", &wgpu::Limits::maxBindGroupsPlusVertexBuffers)    
+    .def_readonly("max_bindings_per_bind_group", &wgpu::Limits::maxBindingsPerBindGroup)    
+    .def_readonly("max_dynamic_uniform_buffers_per_pipeline_layout", &wgpu::Limits::maxDynamicUniformBuffersPerPipelineLayout)    
+    .def_readonly("max_dynamic_storage_buffers_per_pipeline_layout", &wgpu::Limits::maxDynamicStorageBuffersPerPipelineLayout)    
+    .def_readonly("max_sampled_textures_per_shader_stage", &wgpu::Limits::maxSampledTexturesPerShaderStage)    
+    .def_readonly("max_samplers_per_shader_stage", &wgpu::Limits::maxSamplersPerShaderStage)    
+    .def_readonly("max_storage_buffers_per_shader_stage", &wgpu::Limits::maxStorageBuffersPerShaderStage)    
+    .def_readonly("max_storage_textures_per_shader_stage", &wgpu::Limits::maxStorageTexturesPerShaderStage)    
+    .def_readonly("max_uniform_buffers_per_shader_stage", &wgpu::Limits::maxUniformBuffersPerShaderStage)    
+    .def_readonly("max_uniform_buffer_binding_size", &wgpu::Limits::maxUniformBufferBindingSize)    
+    .def_readonly("max_storage_buffer_binding_size", &wgpu::Limits::maxStorageBufferBindingSize)    
+    .def_readonly("min_uniform_buffer_offset_alignment", &wgpu::Limits::minUniformBufferOffsetAlignment)    
+    .def_readonly("min_storage_buffer_offset_alignment", &wgpu::Limits::minStorageBufferOffsetAlignment)    
+    .def_readonly("max_vertex_buffers", &wgpu::Limits::maxVertexBuffers)    
+    .def_readonly("max_buffer_size", &wgpu::Limits::maxBufferSize)    
+    .def_readonly("max_vertex_attributes", &wgpu::Limits::maxVertexAttributes)    
+    .def_readonly("max_vertex_buffer_array_stride", &wgpu::Limits::maxVertexBufferArrayStride)    
+    .def_readonly("max_inter_stage_shader_variables", &wgpu::Limits::maxInterStageShaderVariables)    
+    .def_readonly("max_color_attachments", &wgpu::Limits::maxColorAttachments)    
+    .def_readonly("max_color_attachment_bytes_per_sample", &wgpu::Limits::maxColorAttachmentBytesPerSample)    
+    .def_readonly("max_compute_workgroup_storage_size", &wgpu::Limits::maxComputeWorkgroupStorageSize)    
+    .def_readonly("max_compute_invocations_per_workgroup", &wgpu::Limits::maxComputeInvocationsPerWorkgroup)    
+    .def_readonly("max_compute_workgroup_size_x", &wgpu::Limits::maxComputeWorkgroupSizeX)    
+    .def_readonly("max_compute_workgroup_size_y", &wgpu::Limits::maxComputeWorkgroupSizeY)    
+    .def_readonly("max_compute_workgroup_size_z", &wgpu::Limits::maxComputeWorkgroupSizeZ)    
+    .def_readonly("max_compute_workgroups_per_dimension", &wgpu::Limits::maxComputeWorkgroupsPerDimension)    
+    .def_readonly("max_storage_buffers_in_vertex_stage", &wgpu::Limits::maxStorageBuffersInVertexStage)    
+    .def_readonly("max_storage_textures_in_vertex_stage", &wgpu::Limits::maxStorageTexturesInVertexStage)    
+    .def_readonly("max_storage_buffers_in_fragment_stage", &wgpu::Limits::maxStorageBuffersInFragmentStage)    
+    .def_readonly("max_storage_textures_in_fragment_stage", &wgpu::Limits::maxStorageTexturesInFragmentStage)    
 ;
 PYCLASS_END(m, wgpu::Limits, Limits)
 
-PYSUBCLASS_BEGIN(m, wgpu::DawnExperimentalSubgroupLimits, ChainedStructOut, DawnExperimentalSubgroupLimits) DawnExperimentalSubgroupLimits
-    .def_readonly("next_in_chain", &wgpu::DawnExperimentalSubgroupLimits::nextInChain)    
-    .def_readonly("min_subgroup_size", &wgpu::DawnExperimentalSubgroupLimits::minSubgroupSize)    
-    .def_readonly("max_subgroup_size", &wgpu::DawnExperimentalSubgroupLimits::maxSubgroupSize)    
+PYSUBCLASS_BEGIN(m, wgpu::AdapterPropertiesSubgroups, ChainedStructOut, AdapterPropertiesSubgroups) AdapterPropertiesSubgroups
+    .def_readonly("next_in_chain", &wgpu::AdapterPropertiesSubgroups::nextInChain)    
+    .def_readonly("subgroup_min_size", &wgpu::AdapterPropertiesSubgroups::subgroupMinSize)    
+    .def_readonly("subgroup_max_size", &wgpu::AdapterPropertiesSubgroups::subgroupMaxSize)    
 ;
-PYCLASS_END(m, wgpu::DawnExperimentalSubgroupLimits, DawnExperimentalSubgroupLimits)
+PYCLASS_END(m, wgpu::AdapterPropertiesSubgroups, AdapterPropertiesSubgroups)
 
-PYCLASS_BEGIN(m, wgpu::RequiredLimits, RequiredLimits) RequiredLimits
-    .def_readwrite("next_in_chain", &wgpu::RequiredLimits::nextInChain)    
-    .def_readwrite("limits", &wgpu::RequiredLimits::limits)    
+PYSUBCLASS_BEGIN(m, wgpu::DawnExperimentalImmediateDataLimits, ChainedStructOut, DawnExperimentalImmediateDataLimits) DawnExperimentalImmediateDataLimits
+    .def_readonly("next_in_chain", &wgpu::DawnExperimentalImmediateDataLimits::nextInChain)    
+    .def_readonly("max_immediate_data_range_byte_size", &wgpu::DawnExperimentalImmediateDataLimits::maxImmediateDataRangeByteSize)    
+;
+PYCLASS_END(m, wgpu::DawnExperimentalImmediateDataLimits, DawnExperimentalImmediateDataLimits)
+
+PYSUBCLASS_BEGIN(m, wgpu::DawnTexelCopyBufferRowAlignmentLimits, ChainedStructOut, DawnTexelCopyBufferRowAlignmentLimits) DawnTexelCopyBufferRowAlignmentLimits
+    .def_readonly("next_in_chain", &wgpu::DawnTexelCopyBufferRowAlignmentLimits::nextInChain)    
+    .def_readonly("min_texel_copy_buffer_row_alignment", &wgpu::DawnTexelCopyBufferRowAlignmentLimits::minTexelCopyBufferRowAlignment)    
+;
+PYCLASS_END(m, wgpu::DawnTexelCopyBufferRowAlignmentLimits, DawnTexelCopyBufferRowAlignmentLimits)
+
+PYCLASS_BEGIN(m, wgpu::SupportedFeatures, SupportedFeatures) SupportedFeatures
+    .def_readwrite("feature_count", &wgpu::SupportedFeatures::featureCount)    
+    .def_readwrite("features", &wgpu::SupportedFeatures::features)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::RequiredLimits obj{};        
-        if (kwargs.contains("next_in_chain"))        
+        wgpu::SupportedFeatures obj{};        
+        if (kwargs.contains("feature_count"))        
         {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
+            auto value = kwargs["feature_count"].cast<size_t>();            
+            obj.featureCount = value;            
         }        
-        if (kwargs.contains("limits"))        
+        if (kwargs.contains("features"))        
         {        
-            auto value = kwargs["limits"].cast<wgpu::Limits>();            
-            obj.limits = value;            
+            auto _value = kwargs["features"].cast<std::vector<wgpu::FeatureName>>();            
+            auto count = _value.size();            
+            auto value = new wgpu::FeatureName[count];            
+            std::copy(_value.begin(), _value.end(), value);            
+            obj.features = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::RequiredLimits, RequiredLimits)
+PYCLASS_END(m, wgpu::SupportedFeatures, SupportedFeatures)
 
-PYCLASS_BEGIN(m, wgpu::SupportedLimits, SupportedLimits) SupportedLimits
-    .def_readonly("next_in_chain", &wgpu::SupportedLimits::nextInChain)    
-    .def_readonly("limits", &wgpu::SupportedLimits::limits)    
+PYCLASS_BEGIN(m, wgpu::SupportedWGSLLanguageFeatures, SupportedWGSLLanguageFeatures) SupportedWGSLLanguageFeatures
+    .def_readwrite("feature_count", &wgpu::SupportedWGSLLanguageFeatures::featureCount)    
+    .def_readwrite("features", &wgpu::SupportedWGSLLanguageFeatures::features)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::SupportedWGSLLanguageFeatures obj{};        
+        if (kwargs.contains("feature_count"))        
+        {        
+            auto value = kwargs["feature_count"].cast<size_t>();            
+            obj.featureCount = value;            
+        }        
+        if (kwargs.contains("features"))        
+        {        
+            auto _value = kwargs["features"].cast<std::vector<wgpu::WGSLLanguageFeatureName>>();            
+            auto count = _value.size();            
+            auto value = new wgpu::WGSLLanguageFeatureName[count];            
+            std::copy(_value.begin(), _value.end(), value);            
+            obj.features = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SupportedLimits, SupportedLimits)
+PYCLASS_END(m, wgpu::SupportedWGSLLanguageFeatures, SupportedWGSLLanguageFeatures)
 
 PYCLASS_BEGIN(m, wgpu::Extent2D, Extent2D) Extent2D
     .def_readwrite("width", &wgpu::Extent2D::width)    
@@ -3432,18 +2850,12 @@ PYCLASS_END(m, wgpu::Extent3D, Extent3D)
 
 PYCLASS_BEGIN(m, wgpu::ExternalTextureDescriptor, ExternalTextureDescriptor) ExternalTextureDescriptor
     .def_readwrite("next_in_chain", &wgpu::ExternalTextureDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::ExternalTextureDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::ExternalTextureDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::ExternalTextureDescriptor::label)    
     .def_readwrite("plane_0", &wgpu::ExternalTextureDescriptor::plane0)    
     .def_readwrite("plane_1", &wgpu::ExternalTextureDescriptor::plane1)    
-    .def_readwrite("visible_origin", &wgpu::ExternalTextureDescriptor::visibleOrigin)    
-    .def_readwrite("visible_size", &wgpu::ExternalTextureDescriptor::visibleSize)    
+    .def_readwrite("crop_origin", &wgpu::ExternalTextureDescriptor::cropOrigin)    
+    .def_readwrite("crop_size", &wgpu::ExternalTextureDescriptor::cropSize)    
+    .def_readwrite("apparent_size", &wgpu::ExternalTextureDescriptor::apparentSize)    
     .def_readwrite("do_yuv_to_rgb_conversion_only", &wgpu::ExternalTextureDescriptor::doYuvToRgbConversionOnly)    
     .def_readwrite("yuv_to_rgb_conversion_matrix", &wgpu::ExternalTextureDescriptor::yuvToRgbConversionMatrix)    
     .def_readwrite("src_transfer_function_parameters", &wgpu::ExternalTextureDescriptor::srcTransferFunctionParameters)    
@@ -3460,8 +2872,8 @@ PYCLASS_BEGIN(m, wgpu::ExternalTextureDescriptor, ExternalTextureDescriptor) Ext
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("plane_0"))        
         {        
@@ -3473,15 +2885,20 @@ PYCLASS_BEGIN(m, wgpu::ExternalTextureDescriptor, ExternalTextureDescriptor) Ext
             auto value = kwargs["plane_1"].cast<wgpu::TextureView>();            
             obj.plane1 = value;            
         }        
-        if (kwargs.contains("visible_origin"))        
+        if (kwargs.contains("crop_origin"))        
         {        
-            auto value = kwargs["visible_origin"].cast<wgpu::Origin2D>();            
-            obj.visibleOrigin = value;            
+            auto value = kwargs["crop_origin"].cast<wgpu::Origin2D>();            
+            obj.cropOrigin = value;            
         }        
-        if (kwargs.contains("visible_size"))        
+        if (kwargs.contains("crop_size"))        
         {        
-            auto value = kwargs["visible_size"].cast<wgpu::Extent2D>();            
-            obj.visibleSize = value;            
+            auto value = kwargs["crop_size"].cast<wgpu::Extent2D>();            
+            obj.cropSize = value;            
+        }        
+        if (kwargs.contains("apparent_size"))        
+        {        
+            auto value = kwargs["apparent_size"].cast<wgpu::Extent2D>();            
+            obj.apparentSize = value;            
         }        
         if (kwargs.contains("do_yuv_to_rgb_conversion_only"))        
         {        
@@ -3544,14 +2961,7 @@ PYCLASS_END(m, wgpu::SharedBufferMemoryProperties, SharedBufferMemoryProperties)
 
 PYCLASS_BEGIN(m, wgpu::SharedBufferMemoryDescriptor, SharedBufferMemoryDescriptor) SharedBufferMemoryDescriptor
     .def_readwrite("next_in_chain", &wgpu::SharedBufferMemoryDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::SharedBufferMemoryDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::SharedBufferMemoryDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::SharedBufferMemoryDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::SharedBufferMemoryDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -3561,8 +2971,8 @@ PYCLASS_BEGIN(m, wgpu::SharedBufferMemoryDescriptor, SharedBufferMemoryDescripto
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -3585,14 +2995,7 @@ PYCLASS_END(m, wgpu::SharedTextureMemoryAHardwareBufferProperties, SharedTexture
 
 PYCLASS_BEGIN(m, wgpu::SharedTextureMemoryDescriptor, SharedTextureMemoryDescriptor) SharedTextureMemoryDescriptor
     .def_readwrite("next_in_chain", &wgpu::SharedTextureMemoryDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::SharedTextureMemoryDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::SharedTextureMemoryDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::SharedTextureMemoryDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::SharedTextureMemoryDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -3602,8 +3005,8 @@ PYCLASS_BEGIN(m, wgpu::SharedTextureMemoryDescriptor, SharedTextureMemoryDescrip
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -3881,6 +3284,7 @@ PYCLASS_END(m, wgpu::SharedTextureMemoryDXGISharedHandleDescriptor, SharedTextur
 PYSUBCLASS_BEGIN(m, wgpu::SharedTextureMemoryIOSurfaceDescriptor, ChainedStruct, SharedTextureMemoryIOSurfaceDescriptor) SharedTextureMemoryIOSurfaceDescriptor
     .def_readwrite("next_in_chain", &wgpu::SharedTextureMemoryIOSurfaceDescriptor::nextInChain)    
     .def_readwrite("io_surface", &wgpu::SharedTextureMemoryIOSurfaceDescriptor::ioSurface)    
+    .def_readwrite("allow_storage_binding", &wgpu::SharedTextureMemoryIOSurfaceDescriptor::allowStorageBinding)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::SharedTextureMemoryIOSurfaceDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -3892,6 +3296,11 @@ PYSUBCLASS_BEGIN(m, wgpu::SharedTextureMemoryIOSurfaceDescriptor, ChainedStruct,
         {        
             auto value = kwargs["io_surface"].cast<void *>();            
             obj.ioSurface = value;            
+        }        
+        if (kwargs.contains("allow_storage_binding"))        
+        {        
+            auto value = kwargs["allow_storage_binding"].cast<wgpu::Bool>();            
+            obj.allowStorageBinding = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -4032,14 +3441,7 @@ PYCLASS_END(m, wgpu::SharedTextureMemoryD3DSwapchainBeginState, SharedTextureMem
 
 PYCLASS_BEGIN(m, wgpu::SharedFenceDescriptor, SharedFenceDescriptor) SharedFenceDescriptor
     .def_readwrite("next_in_chain", &wgpu::SharedFenceDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::SharedFenceDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::SharedFenceDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::SharedFenceDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::SharedFenceDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -4049,8 +3451,8 @@ PYCLASS_BEGIN(m, wgpu::SharedFenceDescriptor, SharedFenceDescriptor) SharedFence
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -4077,11 +3479,11 @@ PYSUBCLASS_BEGIN(m, wgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor, ChainedStruc
 ;
 PYCLASS_END(m, wgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor, SharedFenceVkSemaphoreOpaqueFDDescriptor)
 
-PYSUBCLASS_BEGIN(m, wgpu::SharedFenceVkSemaphoreSyncFDDescriptor, ChainedStruct, SharedFenceVkSemaphoreSyncFDDescriptor) SharedFenceVkSemaphoreSyncFDDescriptor
-    .def_readwrite("next_in_chain", &wgpu::SharedFenceVkSemaphoreSyncFDDescriptor::nextInChain)    
-    .def_readwrite("handle", &wgpu::SharedFenceVkSemaphoreSyncFDDescriptor::handle)    
+PYSUBCLASS_BEGIN(m, wgpu::SharedFenceSyncFDDescriptor, ChainedStruct, SharedFenceSyncFDDescriptor) SharedFenceSyncFDDescriptor
+    .def_readwrite("next_in_chain", &wgpu::SharedFenceSyncFDDescriptor::nextInChain)    
+    .def_readwrite("handle", &wgpu::SharedFenceSyncFDDescriptor::handle)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SharedFenceVkSemaphoreSyncFDDescriptor obj{};        
+        wgpu::SharedFenceSyncFDDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -4095,7 +3497,7 @@ PYSUBCLASS_BEGIN(m, wgpu::SharedFenceVkSemaphoreSyncFDDescriptor, ChainedStruct,
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SharedFenceVkSemaphoreSyncFDDescriptor, SharedFenceVkSemaphoreSyncFDDescriptor)
+PYCLASS_END(m, wgpu::SharedFenceSyncFDDescriptor, SharedFenceSyncFDDescriptor)
 
 PYSUBCLASS_BEGIN(m, wgpu::SharedFenceVkSemaphoreZirconHandleDescriptor, ChainedStruct, SharedFenceVkSemaphoreZirconHandleDescriptor) SharedFenceVkSemaphoreZirconHandleDescriptor
     .def_readwrite("next_in_chain", &wgpu::SharedFenceVkSemaphoreZirconHandleDescriptor::nextInChain)    
@@ -4157,6 +3559,58 @@ PYSUBCLASS_BEGIN(m, wgpu::SharedFenceMTLSharedEventDescriptor, ChainedStruct, Sh
 ;
 PYCLASS_END(m, wgpu::SharedFenceMTLSharedEventDescriptor, SharedFenceMTLSharedEventDescriptor)
 
+PYSUBCLASS_BEGIN(m, wgpu::SharedFenceEGLSyncDescriptor, ChainedStruct, SharedFenceEGLSyncDescriptor) SharedFenceEGLSyncDescriptor
+    .def_readwrite("next_in_chain", &wgpu::SharedFenceEGLSyncDescriptor::nextInChain)    
+    .def_readwrite("sync", &wgpu::SharedFenceEGLSyncDescriptor::sync)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::SharedFenceEGLSyncDescriptor obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
+        if (kwargs.contains("sync"))        
+        {        
+            auto value = kwargs["sync"].cast<void *>();            
+            obj.sync = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::SharedFenceEGLSyncDescriptor, SharedFenceEGLSyncDescriptor)
+
+PYSUBCLASS_BEGIN(m, wgpu::DawnFakeBufferOOMForTesting, ChainedStruct, DawnFakeBufferOOMForTesting) DawnFakeBufferOOMForTesting
+    .def_readwrite("next_in_chain", &wgpu::DawnFakeBufferOOMForTesting::nextInChain)    
+    .def_readwrite("fake_oom_at_wire_client_map", &wgpu::DawnFakeBufferOOMForTesting::fakeOOMAtWireClientMap)    
+    .def_readwrite("fake_oom_at_native_map", &wgpu::DawnFakeBufferOOMForTesting::fakeOOMAtNativeMap)    
+    .def_readwrite("fake_oom_at_device", &wgpu::DawnFakeBufferOOMForTesting::fakeOOMAtDevice)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::DawnFakeBufferOOMForTesting obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
+        if (kwargs.contains("fake_oom_at_wire_client_map"))        
+        {        
+            auto value = kwargs["fake_oom_at_wire_client_map"].cast<wgpu::Bool>();            
+            obj.fakeOOMAtWireClientMap = value;            
+        }        
+        if (kwargs.contains("fake_oom_at_native_map"))        
+        {        
+            auto value = kwargs["fake_oom_at_native_map"].cast<wgpu::Bool>();            
+            obj.fakeOOMAtNativeMap = value;            
+        }        
+        if (kwargs.contains("fake_oom_at_device"))        
+        {        
+            auto value = kwargs["fake_oom_at_device"].cast<wgpu::Bool>();            
+            obj.fakeOOMAtDevice = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::DawnFakeBufferOOMForTesting, DawnFakeBufferOOMForTesting)
+
 PYCLASS_BEGIN(m, wgpu::SharedFenceExportInfo, SharedFenceExportInfo) SharedFenceExportInfo
     .def_readonly("next_in_chain", &wgpu::SharedFenceExportInfo::nextInChain)    
     .def_readonly("type", &wgpu::SharedFenceExportInfo::type)    
@@ -4169,11 +3623,11 @@ PYSUBCLASS_BEGIN(m, wgpu::SharedFenceVkSemaphoreOpaqueFDExportInfo, ChainedStruc
 ;
 PYCLASS_END(m, wgpu::SharedFenceVkSemaphoreOpaqueFDExportInfo, SharedFenceVkSemaphoreOpaqueFDExportInfo)
 
-PYSUBCLASS_BEGIN(m, wgpu::SharedFenceVkSemaphoreSyncFDExportInfo, ChainedStructOut, SharedFenceVkSemaphoreSyncFDExportInfo) SharedFenceVkSemaphoreSyncFDExportInfo
-    .def_readonly("next_in_chain", &wgpu::SharedFenceVkSemaphoreSyncFDExportInfo::nextInChain)    
-    .def_readonly("handle", &wgpu::SharedFenceVkSemaphoreSyncFDExportInfo::handle)    
+PYSUBCLASS_BEGIN(m, wgpu::SharedFenceSyncFDExportInfo, ChainedStructOut, SharedFenceSyncFDExportInfo) SharedFenceSyncFDExportInfo
+    .def_readonly("next_in_chain", &wgpu::SharedFenceSyncFDExportInfo::nextInChain)    
+    .def_readonly("handle", &wgpu::SharedFenceSyncFDExportInfo::handle)    
 ;
-PYCLASS_END(m, wgpu::SharedFenceVkSemaphoreSyncFDExportInfo, SharedFenceVkSemaphoreSyncFDExportInfo)
+PYCLASS_END(m, wgpu::SharedFenceSyncFDExportInfo, SharedFenceSyncFDExportInfo)
 
 PYSUBCLASS_BEGIN(m, wgpu::SharedFenceVkSemaphoreZirconHandleExportInfo, ChainedStructOut, SharedFenceVkSemaphoreZirconHandleExportInfo) SharedFenceVkSemaphoreZirconHandleExportInfo
     .def_readonly("next_in_chain", &wgpu::SharedFenceVkSemaphoreZirconHandleExportInfo::nextInChain)    
@@ -4193,23 +3647,29 @@ PYSUBCLASS_BEGIN(m, wgpu::SharedFenceMTLSharedEventExportInfo, ChainedStructOut,
 ;
 PYCLASS_END(m, wgpu::SharedFenceMTLSharedEventExportInfo, SharedFenceMTLSharedEventExportInfo)
 
-PYCLASS_BEGIN(m, wgpu::FormatCapabilities, FormatCapabilities) FormatCapabilities
-    .def_readonly("next_in_chain", &wgpu::FormatCapabilities::nextInChain)    
+PYSUBCLASS_BEGIN(m, wgpu::SharedFenceEGLSyncExportInfo, ChainedStructOut, SharedFenceEGLSyncExportInfo) SharedFenceEGLSyncExportInfo
+    .def_readonly("next_in_chain", &wgpu::SharedFenceEGLSyncExportInfo::nextInChain)    
+    .def_readonly("sync", &wgpu::SharedFenceEGLSyncExportInfo::sync)    
 ;
-PYCLASS_END(m, wgpu::FormatCapabilities, FormatCapabilities)
+PYCLASS_END(m, wgpu::SharedFenceEGLSyncExportInfo, SharedFenceEGLSyncExportInfo)
 
-PYSUBCLASS_BEGIN(m, wgpu::DrmFormatCapabilities, ChainedStructOut, DrmFormatCapabilities) DrmFormatCapabilities
-    .def_readonly("next_in_chain", &wgpu::DrmFormatCapabilities::nextInChain)    
-    .def_readonly("properties_count", &wgpu::DrmFormatCapabilities::propertiesCount)    
-    .def_readonly("properties", &wgpu::DrmFormatCapabilities::properties)    
+PYCLASS_BEGIN(m, wgpu::DawnFormatCapabilities, DawnFormatCapabilities) DawnFormatCapabilities
+    .def_readonly("next_in_chain", &wgpu::DawnFormatCapabilities::nextInChain)    
 ;
-PYCLASS_END(m, wgpu::DrmFormatCapabilities, DrmFormatCapabilities)
+PYCLASS_END(m, wgpu::DawnFormatCapabilities, DawnFormatCapabilities)
 
-PYCLASS_BEGIN(m, wgpu::DrmFormatProperties, DrmFormatProperties) DrmFormatProperties
-    .def_readwrite("modifier", &wgpu::DrmFormatProperties::modifier)    
-    .def_readwrite("modifier_plane_count", &wgpu::DrmFormatProperties::modifierPlaneCount)    
+PYSUBCLASS_BEGIN(m, wgpu::DawnDrmFormatCapabilities, ChainedStructOut, DawnDrmFormatCapabilities) DawnDrmFormatCapabilities
+    .def_readonly("next_in_chain", &wgpu::DawnDrmFormatCapabilities::nextInChain)    
+    .def_readonly("properties_count", &wgpu::DawnDrmFormatCapabilities::propertiesCount)    
+    .def_readonly("properties", &wgpu::DawnDrmFormatCapabilities::properties)    
+;
+PYCLASS_END(m, wgpu::DawnDrmFormatCapabilities, DawnDrmFormatCapabilities)
+
+PYCLASS_BEGIN(m, wgpu::DawnDrmFormatProperties, DawnDrmFormatProperties) DawnDrmFormatProperties
+    .def_readwrite("modifier", &wgpu::DawnDrmFormatProperties::modifier)    
+    .def_readwrite("modifier_plane_count", &wgpu::DawnDrmFormatProperties::modifierPlaneCount)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::DrmFormatProperties obj{};        
+        wgpu::DawnDrmFormatProperties obj{};        
         if (kwargs.contains("modifier"))        
         {        
             auto value = kwargs["modifier"].cast<uint64_t>();            
@@ -4223,16 +3683,16 @@ PYCLASS_BEGIN(m, wgpu::DrmFormatProperties, DrmFormatProperties) DrmFormatProper
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::DrmFormatProperties, DrmFormatProperties)
+PYCLASS_END(m, wgpu::DawnDrmFormatProperties, DawnDrmFormatProperties)
 
-PYCLASS_BEGIN(m, wgpu::ImageCopyBuffer, ImageCopyBuffer) ImageCopyBuffer
-    .def_readwrite("layout", &wgpu::ImageCopyBuffer::layout)    
-    .def_readwrite("buffer", &wgpu::ImageCopyBuffer::buffer)    
+PYCLASS_BEGIN(m, wgpu::TexelCopyBufferInfo, TexelCopyBufferInfo) TexelCopyBufferInfo
+    .def_readwrite("layout", &wgpu::TexelCopyBufferInfo::layout)    
+    .def_readwrite("buffer", &wgpu::TexelCopyBufferInfo::buffer)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::ImageCopyBuffer obj{};        
+        wgpu::TexelCopyBufferInfo obj{};        
         if (kwargs.contains("layout"))        
         {        
-            auto value = kwargs["layout"].cast<wgpu::TextureDataLayout>();            
+            auto value = kwargs["layout"].cast<wgpu::TexelCopyBufferLayout>();            
             obj.layout = value;            
         }        
         if (kwargs.contains("buffer"))        
@@ -4243,15 +3703,41 @@ PYCLASS_BEGIN(m, wgpu::ImageCopyBuffer, ImageCopyBuffer) ImageCopyBuffer
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::ImageCopyBuffer, ImageCopyBuffer)
+PYCLASS_END(m, wgpu::TexelCopyBufferInfo, TexelCopyBufferInfo)
 
-PYCLASS_BEGIN(m, wgpu::ImageCopyTexture, ImageCopyTexture) ImageCopyTexture
-    .def_readwrite("texture", &wgpu::ImageCopyTexture::texture)    
-    .def_readwrite("mip_level", &wgpu::ImageCopyTexture::mipLevel)    
-    .def_readwrite("origin", &wgpu::ImageCopyTexture::origin)    
-    .def_readwrite("aspect", &wgpu::ImageCopyTexture::aspect)    
+PYCLASS_BEGIN(m, wgpu::TexelCopyBufferLayout, TexelCopyBufferLayout) TexelCopyBufferLayout
+    .def_readwrite("offset", &wgpu::TexelCopyBufferLayout::offset)    
+    .def_readwrite("bytes_per_row", &wgpu::TexelCopyBufferLayout::bytesPerRow)    
+    .def_readwrite("rows_per_image", &wgpu::TexelCopyBufferLayout::rowsPerImage)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::ImageCopyTexture obj{};        
+        wgpu::TexelCopyBufferLayout obj{};        
+        if (kwargs.contains("offset"))        
+        {        
+            auto value = kwargs["offset"].cast<uint64_t>();            
+            obj.offset = value;            
+        }        
+        if (kwargs.contains("bytes_per_row"))        
+        {        
+            auto value = kwargs["bytes_per_row"].cast<uint32_t>();            
+            obj.bytesPerRow = value;            
+        }        
+        if (kwargs.contains("rows_per_image"))        
+        {        
+            auto value = kwargs["rows_per_image"].cast<uint32_t>();            
+            obj.rowsPerImage = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::TexelCopyBufferLayout, TexelCopyBufferLayout)
+
+PYCLASS_BEGIN(m, wgpu::TexelCopyTextureInfo, TexelCopyTextureInfo) TexelCopyTextureInfo
+    .def_readwrite("texture", &wgpu::TexelCopyTextureInfo::texture)    
+    .def_readwrite("mip_level", &wgpu::TexelCopyTextureInfo::mipLevel)    
+    .def_readwrite("origin", &wgpu::TexelCopyTextureInfo::origin)    
+    .def_readwrite("aspect", &wgpu::TexelCopyTextureInfo::aspect)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::TexelCopyTextureInfo obj{};        
         if (kwargs.contains("texture"))        
         {        
             auto value = kwargs["texture"].cast<wgpu::Texture>();            
@@ -4275,7 +3761,7 @@ PYCLASS_BEGIN(m, wgpu::ImageCopyTexture, ImageCopyTexture) ImageCopyTexture
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::ImageCopyTexture, ImageCopyTexture)
+PYCLASS_END(m, wgpu::TexelCopyTextureInfo, TexelCopyTextureInfo)
 
 PYCLASS_BEGIN(m, wgpu::ImageCopyExternalTexture, ImageCopyExternalTexture) ImageCopyExternalTexture
     .def_readwrite("next_in_chain", &wgpu::ImageCopyExternalTexture::nextInChain)    
@@ -4343,15 +3829,15 @@ PYCLASS_BEGIN(m, wgpu::FutureWaitInfo, FutureWaitInfo) FutureWaitInfo
 ;
 PYCLASS_END(m, wgpu::FutureWaitInfo, FutureWaitInfo)
 
-PYCLASS_BEGIN(m, wgpu::InstanceFeatures, InstanceFeatures) InstanceFeatures
-    .def_readwrite("next_in_chain", &wgpu::InstanceFeatures::nextInChain)    
-    .def_readwrite("timed_wait_any_enable", &wgpu::InstanceFeatures::timedWaitAnyEnable)    
-    .def_readwrite("timed_wait_any_max_count", &wgpu::InstanceFeatures::timedWaitAnyMaxCount)    
+PYCLASS_BEGIN(m, wgpu::InstanceCapabilities, InstanceCapabilities) InstanceCapabilities
+    .def_readwrite("next_in_chain", &wgpu::InstanceCapabilities::nextInChain)    
+    .def_readwrite("timed_wait_any_enable", &wgpu::InstanceCapabilities::timedWaitAnyEnable)    
+    .def_readwrite("timed_wait_any_max_count", &wgpu::InstanceCapabilities::timedWaitAnyMaxCount)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::InstanceFeatures obj{};        
+        wgpu::InstanceCapabilities obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStructOut *>();            
             obj.nextInChain = value;            
         }        
         if (kwargs.contains("timed_wait_any_enable"))        
@@ -4367,11 +3853,11 @@ PYCLASS_BEGIN(m, wgpu::InstanceFeatures, InstanceFeatures) InstanceFeatures
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::InstanceFeatures, InstanceFeatures)
+PYCLASS_END(m, wgpu::InstanceCapabilities, InstanceCapabilities)
 
 PYCLASS_BEGIN(m, wgpu::InstanceDescriptor, InstanceDescriptor) InstanceDescriptor
     .def_readwrite("next_in_chain", &wgpu::InstanceDescriptor::nextInChain)    
-    .def_readwrite("features", &wgpu::InstanceDescriptor::features)    
+    .def_readwrite("capabilities", &wgpu::InstanceDescriptor::capabilities)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::InstanceDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -4379,10 +3865,10 @@ PYCLASS_BEGIN(m, wgpu::InstanceDescriptor, InstanceDescriptor) InstanceDescripto
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
             obj.nextInChain = value;            
         }        
-        if (kwargs.contains("features"))        
+        if (kwargs.contains("capabilities"))        
         {        
-            auto value = kwargs["features"].cast<wgpu::InstanceFeatures>();            
-            obj.features = value;            
+            auto value = kwargs["capabilities"].cast<wgpu::InstanceCapabilities>();            
+            obj.capabilities = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -4421,12 +3907,38 @@ PYSUBCLASS_BEGIN(m, wgpu::DawnWireWGSLControl, ChainedStruct, DawnWireWGSLContro
 ;
 PYCLASS_END(m, wgpu::DawnWireWGSLControl, DawnWireWGSLControl)
 
+PYSUBCLASS_BEGIN(m, wgpu::DawnInjectedInvalidSType, ChainedStruct, DawnInjectedInvalidSType) DawnInjectedInvalidSType
+    .def_readwrite("next_in_chain", &wgpu::DawnInjectedInvalidSType::nextInChain)    
+    .def_readwrite("invalid_s_type", &wgpu::DawnInjectedInvalidSType::invalidSType)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::DawnInjectedInvalidSType obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
+        if (kwargs.contains("invalid_s_type"))        
+        {        
+            auto value = kwargs["invalid_s_type"].cast<wgpu::SType>();            
+            obj.invalidSType = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::DawnInjectedInvalidSType, DawnInjectedInvalidSType)
+
 PYCLASS_BEGIN(m, wgpu::VertexAttribute, VertexAttribute) VertexAttribute
+    .def_readwrite("next_in_chain", &wgpu::VertexAttribute::nextInChain)    
     .def_readwrite("format", &wgpu::VertexAttribute::format)    
     .def_readwrite("offset", &wgpu::VertexAttribute::offset)    
     .def_readwrite("shader_location", &wgpu::VertexAttribute::shaderLocation)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::VertexAttribute obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
         if (kwargs.contains("format"))        
         {        
             auto value = kwargs["format"].cast<wgpu::VertexFormat>();            
@@ -4448,21 +3960,27 @@ PYCLASS_BEGIN(m, wgpu::VertexAttribute, VertexAttribute) VertexAttribute
 PYCLASS_END(m, wgpu::VertexAttribute, VertexAttribute)
 
 PYCLASS_BEGIN(m, wgpu::VertexBufferLayout, VertexBufferLayout) VertexBufferLayout
-    .def_readwrite("array_stride", &wgpu::VertexBufferLayout::arrayStride)    
+    .def_readwrite("next_in_chain", &wgpu::VertexBufferLayout::nextInChain)    
     .def_readwrite("step_mode", &wgpu::VertexBufferLayout::stepMode)    
+    .def_readwrite("array_stride", &wgpu::VertexBufferLayout::arrayStride)    
     .def_readwrite("attribute_count", &wgpu::VertexBufferLayout::attributeCount)    
     .def_readwrite("attributes", &wgpu::VertexBufferLayout::attributes)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::VertexBufferLayout obj{};        
-        if (kwargs.contains("array_stride"))        
+        if (kwargs.contains("next_in_chain"))        
         {        
-            auto value = kwargs["array_stride"].cast<uint64_t>();            
-            obj.arrayStride = value;            
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
         }        
         if (kwargs.contains("step_mode"))        
         {        
             auto value = kwargs["step_mode"].cast<wgpu::VertexStepMode>();            
             obj.stepMode = value;            
+        }        
+        if (kwargs.contains("array_stride"))        
+        {        
+            auto value = kwargs["array_stride"].cast<uint64_t>();            
+            obj.arrayStride = value;            
         }        
         if (kwargs.contains("attribute_count"))        
         {        
@@ -4528,18 +4046,44 @@ PYCLASS_BEGIN(m, wgpu::Origin2D, Origin2D) Origin2D
 ;
 PYCLASS_END(m, wgpu::Origin2D, Origin2D)
 
+PYCLASS_BEGIN(m, wgpu::PassTimestampWrites, PassTimestampWrites) PassTimestampWrites
+    .def_readwrite("next_in_chain", &wgpu::PassTimestampWrites::nextInChain)    
+    .def_readwrite("query_set", &wgpu::PassTimestampWrites::querySet)    
+    .def_readwrite("beginning_of_pass_write_index", &wgpu::PassTimestampWrites::beginningOfPassWriteIndex)    
+    .def_readwrite("end_of_pass_write_index", &wgpu::PassTimestampWrites::endOfPassWriteIndex)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::PassTimestampWrites obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
+        if (kwargs.contains("query_set"))        
+        {        
+            auto value = kwargs["query_set"].cast<wgpu::QuerySet>();            
+            obj.querySet = value;            
+        }        
+        if (kwargs.contains("beginning_of_pass_write_index"))        
+        {        
+            auto value = kwargs["beginning_of_pass_write_index"].cast<uint32_t>();            
+            obj.beginningOfPassWriteIndex = value;            
+        }        
+        if (kwargs.contains("end_of_pass_write_index"))        
+        {        
+            auto value = kwargs["end_of_pass_write_index"].cast<uint32_t>();            
+            obj.endOfPassWriteIndex = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::PassTimestampWrites, PassTimestampWrites)
+
 PYCLASS_BEGIN(m, wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor) PipelineLayoutDescriptor
     .def_readwrite("next_in_chain", &wgpu::PipelineLayoutDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::PipelineLayoutDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::PipelineLayoutDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::PipelineLayoutDescriptor::label)    
     .def_readwrite("bind_group_layout_count", &wgpu::PipelineLayoutDescriptor::bindGroupLayoutCount)    
     .def_readwrite("bind_group_layouts", &wgpu::PipelineLayoutDescriptor::bindGroupLayouts)    
+    .def_readwrite("immediate_data_range_byte_size", &wgpu::PipelineLayoutDescriptor::immediateDataRangeByteSize)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::PipelineLayoutDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -4549,8 +4093,8 @@ PYCLASS_BEGIN(m, wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor) Pipel
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("bind_group_layout_count"))        
         {        
@@ -4564,6 +4108,11 @@ PYCLASS_BEGIN(m, wgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor) Pipel
             auto value = new wgpu::BindGroupLayout[count];            
             std::copy(_value.begin(), _value.end(), value);            
             obj.bindGroupLayouts = value;            
+        }        
+        if (kwargs.contains("immediate_data_range_byte_size"))        
+        {        
+            auto value = kwargs["immediate_data_range_byte_size"].cast<uint32_t>();            
+            obj.immediateDataRangeByteSize = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -4631,21 +4180,14 @@ PYCLASS_BEGIN(m, wgpu::PipelineLayoutStorageAttachment, PipelineLayoutStorageAtt
 ;
 PYCLASS_END(m, wgpu::PipelineLayoutStorageAttachment, PipelineLayoutStorageAttachment)
 
-PYCLASS_BEGIN(m, wgpu::ProgrammableStageDescriptor, ProgrammableStageDescriptor) ProgrammableStageDescriptor
-    .def_readwrite("next_in_chain", &wgpu::ProgrammableStageDescriptor::nextInChain)    
-    .def_readwrite("module", &wgpu::ProgrammableStageDescriptor::module)    
-    .def_property("entry_point",    
-        [](const wgpu::ProgrammableStageDescriptor& self) {        
-            return self.entryPoint;            
-        },        
-        [](wgpu::ProgrammableStageDescriptor& self, char const *  source) {        
-            self.entryPoint = strdup(source);            
-        }        
-    )    
-    .def_readwrite("constant_count", &wgpu::ProgrammableStageDescriptor::constantCount)    
-    .def_readwrite("constants", &wgpu::ProgrammableStageDescriptor::constants)    
+PYCLASS_BEGIN(m, wgpu::ComputeState, ComputeState) ComputeState
+    .def_readwrite("next_in_chain", &wgpu::ComputeState::nextInChain)    
+    .def_readwrite("module", &wgpu::ComputeState::module)    
+    .def_readwrite("entry_point", &wgpu::ComputeState::entryPoint)    
+    .def_readwrite("constant_count", &wgpu::ComputeState::constantCount)    
+    .def_readwrite("constants", &wgpu::ComputeState::constants)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::ProgrammableStageDescriptor obj{};        
+        wgpu::ComputeState obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -4658,8 +4200,8 @@ PYCLASS_BEGIN(m, wgpu::ProgrammableStageDescriptor, ProgrammableStageDescriptor)
         }        
         if (kwargs.contains("entry_point"))        
         {        
-            auto value = kwargs["entry_point"].cast<std::string>();            
-            obj.entryPoint = strdup(value.c_str());            
+            auto value = kwargs["entry_point"].cast<wgpu::StringView>();            
+            obj.entryPoint = value;            
         }        
         if (kwargs.contains("constant_count"))        
         {        
@@ -4677,18 +4219,11 @@ PYCLASS_BEGIN(m, wgpu::ProgrammableStageDescriptor, ProgrammableStageDescriptor)
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::ProgrammableStageDescriptor, ProgrammableStageDescriptor)
+PYCLASS_END(m, wgpu::ComputeState, ComputeState)
 
 PYCLASS_BEGIN(m, wgpu::QuerySetDescriptor, QuerySetDescriptor) QuerySetDescriptor
     .def_readwrite("next_in_chain", &wgpu::QuerySetDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::QuerySetDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::QuerySetDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::QuerySetDescriptor::label)    
     .def_readwrite("type", &wgpu::QuerySetDescriptor::type)    
     .def_readwrite("count", &wgpu::QuerySetDescriptor::count)    
     .def(py::init([](const py::kwargs& kwargs) {    
@@ -4700,8 +4235,8 @@ PYCLASS_BEGIN(m, wgpu::QuerySetDescriptor, QuerySetDescriptor) QuerySetDescripto
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("type"))        
         {        
@@ -4720,14 +4255,7 @@ PYCLASS_END(m, wgpu::QuerySetDescriptor, QuerySetDescriptor)
 
 PYCLASS_BEGIN(m, wgpu::QueueDescriptor, QueueDescriptor) QueueDescriptor
     .def_readwrite("next_in_chain", &wgpu::QueueDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::QueueDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::QueueDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::QueueDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::QueueDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -4737,50 +4265,17 @@ PYCLASS_BEGIN(m, wgpu::QueueDescriptor, QueueDescriptor) QueueDescriptor
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
 PYCLASS_END(m, wgpu::QueueDescriptor, QueueDescriptor)
 
-PYCLASS_BEGIN(m, wgpu::QueueWorkDoneCallbackInfo, QueueWorkDoneCallbackInfo) QueueWorkDoneCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::QueueWorkDoneCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::QueueWorkDoneCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::QueueWorkDoneCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::QueueWorkDoneCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::QueueWorkDoneCallbackInfo, QueueWorkDoneCallbackInfo)
-
 PYCLASS_BEGIN(m, wgpu::RenderBundleDescriptor, RenderBundleDescriptor) RenderBundleDescriptor
     .def_readwrite("next_in_chain", &wgpu::RenderBundleDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::RenderBundleDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::RenderBundleDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::RenderBundleDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::RenderBundleDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -4790,8 +4285,8 @@ PYCLASS_BEGIN(m, wgpu::RenderBundleDescriptor, RenderBundleDescriptor) RenderBun
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -4800,14 +4295,7 @@ PYCLASS_END(m, wgpu::RenderBundleDescriptor, RenderBundleDescriptor)
 
 PYCLASS_BEGIN(m, wgpu::RenderBundleEncoderDescriptor, RenderBundleEncoderDescriptor) RenderBundleEncoderDescriptor
     .def_readwrite("next_in_chain", &wgpu::RenderBundleEncoderDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::RenderBundleEncoderDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::RenderBundleEncoderDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::RenderBundleEncoderDescriptor::label)    
     .def_readwrite("color_format_count", &wgpu::RenderBundleEncoderDescriptor::colorFormatCount)    
     .def_readwrite("color_formats", &wgpu::RenderBundleEncoderDescriptor::colorFormats)    
     .def_readwrite("depth_stencil_format", &wgpu::RenderBundleEncoderDescriptor::depthStencilFormat)    
@@ -4823,8 +4311,8 @@ PYCLASS_BEGIN(m, wgpu::RenderBundleEncoderDescriptor, RenderBundleEncoderDescrip
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("color_format_count"))        
         {        
@@ -4935,6 +4423,7 @@ PYSUBCLASS_BEGIN(m, wgpu::DawnRenderPassColorAttachmentRenderToSingleSampled, Ch
 PYCLASS_END(m, wgpu::DawnRenderPassColorAttachmentRenderToSingleSampled, DawnRenderPassColorAttachmentRenderToSingleSampled)
 
 PYCLASS_BEGIN(m, wgpu::RenderPassDepthStencilAttachment, RenderPassDepthStencilAttachment) RenderPassDepthStencilAttachment
+    .def_readwrite("next_in_chain", &wgpu::RenderPassDepthStencilAttachment::nextInChain)    
     .def_readwrite("view", &wgpu::RenderPassDepthStencilAttachment::view)    
     .def_readwrite("depth_load_op", &wgpu::RenderPassDepthStencilAttachment::depthLoadOp)    
     .def_readwrite("depth_store_op", &wgpu::RenderPassDepthStencilAttachment::depthStoreOp)    
@@ -4946,6 +4435,11 @@ PYCLASS_BEGIN(m, wgpu::RenderPassDepthStencilAttachment, RenderPassDepthStencilA
     .def_readwrite("stencil_read_only", &wgpu::RenderPassDepthStencilAttachment::stencilReadOnly)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::RenderPassDepthStencilAttachment obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
         if (kwargs.contains("view"))        
         {        
             auto value = kwargs["view"].cast<wgpu::TextureView>();            
@@ -4998,14 +4492,7 @@ PYCLASS_END(m, wgpu::RenderPassDepthStencilAttachment, RenderPassDepthStencilAtt
 
 PYCLASS_BEGIN(m, wgpu::RenderPassDescriptor, RenderPassDescriptor) RenderPassDescriptor
     .def_readwrite("next_in_chain", &wgpu::RenderPassDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::RenderPassDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::RenderPassDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::RenderPassDescriptor::label)    
     .def_readwrite("color_attachment_count", &wgpu::RenderPassDescriptor::colorAttachmentCount)    
     .def_readwrite("color_attachments", &wgpu::RenderPassDescriptor::colorAttachments)    
     .def_readwrite("depth_stencil_attachment", &wgpu::RenderPassDescriptor::depthStencilAttachment)    
@@ -5020,8 +4507,8 @@ PYCLASS_BEGIN(m, wgpu::RenderPassDescriptor, RenderPassDescriptor) RenderPassDes
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("color_attachment_count"))        
         {        
@@ -5048,7 +4535,7 @@ PYCLASS_BEGIN(m, wgpu::RenderPassDescriptor, RenderPassDescriptor) RenderPassDes
         }        
         if (kwargs.contains("timestamp_writes"))        
         {        
-            auto value = kwargs["timestamp_writes"].cast<wgpu::RenderPassTimestampWrites const *>();            
+            auto value = kwargs["timestamp_writes"].cast<wgpu::PassTimestampWrites const *>();            
             obj.timestampWrites = value;            
         }        
         return obj;        
@@ -5056,11 +4543,11 @@ PYCLASS_BEGIN(m, wgpu::RenderPassDescriptor, RenderPassDescriptor) RenderPassDes
 ;
 PYCLASS_END(m, wgpu::RenderPassDescriptor, RenderPassDescriptor)
 
-PYSUBCLASS_BEGIN(m, wgpu::RenderPassDescriptorMaxDrawCount, ChainedStruct, RenderPassDescriptorMaxDrawCount) RenderPassDescriptorMaxDrawCount
-    .def_readwrite("next_in_chain", &wgpu::RenderPassDescriptorMaxDrawCount::nextInChain)    
-    .def_readwrite("max_draw_count", &wgpu::RenderPassDescriptorMaxDrawCount::maxDrawCount)    
+PYSUBCLASS_BEGIN(m, wgpu::RenderPassMaxDrawCount, ChainedStruct, RenderPassMaxDrawCount) RenderPassMaxDrawCount
+    .def_readwrite("next_in_chain", &wgpu::RenderPassMaxDrawCount::nextInChain)    
+    .def_readwrite("max_draw_count", &wgpu::RenderPassMaxDrawCount::maxDrawCount)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::RenderPassDescriptorMaxDrawCount obj{};        
+        wgpu::RenderPassMaxDrawCount obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -5074,7 +4561,45 @@ PYSUBCLASS_BEGIN(m, wgpu::RenderPassDescriptorMaxDrawCount, ChainedStruct, Rende
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::RenderPassDescriptorMaxDrawCount, RenderPassDescriptorMaxDrawCount)
+PYCLASS_END(m, wgpu::RenderPassMaxDrawCount, RenderPassMaxDrawCount)
+
+PYSUBCLASS_BEGIN(m, wgpu::RenderPassDescriptorExpandResolveRect, ChainedStruct, RenderPassDescriptorExpandResolveRect) RenderPassDescriptorExpandResolveRect
+    .def_readwrite("next_in_chain", &wgpu::RenderPassDescriptorExpandResolveRect::nextInChain)    
+    .def_readwrite("x", &wgpu::RenderPassDescriptorExpandResolveRect::x)    
+    .def_readwrite("y", &wgpu::RenderPassDescriptorExpandResolveRect::y)    
+    .def_readwrite("width", &wgpu::RenderPassDescriptorExpandResolveRect::width)    
+    .def_readwrite("height", &wgpu::RenderPassDescriptorExpandResolveRect::height)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::RenderPassDescriptorExpandResolveRect obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
+            obj.nextInChain = value;            
+        }        
+        if (kwargs.contains("x"))        
+        {        
+            auto value = kwargs["x"].cast<uint32_t>();            
+            obj.x = value;            
+        }        
+        if (kwargs.contains("y"))        
+        {        
+            auto value = kwargs["y"].cast<uint32_t>();            
+            obj.y = value;            
+        }        
+        if (kwargs.contains("width"))        
+        {        
+            auto value = kwargs["width"].cast<uint32_t>();            
+            obj.width = value;            
+        }        
+        if (kwargs.contains("height"))        
+        {        
+            auto value = kwargs["height"].cast<uint32_t>();            
+            obj.height = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::RenderPassDescriptorExpandResolveRect, RenderPassDescriptorExpandResolveRect)
 
 PYSUBCLASS_BEGIN(m, wgpu::RenderPassPixelLocalStorage, ChainedStruct, RenderPassPixelLocalStorage) RenderPassPixelLocalStorage
     .def_readwrite("next_in_chain", &wgpu::RenderPassPixelLocalStorage::nextInChain)    
@@ -5155,69 +4680,10 @@ PYCLASS_BEGIN(m, wgpu::RenderPassStorageAttachment, RenderPassStorageAttachment)
 ;
 PYCLASS_END(m, wgpu::RenderPassStorageAttachment, RenderPassStorageAttachment)
 
-PYCLASS_BEGIN(m, wgpu::RenderPassTimestampWrites, RenderPassTimestampWrites) RenderPassTimestampWrites
-    .def_readwrite("query_set", &wgpu::RenderPassTimestampWrites::querySet)    
-    .def_readwrite("beginning_of_pass_write_index", &wgpu::RenderPassTimestampWrites::beginningOfPassWriteIndex)    
-    .def_readwrite("end_of_pass_write_index", &wgpu::RenderPassTimestampWrites::endOfPassWriteIndex)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::RenderPassTimestampWrites obj{};        
-        if (kwargs.contains("query_set"))        
-        {        
-            auto value = kwargs["query_set"].cast<wgpu::QuerySet>();            
-            obj.querySet = value;            
-        }        
-        if (kwargs.contains("beginning_of_pass_write_index"))        
-        {        
-            auto value = kwargs["beginning_of_pass_write_index"].cast<uint32_t>();            
-            obj.beginningOfPassWriteIndex = value;            
-        }        
-        if (kwargs.contains("end_of_pass_write_index"))        
-        {        
-            auto value = kwargs["end_of_pass_write_index"].cast<uint32_t>();            
-            obj.endOfPassWriteIndex = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::RenderPassTimestampWrites, RenderPassTimestampWrites)
-
-PYCLASS_BEGIN(m, wgpu::RequestDeviceCallbackInfo, RequestDeviceCallbackInfo) RequestDeviceCallbackInfo
-    .def_readwrite("next_in_chain", &wgpu::RequestDeviceCallbackInfo::nextInChain)    
-    .def_readwrite("mode", &wgpu::RequestDeviceCallbackInfo::mode)    
-    .def_readwrite("userdata", &wgpu::RequestDeviceCallbackInfo::userdata)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::RequestDeviceCallbackInfo obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("mode"))        
-        {        
-            auto value = kwargs["mode"].cast<wgpu::CallbackMode>();            
-            obj.mode = value;            
-        }        
-        if (kwargs.contains("userdata"))        
-        {        
-            auto value = kwargs["userdata"].cast<void *>();            
-            obj.userdata = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::RequestDeviceCallbackInfo, RequestDeviceCallbackInfo)
-
 PYCLASS_BEGIN(m, wgpu::VertexState, VertexState) VertexState
     .def_readwrite("next_in_chain", &wgpu::VertexState::nextInChain)    
     .def_readwrite("module", &wgpu::VertexState::module)    
-    .def_property("entry_point",    
-        [](const wgpu::VertexState& self) {        
-            return self.entryPoint;            
-        },        
-        [](wgpu::VertexState& self, char const *  source) {        
-            self.entryPoint = strdup(source);            
-        }        
-    )    
+    .def_readwrite("entry_point", &wgpu::VertexState::entryPoint)    
     .def_readwrite("constant_count", &wgpu::VertexState::constantCount)    
     .def_readwrite("constants", &wgpu::VertexState::constants)    
     .def_readwrite("buffer_count", &wgpu::VertexState::bufferCount)    
@@ -5236,8 +4702,8 @@ PYCLASS_BEGIN(m, wgpu::VertexState, VertexState) VertexState
         }        
         if (kwargs.contains("entry_point"))        
         {        
-            auto value = kwargs["entry_point"].cast<std::string>();            
-            obj.entryPoint = strdup(value.c_str());            
+            auto value = kwargs["entry_point"].cast<wgpu::StringView>();            
+            obj.entryPoint = value;            
         }        
         if (kwargs.contains("constant_count"))        
         {        
@@ -5314,26 +4780,6 @@ PYCLASS_BEGIN(m, wgpu::PrimitiveState, PrimitiveState) PrimitiveState
 ;
 PYCLASS_END(m, wgpu::PrimitiveState, PrimitiveState)
 
-PYSUBCLASS_BEGIN(m, wgpu::PrimitiveDepthClipControl, ChainedStruct, PrimitiveDepthClipControl) PrimitiveDepthClipControl
-    .def_readwrite("next_in_chain", &wgpu::PrimitiveDepthClipControl::nextInChain)    
-    .def_readwrite("unclipped_depth", &wgpu::PrimitiveDepthClipControl::unclippedDepth)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::PrimitiveDepthClipControl obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("unclipped_depth"))        
-        {        
-            auto value = kwargs["unclipped_depth"].cast<wgpu::Bool>();            
-            obj.unclippedDepth = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::PrimitiveDepthClipControl, PrimitiveDepthClipControl)
-
 PYCLASS_BEGIN(m, wgpu::DepthStencilState, DepthStencilState) DepthStencilState
     .def_readwrite("next_in_chain", &wgpu::DepthStencilState::nextInChain)    
     .def_readwrite("format", &wgpu::DepthStencilState::format)    
@@ -5360,7 +4806,7 @@ PYCLASS_BEGIN(m, wgpu::DepthStencilState, DepthStencilState) DepthStencilState
         }        
         if (kwargs.contains("depth_write_enabled"))        
         {        
-            auto value = kwargs["depth_write_enabled"].cast<wgpu::Bool>();            
+            auto value = kwargs["depth_write_enabled"].cast<wgpu::OptionalBool>();            
             obj.depthWriteEnabled = value;            
         }        
         if (kwargs.contains("depth_compare"))        
@@ -5408,26 +4854,6 @@ PYCLASS_BEGIN(m, wgpu::DepthStencilState, DepthStencilState) DepthStencilState
 ;
 PYCLASS_END(m, wgpu::DepthStencilState, DepthStencilState)
 
-PYSUBCLASS_BEGIN(m, wgpu::DepthStencilStateDepthWriteDefinedDawn, ChainedStruct, DepthStencilStateDepthWriteDefinedDawn) DepthStencilStateDepthWriteDefinedDawn
-    .def_readwrite("next_in_chain", &wgpu::DepthStencilStateDepthWriteDefinedDawn::nextInChain)    
-    .def_readwrite("depth_write_defined", &wgpu::DepthStencilStateDepthWriteDefinedDawn::depthWriteDefined)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::DepthStencilStateDepthWriteDefinedDawn obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("depth_write_defined"))        
-        {        
-            auto value = kwargs["depth_write_defined"].cast<wgpu::Bool>();            
-            obj.depthWriteDefined = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::DepthStencilStateDepthWriteDefinedDawn, DepthStencilStateDepthWriteDefinedDawn)
-
 PYCLASS_BEGIN(m, wgpu::MultisampleState, MultisampleState) MultisampleState
     .def_readwrite("next_in_chain", &wgpu::MultisampleState::nextInChain)    
     .def_readwrite("count", &wgpu::MultisampleState::count)    
@@ -5463,14 +4889,7 @@ PYCLASS_END(m, wgpu::MultisampleState, MultisampleState)
 PYCLASS_BEGIN(m, wgpu::FragmentState, FragmentState) FragmentState
     .def_readwrite("next_in_chain", &wgpu::FragmentState::nextInChain)    
     .def_readwrite("module", &wgpu::FragmentState::module)    
-    .def_property("entry_point",    
-        [](const wgpu::FragmentState& self) {        
-            return self.entryPoint;            
-        },        
-        [](wgpu::FragmentState& self, char const *  source) {        
-            self.entryPoint = strdup(source);            
-        }        
-    )    
+    .def_readwrite("entry_point", &wgpu::FragmentState::entryPoint)    
     .def_readwrite("constant_count", &wgpu::FragmentState::constantCount)    
     .def_readwrite("constants", &wgpu::FragmentState::constants)    
     .def_readwrite("target_count", &wgpu::FragmentState::targetCount)    
@@ -5489,8 +4908,8 @@ PYCLASS_BEGIN(m, wgpu::FragmentState, FragmentState) FragmentState
         }        
         if (kwargs.contains("entry_point"))        
         {        
-            auto value = kwargs["entry_point"].cast<std::string>();            
-            obj.entryPoint = strdup(value.c_str());            
+            auto value = kwargs["entry_point"].cast<wgpu::StringView>();            
+            obj.entryPoint = value;            
         }        
         if (kwargs.contains("constant_count"))        
         {        
@@ -5597,14 +5016,7 @@ PYCLASS_END(m, wgpu::BlendState, BlendState)
 
 PYCLASS_BEGIN(m, wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor) RenderPipelineDescriptor
     .def_readwrite("next_in_chain", &wgpu::RenderPipelineDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::RenderPipelineDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::RenderPipelineDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::RenderPipelineDescriptor::label)    
     .def_readwrite("layout", &wgpu::RenderPipelineDescriptor::layout)    
     .def_readwrite("vertex", &wgpu::RenderPipelineDescriptor::vertex)    
     .def_readwrite("primitive", &wgpu::RenderPipelineDescriptor::primitive)    
@@ -5620,8 +5032,8 @@ PYCLASS_BEGIN(m, wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor) Rende
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("layout"))        
         {        
@@ -5660,14 +5072,7 @@ PYCLASS_END(m, wgpu::RenderPipelineDescriptor, RenderPipelineDescriptor)
 
 PYCLASS_BEGIN(m, wgpu::SamplerDescriptor, SamplerDescriptor) SamplerDescriptor
     .def_readwrite("next_in_chain", &wgpu::SamplerDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::SamplerDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::SamplerDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::SamplerDescriptor::label)    
     .def_readwrite("address_mode_u", &wgpu::SamplerDescriptor::addressModeU)    
     .def_readwrite("address_mode_v", &wgpu::SamplerDescriptor::addressModeV)    
     .def_readwrite("address_mode_w", &wgpu::SamplerDescriptor::addressModeW)    
@@ -5687,8 +5092,8 @@ PYCLASS_BEGIN(m, wgpu::SamplerDescriptor, SamplerDescriptor) SamplerDescriptor
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("address_mode_u"))        
         {        
@@ -5747,14 +5152,7 @@ PYCLASS_END(m, wgpu::SamplerDescriptor, SamplerDescriptor)
 
 PYCLASS_BEGIN(m, wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor) ShaderModuleDescriptor
     .def_readwrite("next_in_chain", &wgpu::ShaderModuleDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::ShaderModuleDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::ShaderModuleDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::ShaderModuleDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::ShaderModuleDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -5764,20 +5162,20 @@ PYCLASS_BEGIN(m, wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor) ShaderMod
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
 PYCLASS_END(m, wgpu::ShaderModuleDescriptor, ShaderModuleDescriptor)
 
-PYSUBCLASS_BEGIN(m, wgpu::ShaderModuleSPIRVDescriptor, ChainedStruct, ShaderModuleSPIRVDescriptor) ShaderModuleSPIRVDescriptor
-    .def_readwrite("next_in_chain", &wgpu::ShaderModuleSPIRVDescriptor::nextInChain)    
-    .def_readwrite("code_size", &wgpu::ShaderModuleSPIRVDescriptor::codeSize)    
-    .def_readwrite("code", &wgpu::ShaderModuleSPIRVDescriptor::code)    
+PYSUBCLASS_BEGIN(m, wgpu::ShaderSourceSPIRV, ChainedStruct, ShaderSourceSPIRV) ShaderSourceSPIRV
+    .def_readwrite("next_in_chain", &wgpu::ShaderSourceSPIRV::nextInChain)    
+    .def_readwrite("code_size", &wgpu::ShaderSourceSPIRV::codeSize)    
+    .def_readwrite("code", &wgpu::ShaderSourceSPIRV::code)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::ShaderModuleSPIRVDescriptor obj{};        
+        wgpu::ShaderSourceSPIRV obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -5799,20 +5197,13 @@ PYSUBCLASS_BEGIN(m, wgpu::ShaderModuleSPIRVDescriptor, ChainedStruct, ShaderModu
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::ShaderModuleSPIRVDescriptor, ShaderModuleSPIRVDescriptor)
+PYCLASS_END(m, wgpu::ShaderSourceSPIRV, ShaderSourceSPIRV)
 
-PYSUBCLASS_BEGIN(m, wgpu::ShaderModuleWGSLDescriptor, ChainedStruct, ShaderModuleWGSLDescriptor) ShaderModuleWGSLDescriptor
-    .def_readwrite("next_in_chain", &wgpu::ShaderModuleWGSLDescriptor::nextInChain)    
-    .def_property("code",    
-        [](const wgpu::ShaderModuleWGSLDescriptor& self) {        
-            return self.code;            
-        },        
-        [](wgpu::ShaderModuleWGSLDescriptor& self, char const *  source) {        
-            self.code = strdup(source);            
-        }        
-    )    
+PYSUBCLASS_BEGIN(m, wgpu::ShaderSourceWGSL, ChainedStruct, ShaderSourceWGSL) ShaderSourceWGSL
+    .def_readwrite("next_in_chain", &wgpu::ShaderSourceWGSL::nextInChain)    
+    .def_readwrite("code", &wgpu::ShaderSourceWGSL::code)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::ShaderModuleWGSLDescriptor obj{};        
+        wgpu::ShaderSourceWGSL obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -5820,13 +5211,13 @@ PYSUBCLASS_BEGIN(m, wgpu::ShaderModuleWGSLDescriptor, ChainedStruct, ShaderModul
         }        
         if (kwargs.contains("code"))        
         {        
-            auto value = kwargs["code"].cast<std::string>();            
-            obj.code = strdup(value.c_str());            
+            auto value = kwargs["code"].cast<wgpu::StringView>();            
+            obj.code = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::ShaderModuleWGSLDescriptor, ShaderModuleWGSLDescriptor)
+PYCLASS_END(m, wgpu::ShaderSourceWGSL, ShaderSourceWGSL)
 
 PYSUBCLASS_BEGIN(m, wgpu::DawnShaderModuleSPIRVOptionsDescriptor, ChainedStruct, DawnShaderModuleSPIRVOptionsDescriptor) DawnShaderModuleSPIRVOptionsDescriptor
     .def_readwrite("next_in_chain", &wgpu::DawnShaderModuleSPIRVOptionsDescriptor::nextInChain)    
@@ -5902,14 +5293,7 @@ PYCLASS_END(m, wgpu::StencilFaceState, StencilFaceState)
 
 PYCLASS_BEGIN(m, wgpu::SurfaceDescriptor, SurfaceDescriptor) SurfaceDescriptor
     .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::SurfaceDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::SurfaceDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::SurfaceDescriptor::label)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::SurfaceDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -5919,19 +5303,19 @@ PYCLASS_BEGIN(m, wgpu::SurfaceDescriptor, SurfaceDescriptor) SurfaceDescriptor
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
 PYCLASS_END(m, wgpu::SurfaceDescriptor, SurfaceDescriptor)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromAndroidNativeWindow, ChainedStruct, SurfaceDescriptorFromAndroidNativeWindow) SurfaceDescriptorFromAndroidNativeWindow
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromAndroidNativeWindow::nextInChain)    
-    .def_readwrite("window", &wgpu::SurfaceDescriptorFromAndroidNativeWindow::window)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceSourceAndroidNativeWindow, ChainedStruct, SurfaceSourceAndroidNativeWindow) SurfaceSourceAndroidNativeWindow
+    .def_readwrite("next_in_chain", &wgpu::SurfaceSourceAndroidNativeWindow::nextInChain)    
+    .def_readwrite("window", &wgpu::SurfaceSourceAndroidNativeWindow::window)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromAndroidNativeWindow obj{};        
+        wgpu::SurfaceSourceAndroidNativeWindow obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -5945,20 +5329,13 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromAndroidNativeWindow, ChainedStruc
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromAndroidNativeWindow, SurfaceDescriptorFromAndroidNativeWindow)
+PYCLASS_END(m, wgpu::SurfaceSourceAndroidNativeWindow, SurfaceSourceAndroidNativeWindow)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, ChainedStruct, SurfaceDescriptorFromCanvasHTMLSelector) SurfaceDescriptorFromCanvasHTMLSelector
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromCanvasHTMLSelector::nextInChain)    
-    .def_property("selector",    
-        [](const wgpu::SurfaceDescriptorFromCanvasHTMLSelector& self) {        
-            return self.selector;            
-        },        
-        [](wgpu::SurfaceDescriptorFromCanvasHTMLSelector& self, char const *  source) {        
-            self.selector = strdup(source);            
-        }        
-    )    
+PYSUBCLASS_BEGIN(m, wgpu::EmscriptenSurfaceSourceCanvasHTMLSelector, ChainedStruct, EmscriptenSurfaceSourceCanvasHTMLSelector) EmscriptenSurfaceSourceCanvasHTMLSelector
+    .def_readwrite("next_in_chain", &wgpu::EmscriptenSurfaceSourceCanvasHTMLSelector::nextInChain)    
+    .def_readwrite("selector", &wgpu::EmscriptenSurfaceSourceCanvasHTMLSelector::selector)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromCanvasHTMLSelector obj{};        
+        wgpu::EmscriptenSurfaceSourceCanvasHTMLSelector obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -5966,19 +5343,19 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, ChainedStruct
         }        
         if (kwargs.contains("selector"))        
         {        
-            auto value = kwargs["selector"].cast<std::string>();            
-            obj.selector = strdup(value.c_str());            
+            auto value = kwargs["selector"].cast<wgpu::StringView>();            
+            obj.selector = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromCanvasHTMLSelector, SurfaceDescriptorFromCanvasHTMLSelector)
+PYCLASS_END(m, wgpu::EmscriptenSurfaceSourceCanvasHTMLSelector, EmscriptenSurfaceSourceCanvasHTMLSelector)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromMetalLayer, ChainedStruct, SurfaceDescriptorFromMetalLayer) SurfaceDescriptorFromMetalLayer
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromMetalLayer::nextInChain)    
-    .def_readwrite("layer", &wgpu::SurfaceDescriptorFromMetalLayer::layer)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceSourceMetalLayer, ChainedStruct, SurfaceSourceMetalLayer) SurfaceSourceMetalLayer
+    .def_readwrite("next_in_chain", &wgpu::SurfaceSourceMetalLayer::nextInChain)    
+    .def_readwrite("layer", &wgpu::SurfaceSourceMetalLayer::layer)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromMetalLayer obj{};        
+        wgpu::SurfaceSourceMetalLayer obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -5992,14 +5369,14 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromMetalLayer, ChainedStruct, Surfac
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromMetalLayer, SurfaceDescriptorFromMetalLayer)
+PYCLASS_END(m, wgpu::SurfaceSourceMetalLayer, SurfaceSourceMetalLayer)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsHWND, ChainedStruct, SurfaceDescriptorFromWindowsHWND) SurfaceDescriptorFromWindowsHWND
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromWindowsHWND::nextInChain)    
-    .def_readwrite("hinstance", &wgpu::SurfaceDescriptorFromWindowsHWND::hinstance)    
-    .def_readwrite("hwnd", &wgpu::SurfaceDescriptorFromWindowsHWND::hwnd)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceSourceWindowsHWND, ChainedStruct, SurfaceSourceWindowsHWND) SurfaceSourceWindowsHWND
+    .def_readwrite("next_in_chain", &wgpu::SurfaceSourceWindowsHWND::nextInChain)    
+    .def_readwrite("hinstance", &wgpu::SurfaceSourceWindowsHWND::hinstance)    
+    .def_readwrite("hwnd", &wgpu::SurfaceSourceWindowsHWND::hwnd)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromWindowsHWND obj{};        
+        wgpu::SurfaceSourceWindowsHWND obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -6018,14 +5395,14 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsHWND, ChainedStruct, Surfa
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromWindowsHWND, SurfaceDescriptorFromWindowsHWND)
+PYCLASS_END(m, wgpu::SurfaceSourceWindowsHWND, SurfaceSourceWindowsHWND)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromXcbWindow, ChainedStruct, SurfaceDescriptorFromXcbWindow) SurfaceDescriptorFromXcbWindow
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromXcbWindow::nextInChain)    
-    .def_readwrite("connection", &wgpu::SurfaceDescriptorFromXcbWindow::connection)    
-    .def_readwrite("window", &wgpu::SurfaceDescriptorFromXcbWindow::window)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceSourceXCBWindow, ChainedStruct, SurfaceSourceXCBWindow) SurfaceSourceXCBWindow
+    .def_readwrite("next_in_chain", &wgpu::SurfaceSourceXCBWindow::nextInChain)    
+    .def_readwrite("connection", &wgpu::SurfaceSourceXCBWindow::connection)    
+    .def_readwrite("window", &wgpu::SurfaceSourceXCBWindow::window)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromXcbWindow obj{};        
+        wgpu::SurfaceSourceXCBWindow obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -6044,14 +5421,14 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromXcbWindow, ChainedStruct, Surface
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromXcbWindow, SurfaceDescriptorFromXcbWindow)
+PYCLASS_END(m, wgpu::SurfaceSourceXCBWindow, SurfaceSourceXCBWindow)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromXlibWindow, ChainedStruct, SurfaceDescriptorFromXlibWindow) SurfaceDescriptorFromXlibWindow
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromXlibWindow::nextInChain)    
-    .def_readwrite("display", &wgpu::SurfaceDescriptorFromXlibWindow::display)    
-    .def_readwrite("window", &wgpu::SurfaceDescriptorFromXlibWindow::window)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceSourceXlibWindow, ChainedStruct, SurfaceSourceXlibWindow) SurfaceSourceXlibWindow
+    .def_readwrite("next_in_chain", &wgpu::SurfaceSourceXlibWindow::nextInChain)    
+    .def_readwrite("display", &wgpu::SurfaceSourceXlibWindow::display)    
+    .def_readwrite("window", &wgpu::SurfaceSourceXlibWindow::window)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromXlibWindow obj{};        
+        wgpu::SurfaceSourceXlibWindow obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -6070,14 +5447,14 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromXlibWindow, ChainedStruct, Surfac
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromXlibWindow, SurfaceDescriptorFromXlibWindow)
+PYCLASS_END(m, wgpu::SurfaceSourceXlibWindow, SurfaceSourceXlibWindow)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWaylandSurface, ChainedStruct, SurfaceDescriptorFromWaylandSurface) SurfaceDescriptorFromWaylandSurface
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromWaylandSurface::nextInChain)    
-    .def_readwrite("display", &wgpu::SurfaceDescriptorFromWaylandSurface::display)    
-    .def_readwrite("surface", &wgpu::SurfaceDescriptorFromWaylandSurface::surface)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceSourceWaylandSurface, ChainedStruct, SurfaceSourceWaylandSurface) SurfaceSourceWaylandSurface
+    .def_readwrite("next_in_chain", &wgpu::SurfaceSourceWaylandSurface::nextInChain)    
+    .def_readwrite("display", &wgpu::SurfaceSourceWaylandSurface::display)    
+    .def_readwrite("surface", &wgpu::SurfaceSourceWaylandSurface::surface)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromWaylandSurface obj{};        
+        wgpu::SurfaceSourceWaylandSurface obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -6096,7 +5473,7 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWaylandSurface, ChainedStruct, Su
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromWaylandSurface, SurfaceDescriptorFromWaylandSurface)
+PYCLASS_END(m, wgpu::SurfaceSourceWaylandSurface, SurfaceSourceWaylandSurface)
 
 PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsCoreWindow, ChainedStruct, SurfaceDescriptorFromWindowsCoreWindow) SurfaceDescriptorFromWindowsCoreWindow
     .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromWindowsCoreWindow::nextInChain)    
@@ -6118,11 +5495,11 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsCoreWindow, ChainedStruct,
 ;
 PYCLASS_END(m, wgpu::SurfaceDescriptorFromWindowsCoreWindow, SurfaceDescriptorFromWindowsCoreWindow)
 
-PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsSwapChainPanel, ChainedStruct, SurfaceDescriptorFromWindowsSwapChainPanel) SurfaceDescriptorFromWindowsSwapChainPanel
-    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromWindowsSwapChainPanel::nextInChain)    
-    .def_readwrite("swap_chain_panel", &wgpu::SurfaceDescriptorFromWindowsSwapChainPanel::swapChainPanel)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel, ChainedStruct, SurfaceDescriptorFromWindowsUWPSwapChainPanel) SurfaceDescriptorFromWindowsUWPSwapChainPanel
+    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel::nextInChain)    
+    .def_readwrite("swap_chain_panel", &wgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel::swapChainPanel)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SurfaceDescriptorFromWindowsSwapChainPanel obj{};        
+        wgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
@@ -6136,80 +5513,43 @@ PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsSwapChainPanel, ChainedStr
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SurfaceDescriptorFromWindowsSwapChainPanel, SurfaceDescriptorFromWindowsSwapChainPanel)
+PYCLASS_END(m, wgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel, SurfaceDescriptorFromWindowsUWPSwapChainPanel)
 
-PYCLASS_BEGIN(m, wgpu::SwapChainDescriptor, SwapChainDescriptor) SwapChainDescriptor
-    .def_readwrite("next_in_chain", &wgpu::SwapChainDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::SwapChainDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::SwapChainDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
-    .def_readwrite("usage", &wgpu::SwapChainDescriptor::usage)    
-    .def_readwrite("format", &wgpu::SwapChainDescriptor::format)    
-    .def_readwrite("width", &wgpu::SwapChainDescriptor::width)    
-    .def_readwrite("height", &wgpu::SwapChainDescriptor::height)    
-    .def_readwrite("present_mode", &wgpu::SwapChainDescriptor::presentMode)    
+PYSUBCLASS_BEGIN(m, wgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel, ChainedStruct, SurfaceDescriptorFromWindowsWinUISwapChainPanel) SurfaceDescriptorFromWindowsWinUISwapChainPanel
+    .def_readwrite("next_in_chain", &wgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel::nextInChain)    
+    .def_readwrite("swap_chain_panel", &wgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel::swapChainPanel)    
     .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::SwapChainDescriptor obj{};        
+        wgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel obj{};        
         if (kwargs.contains("next_in_chain"))        
         {        
             auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
             obj.nextInChain = value;            
         }        
-        if (kwargs.contains("label"))        
+        if (kwargs.contains("swap_chain_panel"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
-        }        
-        if (kwargs.contains("usage"))        
-        {        
-            auto value = kwargs["usage"].cast<wgpu::TextureUsage>();            
-            obj.usage = value;            
-        }        
-        if (kwargs.contains("format"))        
-        {        
-            auto value = kwargs["format"].cast<wgpu::TextureFormat>();            
-            obj.format = value;            
-        }        
-        if (kwargs.contains("width"))        
-        {        
-            auto value = kwargs["width"].cast<uint32_t>();            
-            obj.width = value;            
-        }        
-        if (kwargs.contains("height"))        
-        {        
-            auto value = kwargs["height"].cast<uint32_t>();            
-            obj.height = value;            
-        }        
-        if (kwargs.contains("present_mode"))        
-        {        
-            auto value = kwargs["present_mode"].cast<wgpu::PresentMode>();            
-            obj.presentMode = value;            
+            auto value = kwargs["swap_chain_panel"].cast<void *>();            
+            obj.swapChainPanel = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
 ;
-PYCLASS_END(m, wgpu::SwapChainDescriptor, SwapChainDescriptor)
+PYCLASS_END(m, wgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel, SurfaceDescriptorFromWindowsWinUISwapChainPanel)
 
 PYCLASS_BEGIN(m, wgpu::SurfaceTexture, SurfaceTexture) SurfaceTexture
+    .def_readwrite("next_in_chain", &wgpu::SurfaceTexture::nextInChain)    
     .def_readwrite("texture", &wgpu::SurfaceTexture::texture)    
-    .def_readwrite("suboptimal", &wgpu::SurfaceTexture::suboptimal)    
     .def_readwrite("status", &wgpu::SurfaceTexture::status)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::SurfaceTexture obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStructOut *>();            
+            obj.nextInChain = value;            
+        }        
         if (kwargs.contains("texture"))        
         {        
             auto value = kwargs["texture"].cast<wgpu::Texture>();            
             obj.texture = value;            
-        }        
-        if (kwargs.contains("suboptimal"))        
-        {        
-            auto value = kwargs["suboptimal"].cast<wgpu::Bool>();            
-            obj.suboptimal = value;            
         }        
         if (kwargs.contains("status"))        
         {        
@@ -6221,48 +5561,9 @@ PYCLASS_BEGIN(m, wgpu::SurfaceTexture, SurfaceTexture) SurfaceTexture
 ;
 PYCLASS_END(m, wgpu::SurfaceTexture, SurfaceTexture)
 
-PYCLASS_BEGIN(m, wgpu::TextureDataLayout, TextureDataLayout) TextureDataLayout
-    .def_readwrite("next_in_chain", &wgpu::TextureDataLayout::nextInChain)    
-    .def_readwrite("offset", &wgpu::TextureDataLayout::offset)    
-    .def_readwrite("bytes_per_row", &wgpu::TextureDataLayout::bytesPerRow)    
-    .def_readwrite("rows_per_image", &wgpu::TextureDataLayout::rowsPerImage)    
-    .def(py::init([](const py::kwargs& kwargs) {    
-        wgpu::TextureDataLayout obj{};        
-        if (kwargs.contains("next_in_chain"))        
-        {        
-            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStruct const *>();            
-            obj.nextInChain = value;            
-        }        
-        if (kwargs.contains("offset"))        
-        {        
-            auto value = kwargs["offset"].cast<uint64_t>();            
-            obj.offset = value;            
-        }        
-        if (kwargs.contains("bytes_per_row"))        
-        {        
-            auto value = kwargs["bytes_per_row"].cast<uint32_t>();            
-            obj.bytesPerRow = value;            
-        }        
-        if (kwargs.contains("rows_per_image"))        
-        {        
-            auto value = kwargs["rows_per_image"].cast<uint32_t>();            
-            obj.rowsPerImage = value;            
-        }        
-        return obj;        
-    }), py::return_value_policy::automatic_reference)    
-;
-PYCLASS_END(m, wgpu::TextureDataLayout, TextureDataLayout)
-
 PYCLASS_BEGIN(m, wgpu::TextureDescriptor, TextureDescriptor) TextureDescriptor
     .def_readwrite("next_in_chain", &wgpu::TextureDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::TextureDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::TextureDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::TextureDescriptor::label)    
     .def_readwrite("usage", &wgpu::TextureDescriptor::usage)    
     .def_readwrite("dimension", &wgpu::TextureDescriptor::dimension)    
     .def_readwrite("size", &wgpu::TextureDescriptor::size)    
@@ -6280,8 +5581,8 @@ PYCLASS_BEGIN(m, wgpu::TextureDescriptor, TextureDescriptor) TextureDescriptor
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("usage"))        
         {        
@@ -6353,14 +5654,7 @@ PYCLASS_END(m, wgpu::TextureBindingViewDimensionDescriptor, TextureBindingViewDi
 
 PYCLASS_BEGIN(m, wgpu::TextureViewDescriptor, TextureViewDescriptor) TextureViewDescriptor
     .def_readwrite("next_in_chain", &wgpu::TextureViewDescriptor::nextInChain)    
-    .def_property("label",    
-        [](const wgpu::TextureViewDescriptor& self) {        
-            return self.label;            
-        },        
-        [](wgpu::TextureViewDescriptor& self, char const *  source) {        
-            self.label = strdup(source);            
-        }        
-    )    
+    .def_readwrite("label", &wgpu::TextureViewDescriptor::label)    
     .def_readwrite("format", &wgpu::TextureViewDescriptor::format)    
     .def_readwrite("dimension", &wgpu::TextureViewDescriptor::dimension)    
     .def_readwrite("base_mip_level", &wgpu::TextureViewDescriptor::baseMipLevel)    
@@ -6368,6 +5662,7 @@ PYCLASS_BEGIN(m, wgpu::TextureViewDescriptor, TextureViewDescriptor) TextureView
     .def_readwrite("base_array_layer", &wgpu::TextureViewDescriptor::baseArrayLayer)    
     .def_readwrite("array_layer_count", &wgpu::TextureViewDescriptor::arrayLayerCount)    
     .def_readwrite("aspect", &wgpu::TextureViewDescriptor::aspect)    
+    .def_readwrite("usage", &wgpu::TextureViewDescriptor::usage)    
     .def(py::init([](const py::kwargs& kwargs) {    
         wgpu::TextureViewDescriptor obj{};        
         if (kwargs.contains("next_in_chain"))        
@@ -6377,8 +5672,8 @@ PYCLASS_BEGIN(m, wgpu::TextureViewDescriptor, TextureViewDescriptor) TextureView
         }        
         if (kwargs.contains("label"))        
         {        
-            auto value = kwargs["label"].cast<std::string>();            
-            obj.label = strdup(value.c_str());            
+            auto value = kwargs["label"].cast<wgpu::StringView>();            
+            obj.label = value;            
         }        
         if (kwargs.contains("format"))        
         {        
@@ -6414,6 +5709,11 @@ PYCLASS_BEGIN(m, wgpu::TextureViewDescriptor, TextureViewDescriptor) TextureView
         {        
             auto value = kwargs["aspect"].cast<wgpu::TextureAspect>();            
             obj.aspect = value;            
+        }        
+        if (kwargs.contains("usage"))        
+        {        
+            auto value = kwargs["usage"].cast<wgpu::TextureUsage>();            
+            obj.usage = value;            
         }        
         return obj;        
     }), py::return_value_policy::automatic_reference)    
@@ -6611,14 +5911,59 @@ PYSUBCLASS_BEGIN(m, wgpu::DawnBufferDescriptorErrorInfoFromWireClient, ChainedSt
 ;
 PYCLASS_END(m, wgpu::DawnBufferDescriptorErrorInfoFromWireClient, DawnBufferDescriptorErrorInfoFromWireClient)
 
+PYCLASS_BEGIN(m, wgpu::SubgroupMatrixConfig, SubgroupMatrixConfig) SubgroupMatrixConfig
+    .def_readwrite("component_type", &wgpu::SubgroupMatrixConfig::componentType)    
+    .def_readwrite("result_component_type", &wgpu::SubgroupMatrixConfig::resultComponentType)    
+    .def_readwrite("m", &wgpu::SubgroupMatrixConfig::M)    
+    .def_readwrite("n", &wgpu::SubgroupMatrixConfig::N)    
+    .def_readwrite("k", &wgpu::SubgroupMatrixConfig::K)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::SubgroupMatrixConfig obj{};        
+        if (kwargs.contains("component_type"))        
+        {        
+            auto value = kwargs["component_type"].cast<wgpu::SubgroupMatrixComponentType>();            
+            obj.componentType = value;            
+        }        
+        if (kwargs.contains("result_component_type"))        
+        {        
+            auto value = kwargs["result_component_type"].cast<wgpu::SubgroupMatrixComponentType>();            
+            obj.resultComponentType = value;            
+        }        
+        if (kwargs.contains("m"))        
+        {        
+            auto value = kwargs["m"].cast<uint32_t>();            
+            obj.M = value;            
+        }        
+        if (kwargs.contains("n"))        
+        {        
+            auto value = kwargs["n"].cast<uint32_t>();            
+            obj.N = value;            
+        }        
+        if (kwargs.contains("k"))        
+        {        
+            auto value = kwargs["k"].cast<uint32_t>();            
+            obj.K = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
+;
+PYCLASS_END(m, wgpu::SubgroupMatrixConfig, SubgroupMatrixConfig)
+
+PYSUBCLASS_BEGIN(m, wgpu::AdapterPropertiesSubgroupMatrixConfigs, ChainedStructOut, AdapterPropertiesSubgroupMatrixConfigs) AdapterPropertiesSubgroupMatrixConfigs
+    .def_readonly("next_in_chain", &wgpu::AdapterPropertiesSubgroupMatrixConfigs::nextInChain)    
+    .def_readonly("config_count", &wgpu::AdapterPropertiesSubgroupMatrixConfigs::configCount)    
+    .def_readonly("configs", &wgpu::AdapterPropertiesSubgroupMatrixConfigs::configs)    
+;
+PYCLASS_END(m, wgpu::AdapterPropertiesSubgroupMatrixConfigs, AdapterPropertiesSubgroupMatrixConfigs)
+
 
 m.def("create_instance", &wgpu::CreateInstance
     , py::arg("descriptor") = nullptr
     , py::return_value_policy::automatic_reference)
     ;
 
-m.def("get_instance_features", &wgpu::GetInstanceFeatures
-    , py::arg("features")
+m.def("get_instance_capabilities", &wgpu::GetInstanceCapabilities
+    , py::arg("capabilities")
     , py::return_value_policy::automatic_reference)
     ;
 

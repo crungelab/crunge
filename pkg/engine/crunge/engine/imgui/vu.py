@@ -161,7 +161,8 @@ class ImGuiVu(Vu):
 
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
-            wgpu.ImageCopyTexture(
+            #wgpu.TexelCopyTextureInfo(
+            wgpu.TexelCopyTextureInfo(
                 #texture=self.texture,
                 texture=self.texture.texture,
                 mip_level=0,
@@ -174,7 +175,8 @@ class ImGuiVu(Vu):
             # width * height * bpp,
             size,
             # The layout of the texture
-            wgpu.TextureDataLayout(
+            #wgpu.TexelCopyBufferLayout(
+            wgpu.TexelCopyBufferLayout(
                 offset=0,
                 bytes_per_row=width * bpp,
                 rows_per_image=height,

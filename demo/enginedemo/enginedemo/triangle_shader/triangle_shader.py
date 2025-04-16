@@ -53,6 +53,7 @@ class TriangleShaderLayer(DemoLayer):
 
         depthStencilState = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
+            depth_write_enabled=False,
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(

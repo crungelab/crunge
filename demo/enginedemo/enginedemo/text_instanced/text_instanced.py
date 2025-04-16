@@ -161,10 +161,10 @@ class InstancedTextDemo(Demo):
         )
         self.sampler = self.device.create_sampler()
         self.queue.write_texture(
-            wgpu.ImageCopyTexture(texture=self.texture),
+            wgpu.TexelCopyTextureInfo(texture=self.texture),
             utils.as_capsule(rgba_data),
             rgba_data.nbytes,
-            wgpu.TextureDataLayout(bytes_per_row=rgba_data.shape[1] * 4),
+            wgpu.TexelCopyBufferLayout(bytes_per_row=rgba_data.shape[1] * 4),
             wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
         )
 

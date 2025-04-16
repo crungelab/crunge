@@ -53,9 +53,9 @@ add_subdirectory(pkg/gltf)
 # Dawn
 #
 
-set(DAWN_BUILD_SAMPLES OFF CACHE BOOL "Build Samples" FORCE)
-set(DAWN_FETCH_DEPENDENCIES ON)
-add_subdirectory("depot/dawn" EXCLUDE_FROM_ALL)
+#set(DAWN_BUILD_SAMPLES OFF CACHE BOOL "Build Samples" FORCE)
+#set(DAWN_FETCH_DEPENDENCIES ON)
+#add_subdirectory("depot/dawn" EXCLUDE_FROM_ALL)
 
 add_subdirectory(pkg/wgpu)
 

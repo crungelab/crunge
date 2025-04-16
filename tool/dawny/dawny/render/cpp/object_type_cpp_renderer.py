@@ -91,7 +91,12 @@ class ObjectTypeCppRenderer(ObjectTypeRenderer):
                 elif isinstance(return_type, EnumType) or isinstance(return_type, BitmaskType):
                     self.out << f"return static_cast<{return_type_name}>(result);" << "\n"
                 else:
-                    self.out << f"return result;" << "\n"
+                    #self.out << f"return result;" << "\n"
+                    if return_type_name == "Future":
+                        self.out << f"return {return_type_name}{{result.id}};" << "\n"
+                    else:
+                        self.out << f"return result;" << "\n"
+
 
             self.out.dedent()
 

@@ -15,6 +15,7 @@ from .renderer import Renderer
 SpecialStructures = ["chained struct", "chained struct out"]
 #SpecialStructures = ["chained struct", "chained struct out", "string view", "nullable string view"]
 SpecialFunctions = ["get proc address", "get proc address 2"]
+SpecialEnums = ["optional bool"]
 
 class Generator(Renderer):
     def __init__(self, context: RenderContext, backend: "Backend") -> None:
@@ -28,14 +29,11 @@ class Generator(Renderer):
     def render(self):
         pass
 
-    def render_enum_types(self):
-        for enum_type in self.backend.enum_types:
-            self.render_node(enum_type)
 
-    def render_bitmask_types(self):
-        for bitmask_type in self.backend.bitmask_types:
-            #logger.debug(f"Rendering bitmask type: {bitmask_type}")
-            self.render_node(bitmask_type)
+    def exclude_enum_type(self, enum_type):
+        if enum_type.name.get() in SpecialEnums:
+            return True
+        return super().exclude_node(enum_type)
 
     def exclude_structure_type(self, structure_type):
         if structure_type.name.get() in SpecialStructures:
@@ -49,6 +47,23 @@ class Generator(Renderer):
         if function_declaration.name.get() in SpecialFunctions:
             return True
         return super().exclude_node(function_declaration)
+
+    def render_bitmask_types(self):
+        for bitmask_type in self.backend.bitmask_types:
+            #logger.debug(f"Rendering bitmask type: {bitmask_type}")
+            self.render_node(bitmask_type)
+
+    '''
+    def render_enum_types(self):
+        for enum_type in self.backend.enum_types:
+            self.render_node(enum_type)
+    '''
+
+    def render_enum_types(self):
+        for enum_type in self.backend.enum_types:
+            if self.exclude_enum_type(enum_type):
+                continue
+            self.render_node(enum_type)
 
     def render_structure_types(self):
         for structure_type in self.backend.structure_types:

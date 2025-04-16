@@ -26,7 +26,12 @@ class Demo:
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
         self.window = None
-        self.instance = wgpu.create_instance()
+
+        #self.instance = wgpu.create_instance()
+        instance_capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable = True)
+        instance_descriptor = wgpu.InstanceDescriptor(capabilities = instance_capabilities)
+        self.instance = wgpu.create_instance(instance_descriptor)
+
         self.adapter = self.instance.request_adapter()
         self.device = self.adapter.create_device()
         self.device.set_label("Primary Device")
@@ -85,7 +90,8 @@ class Demo:
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            wsd = wgpu.SurfaceSourceXlibWindow()
             handle = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
             display = sdl.get_pointer_property(properties, "SDL.window.x11.display", None)
             wsd.window = handle
@@ -97,7 +103,8 @@ class Demo:
         self.configure_surface(self.size)
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
-        wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
+        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
+        wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module

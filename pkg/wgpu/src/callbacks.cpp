@@ -26,7 +26,7 @@ void ErrorCallback(WGPUErrorType type, const char *msg, void *userdata)
         //break;
     case WGPUErrorType_NoError:
     case WGPUErrorType_Unknown:
-    case WGPUErrorType_DeviceLost:
+    //case WGPUErrorType_DeviceLost:
     case WGPUErrorType_Force32:
     case WGPUErrorType_Internal:
         std::cerr << msg << std::endl;
@@ -56,25 +56,21 @@ void DeviceLostCallback(WGPUDeviceLostReason reason, char const *msg, void *user
     std::cerr << "[Device Lost]: ";
     switch (reason)
     {
-    case WGPUDeviceLostReason_Unknown:
-        std::cerr << "Unknown: " << msg << std::endl;
-        break;
-    case WGPUDeviceLostReason_Destroyed:
+    /*case WGPUDeviceLostReason::WGPUDeviceLostReason_Undefined:
+        std::cerr << "Undefined: " << msg << std::endl;
+        break;*/
+    case WGPUDeviceLostReason::WGPUDeviceLostReason_Destroyed:
         std::cerr << "Destroyed: " << msg << std::endl;
         break;
-    case WGPUDeviceLostReason_InstanceDropped:
-        std::cerr << "InstanceDropped: " << msg << std::endl;
-        break;
-    case WGPUDeviceLostReason_FailedCreation:
-        std::cerr << "FailedCreation: " << msg << std::endl;
-        break;
-    case WGPUDeviceLostReason_Force32:
+    case WGPUDeviceLostReason::WGPUDeviceLostReason_Force32:
         std::cerr << "Force32: " << msg << std::endl;
         break;
     }
 }
 
-void LoggingCallback(WGPULoggingType type, const char *msg, void *)
+void LoggingCallback(WGPULoggingType type, WGPUStringView message)
+{
+    std::string msg = message.data ? std::string(message.data, message.length) : "No message";
 {
     py::scoped_ostream_redirect stream(
     std::cerr,                                // std::ostream&
@@ -100,6 +96,6 @@ void LoggingCallback(WGPULoggingType type, const char *msg, void *)
         break;
     }
     std::cerr << msg << std::endl;
-}
+}}
 
 }}  // namespace crunge::wgpu

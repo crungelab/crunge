@@ -52,7 +52,8 @@ class Viewer(Base):
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            wsd = wgpu.SurfaceSourceXlibWindow()
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
             wsd.window = handle

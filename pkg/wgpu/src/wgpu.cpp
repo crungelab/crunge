@@ -2,28 +2,16 @@
 //#include "wgpu.h"
 
 namespace wgpu {
-// INTERNAL__HAVE_EMDAWNWEBGPU_HEADER implementation
+// INTERNAL_HAVE_EMDAWNWEBGPU_HEADER implementation
 
-INTERNAL__HAVE_EMDAWNWEBGPU_HEADER::operator const WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER&() const noexcept {
-    return *reinterpret_cast<const WGPUINTERNAL__HAVE_EMDAWNWEBGPU_HEADER*>(this);
+INTERNAL_HAVE_EMDAWNWEBGPU_HEADER::operator const WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER&() const noexcept {
+    return *reinterpret_cast<const WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER*>(this);
 }
 
 // RequestAdapterOptions implementation
 
 RequestAdapterOptions::operator const WGPURequestAdapterOptions&() const noexcept {
     return *reinterpret_cast<const WGPURequestAdapterOptions*>(this);
-}
-
-// RequestAdapterCallbackInfo implementation
-
-RequestAdapterCallbackInfo::operator const WGPURequestAdapterCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPURequestAdapterCallbackInfo*>(this);
-}
-
-// RequestAdapterCallbackInfo2 implementation
-
-RequestAdapterCallbackInfo2::operator const WGPURequestAdapterCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPURequestAdapterCallbackInfo2*>(this);
 }
 
 // AdapterInfo implementation
@@ -49,7 +37,8 @@ AdapterInfo::AdapterInfo(AdapterInfo&& rhs) :
     adapterType(rhs.adapterType),    
     vendorID(rhs.vendorID),    
     deviceID(rhs.deviceID),    
-    compatibilityMode(rhs.compatibilityMode)    
+    subgroupMinSize(rhs.subgroupMinSize),    
+    subgroupMaxSize(rhs.subgroupMaxSize)    
 {}
 AdapterInfo& AdapterInfo::operator=(AdapterInfo&& rhs) {
 if (&rhs == this) {
@@ -66,50 +55,8 @@ FreeMembers();
     ::wgpu::detail::AsNonConstReference(this->adapterType) = std::move(rhs.adapterType);    
     ::wgpu::detail::AsNonConstReference(this->vendorID) = std::move(rhs.vendorID);    
     ::wgpu::detail::AsNonConstReference(this->deviceID) = std::move(rhs.deviceID);    
-    ::wgpu::detail::AsNonConstReference(this->compatibilityMode) = std::move(rhs.compatibilityMode);    
-    return *this;    
-}
-// AdapterProperties implementation
-
-AdapterProperties::operator const WGPUAdapterProperties&() const noexcept {
-    return *reinterpret_cast<const WGPUAdapterProperties*>(this);
-}
-
-AdapterProperties::~AdapterProperties() {
-    FreeMembers();
-}
-void AdapterProperties::FreeMembers() {
-    // Free members here
-}
-
-AdapterProperties::AdapterProperties(AdapterProperties&& rhs) :
-    nextInChain(rhs.nextInChain),    
-    vendorID(rhs.vendorID),    
-    vendorName(rhs.vendorName),    
-    architecture(rhs.architecture),    
-    deviceID(rhs.deviceID),    
-    name(rhs.name),    
-    driverDescription(rhs.driverDescription),    
-    adapterType(rhs.adapterType),    
-    backendType(rhs.backendType),    
-    compatibilityMode(rhs.compatibilityMode)    
-{}
-AdapterProperties& AdapterProperties::operator=(AdapterProperties&& rhs) {
-if (&rhs == this) {
-    return *this;
-}
-FreeMembers();
-
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->vendorID) = std::move(rhs.vendorID);    
-    ::wgpu::detail::AsNonConstReference(this->vendorName) = std::move(rhs.vendorName);    
-    ::wgpu::detail::AsNonConstReference(this->architecture) = std::move(rhs.architecture);    
-    ::wgpu::detail::AsNonConstReference(this->deviceID) = std::move(rhs.deviceID);    
-    ::wgpu::detail::AsNonConstReference(this->name) = std::move(rhs.name);    
-    ::wgpu::detail::AsNonConstReference(this->driverDescription) = std::move(rhs.driverDescription);    
-    ::wgpu::detail::AsNonConstReference(this->adapterType) = std::move(rhs.adapterType);    
-    ::wgpu::detail::AsNonConstReference(this->backendType) = std::move(rhs.backendType);    
-    ::wgpu::detail::AsNonConstReference(this->compatibilityMode) = std::move(rhs.compatibilityMode);    
+    ::wgpu::detail::AsNonConstReference(this->subgroupMinSize) = std::move(rhs.subgroupMinSize);    
+    ::wgpu::detail::AsNonConstReference(this->subgroupMaxSize) = std::move(rhs.subgroupMaxSize);    
     return *this;    
 }
 // DeviceDescriptor implementation
@@ -152,7 +99,7 @@ DawnCacheDeviceDescriptor::DawnCacheDeviceDescriptor()
 
 struct DawnCacheDeviceDescriptor::Init {
     ChainedStruct const * nextInChain = nullptr;
-    char const * isolationKey = "";
+    StringView isolationKey = {};
     DawnLoadCacheDataFunction loadDataFunction = nullptr;
     DawnStoreCacheDataFunction storeDataFunction = nullptr;
     void * functionUserdata = nullptr;
@@ -219,7 +166,7 @@ StaticSamplerBindingLayout::StaticSamplerBindingLayout()
 struct StaticSamplerBindingLayout::Init {
     ChainedStruct const * nextInChain = nullptr;
     Sampler sampler;
-    uint32_t sampledTextureBinding = WGPU_LIMIT_U32_UNDEFINED;
+    uint32_t sampledTextureBinding = kLimitU32Undefined;
 };
 StaticSamplerBindingLayout::StaticSamplerBindingLayout(StaticSamplerBindingLayout::Init&& init)
 : ChainedStruct { init.nextInChain, SType::StaticSamplerBindingLayout }
@@ -339,12 +286,6 @@ StringView::operator const WGPUStringView&() const noexcept {
     return *reinterpret_cast<const WGPUStringView*>(this);
 }
 
-// NullableStringView implementation
-
-NullableStringView::operator const WGPUStringView&() const noexcept {
-    return *reinterpret_cast<const WGPUStringView*>(this);
-}
-
 // BufferDescriptor implementation
 
 BufferDescriptor::operator const WGPUBufferDescriptor&() const noexcept {
@@ -372,18 +313,6 @@ BufferHostMappedPointer::BufferHostMappedPointer(BufferHostMappedPointer::Init&&
     ,disposeCallback(std::move(init.disposeCallback))
     ,userdata(std::move(init.userdata))
     {}
-// BufferMapCallbackInfo implementation
-
-BufferMapCallbackInfo::operator const WGPUBufferMapCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUBufferMapCallbackInfo*>(this);
-}
-
-// BufferMapCallbackInfo2 implementation
-
-BufferMapCallbackInfo2::operator const WGPUBufferMapCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUBufferMapCallbackInfo2*>(this);
-}
-
 // Color implementation
 
 Color::operator const WGPUColor&() const noexcept {
@@ -414,34 +343,37 @@ CompilationInfo::operator const WGPUCompilationInfo&() const noexcept {
     return *reinterpret_cast<const WGPUCompilationInfo*>(this);
 }
 
-// CompilationInfoCallbackInfo implementation
-
-CompilationInfoCallbackInfo::operator const WGPUCompilationInfoCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUCompilationInfoCallbackInfo*>(this);
-}
-
-// CompilationInfoCallbackInfo2 implementation
-
-CompilationInfoCallbackInfo2::operator const WGPUCompilationInfoCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUCompilationInfoCallbackInfo2*>(this);
-}
-
 // CompilationMessage implementation
 
 CompilationMessage::operator const WGPUCompilationMessage&() const noexcept {
     return *reinterpret_cast<const WGPUCompilationMessage*>(this);
 }
 
+// DawnCompilationMessageUtf16 implementation
+
+DawnCompilationMessageUtf16::operator const WGPUDawnCompilationMessageUtf16&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnCompilationMessageUtf16*>(this);
+}
+
+DawnCompilationMessageUtf16::DawnCompilationMessageUtf16()
+: ChainedStruct { nullptr, SType::DawnCompilationMessageUtf16 } {}
+
+struct DawnCompilationMessageUtf16::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    uint64_t linePos;
+    uint64_t offset;
+    uint64_t length;
+};
+DawnCompilationMessageUtf16::DawnCompilationMessageUtf16(DawnCompilationMessageUtf16::Init&& init)
+: ChainedStruct { init.nextInChain, SType::DawnCompilationMessageUtf16 }
+    ,linePos(std::move(init.linePos))
+    ,offset(std::move(init.offset))
+    ,length(std::move(init.length))
+    {}
 // ComputePassDescriptor implementation
 
 ComputePassDescriptor::operator const WGPUComputePassDescriptor&() const noexcept {
     return *reinterpret_cast<const WGPUComputePassDescriptor*>(this);
-}
-
-// ComputePassTimestampWrites implementation
-
-ComputePassTimestampWrites::operator const WGPUComputePassTimestampWrites&() const noexcept {
-    return *reinterpret_cast<const WGPUComputePassTimestampWrites*>(this);
 }
 
 // ComputePipelineDescriptor implementation
@@ -450,51 +382,10 @@ ComputePipelineDescriptor::operator const WGPUComputePipelineDescriptor&() const
     return *reinterpret_cast<const WGPUComputePipelineDescriptor*>(this);
 }
 
-// DawnComputePipelineFullSubgroups implementation
-
-DawnComputePipelineFullSubgroups::operator const WGPUDawnComputePipelineFullSubgroups&() const noexcept {
-    return *reinterpret_cast<const WGPUDawnComputePipelineFullSubgroups*>(this);
-}
-
-DawnComputePipelineFullSubgroups::DawnComputePipelineFullSubgroups()
-: ChainedStruct { nullptr, SType::DawnComputePipelineFullSubgroups } {}
-
-struct DawnComputePipelineFullSubgroups::Init {
-    ChainedStruct const * nextInChain = nullptr;
-    Bool requiresFullSubgroups = false;
-};
-DawnComputePipelineFullSubgroups::DawnComputePipelineFullSubgroups(DawnComputePipelineFullSubgroups::Init&& init)
-: ChainedStruct { init.nextInChain, SType::DawnComputePipelineFullSubgroups }
-    ,requiresFullSubgroups(std::move(init.requiresFullSubgroups))
-    {}
 // CopyTextureForBrowserOptions implementation
 
 CopyTextureForBrowserOptions::operator const WGPUCopyTextureForBrowserOptions&() const noexcept {
     return *reinterpret_cast<const WGPUCopyTextureForBrowserOptions*>(this);
-}
-
-// CreateComputePipelineAsyncCallbackInfo implementation
-
-CreateComputePipelineAsyncCallbackInfo::operator const WGPUCreateComputePipelineAsyncCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUCreateComputePipelineAsyncCallbackInfo*>(this);
-}
-
-// CreateComputePipelineAsyncCallbackInfo2 implementation
-
-CreateComputePipelineAsyncCallbackInfo2::operator const WGPUCreateComputePipelineAsyncCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUCreateComputePipelineAsyncCallbackInfo2*>(this);
-}
-
-// CreateRenderPipelineAsyncCallbackInfo implementation
-
-CreateRenderPipelineAsyncCallbackInfo::operator const WGPUCreateRenderPipelineAsyncCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUCreateRenderPipelineAsyncCallbackInfo*>(this);
-}
-
-// CreateRenderPipelineAsyncCallbackInfo2 implementation
-
-CreateRenderPipelineAsyncCallbackInfo2::operator const WGPUCreateRenderPipelineAsyncCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUCreateRenderPipelineAsyncCallbackInfo2*>(this);
 }
 
 // AHardwareBufferProperties implementation
@@ -503,121 +394,225 @@ AHardwareBufferProperties::operator const WGPUAHardwareBufferProperties&() const
     return *reinterpret_cast<const WGPUAHardwareBufferProperties*>(this);
 }
 
-// DeviceLostCallbackInfo implementation
-
-DeviceLostCallbackInfo::operator const WGPUDeviceLostCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUDeviceLostCallbackInfo*>(this);
-}
-
-// DeviceLostCallbackInfo2 implementation
-
-DeviceLostCallbackInfo2::operator const WGPUDeviceLostCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUDeviceLostCallbackInfo2*>(this);
-}
-
-// UncapturedErrorCallbackInfo implementation
-
-UncapturedErrorCallbackInfo::operator const WGPUUncapturedErrorCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUUncapturedErrorCallbackInfo*>(this);
-}
-
-// UncapturedErrorCallbackInfo2 implementation
-
-UncapturedErrorCallbackInfo2::operator const WGPUUncapturedErrorCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUUncapturedErrorCallbackInfo2*>(this);
-}
-
-// PopErrorScopeCallbackInfo implementation
-
-PopErrorScopeCallbackInfo::operator const WGPUPopErrorScopeCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUPopErrorScopeCallbackInfo*>(this);
-}
-
-// PopErrorScopeCallbackInfo2 implementation
-
-PopErrorScopeCallbackInfo2::operator const WGPUPopErrorScopeCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUPopErrorScopeCallbackInfo2*>(this);
-}
-
 // Limits implementation
 
 Limits::operator const WGPULimits&() const noexcept {
     return *reinterpret_cast<const WGPULimits*>(this);
 }
 
-// DawnExperimentalSubgroupLimits implementation
-
-DawnExperimentalSubgroupLimits::operator const WGPUDawnExperimentalSubgroupLimits&() const noexcept {
-    return *reinterpret_cast<const WGPUDawnExperimentalSubgroupLimits*>(this);
-}
-
-DawnExperimentalSubgroupLimits::DawnExperimentalSubgroupLimits()
-: ChainedStructOut { nullptr, SType::DawnExperimentalSubgroupLimits } {}
-
-struct DawnExperimentalSubgroupLimits::Init {
-    ChainedStructOut * const nextInChain = nullptr;
-    uint32_t const minSubgroupSize = WGPU_LIMIT_U32_UNDEFINED;
-    uint32_t const maxSubgroupSize = WGPU_LIMIT_U32_UNDEFINED;
-};
-DawnExperimentalSubgroupLimits::DawnExperimentalSubgroupLimits(DawnExperimentalSubgroupLimits::Init&& init)
-: ChainedStructOut { init.nextInChain, SType::DawnExperimentalSubgroupLimits }
-    ,minSubgroupSize(std::move(init.minSubgroupSize))
-    ,maxSubgroupSize(std::move(init.maxSubgroupSize))
-    {}
-DawnExperimentalSubgroupLimits::~DawnExperimentalSubgroupLimits() {
+Limits::~Limits() {
     FreeMembers();
 }
-void DawnExperimentalSubgroupLimits::FreeMembers() {
+void Limits::FreeMembers() {
     // Free members here
 }
 
-DawnExperimentalSubgroupLimits::DawnExperimentalSubgroupLimits(DawnExperimentalSubgroupLimits&& rhs) :
-    minSubgroupSize(rhs.minSubgroupSize),    
-    maxSubgroupSize(rhs.maxSubgroupSize)    
-{}
-DawnExperimentalSubgroupLimits& DawnExperimentalSubgroupLimits::operator=(DawnExperimentalSubgroupLimits&& rhs) {
-if (&rhs == this) {
-    return *this;
-}
-FreeMembers();
-
-    ::wgpu::detail::AsNonConstReference(this->minSubgroupSize) = std::move(rhs.minSubgroupSize);    
-    ::wgpu::detail::AsNonConstReference(this->maxSubgroupSize) = std::move(rhs.maxSubgroupSize);    
-    return *this;    
-}
-// RequiredLimits implementation
-
-RequiredLimits::operator const WGPURequiredLimits&() const noexcept {
-    return *reinterpret_cast<const WGPURequiredLimits*>(this);
-}
-
-// SupportedLimits implementation
-
-SupportedLimits::operator const WGPUSupportedLimits&() const noexcept {
-    return *reinterpret_cast<const WGPUSupportedLimits*>(this);
-}
-
-SupportedLimits::~SupportedLimits() {
-    FreeMembers();
-}
-void SupportedLimits::FreeMembers() {
-    // Free members here
-}
-
-SupportedLimits::SupportedLimits(SupportedLimits&& rhs) :
+Limits::Limits(Limits&& rhs) :
     nextInChain(rhs.nextInChain),    
-    limits(rhs.limits)    
+    maxTextureDimension1D(rhs.maxTextureDimension1D),    
+    maxTextureDimension2D(rhs.maxTextureDimension2D),    
+    maxTextureDimension3D(rhs.maxTextureDimension3D),    
+    maxTextureArrayLayers(rhs.maxTextureArrayLayers),    
+    maxBindGroups(rhs.maxBindGroups),    
+    maxBindGroupsPlusVertexBuffers(rhs.maxBindGroupsPlusVertexBuffers),    
+    maxBindingsPerBindGroup(rhs.maxBindingsPerBindGroup),    
+    maxDynamicUniformBuffersPerPipelineLayout(rhs.maxDynamicUniformBuffersPerPipelineLayout),    
+    maxDynamicStorageBuffersPerPipelineLayout(rhs.maxDynamicStorageBuffersPerPipelineLayout),    
+    maxSampledTexturesPerShaderStage(rhs.maxSampledTexturesPerShaderStage),    
+    maxSamplersPerShaderStage(rhs.maxSamplersPerShaderStage),    
+    maxStorageBuffersPerShaderStage(rhs.maxStorageBuffersPerShaderStage),    
+    maxStorageTexturesPerShaderStage(rhs.maxStorageTexturesPerShaderStage),    
+    maxUniformBuffersPerShaderStage(rhs.maxUniformBuffersPerShaderStage),    
+    maxUniformBufferBindingSize(rhs.maxUniformBufferBindingSize),    
+    maxStorageBufferBindingSize(rhs.maxStorageBufferBindingSize),    
+    minUniformBufferOffsetAlignment(rhs.minUniformBufferOffsetAlignment),    
+    minStorageBufferOffsetAlignment(rhs.minStorageBufferOffsetAlignment),    
+    maxVertexBuffers(rhs.maxVertexBuffers),    
+    maxBufferSize(rhs.maxBufferSize),    
+    maxVertexAttributes(rhs.maxVertexAttributes),    
+    maxVertexBufferArrayStride(rhs.maxVertexBufferArrayStride),    
+    maxInterStageShaderVariables(rhs.maxInterStageShaderVariables),    
+    maxColorAttachments(rhs.maxColorAttachments),    
+    maxColorAttachmentBytesPerSample(rhs.maxColorAttachmentBytesPerSample),    
+    maxComputeWorkgroupStorageSize(rhs.maxComputeWorkgroupStorageSize),    
+    maxComputeInvocationsPerWorkgroup(rhs.maxComputeInvocationsPerWorkgroup),    
+    maxComputeWorkgroupSizeX(rhs.maxComputeWorkgroupSizeX),    
+    maxComputeWorkgroupSizeY(rhs.maxComputeWorkgroupSizeY),    
+    maxComputeWorkgroupSizeZ(rhs.maxComputeWorkgroupSizeZ),    
+    maxComputeWorkgroupsPerDimension(rhs.maxComputeWorkgroupsPerDimension),    
+    maxStorageBuffersInVertexStage(rhs.maxStorageBuffersInVertexStage),    
+    maxStorageTexturesInVertexStage(rhs.maxStorageTexturesInVertexStage),    
+    maxStorageBuffersInFragmentStage(rhs.maxStorageBuffersInFragmentStage),    
+    maxStorageTexturesInFragmentStage(rhs.maxStorageTexturesInFragmentStage)    
 {}
-SupportedLimits& SupportedLimits::operator=(SupportedLimits&& rhs) {
+Limits& Limits::operator=(Limits&& rhs) {
 if (&rhs == this) {
     return *this;
 }
 FreeMembers();
 
     ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->limits) = std::move(rhs.limits);    
+    ::wgpu::detail::AsNonConstReference(this->maxTextureDimension1D) = std::move(rhs.maxTextureDimension1D);    
+    ::wgpu::detail::AsNonConstReference(this->maxTextureDimension2D) = std::move(rhs.maxTextureDimension2D);    
+    ::wgpu::detail::AsNonConstReference(this->maxTextureDimension3D) = std::move(rhs.maxTextureDimension3D);    
+    ::wgpu::detail::AsNonConstReference(this->maxTextureArrayLayers) = std::move(rhs.maxTextureArrayLayers);    
+    ::wgpu::detail::AsNonConstReference(this->maxBindGroups) = std::move(rhs.maxBindGroups);    
+    ::wgpu::detail::AsNonConstReference(this->maxBindGroupsPlusVertexBuffers) = std::move(rhs.maxBindGroupsPlusVertexBuffers);    
+    ::wgpu::detail::AsNonConstReference(this->maxBindingsPerBindGroup) = std::move(rhs.maxBindingsPerBindGroup);    
+    ::wgpu::detail::AsNonConstReference(this->maxDynamicUniformBuffersPerPipelineLayout) = std::move(rhs.maxDynamicUniformBuffersPerPipelineLayout);    
+    ::wgpu::detail::AsNonConstReference(this->maxDynamicStorageBuffersPerPipelineLayout) = std::move(rhs.maxDynamicStorageBuffersPerPipelineLayout);    
+    ::wgpu::detail::AsNonConstReference(this->maxSampledTexturesPerShaderStage) = std::move(rhs.maxSampledTexturesPerShaderStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxSamplersPerShaderStage) = std::move(rhs.maxSamplersPerShaderStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxStorageBuffersPerShaderStage) = std::move(rhs.maxStorageBuffersPerShaderStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxStorageTexturesPerShaderStage) = std::move(rhs.maxStorageTexturesPerShaderStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxUniformBuffersPerShaderStage) = std::move(rhs.maxUniformBuffersPerShaderStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxUniformBufferBindingSize) = std::move(rhs.maxUniformBufferBindingSize);    
+    ::wgpu::detail::AsNonConstReference(this->maxStorageBufferBindingSize) = std::move(rhs.maxStorageBufferBindingSize);    
+    ::wgpu::detail::AsNonConstReference(this->minUniformBufferOffsetAlignment) = std::move(rhs.minUniformBufferOffsetAlignment);    
+    ::wgpu::detail::AsNonConstReference(this->minStorageBufferOffsetAlignment) = std::move(rhs.minStorageBufferOffsetAlignment);    
+    ::wgpu::detail::AsNonConstReference(this->maxVertexBuffers) = std::move(rhs.maxVertexBuffers);    
+    ::wgpu::detail::AsNonConstReference(this->maxBufferSize) = std::move(rhs.maxBufferSize);    
+    ::wgpu::detail::AsNonConstReference(this->maxVertexAttributes) = std::move(rhs.maxVertexAttributes);    
+    ::wgpu::detail::AsNonConstReference(this->maxVertexBufferArrayStride) = std::move(rhs.maxVertexBufferArrayStride);    
+    ::wgpu::detail::AsNonConstReference(this->maxInterStageShaderVariables) = std::move(rhs.maxInterStageShaderVariables);    
+    ::wgpu::detail::AsNonConstReference(this->maxColorAttachments) = std::move(rhs.maxColorAttachments);    
+    ::wgpu::detail::AsNonConstReference(this->maxColorAttachmentBytesPerSample) = std::move(rhs.maxColorAttachmentBytesPerSample);    
+    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupStorageSize) = std::move(rhs.maxComputeWorkgroupStorageSize);    
+    ::wgpu::detail::AsNonConstReference(this->maxComputeInvocationsPerWorkgroup) = std::move(rhs.maxComputeInvocationsPerWorkgroup);    
+    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeX) = std::move(rhs.maxComputeWorkgroupSizeX);    
+    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeY) = std::move(rhs.maxComputeWorkgroupSizeY);    
+    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeZ) = std::move(rhs.maxComputeWorkgroupSizeZ);    
+    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupsPerDimension) = std::move(rhs.maxComputeWorkgroupsPerDimension);    
+    ::wgpu::detail::AsNonConstReference(this->maxStorageBuffersInVertexStage) = std::move(rhs.maxStorageBuffersInVertexStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxStorageTexturesInVertexStage) = std::move(rhs.maxStorageTexturesInVertexStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxStorageBuffersInFragmentStage) = std::move(rhs.maxStorageBuffersInFragmentStage);    
+    ::wgpu::detail::AsNonConstReference(this->maxStorageTexturesInFragmentStage) = std::move(rhs.maxStorageTexturesInFragmentStage);    
     return *this;    
 }
+// AdapterPropertiesSubgroups implementation
+
+AdapterPropertiesSubgroups::operator const WGPUAdapterPropertiesSubgroups&() const noexcept {
+    return *reinterpret_cast<const WGPUAdapterPropertiesSubgroups*>(this);
+}
+
+AdapterPropertiesSubgroups::AdapterPropertiesSubgroups()
+: ChainedStructOut { nullptr, SType::AdapterPropertiesSubgroups } {}
+
+struct AdapterPropertiesSubgroups::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    uint32_t const subgroupMinSize = kLimitU32Undefined;
+    uint32_t const subgroupMaxSize = kLimitU32Undefined;
+};
+AdapterPropertiesSubgroups::AdapterPropertiesSubgroups(AdapterPropertiesSubgroups::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::AdapterPropertiesSubgroups }
+    ,subgroupMinSize(std::move(init.subgroupMinSize))
+    ,subgroupMaxSize(std::move(init.subgroupMaxSize))
+    {}
+AdapterPropertiesSubgroups::~AdapterPropertiesSubgroups() {
+    FreeMembers();
+}
+void AdapterPropertiesSubgroups::FreeMembers() {
+    // Free members here
+}
+
+AdapterPropertiesSubgroups::AdapterPropertiesSubgroups(AdapterPropertiesSubgroups&& rhs) :
+    subgroupMinSize(rhs.subgroupMinSize),    
+    subgroupMaxSize(rhs.subgroupMaxSize)    
+{}
+AdapterPropertiesSubgroups& AdapterPropertiesSubgroups::operator=(AdapterPropertiesSubgroups&& rhs) {
+if (&rhs == this) {
+    return *this;
+}
+FreeMembers();
+
+    ::wgpu::detail::AsNonConstReference(this->subgroupMinSize) = std::move(rhs.subgroupMinSize);    
+    ::wgpu::detail::AsNonConstReference(this->subgroupMaxSize) = std::move(rhs.subgroupMaxSize);    
+    return *this;    
+}
+// DawnExperimentalImmediateDataLimits implementation
+
+DawnExperimentalImmediateDataLimits::operator const WGPUDawnExperimentalImmediateDataLimits&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnExperimentalImmediateDataLimits*>(this);
+}
+
+DawnExperimentalImmediateDataLimits::DawnExperimentalImmediateDataLimits()
+: ChainedStructOut { nullptr, SType::DawnExperimentalImmediateDataLimits } {}
+
+struct DawnExperimentalImmediateDataLimits::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    uint32_t const maxImmediateDataRangeByteSize = kLimitU32Undefined;
+};
+DawnExperimentalImmediateDataLimits::DawnExperimentalImmediateDataLimits(DawnExperimentalImmediateDataLimits::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::DawnExperimentalImmediateDataLimits }
+    ,maxImmediateDataRangeByteSize(std::move(init.maxImmediateDataRangeByteSize))
+    {}
+DawnExperimentalImmediateDataLimits::~DawnExperimentalImmediateDataLimits() {
+    FreeMembers();
+}
+void DawnExperimentalImmediateDataLimits::FreeMembers() {
+    // Free members here
+}
+
+DawnExperimentalImmediateDataLimits::DawnExperimentalImmediateDataLimits(DawnExperimentalImmediateDataLimits&& rhs) :
+    maxImmediateDataRangeByteSize(rhs.maxImmediateDataRangeByteSize)    
+{}
+DawnExperimentalImmediateDataLimits& DawnExperimentalImmediateDataLimits::operator=(DawnExperimentalImmediateDataLimits&& rhs) {
+if (&rhs == this) {
+    return *this;
+}
+FreeMembers();
+
+    ::wgpu::detail::AsNonConstReference(this->maxImmediateDataRangeByteSize) = std::move(rhs.maxImmediateDataRangeByteSize);    
+    return *this;    
+}
+// DawnTexelCopyBufferRowAlignmentLimits implementation
+
+DawnTexelCopyBufferRowAlignmentLimits::operator const WGPUDawnTexelCopyBufferRowAlignmentLimits&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnTexelCopyBufferRowAlignmentLimits*>(this);
+}
+
+DawnTexelCopyBufferRowAlignmentLimits::DawnTexelCopyBufferRowAlignmentLimits()
+: ChainedStructOut { nullptr, SType::DawnTexelCopyBufferRowAlignmentLimits } {}
+
+struct DawnTexelCopyBufferRowAlignmentLimits::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    uint32_t const minTexelCopyBufferRowAlignment = kLimitU32Undefined;
+};
+DawnTexelCopyBufferRowAlignmentLimits::DawnTexelCopyBufferRowAlignmentLimits(DawnTexelCopyBufferRowAlignmentLimits::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::DawnTexelCopyBufferRowAlignmentLimits }
+    ,minTexelCopyBufferRowAlignment(std::move(init.minTexelCopyBufferRowAlignment))
+    {}
+DawnTexelCopyBufferRowAlignmentLimits::~DawnTexelCopyBufferRowAlignmentLimits() {
+    FreeMembers();
+}
+void DawnTexelCopyBufferRowAlignmentLimits::FreeMembers() {
+    // Free members here
+}
+
+DawnTexelCopyBufferRowAlignmentLimits::DawnTexelCopyBufferRowAlignmentLimits(DawnTexelCopyBufferRowAlignmentLimits&& rhs) :
+    minTexelCopyBufferRowAlignment(rhs.minTexelCopyBufferRowAlignment)    
+{}
+DawnTexelCopyBufferRowAlignmentLimits& DawnTexelCopyBufferRowAlignmentLimits::operator=(DawnTexelCopyBufferRowAlignmentLimits&& rhs) {
+if (&rhs == this) {
+    return *this;
+}
+FreeMembers();
+
+    ::wgpu::detail::AsNonConstReference(this->minTexelCopyBufferRowAlignment) = std::move(rhs.minTexelCopyBufferRowAlignment);    
+    return *this;    
+}
+// SupportedFeatures implementation
+
+SupportedFeatures::operator const WGPUSupportedFeatures&() const noexcept {
+    return *reinterpret_cast<const WGPUSupportedFeatures*>(this);
+}
+
+// SupportedWGSLLanguageFeatures implementation
+
+SupportedWGSLLanguageFeatures::operator const WGPUSupportedWGSLLanguageFeatures&() const noexcept {
+    return *reinterpret_cast<const WGPUSupportedWGSLLanguageFeatures*>(this);
+}
+
 // Extent2D implementation
 
 Extent2D::operator const WGPUExtent2D&() const noexcept {
@@ -925,10 +920,12 @@ SharedTextureMemoryIOSurfaceDescriptor::SharedTextureMemoryIOSurfaceDescriptor()
 struct SharedTextureMemoryIOSurfaceDescriptor::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * ioSurface;
+    Bool allowStorageBinding = true;
 };
 SharedTextureMemoryIOSurfaceDescriptor::SharedTextureMemoryIOSurfaceDescriptor(SharedTextureMemoryIOSurfaceDescriptor::Init&& init)
 : ChainedStruct { init.nextInChain, SType::SharedTextureMemoryIOSurfaceDescriptor }
     ,ioSurface(std::move(init.ioSurface))
+    ,allowStorageBinding(std::move(init.allowStorageBinding))
     {}
 // SharedTextureMemoryEGLImageDescriptor implementation
 
@@ -1085,21 +1082,21 @@ SharedFenceVkSemaphoreOpaqueFDDescriptor::SharedFenceVkSemaphoreOpaqueFDDescript
 : ChainedStruct { init.nextInChain, SType::SharedFenceVkSemaphoreOpaqueFDDescriptor }
     ,handle(std::move(init.handle))
     {}
-// SharedFenceVkSemaphoreSyncFDDescriptor implementation
+// SharedFenceSyncFDDescriptor implementation
 
-SharedFenceVkSemaphoreSyncFDDescriptor::operator const WGPUSharedFenceVkSemaphoreSyncFDDescriptor&() const noexcept {
-    return *reinterpret_cast<const WGPUSharedFenceVkSemaphoreSyncFDDescriptor*>(this);
+SharedFenceSyncFDDescriptor::operator const WGPUSharedFenceSyncFDDescriptor&() const noexcept {
+    return *reinterpret_cast<const WGPUSharedFenceSyncFDDescriptor*>(this);
 }
 
-SharedFenceVkSemaphoreSyncFDDescriptor::SharedFenceVkSemaphoreSyncFDDescriptor()
-: ChainedStruct { nullptr, SType::SharedFenceVkSemaphoreSyncFDDescriptor } {}
+SharedFenceSyncFDDescriptor::SharedFenceSyncFDDescriptor()
+: ChainedStruct { nullptr, SType::SharedFenceSyncFDDescriptor } {}
 
-struct SharedFenceVkSemaphoreSyncFDDescriptor::Init {
+struct SharedFenceSyncFDDescriptor::Init {
     ChainedStruct const * nextInChain = nullptr;
     int handle;
 };
-SharedFenceVkSemaphoreSyncFDDescriptor::SharedFenceVkSemaphoreSyncFDDescriptor(SharedFenceVkSemaphoreSyncFDDescriptor::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SharedFenceVkSemaphoreSyncFDDescriptor }
+SharedFenceSyncFDDescriptor::SharedFenceSyncFDDescriptor(SharedFenceSyncFDDescriptor::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SharedFenceSyncFDDescriptor }
     ,handle(std::move(init.handle))
     {}
 // SharedFenceVkSemaphoreZirconHandleDescriptor implementation
@@ -1152,6 +1149,44 @@ struct SharedFenceMTLSharedEventDescriptor::Init {
 SharedFenceMTLSharedEventDescriptor::SharedFenceMTLSharedEventDescriptor(SharedFenceMTLSharedEventDescriptor::Init&& init)
 : ChainedStruct { init.nextInChain, SType::SharedFenceMTLSharedEventDescriptor }
     ,sharedEvent(std::move(init.sharedEvent))
+    {}
+// SharedFenceEGLSyncDescriptor implementation
+
+SharedFenceEGLSyncDescriptor::operator const WGPUSharedFenceEGLSyncDescriptor&() const noexcept {
+    return *reinterpret_cast<const WGPUSharedFenceEGLSyncDescriptor*>(this);
+}
+
+SharedFenceEGLSyncDescriptor::SharedFenceEGLSyncDescriptor()
+: ChainedStruct { nullptr, SType::SharedFenceEGLSyncDescriptor } {}
+
+struct SharedFenceEGLSyncDescriptor::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    void * sync;
+};
+SharedFenceEGLSyncDescriptor::SharedFenceEGLSyncDescriptor(SharedFenceEGLSyncDescriptor::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SharedFenceEGLSyncDescriptor }
+    ,sync(std::move(init.sync))
+    {}
+// DawnFakeBufferOOMForTesting implementation
+
+DawnFakeBufferOOMForTesting::operator const WGPUDawnFakeBufferOOMForTesting&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnFakeBufferOOMForTesting*>(this);
+}
+
+DawnFakeBufferOOMForTesting::DawnFakeBufferOOMForTesting()
+: ChainedStruct { nullptr, SType::DawnFakeBufferOOMForTesting } {}
+
+struct DawnFakeBufferOOMForTesting::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    Bool fakeOOMAtWireClientMap;
+    Bool fakeOOMAtNativeMap;
+    Bool fakeOOMAtDevice;
+};
+DawnFakeBufferOOMForTesting::DawnFakeBufferOOMForTesting(DawnFakeBufferOOMForTesting::Init&& init)
+: ChainedStruct { init.nextInChain, SType::DawnFakeBufferOOMForTesting }
+    ,fakeOOMAtWireClientMap(std::move(init.fakeOOMAtWireClientMap))
+    ,fakeOOMAtNativeMap(std::move(init.fakeOOMAtNativeMap))
+    ,fakeOOMAtDevice(std::move(init.fakeOOMAtDevice))
     {}
 // SharedFenceExportInfo implementation
 
@@ -1216,34 +1251,34 @@ FreeMembers();
     ::wgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
     return *this;    
 }
-// SharedFenceVkSemaphoreSyncFDExportInfo implementation
+// SharedFenceSyncFDExportInfo implementation
 
-SharedFenceVkSemaphoreSyncFDExportInfo::operator const WGPUSharedFenceVkSemaphoreSyncFDExportInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUSharedFenceVkSemaphoreSyncFDExportInfo*>(this);
+SharedFenceSyncFDExportInfo::operator const WGPUSharedFenceSyncFDExportInfo&() const noexcept {
+    return *reinterpret_cast<const WGPUSharedFenceSyncFDExportInfo*>(this);
 }
 
-SharedFenceVkSemaphoreSyncFDExportInfo::SharedFenceVkSemaphoreSyncFDExportInfo()
-: ChainedStructOut { nullptr, SType::SharedFenceVkSemaphoreSyncFDExportInfo } {}
+SharedFenceSyncFDExportInfo::SharedFenceSyncFDExportInfo()
+: ChainedStructOut { nullptr, SType::SharedFenceSyncFDExportInfo } {}
 
-struct SharedFenceVkSemaphoreSyncFDExportInfo::Init {
+struct SharedFenceSyncFDExportInfo::Init {
     ChainedStructOut * const nextInChain = nullptr;
     int const handle = {};
 };
-SharedFenceVkSemaphoreSyncFDExportInfo::SharedFenceVkSemaphoreSyncFDExportInfo(SharedFenceVkSemaphoreSyncFDExportInfo::Init&& init)
-: ChainedStructOut { init.nextInChain, SType::SharedFenceVkSemaphoreSyncFDExportInfo }
+SharedFenceSyncFDExportInfo::SharedFenceSyncFDExportInfo(SharedFenceSyncFDExportInfo::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::SharedFenceSyncFDExportInfo }
     ,handle(std::move(init.handle))
     {}
-SharedFenceVkSemaphoreSyncFDExportInfo::~SharedFenceVkSemaphoreSyncFDExportInfo() {
+SharedFenceSyncFDExportInfo::~SharedFenceSyncFDExportInfo() {
     FreeMembers();
 }
-void SharedFenceVkSemaphoreSyncFDExportInfo::FreeMembers() {
+void SharedFenceSyncFDExportInfo::FreeMembers() {
     // Free members here
 }
 
-SharedFenceVkSemaphoreSyncFDExportInfo::SharedFenceVkSemaphoreSyncFDExportInfo(SharedFenceVkSemaphoreSyncFDExportInfo&& rhs) :
+SharedFenceSyncFDExportInfo::SharedFenceSyncFDExportInfo(SharedFenceSyncFDExportInfo&& rhs) :
     handle(rhs.handle)    
 {}
-SharedFenceVkSemaphoreSyncFDExportInfo& SharedFenceVkSemaphoreSyncFDExportInfo::operator=(SharedFenceVkSemaphoreSyncFDExportInfo&& rhs) {
+SharedFenceSyncFDExportInfo& SharedFenceSyncFDExportInfo::operator=(SharedFenceSyncFDExportInfo&& rhs) {
 if (&rhs == this) {
     return *this;
 }
@@ -1360,23 +1395,59 @@ FreeMembers();
     ::wgpu::detail::AsNonConstReference(this->sharedEvent) = std::move(rhs.sharedEvent);    
     return *this;    
 }
-// FormatCapabilities implementation
+// SharedFenceEGLSyncExportInfo implementation
 
-FormatCapabilities::operator const WGPUFormatCapabilities&() const noexcept {
-    return *reinterpret_cast<const WGPUFormatCapabilities*>(this);
+SharedFenceEGLSyncExportInfo::operator const WGPUSharedFenceEGLSyncExportInfo&() const noexcept {
+    return *reinterpret_cast<const WGPUSharedFenceEGLSyncExportInfo*>(this);
 }
 
-FormatCapabilities::~FormatCapabilities() {
+SharedFenceEGLSyncExportInfo::SharedFenceEGLSyncExportInfo()
+: ChainedStructOut { nullptr, SType::SharedFenceEGLSyncExportInfo } {}
+
+struct SharedFenceEGLSyncExportInfo::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    void * const sync = {};
+};
+SharedFenceEGLSyncExportInfo::SharedFenceEGLSyncExportInfo(SharedFenceEGLSyncExportInfo::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::SharedFenceEGLSyncExportInfo }
+    ,sync(std::move(init.sync))
+    {}
+SharedFenceEGLSyncExportInfo::~SharedFenceEGLSyncExportInfo() {
     FreeMembers();
 }
-void FormatCapabilities::FreeMembers() {
+void SharedFenceEGLSyncExportInfo::FreeMembers() {
     // Free members here
 }
 
-FormatCapabilities::FormatCapabilities(FormatCapabilities&& rhs) :
+SharedFenceEGLSyncExportInfo::SharedFenceEGLSyncExportInfo(SharedFenceEGLSyncExportInfo&& rhs) :
+    sync(rhs.sync)    
+{}
+SharedFenceEGLSyncExportInfo& SharedFenceEGLSyncExportInfo::operator=(SharedFenceEGLSyncExportInfo&& rhs) {
+if (&rhs == this) {
+    return *this;
+}
+FreeMembers();
+
+    ::wgpu::detail::AsNonConstReference(this->sync) = std::move(rhs.sync);    
+    return *this;    
+}
+// DawnFormatCapabilities implementation
+
+DawnFormatCapabilities::operator const WGPUDawnFormatCapabilities&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnFormatCapabilities*>(this);
+}
+
+DawnFormatCapabilities::~DawnFormatCapabilities() {
+    FreeMembers();
+}
+void DawnFormatCapabilities::FreeMembers() {
+    // Free members here
+}
+
+DawnFormatCapabilities::DawnFormatCapabilities(DawnFormatCapabilities&& rhs) :
     nextInChain(rhs.nextInChain)    
 {}
-FormatCapabilities& FormatCapabilities::operator=(FormatCapabilities&& rhs) {
+DawnFormatCapabilities& DawnFormatCapabilities::operator=(DawnFormatCapabilities&& rhs) {
 if (&rhs == this) {
     return *this;
 }
@@ -1385,37 +1456,37 @@ FreeMembers();
     ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
     return *this;    
 }
-// DrmFormatCapabilities implementation
+// DawnDrmFormatCapabilities implementation
 
-DrmFormatCapabilities::operator const WGPUDrmFormatCapabilities&() const noexcept {
-    return *reinterpret_cast<const WGPUDrmFormatCapabilities*>(this);
+DawnDrmFormatCapabilities::operator const WGPUDawnDrmFormatCapabilities&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnDrmFormatCapabilities*>(this);
 }
 
-DrmFormatCapabilities::DrmFormatCapabilities()
-: ChainedStructOut { nullptr, SType::DrmFormatCapabilities } {}
+DawnDrmFormatCapabilities::DawnDrmFormatCapabilities()
+: ChainedStructOut { nullptr, SType::DawnDrmFormatCapabilities } {}
 
-struct DrmFormatCapabilities::Init {
+struct DawnDrmFormatCapabilities::Init {
     ChainedStructOut * const nextInChain = nullptr;
     size_t const propertiesCount = {};
-    DrmFormatProperties const * const properties = {};
+    DawnDrmFormatProperties const * const properties = {};
 };
-DrmFormatCapabilities::DrmFormatCapabilities(DrmFormatCapabilities::Init&& init)
-: ChainedStructOut { init.nextInChain, SType::DrmFormatCapabilities }
+DawnDrmFormatCapabilities::DawnDrmFormatCapabilities(DawnDrmFormatCapabilities::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::DawnDrmFormatCapabilities }
     ,propertiesCount(std::move(init.propertiesCount))
     ,properties(std::move(init.properties))
     {}
-DrmFormatCapabilities::~DrmFormatCapabilities() {
+DawnDrmFormatCapabilities::~DawnDrmFormatCapabilities() {
     FreeMembers();
 }
-void DrmFormatCapabilities::FreeMembers() {
+void DawnDrmFormatCapabilities::FreeMembers() {
     // Free members here
 }
 
-DrmFormatCapabilities::DrmFormatCapabilities(DrmFormatCapabilities&& rhs) :
+DawnDrmFormatCapabilities::DawnDrmFormatCapabilities(DawnDrmFormatCapabilities&& rhs) :
     propertiesCount(rhs.propertiesCount),    
     properties(rhs.properties)    
 {}
-DrmFormatCapabilities& DrmFormatCapabilities::operator=(DrmFormatCapabilities&& rhs) {
+DawnDrmFormatCapabilities& DawnDrmFormatCapabilities::operator=(DawnDrmFormatCapabilities&& rhs) {
 if (&rhs == this) {
     return *this;
 }
@@ -1425,22 +1496,28 @@ FreeMembers();
     ::wgpu::detail::AsNonConstReference(this->properties) = std::move(rhs.properties);    
     return *this;    
 }
-// DrmFormatProperties implementation
+// DawnDrmFormatProperties implementation
 
-DrmFormatProperties::operator const WGPUDrmFormatProperties&() const noexcept {
-    return *reinterpret_cast<const WGPUDrmFormatProperties*>(this);
+DawnDrmFormatProperties::operator const WGPUDawnDrmFormatProperties&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnDrmFormatProperties*>(this);
 }
 
-// ImageCopyBuffer implementation
+// TexelCopyBufferInfo implementation
 
-ImageCopyBuffer::operator const WGPUImageCopyBuffer&() const noexcept {
-    return *reinterpret_cast<const WGPUImageCopyBuffer*>(this);
+TexelCopyBufferInfo::operator const WGPUTexelCopyBufferInfo&() const noexcept {
+    return *reinterpret_cast<const WGPUTexelCopyBufferInfo*>(this);
 }
 
-// ImageCopyTexture implementation
+// TexelCopyBufferLayout implementation
 
-ImageCopyTexture::operator const WGPUImageCopyTexture&() const noexcept {
-    return *reinterpret_cast<const WGPUImageCopyTexture*>(this);
+TexelCopyBufferLayout::operator const WGPUTexelCopyBufferLayout&() const noexcept {
+    return *reinterpret_cast<const WGPUTexelCopyBufferLayout*>(this);
+}
+
+// TexelCopyTextureInfo implementation
+
+TexelCopyTextureInfo::operator const WGPUTexelCopyTextureInfo&() const noexcept {
+    return *reinterpret_cast<const WGPUTexelCopyTextureInfo*>(this);
 }
 
 // ImageCopyExternalTexture implementation
@@ -1461,10 +1538,10 @@ FutureWaitInfo::operator const WGPUFutureWaitInfo&() const noexcept {
     return *reinterpret_cast<const WGPUFutureWaitInfo*>(this);
 }
 
-// InstanceFeatures implementation
+// InstanceCapabilities implementation
 
-InstanceFeatures::operator const WGPUInstanceFeatures&() const noexcept {
-    return *reinterpret_cast<const WGPUInstanceFeatures*>(this);
+InstanceCapabilities::operator const WGPUInstanceCapabilities&() const noexcept {
+    return *reinterpret_cast<const WGPUInstanceCapabilities*>(this);
 }
 
 // InstanceDescriptor implementation
@@ -1494,6 +1571,23 @@ DawnWireWGSLControl::DawnWireWGSLControl(DawnWireWGSLControl::Init&& init)
     ,enableUnsafe(std::move(init.enableUnsafe))
     ,enableTesting(std::move(init.enableTesting))
     {}
+// DawnInjectedInvalidSType implementation
+
+DawnInjectedInvalidSType::operator const WGPUDawnInjectedInvalidSType&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnInjectedInvalidSType*>(this);
+}
+
+DawnInjectedInvalidSType::DawnInjectedInvalidSType()
+: ChainedStruct { nullptr, SType::DawnInjectedInvalidSType } {}
+
+struct DawnInjectedInvalidSType::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    SType invalidSType;
+};
+DawnInjectedInvalidSType::DawnInjectedInvalidSType(DawnInjectedInvalidSType::Init&& init)
+: ChainedStruct { init.nextInChain, SType::DawnInjectedInvalidSType }
+    ,invalidSType(std::move(init.invalidSType))
+    {}
 // VertexAttribute implementation
 
 VertexAttribute::operator const WGPUVertexAttribute&() const noexcept {
@@ -1516,6 +1610,12 @@ Origin3D::operator const WGPUOrigin3D&() const noexcept {
 
 Origin2D::operator const WGPUOrigin2D&() const noexcept {
     return *reinterpret_cast<const WGPUOrigin2D*>(this);
+}
+
+// PassTimestampWrites implementation
+
+PassTimestampWrites::operator const WGPUPassTimestampWrites&() const noexcept {
+    return *reinterpret_cast<const WGPUPassTimestampWrites*>(this);
 }
 
 // PipelineLayoutDescriptor implementation
@@ -1551,10 +1651,10 @@ PipelineLayoutStorageAttachment::operator const WGPUPipelineLayoutStorageAttachm
     return *reinterpret_cast<const WGPUPipelineLayoutStorageAttachment*>(this);
 }
 
-// ProgrammableStageDescriptor implementation
+// ComputeState implementation
 
-ProgrammableStageDescriptor::operator const WGPUProgrammableStageDescriptor&() const noexcept {
-    return *reinterpret_cast<const WGPUProgrammableStageDescriptor*>(this);
+ComputeState::operator const WGPUComputeState&() const noexcept {
+    return *reinterpret_cast<const WGPUComputeState*>(this);
 }
 
 // QuerySetDescriptor implementation
@@ -1567,18 +1667,6 @@ QuerySetDescriptor::operator const WGPUQuerySetDescriptor&() const noexcept {
 
 QueueDescriptor::operator const WGPUQueueDescriptor&() const noexcept {
     return *reinterpret_cast<const WGPUQueueDescriptor*>(this);
-}
-
-// QueueWorkDoneCallbackInfo implementation
-
-QueueWorkDoneCallbackInfo::operator const WGPUQueueWorkDoneCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPUQueueWorkDoneCallbackInfo*>(this);
-}
-
-// QueueWorkDoneCallbackInfo2 implementation
-
-QueueWorkDoneCallbackInfo2::operator const WGPUQueueWorkDoneCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPUQueueWorkDoneCallbackInfo2*>(this);
 }
 
 // RenderBundleDescriptor implementation
@@ -1628,22 +1716,45 @@ RenderPassDescriptor::operator const WGPURenderPassDescriptor&() const noexcept 
     return *reinterpret_cast<const WGPURenderPassDescriptor*>(this);
 }
 
-// RenderPassDescriptorMaxDrawCount implementation
+// RenderPassMaxDrawCount implementation
 
-RenderPassDescriptorMaxDrawCount::operator const WGPURenderPassDescriptorMaxDrawCount&() const noexcept {
-    return *reinterpret_cast<const WGPURenderPassDescriptorMaxDrawCount*>(this);
+RenderPassMaxDrawCount::operator const WGPURenderPassMaxDrawCount&() const noexcept {
+    return *reinterpret_cast<const WGPURenderPassMaxDrawCount*>(this);
 }
 
-RenderPassDescriptorMaxDrawCount::RenderPassDescriptorMaxDrawCount()
-: ChainedStruct { nullptr, SType::RenderPassDescriptorMaxDrawCount } {}
+RenderPassMaxDrawCount::RenderPassMaxDrawCount()
+: ChainedStruct { nullptr, SType::RenderPassMaxDrawCount } {}
 
-struct RenderPassDescriptorMaxDrawCount::Init {
+struct RenderPassMaxDrawCount::Init {
     ChainedStruct const * nextInChain = nullptr;
     uint64_t maxDrawCount = 50000000;
 };
-RenderPassDescriptorMaxDrawCount::RenderPassDescriptorMaxDrawCount(RenderPassDescriptorMaxDrawCount::Init&& init)
-: ChainedStruct { init.nextInChain, SType::RenderPassDescriptorMaxDrawCount }
+RenderPassMaxDrawCount::RenderPassMaxDrawCount(RenderPassMaxDrawCount::Init&& init)
+: ChainedStruct { init.nextInChain, SType::RenderPassMaxDrawCount }
     ,maxDrawCount(std::move(init.maxDrawCount))
+    {}
+// RenderPassDescriptorExpandResolveRect implementation
+
+RenderPassDescriptorExpandResolveRect::operator const WGPURenderPassDescriptorExpandResolveRect&() const noexcept {
+    return *reinterpret_cast<const WGPURenderPassDescriptorExpandResolveRect*>(this);
+}
+
+RenderPassDescriptorExpandResolveRect::RenderPassDescriptorExpandResolveRect()
+: ChainedStruct { nullptr, SType::RenderPassDescriptorExpandResolveRect } {}
+
+struct RenderPassDescriptorExpandResolveRect::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    uint32_t x;
+    uint32_t y;
+    uint32_t width;
+    uint32_t height;
+};
+RenderPassDescriptorExpandResolveRect::RenderPassDescriptorExpandResolveRect(RenderPassDescriptorExpandResolveRect::Init&& init)
+: ChainedStruct { init.nextInChain, SType::RenderPassDescriptorExpandResolveRect }
+    ,x(std::move(init.x))
+    ,y(std::move(init.y))
+    ,width(std::move(init.width))
+    ,height(std::move(init.height))
     {}
 // RenderPassPixelLocalStorage implementation
 
@@ -1672,24 +1783,6 @@ RenderPassStorageAttachment::operator const WGPURenderPassStorageAttachment&() c
     return *reinterpret_cast<const WGPURenderPassStorageAttachment*>(this);
 }
 
-// RenderPassTimestampWrites implementation
-
-RenderPassTimestampWrites::operator const WGPURenderPassTimestampWrites&() const noexcept {
-    return *reinterpret_cast<const WGPURenderPassTimestampWrites*>(this);
-}
-
-// RequestDeviceCallbackInfo implementation
-
-RequestDeviceCallbackInfo::operator const WGPURequestDeviceCallbackInfo&() const noexcept {
-    return *reinterpret_cast<const WGPURequestDeviceCallbackInfo*>(this);
-}
-
-// RequestDeviceCallbackInfo2 implementation
-
-RequestDeviceCallbackInfo2::operator const WGPURequestDeviceCallbackInfo2&() const noexcept {
-    return *reinterpret_cast<const WGPURequestDeviceCallbackInfo2*>(this);
-}
-
 // VertexState implementation
 
 VertexState::operator const WGPUVertexState&() const noexcept {
@@ -1702,46 +1795,12 @@ PrimitiveState::operator const WGPUPrimitiveState&() const noexcept {
     return *reinterpret_cast<const WGPUPrimitiveState*>(this);
 }
 
-// PrimitiveDepthClipControl implementation
-
-PrimitiveDepthClipControl::operator const WGPUPrimitiveDepthClipControl&() const noexcept {
-    return *reinterpret_cast<const WGPUPrimitiveDepthClipControl*>(this);
-}
-
-PrimitiveDepthClipControl::PrimitiveDepthClipControl()
-: ChainedStruct { nullptr, SType::PrimitiveDepthClipControl } {}
-
-struct PrimitiveDepthClipControl::Init {
-    ChainedStruct const * nextInChain = nullptr;
-    Bool unclippedDepth = false;
-};
-PrimitiveDepthClipControl::PrimitiveDepthClipControl(PrimitiveDepthClipControl::Init&& init)
-: ChainedStruct { init.nextInChain, SType::PrimitiveDepthClipControl }
-    ,unclippedDepth(std::move(init.unclippedDepth))
-    {}
 // DepthStencilState implementation
 
 DepthStencilState::operator const WGPUDepthStencilState&() const noexcept {
     return *reinterpret_cast<const WGPUDepthStencilState*>(this);
 }
 
-// DepthStencilStateDepthWriteDefinedDawn implementation
-
-DepthStencilStateDepthWriteDefinedDawn::operator const WGPUDepthStencilStateDepthWriteDefinedDawn&() const noexcept {
-    return *reinterpret_cast<const WGPUDepthStencilStateDepthWriteDefinedDawn*>(this);
-}
-
-DepthStencilStateDepthWriteDefinedDawn::DepthStencilStateDepthWriteDefinedDawn()
-: ChainedStruct { nullptr, SType::DepthStencilStateDepthWriteDefinedDawn } {}
-
-struct DepthStencilStateDepthWriteDefinedDawn::Init {
-    ChainedStruct const * nextInChain = nullptr;
-    Bool depthWriteDefined;
-};
-DepthStencilStateDepthWriteDefinedDawn::DepthStencilStateDepthWriteDefinedDawn(DepthStencilStateDepthWriteDefinedDawn::Init&& init)
-: ChainedStruct { init.nextInChain, SType::DepthStencilStateDepthWriteDefinedDawn }
-    ,depthWriteDefined(std::move(init.depthWriteDefined))
-    {}
 // MultisampleState implementation
 
 MultisampleState::operator const WGPUMultisampleState&() const noexcept {
@@ -1801,40 +1860,40 @@ ShaderModuleDescriptor::operator const WGPUShaderModuleDescriptor&() const noexc
     return *reinterpret_cast<const WGPUShaderModuleDescriptor*>(this);
 }
 
-// ShaderModuleSPIRVDescriptor implementation
+// ShaderSourceSPIRV implementation
 
-ShaderModuleSPIRVDescriptor::operator const WGPUShaderModuleSPIRVDescriptor&() const noexcept {
-    return *reinterpret_cast<const WGPUShaderModuleSPIRVDescriptor*>(this);
+ShaderSourceSPIRV::operator const WGPUShaderSourceSPIRV&() const noexcept {
+    return *reinterpret_cast<const WGPUShaderSourceSPIRV*>(this);
 }
 
-ShaderModuleSPIRVDescriptor::ShaderModuleSPIRVDescriptor()
-: ChainedStruct { nullptr, SType::ShaderModuleSPIRVDescriptor } {}
+ShaderSourceSPIRV::ShaderSourceSPIRV()
+: ChainedStruct { nullptr, SType::ShaderSourceSPIRV } {}
 
-struct ShaderModuleSPIRVDescriptor::Init {
+struct ShaderSourceSPIRV::Init {
     ChainedStruct const * nextInChain = nullptr;
     uint32_t codeSize;
     uint32_t const * code;
 };
-ShaderModuleSPIRVDescriptor::ShaderModuleSPIRVDescriptor(ShaderModuleSPIRVDescriptor::Init&& init)
-: ChainedStruct { init.nextInChain, SType::ShaderModuleSPIRVDescriptor }
+ShaderSourceSPIRV::ShaderSourceSPIRV(ShaderSourceSPIRV::Init&& init)
+: ChainedStruct { init.nextInChain, SType::ShaderSourceSPIRV }
     ,codeSize(std::move(init.codeSize))
     ,code(std::move(init.code))
     {}
-// ShaderModuleWGSLDescriptor implementation
+// ShaderSourceWGSL implementation
 
-ShaderModuleWGSLDescriptor::operator const WGPUShaderModuleWGSLDescriptor&() const noexcept {
-    return *reinterpret_cast<const WGPUShaderModuleWGSLDescriptor*>(this);
+ShaderSourceWGSL::operator const WGPUShaderSourceWGSL&() const noexcept {
+    return *reinterpret_cast<const WGPUShaderSourceWGSL*>(this);
 }
 
-ShaderModuleWGSLDescriptor::ShaderModuleWGSLDescriptor()
-: ChainedStruct { nullptr, SType::ShaderModuleWGSLDescriptor } {}
+ShaderSourceWGSL::ShaderSourceWGSL()
+: ChainedStruct { nullptr, SType::ShaderSourceWGSL } {}
 
-struct ShaderModuleWGSLDescriptor::Init {
+struct ShaderSourceWGSL::Init {
     ChainedStruct const * nextInChain = nullptr;
-    char const * code;
+    StringView code = {};
 };
-ShaderModuleWGSLDescriptor::ShaderModuleWGSLDescriptor(ShaderModuleWGSLDescriptor::Init&& init)
-: ChainedStruct { init.nextInChain, SType::ShaderModuleWGSLDescriptor }
+ShaderSourceWGSL::ShaderSourceWGSL(ShaderSourceWGSL::Init&& init)
+: ChainedStruct { init.nextInChain, SType::ShaderSourceWGSL }
     ,code(std::move(init.code))
     {}
 // DawnShaderModuleSPIRVOptionsDescriptor implementation
@@ -1883,130 +1942,130 @@ SurfaceDescriptor::operator const WGPUSurfaceDescriptor&() const noexcept {
     return *reinterpret_cast<const WGPUSurfaceDescriptor*>(this);
 }
 
-// SurfaceDescriptorFromAndroidNativeWindow implementation
+// SurfaceSourceAndroidNativeWindow implementation
 
-SurfaceDescriptorFromAndroidNativeWindow::operator const WGPUSurfaceDescriptorFromAndroidNativeWindow&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromAndroidNativeWindow*>(this);
+SurfaceSourceAndroidNativeWindow::operator const WGPUSurfaceSourceAndroidNativeWindow&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceSourceAndroidNativeWindow*>(this);
 }
 
-SurfaceDescriptorFromAndroidNativeWindow::SurfaceDescriptorFromAndroidNativeWindow()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromAndroidNativeWindow } {}
+SurfaceSourceAndroidNativeWindow::SurfaceSourceAndroidNativeWindow()
+: ChainedStruct { nullptr, SType::SurfaceSourceAndroidNativeWindow } {}
 
-struct SurfaceDescriptorFromAndroidNativeWindow::Init {
+struct SurfaceSourceAndroidNativeWindow::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * window;
 };
-SurfaceDescriptorFromAndroidNativeWindow::SurfaceDescriptorFromAndroidNativeWindow(SurfaceDescriptorFromAndroidNativeWindow::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromAndroidNativeWindow }
+SurfaceSourceAndroidNativeWindow::SurfaceSourceAndroidNativeWindow(SurfaceSourceAndroidNativeWindow::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceSourceAndroidNativeWindow }
     ,window(std::move(init.window))
     {}
-// SurfaceDescriptorFromCanvasHTMLSelector implementation
+// EmscriptenSurfaceSourceCanvasHTMLSelector implementation
 
-SurfaceDescriptorFromCanvasHTMLSelector::operator const WGPUSurfaceDescriptorFromCanvasHTMLSelector&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromCanvasHTMLSelector*>(this);
+EmscriptenSurfaceSourceCanvasHTMLSelector::operator const WGPUEmscriptenSurfaceSourceCanvasHTMLSelector&() const noexcept {
+    return *reinterpret_cast<const WGPUEmscriptenSurfaceSourceCanvasHTMLSelector*>(this);
 }
 
-SurfaceDescriptorFromCanvasHTMLSelector::SurfaceDescriptorFromCanvasHTMLSelector()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromCanvasHTMLSelector } {}
+EmscriptenSurfaceSourceCanvasHTMLSelector::EmscriptenSurfaceSourceCanvasHTMLSelector()
+: ChainedStruct { nullptr, SType::EmscriptenSurfaceSourceCanvasHTMLSelector } {}
 
-struct SurfaceDescriptorFromCanvasHTMLSelector::Init {
+struct EmscriptenSurfaceSourceCanvasHTMLSelector::Init {
     ChainedStruct const * nextInChain = nullptr;
-    char const * selector;
+    StringView selector = {};
 };
-SurfaceDescriptorFromCanvasHTMLSelector::SurfaceDescriptorFromCanvasHTMLSelector(SurfaceDescriptorFromCanvasHTMLSelector::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromCanvasHTMLSelector }
+EmscriptenSurfaceSourceCanvasHTMLSelector::EmscriptenSurfaceSourceCanvasHTMLSelector(EmscriptenSurfaceSourceCanvasHTMLSelector::Init&& init)
+: ChainedStruct { init.nextInChain, SType::EmscriptenSurfaceSourceCanvasHTMLSelector }
     ,selector(std::move(init.selector))
     {}
-// SurfaceDescriptorFromMetalLayer implementation
+// SurfaceSourceMetalLayer implementation
 
-SurfaceDescriptorFromMetalLayer::operator const WGPUSurfaceDescriptorFromMetalLayer&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromMetalLayer*>(this);
+SurfaceSourceMetalLayer::operator const WGPUSurfaceSourceMetalLayer&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceSourceMetalLayer*>(this);
 }
 
-SurfaceDescriptorFromMetalLayer::SurfaceDescriptorFromMetalLayer()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromMetalLayer } {}
+SurfaceSourceMetalLayer::SurfaceSourceMetalLayer()
+: ChainedStruct { nullptr, SType::SurfaceSourceMetalLayer } {}
 
-struct SurfaceDescriptorFromMetalLayer::Init {
+struct SurfaceSourceMetalLayer::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * layer;
 };
-SurfaceDescriptorFromMetalLayer::SurfaceDescriptorFromMetalLayer(SurfaceDescriptorFromMetalLayer::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromMetalLayer }
+SurfaceSourceMetalLayer::SurfaceSourceMetalLayer(SurfaceSourceMetalLayer::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceSourceMetalLayer }
     ,layer(std::move(init.layer))
     {}
-// SurfaceDescriptorFromWindowsHWND implementation
+// SurfaceSourceWindowsHWND implementation
 
-SurfaceDescriptorFromWindowsHWND::operator const WGPUSurfaceDescriptorFromWindowsHWND&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromWindowsHWND*>(this);
+SurfaceSourceWindowsHWND::operator const WGPUSurfaceSourceWindowsHWND&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceSourceWindowsHWND*>(this);
 }
 
-SurfaceDescriptorFromWindowsHWND::SurfaceDescriptorFromWindowsHWND()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromWindowsHWND } {}
+SurfaceSourceWindowsHWND::SurfaceSourceWindowsHWND()
+: ChainedStruct { nullptr, SType::SurfaceSourceWindowsHWND } {}
 
-struct SurfaceDescriptorFromWindowsHWND::Init {
+struct SurfaceSourceWindowsHWND::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * hinstance;
     void * hwnd;
 };
-SurfaceDescriptorFromWindowsHWND::SurfaceDescriptorFromWindowsHWND(SurfaceDescriptorFromWindowsHWND::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromWindowsHWND }
+SurfaceSourceWindowsHWND::SurfaceSourceWindowsHWND(SurfaceSourceWindowsHWND::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceSourceWindowsHWND }
     ,hinstance(std::move(init.hinstance))
     ,hwnd(std::move(init.hwnd))
     {}
-// SurfaceDescriptorFromXcbWindow implementation
+// SurfaceSourceXCBWindow implementation
 
-SurfaceDescriptorFromXcbWindow::operator const WGPUSurfaceDescriptorFromXcbWindow&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromXcbWindow*>(this);
+SurfaceSourceXCBWindow::operator const WGPUSurfaceSourceXCBWindow&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceSourceXCBWindow*>(this);
 }
 
-SurfaceDescriptorFromXcbWindow::SurfaceDescriptorFromXcbWindow()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromXcbWindow } {}
+SurfaceSourceXCBWindow::SurfaceSourceXCBWindow()
+: ChainedStruct { nullptr, SType::SurfaceSourceXCBWindow } {}
 
-struct SurfaceDescriptorFromXcbWindow::Init {
+struct SurfaceSourceXCBWindow::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * connection;
     uint32_t window;
 };
-SurfaceDescriptorFromXcbWindow::SurfaceDescriptorFromXcbWindow(SurfaceDescriptorFromXcbWindow::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromXcbWindow }
+SurfaceSourceXCBWindow::SurfaceSourceXCBWindow(SurfaceSourceXCBWindow::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceSourceXCBWindow }
     ,connection(std::move(init.connection))
     ,window(std::move(init.window))
     {}
-// SurfaceDescriptorFromXlibWindow implementation
+// SurfaceSourceXlibWindow implementation
 
-SurfaceDescriptorFromXlibWindow::operator const WGPUSurfaceDescriptorFromXlibWindow&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromXlibWindow*>(this);
+SurfaceSourceXlibWindow::operator const WGPUSurfaceSourceXlibWindow&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceSourceXlibWindow*>(this);
 }
 
-SurfaceDescriptorFromXlibWindow::SurfaceDescriptorFromXlibWindow()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromXlibWindow } {}
+SurfaceSourceXlibWindow::SurfaceSourceXlibWindow()
+: ChainedStruct { nullptr, SType::SurfaceSourceXlibWindow } {}
 
-struct SurfaceDescriptorFromXlibWindow::Init {
+struct SurfaceSourceXlibWindow::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * display;
     uint64_t window;
 };
-SurfaceDescriptorFromXlibWindow::SurfaceDescriptorFromXlibWindow(SurfaceDescriptorFromXlibWindow::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromXlibWindow }
+SurfaceSourceXlibWindow::SurfaceSourceXlibWindow(SurfaceSourceXlibWindow::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceSourceXlibWindow }
     ,display(std::move(init.display))
     ,window(std::move(init.window))
     {}
-// SurfaceDescriptorFromWaylandSurface implementation
+// SurfaceSourceWaylandSurface implementation
 
-SurfaceDescriptorFromWaylandSurface::operator const WGPUSurfaceDescriptorFromWaylandSurface&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromWaylandSurface*>(this);
+SurfaceSourceWaylandSurface::operator const WGPUSurfaceSourceWaylandSurface&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceSourceWaylandSurface*>(this);
 }
 
-SurfaceDescriptorFromWaylandSurface::SurfaceDescriptorFromWaylandSurface()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromWaylandSurface } {}
+SurfaceSourceWaylandSurface::SurfaceSourceWaylandSurface()
+: ChainedStruct { nullptr, SType::SurfaceSourceWaylandSurface } {}
 
-struct SurfaceDescriptorFromWaylandSurface::Init {
+struct SurfaceSourceWaylandSurface::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * display;
     void * surface;
 };
-SurfaceDescriptorFromWaylandSurface::SurfaceDescriptorFromWaylandSurface(SurfaceDescriptorFromWaylandSurface::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromWaylandSurface }
+SurfaceSourceWaylandSurface::SurfaceSourceWaylandSurface(SurfaceSourceWaylandSurface::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceSourceWaylandSurface }
     ,display(std::move(init.display))
     ,surface(std::move(init.surface))
     {}
@@ -2027,39 +2086,44 @@ SurfaceDescriptorFromWindowsCoreWindow::SurfaceDescriptorFromWindowsCoreWindow(S
 : ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromWindowsCoreWindow }
     ,coreWindow(std::move(init.coreWindow))
     {}
-// SurfaceDescriptorFromWindowsSwapChainPanel implementation
+// SurfaceDescriptorFromWindowsUWPSwapChainPanel implementation
 
-SurfaceDescriptorFromWindowsSwapChainPanel::operator const WGPUSurfaceDescriptorFromWindowsSwapChainPanel&() const noexcept {
-    return *reinterpret_cast<const WGPUSurfaceDescriptorFromWindowsSwapChainPanel*>(this);
+SurfaceDescriptorFromWindowsUWPSwapChainPanel::operator const WGPUSurfaceDescriptorFromWindowsUWPSwapChainPanel&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceDescriptorFromWindowsUWPSwapChainPanel*>(this);
 }
 
-SurfaceDescriptorFromWindowsSwapChainPanel::SurfaceDescriptorFromWindowsSwapChainPanel()
-: ChainedStruct { nullptr, SType::SurfaceDescriptorFromWindowsSwapChainPanel } {}
+SurfaceDescriptorFromWindowsUWPSwapChainPanel::SurfaceDescriptorFromWindowsUWPSwapChainPanel()
+: ChainedStruct { nullptr, SType::SurfaceDescriptorFromWindowsUWPSwapChainPanel } {}
 
-struct SurfaceDescriptorFromWindowsSwapChainPanel::Init {
+struct SurfaceDescriptorFromWindowsUWPSwapChainPanel::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * swapChainPanel;
 };
-SurfaceDescriptorFromWindowsSwapChainPanel::SurfaceDescriptorFromWindowsSwapChainPanel(SurfaceDescriptorFromWindowsSwapChainPanel::Init&& init)
-: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromWindowsSwapChainPanel }
+SurfaceDescriptorFromWindowsUWPSwapChainPanel::SurfaceDescriptorFromWindowsUWPSwapChainPanel(SurfaceDescriptorFromWindowsUWPSwapChainPanel::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromWindowsUWPSwapChainPanel }
     ,swapChainPanel(std::move(init.swapChainPanel))
     {}
-// SwapChainDescriptor implementation
+// SurfaceDescriptorFromWindowsWinUISwapChainPanel implementation
 
-SwapChainDescriptor::operator const WGPUSwapChainDescriptor&() const noexcept {
-    return *reinterpret_cast<const WGPUSwapChainDescriptor*>(this);
+SurfaceDescriptorFromWindowsWinUISwapChainPanel::operator const WGPUSurfaceDescriptorFromWindowsWinUISwapChainPanel&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceDescriptorFromWindowsWinUISwapChainPanel*>(this);
 }
 
+SurfaceDescriptorFromWindowsWinUISwapChainPanel::SurfaceDescriptorFromWindowsWinUISwapChainPanel()
+: ChainedStruct { nullptr, SType::SurfaceDescriptorFromWindowsWinUISwapChainPanel } {}
+
+struct SurfaceDescriptorFromWindowsWinUISwapChainPanel::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    void * swapChainPanel;
+};
+SurfaceDescriptorFromWindowsWinUISwapChainPanel::SurfaceDescriptorFromWindowsWinUISwapChainPanel(SurfaceDescriptorFromWindowsWinUISwapChainPanel::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceDescriptorFromWindowsWinUISwapChainPanel }
+    ,swapChainPanel(std::move(init.swapChainPanel))
+    {}
 // SurfaceTexture implementation
 
 SurfaceTexture::operator const WGPUSurfaceTexture&() const noexcept {
     return *reinterpret_cast<const WGPUSurfaceTexture*>(this);
-}
-
-// TextureDataLayout implementation
-
-TextureDataLayout::operator const WGPUTextureDataLayout&() const noexcept {
-    return *reinterpret_cast<const WGPUTextureDataLayout*>(this);
 }
 
 // TextureDescriptor implementation
@@ -2079,7 +2143,7 @@ TextureBindingViewDimensionDescriptor::TextureBindingViewDimensionDescriptor()
 
 struct TextureBindingViewDimensionDescriptor::Init {
     ChainedStruct const * nextInChain = nullptr;
-    TextureViewDimension textureBindingViewDimension = TextureViewDimension::Undefined;
+    TextureViewDimension textureBindingViewDimension;
 };
 TextureBindingViewDimensionDescriptor::TextureBindingViewDimensionDescriptor(TextureBindingViewDimensionDescriptor::Init&& init)
 : ChainedStruct { init.nextInChain, SType::TextureBindingViewDimensionDescriptor }
@@ -2141,7 +2205,7 @@ DawnTextureInternalUsageDescriptor::DawnTextureInternalUsageDescriptor()
 
 struct DawnTextureInternalUsageDescriptor::Init {
     ChainedStruct const * nextInChain = nullptr;
-    TextureUsage internalUsage = TextureUsage::None;
+    TextureUsage internalUsage;
 };
 DawnTextureInternalUsageDescriptor::DawnTextureInternalUsageDescriptor(DawnTextureInternalUsageDescriptor::Init&& init)
 : ChainedStruct { init.nextInChain, SType::DawnTextureInternalUsageDescriptor }
@@ -2175,7 +2239,7 @@ DawnAdapterPropertiesPowerPreference::DawnAdapterPropertiesPowerPreference()
 
 struct DawnAdapterPropertiesPowerPreference::Init {
     ChainedStructOut * const nextInChain = nullptr;
-    PowerPreference const powerPreference = PowerPreference::Undefined;
+    PowerPreference const powerPreference = {};
 };
 DawnAdapterPropertiesPowerPreference::DawnAdapterPropertiesPowerPreference(DawnAdapterPropertiesPowerPreference::Init&& init)
 : ChainedStructOut { init.nextInChain, SType::DawnAdapterPropertiesPowerPreference }
@@ -2335,6 +2399,52 @@ DawnBufferDescriptorErrorInfoFromWireClient::DawnBufferDescriptorErrorInfoFromWi
 : ChainedStruct { init.nextInChain, SType::DawnBufferDescriptorErrorInfoFromWireClient }
     ,outOfMemory(std::move(init.outOfMemory))
     {}
+// SubgroupMatrixConfig implementation
+
+SubgroupMatrixConfig::operator const WGPUSubgroupMatrixConfig&() const noexcept {
+    return *reinterpret_cast<const WGPUSubgroupMatrixConfig*>(this);
+}
+
+// AdapterPropertiesSubgroupMatrixConfigs implementation
+
+AdapterPropertiesSubgroupMatrixConfigs::operator const WGPUAdapterPropertiesSubgroupMatrixConfigs&() const noexcept {
+    return *reinterpret_cast<const WGPUAdapterPropertiesSubgroupMatrixConfigs*>(this);
+}
+
+AdapterPropertiesSubgroupMatrixConfigs::AdapterPropertiesSubgroupMatrixConfigs()
+: ChainedStructOut { nullptr, SType::AdapterPropertiesSubgroupMatrixConfigs } {}
+
+struct AdapterPropertiesSubgroupMatrixConfigs::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    size_t const configCount = {};
+    SubgroupMatrixConfig const * const configs = {};
+};
+AdapterPropertiesSubgroupMatrixConfigs::AdapterPropertiesSubgroupMatrixConfigs(AdapterPropertiesSubgroupMatrixConfigs::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::AdapterPropertiesSubgroupMatrixConfigs }
+    ,configCount(std::move(init.configCount))
+    ,configs(std::move(init.configs))
+    {}
+AdapterPropertiesSubgroupMatrixConfigs::~AdapterPropertiesSubgroupMatrixConfigs() {
+    FreeMembers();
+}
+void AdapterPropertiesSubgroupMatrixConfigs::FreeMembers() {
+    // Free members here
+}
+
+AdapterPropertiesSubgroupMatrixConfigs::AdapterPropertiesSubgroupMatrixConfigs(AdapterPropertiesSubgroupMatrixConfigs&& rhs) :
+    configCount(rhs.configCount),    
+    configs(rhs.configs)    
+{}
+AdapterPropertiesSubgroupMatrixConfigs& AdapterPropertiesSubgroupMatrixConfigs::operator=(AdapterPropertiesSubgroupMatrixConfigs&& rhs) {
+if (&rhs == this) {
+    return *this;
+}
+FreeMembers();
+
+    ::wgpu::detail::AsNonConstReference(this->configCount) = std::move(rhs.configCount);    
+    ::wgpu::detail::AsNonConstReference(this->configs) = std::move(rhs.configs);    
+    return *this;    
+}
 
 // Adapter implementation
 
@@ -2342,35 +2452,31 @@ Instance Adapter::GetInstance () const {
     auto result = wgpuAdapterGetInstance(Get());    
     return Instance::Acquire(result);    
 }
-Status Adapter::GetLimits (SupportedLimits * limits) const {
-    auto result = wgpuAdapterGetLimits(Get(), reinterpret_cast<WGPUSupportedLimits * >(limits));    
+Status Adapter::GetLimits (Limits * limits) const {
+    auto result = wgpuAdapterGetLimits(Get(), reinterpret_cast<WGPULimits * >(limits));    
     return static_cast<Status>(result);    
 }
 Status Adapter::GetInfo (AdapterInfo * info) const {
     auto result = wgpuAdapterGetInfo(Get(), reinterpret_cast<WGPUAdapterInfo * >(info));    
     return static_cast<Status>(result);    
 }
-Status Adapter::GetProperties (AdapterProperties * properties) const {
-    auto result = wgpuAdapterGetProperties(Get(), reinterpret_cast<WGPUAdapterProperties * >(properties));    
-    return static_cast<Status>(result);    
-}
 bool Adapter::HasFeature (FeatureName feature) const {
     auto result = wgpuAdapterHasFeature(Get(), *reinterpret_cast<WGPUFeatureName const*>(&feature));    
     return result;    
 }
-size_t Adapter::EnumerateFeatures (FeatureName * features) const {
-    auto result = wgpuAdapterEnumerateFeatures(Get(), reinterpret_cast<WGPUFeatureName * >(features));    
-    return result;    
+void Adapter::GetFeatures (SupportedFeatures * features) const {
+    wgpuAdapterGetFeatures(Get(), reinterpret_cast<WGPUSupportedFeatures * >(features));    
 }
-void Adapter::RequestDevice (DeviceDescriptor const* descriptor, RequestDeviceCallback callback, void * userdata) const {
-    wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const* >(descriptor), *reinterpret_cast<WGPURequestDeviceCallback const*>(&callback), userdata);    
+Future Adapter::RequestDevice (DeviceDescriptor const* options, RequestDeviceCallbackInfo callbackInfo) const {
+    auto result = wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const* >(options), *reinterpret_cast<WGPURequestDeviceCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
 }
 Device Adapter::CreateDevice (DeviceDescriptor const* descriptor) const {
     auto result = wgpuAdapterCreateDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const* >(descriptor));    
     return Device::Acquire(result);    
 }
-Status Adapter::GetFormatCapabilities (TextureFormat format, FormatCapabilities * capabilities) const {
-    auto result = wgpuAdapterGetFormatCapabilities(Get(), *reinterpret_cast<WGPUTextureFormat const*>(&format), reinterpret_cast<WGPUFormatCapabilities * >(capabilities));    
+Status Adapter::GetFormatCapabilities (TextureFormat format, DawnFormatCapabilities * capabilities) const {
+    auto result = wgpuAdapterGetFormatCapabilities(Get(), *reinterpret_cast<WGPUTextureFormat const*>(&format), reinterpret_cast<WGPUDawnFormatCapabilities * >(capabilities));    
     return static_cast<Status>(result);    
 }
 
@@ -2387,11 +2493,8 @@ void Adapter::WGPURelease(WGPUAdapter handle) {
 
 // BindGroup implementation
 
-void BindGroup::SetLabel (char const* label) const {
-    wgpuBindGroupSetLabel(Get(), label);    
-}
-void BindGroup::SetLabel2 (NullableStringView label) const {
-    wgpuBindGroupSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void BindGroup::SetLabel (StringView label) const {
+    wgpuBindGroupSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void BindGroup::WGPUAddRef(WGPUBindGroup handle) {
@@ -2407,11 +2510,8 @@ void BindGroup::WGPURelease(WGPUBindGroup handle) {
 
 // BindGroupLayout implementation
 
-void BindGroupLayout::SetLabel (char const* label) const {
-    wgpuBindGroupLayoutSetLabel(Get(), label);    
-}
-void BindGroupLayout::SetLabel2 (NullableStringView label) const {
-    wgpuBindGroupLayoutSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void BindGroupLayout::SetLabel (StringView label) const {
+    wgpuBindGroupLayoutSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void BindGroupLayout::WGPUAddRef(WGPUBindGroupLayout handle) {
@@ -2427,8 +2527,9 @@ void BindGroupLayout::WGPURelease(WGPUBindGroupLayout handle) {
 
 // Buffer implementation
 
-void Buffer::MapAsync (MapMode mode, size_t offset, size_t size, BufferMapCallback callback, void * userdata) const {
-    wgpuBufferMapAsync(Get(), *reinterpret_cast<WGPUMapMode const*>(&mode), offset, size, *reinterpret_cast<WGPUBufferMapCallback const*>(&callback), userdata);    
+Future Buffer::MapAsync (MapMode mode, size_t offset, size_t size, BufferMapCallbackInfo callbackInfo) const {
+    auto result = wgpuBufferMapAsync(Get(), *reinterpret_cast<WGPUMapMode const*>(&mode), offset, size, *reinterpret_cast<WGPUBufferMapCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
 }
 void * Buffer::GetMappedRange (size_t offset, size_t size) const {
     auto result = wgpuBufferGetMappedRange(Get(), offset, size);    
@@ -2438,11 +2539,16 @@ void const * Buffer::GetConstMappedRange (size_t offset, size_t size) const {
     auto result = wgpuBufferGetConstMappedRange(Get(), offset, size);    
     return result;    
 }
-void Buffer::SetLabel (char const* label) const {
-    wgpuBufferSetLabel(Get(), label);    
+Status Buffer::WriteMappedRange (size_t offset, void const* data, size_t size) const {
+    auto result = wgpuBufferWriteMappedRange(Get(), offset, data, size);    
+    return static_cast<Status>(result);    
 }
-void Buffer::SetLabel2 (NullableStringView label) const {
-    wgpuBufferSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+Status Buffer::ReadMappedRange (size_t offset, void * data, size_t size) const {
+    auto result = wgpuBufferReadMappedRange(Get(), offset, data, size);    
+    return static_cast<Status>(result);    
+}
+void Buffer::SetLabel (StringView label) const {
+    wgpuBufferSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 BufferUsage Buffer::GetUsage () const {
     auto result = wgpuBufferGetUsage(Get());    
@@ -2476,11 +2582,8 @@ void Buffer::WGPURelease(WGPUBuffer handle) {
 
 // CommandBuffer implementation
 
-void CommandBuffer::SetLabel (char const* label) const {
-    wgpuCommandBufferSetLabel(Get(), label);    
-}
-void CommandBuffer::SetLabel2 (NullableStringView label) const {
-    wgpuCommandBufferSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void CommandBuffer::SetLabel (StringView label) const {
+    wgpuCommandBufferSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void CommandBuffer::WGPUAddRef(WGPUCommandBuffer handle) {
@@ -2511,38 +2614,29 @@ RenderPassEncoder CommandEncoder::BeginRenderPass (RenderPassDescriptor const* d
 void CommandEncoder::CopyBufferToBuffer (Buffer source, uint64_t sourceOffset, Buffer destination, uint64_t destinationOffset, uint64_t size) const {
     wgpuCommandEncoderCopyBufferToBuffer(Get(), *reinterpret_cast<WGPUBuffer const*>(&source), sourceOffset, *reinterpret_cast<WGPUBuffer const*>(&destination), destinationOffset, size);    
 }
-void CommandEncoder::CopyBufferToTexture (ImageCopyBuffer const* source, ImageCopyTexture const* destination, Extent3D const* copySize) const {
-    wgpuCommandEncoderCopyBufferToTexture(Get(), reinterpret_cast<WGPUImageCopyBuffer const* >(source), reinterpret_cast<WGPUImageCopyTexture const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize));    
+void CommandEncoder::CopyBufferToTexture (TexelCopyBufferInfo const* source, TexelCopyTextureInfo const* destination, Extent3D const* copySize) const {
+    wgpuCommandEncoderCopyBufferToTexture(Get(), reinterpret_cast<WGPUTexelCopyBufferInfo const* >(source), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize));    
 }
-void CommandEncoder::CopyTextureToBuffer (ImageCopyTexture const* source, ImageCopyBuffer const* destination, Extent3D const* copySize) const {
-    wgpuCommandEncoderCopyTextureToBuffer(Get(), reinterpret_cast<WGPUImageCopyTexture const* >(source), reinterpret_cast<WGPUImageCopyBuffer const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize));    
+void CommandEncoder::CopyTextureToBuffer (TexelCopyTextureInfo const* source, TexelCopyBufferInfo const* destination, Extent3D const* copySize) const {
+    wgpuCommandEncoderCopyTextureToBuffer(Get(), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(source), reinterpret_cast<WGPUTexelCopyBufferInfo const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize));    
 }
-void CommandEncoder::CopyTextureToTexture (ImageCopyTexture const* source, ImageCopyTexture const* destination, Extent3D const* copySize) const {
-    wgpuCommandEncoderCopyTextureToTexture(Get(), reinterpret_cast<WGPUImageCopyTexture const* >(source), reinterpret_cast<WGPUImageCopyTexture const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize));    
+void CommandEncoder::CopyTextureToTexture (TexelCopyTextureInfo const* source, TexelCopyTextureInfo const* destination, Extent3D const* copySize) const {
+    wgpuCommandEncoderCopyTextureToTexture(Get(), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(source), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize));    
 }
 void CommandEncoder::ClearBuffer (Buffer buffer, uint64_t offset, uint64_t size) const {
     wgpuCommandEncoderClearBuffer(Get(), *reinterpret_cast<WGPUBuffer const*>(&buffer), offset, size);    
 }
-void CommandEncoder::InjectValidationError (char const* message) const {
-    wgpuCommandEncoderInjectValidationError(Get(), message);    
+void CommandEncoder::InjectValidationError (StringView message) const {
+    wgpuCommandEncoderInjectValidationError(Get(), *reinterpret_cast<WGPUStringView const*>(&message));    
 }
-void CommandEncoder::InjectValidationError2 (StringView message) const {
-    wgpuCommandEncoderInjectValidationError2(Get(), *reinterpret_cast<WGPUStringView const*>(&message));    
-}
-void CommandEncoder::InsertDebugMarker (char const* markerLabel) const {
-    wgpuCommandEncoderInsertDebugMarker(Get(), markerLabel);    
-}
-void CommandEncoder::InsertDebugMarker2 (StringView markerLabel) const {
-    wgpuCommandEncoderInsertDebugMarker2(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
+void CommandEncoder::InsertDebugMarker (StringView markerLabel) const {
+    wgpuCommandEncoderInsertDebugMarker(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
 }
 void CommandEncoder::PopDebugGroup () const {
     wgpuCommandEncoderPopDebugGroup(Get());    
 }
-void CommandEncoder::PushDebugGroup (char const* groupLabel) const {
-    wgpuCommandEncoderPushDebugGroup(Get(), groupLabel);    
-}
-void CommandEncoder::PushDebugGroup2 (StringView groupLabel) const {
-    wgpuCommandEncoderPushDebugGroup2(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
+void CommandEncoder::PushDebugGroup (StringView groupLabel) const {
+    wgpuCommandEncoderPushDebugGroup(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
 }
 void CommandEncoder::ResolveQuerySet (QuerySet querySet, uint32_t firstQuery, uint32_t queryCount, Buffer destination, uint64_t destinationOffset) const {
     wgpuCommandEncoderResolveQuerySet(Get(), *reinterpret_cast<WGPUQuerySet const*>(&querySet), firstQuery, queryCount, *reinterpret_cast<WGPUBuffer const*>(&destination), destinationOffset);    
@@ -2553,11 +2647,8 @@ void CommandEncoder::WriteBuffer (Buffer buffer, uint64_t bufferOffset, uint8_t 
 void CommandEncoder::WriteTimestamp (QuerySet querySet, uint32_t queryIndex) const {
     wgpuCommandEncoderWriteTimestamp(Get(), *reinterpret_cast<WGPUQuerySet const*>(&querySet), queryIndex);    
 }
-void CommandEncoder::SetLabel (char const* label) const {
-    wgpuCommandEncoderSetLabel(Get(), label);    
-}
-void CommandEncoder::SetLabel2 (NullableStringView label) const {
-    wgpuCommandEncoderSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void CommandEncoder::SetLabel (StringView label) const {
+    wgpuCommandEncoderSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void CommandEncoder::WGPUAddRef(WGPUCommandEncoder handle) {
@@ -2573,20 +2664,14 @@ void CommandEncoder::WGPURelease(WGPUCommandEncoder handle) {
 
 // ComputePassEncoder implementation
 
-void ComputePassEncoder::InsertDebugMarker (char const* markerLabel) const {
-    wgpuComputePassEncoderInsertDebugMarker(Get(), markerLabel);    
-}
-void ComputePassEncoder::InsertDebugMarker2 (StringView markerLabel) const {
-    wgpuComputePassEncoderInsertDebugMarker2(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
+void ComputePassEncoder::InsertDebugMarker (StringView markerLabel) const {
+    wgpuComputePassEncoderInsertDebugMarker(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
 }
 void ComputePassEncoder::PopDebugGroup () const {
     wgpuComputePassEncoderPopDebugGroup(Get());    
 }
-void ComputePassEncoder::PushDebugGroup (char const* groupLabel) const {
-    wgpuComputePassEncoderPushDebugGroup(Get(), groupLabel);    
-}
-void ComputePassEncoder::PushDebugGroup2 (StringView groupLabel) const {
-    wgpuComputePassEncoderPushDebugGroup2(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
+void ComputePassEncoder::PushDebugGroup (StringView groupLabel) const {
+    wgpuComputePassEncoderPushDebugGroup(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
 }
 void ComputePassEncoder::SetPipeline (ComputePipeline pipeline) const {
     wgpuComputePassEncoderSetPipeline(Get(), *reinterpret_cast<WGPUComputePipeline const*>(&pipeline));    
@@ -2606,11 +2691,11 @@ void ComputePassEncoder::DispatchWorkgroupsIndirect (Buffer indirectBuffer, uint
 void ComputePassEncoder::End () const {
     wgpuComputePassEncoderEnd(Get());    
 }
-void ComputePassEncoder::SetLabel (char const* label) const {
-    wgpuComputePassEncoderSetLabel(Get(), label);    
+void ComputePassEncoder::SetLabel (StringView label) const {
+    wgpuComputePassEncoderSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
-void ComputePassEncoder::SetLabel2 (NullableStringView label) const {
-    wgpuComputePassEncoderSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void ComputePassEncoder::SetImmediateData (uint32_t offset, void const* data, size_t size) const {
+    wgpuComputePassEncoderSetImmediateData(Get(), offset, data, size);    
 }
 
 void ComputePassEncoder::WGPUAddRef(WGPUComputePassEncoder handle) {
@@ -2630,11 +2715,8 @@ BindGroupLayout ComputePipeline::GetBindGroupLayout (uint32_t groupIndex) const 
     auto result = wgpuComputePipelineGetBindGroupLayout(Get(), groupIndex);    
     return BindGroupLayout::Acquire(result);    
 }
-void ComputePipeline::SetLabel (char const* label) const {
-    wgpuComputePipelineSetLabel(Get(), label);    
-}
-void ComputePipeline::SetLabel2 (NullableStringView label) const {
-    wgpuComputePipelineSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void ComputePipeline::SetLabel (StringView label) const {
+    wgpuComputePipelineSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void ComputePipeline::WGPUAddRef(WGPUComputePipeline handle) {
@@ -2674,8 +2756,9 @@ ComputePipeline Device::CreateComputePipeline (ComputePipelineDescriptor const* 
     auto result = wgpuDeviceCreateComputePipeline(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const* >(descriptor));    
     return ComputePipeline::Acquire(result);    
 }
-void Device::CreateComputePipelineAsync (ComputePipelineDescriptor const* descriptor, CreateComputePipelineAsyncCallback callback, void * userdata) const {
-    wgpuDeviceCreateComputePipelineAsync(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const* >(descriptor), *reinterpret_cast<WGPUCreateComputePipelineAsyncCallback const*>(&callback), userdata);    
+Future Device::CreateComputePipelineAsync (ComputePipelineDescriptor const* descriptor, CreateComputePipelineAsyncCallbackInfo callbackInfo) const {
+    auto result = wgpuDeviceCreateComputePipelineAsync(Get(), reinterpret_cast<WGPUComputePipelineDescriptor const* >(descriptor), *reinterpret_cast<WGPUCreateComputePipelineAsyncCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
 }
 ExternalTexture Device::CreateExternalTexture (ExternalTextureDescriptor const* externalTextureDescriptor) const {
     auto result = wgpuDeviceCreateExternalTexture(Get(), reinterpret_cast<WGPUExternalTextureDescriptor const* >(externalTextureDescriptor));    
@@ -2693,8 +2776,9 @@ QuerySet Device::CreateQuerySet (QuerySetDescriptor const* descriptor) const {
     auto result = wgpuDeviceCreateQuerySet(Get(), reinterpret_cast<WGPUQuerySetDescriptor const* >(descriptor));    
     return QuerySet::Acquire(result);    
 }
-void Device::CreateRenderPipelineAsync (RenderPipelineDescriptor const* descriptor, CreateRenderPipelineAsyncCallback callback, void * userdata) const {
-    wgpuDeviceCreateRenderPipelineAsync(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const* >(descriptor), *reinterpret_cast<WGPUCreateRenderPipelineAsyncCallback const*>(&callback), userdata);    
+Future Device::CreateRenderPipelineAsync (RenderPipelineDescriptor const* descriptor, CreateRenderPipelineAsyncCallbackInfo callbackInfo) const {
+    auto result = wgpuDeviceCreateRenderPipelineAsync(Get(), reinterpret_cast<WGPURenderPipelineDescriptor const* >(descriptor), *reinterpret_cast<WGPUCreateRenderPipelineAsyncCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
 }
 RenderBundleEncoder Device::CreateRenderBundleEncoder (RenderBundleEncoderDescriptor const* descriptor) const {
     auto result = wgpuDeviceCreateRenderBundleEncoder(Get(), reinterpret_cast<WGPURenderBundleEncoderDescriptor const* >(descriptor));    
@@ -2712,17 +2796,9 @@ ShaderModule Device::CreateShaderModule (ShaderModuleDescriptor const* descripto
     auto result = wgpuDeviceCreateShaderModule(Get(), reinterpret_cast<WGPUShaderModuleDescriptor const* >(descriptor));    
     return ShaderModule::Acquire(result);    
 }
-ShaderModule Device::CreateErrorShaderModule (ShaderModuleDescriptor const* descriptor, char const* errorMessage) const {
-    auto result = wgpuDeviceCreateErrorShaderModule(Get(), reinterpret_cast<WGPUShaderModuleDescriptor const* >(descriptor), errorMessage);    
+ShaderModule Device::CreateErrorShaderModule (ShaderModuleDescriptor const* descriptor, StringView errorMessage) const {
+    auto result = wgpuDeviceCreateErrorShaderModule(Get(), reinterpret_cast<WGPUShaderModuleDescriptor const* >(descriptor), *reinterpret_cast<WGPUStringView const*>(&errorMessage));    
     return ShaderModule::Acquire(result);    
-}
-ShaderModule Device::CreateErrorShaderModule2 (ShaderModuleDescriptor const* descriptor, StringView errorMessage) const {
-    auto result = wgpuDeviceCreateErrorShaderModule2(Get(), reinterpret_cast<WGPUShaderModuleDescriptor const* >(descriptor), *reinterpret_cast<WGPUStringView const*>(&errorMessage));    
-    return ShaderModule::Acquire(result);    
-}
-SwapChain Device::CreateSwapChain (Surface surface, SwapChainDescriptor const* descriptor) const {
-    auto result = wgpuDeviceCreateSwapChain(Get(), *reinterpret_cast<WGPUSurface const*>(&surface), reinterpret_cast<WGPUSwapChainDescriptor const* >(descriptor));    
-    return SwapChain::Acquire(result);    
 }
 Texture Device::CreateTexture (TextureDescriptor const* descriptor) const {
     auto result = wgpuDeviceCreateTexture(Get(), reinterpret_cast<WGPUTextureDescriptor const* >(descriptor));    
@@ -2751,17 +2827,24 @@ Status Device::GetAHardwareBufferProperties (void * handle, AHardwareBufferPrope
     auto result = wgpuDeviceGetAHardwareBufferProperties(Get(), handle, reinterpret_cast<WGPUAHardwareBufferProperties * >(properties));    
     return static_cast<Status>(result);    
 }
-Status Device::GetLimits (SupportedLimits * limits) const {
-    auto result = wgpuDeviceGetLimits(Get(), reinterpret_cast<WGPUSupportedLimits * >(limits));    
+Status Device::GetLimits (Limits * limits) const {
+    auto result = wgpuDeviceGetLimits(Get(), reinterpret_cast<WGPULimits * >(limits));    
     return static_cast<Status>(result);    
+}
+Future Device::GetLostFuture () const {
+    auto result = wgpuDeviceGetLostFuture(Get());    
+    return Future{result.id};    
 }
 bool Device::HasFeature (FeatureName feature) const {
     auto result = wgpuDeviceHasFeature(Get(), *reinterpret_cast<WGPUFeatureName const*>(&feature));    
     return result;    
 }
-size_t Device::EnumerateFeatures (FeatureName * features) const {
-    auto result = wgpuDeviceEnumerateFeatures(Get(), reinterpret_cast<WGPUFeatureName * >(features));    
-    return result;    
+void Device::GetFeatures (SupportedFeatures * features) const {
+    wgpuDeviceGetFeatures(Get(), reinterpret_cast<WGPUSupportedFeatures * >(features));    
+}
+Status Device::GetAdapterInfo (AdapterInfo * adapterInfo) const {
+    auto result = wgpuDeviceGetAdapterInfo(Get(), reinterpret_cast<WGPUAdapterInfo * >(adapterInfo));    
+    return static_cast<Status>(result);    
 }
 Adapter Device::GetAdapter () const {
     auto result = wgpuDeviceGetAdapter(Get());    
@@ -2771,48 +2854,30 @@ Queue Device::GetQueue () const {
     auto result = wgpuDeviceGetQueue(Get());    
     return Queue::Acquire(result);    
 }
-void Device::InjectError (ErrorType type, char const* message) const {
-    wgpuDeviceInjectError(Get(), *reinterpret_cast<WGPUErrorType const*>(&type), message);    
+void Device::InjectError (ErrorType type, StringView message) const {
+    wgpuDeviceInjectError(Get(), *reinterpret_cast<WGPUErrorType const*>(&type), *reinterpret_cast<WGPUStringView const*>(&message));    
 }
-void Device::InjectError2 (ErrorType type, StringView message) const {
-    wgpuDeviceInjectError2(Get(), *reinterpret_cast<WGPUErrorType const*>(&type), *reinterpret_cast<WGPUStringView const*>(&message));    
-}
-void Device::ForceLoss (DeviceLostReason type, char const* message) const {
-    wgpuDeviceForceLoss(Get(), *reinterpret_cast<WGPUDeviceLostReason const*>(&type), message);    
-}
-void Device::ForceLoss2 (DeviceLostReason type, StringView message) const {
-    wgpuDeviceForceLoss2(Get(), *reinterpret_cast<WGPUDeviceLostReason const*>(&type), *reinterpret_cast<WGPUStringView const*>(&message));    
+void Device::ForceLoss (DeviceLostReason type, StringView message) const {
+    wgpuDeviceForceLoss(Get(), *reinterpret_cast<WGPUDeviceLostReason const*>(&type), *reinterpret_cast<WGPUStringView const*>(&message));    
 }
 void Device::Tick () const {
     wgpuDeviceTick(Get());    
 }
-void Device::SetUncapturedErrorCallback (ErrorCallback callback, void * userdata) const {
-    wgpuDeviceSetUncapturedErrorCallback(Get(), *reinterpret_cast<WGPUErrorCallback const*>(&callback), userdata);    
-}
-void Device::SetLoggingCallback (LoggingCallback callback, void * userdata) const {
-    wgpuDeviceSetLoggingCallback(Get(), *reinterpret_cast<WGPULoggingCallback const*>(&callback), userdata);    
-}
-void Device::SetDeviceLostCallback (DeviceLostCallback callback, void * userdata) const {
-    wgpuDeviceSetDeviceLostCallback(Get(), *reinterpret_cast<WGPUDeviceLostCallback const*>(&callback), userdata);    
+void Device::SetLoggingCallback (LoggingCallbackInfo callbackInfo) const {
+    wgpuDeviceSetLoggingCallback(Get(), *reinterpret_cast<WGPULoggingCallbackInfo const*>(&callbackInfo));    
 }
 void Device::PushErrorScope (ErrorFilter filter) const {
     wgpuDevicePushErrorScope(Get(), *reinterpret_cast<WGPUErrorFilter const*>(&filter));    
 }
-void Device::PopErrorScope (ErrorCallback oldCallback, void * userdata) const {
-    wgpuDevicePopErrorScope(Get(), *reinterpret_cast<WGPUErrorCallback const*>(&oldCallback), userdata);    
+Future Device::PopErrorScope (PopErrorScopeCallbackInfo callbackInfo) const {
+    auto result = wgpuDevicePopErrorScope(Get(), *reinterpret_cast<WGPUPopErrorScopeCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
 }
-void Device::SetLabel (char const* label) const {
-    wgpuDeviceSetLabel(Get(), label);    
-}
-void Device::SetLabel2 (NullableStringView label) const {
-    wgpuDeviceSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void Device::SetLabel (StringView label) const {
+    wgpuDeviceSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 void Device::ValidateTextureDescriptor (TextureDescriptor const* descriptor) const {
     wgpuDeviceValidateTextureDescriptor(Get(), reinterpret_cast<WGPUTextureDescriptor const* >(descriptor));    
-}
-TextureUsage Device::GetSupportedSurfaceUsage (Surface surface) const {
-    auto result = wgpuDeviceGetSupportedSurfaceUsage(Get(), *reinterpret_cast<WGPUSurface const*>(&surface));    
-    return static_cast<TextureUsage>(result);    
 }
 
 void Device::WGPUAddRef(WGPUDevice handle) {
@@ -2828,11 +2893,8 @@ void Device::WGPURelease(WGPUDevice handle) {
 
 // ExternalTexture implementation
 
-void ExternalTexture::SetLabel (char const* label) const {
-    wgpuExternalTextureSetLabel(Get(), label);    
-}
-void ExternalTexture::SetLabel2 (NullableStringView label) const {
-    wgpuExternalTextureSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void ExternalTexture::SetLabel (StringView label) const {
+    wgpuExternalTextureSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 void ExternalTexture::Destroy () const {
     wgpuExternalTextureDestroy(Get());    
@@ -2857,11 +2919,8 @@ void ExternalTexture::WGPURelease(WGPUExternalTexture handle) {
 
 // SharedBufferMemory implementation
 
-void SharedBufferMemory::SetLabel (char const* label) const {
-    wgpuSharedBufferMemorySetLabel(Get(), label);    
-}
-void SharedBufferMemory::SetLabel2 (NullableStringView label) const {
-    wgpuSharedBufferMemorySetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void SharedBufferMemory::SetLabel (StringView label) const {
+    wgpuSharedBufferMemorySetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 Status SharedBufferMemory::GetProperties (SharedBufferMemoryProperties * properties) const {
     auto result = wgpuSharedBufferMemoryGetProperties(Get(), reinterpret_cast<WGPUSharedBufferMemoryProperties * >(properties));    
@@ -2897,11 +2956,8 @@ void SharedBufferMemory::WGPURelease(WGPUSharedBufferMemory handle) {
 
 // SharedTextureMemory implementation
 
-void SharedTextureMemory::SetLabel (char const* label) const {
-    wgpuSharedTextureMemorySetLabel(Get(), label);    
-}
-void SharedTextureMemory::SetLabel2 (NullableStringView label) const {
-    wgpuSharedTextureMemorySetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void SharedTextureMemory::SetLabel (StringView label) const {
+    wgpuSharedTextureMemorySetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 Status SharedTextureMemory::GetProperties (SharedTextureMemoryProperties * properties) const {
     auto result = wgpuSharedTextureMemoryGetProperties(Get(), reinterpret_cast<WGPUSharedTextureMemoryProperties * >(properties));    
@@ -2965,16 +3021,17 @@ WaitStatus Instance::WaitAny (size_t futureCount, FutureWaitInfo * futures, uint
     auto result = wgpuInstanceWaitAny(Get(), futureCount, reinterpret_cast<WGPUFutureWaitInfo * >(futures), timeoutNS);    
     return static_cast<WaitStatus>(result);    
 }
-void Instance::RequestAdapter (RequestAdapterOptions const* options, RequestAdapterCallback callback, void * userdata) const {
-    wgpuInstanceRequestAdapter(Get(), reinterpret_cast<WGPURequestAdapterOptions const* >(options), *reinterpret_cast<WGPURequestAdapterCallback const*>(&callback), userdata);    
+Future Instance::RequestAdapter (RequestAdapterOptions const* options, RequestAdapterCallbackInfo callbackInfo) const {
+    auto result = wgpuInstanceRequestAdapter(Get(), reinterpret_cast<WGPURequestAdapterOptions const* >(options), *reinterpret_cast<WGPURequestAdapterCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
 }
-bool Instance::HasWGSLLanguageFeature (WGSLFeatureName feature) const {
-    auto result = wgpuInstanceHasWGSLLanguageFeature(Get(), *reinterpret_cast<WGPUWGSLFeatureName const*>(&feature));    
+bool Instance::HasWGSLLanguageFeature (WGSLLanguageFeatureName feature) const {
+    auto result = wgpuInstanceHasWGSLLanguageFeature(Get(), *reinterpret_cast<WGPUWGSLLanguageFeatureName const*>(&feature));    
     return result;    
 }
-size_t Instance::EnumerateWGSLLanguageFeatures (WGSLFeatureName * features) const {
-    auto result = wgpuInstanceEnumerateWGSLLanguageFeatures(Get(), reinterpret_cast<WGPUWGSLFeatureName * >(features));    
-    return result;    
+Status Instance::GetWGSLLanguageFeatures (SupportedWGSLLanguageFeatures * features) const {
+    auto result = wgpuInstanceGetWGSLLanguageFeatures(Get(), reinterpret_cast<WGPUSupportedWGSLLanguageFeatures * >(features));    
+    return static_cast<Status>(result);    
 }
 
 void Instance::WGPUAddRef(WGPUInstance handle) {
@@ -2990,11 +3047,8 @@ void Instance::WGPURelease(WGPUInstance handle) {
 
 // PipelineLayout implementation
 
-void PipelineLayout::SetLabel (char const* label) const {
-    wgpuPipelineLayoutSetLabel(Get(), label);    
-}
-void PipelineLayout::SetLabel2 (NullableStringView label) const {
-    wgpuPipelineLayoutSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void PipelineLayout::SetLabel (StringView label) const {
+    wgpuPipelineLayoutSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void PipelineLayout::WGPUAddRef(WGPUPipelineLayout handle) {
@@ -3010,11 +3064,8 @@ void PipelineLayout::WGPURelease(WGPUPipelineLayout handle) {
 
 // QuerySet implementation
 
-void QuerySet::SetLabel (char const* label) const {
-    wgpuQuerySetSetLabel(Get(), label);    
-}
-void QuerySet::SetLabel2 (NullableStringView label) const {
-    wgpuQuerySetSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void QuerySet::SetLabel (StringView label) const {
+    wgpuQuerySetSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 QueryType QuerySet::GetType () const {
     auto result = wgpuQuerySetGetType(Get());    
@@ -3044,23 +3095,24 @@ void QuerySet::WGPURelease(WGPUQuerySet handle) {
 void Queue::Submit (size_t commandCount, CommandBuffer const* commands) const {
     wgpuQueueSubmit(Get(), commandCount, reinterpret_cast<WGPUCommandBuffer const* >(commands));    
 }
+Future Queue::OnSubmittedWorkDone (QueueWorkDoneCallbackInfo callbackInfo) const {
+    auto result = wgpuQueueOnSubmittedWorkDone(Get(), *reinterpret_cast<WGPUQueueWorkDoneCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
+}
 void Queue::WriteBuffer (Buffer buffer, uint64_t bufferOffset, void const* data, size_t size) const {
     wgpuQueueWriteBuffer(Get(), *reinterpret_cast<WGPUBuffer const*>(&buffer), bufferOffset, data, size);    
 }
-void Queue::WriteTexture (ImageCopyTexture const* destination, void const* data, size_t dataSize, TextureDataLayout const* dataLayout, Extent3D const* writeSize) const {
-    wgpuQueueWriteTexture(Get(), reinterpret_cast<WGPUImageCopyTexture const* >(destination), data, dataSize, reinterpret_cast<WGPUTextureDataLayout const* >(dataLayout), reinterpret_cast<WGPUExtent3D const* >(writeSize));    
+void Queue::WriteTexture (TexelCopyTextureInfo const* destination, void const* data, size_t dataSize, TexelCopyBufferLayout const* dataLayout, Extent3D const* writeSize) const {
+    wgpuQueueWriteTexture(Get(), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(destination), data, dataSize, reinterpret_cast<WGPUTexelCopyBufferLayout const* >(dataLayout), reinterpret_cast<WGPUExtent3D const* >(writeSize));    
 }
-void Queue::CopyTextureForBrowser (ImageCopyTexture const* source, ImageCopyTexture const* destination, Extent3D const* copySize, CopyTextureForBrowserOptions const* options) const {
-    wgpuQueueCopyTextureForBrowser(Get(), reinterpret_cast<WGPUImageCopyTexture const* >(source), reinterpret_cast<WGPUImageCopyTexture const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize), reinterpret_cast<WGPUCopyTextureForBrowserOptions const* >(options));    
+void Queue::CopyTextureForBrowser (TexelCopyTextureInfo const* source, TexelCopyTextureInfo const* destination, Extent3D const* copySize, CopyTextureForBrowserOptions const* options) const {
+    wgpuQueueCopyTextureForBrowser(Get(), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(source), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize), reinterpret_cast<WGPUCopyTextureForBrowserOptions const* >(options));    
 }
-void Queue::CopyExternalTextureForBrowser (ImageCopyExternalTexture const* source, ImageCopyTexture const* destination, Extent3D const* copySize, CopyTextureForBrowserOptions const* options) const {
-    wgpuQueueCopyExternalTextureForBrowser(Get(), reinterpret_cast<WGPUImageCopyExternalTexture const* >(source), reinterpret_cast<WGPUImageCopyTexture const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize), reinterpret_cast<WGPUCopyTextureForBrowserOptions const* >(options));    
+void Queue::CopyExternalTextureForBrowser (ImageCopyExternalTexture const* source, TexelCopyTextureInfo const* destination, Extent3D const* copySize, CopyTextureForBrowserOptions const* options) const {
+    wgpuQueueCopyExternalTextureForBrowser(Get(), reinterpret_cast<WGPUImageCopyExternalTexture const* >(source), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(destination), reinterpret_cast<WGPUExtent3D const* >(copySize), reinterpret_cast<WGPUCopyTextureForBrowserOptions const* >(options));    
 }
-void Queue::SetLabel (char const* label) const {
-    wgpuQueueSetLabel(Get(), label);    
-}
-void Queue::SetLabel2 (NullableStringView label) const {
-    wgpuQueueSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void Queue::SetLabel (StringView label) const {
+    wgpuQueueSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void Queue::WGPUAddRef(WGPUQueue handle) {
@@ -3076,11 +3128,8 @@ void Queue::WGPURelease(WGPUQueue handle) {
 
 // RenderBundle implementation
 
-void RenderBundle::SetLabel (char const* label) const {
-    wgpuRenderBundleSetLabel(Get(), label);    
-}
-void RenderBundle::SetLabel2 (NullableStringView label) const {
-    wgpuRenderBundleSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void RenderBundle::SetLabel (StringView label) const {
+    wgpuRenderBundleSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void RenderBundle::WGPUAddRef(WGPURenderBundle handle) {
@@ -3114,20 +3163,14 @@ void RenderBundleEncoder::DrawIndirect (Buffer indirectBuffer, uint64_t indirect
 void RenderBundleEncoder::DrawIndexedIndirect (Buffer indirectBuffer, uint64_t indirectOffset) const {
     wgpuRenderBundleEncoderDrawIndexedIndirect(Get(), *reinterpret_cast<WGPUBuffer const*>(&indirectBuffer), indirectOffset);    
 }
-void RenderBundleEncoder::InsertDebugMarker (char const* markerLabel) const {
-    wgpuRenderBundleEncoderInsertDebugMarker(Get(), markerLabel);    
-}
-void RenderBundleEncoder::InsertDebugMarker2 (StringView markerLabel) const {
-    wgpuRenderBundleEncoderInsertDebugMarker2(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
+void RenderBundleEncoder::InsertDebugMarker (StringView markerLabel) const {
+    wgpuRenderBundleEncoderInsertDebugMarker(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
 }
 void RenderBundleEncoder::PopDebugGroup () const {
     wgpuRenderBundleEncoderPopDebugGroup(Get());    
 }
-void RenderBundleEncoder::PushDebugGroup (char const* groupLabel) const {
-    wgpuRenderBundleEncoderPushDebugGroup(Get(), groupLabel);    
-}
-void RenderBundleEncoder::PushDebugGroup2 (StringView groupLabel) const {
-    wgpuRenderBundleEncoderPushDebugGroup2(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
+void RenderBundleEncoder::PushDebugGroup (StringView groupLabel) const {
+    wgpuRenderBundleEncoderPushDebugGroup(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
 }
 void RenderBundleEncoder::SetVertexBuffer (uint32_t slot, Buffer buffer, uint64_t offset, uint64_t size) const {
     wgpuRenderBundleEncoderSetVertexBuffer(Get(), slot, *reinterpret_cast<WGPUBuffer const*>(&buffer), offset, size);    
@@ -3139,11 +3182,11 @@ RenderBundle RenderBundleEncoder::Finish (RenderBundleDescriptor const* descript
     auto result = wgpuRenderBundleEncoderFinish(Get(), reinterpret_cast<WGPURenderBundleDescriptor const* >(descriptor));    
     return RenderBundle::Acquire(result);    
 }
-void RenderBundleEncoder::SetLabel (char const* label) const {
-    wgpuRenderBundleEncoderSetLabel(Get(), label);    
+void RenderBundleEncoder::SetLabel (StringView label) const {
+    wgpuRenderBundleEncoderSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
-void RenderBundleEncoder::SetLabel2 (NullableStringView label) const {
-    wgpuRenderBundleEncoderSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void RenderBundleEncoder::SetImmediateData (uint32_t offset, void const* data, size_t size) const {
+    wgpuRenderBundleEncoderSetImmediateData(Get(), offset, data, size);    
 }
 
 void RenderBundleEncoder::WGPUAddRef(WGPURenderBundleEncoder handle) {
@@ -3177,23 +3220,23 @@ void RenderPassEncoder::DrawIndirect (Buffer indirectBuffer, uint64_t indirectOf
 void RenderPassEncoder::DrawIndexedIndirect (Buffer indirectBuffer, uint64_t indirectOffset) const {
     wgpuRenderPassEncoderDrawIndexedIndirect(Get(), *reinterpret_cast<WGPUBuffer const*>(&indirectBuffer), indirectOffset);    
 }
+void RenderPassEncoder::MultiDrawIndirect (Buffer indirectBuffer, uint64_t indirectOffset, uint32_t maxDrawCount, Buffer drawCountBuffer, uint64_t drawCountBufferOffset) const {
+    wgpuRenderPassEncoderMultiDrawIndirect(Get(), *reinterpret_cast<WGPUBuffer const*>(&indirectBuffer), indirectOffset, maxDrawCount, *reinterpret_cast<WGPUBuffer const*>(&drawCountBuffer), drawCountBufferOffset);    
+}
+void RenderPassEncoder::MultiDrawIndexedIndirect (Buffer indirectBuffer, uint64_t indirectOffset, uint32_t maxDrawCount, Buffer drawCountBuffer, uint64_t drawCountBufferOffset) const {
+    wgpuRenderPassEncoderMultiDrawIndexedIndirect(Get(), *reinterpret_cast<WGPUBuffer const*>(&indirectBuffer), indirectOffset, maxDrawCount, *reinterpret_cast<WGPUBuffer const*>(&drawCountBuffer), drawCountBufferOffset);    
+}
 void RenderPassEncoder::ExecuteBundles (size_t bundleCount, RenderBundle const* bundles) const {
     wgpuRenderPassEncoderExecuteBundles(Get(), bundleCount, reinterpret_cast<WGPURenderBundle const* >(bundles));    
 }
-void RenderPassEncoder::InsertDebugMarker (char const* markerLabel) const {
-    wgpuRenderPassEncoderInsertDebugMarker(Get(), markerLabel);    
-}
-void RenderPassEncoder::InsertDebugMarker2 (StringView markerLabel) const {
-    wgpuRenderPassEncoderInsertDebugMarker2(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
+void RenderPassEncoder::InsertDebugMarker (StringView markerLabel) const {
+    wgpuRenderPassEncoderInsertDebugMarker(Get(), *reinterpret_cast<WGPUStringView const*>(&markerLabel));    
 }
 void RenderPassEncoder::PopDebugGroup () const {
     wgpuRenderPassEncoderPopDebugGroup(Get());    
 }
-void RenderPassEncoder::PushDebugGroup (char const* groupLabel) const {
-    wgpuRenderPassEncoderPushDebugGroup(Get(), groupLabel);    
-}
-void RenderPassEncoder::PushDebugGroup2 (StringView groupLabel) const {
-    wgpuRenderPassEncoderPushDebugGroup2(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
+void RenderPassEncoder::PushDebugGroup (StringView groupLabel) const {
+    wgpuRenderPassEncoderPushDebugGroup(Get(), *reinterpret_cast<WGPUStringView const*>(&groupLabel));    
 }
 void RenderPassEncoder::SetStencilReference (uint32_t reference) const {
     wgpuRenderPassEncoderSetStencilReference(Get(), reference);    
@@ -3228,11 +3271,11 @@ void RenderPassEncoder::PixelLocalStorageBarrier () const {
 void RenderPassEncoder::End () const {
     wgpuRenderPassEncoderEnd(Get());    
 }
-void RenderPassEncoder::SetLabel (char const* label) const {
-    wgpuRenderPassEncoderSetLabel(Get(), label);    
+void RenderPassEncoder::SetLabel (StringView label) const {
+    wgpuRenderPassEncoderSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
-void RenderPassEncoder::SetLabel2 (NullableStringView label) const {
-    wgpuRenderPassEncoderSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void RenderPassEncoder::SetImmediateData (uint32_t offset, void const* data, size_t size) const {
+    wgpuRenderPassEncoderSetImmediateData(Get(), offset, data, size);    
 }
 
 void RenderPassEncoder::WGPUAddRef(WGPURenderPassEncoder handle) {
@@ -3252,11 +3295,8 @@ BindGroupLayout RenderPipeline::GetBindGroupLayout (uint32_t groupIndex) const {
     auto result = wgpuRenderPipelineGetBindGroupLayout(Get(), groupIndex);    
     return BindGroupLayout::Acquire(result);    
 }
-void RenderPipeline::SetLabel (char const* label) const {
-    wgpuRenderPipelineSetLabel(Get(), label);    
-}
-void RenderPipeline::SetLabel2 (NullableStringView label) const {
-    wgpuRenderPipelineSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void RenderPipeline::SetLabel (StringView label) const {
+    wgpuRenderPipelineSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void RenderPipeline::WGPUAddRef(WGPURenderPipeline handle) {
@@ -3272,11 +3312,8 @@ void RenderPipeline::WGPURelease(WGPURenderPipeline handle) {
 
 // Sampler implementation
 
-void Sampler::SetLabel (char const* label) const {
-    wgpuSamplerSetLabel(Get(), label);    
-}
-void Sampler::SetLabel2 (NullableStringView label) const {
-    wgpuSamplerSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void Sampler::SetLabel (StringView label) const {
+    wgpuSamplerSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void Sampler::WGPUAddRef(WGPUSampler handle) {
@@ -3292,14 +3329,12 @@ void Sampler::WGPURelease(WGPUSampler handle) {
 
 // ShaderModule implementation
 
-void ShaderModule::GetCompilationInfo (CompilationInfoCallback callback, void * userdata) const {
-    wgpuShaderModuleGetCompilationInfo(Get(), *reinterpret_cast<WGPUCompilationInfoCallback const*>(&callback), userdata);    
+Future ShaderModule::GetCompilationInfo (CompilationInfoCallbackInfo callbackInfo) const {
+    auto result = wgpuShaderModuleGetCompilationInfo(Get(), *reinterpret_cast<WGPUCompilationInfoCallbackInfo const*>(&callbackInfo));    
+    return Future{result.id};    
 }
-void ShaderModule::SetLabel (char const* label) const {
-    wgpuShaderModuleSetLabel(Get(), label);    
-}
-void ShaderModule::SetLabel2 (NullableStringView label) const {
-    wgpuShaderModuleSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void ShaderModule::SetLabel (StringView label) const {
+    wgpuShaderModuleSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void ShaderModule::WGPUAddRef(WGPUShaderModule handle) {
@@ -3325,21 +3360,14 @@ Status Surface::GetCapabilities (Adapter adapter, SurfaceCapabilities * capabili
 void Surface::GetCurrentTexture (SurfaceTexture * surfaceTexture) const {
     wgpuSurfaceGetCurrentTexture(Get(), reinterpret_cast<WGPUSurfaceTexture * >(surfaceTexture));    
 }
-TextureFormat Surface::GetPreferredFormat (Adapter adapter) const {
-    auto result = wgpuSurfaceGetPreferredFormat(Get(), *reinterpret_cast<WGPUAdapter const*>(&adapter));    
-    return static_cast<TextureFormat>(result);    
-}
 void Surface::Present () const {
     wgpuSurfacePresent(Get());    
 }
 void Surface::Unconfigure () const {
     wgpuSurfaceUnconfigure(Get());    
 }
-void Surface::SetLabel (char const* label) const {
-    wgpuSurfaceSetLabel(Get(), label);    
-}
-void Surface::SetLabel2 (NullableStringView label) const {
-    wgpuSurfaceSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void Surface::SetLabel (StringView label) const {
+    wgpuSurfaceSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void Surface::WGPUAddRef(WGPUSurface handle) {
@@ -3353,31 +3381,6 @@ void Surface::WGPURelease(WGPUSurface handle) {
     }
 }
 
-// SwapChain implementation
-
-TextureView SwapChain::GetCurrentTextureView () const {
-    auto result = wgpuSwapChainGetCurrentTextureView(Get());    
-    return TextureView::Acquire(result);    
-}
-Texture SwapChain::GetCurrentTexture () const {
-    auto result = wgpuSwapChainGetCurrentTexture(Get());    
-    return Texture::Acquire(result);    
-}
-void SwapChain::Present () const {
-    wgpuSwapChainPresent(Get());    
-}
-
-void SwapChain::WGPUAddRef(WGPUSwapChain handle) {
-    if (handle != nullptr) {
-        wgpuSwapChainAddRef(handle);
-    }
-}
-void SwapChain::WGPURelease(WGPUSwapChain handle) {
-    if (handle != nullptr) {
-        wgpuSwapChainRelease(handle);
-    }
-}
-
 // Texture implementation
 
 TextureView Texture::CreateView (TextureViewDescriptor const* descriptor) const {
@@ -3388,11 +3391,8 @@ TextureView Texture::CreateErrorView (TextureViewDescriptor const* descriptor) c
     auto result = wgpuTextureCreateErrorView(Get(), reinterpret_cast<WGPUTextureViewDescriptor const* >(descriptor));    
     return TextureView::Acquire(result);    
 }
-void Texture::SetLabel (char const* label) const {
-    wgpuTextureSetLabel(Get(), label);    
-}
-void Texture::SetLabel2 (NullableStringView label) const {
-    wgpuTextureSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void Texture::SetLabel (StringView label) const {
+    wgpuTextureSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 uint32_t Texture::GetWidth () const {
     auto result = wgpuTextureGetWidth(Get());    
@@ -3443,11 +3443,8 @@ void Texture::WGPURelease(WGPUTexture handle) {
 
 // TextureView implementation
 
-void TextureView::SetLabel (char const* label) const {
-    wgpuTextureViewSetLabel(Get(), label);    
-}
-void TextureView::SetLabel2 (NullableStringView label) const {
-    wgpuTextureViewSetLabel2(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
+void TextureView::SetLabel (StringView label) const {
+    wgpuTextureViewSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));    
 }
 
 void TextureView::WGPUAddRef(WGPUTextureView handle) {
@@ -3464,8 +3461,8 @@ Instance CreateInstance (InstanceDescriptor const* descriptor) {
     auto result = wgpuCreateInstance(reinterpret_cast<WGPUInstanceDescriptor const* >(descriptor));    
     return Instance::Acquire(result);    
 }
-Status GetInstanceFeatures (InstanceFeatures * features) {
-    auto result = wgpuGetInstanceFeatures(reinterpret_cast<WGPUInstanceFeatures * >(features));    
+Status GetInstanceCapabilities (InstanceCapabilities * capabilities) {
+    auto result = wgpuGetInstanceCapabilities(reinterpret_cast<WGPUInstanceCapabilities * >(capabilities));    
     return static_cast<Status>(result);    
 }
 
@@ -3474,17 +3471,6 @@ Status GetInstanceFeatures (InstanceFeatures * features) {
         const bool isNull = this->data == nullptr;
         const bool useStrlen = this->length == SIZE_MAX;
         //DAWN_ASSERT(!(isNull && useStrlen));
-        return std::string_view(this->data, isNull      ? 0
-                                            : useStrlen ? std::strlen(this->data)
-                                                        : this->length);
-    }
-
-    NullableStringView::operator std::optional<std::string_view>() const {
-        const bool isNull = this->data == nullptr;
-        const bool useStrlen = this->length == SIZE_MAX;
-        if (isNull && useStrlen) {
-            return std::nullopt;
-        }
         return std::string_view(this->data, isNull      ? 0
                                             : useStrlen ? std::strlen(this->data)
                                                         : this->length);

@@ -13,7 +13,10 @@ set(IMGUI_ROOT ${CRUNGE_ROOT}/depot/imgui)
 set(IMPLOT_ROOT ${CRUNGE_ROOT}/depot/implot)
 set(IMNODES_ROOT ${CRUNGE_ROOT}/depot/imnodes)
 
-set(DAWN_ROOT ${CRUNGE_ROOT}/depot/dawn)
+#set(DAWN_ROOT ${CRUNGE_ROOT}/depot/dawn)
+set(SKIA_ROOT ${CRUNGE_ROOT}/depot/skia)
+set(DAWN_ROOT ${SKIA_ROOT}/third_party/externals/dawn)
+set(SKIA_LIB_DIR ${SKIA_ROOT}/out/debug)
 
 set(GLTF_ROOT ${CRUNGE_ROOT}/depot/gltf)
 

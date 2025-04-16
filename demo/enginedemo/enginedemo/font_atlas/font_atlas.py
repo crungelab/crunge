@@ -249,12 +249,12 @@ class FontAtlasDemo(Demo):
         self.sampler = self.device.create_sampler()
 
         self.queue.write_texture(
-            wgpu.ImageCopyTexture(
+            wgpu.TexelCopyTextureInfo(
                 texture=self.texture, mip_level=0, origin=wgpu.Origin3D(0, 0, 0)
             ),
             utils.as_capsule(rgba_data),
             rgba_data.nbytes,
-            wgpu.TextureDataLayout(
+            wgpu.TexelCopyBufferLayout(
                 offset=0,
                 bytes_per_row=rgba_data.shape[1] * 4,
                 rows_per_image=rgba_data.shape[0],

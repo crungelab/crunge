@@ -204,7 +204,8 @@ class ParticlesDemo(Demo):
         compute_pl_desc = wgpu.ComputePipelineDescriptor(
             label="Main Compute Pipeline",
             layout=self.device.create_pipeline_layout(compute_pll_desc),
-            compute=wgpu.ProgrammableStageDescriptor(
+            #compute=wgpu.ProgrammableStageDescriptor(
+            compute=wgpu.ComputeState(
                 module=self.cs_module,
                 entry_point="cs_main",
             ),

@@ -63,6 +63,7 @@ class QuadShaderLayer(DemoLayer):
 
         depthStencilState = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
+            depth_write_enabled=False,
         )
 
         primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_STRIP)

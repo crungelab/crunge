@@ -200,7 +200,7 @@ class QuadTextureDemo(Demo):
 
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
-            wgpu.ImageCopyTexture(
+            wgpu.TexelCopyTextureInfo(
                 texture=self.texture,
                 mip_level=0,
                 origin=wgpu.Origin3D(0, 0, 0),
@@ -211,7 +211,7 @@ class QuadTextureDemo(Demo):
             # Data size
             data.size,
             # The layout of the texture
-            wgpu.TextureDataLayout(
+            wgpu.TexelCopyBufferLayout(
                 offset=0,
                 bytes_per_row=4 * 1024,
                 rows_per_image=1024,

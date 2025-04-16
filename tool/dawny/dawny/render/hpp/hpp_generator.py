@@ -23,6 +23,7 @@ class HppGenerator(Generator):
 
     def render(self):
         # using declarations
+        '''
         self.out << """
 using BufferMapCallback = WGPUBufferMapCallback;
 using Callback = WGPUCallback;
@@ -52,6 +53,21 @@ using CompilationInfoCallback2 = WGPUCompilationInfoCallback2;
 using BufferMapCallback2 = WGPUBufferMapCallback2;
 using RequestAdapterCallback2 = WGPURequestAdapterCallback2;
 """ << "\n"
+        '''
+
+        '''
+        using {{as_cppType(type.name)}} = {{as_cType(type.name)}};
+        '''
+        
+        for node in self.backend.function_pointer_types:
+            #self.out << f"using {node.name.CamelCase()} = {self.as_cppType(node.name)};" << "\n"
+            self.out << f"using {self.as_cppType(node.name)} = {self.as_cType(node.name)};" << "\n"
+        self.out << "\n"
+
+        for node in self.backend.callback_info_types:
+            #self.out << f"using {node.name.CamelCase()} = {self.as_cppType(node.name)};" << "\n"
+            self.out << f"using {self.as_cppType(node.name)} = {self.as_cType(node.name)};" << "\n"
+        self.out << "\n"
 
         # forward declarations
         for node in self.backend.structure_types:
@@ -61,24 +77,56 @@ using RequestAdapterCallback2 = WGPURequestAdapterCallback2;
 
         self.out << "\n"
 
+        # calback templates
+        #cb_template = self.context.jinja_env.get_template('_callback.h.j2')
+        #self.out << cb_template.render() << "\n" << "\n"
+
         for node in self.backend.object_types:
             self.out << f"class {node.name.CamelCase()};" << "\n"
 
         self.out << "\n"
         
+        self.render_constant_definitions()
         self.render_enum_types()
         self.render_bitmask_types()
 
+        # calback templates
+        cb_template = self.context.jinja_env.get_template('_callback.h.j2')
+        self.out << cb_template.render() << "\n" << "\n"
+
         #self.render_structure_types()
         #self.render_object_types()
-        custom_template = self.context.jinja_env.get_template('custom.h')
-        self.out << custom_template.render()
+        custom_template = self.context.jinja_env.get_template('_custom.h.j2')
+        self.out << custom_template.render() << "\n" << "\n"
 
         self.render_declarations()
 
         self.render_function_declarations()
 
         super().render()
+
+    '''
+    {% for constant in by_category["constant"] %}
+        {% set type = as_cppType(constant.type.name) %}
+        {% if constant.cpp_value %}
+            static constexpr {{type}} k{{constant.name.CamelCase()}} = {{ constant.cpp_value }};
+        {% else %}
+            {% set value = c_prefix + "_" +  constant.name.SNAKE_CASE() %}
+            static constexpr {{type}} k{{constant.name.CamelCase()}} = {{ value }};
+        {% endif %}
+    {% endfor %}
+    '''
+
+    def render_constant_definitions(self):
+        for constant in self.backend.constant_definitions:
+            constant_type = self.lookup(constant.type)
+            type = self.as_cppType(constant_type.name)
+            if constant.cpp_value:
+                self.out << f"static constexpr {type} k{constant.name.CamelCase()} = {constant.cpp_value};" << "\n"
+            else:
+                value = f"{self.context.c_prefix}_{constant.name.SNAKE_CASE()}"
+                self.out << f"static constexpr {type} k{constant.name.CamelCase()} = {value};" << "\n"
+        self.out << "\n"
 
     def render_declarations(self):
         declarations = []

@@ -73,8 +73,13 @@ class StructureTypePyRenderer(StructureTypeRenderer):
 
     def render_init(self):
         node = self.node
+        '''
+        if node.output:
+            return
+        '''
         if node.extensible and node.extensible == "out" or node.chained and node.chained == "out":
             return
+
         class_name = node.name.CamelCase()
 
         self.out << f'.def(py::init([](const py::kwargs& kwargs) {{' << "\n"

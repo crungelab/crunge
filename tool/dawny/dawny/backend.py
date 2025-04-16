@@ -65,9 +65,7 @@ class Backend(Processor):
 
         # Render the header template
         header_template = self.jinja_env.get_template("wgpu.h.j2")
-        output = header_template.render(
-            hpp_code=hpp_code
-        )
+        output = header_template.render(hpp_code=hpp_code)
         # logger.debug(output)
         # Write the C++ code to a file
         path = Path("src/dawn/webgpu_cpp.h")
@@ -76,9 +74,7 @@ class Backend(Processor):
 
         # Render the source template
         source_template = self.jinja_env.get_template("wgpu.cpp.j2")
-        output = source_template.render(
-            cpp_code=cpp_code
-        )
+        output = source_template.render(cpp_code=cpp_code)
         # logger.debug(output)
         # Write the C++ code to a file
         path = Path("src/wgpu.cpp")
@@ -88,9 +84,7 @@ class Backend(Processor):
         # Render the Python bindings
         # Render the source template
         source_template = self.jinja_env.get_template("wgpu_py.cpp.j2")
-        output = source_template.render(
-            py_code=py_code
-        )
+        output = source_template.render(py_code=py_code)
         # logger.debug(output)
         # Write the C++ code to a file
         path = Path("src/wgpu_py.cpp")
@@ -101,7 +95,7 @@ class Backend(Processor):
 
     def process(self):
         for key, entry in self.program.root:
-            #logger.debug(f"Backend: Processing '{key}': {entry.__class__.__name__}")
+            # logger.debug(f"Backend: Processing '{key}': {entry.__class__.__name__}")
             if isinstance(entry, ObjectType):
                 self.process_object_type(entry)
             elif isinstance(entry, NativeType):
@@ -130,7 +124,7 @@ class Backend(Processor):
         self.native_types.append(native)
 
     def process_object_type(self, obj: ObjectType):
-        #logger.debug(f"Backend: Processing object type '{obj.name.CamelCase()}'")
+        # logger.debug(f"Backend: Processing object type '{obj.name.CamelCase()}'")
         self.object_types.append(obj)
 
     def process_enum_type(self, enum: EnumType):
@@ -146,7 +140,9 @@ class Backend(Processor):
         self.structure_types.append(structure)
 
     def process_function_pointer_type(self, function_pointer: FunctionPointerType):
-        # logger.debug(f"Backend: Processing function pointer type '{function_pointer.name.CamelCase()}'")
+        logger.debug(
+            f"Backend: Processing function pointer type '{function_pointer.name.CamelCase()}, category: {function_pointer.category}, class:{function_pointer.__class__.__name__}'"
+        )
         self.function_pointer_types.append(function_pointer)
 
     def process_constant_definition(self, constant: ConstantDefinition):
@@ -162,7 +158,7 @@ class Backend(Processor):
         self.callback_info_types.append(callback_info)
 
     def process_callback_function_type(self, callback_function: CallbackFunctionType):
-        # logger.debug(f"Backend: Processing callback function type '{callback_function.name.CamelCase()}'")
+        logger.debug(
+            f"Backend: Processing callback function type '{callback_function.name.CamelCase()}'"
+        )
         self.callback_function_types.append(callback_function)
-
-
