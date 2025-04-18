@@ -1675,17 +1675,76 @@ PYCLASS_BEGIN(m, wgpu::RequestAdapterOptions, RequestAdapterOptions) RequestAdap
 PYCLASS_END(m, wgpu::RequestAdapterOptions, RequestAdapterOptions)
 
 PYCLASS_BEGIN(m, wgpu::AdapterInfo, AdapterInfo) AdapterInfo
-    .def_readonly("next_in_chain", &wgpu::AdapterInfo::nextInChain)    
-    .def_readonly("vendor", &wgpu::AdapterInfo::vendor)    
-    .def_readonly("architecture", &wgpu::AdapterInfo::architecture)    
-    .def_readonly("device", &wgpu::AdapterInfo::device)    
-    .def_readonly("description", &wgpu::AdapterInfo::description)    
-    .def_readonly("backend_type", &wgpu::AdapterInfo::backendType)    
-    .def_readonly("adapter_type", &wgpu::AdapterInfo::adapterType)    
-    .def_readonly("vendor_id", &wgpu::AdapterInfo::vendorID)    
-    .def_readonly("device_id", &wgpu::AdapterInfo::deviceID)    
-    .def_readonly("subgroup_min_size", &wgpu::AdapterInfo::subgroupMinSize)    
-    .def_readonly("subgroup_max_size", &wgpu::AdapterInfo::subgroupMaxSize)    
+    .def_readwrite("next_in_chain", &wgpu::AdapterInfo::nextInChain)    
+    .def_readwrite("vendor", &wgpu::AdapterInfo::vendor)    
+    .def_readwrite("architecture", &wgpu::AdapterInfo::architecture)    
+    .def_readwrite("device", &wgpu::AdapterInfo::device)    
+    .def_readwrite("description", &wgpu::AdapterInfo::description)    
+    .def_readwrite("backend_type", &wgpu::AdapterInfo::backendType)    
+    .def_readwrite("adapter_type", &wgpu::AdapterInfo::adapterType)    
+    .def_readwrite("vendor_id", &wgpu::AdapterInfo::vendorID)    
+    .def_readwrite("device_id", &wgpu::AdapterInfo::deviceID)    
+    .def_readwrite("subgroup_min_size", &wgpu::AdapterInfo::subgroupMinSize)    
+    .def_readwrite("subgroup_max_size", &wgpu::AdapterInfo::subgroupMaxSize)    
+    .def(py::init([](const py::kwargs& kwargs) {    
+        wgpu::AdapterInfo obj{};        
+        if (kwargs.contains("next_in_chain"))        
+        {        
+            auto value = kwargs["next_in_chain"].cast<wgpu::ChainedStructOut *>();            
+            obj.nextInChain = value;            
+        }        
+        if (kwargs.contains("vendor"))        
+        {        
+            auto value = kwargs["vendor"].cast<wgpu::StringView>();            
+            obj.vendor = value;            
+        }        
+        if (kwargs.contains("architecture"))        
+        {        
+            auto value = kwargs["architecture"].cast<wgpu::StringView>();            
+            obj.architecture = value;            
+        }        
+        if (kwargs.contains("device"))        
+        {        
+            auto value = kwargs["device"].cast<wgpu::StringView>();            
+            obj.device = value;            
+        }        
+        if (kwargs.contains("description"))        
+        {        
+            auto value = kwargs["description"].cast<wgpu::StringView>();            
+            obj.description = value;            
+        }        
+        if (kwargs.contains("backend_type"))        
+        {        
+            auto value = kwargs["backend_type"].cast<wgpu::BackendType>();            
+            obj.backendType = value;            
+        }        
+        if (kwargs.contains("adapter_type"))        
+        {        
+            auto value = kwargs["adapter_type"].cast<wgpu::AdapterType>();            
+            obj.adapterType = value;            
+        }        
+        if (kwargs.contains("vendor_id"))        
+        {        
+            auto value = kwargs["vendor_id"].cast<uint32_t>();            
+            obj.vendorID = value;            
+        }        
+        if (kwargs.contains("device_id"))        
+        {        
+            auto value = kwargs["device_id"].cast<uint32_t>();            
+            obj.deviceID = value;            
+        }        
+        if (kwargs.contains("subgroup_min_size"))        
+        {        
+            auto value = kwargs["subgroup_min_size"].cast<uint32_t>();            
+            obj.subgroupMinSize = value;            
+        }        
+        if (kwargs.contains("subgroup_max_size"))        
+        {        
+            auto value = kwargs["subgroup_max_size"].cast<uint32_t>();            
+            obj.subgroupMaxSize = value;            
+        }        
+        return obj;        
+    }), py::return_value_policy::automatic_reference)    
 ;
 PYCLASS_END(m, wgpu::AdapterInfo, AdapterInfo)
 

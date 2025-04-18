@@ -3241,26 +3241,18 @@ struct DeviceDescriptor {
 };
 
 struct AdapterInfo {
-AdapterInfo() = default;
-    ~AdapterInfo();
-    AdapterInfo(const AdapterInfo&) = delete;
-    void FreeMembers();
-    AdapterInfo& operator=(const AdapterInfo&) = delete;
-    AdapterInfo(AdapterInfo&&);
-    AdapterInfo& operator=(AdapterInfo&&);
-    
     operator const WGPUAdapterInfo&() const noexcept;
-    ChainedStructOut * const nextInChain = nullptr;
-    StringView const vendor = {};
-    StringView const architecture = {};
-    StringView const device = {};
-    StringView const description = {};
-    BackendType const backendType = {};
-    AdapterType const adapterType = {};
-    uint32_t const vendorID = {};
-    uint32_t const deviceID = {};
-    uint32_t const subgroupMinSize = {};
-    uint32_t const subgroupMaxSize = {};
+    ChainedStructOut * nextInChain = nullptr;
+    StringView vendor = {};
+    StringView architecture = {};
+    StringView device = {};
+    StringView description = {};
+    BackendType backendType;
+    AdapterType adapterType;
+    uint32_t vendorID;
+    uint32_t deviceID;
+    uint32_t subgroupMinSize;
+    uint32_t subgroupMaxSize;
 };
 
 struct RequestAdapterOptions {

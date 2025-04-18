@@ -14,19 +14,21 @@ from . import globals
 class Gfx:
     def __init__(self) -> None:
         logger.debug("Creating Gfx")
-
+        '''
         instance_capabilities = wgpu.InstanceCapabilities()
         instance_capabilities.timed_wait_any_enable = True
 
         instance_descriptor = wgpu.InstanceDescriptor()
         instance_descriptor.capabilities = instance_capabilities
         self.instance = wgpu.create_instance(instance_descriptor)
+        '''
         #self.instance = wgpu.create_instance()
+        self.instance = utils.create_instance()
 
         self.adapter = self.instance.request_adapter()
         self.device = self.adapter.create_device()
         self.device.set_label("Primary Device")
-        self.device.enable_logging()
+        #self.device.enable_logging()
         self.queue = self.device.get_queue()
         globals.set_gfx(self)
 

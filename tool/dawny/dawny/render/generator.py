@@ -53,12 +53,6 @@ class Generator(Renderer):
             #logger.debug(f"Rendering bitmask type: {bitmask_type}")
             self.render_node(bitmask_type)
 
-    '''
-    def render_enum_types(self):
-        for enum_type in self.backend.enum_types:
-            self.render_node(enum_type)
-    '''
-
     def render_enum_types(self):
         for enum_type in self.backend.enum_types:
             if self.exclude_enum_type(enum_type):

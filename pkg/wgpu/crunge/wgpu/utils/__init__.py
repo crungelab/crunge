@@ -13,6 +13,12 @@ def divround_down(value, step):
 def divround_up(value, step):
     return (value + step - 1) // step * step
 
+def create_instance() -> wgpu.Instance:
+    capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable = True)
+    instance_descriptor = wgpu.InstanceDescriptor(capabilities=capabilities)
+    instance = wgpu.create_instance(instance_descriptor)
+    return instance
+
 
 def create_buffer(
     device: wgpu.Device, label: str, size: int, usage: wgpu.BufferUsage

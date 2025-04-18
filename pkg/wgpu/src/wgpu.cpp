@@ -20,45 +20,6 @@ AdapterInfo::operator const WGPUAdapterInfo&() const noexcept {
     return *reinterpret_cast<const WGPUAdapterInfo*>(this);
 }
 
-AdapterInfo::~AdapterInfo() {
-    FreeMembers();
-}
-void AdapterInfo::FreeMembers() {
-    // Free members here
-}
-
-AdapterInfo::AdapterInfo(AdapterInfo&& rhs) :
-    nextInChain(rhs.nextInChain),    
-    vendor(rhs.vendor),    
-    architecture(rhs.architecture),    
-    device(rhs.device),    
-    description(rhs.description),    
-    backendType(rhs.backendType),    
-    adapterType(rhs.adapterType),    
-    vendorID(rhs.vendorID),    
-    deviceID(rhs.deviceID),    
-    subgroupMinSize(rhs.subgroupMinSize),    
-    subgroupMaxSize(rhs.subgroupMaxSize)    
-{}
-AdapterInfo& AdapterInfo::operator=(AdapterInfo&& rhs) {
-if (&rhs == this) {
-    return *this;
-}
-FreeMembers();
-
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->vendor) = std::move(rhs.vendor);    
-    ::wgpu::detail::AsNonConstReference(this->architecture) = std::move(rhs.architecture);    
-    ::wgpu::detail::AsNonConstReference(this->device) = std::move(rhs.device);    
-    ::wgpu::detail::AsNonConstReference(this->description) = std::move(rhs.description);    
-    ::wgpu::detail::AsNonConstReference(this->backendType) = std::move(rhs.backendType);    
-    ::wgpu::detail::AsNonConstReference(this->adapterType) = std::move(rhs.adapterType);    
-    ::wgpu::detail::AsNonConstReference(this->vendorID) = std::move(rhs.vendorID);    
-    ::wgpu::detail::AsNonConstReference(this->deviceID) = std::move(rhs.deviceID);    
-    ::wgpu::detail::AsNonConstReference(this->subgroupMinSize) = std::move(rhs.subgroupMinSize);    
-    ::wgpu::detail::AsNonConstReference(this->subgroupMaxSize) = std::move(rhs.subgroupMaxSize);    
-    return *this;    
-}
 // DeviceDescriptor implementation
 
 DeviceDescriptor::operator const WGPUDeviceDescriptor&() const noexcept {

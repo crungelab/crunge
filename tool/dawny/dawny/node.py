@@ -290,6 +290,7 @@ class Root(RootModel):
 
         self.root["instance capabilities"].extensible = "in"
         self.root["surface texture"].extensible = "in"
+        self.root["adapter info"].extensible = "in"
 
         self.root["chained struct"] = StructureType(
             name=Name.intern("chained struct"),

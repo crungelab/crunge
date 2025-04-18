@@ -82,7 +82,8 @@ void init_main(py::module &_wgpu, Registry &registry)
 
         wgpu::RequestAdapterCallbackInfo callbackInfo = {
             //.mode = wgpu::CallbackMode::WaitAnyOnly,
-            .mode = WGPUCallbackMode_WaitAnyOnly,
+            //.mode = WGPUCallbackMode_WaitAnyOnly,
+            .mode = WGPUCallbackMode_AllowProcessEvents,
             .callback = cb
         };
     
@@ -153,6 +154,7 @@ void init_main(py::module &_wgpu, Registry &registry)
     Device.def_property_readonly("queue", [](const wgpu::Device &self)
                                  { return self.GetQueue(); }, py::return_value_policy::automatic_reference);
 
+    /*
     Device.def("enable_logging",
                [](const wgpu::Device &self)
                {
@@ -162,41 +164,8 @@ void init_main(py::module &_wgpu, Registry &registry)
 
                    //self.SetDeviceLostCallback(crunge::wgpu::DeviceLostCallback, nullptr);
                });
-    PYEXTEND_END
-
-    /*PYEXTEND_BEGIN(wgpu::Adapter, Adapter)
-    Adapter.def("get_properties",
-                [](const wgpu::Adapter &self)
-                {
-                    wgpu::AdapterProperties properties;
-                    self.GetProperties(&properties);
-                    return properties;
-                });
-    PYEXTEND_END*/
-
-    /*
-    //TODO:GENERATE: need to define our own bitwise operators for scoped enums.
-    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::TextureUsage, TextureUsage)
-        //TextureUsage.def(py::self | py::self); //Doesn't work
-        TextureUsage.def("__or__", [](wgpu::TextureUsage& a, wgpu::TextureUsage& b) {
-        return (wgpu::TextureUsage)(a | b);
-            }, py::is_operator());
-    PYEXTEND_END
-
-    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::BufferUsage, BufferUsage)
-        //TextureUsage.def(py::self | py::self); //Doesn't work
-        BufferUsage.def("__or__", [](wgpu::BufferUsage& a, wgpu::BufferUsage& b) {
-        return (wgpu::BufferUsage)(a | b);
-            }, py::is_operator());
-    PYEXTEND_END
-
-    PYEXTEND_SCOPED_ENUM_BEGIN(wgpu::ShaderStage, ShaderStage)
-        //TextureUsage.def(py::self | py::self); //Doesn't work
-        ShaderStage.def("__or__", [](wgpu::ShaderStage& a, wgpu::ShaderStage& b) {
-        return (wgpu::ShaderStage)(a | b);
-            }, py::is_operator());
-    PYEXTEND_END
     */
+    PYEXTEND_END
 
     PYEXTEND_BEGIN(wgpu::Extent3D, Extent3D)
     Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>(), py::arg("width"), py::arg("height") = 1, py::arg("depth") = 1);
