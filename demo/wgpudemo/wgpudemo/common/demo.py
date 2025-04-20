@@ -6,7 +6,7 @@ from loguru import logger
 
 from crunge.core import as_capsule
 from crunge import wgpu
-from crunge.wgpu import utils
+
 
 class Demo:
     kWidth = 1024
@@ -17,7 +17,6 @@ class Demo:
     pipeline: wgpu.RenderPipeline = None
 
     surface: wgpu.Surface = None
-    #swap_chain: wgpu.SwapChain = None
 
     depth_stencil_view: wgpu.TextureView = None
 
@@ -25,29 +24,24 @@ class Demo:
         super().__init__()
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
+        self.context = wgpu.Context()
 
-        '''
-        wgpu::InstanceDescriptor instanceDescriptor = {};
-        instanceDescriptor.capabilities.timedWaitAnyEnable = true;
-        '''
-        instance_descriptor = wgpu.InstanceDescriptor()
-        instance_capabilities = wgpu.InstanceCapabilities()
-        instance_capabilities.timed_wait_any_enable = True
-        instance_descriptor.capabilities = instance_capabilities
-        self.instance = wgpu.create_instance(instance_descriptor)
-        #self.instance = wgpu.create_instance()
-        
-        logger.debug(f"instance: {self.instance}")
-        self.adapter = self.instance.request_adapter()
-        logger.debug(f"adapter: {self.adapter}")
-        self.device = self.adapter.create_device()
-        logger.debug(f"device: {self.device}")
-        self.device.set_label("Primary Device")
-        self.device.enable_logging()
-
-        self.queue = self.device.get_queue()
-        logger.debug(f"queue: {self.queue}")
-
+    @property
+    def instance(self) -> wgpu.Instance:
+        return self.context.instance
+    
+    @property
+    def adapter(self) -> wgpu.Adapter:
+        return self.context.adapter
+    
+    @property
+    def device(self) -> wgpu.Device:
+        return self.context.device
+    
+    @property
+    def queue(self) -> wgpu.Queue:
+        return self.context.queue
+    
     def create_window(self):
         glfw.init()
 
@@ -86,16 +80,6 @@ class Demo:
         logger.debug(config)
         self.surface.configure(config)
         logger.debug(f"Surface configured to size: {size}")
-
-    def resize(self, size: glm.ivec2):
-        logger.debug(f"Resizing to {size}")
-        if not size.x or not size.y:
-            return
-        if self.size == size:
-            return
-        self.size = size
-        self.configure_surface(size)
-        logger.debug(f"Resized to {size}")
 
     def create_surface(self):
         logger.debug("Creating surface")
@@ -148,8 +132,9 @@ class Demo:
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
         while not glfw.window_should_close(self.window):
-            glfw.poll_events()
             self.instance.process_events()
+            glfw.poll_events()
+            #self.instance.process_events()
 
             now = time.perf_counter()
             frame_time = now - last_time
@@ -165,3 +150,19 @@ class Demo:
             last_time = time.perf_counter()
 
             self.frame()
+
+        #del self.surface
+        #self.instance.process_events()
+        #self.context = None
+        #glfw.destroy_window(self.window)
+        #glfw.terminate()
+
+    def resize(self, size: glm.ivec2):
+        logger.debug(f"Resizing to {size}")
+        if not size.x or not size.y:
+            return
+        if self.size == size:
+            return
+        self.size = size
+        self.configure_surface(size)
+        logger.debug(f"Resized to {size}")

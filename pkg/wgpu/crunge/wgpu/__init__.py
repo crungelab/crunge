@@ -1,4 +1,4 @@
-__version__ = '0.1.0'
+__version__ = "0.1.0"
 
 from crunge import core
 
@@ -8,3 +8,5 @@ from ._wgpu import *
 from ._wgpu import create_proc_table
 
 create_proc_table()
+
+from .context import Context

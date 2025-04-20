@@ -31,7 +31,9 @@ def request_adapter(instance: wgpu.Instance) -> wgpu.Adapter:
     adapter_holder = None
 
     # 3) Define the callback exactly like the C++ lambda did
-    def on_adapter_request(status, adapter, message):
+    def on_adapter_request(
+        status: wgpu.RequestAdapterStatus, adapter: wgpu.Adapter, message: str
+    ):
         logger.debug("on_adapter_request called")
         nonlocal adapter_holder
 
@@ -76,6 +78,10 @@ def uncaptured_error_cb(device, type, message):
 uncaptured_error_callback_info = wgpu.UncapturedErrorCallbackInfo(uncaptured_error_cb)
 
 
+def logging_cb(type: wgpu.LoggingType, message: str):
+    print("Logging: ", type, message)
+
+
 def create_device(adapter: wgpu.Adapter) -> wgpu.Device:
     device_desc = wgpu.DeviceDescriptor(
         device_lost_callback_info=device_lost_callback_info,
@@ -83,9 +89,10 @@ def create_device(adapter: wgpu.Adapter) -> wgpu.Device:
     )
     device = adapter.create_device(device_desc)
 
-    logging_cb = lambda info: print(info)
+    # logging_cb = lambda info: print(info)
     cbinfo = wgpu.LoggingCallbackInfo(logging_cb)
     device.set_logging_callback(cbinfo)
+    device.set_label("Primary Device")
 
     return device
 

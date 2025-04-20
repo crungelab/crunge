@@ -17,9 +17,28 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class GltfV:
     def __init__(self):
-        pass
+        self.context = wgpu.Context()
+        gltfv.globals.instance = self.instance
+        gltfv.globals.device = self.device
+
+    @property
+    def instance(self) -> wgpu.Instance:
+        return self.context.instance
+    
+    @property
+    def adapter(self) -> wgpu.Adapter:
+        return self.context.adapter
+    
+    @property
+    def device(self) -> wgpu.Device:
+        return self.context.device
+    
+    @property
+    def queue(self) -> wgpu.Queue:
+        return self.context.queue
 
     def run(self):
+        '''
         instance_capabilities = wgpu.InstanceCapabilities()
         instance_capabilities.timed_wait_any_enable = True
 
@@ -34,6 +53,7 @@ class GltfV:
         gltfv.globals.device = self.device
         self.device.set_label("Primary Device")
         self.device.enable_logging()
+        '''
 
         #scene_path = models_root / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
         #scene_path = models_root / "BoxTextured" / "glTF" / "BoxTextured.gltf"
@@ -67,7 +87,7 @@ class GltfV:
         scene = SceneBuilder().build(scene_path)
         #exit()
         Viewer().show(scene)
-        self.device.destroy()
+        #self.device.destroy()
 
 def main():
     GltfV().run()

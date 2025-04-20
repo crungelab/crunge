@@ -23,17 +23,39 @@ class Gfx:
         self.instance = wgpu.create_instance(instance_descriptor)
         '''
         #self.instance = wgpu.create_instance()
-        self.instance = utils.create_instance()
+        #self.instance = utils.create_instance()
 
         #self.adapter = self.instance.request_adapter()
-        self.adapter = utils.request_adapter(self.instance)
+        #self.adapter = utils.request_adapter(self.instance)
 
-        self.device = utils.create_device(self.adapter)
+        #self.device = utils.create_device(self.adapter)
         #self.device = self.adapter.create_device()
-        self.device.set_label("Primary Device")
+        self.context = wgpu.Context()
+        #self.instance = self.context.instance
+        #self.adapter = self.context.adapter
+        #self.device = self.context.device
+        #self.queue = self.context.queue
+
+        #self.device.set_label("Primary Device")
         #self.device.enable_logging()
-        self.queue = self.device.get_queue()
+        #self.queue = self.device.get_queue()
         globals.set_gfx(self)
+
+    @property
+    def instance(self) -> wgpu.Instance:
+        return self.context.instance
+    
+    @property
+    def adapter(self) -> wgpu.Adapter:
+        return self.context.adapter
+    
+    @property
+    def device(self) -> wgpu.Device:
+        return self.context.device
+    
+    @property
+    def queue(self) -> wgpu.Queue:
+        return self.context.queue
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
         #logger.debug(f"Creating shader module from code: {code}")

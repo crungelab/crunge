@@ -32,7 +32,7 @@ struct PyRequestAdapterCallbackInfo {
             py::gil_scoped_acquire gil;
 
             auto apiAdapter = wgpu::Adapter::Acquire(adapter);
-            std::cout << "RequestAdapterCallbackInfo: " << message.data << std::endl;
+            //std::cout << "RequestAdapterCallbackInfo: " << message.data << std::endl;
             self->py_callback(static_cast<wgpu::RequestAdapterStatus>(status), apiAdapter, static_cast<wgpu::StringView>(message));
         };
 
@@ -66,12 +66,16 @@ struct PyDeviceLostCallbackInfo {
                             struct WGPUStringView message,
                            void* userdata1,
                            void* userdata2) {
-            auto self = reinterpret_cast<PyDeviceLostCallbackInfo*>(userdata1);
-            py::gil_scoped_acquire gil;
 
-            auto apiDevice = wgpu::Device::Acquire(*device);
-            //std::cout << "DeviceLostCallbackInfo: " << message.data << std::endl;
-            self->py_callback(apiDevice, static_cast<wgpu::DeviceLostReason>(reason), static_cast<wgpu::StringView>(message));
+            // Check if Python interpreter is still alive
+            if (Py_IsInitialized()) {
+                auto self = reinterpret_cast<PyDeviceLostCallbackInfo*>(userdata1);
+                py::gil_scoped_acquire gil;
+
+                auto apiDevice = wgpu::Device::Acquire(*device);
+                //std::cout << "DeviceLostCallbackInfo: " << message.data << std::endl;
+                self->py_callback(apiDevice, static_cast<wgpu::DeviceLostReason>(reason), static_cast<wgpu::StringView>(message));
+            }
         };
 
         WGPUDeviceLostCallbackInfo native_info = {};
