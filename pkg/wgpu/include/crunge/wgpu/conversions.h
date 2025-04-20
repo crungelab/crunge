@@ -3,6 +3,9 @@
 //#include <wgpu.h>
 #include <pybind11/pybind11.h>
 
+#include <crunge/wgpu/callbacks.h>
+
+
 namespace py = pybind11;
 
 namespace pybind11 { namespace detail {
@@ -55,46 +58,19 @@ template <> struct type_caster<wgpu::StringView> {
         }
     };
     
-    /*template<>
-    struct pybind11::detail::type_caster<wgpu::RequestAdapterCallbackInfo> {
+template<>
+    struct type_caster<wgpu::RequestAdapterCallbackInfo> {
     public:
         PYBIND11_TYPE_CASTER(wgpu::RequestAdapterCallbackInfo, _("RequestAdapterCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
-            py::object obj = py::reinterpret_borrow<py::object>(src);
-    
-            // Extract fields from Python object
-            py::object mode_obj = obj.attr("mode");
-            py::object callback_obj = obj.attr("callback");
-    
-            value.mode = mode_obj.cast<wgpu::CallbackMode>();
-    
-            // Allocate Python function to userdata
-            py::function* cb = new py::function(callback_obj);
-    
-            value.userdata1 = cb;
-            value.userdata2 = nullptr;
-    
-            // Define the native callback lambda
-            value.callback = [](wgpu::RequestAdapterStatus status,
-                                wgpu::Adapter adapter,
-                                wgpu::StringView message,
-                                void* userdata1,
-                                void* userdata2) {
-                py::function* py_cb = reinterpret_cast<py::function*>(userdata1);
-                py::gil_scoped_acquire gil;
-    
-                if (status == wgpu::RequestAdapterStatus::Success) {
-                    (*py_cb)(true, adapter);
-                } else {
-                    std::string msg(message.data, message.length);
-                    (*py_cb)(false, msg);
-                }
-    
-                // Clean up after callback invocation
-                delete py_cb;
-            };
+            crunge_wgpu::PyRequestAdapterCallbackInfo* info = src.cast<crunge_wgpu::PyRequestAdapterCallbackInfo*>();
+            if (info == nullptr) {
+                return false;
+            }
+            value = *info;
+            //std::cout << value.mode << std::endl;
     
             return true;
         }
@@ -104,108 +80,24 @@ template <> struct type_caster<wgpu::StringView> {
             py::object py_mode = py::cast(src.mode);
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
-            py::object py_obj = py::module_::import("your_module").attr("RequestAdapterCallbackInfo")(py_mode, py_callback);
-            return py_obj.release();
-        }
-    };*/
-
-    template<>
-    struct type_caster<wgpu::LoggingCallbackInfo> {
-    public:
-        PYBIND11_TYPE_CASTER(wgpu::LoggingCallbackInfo, _("LoggingCallbackInfo"));
-    
-        // Python -> C++
-        bool load(py::handle src, bool) {
-            py::object obj = py::reinterpret_borrow<py::object>(src);
-    
-            // Extract fields from Python object
-            py::object callback_obj = obj.attr("callback");
-        
-            // Allocate Python function to userdata
-            py::function* cb = new py::function(callback_obj);
-    
-            value.userdata1 = cb;
-            value.userdata2 = nullptr;
-    
-            // Define the native callback lambda
-            value.callback = [](WGPULoggingType type,
-                                WGPUStringView message,
-                                void* userdata1,
-                                void* userdata2) {
-                py::function* py_cb = reinterpret_cast<py::function*>(userdata1);
-                py::gil_scoped_acquire gil;
-    
-                (*py_cb)(type, message);
-    
-                // Clean up after callback invocation
-                delete py_cb;
-            };
-    
-            return true;
-        }
-    
-        // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::LoggingCallbackInfo& src, py::return_value_policy, py::handle) {
-            py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
-    
-            py::object py_obj = py::module_::import("wgpu").attr("LoggingCallbackInfo")(py_callback);
+            py::object py_obj = py::module_::import("wgpu").attr("RequestAdapterCallbackInfo")(py_mode, py_callback);
             return py_obj.release();
         }
     };
 
-    /*
-    template <typename F, typename T, typename Cb, typename>
-    void DeviceDescriptor::SetDeviceLostCallback(CallbackMode callbackMode, F callback, T userdata) {
-        assert(deviceLostCallbackInfo.callback == nullptr);
-
-        deviceLostCallbackInfo.mode = static_cast<WGPUCallbackMode>(callbackMode);
-        deviceLostCallbackInfo.callback = [](WGPUDevice const * device, WGPUDeviceLostReason reason, WGPUStringView message, void* callback_param, void* userdata_param) {
-            auto cb = reinterpret_cast<Cb*>(callback_param);
-            // We manually acquire and release the device to avoid changing any ref counts.
-            auto apiDevice = Device::Acquire(*device);
-            (*cb)(apiDevice, static_cast<DeviceLostReason>(reason), message, static_cast<T>(userdata_param));
-            apiDevice.MoveToCHandle();
-        };
-        deviceLostCallbackInfo.userdata1 = reinterpret_cast<void*>(+callback);
-        deviceLostCallbackInfo.userdata2 = reinterpret_cast<void*>(userdata);
-    }
-    */
-    template<>
+template<>
     struct type_caster<wgpu::DeviceLostCallbackInfo> {
     public:
         PYBIND11_TYPE_CASTER(wgpu::DeviceLostCallbackInfo, _("DeviceLostCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
-            py::object obj = py::reinterpret_borrow<py::object>(src);
-    
-            // Extract fields from Python object
-            py::object mode_obj = obj.attr("mode");
-            py::object callback_obj = obj.attr("callback");
-    
-            value.mode = static_cast<WGPUCallbackMode>(mode_obj.cast<wgpu::CallbackMode>());
-    
-            // Allocate Python function to userdata
-            py::function* cb = new py::function(callback_obj);
-    
-            value.userdata1 = cb;
-            value.userdata2 = nullptr;
-    
-            // Define the native callback lambda
-            value.callback = [](WGPUDevice const * device,
-                                WGPUDeviceLostReason reason,
-                                struct WGPUStringView message,
-                                void* userdata1,
-                                void* userdata2) {
-                py::function* py_cb = reinterpret_cast<py::function*>(userdata1);
-                py::gil_scoped_acquire gil;
-    
-                auto apiDevice = wgpu::Device::Acquire(*device);
-                (*py_cb)(apiDevice, static_cast<wgpu::DeviceLostReason>(reason), static_cast<wgpu::StringView>(message));
-    
-                // Clean up after callback invocation
-                delete py_cb;
-            };
+            crunge_wgpu::PyDeviceLostCallbackInfo* info = src.cast<crunge_wgpu::PyDeviceLostCallbackInfo*>();
+            if (info == nullptr) {
+                return false;
+            }
+            value = *info;
+            //std::cout << value.mode << std::endl;
     
             return true;
         }
@@ -227,32 +119,12 @@ template <> struct type_caster<wgpu::StringView> {
     
         // Python -> C++
         bool load(py::handle src, bool) {
-            py::object obj = py::reinterpret_borrow<py::object>(src);
-    
-            // Extract fields from Python object
-            py::object callback_obj = obj.attr("callback");
-        
-            // Allocate Python function to userdata
-            py::function* cb = new py::function(callback_obj);
-    
-            value.userdata1 = cb;
-            value.userdata2 = nullptr;
-    
-            // Define the native callback lambda
-            value.callback = [](WGPUDevice const * device,
-                                WGPUErrorType type,
-                                struct WGPUStringView message,
-                                void* userdata1,
-                                void* userdata2) {
-                py::function* py_cb = reinterpret_cast<py::function*>(userdata1);
-                py::gil_scoped_acquire gil;
-    
-                auto apiDevice = wgpu::Device::Acquire(*device);
-                (*py_cb)(apiDevice, static_cast<wgpu::ErrorType>(type), static_cast<wgpu::StringView>(message));
-    
-                // Clean up after callback invocation
-                delete py_cb;
-            };
+            crunge_wgpu::PyUncapturedErrorCallbackInfo* info = src.cast<crunge_wgpu::PyUncapturedErrorCallbackInfo*>();
+            if (info == nullptr) {
+                return false;
+            }
+            value = *info;
+            //std::cout << value.mode << std::endl;
     
             return true;
         }
@@ -262,6 +134,32 @@ template <> struct type_caster<wgpu::StringView> {
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
             py::object py_obj = py::module_::import("wgpu").attr("UncapturedErrorCallbackInfo")(py_callback);
+            return py_obj.release();
+        }
+    };
+
+    template<>
+    struct type_caster<wgpu::LoggingCallbackInfo> {
+    public:
+        PYBIND11_TYPE_CASTER(wgpu::LoggingCallbackInfo, _("LoggingCallbackInfo"));
+    
+        // Python -> C++
+        bool load(py::handle src, bool) {
+            crunge_wgpu::PyLoggingCallbackInfo* info = src.cast<crunge_wgpu::PyLoggingCallbackInfo*>();
+            if (info == nullptr) {
+                return false;
+            }
+            value = *info;
+            //std::cout << value.mode << std::endl;
+    
+            return true;
+        }
+    
+        // C++ -> Python (not usually needed, but provided for completeness)
+        static py::handle cast(const wgpu::LoggingCallbackInfo& src, py::return_value_policy, py::handle) {
+            py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
+    
+            py::object py_obj = py::module_::import("wgpu").attr("LoggingCallbackInfo")(py_callback);
             return py_obj.release();
         }
     };

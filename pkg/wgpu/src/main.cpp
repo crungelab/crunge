@@ -17,8 +17,10 @@
 #include <crunge/wgpu/crunge-wgpu.h>
 #include <crunge/wgpu/conversions.h>
 
-#include "callbacks.h"
-using namespace crunge::wgpu;
+//#include "callbacks.h"
+
+
+using namespace crunge_wgpu;
 
 namespace py = pybind11;
 

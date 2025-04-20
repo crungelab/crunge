@@ -25,6 +25,7 @@ set(SOURCES
     src/wgpu_py.cpp
     src/main.cpp
     src/callbacks.cpp
+    src/callbacks_py.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})

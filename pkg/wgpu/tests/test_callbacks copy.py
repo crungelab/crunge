@@ -6,17 +6,19 @@ class DeviceLostCallbackInfo:
     def __init__(self, callback, mode):
         self.callback = callback
         self.mode = mode
+'''
 
+'''
 class UncapturedErrorCallbackInfo:
-    def __init__(self, callback):
-        self.callback = callback
-
-
-class LoggingCallbackInfo:
     def __init__(self, callback):
         self.callback = callback
 '''
 
+'''
+class LoggingCallbackInfo:
+    def __init__(self, callback):
+        self.callback = callback
+'''
 
 def device_cb(device, reason, message):
     print("Device lost: ", reason, message)
@@ -39,6 +41,7 @@ def main():
     def uncaptured_error_cb(device, type, message):
         print("Uncaptured error: ", type, message)
 
+    #uncaptured_error_callback_info = UncapturedErrorCallbackInfo(uncaptured_error_cb)
     uncaptured_error_callback_info = wgpu.UncapturedErrorCallbackInfo(uncaptured_error_cb)
 
     device_desc = wgpu.DeviceDescriptor(
@@ -48,6 +51,7 @@ def main():
 
     device = adapter.create_device(device_desc)
     cb = lambda info: print(info)
+    #cbinfo = LoggingCallbackInfo(cb)
     cbinfo = wgpu.LoggingCallbackInfo(cb)
     device.set_logging_callback(cbinfo)
 
