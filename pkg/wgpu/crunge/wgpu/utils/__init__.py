@@ -1,4 +1,6 @@
 import ctypes
+
+from loguru import logger
 import numpy as np
 
 from crunge import wgpu
@@ -13,11 +15,79 @@ def divround_down(value, step):
 def divround_up(value, step):
     return (value + step - 1) // step * step
 
+
 def create_instance() -> wgpu.Instance:
-    capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable = True)
+    capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable=True)
     instance_descriptor = wgpu.InstanceDescriptor(capabilities=capabilities)
     instance = wgpu.create_instance(instance_descriptor)
     return instance
+
+
+def request_adapter(instance: wgpu.Instance) -> wgpu.Adapter:
+    # 1) Set up options
+    options = wgpu.RequestAdapterOptions()
+
+    # 2) Holder for the adapter we'll receive in the callback
+    adapter_holder = None
+
+    # 3) Define the callback exactly like the C++ lambda did
+    def on_adapter_request(status, adapter, message):
+        logger.debug("on_adapter_request called")
+        nonlocal adapter_holder
+
+        if status != wgpu.RequestAdapterStatus.SUCCESS:
+            logger.debug(f"Failed to get an adapter: {message}")
+        else:
+            logger.debug("Got an adapter")
+            logger.debug(f"message: {message}")
+            adapter_holder = adapter
+
+    callback_info = wgpu.RequestAdapterCallbackInfo(
+        # mode=wgpu.CallbackMode.ALLOW_PROCESS_EVENTS,
+        mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
+        callback=on_adapter_request,
+    )
+
+    # 5) Kick off the async request
+    future = instance.request_adapter(options, callback_info)
+
+    # 6) Block until the callback fires (or timeout)
+    wait_info = wgpu.FutureWaitInfo(future=future, completed=False)
+    # UINT64_MAX for no real timeout:
+    instance.wait_any([wait_info], 0xFFFFFFFFFFFFFFFF)
+    # instance.wait_any(1, wait_info, 0xFFFFFFFFFFFFFFFF)
+    # 7) Pull the adapter out and return it (or None on failure)
+    return adapter_holder
+
+
+def device_cb(device, reason, message):
+    print("Device lost: ", reason, message)
+
+
+device_lost_callback_info = wgpu.DeviceLostCallbackInfo(
+    wgpu.CallbackMode.ALLOW_PROCESS_EVENTS, device_cb
+)
+
+
+def uncaptured_error_cb(device, type, message):
+    print("Uncaptured error: ", type, message)
+
+
+uncaptured_error_callback_info = wgpu.UncapturedErrorCallbackInfo(uncaptured_error_cb)
+
+
+def create_device(adapter: wgpu.Adapter) -> wgpu.Device:
+    device_desc = wgpu.DeviceDescriptor(
+        device_lost_callback_info=device_lost_callback_info,
+        uncaptured_error_callback_info=uncaptured_error_callback_info,
+    )
+    device = adapter.create_device(device_desc)
+
+    logging_cb = lambda info: print(info)
+    cbinfo = wgpu.LoggingCallbackInfo(logging_cb)
+    device.set_logging_callback(cbinfo)
+
+    return device
 
 
 def create_buffer(
@@ -128,9 +198,9 @@ def create_image_copy_texture(
 
 
 def create_shader_module(device: wgpu.Device, code: str) -> wgpu.ShaderModule:
-    #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
+    # wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
     wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
-    #wgsl_desc.code = source
+    # wgsl_desc.code = source
     descriptor = wgpu.ShaderModuleDescriptor()
     descriptor.next_in_chain = wgsl_desc
     return device.create_shader_module(descriptor)

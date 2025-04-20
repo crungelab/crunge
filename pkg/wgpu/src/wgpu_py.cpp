@@ -1268,8 +1268,8 @@ PYCLASS_BEGIN(m, wgpu::Instance, Instance) Instance
     .def("process_events", &wgpu::Instance::ProcessEvents
         , py::return_value_policy::automatic_reference)
     
-    .def("wait_any", &wgpu::Instance::WaitAny
-        , py::arg("future_count"), py::arg("futures"), py::arg("timeout_NS")
+    .def("request_adapter", &wgpu::Instance::RequestAdapter
+        , py::arg("options"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
     .def("has_WGSL_language_feature", &wgpu::Instance::HasWGSLLanguageFeature

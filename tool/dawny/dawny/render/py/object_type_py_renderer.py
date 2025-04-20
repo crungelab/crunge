@@ -3,8 +3,13 @@ from ..object_type_renderer import ObjectTypeRenderer
 
 class ObjectTypePyRenderer(ObjectTypeRenderer):
     def exclude_method(self, method: Method):
+        if method.name.get() == "wait any":
+            return True
+
+        '''
         if method.name.get() == "request adapter":
             return True
+        '''
         return super().exclude_method(method)
 
     def render(self):

@@ -42,6 +42,8 @@ PYBIND11_MAKE_OPAQUE(std::vector<wgpu::ColorTargetState>)
 PYBIND11_MAKE_OPAQUE(std::vector<wgpu::VertexBufferLayout>)
 PYBIND11_MAKE_OPAQUE(std::vector<wgpu::RenderPassColorAttachment>)
 
+//PYBIND11_MAKE_OPAQUE(std::vector<wgpu::FutureWaitInfo>)
+
 void init_main(py::module &_wgpu, Registry &registry)
 {
     _wgpu.def("create_proc_table", &CreateProcTable);
@@ -54,12 +56,35 @@ void init_main(py::module &_wgpu, Registry &registry)
     py::bind_vector<std::vector<wgpu::VertexBufferLayout>>(_wgpu, "VertexBufferLayouts", "VertexBufferLayout Vector");
     py::bind_vector<std::vector<wgpu::RenderPassColorAttachment>>(_wgpu, "RenderPassColorAttachments", "RenderPassColorAttachment Vector");
 
+    //py::bind_vector<std::vector<wgpu::FutureWaitInfo>>(_wgpu, "FutureWaitInfos", "FutureWaitInfo Vector");
+
     /*
     PYCLASS_BEGIN(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
     PYCLASS_END(_wgpu, wgpu::DeviceDescriptor, DeviceDescriptor)
     */
 
     PYEXTEND_BEGIN(wgpu::Instance, Instance)
+    Instance.def("wait_any",
+        [] (wgpu::Instance &self,
+            std::vector<wgpu::FutureWaitInfo> &futures,
+            uint64_t timeout) 
+        {
+            py::scoped_ostream_redirect stream(
+                std::cerr,                                // std::ostream&
+                py::module_::import("sys").attr("stderr") // Python output
+                );
+    
+            // pybind11 has already made you a contiguous vector<FutureWaitInfo>
+            self.WaitAny(
+                static_cast<uint32_t>(futures.size()),
+                futures.data(),
+                timeout
+            );
+        },
+        py::arg("futures"),
+        py::arg("timeout") = UINT64_MAX
+   );
+    /*
     Instance.def("request_adapter", [](const wgpu::Instance &self)
                  {
         //Adapter adapter;
@@ -94,6 +119,7 @@ void init_main(py::module &_wgpu, Registry &registry)
         self.WaitAny(1, &waitInfo, UINT64_MAX);
 
         return adapter; });
+    */
     PYEXTEND_END
 
     /*

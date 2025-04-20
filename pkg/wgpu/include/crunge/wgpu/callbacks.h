@@ -32,7 +32,7 @@ struct PyRequestAdapterCallbackInfo {
             py::gil_scoped_acquire gil;
 
             auto apiAdapter = wgpu::Adapter::Acquire(adapter);
-            //std::cout << "DeviceLostCallbackInfo: " << message.data << std::endl;
+            std::cout << "RequestAdapterCallbackInfo: " << message.data << std::endl;
             self->py_callback(static_cast<wgpu::RequestAdapterStatus>(status), apiAdapter, static_cast<wgpu::StringView>(message));
         };
 

@@ -54,6 +54,9 @@ template <> struct type_caster<wgpu::StringView> {
         }
         
         static handle cast(wgpu::StringView src, return_value_policy /* policy */, handle /* parent */) {
+            if (src.data == nullptr) {
+                return py::none().inc_ref(); // return None instead of crashing
+            }
             return PyUnicode_FromString(src.data);
         }
     };

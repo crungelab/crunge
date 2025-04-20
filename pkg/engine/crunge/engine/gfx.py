@@ -25,8 +25,11 @@ class Gfx:
         #self.instance = wgpu.create_instance()
         self.instance = utils.create_instance()
 
-        self.adapter = self.instance.request_adapter()
-        self.device = self.adapter.create_device()
+        #self.adapter = self.instance.request_adapter()
+        self.adapter = utils.request_adapter(self.instance)
+
+        self.device = utils.create_device(self.adapter)
+        #self.device = self.adapter.create_device()
         self.device.set_label("Primary Device")
         #self.device.enable_logging()
         self.queue = self.device.get_queue()

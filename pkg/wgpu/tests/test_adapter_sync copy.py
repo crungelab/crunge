@@ -18,10 +18,17 @@ struct AdapterInfo {
 };
 '''
 
+_last_cb_info = None
+_last_callback_fn = None
+_last_wait_info = None
+_last_future = None
 
 def request_adapter_sync(instance: wgpu.Instance) -> wgpu.Adapter:
+    global _last_cb_info, _last_callback_fn, _last_wait_info, _last_future
     # 1) Set up options (no surface in this example)
-    options = wgpu.RequestAdapterOptions()
+    options = wgpu.RequestAdapterOptions(
+        compatibleSurface=None,
+    )
 
     # 2) Holder for the adapter we'll receive in the callback
     adapter_holder = None
@@ -44,9 +51,13 @@ def request_adapter_sync(instance: wgpu.Instance) -> wgpu.Adapter:
         callback=on_adapter_request
     )
 
+    # prevent GC:
+    _last_cb_info = callback_info
+    _last_callback_fn = on_adapter_request
+
     # 5) Kick off the async request
     future = instance.request_adapter(options, callback_info)
-
+    _last_future = future
     print("Called request_adapter")
     print(f"future: {future}")
     print(f"future.id: {future.id}")
@@ -54,7 +65,7 @@ def request_adapter_sync(instance: wgpu.Instance) -> wgpu.Adapter:
 
     # 6) Block until the callback fires (or timeout)
     wait_info = wgpu.FutureWaitInfo(future=future, completed=False)
-    #_last_wait_info = wait_info
+    _last_wait_info = wait_info
     print("Created wgpu.FutureWaitInfo")
     # UINT64_MAX for no real timeout:
     instance.wait_any([wait_info], 0xFFFFFFFFFFFFFFFF)
