@@ -8,12 +8,20 @@ target: 'src/skia_canvas_py_auto.cpp'
 #  '-std=c++17',
 #]
 
-#nodes:
+nodes:
   # Wrapped
   # These write to err and warn.  Not good
   #'function.tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
 
   # Internal / Ignored
+  'method.SkCanvas::recordingContext': {exclude: true}
+  'method.SkCanvas::experimental_DrawEdgeAAQuad': {exclude: true}
+  'method.SkCanvas::experimental_DrawEdgeAAImageSet': {exclude: true}
+  'method.SkCanvas::drawPatch': {exclude: true}
+  'method.SkCanvas::MakeRasterDirect': {exclude: true}
+  'method.SkCanvas::MakeRasterDirectN32': {exclude: true}
+  
+  
 
   #'struct.tinygltf::FsCallbacks': {exclude: true}
   #'struct.tinygltf::URICallbacks': {exclude: true}

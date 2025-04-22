@@ -1,47 +1,67 @@
+#include <iostream>
+#include <limits>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
-
-#include <tiny_gltf.h>
-#include <iostream>
 
 #include <cxbind/cxbind.h>
-#include <crunge/gltf/conversions.h>
+#include <crunge/skia/conversions.h>
+
+#include "include/core/SkCanvas.h"
+
+#include "include/core/SkAlphaType.h"
+#include "include/core/SkBitmap.h"
+#include "include/core/SkBlendMode.h"
+#include "include/core/SkBlender.h"
+#include "include/core/SkBlurTypes.h"
+#include "include/core/SkColorFilter.h"
+#include "include/core/SkColorSpace.h"
+#include "include/core/SkColorType.h"
+#include "include/core/SkImage.h"
+#include "include/core/SkImageFilter.h"
+#include "include/core/SkMaskFilter.h"
+#include "include/core/SkPath.h"
+#include "include/core/SkPathEffect.h"
+#include "include/core/SkPicture.h"
+#include "include/core/SkPixmap.h"
+#include "include/core/SkRRect.h"
+#include "include/core/SkRSXform.h"
+#include "include/core/SkRasterHandleAllocator.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkRegion.h"
+#include "include/core/SkShader.h"
+#include "include/core/SkStrokeRec.h"
+#include "include/core/SkSurface.h"
+#include "include/core/SkTextBlob.h"
+#include "include/core/SkTileMode.h"
+#include "include/core/SkTypes.h"
+#include "include/core/SkVertices.h"
+#include "include/core/SkMesh.h"
+#include "include/core/SkDrawable.h"
+#include "src/core/SkDrawShadowInfo.h"
+
+#include "include/private/base/SkDebug.h"
+#include "include/private/base/SkFloatingPoint.h"
+#include "include/private/base/SkSafe32.h"
+#include "include/private/base/SkTPin.h"
+#include "include/private/base/SkTemplates.h"
+#include "include/private/base/SkTo.h"
+#include "include/private/chromium/Slug.h"
+#include "include/utils/SkNoDrawCanvas.h"
+
+#include <skia/include/gpu/graphite/Recorder.h>
 
 namespace py = pybind11;
 
-using namespace tinygltf;
-
-void init_generated(py::module &_gltf, Registry &registry) {
-    py::class_<SkCanvas> SkCanvas(_gltf, "SkCanvas");
-    registry.on(_gltf, "SkCanvas", SkCanvas);
-    SkCanvas
-        .def("make_raster_direct", &SkCanvas::MakeRasterDirect
-            , py::arg("info")
-            , py::arg("pixels")
-            , py::arg("row_bytes")
-            , py::arg("props") = nullptr
-            , py::return_value_policy::automatic_reference)
-        .def("make_raster_direct_n32", [](int width, int height, int * pixels, unsigned long rowBytes)
-            {
-                auto ret = SkCanvas::MakeRasterDirectN32::(width, height, pixels, rowBytes);
-                return std::make_tuple(ret, pixels);
-            }
-            , py::arg("width")
-            , py::arg("height")
-            , py::arg("pixels")
-            , py::arg("row_bytes")
-            , py::return_value_policy::automatic_reference)
+void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
+    py::class_<SkCanvas> Canvas(_skia, "Canvas");
+    registry.on(_skia, "Canvas", Canvas);
+    Canvas
         .def(py::init<>())
-        .def_readwrite("sk_sp", &SkCanvas::sk_sp)
         .def("image_info", &SkCanvas::imageInfo
             , py::return_value_policy::automatic_reference)
-        .def("get_props", [](SkCanvas& self, int * props)
-            {
-                auto ret = self.getProps(props);
-                return std::make_tuple(ret, props);
-            }
+        .def("get_props", &SkCanvas::getProps
             , py::arg("props")
             , py::return_value_policy::automatic_reference)
         .def("get_base_props", &SkCanvas::getBaseProps
@@ -54,16 +74,14 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("info")
             , py::arg("props") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def("recording_context", &SkCanvas::recordingContext
-            , py::return_value_policy::automatic_reference)
         .def("recorder", &SkCanvas::recorder
             , py::return_value_policy::automatic_reference)
         .def("get_surface", &SkCanvas::getSurface
             , py::return_value_policy::automatic_reference)
-        .def("access_top_layer_pixels", [](SkCanvas& self, int * info, unsigned long * rowBytes, int * origin)
+        .def("access_top_layer_pixels", [](SkCanvas& self, SkImageInfo * info, unsigned long * rowBytes, SkIPoint * origin)
             {
                 auto ret = self.accessTopLayerPixels(info, rowBytes, origin);
-                return std::make_tuple(ret, info, rowBytes, origin);
+                return std::make_tuple(ret, rowBytes);
             }
             , py::arg("info")
             , py::arg("row_bytes")
@@ -74,14 +92,14 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def("peek_pixels", &SkCanvas::peekPixels
             , py::arg("pixmap")
             , py::return_value_policy::automatic_reference)
-        .def("read_pixels", py::overload_cast<const int &, void *, unsigned long, int, int>(&SkCanvas::readPixels)
+        .def("read_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, int, int>(&SkCanvas::readPixels)
             , py::arg("dst_info")
             , py::arg("dst_pixels")
             , py::arg("dst_row_bytes")
             , py::arg("src_x")
             , py::arg("src_y")
             , py::return_value_policy::automatic_reference)
-        .def("write_pixels", py::overload_cast<const int &, const void *, unsigned long, int, int>(&SkCanvas::writePixels)
+        .def("write_pixels", py::overload_cast<const SkImageInfo &, const void *, unsigned long, int, int>(&SkCanvas::writePixels)
             , py::arg("info")
             , py::arg("pixels")
             , py::arg("row_bytes")
@@ -90,7 +108,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("save", &SkCanvas::save
             , py::return_value_policy::automatic_reference)
-        .def("save_layer", py::overload_cast<const int *, const int *>(&SkCanvas::saveLayer)
+        .def("save_layer", py::overload_cast<const SkRect *, const SkPaint *>(&SkCanvas::saveLayer)
             , py::arg("bounds")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
@@ -104,14 +122,14 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::SaveLayerFlagsSet>(_gltf, "SaveLayerFlagsSet", py::arithmetic())
+        py::enum_<SkCanvas::SaveLayerFlagsSet>(_skia, "SaveLayerFlagsSet", py::arithmetic())
             .value("K_PRESERVE_LCD_TEXT_SAVE_LAYER_FLAG", SkCanvas::SaveLayerFlagsSet::kPreserveLCDText_SaveLayerFlag)
             .value("K_INIT_WITH_PREVIOUS_SAVE_LAYER_FLAG", SkCanvas::SaveLayerFlagsSet::kInitWithPrevious_SaveLayerFlag)
             .value("K_F16_COLOR_TYPE", SkCanvas::SaveLayerFlagsSet::kF16ColorType)
             .export_values()
         ;
 
-        SkCanvas
+        Canvas
         .def("restore", &SkCanvas::restore
             , py::return_value_policy::automatic_reference)
         .def("get_save_count", &SkCanvas::getSaveCount
@@ -127,63 +145,63 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("sx")
             , py::arg("sy")
             , py::return_value_policy::automatic_reference)
-        .def("rotate", py::overload_cast<int>(&SkCanvas::rotate)
+        .def("rotate", py::overload_cast<float>(&SkCanvas::rotate)
             , py::arg("degrees")
             , py::return_value_policy::automatic_reference)
         .def("skew", &SkCanvas::skew
             , py::arg("sx")
             , py::arg("sy")
             , py::return_value_policy::automatic_reference)
-        .def("concat", py::overload_cast<const int &>(&SkCanvas::concat)
+        .def("concat", py::overload_cast<const SkMatrix &>(&SkCanvas::concat)
             , py::arg("matrix")
             , py::return_value_policy::automatic_reference)
-        .def("set_matrix", py::overload_cast<const int &>(&SkCanvas::setMatrix)
+        .def("set_matrix", py::overload_cast<const SkM44 &>(&SkCanvas::setMatrix)
             , py::arg("matrix")
             , py::return_value_policy::automatic_reference)
         .def("reset_matrix", &SkCanvas::resetMatrix
             , py::return_value_policy::automatic_reference)
-        .def("clip_rect", py::overload_cast<const int &, int, bool>(&SkCanvas::clipRect)
+        .def("clip_rect", py::overload_cast<const SkRect &, SkClipOp, bool>(&SkCanvas::clipRect)
             , py::arg("rect")
             , py::arg("op")
             , py::arg("do_anti_alias")
             , py::return_value_policy::automatic_reference)
         .def("clip_i_rect", &SkCanvas::clipIRect
             , py::arg("irect")
-            , py::arg("op")
+            , py::arg("op") = SkClipOp::kIntersect
             , py::return_value_policy::automatic_reference)
         .def("android_framework_set_device_clip_restriction", &SkCanvas::androidFramework_setDeviceClipRestriction
             , py::arg("rect")
             , py::return_value_policy::automatic_reference)
-        .def("clip_r_rect", py::overload_cast<const SkRRect &, int, bool>(&SkCanvas::clipRRect)
+        .def("clip_r_rect", py::overload_cast<const SkRRect &, SkClipOp, bool>(&SkCanvas::clipRRect)
             , py::arg("rrect")
             , py::arg("op")
             , py::arg("do_anti_alias")
             , py::return_value_policy::automatic_reference)
-        .def("clip_path", py::overload_cast<const SkPath &, int, bool>(&SkCanvas::clipPath)
+        .def("clip_path", py::overload_cast<const SkPath &, SkClipOp, bool>(&SkCanvas::clipPath)
             , py::arg("path")
             , py::arg("op")
             , py::arg("do_anti_alias")
             , py::return_value_policy::automatic_reference)
         .def("clip_shader", &SkCanvas::clipShader
             , py::arg("")
-            , py::arg("")
+            , py::arg("") = SkClipOp::kIntersect
             , py::return_value_policy::automatic_reference)
         .def("clip_region", &SkCanvas::clipRegion
             , py::arg("device_rgn")
-            , py::arg("op")
+            , py::arg("op") = SkClipOp::kIntersect
             , py::return_value_policy::automatic_reference)
-        .def("quick_reject", py::overload_cast<const int &>(&SkCanvas::quickReject, py::const_)
+        .def("quick_reject", py::overload_cast<const SkRect &>(&SkCanvas::quickReject, py::const_)
             , py::arg("rect")
             , py::return_value_policy::automatic_reference)
         .def("get_local_clip_bounds", py::overload_cast<>(&SkCanvas::getLocalClipBounds, py::const_)
             , py::return_value_policy::automatic_reference)
         .def("get_device_clip_bounds", py::overload_cast<>(&SkCanvas::getDeviceClipBounds, py::const_)
             , py::return_value_policy::automatic_reference)
-        .def("draw_color", py::overload_cast<int, int>(&SkCanvas::drawColor)
+        .def("draw_color", py::overload_cast<unsigned int, SkBlendMode>(&SkCanvas::drawColor)
             , py::arg("color")
-            , py::arg("mode")
+            , py::arg("mode") = SkBlendMode::kSrcOver
             , py::return_value_policy::automatic_reference)
-        .def("clear", py::overload_cast<int>(&SkCanvas::clear)
+        .def("clear", py::overload_cast<unsigned int>(&SkCanvas::clear)
             , py::arg("color")
             , py::return_value_policy::automatic_reference)
         .def("discard", &SkCanvas::discard
@@ -193,26 +211,26 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::PointMode>(_gltf, "PointMode", py::arithmetic())
+        py::enum_<SkCanvas::PointMode>(_skia, "PointMode", py::arithmetic())
             .value("K_POINTS_POINT_MODE", SkCanvas::PointMode::kPoints_PointMode)
             .value("K_LINES_POINT_MODE", SkCanvas::PointMode::kLines_PointMode)
             .value("K_POLYGON_POINT_MODE", SkCanvas::PointMode::kPolygon_PointMode)
             .export_values()
         ;
 
-        SkCanvas
+        Canvas
         .def("draw_points", &SkCanvas::drawPoints
             , py::arg("mode")
             , py::arg("count")
             , py::arg("pts")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_point", py::overload_cast<int, int, const int &>(&SkCanvas::drawPoint)
+        .def("draw_point", py::overload_cast<float, float, const SkPaint &>(&SkCanvas::drawPoint)
             , py::arg("x")
             , py::arg("y")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_line", py::overload_cast<int, int, int, int, const int &>(&SkCanvas::drawLine)
+        .def("draw_line", py::overload_cast<float, float, float, float, const SkPaint &>(&SkCanvas::drawLine)
             , py::arg("x0")
             , py::arg("y0")
             , py::arg("x1")
@@ -244,13 +262,13 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("inner")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_circle", py::overload_cast<int, int, int, const int &>(&SkCanvas::drawCircle)
+        .def("draw_circle", py::overload_cast<float, float, float, const SkPaint &>(&SkCanvas::drawCircle)
             , py::arg("cx")
             , py::arg("cy")
             , py::arg("radius")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_arc", py::overload_cast<const int &, int, int, bool, const int &>(&SkCanvas::drawArc)
+        .def("draw_arc", py::overload_cast<const SkRect &, float, float, bool, const SkPaint &>(&SkCanvas::drawArc)
             , py::arg("oval")
             , py::arg("start_angle")
             , py::arg("sweep_angle")
@@ -267,21 +285,21 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("path")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_image", py::overload_cast<const SkImage *, int, int>(&SkCanvas::drawImage)
+        .def("draw_image", py::overload_cast<const SkImage *, float, float>(&SkCanvas::drawImage)
             , py::arg("image")
             , py::arg("left")
             , py::arg("top")
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::SrcRectConstraint>(_gltf, "SrcRectConstraint", py::arithmetic())
+        py::enum_<SkCanvas::SrcRectConstraint>(_skia, "SrcRectConstraint", py::arithmetic())
             .value("K_STRICT_SRC_RECT_CONSTRAINT", SkCanvas::SrcRectConstraint::kStrict_SrcRectConstraint)
             .value("K_FAST_SRC_RECT_CONSTRAINT", SkCanvas::SrcRectConstraint::kFast_SrcRectConstraint)
             .export_values()
         ;
 
-        SkCanvas
-        .def("draw_image_rect", py::overload_cast<const SkImage *, const int &, const int &, const int &, const int *, SkCanvas::SrcRectConstraint>(&SkCanvas::drawImageRect)
+        Canvas
+        .def("draw_image_rect", py::overload_cast<const SkImage *, const SkRect &, const SkRect &, const SkSamplingOptions &, const SkPaint *, SkCanvas::SrcRectConstraint>(&SkCanvas::drawImageRect)
             , py::arg("")
             , py::arg("src")
             , py::arg("dst")
@@ -296,7 +314,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("filter")
             , py::arg("paint") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def("draw_image_lattice", py::overload_cast<const SkImage *, const SkCanvas::Lattice &, const int &, int, const int *>(&SkCanvas::drawImageLattice)
+        .def("draw_image_lattice", py::overload_cast<const SkImage *, const SkCanvas::Lattice &, const SkRect &, SkFilterMode, const SkPaint *>(&SkCanvas::drawImageLattice)
             , py::arg("image")
             , py::arg("lattice")
             , py::arg("dst")
@@ -305,7 +323,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::QuadAAFlags>(_gltf, "QuadAAFlags", py::arithmetic())
+        py::enum_<SkCanvas::QuadAAFlags>(_skia, "QuadAAFlags", py::arithmetic())
             .value("K_LEFT_QUAD_AA_FLAG", SkCanvas::QuadAAFlags::kLeft_QuadAAFlag)
             .value("K_TOP_QUAD_AA_FLAG", SkCanvas::QuadAAFlags::kTop_QuadAAFlag)
             .value("K_RIGHT_QUAD_AA_FLAG", SkCanvas::QuadAAFlags::kRight_QuadAAFlag)
@@ -315,27 +333,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             .export_values()
         ;
 
-        SkCanvas
-        .def("experimental_draw_edge_aa_quad", [](SkCanvas& self, const int & rect, std::array<const int, 4>& clip, SkCanvas::QuadAAFlags aaFlags, const int & color, int mode)
-            {
-                self.experimental_DrawEdgeAAQuad(rect, &clip[0], aaFlags, color, mode);
-                return clip;
-            }
-            , py::arg("rect")
-            , py::arg("clip")
-            , py::arg("aa_flags")
-            , py::arg("color")
-            , py::arg("mode")
-            , py::return_value_policy::automatic_reference)
-        .def("experimental_draw_edge_aa_image_set", &SkCanvas::experimental_DrawEdgeAAImageSet
-            , py::arg("image_set")
-            , py::arg("cnt")
-            , py::arg("dst_clips")
-            , py::arg("pre_view_matrices")
-            , py::arg("")
-            , py::arg("paint") = nullptr
-            , py::arg("constraint") = kStrict_SrcRectConstraint
-            , py::return_value_policy::automatic_reference)
+        Canvas
         .def("draw_simple_text", &SkCanvas::drawSimpleText
             , py::arg("text")
             , py::arg("byte_length")
@@ -345,14 +343,14 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("font")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_string", py::overload_cast<const char[], int, int, const SkFont &, const int &>(&SkCanvas::drawString)
+        .def("draw_string", py::overload_cast<const char[], float, float, const SkFont &, const SkPaint &>(&SkCanvas::drawString)
             , py::arg("str")
             , py::arg("x")
             , py::arg("y")
             , py::arg("font")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_glyphs", py::overload_cast<int, const int[], const int[], const unsigned int[], int, const char[], int, const SkFont &, const int &>(&SkCanvas::drawGlyphs)
+        .def("draw_glyphs", py::overload_cast<int, const unsigned short[], const SkPoint[], const unsigned int[], int, const char[], SkPoint, const SkFont &, const SkPaint &>(&SkCanvas::drawGlyphs)
             , py::arg("count")
             , py::arg("glyphs")
             , py::arg("positions")
@@ -363,7 +361,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("font")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_text_blob", py::overload_cast<const SkTextBlob *, int, int, const int &>(&SkCanvas::drawTextBlob)
+        .def("draw_text_blob", py::overload_cast<const SkTextBlob *, float, float, const SkPaint &>(&SkCanvas::drawTextBlob)
             , py::arg("blob")
             , py::arg("x")
             , py::arg("y")
@@ -372,7 +370,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def("draw_picture", py::overload_cast<const SkPicture *>(&SkCanvas::drawPicture)
             , py::arg("picture")
             , py::return_value_policy::automatic_reference)
-        .def("draw_vertices", py::overload_cast<const SkVertices *, int, const int &>(&SkCanvas::drawVertices)
+        .def("draw_vertices", py::overload_cast<const SkVertices *, SkBlendMode, const SkPaint &>(&SkCanvas::drawVertices)
             , py::arg("vertices")
             , py::arg("mode")
             , py::arg("paint")
@@ -380,17 +378,6 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def("draw_mesh", &SkCanvas::drawMesh
             , py::arg("mesh")
             , py::arg("blender")
-            , py::arg("paint")
-            , py::return_value_policy::automatic_reference)
-        .def("draw_patch", [](SkCanvas& self, std::array<const int, 12>& cubics, std::array<const int, 4>& colors, std::array<const int, 4>& texCoords, int mode, const int & paint)
-            {
-                self.drawPatch(&cubics[0], &colors[0], &texCoords[0], mode, paint);
-                return std::make_tuple(cubics, colors, texCoords);
-            }
-            , py::arg("cubics")
-            , py::arg("colors")
-            , py::arg("tex_coords")
-            , py::arg("mode")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
         .def("draw_atlas", &SkCanvas::drawAtlas
@@ -404,11 +391,11 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("cull_rect")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
-        .def("draw_drawable", py::overload_cast<SkDrawable *, const int *>(&SkCanvas::drawDrawable)
+        .def("draw_drawable", py::overload_cast<SkDrawable *, const SkMatrix *>(&SkCanvas::drawDrawable)
             , py::arg("drawable")
             , py::arg("matrix") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def("draw_annotation", py::overload_cast<const int &, const char[], SkData *>(&SkCanvas::drawAnnotation)
+        .def("draw_annotation", py::overload_cast<const SkRect &, const char[], SkData *>(&SkCanvas::drawAnnotation)
             , py::arg("rect")
             , py::arg("key")
             , py::arg("value")
@@ -432,9 +419,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkAutoCanvasRestore> SkAutoCanvasRestore(_gltf, "SkAutoCanvasRestore");
-    registry.on(_gltf, "SkAutoCanvasRestore", SkAutoCanvasRestore);
-    SkAutoCanvasRestore
+    py::class_<SkAutoCanvasRestore> AutoCanvasRestore(_skia, "AutoCanvasRestore");
+    registry.on(_skia, "AutoCanvasRestore", AutoCanvasRestore);
+    AutoCanvasRestore
         .def(py::init<SkCanvas *, bool>()
         , py::arg("canvas")
         , py::arg("do_save")

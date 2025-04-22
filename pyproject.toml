@@ -28,6 +28,7 @@ projects = [
   "pkg/implot",
   "pkg/imnodes",
   "pkg/wgpu",
+  "pkg/skia",
   "pkg/gltf",
   "pkg/sdl",
   "pkg/nanort",

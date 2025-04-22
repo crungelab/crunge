@@ -1,10 +1,15 @@
-module: _gltf
+module: _skia
 
 flags: [
   '-x', 'c++',
   '-std=c++17',
-  '-DSK_API='
+  '-I../../depot/skia',
+  '-DSK_API=',
+  '-DSK_GRAPHITE=1',
+  '-DSK_DAWN=1'
 ]
+
+prefixes: [Sk]
 
 unit_files:
   - path: skia_canvas.unit.yaml

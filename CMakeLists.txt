@@ -24,7 +24,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-
 #
 # pybind11
 #
@@ -33,6 +32,27 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_subdirectory(depot/pybind11)
 find_package(cxbind REQUIRED)
+
+
+#
+# SDL
+#
+set(HAVE_LIBC ON)
+set(SDL_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
+set(SDL_STATIC ON CACHE BOOL "Build a static version of the library" FORCE)
+set(SDL_TEST OFF CACHE BOOL "Build the SDL3_test library" FORCE)
+
+set(SDL_RENDER OFF CACHE BOOL "Use render subsystem" FORCE)
+#set(SDL_AUDIO OFF CACHE BOOL "Use audio subsystem" FORCE)
+#set(SDL_HAPTIC OFF CACHE BOOL "Use haptic subsystem" FORCE)
+
+#set(SDL_X11 ${WG_WM_X11} CACHE BOOL "Enable X11 support" FORCE)
+#set(SDL_WAYLAND ${WG_WM_WAYLAND} CACHE BOOL "Enable Wayland support" FORCE)
+
+add_subdirectory(depot/sdl)
+set_target_properties(SDL3-static PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+add_subdirectory(pkg/sdl)
 
 #
 # ImGui and friends
@@ -60,24 +80,10 @@ add_subdirectory(pkg/gltf)
 add_subdirectory(pkg/wgpu)
 
 #
-# SDL
+# Skia
 #
-set(HAVE_LIBC ON)
-set(SDL_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
-set(SDL_STATIC ON CACHE BOOL "Build a static version of the library" FORCE)
-set(SDL_TEST OFF CACHE BOOL "Build the SDL3_test library" FORCE)
 
-set(SDL_RENDER OFF CACHE BOOL "Use render subsystem" FORCE)
-#set(SDL_AUDIO OFF CACHE BOOL "Use audio subsystem" FORCE)
-#set(SDL_HAPTIC OFF CACHE BOOL "Use haptic subsystem" FORCE)
-
-#set(SDL_X11 ${WG_WM_X11} CACHE BOOL "Enable X11 support" FORCE)
-#set(SDL_WAYLAND ${WG_WM_WAYLAND} CACHE BOOL "Enable Wayland support" FORCE)
-
-add_subdirectory(depot/sdl)
-set_target_properties(SDL3-static PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-add_subdirectory(pkg/sdl)
+add_subdirectory(pkg/skia)
 
 #
 # Nanort

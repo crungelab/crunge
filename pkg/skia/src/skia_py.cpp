@@ -12,11 +12,11 @@
 #include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
-using namespace crunge::wgpu;
+//using namespace crunge::wgpu;
 
 namespace py = pybind11;
 
-using namespace wgpu;
+//using namespace wgpu;
 
 
 void init_main(py::module &_skia, Registry &registry) {
