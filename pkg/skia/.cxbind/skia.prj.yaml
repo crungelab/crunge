@@ -5,11 +5,13 @@ flags: [
   '-std=c++17',
   '-I../../depot/skia',
   '-DSK_API=',
-  '-DSK_GRAPHITE=1',
-  '-DSK_DAWN=1'
+  '-DSK_GRAPHITE=',
+  '-DSK_DAWN='
 ]
 
 prefixes: [Sk]
 
 unit_files:
+  - path: skia_context.unit.yaml
+  - path: skia_surface.unit.yaml
   - path: skia_canvas.unit.yaml

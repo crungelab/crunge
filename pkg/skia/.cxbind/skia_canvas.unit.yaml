@@ -1,17 +1,8 @@
 source: '../../depot/skia/include/core/SkCanvas.h'
 target: 'src/skia_canvas_py_auto.cpp'
 
-#module: _gltf
-
-#flags: [
-#  '-x', 'c++',
-#  '-std=c++17',
-#]
-
 nodes:
   # Wrapped
-  # These write to err and warn.  Not good
-  #'function.tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
 
   # Internal / Ignored
   'method.SkCanvas::recordingContext': {exclude: true}
@@ -21,17 +12,4 @@ nodes:
   'method.SkCanvas::MakeRasterDirect': {exclude: true}
   'method.SkCanvas::MakeRasterDirectN32': {exclude: true}
   
-  
-
-  #'struct.tinygltf::FsCallbacks': {exclude: true}
-  #'struct.tinygltf::URICallbacks': {exclude: true}
-  #'class.tinygltf::Value': {exclude: true}
-  #'function.tinygltf::Value::Get': {exclude: true}
-
-  # Not sure why it's choking on the last void*
-  #'function.tinygltf::GetFileSizeInBytes': {exclude: true}
-  # std::ostream& ??
-  #'function.tinygltf::TinyGLTF::WriteGltfSceneToStream': {exclude: true}
-
-
   # Overloads

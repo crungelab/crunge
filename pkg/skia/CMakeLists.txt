@@ -22,6 +22,8 @@ USES_SKIA(${THIS})
 set(SOURCES
     src/skia_py_module.cpp
     src/skia_py.cpp
+    src/skia_context_py_auto.cpp
+    src/skia_surface_py_auto.cpp
     src/skia_canvas_py_auto.cpp
 )
 

@@ -41,15 +41,6 @@
 #include "include/core/SkDrawable.h"
 #include "src/core/SkDrawShadowInfo.h"
 
-#include "include/private/base/SkDebug.h"
-#include "include/private/base/SkFloatingPoint.h"
-#include "include/private/base/SkSafe32.h"
-#include "include/private/base/SkTPin.h"
-#include "include/private/base/SkTemplates.h"
-#include "include/private/base/SkTo.h"
-#include "include/private/chromium/Slug.h"
-#include "include/utils/SkNoDrawCanvas.h"
-
 #include <skia/include/gpu/graphite/Recorder.h>
 
 namespace py = pybind11;
