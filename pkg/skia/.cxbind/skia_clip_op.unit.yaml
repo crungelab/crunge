@@ -1,0 +1,7 @@
+source: '../../depot/skia/include/core/SkClipOp.h'
+target: 'src/skia_clip_op_py_auto.cpp'
+
+#nodes:
+  # Wrapped
+  # Internal / Ignored
+  # Overloads

@@ -22,9 +22,20 @@ USES_SKIA(${THIS})
 set(SOURCES
     src/skia_py_module.cpp
     src/skia_py.cpp
+    src/skia_graphite_types_py_auto.cpp
+    src/skia_clip_op_py_auto.cpp
+    src/skia_rect_py_auto.cpp
+    src/skia_rect_py.cpp
+    src/skia_blend_mode_py_auto.cpp
     src/skia_context_py_auto.cpp
+    src/skia_context_py.cpp
     src/skia_surface_py_auto.cpp
+    src/skia_surface_py.cpp
     src/skia_canvas_py_auto.cpp
+    src/skia_recorder_py_auto.cpp
+    src/skia_recording_py_auto.cpp
+    src/skia_paint_py_auto.cpp
+    src/skia_color_py_auto.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})
@@ -38,5 +49,8 @@ target_include_directories(${THIS}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+set_target_properties(${THIS} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
+set_target_properties(${THIS} PROPERTIES INSTALL_RPATH "$ORIGIN/../core")
 
 install(TARGETS ${THIS} DESTINATION crunge/${MODULE})

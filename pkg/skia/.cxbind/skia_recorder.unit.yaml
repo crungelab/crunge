@@ -1,0 +1,8 @@
+source: '../../depot/skia/include/gpu/graphite/Recorder.h'
+target: 'src/skia_recorder_py_auto.cpp'
+
+nodes:
+  # Wrapped
+  # Internal / Ignored
+  'method.skgpu::graphite::Recorder::priv': {exclude: true}
+  # Overloads

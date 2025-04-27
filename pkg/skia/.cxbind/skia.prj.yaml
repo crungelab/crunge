@@ -12,6 +12,14 @@ flags: [
 prefixes: [Sk]
 
 unit_files:
+  - path: skia_graphite_types.unit.yaml
+  - path: skia_clip_op.unit.yaml
+  - path: skia_rect.unit.yaml
+  - path: skia_blend_mode.unit.yaml
   - path: skia_context.unit.yaml
   - path: skia_surface.unit.yaml
   - path: skia_canvas.unit.yaml
+  - path: skia_recorder.unit.yaml
+  - path: skia_recording.unit.yaml
+  - path: skia_paint.unit.yaml
+  - path: skia_color.unit.yaml

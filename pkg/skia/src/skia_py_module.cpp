@@ -5,13 +5,46 @@
 namespace py = pybind11;
 
 void init_main(py::module &, Registry& registry);
+void init_skia_graphite_types_py_auto(py::module &, Registry& registry);
+void init_skia_clip_op_py_auto(py::module &, Registry& registry);
+void init_skia_rect_py_auto(py::module &, Registry& registry);
+void init_skia_rect_py(py::module &, Registry& registry);
+void init_skia_blend_mode_py_auto(py::module &, Registry& registry);
 void init_skia_context_py_auto(py::module &, Registry& registry);
+void init_skia_context_py(py::module &, Registry& registry);
 void init_skia_canvas_py_auto(py::module &, Registry& registry);
 
+void init_skia_surface_py_auto(py::module &, Registry& registry);
+void init_skia_surface_py(py::module &, Registry& registry);
 
-PYBIND11_MODULE(_wgpu, m) {
+void init_skia_recorder_py_auto(py::module &, Registry& registry);
+void init_skia_recording_py_auto(py::module &, Registry& registry);
+
+void init_skia_paint_py_auto(py::module &, Registry& registry);
+void init_skia_color_py_auto(py::module &, Registry& registry);
+
+PYBIND11_MODULE(_skia, m) {
         Registry r;
         init_main(m, r);
+        init_skia_graphite_types_py_auto(m, r);
+        init_skia_clip_op_py_auto(m, r);
+        init_skia_rect_py(m, r);
+        init_skia_rect_py_auto(m, r);
+        //init_skia_rect_py(m, r);
+        init_skia_blend_mode_py_auto(m, r);
+        
         init_skia_context_py_auto(m, r);
+        init_skia_context_py(m, r);
+
         init_skia_canvas_py_auto(m, r);
+
+        init_skia_surface_py_auto(m, r);
+        init_skia_surface_py(m, r);
+
+        init_skia_recorder_py_auto(m, r);
+        init_skia_recording_py_auto(m, r);
+
+        init_skia_paint_py_auto(m, r);
+        init_skia_color_py_auto(m, r);
+
 }

@@ -4,6 +4,11 @@ ln -s ../../core/crunge/core core
 ```
 
 ```bash
+cd pkg/skia/crunge
+ln -s ../../core/crunge/core core
+```
+
+```bash
 cd pkg/imnodes/crunge
 ln -s ../../imgui/crunge/imgui imgui
 ```
