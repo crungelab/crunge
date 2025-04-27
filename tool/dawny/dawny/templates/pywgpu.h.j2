@@ -11,10 +11,12 @@
 #include <optional>
 
 #include "webgpu/webgpu.h"
-#include "webgpu/webgpu_cpp_chained_struct.h"
-#include "webgpu/webgpu_enum_class_bitmasks.h"  // IWYU pragma: export
+//#include "webgpu/webgpu_cpp_chained_struct.h"
+#include <crunge/wgpu/pywgpu_chained_struct.h>
+//#include "webgpu/webgpu_enum_class_bitmasks.h"  // IWYU pragma: export
+#include <crunge/wgpu/pywgpu_enum_class_bitmasks.h>
 
-namespace wgpu {
+namespace pywgpu {
 
 namespace detail {
 
@@ -31,6 +33,6 @@ static T& AsNonConstReference(const T& value) {
 
 {{ hpp_code }}
 
-} //namespace wgpu
+} //namespace pywgpu
 
 #endif // WGPU_H

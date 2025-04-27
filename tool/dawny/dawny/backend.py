@@ -64,20 +64,22 @@ class Backend(Processor):
         py_code = PyGenerator(self).generate()
 
         # Render the header template
-        header_template = self.jinja_env.get_template("wgpu.h.j2")
+        header_template = self.jinja_env.get_template("pywgpu.h.j2")
         output = header_template.render(hpp_code=hpp_code)
         # logger.debug(output)
         # Write the C++ code to a file
-        path = Path("src/dawn/webgpu_cpp.h")
+        #path = Path("include/dawn/webgpu_cpp.h")
+        path = Path("include/crunge/wgpu/pywgpu.h")
         with open(path, "w") as f:
             f.write(output)
 
         # Render the source template
-        source_template = self.jinja_env.get_template("wgpu.cpp.j2")
+        #source_template = self.jinja_env.get_template("wgpu.cpp.j2")
+        source_template = self.jinja_env.get_template("pywgpu.cpp.j2")
         output = source_template.render(cpp_code=cpp_code)
         # logger.debug(output)
         # Write the C++ code to a file
-        path = Path("src/wgpu.cpp")
+        path = Path("src/pywgpu.cpp")
         with open(path, "w") as f:
             f.write(output)
 

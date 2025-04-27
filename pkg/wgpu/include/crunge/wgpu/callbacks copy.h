@@ -9,16 +9,16 @@ namespace py = pybind11;
 namespace crunge_wgpu {
 
 struct PyDeviceLostCallbackInfo {
-    wgpu::CallbackMode mode;
+    pywgpu::CallbackMode mode;
     py::function py_callback;
 
     PyDeviceLostCallbackInfo(
-        wgpu::CallbackMode mode,
+        pywgpu::CallbackMode mode,
         py::function py_callback
     ) : mode(mode), py_callback(py_callback) {}
 
-    //wgpu::DeviceLostCallbackInfo to_native() {
-    operator wgpu::DeviceLostCallbackInfo() {
+    //pywgpu::DeviceLostCallbackInfo to_native() {
+    operator pywgpu::DeviceLostCallbackInfo() {
         auto callback = [](WGPUDevice const * device,
                             WGPUDeviceLostReason reason,
                             struct WGPUStringView message,
@@ -28,9 +28,9 @@ struct PyDeviceLostCallbackInfo {
             auto self = reinterpret_cast<PyDeviceLostCallbackInfo*>(userdata1);
             py::gil_scoped_acquire gil;
 
-            auto apiDevice = wgpu::Device::Acquire(*device);
-            //(*py_cb)(apiDevice, static_cast<wgpu::DeviceLostReason>(reason), static_cast<wgpu::StringView>(message));
-            self->py_callback(apiDevice, static_cast<wgpu::DeviceLostReason>(reason), static_cast<wgpu::StringView>(message));
+            auto apiDevice = pywgpu::Device::Acquire(*device);
+            //(*py_cb)(apiDevice, static_cast<pywgpu::DeviceLostReason>(reason), static_cast<pywgpu::StringView>(message));
+            self->py_callback(apiDevice, static_cast<pywgpu::DeviceLostReason>(reason), static_cast<pywgpu::StringView>(message));
 
             // Clean up callback function
             //delete py_cb;
@@ -39,7 +39,7 @@ struct PyDeviceLostCallbackInfo {
         // Important: We store the Python callback pointer as userdata.
         //py::function* callback_storage = new py::function(py_callback);
 
-        wgpu::DeviceLostCallbackInfo native_info = {};
+        pywgpu::DeviceLostCallbackInfo native_info = {};
         native_info.mode = static_cast<WGPUCallbackMode>(mode);
         native_info.callback = callback;
         //native_info.userdata1 = callback_storage;

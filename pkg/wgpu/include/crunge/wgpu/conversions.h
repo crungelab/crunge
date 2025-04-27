@@ -1,8 +1,9 @@
 #pragma once
-#include <dawn/webgpu_cpp.h>
+//#include <dawn/webgpu_cpp.h>
 //#include <wgpu.h>
 #include <pybind11/pybind11.h>
 
+#include <crunge/wgpu/pywgpu.h>
 #include <crunge/wgpu/callbacks.h>
 
 
@@ -10,50 +11,50 @@ namespace py = pybind11;
 
 namespace pybind11 { namespace detail {
 
-template <> struct type_caster<wgpu::Bool> {
+template <> struct type_caster<pywgpu::Bool> {
 public:
-    PYBIND11_TYPE_CASTER(wgpu::Bool, _("Bool"));
+    PYBIND11_TYPE_CASTER(pywgpu::Bool, _("Bool"));
     bool load(handle src, bool implicit) {
         if (!PyBool_Check(src.ptr())) {
             return false;
         }
-        value = wgpu::Bool{src.cast<bool>()};
+        value = pywgpu::Bool{src.cast<bool>()};
         return true;
     }
     
-    static handle cast(wgpu::Bool src, return_value_policy /* policy */, handle /* parent */) {
+    static handle cast(pywgpu::Bool src, return_value_policy /* policy */, handle /* parent */) {
         return PyBool_FromLong(static_cast<long>(src));
     }
 };
 
-template <> struct type_caster<wgpu::OptionalBool> {
+template <> struct type_caster<pywgpu::OptionalBool> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::OptionalBool, _("OptionalBool"));
+        PYBIND11_TYPE_CASTER(pywgpu::OptionalBool, _("OptionalBool"));
         bool load(handle src, bool implicit) {
             if (!PyBool_Check(src.ptr())) {
                 return false;
             }
-            value = wgpu::OptionalBool{src.cast<bool>()};
+            value = pywgpu::OptionalBool{src.cast<bool>()};
             return true;
         }
         
-        static handle cast(wgpu::OptionalBool src, return_value_policy /* policy */, handle /* parent */) {
+        static handle cast(pywgpu::OptionalBool src, return_value_policy /* policy */, handle /* parent */) {
             return PyBool_FromLong(static_cast<long>(src));
         }
     };
     
-template <> struct type_caster<wgpu::StringView> {
+template <> struct type_caster<pywgpu::StringView> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::StringView, _("StringView"));
+        PYBIND11_TYPE_CASTER(pywgpu::StringView, _("StringView"));
         bool load(handle src, bool implicit) {
             if (!PyUnicode_Check(src.ptr())) {
                 return false;
             }
-            value = wgpu::StringView{src.cast<std::string_view>()};
+            value = pywgpu::StringView{src.cast<std::string_view>()};
             return true;
         }
         
-        static handle cast(wgpu::StringView src, return_value_policy /* policy */, handle /* parent */) {
+        static handle cast(pywgpu::StringView src, return_value_policy /* policy */, handle /* parent */) {
             if (src.data == nullptr) {
                 return py::none().inc_ref(); // return None instead of crashing
             }
@@ -62,9 +63,9 @@ template <> struct type_caster<wgpu::StringView> {
     };
     
 template<>
-    struct type_caster<wgpu::RequestAdapterCallbackInfo> {
+    struct type_caster<pywgpu::RequestAdapterCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::RequestAdapterCallbackInfo, _("RequestAdapterCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::RequestAdapterCallbackInfo, _("RequestAdapterCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -79,7 +80,7 @@ template<>
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::RequestAdapterCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::RequestAdapterCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_mode = py::cast(src.mode);
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
@@ -89,9 +90,9 @@ template<>
     };
 
 template<>
-    struct type_caster<wgpu::DeviceLostCallbackInfo> {
+    struct type_caster<pywgpu::DeviceLostCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::DeviceLostCallbackInfo, _("DeviceLostCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::DeviceLostCallbackInfo, _("DeviceLostCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -106,7 +107,7 @@ template<>
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::DeviceLostCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::DeviceLostCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_mode = py::cast(src.mode);
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
@@ -116,9 +117,9 @@ template<>
     };
 
     template<>
-    struct type_caster<wgpu::UncapturedErrorCallbackInfo> {
+    struct type_caster<pywgpu::UncapturedErrorCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::UncapturedErrorCallbackInfo, _("UncapturedErrorCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::UncapturedErrorCallbackInfo, _("UncapturedErrorCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -133,7 +134,7 @@ template<>
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::UncapturedErrorCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::UncapturedErrorCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
             py::object py_obj = py::module_::import("wgpu").attr("UncapturedErrorCallbackInfo")(py_callback);
@@ -142,9 +143,9 @@ template<>
     };
 
     template<>
-    struct type_caster<wgpu::LoggingCallbackInfo> {
+    struct type_caster<pywgpu::LoggingCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::LoggingCallbackInfo, _("LoggingCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::LoggingCallbackInfo, _("LoggingCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -159,7 +160,7 @@ template<>
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::LoggingCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::LoggingCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
             py::object py_obj = py::module_::import("wgpu").attr("LoggingCallbackInfo")(py_callback);

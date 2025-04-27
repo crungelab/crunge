@@ -11,10 +11,12 @@
 #include <optional>
 
 #include "webgpu/webgpu.h"
-#include "webgpu/webgpu_cpp_chained_struct.h"
-#include "webgpu/webgpu_enum_class_bitmasks.h"  // IWYU pragma: export
+//#include "webgpu/webgpu_cpp_chained_struct.h"
+#include <crunge/wgpu/pywgpu_chained_struct.h>
+//#include "webgpu/webgpu_enum_class_bitmasks.h"  // IWYU pragma: export
+#include <crunge/wgpu/pywgpu_enum_class_bitmasks.h>
 
-namespace wgpu {
+namespace pywgpu {
 
 namespace detail {
 
@@ -961,7 +963,7 @@ enum class BufferUsage : uint64_t {
 };
 
 template<>
-struct IsWGPUBitmask<wgpu::BufferUsage> {
+struct IsWGPUBitmask<pywgpu::BufferUsage> {
     static constexpr bool enable = true;
 };
 
@@ -976,7 +978,7 @@ enum class ColorWriteMask : uint64_t {
 };
 
 template<>
-struct IsWGPUBitmask<wgpu::ColorWriteMask> {
+struct IsWGPUBitmask<pywgpu::ColorWriteMask> {
     static constexpr bool enable = true;
 };
 
@@ -988,7 +990,7 @@ enum class MapMode : uint64_t {
 };
 
 template<>
-struct IsWGPUBitmask<wgpu::MapMode> {
+struct IsWGPUBitmask<pywgpu::MapMode> {
     static constexpr bool enable = true;
 };
 
@@ -1001,7 +1003,7 @@ enum class ShaderStage : uint64_t {
 };
 
 template<>
-struct IsWGPUBitmask<wgpu::ShaderStage> {
+struct IsWGPUBitmask<pywgpu::ShaderStage> {
     static constexpr bool enable = true;
 };
 
@@ -1018,7 +1020,7 @@ enum class TextureUsage : uint64_t {
 };
 
 template<>
-struct IsWGPUBitmask<wgpu::TextureUsage> {
+struct IsWGPUBitmask<pywgpu::TextureUsage> {
     static constexpr bool enable = true;
 };
 
@@ -1033,55 +1035,10 @@ enum class HeapProperty : uint64_t {
 };
 
 template<>
-struct IsWGPUBitmask<wgpu::HeapProperty> {
+struct IsWGPUBitmask<pywgpu::HeapProperty> {
     static constexpr bool enable = true;
 };
 
-
-namespace detail {
-
-// For callbacks, we support two modes:
-//   1) No userdata where we allow a std::function type that can include argument captures.
-//   2) Explicit typed userdata where we only allow non-capturing lambdas or function pointers.
-template <typename... Args>
-struct CallbackTypeBase;
-template <typename... Args>
-struct CallbackTypeBase<std::tuple<Args...>> {
-    using Callback = std::function<void(Args...)>;
-};
-template <typename... Args>
-struct CallbackTypeBase<std::tuple<Args...>, void> {
-    using Callback = void (Args...);
-};
-template <typename... Args, typename T>
-struct CallbackTypeBase<std::tuple<Args...>, T> {
-    using Callback = void (Args..., T);
-};
-}  // namespace detail
-
-
-template <typename... T>
-using BufferMapCallback = typename detail::CallbackTypeBase<std::tuple<MapAsyncStatus , StringView >, T...>::Callback;
-template <typename... T>
-using CompilationInfoCallback = typename detail::CallbackTypeBase<std::tuple<CompilationInfoRequestStatus , CompilationInfo const * >, T...>::Callback;
-template <typename... T>
-using CreateComputePipelineAsyncCallback = typename detail::CallbackTypeBase<std::tuple<CreatePipelineAsyncStatus , ComputePipeline , StringView >, T...>::Callback;
-template <typename... T>
-using CreateRenderPipelineAsyncCallback = typename detail::CallbackTypeBase<std::tuple<CreatePipelineAsyncStatus , RenderPipeline , StringView >, T...>::Callback;
-template <typename... T>
-using LoggingCallback = typename detail::CallbackTypeBase<std::tuple<LoggingType , StringView >, T...>::Callback;
-template <typename... T>
-using PopErrorScopeCallback = typename detail::CallbackTypeBase<std::tuple<PopErrorScopeStatus , ErrorType , StringView >, T...>::Callback;
-template <typename... T>
-using QueueWorkDoneCallback = typename detail::CallbackTypeBase<std::tuple<QueueWorkDoneStatus >, T...>::Callback;
-template <typename... T>
-using RequestAdapterCallback = typename detail::CallbackTypeBase<std::tuple<RequestAdapterStatus , Adapter , StringView >, T...>::Callback;
-template <typename... T>
-using RequestDeviceCallback = typename detail::CallbackTypeBase<std::tuple<RequestDeviceStatus , Device , StringView >, T...>::Callback;
-template <typename... T>
-using DeviceLostCallback = typename detail::CallbackTypeBase<std::tuple<const Device&, DeviceLostReason, StringView>, T...>::Callback;
-template <typename... T>
-using UncapturedErrorCallback = typename detail::CallbackTypeBase<std::tuple<const Device&, ErrorType, StringView>, T...>::Callback;
 
 using Callback = WGPUCallback;
 using DawnLoadCacheDataFunction = WGPUDawnLoadCacheDataFunction;
@@ -3534,6 +3491,6 @@ Instance CreateInstance(InstanceDescriptor const* descriptor);
 Status GetInstanceCapabilities(InstanceCapabilities * capabilities);
 
 
-} //namespace wgpu
+} //namespace pywgpu
 
 #endif // WGPU_H

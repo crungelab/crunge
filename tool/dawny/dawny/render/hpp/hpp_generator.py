@@ -91,8 +91,8 @@ using RequestAdapterCallback2 = WGPURequestAdapterCallback2;
         self.render_bitmask_types()
 
         # calback templates
-        cb_template = self.context.jinja_env.get_template('_callback.h.j2')
-        self.out << cb_template.render() << "\n" << "\n"
+        #cb_template = self.context.jinja_env.get_template('_callback.h.j2')
+        #self.out << cb_template.render() << "\n" << "\n"
 
         #self.render_structure_types()
         #self.render_object_types()

@@ -21,7 +21,7 @@ USES_DAWN(${THIS})
 
 set(SOURCES
     src/chained_struct.cpp
-    src/wgpu.cpp
+    src/pywgpu.cpp
     src/wgpu_py.cpp
     src/main.cpp
     src/callbacks.cpp

@@ -11,14 +11,14 @@ class StructureTypePyRenderer(StructureTypeRenderer):
         const = "const" if not node.output else ""
 
         if node.chained:
-            self.out << f"PYSUBCLASS_BEGIN(m, wgpu::{class_name}, ChainedStruct{Out}, {class_name}) {class_name}" << "\n"
+            self.out << f"PYSUBCLASS_BEGIN(m, pywgpu::{class_name}, ChainedStruct{Out}, {class_name}) {class_name}" << "\n"
         else:
-            self.out << f"PYCLASS_BEGIN(m, wgpu::{class_name}, {class_name}) {class_name}" << "\n"
+            self.out << f"PYCLASS_BEGIN(m, pywgpu::{class_name}, {class_name}) {class_name}" << "\n"
         self.out.indent()
 
         '''
         if node.extensible:
-            self.out << f'.def_readwrite("next_in_chain", &wgpu::{class_name}::nextInChain)' << "\n"
+            self.out << f'.def_readwrite("next_in_chain", &pywgpu::{class_name}::nextInChain)' << "\n"
         '''
 
         for member in node.members:
@@ -50,12 +50,12 @@ class StructureTypePyRenderer(StructureTypeRenderer):
                 #print(decoration, readonly)
                 self.out << f'.def_property("{member_name}",' << "\n"
                 self.out.indent()
-                self.out << f'[](const wgpu::{class_name}& self) {{' << "\n"
+                self.out << f'[](const pywgpu::{class_name}& self) {{' << "\n"
                 self.out.indent()
                 self.out << f'return self.{member_cpp_name};' << "\n"
                 self.out.dedent()
                 self.out << '},' << "\n"
-                self.out << f'[](wgpu::{class_name}& self, {decoration} source) {{' << "\n"
+                self.out << f'[](pywgpu::{class_name}& self, {decoration} source) {{' << "\n"
                 self.out.indent()
                 self.out << f'self.{member_cpp_name} = strdup(source);' << "\n"
                 self.out.dedent()
@@ -63,13 +63,13 @@ class StructureTypePyRenderer(StructureTypeRenderer):
                 self.out.dedent()
                 self.out << ')' << "\n"
             else:
-                self.out << f'.{def_kind}("{member_name}", &wgpu::{class_name}::{member_cpp_name})' << "\n"
+                self.out << f'.{def_kind}("{member_name}", &pywgpu::{class_name}::{member_cpp_name})' << "\n"
 
         self.render_init()
 
         self.out.dedent()
         self.out << ";\n"
-        self.out << f"PYCLASS_END(m, wgpu::{class_name}, {class_name})" << "\n\n"
+        self.out << f"PYCLASS_END(m, pywgpu::{class_name}, {class_name})" << "\n\n"
 
     def render_init(self):
         node = self.node
@@ -84,16 +84,16 @@ class StructureTypePyRenderer(StructureTypeRenderer):
 
         self.out << f'.def(py::init([](const py::kwargs& kwargs) {{' << "\n"
         self.out.indent()
-        #self.out << f'wgpu::{class_name} obj = {{}};' << "\n"
-        self.out << f'wgpu::{class_name} obj{{}};' << "\n"
-        #self.out << f'wgpu::{class_name} obj;' << "\n"
+        #self.out << f'pywgpu::{class_name} obj = {{}};' << "\n"
+        self.out << f'pywgpu::{class_name} obj{{}};' << "\n"
+        #self.out << f'pywgpu::{class_name} obj;' << "\n"
 
         '''
         if node.extensible:
             self.out(f"""\
             if (kwargs.contains("next_in_chain"))
             {{
-                obj.nextInChain = kwargs["next_in_chain"].cast<const wgpu::ChainedStruct*>();
+                obj.nextInChain = kwargs["next_in_chain"].cast<const pywgpu::ChainedStruct*>();
             }}
             """)
         '''

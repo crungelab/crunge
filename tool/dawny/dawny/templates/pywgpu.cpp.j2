@@ -1,7 +1,9 @@
-#include <dawn/webgpu_cpp.h>
+//#include <dawn/webgpu_cpp.h>
 //#include "wgpu.h"
 
-namespace wgpu {
+#include <crunge/wgpu/pywgpu.h>
+
+namespace pywgpu {
 {{ cpp_code }}
 
     StringView::operator std::string_view() const {
@@ -13,4 +15,4 @@ namespace wgpu {
                                                         : this->length);
     }
 
-} //namespace wgpu
+} //namespace pywgpu

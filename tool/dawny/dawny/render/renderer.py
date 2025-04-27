@@ -62,7 +62,7 @@ class Renderer(Generic[T_Node]):
             return name.CamelCase()
 
     @staticmethod
-    def as_cppFqType(name: Name, namespace: str = "wgpu") -> str:
+    def as_cppFqType(name: Name, namespace: str = "pywgpu") -> str:
         # Special case for 'bool' because it has a typedef for compatibility.
         if name.native and name.get() != "bool":
             return name.concatcase()
@@ -112,7 +112,7 @@ class Renderer(Generic[T_Node]):
     '''
     @staticmethod
     def decorate_type(typ, arg: RecordMember, make_const=False):
-        #type_name = "wgpu::" + typ.name.get() if not typ.name.native else typ.name.concatcase()
+        #type_name = "pywgpu::" + typ.name.get() if not typ.name.native else typ.name.concatcase()
         type_name = Renderer.as_cppFqType(typ.name)
         maybe_const = 'const ' if make_const else ''
         #if arg.annotation == 'value':
@@ -275,12 +275,12 @@ class Renderer(Generic[T_Node]):
     }
 
     bool IsUndefined() const {
-        return this->data == nullptr && this->length == wgpu::kStrlen;
+        return this->data == nullptr && this->length == pywgpu::kStrlen;
     }
 
     // NOLINTNEXTLINE(runtime/explicit) allow implicit conversion
     operator std::string_view() const {
-        if (this->length == wgpu::kStrlen) {
+        if (this->length == pywgpu::kStrlen) {
             if (IsUndefined()) {
                 return {};
             }
@@ -292,7 +292,7 @@ class Renderer(Generic[T_Node]):
     template <typename View,
               typename = std::enable_if_t<std::is_constructible_v<View, const char*, size_t>>>
     explicit operator View() const {
-        if (this->length == wgpu::kStrlen) {
+        if (this->length == pywgpu::kStrlen) {
             if (IsUndefined()) {
                 return {};
             }
@@ -344,12 +344,12 @@ class Renderer(Generic[T_Node]):
         }}
 
         bool IsUndefined() const {{
-            return this->data == nullptr && this->length == wgpu::kStrlen;
+            return this->data == nullptr && this->length == pywgpu::kStrlen;
         }}
 
         // NOLINTNEXTLINE(runtime/explicit) allow implicit conversion
         operator std::string_view() const {{
-            if (this->length == wgpu::kStrlen) {{
+            if (this->length == pywgpu::kStrlen) {{
                 if (IsUndefined()) {{
                     return {{}};
                 }}
@@ -361,7 +361,7 @@ class Renderer(Generic[T_Node]):
         template <typename View,
                 typename = std::enable_if_t<std::is_constructible_v<View, const char*, size_t>>>
         explicit operator View() const {{
-            if (this->length == wgpu::kStrlen) {{
+            if (this->length == pywgpu::kStrlen) {{
                 if (IsUndefined()) {{
                     return {{}};
                 }}

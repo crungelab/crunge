@@ -19,11 +19,11 @@ namespace wgpu {
 }
 
 /*
-PYBIND11_MAKE_OPAQUE(wgpu::BindGroupLayouts)
-PYBIND11_MAKE_OPAQUE(wgpu::BindGroupLayoutEntries)
-PYBIND11_MAKE_OPAQUE(wgpu::BindGroupEntries)
-PYBIND11_MAKE_OPAQUE(wgpu::VertexAttributes)
-PYBIND11_MAKE_OPAQUE(wgpu::ColorTargetStates)
-PYBIND11_MAKE_OPAQUE(wgpu::VertexBufferLayouts)
-PYBIND11_MAKE_OPAQUE(wgpu::RenderPassColorAttachments)
+PYBIND11_MAKE_OPAQUE(pywgpu::BindGroupLayouts)
+PYBIND11_MAKE_OPAQUE(pywgpu::BindGroupLayoutEntries)
+PYBIND11_MAKE_OPAQUE(pywgpu::BindGroupEntries)
+PYBIND11_MAKE_OPAQUE(pywgpu::VertexAttributes)
+PYBIND11_MAKE_OPAQUE(pywgpu::ColorTargetStates)
+PYBIND11_MAKE_OPAQUE(pywgpu::VertexBufferLayouts)
+PYBIND11_MAKE_OPAQUE(pywgpu::RenderPassColorAttachments)
 */

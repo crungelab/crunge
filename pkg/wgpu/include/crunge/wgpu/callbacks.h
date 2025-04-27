@@ -2,23 +2,25 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
-#include <dawn/webgpu_cpp.h>
+//#include <dawn/webgpu_cpp.h>
+
+#include <crunge/wgpu/pywgpu.h>
 
 namespace py = pybind11;
 
 namespace crunge_wgpu {
 
 struct PyRequestAdapterCallbackInfo {
-    wgpu::CallbackMode mode;
+    pywgpu::CallbackMode mode;
     py::function py_callback;
 
     PyRequestAdapterCallbackInfo(
-        wgpu::CallbackMode mode,
+        pywgpu::CallbackMode mode,
         py::function py_callback
     ) : mode(mode), py_callback(py_callback) {}
 
     /*PyDeviceLostCallbackInfo(
-        wgpu::CallbackMode mode_,
+        pywgpu::CallbackMode mode_,
         py::function callback_
     ) : mode(mode_), py_callback(std::move(callback_)) {}*/
 
@@ -31,9 +33,9 @@ struct PyRequestAdapterCallbackInfo {
             auto self = reinterpret_cast<PyRequestAdapterCallbackInfo*>(userdata1);
             py::gil_scoped_acquire gil;
 
-            auto apiAdapter = wgpu::Adapter::Acquire(adapter);
+            auto apiAdapter = pywgpu::Adapter::Acquire(adapter);
             //std::cout << "RequestAdapterCallbackInfo: " << message.data << std::endl;
-            self->py_callback(static_cast<wgpu::RequestAdapterStatus>(status), apiAdapter, static_cast<wgpu::StringView>(message));
+            self->py_callback(static_cast<pywgpu::RequestAdapterStatus>(status), apiAdapter, static_cast<pywgpu::StringView>(message));
         };
 
         WGPURequestAdapterCallbackInfo native_info = {};
@@ -47,16 +49,16 @@ struct PyRequestAdapterCallbackInfo {
 };
 
 struct PyDeviceLostCallbackInfo {
-    wgpu::CallbackMode mode;
+    pywgpu::CallbackMode mode;
     py::function py_callback;
 
     PyDeviceLostCallbackInfo(
-        wgpu::CallbackMode mode,
+        pywgpu::CallbackMode mode,
         py::function py_callback
     ) : mode(mode), py_callback(py_callback) {}
 
     /*PyDeviceLostCallbackInfo(
-        wgpu::CallbackMode mode_,
+        pywgpu::CallbackMode mode_,
         py::function callback_
     ) : mode(mode_), py_callback(std::move(callback_)) {}*/
 
@@ -72,9 +74,9 @@ struct PyDeviceLostCallbackInfo {
                 auto self = reinterpret_cast<PyDeviceLostCallbackInfo*>(userdata1);
                 py::gil_scoped_acquire gil;
 
-                auto apiDevice = wgpu::Device::Acquire(*device);
+                auto apiDevice = pywgpu::Device::Acquire(*device);
                 //std::cout << "DeviceLostCallbackInfo: " << message.data << std::endl;
-                self->py_callback(apiDevice, static_cast<wgpu::DeviceLostReason>(reason), static_cast<wgpu::StringView>(message));
+                self->py_callback(apiDevice, static_cast<pywgpu::DeviceLostReason>(reason), static_cast<pywgpu::StringView>(message));
             }
         };
 
@@ -104,9 +106,9 @@ struct PyUncapturedErrorCallbackInfo {
             auto self = reinterpret_cast<PyUncapturedErrorCallbackInfo*>(userdata1);
             py::gil_scoped_acquire gil;
 
-            auto apiDevice = wgpu::Device::Acquire(*device);
+            auto apiDevice = pywgpu::Device::Acquire(*device);
             //std::cout << "UncapturedErrorCallbackInfo: " << message.data << std::endl;
-            self->py_callback(apiDevice, static_cast<wgpu::ErrorType>(type), static_cast<wgpu::StringView>(message));
+            self->py_callback(apiDevice, static_cast<pywgpu::ErrorType>(type), static_cast<pywgpu::StringView>(message));
         };
 
         WGPUUncapturedErrorCallbackInfo native_info = {};
@@ -134,7 +136,7 @@ struct PyLoggingCallbackInfo {
             py::gil_scoped_acquire gil;
 
             //std::cout << "UncapturedErrorCallbackInfo: " << message.data << std::endl;
-            self->py_callback(static_cast<wgpu::LoggingType>(type), static_cast<wgpu::StringView>(message));
+            self->py_callback(static_cast<pywgpu::LoggingType>(type), static_cast<pywgpu::StringView>(message));
         };
 
         WGPULoggingCallbackInfo native_info = {};

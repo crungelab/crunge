@@ -19,7 +19,7 @@ class BitmaskTypeHppRenderer(BitmaskTypeRenderer):
 
         self.out(f"""
 template<>
-struct IsWGPUBitmask<wgpu::{enum_name}> {{
+struct IsWGPUBitmask<pywgpu::{enum_name}> {{
     static constexpr bool enable = true;
 }};
 

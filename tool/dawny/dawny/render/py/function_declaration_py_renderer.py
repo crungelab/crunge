@@ -42,9 +42,9 @@ class FunctionDeclarationPyRenderer(FunctionDeclarationRenderer):
         arg_type_str = ', '.join(arg_type_list)
         py_arg_str = ', '.join(py_arg_list)
         
-        fn_signature = f'{return_type} (wgpu::{fn_cpp_name}*)({arg_str})'
+        fn_signature = f'{return_type} (pywgpu::{fn_cpp_name}*)({arg_str})'
         #print(fn_signature)
-        fn_expr = f"&wgpu::{fn_cpp_name}"
+        fn_expr = f"&pywgpu::{fn_cpp_name}"
 
         if py_arg_list:
             self.out << f"""

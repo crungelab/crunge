@@ -10,58 +10,58 @@ namespace py = pybind11;
 
 namespace pybind11 { namespace detail {
 
-template <> struct type_caster<wgpu::Bool> {
+template <> struct type_caster<pywgpu::Bool> {
 public:
-    PYBIND11_TYPE_CASTER(wgpu::Bool, _("Bool"));
+    PYBIND11_TYPE_CASTER(pywgpu::Bool, _("Bool"));
     bool load(handle src, bool implicit) {
         if (!PyBool_Check(src.ptr())) {
             return false;
         }
-        value = wgpu::Bool{src.cast<bool>()};
+        value = pywgpu::Bool{src.cast<bool>()};
         return true;
     }
     
-    static handle cast(wgpu::Bool src, return_value_policy /* policy */, handle /* parent */) {
+    static handle cast(pywgpu::Bool src, return_value_policy /* policy */, handle /* parent */) {
         return PyBool_FromLong(static_cast<long>(src));
     }
 };
 
-template <> struct type_caster<wgpu::OptionalBool> {
+template <> struct type_caster<pywgpu::OptionalBool> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::OptionalBool, _("OptionalBool"));
+        PYBIND11_TYPE_CASTER(pywgpu::OptionalBool, _("OptionalBool"));
         bool load(handle src, bool implicit) {
             if (!PyBool_Check(src.ptr())) {
                 return false;
             }
-            value = wgpu::OptionalBool{src.cast<bool>()};
+            value = pywgpu::OptionalBool{src.cast<bool>()};
             return true;
         }
         
-        static handle cast(wgpu::OptionalBool src, return_value_policy /* policy */, handle /* parent */) {
+        static handle cast(pywgpu::OptionalBool src, return_value_policy /* policy */, handle /* parent */) {
             return PyBool_FromLong(static_cast<long>(src));
         }
     };
     
-template <> struct type_caster<wgpu::StringView> {
+template <> struct type_caster<pywgpu::StringView> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::StringView, _("StringView"));
+        PYBIND11_TYPE_CASTER(pywgpu::StringView, _("StringView"));
         bool load(handle src, bool implicit) {
             if (!PyUnicode_Check(src.ptr())) {
                 return false;
             }
-            value = wgpu::StringView{src.cast<std::string_view>()};
+            value = pywgpu::StringView{src.cast<std::string_view>()};
             return true;
         }
         
-        static handle cast(wgpu::StringView src, return_value_policy /* policy */, handle /* parent */) {
+        static handle cast(pywgpu::StringView src, return_value_policy /* policy */, handle /* parent */) {
             return PyUnicode_FromString(src.data);
         }
     };
     
     /*template<>
-    struct pybind11::detail::type_caster<wgpu::RequestAdapterCallbackInfo> {
+    struct pybind11::detail::type_caster<pywgpu::RequestAdapterCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::RequestAdapterCallbackInfo, _("RequestAdapterCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::RequestAdapterCallbackInfo, _("RequestAdapterCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -71,7 +71,7 @@ template <> struct type_caster<wgpu::StringView> {
             py::object mode_obj = obj.attr("mode");
             py::object callback_obj = obj.attr("callback");
     
-            value.mode = mode_obj.cast<wgpu::CallbackMode>();
+            value.mode = mode_obj.cast<pywgpu::CallbackMode>();
     
             // Allocate Python function to userdata
             py::function* cb = new py::function(callback_obj);
@@ -80,15 +80,15 @@ template <> struct type_caster<wgpu::StringView> {
             value.userdata2 = nullptr;
     
             // Define the native callback lambda
-            value.callback = [](wgpu::RequestAdapterStatus status,
-                                wgpu::Adapter adapter,
-                                wgpu::StringView message,
+            value.callback = [](pywgpu::RequestAdapterStatus status,
+                                pywgpu::Adapter adapter,
+                                pywgpu::StringView message,
                                 void* userdata1,
                                 void* userdata2) {
                 py::function* py_cb = reinterpret_cast<py::function*>(userdata1);
                 py::gil_scoped_acquire gil;
     
-                if (status == wgpu::RequestAdapterStatus::Success) {
+                if (status == pywgpu::RequestAdapterStatus::Success) {
                     (*py_cb)(true, adapter);
                 } else {
                     std::string msg(message.data, message.length);
@@ -103,7 +103,7 @@ template <> struct type_caster<wgpu::StringView> {
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::RequestAdapterCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::RequestAdapterCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_mode = py::cast(src.mode);
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
@@ -113,9 +113,9 @@ template <> struct type_caster<wgpu::StringView> {
     };*/
 
     template<>
-    struct type_caster<wgpu::LoggingCallbackInfo> {
+    struct type_caster<pywgpu::LoggingCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::LoggingCallbackInfo, _("LoggingCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::LoggingCallbackInfo, _("LoggingCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -148,7 +148,7 @@ template <> struct type_caster<wgpu::StringView> {
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::LoggingCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::LoggingCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
             py::object py_obj = py::module_::import("wgpu").attr("LoggingCallbackInfo")(py_callback);
@@ -174,9 +174,9 @@ template <> struct type_caster<wgpu::StringView> {
     }
     */
     template<>
-    struct type_caster<wgpu::DeviceLostCallbackInfo> {
+    struct type_caster<pywgpu::DeviceLostCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::DeviceLostCallbackInfo, _("DeviceLostCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::DeviceLostCallbackInfo, _("DeviceLostCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -186,7 +186,7 @@ template <> struct type_caster<wgpu::StringView> {
             py::object mode_obj = obj.attr("mode");
             py::object callback_obj = obj.attr("callback");
     
-            value.mode = static_cast<WGPUCallbackMode>(mode_obj.cast<wgpu::CallbackMode>());
+            value.mode = static_cast<WGPUCallbackMode>(mode_obj.cast<pywgpu::CallbackMode>());
     
             // Allocate Python function to userdata
             py::function* cb = new py::function(callback_obj);
@@ -203,8 +203,8 @@ template <> struct type_caster<wgpu::StringView> {
                 py::function* py_cb = reinterpret_cast<py::function*>(userdata1);
                 py::gil_scoped_acquire gil;
     
-                auto apiDevice = wgpu::Device::Acquire(*device);
-                (*py_cb)(apiDevice, static_cast<wgpu::DeviceLostReason>(reason), static_cast<wgpu::StringView>(message));
+                auto apiDevice = pywgpu::Device::Acquire(*device);
+                (*py_cb)(apiDevice, static_cast<pywgpu::DeviceLostReason>(reason), static_cast<pywgpu::StringView>(message));
     
                 // Clean up after callback invocation
                 delete py_cb;
@@ -214,7 +214,7 @@ template <> struct type_caster<wgpu::StringView> {
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::DeviceLostCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::DeviceLostCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_mode = py::cast(src.mode);
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
@@ -224,9 +224,9 @@ template <> struct type_caster<wgpu::StringView> {
     };
 
     template<>
-    struct type_caster<wgpu::UncapturedErrorCallbackInfo> {
+    struct type_caster<pywgpu::UncapturedErrorCallbackInfo> {
     public:
-        PYBIND11_TYPE_CASTER(wgpu::UncapturedErrorCallbackInfo, _("UncapturedErrorCallbackInfo"));
+        PYBIND11_TYPE_CASTER(pywgpu::UncapturedErrorCallbackInfo, _("UncapturedErrorCallbackInfo"));
     
         // Python -> C++
         bool load(py::handle src, bool) {
@@ -250,8 +250,8 @@ template <> struct type_caster<wgpu::StringView> {
                 py::function* py_cb = reinterpret_cast<py::function*>(userdata1);
                 py::gil_scoped_acquire gil;
     
-                auto apiDevice = wgpu::Device::Acquire(*device);
-                (*py_cb)(apiDevice, static_cast<wgpu::ErrorType>(type), static_cast<wgpu::StringView>(message));
+                auto apiDevice = pywgpu::Device::Acquire(*device);
+                (*py_cb)(apiDevice, static_cast<pywgpu::ErrorType>(type), static_cast<pywgpu::StringView>(message));
     
                 // Clean up after callback invocation
                 delete py_cb;
@@ -261,7 +261,7 @@ template <> struct type_caster<wgpu::StringView> {
         }
     
         // C++ -> Python (not usually needed, but provided for completeness)
-        static py::handle cast(const wgpu::UncapturedErrorCallbackInfo& src, py::return_value_policy, py::handle) {
+        static py::handle cast(const pywgpu::UncapturedErrorCallbackInfo& src, py::return_value_policy, py::handle) {
             py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
     
             py::object py_obj = py::module_::import("wgpu").attr("UncapturedErrorCallbackInfo")(py_callback);

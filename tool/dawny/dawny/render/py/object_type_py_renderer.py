@@ -15,7 +15,7 @@ class ObjectTypePyRenderer(ObjectTypeRenderer):
     def render(self):
         class_name = self.node.name.CamelCase()
 
-        self.out << f"PYCLASS_BEGIN(m, wgpu::{class_name}, {class_name}) {class_name}" << "\n"
+        self.out << f"PYCLASS_BEGIN(m, pywgpu::{class_name}, {class_name}) {class_name}" << "\n"
         self.out.indent()
         for method in self.node.methods:
             if self.exclude_method(method):
@@ -63,9 +63,9 @@ class ObjectTypePyRenderer(ObjectTypeRenderer):
             arg_type_str = ', '.join(arg_type_list)
             py_arg_str = ', '.join(py_arg_list)
             
-            method_signature = f'{return_type} (wgpu::{class_name}::{method_cpp_name}*)({arg_str})'
+            method_signature = f'{return_type} (pywgpu::{class_name}::{method_cpp_name}*)({arg_str})'
             #print(method_signature)
-            method_expr = f"&wgpu::{class_name}::{method_cpp_name}"
+            method_expr = f"&pywgpu::{class_name}::{method_cpp_name}"
 
             if py_arg_list:
                 self.out(f"""\
@@ -81,4 +81,4 @@ class ObjectTypePyRenderer(ObjectTypeRenderer):
 
         self.out << "    ;\n"
         self.out.dedent()
-        self.out << f"PYCLASS_END(m, wgpu::{class_name}, {class_name})" << "\n\n"
+        self.out << f"PYCLASS_END(m, pywgpu::{class_name}, {class_name})" << "\n\n"

@@ -1,7 +1,9 @@
-#include <dawn/webgpu_cpp.h>
+//#include <dawn/webgpu_cpp.h>
 //#include "wgpu.h"
 
-namespace wgpu {
+#include <crunge/wgpu/pywgpu.h>
+
+namespace pywgpu {
 // INTERNAL_HAVE_EMDAWNWEBGPU_HEADER implementation
 
 INTERNAL_HAVE_EMDAWNWEBGPU_HEADER::operator const WGPUINTERNAL_HAVE_EMDAWNWEBGPU_HEADER&() const noexcept {
@@ -169,14 +171,14 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->usages) = std::move(rhs.usages);    
-    ::wgpu::detail::AsNonConstReference(this->formatCount) = std::move(rhs.formatCount);    
-    ::wgpu::detail::AsNonConstReference(this->formats) = std::move(rhs.formats);    
-    ::wgpu::detail::AsNonConstReference(this->presentModeCount) = std::move(rhs.presentModeCount);    
-    ::wgpu::detail::AsNonConstReference(this->presentModes) = std::move(rhs.presentModes);    
-    ::wgpu::detail::AsNonConstReference(this->alphaModeCount) = std::move(rhs.alphaModeCount);    
-    ::wgpu::detail::AsNonConstReference(this->alphaModes) = std::move(rhs.alphaModes);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->usages) = std::move(rhs.usages);    
+    ::pywgpu::detail::AsNonConstReference(this->formatCount) = std::move(rhs.formatCount);    
+    ::pywgpu::detail::AsNonConstReference(this->formats) = std::move(rhs.formats);    
+    ::pywgpu::detail::AsNonConstReference(this->presentModeCount) = std::move(rhs.presentModeCount);    
+    ::pywgpu::detail::AsNonConstReference(this->presentModes) = std::move(rhs.presentModes);    
+    ::pywgpu::detail::AsNonConstReference(this->alphaModeCount) = std::move(rhs.alphaModeCount);    
+    ::pywgpu::detail::AsNonConstReference(this->alphaModes) = std::move(rhs.alphaModes);    
     return *this;    
 }
 // SurfaceConfiguration implementation
@@ -412,42 +414,42 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->maxTextureDimension1D) = std::move(rhs.maxTextureDimension1D);    
-    ::wgpu::detail::AsNonConstReference(this->maxTextureDimension2D) = std::move(rhs.maxTextureDimension2D);    
-    ::wgpu::detail::AsNonConstReference(this->maxTextureDimension3D) = std::move(rhs.maxTextureDimension3D);    
-    ::wgpu::detail::AsNonConstReference(this->maxTextureArrayLayers) = std::move(rhs.maxTextureArrayLayers);    
-    ::wgpu::detail::AsNonConstReference(this->maxBindGroups) = std::move(rhs.maxBindGroups);    
-    ::wgpu::detail::AsNonConstReference(this->maxBindGroupsPlusVertexBuffers) = std::move(rhs.maxBindGroupsPlusVertexBuffers);    
-    ::wgpu::detail::AsNonConstReference(this->maxBindingsPerBindGroup) = std::move(rhs.maxBindingsPerBindGroup);    
-    ::wgpu::detail::AsNonConstReference(this->maxDynamicUniformBuffersPerPipelineLayout) = std::move(rhs.maxDynamicUniformBuffersPerPipelineLayout);    
-    ::wgpu::detail::AsNonConstReference(this->maxDynamicStorageBuffersPerPipelineLayout) = std::move(rhs.maxDynamicStorageBuffersPerPipelineLayout);    
-    ::wgpu::detail::AsNonConstReference(this->maxSampledTexturesPerShaderStage) = std::move(rhs.maxSampledTexturesPerShaderStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxSamplersPerShaderStage) = std::move(rhs.maxSamplersPerShaderStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxStorageBuffersPerShaderStage) = std::move(rhs.maxStorageBuffersPerShaderStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxStorageTexturesPerShaderStage) = std::move(rhs.maxStorageTexturesPerShaderStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxUniformBuffersPerShaderStage) = std::move(rhs.maxUniformBuffersPerShaderStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxUniformBufferBindingSize) = std::move(rhs.maxUniformBufferBindingSize);    
-    ::wgpu::detail::AsNonConstReference(this->maxStorageBufferBindingSize) = std::move(rhs.maxStorageBufferBindingSize);    
-    ::wgpu::detail::AsNonConstReference(this->minUniformBufferOffsetAlignment) = std::move(rhs.minUniformBufferOffsetAlignment);    
-    ::wgpu::detail::AsNonConstReference(this->minStorageBufferOffsetAlignment) = std::move(rhs.minStorageBufferOffsetAlignment);    
-    ::wgpu::detail::AsNonConstReference(this->maxVertexBuffers) = std::move(rhs.maxVertexBuffers);    
-    ::wgpu::detail::AsNonConstReference(this->maxBufferSize) = std::move(rhs.maxBufferSize);    
-    ::wgpu::detail::AsNonConstReference(this->maxVertexAttributes) = std::move(rhs.maxVertexAttributes);    
-    ::wgpu::detail::AsNonConstReference(this->maxVertexBufferArrayStride) = std::move(rhs.maxVertexBufferArrayStride);    
-    ::wgpu::detail::AsNonConstReference(this->maxInterStageShaderVariables) = std::move(rhs.maxInterStageShaderVariables);    
-    ::wgpu::detail::AsNonConstReference(this->maxColorAttachments) = std::move(rhs.maxColorAttachments);    
-    ::wgpu::detail::AsNonConstReference(this->maxColorAttachmentBytesPerSample) = std::move(rhs.maxColorAttachmentBytesPerSample);    
-    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupStorageSize) = std::move(rhs.maxComputeWorkgroupStorageSize);    
-    ::wgpu::detail::AsNonConstReference(this->maxComputeInvocationsPerWorkgroup) = std::move(rhs.maxComputeInvocationsPerWorkgroup);    
-    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeX) = std::move(rhs.maxComputeWorkgroupSizeX);    
-    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeY) = std::move(rhs.maxComputeWorkgroupSizeY);    
-    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeZ) = std::move(rhs.maxComputeWorkgroupSizeZ);    
-    ::wgpu::detail::AsNonConstReference(this->maxComputeWorkgroupsPerDimension) = std::move(rhs.maxComputeWorkgroupsPerDimension);    
-    ::wgpu::detail::AsNonConstReference(this->maxStorageBuffersInVertexStage) = std::move(rhs.maxStorageBuffersInVertexStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxStorageTexturesInVertexStage) = std::move(rhs.maxStorageTexturesInVertexStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxStorageBuffersInFragmentStage) = std::move(rhs.maxStorageBuffersInFragmentStage);    
-    ::wgpu::detail::AsNonConstReference(this->maxStorageTexturesInFragmentStage) = std::move(rhs.maxStorageTexturesInFragmentStage);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->maxTextureDimension1D) = std::move(rhs.maxTextureDimension1D);    
+    ::pywgpu::detail::AsNonConstReference(this->maxTextureDimension2D) = std::move(rhs.maxTextureDimension2D);    
+    ::pywgpu::detail::AsNonConstReference(this->maxTextureDimension3D) = std::move(rhs.maxTextureDimension3D);    
+    ::pywgpu::detail::AsNonConstReference(this->maxTextureArrayLayers) = std::move(rhs.maxTextureArrayLayers);    
+    ::pywgpu::detail::AsNonConstReference(this->maxBindGroups) = std::move(rhs.maxBindGroups);    
+    ::pywgpu::detail::AsNonConstReference(this->maxBindGroupsPlusVertexBuffers) = std::move(rhs.maxBindGroupsPlusVertexBuffers);    
+    ::pywgpu::detail::AsNonConstReference(this->maxBindingsPerBindGroup) = std::move(rhs.maxBindingsPerBindGroup);    
+    ::pywgpu::detail::AsNonConstReference(this->maxDynamicUniformBuffersPerPipelineLayout) = std::move(rhs.maxDynamicUniformBuffersPerPipelineLayout);    
+    ::pywgpu::detail::AsNonConstReference(this->maxDynamicStorageBuffersPerPipelineLayout) = std::move(rhs.maxDynamicStorageBuffersPerPipelineLayout);    
+    ::pywgpu::detail::AsNonConstReference(this->maxSampledTexturesPerShaderStage) = std::move(rhs.maxSampledTexturesPerShaderStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxSamplersPerShaderStage) = std::move(rhs.maxSamplersPerShaderStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageBuffersPerShaderStage) = std::move(rhs.maxStorageBuffersPerShaderStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageTexturesPerShaderStage) = std::move(rhs.maxStorageTexturesPerShaderStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxUniformBuffersPerShaderStage) = std::move(rhs.maxUniformBuffersPerShaderStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxUniformBufferBindingSize) = std::move(rhs.maxUniformBufferBindingSize);    
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageBufferBindingSize) = std::move(rhs.maxStorageBufferBindingSize);    
+    ::pywgpu::detail::AsNonConstReference(this->minUniformBufferOffsetAlignment) = std::move(rhs.minUniformBufferOffsetAlignment);    
+    ::pywgpu::detail::AsNonConstReference(this->minStorageBufferOffsetAlignment) = std::move(rhs.minStorageBufferOffsetAlignment);    
+    ::pywgpu::detail::AsNonConstReference(this->maxVertexBuffers) = std::move(rhs.maxVertexBuffers);    
+    ::pywgpu::detail::AsNonConstReference(this->maxBufferSize) = std::move(rhs.maxBufferSize);    
+    ::pywgpu::detail::AsNonConstReference(this->maxVertexAttributes) = std::move(rhs.maxVertexAttributes);    
+    ::pywgpu::detail::AsNonConstReference(this->maxVertexBufferArrayStride) = std::move(rhs.maxVertexBufferArrayStride);    
+    ::pywgpu::detail::AsNonConstReference(this->maxInterStageShaderVariables) = std::move(rhs.maxInterStageShaderVariables);    
+    ::pywgpu::detail::AsNonConstReference(this->maxColorAttachments) = std::move(rhs.maxColorAttachments);    
+    ::pywgpu::detail::AsNonConstReference(this->maxColorAttachmentBytesPerSample) = std::move(rhs.maxColorAttachmentBytesPerSample);    
+    ::pywgpu::detail::AsNonConstReference(this->maxComputeWorkgroupStorageSize) = std::move(rhs.maxComputeWorkgroupStorageSize);    
+    ::pywgpu::detail::AsNonConstReference(this->maxComputeInvocationsPerWorkgroup) = std::move(rhs.maxComputeInvocationsPerWorkgroup);    
+    ::pywgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeX) = std::move(rhs.maxComputeWorkgroupSizeX);    
+    ::pywgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeY) = std::move(rhs.maxComputeWorkgroupSizeY);    
+    ::pywgpu::detail::AsNonConstReference(this->maxComputeWorkgroupSizeZ) = std::move(rhs.maxComputeWorkgroupSizeZ);    
+    ::pywgpu::detail::AsNonConstReference(this->maxComputeWorkgroupsPerDimension) = std::move(rhs.maxComputeWorkgroupsPerDimension);    
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageBuffersInVertexStage) = std::move(rhs.maxStorageBuffersInVertexStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageTexturesInVertexStage) = std::move(rhs.maxStorageTexturesInVertexStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageBuffersInFragmentStage) = std::move(rhs.maxStorageBuffersInFragmentStage);    
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageTexturesInFragmentStage) = std::move(rhs.maxStorageTexturesInFragmentStage);    
     return *this;    
 }
 // AdapterPropertiesSubgroups implementation
@@ -486,8 +488,8 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->subgroupMinSize) = std::move(rhs.subgroupMinSize);    
-    ::wgpu::detail::AsNonConstReference(this->subgroupMaxSize) = std::move(rhs.subgroupMaxSize);    
+    ::pywgpu::detail::AsNonConstReference(this->subgroupMinSize) = std::move(rhs.subgroupMinSize);    
+    ::pywgpu::detail::AsNonConstReference(this->subgroupMaxSize) = std::move(rhs.subgroupMaxSize);    
     return *this;    
 }
 // DawnExperimentalImmediateDataLimits implementation
@@ -523,7 +525,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->maxImmediateDataRangeByteSize) = std::move(rhs.maxImmediateDataRangeByteSize);    
+    ::pywgpu::detail::AsNonConstReference(this->maxImmediateDataRangeByteSize) = std::move(rhs.maxImmediateDataRangeByteSize);    
     return *this;    
 }
 // DawnTexelCopyBufferRowAlignmentLimits implementation
@@ -559,7 +561,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->minTexelCopyBufferRowAlignment) = std::move(rhs.minTexelCopyBufferRowAlignment);    
+    ::pywgpu::detail::AsNonConstReference(this->minTexelCopyBufferRowAlignment) = std::move(rhs.minTexelCopyBufferRowAlignment);    
     return *this;    
 }
 // SupportedFeatures implementation
@@ -616,9 +618,9 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->usage) = std::move(rhs.usage);    
-    ::wgpu::detail::AsNonConstReference(this->size) = std::move(rhs.size);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->usage) = std::move(rhs.usage);    
+    ::pywgpu::detail::AsNonConstReference(this->size) = std::move(rhs.size);    
     return *this;    
 }
 // SharedBufferMemoryDescriptor implementation
@@ -652,10 +654,10 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->usage) = std::move(rhs.usage);    
-    ::wgpu::detail::AsNonConstReference(this->size) = std::move(rhs.size);    
-    ::wgpu::detail::AsNonConstReference(this->format) = std::move(rhs.format);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->usage) = std::move(rhs.usage);    
+    ::pywgpu::detail::AsNonConstReference(this->size) = std::move(rhs.size);    
+    ::pywgpu::detail::AsNonConstReference(this->format) = std::move(rhs.format);    
     return *this;    
 }
 // SharedTextureMemoryAHardwareBufferProperties implementation
@@ -691,7 +693,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->yCbCrInfo) = std::move(rhs.yCbCrInfo);    
+    ::pywgpu::detail::AsNonConstReference(this->yCbCrInfo) = std::move(rhs.yCbCrInfo);    
     return *this;    
 }
 // SharedTextureMemoryDescriptor implementation
@@ -732,11 +734,11 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->initialized) = std::move(rhs.initialized);    
-    ::wgpu::detail::AsNonConstReference(this->fenceCount) = std::move(rhs.fenceCount);    
-    ::wgpu::detail::AsNonConstReference(this->fences) = std::move(rhs.fences);    
-    ::wgpu::detail::AsNonConstReference(this->signaledValues) = std::move(rhs.signaledValues);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->initialized) = std::move(rhs.initialized);    
+    ::pywgpu::detail::AsNonConstReference(this->fenceCount) = std::move(rhs.fenceCount);    
+    ::pywgpu::detail::AsNonConstReference(this->fences) = std::move(rhs.fences);    
+    ::pywgpu::detail::AsNonConstReference(this->signaledValues) = std::move(rhs.signaledValues);    
     return *this;    
 }
 // SharedTextureMemoryVkDedicatedAllocationDescriptor implementation
@@ -937,11 +939,11 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->initialized) = std::move(rhs.initialized);    
-    ::wgpu::detail::AsNonConstReference(this->fenceCount) = std::move(rhs.fenceCount);    
-    ::wgpu::detail::AsNonConstReference(this->fences) = std::move(rhs.fences);    
-    ::wgpu::detail::AsNonConstReference(this->signaledValues) = std::move(rhs.signaledValues);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->initialized) = std::move(rhs.initialized);    
+    ::pywgpu::detail::AsNonConstReference(this->fenceCount) = std::move(rhs.fenceCount);    
+    ::pywgpu::detail::AsNonConstReference(this->fences) = std::move(rhs.fences);    
+    ::pywgpu::detail::AsNonConstReference(this->signaledValues) = std::move(rhs.signaledValues);    
     return *this;    
 }
 // SharedTextureMemoryVkImageLayoutBeginState implementation
@@ -999,8 +1001,8 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->oldLayout) = std::move(rhs.oldLayout);    
-    ::wgpu::detail::AsNonConstReference(this->newLayout) = std::move(rhs.newLayout);    
+    ::pywgpu::detail::AsNonConstReference(this->oldLayout) = std::move(rhs.oldLayout);    
+    ::pywgpu::detail::AsNonConstReference(this->newLayout) = std::move(rhs.newLayout);    
     return *this;    
 }
 // SharedTextureMemoryD3DSwapchainBeginState implementation
@@ -1172,8 +1174,8 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
-    ::wgpu::detail::AsNonConstReference(this->type) = std::move(rhs.type);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->type) = std::move(rhs.type);    
     return *this;    
 }
 // SharedFenceVkSemaphoreOpaqueFDExportInfo implementation
@@ -1209,7 +1211,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
+    ::pywgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
     return *this;    
 }
 // SharedFenceSyncFDExportInfo implementation
@@ -1245,7 +1247,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
+    ::pywgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
     return *this;    
 }
 // SharedFenceVkSemaphoreZirconHandleExportInfo implementation
@@ -1281,7 +1283,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
+    ::pywgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
     return *this;    
 }
 // SharedFenceDXGISharedHandleExportInfo implementation
@@ -1317,7 +1319,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
+    ::pywgpu::detail::AsNonConstReference(this->handle) = std::move(rhs.handle);    
     return *this;    
 }
 // SharedFenceMTLSharedEventExportInfo implementation
@@ -1353,7 +1355,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->sharedEvent) = std::move(rhs.sharedEvent);    
+    ::pywgpu::detail::AsNonConstReference(this->sharedEvent) = std::move(rhs.sharedEvent);    
     return *this;    
 }
 // SharedFenceEGLSyncExportInfo implementation
@@ -1389,7 +1391,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->sync) = std::move(rhs.sync);    
+    ::pywgpu::detail::AsNonConstReference(this->sync) = std::move(rhs.sync);    
     return *this;    
 }
 // DawnFormatCapabilities implementation
@@ -1414,7 +1416,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);    
     return *this;    
 }
 // DawnDrmFormatCapabilities implementation
@@ -1453,8 +1455,8 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->propertiesCount) = std::move(rhs.propertiesCount);    
-    ::wgpu::detail::AsNonConstReference(this->properties) = std::move(rhs.properties);    
+    ::pywgpu::detail::AsNonConstReference(this->propertiesCount) = std::move(rhs.propertiesCount);    
+    ::pywgpu::detail::AsNonConstReference(this->properties) = std::move(rhs.properties);    
     return *this;    
 }
 // DawnDrmFormatProperties implementation
@@ -2222,7 +2224,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->powerPreference) = std::move(rhs.powerPreference);    
+    ::pywgpu::detail::AsNonConstReference(this->powerPreference) = std::move(rhs.powerPreference);    
     return *this;    
 }
 // MemoryHeapInfo implementation
@@ -2267,8 +2269,8 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->heapCount) = std::move(rhs.heapCount);    
-    ::wgpu::detail::AsNonConstReference(this->heapInfo) = std::move(rhs.heapInfo);    
+    ::pywgpu::detail::AsNonConstReference(this->heapCount) = std::move(rhs.heapCount);    
+    ::pywgpu::detail::AsNonConstReference(this->heapInfo) = std::move(rhs.heapInfo);    
     return *this;    
 }
 // AdapterPropertiesD3D implementation
@@ -2304,7 +2306,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->shaderModel) = std::move(rhs.shaderModel);    
+    ::pywgpu::detail::AsNonConstReference(this->shaderModel) = std::move(rhs.shaderModel);    
     return *this;    
 }
 // AdapterPropertiesVk implementation
@@ -2340,7 +2342,7 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->driverVersion) = std::move(rhs.driverVersion);    
+    ::pywgpu::detail::AsNonConstReference(this->driverVersion) = std::move(rhs.driverVersion);    
     return *this;    
 }
 // DawnBufferDescriptorErrorInfoFromWireClient implementation
@@ -2402,8 +2404,8 @@ if (&rhs == this) {
 }
 FreeMembers();
 
-    ::wgpu::detail::AsNonConstReference(this->configCount) = std::move(rhs.configCount);    
-    ::wgpu::detail::AsNonConstReference(this->configs) = std::move(rhs.configs);    
+    ::pywgpu::detail::AsNonConstReference(this->configCount) = std::move(rhs.configCount);    
+    ::pywgpu::detail::AsNonConstReference(this->configs) = std::move(rhs.configs);    
     return *this;    
 }
 
@@ -3437,4 +3439,4 @@ Status GetInstanceCapabilities (InstanceCapabilities * capabilities) {
                                                         : this->length);
     }
 
-} //namespace wgpu
+} //namespace pywgpu

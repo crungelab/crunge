@@ -86,7 +86,7 @@ class StructureType(StructureBase):
 
     def model_post_init(self, __context: Any) -> None:
         super().model_post_init(__context)
-        # Chained structs inherit from wgpu::ChainedStruct, which has
+        # Chained structs inherit from pywgpu::ChainedStruct, which has
         # nextInChain, so setting both extensible and chained would result in
         # two nextInChain members.
         assert not (self.extensible and self.chained)

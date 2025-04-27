@@ -7,8 +7,8 @@ function(USES_DAWN THIS)
 
     target_include_directories(${THIS} PRIVATE
         ${DAWN_ROOT}/include
-        ${CRUNGE_ROOT}/pkg/wgpu/src # Override dawn/webgpu_cpp.h
         ${SKIA_LIB_DIR}/gen/third_party/externals/dawn/include
+        ${CRUNGE_ROOT}/pkg/wgpu/include # Override dawn/webgpu_cpp.h
     )
 
     target_link_libraries(${THIS} PRIVATE

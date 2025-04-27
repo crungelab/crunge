@@ -115,7 +115,7 @@ class StructureTypeCppRenderer(StructureTypeRenderer):
                 #this->{{member.name.camelCase()}} = std::move(rhs.{{member.name.camelCase()}});
                 #self.out << f"{member_name} = rhs.{member_name};" << "\n"
                 #self.out << f"this->{member_name} = std::move(rhs.{member_name});" << "\n"
-                self.out << f"::wgpu::detail::AsNonConstReference(this->{member_name}) = std::move(rhs.{member_name});" << "\n"
+                self.out << f"::pywgpu::detail::AsNonConstReference(this->{member_name}) = std::move(rhs.{member_name});" << "\n"
 
 
             self.out << "return *this;" << "\n"
