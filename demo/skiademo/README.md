@@ -1,3 +1,4 @@
 ```bash
-python -m skiademo.cube
+python -m skiademo.rectangle
+python -m skiademo.text
 ```

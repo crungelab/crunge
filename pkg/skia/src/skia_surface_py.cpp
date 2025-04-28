@@ -81,28 +81,8 @@ SkSurface* CreateSurface(pywgpu::Texture& _texture, skgpu::graphite::Recorder* r
                                                  nullptr);
     //SkASSERT(surface);
     return surface.release();
-    //return surface;
 }
 
 void init_skia_surface_py(py::module &_skia, Registry &registry) {
     _skia.def("create_surface", &CreateSurface);
 }
-
-/*
-    sk_sp<SkSurface> getBackbufferSurface() {
-        wgpu::SurfaceTexture surfaceTexture;
-        surface_.GetCurrentTexture(&surfaceTexture);
-        SkASSERT(surfaceTexture.texture);
-        auto texture = surfaceTexture.texture;
-    
-        auto backendTex = skgpu::graphite::BackendTextures::MakeDawn(texture.Get());
-        SkASSERT(this->graphiteRecorder());
-        auto surface = SkSurfaces::WrapBackendTexture(this->graphiteRecorder(),
-                                                    backendTex,
-                                                    kBGRA_8888_SkColorType,
-                                                    fDisplayParams->colorSpace(),
-                                                    &fDisplayParams->surfaceProps());
-        SkASSERT(surface);
-        return surface;
-    }
-*/

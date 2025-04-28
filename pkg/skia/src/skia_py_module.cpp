@@ -23,16 +23,28 @@ void init_skia_recording_py_auto(py::module &, Registry& registry);
 void init_skia_paint_py_auto(py::module &, Registry& registry);
 void init_skia_color_py_auto(py::module &, Registry& registry);
 
+void init_skia_font_py(py::module &, Registry& registry);
+void init_skia_font_py_auto(py::module &, Registry& registry);
+
+void init_skia_point_py_auto(py::module &, Registry& registry);
+
+//NOTE: initialization/binding order does matter!
+//This popped up using default arguments that use structure constructors
+
 PYBIND11_MODULE(_skia, m) {
         Registry r;
         init_main(m, r);
         init_skia_graphite_types_py_auto(m, r);
         init_skia_clip_op_py_auto(m, r);
+
         init_skia_rect_py(m, r);
         init_skia_rect_py_auto(m, r);
-        //init_skia_rect_py(m, r);
+
         init_skia_blend_mode_py_auto(m, r);
-        
+
+        init_skia_recorder_py_auto(m, r);
+        init_skia_recording_py_auto(m, r);
+
         init_skia_context_py_auto(m, r);
         init_skia_context_py(m, r);
 
@@ -41,10 +53,10 @@ PYBIND11_MODULE(_skia, m) {
         init_skia_surface_py_auto(m, r);
         init_skia_surface_py(m, r);
 
-        init_skia_recorder_py_auto(m, r);
-        init_skia_recording_py_auto(m, r);
-
         init_skia_paint_py_auto(m, r);
         init_skia_color_py_auto(m, r);
+        init_skia_point_py_auto(m, r);
 
+        init_skia_font_py(m, r);
+        init_skia_font_py_auto(m, r);
 }

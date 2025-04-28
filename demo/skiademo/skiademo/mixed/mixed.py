@@ -137,18 +137,14 @@ class RectangleDemo(Demo):
         skia_surface = skia.create_surface(backend_texture, recorder)
 
         if skia_surface:
-            canvas = skia_surface.get_canvas()
+            skia_canvas = skia_surface.get_canvas()
             #skia_canvas.clear(skia.Color(0, 0, 0, 1))
 
             paint = skia.Paint()
             #paint.set_color(skia.Color(1, 1, 1, 1))
             paint.set_color(0xFFFFFFFF)
-            canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
-            #canvas.draw_rect(skia.Rect([10, 10, 210, 110]), paint)
-
-            #font = skia.Font()
-            #font.set_size(36)
-            #canvas.draw_string('Hello Skia!', 10, 32, font, paint)
+            skia_canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
+            #skia_canvas.draw_rect(skia.Rect([10, 10, 210, 110]), paint)
 
             recording = recorder.snap()
 
@@ -158,6 +154,25 @@ class RectangleDemo(Demo):
                 self.skia_context.insert_recording(insert_info)
                 self.skia_context.submit(skia.SyncToCpu.K_NO)
 
+        '''
+        auto backbuffer = getBackbufferSurface();
+        if (backbuffer) {
+            auto canvas = backbuffer->getCanvas();
+            SkPaint paint;
+            paint.setColor(SK_ColorWHITE);
+            //canvas->drawColor(SK_ColorBLACK);
+            canvas->drawRect(SkRect::MakeXYWH(10, 10, 200, 100), paint);
+
+            std::unique_ptr<skgpu::graphite::Recording> recording = fGraphiteRecorder->snap();
+
+            if (recording) {
+                skgpu::graphite::InsertRecordingInfo info;
+                info.fRecording = recording.get();
+                fGraphiteContext->insertRecording(info);
+                fGraphiteContext->submit(skgpu::graphite::SyncToCpu::kNo);
+            }
+        }
+        '''
 def main():
     RectangleDemo().run()
 

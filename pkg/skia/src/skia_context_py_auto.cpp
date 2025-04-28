@@ -71,7 +71,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
         .def("backend", &skgpu::graphite::Context::backend
             , py::return_value_policy::automatic_reference)
         .def("make_recorder", &skgpu::graphite::Context::makeRecorder
-            , py::arg("") = {}
+            , py::arg("") = skgpu::graphite::RecorderOptions{}
             , py::return_value_policy::automatic_reference)
         .def("make_precompile_context", &skgpu::graphite::Context::makePrecompileContext
             , py::return_value_policy::automatic_reference)

@@ -36,11 +36,13 @@ set(SOURCES
     src/skia_recording_py_auto.cpp
     src/skia_paint_py_auto.cpp
     src/skia_color_py_auto.cpp
+    src/skia_font_py.cpp
+    src/skia_font_py_auto.cpp
+    src/skia_point_py_auto.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})
 
-# add include files
 target_include_directories(${THIS}
     PUBLIC
     $<INSTALL_INTERFACE:include>

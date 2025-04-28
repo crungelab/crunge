@@ -1,0 +1,8 @@
+source: '../../depot/skia/include/core/SkFont.h'
+target: 'src/skia_font_py_auto.cpp'
+
+nodes:
+  # Wrapped
+  # Internal / Ignored
+  'method.SkFont::SkFont': {exclude: true}
+  # Overloads

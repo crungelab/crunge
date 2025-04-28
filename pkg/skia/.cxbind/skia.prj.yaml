@@ -23,3 +23,5 @@ unit_files:
   - path: skia_recording.unit.yaml
   - path: skia_paint.unit.yaml
   - path: skia_color.unit.yaml
+  - path: skia_font.unit.yaml
+  - path: skia_point.unit.yaml
