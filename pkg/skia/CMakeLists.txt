@@ -27,10 +27,11 @@ set(SOURCES
     src/skia_rect_py_auto.cpp
     src/skia_rect_py.cpp
     src/skia_blend_mode_py_auto.cpp
-    src/skia_context_py_auto.cpp
+    src/skia_tile_mode_py_auto.cpp
     src/skia_context_py.cpp
-    src/skia_surface_py_auto.cpp
+    src/skia_context_py_auto.cpp
     src/skia_surface_py.cpp
+    src/skia_surface_py_auto.cpp
     src/skia_canvas_py_auto.cpp
     src/skia_recorder_py_auto.cpp
     src/skia_recording_py_auto.cpp
@@ -38,7 +39,10 @@ set(SOURCES
     src/skia_color_py_auto.cpp
     src/skia_font_py.cpp
     src/skia_font_py_auto.cpp
+    src/skia_point_py.cpp
     src/skia_point_py_auto.cpp
+    src/skia_matrix_py_auto.cpp
+    src/skia_gradient_shader_py_auto.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})

@@ -1,0 +1,8 @@
+source: '../../depot/skia/include/core/SkMatrix.h'
+target: 'src/skia_matrix_py_auto.cpp'
+
+nodes:
+  # Wrapped
+  # Internal / Ignored
+  'method.SkMatrix::RectToRect': {exclude: true} # cxbind py arg enum problem?
+  # Overloads

@@ -16,6 +16,7 @@ unit_files:
   - path: skia_clip_op.unit.yaml
   - path: skia_rect.unit.yaml
   - path: skia_blend_mode.unit.yaml
+  - path: skia_tile_mode.unit.yaml
   - path: skia_context.unit.yaml
   - path: skia_surface.unit.yaml
   - path: skia_canvas.unit.yaml
@@ -25,3 +26,5 @@ unit_files:
   - path: skia_color.unit.yaml
   - path: skia_font.unit.yaml
   - path: skia_point.unit.yaml
+  - path: skia_matrix.unit.yaml
+  - path: skia_gradient_shader.unit.yaml
