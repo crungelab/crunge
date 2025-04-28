@@ -1,8 +1,8 @@
 source: '../../depot/skia/include/effects/SkGradientShader.h'
 target: 'src/skia_gradient_shader_py_auto.cpp'
 
-#nodes:
+nodes:
   # Wrapped
   # Internal / Ignored
-  #'function.SkHSVToColor': {exclude: true}
+  'method.SkGradientShader::MakeLinear': {exclude: true}
   # Overloads

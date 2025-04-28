@@ -22,6 +22,7 @@ USES_SKIA(${THIS})
 set(SOURCES
     src/skia_py_module.cpp
     src/skia_py.cpp
+    src/skia_shader_py.cpp
     src/skia_graphite_types_py_auto.cpp
     src/skia_clip_op_py_auto.cpp
     src/skia_rect_py_auto.cpp
@@ -35,6 +36,7 @@ set(SOURCES
     src/skia_canvas_py_auto.cpp
     src/skia_recorder_py_auto.cpp
     src/skia_recording_py_auto.cpp
+    src/skia_paint_py.cpp
     src/skia_paint_py_auto.cpp
     src/skia_color_py_auto.cpp
     src/skia_font_py.cpp
@@ -42,6 +44,7 @@ set(SOURCES
     src/skia_point_py.cpp
     src/skia_point_py_auto.cpp
     src/skia_matrix_py_auto.cpp
+    src/skia_gradient_shader_py.cpp
     src/skia_gradient_shader_py_auto.cpp
 )
 

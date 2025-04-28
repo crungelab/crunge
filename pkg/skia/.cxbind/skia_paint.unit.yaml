@@ -1,7 +1,8 @@
 source: '../../depot/skia/include/core/SkPaint.h'
 target: 'src/skia_paint_py_auto.cpp'
 
-#nodes:
+nodes:
   # Wrapped
+  'method.SkPaint::setShader': {exclude: true}
   # Internal / Ignored
   # Overloads

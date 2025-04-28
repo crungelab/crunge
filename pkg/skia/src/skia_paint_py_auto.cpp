@@ -128,9 +128,6 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("ref_shader", &SkPaint::refShader
             , py::return_value_policy::automatic_reference)
-        .def("set_shader", &SkPaint::setShader
-            , py::arg("shader")
-            , py::return_value_policy::automatic_reference)
         .def("get_color_filter", &SkPaint::getColorFilter
             , py::return_value_policy::automatic_reference)
         .def("ref_color_filter", &SkPaint::refColorFilter

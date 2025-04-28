@@ -26,19 +26,6 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
         ;
 
         GradientShader
-        .def_static("make_linear", [](std::array<SkPoint, 2>& pts, const unsigned int colors[], const float pos[], int count, SkTileMode mode, unsigned int flags, const SkMatrix * localMatrix)
-            {
-                auto ret = SkGradientShader::MakeLinear(&pts[0], colors, pos, count, mode, flags, localMatrix);
-                return std::make_tuple(ret, pts);
-            }
-            , py::arg("pts")
-            , py::arg("colors")
-            , py::arg("pos")
-            , py::arg("count")
-            , py::arg("mode")
-            , py::arg("flags") = 0
-            , py::arg("local_matrix") = nullptr
-            , py::return_value_policy::automatic_reference)
         .def_static("make_radial", py::overload_cast<const SkPoint &, float, const unsigned int[], const float[], int, SkTileMode, unsigned int, const SkMatrix *>(&SkGradientShader::MakeRadial)
             , py::arg("center")
             , py::arg("radius")

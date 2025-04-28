@@ -18,12 +18,12 @@
 
 namespace py = pybind11;
 
-PYBIND11_MAKE_OPAQUE(std::vector<SkScalar>)
-PYBIND11_MAKE_OPAQUE(std::vector<SkPoint>)
-PYBIND11_MAKE_OPAQUE(std::vector<SkColor>)
+//PYBIND11_MAKE_OPAQUE(std::vector<SkScalar>)
+//PYBIND11_MAKE_OPAQUE(std::vector<SkPoint>)
+//PYBIND11_MAKE_OPAQUE(std::vector<SkColor>)
 
 void init_main(py::module &_skia, Registry &registry) {
-    py::bind_vector<std::vector<SkScalar>>(_skia, "SkScalars", "SkScalar Vector");
-    py::bind_vector<std::vector<SkPoint>>(_skia, "SkPoints", "SkPoint Vector");
-    py::bind_vector<std::vector<SkColor>>(_skia, "SkColors", "SkColor Vector");
+    //py::bind_vector<std::vector<SkScalar>>(_skia, "SkScalars", "SkScalar Vector");
+    //py::bind_vector<std::vector<SkPoint>>(_skia, "SkPoints", "SkPoint Vector");
+    //py::bind_vector<std::vector<SkColor>>(_skia, "SkColors", "SkColor Vector");
 }
