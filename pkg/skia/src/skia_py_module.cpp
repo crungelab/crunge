@@ -10,6 +10,7 @@ void init_skia_graphite_types_py_auto(py::module &, Registry& registry);
 void init_skia_clip_op_py_auto(py::module &, Registry& registry);
 void init_skia_rect_py_auto(py::module &, Registry& registry);
 void init_skia_rect_py(py::module &, Registry& registry);
+void init_skia_size_py_auto(py::module &, Registry& registry);
 void init_skia_blend_mode_py_auto(py::module &, Registry& registry);
 void init_skia_tile_mode_py_auto(py::module &, Registry& registry);
 void init_skia_context_py_auto(py::module &, Registry& registry);
@@ -39,6 +40,8 @@ void init_skia_point_py_auto(py::module &, Registry& registry);
 void init_skia_gradient_shader_py(py::module &, Registry& registry);
 void init_skia_gradient_shader_py_auto(py::module &, Registry& registry);
 
+void init_skia_perlin_noise_shader_py(py::module &, Registry& registry);
+
 //NOTE: initialization/binding order does matter!
 //This popped up using default arguments that use structure constructors
 
@@ -51,6 +54,8 @@ PYBIND11_MODULE(_skia, m) {
 
         init_skia_rect_py(m, r);
         init_skia_rect_py_auto(m, r);
+
+        init_skia_size_py_auto(m, r);
 
         init_skia_blend_mode_py_auto(m, r);
         init_skia_tile_mode_py_auto(m, r);
@@ -79,6 +84,8 @@ PYBIND11_MODULE(_skia, m) {
 
         init_skia_gradient_shader_py(m, r);
         init_skia_gradient_shader_py_auto(m, r);
+
+        init_skia_perlin_noise_shader_py(m, r);
 
         init_skia_font_py(m, r);
         init_skia_font_py_auto(m, r);

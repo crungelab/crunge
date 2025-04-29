@@ -6,7 +6,7 @@ from crunge import skia
 from ..common import Demo
 
 
-class SweepGradientDemo(Demo):
+class FractalPerlinNoiseDemo(Demo):
     depth_stencil_view: wgpu.TextureView = None
 
     def __init__(self):
@@ -28,11 +28,7 @@ class SweepGradientDemo(Demo):
 
             gradient_paint = skia.Paint()
 
-            shader = skia.GradientShader.make_sweep(
-                128.0,
-                128.0,
-                [skia.Colors.CYAN, skia.Colors.MAGENTA, skia.Colors.YELLOW, skia.Colors.CYAN],
-            )
+            shader = skia.PerlinNoiseShader.make_fractal_noise(0.05, 0.05, 4, 0.0)
             #logger.debug(f"shader: {shader}")
 
             gradient_paint.set_shader(shader)
@@ -57,7 +53,7 @@ class SweepGradientDemo(Demo):
 
 
 def main():
-    SweepGradientDemo().run()
+    FractalPerlinNoiseDemo().run()
 
 
 if __name__ == "__main__":

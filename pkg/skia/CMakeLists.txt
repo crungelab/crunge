@@ -25,8 +25,9 @@ set(SOURCES
     src/skia_shader_py.cpp
     src/skia_graphite_types_py_auto.cpp
     src/skia_clip_op_py_auto.cpp
-    src/skia_rect_py_auto.cpp
     src/skia_rect_py.cpp
+    src/skia_rect_py_auto.cpp
+    src/skia_size_py_auto.cpp
     src/skia_blend_mode_py_auto.cpp
     src/skia_tile_mode_py_auto.cpp
     src/skia_context_py.cpp
@@ -47,6 +48,7 @@ set(SOURCES
     src/skia_matrix_py_auto.cpp
     src/skia_gradient_shader_py.cpp
     src/skia_gradient_shader_py_auto.cpp
+    src/skia_perlin_noise_shader_py.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})
