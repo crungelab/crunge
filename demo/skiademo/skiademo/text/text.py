@@ -18,7 +18,6 @@ class TextDemo(Demo):
         self.recorder = self.skia_context.make_recorder(skia.RecorderOptions())
 
     def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
-        # Skia rendering
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         backend_texture = surface_texture.texture

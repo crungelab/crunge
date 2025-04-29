@@ -3,6 +3,9 @@ target: 'src/skia_gradient_shader_py_auto.cpp'
 
 nodes:
   # Wrapped
-  # Internal / Ignored
   'method.SkGradientShader::MakeLinear': {exclude: true}
+  'method.SkGradientShader::MakeRadial': {exclude: true}
+  'method.SkGradientShader::MakeTwoPointConical': {exclude: true}
+  'method.SkGradientShader::MakeSweep': {exclude: true}
+  # Internal / Ignored
   # Overloads

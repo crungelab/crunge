@@ -138,13 +138,10 @@ class RectangleDemo(Demo):
 
         if skia_surface:
             skia_canvas = skia_surface.get_canvas()
-            #skia_canvas.clear(skia.Color(0, 0, 0, 1))
 
             paint = skia.Paint()
-            #paint.set_color(skia.Color(1, 1, 1, 1))
             paint.set_color(0xFFFFFFFF)
             skia_canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
-            #skia_canvas.draw_rect(skia.Rect([10, 10, 210, 110]), paint)
 
             recording = recorder.snap()
 

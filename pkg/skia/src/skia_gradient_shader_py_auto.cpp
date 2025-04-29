@@ -25,41 +25,6 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
             .export_values()
         ;
 
-        GradientShader
-        .def_static("make_radial", py::overload_cast<const SkPoint &, float, const unsigned int[], const float[], int, SkTileMode, unsigned int, const SkMatrix *>(&SkGradientShader::MakeRadial)
-            , py::arg("center")
-            , py::arg("radius")
-            , py::arg("colors")
-            , py::arg("pos")
-            , py::arg("count")
-            , py::arg("mode")
-            , py::arg("flags") = 0
-            , py::arg("local_matrix") = nullptr
-            , py::return_value_policy::automatic_reference)
-        .def_static("make_two_point_conical", py::overload_cast<const SkPoint &, float, const SkPoint &, float, const unsigned int[], const float[], int, SkTileMode, unsigned int, const SkMatrix *>(&SkGradientShader::MakeTwoPointConical)
-            , py::arg("start")
-            , py::arg("start_radius")
-            , py::arg("end")
-            , py::arg("end_radius")
-            , py::arg("colors")
-            , py::arg("pos")
-            , py::arg("count")
-            , py::arg("mode")
-            , py::arg("flags") = 0
-            , py::arg("local_matrix") = nullptr
-            , py::return_value_policy::automatic_reference)
-        .def_static("make_sweep", py::overload_cast<float, float, const unsigned int[], const float[], int, SkTileMode, float, float, unsigned int, const SkMatrix *>(&SkGradientShader::MakeSweep)
-            , py::arg("cx")
-            , py::arg("cy")
-            , py::arg("colors")
-            , py::arg("pos")
-            , py::arg("count")
-            , py::arg("mode")
-            , py::arg("start_angle")
-            , py::arg("end_angle")
-            , py::arg("flags")
-            , py::arg("local_matrix")
-            , py::return_value_policy::automatic_reference)
     ;
 
 

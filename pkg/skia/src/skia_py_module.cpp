@@ -25,6 +25,7 @@ void init_skia_recording_py_auto(py::module &, Registry& registry);
 void init_skia_paint_py(py::module &, Registry& registry);
 void init_skia_paint_py_auto(py::module &, Registry& registry);
 
+void init_skia_color_py(py::module &, Registry& registry);
 void init_skia_color_py_auto(py::module &, Registry& registry);
 
 void init_skia_font_py(py::module &, Registry& registry);
@@ -68,8 +69,8 @@ PYBIND11_MODULE(_skia, m) {
         init_skia_paint_py(m, r);
         init_skia_paint_py_auto(m, r);
 
+        init_skia_color_py(m, r);
         init_skia_color_py_auto(m, r);
-
 
         init_skia_point_py(m, r);
         init_skia_point_py_auto(m, r);

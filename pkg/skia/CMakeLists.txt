@@ -38,6 +38,7 @@ set(SOURCES
     src/skia_recording_py_auto.cpp
     src/skia_paint_py.cpp
     src/skia_paint_py_auto.cpp
+    src/skia_color_py.cpp
     src/skia_color_py_auto.cpp
     src/skia_font_py.cpp
     src/skia_font_py_auto.cpp
