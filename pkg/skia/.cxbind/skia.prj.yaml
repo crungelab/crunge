@@ -28,4 +28,5 @@ unit_files:
   - path: skia_font.unit.yaml
   - path: skia_point.unit.yaml
   - path: skia_matrix.unit.yaml
-  - path: skia_gradient_shader.unit.yaml
+  - path: effects/skia_gradient_shader.unit.yaml
+  - path: effects/skia_image_filters.unit.yaml

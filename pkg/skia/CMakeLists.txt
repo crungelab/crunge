@@ -46,9 +46,11 @@ set(SOURCES
     src/skia_point_py.cpp
     src/skia_point_py_auto.cpp
     src/skia_matrix_py_auto.cpp
-    src/skia_gradient_shader_py.cpp
-    src/skia_gradient_shader_py_auto.cpp
-    src/skia_perlin_noise_shader_py.cpp
+
+    src/effects/skia_gradient_shader_py.cpp
+    src/effects/skia_gradient_shader_py_auto.cpp
+    src/effects/skia_perlin_noise_shader_py.cpp
+    src/effects/skia_image_filters_py_auto.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})

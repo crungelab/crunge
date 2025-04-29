@@ -1,0 +1,8 @@
+source: '../../depot/skia/include/effects/SkImageFilters.h'
+target: 'src/effects/skia_image_filters_py_auto.cpp'
+template: 'effects/skia_image_filters.cpp'
+#nodes:
+  # Wrapped
+  #'method.SkGradientShader::MakeLinear': {exclude: true}
+  # Internal / Ignored
+  # Overloads
