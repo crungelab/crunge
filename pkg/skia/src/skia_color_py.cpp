@@ -13,66 +13,45 @@
 
 namespace py = pybind11;
 
-/*
-constexpr SkAlpha SK_AlphaTRANSPARENT = 0x00;
-
-constexpr SkAlpha SK_AlphaOPAQUE      = 0xFF;
-
-constexpr SkColor SK_ColorTRANSPARENT = SkColorSetARGB(0x00, 0x00, 0x00, 0x00);
-
-constexpr SkColor SK_ColorBLACK       = SkColorSetARGB(0xFF, 0x00, 0x00, 0x00);
-
-constexpr SkColor SK_ColorDKGRAY      = SkColorSetARGB(0xFF, 0x44, 0x44, 0x44);
-
-constexpr SkColor SK_ColorGRAY        = SkColorSetARGB(0xFF, 0x88, 0x88, 0x88);
-
-constexpr SkColor SK_ColorLTGRAY      = SkColorSetARGB(0xFF, 0xCC, 0xCC, 0xCC);
-
-constexpr SkColor SK_ColorWHITE       = SkColorSetARGB(0xFF, 0xFF, 0xFF, 0xFF);
-
-constexpr SkColor SK_ColorRED         = SkColorSetARGB(0xFF, 0xFF, 0x00, 0x00);
-
-constexpr SkColor SK_ColorGREEN       = SkColorSetARGB(0xFF, 0x00, 0xFF, 0x00);
-
-constexpr SkColor SK_ColorBLUE        = SkColorSetARGB(0xFF, 0x00, 0x00, 0xFF);
-
-constexpr SkColor SK_ColorYELLOW      = SkColorSetARGB(0xFF, 0xFF, 0xFF, 0x00);
-
-constexpr SkColor SK_ColorCYAN        = SkColorSetARGB(0xFF, 0x00, 0xFF, 0xFF);
-
-constexpr SkColor SK_ColorMAGENTA     = SkColorSetARGB(0xFF, 0xFF, 0x00, 0xFF);
-
-*/
-
-
-enum class Colors : uint32_t {
-    TRANSPARENT = SK_ColorTRANSPARENT,
-    BLACK = SK_ColorBLACK,
-    DKGRAY = SK_ColorDKGRAY,
-    GRAY = SK_ColorGRAY,
-    LTGRAY = SK_ColorLTGRAY,
-    WHITE = SK_ColorWHITE,
-    RED = SK_ColorRED,
-    GREEN = SK_ColorGREEN,
-    BLUE = SK_ColorBLUE,
-    YELLOW = SK_ColorYELLOW,
-    CYAN = SK_ColorCYAN,
-    MAGENTA = SK_ColorMAGENTA,
-};
-
 void init_skia_color_py(py::module &_skia, Registry &registry) {
-    py::enum_<Colors>(_skia, "Colors")
-        .value("TRANSPARENT", Colors::TRANSPARENT)
-        .value("BLACK", Colors::BLACK)
-        .value("DKGRAY", Colors::DKGRAY)
-        .value("GRAY", Colors::GRAY)
-        .value("LTGRAY", Colors::LTGRAY)
-        .value("WHITE", Colors::WHITE)
-        .value("RED", Colors::RED)
-        .value("GREEN", Colors::GREEN)
-        .value("BLUE", Colors::BLUE)
-        .value("YELLOW", Colors::YELLOW)
-        .value("CYAN", Colors::CYAN)
-        .value("MAGENTA", Colors::MAGENTA)
-        .export_values();
+    py::class_<SkColor4f>(_skia, "Color4f")
+    .def(py::init<float, float, float, float>())
+    .def_readwrite("r", &SkColor4f::fR)
+    .def_readwrite("g", &SkColor4f::fG)
+    .def_readwrite("b", &SkColor4f::fB)
+    .def_readwrite("a", &SkColor4f::fA)
+    .def("__repr__", [](const SkColor4f &c) {
+        return "<Color4f r=" + std::to_string(c.fR) +
+               " g=" + std::to_string(c.fG) +
+               " b=" + std::to_string(c.fB) +
+               " a=" + std::to_string(c.fA) + ">";
+    });
+
+    py::module colors = _skia.def_submodule("colors", "SkColor constants");
+    colors.attr("TRANSPARENT") = SK_ColorTRANSPARENT;
+    colors.attr("BLACK") = SK_ColorBLACK;
+    colors.attr("DKGRAY") = SK_ColorDKGRAY;
+    colors.attr("GRAY") = SK_ColorGRAY;
+    colors.attr("LTGRAY") = SK_ColorLTGRAY;
+    colors.attr("WHITE") = SK_ColorWHITE;
+    colors.attr("RED") = SK_ColorRED;
+    colors.attr("GREEN") = SK_ColorGREEN;
+    colors.attr("BLUE") = SK_ColorBLUE;
+    colors.attr("YELLOW") = SK_ColorYELLOW;
+    colors.attr("CYAN") = SK_ColorCYAN;
+    colors.attr("MAGENTA") = SK_ColorMAGENTA;
+    
+    py::module colors4f = _skia.def_submodule("colors4f", "SkColor4f constants");
+    colors4f.attr("TRANSPARENT") = SkColors::kTransparent;
+    colors4f.attr("BLACK") = SkColors::kBlack;
+    colors4f.attr("DKGRAY") = SkColors::kDkGray;
+    colors4f.attr("GRAY") = SkColors::kGray;
+    colors4f.attr("LTGRAY") = SkColors::kLtGray;
+    colors4f.attr("WHITE") = SkColors::kWhite;
+    colors4f.attr("RED") = SkColors::kRed;
+    colors4f.attr("GREEN") = SkColors::kGreen;
+    colors4f.attr("BLUE") = SkColors::kBlue;
+    colors4f.attr("YELLOW") = SkColors::kYellow;
+    colors4f.attr("CYAN") = SkColors::kCyan;
+    colors4f.attr("MAGENTA") = SkColors::kMagenta;
 }

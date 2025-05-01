@@ -31,7 +31,7 @@ class SweepGradientDemo(Demo):
             shader = skia.GradientShader.make_sweep(
                 128.0,
                 128.0,
-                [skia.Colors.CYAN, skia.Colors.MAGENTA, skia.Colors.YELLOW, skia.Colors.CYAN],
+                [skia.colors.CYAN, skia.colors.MAGENTA, skia.colors.YELLOW, skia.colors.CYAN],
             )
             #logger.debug(f"shader: {shader}")
 

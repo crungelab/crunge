@@ -26,9 +26,9 @@ class FractalPerlinNoiseDemo(Demo):
         if skia_surface:
             canvas = skia_surface.get_canvas()
 
-            canvas.draw_color(skia.Colors.WHITE)
+            canvas.draw_color(skia.colors.WHITE)
 
-            filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.Colors.BLACK)
+            filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.colors4f.BLACK)
             filter_paint = skia.Paint()
             filter_paint.set_image_filter(filter)
 
