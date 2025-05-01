@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkRect.h>
@@ -14,7 +15,9 @@
 namespace py = pybind11;
 
 void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
-    PYCLASS(_skia, SkIRect, IRect)
+    py::class_<SkIRect> IRect(_skia, "IRect");
+    registry.on(_skia, "IRect", IRect);
+        IRect
         .def_readwrite("f_left", &SkIRect::fLeft)
         .def_readwrite("f_top", &SkIRect::fTop)
         .def_readwrite("f_right", &SkIRect::fRight)
@@ -121,7 +124,9 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    PYCLASS(_skia, SkRect, Rect)
+    py::class_<SkRect> Rect(_skia, "Rect");
+    registry.on(_skia, "Rect", Rect);
+        Rect
         .def_readwrite("f_left", &SkRect::fLeft)
         .def_readwrite("f_top", &SkRect::fTop)
         .def_readwrite("f_right", &SkRect::fRight)

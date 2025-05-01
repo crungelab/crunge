@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include "include/core/SkCanvas.h"
@@ -48,7 +49,7 @@ namespace py = pybind11;
 void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
     py::class_<SkCanvas> Canvas(_skia, "Canvas");
     registry.on(_skia, "Canvas", Canvas);
-    Canvas
+        Canvas
         .def(py::init<>())
         .def("image_info", &SkCanvas::imageInfo
             , py::return_value_policy::automatic_reference)
@@ -118,6 +119,19 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             .value("K_INIT_WITH_PREVIOUS_SAVE_LAYER_FLAG", SkCanvas::SaveLayerFlagsSet::kInitWithPrevious_SaveLayerFlag)
             .value("K_F16_COLOR_TYPE", SkCanvas::SaveLayerFlagsSet::kF16ColorType)
             .export_values()
+        ;
+
+        py::class_<SkCanvas::SaveLayerRec> CanvasSaveLayerRec(_skia, "CanvasSaveLayerRec");
+        registry.on(_skia, "CanvasSaveLayerRec", CanvasSaveLayerRec);
+            CanvasSaveLayerRec
+            .def(py::init<>())
+            .def_readwrite("f_bounds", &SkCanvas::SaveLayerRec::fBounds)
+            .def_readwrite("f_paint", &SkCanvas::SaveLayerRec::fPaint)
+            .def_readwrite("f_filters", &SkCanvas::SaveLayerRec::fFilters)
+            .def_readwrite("f_backdrop", &SkCanvas::SaveLayerRec::fBackdrop)
+            .def_readwrite("f_backdrop_tile_mode", &SkCanvas::SaveLayerRec::fBackdropTileMode)
+            .def_readwrite("f_color_space", &SkCanvas::SaveLayerRec::fColorSpace)
+            .def_readwrite("f_save_layer_flags", &SkCanvas::SaveLayerRec::fSaveLayerFlags)
         ;
 
         Canvas
@@ -305,6 +319,28 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("filter")
             , py::arg("paint") = nullptr
             , py::return_value_policy::automatic_reference)
+        ;
+
+        py::class_<SkCanvas::Lattice> CanvasLattice(_skia, "CanvasLattice");
+        registry.on(_skia, "CanvasLattice", CanvasLattice);
+            py::enum_<SkCanvas::Lattice::RectType>(_skia, "RectType", py::arithmetic())
+                .value("K_DEFAULT", SkCanvas::Lattice::RectType::kDefault)
+                .value("K_TRANSPARENT", SkCanvas::Lattice::RectType::kTransparent)
+                .value("K_FIXED_COLOR", SkCanvas::Lattice::RectType::kFixedColor)
+                .export_values()
+            ;
+
+            CanvasLattice
+            .def_readwrite("f_x_divs", &SkCanvas::Lattice::fXDivs)
+            .def_readwrite("f_y_divs", &SkCanvas::Lattice::fYDivs)
+            .def_readwrite("f_rect_types", &SkCanvas::Lattice::fRectTypes)
+            .def_readwrite("f_x_count", &SkCanvas::Lattice::fXCount)
+            .def_readwrite("f_y_count", &SkCanvas::Lattice::fYCount)
+            .def_readwrite("f_bounds", &SkCanvas::Lattice::fBounds)
+            .def_readwrite("f_colors", &SkCanvas::Lattice::fColors)
+        ;
+
+        Canvas
         .def("draw_image_lattice", py::overload_cast<const SkImage *, const SkCanvas::Lattice &, const SkRect &, SkFilterMode, const SkPaint *>(&SkCanvas::drawImageLattice)
             , py::arg("image")
             , py::arg("lattice")
@@ -322,6 +358,27 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             .value("K_NONE_QUAD_AA_FLAGS", SkCanvas::QuadAAFlags::kNone_QuadAAFlags)
             .value("K_ALL_QUAD_AA_FLAGS", SkCanvas::QuadAAFlags::kAll_QuadAAFlags)
             .export_values()
+        ;
+
+        py::class_<SkCanvas::ImageSetEntry> CanvasImageSetEntry(_skia, "CanvasImageSetEntry");
+        registry.on(_skia, "CanvasImageSetEntry", CanvasImageSetEntry);
+            CanvasImageSetEntry
+            .def(py::init<sk_sp<const SkImage>, const SkRect &, const SkRect &, int, float, unsigned int, bool>()
+            , py::arg("image")
+            , py::arg("src_rect")
+            , py::arg("dst_rect")
+            , py::arg("matrix_index")
+            , py::arg("alpha")
+            , py::arg("aa_flags")
+            , py::arg("has_clip")
+            )
+            .def_readwrite("f_image", &SkCanvas::ImageSetEntry::fImage)
+            .def_readwrite("f_src_rect", &SkCanvas::ImageSetEntry::fSrcRect)
+            .def_readwrite("f_dst_rect", &SkCanvas::ImageSetEntry::fDstRect)
+            .def_readwrite("f_matrix_index", &SkCanvas::ImageSetEntry::fMatrixIndex)
+            .def_readwrite("f_alpha", &SkCanvas::ImageSetEntry::fAlpha)
+            .def_readwrite("f_aa_flags", &SkCanvas::ImageSetEntry::fAAFlags)
+            .def_readwrite("f_has_clip", &SkCanvas::ImageSetEntry::fHasClip)
         ;
 
         Canvas
@@ -412,7 +469,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
 
     py::class_<SkAutoCanvasRestore> AutoCanvasRestore(_skia, "AutoCanvasRestore");
     registry.on(_skia, "AutoCanvasRestore", AutoCanvasRestore);
-    AutoCanvasRestore
+        AutoCanvasRestore
         .def(py::init<SkCanvas *, bool>()
         , py::arg("canvas")
         , py::arg("do_save")

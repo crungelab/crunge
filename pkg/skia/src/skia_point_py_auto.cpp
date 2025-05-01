@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkPoint.h>
@@ -14,7 +15,9 @@
 namespace py = pybind11;
 
 void init_skia_point_py_auto(py::module &_skia, Registry &registry) {
-    PYCLASS(_skia, SkIPoint, IPoint)
+    py::class_<SkIPoint> IPoint(_skia, "IPoint");
+    registry.on(_skia, "IPoint", IPoint);
+        IPoint
         .def_readwrite("f_x", &SkIPoint::fX)
         .def_readwrite("f_y", &SkIPoint::fY)
         .def_static("make", &SkIPoint::Make
@@ -37,7 +40,9 @@ void init_skia_point_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    PYCLASS(_skia, SkPoint, Point)
+    py::class_<SkPoint> Point(_skia, "Point");
+    registry.on(_skia, "Point", Point);
+        Point
         .def_readwrite("f_x", &SkPoint::fX)
         .def_readwrite("f_y", &SkPoint::fY)
         .def_static("make", &SkPoint::Make

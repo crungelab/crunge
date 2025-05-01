@@ -23,13 +23,13 @@ void init_skia_perlin_noise_shader_py(py::module &_skia, Registry &registry) {
     PerlinNoiseShader
     .def_static("make_fractal_noise", &SkShaders::MakeFractalNoise,
         py::arg("base_frequency_x"), py::arg("base_frequency_y"),
-        py::arg("num_octaves"), py::arg("seed"), py::arg("tile_size") = nullptr,
-        py::return_value_policy::take_ownership
+        py::arg("num_octaves"), py::arg("seed"), py::arg("tile_size") = nullptr/*,
+        py::return_value_policy::take_ownership*/
     )
     .def_static("make_turbulence", &SkShaders::MakeTurbulence,
         py::arg("base_frequency_x"), py::arg("base_frequency_y"),
-        py::arg("num_octaves"), py::arg("seed"), py::arg("tile_size") = nullptr,
-        py::return_value_policy::take_ownership
+        py::arg("num_octaves"), py::arg("seed"), py::arg("tile_size") = nullptr/*,
+        py::return_value_policy::take_ownership*/
     )
     ;
 }

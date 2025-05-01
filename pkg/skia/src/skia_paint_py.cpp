@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkPaint.h>
@@ -14,6 +15,7 @@
 namespace py = pybind11;
 
 void init_skia_paint_py(py::module &_skia, Registry &registry) {
+    /*
     PYEXTEND_BEGIN(SkPaint, Paint)
     Paint
     .def("set_shader",
@@ -23,4 +25,5 @@ void init_skia_paint_py(py::module &_skia, Registry &registry) {
         py::arg("shader"));
 
     PYEXTEND_END
+    */
 }

@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkPaint.h>
@@ -24,7 +25,7 @@ namespace py = pybind11;
 void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
     py::class_<SkPaint> Paint(_skia, "Paint");
     registry.on(_skia, "Paint", Paint);
-    Paint
+        Paint
         .def(py::init<>())
         .def("reset", &SkPaint::reset
             , py::return_value_policy::automatic_reference)
@@ -127,6 +128,9 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
         .def("get_shader", &SkPaint::getShader
             , py::return_value_policy::automatic_reference)
         .def("ref_shader", &SkPaint::refShader
+            , py::return_value_policy::automatic_reference)
+        .def("set_shader", &SkPaint::setShader
+            , py::arg("shader")
             , py::return_value_policy::automatic_reference)
         .def("get_color_filter", &SkPaint::getColorFilter
             , py::return_value_policy::automatic_reference)

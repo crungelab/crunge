@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/gpu/graphite/GraphiteTypes.h>
@@ -17,7 +18,9 @@
 namespace py = pybind11;
 
 void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
-    PYCLASS(_skia, skgpu::graphite::InsertRecordingInfo, InsertRecordingInfo)
+    py::class_<skgpu::graphite::InsertRecordingInfo> InsertRecordingInfo(_skia, "InsertRecordingInfo");
+    registry.on(_skia, "InsertRecordingInfo", InsertRecordingInfo);
+        InsertRecordingInfo
         .def_readwrite("f_recording", &skgpu::graphite::InsertRecordingInfo::fRecording)
         .def_readwrite("f_target_surface", &skgpu::graphite::InsertRecordingInfo::fTargetSurface)
         .def_readwrite("f_target_translation", &skgpu::graphite::InsertRecordingInfo::fTargetTranslation)
@@ -32,7 +35,9 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
         .def(py::init<>())
     ;
 
-    PYCLASS(_skia, skgpu::graphite::InsertFinishInfo, InsertFinishInfo)
+    py::class_<skgpu::graphite::InsertFinishInfo> InsertFinishInfo(_skia, "InsertFinishInfo");
+    registry.on(_skia, "InsertFinishInfo", InsertFinishInfo);
+        InsertFinishInfo
         .def(py::init<>())
         .def_readwrite("f_finished_context", &skgpu::graphite::InsertFinishInfo::fFinishedContext)
         .def_readwrite("f_gpu_stats_flags", &skgpu::graphite::InsertFinishInfo::fGpuStatsFlags)

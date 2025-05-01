@@ -27,6 +27,7 @@ class LinearGradientDemo(Demo):
             canvas = skia_surface.get_canvas()
 
             gradient_paint = skia.Paint()
+            #logger.debug(f"gradient_paint: {gradient_paint}")
 
             shader = skia.GradientShader.make_linear(
                 [skia.Point(0, 0), skia.Point(256.0, 256.0)],
@@ -35,8 +36,10 @@ class LinearGradientDemo(Demo):
                 #skia.TileMode.K_CLAMP,
             )
             #logger.debug(f"shader: {shader}")
+            #logger.debug(f"shader: {shader.isOpaque()}")
 
             gradient_paint.set_shader(shader)
+            #logger.debug("shader set")
             canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
             #canvas.draw_paint(paint)
 

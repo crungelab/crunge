@@ -6,17 +6,8 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
-
-/*
-#include <include/gpu/graphite/Recorder.h>
-#include <include/gpu/graphite/ImageProvider.h>
-#include <include/gpu/graphite/BackendTexture.h>
-
-#include <include/core/SkPixmap.h>
-#include <include/core/SkTraceMemoryDump.h>
-#include <include/core/SkCanvas.h>
-*/
 
 #include <include/gpu/graphite/Recording.h>
 

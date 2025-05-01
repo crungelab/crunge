@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkSize.h>
@@ -14,7 +15,9 @@
 namespace py = pybind11;
 
 void init_skia_size_py_auto(py::module &_skia, Registry &registry) {
-    PYCLASS(_skia, SkISize, ISize)
+    py::class_<SkISize> ISize(_skia, "ISize");
+    registry.on(_skia, "ISize", ISize);
+        ISize
         .def_readwrite("f_width", &SkISize::fWidth)
         .def_readwrite("f_height", &SkISize::fHeight)
         .def_static("make", &SkISize::Make
@@ -45,7 +48,9 @@ void init_skia_size_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    PYCLASS(_skia, SkSize, Size)
+    py::class_<SkSize> Size(_skia, "Size");
+    registry.on(_skia, "Size", Size);
+        Size
         .def_readwrite("f_width", &SkSize::fWidth)
         .def_readwrite("f_height", &SkSize::fHeight)
         .def_static("make", py::overload_cast<float, float>(&SkSize::Make)

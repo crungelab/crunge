@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/gpu/graphite/Recorder.h>
@@ -20,7 +21,9 @@
 namespace py = pybind11;
 
 void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
-    PYCLASS(_skia, skgpu::graphite::RecorderOptions, RecorderOptions)
+    py::class_<skgpu::graphite::RecorderOptions> RecorderOptions(_skia, "RecorderOptions");
+    registry.on(_skia, "RecorderOptions", RecorderOptions);
+        RecorderOptions
         .def(py::init<>())
         .def_readwrite("f_image_provider", &skgpu::graphite::RecorderOptions::fImageProvider)
         .def_readwrite("f_gpu_budget_in_bytes", &skgpu::graphite::RecorderOptions::fGpuBudgetInBytes)
@@ -29,7 +32,7 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
 
     py::class_<skgpu::graphite::Recorder> Recorder(_skia, "Recorder");
     registry.on(_skia, "Recorder", Recorder);
-    Recorder
+        Recorder
         .def("backend", &skgpu::graphite::Recorder::backend
             , py::return_value_policy::automatic_reference)
         .def("snap", &skgpu::graphite::Recorder::snap

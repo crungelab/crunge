@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkMatrix.h>
@@ -24,7 +25,7 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
 
     py::class_<SkMatrix> Matrix(_skia, "Matrix");
     registry.on(_skia, "Matrix", Matrix);
-    Matrix
+        Matrix
         .def(py::init<>())
         .def_static("scale", &SkMatrix::Scale
             , py::arg("sx")

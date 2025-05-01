@@ -26,6 +26,21 @@ class FractalPerlinNoiseDemo(Demo):
         if skia_surface:
             canvas = skia_surface.get_canvas()
 
+            canvas.draw_color(skia.Colors.WHITE)
+
+            filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.Colors.BLACK)
+            filter_paint = skia.Paint()
+            filter_paint.set_image_filter(filter)
+
+            '''
+            paint = skia.Paint(
+                ImageFilter=skia.ImageFilters.DropShadow(3, 3, 5, 5, skia.ColorBLACK)
+            )
+            blob = skia.TextBlob("Skia", skia.Font(None, 120))
+            canvas.drawTextBlob(blob, 0, 160, paint)
+            '''
+
+            '''
             gradient_paint = skia.Paint()
 
             shader = skia.PerlinNoiseShader.make_fractal_noise(0.05, 0.05, 4, 0.0)
@@ -34,6 +49,7 @@ class FractalPerlinNoiseDemo(Demo):
             gradient_paint.set_shader(shader)
             canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
             #canvas.draw_paint(paint)
+            '''
 
             '''
             text_paint = skia.Paint()

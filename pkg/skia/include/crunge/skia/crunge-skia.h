@@ -6,4 +6,5 @@
 
 namespace py = pybind11;
 
-PYBIND11_DECLARE_HOLDER_TYPE(T, sk_sp<T>);
+//PYBIND11_DECLARE_HOLDER_TYPE(T, sk_sp<T>);
+PYBIND11_DECLARE_HOLDER_TYPE(T, sk_sp<T>, true);

@@ -89,7 +89,7 @@ PYBIND11_MODULE(_skia, m) {
 
         init_skia_perlin_noise_shader_py(m, r);
 
-        //init_skia_image_filters_py_auto(m, r);
+        init_skia_image_filters_py_auto(m, r);
 
         init_skia_font_py(m, r);
         init_skia_font_py_auto(m, r);

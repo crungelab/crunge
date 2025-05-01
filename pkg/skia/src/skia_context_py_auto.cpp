@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include "include/gpu/graphite/Context.h"
@@ -67,7 +68,7 @@ using namespace skgpu::graphite;
 void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
     py::class_<skgpu::graphite::Context> Context(_skia, "Context");
     registry.on(_skia, "Context", Context);
-    Context
+        Context
         .def("backend", &skgpu::graphite::Context::backend
             , py::return_value_policy::automatic_reference)
         .def("make_recorder", &skgpu::graphite::Context::makeRecorder
@@ -146,6 +147,21 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("priv", py::overload_cast<>(&skgpu::graphite::Context::priv)
             , py::return_value_policy::automatic_reference)
+        ;
+
+        py::class_<skgpu::graphite::Context::ContextID> ContextContextID(_skia, "ContextContextID");
+        registry.on(_skia, "ContextContextID", ContextContextID);
+            ContextContextID
+            .def_static("next", &skgpu::graphite::Context::ContextID::Next
+                , py::return_value_policy::automatic_reference)
+            .def(py::init<>())
+            .def("make_invalid", &skgpu::graphite::Context::ContextID::makeInvalid
+                , py::return_value_policy::automatic_reference)
+            .def("is_valid", &skgpu::graphite::Context::ContextID::isValid
+                , py::return_value_policy::automatic_reference)
+        ;
+
+        Context
         .def("context_id", &skgpu::graphite::Context::contextID
             , py::return_value_policy::automatic_reference)
     ;

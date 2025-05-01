@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include <include/effects/SkImageFilters.h>
@@ -24,7 +25,13 @@ namespace py = pybind11;
 void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
     py::class_<SkImageFilters> ImageFilters(_skia, "ImageFilters");
     registry.on(_skia, "ImageFilters", ImageFilters);
-    ImageFilters
+        py::class_<SkImageFilters::CropRect> ImageFiltersCropRect(_skia, "ImageFiltersCropRect");
+        registry.on(_skia, "ImageFiltersCropRect", ImageFiltersCropRect);
+            ImageFiltersCropRect
+            .def(py::init<>())
+        ;
+
+        ImageFilters
         .def_static("arithmetic", &SkImageFilters::Arithmetic
             , py::arg("k1")
             , py::arg("k2")

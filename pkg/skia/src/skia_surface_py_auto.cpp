@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include <cxbind/cxbind.h>
+#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
 #include "include/core/SkSurface.h"
@@ -44,7 +45,7 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
 
     py::class_<SkSurface> Surface(_skia, "Surface");
     registry.on(_skia, "Surface", Surface);
-    Surface
+        Surface
         .def("width", &SkSurface::width
             , py::return_value_policy::automatic_reference)
         .def("height", &SkSurface::height
