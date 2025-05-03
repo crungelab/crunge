@@ -41,6 +41,7 @@ set(SOURCES
     src/skia_paint_py_auto.cpp
     src/skia_color_py.cpp
     src/skia_color_py_auto.cpp
+    src/skia_font_types_py_auto.cpp
     src/skia_font_py.cpp
     src/skia_font_py_auto.cpp
     src/skia_point_py.cpp
@@ -48,6 +49,7 @@ set(SOURCES
     src/skia_matrix_py_auto.cpp
 
     src/skia_image_filter_py_auto.cpp
+    src/skia_text_blob_py_auto.cpp
 
     src/effects/skia_gradient_shader_py.cpp
     src/effects/skia_gradient_shader_py_auto.cpp

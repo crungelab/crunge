@@ -1,0 +1,12 @@
+source: '../../depot/skia/include/core/SkTextBlob.h'
+target: 'src/skia_text_blob_py_auto.cpp'
+
+defaults:
+  encoding: SkTextEncoding::kUTF8
+
+nodes:
+  'class.SkTextBlob':
+    holder: sk_sp
+  # Wrapped
+  # Internal / Ignored
+  # Overloads
