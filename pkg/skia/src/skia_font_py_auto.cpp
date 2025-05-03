@@ -27,7 +27,6 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
             .value("K_SUBPIXEL_ANTI_ALIAS", SkFont::Edging::kSubpixelAntiAlias)
             .export_values()
         ;
-
         Font
         .def("is_force_auto_hinting", &SkFont::isForceAutoHinting
             , py::return_value_policy::automatic_reference)
@@ -120,11 +119,29 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("encoding")
             , py::arg("bounds") = nullptr
             , py::return_value_policy::automatic_reference)
+        .def("measure_text", py::overload_cast<const void *, unsigned long, SkTextEncoding, SkRect *, const SkPaint *>(&SkFont::measureText, py::const_)
+            , py::arg("text")
+            , py::arg("byte_length")
+            , py::arg("encoding")
+            , py::arg("bounds")
+            , py::arg("paint")
+            , py::return_value_policy::automatic_reference)
         .def("get_widths", py::overload_cast<const unsigned short[], int, float[], SkRect[]>(&SkFont::getWidths, py::const_)
             , py::arg("glyphs")
             , py::arg("count")
             , py::arg("widths")
             , py::arg("bounds")
+            , py::return_value_policy::automatic_reference)
+        .def("get_widths", py::overload_cast<const unsigned short[], int, float[], std::nullptr_t>(&SkFont::getWidths, py::const_)
+            , py::arg("glyphs")
+            , py::arg("count")
+            , py::arg("widths")
+            , py::arg("")
+            , py::return_value_policy::automatic_reference)
+        .def("get_widths", py::overload_cast<const unsigned short[], int, float[]>(&SkFont::getWidths, py::const_)
+            , py::arg("glyphs")
+            , py::arg("count")
+            , py::arg("widths")
             , py::return_value_policy::automatic_reference)
         .def("get_widths_bounds", &SkFont::getWidthsBounds
             , py::arg("glyphs")

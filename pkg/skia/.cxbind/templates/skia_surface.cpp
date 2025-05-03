@@ -14,7 +14,7 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkCapabilities.h"
 #include "include/core/SkColorSpace.h"
-
+#include "include/core/SkBitmap.h"
 
 namespace py = pybind11;
 

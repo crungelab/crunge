@@ -1,8 +1,13 @@
 source: '../../depot/skia/include/effects/SkImageFilters.h'
 target: 'src/effects/skia_image_filters_py_auto.cpp'
 template: 'effects/skia_image_filters.cpp'
-#nodes:
+
+defaults:
+  'color_space': nullptr
+  'input': nullptr
+
+nodes:
   # Wrapped
-  #'method.SkGradientShader::MakeLinear': {exclude: true}
-  # Internal / Ignored
+  #Internal / Ignored
+  'ctor.SkImageFilters::CropRect::CropRect.void (const std::nullopt_t &)' : {exclude: true}
   # Overloads

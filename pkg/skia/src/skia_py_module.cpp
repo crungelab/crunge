@@ -34,6 +34,8 @@ void init_skia_font_py_auto(py::module &, Registry& registry);
 
 void init_skia_matrix_py_auto(py::module &, Registry& registry);
 
+void init_skia_image_filter_py_auto(py::module &, Registry& registry);
+
 void init_skia_point_py(py::module &, Registry& registry);
 void init_skia_point_py_auto(py::module &, Registry& registry);
 
@@ -83,6 +85,8 @@ PYBIND11_MODULE(_skia, m) {
         init_skia_point_py_auto(m, r);
 
         init_skia_matrix_py_auto(m, r);
+
+        init_skia_image_filter_py_auto(m, r);
 
         init_skia_gradient_shader_py(m, r);
         init_skia_gradient_shader_py_auto(m, r);

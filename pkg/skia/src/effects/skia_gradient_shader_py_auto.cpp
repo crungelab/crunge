@@ -22,7 +22,6 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
             .value("K_INTERPOLATE_COLORS_IN_PREMUL_FLAG", SkGradientShader::Flags::kInterpolateColorsInPremul_Flag)
             .export_values()
         ;
-
         py::class_<SkGradientShader::Interpolation> GradientShaderInterpolation(_skia, "GradientShaderInterpolation");
         registry.on(_skia, "GradientShaderInterpolation", GradientShaderInterpolation);
             py::enum_<SkGradientShader::Interpolation::InPremul>(_skia, "InPremul", py::arithmetic())
@@ -30,7 +29,6 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
                 .value("K_YES", SkGradientShader::Interpolation::InPremul::kYes)
                 .export_values()
             ;
-
             py::enum_<SkGradientShader::Interpolation::ColorSpace>(_skia, "ColorSpace", py::arithmetic())
                 .value("K_DESTINATION", SkGradientShader::Interpolation::ColorSpace::kDestination)
                 .value("K_SRGB_LINEAR", SkGradientShader::Interpolation::ColorSpace::kSRGBLinear)
@@ -50,7 +48,6 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
                 .value("K_LAST_COLOR_SPACE", SkGradientShader::Interpolation::ColorSpace::kLastColorSpace)
                 .export_values()
             ;
-
             py::enum_<SkGradientShader::Interpolation::HueMethod>(_skia, "HueMethod", py::arithmetic())
                 .value("K_SHORTER", SkGradientShader::Interpolation::HueMethod::kShorter)
                 .value("K_LONGER", SkGradientShader::Interpolation::HueMethod::kLonger)
@@ -59,7 +56,6 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
                 .value("K_LAST_HUE_METHOD", SkGradientShader::Interpolation::HueMethod::kLastHueMethod)
                 .export_values()
             ;
-
             GradientShaderInterpolation
             .def_readwrite("f_in_premul", &SkGradientShader::Interpolation::fInPremul)
             .def_readwrite("f_color_space", &SkGradientShader::Interpolation::fColorSpace)

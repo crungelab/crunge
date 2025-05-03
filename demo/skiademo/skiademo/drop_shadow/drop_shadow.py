@@ -6,7 +6,7 @@ from crunge import skia
 from ..common import Demo
 
 
-class FractalPerlinNoiseDemo(Demo):
+class DropShadowDemo(Demo):
     depth_stencil_view: wgpu.TextureView = None
 
     def __init__(self):
@@ -28,9 +28,15 @@ class FractalPerlinNoiseDemo(Demo):
 
             canvas.draw_color(skia.colors.WHITE)
 
-            filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.colors4f.BLACK)
+            filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.colors.BLACK)
             filter_paint = skia.Paint()
             filter_paint.set_image_filter(filter)
+
+            font = skia.Font()
+            font.set_size(120)
+            #font.set_typeface(skia.Typeface('Arial'))
+            #font.set_typeface(None)
+            canvas.draw_string('Hello Skia!', 0, 160, font, filter_paint)
 
             '''
             paint = skia.Paint(
@@ -69,7 +75,7 @@ class FractalPerlinNoiseDemo(Demo):
 
 
 def main():
-    FractalPerlinNoiseDemo().run()
+    DropShadowDemo().run()
 
 
 if __name__ == "__main__":

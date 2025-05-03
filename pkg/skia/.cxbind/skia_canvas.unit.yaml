@@ -5,6 +5,12 @@ nodes:
   # Wrapped
 
   # Internal / Ignored
+  'ctor.SkCanvas::SkCanvas.void (sk_sp<SkDevice>)': {exclude: true}
+
+  #'ctor.SkCanvas::SkCanvas':
+  #  overloads:
+  #    'void sk_sp<SkDevice>': {exclude: true}
+
   'method.SkCanvas::recordingContext': {exclude: true}
   'method.SkCanvas::experimental_DrawEdgeAAQuad': {exclude: true}
   'method.SkCanvas::experimental_DrawEdgeAAImageSet': {exclude: true}

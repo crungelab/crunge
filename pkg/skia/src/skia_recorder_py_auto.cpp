@@ -25,6 +25,9 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "RecorderOptions", RecorderOptions);
         RecorderOptions
         .def(py::init<>())
+        .def(py::init<const skgpu::graphite::RecorderOptions &>()
+        , py::arg("")
+        )
         .def_readwrite("f_image_provider", &skgpu::graphite::RecorderOptions::fImageProvider)
         .def_readwrite("f_gpu_budget_in_bytes", &skgpu::graphite::RecorderOptions::fGpuBudgetInBytes)
         .def_readwrite("f_require_ordered_recordings", &skgpu::graphite::RecorderOptions::fRequireOrderedRecordings)
@@ -38,6 +41,8 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
         .def("snap", &skgpu::graphite::Recorder::snap
             , py::return_value_policy::automatic_reference)
         .def("client_image_provider", py::overload_cast<>(&skgpu::graphite::Recorder::clientImageProvider)
+            , py::return_value_policy::automatic_reference)
+        .def("client_image_provider", py::overload_cast<>(&skgpu::graphite::Recorder::clientImageProvider, py::const_)
             , py::return_value_policy::automatic_reference)
         .def("max_texture_size", &skgpu::graphite::Recorder::maxTextureSize
             , py::return_value_policy::automatic_reference)

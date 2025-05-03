@@ -49,7 +49,6 @@ void init_skia_blend_mode_py_auto(py::module &_skia, Registry &registry) {
         .value("K_LAST_MODE", SkBlendMode::kLastMode)
         .export_values()
     ;
-
     py::enum_<SkBlendModeCoeff>(_skia, "BlendModeCoeff", py::arithmetic())
         .value("K_ZERO", SkBlendModeCoeff::kZero)
         .value("K_ONE", SkBlendModeCoeff::kOne)
@@ -64,7 +63,6 @@ void init_skia_blend_mode_py_auto(py::module &_skia, Registry &registry) {
         .value("K_COEFF_COUNT", SkBlendModeCoeff::kCoeffCount)
         .export_values()
     ;
-
     _skia
     .def("blend_mode_as_coeff", &SkBlendMode_AsCoeff
         , py::arg("mode")

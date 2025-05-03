@@ -14,7 +14,7 @@
 #include "include/core/SkCanvas.h"
 #include "include/core/SkCapabilities.h"
 #include "include/core/SkColorSpace.h"
-
+#include "include/core/SkBitmap.h"
 
 namespace py = pybind11;
 
@@ -24,7 +24,6 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
         .value("K_PRESENT", SkSurfaces::BackendSurfaceAccess::kPresent)
         .export_values()
     ;
-
     _skia
     .def("null", &SkSurfaces::Null
         , py::arg("width")
@@ -35,10 +34,26 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("row_bytes")
         , py::arg("surface_props")
         , py::return_value_policy::automatic_reference)
+    .def("raster", py::overload_cast<const SkImageInfo &, const SkSurfaceProps *>(&SkSurfaces::Raster)
+        , py::arg("image_info")
+        , py::arg("props") = nullptr
+        , py::return_value_policy::automatic_reference)
     .def("wrap_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
         , py::arg("image_info")
         , py::arg("pixels")
         , py::arg("row_bytes")
+        , py::arg("surface_props") = nullptr
+        , py::return_value_policy::automatic_reference)
+    .def("wrap_pixels", py::overload_cast<const SkPixmap &, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
+        , py::arg("pm")
+        , py::arg("props") = nullptr
+        , py::return_value_policy::automatic_reference)
+    .def("wrap_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, void (void *, void *), void *, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
+        , py::arg("image_info")
+        , py::arg("pixels")
+        , py::arg("row_bytes")
+        , py::arg("")
+        , py::arg("context")
         , py::arg("surface_props") = nullptr
         , py::return_value_policy::automatic_reference)
     ;
@@ -61,7 +76,6 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             .value("K_RETAIN_CONTENT_CHANGE_MODE", SkSurface::ContentChangeMode::kRetain_ContentChangeMode)
             .export_values()
         ;
-
         Surface
         .def("notify_content_will_change", &SkSurface::notifyContentWillChange
             , py::arg("mode")
@@ -79,7 +93,6 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             .value("K_DISCARD_WRITE_BACKEND_HANDLE_ACCESS", SkSurface::BackendHandleAccess::kDiscardWrite_BackendHandleAccess)
             .export_values()
         ;
-
         Surface
         .def("get_canvas", &SkSurface::getCanvas
             , py::return_value_policy::automatic_reference)
@@ -88,7 +101,14 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
         .def("make_surface", py::overload_cast<const SkImageInfo &>(&SkSurface::makeSurface)
             , py::arg("image_info")
             , py::return_value_policy::automatic_reference)
+        .def("make_surface", py::overload_cast<int, int>(&SkSurface::makeSurface)
+            , py::arg("width")
+            , py::arg("height")
+            , py::return_value_policy::automatic_reference)
         .def("make_image_snapshot", py::overload_cast<>(&SkSurface::makeImageSnapshot)
+            , py::return_value_policy::automatic_reference)
+        .def("make_image_snapshot", py::overload_cast<const SkIRect &>(&SkSurface::makeImageSnapshot)
+            , py::arg("bounds")
             , py::return_value_policy::automatic_reference)
         .def("make_temporary_image", &SkSurface::makeTemporaryImage
             , py::return_value_policy::automatic_reference)
@@ -99,10 +119,28 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("sampling")
             , py::arg("paint")
             , py::return_value_policy::automatic_reference)
+        .def("draw", py::overload_cast<SkCanvas *, float, float, const SkPaint *>(&SkSurface::draw)
+            , py::arg("canvas")
+            , py::arg("x")
+            , py::arg("y")
+            , py::arg("paint") = nullptr
+            , py::return_value_policy::automatic_reference)
         .def("peek_pixels", &SkSurface::peekPixels
             , py::arg("pixmap")
             , py::return_value_policy::automatic_reference)
         .def("read_pixels", py::overload_cast<const SkPixmap &, int, int>(&SkSurface::readPixels)
+            , py::arg("dst")
+            , py::arg("src_x")
+            , py::arg("src_y")
+            , py::return_value_policy::automatic_reference)
+        .def("read_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, int, int>(&SkSurface::readPixels)
+            , py::arg("dst_info")
+            , py::arg("dst_pixels")
+            , py::arg("dst_row_bytes")
+            , py::arg("src_x")
+            , py::arg("src_y")
+            , py::return_value_policy::automatic_reference)
+        .def("read_pixels", py::overload_cast<const SkBitmap &, int, int>(&SkSurface::readPixels)
             , py::arg("dst")
             , py::arg("src_x")
             , py::arg("src_y")
@@ -136,6 +174,11 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("context")
             , py::return_value_policy::automatic_reference)
         .def("write_pixels", py::overload_cast<const SkPixmap &, int, int>(&SkSurface::writePixels)
+            , py::arg("src")
+            , py::arg("dst_x")
+            , py::arg("dst_y")
+            , py::return_value_policy::automatic_reference)
+        .def("write_pixels", py::overload_cast<const SkBitmap &, int, int>(&SkSurface::writePixels)
             , py::arg("src")
             , py::arg("dst_x")
             , py::arg("dst_y")

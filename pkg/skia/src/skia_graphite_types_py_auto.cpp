@@ -39,6 +39,14 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "InsertFinishInfo", InsertFinishInfo);
         InsertFinishInfo
         .def(py::init<>())
+        .def(py::init<void *, void (*)(void *, skgpu::CallbackResult)>()
+        , py::arg("context")
+        , py::arg("proc")
+        )
+        .def(py::init<void *, void (*)(void *, skgpu::CallbackResult, const skgpu::GpuStats &)>()
+        , py::arg("context")
+        , py::arg("proc")
+        )
         .def_readwrite("f_finished_context", &skgpu::graphite::InsertFinishInfo::fFinishedContext)
         .def_readwrite("f_gpu_stats_flags", &skgpu::graphite::InsertFinishInfo::fGpuStatsFlags)
     ;
@@ -48,13 +56,11 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
         .value("K_NO", skgpu::graphite::SyncToCpu::kNo)
         .export_values()
     ;
-
     py::enum_<skgpu::graphite::Volatile>(_skia, "Volatile", py::arithmetic())
         .value("K_NO", skgpu::graphite::Volatile::kNo)
         .value("K_YES", skgpu::graphite::Volatile::kYes)
         .export_values()
     ;
-
     py::enum_<skgpu::graphite::DepthStencilFlags>(_skia, "DepthStencilFlags", py::arithmetic())
         .value("K_NONE", skgpu::graphite::DepthStencilFlags::kNone)
         .value("K_DEPTH", skgpu::graphite::DepthStencilFlags::kDepth)
@@ -62,7 +68,6 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
         .value("K_DEPTH_STENCIL", skgpu::graphite::DepthStencilFlags::kDepthStencil)
         .export_values()
     ;
-
     py::enum_<skgpu::graphite::DrawTypeFlags>(_skia, "DrawTypeFlags", py::arithmetic())
         .value("K_NONE", skgpu::graphite::DrawTypeFlags::kNone)
         .value("K_BITMAP_TEXT_MASK", skgpu::graphite::DrawTypeFlags::kBitmapText_Mask)
@@ -77,6 +82,5 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
         .value("K_LAST", skgpu::graphite::DrawTypeFlags::kLast)
         .export_values()
     ;
-
 
 }

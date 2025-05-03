@@ -63,7 +63,6 @@ void init_skia_color_py_auto(py::module &_skia, Registry &registry) {
         .value("K_LAST_ENUM", SkColorChannel::kLastEnum)
         .export_values()
     ;
-
     py::enum_<SkColorChannelFlag>(_skia, "ColorChannelFlag", py::arithmetic())
         .value("K_RED_SK_COLOR_CHANNEL_FLAG", SkColorChannelFlag::kRed_SkColorChannelFlag)
         .value("K_GREEN_SK_COLOR_CHANNEL_FLAG", SkColorChannelFlag::kGreen_SkColorChannelFlag)
@@ -76,6 +75,5 @@ void init_skia_color_py_auto(py::module &_skia, Registry &registry) {
         .value("K_RGBA_SK_COLOR_CHANNEL_FLAGS", SkColorChannelFlag::kRGBA_SkColorChannelFlags)
         .export_values()
     ;
-
 
 }

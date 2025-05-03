@@ -23,5 +23,4 @@ void init_skia_tile_mode_py_auto(py::module &_skia, Registry &registry) {
         .export_values()
     ;
 
-
 }

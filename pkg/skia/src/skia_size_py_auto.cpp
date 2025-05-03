@@ -57,6 +57,9 @@ void init_skia_size_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("w")
             , py::arg("h")
             , py::return_value_policy::automatic_reference)
+        .def_static("make", py::overload_cast<const SkISize &>(&SkSize::Make)
+            , py::arg("src")
+            , py::return_value_policy::automatic_reference)
         .def_static("make_empty", &SkSize::MakeEmpty
             , py::return_value_policy::automatic_reference)
         .def("set", &SkSize::set

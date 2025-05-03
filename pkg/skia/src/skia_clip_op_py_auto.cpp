@@ -21,5 +21,4 @@ void init_skia_clip_op_py_auto(py::module &_skia, Registry &registry) {
         .export_values()
     ;
 
-
 }

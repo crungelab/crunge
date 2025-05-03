@@ -27,6 +27,13 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "Paint", Paint);
         Paint
         .def(py::init<>())
+        .def(py::init<const SkRGBA4f<kUnpremul_SkAlphaType> &, SkColorSpace *>()
+        , py::arg("color")
+        , py::arg("color_space") = nullptr
+        )
+        .def(py::init<const SkPaint &>()
+        , py::arg("paint")
+        )
         .def("reset", &SkPaint::reset
             , py::return_value_policy::automatic_reference)
         .def("is_anti_alias", &SkPaint::isAntiAlias
@@ -47,7 +54,6 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             .value("K_STROKE_AND_FILL_STYLE", SkPaint::Style::kStrokeAndFill_Style)
             .export_values()
         ;
-
         Paint
         .def("get_style", &SkPaint::getStyle
             , py::return_value_policy::automatic_reference)
@@ -63,6 +69,10 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("set_color", py::overload_cast<unsigned int>(&SkPaint::setColor)
             , py::arg("color")
+            , py::return_value_policy::automatic_reference)
+        .def("set_color", py::overload_cast<const SkRGBA4f<kUnpremul_SkAlphaType> &, SkColorSpace *>(&SkPaint::setColor)
+            , py::arg("color")
+            , py::arg("color_space") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("set_color4f", &SkPaint::setColor4f
             , py::arg("color")
@@ -104,7 +114,6 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             .value("K_DEFAULT_CAP", SkPaint::Cap::kDefault_Cap)
             .export_values()
         ;
-
         py::enum_<SkPaint::Join>(_skia, "Join", py::arithmetic())
             .value("K_MITER_JOIN", SkPaint::Join::kMiter_Join)
             .value("K_ROUND_JOIN", SkPaint::Join::kRound_Join)
@@ -113,7 +122,6 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             .value("K_DEFAULT_JOIN", SkPaint::Join::kDefault_Join)
             .export_values()
         ;
-
         Paint
         .def("get_stroke_cap", &SkPaint::getStrokeCap
             , py::return_value_policy::automatic_reference)
