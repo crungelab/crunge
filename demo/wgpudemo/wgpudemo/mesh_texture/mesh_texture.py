@@ -18,7 +18,7 @@ from crunge import wgpu
 
 from crunge.wgpu import utils
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 resource_root = Path(__file__).parent.parent.parent / "resources"
 
@@ -105,9 +105,6 @@ class MeshTextureDemo(Demo):
 
     index_data: np.ndarray = None
     index_buffer: wgpu.Buffer = None
-
-    def __init__(self):
-        super().__init__()
 
     def resize(self, size: glm.ivec2):
         super().resize(size)
@@ -359,10 +356,10 @@ class MeshTextureDemo(Demo):
         )
         # exit()
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -404,14 +401,7 @@ class MeshTextureDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
-
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.surface.present()
-
+        super().frame()
 
 def main():
     MeshTextureDemo().run()

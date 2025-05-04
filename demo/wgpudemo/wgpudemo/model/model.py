@@ -12,7 +12,7 @@ from crunge.core import as_capsule
 from crunge import wgpu
 from crunge.wgpu import utils
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 resource_root = Path(__file__).parent.parent.parent / "resources"
 
@@ -368,10 +368,10 @@ class ModelDemo(Demo):
         )
         # exit()
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -413,16 +413,7 @@ class ModelDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        #backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
-
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        #self.swap_chain.present()
-        self.surface.present()
-
+        super().frame()
 
 def main():
     ModelDemo().run()

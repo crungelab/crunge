@@ -1,17 +1,12 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import c_float, sizeof
 
 from loguru import logger
-import glfw
 import numpy as np
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 vs_shader_code = """
 @vertex fn main(@location(0) pos : vec4<f32>) -> @builtin(position) vec4<f32> {
@@ -229,10 +224,10 @@ class TriangleTextureDemo(Demo):
             wgpu.Extent3D(1024, 1024, 1),
         )
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -256,17 +251,6 @@ class TriangleTextureDemo(Demo):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
-
-    def frame(self):
-        #backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
-
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        #self.swap_chain.present()
-        self.surface.present()
 
 
 def main():

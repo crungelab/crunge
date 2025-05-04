@@ -3,11 +3,11 @@ from loguru import logger
 from crunge import wgpu
 from crunge import skia
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 
 class DropShadowDemo(Demo):
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
             canvas.draw_color(skia.colors.WHITE)
 

@@ -1,6 +1,4 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
+from ctypes import Structure, c_float, c_uint32, sizeof
 import sys
 
 from loguru import logger
@@ -12,15 +10,12 @@ from crunge.core import as_capsule
 from crunge import wgpu
 from crunge.wgpu import utils
 
-# from crunge import imgui
 from imgui_bundle import imgui
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 from .uniforms import (
-    cast_matrix3,
     cast_matrix4,
-    cast_vec3,
     Uniforms,
 )
 
@@ -112,8 +107,8 @@ class WImGuiDemo(Demo):
 
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
-        self.context = imgui.create_context()
-        imgui.set_current_context(self.context)
+        self.imgui_context = imgui.create_context()
+        imgui.set_current_context(self.imgui_context)
 
         imgui.style_colors_dark()
 
@@ -165,7 +160,6 @@ class WImGuiDemo(Demo):
         if action == glfw.PRESS:
             logger.debug(f"key down: {key}")
             self.io.add_key_event(key_map[key], 1)
-            #self.io.add_input_character(key)
         elif action == glfw.RELEASE:
             logger.debug(f"key up: {key}")
             self.io.add_key_event(key_map[key], 0)
@@ -182,11 +176,9 @@ class WImGuiDemo(Demo):
 
     def on_mouse_button(self, window, button: int, action: int, mods: int):
         if button < 3:
-            # self.io.mouse_down[button] = action == glfw.PRESS
             self.io.add_mouse_button_event(button, action == glfw.PRESS)
 
     def on_scroll(self, window, x: float, y: float):
-        # self.io.mouse_wheel = y
         self.io.add_mouse_wheel_event(x, y)
 
     def create_buffers(self):
@@ -212,7 +204,6 @@ class WImGuiDemo(Demo):
         width = font_matrix.shape[1]
         height = font_matrix.shape[0]
         pixels = font_matrix.data
-        # bpp = pixels.itemsize
         bpp = font_matrix.shape[2]
 
         logger.debug(f"width: {width}")
@@ -254,8 +245,6 @@ class WImGuiDemo(Demo):
 
         self.sampler = self.device.create_sampler(sampler_desc)
 
-        # size = utils.divround_up(pixels.nbytes, 256)
-        # size = utils.divround_up(width * height * bpp, 256)
         size = width * height * bpp
 
         self.queue.write_texture(
@@ -269,7 +258,6 @@ class WImGuiDemo(Demo):
             # The actual pixel data
             utils.as_capsule(pixels),
             # Data size
-            # width * height * bpp,
             size,
             # The layout of the texture
             wgpu.TexelCopyBufferLayout(
@@ -444,22 +432,16 @@ class WImGuiDemo(Demo):
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
-                # utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
                 vtx_offset * imgui.VERTEX_SIZE,
-                # commands.vtx_buffer_data,
                 commands.vtx_buffer.data_address(),
-                # commands.vtx_buffer_size * imgui.VERTEX_SIZE,
                 commands.vtx_buffer.size() * imgui.VERTEX_SIZE,
             )
             # logger.debug('write index_buffer')
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
-                # utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
                 idx_offset * imgui.INDEX_SIZE,
-                # commands.idx_buffer_data,
                 commands.idx_buffer.data_address(),
-                # commands.idx_buffer_size * imgui.INDEX_SIZE,
                 commands.idx_buffer.size() * imgui.INDEX_SIZE,
             )
 
@@ -480,12 +462,10 @@ class WImGuiDemo(Demo):
                     0,
                 )
 
-            # vtx_offset += commands.vtx_buffer_size
             vtx_offset += commands.vtx_buffer.size()
-            # idx_offset += commands.idx_buffer_size
             idx_offset += commands.idx_buffer.size()
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         # logger.debug("render")
         imgui.render()
         io = imgui.get_io()
@@ -516,7 +496,7 @@ class WImGuiDemo(Demo):
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -554,7 +534,6 @@ class WImGuiDemo(Demo):
         imgui.end()
 
     def frame(self):
-        # logger.debug("frame")
         imgui.new_frame()
 
         self.draw_buttons()
@@ -563,13 +542,7 @@ class WImGuiDemo(Demo):
 
         imgui.end_frame()
 
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
-
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.surface.present()
+        super().frame()
 
 
 def main():

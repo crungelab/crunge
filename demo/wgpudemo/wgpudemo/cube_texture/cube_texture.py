@@ -1,21 +1,17 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import c_float, sizeof
 import time
-import sys
 import math
 import glm
 from pathlib import Path
 
 from loguru import logger
-import glfw
-import numpy as np
 import imageio.v3 as iio
 
 from crunge.core import as_capsule
 from crunge import wgpu
 from crunge.wgpu import utils
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 from .data import vertex_data
 
@@ -66,9 +62,6 @@ class CubeTextureDemo(Demo):
     kPositionByteOffset = 0
     kUVByteOffset = 4 * sizeof(c_float)
     kCubeDataStride = 6
-
-    def __init__(self):
-        super().__init__()
 
     def resize(self, size: glm.ivec2):
         super().resize(size)
@@ -282,10 +275,10 @@ class CubeTextureDemo(Demo):
         rotMatrix = glm.rotate(rotMatrix, math.cos(ms), WORLD_AXIS_Y)
         return self.projectionMatrix * viewMatrix * rotMatrix
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -325,6 +318,17 @@ class CubeTextureDemo(Demo):
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
+        super().frame()
+
+    '''
+    def frame(self):
+        transform = self.transform_matrix
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            as_capsule(glm.value_ptr(transform)),
+            self.uniformBufferSize,
+        )
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
@@ -332,7 +336,7 @@ class CubeTextureDemo(Demo):
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
         self.surface.present()
-
+    '''
 
 def main():
     CubeTextureDemo().run()

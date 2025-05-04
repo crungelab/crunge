@@ -3,11 +3,11 @@ from loguru import logger
 from crunge import wgpu
 from crunge import skia
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 
 class TextDemo(Demo):
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
             # canvas.clear(0xFF00FF00)  # Clear with a color
 

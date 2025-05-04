@@ -7,6 +7,8 @@ from loguru import logger
 from crunge.core import as_capsule
 from crunge import wgpu
 
+from .renderer import Renderer
+
 
 class Demo:
     kWidth = 1024
@@ -29,31 +31,33 @@ class Demo:
     @property
     def instance(self) -> wgpu.Instance:
         return self.context.instance
-    
+
     @property
     def adapter(self) -> wgpu.Adapter:
         return self.context.adapter
-    
+
     @property
     def device(self) -> wgpu.Device:
         return self.context.device
-    
+
     @property
     def queue(self) -> wgpu.Queue:
         return self.context.queue
-    
+
     def create_window(self):
         glfw.init()
 
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
 
-        self.window = glfw.create_window(self.size.x, self.size.y, self.name, None, None)
+        self.window = glfw.create_window(
+            self.size.x, self.size.y, self.name, None, None
+        )
 
         def resize_cb(window, w, h):
             self.resize(glm.ivec2(w, h))
-        glfw.set_window_size_callback(self.window, resize_cb)
 
+        glfw.set_window_size_callback(self.window, resize_cb)
 
     def create_device_objects(self):
         pass
@@ -72,9 +76,9 @@ class Demo:
             format=wgpu.TextureFormat.BGRA8_UNORM,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
-            #present_mode=wgpu.PresentMode.MAILBOX,
+            # present_mode=wgpu.PresentMode.MAILBOX,
             view_format_count=0,
-            #view_formats=None,
+            # view_formats=None,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)
@@ -85,7 +89,7 @@ class Demo:
         logger.debug("Creating surface")
         if sys.platform == "darwin":
             handle = glfw.get_cocoa_window(self.window)
-            #TODO: Implement SurfaceDescriptorFromMetalLayer
+            # TODO: Implement SurfaceDescriptorFromMetalLayer
         elif sys.platform == "win32":
             wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
             handle = glfw.get_win32_window(self.window)
@@ -93,7 +97,7 @@ class Demo:
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            # wsd = wgpu.SurfaceDescriptorFromXlibWindow()
             wsd = wgpu.SurfaceSourceXlibWindow()
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
@@ -106,13 +110,12 @@ class Demo:
         self.configure_surface(self.size)
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
-        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
         wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module
 
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
+    def render(self, renderer: Renderer):
         pass
 
     def frame(self):
@@ -120,7 +123,8 @@ class Demo:
         self.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
 
-        self.render(backbufferView, self.depth_stencil_view)
+        renderer = Renderer(backbufferView, self.depth_stencil_view)
+        self.render(renderer)
         self.surface.present()
 
     def run(self):
@@ -134,7 +138,7 @@ class Demo:
         while not glfw.window_should_close(self.window):
             self.instance.process_events()
             glfw.poll_events()
-            #self.instance.process_events()
+            # self.instance.process_events()
 
             now = time.perf_counter()
             frame_time = now - last_time
@@ -150,12 +154,6 @@ class Demo:
             last_time = time.perf_counter()
 
             self.frame()
-
-        #del self.surface
-        #self.instance.process_events()
-        #self.context = None
-        #glfw.destroy_window(self.window)
-        #glfw.terminate()
 
     def resize(self, size: glm.ivec2):
         logger.debug(f"Resizing to {size}")

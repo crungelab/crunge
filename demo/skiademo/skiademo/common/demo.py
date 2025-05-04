@@ -9,6 +9,7 @@ from crunge.core import as_capsule
 from crunge import wgpu
 from crunge import skia
 
+from .renderer import Renderer
 
 class Demo:
     kWidth = 1024
@@ -132,7 +133,7 @@ class Demo:
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module
 
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
+    def render(self, renderer: Renderer):
         pass
 
     def frame(self):
@@ -140,7 +141,8 @@ class Demo:
         self.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
 
-        self.render(backbufferView, self.depth_stencil_view)
+        renderer = Renderer(backbufferView, self.depth_stencil_view)
+        self.render(renderer)
         self.surface.present()
 
     def run(self):

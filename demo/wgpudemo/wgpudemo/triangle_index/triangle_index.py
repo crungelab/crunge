@@ -1,17 +1,13 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import c_float, sizeof
 
 from loguru import logger
-import glfw
 import numpy as np
 
 from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 index_data = np.array([0, 1, 2], dtype=np.uint32)
 
@@ -78,9 +74,6 @@ class TriangleIndexDemo(Demo):
     kWidth = 1024
     kHeight = 768
 
-    def __init__(self):
-        super().__init__()
-
     def create_device_objects(self):
         self.create_buffers()
         self.create_pipeline()
@@ -140,11 +133,11 @@ class TriangleIndexDemo(Demo):
             self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
         )
 
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
+    def render(self, renderer: Renderer):
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -167,14 +160,6 @@ class TriangleIndexDemo(Demo):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
-
-    """
-    def frame(self):
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        self.render(backbuffer)
-        self.swap_chain.present()
-    """
 
 
 def main():

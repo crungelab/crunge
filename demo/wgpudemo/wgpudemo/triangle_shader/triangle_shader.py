@@ -8,7 +8,7 @@ import glm
 from crunge import wgpu
 from crunge.core import as_capsule
 
-from ..common import Demo
+from ..common import Demo, Renderer
 
 shader_code = """
 @vertex
@@ -69,6 +69,7 @@ class TriangleShaderDemo(Demo):
         logger.debug("Creating depthStencilState")
         depthStencilState = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH32_FLOAT,
+            depth_write_enabled=False,
         )
 
         logger.debug("Creating primitive")
@@ -94,10 +95,10 @@ class TriangleShaderDemo(Demo):
         self.pipeline = self.device.create_render_pipeline(descriptor)
         logger.debug(self.pipeline)
 
-    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView):
+    def render(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_color=wgpu.Color(0, 0, 0, 1),
@@ -105,7 +106,7 @@ class TriangleShaderDemo(Demo):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=depthStencilView,
+            view=renderer.depthStencilView,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
