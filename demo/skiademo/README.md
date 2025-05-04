@@ -1,6 +1,7 @@
 ```bash
 python -m skiademo.rectangle
 python -m skiademo.text
+python -m skiademo.text_blob
 python -m skiademo.linear_gradient
 python -m skiademo.radial_gradient
 python -m skiademo.conical_gradient

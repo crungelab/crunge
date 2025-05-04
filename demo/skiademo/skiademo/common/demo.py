@@ -1,4 +1,5 @@
 import sys, time
+import contextlib
 
 import glm
 import glfw
@@ -6,6 +7,7 @@ from loguru import logger
 
 from crunge.core import as_capsule
 from crunge import wgpu
+from crunge import skia
 
 
 class Demo:
@@ -25,6 +27,9 @@ class Demo:
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
         self.context = wgpu.Context()
+        self.skia_context = skia.create_context(self.context.instance, self.context.device)
+        self.recorder = self.skia_context.make_recorder(skia.RecorderOptions())
+
 
     @property
     def instance(self) -> wgpu.Instance:
@@ -42,6 +47,22 @@ class Demo:
     def queue(self) -> wgpu.Queue:
         return self.context.queue
     
+    @contextlib.contextmanager
+    def canvas_target(self, target: wgpu.Texture = None) :
+        if target is None:
+            surface_texture = wgpu.SurfaceTexture()
+            self.surface.get_current_texture(surface_texture)
+            target = surface_texture.texture
+        skia_surface = skia.create_surface(target, self.recorder)
+        canvas = skia_surface.get_canvas()
+        yield canvas
+        recording = self.recorder.snap()
+        if recording:
+            insert_info = skia.InsertRecordingInfo()
+            insert_info.f_recording = recording
+            self.skia_context.insert_recording(insert_info)
+            self.skia_context.submit(skia.SyncToCpu.K_NO)
+
     def create_window(self):
         glfw.init()
 
@@ -106,7 +127,6 @@ class Demo:
         self.configure_surface(self.size)
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
-        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
         wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
@@ -151,11 +171,6 @@ class Demo:
 
             self.frame()
 
-        #del self.surface
-        #self.instance.process_events()
-        #self.context = None
-        #glfw.destroy_window(self.window)
-        #glfw.terminate()
 
     def resize(self, size: glm.ivec2):
         logger.debug(f"Resizing to {size}")

@@ -24,12 +24,10 @@ fn fs_main() -> @location(0) vec4<f32> {
 """
 
 
-class RectangleDemo(Demo):
-    depth_stencil_view: wgpu.TextureView = None
+class MixedDemo(Demo):
+    """Mixed demo using Skia and WGPU"""
 
-    def __init__(self):
-        super().__init__()
-        self.skia_context = skia.create_context(self.context.instance, self.context.device)
+    depth_stencil_view: wgpu.TextureView = None
 
     def resize(self, size: glm.ivec2):
         super().resize(size)
@@ -130,48 +128,15 @@ class RectangleDemo(Demo):
         self.queue.submit(1, commands)
 
         # Skia rendering
-        recorder = self.skia_context.make_recorder(skia.RecorderOptions())
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        backend_texture = surface_texture.texture
-        skia_surface = skia.create_surface(backend_texture, recorder)
 
-        if skia_surface:
-            skia_canvas = skia_surface.get_canvas()
-
+        with self.canvas_target() as canvas:
             paint = skia.Paint()
             paint.set_color(0xFFFFFFFF)
-            skia_canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
+            canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
 
-            recording = recorder.snap()
 
-            if recording:
-                insert_info = skia.InsertRecordingInfo()
-                insert_info.f_recording = recording
-                self.skia_context.insert_recording(insert_info)
-                self.skia_context.submit(skia.SyncToCpu.K_NO)
-
-        '''
-        auto backbuffer = getBackbufferSurface();
-        if (backbuffer) {
-            auto canvas = backbuffer->getCanvas();
-            SkPaint paint;
-            paint.setColor(SK_ColorWHITE);
-            //canvas->drawColor(SK_ColorBLACK);
-            canvas->drawRect(SkRect::MakeXYWH(10, 10, 200, 100), paint);
-
-            std::unique_ptr<skgpu::graphite::Recording> recording = fGraphiteRecorder->snap();
-
-            if (recording) {
-                skgpu::graphite::InsertRecordingInfo info;
-                info.fRecording = recording.get();
-                fGraphiteContext->insertRecording(info);
-                fGraphiteContext->submit(skgpu::graphite::SyncToCpu::kNo);
-            }
-        }
-        '''
 def main():
-    RectangleDemo().run()
+    MixedDemo().run()
 
 
 if __name__ == "__main__":
