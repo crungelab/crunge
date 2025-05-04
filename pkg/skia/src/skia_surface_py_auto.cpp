@@ -71,7 +71,7 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkSurface::ContentChangeMode>(_skia, "ContentChangeMode", py::arithmetic())
+        py::enum_<SkSurface::ContentChangeMode>(Surface, "ContentChangeMode", py::arithmetic())
             .value("K_DISCARD_CONTENT_CHANGE_MODE", SkSurface::ContentChangeMode::kDiscard_ContentChangeMode)
             .value("K_RETAIN_CONTENT_CHANGE_MODE", SkSurface::ContentChangeMode::kRetain_ContentChangeMode)
             .export_values()
@@ -84,7 +84,7 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkSurface::BackendHandleAccess>(_skia, "BackendHandleAccess", py::arithmetic())
+        py::enum_<SkSurface::BackendHandleAccess>(Surface, "BackendHandleAccess", py::arithmetic())
             .value("K_FLUSH_READ", SkSurface::BackendHandleAccess::kFlushRead)
             .value("K_FLUSH_WRITE", SkSurface::BackendHandleAccess::kFlushWrite)
             .value("K_DISCARD_WRITE", SkSurface::BackendHandleAccess::kDiscardWrite)

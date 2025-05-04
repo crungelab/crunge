@@ -1,6 +1,9 @@
 source: '../../depot/skia/include/core/SkCanvas.h'
 target: 'src/skia_canvas_py_auto.cpp'
 
+defaults:
+  encoding: SkTextEncoding::kUTF8
+
 nodes:
   # Wrapped
 

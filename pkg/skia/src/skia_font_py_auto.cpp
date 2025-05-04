@@ -21,7 +21,7 @@ namespace py = pybind11;
 void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
     py::class_<SkFont> Font(_skia, "Font");
     registry.on(_skia, "Font", Font);
-        py::enum_<SkFont::Edging>(_skia, "Edging", py::arithmetic())
+        py::enum_<SkFont::Edging>(Font, "Edging", py::arithmetic())
             .value("K_ALIAS", SkFont::Edging::kAlias)
             .value("K_ANTI_ALIAS", SkFont::Edging::kAntiAlias)
             .value("K_SUBPIXEL_ANTI_ALIAS", SkFont::Edging::kSubpixelAntiAlias)

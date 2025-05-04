@@ -56,7 +56,7 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkMatrix::ScaleToFit>(_skia, "ScaleToFit", py::arithmetic())
+        py::enum_<SkMatrix::ScaleToFit>(Matrix, "ScaleToFit", py::arithmetic())
             .value("K_FILL_SCALE_TO_FIT", SkMatrix::ScaleToFit::kFill_ScaleToFit)
             .value("K_START_SCALE_TO_FIT", SkMatrix::ScaleToFit::kStart_ScaleToFit)
             .value("K_CENTER_SCALE_TO_FIT", SkMatrix::ScaleToFit::kCenter_ScaleToFit)
@@ -77,7 +77,7 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkMatrix::TypeMask>(_skia, "TypeMask", py::arithmetic())
+        py::enum_<SkMatrix::TypeMask>(Matrix, "TypeMask", py::arithmetic())
             .value("K_IDENTITY_MASK", SkMatrix::TypeMask::kIdentity_Mask)
             .value("K_TRANSLATE_MASK", SkMatrix::TypeMask::kTranslate_Mask)
             .value("K_SCALE_MASK", SkMatrix::TypeMask::kScale_Mask)

@@ -19,7 +19,7 @@ namespace py = pybind11;
 void init_skia_image_filter_py_auto(py::module &_skia, Registry &registry) {
     py::class_<SkImageFilter,sk_sp<SkImageFilter>> ImageFilter(_skia, "ImageFilter");
     registry.on(_skia, "ImageFilter", ImageFilter);
-        py::enum_<SkImageFilter::MapDirection>(_skia, "MapDirection", py::arithmetic())
+        py::enum_<SkImageFilter::MapDirection>(ImageFilter, "MapDirection", py::arithmetic())
             .value("K_FORWARD_MAP_DIRECTION", SkImageFilter::MapDirection::kForward_MapDirection)
             .value("K_REVERSE_MAP_DIRECTION", SkImageFilter::MapDirection::kReverse_MapDirection)
             .export_values()

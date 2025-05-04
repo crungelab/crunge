@@ -34,6 +34,7 @@ set(SOURCES
     src/skia_context_py_auto.cpp
     src/skia_surface_py.cpp
     src/skia_surface_py_auto.cpp
+    src/skia_canvas_py.cpp
     src/skia_canvas_py_auto.cpp
     src/skia_recorder_py_auto.cpp
     src/skia_recording_py_auto.cpp

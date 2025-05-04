@@ -15,6 +15,9 @@ void init_skia_blend_mode_py_auto(py::module &, Registry& registry);
 void init_skia_tile_mode_py_auto(py::module &, Registry& registry);
 void init_skia_context_py_auto(py::module &, Registry& registry);
 void init_skia_context_py(py::module &, Registry& registry);
+void init_skia_font_types_py_auto(py::module &, Registry& registry);
+
+void init_skia_canvas_py(py::module &, Registry& registry);
 void init_skia_canvas_py_auto(py::module &, Registry& registry);
 
 void init_skia_surface_py_auto(py::module &, Registry& registry);
@@ -29,7 +32,6 @@ void init_skia_paint_py_auto(py::module &, Registry& registry);
 void init_skia_color_py(py::module &, Registry& registry);
 void init_skia_color_py_auto(py::module &, Registry& registry);
 
-void init_skia_font_types_py_auto(py::module &, Registry& registry);
 void init_skia_font_py(py::module &, Registry& registry);
 void init_skia_font_py_auto(py::module &, Registry& registry);
 
@@ -73,6 +75,9 @@ PYBIND11_MODULE(_skia, m) {
         init_skia_context_py_auto(m, r);
         init_skia_context_py(m, r);
 
+        init_skia_font_types_py_auto(m, r);
+
+        init_skia_canvas_py(m, r);
         init_skia_canvas_py_auto(m, r);
 
         init_skia_surface_py(m, r);
@@ -98,7 +103,6 @@ PYBIND11_MODULE(_skia, m) {
 
         init_skia_image_filters_py_auto(m, r);
 
-        init_skia_font_types_py_auto(m, r);
         init_skia_font_py(m, r);
         init_skia_font_py_auto(m, r);
 

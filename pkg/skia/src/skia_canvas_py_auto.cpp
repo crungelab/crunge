@@ -146,7 +146,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::SaveLayerFlagsSet>(_skia, "SaveLayerFlagsSet", py::arithmetic())
+        py::enum_<SkCanvas::SaveLayerFlagsSet>(Canvas, "SaveLayerFlagsSet", py::arithmetic())
             .value("K_PRESERVE_LCD_TEXT_SAVE_LAYER_FLAG", SkCanvas::SaveLayerFlagsSet::kPreserveLCDText_SaveLayerFlag)
             .value("K_INIT_WITH_PREVIOUS_SAVE_LAYER_FLAG", SkCanvas::SaveLayerFlagsSet::kInitWithPrevious_SaveLayerFlag)
             .value("K_F16_COLOR_TYPE", SkCanvas::SaveLayerFlagsSet::kF16ColorType)
@@ -327,7 +327,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::PointMode>(_skia, "PointMode", py::arithmetic())
+        py::enum_<SkCanvas::PointMode>(Canvas, "PointMode", py::arithmetic())
             .value("K_POINTS_POINT_MODE", SkCanvas::PointMode::kPoints_PointMode)
             .value("K_LINES_POINT_MODE", SkCanvas::PointMode::kLines_PointMode)
             .value("K_POLYGON_POINT_MODE", SkCanvas::PointMode::kPolygon_PointMode)
@@ -430,7 +430,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::SrcRectConstraint>(_skia, "SrcRectConstraint", py::arithmetic())
+        py::enum_<SkCanvas::SrcRectConstraint>(Canvas, "SrcRectConstraint", py::arithmetic())
             .value("K_STRICT_SRC_RECT_CONSTRAINT", SkCanvas::SrcRectConstraint::kStrict_SrcRectConstraint)
             .value("K_FAST_SRC_RECT_CONSTRAINT", SkCanvas::SrcRectConstraint::kFast_SrcRectConstraint)
             .export_values()
@@ -489,7 +489,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
 
         py::class_<SkCanvas::Lattice> CanvasLattice(_skia, "CanvasLattice");
         registry.on(_skia, "CanvasLattice", CanvasLattice);
-            py::enum_<SkCanvas::Lattice::RectType>(_skia, "RectType", py::arithmetic())
+            py::enum_<SkCanvas::Lattice::RectType>(CanvasLattice, "RectType", py::arithmetic())
                 .value("K_DEFAULT", SkCanvas::Lattice::RectType::kDefault)
                 .value("K_TRANSPARENT", SkCanvas::Lattice::RectType::kTransparent)
                 .value("K_FIXED_COLOR", SkCanvas::Lattice::RectType::kFixedColor)
@@ -520,7 +520,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkCanvas::QuadAAFlags>(_skia, "QuadAAFlags", py::arithmetic())
+        py::enum_<SkCanvas::QuadAAFlags>(Canvas, "QuadAAFlags", py::arithmetic())
             .value("K_LEFT_QUAD_AA_FLAG", SkCanvas::QuadAAFlags::kLeft_QuadAAFlag)
             .value("K_TOP_QUAD_AA_FLAG", SkCanvas::QuadAAFlags::kTop_QuadAAFlag)
             .value("K_RIGHT_QUAD_AA_FLAG", SkCanvas::QuadAAFlags::kRight_QuadAAFlag)
@@ -565,7 +565,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
         .def("draw_simple_text", &SkCanvas::drawSimpleText
             , py::arg("text")
             , py::arg("byte_length")
-            , py::arg("encoding")
+            , py::arg("encoding") = SkTextEncoding::kUTF8
             , py::arg("x")
             , py::arg("y")
             , py::arg("font")
