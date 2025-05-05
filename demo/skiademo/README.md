@@ -9,4 +9,5 @@ python -m skiademo.sweep_gradient
 python -m skiademo.fractal_perlin_noise
 python -m skiademo.turbulent_perlin_noise
 python -m skiademo.drop_shadow
+python -m skiademo.image_shader
 ```

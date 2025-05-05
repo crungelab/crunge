@@ -28,6 +28,20 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
             .export_values()
         ;
         Font
+        .def(py::init<>())
+        .def(py::init<sk_sp<SkTypeface>, float>()
+        , py::arg("typeface")
+        , py::arg("size")
+        )
+        .def(py::init<sk_sp<SkTypeface>>()
+        , py::arg("typeface")
+        )
+        .def(py::init<sk_sp<SkTypeface>, float, float, float>()
+        , py::arg("typeface")
+        , py::arg("size")
+        , py::arg("scale_x")
+        , py::arg("skew_x")
+        )
         .def("is_force_auto_hinting", &SkFont::isForceAutoHinting
             , py::return_value_policy::automatic_reference)
         .def("is_embedded_bitmaps", &SkFont::isEmbeddedBitmaps

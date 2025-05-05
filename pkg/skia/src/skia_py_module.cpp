@@ -32,6 +32,9 @@ void init_skia_paint_py_auto(py::module &, Registry& registry);
 void init_skia_color_py(py::module &, Registry& registry);
 void init_skia_color_py_auto(py::module &, Registry& registry);
 
+void init_skia_alpha_type_py_auto(py::module &, Registry& registry);
+void init_skia_color_type_py_auto(py::module &, Registry& registry);
+
 void init_skia_font_py(py::module &, Registry& registry);
 void init_skia_font_py_auto(py::module &, Registry& registry);
 
@@ -50,6 +53,13 @@ void init_skia_perlin_noise_shader_py(py::module &, Registry& registry);
 void init_skia_image_filters_py_auto(py::module &, Registry& registry);
 
 void init_skia_text_blob_py_auto(py::module &, Registry& registry);
+
+void init_skia_data_py_auto(py::module &, Registry& registry);
+void init_skia_sampling_options_py_auto(py::module &, Registry& registry);
+void init_skia_image_info_py_auto(py::module &, Registry& registry);
+void init_skia_image_py_auto(py::module &, Registry& registry);
+
+void init_skia_standard_recorder_options_py(py::module &, Registry& registry);
 
 //NOTE: initialization/binding order does matter!
 //This popped up using default arguments that use structure constructors
@@ -88,6 +98,9 @@ PYBIND11_MODULE(_skia, m) {
 
         init_skia_color_py(m, r);
         init_skia_color_py_auto(m, r);
+        
+        init_skia_alpha_type_py_auto(m, r);
+        init_skia_color_type_py_auto(m, r);
 
         init_skia_point_py(m, r);
         init_skia_point_py_auto(m, r);
@@ -107,4 +120,11 @@ PYBIND11_MODULE(_skia, m) {
         init_skia_font_py_auto(m, r);
 
         init_skia_text_blob_py_auto(m, r);
+
+        init_skia_data_py_auto(m, r);
+        init_skia_sampling_options_py_auto(m, r);
+        init_skia_image_info_py_auto(m, r);
+        init_skia_image_py_auto(m, r);
+
+        init_skia_standard_recorder_options_py(m, r);
 }

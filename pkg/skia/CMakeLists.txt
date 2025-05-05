@@ -42,6 +42,10 @@ set(SOURCES
     src/skia_paint_py_auto.cpp
     src/skia_color_py.cpp
     src/skia_color_py_auto.cpp
+
+    src/skia_alpha_type_py_auto.cpp
+    src/skia_color_type_py_auto.cpp
+
     src/skia_font_types_py_auto.cpp
     src/skia_font_py.cpp
     src/skia_font_py_auto.cpp
@@ -51,11 +55,17 @@ set(SOURCES
 
     src/skia_image_filter_py_auto.cpp
     src/skia_text_blob_py_auto.cpp
+    src/skia_image_py_auto.cpp
+    src/skia_image_info_py_auto.cpp
+    src/skia_data_py_auto.cpp
+    src/skia_sampling_options_py_auto.cpp
 
     src/effects/skia_gradient_shader_py.cpp
     src/effects/skia_gradient_shader_py_auto.cpp
     src/effects/skia_perlin_noise_shader_py.cpp
     src/effects/skia_image_filters_py_auto.cpp
+
+    src/standard_recorder_options_py.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})

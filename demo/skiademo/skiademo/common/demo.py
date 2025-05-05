@@ -29,7 +29,9 @@ class Demo:
         self.size = glm.ivec2(self.kWidth, self.kHeight)
         self.context = wgpu.Context()
         self.skia_context = skia.create_context(self.context.instance, self.context.device)
-        self.recorder = self.skia_context.make_recorder(skia.RecorderOptions())
+        recorder_options = skia.create_standard_recorder_options()
+        #self.recorder = self.skia_context.make_recorder(skia.RecorderOptions())
+        self.recorder = self.skia_context.make_recorder(recorder_options)
 
 
     @property

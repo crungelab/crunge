@@ -1,0 +1,7 @@
+source: '../../depot/skia/include/core/SkAlphaType.h'
+target: 'src/skia_alpha_type_py_auto.cpp'
+
+#nodes:
+  # Wrapped
+  # Internal / Ignored
+  # Overloads

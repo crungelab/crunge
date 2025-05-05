@@ -25,12 +25,18 @@ unit_files:
   - path: skia_recording.unit.yaml
   - path: skia_paint.unit.yaml
   - path: skia_color.unit.yaml
+  - path: skia_alpha_type.unit.yaml
+  - path: skia_color_type.unit.yaml
   - path: skia_font_types.unit.yaml
   - path: skia_font.unit.yaml
   - path: skia_point.unit.yaml
   - path: skia_matrix.unit.yaml
   - path: skia_image_filter.unit.yaml
   - path: skia_text_blob.unit.yaml
+  - path: skia_sampling_options.unit.yaml
+  - path: skia_image_info.unit.yaml
+  - path: skia_data.unit.yaml
+  - path: skia_image.unit.yaml
 
   - path: effects/skia_gradient_shader.unit.yaml
   - path: effects/skia_image_filters.unit.yaml

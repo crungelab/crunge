@@ -80,7 +80,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("")
             , py::return_value_policy::automatic_reference)
         .def("submit", &skgpu::graphite::Context::submit
-            , py::arg("") = SyncToCpu::kNo
+            , py::arg("") = skgpu::graphite::SyncToCpu::kNo
             , py::return_value_policy::automatic_reference)
         .def("has_unfinished_gpu_work", &skgpu::graphite::Context::hasUnfinishedGpuWork
             , py::return_value_policy::automatic_reference)
