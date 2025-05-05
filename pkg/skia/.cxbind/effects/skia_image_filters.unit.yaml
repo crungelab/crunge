@@ -3,7 +3,7 @@ target: 'src/effects/skia_image_filters_py_auto.cpp'
 template: 'effects/skia_image_filters.cpp'
 
 defaults:
-  'color_space': nullptr
+  'colorSpace': nullptr
   'input': nullptr
 
 nodes:

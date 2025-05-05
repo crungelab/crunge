@@ -564,7 +564,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
         .def("draw_simple_text", &SkCanvas::drawSimpleText
             , py::arg("text")
             , py::arg("byte_length")
-            , py::arg("encoding")
+            , py::arg("encoding") = SkTextEncoding::kUTF8
             , py::arg("x")
             , py::arg("y")
             , py::arg("font")
