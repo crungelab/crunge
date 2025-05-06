@@ -266,5 +266,4 @@ void init_sdl_scancode_py_auto(py::module &_sdl, Registry &registry) {
         .export_values()
     ;
 
-
 }

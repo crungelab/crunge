@@ -9,15 +9,13 @@ from .constants import *
 class Camera:
     def __init__(
         self,
-        width,
-        height,
+        size: glm.ivec2,
         position=glm.vec3(0.0, 0.0, 4.0),
         up=glm.vec3(0.0, 1.0, 0.0),
         yaw=-90.0,
         pitch=0.0,
     ):
-        self.width = width
-        self.height = height
+        self.size = size
         self.position = position
         self.up = up
         self.yaw = yaw
@@ -32,7 +30,7 @@ class Camera:
 
         self.update_camera_vectors()
 
-        aspect = float(width) / float(height)
+        aspect = float(size.x) / float(size.y)
         fov_y_radians = (2.0 * math.pi) / 5.0
         self.projection_matrix = glm.perspective(fov_y_radians, aspect, .5, 100.0)
         self.view_matrix = glm.mat4(1.0)

@@ -27,7 +27,7 @@ class Demo:
         self.size = glm.ivec2(self.kWidth, self.kHeight)
         self.window = None
 
-        #self.instance = wgpu.create_instance()
+        '''
         instance_capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable = True)
         instance_descriptor = wgpu.InstanceDescriptor(capabilities = instance_capabilities)
         self.instance = wgpu.create_instance(instance_descriptor)
@@ -37,6 +37,25 @@ class Demo:
         self.device.set_label("Primary Device")
         self.device.enable_logging()
         self.queue = self.device.get_queue()
+        '''
+
+        self.wgpu_context = wgpu.Context()
+
+    @property
+    def instance(self) -> wgpu.Instance:
+        return self.wgpu_context.instance
+
+    @property
+    def adapter(self) -> wgpu.Adapter:
+        return self.wgpu_context.adapter
+
+    @property
+    def device(self) -> wgpu.Device:
+        return self.wgpu_context.device
+
+    @property
+    def queue(self) -> wgpu.Queue:
+        return self.wgpu_context.queue
 
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)

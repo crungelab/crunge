@@ -26,23 +26,23 @@ class Demo:
         super().__init__()
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
-        self.context = wgpu.Context()
+        self.wgpu_context = wgpu.Context()
 
     @property
     def instance(self) -> wgpu.Instance:
-        return self.context.instance
+        return self.wgpu_context.instance
 
     @property
     def adapter(self) -> wgpu.Adapter:
-        return self.context.adapter
+        return self.wgpu_context.adapter
 
     @property
     def device(self) -> wgpu.Device:
-        return self.context.device
+        return self.wgpu_context.device
 
     @property
     def queue(self) -> wgpu.Queue:
-        return self.context.queue
+        return self.wgpu_context.queue
 
     def create_window(self):
         glfw.init()
@@ -154,6 +154,8 @@ class Demo:
             last_time = time.perf_counter()
 
             self.frame()
+
+        glfw.destroy_window(self.window)
 
     def resize(self, size: glm.ivec2):
         logger.debug(f"Resizing to {size}")

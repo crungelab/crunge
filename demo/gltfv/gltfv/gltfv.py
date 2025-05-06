@@ -1,12 +1,9 @@
 import os
-import time
-import sys
-import math
-import glm
 from pathlib import Path
 
+import glfw
+
 from crunge import wgpu
-import crunge.wgpu.utils as utils
 
 import gltfv.globals
 from .scene_builder import SceneBuilder
@@ -38,23 +35,6 @@ class GltfV:
         return self.context.queue
 
     def run(self):
-        '''
-        instance_capabilities = wgpu.InstanceCapabilities()
-        instance_capabilities.timed_wait_any_enable = True
-
-        instance_descriptor = wgpu.InstanceDescriptor()
-        instance_descriptor.capabilities = instance_capabilities
-        self.instance = wgpu.create_instance(instance_descriptor)
-
-        #self.instance = wgpu.create_instance()
-        gltfv.globals.instance = self.instance
-        self.adapter = self.instance.request_adapter()
-        self.device = self.adapter.create_device()
-        gltfv.globals.device = self.device
-        self.device.set_label("Primary Device")
-        self.device.enable_logging()
-        '''
-
         #scene_path = models_root / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
         #scene_path = models_root / "BoxTextured" / "glTF" / "BoxTextured.gltf"
         #scene_path = models_root / "Cube" / "glTF" / "Cube.gltf"
@@ -91,6 +71,7 @@ class GltfV:
 
 def main():
     GltfV().run()
+    glfw.terminate()
 
 if __name__ == "__main__":
     main()

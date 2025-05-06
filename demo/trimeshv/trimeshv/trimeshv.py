@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from loguru import logger
+import glfw
 
 from crunge import wgpu
 
@@ -12,17 +13,27 @@ resource_root = Path(__file__).parent.parent.parent.parent / "resources"
 
 class TrimeshV:
     def __init__(self):
-        pass
+        self.wgpu_context = wgpu.Context()
+        trimeshv.globals.instance = self.instance
+        trimeshv.globals.device = self.device
+
+    @property
+    def instance(self) -> wgpu.Instance:
+        return self.wgpu_context.instance
+
+    @property
+    def adapter(self) -> wgpu.Adapter:
+        return self.wgpu_context.adapter
+
+    @property
+    def device(self) -> wgpu.Device:
+        return self.wgpu_context.device
+
+    @property
+    def queue(self) -> wgpu.Queue:
+        return self.wgpu_context.queue
 
     def run(self):
-        self.instance = wgpu.create_instance()
-        trimeshv.globals.instance = self.instance
-        self.adapter = self.instance.request_adapter()
-        self.device = self.adapter.create_device()
-        trimeshv.globals.device = self.device
-        self.device.set_label("Primary Device")
-        self.device.enable_logging()
-
         #scene_path = resource_root / "models" / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
         #scene_path = resource_root / "models" / "BoxTextured" / "glTF" / "BoxTextured.gltf"
         #scene_path = resource_root / "models" / "Cube" / "glTF" / "Cube.gltf"
@@ -63,6 +74,7 @@ class TrimeshV:
 
 def main():
     TrimeshV().run()
+    glfw.terminate()
 
 if __name__ == "__main__":
     main()

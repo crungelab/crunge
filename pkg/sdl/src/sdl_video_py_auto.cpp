@@ -21,24 +21,17 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         .value("SYSTEM_THEME_DARK", SDL_SystemTheme::SDL_SYSTEM_THEME_DARK)
         .export_values()
     ;
-
-    PYCLASS(_sdl, SDL_DisplayMode, DisplayMode)
+    py::class_<SDL_DisplayMode> DisplayMode(_sdl, "DisplayMode");
+    registry.on(_sdl, "DisplayMode", DisplayMode);
+        DisplayMode
         .def_readwrite("display_id", &SDL_DisplayMode::displayID)
-
         .def_readwrite("format", &SDL_DisplayMode::format)
-
         .def_readwrite("w", &SDL_DisplayMode::w)
-
         .def_readwrite("h", &SDL_DisplayMode::h)
-
         .def_readwrite("pixel_density", &SDL_DisplayMode::pixel_density)
-
         .def_readwrite("refresh_rate", &SDL_DisplayMode::refresh_rate)
-
         .def_readwrite("refresh_rate_numerator", &SDL_DisplayMode::refresh_rate_numerator)
-
         .def_readwrite("refresh_rate_denominator", &SDL_DisplayMode::refresh_rate_denominator)
-
     ;
 
     py::enum_<SDL_DisplayOrientation>(_sdl, "DisplayOrientation", py::arithmetic())
@@ -49,14 +42,12 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         .value("ORIENTATION_PORTRAIT_FLIPPED", SDL_DisplayOrientation::SDL_ORIENTATION_PORTRAIT_FLIPPED)
         .export_values()
     ;
-
     py::enum_<SDL_FlashOperation>(_sdl, "FlashOperation", py::arithmetic())
         .value("FLASH_CANCEL", SDL_FlashOperation::SDL_FLASH_CANCEL)
         .value("FLASH_BRIEFLY", SDL_FlashOperation::SDL_FLASH_BRIEFLY)
         .value("FLASH_UNTIL_FOCUSED", SDL_FlashOperation::SDL_FLASH_UNTIL_FOCUSED)
         .export_values()
     ;
-
     py::enum_<SDL_GLattr>(_sdl, "GLattr", py::arithmetic())
         .value("GL_RED_SIZE", SDL_GLattr::SDL_GL_RED_SIZE)
         .value("GL_GREEN_SIZE", SDL_GLattr::SDL_GL_GREEN_SIZE)
@@ -88,14 +79,12 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         .value("GL_EGL_PLATFORM", SDL_GLattr::SDL_GL_EGL_PLATFORM)
         .export_values()
     ;
-
     py::enum_<SDL_GLprofile>(_sdl, "GLprofile", py::arithmetic())
         .value("GL_CONTEXT_PROFILE_CORE", SDL_GLprofile::SDL_GL_CONTEXT_PROFILE_CORE)
         .value("GL_CONTEXT_PROFILE_COMPATIBILITY", SDL_GLprofile::SDL_GL_CONTEXT_PROFILE_COMPATIBILITY)
         .value("GL_CONTEXT_PROFILE_ES", SDL_GLprofile::SDL_GL_CONTEXT_PROFILE_ES)
         .export_values()
     ;
-
     py::enum_<SDL_GLcontextFlag>(_sdl, "GLcontextFlag", py::arithmetic())
         .value("GL_CONTEXT_DEBUG_FLAG", SDL_GLcontextFlag::SDL_GL_CONTEXT_DEBUG_FLAG)
         .value("GL_CONTEXT_FORWARD_COMPATIBLE_FLAG", SDL_GLcontextFlag::SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
@@ -103,33 +92,26 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         .value("GL_CONTEXT_RESET_ISOLATION_FLAG", SDL_GLcontextFlag::SDL_GL_CONTEXT_RESET_ISOLATION_FLAG)
         .export_values()
     ;
-
     py::enum_<SDL_GLcontextReleaseFlag>(_sdl, "GLcontextReleaseFlag", py::arithmetic())
         .value("GL_CONTEXT_RELEASE_BEHAVIOR_NONE", SDL_GLcontextReleaseFlag::SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE)
         .value("GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH", SDL_GLcontextReleaseFlag::SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH)
         .export_values()
     ;
-
     py::enum_<SDL_GLContextResetNotification>(_sdl, "GLContextResetNotification", py::arithmetic())
         .value("GL_CONTEXT_RESET_NO_NOTIFICATION", SDL_GLContextResetNotification::SDL_GL_CONTEXT_RESET_NO_NOTIFICATION)
         .value("GL_CONTEXT_RESET_LOSE_CONTEXT", SDL_GLContextResetNotification::SDL_GL_CONTEXT_RESET_LOSE_CONTEXT)
         .export_values()
     ;
-
     _sdl
     .def("get_num_video_drivers", &SDL_GetNumVideoDrivers
         , py::return_value_policy::automatic_reference)
-
     .def("get_video_driver", &SDL_GetVideoDriver
         , py::arg("index")
         , py::return_value_policy::automatic_reference)
-
     .def("get_current_video_driver", &SDL_GetCurrentVideoDriver
         , py::return_value_policy::automatic_reference)
-
     .def("get_system_theme", &SDL_GetSystemTheme
         , py::return_value_policy::automatic_reference)
-
     .def("get_displays", [](int * count)
         {
             auto ret = SDL_GetDisplays(count);
@@ -137,40 +119,31 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("count")
         , py::return_value_policy::automatic_reference)
-
     .def("get_primary_display", &SDL_GetPrimaryDisplay
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_properties", &SDL_GetDisplayProperties
         , py::arg("display_id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_name", &SDL_GetDisplayName
         , py::arg("display_id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_bounds", &SDL_GetDisplayBounds
         , py::arg("display_id")
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_usable_bounds", &SDL_GetDisplayUsableBounds
         , py::arg("display_id")
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
-
     .def("get_natural_display_orientation", &SDL_GetNaturalDisplayOrientation
         , py::arg("display_id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_current_display_orientation", &SDL_GetCurrentDisplayOrientation
         , py::arg("display_id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_content_scale", &SDL_GetDisplayContentScale
         , py::arg("display_id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_closest_fullscreen_display_mode", &SDL_GetClosestFullscreenDisplayMode
         , py::arg("display_id")
         , py::arg("w")
@@ -179,23 +152,18 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("include_high_density_modes")
         , py::arg("mode")
         , py::return_value_policy::automatic_reference)
-
     .def("get_desktop_display_mode", &SDL_GetDesktopDisplayMode
         , py::arg("display_id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_current_display_mode", &SDL_GetCurrentDisplayMode
         , py::arg("display_id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_for_point", &SDL_GetDisplayForPoint
         , py::arg("point")
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_for_rect", &SDL_GetDisplayForRect
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
-
     .def("get_display_for_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetDisplayForWindow(window);
@@ -203,7 +171,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_pixel_density", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowPixelDensity(window);
@@ -211,7 +178,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_display_scale", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowDisplayScale(window);
@@ -219,7 +185,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_fullscreen_mode", [](const SDLWindowWrapper& window, const SDL_DisplayMode * mode)
         {
             auto ret = SDL_SetWindowFullscreenMode(window, mode);
@@ -228,7 +193,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("mode")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_fullscreen_mode", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowFullscreenMode(window);
@@ -236,7 +200,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_icc_profile", [](const SDLWindowWrapper& window, unsigned long * size)
         {
             auto ret = SDL_GetWindowICCProfile(window, size);
@@ -245,7 +208,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("size")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_pixel_format", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowPixelFormat(window);
@@ -253,7 +215,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("create_window", [](const char * title, int w, int h, unsigned long flags)
         {
             auto ret = SDLWindowWrapper(SDL_CreateWindow(title, w, h, flags));
@@ -264,7 +225,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h")
         , py::arg("flags")
         , py::return_value_policy::automatic_reference)
-
     .def("create_popup_window", [](const SDLWindowWrapper& parent, int offset_x, int offset_y, int w, int h, unsigned long flags)
         {
             auto ret = SDLWindowWrapper(SDL_CreatePopupWindow(parent, offset_x, offset_y, w, h, flags));
@@ -277,7 +237,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h")
         , py::arg("flags")
         , py::return_value_policy::automatic_reference)
-
     .def("create_window_with_properties", [](unsigned int props)
         {
             auto ret = SDLWindowWrapper(SDL_CreateWindowWithProperties(props));
@@ -285,7 +244,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("props")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_id", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowID(window);
@@ -293,7 +251,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_from_id", [](unsigned int id)
         {
             auto ret = SDLWindowWrapper(SDL_GetWindowFromID(id));
@@ -301,7 +258,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("id")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_parent", [](const SDLWindowWrapper& window)
         {
             auto ret = SDLWindowWrapper(SDL_GetWindowParent(window));
@@ -309,7 +265,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_properties", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowProperties(window);
@@ -317,7 +272,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_flags", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowFlags(window);
@@ -325,7 +279,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_title", [](const SDLWindowWrapper& window, const char * title)
         {
             auto ret = SDL_SetWindowTitle(window, title);
@@ -334,7 +287,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("title")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_title", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowTitle(window);
@@ -342,7 +294,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_icon", [](const SDLWindowWrapper& window, SDL_Surface * icon)
         {
             auto ret = SDL_SetWindowIcon(window, icon);
@@ -351,7 +302,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("icon")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_position", [](const SDLWindowWrapper& window, int x, int y)
         {
             auto ret = SDL_SetWindowPosition(window, x, y);
@@ -361,7 +311,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("x")
         , py::arg("y")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_position", [](const SDLWindowWrapper& window, int * x, int * y)
         {
             auto ret = SDL_GetWindowPosition(window, x, y);
@@ -371,7 +320,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("x")
         , py::arg("y")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_size", [](const SDLWindowWrapper& window, int w, int h)
         {
             auto ret = SDL_SetWindowSize(window, w, h);
@@ -381,7 +329,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("w")
         , py::arg("h")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_size", [](const SDLWindowWrapper& window, int * w, int * h)
         {
             auto ret = SDL_GetWindowSize(window, w, h);
@@ -391,7 +338,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("w") = 0
         , py::arg("h") = 0
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_safe_area", [](const SDLWindowWrapper& window, SDL_Rect * rect)
         {
             auto ret = SDL_GetWindowSafeArea(window, rect);
@@ -400,7 +346,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_aspect_ratio", [](const SDLWindowWrapper& window, float min_aspect, float max_aspect)
         {
             auto ret = SDL_SetWindowAspectRatio(window, min_aspect, max_aspect);
@@ -410,7 +355,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("min_aspect")
         , py::arg("max_aspect")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_aspect_ratio", [](const SDLWindowWrapper& window, float * min_aspect, float * max_aspect)
         {
             auto ret = SDL_GetWindowAspectRatio(window, min_aspect, max_aspect);
@@ -420,7 +364,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("min_aspect")
         , py::arg("max_aspect")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_borders_size", [](const SDLWindowWrapper& window, int * top, int * left, int * bottom, int * right)
         {
             auto ret = SDL_GetWindowBordersSize(window, top, left, bottom, right);
@@ -432,7 +375,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("bottom")
         , py::arg("right")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_size_in_pixels", [](const SDLWindowWrapper& window, int * w, int * h)
         {
             auto ret = SDL_GetWindowSizeInPixels(window, w, h);
@@ -442,7 +384,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("w") = 0
         , py::arg("h") = 0
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_minimum_size", [](const SDLWindowWrapper& window, int min_w, int min_h)
         {
             auto ret = SDL_SetWindowMinimumSize(window, min_w, min_h);
@@ -452,7 +393,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("min_w")
         , py::arg("min_h")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_minimum_size", [](const SDLWindowWrapper& window, int * w, int * h)
         {
             auto ret = SDL_GetWindowMinimumSize(window, w, h);
@@ -462,7 +402,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("w")
         , py::arg("h")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_maximum_size", [](const SDLWindowWrapper& window, int max_w, int max_h)
         {
             auto ret = SDL_SetWindowMaximumSize(window, max_w, max_h);
@@ -472,7 +411,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("max_w")
         , py::arg("max_h")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_maximum_size", [](const SDLWindowWrapper& window, int * w, int * h)
         {
             auto ret = SDL_GetWindowMaximumSize(window, w, h);
@@ -482,7 +420,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("w")
         , py::arg("h")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_bordered", [](const SDLWindowWrapper& window, bool bordered)
         {
             auto ret = SDL_SetWindowBordered(window, bordered);
@@ -491,7 +428,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("bordered")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_resizable", [](const SDLWindowWrapper& window, bool resizable)
         {
             auto ret = SDL_SetWindowResizable(window, resizable);
@@ -500,7 +436,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("resizable")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_always_on_top", [](const SDLWindowWrapper& window, bool on_top)
         {
             auto ret = SDL_SetWindowAlwaysOnTop(window, on_top);
@@ -509,7 +444,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("on_top")
         , py::return_value_policy::automatic_reference)
-
     .def("show_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_ShowWindow(window);
@@ -517,7 +451,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("hide_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_HideWindow(window);
@@ -525,7 +458,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("raise_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_RaiseWindow(window);
@@ -533,7 +465,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("maximize_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_MaximizeWindow(window);
@@ -541,7 +472,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("minimize_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_MinimizeWindow(window);
@@ -549,7 +479,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("restore_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_RestoreWindow(window);
@@ -557,7 +486,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_fullscreen", [](const SDLWindowWrapper& window, bool fullscreen)
         {
             auto ret = SDL_SetWindowFullscreen(window, fullscreen);
@@ -566,7 +494,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("fullscreen")
         , py::return_value_policy::automatic_reference)
-
     .def("sync_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_SyncWindow(window);
@@ -574,7 +501,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("window_has_surface", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_WindowHasSurface(window);
@@ -582,7 +508,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_surface", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowSurface(window);
@@ -590,7 +515,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_surface_v_sync", [](const SDLWindowWrapper& window, int vsync)
         {
             auto ret = SDL_SetWindowSurfaceVSync(window, vsync);
@@ -599,7 +523,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("vsync")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_surface_v_sync", [](const SDLWindowWrapper& window, int * vsync)
         {
             auto ret = SDL_GetWindowSurfaceVSync(window, vsync);
@@ -608,7 +531,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("vsync")
         , py::return_value_policy::automatic_reference)
-
     .def("update_window_surface", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_UpdateWindowSurface(window);
@@ -616,7 +538,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("update_window_surface_rects", [](const SDLWindowWrapper& window, const SDL_Rect * rects, int numrects)
         {
             auto ret = SDL_UpdateWindowSurfaceRects(window, rects, numrects);
@@ -626,7 +547,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("rects")
         , py::arg("numrects")
         , py::return_value_policy::automatic_reference)
-
     .def("destroy_window_surface", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_DestroyWindowSurface(window);
@@ -634,7 +554,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_keyboard_grab", [](const SDLWindowWrapper& window, bool grabbed)
         {
             auto ret = SDL_SetWindowKeyboardGrab(window, grabbed);
@@ -643,7 +562,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("grabbed")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_mouse_grab", [](const SDLWindowWrapper& window, bool grabbed)
         {
             auto ret = SDL_SetWindowMouseGrab(window, grabbed);
@@ -652,7 +570,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("grabbed")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_keyboard_grab", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowKeyboardGrab(window);
@@ -660,7 +577,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_mouse_grab", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowMouseGrab(window);
@@ -668,14 +584,12 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("get_grabbed_window", []()
         {
             auto ret = SDLWindowWrapper(SDL_GetGrabbedWindow());
             return ret;
         }
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_mouse_rect", [](const SDLWindowWrapper& window, const SDL_Rect * rect)
         {
             auto ret = SDL_SetWindowMouseRect(window, rect);
@@ -684,7 +598,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("rect")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_mouse_rect", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowMouseRect(window);
@@ -692,7 +605,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_opacity", [](const SDLWindowWrapper& window, float opacity)
         {
             auto ret = SDL_SetWindowOpacity(window, opacity);
@@ -701,7 +613,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("opacity")
         , py::return_value_policy::automatic_reference)
-
     .def("get_window_opacity", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GetWindowOpacity(window);
@@ -709,7 +620,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_parent", [](const SDLWindowWrapper& window, const SDLWindowWrapper& parent)
         {
             auto ret = SDL_SetWindowParent(window, parent);
@@ -718,7 +628,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("parent")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_modal", [](const SDLWindowWrapper& window, bool modal)
         {
             auto ret = SDL_SetWindowModal(window, modal);
@@ -727,7 +636,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("modal")
         , py::return_value_policy::automatic_reference)
-
     .def("set_window_focusable", [](const SDLWindowWrapper& window, bool focusable)
         {
             auto ret = SDL_SetWindowFocusable(window, focusable);
@@ -736,7 +644,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("focusable")
         , py::return_value_policy::automatic_reference)
-
     .def("show_window_system_menu", [](const SDLWindowWrapper& window, int x, int y)
         {
             auto ret = SDL_ShowWindowSystemMenu(window, x, y);
@@ -761,7 +668,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         .value("HITTEST_RESIZE_LEFT", SDL_HitTestResult::SDL_HITTEST_RESIZE_LEFT)
         .export_values()
     ;
-
     _sdl
     .def("set_window_shape", [](const SDLWindowWrapper& window, SDL_Surface * shape)
         {
@@ -771,7 +677,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("shape")
         , py::return_value_policy::automatic_reference)
-
     .def("flash_window", [](const SDLWindowWrapper& window, SDL_FlashOperation operation)
         {
             auto ret = SDL_FlashWindow(window, operation);
@@ -780,7 +685,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("operation")
         , py::return_value_policy::automatic_reference)
-
     .def("destroy_window", [](const SDLWindowWrapper& window)
         {
             SDL_DestroyWindow(window);
@@ -788,35 +692,26 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("screen_saver_enabled", &SDL_ScreenSaverEnabled
         , py::return_value_policy::automatic_reference)
-
     .def("enable_screen_saver", &SDL_EnableScreenSaver
         , py::return_value_policy::automatic_reference)
-
     .def("disable_screen_saver", &SDL_DisableScreenSaver
         , py::return_value_policy::automatic_reference)
-
     .def("gl_load_library", &SDL_GL_LoadLibrary
         , py::arg("path")
         , py::return_value_policy::automatic_reference)
-
     .def("gl_unload_library", &SDL_GL_UnloadLibrary
         , py::return_value_policy::automatic_reference)
-
     .def("gl_extension_supported", &SDL_GL_ExtensionSupported
         , py::arg("extension")
         , py::return_value_policy::automatic_reference)
-
     .def("gl_reset_attributes", &SDL_GL_ResetAttributes
         , py::return_value_policy::automatic_reference)
-
     .def("gl_set_attribute", &SDL_GL_SetAttribute
         , py::arg("attr")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
-
     .def("gl_get_attribute", [](SDL_GLattr attr, int * value)
         {
             auto ret = SDL_GL_GetAttribute(attr, value);
@@ -825,20 +720,16 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("attr")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
-
     .def("gl_get_current_window", []()
         {
             auto ret = SDLWindowWrapper(SDL_GL_GetCurrentWindow());
             return ret;
         }
         , py::return_value_policy::automatic_reference)
-
     .def("egl_get_current_display", &SDL_EGL_GetCurrentDisplay
         , py::return_value_policy::automatic_reference)
-
     .def("egl_get_current_config", &SDL_EGL_GetCurrentConfig
         , py::return_value_policy::automatic_reference)
-
     .def("egl_get_window_surface", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_EGL_GetWindowSurface(window);
@@ -846,17 +737,14 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-
     .def("egl_set_attribute_callbacks", &SDL_EGL_SetAttributeCallbacks
         , py::arg("platform_attrib_callback")
         , py::arg("surface_attrib_callback")
         , py::arg("context_attrib_callback")
         , py::return_value_policy::automatic_reference)
-
     .def("gl_set_swap_interval", &SDL_GL_SetSwapInterval
         , py::arg("interval")
         , py::return_value_policy::automatic_reference)
-
     .def("gl_get_swap_interval", [](int * interval)
         {
             auto ret = SDL_GL_GetSwapInterval(interval);
@@ -864,7 +752,6 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("interval")
         , py::return_value_policy::automatic_reference)
-
     .def("gl_swap_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GL_SwapWindow(window);

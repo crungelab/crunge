@@ -14,19 +14,15 @@ from .camera import Camera
 class View(Base):
     scene: Scene = None
     surface: wgpu.Surface = None
-    #swap_chain: wgpu.SwapChain = None
-    width: int = 0
-    height: int = 0
 
-    def __init__(self, scene: Scene, width: int, height: int) -> None:
+    def __init__(self, scene: Scene, size: glm.ivec2) -> None:
         self.scene = scene
-        self.width = width
-        self.height = height
-        self.camera = Camera(width, height)
+        self.size = size
+        self.camera = Camera(size)
         self.depthTexture = utils.create_texture(
             self.device,
             "Depth texture",
-            wgpu.Extent3D(width, height),
+            wgpu.Extent3D(size.x, size.y),
             wgpu.TextureFormat.DEPTH24_PLUS,
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
@@ -35,23 +31,37 @@ class View(Base):
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
+        self.configure_surface(self.size)
 
-        scDesc = wgpu.SwapChainDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+    def configure_surface(self, size: glm.ivec2):
+        logger.debug("Configuring surface")
+
+        if not size.x or not size.y:
+            return
+
+        logger.debug("Creating surface configuration")
+        config = wgpu.SurfaceConfiguration(
+            device=self.device,
+            width=size.x,
+            height=size.y,
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            width=self.width,
-            height=self.height,
-            present_mode=wgpu.PresentMode.MAILBOX,
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            present_mode=wgpu.PresentMode.FIFO,
+            view_format_count=0,
+            #view_formats=None,
+            alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
-
-        self.swap_chain = self.device.create_swap_chain(self.surface, scDesc)
-        logger.debug(self.swap_chain)
+        logger.debug(config)
+        self.surface.configure(config)
+        logger.debug(f"Surface configured to size: {size}")
 
     def frame(self):
-        backbufferView: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbufferView.set_label("Back Buffer Texture View")
+        surface_texture = wgpu.SurfaceTexture()
+        self.surface.get_current_texture(surface_texture)
+        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
+
         self.draw(backbufferView)
-        self.swap_chain.present()
+        self.surface.present()
 
     def draw(self, view: wgpu.TextureView):
         # self.camera.update()

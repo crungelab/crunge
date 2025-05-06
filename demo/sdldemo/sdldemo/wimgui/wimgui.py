@@ -124,8 +124,8 @@ class WImGuiDemo(Demo):
 
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
-        self.context = imgui.create_context()
-        imgui.set_current_context(self.context)
+        self.imgui_context = imgui.create_context()
+        imgui.set_current_context(self.imgui_context)
 
         imgui.style_colors_dark()
 

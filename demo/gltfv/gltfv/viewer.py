@@ -3,6 +3,7 @@ import sys
 
 from loguru import logger
 import glfw
+import glm
 
 from crunge.core import as_capsule
 from crunge import wgpu
@@ -59,7 +60,7 @@ class Viewer(Base):
             wsd.window = handle
             wsd.display = as_capsule(display)
 
-        view = View(scene, self.kWidth, self.kHeight)
+        view = View(scene, glm.ivec2(self.kWidth, self.kHeight))
         view.create_from_wsd(wsd)
         self.view = view
 
@@ -99,7 +100,7 @@ class Viewer(Base):
             self.view.frame()
 
         glfw.destroy_window(self.window)
-        glfw.terminate()
+        #glfw.terminate() # causes crash on exit
 
     def on_cursor_pos(self, window, xpos, ypos):
         self.camera_controller.on_cursor_pos(window, xpos, ypos)

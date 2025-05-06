@@ -1,13 +1,6 @@
 source: '../../depot/gltf/tiny_gltf.h'
 target: 'src/gltf_py_auto.cpp'
 
-#module: _gltf
-
-#flags: [
-#  '-x', 'c++',
-#  '-std=c++17',
-#]
-
 nodes:
   # Wrapped
   # These write to err and warn.  Not good
