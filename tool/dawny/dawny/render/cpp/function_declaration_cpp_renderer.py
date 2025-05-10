@@ -22,13 +22,6 @@ class FunctionDeclarationCppRenderer(FunctionDeclarationRenderer):
         arg_list = []
         call_arg_list = []
 
-        '''
-        Device Adapter::CreateDevice(DeviceDescriptor const * descriptor) const {
-            auto result = wgpuAdapterCreateDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(descriptor));
-            return Device::Acquire(result);
-        }
-        '''
-
         for arg in args:
             arg_type = self.context.root[arg.type]
             if arg_type.name.native:

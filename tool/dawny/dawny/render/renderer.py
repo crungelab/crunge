@@ -95,42 +95,16 @@ class Renderer(Generic[T_Node]):
         maybe_const = 'const ' if make_const else ''
         #if arg.annotation == 'value':
         if arg.annotation is None:
-            #return type_name + maybe_const
             return maybe_const + type_name
         elif arg.annotation == '*':
-            #return type_name + ' *' + maybe_const
             return maybe_const + type_name + ' *'
         elif arg.annotation == 'const*':
-            #return type_name + ' const *' + maybe_const
             return maybe_const + type_name + ' const *'
         elif arg.annotation == 'const*const*':
-            #return 'const ' + type_name + '* const *' + maybe_const
             return maybe_const + 'const ' + type_name + '* const *'
         else:
             assert False
 
-    '''
-    @staticmethod
-    def decorate_type(typ, arg: RecordMember, make_const=False):
-        #type_name = "pywgpu::" + typ.name.get() if not typ.name.native else typ.name.concatcase()
-        type_name = Renderer.as_cppFqType(typ.name)
-        maybe_const = 'const ' if make_const else ''
-        #if arg.annotation == 'value':
-        if arg.annotation is None:
-            #return typ + maybe_const
-            return maybe_const + type_name
-        elif arg.annotation == '*':
-            #return typ + ' *' + maybe_const
-            return maybe_const + type_name + ' *'
-        elif arg.annotation == 'const*':
-            #return typ + ' const *' + maybe_const
-            return maybe_const + type_name + ' const *'
-        elif arg.annotation == 'const*const*':
-            #return 'const ' + typ + '* const *' + maybe_const
-            return maybe_const + 'const ' + type_name + '* const *'
-        else:
-            assert False
-    '''
 
     @staticmethod
     def decorate_member(name, typ, arg: RecordMember, make_const=False):
@@ -147,29 +121,6 @@ class Renderer(Generic[T_Node]):
         else:
             assert False
 
-    '''
-    @staticmethod
-    def decorate(name, typ, arg: RecordMember, make_const=False):
-        maybe_const = ' const ' if make_const else ' '
-        #if arg.annotation == 'value':
-        if arg.annotation is None:
-            return typ + maybe_const + name
-        elif arg.annotation == '*':
-            return typ + ' *' + maybe_const + name
-        elif arg.annotation == 'const*':
-            return typ + ' const *' + maybe_const + name
-        elif arg.annotation == 'const*const*':
-            return 'const ' + typ + '* const *' + maybe_const + name
-        else:
-            assert False
-    '''
-
-    '''
-    @staticmethod
-    def annotated(typ: Entry, arg: RecordMember, make_const=False):
-        name = Renderer.as_varName(arg.name)
-        return Renderer.decorate(name, typ, arg, make_const)
-    '''
     @staticmethod
     def annotated_type(typ: Entry, arg: RecordMember, make_const=False):
         return Renderer.decorate_type(typ, arg, make_const)
@@ -186,19 +137,12 @@ class Renderer(Generic[T_Node]):
         return Renderer.annotated(self.as_cTypeEnumSpecialCase(self.lookup(arg.type).name), arg, make_const)
 
     def as_annotated_cppType(self, arg: RecordMember, make_const=False) -> str:
-        #return Renderer.annotated_type(self.as_cppType(self.lookup(arg.type).name), arg, make_const)
         return Renderer.annotated_type(self.lookup(arg.type), arg, make_const)
 
     def as_annotated_cppMember(self, arg: RecordMember, make_const=False) -> str:
         return Renderer.annotated_member(self.as_cppType(self.lookup(arg.type).name), arg, make_const)
 
-    '''
-    {%- set constant = find_by_name(by_category["constant"], member.default_value) -%}
-    {%- if constant -%}
-        {{" "}}= k{{constant.name.CamelCase()}}
-    {%- else -%}
-        {{" "}}= {{member.default_value}}
-    '''
+
     def render_cpp_default_value(self, member: RecordMember, is_struct: bool, force_default=False, forced_default_value=None) -> str:
         member_type = self.lookup(member.type)
         if forced_default_value is not None:
@@ -212,10 +156,6 @@ class Renderer(Generic[T_Node]):
         elif member_type.category in ["enum", "bitmask"] and member.default_value is not None:
             return f" = {Renderer.as_cppType(member_type.name)}::{Renderer.as_cppEnum(Name(member.default_value))}"
         elif member_type.category == "native" and member.default_value is not None:
-            #return f" = {member.default_value}"
-            #logger.debug(self.context.catalog.categories["constant"].entries)
-            #exit()
-            #constant = self.context.catalog.categories["constant"].entries[member.default_value]
             constant = None
             if isinstance(member.default_value, str):
                 constant = self.context.catalog.categories["constant"].find_entry(Name.intern(member.default_value))
@@ -235,73 +175,6 @@ class Renderer(Generic[T_Node]):
                 return " = {}"
         return ""
 
-    """
-{% macro wgpu_string_members(CppType) %}
-    inline constexpr {{CppType}}() noexcept = default;
-
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-    inline constexpr {{CppType}}(const std::string_view& sv) noexcept {
-        this->data = sv.data();
-        this->length = sv.length();
-    }
-
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-    inline constexpr {{CppType}}(const char* s) {
-        this->data = s;
-        this->length = WGPU_STRLEN;  // use strlen
-    }
-
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-    inline constexpr {{CppType}}(WGPUStringView s) {
-        this->data = s.data;
-        this->length = s.length;
-    }
-
-    inline constexpr {{CppType}}(const char* data, size_t length) {
-        this->data = data;
-        this->length = length;
-    }
-
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-    inline constexpr {{CppType}}(std::nullptr_t) {
-        this->data = nullptr;
-        this->length = WGPU_STRLEN;
-    }
-
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-    inline constexpr {{CppType}}(std::nullopt_t) {
-        this->data = nullptr;
-        this->length = WGPU_STRLEN;
-    }
-
-    bool IsUndefined() const {
-        return this->data == nullptr && this->length == pywgpu::kStrlen;
-    }
-
-    // NOLINTNEXTLINE(runtime/explicit) allow implicit conversion
-    operator std::string_view() const {
-        if (this->length == pywgpu::kStrlen) {
-            if (IsUndefined()) {
-                return {};
-            }
-            return {this->data};
-        }
-        return {this->data, this->length};
-    }
-
-    template <typename View,
-              typename = std::enable_if_t<std::is_constructible_v<View, const char*, size_t>>>
-    explicit operator View() const {
-        if (this->length == pywgpu::kStrlen) {
-            if (IsUndefined()) {
-                return {};
-            }
-            return {this->data};
-        }
-        return {this->data, this->length};
-    }
-{% endmacro %}
-    """
 
     @staticmethod
     def wgpu_string_members(CppType: Node):
@@ -417,45 +290,6 @@ class Renderer(Generic[T_Node]):
         '''
         return result
 
-    """
-    @staticmethod
-    def wgpu_string_constructors(CppType: Node, is_nullable: bool):
-        result = f'''\
-        inline constexpr StringView() noexcept = default;
-        
-        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-        inline constexpr {CppType}(const std::string_view& sv) noexcept {{
-            this->data = sv.data();
-            this->length = sv.length();
-        }}
-        // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-        inline constexpr {CppType}(const char* s) {{
-            this->data = s;
-            this->length = SIZE_MAX;  // use strlen
-        }}
-        inline constexpr {CppType}(const char* data, size_t length) {{
-            this->data = data;
-            this->length = length;
-        }}
-        '''
-
-        if is_nullable:
-            result += f'''\
-            inline constexpr {CppType}() noexcept = default;
-
-            // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-            inline constexpr {CppType}(std::nullptr_t) {{
-                this->data = nullptr;
-                this->length = SIZE_MAX;
-            }}
-            // NOLINTNEXTLINE(runtime/explicit) allow implicit construction
-            inline constexpr {CppType}(std::nullopt_t) {{
-                this->data = nullptr;
-                this->length = SIZE_MAX;
-            }}
-        '''
-        return result
-    """
 
 class NullRenderer(Renderer[Node]):
     def render(self):

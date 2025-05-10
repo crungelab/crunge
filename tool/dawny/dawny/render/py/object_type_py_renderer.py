@@ -6,10 +6,6 @@ class ObjectTypePyRenderer(ObjectTypeRenderer):
         if method.name.get() == "wait any":
             return True
 
-        '''
-        if method.name.get() == "request adapter":
-            return True
-        '''
         return super().exclude_method(method)
 
     def render(self):

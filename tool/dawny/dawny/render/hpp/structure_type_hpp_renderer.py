@@ -46,7 +46,6 @@ class StructureTypeHppRenderer(StructureTypeRenderer):
             {struct_name}& operator=({struct_name}&&);
             """)
 
-        #self.out(f"operator const WGPU{struct_name}&() const noexcept;")
         self.out(f"operator const {self.as_cType(node.name)}&() const noexcept;")
 
         #if node.extensible and node.extensible == "in":

@@ -1,5 +1,4 @@
 from typing import TYPE_CHECKING
-from typing import List
 
 if TYPE_CHECKING:
     from ...backend import Backend
@@ -12,7 +11,6 @@ class CppGenerator(Generator):
     def __init__(self, backend: "Backend") -> None:
         context = CppRenderContext(backend.program.root, backend.jinja_env)
         super().__init__(context, backend)
-        #self.context = CppRenderContext()
     
     def render(self):
         self.render_structure_types()

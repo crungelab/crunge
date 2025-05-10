@@ -14,6 +14,4 @@ class EnumTypePyRenderer(EnumTypeRenderer):
                 py_value_name = self.as_pyEnum(value.name)
                 self.out << f".value(\"{py_value_name}\", {enum_name}::{value_name})" << "\n"
 
-
-        #self.out << ".export_values();\n\n"
         self.out << ";\n\n"

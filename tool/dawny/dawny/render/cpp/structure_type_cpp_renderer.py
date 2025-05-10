@@ -44,7 +44,6 @@ class StructureTypeCppRenderer(StructureTypeRenderer):
                 if self.exclude_member(member):
                     continue
                 '''
-                #member_declaration = self.as_annotated_cppType(member, node.has_free_members_function)  + self.render_cpp_default_value(member, True, node.has_free_members_function)
                 member_declaration = self.as_annotated_cppMember(member, node.has_free_members_function)  + self.render_cpp_default_value(member, True, node.has_free_members_function)
                 self.out(f"{member_declaration};")
             self.out.dedent()

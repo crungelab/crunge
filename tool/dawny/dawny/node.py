@@ -7,9 +7,6 @@ from .name import Name
 class Node(BaseModel):
     tags: Optional[List[str]] = None
     _comment: Optional[str] = None
-
-    #model_config = ConfigDict(arbitrary_types_allowed = True, strict=True, populate_by_name=True)
-    #model_config = ConfigDict(arbitrary_types_allowed = True, populate_by_name=True)
     model_config = ConfigDict(arbitrary_types_allowed = True)
 
 
@@ -19,9 +16,7 @@ class RecordMember(Node):
     annotation: Optional[str] = None
     optional: Optional[bool] = False
     no_default: Optional[bool] = False
-    #default_value: Optional[str] = Field(alias="default", default=None)
     default_value: Union[str, int] = Field(alias="default", default=None)
-    #default_val: Optional[str] = Field(default=None, alias="default")
     length: Optional[Union[str, int]] = None
 
 
@@ -74,10 +69,8 @@ class ObjectType(Entry):
 class StructureBase(Entry):
     members: List[RecordMember]
 
-#class StructureType(Entry):
 class StructureType(StructureBase):
     category: Literal["structure"]
-    #members: List[RecordMember]
     extensible: Optional[Union[str, bool]] = None
     chained: Optional[str] = None
     chain_roots: Optional[List[str]] = Field(alias="chain roots", default=None)
@@ -155,14 +148,8 @@ class StructureType(StructureBase):
         return False
 
 
-#class CallbackInfoType(StructureType):
 class CallbackInfoType(StructureBase):
     category: Literal["callback info"]
-    '''
-    category: Literal["callback info"] = Field(
-        default="callback info", alias="callback info"
-    )
-    '''
 
 
 class NativeType(Entry):
@@ -172,22 +159,12 @@ class NativeType(Entry):
 
 class FunctionPointerType(Entry):
     category: Literal["function pointer"]
-    '''
-    category: Literal["function pointer"] = Field(
-        default="function pointer", alias="function pointer"
-    )
-    '''
     returns: Optional[str] = None
     args: Optional[List[RecordMember]] = None
 
 
 class CallbackFunctionType(Entry):
     category: Literal["callback function"]
-    '''
-    category: Literal["callback function"] = Field(
-        default="callback function", alias="callback function"
-    )
-    '''
     args: Optional[List[RecordMember]] = None
 
 
@@ -220,20 +197,6 @@ TypeUnion = Annotated[
     ],
     Field(discriminator="category")
 ]
-'''
-TypeUnion = Union[
-    ObjectType,
-    EnumType,
-    BitmaskType,
-    StructureType,
-    NativeType,
-    FunctionPointerType,
-    ConstantDefinition,
-    FunctionDeclaration,
-    CallbackInfoType,
-    CallbackFunctionType,
-]
-'''
 
 class Category:
     NATIVE = "native"
@@ -277,7 +240,6 @@ class Catalog:
 
 
 class Root(RootModel):
-    #root: Dict[str, TypeUnion]
     root: Dict[str, TypeUnion] = Field(default_factory=dict)
 
     model_config = ConfigDict(populate_by_name=True)
@@ -333,11 +295,6 @@ class Root(RootModel):
 
     def __delitem__(self, key):
         del self.root[key]
-
-    """
-    def __iter__(self):
-        return iter(self.root)
-    """
 
     def __len__(self):
         return len(self.root)

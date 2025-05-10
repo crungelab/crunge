@@ -124,21 +124,9 @@ class StructureTypePyRenderer(StructureTypeRenderer):
 
             stripped_cppType = cppType.replace("const ", "").replace(" *", "")
 
-            '''
-            unconst_cppType = cppType.replace("const ", "")
-            print(f"stripped_cppType: {stripped_cppType}")
-            if stripped_cppType == "char":
-                self.out << f'auto {member_name} = kwargs["{member_name}"].cast<std::string>();' << "\n"
-                self.out << f'obj.{member_cpp_name} = strdup({member_name}.c_str());' << "\n"
-            else:
-                self.out << f'auto value = kwargs["{member_name}"].cast<{unconst_cppType}>();' << "\n"
-                self.out << f'obj.{member_cpp_name} = value;' << "\n"
-            '''
-
             if member.length:
                 stripped_cppType = cppType.replace("const ", "").replace(" *", "")
                 #print(f"stripped_cppType: {stripped_cppType}")
-                #stripped_cppType = cppType.replace(" *", "")
                 if stripped_cppType == "char":
                     self.out << f'auto value = kwargs["{member_name}"].cast<std::string>();' << "\n"
                     self.out << f'obj.{member_cpp_name} = strdup(value.c_str());' << "\n"

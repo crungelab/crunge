@@ -21,10 +21,6 @@ def filter_dawn_data(data: dict) -> dict:
         and k not in ["_comment", "_doc", "_metadata"]
     }
 
-def rename_keys(data: dict) -> dict:
-    """Rename keys in the data. Replace spaces with underscores"""
-    #return {k: v for k, v in data.items()}
-    return {k.replace(" ", "_"): v for k, v in data.items()}
 
 class Frontend(Processor):
     def __init__(self, program: "Program") -> None:
@@ -39,7 +35,6 @@ class Frontend(Processor):
 
             # Filter the data before parsing
             filtered_data = filter_dawn_data(dawn_data)
-            #filtered_data = rename_keys(filtered_data)
             #print(filtered_data["buffer"])
             '''
             for k, v in filtered_data.items():

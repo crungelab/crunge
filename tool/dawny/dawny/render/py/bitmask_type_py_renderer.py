@@ -7,24 +7,12 @@ class BitmaskTypePyRenderer(BitmaskTypeRenderer):
 
         self.out << f"py::enum_<{enum_name}>(m, \"{enum_name}\", py::arithmetic())" << "\n"
 
-        '''
-        PYEXTEND_SCOPED_ENUM_BEGIN(pywgpu::TextureUsage, TextureUsage)
-            //TextureUsage.def(py::self | py::self); //Doesn't work
-            TextureUsage.def("__or__", [](pywgpu::TextureUsage& a, pywgpu::TextureUsage& b) {
-            return (pywgpu::TextureUsage)(a | b);
-                }, py::is_operator());
-        PYEXTEND_END
-        '''
         self.out.indent()
 
         for value in self.node.values:
             value_name = self.as_cppEnum(value.name)
             py_value_name = self.as_pyEnum(value.name)
-            #self.out << f"{value_name} = WGPU{enum_name}_{suffix}," << "\n"
             self.out << f".value(\"{py_value_name}\", {enum_name}::{value_name})" << "\n"
-
-
-        #self.out << ".export_values()"
 
         self.out(f"""
         .def("__or__", [](pywgpu::{enum_name}& a, pywgpu::{enum_name}& b) {{

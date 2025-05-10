@@ -11,9 +11,7 @@ from dawny.render.render_context import RenderContext
 from ..node import Node
 from .renderer import Renderer
 
-#SpecialStructures = ["device descriptor"]
 SpecialStructures = ["chained struct", "chained struct out"]
-#SpecialStructures = ["chained struct", "chained struct out", "string view", "nullable string view"]
 SpecialFunctions = ["get proc address", "get proc address 2"]
 SpecialEnums = ["optional bool"]
 
@@ -28,7 +26,6 @@ class Generator(Renderer):
     
     def render(self):
         pass
-
 
     def exclude_enum_type(self, enum_type):
         if enum_type.name.get() in SpecialEnums:

@@ -22,50 +22,11 @@ class HppGenerator(Generator):
         super().__init__(context, backend)
 
     def render(self):
-        # using declarations
-        '''
-        self.out << """
-using BufferMapCallback = WGPUBufferMapCallback;
-using Callback = WGPUCallback;
-using CompilationInfoCallback = WGPUCompilationInfoCallback;
-using CreateComputePipelineAsyncCallback = WGPUCreateComputePipelineAsyncCallback;
-using CreateRenderPipelineAsyncCallback = WGPUCreateRenderPipelineAsyncCallback;
-using DawnLoadCacheDataFunction = WGPUDawnLoadCacheDataFunction;
-using DawnStoreCacheDataFunction = WGPUDawnStoreCacheDataFunction;
-using DeviceLostCallback = WGPUDeviceLostCallback;
-using DeviceLostCallbackNew = WGPUDeviceLostCallbackNew;
-using ErrorCallback = WGPUErrorCallback;
-using LoggingCallback = WGPULoggingCallback;
-using PopErrorScopeCallback = WGPUPopErrorScopeCallback;
-using Proc = WGPUProc;
-using QueueWorkDoneCallback = WGPUQueueWorkDoneCallback;
-using RequestAdapterCallback = WGPURequestAdapterCallback;
-using RequestDeviceCallback = WGPURequestDeviceCallback;
-
-using UncapturedErrorCallback = WGPUUncapturedErrorCallback;
-using DeviceLostCallback2 = WGPUDeviceLostCallback2;
-using RequestDeviceCallback2 = WGPURequestDeviceCallback2;
-using QueueWorkDoneCallback2 = WGPUQueueWorkDoneCallback2;
-using PopErrorScopeCallback2 = WGPUPopErrorScopeCallback2;
-using CreateRenderPipelineAsyncCallback2 = WGPUCreateRenderPipelineAsyncCallback2;
-using CreateComputePipelineAsyncCallback2 = WGPUCreateComputePipelineAsyncCallback2;
-using CompilationInfoCallback2 = WGPUCompilationInfoCallback2;
-using BufferMapCallback2 = WGPUBufferMapCallback2;
-using RequestAdapterCallback2 = WGPURequestAdapterCallback2;
-""" << "\n"
-        '''
-
-        '''
-        using {{as_cppType(type.name)}} = {{as_cType(type.name)}};
-        '''
-        
         for node in self.backend.function_pointer_types:
-            #self.out << f"using {node.name.CamelCase()} = {self.as_cppType(node.name)};" << "\n"
             self.out << f"using {self.as_cppType(node.name)} = {self.as_cType(node.name)};" << "\n"
         self.out << "\n"
 
         for node in self.backend.callback_info_types:
-            #self.out << f"using {node.name.CamelCase()} = {self.as_cppType(node.name)};" << "\n"
             self.out << f"using {self.as_cppType(node.name)} = {self.as_cType(node.name)};" << "\n"
         self.out << "\n"
 
@@ -77,10 +38,6 @@ using RequestAdapterCallback2 = WGPURequestAdapterCallback2;
 
         self.out << "\n"
 
-        # calback templates
-        #cb_template = self.context.jinja_env.get_template('_callback.h.j2')
-        #self.out << cb_template.render() << "\n" << "\n"
-
         for node in self.backend.object_types:
             self.out << f"class {node.name.CamelCase()};" << "\n"
 
@@ -90,12 +47,6 @@ using RequestAdapterCallback2 = WGPURequestAdapterCallback2;
         self.render_enum_types()
         self.render_bitmask_types()
 
-        # calback templates
-        #cb_template = self.context.jinja_env.get_template('_callback.h.j2')
-        #self.out << cb_template.render() << "\n" << "\n"
-
-        #self.render_structure_types()
-        #self.render_object_types()
         custom_template = self.context.jinja_env.get_template('_custom.h.j2')
         self.out << custom_template.render() << "\n" << "\n"
 
@@ -104,18 +55,6 @@ using RequestAdapterCallback2 = WGPURequestAdapterCallback2;
         self.render_function_declarations()
 
         super().render()
-
-    '''
-    {% for constant in by_category["constant"] %}
-        {% set type = as_cppType(constant.type.name) %}
-        {% if constant.cpp_value %}
-            static constexpr {{type}} k{{constant.name.CamelCase()}} = {{ constant.cpp_value }};
-        {% else %}
-            {% set value = c_prefix + "_" +  constant.name.SNAKE_CASE() %}
-            static constexpr {{type}} k{{constant.name.CamelCase()}} = {{ value }};
-        {% endif %}
-    {% endfor %}
-    '''
 
     def render_constant_definitions(self):
         for constant in self.backend.constant_definitions:

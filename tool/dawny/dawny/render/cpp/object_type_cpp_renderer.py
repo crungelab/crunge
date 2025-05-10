@@ -11,10 +11,7 @@ class ObjectTypeCppRenderer(ObjectTypeRenderer):
                 continue
 
             method_name = method.name.CamelCase()
-            #return_type = method.returns
-            #print(method.returns)
-            #TODO: skip async methods for now
-            # skip methods with empty tags
+
             if method.returns:
                 return_type = self.context.root[method.returns]
             else:
@@ -29,13 +26,6 @@ class ObjectTypeCppRenderer(ObjectTypeRenderer):
 
             arg_list = []
             call_arg_list = []
-
-            '''
-            Device Adapter::CreateDevice(DeviceDescriptor const * descriptor) const {
-                auto result = wgpuAdapterCreateDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const * >(descriptor));
-                return Device::Acquire(result);
-            }
-            '''
 
             for arg in args:
                 arg_type = self.context.root[arg.type]
@@ -64,7 +54,6 @@ class ObjectTypeCppRenderer(ObjectTypeRenderer):
                     call_arg_list.append(f"*reinterpret_cast<{self.as_cType(arg_type.name)}{arg_annotation_str}>({arg_name})")
                 elif isinstance(arg_type, StructureType):
                     call_arg_list.append(f"reinterpret_cast<{self.as_cType(arg_type.name)}{arg_annotation_str}>({arg_name})")
-                    #call_arg_list.append(f"*reinterpret_cast<{self.as_cType(arg_type.name)} const*>(&{arg_name})")
                 elif isinstance(arg_type, ObjectType):
                     if arg.annotation:
                         call_arg_list.append(f"reinterpret_cast<{self.as_cType(arg_type.name)}{arg_annotation_str}>({arg_name})")
