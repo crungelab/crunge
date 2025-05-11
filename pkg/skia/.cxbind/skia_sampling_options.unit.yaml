@@ -1,7 +1,2 @@
 source: '../../depot/skia/include/core/SkSamplingOptions.h'
 target: 'src/skia_sampling_options_py_auto.cpp'
-
-#nodes:
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

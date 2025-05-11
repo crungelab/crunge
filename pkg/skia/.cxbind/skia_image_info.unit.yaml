@@ -1,7 +1,2 @@
 source: '../../depot/skia/include/core/SkImageInfo.h'
 target: 'src/skia_image_info_py_auto.cpp'
-
-#nodes:
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

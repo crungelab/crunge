@@ -1,24 +1,23 @@
 source: '../../depot/skia/include/core/SkImage.h'
 target: 'src/skia_image_py_auto.cpp'
 
-nodes:
-  'class.SkImage':
+specs:
+  'class/SkImage':
     holder: sk_sp
   # Wrapped
   # Internal / Ignored
   # Ganesh related
-  'method.SkImage::isValid' : { exclude: true }
-  'method.SkImage::makeNonTextureImage' : { exclude: true }
+  'method/SkImage::isValid' : { exclude: true }
+  'method/SkImage::makeNonTextureImage' : { exclude: true }
 
-  'method.SkImage::readPixels.bool (GrDirectContext *, const SkImageInfo &, void *, size_t, int, int, CachingHint) const' : { exclude: true }
-  'method.SkImage::readPixels.bool (GrDirectContext *, const SkPixmap &, int, int, CachingHint) const' : { exclude: true }
-  'method.SkImage::makeSubset.sk_sp<SkImage> (GrDirectContext *, const SkIRect &) const' : { exclude: true }
-  #'method.SkImage::readPixels' : { exclude: true } # Still working on overload resolution in cxbind
+  'method/SkImage::readPixels/bool (GrDirectContext *, const SkImageInfo &, void *, size_t, int, int, CachingHint) const' : { exclude: true }
+  'method/SkImage::readPixels/bool (GrDirectContext *, const SkPixmap &, int, int, CachingHint) const' : { exclude: true }
+  'method/SkImage::makeSubset/sk_sp<SkImage> (GrDirectContext *, const SkIRect &) const' : { exclude: true }
 
-  'method.SkImage::makeRasterImage.sk_sp<SkImage> (GrDirectContext *, CachingHint) const' : { exclude: true }
-  'method.SkImage::makeColorTypeAndColorSpace.sk_sp<SkImage> (GrDirectContext *, SkColorType, sk_sp<SkColorSpace>) const' : { exclude: true }
-  'method.SkImage::makeColorSpace.sk_sp<SkImage> (GrDirectContext *, sk_sp<SkColorSpace>) const' : { exclude: true }
+  'method/SkImage::makeRasterImage/sk_sp<SkImage> (GrDirectContext *, CachingHint) const' : { exclude: true }
+  'method/SkImage::makeColorTypeAndColorSpace/sk_sp<SkImage> (GrDirectContext *, SkColorType, sk_sp<SkColorSpace>) const' : { exclude: true }
+  'method/SkImage::makeColorSpace/sk_sp<SkImage> (GrDirectContext *, sk_sp<SkColorSpace>) const' : { exclude: true }
 
-  'function.SkImages::DeferredFromGenerator' : { exclude: true } #pybind11 doesn't like std::unique_ptr as paramater
+  'function/SkImages::DeferredFromGenerator' : { exclude: true } #pybind11 doesn't like std::unique_ptr as parameter
   
   # Overloads

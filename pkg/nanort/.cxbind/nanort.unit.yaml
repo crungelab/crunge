@@ -1,13 +1,13 @@
 source: '../../depot/nanort/nanort.h'
 target: 'src/nanort_py_auto.cpp'
 
-nodes:
-  'class_template.nanort::BVHAccel':
+specs:
+  'class_template/nanort::BVHAccel':
     specializations:
       - name: BVHAccelF
         args: [float]
 
-  'class_template.nanort::Ray':
+  'class_template/nanort::Ray':
     specializations:
       - name: RayF
         args: [float]

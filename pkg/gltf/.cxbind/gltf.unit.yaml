@@ -1,22 +1,22 @@
 source: '../../depot/gltf/tiny_gltf.h'
 target: 'src/gltf_py_auto.cpp'
 
-nodes:
+specs:
   # Wrapped
   # These write to err and warn.  Not good
-  'function.tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
+  'function/tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
 
   # Internal / Ignored
 
-  'struct.tinygltf::FsCallbacks': {exclude: true}
-  'struct.tinygltf::URICallbacks': {exclude: true}
+  'struct/tinygltf::FsCallbacks': {exclude: true}
+  'struct/tinygltf::URICallbacks': {exclude: true}
   #'class.tinygltf::Value': {exclude: true}
-  'function.tinygltf::Value::Get': {exclude: true}
+  'method/tinygltf::Value::Get': {exclude: true}
 
   # Not sure why it's choking on the last void*
-  'function.tinygltf::GetFileSizeInBytes': {exclude: true}
+  'function/tinygltf::GetFileSizeInBytes': {exclude: true}
   # std::ostream& ??
-  'function.tinygltf::TinyGLTF::WriteGltfSceneToStream': {exclude: true}
+  'method/tinygltf::TinyGLTF::WriteGltfSceneToStream': {exclude: true}
 
 
   # Overloads

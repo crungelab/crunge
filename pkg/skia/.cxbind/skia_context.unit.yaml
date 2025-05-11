@@ -1,9 +1,2 @@
 source: '../../depot/skia/include/gpu/graphite/Context.h'
 target: 'src/skia_context_py_auto.cpp'
-
-#nodes:
-  # Wrapped
-
-  # Internal / Ignored
-
-  # Overloads

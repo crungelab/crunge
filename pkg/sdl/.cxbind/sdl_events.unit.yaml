@@ -1,27 +1,18 @@
 source: '../../depot/sdl/include/SDL3/SDL_events.h'
 target: 'src/sdl_events_py_auto.cpp'
 
-#module: _sdl
-
-#flags: [
-#  '-x', 'c++',
-#  '-std=c++17',
-#  '-I../../depot/sdl/include',
-#]
-
-#prefixes: [SDL_EVENT_, SDL_]
 prefixes: [SDL_EVENT_]
 
-nodes:
+specs:
 
   # Wrapped
-  'function.SDL_PollEvent': {exclude: true}
+  'function/SDL_PollEvent': {exclude: true}
 
   # Internal / Ignored
-  'function.SDL_GetEventFilter': {exclude: true}
+  'function/SDL_GetEventFilter': {exclude: true}
 
-  'field.SDL_TextEditingCandidatesEvent::candidates': {exclude: true}
+  'field/SDL_TextEditingCandidatesEvent::candidates': {exclude: true}
 
-  'function.SDL_GetWindowFromEvent': {exclude: true}
+  'function/SDL_GetWindowFromEvent': {exclude: true}
 
   # Overloads

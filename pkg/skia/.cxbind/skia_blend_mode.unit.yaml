@@ -1,7 +1,2 @@
 source: '../../depot/skia/include/core/SkBlendMode.h'
 target: 'src/skia_blend_mode_py_auto.cpp'
-
-#nodes:
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

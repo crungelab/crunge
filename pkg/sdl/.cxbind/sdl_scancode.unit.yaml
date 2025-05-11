@@ -1,23 +1,4 @@
 source: '../../depot/sdl/include/SDL3/SDL_scancode.h'
 target: 'src/sdl_scancode_py_auto.cpp'
 
-#module: _sdl
-
-#flags: [
-#  '-x', 'c++',
-#  '-std=c++17',
-#  '-I../../depot/sdl/include',
-#]
-
-#prefixes: [SDL_EVENT_, SDL_]
 prefixes: [SDL_EVENT_]
-
-# Wrapped
-
-#TODO: Need to have an include for yaml and merge dictionaries.
-#'struct.SDL_Window':
-#  wrapper: 'SDLWindowWrapper'
-
-# Internal / Ignored
-
-# Overloads

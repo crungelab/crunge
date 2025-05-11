@@ -1,18 +1,18 @@
 source: '../../depot/skia/include/core/SkSurface.h'
 target: 'src/skia_surface_py_auto.cpp'
 
-nodes:
+specs:
   # Wrapped
 
   # Internal / Ignored
 
   # Ganesh related
-  'method.SkSurface::recordingContext': {exclude: true}
-  'method.SkSurface::isCompatible': {exclude: true}
-  'method.SkSurface::characterize': {exclude: true}
-  'method.SkSurface::wait': {exclude: true}
+  'method/SkSurface::recordingContext': {exclude: true}
+  'method/SkSurface::isCompatible': {exclude: true}
+  'method/SkSurface::characterize': {exclude: true}
+  'method/SkSurface::wait': {exclude: true}
   
   # fix cxbind write_pyargs
-  'method.SkSurface::replaceBackendTexture': {exclude: true}
+  'method/SkSurface::replaceBackendTexture': {exclude: true}
 
   # Overloads

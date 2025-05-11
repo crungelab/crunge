@@ -4,8 +4,8 @@ target: 'src/skia_text_blob_py_auto.cpp'
 defaults:
   encoding: SkTextEncoding::kUTF8
 
-nodes:
-  'class.SkTextBlob':
+specs:
+  'class/SkTextBlob':
     holder: sk_sp
   # Wrapped
   # Internal / Ignored

@@ -4,21 +4,17 @@ target: 'src/skia_canvas_py_auto.cpp'
 defaults:
   encoding: SkTextEncoding::kUTF8
 
-nodes:
+specs:
   # Wrapped
 
   # Internal / Ignored
-  'ctor.SkCanvas::SkCanvas.void (sk_sp<SkDevice>)': {exclude: true}
+  'ctor/SkCanvas::SkCanvas/void (sk_sp<SkDevice>)': {exclude: true}
 
-  #'ctor.SkCanvas::SkCanvas':
-  #  overloads:
-  #    'void sk_sp<SkDevice>': {exclude: true}
-
-  'method.SkCanvas::recordingContext': {exclude: true}
-  'method.SkCanvas::experimental_DrawEdgeAAQuad': {exclude: true}
-  'method.SkCanvas::experimental_DrawEdgeAAImageSet': {exclude: true}
-  'method.SkCanvas::drawPatch': {exclude: true}
-  'method.SkCanvas::MakeRasterDirect': {exclude: true}
-  'method.SkCanvas::MakeRasterDirectN32': {exclude: true}
+  'method/SkCanvas::recordingContext': {exclude: true}
+  'method/SkCanvas::experimental_DrawEdgeAAQuad': {exclude: true}
+  'method/SkCanvas::experimental_DrawEdgeAAImageSet': {exclude: true}
+  'method/SkCanvas::drawPatch': {exclude: true}
+  'method/SkCanvas::MakeRasterDirect': {exclude: true}
+  'method/SkCanvas::MakeRasterDirectN32': {exclude: true}
   
   # Overloads

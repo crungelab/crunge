@@ -2,11 +2,11 @@ source: '../../depot/skia/include/effects/SkGradientShader.h'
 target: 'src/effects/skia_gradient_shader_py_auto.cpp'
 template: 'effects/skia_gradient_shader.cpp'
 
-nodes:
+specs:
   # Wrapped
-  'method.SkGradientShader::MakeLinear': {exclude: true}
-  'method.SkGradientShader::MakeRadial': {exclude: true}
-  'method.SkGradientShader::MakeTwoPointConical': {exclude: true}
-  'method.SkGradientShader::MakeSweep': {exclude: true}
+  'method/SkGradientShader::MakeLinear': {exclude: true}
+  'method/SkGradientShader::MakeRadial': {exclude: true}
+  'method/SkGradientShader::MakeTwoPointConical': {exclude: true}
+  'method/SkGradientShader::MakeSweep': {exclude: true}
   # Internal / Ignored
   # Overloads

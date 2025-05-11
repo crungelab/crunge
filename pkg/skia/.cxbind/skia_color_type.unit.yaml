@@ -1,7 +1,2 @@
 source: '../../depot/skia/include/core/SkColorType.h'
 target: 'src/skia_color_type_py_auto.cpp'
-
-#nodes:
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

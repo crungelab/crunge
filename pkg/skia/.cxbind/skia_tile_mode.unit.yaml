@@ -1,7 +1,2 @@
 source: '../../depot/skia/include/core/SkTileMode.h'
 target: 'src/skia_tile_mode_py_auto.cpp'
-
-#nodes:
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

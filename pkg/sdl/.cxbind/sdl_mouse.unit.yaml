@@ -1,27 +1,8 @@
 source: '../../depot/sdl/include/SDL3/SDL_mouse.h'
 target: 'src/sdl_mouse_py_auto.cpp'
 
-#module: _sdl
-
-#flags: [
-#  '-x', 'c++',
-#  '-std=c++17',
-#  '-I../../depot/sdl/include',
-#]
-
-#prefixes: [SDL_EVENT_, SDL_]
 prefixes: [SDL_EVENT_]
 
-# Wrapped
-
-#TODO: Need to have an include for yaml and merge dictionaries.
-#'struct.SDL_Window':
-#  wrapper: 'SDLWindowWrapper'
-
-nodes:
-  'struct.SDL_Cursor':
+specs:
+  'struct/SDL_Cursor':
     wrapper: 'SDLCursorWrapper'
-
-# Internal / Ignored
-
-# Overloads

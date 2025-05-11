@@ -1,7 +1,2 @@
 source: '../../depot/skia/include/core/SkFontTypes.h'
 target: 'src/skia_font_types_py_auto.cpp'
-
-#nodes:
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

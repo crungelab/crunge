@@ -1,12 +1,12 @@
 source: '../../depot/skia/include/core/SkImageFilter.h'
 target: 'src/skia_image_filter_py_auto.cpp'
 
-nodes:
-  'class.SkImageFilter':
+specs:
+  'class/SkImageFilter':
     holder: sk_sp
   # Wrapped
   # Internal / Ignored
-  'method.SkImageFilter::isColorFilterNode': {exclude: true}
-  'method.SkImageFilter::asColorFilter': {exclude: true}
-  'method.SkImageFilter::asAColorFilter': {exclude: true}
+  'method/SkImageFilter::isColorFilterNode': {exclude: true}
+  'method/SkImageFilter::asColorFilter': {exclude: true}
+  'method/SkImageFilter::asAColorFilter': {exclude: true}
   # Overloads

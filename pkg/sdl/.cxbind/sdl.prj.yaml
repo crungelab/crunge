@@ -17,6 +17,6 @@ unit_files:
   - path: sdl_scancode.unit.yaml
   - path: sdl_video.unit.yaml
 
-nodes:
-  'struct.SDL_Window':
+specs:
+  'struct/SDL_Window':
     wrapper: 'SDLWindowWrapper'
