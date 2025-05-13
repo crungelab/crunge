@@ -4,16 +4,16 @@
 
 namespace py = pybind11;
 
-void init_main(py::module &, Registry& registry);
+void init_wgpu_py(py::module &, Registry& registry);
 void init_chained_struct(py::module &, Registry& registry);
-void init_wgpu(py::module &, Registry& registry);
+void init_wgpu_py_auto(py::module &, Registry& registry);
 void init_callbacks(py::module &, Registry& registry);
 
 
 PYBIND11_MODULE(_wgpu, m) {
         Registry r;
-        init_main(m, r);
+        init_wgpu_py(m, r);
         init_chained_struct(m, r);
-        init_wgpu(m, r);
+        init_wgpu_py_auto(m, r);
         init_callbacks(m, r);
 }

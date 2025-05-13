@@ -11,7 +11,7 @@ project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
 find_package(Python COMPONENTS Interpreter Development)
 
-pybind11_add_module(${THIS} SHARED src/init.cpp)
+pybind11_add_module(${THIS} SHARED src/wgpu_py_module.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
@@ -23,7 +23,7 @@ set(SOURCES
     src/chained_struct.cpp
     src/pywgpu.cpp
     src/wgpu_py.cpp
-    src/main.cpp
+    src/wgpu_py_auto.cpp
     src/callbacks.cpp
     src/callbacks_py.cpp
 )

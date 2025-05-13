@@ -6,6 +6,7 @@ from pathlib import Path
 
 from loguru import logger
 import imageio.v3 as iio
+import numpy as np
 
 from crunge.core import as_capsule
 from crunge import wgpu
@@ -125,6 +126,7 @@ class CubeTextureDemo(Demo):
         logger.debug(bytes_per_row)
         rows_per_image = im_height
 
+        '''
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             wgpu.TexelCopyTextureInfo(
@@ -137,6 +139,27 @@ class CubeTextureDemo(Demo):
             utils.as_capsule(im),
             # Data size
             size,
+            # The layout of the texture
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=bytes_per_row,
+                rows_per_image=rows_per_image,
+            ),
+            # The texture size
+            wgpu.Extent3D(im_width, im_height, im_depth),
+        )
+        '''
+
+        self.queue.write_texture_array(
+            # Tells wgpu where to copy the pixel data
+            wgpu.TexelCopyTextureInfo(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
+            im,
             # The layout of the texture
             wgpu.TexelCopyBufferLayout(
                 offset=0,

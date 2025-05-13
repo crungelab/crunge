@@ -1,0 +1,3 @@
+source: '../../depot/skia/third_party/externals/dawn/src/dawn/dawn.json'
+target: 'include/crunge/wgpu/pywgpu.h'
+program: dawn_hpp
