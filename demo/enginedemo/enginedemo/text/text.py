@@ -271,6 +271,20 @@ class TextDemo(Demo):
             wgpu.TexelCopyTextureInfo(
                 texture=self.texture, mip_level=0, origin=wgpu.Origin3D(0, 0, 0)
             ),
+            rgba_data,
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=rgba_data.shape[1] * 4,
+                rows_per_image=rgba_data.shape[0],
+            ),
+            wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
+        )
+
+        '''
+        self.queue.write_texture(
+            wgpu.TexelCopyTextureInfo(
+                texture=self.texture, mip_level=0, origin=wgpu.Origin3D(0, 0, 0)
+            ),
             utils.as_capsule(rgba_data),
             rgba_data.nbytes,
             wgpu.TexelCopyBufferLayout(
@@ -280,6 +294,7 @@ class TextDemo(Demo):
             ),
             wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
         )
+        '''
 
 
     def draw(self, renderer: Renderer):

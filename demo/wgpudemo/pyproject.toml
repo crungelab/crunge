@@ -14,5 +14,5 @@ dependencies = [
     "PyGLM ==2.7.1",
     "trimesh ==4.4.3",
     "imageio ==2.34.2",
-    "imgui-bundle ==1.5.2",
+    "imgui-bundle ==1.6.2",
 ]

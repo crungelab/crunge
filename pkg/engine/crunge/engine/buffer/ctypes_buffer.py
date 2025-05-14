@@ -54,6 +54,14 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
         self.dirty = True
         # self.upload()
         #logger.debug(f"Uploading {self.data} to buffer")
+
+        self.device.queue.write_buffer(
+            self.buffer,
+            index * ctypes.sizeof(self.data_type),
+            value
+        )
+
+        '''
         self.device.queue.write_buffer(
             self.buffer,
             index * ctypes.sizeof(self.data_type),
@@ -61,6 +69,7 @@ class CtypesBuffer(Buffer, Generic[TDataType]):
             as_capsule(value),
             ctypes.sizeof(self.data_type)
         )
+        '''
 
     def __iter__(self) -> Iterator[TDataType]:
         return iter(self.data)

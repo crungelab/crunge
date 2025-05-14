@@ -144,9 +144,17 @@ class Line2D(Vu2D):
         renderer.device.queue.write_buffer(
             self.model_uniform_buffer,
             0,
+            model_uniform
+        )
+
+        '''
+        renderer.device.queue.write_buffer(
+            self.model_uniform_buffer,
+            0,
             as_capsule(model_uniform),
             self.model_uniform_buffer_size,
         )
+        '''
 
         material_uniform = MaterialUniform()
         material_uniform.color = cast_vec4(self.color)
@@ -154,9 +162,17 @@ class Line2D(Vu2D):
         renderer.device.queue.write_buffer(
             self.material_uniform_buffer,
             0,
+            material_uniform
+        )
+
+        '''
+        renderer.device.queue.write_buffer(
+            self.material_uniform_buffer,
+            0,
             as_capsule(material_uniform),
             self.material_uniform_buffer_size,
         )
+        '''
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)

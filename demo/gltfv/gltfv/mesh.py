@@ -81,9 +81,17 @@ class Mesh(Node):
         self.device.queue.write_buffer(
             self.camera_uniform_buffer,
             0,
+            camera_uniform
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.camera_uniform_buffer,
+            0,
             as_capsule(camera_uniform),
             self.camera_uniform_buffer_size,
         )
+        '''
 
         light_uniform = LightUniform()
         
@@ -99,13 +107,20 @@ class Mesh(Node):
         light_uniform.range = 10.0
         light_uniform.intensity = 10.0
 
+        self.device.queue.write_buffer(
+            self.light_uniform_buffer,
+            0,
+            light_uniform
+        )
 
+        '''
         self.device.queue.write_buffer(
             self.light_uniform_buffer,
             0,
             as_capsule(light_uniform),
             self.light_uniform_buffer_size,
         )
+        '''
 
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.bind_group)

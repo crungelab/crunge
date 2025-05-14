@@ -384,9 +384,17 @@ class ParticlesDemo(Demo):
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
+            transform
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
+        '''
         super().frame()
 
     def update(self, delta_time: float):

@@ -89,9 +89,17 @@ class MeshInstance3D(Node3D):
         self.device.queue.write_buffer(
             self.model_uniform_buffer,
             0,
+            model_uniform
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.model_uniform_buffer,
+            0,
             as_capsule(model_uniform),
             self.model_uniform_buffer_size,
         )
+        '''
 
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc

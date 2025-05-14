@@ -210,6 +210,27 @@ class TriangleTextureDemo(Demo):
                 aspect=wgpu.TextureAspect.ALL,
             ),
             # The actual pixel data
+            data,
+            # The layout of the texture
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=4 * 1024,
+                rows_per_image=1024,
+            ),
+            # The texture size
+            wgpu.Extent3D(1024, 1024, 1),
+        )
+
+        '''
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.TexelCopyTextureInfo(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
             utils.as_capsule(data),
             # Data size
             data.size,
@@ -222,6 +243,7 @@ class TriangleTextureDemo(Demo):
             # The texture size
             wgpu.Extent3D(1024, 1024, 1),
         )
+        '''
 
     def render(self, view: wgpu.TextureView):
         color_attachments = [

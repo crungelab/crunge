@@ -62,9 +62,17 @@ class Light3D(Node3D):
         self.device.queue.write_buffer(
             self.uniform_buffer,
             0,
+            light_uniform
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.uniform_buffer,
+            0,
             as_capsule(light_uniform),
             self.uniform_buffer_size,
         )
+        '''
 
 class OmniLight3D(Light3D):
     pass

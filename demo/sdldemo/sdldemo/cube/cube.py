@@ -218,12 +218,21 @@ class CubeDemo(Demo):
 
     def frame(self):
         transform = self.transform_matrix
+
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            transform
+        )
+
+        '''
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
+        '''
 
         backbuffer: wgpu.TextureView = self.get_surface_view()
         backbuffer.set_label("Back Buffer Texture View")

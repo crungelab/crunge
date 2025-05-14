@@ -212,11 +212,21 @@ class CubeDemo(Demo):
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
+            transform
+        )
+        super().frame()
+
+    '''
+    def frame(self):
+        transform = self.transform_matrix
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
         super().frame()
-
+    '''
 
 def main():
     CubeDemo().create().run()

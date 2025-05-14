@@ -257,6 +257,27 @@ class CubeTextureDemo(Demo):
                 aspect=wgpu.TextureAspect.ALL,
             ),
             # The actual pixel data
+            im,
+            # The layout of the texture
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=bytes_per_row,
+                rows_per_image=rows_per_image,
+            ),
+            # The texture size
+            wgpu.Extent3D(im_width, im_height, im_depth),
+        )
+
+        '''
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.TexelCopyTextureInfo(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
             utils.as_capsule(im),
             # Data size
             size,
@@ -269,6 +290,7 @@ class CubeTextureDemo(Demo):
             # The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
+        '''
 
     def draw(self, renderer: Renderer):
         color_attachments = [
@@ -312,11 +334,21 @@ class CubeTextureDemo(Demo):
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
+            transform
+        )
+        super().frame()
+
+    '''
+    def frame(self):
+        transform = self.transform_matrix
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
         super().frame()
-
+    '''
 
 def main():
     CubeTextureDemo().create().run()

@@ -45,6 +45,14 @@ class AmbientLight(Base):
         self.device.queue.write_buffer(
             self.uniform_buffer,
             0,
+            uniform
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.uniform_buffer,
+            0,
             as_capsule(uniform),
             self.uniform_buffer_size,
         )
+        '''

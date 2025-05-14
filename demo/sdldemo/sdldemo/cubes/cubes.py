@@ -306,16 +306,21 @@ class CubesDemo(Demo):
 
     def frame(self):
         self.update_transformation_matrices()
-        # for i in range(len(self.mvp_matrices)):
-        #    self.mvp_matrices[i] = self.transform_matrix
-        # print(self.mvp_matrices)
-        # exit()
+
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            self.mvp_matrices
+        )
+
+        '''
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
             as_capsule(self.mvp_matrices.ptr),
             self.uniformBufferSize,
         )
+        '''
 
         backbufferView: wgpu.TextureView = self.get_surface_view()
         backbufferView.set_label("Back Buffer Texture View")

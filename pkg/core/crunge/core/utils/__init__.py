@@ -43,3 +43,8 @@ def from_capsule(capsule):
     ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
     ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [ctypes.py_object, ctypes.c_char_p]
     return ctypes.pythonapi.PyCapsule_GetPointer(capsule, None)
+
+def pointer_to_memoryview(address: int, size_in_bytes: int) -> memoryview:
+    ArrayType = ctypes.c_uint8 * size_in_bytes
+    array = ArrayType.from_address(address)
+    return memoryview(array)

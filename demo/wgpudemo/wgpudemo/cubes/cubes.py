@@ -286,11 +286,21 @@ class CubesDemo(Demo):
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
+            self.mvp_matrices
+        )
+        super().frame()
+
+    '''
+    def frame(self):
+        self.update_transformation_matrices()
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
             as_capsule(self.mvp_matrices.ptr),
             self.uniformBufferSize,
         )
         super().frame()
-
+    '''
 
 def main():
     CubesDemo().run()

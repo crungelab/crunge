@@ -260,6 +260,27 @@ class WImGuiDemo(Demo):
                 aspect=wgpu.TextureAspect.ALL,
             ),
             # The actual pixel data
+            pixels,
+            # The layout of the texture
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=width * bpp,
+                rows_per_image=height,
+            ),
+            # The texture size
+            wgpu.Extent3D(width, height, 1),
+        )
+
+        '''
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.TexelCopyTextureInfo(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
             utils.as_capsule(pixels),
             # Data size
             # width * height * bpp,
@@ -273,6 +294,7 @@ class WImGuiDemo(Demo):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
+        '''
 
         # io.fonts.set_tex_id(id(self.texture_view))
         # io.fonts.clear_tex_data()
@@ -435,19 +457,17 @@ class WImGuiDemo(Demo):
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
-                # utils.divround_up(vtx_offset * imgui.VERTEX_SIZE, 4),
                 vtx_offset * imgui.VERTEX_SIZE,
                 commands.vtx_buffer_data,
-                commands.vtx_buffer_size * imgui.VERTEX_SIZE,
+                #commands.vtx_buffer_size * imgui.VERTEX_SIZE,
             )
             # logger.debug('write index_buffer')
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
-                # utils.divround_up(idx_offset * imgui.INDEX_SIZE, 4),
                 idx_offset * imgui.INDEX_SIZE,
                 commands.idx_buffer_data,
-                commands.idx_buffer_size * imgui.INDEX_SIZE,
+                #commands.idx_buffer_size * imgui.INDEX_SIZE,
             )
 
             for command in commands:
@@ -500,9 +520,17 @@ class WImGuiDemo(Demo):
         self.device.queue.write_buffer(
             self.uniform_buffer,
             0,
+            uniforms
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.uniform_buffer,
+            0,
             as_capsule(uniforms),
             self.uniform_buffer_size,
         )
+        '''
 
         draw_data.scale_clip_rects(fb_scale)
 

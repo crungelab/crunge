@@ -158,7 +158,29 @@ class ImGuiVu(Vu):
         # size = utils.divround_up(pixels.nbytes, 256)
         # size = utils.divround_up(width * height * bpp, 256)
         size = width * height * bpp
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            #wgpu.TexelCopyTextureInfo(
+            wgpu.TexelCopyTextureInfo(
+                #texture=self.texture,
+                texture=self.texture.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
+            pixels,
+            # The layout of the texture
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=width * bpp,
+                rows_per_image=height,
+            ),
+            # The texture size
+            wgpu.Extent3D(width, height, 1),
+        )
 
+        '''
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             #wgpu.TexelCopyTextureInfo(
@@ -184,6 +206,7 @@ class ImGuiVu(Vu):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
+        '''
 
         self.io.fonts.set_tex_id(self.texture.id)
         self.io.fonts.clear_tex_data()
@@ -395,10 +418,27 @@ class ImGuiVu(Vu):
                 self.device,
                 self.vertex_buffer,
                 vtx_offset * imgui.VERTEX_SIZE,
+                commands.vtx_buffer_data
+            )
+
+            '''
+            utils.write_buffer(
+                self.device,
+                self.vertex_buffer,
+                vtx_offset * imgui.VERTEX_SIZE,
                 commands.vtx_buffer_data,
                 commands.vtx_buffer_size * imgui.VERTEX_SIZE,
             )
+            '''
             # logger.debug('write index_buffer')
+            utils.write_buffer(
+                self.device,
+                self.index_buffer,
+                idx_offset * imgui.INDEX_SIZE,
+                commands.idx_buffer_data
+            )
+
+            '''
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
@@ -406,6 +446,7 @@ class ImGuiVu(Vu):
                 commands.idx_buffer_data,
                 commands.idx_buffer_size * imgui.INDEX_SIZE,
             )
+            '''
 
             for command in commands:
                 if command.user_callback:
@@ -496,9 +537,17 @@ class ImGuiVu(Vu):
         self.device.queue.write_buffer(
             self.uniform_buffer,
             0,
+            uniforms
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.uniform_buffer,
+            0,
             as_capsule(uniforms),
             self.uniform_buffer_size,
         )
+        '''
 
         draw_data.scale_clip_rects(fb_scale)
 

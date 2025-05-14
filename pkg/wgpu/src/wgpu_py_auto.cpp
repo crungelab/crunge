@@ -1314,14 +1314,6 @@ PYCLASS_BEGIN(m, pywgpu::Queue, Queue) Queue
         , py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
     
-    .def("write_buffer", &pywgpu::Queue::WriteBuffer
-        , py::arg("buffer"), py::arg("buffer_offset"), py::arg("data"), py::arg("size")
-        , py::return_value_policy::automatic_reference)
-    
-    .def("write_texture", &pywgpu::Queue::WriteTexture
-        , py::arg("destination"), py::arg("data"), py::arg("data_size"), py::arg("data_layout"), py::arg("write_size")
-        , py::return_value_policy::automatic_reference)
-    
     .def("copy_texture_for_browser", &pywgpu::Queue::CopyTextureForBrowser
         , py::arg("source"), py::arg("destination"), py::arg("copy_size"), py::arg("options")
         , py::return_value_policy::automatic_reference)

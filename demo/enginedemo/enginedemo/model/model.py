@@ -336,6 +336,27 @@ class ModelDemo(Demo):
                 aspect=wgpu.TextureAspect.ALL,
             ),
             # The actual pixel data
+            im,
+            # The layout of the texture
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=bytes_per_row,
+                rows_per_image=rows_per_image,
+            ),
+            # The texture size
+            wgpu.Extent3D(im_width, im_height, im_depth),
+        )
+
+        '''
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.TexelCopyTextureInfo(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
             utils.as_capsule(im),
             # Data size
             size,
@@ -348,7 +369,7 @@ class ModelDemo(Demo):
             # The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
-        # exit()
+        '''
 
     def render(self, view: wgpu.TextureView):
         color_attachments = [
@@ -385,8 +406,23 @@ class ModelDemo(Demo):
         commands = encoder.finish()
 
         self.queue.submit(1, commands)
-        # exit()
 
+    def frame(self):
+        transform = self.transform_matrix
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            transform
+        )
+        surface_texture = wgpu.SurfaceTexture()
+        self.viewport.surface.get_current_texture(surface_texture)
+        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
+
+        backbufferView.set_label("Back Buffer Texture View")
+        self.render(backbufferView)
+        self.viewport.present()
+
+    '''
     def frame(self):
         transform = self.transform_matrix
         self.device.queue.write_buffer(
@@ -402,7 +438,7 @@ class ModelDemo(Demo):
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
         self.viewport.present()
-
+    '''
 
 def main():
     ModelDemo().create().run()

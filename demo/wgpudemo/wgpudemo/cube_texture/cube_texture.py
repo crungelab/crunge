@@ -338,28 +338,19 @@ class CubeTextureDemo(Demo):
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
+            transform
         )
-        super().frame()
 
-    '''
-    def frame(self):
-        transform = self.transform_matrix
+        '''
         self.device.queue.write_buffer(
             self.uniformBuffer,
             0,
             as_capsule(glm.value_ptr(transform)),
             self.uniformBufferSize,
         )
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
+        '''
+        super().frame()
 
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.surface.present()
-    '''
 
 def main():
     CubeTextureDemo().run()

@@ -3,5 +3,6 @@ target: 'src/wgpu_py_auto.cpp'
 program: dawn_py
 
 excludes : [
-  #'method/pywgpu::Queue::WriteTexture'
+  'method/pywgpu::Queue::WriteTexture',
+  'method/pywgpu::Queue::WriteBuffer'
 ]

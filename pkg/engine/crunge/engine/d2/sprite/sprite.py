@@ -185,9 +185,17 @@ class Sprite(Material):
         self.device.queue.write_buffer(
             self.uniform_buffer,
             0,
+            uniform
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.uniform_buffer,
+            0,
             as_capsule(uniform),
             self.uniform_buffer_size,
         )
+        '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(1, self.bind_group)

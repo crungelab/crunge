@@ -75,6 +75,27 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
                     aspect=wgpu.TextureAspect.ALL,
                 ),
                 # The actual pixel data
+                im,
+                # The layout of the texture
+                wgpu.TexelCopyBufferLayout(
+                    offset=0,
+                    bytes_per_row=bytes_per_row,
+                    rows_per_image=rows_per_image,
+                ),
+                # The texture size
+                wgpu.Extent3D(im_width, im_height, im_depth),
+            )
+
+            '''
+            self.queue.write_texture(
+                # Tells wgpu where to copy the pixel data
+                wgpu.TexelCopyTextureInfo(
+                    texture=texture,
+                    mip_level=0,
+                    origin=wgpu.Origin3D(0, 0, i),
+                    aspect=wgpu.TextureAspect.ALL,
+                ),
+                # The actual pixel data
                 utils.as_capsule(im),
                 # Data size
                 size,
@@ -87,6 +108,7 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
                 # The texture size
                 wgpu.Extent3D(im_width, im_height, im_depth),
             )
+            '''
 
         # return texture, im_width, im_height
         return TextureDetails(texture, im_width, im_height)

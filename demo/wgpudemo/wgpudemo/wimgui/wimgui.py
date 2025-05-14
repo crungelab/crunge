@@ -6,7 +6,7 @@ import glfw
 import numpy as np
 import glm
 
-from crunge.core import as_capsule
+from crunge.core import as_capsule, pointer_to_memoryview
 from crunge import wgpu
 from crunge.wgpu import utils
 
@@ -159,10 +159,10 @@ class WImGuiDemo(Demo):
 
         if action == glfw.PRESS:
             logger.debug(f"key down: {key}")
-            self.io.add_key_event(key_map[key], 1)
+            self.io.add_key_event(key_map[key], True)
         elif action == glfw.RELEASE:
             logger.debug(f"key up: {key}")
-            self.io.add_key_event(key_map[key], 0)
+            self.io.add_key_event(key_map[key], False)
 
     def char_callback(self, window, char):
         io = imgui.get_io()
@@ -256,6 +256,27 @@ class WImGuiDemo(Demo):
                 aspect=wgpu.TextureAspect.ALL,
             ),
             # The actual pixel data
+            pixels,
+            # The layout of the texture
+            wgpu.TexelCopyBufferLayout(
+                offset=0,
+                bytes_per_row=width * bpp,
+                rows_per_image=height,
+            ),
+            # The texture size
+            wgpu.Extent3D(width, height, 1),
+        )
+
+        '''
+        self.queue.write_texture(
+            # Tells wgpu where to copy the pixel data
+            wgpu.TexelCopyTextureInfo(
+                texture=self.texture,
+                mip_level=0,
+                origin=wgpu.Origin3D(0, 0, 0),
+                aspect=wgpu.TextureAspect.ALL,
+            ),
+            # The actual pixel data
             utils.as_capsule(pixels),
             # Data size
             size,
@@ -268,6 +289,7 @@ class WImGuiDemo(Demo):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
+        '''
 
         # io.fonts.set_tex_id(id(self.texture_view))
         # io.fonts.clear_tex_data()
@@ -428,7 +450,24 @@ class WImGuiDemo(Demo):
         vtx_offset = 0
         idx_offset = 0
         for commands in draw_data.cmd_lists:
-            # logger.debug('write vertex_buffer')
+            utils.write_buffer(
+                self.device,
+                self.vertex_buffer,
+                vtx_offset * imgui.VERTEX_SIZE,
+                pointer_to_memoryview(commands.vtx_buffer.data_address(), commands.vtx_buffer.size() * imgui.VERTEX_SIZE)
+            )
+
+            '''
+            utils.write_buffer(
+                self.device,
+                self.vertex_buffer,
+                vtx_offset * imgui.VERTEX_SIZE,
+                #commands.vtx_buffer
+                commands.vtx_buffer,
+            )
+            '''
+
+            '''
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
@@ -436,7 +475,25 @@ class WImGuiDemo(Demo):
                 commands.vtx_buffer.data_address(),
                 commands.vtx_buffer.size() * imgui.VERTEX_SIZE,
             )
+            '''
             # logger.debug('write index_buffer')
+            utils.write_buffer(
+                self.device,
+                self.index_buffer,
+                idx_offset * imgui.INDEX_SIZE,
+                pointer_to_memoryview(commands.idx_buffer.data_address(), commands.idx_buffer.size() * imgui.VERTEX_SIZE)
+            )
+
+            '''
+            utils.write_buffer(
+                self.device,
+                self.index_buffer,
+                idx_offset * imgui.INDEX_SIZE,
+                commands.idx_buffer
+            )
+            '''
+
+            '''
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
@@ -444,6 +501,7 @@ class WImGuiDemo(Demo):
                 commands.idx_buffer.data_address(),
                 commands.idx_buffer.size() * imgui.INDEX_SIZE,
             )
+            '''
 
             # for command in commands:
             for command in commands.cmd_buffer:
@@ -488,9 +546,17 @@ class WImGuiDemo(Demo):
         self.device.queue.write_buffer(
             self.uniform_buffer,
             0,
+            uniforms
+        )
+
+        '''
+        self.device.queue.write_buffer(
+            self.uniform_buffer,
+            0,
             as_capsule(uniforms),
             self.uniform_buffer_size,
         )
+        '''
 
         draw_data.scale_clip_rects(fb_scale)
 
