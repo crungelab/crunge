@@ -155,7 +155,7 @@ class CubeDemo(Demo):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=1,
+            #entry_count=1,
             entries=bind_group_entries,
         )
 
