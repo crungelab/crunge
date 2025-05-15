@@ -1,9 +1,7 @@
 import numpy as np
 import glm
 
-from crunge.core import as_capsule
 from crunge import wgpu
-import crunge.wgpu.utils as utils
 
 from .node import Node
 from .camera import Camera
@@ -32,15 +30,6 @@ class Mesh(Node):
             0,
             transform
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniform_buffer_size,
-        )
-        '''
 
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_bind_group(0, self.bind_group)

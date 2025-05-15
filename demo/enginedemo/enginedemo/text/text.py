@@ -280,23 +280,6 @@ class TextDemo(Demo):
             wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
         )
 
-        '''
-        self.queue.write_texture(
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture, mip_level=0, origin=wgpu.Origin3D(0, 0, 0)
-            ),
-            utils.as_capsule(rgba_data),
-            rgba_data.nbytes,
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=rgba_data.shape[1] * 4,
-                rows_per_image=rgba_data.shape[0],
-            ),
-            wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
-        )
-        '''
-
-
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
@@ -320,7 +303,7 @@ class TextDemo(Demo):
         pass_enc.set_bind_group(0, self.bindGroup)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        #pass_enc.draw_indexed(6)
+        # pass_enc.draw_indexed(6)
         pass_enc.draw_indexed(self.index_count)
         pass_enc.end()
         commands = encoder.finish()
@@ -328,7 +311,6 @@ class TextDemo(Demo):
         self.queue.submit(1, commands)
 
         super().draw(renderer)
-
 
     def shape_text(self, text: str):
         # Load font data
@@ -350,7 +332,6 @@ class TextDemo(Demo):
         positions = buf.glyph_positions
 
         return infos, positions
-
 
     def create_text_vertex_buffer(self, text: str):
         infos, positions = self.shape_text(text)
@@ -377,25 +358,33 @@ class TextDemo(Demo):
             x1 = x0 + size_x / self.kWidth
             y1 = y0 - size_y / self.kHeight  # height becomes negative
 
-            '''
+            """
             x0 = cursor_x + offset_x / self.kWidth
             y0 = cursor_y - offset_y / self.kHeight
             x1 = x0 + size_x / self.kWidth
             y1 = y0 + size_y / self.kHeight
-            '''
+            """
 
             # Vertex: pos (x, y), uv (u, v)
-            vertices.extend([
-                [x0, y0, uv_x, uv_y],
-                [x1, y0, uv_x + uv_w, uv_y],
-                [x1, y1, uv_x + uv_w, uv_y + uv_h],
-                [x0, y1, uv_x, uv_y + uv_h],
-            ])
+            vertices.extend(
+                [
+                    [x0, y0, uv_x, uv_y],
+                    [x1, y0, uv_x + uv_w, uv_y],
+                    [x1, y1, uv_x + uv_w, uv_y + uv_h],
+                    [x0, y1, uv_x, uv_y + uv_h],
+                ]
+            )
 
-            indices.extend([
-                index_offset, index_offset + 1, index_offset + 2,
-                index_offset + 2, index_offset + 3, index_offset
-            ])
+            indices.extend(
+                [
+                    index_offset,
+                    index_offset + 1,
+                    index_offset + 2,
+                    index_offset + 2,
+                    index_offset + 3,
+                    index_offset,
+                ]
+            )
             index_offset += 4
 
             cursor_x += advance_x / self.kWidth

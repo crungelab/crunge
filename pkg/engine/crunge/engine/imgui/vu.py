@@ -1,13 +1,12 @@
 import os, sys
 import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import Structure, c_float, c_uint32, sizeof
 from pathlib import Path
 
 from loguru import logger
 import glm
 
 
-from crunge.core import as_capsule, from_capsule
 from crunge.core import klass
 
 from crunge import wgpu
@@ -153,11 +152,6 @@ class ImGuiVu(Vu):
         self.texture = Texture2D(wgpu_texture, glm.ivec2(width, height))
         ResourceManager().add(self.texture)
 
-        #self.sampler = self.device.create_sampler()
-
-        # size = utils.divround_up(pixels.nbytes, 256)
-        # size = utils.divround_up(width * height * bpp, 256)
-        size = width * height * bpp
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             #wgpu.TexelCopyTextureInfo(
@@ -179,34 +173,6 @@ class ImGuiVu(Vu):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
-
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            #wgpu.TexelCopyTextureInfo(
-            wgpu.TexelCopyTextureInfo(
-                #texture=self.texture,
-                texture=self.texture.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(pixels),
-            # Data size
-            # width * height * bpp,
-            size,
-            # The layout of the texture
-            #wgpu.TexelCopyBufferLayout(
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=width * bpp,
-                rows_per_image=height,
-            ),
-            # The texture size
-            wgpu.Extent3D(width, height, 1),
-        )
-        '''
 
         self.io.fonts.set_tex_id(self.texture.id)
         self.io.fonts.clear_tex_data()
@@ -539,15 +505,6 @@ class ImGuiVu(Vu):
             0,
             uniforms
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(uniforms),
-            self.uniform_buffer_size,
-        )
-        '''
 
         draw_data.scale_clip_rects(fb_scale)
 

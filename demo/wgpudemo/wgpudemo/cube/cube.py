@@ -5,7 +5,6 @@ import glm
 
 from loguru import logger
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
@@ -231,17 +230,6 @@ class CubeDemo(Demo):
         )
         super().frame()
 
-    '''
-    def frame(self):
-        transform = self.transform_matrix
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
-        )
-        super().frame()
-    '''
 
 def main():
     CubeDemo().run()

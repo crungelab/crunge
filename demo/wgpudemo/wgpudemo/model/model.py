@@ -1,4 +1,4 @@
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import Structure, c_float, sizeof
 import time
 import math
 import glm
@@ -8,7 +8,6 @@ from loguru import logger
 import numpy as np
 import trimesh as tm
 
-from crunge.core import as_capsule
 from crunge import wgpu
 from crunge.wgpu import utils
 
@@ -101,7 +100,6 @@ class ModelDemo(Demo):
             wgpu.TextureUsage.RENDER_ATTACHMENT,
         )
         self.depth_stencil_view = self.depthTexture.create_view()
-
 
     def create_pipeline(self):
         shader_module = self.create_shader_module(shader_code)
@@ -311,9 +309,6 @@ class ModelDemo(Demo):
         im_width = shape[0]
         im_height = shape[1]
         im_depth = 1
-        # Has to be a multiple of 256
-        size = utils.divround_up(im.nbytes, 256)
-        logger.debug(size)
 
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
@@ -333,10 +328,10 @@ class ModelDemo(Demo):
             mag_filter=wgpu.FilterMode.LINEAR,
             min_filter=wgpu.FilterMode.LINEAR,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
-            #lod_min_clamp=0,
-            #lod_max_clamp=100,
-            #compare=wgpu.CompareFunction.UNDEFINED,
-            #anisotropy=16,
+            # lod_min_clamp=0,
+            # lod_max_clamp=100,
+            # compare=wgpu.CompareFunction.UNDEFINED,
+            # anisotropy=16,
         )
 
         self.sampler = self.device.create_sampler(sampler_desc)
@@ -364,30 +359,6 @@ class ModelDemo(Demo):
             # The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
-
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(im),
-            # Data size
-            size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=bytes_per_row,
-                rows_per_image=rows_per_image,
-            ),
-            # The texture size
-            wgpu.Extent3D(im_width, im_height, im_depth),
-        )
-        '''
 
     def render(self, renderer: Renderer):
         color_attachments = [
@@ -428,24 +399,9 @@ class ModelDemo(Demo):
 
     def frame(self):
         transform = self.transform_matrix
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            transform
-        )
+        self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
         super().frame()
 
-    '''
-    def frame(self):
-        transform = self.transform_matrix
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
-        )
-        super().frame()
-    '''
 
 def main():
     ModelDemo().run()

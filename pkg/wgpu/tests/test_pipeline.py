@@ -17,13 +17,8 @@ fn fs_main() -> @location(0) vec4<f32> {
 """
 
 def main():
-    instance = wgpu.create_instance()
-    adapter = instance.request_adapter()
-    props = adapter.get_properties()
-    print(props.vendor_name)
-    device = adapter.create_device()
-    device.enable_logging()
-    print(device)
+    wgpu_context = wgpu.Context()
+    device = wgpu_context.device
 
     logger.debug("Creating pipeline")
 
@@ -58,6 +53,7 @@ def main():
     logger.debug("Creating depthStencilState")
     depthStencilState = wgpu.DepthStencilState(
         format=wgpu.TextureFormat.DEPTH32_FLOAT,
+        depth_write_enabled=False
     )
     logger.debug(depthStencilState)
 

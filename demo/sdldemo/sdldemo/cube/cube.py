@@ -1,5 +1,4 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import c_float, sizeof
 import time
 import sys
 import math
@@ -8,7 +7,6 @@ import glm
 from loguru import logger
 import numpy as np
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
@@ -224,15 +222,6 @@ class CubeDemo(Demo):
             0,
             transform
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
-        )
-        '''
 
         backbuffer: wgpu.TextureView = self.get_surface_view()
         backbuffer.set_label("Back Buffer Texture View")

@@ -3,7 +3,6 @@ from ctypes import sizeof
 from loguru import logger
 import glm
 
-from crunge.core import as_capsule
 from crunge.core import klass
 from crunge.core.event_source import Subscription
 
@@ -166,15 +165,6 @@ class Camera3D(Node3D):
             0,
             camera_uniform
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(camera_uniform),
-            self.uniform_buffer_size,
-        )
-        '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(0, self.bind_group)

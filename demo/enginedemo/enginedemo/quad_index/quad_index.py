@@ -6,7 +6,6 @@ import sys
 from loguru import logger
 import numpy as np
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge.engine import Renderer
@@ -114,8 +113,8 @@ class QuadIndexDemo(Demo):
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
-                view = renderer.viewport.color_texture_view,
+                # view=renderer.texture_view,
+                view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),

@@ -1,12 +1,10 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import c_float, sizeof
 import time
 import sys
 
 from loguru import logger
 import numpy as np
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
@@ -220,30 +218,6 @@ class TriangleTextureDemo(Demo):
             # The texture size
             wgpu.Extent3D(1024, 1024, 1),
         )
-
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(data),
-            # Data size
-            data.size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=4 * 1024,
-                rows_per_image=1024,
-            ),
-            # The texture size
-            wgpu.Extent3D(1024, 1024, 1),
-        )
-        '''
 
     def render(self, view: wgpu.TextureView):
         color_attachments = [

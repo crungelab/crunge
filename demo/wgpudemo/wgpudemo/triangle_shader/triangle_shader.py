@@ -2,11 +2,9 @@ import time
 import sys
 
 from loguru import logger
-import glfw
 import glm
 
 from crunge import wgpu
-from crunge.core import as_capsule
 
 from ..common import Demo, Renderer
 

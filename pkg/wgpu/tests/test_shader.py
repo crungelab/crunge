@@ -14,13 +14,8 @@ fn main_f() -> @location(0) vec4<f32> {
 """
 
 def main():
-    instance = wgpu.create_instance()
-    adapter = instance.request_adapter()
-    props = adapter.get_properties()
-    print(props.vendor_name)
-    device = adapter.create_device()
-    print(device)
-    device.enable_logging()
+    wgpu_context = wgpu.Context()
+    device = wgpu_context.device
 
     #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(source=shader_code)
     wgsl_desc = wgpu.ShaderSourceWGSL(code=shader_code)

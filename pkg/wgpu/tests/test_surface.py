@@ -45,14 +45,8 @@ def main():
         wsd.window = handle
         wsd.display = as_capsule(display)
 
-    instance = wgpu.create_instance()
-    adapter = instance.request_adapter()
-    props = adapter.get_properties()
-    print(props.vendor_name)
-    device = adapter.create_device()
-    print(device)
-    device.enable_logging()
-
+    wgpu_context = wgpu.Context()
+    instance = wgpu_context.instance
     sd = wgpu.SurfaceDescriptor()
     sd.label = "Test Surface"
     print(sd.label)

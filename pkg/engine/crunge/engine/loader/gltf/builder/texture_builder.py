@@ -2,7 +2,6 @@ from loguru import logger
 import glm
 import numpy as np
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge import gltf
@@ -50,14 +49,9 @@ class TextureBuilder(GltfBuilder):
         logger.debug(f"im.strides: {im.strides}")
         # logger.debug(im)
 
-        # im_width = shape[0]
         im_width = tf_image.width
-        # im_height = shape[1]
         im_height = tf_image.height
         im_depth = 1
-        # Has to be a multiple of 256
-        size = utils.divround_up(im.nbytes, 256)
-        logger.debug(f"im.size: {size}")
 
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
@@ -112,29 +106,5 @@ class TextureBuilder(GltfBuilder):
             # The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
-
-        '''
-        self.gfx.device.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(im),
-            # Data size
-            size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=bytes_per_row,
-                rows_per_image=rows_per_image,
-            ),
-            # The texture size
-            wgpu.Extent3D(im_width, im_height, im_depth),
-        )
-        '''
 
         return self.texture

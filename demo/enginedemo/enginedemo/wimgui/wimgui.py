@@ -7,8 +7,6 @@ from loguru import logger
 import numpy as np
 import glm
 
-from crunge.core import as_capsule
-
 from crunge import sdl
 from crunge import wgpu
 from crunge import imgui
@@ -222,7 +220,7 @@ class WImGuiDemo(Demo):
 
         self.texture_view = self.texture.create_view(texture_view_desc)
 
-        '''
+        """
         sampler_desc = wgpu.SamplerDescriptor(
             min_filter=wgpu.FilterMode.LINEAR,
             mag_filter=wgpu.FilterMode.LINEAR,
@@ -232,14 +230,10 @@ class WImGuiDemo(Demo):
             address_mode_w=wgpu.AddressMode.REPEAT,
             max_anisotropy=1,
         )
-        '''
+        """
         sampler_desc = wgpu.SamplerDescriptor()
 
         self.sampler = self.device.create_sampler(sampler_desc)
-
-        # size = utils.divround_up(pixels.nbytes, 256)
-        # size = utils.divround_up(width * height * bpp, 256)
-        size = width * height * bpp
 
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
@@ -260,31 +254,6 @@ class WImGuiDemo(Demo):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
-
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(pixels),
-            # Data size
-            # width * height * bpp,
-            size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=width * bpp,
-                rows_per_image=height,
-            ),
-            # The texture size
-            wgpu.Extent3D(width, height, 1),
-        )
-        '''
 
         # io.fonts.set_tex_id(id(self.texture_view))
         # io.fonts.clear_tex_data()
@@ -449,7 +418,7 @@ class WImGuiDemo(Demo):
                 self.vertex_buffer,
                 vtx_offset * imgui.VERTEX_SIZE,
                 commands.vtx_buffer_data,
-                #commands.vtx_buffer_size * imgui.VERTEX_SIZE,
+                # commands.vtx_buffer_size * imgui.VERTEX_SIZE,
             )
             # logger.debug('write index_buffer')
             utils.write_buffer(
@@ -457,7 +426,7 @@ class WImGuiDemo(Demo):
                 self.index_buffer,
                 idx_offset * imgui.INDEX_SIZE,
                 commands.idx_buffer_data,
-                #commands.idx_buffer_size * imgui.INDEX_SIZE,
+                # commands.idx_buffer_size * imgui.INDEX_SIZE,
             )
 
             for command in commands:
@@ -519,27 +488,14 @@ class WImGuiDemo(Demo):
         uniforms.mvp.data = cast_matrix4(mvp)
         uniforms.gamma = 1.0
 
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            uniforms
-        )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(uniforms),
-            self.uniform_buffer_size,
-        )
-        '''
+        self.device.queue.write_buffer(self.uniform_buffer, 0, uniforms)
 
         draw_data.scale_clip_rects(fb_scale)
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
-                view = renderer.viewport.color_texture_view,
+                # view=renderer.texture_view,
+                view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),

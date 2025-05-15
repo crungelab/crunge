@@ -6,7 +6,6 @@ import glm
 
 from crunge import wgpu
 from crunge import imgui
-from crunge.core import as_capsule
 from crunge.engine import Renderer
 
 from ..demo import Demo, DemoView, DemoLayer
@@ -87,7 +86,7 @@ class QuadShaderLayer(DemoLayer):
         # logger.debug("render")
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view = renderer.viewport.color_texture_view,
+                view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -122,6 +121,7 @@ class QuadShaderLayer(DemoLayer):
 
 class QuadShaderDemo(Demo):
     pass
+
 
 def main():
     QuadShaderDemo(DemoView(layers=[QuadShaderLayer()])).create().run()

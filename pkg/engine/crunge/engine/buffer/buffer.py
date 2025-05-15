@@ -56,30 +56,3 @@ class Buffer(Base):
 
     def get(self) -> wgpu.Buffer:
         return self.buffer
-
-"""
-class Buffer(Base):
-    def __init__(self, size: int, usage: wgpu.BufferUsage, data: bytes = None) -> None:
-        super().__init__()
-        self.size = size
-        self.usage = usage
-        self.data = data
-
-        self.buffer: wgpu.Buffer = None
-        self.create_buffer()
-
-    def create_buffer(self):
-        self.buffer = self.gfx.create_buffer(self.size, self.usage, self.data)
-
-    def write_data(self, data: bytes):
-        self.gfx.write_buffer(self.buffer, data)
-
-    def read_data(self) -> bytes:
-        return self.gfx.read_buffer(self.buffer)
-
-    def __del__(self):
-        self.gfx.destroy_buffer(self.buffer)
-
-    def get(self) -> wgpu.Buffer:
-        return self.buffer
-"""

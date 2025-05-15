@@ -5,7 +5,6 @@ from loguru import logger
 import glm
 
 from crunge import wgpu
-from crunge.core import as_capsule
 
 from ..common import Demo
 

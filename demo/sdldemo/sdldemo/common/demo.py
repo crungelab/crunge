@@ -7,7 +7,7 @@ from crunge.core import as_capsule
 from crunge import sdl
 
 from crunge import wgpu
-import crunge.wgpu.utils as utils
+
 
 class Demo:
     kWidth = 1024
@@ -26,18 +26,6 @@ class Demo:
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
         self.window = None
-
-        '''
-        instance_capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable = True)
-        instance_descriptor = wgpu.InstanceDescriptor(capabilities = instance_capabilities)
-        self.instance = wgpu.create_instance(instance_descriptor)
-
-        self.adapter = self.instance.request_adapter()
-        self.device = self.adapter.create_device()
-        self.device.set_label("Primary Device")
-        self.device.enable_logging()
-        self.queue = self.device.get_queue()
-        '''
 
         self.wgpu_context = wgpu.Context()
 
@@ -60,7 +48,9 @@ class Demo:
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
         logger.debug(f"SDL_Init: {success}")
-        self.window = sdl.create_window(self.name, self.size.x, self.size.y, sdl.WindowFlags.RESIZABLE)
+        self.window = sdl.create_window(
+            self.name, self.size.x, self.size.y, sdl.WindowFlags.RESIZABLE
+        )
 
     def create_device_objects(self):
         pass
@@ -79,7 +69,7 @@ class Demo:
             format=wgpu.TextureFormat.BGRA8_UNORM,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
-            #present_mode=wgpu.PresentMode.MAILBOX,
+            # present_mode=wgpu.PresentMode.MAILBOX,
             view_format_count=0,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
@@ -109,10 +99,12 @@ class Demo:
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
+            # wsd = wgpu.SurfaceDescriptorFromXlibWindow()
             wsd = wgpu.SurfaceSourceXlibWindow()
             handle = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
-            display = sdl.get_pointer_property(properties, "SDL.window.x11.display", None)
+            display = sdl.get_pointer_property(
+                properties, "SDL.window.x11.display", None
+            )
             wsd.window = handle
             wsd.display = display
 
@@ -122,7 +114,6 @@ class Demo:
         self.configure_surface(self.size)
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
-        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
         wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)
@@ -143,7 +134,7 @@ class Demo:
         return surface_view
 
     def dispatch(self, event):
-        #logger.debug(event)
+        # logger.debug(event)
         match event.__class__:
             case sdl.QuitEvent:
                 return False
@@ -196,7 +187,7 @@ class Demo:
 
         running = True
         while running:
-            #self.instance.process_events()
+            # self.instance.process_events()
 
             while event := sdl.poll_event():
                 if not self.dispatch(event):
@@ -217,5 +208,5 @@ class Demo:
 
             self.frame()
 
-            #TODO: Losing device on resize
+            # TODO: Losing device on resize
             self.instance.process_events()

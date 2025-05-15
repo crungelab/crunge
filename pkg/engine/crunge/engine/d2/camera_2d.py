@@ -5,7 +5,6 @@ import glm
 from loguru import logger
 
 from crunge import wgpu
-from crunge.core import as_capsule
 from crunge.core import klass
 from crunge.core.event_source import Subscription
 
@@ -160,15 +159,6 @@ class Camera2D(Node2D):
             0,
             camera_uniform
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(camera_uniform),
-            self.uniform_buffer_size,
-        )
-        '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(0, self.bind_group)

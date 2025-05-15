@@ -1,21 +1,9 @@
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
+from ctypes import sizeof
 
 from loguru import logger
 import numpy as np
 import glm
 
-# from crunge.core import klass
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
@@ -32,7 +20,7 @@ from ..uniforms_2d import (
 
 # from .program_2d import Program2D
 
-#from .line_program_2d import LineProgram2D
+# from .line_program_2d import LineProgram2D
 from .polygon_program_2d import PolygonProgram2D
 
 # Define the structured dtype for the combined data
@@ -41,6 +29,7 @@ vertex_dtype = np.dtype(
         ("position", np.float32, (2,)),  # Points (x, y)
     ]
 )
+
 
 class Circle2D(Vu2D):
     material_bind_group: wgpu.BindGroup = None
@@ -173,38 +162,14 @@ class Circle2D(Vu2D):
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
-        renderer.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            model_uniform
-        )
-
-        '''
-        renderer.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            as_capsule(model_uniform),
-            self.model_uniform_buffer_size,
-        )
-        '''
+        renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
         material_uniform = MaterialUniform()
         material_uniform.color = cast_vec4(self.color)
 
         renderer.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            material_uniform
+            self.material_uniform_buffer, 0, material_uniform
         )
-
-        '''
-        renderer.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            as_capsule(material_uniform),
-            self.material_uniform_buffer_size,
-        )
-        '''
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)

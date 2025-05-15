@@ -2,7 +2,6 @@ from ctypes import sizeof
 
 import glm
 
-from crunge.core import as_capsule
 from crunge import wgpu
 
 from ..uniforms import cast_vec3
@@ -31,7 +30,7 @@ class Light3D(Node3D):
     @property
     def color(self):
         return self._color
-    
+
     @color.setter
     def color(self, color: glm.vec3):
         self._color = color
@@ -46,33 +45,21 @@ class Light3D(Node3D):
     def gpu_update_light(self):
         light_uniform = LightUniform()
 
-        #light_uniform.position.x = self.position.x
-        #light_uniform.position.y = self.position.y
-        #light_uniform.position.z = self.position.z
+        # light_uniform.position.x = self.position.x
+        # light_uniform.position.y = self.position.y
+        # light_uniform.position.z = self.position.z
         light_uniform.position = cast_vec3(self.position)
 
-        #light_uniform.color.x = self.color.x
-        #light_uniform.color.y = self.color.y
-        #light_uniform.color.z = self.color.z
+        # light_uniform.color.x = self.color.x
+        # light_uniform.color.y = self.color.y
+        # light_uniform.color.z = self.color.z
         light_uniform.color = cast_vec3(self.color)
 
         light_uniform.range = self.range
         light_uniform.energy = self.energy
 
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            light_uniform
-        )
+        self.device.queue.write_buffer(self.uniform_buffer, 0, light_uniform)
 
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(light_uniform),
-            self.uniform_buffer_size,
-        )
-        '''
 
 class OmniLight3D(Light3D):
     pass

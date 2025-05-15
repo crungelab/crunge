@@ -3,7 +3,6 @@ from ctypes import sizeof
 from loguru import logger
 import glm
 
-from crunge.core import as_capsule
 from crunge import wgpu
 
 from ...math import Rect2i
@@ -80,7 +79,7 @@ class Sprite(Material):
         self._rect = value
         self.update_gpu()
 
-    '''
+    """
     @property
     def x(self):
         return self.rect.x
@@ -88,7 +87,7 @@ class Sprite(Material):
     @property
     def y(self):
         return self.rect.y
-    '''
+    """
 
     @property
     def size(self):
@@ -96,11 +95,11 @@ class Sprite(Material):
             return self.collision_rect.size
         return self.rect.size
 
-    '''
+    """
     @property
     def size(self):
         return self.rect.size
-    '''
+    """
 
     @property
     def width(self):
@@ -182,20 +181,7 @@ class Sprite(Material):
         uniform.flip_h = 1 if self.flip_h else 0
         uniform.flip_v = 1 if self.flip_v else 0
 
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            uniform
-        )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(uniform),
-            self.uniform_buffer_size,
-        )
-        '''
+        self.device.queue.write_buffer(self.uniform_buffer, 0, uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(1, self.bind_group)

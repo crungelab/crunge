@@ -1,5 +1,4 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import Structure, c_float, c_uint32, sizeof
 import time
 import sys
 
@@ -7,10 +6,7 @@ from loguru import logger
 import numpy as np
 import glm
 
-from crunge.core import as_capsule
-
 from crunge import sdl
-
 from crunge import wgpu
 from crunge.wgpu import utils
 
@@ -247,10 +243,6 @@ class WImGuiDemo(Demo):
 
         self.sampler = self.device.create_sampler(sampler_desc)
 
-        # size = utils.divround_up(pixels.nbytes, 256)
-        # size = utils.divround_up(width * height * bpp, 256)
-        size = width * height * bpp
-
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             wgpu.TexelCopyTextureInfo(
@@ -270,31 +262,6 @@ class WImGuiDemo(Demo):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
-
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(pixels),
-            # Data size
-            # width * height * bpp,
-            size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=width * bpp,
-                rows_per_image=height,
-            ),
-            # The texture size
-            wgpu.Extent3D(width, height, 1),
-        )
-        '''
 
         # io.fonts.set_tex_id(id(self.texture_view))
         # io.fonts.clear_tex_data()
@@ -522,15 +489,6 @@ class WImGuiDemo(Demo):
             0,
             uniforms
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(uniforms),
-            self.uniform_buffer_size,
-        )
-        '''
 
         draw_data.scale_clip_rects(fb_scale)
 

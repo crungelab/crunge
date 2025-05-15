@@ -168,16 +168,6 @@ class InstancedTextDemo(Demo):
             wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
         )
 
-        '''
-        self.queue.write_texture(
-            wgpu.TexelCopyTextureInfo(texture=self.texture),
-            utils.as_capsule(rgba_data),
-            rgba_data.nbytes,
-            wgpu.TexelCopyBufferLayout(bytes_per_row=rgba_data.shape[1] * 4),
-            wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
-        )
-        '''
-
     def create_buffers(self):
         infos, positions = self.shape_text(self.text)
 

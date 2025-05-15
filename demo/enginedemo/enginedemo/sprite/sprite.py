@@ -9,7 +9,6 @@ import numpy as np
 import imageio.v3 as iio
 import glm
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge.engine import Renderer
@@ -217,9 +216,6 @@ class SpriteDemo(Demo):
         logger.debug(shape)
         im_height, im_width, im_channels = shape
         im_depth = 1
-        # Has to be a multiple of 256
-        size = utils.divround_up(im.nbytes, 256)
-        logger.debug(size)
 
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
@@ -258,34 +254,10 @@ class SpriteDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(im),
-            # Data size
-            size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=bytes_per_row,
-                rows_per_image=rows_per_image,
-            ),
-            # The texture size
-            wgpu.Extent3D(im_width, im_height, im_depth),
-        )
-        '''
-
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view = renderer.viewport.color_texture_view,
+                view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -337,20 +309,8 @@ class SpriteDemo(Demo):
 
         transform = projection * view * model
 
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            transform
-        )
+        self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
 
-        '''
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
-        )
-        '''
         super().frame()
 
 

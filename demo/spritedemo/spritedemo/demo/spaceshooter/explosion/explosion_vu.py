@@ -4,7 +4,6 @@ import random
 from loguru import logger
 import glm
 
-from crunge.core import as_capsule
 from crunge.core import klass
 from crunge import wgpu
 import crunge.wgpu.utils as utils
@@ -363,15 +362,6 @@ class ExplosionVu(Vu2D):
             0,
             model_uniform
         )
-
-        '''
-        renderer.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            as_capsule(model_uniform),
-            self.model_uniform_buffer_size,
-        )
-        '''
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline)

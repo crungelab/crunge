@@ -7,7 +7,6 @@ import glm
 from crunge import wgpu
 from crunge import imgui
 
-from crunge.core import as_capsule
 from crunge.engine import Renderer
 
 

@@ -5,7 +5,7 @@ from ctypes import sizeof
 from loguru import logger
 import glm
 
-from crunge.core import klass, as_capsule
+from crunge.core import klass
 from crunge import wgpu
 
 from ..renderer import Renderer
@@ -20,16 +20,18 @@ from .uniforms_3d import (
 from .mesh_3d import Mesh3D
 from .primitive_3d import Primitive3D
 
+
 @klass.singleton
 class MeshInstance3DProgram(Program3D):
     pass
 
+
 class MeshInstance3D(Node3D):
     def __init__(self) -> None:
-        #super().__init__()
+        # super().__init__()
         self.program = MeshInstance3DProgram()
         self.model_bind_group: wgpu.BindGroup = None
-        #self.mesh: Mesh3D = None
+        # self.mesh: Mesh3D = None
         self._mesh: Mesh3D = None
 
         # Uniform Buffers
@@ -45,7 +47,7 @@ class MeshInstance3D(Node3D):
     @property
     def mesh(self) -> Mesh3D:
         return self._mesh
-    
+
     @mesh.setter
     def mesh(self, mesh: Mesh3D):
         self._mesh = mesh
@@ -56,7 +58,7 @@ class MeshInstance3D(Node3D):
         if self.mesh:
             self.bounds = self.mesh.bounds.to_global(self.transform)
         return super().update_bounds()
-    
+
     def build_bindgroup(self):
         logger.debug("Creating bind group")
 
@@ -86,20 +88,7 @@ class MeshInstance3D(Node3D):
         model_uniform.model_matrix.data = cast_matrix4(model_matrix)
         model_uniform.normal_matrix.data = cast_matrix4(normal_matrix)
 
-        self.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            model_uniform
-        )
-
-        '''
-        self.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            as_capsule(model_uniform),
-            self.model_uniform_buffer_size,
-        )
-        '''
+        self.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc

@@ -2,7 +2,6 @@ from ctypes import sizeof
 
 import glm
 
-from crunge.core import as_capsule
 from crunge import wgpu
 
 from .d3.uniforms_3d import (
@@ -47,12 +46,3 @@ class AmbientLight(Base):
             0,
             uniform
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(uniform),
-            self.uniform_buffer_size,
-        )
-        '''

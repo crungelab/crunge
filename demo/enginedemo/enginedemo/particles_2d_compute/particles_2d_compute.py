@@ -8,7 +8,6 @@ from loguru import logger
 import numpy as np
 import glm
 
-from crunge.core import as_capsule
 from crunge import wgpu
 from crunge import imgui
 
@@ -97,7 +96,8 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
-#TODO: hanging on resize
+# TODO: hanging on resize
+
 
 class ParticlesDemo(Demo):
     vertex_buffer: wgpu.Buffer = None
@@ -204,7 +204,7 @@ class ParticlesDemo(Demo):
         compute_pl_desc = wgpu.ComputePipelineDescriptor(
             label="Main Compute Pipeline",
             layout=self.device.create_pipeline_layout(compute_pll_desc),
-            #compute=wgpu.ProgrammableStageDescriptor(
+            # compute=wgpu.ProgrammableStageDescriptor(
             compute=wgpu.ComputeState(
                 module=self.cs_module,
                 entry_point="cs_main",
@@ -321,8 +321,8 @@ class ParticlesDemo(Demo):
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
-                view = renderer.viewport.color_texture_view,
+                # view=renderer.texture_view,
+                view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -381,20 +381,8 @@ class ParticlesDemo(Demo):
 
         transform = projection * view * model
 
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            transform
-        )
+        self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
 
-        '''
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
-        )
-        '''
         super().frame()
 
     def update(self, delta_time: float):

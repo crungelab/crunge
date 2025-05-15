@@ -1,6 +1,5 @@
 from enum import IntEnum
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import Structure, c_float, sizeof
 import time
 import sys
 import math
@@ -8,12 +7,10 @@ import glm
 from pathlib import Path
 
 from loguru import logger
-import glfw
 import numpy as np
 import trimesh as tm
 import imageio.v3 as iio
 
-from crunge.core import as_capsule
 from crunge import wgpu
 
 from crunge.wgpu import utils
@@ -312,9 +309,6 @@ class MeshTextureDemo(Demo):
         im_width = shape[0]
         im_height = shape[1]
         im_depth = 1
-        # Has to be a multiple of 256
-        size = utils.divround_up(im.nbytes, 256)
-        logger.debug(size)
 
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
@@ -352,30 +346,6 @@ class MeshTextureDemo(Demo):
             # The texture size
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
-
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(im),
-            # Data size
-            size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=bytes_per_row,
-                rows_per_image=rows_per_image,
-            ),
-            # The texture size
-            wgpu.Extent3D(im_width, im_height, im_depth),
-        )
-        '''
 
     def render(self, renderer: Renderer):
         color_attachments = [
@@ -416,24 +386,9 @@ class MeshTextureDemo(Demo):
 
     def frame(self):
         transform = self.transform_matrix
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            transform
-        )
+        self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
         super().frame()
 
-    '''
-    def frame(self):
-        transform = self.transform_matrix
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(glm.value_ptr(transform)),
-            self.uniformBufferSize,
-        )
-        super().frame()
-    '''
 
 def main():
     MeshTextureDemo().run()

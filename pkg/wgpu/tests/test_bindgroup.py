@@ -1,13 +1,9 @@
 from crunge import wgpu
-from crunge.wgpu import BackendType
 
 
 def main():
-    instance = wgpu.create_instance()
-    adapter = instance.request_adapter()
-    device = adapter.create_device()
-    print(device)
-    device.enable_logging()
+    wgpu_context = wgpu.Context()
+    device = wgpu_context.device
 
     bgl_desc = wgpu.BindGroupLayoutDescriptor()
     bgl = device.create_bind_group_layout(bgl_desc)

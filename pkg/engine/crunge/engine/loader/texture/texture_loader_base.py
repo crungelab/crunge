@@ -58,9 +58,6 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
             # logger.debug(f"shape: {shape}")
             im_height, im_width, im_channels = shape
             im_depth = 1
-            # Has to be a multiple of 256
-            size = utils.divround_up(im.nbytes, 256)
-            # logger.debug(f"size: {size}")
 
             bytes_per_row = im_channels * im_width
             # logger.debug(f"bytes_per_row: {bytes_per_row}")
@@ -86,29 +83,4 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
                 wgpu.Extent3D(im_width, im_height, im_depth),
             )
 
-            '''
-            self.queue.write_texture(
-                # Tells wgpu where to copy the pixel data
-                wgpu.TexelCopyTextureInfo(
-                    texture=texture,
-                    mip_level=0,
-                    origin=wgpu.Origin3D(0, 0, i),
-                    aspect=wgpu.TextureAspect.ALL,
-                ),
-                # The actual pixel data
-                utils.as_capsule(im),
-                # Data size
-                size,
-                # The layout of the texture
-                wgpu.TexelCopyBufferLayout(
-                    offset=0,
-                    bytes_per_row=bytes_per_row,
-                    rows_per_image=rows_per_image,
-                ),
-                # The texture size
-                wgpu.Extent3D(im_width, im_height, im_depth),
-            )
-            '''
-
-        # return texture, im_width, im_height
         return TextureDetails(texture, im_width, im_height)

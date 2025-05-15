@@ -5,7 +5,6 @@ import sys
 from loguru import logger
 import numpy as np
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge.engine import Renderer

@@ -6,7 +6,7 @@ import glfw
 import numpy as np
 import glm
 
-from crunge.core import as_capsule, pointer_to_memoryview
+from crunge.core import pointer_to_memoryview
 from crunge import wgpu
 from crunge.wgpu import utils
 
@@ -245,8 +245,6 @@ class WImGuiDemo(Demo):
 
         self.sampler = self.device.create_sampler(sampler_desc)
 
-        size = width * height * bpp
-
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             wgpu.TexelCopyTextureInfo(
@@ -266,30 +264,6 @@ class WImGuiDemo(Demo):
             # The texture size
             wgpu.Extent3D(width, height, 1),
         )
-
-        '''
-        self.queue.write_texture(
-            # Tells wgpu where to copy the pixel data
-            wgpu.TexelCopyTextureInfo(
-                texture=self.texture,
-                mip_level=0,
-                origin=wgpu.Origin3D(0, 0, 0),
-                aspect=wgpu.TextureAspect.ALL,
-            ),
-            # The actual pixel data
-            utils.as_capsule(pixels),
-            # Data size
-            size,
-            # The layout of the texture
-            wgpu.TexelCopyBufferLayout(
-                offset=0,
-                bytes_per_row=width * bpp,
-                rows_per_image=height,
-            ),
-            # The texture size
-            wgpu.Extent3D(width, height, 1),
-        )
-        '''
 
         # io.fonts.set_tex_id(id(self.texture_view))
         # io.fonts.clear_tex_data()
@@ -548,15 +522,6 @@ class WImGuiDemo(Demo):
             0,
             uniforms
         )
-
-        '''
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            as_capsule(uniforms),
-            self.uniform_buffer_size,
-        )
-        '''
 
         draw_data.scale_clip_rects(fb_scale)
 

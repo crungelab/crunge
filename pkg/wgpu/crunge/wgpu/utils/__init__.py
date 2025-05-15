@@ -5,7 +5,6 @@ import numpy as np
 
 from crunge import wgpu
 from crunge.wgpu.constants import *
-from crunge.core import as_capsule
 
 
 def divround_down(value, step):
@@ -113,15 +112,6 @@ def write_buffer(
 ) -> None:
     device.queue.write_buffer(buffer, offset, data)
 
-'''
-def write_buffer(
-    device: wgpu.Device, buffer: wgpu.Buffer, offset: int, data: object, size: int
-) -> None:
-    # Buffer size has to be a multiple of 4
-    size = divround_up(size, 4)
-    device.queue.write_buffer(buffer, offset, as_capsule(data), size)
-'''
-
 def create_buffer_from_ndarray(
     device: wgpu.Device, label: str, data: np.ndarray, usage: wgpu.BufferUsage
 ) -> wgpu.Buffer:
@@ -129,19 +119,8 @@ def create_buffer_from_ndarray(
     # Buffer size has to be a multiple of 4
     size = divround_up(size, 4)
     buffer = create_buffer(device, label, size, usage)
-    #device.queue.write_buffer(buffer, 0, as_capsule(data), size)
     device.queue.write_buffer(buffer, 0, data)
     return buffer
-
-
-def write_buffer_from_ndarray(
-    device: wgpu.Device, buffer: wgpu.Buffer, data: np.ndarray
-) -> None:
-    size = data.nbytes
-    # Buffer size has to be a multiple of 4
-    size = divround_up(size, 4)
-    device.queue.write_buffer(buffer, 0, as_capsule(data), size)
-
 
 def create_buffer_from_ctypes_array(
     device: wgpu.Device, label: str, data: ctypes.Array, usage: wgpu.BufferUsage
@@ -155,31 +134,10 @@ def create_buffer_from_ctypes_array(
     # Create the buffer
     buffer = create_buffer(device, label, size, usage)
 
-    # Get a pointer to the array data
-    ptr = as_capsule(data)
-
     # Write the data to the buffer
-    #device.queue.write_buffer(buffer, 0, ptr, size)
     device.queue.write_buffer(buffer, 0, data)
 
     return buffer
-
-
-def write_buffer_from_ctypes_array(
-    device: wgpu.Device, buffer: wgpu.Buffer, data: ctypes.Array
-) -> None:
-    # Calculate the size of the ctypes array
-    item_size = ctypes.sizeof(data._type_)
-    total_size = len(data) * item_size
-    # Buffer size has to be a multiple of 4
-    size = divround_up(total_size, 4)
-
-    # Get a pointer to the array data
-    ptr = as_capsule(data)
-
-    # Write the data to the buffer
-    device.queue.write_buffer(buffer, 0, ptr, size)
-
 
 def create_image_copy_buffer(
     buffer: wgpu.Buffer,
@@ -212,9 +170,7 @@ def create_image_copy_texture(
 
 
 def create_shader_module(device: wgpu.Device, code: str) -> wgpu.ShaderModule:
-    # wgsl_desc = wgpu.ShaderModuleWGSLDescriptor()
     wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
-    # wgsl_desc.code = source
     descriptor = wgpu.ShaderModuleDescriptor()
     descriptor.next_in_chain = wgsl_desc
     return device.create_shader_module(descriptor)

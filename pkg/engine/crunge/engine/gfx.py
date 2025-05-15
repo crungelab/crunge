@@ -82,9 +82,6 @@ class Gfx:
         im_height = shape[1]
         # im_depth = shape[2]
         im_depth = 1
-        # Has to be a multiple of 256
-        size = utils.divround_up(im.nbytes, 256)
-        logger.debug(size)
 
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,

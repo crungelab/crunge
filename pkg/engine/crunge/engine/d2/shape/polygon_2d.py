@@ -1,21 +1,9 @@
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
+from ctypes import sizeof
 
 from loguru import logger
 import numpy as np
 import glm
 
-# from crunge.core import klass
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
@@ -32,7 +20,7 @@ from ..uniforms_2d import (
 
 # from .program_2d import Program2D
 
-#from .line_program_2d import LineProgram2D
+# from .line_program_2d import LineProgram2D
 from .polygon_program_2d import PolygonProgram2D
 
 # Define the structured dtype for the combined data
@@ -62,7 +50,7 @@ class Polygon2D(Vu2D):
         super().__init__()
         self.points = points
         self.color = color
-        #self.program = LineProgram2D()  # Assuming it is renamed to PolygonProgram2D
+        # self.program = LineProgram2D()  # Assuming it is renamed to PolygonProgram2D
         self.program = PolygonProgram2D()
         self.create_vertices()
         self.create_buffers()
@@ -80,20 +68,22 @@ class Polygon2D(Vu2D):
     def height(self) -> int:
         return self.size.y
 
-    '''
+    """
     def create_vertices(self):
         # Create an empty array with the structured dtype
         self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
         # Fill the array with data
         self.vertices["position"] = self.points
-    '''
+    """
 
     def create_vertices(self):
         # Create an empty array with the structured dtype
         self.vertices = np.empty(len(self.points) + 1, dtype=vertex_dtype)
         # Fill the array with data
         self.vertices["position"][:-1] = self.points  # Copy all points
-        self.vertices["position"][-1] = self.points[0]  # Close the loop by adding the first point again
+        self.vertices["position"][-1] = self.points[
+            0
+        ]  # Close the loop by adding the first point again
 
     def update_vertices(self):
         self.create_vertices()
@@ -165,38 +155,14 @@ class Polygon2D(Vu2D):
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
-        renderer.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            model_uniform
-        )
-
-        '''
-        renderer.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            as_capsule(model_uniform),
-            self.model_uniform_buffer_size,
-        )
-        '''
+        renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
         material_uniform = MaterialUniform()
         material_uniform.color = cast_vec4(self.color)
 
         renderer.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            material_uniform
+            self.material_uniform_buffer, 0, material_uniform
         )
-
-        '''
-        renderer.device.queue.write_buffer(
-            self.material_uniform_buffer,
-            0,
-            as_capsule(material_uniform),
-            self.material_uniform_buffer_size,
-        )
-        '''
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)

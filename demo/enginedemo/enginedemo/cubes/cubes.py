@@ -5,7 +5,6 @@ import glm
 
 from loguru import logger
 
-from crunge.core import as_capsule
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge.engine import Renderer
@@ -103,7 +102,7 @@ class CubesDemo(Demo):
     def resize_camera(self, size: glm.ivec2):
         aspect = float(size.x) / float(size.y)
         fov_y_radians = (2.0 * math.pi) / 5.0
-        #fov_y_radians = glm.radians(60.0)
+        # fov_y_radians = glm.radians(60.0)
         self.projectionMatrix = glm.perspective(fov_y_radians, aspect, 1.0, 100.0)
 
     def create_pipeline(self):
@@ -232,7 +231,7 @@ class CubesDemo(Demo):
     def draw(self, renderer: Renderer):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view = renderer.viewport.color_texture_view,
+                view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
@@ -269,24 +268,9 @@ class CubesDemo(Demo):
 
     def frame(self):
         self.update_transformation_matrices()
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            self.mvp_matrices
-        )
+        self.device.queue.write_buffer(self.uniformBuffer, 0, self.mvp_matrices)
         super().frame()
 
-    '''
-    def frame(self):
-        self.update_transformation_matrices()
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            as_capsule(self.mvp_matrices.ptr),
-            self.uniformBufferSize,
-        )
-        super().frame()
-    '''
 
 def main():
     CubesDemo().create().run()
