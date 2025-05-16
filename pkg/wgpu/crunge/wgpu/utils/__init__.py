@@ -26,6 +26,14 @@ def request_adapter(instance: wgpu.Instance) -> wgpu.Adapter:
     # 1) Set up options
     options = wgpu.RequestAdapterOptions()
 
+    #Optional
+    '''
+    options = wgpu.RequestAdapterOptions(
+        backend_type=wgpu.BackendType.UNDEFINED,
+        power_preference=wgpu.PowerPreference.HIGH_PERFORMANCE,
+    )
+    '''
+
     # 2) Holder for the adapter we'll receive in the callback
     adapter_holder = None
 
@@ -83,6 +91,7 @@ def logging_cb(type: wgpu.LoggingType, message: str):
 
 def create_device(adapter: wgpu.Adapter) -> wgpu.Device:
     device_desc = wgpu.DeviceDescriptor(
+        #default_queue = wgpu.QueueDescriptor(), #Optional
         device_lost_callback_info=device_lost_callback_info,
         uncaptured_error_callback_info=uncaptured_error_callback_info,
     )
@@ -101,16 +110,19 @@ def create_buffer(
 ) -> wgpu.Buffer:
     # Buffer size has to be a multiple of 4
     size = divround_up(size, 4)
-    desc = wgpu.BufferDescriptor()
-    desc.label = label
-    desc.usage = usage | wgpu.BufferUsage.COPY_DST
-    desc.size = size
+    desc = wgpu.BufferDescriptor(
+        label=label,
+        usage=usage | wgpu.BufferUsage.COPY_DST,
+        size=size,
+    )
     return device.create_buffer(desc)
+
 
 def write_buffer(
     device: wgpu.Device, buffer: wgpu.Buffer, offset: int, data: object
 ) -> None:
     device.queue.write_buffer(buffer, offset, data)
+
 
 def create_buffer_from_ndarray(
     device: wgpu.Device, label: str, data: np.ndarray, usage: wgpu.BufferUsage
@@ -121,6 +133,7 @@ def create_buffer_from_ndarray(
     buffer = create_buffer(device, label, size, usage)
     device.queue.write_buffer(buffer, 0, data)
     return buffer
+
 
 def create_buffer_from_ctypes_array(
     device: wgpu.Device, label: str, data: ctypes.Array, usage: wgpu.BufferUsage
@@ -138,6 +151,7 @@ def create_buffer_from_ctypes_array(
     device.queue.write_buffer(buffer, 0, data)
 
     return buffer
+
 
 def create_image_copy_buffer(
     buffer: wgpu.Buffer,
@@ -194,10 +208,11 @@ def create_texture(
     format: wgpu.TextureFormat,
     usage: wgpu.TextureUsage,
 ):
-    descriptor = wgpu.TextureDescriptor()
-    descriptor.label = label
-    descriptor.size = extent
-    descriptor.format = format
-    descriptor.usage = usage
+    descriptor = wgpu.TextureDescriptor(
+        label=label,
+        size=extent,
+        format=format,
+        usage=usage,
+    )
     texture = device.create_texture(descriptor)
     return texture

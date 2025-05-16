@@ -94,8 +94,8 @@ class CubeDemo(Demo):
 
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
+                step_mode=wgpu.VertexStepMode.VERTEX,
                 array_stride=self.kCubeDataStride * sizeof(c_float),
-                attribute_count=2,
                 attributes=vertAttributes,
             )
         ]
@@ -111,7 +111,6 @@ class CubeDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=colorTargetStates,
         )
 
@@ -126,7 +125,7 @@ class CubeDemo(Demo):
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            buffer_count=1,
+            #buffer_count=1,
             buffers=vertBufferLayouts,
         )
 
@@ -146,8 +145,6 @@ class CubeDemo(Demo):
         bind_group_entries = [
             wgpu.BindGroupEntry(
                 binding=0,
-                # TODO: deprecated?
-                # resource=wgpu.BindingResource.buffer(self.uniformBuffer),
                 buffer=self.uniformBuffer,
             )
         ]
@@ -155,7 +152,6 @@ class CubeDemo(Demo):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            #entry_count=1,
             entries=bind_group_entries,
         )
 
@@ -192,7 +188,7 @@ class CubeDemo(Demo):
                 view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
-                clear_color=wgpu.Color(0.5, 0.5, 0.5, 1.0),
+                clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
             )
         ]
 
@@ -205,7 +201,6 @@ class CubeDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
