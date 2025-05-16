@@ -165,7 +165,6 @@ class CubeTextureDemo(Demo):
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
                 array_stride=self.kCubeDataStride * sizeof(c_float),
-                attribute_count=2,
                 attributes=vertAttributes,
             )
         ]
@@ -175,7 +174,6 @@ class CubeTextureDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
@@ -190,7 +188,6 @@ class CubeTextureDemo(Demo):
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            buffer_count=1,
             buffers=vertBufferLayouts,
         )
 
@@ -217,14 +214,10 @@ class CubeTextureDemo(Demo):
             ),
         ]
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries
-        )
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[bgl]
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
 
         rp_descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
@@ -250,7 +243,6 @@ class CubeTextureDemo(Demo):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture+Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bg_entries),
             entries=bg_entries,
         )
 
@@ -289,7 +281,6 @@ class CubeTextureDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )
@@ -307,11 +298,7 @@ class CubeTextureDemo(Demo):
 
     def frame(self):
         transform = self.transform_matrix
-        self.device.queue.write_buffer(
-            self.uniformBuffer,
-            0,
-            transform
-        )
+        self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
 
         super().frame()
 

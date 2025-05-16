@@ -2509,7 +2509,7 @@ PYCLASS_BEGIN(m, pywgpu::BindGroupLayoutEntry, BindGroupLayoutEntry) BindGroupLa
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::BindGroupLayoutEntry obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "binding", "visibility", "buffer", "sampler", "texture", "storage_texture"};        
-        static const std::set<std::string> required = {"binding", "visibility"};        
+        static const std::set<std::string> required = {"binding"};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -2668,7 +2668,7 @@ PYCLASS_BEGIN(m, pywgpu::BufferDescriptor, BufferDescriptor) BufferDescriptor
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::BufferDescriptor obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "label", "usage", "size", "mapped_at_creation"};        
-        static const std::set<std::string> required = {"usage", "size"};        
+        static const std::set<std::string> required = {"size"};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -4861,7 +4861,7 @@ PYCLASS_BEGIN(m, pywgpu::TexelCopyBufferLayout, TexelCopyBufferLayout) TexelCopy
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::TexelCopyBufferLayout obj{};        
         static const std::set<std::string> allowed = {"offset", "bytes_per_row", "rows_per_image"};        
-        static const std::set<std::string> required = {"offset"};        
+        static const std::set<std::string> required = {};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -5484,7 +5484,7 @@ PYCLASS_BEGIN(m, pywgpu::PipelineLayoutDescriptor, PipelineLayoutDescriptor) Pip
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::PipelineLayoutDescriptor obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "label", "bind_group_layouts", "immediate_data_range_byte_size"};        
-        static const std::set<std::string> required = {"immediate_data_range_byte_size"};        
+        static const std::set<std::string> required = {};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -5586,7 +5586,7 @@ PYCLASS_BEGIN(m, pywgpu::PipelineLayoutStorageAttachment, PipelineLayoutStorageA
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::PipelineLayoutStorageAttachment obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "offset", "format"};        
-        static const std::set<std::string> required = {"offset"};        
+        static const std::set<std::string> required = {};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -6289,7 +6289,7 @@ PYCLASS_BEGIN(m, pywgpu::RenderPassStorageAttachment, RenderPassStorageAttachmen
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::RenderPassStorageAttachment obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "offset", "storage", "load_op", "store_op", "clear_value"};        
-        static const std::set<std::string> required = {"offset", "storage"};        
+        static const std::set<std::string> required = {"storage"};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -7684,7 +7684,7 @@ PYCLASS_BEGIN(m, pywgpu::TextureDescriptor, TextureDescriptor) TextureDescriptor
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::TextureDescriptor obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "label", "usage", "dimension", "size", "format", "mip_level_count", "sample_count", "view_formats"};        
-        static const std::set<std::string> required = {"usage"};        
+        static const std::set<std::string> required = {};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -7807,7 +7807,7 @@ PYCLASS_BEGIN(m, pywgpu::TextureViewDescriptor, TextureViewDescriptor) TextureVi
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::TextureViewDescriptor obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "label", "format", "dimension", "base_mip_level", "mip_level_count", "base_array_layer", "array_layer_count", "aspect", "usage"};        
-        static const std::set<std::string> required = {"usage"};        
+        static const std::set<std::string> required = {};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -7989,7 +7989,7 @@ PYSUBCLASS_BEGIN(m, pywgpu::DawnTextureInternalUsageDescriptor, ChainedStruct, D
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::DawnTextureInternalUsageDescriptor obj{};        
         static const std::set<std::string> allowed = {"next_in_chain", "internal_usage"};        
-        static const std::set<std::string> required = {"internal_usage"};        
+        static const std::set<std::string> required = {};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {
@@ -8072,7 +8072,7 @@ PYCLASS_BEGIN(m, pywgpu::MemoryHeapInfo, MemoryHeapInfo) MemoryHeapInfo
     .def(py::init([](const py::kwargs& kwargs) {    
         pywgpu::MemoryHeapInfo obj{};        
         static const std::set<std::string> allowed = {"properties", "size"};        
-        static const std::set<std::string> required = {"properties", "size"};        
+        static const std::set<std::string> required = {"size"};        
         
         // Check for unknown keys
         for (auto& item : kwargs) {

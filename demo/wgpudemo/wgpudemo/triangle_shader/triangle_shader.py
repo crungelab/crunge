@@ -60,7 +60,6 @@ class TriangleShaderDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=colorTargetStates,
         )
 
@@ -99,7 +98,7 @@ class TriangleShaderDemo(Demo):
                 view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
-                clear_color=wgpu.Color(0, 0, 0, 1),
+                clear_value=wgpu.Color(0, 0, 0, 1),
             )
         ]
 
@@ -112,7 +111,6 @@ class TriangleShaderDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
             depth_stencil_attachment=depth_stencil_attachment,
         )

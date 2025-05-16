@@ -125,7 +125,7 @@ class CubeDemo(Demo):
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            #buffer_count=1,
+            # buffer_count=1,
             buffers=vertBufferLayouts,
         )
 
