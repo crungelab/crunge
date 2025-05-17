@@ -124,23 +124,19 @@ class ExplosionProgram(Program):
         logger.debug("create_render_bind_group_layouts")
         camera_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
-                label="Camera Buffer",
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
         ]
 
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
+        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=camera_bgl_entries)
         camera_bgl = self.device.create_bind_group_layout(camera_bgl_desc)
         logger.debug(f"camera_bgl: {camera_bgl}")
 
         # Render Bind Group Layout Entries
         render_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
-                label="Model Buffer",
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(
@@ -149,7 +145,6 @@ class ExplosionProgram(Program):
                 ),
             ),
             wgpu.BindGroupLayoutEntry(
-                label="Particle Buffer",
                 binding=1,
                 visibility=wgpu.ShaderStage.COMPUTE | wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(
@@ -162,7 +157,6 @@ class ExplosionProgram(Program):
         # Render Bind Group Layout
         render_bgl_desc = wgpu.BindGroupLayoutDescriptor(
             label="Render Bind Group Layout",
-            entry_count=len(render_bgl_entries),
             entries=render_bgl_entries,
         )
         render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
@@ -194,7 +188,6 @@ class ExplosionProgram(Program):
         fragmentState = wgpu.FragmentState(
             module=self.fs_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
@@ -208,13 +201,12 @@ class ExplosionProgram(Program):
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
             depth_write_enabled=True,
-            depth_compare = wgpu.CompareFunction.LESS,
+            depth_compare=wgpu.CompareFunction.LESS,
         )
 
         # Render Pipeline Layout
         render_pll_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(self.render_bind_group_layouts),
-            bind_group_layouts=self.render_bind_group_layouts,
+            bind_group_layouts=self.render_bind_group_layouts
         )
 
         render_pl_desc = wgpu.RenderPipelineDescriptor(
@@ -234,7 +226,6 @@ class ExplosionProgram(Program):
         # Compute Bind Group Layout Entries
         compute_bgl_entries = [
             wgpu.BindGroupLayoutEntry(
-                label="Particle Buffer",
                 binding=0,
                 visibility=wgpu.ShaderStage.COMPUTE,
                 buffer=wgpu.BufferBindingLayout(
@@ -245,9 +236,7 @@ class ExplosionProgram(Program):
         ]
 
         # Compute Bind Group Layout
-        compute_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(compute_bgl_entries), entries=compute_bgl_entries
-        )
+        compute_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=compute_bgl_entries)
         compute_bgl = self.device.create_bind_group_layout(compute_bgl_desc)
 
         self.compute_bind_group_layouts = [compute_bgl]
@@ -256,14 +245,13 @@ class ExplosionProgram(Program):
 
         # Compute Pipeline Layout
         compute_pll_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(self.compute_bind_group_layouts),
-            bind_group_layouts=self.compute_bind_group_layouts,
+            bind_group_layouts=self.compute_bind_group_layouts
         )
 
         compute_pl_desc = wgpu.ComputePipelineDescriptor(
             label="Main Compute Pipeline",
             layout=self.device.create_pipeline_layout(compute_pll_desc),
-            #compute=wgpu.ProgrammableStageDescriptor(
+            # compute=wgpu.ProgrammableStageDescriptor(
             compute=wgpu.ComputeState(
                 module=self.cs_module,
                 entry_point="cs_main",
@@ -326,7 +314,6 @@ class ExplosionVu(Vu2D):
         compute_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Compute bind group",
             layout=self.program.compute_pipeline.get_bind_group_layout(0),
-            entry_count=len(compute_bindgroup_entries),
             entries=compute_bindgroup_entries,
         )
 
@@ -345,7 +332,6 @@ class ExplosionVu(Vu2D):
         render_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Render bind group",
             layout=self.program.render_pipeline.get_bind_group_layout(1),
-            entry_count=len(render_bindgroup_entries),
             entries=render_bindgroup_entries,
         )
 
@@ -357,11 +343,7 @@ class ExplosionVu(Vu2D):
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
-        renderer.device.queue.write_buffer(
-            self.model_uniform_buffer,
-            0,
-            model_uniform
-        )
+        renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline)

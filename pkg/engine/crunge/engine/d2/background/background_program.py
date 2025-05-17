@@ -121,6 +121,7 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
+
 @klass.singleton
 class BackgroundProgram(Program2D):
     pipeline: wgpu.RenderPipeline = None
@@ -156,7 +157,6 @@ class BackgroundProgram(Program2D):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
@@ -169,14 +169,13 @@ class BackgroundProgram(Program2D):
 
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
-            #depth_write_enabled=True,
+            # depth_write_enabled=True,
             depth_write_enabled=False,
-            #depth_compare = wgpu.CompareFunction.LESS,
+            # depth_compare = wgpu.CompareFunction.LESS,
         )
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(self.bind_group_layouts),
-            bind_group_layouts=self.bind_group_layouts,
+            bind_group_layouts=self.bind_group_layouts
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(

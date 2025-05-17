@@ -47,8 +47,6 @@ class View(Base):
             format=wgpu.TextureFormat.BGRA8_UNORM,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
-            view_format_count=0,
-            #view_formats=None,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)
@@ -85,7 +83,6 @@ class View(Base):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )

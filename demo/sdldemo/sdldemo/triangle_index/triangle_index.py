@@ -101,7 +101,6 @@ class TriangleIndexDemo(Demo):
         vb_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=8 * sizeof(c_float),
-                attribute_count=2,
                 attributes=vertAttributes,
             )
         ]
@@ -111,14 +110,12 @@ class TriangleIndexDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            buffer_count=1,
             buffers=vb_layouts,
         )
         descriptor = wgpu.RenderPipelineDescriptor(
@@ -147,7 +144,6 @@ class TriangleIndexDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
         )
 

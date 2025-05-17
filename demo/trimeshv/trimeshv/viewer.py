@@ -44,12 +44,12 @@ class Viewer(Base):
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
-            wsd = wgpu.SurfaceSourceXlibWindow()
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
-            wsd.window = handle
-            wsd.display = as_capsule(display)
+            wsd = wgpu.SurfaceSourceXlibWindow(
+                display=as_capsule(display),
+                window=handle
+            )
 
         view = View(scene, self.size)
         view.create_from_wsd(wsd)

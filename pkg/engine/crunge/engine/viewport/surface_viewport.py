@@ -38,14 +38,14 @@ class SurfaceViewport(Viewport):
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
-            wsd = wgpu.SurfaceSourceXlibWindow()
             handle = sdl.get_number_property(properties, "SDL.window.x11.window", 0)
             display = sdl.get_pointer_property(
                 properties, "SDL.window.x11.display", None
             )
-            wsd.window = handle
-            wsd.display = display
+            wsd = wgpu.SurfaceSourceXlibWindow(
+                display=display,
+                window=handle,
+            )
 
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)
@@ -66,8 +66,6 @@ class SurfaceViewport(Viewport):
             format=wgpu.TextureFormat.BGRA8_UNORM,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
-            view_format_count=0,
-            # view_formats=None,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)

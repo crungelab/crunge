@@ -117,7 +117,6 @@ class SpriteVu(Vu2D):
         bind_group_desc = wgpu.BindGroupDescriptor(
             label="Model Bind Group",
             layout=self.program.pipeline.get_bind_group_layout(2),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 

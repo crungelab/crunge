@@ -249,7 +249,7 @@ class InstancedTextDemo(Demo):
         color_target = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
         vertex_state = wgpu.VertexState(module=vs_module, entry_point="vs_main")
         fragment_state = wgpu.FragmentState(
-            module=fs_module, entry_point="main", target_count=1, targets=[color_target]
+            module=fs_module, entry_point="main", targets=[color_target]
         )
 
         bgl_entries = [
@@ -284,14 +284,10 @@ class InstancedTextDemo(Demo):
             ),
         ]
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries
-        )
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[bgl]
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
 
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
@@ -315,7 +311,6 @@ class InstancedTextDemo(Demo):
         bind_group_desc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 
@@ -325,7 +320,6 @@ class InstancedTextDemo(Demo):
         encoder = self.device.create_command_encoder()
         render_pass = encoder.begin_render_pass(
             wgpu.RenderPassDescriptor(
-                color_attachment_count=1,
                 color_attachments=[
                     wgpu.RenderPassColorAttachment(
                         view=renderer.viewport.color_texture_view,

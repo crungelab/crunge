@@ -74,7 +74,6 @@ class TriangleVertexDemo(Demo):
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
                 array_stride=8 * sizeof(c_float),
-                attribute_count=2,
                 attributes=vertAttributes,
             )
         ]
@@ -84,14 +83,12 @@ class TriangleVertexDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            buffer_count=1,
             buffers=vertBufferLayouts,
         )
         descriptor = wgpu.RenderPipelineDescriptor(
@@ -112,7 +109,6 @@ class TriangleVertexDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
         )
 

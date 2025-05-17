@@ -124,7 +124,6 @@ class Polygon2D(Vu2D):
         material_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Material Bind Group",
             layout=self.program.pipeline.get_bind_group_layout(1),
-            entry_count=len(material_bindgroup_entries),
             entries=material_bindgroup_entries,
         )
 
@@ -145,7 +144,6 @@ class Polygon2D(Vu2D):
         model_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Model Bind Group",
             layout=self.program.pipeline.get_bind_group_layout(2),
-            entry_count=len(model_bindgroup_entries),
             entries=model_bindgroup_entries,
         )
 

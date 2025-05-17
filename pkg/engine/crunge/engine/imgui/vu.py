@@ -116,12 +116,18 @@ class ImGuiVu(Vu):
     def create_buffers(self):
         logger.debug("create_buffers")
         self.vertex_buffer = utils.create_buffer(
-            self.device, "VERTEX", imgui.VERTEX_SIZE * 65536, wgpu.BufferUsage.VERTEX
-            #self.device, "VERTEX", imgui.VERTEX_SIZE * 131072, wgpu.BufferUsage.VERTEX
+            self.device,
+            "VERTEX",
+            imgui.VERTEX_SIZE * 65536,
+            wgpu.BufferUsage.VERTEX,
+            # self.device, "VERTEX", imgui.VERTEX_SIZE * 131072, wgpu.BufferUsage.VERTEX
         )
         self.index_buffer = utils.create_buffer(
-            #self.device, "INDEX", imgui.INDEX_SIZE * 65536, wgpu.BufferUsage.INDEX
-            self.device, "INDEX", imgui.INDEX_SIZE * 131072, wgpu.BufferUsage.INDEX
+            # self.device, "INDEX", imgui.INDEX_SIZE * 65536, wgpu.BufferUsage.INDEX
+            self.device,
+            "INDEX",
+            imgui.INDEX_SIZE * 131072,
+            wgpu.BufferUsage.INDEX,
         )
 
         self.uniform_buffer_size = sizeof(Uniforms)
@@ -154,9 +160,9 @@ class ImGuiVu(Vu):
 
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
-            #wgpu.TexelCopyTextureInfo(
+            # wgpu.TexelCopyTextureInfo(
             wgpu.TexelCopyTextureInfo(
-                #texture=self.texture,
+                # texture=self.texture,
                 texture=self.texture.texture,
                 mip_level=0,
                 origin=wgpu.Origin3D(0, 0, 0),
@@ -202,7 +208,6 @@ class ImGuiVu(Vu):
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
                 array_stride=sizeof(ImDrawVert),
-                attribute_count=len(vertAttributes),
                 attributes=vertAttributes,
             )
         ]
@@ -231,14 +236,12 @@ class ImGuiVu(Vu):
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
-            target_count=1,
             targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
-            buffer_count=1,
             buffers=vertBufferLayouts,
         )
 
@@ -265,14 +268,10 @@ class ImGuiVu(Vu):
             ),
         ]
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries
-        )
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[bgl]
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
 
         primitive = wgpu.PrimitiveState(
             topology=wgpu.PrimitiveTopology.TRIANGLE_LIST,
@@ -311,7 +310,7 @@ class ImGuiVu(Vu):
             wgpu.BindGroupEntry(
                 binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
             ),
-            #wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+            # wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
             wgpu.BindGroupEntry(binding=1, sampler=self.sampler.sampler),
             wgpu.BindGroupEntry(binding=2, texture_view=self.texture.view),
         ]
@@ -319,7 +318,6 @@ class ImGuiVu(Vu):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 
@@ -327,13 +325,13 @@ class ImGuiVu(Vu):
         logger.debug("create_pipeline done")
 
     def create_image_bind_group(self, tex_id):
-        #logger.debug("create_image_bind_group")
+        # logger.debug("create_image_bind_group")
         texture = ResourceManager().texture_kit.get(tex_id)
         bindgroup_entries = [
             wgpu.BindGroupEntry(
                 binding=0, buffer=self.uniform_buffer, size=self.uniform_buffer_size
             ),
-            #wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+            # wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
             wgpu.BindGroupEntry(binding=1, sampler=self.sampler.sampler),
             wgpu.BindGroupEntry(binding=2, texture_view=texture.view),
         ]
@@ -341,7 +339,6 @@ class ImGuiVu(Vu):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 
@@ -384,10 +381,10 @@ class ImGuiVu(Vu):
                 self.device,
                 self.vertex_buffer,
                 vtx_offset * imgui.VERTEX_SIZE,
-                commands.vtx_buffer_data
+                commands.vtx_buffer_data,
             )
 
-            '''
+            """
             utils.write_buffer(
                 self.device,
                 self.vertex_buffer,
@@ -395,16 +392,16 @@ class ImGuiVu(Vu):
                 commands.vtx_buffer_data,
                 commands.vtx_buffer_size * imgui.VERTEX_SIZE,
             )
-            '''
+            """
             # logger.debug('write index_buffer')
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
                 idx_offset * imgui.INDEX_SIZE,
-                commands.idx_buffer_data
+                commands.idx_buffer_data,
             )
 
-            '''
+            """
             utils.write_buffer(
                 self.device,
                 self.index_buffer,
@@ -412,25 +409,26 @@ class ImGuiVu(Vu):
                 commands.idx_buffer_data,
                 commands.idx_buffer_size * imgui.INDEX_SIZE,
             )
-            '''
+            """
 
             for command in commands:
                 if command.user_callback:
                     command.user_callback(
-                        #self, draw_data, commands, command, command.user_callback_data
-                        commands, command
+                        # self, draw_data, commands, command, command.user_callback_data
+                        commands,
+                        command,
                     )
                 else:
                     tex_id = command.texture_id
-                    #tex_id = command.get_tex_id()
-                    #logger.debug(f"tex_id: {tex_id}")
+                    # tex_id = command.get_tex_id()
+                    # logger.debug(f"tex_id: {tex_id}")
                     bind_group = self.image_bind_groups.get(tex_id)
                     if bind_group is None:
                         bind_group = self.create_image_bind_group(tex_id)
                         self.image_bind_groups[tex_id] = bind_group
 
                     pass_enc.set_bind_group(0, bind_group)
-                    
+
                     # Project scissor/clipping rectangles into framebuffer space
 
                     clip_rect = glm.vec4(
@@ -500,17 +498,13 @@ class ImGuiVu(Vu):
         uniforms.mvp.data = cast_matrix4(mvp)
         uniforms.gamma = 1.0
 
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            uniforms
-        )
+        self.device.queue.write_buffer(self.uniform_buffer, 0, uniforms)
 
         draw_data.scale_clip_rects(fb_scale)
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
+                # view=renderer.texture_view,
                 view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.LOAD,
                 store_op=wgpu.StoreOp.STORE,
@@ -519,7 +513,6 @@ class ImGuiVu(Vu):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
         )
 

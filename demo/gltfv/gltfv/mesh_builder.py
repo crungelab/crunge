@@ -208,7 +208,6 @@ class MeshBuilder(NodeBuilder):
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
                 array_stride=self.vertex_table.vertex_size,
-                attribute_count=self.vertex_table.count,
                 attributes=vertAttributes,
             )
         ]
@@ -216,7 +215,6 @@ class MeshBuilder(NodeBuilder):
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="vs_main",
-            buffer_count=1,
             buffers=vertBufferLayouts,
         )
 
@@ -247,7 +245,6 @@ class MeshBuilder(NodeBuilder):
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
@@ -293,14 +290,10 @@ class MeshBuilder(NodeBuilder):
                 )
             )
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries
-        )
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[bgl]
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
 
         rp_descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
@@ -344,7 +337,6 @@ class MeshBuilder(NodeBuilder):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Uniform bind group",
             layout=self.mesh.pipeline.get_bind_group_layout(0),
-            entry_count=len(bg_entries),
             entries=bg_entries,
         )
 

@@ -122,6 +122,7 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
 }
 """
 
+
 @klass.singleton
 class ModelBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
@@ -129,17 +130,17 @@ class ModelBindGroupLayout(BindGroupLayout):
             wgpu.BindGroupLayoutEntry(
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX,
-                #buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.READ_ONLY_STORAGE),
+                buffer=wgpu.BufferBindingLayout(
+                    type=wgpu.BufferBindingType.READ_ONLY_STORAGE
+                ),
             ),
         ]
 
-        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(model_bgl_entries), entries=model_bgl_entries
-        )
+        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=model_bgl_entries)
         bind_group_layout = self.device.create_bind_group_layout(model_bgl_desc)
         logger.debug(f"model_bgl: {bind_group_layout}")
         super().__init__(bind_group_layout)
+
 
 @klass.singleton
 class InstancedSpriteVuGroupProgram(Program2D):
@@ -180,7 +181,6 @@ class InstancedSpriteVuGroupProgram(Program2D):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
@@ -193,13 +193,12 @@ class InstancedSpriteVuGroupProgram(Program2D):
 
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
-            #depth_write_enabled=True,
+            # depth_write_enabled=True,
             depth_write_enabled=False,
-            #depth_compare = wgpu.CompareFunction.LESS,
+            # depth_compare = wgpu.CompareFunction.LESS,
         )
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(self.bind_group_layouts),
             bind_group_layouts=self.bind_group_layouts,
         )
 

@@ -291,7 +291,6 @@ class WImGuiDemo(Demo):
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
                 array_stride=sizeof(ImDrawVert),
-                attribute_count=len(vertAttributes),
                 attributes=vertAttributes,
             )
         ]
@@ -320,14 +319,12 @@ class WImGuiDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
-            target_count=1,
             targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
-            buffer_count=1,
             buffers=vertBufferLayouts,
         )
 
@@ -354,14 +351,10 @@ class WImGuiDemo(Demo):
             ),
         ]
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries
-        )
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[bgl]
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
 
         primitive = wgpu.PrimitiveState(
             topology=wgpu.PrimitiveTopology.TRIANGLE_LIST,
@@ -407,7 +400,6 @@ class WImGuiDemo(Demo):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 
@@ -426,7 +418,7 @@ class WImGuiDemo(Demo):
                 self.vertex_buffer,
                 vtx_offset * imgui.VERTEX_SIZE,
                 commands.vtx_buffer_data,
-                #commands.vtx_buffer_size * imgui.VERTEX_SIZE,
+                # commands.vtx_buffer_size * imgui.VERTEX_SIZE,
             )
             # logger.debug('write index_buffer')
             utils.write_buffer(
@@ -434,7 +426,7 @@ class WImGuiDemo(Demo):
                 self.index_buffer,
                 idx_offset * imgui.INDEX_SIZE,
                 commands.idx_buffer_data,
-                #commands.idx_buffer_size * imgui.INDEX_SIZE,
+                # commands.idx_buffer_size * imgui.INDEX_SIZE,
             )
 
             for command in commands:
@@ -484,11 +476,7 @@ class WImGuiDemo(Demo):
         uniforms.mvp.data = cast_matrix4(mvp)
         uniforms.gamma = 1.0
 
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            uniforms
-        )
+        self.device.queue.write_buffer(self.uniform_buffer, 0, uniforms)
 
         draw_data.scale_clip_rects(fb_scale)
 
@@ -503,7 +491,6 @@ class WImGuiDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
         )
 

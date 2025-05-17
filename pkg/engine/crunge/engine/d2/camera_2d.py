@@ -87,7 +87,6 @@ class Camera2D(Node2D):
         camera_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Camera bind group",
             layout=CameraProgram2D().camera_bind_group_layout,
-            entry_count=len(camera_bindgroup_entries),
             entries=camera_bindgroup_entries,
         )
 

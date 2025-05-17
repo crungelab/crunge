@@ -283,7 +283,6 @@ class WImGuiDemo(Demo):
         vb_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=sizeof(ImDrawVert),
-                attribute_count=len(vertAttributes),
                 attributes=vertAttributes,
             )
         ]
@@ -312,14 +311,12 @@ class WImGuiDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
-            target_count=1,
             targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
-            buffer_count=1,
             buffers=vb_layouts,
         )
 
@@ -346,14 +343,10 @@ class WImGuiDemo(Demo):
             ),
         ]
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries
-        )
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[bgl]
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
 
         primitive = wgpu.PrimitiveState(
             topology=wgpu.PrimitiveTopology.TRIANGLE_LIST,
@@ -399,7 +392,6 @@ class WImGuiDemo(Demo):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 
@@ -504,7 +496,6 @@ class WImGuiDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
         )
 

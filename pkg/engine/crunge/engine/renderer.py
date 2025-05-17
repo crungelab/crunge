@@ -78,7 +78,6 @@ class Renderer(Base):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )

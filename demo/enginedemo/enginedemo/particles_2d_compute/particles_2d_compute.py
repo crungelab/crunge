@@ -165,7 +165,6 @@ class ParticlesDemo(Demo):
         vb_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=2 * sizeof(c_float),
-                attribute_count=1,
                 attributes=vertAttributes,
             )
         ]
@@ -191,14 +190,12 @@ class ParticlesDemo(Demo):
         ]
 
         # Render Bind Group Layout
-        compute_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(compute_bgl_entries), entries=compute_bgl_entries
-        )
+        compute_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=compute_bgl_entries)
         compute_bgl = self.device.create_bind_group_layout(compute_bgl_desc)
 
         # Render Pipeline Layout
         compute_pll_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[compute_bgl]
+            bind_group_layouts=[compute_bgl]
         )
 
         compute_pl_desc = wgpu.ComputePipelineDescriptor(
@@ -236,14 +233,12 @@ class ParticlesDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=self.fs_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=self.vs_module,
             entry_point="vs_main",
-            buffer_count=1,
             buffers=vb_layouts,
         )
 
@@ -268,15 +263,11 @@ class ParticlesDemo(Demo):
         ]
 
         # Render Bind Group Layout
-        render_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(render_bgl_entries), entries=render_bgl_entries
-        )
+        render_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=render_bgl_entries)
         render_bgl = self.device.create_bind_group_layout(render_bgl_desc)
 
         # Render Pipeline Layout
-        render_pll_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[render_bgl]
-        )
+        render_pll_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[render_bgl])
 
         render_pl_desc = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
@@ -299,7 +290,6 @@ class ParticlesDemo(Demo):
         compute_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Compute bind group",
             layout=self.compute_pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 
@@ -309,7 +299,6 @@ class ParticlesDemo(Demo):
         render_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Render bind group",
             layout=self.render_pipeline.get_bind_group_layout(0),
-            entry_count=len(bindgroup_entries),
             entries=bindgroup_entries,
         )
 
@@ -331,7 +320,6 @@ class ParticlesDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
         )
 

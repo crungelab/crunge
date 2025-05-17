@@ -74,7 +74,6 @@ class MeshInstance3D(Node3D):
         model_bg_desc = wgpu.BindGroupDescriptor(
             label="Model Bind Group",
             layout=self.program.model_bind_group_layout,
-            entry_count=len(model_bg_entries),
             entries=model_bg_entries,
         )
 

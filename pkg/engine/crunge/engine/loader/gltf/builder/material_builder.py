@@ -11,7 +11,7 @@ from crunge import gltf
 
 from crunge.engine.math import Rect2i
 
-#from crunge.engine.resource.material import Material
+# from crunge.engine.resource.material import Material
 from crunge.engine.d3.material_3d import Material3D
 from crunge.engine.resource.texture import Texture
 from crunge.engine.resource.texture.cube_texture import CubeTexture
@@ -37,7 +37,7 @@ class MaterialBuilder(GltfBuilder):
     def build(self) -> None:
         if self.material_index in self.context.material_cache:
             return self.context.material_cache[self.material_index]
-        
+
         self.tf_material = tf_material = self.tf_model.materials[self.material_index]
         logger.debug(tf_material)
         self.material = material = Material3D()
@@ -70,7 +70,7 @@ class MaterialBuilder(GltfBuilder):
 
         # Base Color Texture
         if pbr.base_color_texture.index >= 0:
-            self.build_texture('baseColor', pbr.base_color_texture)
+            self.build_texture("baseColor", pbr.base_color_texture)
 
         # Metallic Factor
         metallic_factor = pbr.metallic_factor
@@ -84,17 +84,17 @@ class MaterialBuilder(GltfBuilder):
 
         # Metallic Roughness Texture
         if pbr.metallic_roughness_texture.index >= 0:
-            self.build_texture('metallicRoughness', pbr.metallic_roughness_texture)
+            self.build_texture("metallicRoughness", pbr.metallic_roughness_texture)
             self.use_environment_map = True
 
         # Normal Texture
         if tf_material.normal_texture.index >= 0:
-            self.build_texture('normal', tf_material.normal_texture)
+            self.build_texture("normal", tf_material.normal_texture)
 
         # Occlusion Texture
         if tf_material.occlusion_texture.index >= 0:
             material.occlusion_strength = tf_material.occlusion_texture.strength
-            self.build_texture('occlusion', tf_material.occlusion_texture)
+            self.build_texture("occlusion", tf_material.occlusion_texture)
 
         # Emissive Factor
         emissive_factor = tf_material.emissive_factor
@@ -103,7 +103,7 @@ class MaterialBuilder(GltfBuilder):
 
         # Emissive Texture
         if tf_material.emissive_texture.index >= 0:
-            self.build_texture('emissive', tf_material.emissive_texture)
+            self.build_texture("emissive", tf_material.emissive_texture)
 
         # Environment Map
         if self.use_environment_map:
@@ -114,26 +114,30 @@ class MaterialBuilder(GltfBuilder):
 
         self.context.material_cache[self.material_index] = material
         return self.material
-    
+
     def build_texture(self, name: str, texture_info: gltf.TextureInfo) -> None:
-        #debug_texture_info(texture_info)
+        # debug_texture_info(texture_info)
         texture = TextureBuilder(self.context, name, texture_info).build()
         self.material.add_texture(texture)
 
     def build_environment_map(self) -> None:
-        #texture = self.build_environment_texture()
+        # texture = self.build_environment_texture()
         texture = self.build_cube_environment_texture()
         self.material.add_texture(texture)
 
     def build_environment_texture(self) -> Texture:
-        path = importlib.resources.path('crunge.engine.resources.textures', 'environment.hdr')
-        texture = Texture2DLoader(image_loader=HdrImageLoader()).load(path, name="environment")
+        path = importlib.resources.path(
+            "crunge.engine.resources.textures", "environment.hdr"
+        )
+        texture = Texture2DLoader(image_loader=HdrImageLoader()).load(
+            path, name="environment"
+        )
         texture.view = texture.texture.create_view()
         texture.sampler = self.gfx.device.create_sampler()
         return texture
 
     def build_cube_environment_texture(self) -> Texture:
-        root = importlib.resources.path('crunge.engine.resources.textures.cubemaps', '')
+        root = importlib.resources.path("crunge.engine.resources.textures.cubemaps", "")
         name = "gcanyon_cube"
         ext = "png"
         paths = [
@@ -183,9 +187,7 @@ class MaterialBuilder(GltfBuilder):
                 )
             )
 
-        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(material_bgl_entries), entries=material_bgl_entries
-        )
+        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=material_bgl_entries)
         material_bgl = self.device.create_bind_group_layout(material_bgl_desc)
         self.material.bind_group_layout = material_bgl
 
@@ -193,20 +195,15 @@ class MaterialBuilder(GltfBuilder):
         material_bg_entries = []
         for i, texture in enumerate(self.material.textures):
             material_bg_entries.append(
-                wgpu.BindGroupEntry(
-                    binding=i * 2, sampler=texture.sampler
-                )
+                wgpu.BindGroupEntry(binding=i * 2, sampler=texture.sampler)
             )
             material_bg_entries.append(
-                wgpu.BindGroupEntry(
-                    binding=i * 2 + 1, texture_view=texture.view
-                )
+                wgpu.BindGroupEntry(binding=i * 2 + 1, texture_view=texture.view)
             )
 
         material_bg_desc = wgpu.BindGroupDescriptor(
             label="Material Bind Group",
             layout=self.material.bind_group_layout,
-            entry_count=len(material_bg_entries),
             entries=material_bg_entries,
         )
 

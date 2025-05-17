@@ -128,7 +128,6 @@ class CubesDemo(Demo):
         vb_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=self.kCubeDataStride * sizeof(c_float),
-                attribute_count=2,
                 attributes=vertAttributes,
             )
         ]
@@ -138,7 +137,6 @@ class CubesDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
@@ -153,7 +151,6 @@ class CubesDemo(Demo):
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            buffer_count=1,
             buffers=vb_layouts,
         )
 
@@ -176,7 +173,6 @@ class CubesDemo(Demo):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Uniform bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=1,
             entries=bg_entries,
         )
 
@@ -248,7 +244,6 @@ class CubesDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
             depth_stencil_attachment=depthStencilAttach,
         )

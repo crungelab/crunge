@@ -73,7 +73,7 @@ class TextureBuilder(ModelBuilder):
             lod_min_clamp=0,
             lod_max_clamp=100,
             compare=wgpu.CompareFunction.UNDEFINED,
-            anisotropy=16,
+            max_anisotropy=16,
         )
         self.texture.sampler = self.device.create_sampler(sampler_desc)
 

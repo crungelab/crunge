@@ -50,7 +50,6 @@ class Lighting3D(Base):
         light_bg_desc = wgpu.BindGroupDescriptor(
             label="Light Bind Group",
             layout = Lighting3DProgram().light_bind_group_layout,
-            entry_count=len(light_bg_entries),
             entries=light_bg_entries,
         )
 

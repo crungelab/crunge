@@ -109,7 +109,6 @@ class TextDemo(Demo):
         vb_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=4 * sizeof(c_float),
-                attribute_count=2,
                 attributes=vertAttributes,
             )
         ]
@@ -123,14 +122,12 @@ class TextDemo(Demo):
         fragment_state = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
-            target_count=1,
             targets=color_targets,
         )
 
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
-            buffer_count=1,
             buffers=vb_layouts,
         )
 
@@ -152,14 +149,10 @@ class TextDemo(Demo):
             ),
         ]
 
-        bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(bgl_entries), entries=bgl_entries
-        )
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=1, bind_group_layouts=[bgl]
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
 
         descriptor = wgpu.RenderPipelineDescriptor(
             label="Main Render Pipeline",
@@ -180,7 +173,6 @@ class TextDemo(Demo):
         bindGroupDesc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
-            entry_count=2,
             entries=bindgroup_entries,
         )
 
@@ -293,7 +285,6 @@ class TextDemo(Demo):
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
         )
 

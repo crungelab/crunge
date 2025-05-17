@@ -22,7 +22,8 @@ from .vertex_table import VertexTable
 from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, TangentColumn
 
 from .material_builder import MaterialBuilder
-#from crunge.engine.resource.material import Material
+
+# from crunge.engine.resource.material import Material
 from crunge.engine.d3.material_3d import Material3D
 
 from ..normals import compute_normals
@@ -30,14 +31,12 @@ from ..tangents import compute_tangents
 
 
 class PrimitiveBuilder(GltfBuilder):
-    def __init__(
-        self, context: BuilderContext, tf_primitive: gltf.Primitive
-    ) -> None:
+    def __init__(self, context: BuilderContext, tf_primitive: gltf.Primitive) -> None:
         super().__init__(context)
         self.tf_primitive = tf_primitive
         self.primitive = Primitive3D()
         self.program = Primitive3DProgram()
-        self.material:Material3D = None
+        self.material: Material3D = None
         self.vertex_table = VertexTable()
 
     def build(self):
@@ -85,7 +84,7 @@ class PrimitiveBuilder(GltfBuilder):
         name, accessor_index = attribute
         logger.debug(f"primitive.attributes[{name}]: {accessor_index}")
         accessor = self.tf_model.accessors[accessor_index]
-        #data = self.build_attribute_array(index)
+        # data = self.build_attribute_array(index)
         data = self.build_array(accessor_index)
 
         if name == "POSITION":
@@ -119,8 +118,7 @@ class PrimitiveBuilder(GltfBuilder):
         tf_primitive = self.tf_primitive
         logger.debug(f"primitive.indices: {tf_primitive.indices}")
         accessor = self.tf_model.accessors[tf_primitive.indices]
-        #debug_accessor(accessor)
-
+        # debug_accessor(accessor)
 
         indices = self.build_array(tf_primitive.indices)
         # logger.debug(f"indices: {indices}")
@@ -145,7 +143,7 @@ class PrimitiveBuilder(GltfBuilder):
             return self.context.array_cache[accessor_index]
 
         accessor = self.tf_model.accessors[accessor_index]
-        #debug_accessor(accessor)
+        # debug_accessor(accessor)
 
         buffer_view = self.tf_model.buffer_views[accessor.buffer_view]
         buffer = self.tf_model.buffers[buffer_view.buffer]
@@ -183,8 +181,8 @@ class PrimitiveBuilder(GltfBuilder):
 
     def build_material(self):
         if self.tf_primitive.material < 0:
-            #self.material = Material3D()
-            #self.primitive.material = self.material
+            # self.material = Material3D()
+            # self.primitive.material = self.material
             return
         tf_primitive = self.tf_primitive
         logger.debug(f"primitive.material: {tf_primitive.material}")
@@ -206,7 +204,6 @@ class PrimitiveBuilder(GltfBuilder):
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
                 array_stride=self.vertex_table.vertex_size,
-                attribute_count=self.vertex_table.count,
                 attributes=vertAttributes,
             )
         ]
@@ -214,7 +211,6 @@ class PrimitiveBuilder(GltfBuilder):
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="vs_main",
-            buffer_count=1,
             buffers=vertBufferLayouts,
         )
 
@@ -245,7 +241,6 @@ class PrimitiveBuilder(GltfBuilder):
         fragmentState = wgpu.FragmentState(
             module=fs_module,
             entry_point="fs_main",
-            target_count=1,
             targets=color_targets,
         )
 
@@ -267,10 +262,7 @@ class PrimitiveBuilder(GltfBuilder):
 
         bind_group_layouts = [camera_bgl, light_bgl, material_bgl, model_bgl]
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layout_count=len(bind_group_layouts),
-            bind_group_layouts=bind_group_layouts,
-        )
+        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=bind_group_layouts)
 
         multisample = wgpu.MultisampleState(
             count=SAMPLE_COUNT,

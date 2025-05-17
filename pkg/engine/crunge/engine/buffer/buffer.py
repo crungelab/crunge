@@ -25,13 +25,15 @@ class Buffer(Base):
         # Create the WebGPU buffer
         #logger.debug(f"Creating buffer: {label}")
         size = divround_up(size, 4)
-        desc = wgpu.BufferDescriptor()
         #TODO: fix Dawny/CxBind's issue with c strings
-        if label is not None:
-            desc.label = label
-        #desc.label = label
-        desc.usage = usage | wgpu.BufferUsage.COPY_DST
-        desc.size = size
+
+        desc = wgpu.BufferDescriptor(
+            label=label,
+            size=size,
+            usage=usage | wgpu.BufferUsage.COPY_DST,
+            #mapped_at_creation=False,
+        )
+
         #logger.debug(f"Buffer size: {size}")
         self.buffer = self.device.create_buffer(desc)
         #logger.debug(f"Buffer created: {label}")

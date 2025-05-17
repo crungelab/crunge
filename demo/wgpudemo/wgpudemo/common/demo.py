@@ -77,8 +77,6 @@ class Demo:
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
             # present_mode=wgpu.PresentMode.MAILBOX,
-            #view_format_count=0,
-            # view_formats=None,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)
@@ -104,9 +102,6 @@ class Demo:
                 display=as_capsule(display),
                 window=handle,
             )
-
-            #wsd.window = handle
-            #wsd.display = as_capsule(display)
 
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)

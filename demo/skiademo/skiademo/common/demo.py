@@ -97,8 +97,6 @@ class Demo:
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
             #present_mode=wgpu.PresentMode.MAILBOX,
-            view_format_count=0,
-            #view_formats=None,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)
@@ -117,12 +115,12 @@ class Demo:
             wsd.hinstance = None
 
         elif sys.platform == "linux":
-            #wsd = wgpu.SurfaceDescriptorFromXlibWindow()
-            wsd = wgpu.SurfaceSourceXlibWindow()
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
-            wsd.window = handle
-            wsd.display = as_capsule(display)
+            wsd = wgpu.SurfaceSourceXlibWindow(
+                window=handle,
+                display=as_capsule(display)
+            )
 
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)

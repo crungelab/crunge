@@ -41,7 +41,7 @@ class BackgroundDemo(Demo):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
-        imgui.begin("Ship")
+        imgui.begin("Background")
 
         # Rotation
         changed, self.angle = imgui.drag_float(

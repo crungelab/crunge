@@ -30,9 +30,7 @@ class CameraBindGroupLayout(BindGroupLayout):
             ),
         ]
 
-        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(camera_bgl_entries), entries=camera_bgl_entries
-        )
+        camera_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=camera_bgl_entries)
         bind_group_layout = self.device.create_bind_group_layout(camera_bgl_desc)
         logger.debug(f"camera_bgl: {bind_group_layout}")
         super().__init__(bind_group_layout)
@@ -55,9 +53,7 @@ class LightBindGroupLayout(BindGroupLayout):
             ),
         ]
 
-        light_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(light_bgl_entries), entries=light_bgl_entries
-        )
+        light_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=light_bgl_entries)
         bind_group_layout = self.device.create_bind_group_layout(light_bgl_desc)
         logger.debug(f"light_bgl: {bind_group_layout}")
         super().__init__(bind_group_layout)
@@ -108,9 +104,7 @@ class ModelBindGroupLayout(BindGroupLayout):
             ),
         ]
 
-        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(
-            entry_count=len(model_bgl_entries), entries=model_bgl_entries
-        )
+        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=model_bgl_entries)
         bind_group_layout = self.device.create_bind_group_layout(model_bgl_desc)
         logger.debug(f"model_bgl: {bind_group_layout}")
         super().__init__(bind_group_layout)
@@ -127,7 +121,7 @@ class Program3D(Program):
     @property
     def light_bind_group_layout(self):
         return LightBindGroupLayout().get()
-    
+
     @property
     def material_bind_group_layout(self):
         return MaterialBindGroupLayout().get()

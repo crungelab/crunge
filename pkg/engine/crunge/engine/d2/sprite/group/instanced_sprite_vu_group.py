@@ -120,7 +120,6 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         model_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Model Bind Group",
             layout=self.program.pipeline.get_bind_group_layout(2),
-            entry_count=len(model_bindgroup_entries),
             entries=model_bindgroup_entries,
         )
 
@@ -128,8 +127,6 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)
-        # self.material.bind(pass_enc)
-        #self.members[0].material.bind(pass_enc)
         pass_enc.set_bind_group(2, self.bind_group)
 
     def draw(self, renderer: Renderer):

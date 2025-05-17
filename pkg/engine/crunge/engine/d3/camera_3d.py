@@ -119,9 +119,7 @@ class Camera3D(Node3D):
 
         camera_bind_group_desc = wgpu.BindGroupDescriptor(
             label="Camera Bind Group",
-            #layout=camera_bgl,
             layout=CameraProgram3D().camera_bind_group_layout,
-            entry_count=len(camera_bindgroup_entries),
             entries=camera_bindgroup_entries,
         )
 
