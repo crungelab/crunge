@@ -103,6 +103,8 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     PYEXTEND_END
 
     // TODO: Getting incompatible argument types when both signatures match.  Makes no sense ...
+    // Might be a binding order registration issue.
+
     /*
     TypeError: set_bind_group(): incompatible function arguments. The following argument types are supported:
         1. (self: crunge.wgpu._wgpu.ComputePassEncoder, group_index: int, group: crunge.wgpu._wgpu.BindGroup, dynamic_offset_count: int = 0, dynamic_offsets: int = None) -> None
@@ -111,6 +113,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     */
 
     // void RenderPassEncoder::SetBindGroup(uint32_t groupIndex, BindGroup const& group, uint32_t dynamicOffsetCount, uint32_t const * dynamicOffsets) const {
+
     PYEXTEND_BEGIN(pywgpu::RenderPassEncoder, RenderPassEncoder)
     RenderPassEncoder.def("set_bind_group", [](pywgpu::RenderPassEncoder &self, uint32_t groupIndex, BindGroup const &group)
                           { self.SetBindGroup(groupIndex, group, 0, nullptr); }, py::arg("group_index"), py::arg("group")
@@ -134,6 +137,8 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
         wgpuQueueWriteTexture(Get(), reinterpret_cast<WGPUTexelCopyTextureInfo const* >(destination), data, dataSize, reinterpret_cast<WGPUTexelCopyBufferLayout const* >(dataLayout), reinterpret_cast<WGPUExtent3D const* >(writeSize));    
     }
     */
+
+    /*
     PYEXTEND_BEGIN(pywgpu::Queue, Queue)
     Queue.def("write_texture",
         [](pywgpu::Queue& self,
@@ -172,6 +177,8 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
         py::arg("layout"),
         py::arg("write_size"));
 
+    */
+
     /*
     void Queue::WriteBuffer (Buffer buffer, uint64_t bufferOffset, void const* data, size_t size) const {
         wgpuQueueWriteBuffer(Get(), *reinterpret_cast<WGPUBuffer const*>(&buffer), bufferOffset, data, size);    
@@ -180,6 +187,8 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
         , py::arg("buffer"), py::arg("buffer_offset"), py::arg("data"), py::arg("size")
         , py::return_value_policy::automatic_reference)
     */
+
+    /*
     Queue.def("write_buffer",
         [](pywgpu::Queue& self,
                 pywgpu::Buffer& buffer,
@@ -215,33 +224,6 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
         py::arg("data")
     );
             
-    PYEXTEND_END
-
-    /*
-    PYEXTEND_BEGIN(pywgpu::Queue, Queue)
-    Queue.def("write_texture_buffer",
-        [](wgpu::Queue& self,
-           const wgpu::TexelCopyTextureInfo& destination,
-           py::buffer buffer,
-           //py::array_t<uint8_t, py::array::c_style | py::array::forcecast>  &buffer,
-           const wgpu::TexelCopyBufferLayout& layout,
-           const wgpu::Extent3D& write_size) {
-
-            // Get buffer info
-            py::buffer_info info = buffer.request();
-
-            // Validate type and contiguity if necessary
-            if (info.ndim != 1) {
-                throw std::runtime_error("Buffer must be a 1D array of bytes");
-            }
-
-            // Call the actual method
-            self.WriteTexture(&destination, info.ptr, info.size * info.itemsize, &layout, &write_size);
-        },
-        py::arg("destination"),
-        py::arg("data"),
-        py::arg("layout"),
-        py::arg("write_size"));
     PYEXTEND_END
     */
 

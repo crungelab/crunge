@@ -2,7 +2,7 @@ source: '../../depot/skia/third_party/externals/dawn/src/dawn/dawn.json'
 target: 'src/wgpu_py_auto.cpp'
 program: dawn_py
 
-excludes : [
-  'method/pywgpu::Queue::WriteTexture',
-  'method/pywgpu::Queue::WriteBuffer'
-]
+#excludes : [
+#  'method/pywgpu::Queue::WriteTexture',
+#  'method/pywgpu::Queue::WriteBuffer'
+#]
