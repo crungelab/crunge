@@ -277,9 +277,9 @@ class FontAtlasDemo(Demo):
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
         pass_enc.draw_indexed(6)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([command_buffer])
 
         super().draw(renderer)
 

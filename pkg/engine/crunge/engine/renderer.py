@@ -119,5 +119,5 @@ class Renderer(Base):
 
     def end(self):
         self.pass_enc.end()
-        commands = self.encoder.finish()
-        self.device.queue.submit(1, commands)
+        command_buffer = self.encoder.finish()
+        self.queue.submit([command_buffer])

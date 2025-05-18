@@ -71,6 +71,8 @@ class Page(ImGuiView):
     def create_server(self):
         logger.debug("Creating server")
         self.server = s = Server()
+        #self.server = s = Server(audio='coreaudio')
+        #self.server = s = Server(audio='jack')
         s.setMidiInputDevice(4)
         s.boot()
 

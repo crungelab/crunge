@@ -334,7 +334,9 @@ class InstancedTextDemo(Demo):
         render_pass.set_bind_group(0, self.bind_group)
         render_pass.draw(4, self.instance_count)
         render_pass.end()
-        self.queue.submit(1, encoder.finish())
+        command_buffer = encoder.finish()
+
+        self.queue.submit([command_buffer])
 
 
 def main():

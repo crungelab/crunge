@@ -502,9 +502,9 @@ class WImGuiDemo(Demo):
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
         self.render_draw_data(draw_data, pass_enc)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([command_buffer])
 
     def draw_buttons(self):
         imgui.begin("Buttons")

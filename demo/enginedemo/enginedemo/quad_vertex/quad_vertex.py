@@ -120,9 +120,9 @@ class QuadVertexDemo(Demo):
         # pass_enc.draw(3)
         pass_enc.draw(6)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([command_buffer])
 
         super().draw(renderer)
 

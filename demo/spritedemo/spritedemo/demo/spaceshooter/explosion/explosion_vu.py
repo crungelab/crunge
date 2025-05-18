@@ -363,5 +363,6 @@ class ExplosionVu(Vu2D):
         compute_pass.set_bind_group(0, self.compute_bind_group)
         compute_pass.dispatch_workgroups(1)
         compute_pass.end()
-        commands = encoder.finish()
-        self.queue.submit(1, commands)
+        command_buffer = encoder.finish()
+
+        self.queue.submit([command_buffer])

@@ -154,17 +154,9 @@ class TriangleIndexDemo(Demo):
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
         pass_enc.draw_indexed(3)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
-
-    """
-    def frame(self):
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        backbuffer.set_label("Back Buffer Texture View")
-        self.render(backbuffer)
-        self.swap_chain.present()
-    """
+        self.queue.submit([command_buffer])
 
 
 def main():

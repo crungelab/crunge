@@ -99,9 +99,9 @@ class TriangleMsaaLayer(DemoLayer):
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.draw(3)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([command_buffer])
 
         super().draw(renderer)
 

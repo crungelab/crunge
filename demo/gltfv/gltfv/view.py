@@ -91,7 +91,6 @@ class View(Base):
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         self.scene.draw(self.camera, pass_enc)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.device.queue.submit(1, commands)
-        # exit()
+        self.device.queue.submit([command_buffer])

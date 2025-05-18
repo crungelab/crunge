@@ -373,9 +373,9 @@ class MeshTextureDemo(Demo):
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
         pass_enc.draw_indexed(len(self.index_data) * 3)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([command_buffer])
 
     def frame(self):
         transform = self.transform_matrix

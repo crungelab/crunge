@@ -331,9 +331,9 @@ class ParticlesDemo(Demo):
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(6, self.num_particles)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([command_buffer])
 
         self.draw_gui()
         super().draw(renderer)
@@ -387,8 +387,9 @@ class ParticlesDemo(Demo):
         # compute_pass.dispatch_workgroups(4, 4, 1)
         compute_pass.dispatch_workgroups(1)
         compute_pass.end()
-        commands = encoder.finish()
-        self.queue.submit(1, commands)
+        command_buffer = encoder.finish()
+
+        self.queue.submit([command_buffer])
 
 
 def main():

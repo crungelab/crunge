@@ -293,9 +293,9 @@ class CubesDemo(Demo):
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(self.kVertexCount)
         pass_enc.end()
-        commands = encoder.finish()
+        command_buffer = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([command_buffer])
 
     def frame(self):
         self.update_transformation_matrices()

@@ -861,13 +861,27 @@ PYCLASS_BEGIN(m, pywgpu::Buffer, Buffer) Buffer
         , py::arg("offset") = 0, py::arg("size") = kWholeMapSize
         , py::return_value_policy::automatic_reference)
     
-    .def("write_mapped_range", &pywgpu::Buffer::WriteMappedRange
-        , py::arg("offset"), py::arg("data"), py::arg("size")
-        , py::return_value_policy::automatic_reference)
+        .def("write_mapped_range", [](pywgpu::Buffer& self, size_t offset, py::buffer data) {
     
-    .def("read_mapped_range", &pywgpu::Buffer::ReadMappedRange
-        , py::arg("offset"), py::arg("data"), py::arg("size")
-        , py::return_value_policy::automatic_reference)
+    py::buffer_info dataInfo = data.request();
+    void const* _data = (void const*)dataInfo.ptr;
+    auto size = dataInfo.size * dataInfo.itemsize;
+    
+                return self.WriteMappedRange(offset, _data, size);
+            }
+            , py::arg("offset"), py::arg("data")
+            , py::return_value_policy::automatic_reference)
+    
+        .def("read_mapped_range", [](pywgpu::Buffer& self, size_t offset, py::buffer data) {
+    
+    py::buffer_info dataInfo = data.request();
+    void * _data = (void *)dataInfo.ptr;
+    auto size = dataInfo.size * dataInfo.itemsize;
+    
+                return self.ReadMappedRange(offset, _data, size);
+            }
+            , py::arg("offset"), py::arg("data")
+            , py::return_value_policy::automatic_reference)
     
     .def("set_label", &pywgpu::Buffer::SetLabel
         , py::arg("label")
@@ -951,9 +965,16 @@ PYCLASS_BEGIN(m, pywgpu::CommandEncoder, CommandEncoder) CommandEncoder
         , py::arg("query_set"), py::arg("first_query"), py::arg("query_count"), py::arg("destination"), py::arg("destination_offset")
         , py::return_value_policy::automatic_reference)
     
-    .def("write_buffer", &pywgpu::CommandEncoder::WriteBuffer
-        , py::arg("buffer"), py::arg("buffer_offset"), py::arg("data"), py::arg("size")
-        , py::return_value_policy::automatic_reference)
+        .def("write_buffer", [](pywgpu::CommandEncoder& self, pywgpu::Buffer buffer, uint64_t bufferOffset, py::buffer data) {
+    
+    py::buffer_info dataInfo = data.request();
+    uint8_t const* _data = (uint8_t const*)dataInfo.ptr;
+    auto size = dataInfo.size * dataInfo.itemsize;
+    
+                return self.WriteBuffer(buffer, bufferOffset, _data, size);
+            }
+            , py::arg("buffer"), py::arg("buffer_offset"), py::arg("data")
+            , py::return_value_policy::automatic_reference)
     
     .def("write_timestamp", &pywgpu::CommandEncoder::WriteTimestamp
         , py::arg("query_set"), py::arg("query_index")
@@ -982,9 +1003,16 @@ PYCLASS_BEGIN(m, pywgpu::ComputePassEncoder, ComputePassEncoder) ComputePassEnco
         , py::arg("pipeline")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_bind_group", &pywgpu::ComputePassEncoder::SetBindGroup
-        , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offset_count") = 0, py::arg("dynamic_offsets") = nullptr
-        , py::return_value_policy::automatic_reference)
+        .def("set_bind_group", [](pywgpu::ComputePassEncoder& self, uint32_t groupIndex, pywgpu::BindGroup group, py::buffer dynamicOffsets) {
+    
+    py::buffer_info dynamicOffsetsInfo = dynamicOffsets.request();
+    uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
+    auto dynamicOffsetCount = dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize;
+    
+                return self.SetBindGroup(groupIndex, group, dynamicOffsetCount, _dynamicOffsets);
+            }
+            , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offsets") = nullptr
+            , py::return_value_policy::automatic_reference)
     
     .def("write_timestamp", &pywgpu::ComputePassEncoder::WriteTimestamp
         , py::arg("query_set"), py::arg("query_index")
@@ -1005,9 +1033,16 @@ PYCLASS_BEGIN(m, pywgpu::ComputePassEncoder, ComputePassEncoder) ComputePassEnco
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_immediate_data", &pywgpu::ComputePassEncoder::SetImmediateData
-        , py::arg("offset"), py::arg("data"), py::arg("size")
-        , py::return_value_policy::automatic_reference)
+        .def("set_immediate_data", [](pywgpu::ComputePassEncoder& self, uint32_t offset, py::buffer data) {
+    
+    py::buffer_info dataInfo = data.request();
+    void const* _data = (void const*)dataInfo.ptr;
+    auto size = dataInfo.size * dataInfo.itemsize;
+    
+                return self.SetImmediateData(offset, _data, size);
+            }
+            , py::arg("offset"), py::arg("data")
+            , py::return_value_policy::automatic_reference)
     
         ;
 PYCLASS_END(m, pywgpu::ComputePassEncoder, ComputePassEncoder)
@@ -1306,9 +1341,15 @@ PYCLASS_BEGIN(m, pywgpu::QuerySet, QuerySet) QuerySet
 PYCLASS_END(m, pywgpu::QuerySet, QuerySet)
 
 PYCLASS_BEGIN(m, pywgpu::Queue, Queue) Queue
-    .def("submit", &pywgpu::Queue::Submit
-        , py::arg("command_count"), py::arg("commands")
-        , py::return_value_policy::automatic_reference)
+        .def("submit", [](pywgpu::Queue& self, std::vector<pywgpu::CommandBuffer> commands) {
+    
+    pywgpu::CommandBuffer const* _commands = (pywgpu::CommandBuffer const*)commands.data();
+    auto commandCount = commands.size();
+    
+                return self.Submit(commandCount, _commands);
+            }
+            , py::arg("commands")
+            , py::return_value_policy::automatic_reference)
     
     .def("on_submitted_work_done", &pywgpu::Queue::OnSubmittedWorkDone
         , py::arg("callback_info")
@@ -1342,9 +1383,16 @@ PYCLASS_BEGIN(m, pywgpu::RenderBundleEncoder, RenderBundleEncoder) RenderBundleE
         , py::arg("pipeline")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_bind_group", &pywgpu::RenderBundleEncoder::SetBindGroup
-        , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offset_count") = 0, py::arg("dynamic_offsets") = nullptr
-        , py::return_value_policy::automatic_reference)
+        .def("set_bind_group", [](pywgpu::RenderBundleEncoder& self, uint32_t groupIndex, pywgpu::BindGroup group, py::buffer dynamicOffsets) {
+    
+    py::buffer_info dynamicOffsetsInfo = dynamicOffsets.request();
+    uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
+    auto dynamicOffsetCount = dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize;
+    
+                return self.SetBindGroup(groupIndex, group, dynamicOffsetCount, _dynamicOffsets);
+            }
+            , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offsets") = nullptr
+            , py::return_value_policy::automatic_reference)
     
     .def("draw", &pywgpu::RenderBundleEncoder::Draw
         , py::arg("vertex_count"), py::arg("instance_count") = 1, py::arg("first_vertex") = 0, py::arg("first_instance") = 0
@@ -1389,9 +1437,16 @@ PYCLASS_BEGIN(m, pywgpu::RenderBundleEncoder, RenderBundleEncoder) RenderBundleE
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_immediate_data", &pywgpu::RenderBundleEncoder::SetImmediateData
-        , py::arg("offset"), py::arg("data"), py::arg("size")
-        , py::return_value_policy::automatic_reference)
+        .def("set_immediate_data", [](pywgpu::RenderBundleEncoder& self, uint32_t offset, py::buffer data) {
+    
+    py::buffer_info dataInfo = data.request();
+    void const* _data = (void const*)dataInfo.ptr;
+    auto size = dataInfo.size * dataInfo.itemsize;
+    
+                return self.SetImmediateData(offset, _data, size);
+            }
+            , py::arg("offset"), py::arg("data")
+            , py::return_value_policy::automatic_reference)
     
         ;
 PYCLASS_END(m, pywgpu::RenderBundleEncoder, RenderBundleEncoder)
@@ -1401,9 +1456,16 @@ PYCLASS_BEGIN(m, pywgpu::RenderPassEncoder, RenderPassEncoder) RenderPassEncoder
         , py::arg("pipeline")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_bind_group", &pywgpu::RenderPassEncoder::SetBindGroup
-        , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offset_count") = 0, py::arg("dynamic_offsets") = nullptr
-        , py::return_value_policy::automatic_reference)
+        .def("set_bind_group", [](pywgpu::RenderPassEncoder& self, uint32_t groupIndex, pywgpu::BindGroup group, py::buffer dynamicOffsets) {
+    
+    py::buffer_info dynamicOffsetsInfo = dynamicOffsets.request();
+    uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
+    auto dynamicOffsetCount = dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize;
+    
+                return self.SetBindGroup(groupIndex, group, dynamicOffsetCount, _dynamicOffsets);
+            }
+            , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offsets") = nullptr
+            , py::return_value_policy::automatic_reference)
     
     .def("draw", &pywgpu::RenderPassEncoder::Draw
         , py::arg("vertex_count"), py::arg("instance_count") = 1, py::arg("first_vertex") = 0, py::arg("first_instance") = 0
@@ -1429,9 +1491,15 @@ PYCLASS_BEGIN(m, pywgpu::RenderPassEncoder, RenderPassEncoder) RenderPassEncoder
         , py::arg("indirect_buffer"), py::arg("indirect_offset"), py::arg("max_draw_count"), py::arg("draw_count_buffer"), py::arg("draw_count_buffer_offset") = 0
         , py::return_value_policy::automatic_reference)
     
-    .def("execute_bundles", &pywgpu::RenderPassEncoder::ExecuteBundles
-        , py::arg("bundle_count"), py::arg("bundles")
-        , py::return_value_policy::automatic_reference)
+        .def("execute_bundles", [](pywgpu::RenderPassEncoder& self, std::vector<pywgpu::RenderBundle> bundles) {
+    
+    pywgpu::RenderBundle const* _bundles = (pywgpu::RenderBundle const*)bundles.data();
+    auto bundleCount = bundles.size();
+    
+                return self.ExecuteBundles(bundleCount, _bundles);
+            }
+            , py::arg("bundles")
+            , py::return_value_policy::automatic_reference)
     
     .def("insert_debug_marker", &pywgpu::RenderPassEncoder::InsertDebugMarker
         , py::arg("marker_label")
@@ -1489,9 +1557,16 @@ PYCLASS_BEGIN(m, pywgpu::RenderPassEncoder, RenderPassEncoder) RenderPassEncoder
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
     
-    .def("set_immediate_data", &pywgpu::RenderPassEncoder::SetImmediateData
-        , py::arg("offset"), py::arg("data"), py::arg("size")
-        , py::return_value_policy::automatic_reference)
+        .def("set_immediate_data", [](pywgpu::RenderPassEncoder& self, uint32_t offset, py::buffer data) {
+    
+    py::buffer_info dataInfo = data.request();
+    void const* _data = (void const*)dataInfo.ptr;
+    auto size = dataInfo.size * dataInfo.itemsize;
+    
+                return self.SetImmediateData(offset, _data, size);
+            }
+            , py::arg("offset"), py::arg("data")
+            , py::return_value_policy::automatic_reference)
     
         ;
 PYCLASS_END(m, pywgpu::RenderPassEncoder, RenderPassEncoder)
@@ -8153,14 +8228,14 @@ PYSUBCLASS_BEGIN(m, pywgpu::AdapterPropertiesSubgroupMatrixConfigs, ChainedStruc
 PYCLASS_END(m, pywgpu::AdapterPropertiesSubgroupMatrixConfigs, AdapterPropertiesSubgroupMatrixConfigs)
 
 
-m.def("create_instance", &pywgpu::CreateInstance
-    , py::arg("descriptor") = nullptr
-    , py::return_value_policy::automatic_reference)
-    ;
+            m.def("create_instance", &pywgpu::CreateInstance
+                , py::arg("descriptor") = nullptr
+                , py::return_value_policy::automatic_reference)
+                ;
 
-m.def("get_instance_capabilities", &pywgpu::GetInstanceCapabilities
-    , py::arg("capabilities")
-    , py::return_value_policy::automatic_reference)
-    ;
+            m.def("get_instance_capabilities", &pywgpu::GetInstanceCapabilities
+                , py::arg("capabilities")
+                , py::return_value_policy::automatic_reference)
+                ;
 
 }
