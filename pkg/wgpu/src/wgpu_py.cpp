@@ -103,7 +103,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     PYEXTEND_END
 
     // TODO: Getting incompatible argument types when both signatures match.  Makes no sense ...
-    // Might be a binding order registration issue.
+    // Fixed:  Turns out that py::buffer is not optional, but std::optional<py::buffer> is.
 
     /*
     TypeError: set_bind_group(): incompatible function arguments. The following argument types are supported:
@@ -114,6 +114,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
 
     // void RenderPassEncoder::SetBindGroup(uint32_t groupIndex, BindGroup const& group, uint32_t dynamicOffsetCount, uint32_t const * dynamicOffsets) const {
 
+    /*
     PYEXTEND_BEGIN(pywgpu::RenderPassEncoder, RenderPassEncoder)
     RenderPassEncoder.def("set_bind_group", [](pywgpu::RenderPassEncoder &self, uint32_t groupIndex, BindGroup const &group)
                           { self.SetBindGroup(groupIndex, group, 0, nullptr); }, py::arg("group_index"), py::arg("group")
@@ -131,6 +132,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
                            ,
                            py::return_value_policy::automatic_reference);
     PYEXTEND_END
+    */
 
     /*
     void Queue::WriteTexture (TexelCopyTextureInfo const* destination, void const* data, size_t dataSize, TexelCopyBufferLayout const* dataLayout, Extent3D const* writeSize) const {

@@ -122,7 +122,7 @@ class CubeTextureDemo(Demo):
         logger.debug(bytes_per_row)
         rows_per_image = im_height
 
-        self.queue.write_texture_array(
+        self.queue.write_texture(
             # Tells wgpu where to copy the pixel data
             wgpu.TexelCopyTextureInfo(
                 texture=self.texture,
