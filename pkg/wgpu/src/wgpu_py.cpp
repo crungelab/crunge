@@ -62,6 +62,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     //py::bind_vector<std::vector<pywgpu::FutureWaitInfo>>(_wgpu, "FutureWaitInfos", "FutureWaitInfo Vector");
 
 
+    /*
     PYEXTEND_BEGIN(pywgpu::Instance, Instance)
     Instance.def("wait_any",
         [] (pywgpu::Instance &self,
@@ -84,6 +85,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
         py::arg("timeout") = UINT64_MAX
    );
     PYEXTEND_END
+    */
 
     PYEXTEND_BEGIN(pywgpu::Device, Device)
     Device.def_property_readonly("queue", [](const pywgpu::Device &self)

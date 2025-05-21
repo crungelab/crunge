@@ -23,50 +23,17 @@ def create_instance() -> wgpu.Instance:
 
 
 def request_adapter(instance: wgpu.Instance) -> wgpu.Adapter:
-    # 1) Set up options
     options = wgpu.RequestAdapterOptions()
 
-    #Optional
-    '''
+    # Optional
+    """
     options = wgpu.RequestAdapterOptions(
         backend_type=wgpu.BackendType.UNDEFINED,
         power_preference=wgpu.PowerPreference.HIGH_PERFORMANCE,
     )
-    '''
+    """
 
-    # 2) Holder for the adapter we'll receive in the callback
-    adapter_holder = None
-
-    # 3) Define the callback exactly like the C++ lambda did
-    def on_adapter_request(
-        status: wgpu.RequestAdapterStatus, adapter: wgpu.Adapter, message: str
-    ):
-        logger.debug("on_adapter_request called")
-        nonlocal adapter_holder
-
-        if status != wgpu.RequestAdapterStatus.SUCCESS:
-            logger.debug(f"Failed to get an adapter: {message}")
-        else:
-            logger.debug("Got an adapter")
-            logger.debug(f"message: {message}")
-            adapter_holder = adapter
-
-    callback_info = wgpu.RequestAdapterCallbackInfo(
-        # mode=wgpu.CallbackMode.ALLOW_PROCESS_EVENTS,
-        mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
-        callback=on_adapter_request,
-    )
-
-    # 5) Kick off the async request
-    future = instance.request_adapter(options, callback_info)
-
-    # 6) Block until the callback fires (or timeout)
-    wait_info = wgpu.FutureWaitInfo(future=future, completed=False)
-    # UINT64_MAX for no real timeout:
-    instance.wait_any([wait_info], 0xFFFFFFFFFFFFFFFF)
-    # instance.wait_any(1, wait_info, 0xFFFFFFFFFFFFFFFF)
-    # 7) Pull the adapter out and return it (or None on failure)
-    return adapter_holder
+    return instance.request_adapter_sync(options)
 
 
 def device_cb(device, reason, message):
@@ -91,7 +58,7 @@ def logging_cb(type: wgpu.LoggingType, message: str):
 
 def create_device(adapter: wgpu.Adapter) -> wgpu.Device:
     device_desc = wgpu.DeviceDescriptor(
-        #default_queue = wgpu.QueueDescriptor(), #Optional
+        # default_queue = wgpu.QueueDescriptor(), #Optional
         device_lost_callback_info=device_lost_callback_info,
         uncaptured_error_callback_info=uncaptured_error_callback_info,
     )

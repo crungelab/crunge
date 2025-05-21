@@ -9,4 +9,6 @@ from ._wgpu import create_proc_table
 
 create_proc_table()
 
+from . import async_patch
+
 from .context import Context
