@@ -62,6 +62,10 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     //py::bind_vector<std::vector<pywgpu::FutureWaitInfo>>(_wgpu, "FutureWaitInfos", "FutureWaitInfo Vector");
 
 
+    PYEXTEND_BEGIN(pywgpu::Instance, Instance)
+    Instance.def(py::init<>());
+    PYEXTEND_END
+
     /*
     PYEXTEND_BEGIN(pywgpu::Instance, Instance)
     Instance.def("wait_any",

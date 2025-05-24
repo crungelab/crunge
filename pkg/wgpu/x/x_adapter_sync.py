@@ -44,7 +44,7 @@ def request_adapter_sync(instance: wgpu.Instance) -> wgpu.Adapter:
     )
 
     # 5) Kick off the async request
-    future = instance.request_adapter(options, callback_info)
+    future = instance._request_adapter(options, callback_info)
 
     print("Called request_adapter")
     print(f"future: {future}")
@@ -80,12 +80,14 @@ def main():
     print(f'status: {status}')
 
     print(f'vendor: {info.vendor}')
-    print(f'vendor_id: {info.vendor_id}')
+    #print(f'vendor_id: {info.vendor_id}')
+    print(f'vendor_id: {info.vendor_ID}')
 
     print(f'architecture: {info.architecture}')
 
     print(f'device: {info.device}')
-    print(f'device_id: {info.device_id}')
+    #print(f'device_id: {info.device_id}')
+    print(f'device_id: {info.device_ID}')
 
     print(f'description: {info.description}')
     print(f'backend_type: {info.backend_type}')

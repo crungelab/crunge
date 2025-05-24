@@ -1,9 +1,12 @@
 from loguru import logger
 
-#from . import wgpu
+# from . import wgpu
 from . import _wgpu as wgpu
 
-def _Instance_request_adapter_sync(self: wgpu.Instance, options: wgpu.RequestAdapterOptions) -> wgpu.Adapter:
+
+def _Instance_request_adapter_sync(
+    self: wgpu.Instance, options: wgpu.RequestAdapterOptions
+) -> wgpu.Adapter:
     # 2) Holder for the adapter we'll receive in the callback
     adapter_holder = None
 
@@ -36,5 +39,6 @@ def _Instance_request_adapter_sync(self: wgpu.Instance, options: wgpu.RequestAda
     self.wait_any([wait_info], 0xFFFFFFFFFFFFFFFF)
     # 7) Pull the adapter out and return it (or None on failure)
     return adapter_holder
+
 
 wgpu.Instance.request_adapter_sync = _Instance_request_adapter_sync
