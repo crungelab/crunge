@@ -15,7 +15,7 @@ namespace py = pybind11;
 
 void init_skia_rect_py(py::module &_skia, Registry &registry) {
     PYEXTEND_BEGIN(SkRect, Rect)
-    Rect.def(py::init(&SkRect::MakeXYWH),
+    _Rect.def(py::init(&SkRect::MakeXYWH),
         py::arg("x"), py::arg("y"), py::arg("w"), py::arg("h"));
 
     /*

@@ -57,7 +57,7 @@ namespace {
 void init_skia_font_py(py::module &_skia, Registry &registry) {
     PYEXTEND_BEGIN(SkFont, Font)
 
-    Font.def(py::init(
+    _Font.def(py::init(
         [] () {
             auto warnings = pybind11::module::import("warnings");
             auto builtins = pybind11::module::import("builtins");

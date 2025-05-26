@@ -17,7 +17,7 @@ namespace py = pybind11;
 void init_skia_paint_py(py::module &_skia, Registry &registry) {
     /*
     PYEXTEND_BEGIN(SkPaint, Paint)
-    Paint
+    _Paint
     .def("set_shader",
         [] (SkPaint& paint, const SkShader& shader) {
             paint.setShader(sk_ref_sp(&shader));

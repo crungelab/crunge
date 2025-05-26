@@ -1,0 +1,16 @@
+module: _yoga
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-I../../depot/yoga',
+]
+
+#prefixes: [Sk]
+
+unit_files:
+  #- path: yoga_numeric.unit.yaml
+  - path: yoga_enums.unit.yaml
+  - path: yoga_style.unit.yaml
+  - path: yoga_node.unit.yaml
+  - path: yoga_algorithm.unit.yaml

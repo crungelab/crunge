@@ -1,0 +1,10 @@
+target: 'src/yoga_numeric_py_auto.cpp'
+
+sources:
+  #- ../../depot/yoga/yoga/numeric/Comparison.h
+  - ../../depot/yoga/yoga/numeric/FloatOptional.h
+
+excludes: [
+  # Need to specify as overloaded.  Ignoring for now.
+  'function/facebook::yoga::maxOrDefined',
+]

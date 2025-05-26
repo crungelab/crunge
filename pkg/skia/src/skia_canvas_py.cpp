@@ -48,7 +48,7 @@ namespace py = pybind11;
 
 void init_skia_canvas_py(py::module &_skia, Registry &registry) {
     PYEXTEND_BEGIN(SkAutoCanvasRestore, AutoCanvasRestore)
-    AutoCanvasRestore
+    _AutoCanvasRestore
     .def("__enter__", [] (SkAutoCanvasRestore& self) {})
     .def("__exit__",
         [] (SkAutoCanvasRestore& self, py::args args) { self.restore(); })

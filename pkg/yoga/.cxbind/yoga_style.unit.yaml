@@ -1,0 +1,10 @@
+#source: '../../depot/yoga/yoga/style/Style.h'
+sources:
+  - ../../depot/yoga/yoga/style/StyleLength.h
+  - ../../depot/yoga/yoga/style/StyleSizeLength.h
+  - ../../depot/yoga/yoga/style/Style.h
+
+target: 'src/yoga_style_py_auto.cpp'
+
+specs:
+  'class/facebook::yoga::Style': {gen_init: true}

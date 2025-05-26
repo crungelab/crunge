@@ -98,15 +98,15 @@ std::tuple<bool, std::string, std::string> LoadASCIIFromFileWrapper(
 
 void init_main(py::module &_gltf, Registry &registry) {
     PYEXTEND_BEGIN(tinygltf::Buffer, Buffer)
-        Buffer.def("get_array", &get_buffer_array, py::arg("byte_offset"), py::arg("count"), py::arg("type"), py::arg("component_type"));
+        _Buffer.def("get_array", &get_buffer_array, py::arg("byte_offset"), py::arg("count"), py::arg("type"), py::arg("component_type"));
     PYEXTEND_END
 
     PYEXTEND_BEGIN(tinygltf::Image, Image)
-        Image.def("get_array", &get_image_array);
+        _Image.def("get_array", &get_image_array);
     PYEXTEND_END
 
     PYEXTEND_BEGIN(tinygltf::TinyGLTF, TinyGLTF)
-        TinyGLTF.def("load_ascii_from_file", &LoadASCIIFromFileWrapper
+        _TinyGLTF.def("load_ascii_from_file", &LoadASCIIFromFileWrapper
         , py::arg("model")
         , py::arg("filename")
         , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION);

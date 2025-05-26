@@ -18,6 +18,8 @@ set(SKIA_ROOT ${CRUNGE_ROOT}/depot/skia)
 set(DAWN_ROOT ${SKIA_ROOT}/third_party/externals/dawn)
 set(SKIA_LIB_DIR ${SKIA_ROOT}/out/debug)
 
+set(YOGA_ROOT ${CRUNGE_ROOT}/depot/yoga)
+
 set(GLTF_ROOT ${CRUNGE_ROOT}/depot/gltf)
 
 set(SDL_ROOT ${CRUNGE_ROOT}/depot/sdl)

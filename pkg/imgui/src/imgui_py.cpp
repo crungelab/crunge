@@ -114,7 +114,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
 
 
     PYEXTEND_BEGIN(ImGuiStyle, Style)
-    Style.def_property_readonly("colors", [](const ImGuiStyle &self) {
+    _Style.def_property_readonly("colors", [](const ImGuiStyle &self) {
         auto colors = self.Colors;
         auto result = PyList_New(ImGuiCol_COUNT);
         for(int i = 0; i < ImGuiCol_COUNT; ++i ) {
@@ -128,7 +128,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         }
         return py::reinterpret_steal<py::list>(result);
     });
-    Style.def("set_color", [](ImGuiStyle& self, int item, ImVec4 color)
+    _Style.def("set_color", [](ImGuiStyle& self, int item, ImVec4 color)
     {
         if (item < 0) throw py::index_error();
         if (item >= IM_ARRAYSIZE(self.Colors)) throw py::index_error();
@@ -137,7 +137,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     PYEXTEND_END
 
     PYEXTEND_BEGIN(ImGuiIO, IO)
-    IO.def("set_mouse_down", [](ImGuiIO& self, int button, bool down)
+    _IO.def("set_mouse_down", [](ImGuiIO& self, int button, bool down)
     {
         if (button < 0) throw py::index_error();
         if (button >= IM_ARRAYSIZE(self.MouseDown)) throw py::index_error();
@@ -189,7 +189,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
 
     PYEXTEND_BEGIN(ImDrawList, DrawList)
 
-    DrawList.def("add_callback", 
+    _DrawList.def("add_callback", 
     [](ImDrawList &self ,ImDrawCallback callback, py::object callback_data) {
         return self.AddCallback(callback, callback_data.ptr());
     }
@@ -198,54 +198,54 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::return_value_policy::automatic_reference);
 
 
-    DrawList.def_property_readonly("cmd_buffer_size",
+    _DrawList.def_property_readonly("cmd_buffer_size",
         [](const ImDrawList &dl) {
             auto result = PyLong_FromLong(dl.CmdBuffer.Size);
             return py::reinterpret_steal<py::object>(result);
         }
     );
 
-    DrawList.def_property_readonly("cmd_buffer_data",
+    _DrawList.def_property_readonly("cmd_buffer_data",
         [](const ImDrawList &dl) {
             auto result = PyMemoryView_FromMemory((char*)dl.CmdBuffer.Data, dl.CmdBuffer.Size*AimDrawList::COMMAND_SIZE, PyBUF_WRITE);
             return py::reinterpret_steal<py::object>(result);
         }
     );
 
-    DrawList.def_property_readonly("vtx_buffer_size",
+    _DrawList.def_property_readonly("vtx_buffer_size",
         [](const ImDrawList &dl) {
             auto result = PyLong_FromLong(dl.VtxBuffer.Size);
             return py::reinterpret_steal<py::object>(result);
         }
     );
 
-    DrawList.def_property_readonly("vtx_buffer_data",
+    _DrawList.def_property_readonly("vtx_buffer_data",
         [](const ImDrawList &dl) {
             auto result = PyMemoryView_FromMemory((char*)dl.VtxBuffer.Data, dl.VtxBuffer.Size*AimDrawList::VERTEX_SIZE, PyBUF_WRITE);
             return py::reinterpret_steal<py::object>(result);
         }
     );
 
-    DrawList.def_property_readonly("idx_buffer_size",
+    _DrawList.def_property_readonly("idx_buffer_size",
         [](const ImDrawList &dl) {
             auto result = PyLong_FromLong(dl.IdxBuffer.Size);
             return py::reinterpret_steal<py::object>(result);
         }
     );
 
-    DrawList.def_property_readonly("idx_buffer_data",
+    _DrawList.def_property_readonly("idx_buffer_data",
         [](const ImDrawList &dl) {
             auto result = PyMemoryView_FromMemory((char*)dl.IdxBuffer.Data, dl.IdxBuffer.Size*AimDrawList::INDEX_SIZE, PyBUF_WRITE);
             return py::reinterpret_steal<py::object>(result);
         }
     );
 
-    DrawList.def("__iter__", 
+    _DrawList.def("__iter__", 
         [](const ImDrawList &dl) { return py::make_iterator(dl.CmdBuffer.Data, dl.CmdBuffer.Data + dl.CmdBuffer.Size); },
         py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */);
 
     //void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32 col, bool closed, float thickness)
-    DrawList.def("add_polyline",  [](ImDrawList& self, py::list points, ImU32 col, bool closed, float thickness)
+    _DrawList.def("add_polyline",  [](ImDrawList& self, py::list points, ImU32 col, bool closed, float thickness)
     {
         const int points_count = points.size();
         ImVec2 *pts = (ImVec2*)malloc(points_count * sizeof(ImVec2));
@@ -265,7 +265,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     PYEXTEND_END
 
     PYEXTEND_BEGIN(ImDrawData, DrawData)
-    DrawData.def_property_readonly("cmd_lists", [](const ImDrawData& self)
+    _DrawData.def_property_readonly("cmd_lists", [](const ImDrawData& self)
     {
         py::list ret;
         for(int i = 0; i < self.CmdListsCount; i++)
@@ -277,17 +277,17 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     PYEXTEND_END
 
     PYEXTEND_BEGIN(ImDrawVert, DrawVert)
-    DrawVert.def_property_readonly_static("pos_offset", [](py::object)
+    _DrawVert.def_property_readonly_static("pos_offset", [](py::object)
     {
         //return IM_OFFSETOF(ImDrawVert, pos);
         return offsetof(ImDrawVert, pos);
     });
-    DrawVert.def_property_readonly_static("uv_offset", [](py::object)
+    _DrawVert.def_property_readonly_static("uv_offset", [](py::object)
     {
         //return IM_OFFSETOF(ImDrawVert, uv);
         return offsetof(ImDrawVert, uv);
     });
-    DrawVert.def_property_readonly_static("col_offset", [](py::object)
+    _DrawVert.def_property_readonly_static("col_offset", [](py::object)
     {
         //return IM_OFFSETOF(ImDrawVert, col);
         return offsetof(ImDrawVert, col);
@@ -295,7 +295,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     PYEXTEND_END
 
     PYEXTEND_BEGIN(ImFontAtlas, FontAtlas)
-    FontAtlas.def("add_font_from_file_ttf", [](ImFontAtlas& self, const std::string& filename, float size_pixels, const ImFontConfig* font_cfg_template, const std::vector<ImWchar>& glyph_ranges)
+    _FontAtlas.def("add_font_from_file_ttf", [](ImFontAtlas& self, const std::string& filename, float size_pixels, const ImFontConfig* font_cfg_template, const std::vector<ImWchar>& glyph_ranges)
     {
         const ImWchar* glyph_ranges_ptr = glyph_ranges.empty() ? nullptr : glyph_ranges.data();
         return self.AddFontFromFileTTF(filename.c_str(), size_pixels, font_cfg_template, glyph_ranges_ptr);
@@ -306,7 +306,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("glyph_ranges") = std::vector<ImWchar>()  // Default empty vector
     , py::return_value_policy::automatic_reference);
 
-    FontAtlas.def("get_tex_data_as_alpha8", [](ImFontAtlas& self)
+    _FontAtlas.def("get_tex_data_as_alpha8", [](ImFontAtlas& self)
     {
         unsigned char* pixels;
         int width, height, bytes_per_pixel;
@@ -314,7 +314,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         std::string data((char*)pixels, width * height * bytes_per_pixel);
         return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
     });
-    FontAtlas.def("get_tex_data_as_rgba32", [](ImFontAtlas& self)
+    _FontAtlas.def("get_tex_data_as_rgba32", [](ImFontAtlas& self)
     {
         unsigned char* pixels;
         int width, height, bytes_per_pixel;
@@ -322,7 +322,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         std::string data((char*)pixels, width * height * bytes_per_pixel);
         return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
     });
-    FontAtlas.def("get_tex_data_as_rgba32_array", [](ImFontAtlas& self)
+    _FontAtlas.def("get_tex_data_as_rgba32_array", [](ImFontAtlas& self)
     {
         unsigned char* pixels;
         int width, height, bytes_per_pixel;

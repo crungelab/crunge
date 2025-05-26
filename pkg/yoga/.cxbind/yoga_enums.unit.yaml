@@ -1,0 +1,24 @@
+target: 'src/yoga_enums_py_auto.cpp'
+
+sources:
+  - ../../depot/yoga/yoga/enums/Align.h
+  - ../../depot/yoga/yoga/enums/BoxSizing.h
+  - ../../depot/yoga/yoga/enums/Dimension.h
+  - ../../depot/yoga/yoga/enums/Direction.h
+  - ../../depot/yoga/yoga/enums/Display.h
+  - ../../depot/yoga/yoga/enums/Edge.h
+  - ../../depot/yoga/yoga/enums/FlexDirection.h
+  - ../../depot/yoga/yoga/enums/Gutter.h
+  - ../../depot/yoga/yoga/enums/Justify.h
+  - ../../depot/yoga/yoga/enums/Overflow.h
+  - ../../depot/yoga/yoga/enums/PhysicalEdge.h
+  - ../../depot/yoga/yoga/enums/PositionType.h
+  - ../../depot/yoga/yoga/enums/Unit.h
+  - ../../depot/yoga/yoga/enums/Wrap.h
+
+excludes:
+  - 'function/facebook::yoga::ordinalCount'
+  - 'function/facebook::yoga::scopedEnum'
+  - 'function/facebook::yoga::unscopedEnum'
+  - 'function/facebook::yoga::toString'
+  - 'function/facebook::yoga::inexactEquals'

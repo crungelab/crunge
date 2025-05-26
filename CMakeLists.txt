@@ -86,6 +86,12 @@ add_subdirectory(pkg/wgpu)
 add_subdirectory(pkg/skia)
 
 #
+# Yoga
+#
+add_subdirectory(depot/yoga)
+add_subdirectory(pkg/yoga)
+
+#
 # Nanort
 #
 add_subdirectory(pkg/nanort)

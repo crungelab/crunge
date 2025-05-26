@@ -63,12 +63,12 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
 
 
     PYEXTEND_BEGIN(pywgpu::Instance, Instance)
-    Instance.def(py::init<>());
+    _Instance.def(py::init<>());
     PYEXTEND_END
 
     /*
     PYEXTEND_BEGIN(pywgpu::Instance, Instance)
-    Instance.def("wait_any",
+    _Instance.def("wait_any",
         [] (pywgpu::Instance &self,
             std::vector<pywgpu::FutureWaitInfo> &futures,
             uint64_t timeout) 
@@ -92,20 +92,20 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     */
 
     PYEXTEND_BEGIN(pywgpu::Device, Device)
-    Device.def_property_readonly("queue", [](const pywgpu::Device &self)
+    _Device.def_property_readonly("queue", [](const pywgpu::Device &self)
                                  { return self.GetQueue(); }, py::return_value_policy::automatic_reference);
     PYEXTEND_END
 
     PYEXTEND_BEGIN(pywgpu::Extent3D, Extent3D)
-    Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>(), py::arg("width"), py::arg("height") = 1, py::arg("depth") = 1);
+    _Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>(), py::arg("width"), py::arg("height") = 1, py::arg("depth") = 1);
     PYEXTEND_END
 
     PYEXTEND_BEGIN(pywgpu::Origin3D, Origin3D)
-    Origin3D.def(py::init<uint32_t, uint32_t, uint32_t>(), py::arg("x"), py::arg("y"), py::arg("z"));
+    _Origin3D.def(py::init<uint32_t, uint32_t, uint32_t>(), py::arg("x"), py::arg("y"), py::arg("z"));
     PYEXTEND_END
 
     PYEXTEND_BEGIN(pywgpu::Color, Color)
-    Color.def(py::init<float, float, float, float>(), py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a"));
+    _Color.def(py::init<float, float, float, float>(), py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a"));
     PYEXTEND_END
 
     // TODO: Getting incompatible argument types when both signatures match.  Makes no sense ...
@@ -122,7 +122,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
 
     /*
     PYEXTEND_BEGIN(pywgpu::RenderPassEncoder, RenderPassEncoder)
-    RenderPassEncoder.def("set_bind_group", [](pywgpu::RenderPassEncoder &self, uint32_t groupIndex, BindGroup const &group)
+    _RenderPassEncoder.def("set_bind_group", [](pywgpu::RenderPassEncoder &self, uint32_t groupIndex, BindGroup const &group)
                           { self.SetBindGroup(groupIndex, group, 0, nullptr); }, py::arg("group_index"), py::arg("group")
                           //, py::arg("dynamic_offset_count") = 0
                           //, py::arg("dynamic_offsets") = nullptr
@@ -131,7 +131,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     PYEXTEND_END
 
     PYEXTEND_BEGIN(pywgpu::ComputePassEncoder, ComputePassEncoder)
-    ComputePassEncoder.def("set_bind_group", [](pywgpu::ComputePassEncoder &self, uint32_t groupIndex, BindGroup const &group)
+    _ComputePassEncoder.def("set_bind_group", [](pywgpu::ComputePassEncoder &self, uint32_t groupIndex, BindGroup const &group)
                            { self.SetBindGroup(groupIndex, group, 0, nullptr); }, py::arg("group_index"), py::arg("group")
                            //, py::arg("dynamic_offset_count") = 0
                            //, py::arg("dynamic_offsets") = nullptr
@@ -148,7 +148,7 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
 
     /*
     PYEXTEND_BEGIN(pywgpu::Queue, Queue)
-    Queue.def("write_texture",
+    _Queue.def("write_texture",
         [](pywgpu::Queue& self,
            const pywgpu::TexelCopyTextureInfo& destination,
            py::buffer buffer,

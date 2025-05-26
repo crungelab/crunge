@@ -1,0 +1,8 @@
+target: src/yoga_algorithm_py_auto.cpp
+
+sources:
+  - ../../depot/yoga/yoga/algorithm/CalculateLayout.h
+
+#excludes: [
+#  'function/facebook::yoga::maxOrDefined',
+#]

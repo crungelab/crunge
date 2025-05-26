@@ -16,7 +16,7 @@ namespace py = pybind11;
 
 void init_skia_gradient_shader_py(py::module &_skia, Registry &registry) {
     PYEXTEND_BEGIN(SkGradientShader, GradientShader)
-    GradientShader
+    _GradientShader
     .def_static("make_linear",[](
         const std::vector<SkPoint>& pts,
         const std::vector<SkColor>& colors,
