@@ -25,18 +25,19 @@ def main():
 
     child0.set_style(child0_style)
 
-    root.add_child(child0)
+    #root.add_child(child0)
+    root.insert_child(child0, 0)
 
     child1 = yoga.Node()
-    child1.set_owner(root)
     child1_style = yoga.Style()
     child1_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
     child1_style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(10))
     child1_style.set_flex_grow(1.0)
 
     child1.set_style(child1_style)
+    root.insert_child(child1, 1)
     
-    root.add_child(child1)
+    #root.add_child(child1)
 
     # Calculate layout for the root node
     #root.calculate_layout(width=100, height=100)

@@ -9,20 +9,17 @@ from crunge import yoga
 from ..common import Demo, Renderer
 
 
-class TreeDemo(Demo):
+class FlexColumnDemo(Demo):
     def __init__(self):
         super().__init__()
         # Create a root node
         root_style = yoga.Style()
 
-        root_style.set_flex_direction(yoga.FlexDirection.ROW)
-        # root_style.set_align_items(yoga.Align.CENTER)
+        root_style.set_flex_direction(yoga.FlexDirection.COLUMN)
         root_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
-        # style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(math.nan))
         root_style.set_dimension(
             yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(100)
         )
-        # style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(math.nan))
 
         self.root = root = yoga.Node()
         root.set_style(root_style)
@@ -30,9 +27,7 @@ class TreeDemo(Demo):
         child0 = yoga.Node()
         child0_style = yoga.Style()
         child0_style.set_flex_grow(1.0)
-        # child0_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
-        # child0_style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(20))
-        child0_style.set_margin(yoga.Edge.RIGHT, yoga.StyleLength.points(10))
+        child0_style.set_margin(yoga.Edge.BOTTOM, yoga.StyleLength.points(10))
 
         child0.set_style(child0_style)
 
@@ -41,8 +36,6 @@ class TreeDemo(Demo):
         child1 = yoga.Node()
         child1.set_owner(root)
         child1_style = yoga.Style()
-        # child1_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
-        # child1_style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(10))
         child1_style.set_flex_grow(1.0)
 
         child1.set_style(child1_style)
@@ -50,8 +43,6 @@ class TreeDemo(Demo):
         root.add_child(child1)
 
         # Calculate layout for the root node
-        # root.calculate_layout(width=100, height=100)
-        # yoga.calculate_layout(root, 100, 100, yoga.Direction.LTR)
         yoga.calculate_layout(root, math.nan, math.nan, yoga.Direction.LTR)
 
         self.debug_node(root)
@@ -68,9 +59,6 @@ class TreeDemo(Demo):
 
     def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
-            # paint = skia.Paint()
-            # paint.set_color(0xFFFFFFFF)
-            # canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
             self.render_node(self.root, canvas)
 
     def render_node(self, node: yoga.Node, canvas: skia.Canvas, depth=0, max_depth=6):
@@ -95,7 +83,7 @@ class TreeDemo(Demo):
 
 
 def main():
-    TreeDemo().run()
+    FlexColumnDemo().run()
 
 
 if __name__ == "__main__":

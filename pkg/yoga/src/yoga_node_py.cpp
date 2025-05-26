@@ -17,6 +17,13 @@ using namespace facebook::yoga;
 
 void init_yoga_node_py(py::module &_yoga, Registry &registry) {
     PYEXTEND_BEGIN(Node, Node)
+    _Node.def("insert_child", [](Node& self, Node& child, size_t index)
+    {
+        child.setOwner(&self);
+        self.insertChild(&child, index);
+        self.markDirtyAndPropagate();
+    }, py::arg("child"), py::arg("index"));
+
     _Node.def("add_child", [](Node& self, Node& child)
     {
         child.setOwner(&self);
