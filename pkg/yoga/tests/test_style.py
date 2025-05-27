@@ -1,7 +1,6 @@
 from crunge import yoga
 
 def main():
-    # Create a root node
     style = yoga.Style()
     print(f"Style: {style}")
     style.set_flex_direction(yoga.FlexDirection.ROW)

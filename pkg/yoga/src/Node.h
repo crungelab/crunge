@@ -19,7 +19,21 @@ namespace py = pybind11;
 #include "./Size.h"
 #include "./Value.h"
 
+#include <yoga/enums/Align.h>
+#include <yoga/enums/BoxSizing.h>
+#include <yoga/enums/Dimension.h>
 #include <yoga/enums/Direction.h>
+#include <yoga/enums/Display.h>
+#include <yoga/enums/Edge.h>
+#include <yoga/enums/FlexDirection.h>
+#include <yoga/enums/Gutter.h>
+#include <yoga/enums/Justify.h>
+#include <yoga/enums/Overflow.h>
+#include <yoga/enums/PhysicalEdge.h>
+#include <yoga/enums/PositionType.h>
+#include <yoga/enums/Unit.h>
+#include <yoga/enums/Wrap.h>
+
 
 class MeasureCallback
 {
@@ -69,7 +83,7 @@ public: // Style setters
   void setPositionPercent(int edge, double position);
   void setPositionAuto(int edge);
 
-  void setAlignContent(int alignContent);
+  void setAlignContent(facebook::yoga::Align alignContent);
   void setAlignItems(int alignItems);
   void setAlignSelf(int alignSelf);
   void setFlexDirection(int flexDirection);

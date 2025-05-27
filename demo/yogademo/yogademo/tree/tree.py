@@ -13,6 +13,7 @@ class TreeDemo(Demo):
     def __init__(self):
         super().__init__()
         # Create a root node
+        """
         root_style = yoga.Style()
 
         root_style.set_flex_direction(yoga.FlexDirection.ROW)
@@ -26,6 +27,16 @@ class TreeDemo(Demo):
 
         self.root = root = yoga.Node()
         root.set_style(root_style)
+        """
+        self.root = root = yoga.Node()
+        root.set_style(
+            yoga.StyleBuilder()
+            .flex_direction(yoga.FlexDirection.ROW)
+            #.align_items(yoga.Align.CENTER)
+            .width(256)
+            .height(256)
+            .build()
+        )
 
         child0 = yoga.Node()
         child0_style = yoga.Style()
@@ -54,16 +65,6 @@ class TreeDemo(Demo):
         root.calculate_layout(math.nan, math.nan, yoga.Direction.LTR)
 
         self.debug_node(root)
-
-    def debug_node(self, node: yoga.Node):
-        layout = node.get_computed_layout()
-        left = layout.left
-        top = layout.top
-        width = layout.width
-        height = layout.height
-        print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
-        for child in node.children:
-            self.debug_node(child)
 
     def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:

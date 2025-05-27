@@ -8,6 +8,7 @@ from loguru import logger
 from crunge.core import as_capsule
 from crunge import wgpu
 from crunge import skia
+from crunge import yoga
 
 from .renderer import Renderer
 
@@ -183,3 +184,13 @@ class Demo:
         self.size = size
         self.configure_surface(size)
         logger.debug(f"Resized to {size}")
+
+    def debug_node(self, node: yoga.Node):
+        layout = node.get_computed_layout()
+        left = layout.left
+        top = layout.top
+        width = layout.width
+        height = layout.height
+        print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
+        for child in node.children:
+            self.debug_node(child)

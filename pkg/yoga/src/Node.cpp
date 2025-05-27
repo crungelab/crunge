@@ -95,7 +95,7 @@ void Node::setPositionAuto(int edge) {
   YGNodeStyleSetPositionAuto(m_node, static_cast<YGEdge>(edge));
 }
 
-void Node::setAlignContent(int alignContent) {
+void Node::setAlignContent(facebook::yoga::Align alignContent) {
   YGNodeStyleSetAlignContent(m_node, static_cast<YGAlign>(alignContent));
 }
 

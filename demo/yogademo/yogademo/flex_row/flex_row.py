@@ -57,22 +57,6 @@ class FlexRowDemo(Demo):
 
         self.debug_node(root)
 
-    def debug_node(self, node: yoga.Node):
-        layout = node.get_computed_layout()
-        left = layout.left
-        top = layout.top
-        width = layout.width
-        height = layout.height
-        print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
-        child_count = node.get_child_count()
-        for i in range(child_count):
-            child = node.get_child(i)
-            self.debug_node(child)
-        '''
-        for child in node.get_children():
-            self.debug_node(child)
-        '''
-
     def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
             self.render_node(self.root, canvas)

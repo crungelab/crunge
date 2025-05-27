@@ -5,3 +5,5 @@ from crunge import core
 core.add_plugin(__file__)
 
 from ._yoga import *
+
+from .style_builder import StyleBuilder
