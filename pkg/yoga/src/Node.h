@@ -9,6 +9,9 @@
 
 #include <memory>
 
+#include <pybind11/pybind11.h>
+namespace py = pybind11;
+
 #include <yoga/Yoga.h>
 
 #include "./Config.h"
@@ -18,45 +21,48 @@
 
 #include <yoga/enums/Direction.h>
 
-class MeasureCallback {
- public:
+class MeasureCallback
+{
+public:
   virtual ~MeasureCallback() {}
   virtual Size
   measure(float width, int widthMode, float height, int heightMode) = 0;
 };
 
-class DirtiedCallback {
- public:
+class DirtiedCallback
+{
+public:
   virtual ~DirtiedCallback() {}
   virtual void dirtied() = 0;
 };
 
-class Node {
- public:
-  static Node* createDefault(void);
-  static Node* createWithConfig(Config* config);
+class Node
+{
+public:
+  static Node *createDefault(void);
+  static Node *createWithConfig(Config *config);
 
-  static void destroy(Node* node);
+  static void destroy(Node *node);
 
- public:
-  static Node* fromYGNode(YGNodeRef nodeRef);
+public:
+  static Node *fromYGNode(YGNodeRef nodeRef);
 
- private:
-  Node(Config* config);
+private:
+  Node(Config *config);
 
- public:
+public:
   ~Node(void);
 
- public: // Prevent accidental copy
-  Node(Node const&) = delete;
+public: // Prevent accidental copy
+  Node(Node const &) = delete;
 
-  Node const& operator=(Node const&) = delete;
+  Node const &operator=(Node const &) = delete;
 
- public:
+public:
   void reset(void);
 
- public: // Style setters
-  void copyStyle(Node const& other);
+public: // Style setters
+  void copyStyle(Node const &other);
 
   void setPositionType(int positionType);
   void setPosition(int edge, double position);
@@ -135,7 +141,7 @@ class Node {
 
   void setBoxSizing(int boxSizing);
 
- public: // Style getters
+public: // Style getters
   int getPositionType(void) const;
   Value getPosition(int edge) const;
 
@@ -175,48 +181,50 @@ class Node {
 
   int getBoxSizing(void) const;
 
- public: // Tree hierarchy mutators
-  void insertChild(Node* child, unsigned index);
-  void removeChild(Node* child);
+public: // Tree hierarchy mutators
+  //void insertChild(Node *child, unsigned index);
+  void insertChild(py::object child, unsigned index);
+  void addChild(py::object child);
+  void removeChild(Node *child);
 
- public: // Tree hierarchy inspectors
+public: // Tree hierarchy inspectors
   unsigned getChildCount(void) const;
 
   // The following functions cannot be const because they could discard const
   // qualifiers (ex: constNode->getChild(0)->getParent() wouldn't be const)
 
-  Node* getParent(void);
-  Node* getChild(unsigned index);
+  Node *getParent(void);
+  Node *getChild(unsigned index);
 
- public: // Measure func mutators
-  void setMeasureFunc(MeasureCallback* measureFunc);
+public: // Measure func mutators
+  void setMeasureFunc(MeasureCallback *measureFunc);
   void unsetMeasureFunc(void);
 
- public: // Measure func inspectors
+public: // Measure func inspectors
   Size callMeasureFunc(
       double width,
       int widthMode,
       double height,
       int heightMode) const;
 
- public: // Dirtied func mutators
-  void setDirtiedFunc(DirtiedCallback* dirtiedFunc);
+public: // Dirtied func mutators
+  void setDirtiedFunc(DirtiedCallback *dirtiedFunc);
   void unsetDirtiedFunc(void);
 
- public: // Dirtied func inspectors
+public: // Dirtied func inspectors
   void callDirtiedFunc(void) const;
 
- public: // Dirtiness accessors
+public: // Dirtiness accessors
   void markDirty(void);
   bool isDirty(void) const;
   void markLayoutSeen();
   bool hasNewLayout(void) const;
 
- public: // Layout mutators
-  //void calculateLayout(double width, double height, int direction);
+public: // Layout mutators
+  // void calculateLayout(double width, double height, int direction);
   void calculateLayout(double width, double height, facebook::yoga::Direction direction);
 
- public: // Layout inspectors
+public: // Layout inspectors
   double getComputedLeft(void) const;
   double getComputedRight(void) const;
 
@@ -232,7 +240,7 @@ class Node {
   double getComputedBorder(int edge) const;
   double getComputedPadding(int edge) const;
 
- public:
+public:
   void setIsReferenceBaseline(bool isReferenceBaseline);
   bool isReferenceBaseline();
 
@@ -241,6 +249,8 @@ class Node {
   std::unique_ptr<MeasureCallback> m_measureFunc;
   std::unique_ptr<DirtiedCallback> m_dirtiedFunc;
 
- public:
+  std::vector<pybind11::object> py_children;
+
+public:
   void setAlwaysFormsContainingBlock(bool alwaysFormContainingBlock);
 };

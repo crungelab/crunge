@@ -12,49 +12,57 @@ from ..common import Demo, Renderer
 class FlexColumnDemo(Demo):
     def __init__(self):
         super().__init__()
+        self.text_paint = text_paint = skia.Paint()
+        text_paint.set_color(0xFFFF00FF)
+        self.font = font = skia.Font()
+        font.set_size(16)
+
         # Create a root node
         root_style = yoga.Style()
 
         root_style.set_flex_direction(yoga.FlexDirection.COLUMN)
-        root_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
+        root_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(256))
         root_style.set_dimension(
-            yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(100)
+            yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(256)
         )
+        root_style.set_padding(yoga.Edge.ALL, yoga.StyleLength.points(32))
 
         self.root = root = yoga.Node()
         root.set_style(root_style)
 
         child0 = yoga.Node()
         child0_style = yoga.Style()
-        child0_style.set_flex_grow(1.0)
+        child0_style.set_flex_grow(.25)
         child0_style.set_margin(yoga.Edge.BOTTOM, yoga.StyleLength.points(10))
 
         child0.set_style(child0_style)
+        #child0.set_height(50)
 
         root.add_child(child0)
 
         child1 = yoga.Node()
-        child1.set_owner(root)
         child1_style = yoga.Style()
-        child1_style.set_flex_grow(1.0)
+        child1_style.set_flex_grow(0.25)
 
         child1.set_style(child1_style)
+        #child1.set_height(50)
 
         root.add_child(child1)
 
         # Calculate layout for the root node
-        yoga.calculate_layout(root, math.nan, math.nan, yoga.Direction.LTR)
+        #root.calculate_layout(math.nan, math.nan, yoga.Direction.LTR)
+        root.calculate_layout(256, 256, yoga.Direction.LTR)
 
         self.debug_node(root)
 
     def debug_node(self, node: yoga.Node):
-        layout = node.get_layout()
-        left = layout.position(yoga.PhysicalEdge.LEFT)
-        top = layout.position(yoga.PhysicalEdge.TOP)
-        width = layout.dimension(yoga.Dimension.WIDTH)
-        height = layout.dimension(yoga.Dimension.HEIGHT)
-        print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
-        for child in node.get_children():
+        layout = node.get_computed_layout()
+        left = layout.left
+        top = layout.top
+        width = layout.width
+        height = layout.height
+        print(f"Node Layout: Node={node} Left={left}, Top={top}, Width={width}, Height={height}")
+        for child in node.children:
             self.debug_node(child)
 
     def render(self, renderer: Renderer):
@@ -62,11 +70,11 @@ class FlexColumnDemo(Demo):
             self.render_node(self.root, canvas)
 
     def render_node(self, node: yoga.Node, canvas: skia.Canvas, depth=0, max_depth=6):
-        layout = node.get_layout()
-        left = layout.position(yoga.PhysicalEdge.LEFT)
-        top = layout.position(yoga.PhysicalEdge.TOP)
-        width = layout.dimension(yoga.Dimension.WIDTH)
-        height = layout.dimension(yoga.Dimension.HEIGHT)
+        layout = node.get_computed_layout()
+        left = layout.left
+        top = layout.top
+        width = layout.width
+        height = layout.height
 
         # Calculate shade of grey (darker at depth 0, lighter as depth increases)
         # Clamp depth so that we stay within 0 (black) to 255 (white)
@@ -78,7 +86,9 @@ class FlexColumnDemo(Demo):
         paint.set_color(color)
         canvas.draw_rect(skia.Rect(left, top, width, height), paint)
 
-        for child in node.get_children():
+        canvas.draw_string(f"Node {depth}", left + 5, top + 15, self.font, self.text_paint)
+
+        for child in node.children:
             self.render_node(child, canvas, depth=depth + 1, max_depth=max_depth)
 
 

@@ -28,7 +28,7 @@ void init_yoga_node_py(py::module &_yoga, Registry &registry) {
         }
         //self.m_node->setStyle(style);
         node->setStyle(style);
-        self.markDirtyAndPropagate();
+        node->markDirtyAndPropagate();
     }, py::arg("style"));
 
     PYEXTEND_END

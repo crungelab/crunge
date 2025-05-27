@@ -39,7 +39,6 @@ class TreeDemo(Demo):
         root.add_child(child0)
 
         child1 = yoga.Node()
-        child1.set_owner(root)
         child1_style = yoga.Style()
         # child1_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
         # child1_style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(10))
@@ -52,18 +51,18 @@ class TreeDemo(Demo):
         # Calculate layout for the root node
         # root.calculate_layout(width=100, height=100)
         # yoga.calculate_layout(root, 100, 100, yoga.Direction.LTR)
-        yoga.calculate_layout(root, math.nan, math.nan, yoga.Direction.LTR)
+        root.calculate_layout(math.nan, math.nan, yoga.Direction.LTR)
 
         self.debug_node(root)
 
     def debug_node(self, node: yoga.Node):
-        layout = node.get_layout()
-        left = layout.position(yoga.PhysicalEdge.LEFT)
-        top = layout.position(yoga.PhysicalEdge.TOP)
-        width = layout.dimension(yoga.Dimension.WIDTH)
-        height = layout.dimension(yoga.Dimension.HEIGHT)
+        layout = node.get_computed_layout()
+        left = layout.left
+        top = layout.top
+        width = layout.width
+        height = layout.height
         print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
-        for child in node.get_children():
+        for child in node.children:
             self.debug_node(child)
 
     def render(self, renderer: Renderer):
@@ -74,11 +73,11 @@ class TreeDemo(Demo):
             self.render_node(self.root, canvas)
 
     def render_node(self, node: yoga.Node, canvas: skia.Canvas, depth=0, max_depth=6):
-        layout = node.get_layout()
-        left = layout.position(yoga.PhysicalEdge.LEFT)
-        top = layout.position(yoga.PhysicalEdge.TOP)
-        width = layout.dimension(yoga.Dimension.WIDTH)
-        height = layout.dimension(yoga.Dimension.HEIGHT)
+        layout = node.get_computed_layout()
+        left = layout.left
+        top = layout.top
+        width = layout.width
+        height = layout.height
 
         # Calculate shade of grey (darker at depth 0, lighter as depth increases)
         # Clamp depth so that we stay within 0 (black) to 255 (white)
@@ -90,7 +89,7 @@ class TreeDemo(Demo):
         paint.set_color(color)
         canvas.draw_rect(skia.Rect(left, top, width, height), paint)
 
-        for child in node.get_children():
+        for child in node.children:
             self.render_node(child, canvas, depth=depth + 1, max_depth=max_depth)
 
 

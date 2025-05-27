@@ -298,6 +298,9 @@ void init_yoga_node_py_auto(py::module &_yoga, Registry &registry) {
             , py::arg("child")
             , py::arg("index")
             , py::return_value_policy::automatic_reference)
+        .def("add_child", &Node::addChild
+            , py::arg("child")
+            , py::return_value_policy::automatic_reference)
         .def("remove_child", &Node::removeChild
             , py::arg("child")
             , py::return_value_policy::automatic_reference)
@@ -367,6 +370,7 @@ void init_yoga_node_py_auto(py::module &_yoga, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("is_reference_baseline", &Node::isReferenceBaseline
             , py::return_value_policy::automatic_reference)
+        .def_readwrite("children", &Node::py_children)
         .def("set_always_forms_containing_block", &Node::setAlwaysFormsContainingBlock
             , py::arg("always_form_containing_block")
             , py::return_value_policy::automatic_reference)

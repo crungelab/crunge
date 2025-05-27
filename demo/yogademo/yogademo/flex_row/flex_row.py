@@ -14,42 +14,40 @@ class FlexRowDemo(Demo):
         super().__init__()
         self.text_paint = text_paint = skia.Paint()
         text_paint.set_color(0xFFFF00FF)
-
         self.font = font = skia.Font()
         font.set_size(16)
-
-        self.text_blob = skia.TextBlob.make_from_string(f"Blob", self.font)
 
         # Create a root node
         root_style = yoga.Style()
 
         root_style.set_flex_direction(yoga.FlexDirection.ROW)
-        root_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
+        root_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(256))
         root_style.set_dimension(
-            yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(100)
+            yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(256)
         )
+        root_style.set_padding(yoga.Edge.ALL, yoga.StyleLength.points(32))
 
         self.root = root = yoga.Node()
         root.set_style(root_style)
 
         child0 = yoga.Node()
         child0_style = yoga.Style()
-        child0_style.set_flex_grow(1.0)
+        child0_style.set_flex_grow(0.25)
         child0_style.set_margin(yoga.Edge.RIGHT, yoga.StyleLength.points(10))
 
         child0.set_style(child0_style)
 
-        #root.add_child(child0)
-        root.insert_child(child0, 0)
+        root.add_child(child0)
+        #root.insert_child(child0, 0)
 
         child1 = yoga.Node()
         child1_style = yoga.Style()
-        child1_style.set_flex_grow(1.0)
+        child1_style.set_flex_grow(0.75)
 
         child1.set_style(child1_style)
 
-        #root.add_child(child1)
-        root.insert_child(child1, 1)
+        root.add_child(child1)
+        #root.insert_child(child1, 1)
 
         # Calculate layout for the root node
         #yoga.calculate_layout(root, math.nan, math.nan, yoga.Direction.LTR)
@@ -62,7 +60,7 @@ class FlexRowDemo(Demo):
     def debug_node(self, node: yoga.Node):
         layout = node.get_computed_layout()
         left = layout.left
-        top = layout.right
+        top = layout.top
         width = layout.width
         height = layout.height
         print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
@@ -97,20 +95,13 @@ class FlexRowDemo(Demo):
         paint.set_color(color)
         canvas.draw_rect(skia.Rect(left, top, width, height), paint)
 
-        #canvas.draw_simple_text(f"Node {depth}", left + 5, top + 15, skia.Font(), skia.Paint())
-        #text_paint = skia.Paint()
-        #text_paint.set_color(0xFFFF00FF)
-
-        #font = skia.Font()
-        #font.set_size(16)
-        #canvas.draw_string(f"Node {depth}", left + 5, top + 15, font, text_paint)
         canvas.draw_string(f"Node {depth}", left + 5, top + 15, self.font, self.text_paint)
-        #text_blob = skia.TextBlob.make_from_string(f"Node {depth}", self.font)
-        #canvas.draw_text_blob(text_blob, left + 5, top + 15, self.text_paint)
-        #canvas.draw_text_blob(self.text_blob, left + 5, top + 15, self.text_paint)
-
         '''
-        for child in node.get_children():
+        text_blob = skia.TextBlob.make_from_string(f"Node {depth}", self.font)
+        canvas.draw_text_blob(text_blob, left + 5, top + 15, self.text_paint)
+        '''
+
+        for child in node.children:
             self.render_node(child, canvas, depth=depth + 1, max_depth=max_depth)
         '''
         child_count = node.get_child_count()
@@ -118,7 +109,7 @@ class FlexRowDemo(Demo):
         for i in range(child_count):
             child = node.get_child(i)
             self.render_node(child, canvas, depth=depth + 1, max_depth=max_depth)
-
+        '''
 
 def main():
     FlexRowDemo().run()

@@ -448,8 +448,22 @@ bool Node::isReferenceBaseline() {
   return YGNodeIsReferenceBaseline(m_node);
 }
 
+void Node::insertChild(py::object py_child, unsigned index) {
+    // Extract C++ pointer from the Python object
+    Node* child = py_child.cast<Node*>();
+    YGNodeInsertChild(m_node, child->m_node, index);
+    py_children.insert(py_children.begin() + index, py_child);
+}
+/*
 void Node::insertChild(Node* child, unsigned index) {
   YGNodeInsertChild(m_node, child->m_node, index);
+}
+*/
+void Node::addChild(py::object py_child) {
+  // Extract C++ pointer from the Python object
+  Node* child = py_child.cast<Node*>();
+  YGNodeInsertChild(m_node, child->m_node, YGNodeGetChildCount(m_node));
+  py_children.push_back(py_child);
 }
 
 void Node::removeChild(Node* child) {

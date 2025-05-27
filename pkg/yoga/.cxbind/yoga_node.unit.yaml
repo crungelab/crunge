@@ -13,3 +13,6 @@ excludes: [
   'field/Node::m_dirtiedFunc',
   'method/Node::fromYGNode'
 ]
+
+specs:
+  'field/Node::py_children': { pyname: children }
