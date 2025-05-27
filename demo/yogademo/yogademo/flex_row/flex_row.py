@@ -53,31 +53,39 @@ class FlexRowDemo(Demo):
 
         # Calculate layout for the root node
         #yoga.calculate_layout(root, math.nan, math.nan, yoga.Direction.LTR)
-        yoga.calculate_layout(root, 100, 100, yoga.Direction.LTR)
+        #yoga.calculate_layout(root, 100, 100, yoga.Direction.LTR)
+        #root.calculate_layout(100, 100, yoga.Direction.LTR)
+        root.calculate_layout(math.nan, math.nan, yoga.Direction.LTR)
 
         self.debug_node(root)
 
     def debug_node(self, node: yoga.Node):
-        layout = node.get_layout()
-        left = layout.position(yoga.PhysicalEdge.LEFT)
-        top = layout.position(yoga.PhysicalEdge.TOP)
-        width = layout.dimension(yoga.Dimension.WIDTH)
-        height = layout.dimension(yoga.Dimension.HEIGHT)
+        layout = node.get_computed_layout()
+        left = layout.left
+        top = layout.right
+        width = layout.width
+        height = layout.height
         print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
+        child_count = node.get_child_count()
+        for i in range(child_count):
+            child = node.get_child(i)
+            self.debug_node(child)
+        '''
         for child in node.get_children():
             self.debug_node(child)
+        '''
 
     def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
             self.render_node(self.root, canvas)
 
     def render_node(self, node: yoga.Node, canvas: skia.Canvas, depth=0, max_depth=6):
-        layout = node.get_layout()
-        left = layout.position(yoga.PhysicalEdge.LEFT)
-        top = layout.position(yoga.PhysicalEdge.TOP)
-        width = layout.dimension(yoga.Dimension.WIDTH)
-        height = layout.dimension(yoga.Dimension.HEIGHT)
-        logger.debug(f"Rendering node at depth {depth}: Left={left}, Top={top}, Width={width}, Height={height}")
+        layout = node.get_computed_layout()
+        left = layout.left
+        top = layout.top
+        width = layout.width
+        height = layout.height
+        #logger.debug(f"Rendering node at depth {depth}: Left={left}, Top={top}, Width={width}, Height={height}")
 
         # Calculate shade of grey (darker at depth 0, lighter as depth increases)
         # Clamp depth so that we stay within 0 (black) to 255 (white)
@@ -101,7 +109,14 @@ class FlexRowDemo(Demo):
         #canvas.draw_text_blob(text_blob, left + 5, top + 15, self.text_paint)
         #canvas.draw_text_blob(self.text_blob, left + 5, top + 15, self.text_paint)
 
+        '''
         for child in node.get_children():
+            self.render_node(child, canvas, depth=depth + 1, max_depth=max_depth)
+        '''
+        child_count = node.get_child_count()
+        logger.debug(f"Node {depth} has {child_count} children")
+        for i in range(child_count):
+            child = node.get_child(i)
             self.render_node(child, canvas, depth=depth + 1, max_depth=max_depth)
 
 

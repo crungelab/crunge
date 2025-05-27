@@ -11,7 +11,7 @@ project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
 find_package(Python COMPONENTS Interpreter Development)
 
-pybind11_add_module(${THIS} SHARED src/yoga_py_module.cpp)
+pybind11_add_module(${THIS} SHARED src/bindings/yoga_py_module.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
@@ -20,14 +20,16 @@ USES_CORE(${THIS})
 USES_YOGA(${THIS})
 
 set(SOURCES
-    src/yoga_py_module.cpp
-    #src/yoga_py.cpp
-    #src/yoga_numeric_py_auto.cpp
-    src/yoga_enums_py_auto.cpp
-    src/yoga_style_py_auto.cpp
-    src/yoga_node_py.cpp
-    src/yoga_node_py_auto.cpp
-    src/yoga_algorithm_py_auto.cpp
+    src/Node.cpp
+    src/Config.cpp
+    src/bindings/yoga_py_module.cpp
+    #src/bindings/yoga_py.cpp
+    #src/bindings/yoga_numeric_py_auto.cpp
+    src/bindings/yoga_enums_py_auto.cpp
+    src/bindings/yoga_style_py_auto.cpp
+    src/bindings/yoga_node_py.cpp
+    src/bindings/yoga_node_py_auto.cpp
+    #src/bindings/yoga_algorithm_py_auto.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})

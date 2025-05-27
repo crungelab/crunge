@@ -4,7 +4,7 @@ sources:
   - ../../depot/yoga/yoga/style/StyleSizeLength.h
   - ../../depot/yoga/yoga/style/Style.h
 
-target: 'src/yoga_style_py_auto.cpp'
+target: 'src/bindings/yoga_style_py_auto.cpp'
 
 specs:
   'class/facebook::yoga::Style': {gen_init: true}

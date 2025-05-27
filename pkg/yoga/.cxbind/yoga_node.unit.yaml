@@ -1,15 +1,15 @@
 #source: '../../depot/yoga/yoga/node/Node.h'
 sources:
-  - ../../depot/yoga/yoga/node/LayoutResults.h
-  - ../../depot/yoga/yoga/node/Node.h
+  #- ../../depot/yoga/yoga/node/LayoutResults.h
+  #- ../../depot/yoga/yoga/node/Node.h
+  - src/Layout.h
+  - src/Node.h
 
-target: src/yoga_node_py_auto.cpp
+target: src/bindings/yoga_node_py_auto.cpp
 
 excludes: [
-  # Uses function pointers
-  'method/facebook::yoga::Node::getDirtiedFunc',
-  'method/facebook::yoga::Node::style',
-
-  # Uses C API
-  'function/facebook::yoga::resolveRef',
+  'field/Node::m_node',
+  'field/Node::m_measureFunc',
+  'field/Node::m_dirtiedFunc',
+  'method/Node::fromYGNode'
 ]

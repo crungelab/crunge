@@ -1,4 +1,4 @@
-target: 'src/yoga_enums_py_auto.cpp'
+target: 'src/bindings/yoga_enums_py_auto.cpp'
 
 sources:
   - ../../depot/yoga/yoga/enums/Align.h

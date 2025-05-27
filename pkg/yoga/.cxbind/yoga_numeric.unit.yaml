@@ -1,4 +1,4 @@
-target: 'src/yoga_numeric_py_auto.cpp'
+target: 'src/bindings/yoga_numeric_py_auto.cpp'
 
 sources:
   #- ../../depot/yoga/yoga/numeric/Comparison.h

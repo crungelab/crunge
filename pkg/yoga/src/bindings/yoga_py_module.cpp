@@ -19,5 +19,5 @@ PYBIND11_MODULE(_yoga, m) {
     init_yoga_style_py_auto(m, r);
     init_yoga_node_py(m, r);
     init_yoga_node_py_auto(m, r);
-    init_yoga_algorithm_py_auto(m, r);
+    //init_yoga_algorithm_py_auto(m, r);
 }

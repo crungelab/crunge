@@ -6,11 +6,11 @@ flags: [
   '-I../../depot/yoga',
 ]
 
-#prefixes: [Sk]
+#prefixes: [YG]
 
 unit_files:
   #- path: yoga_numeric.unit.yaml
   - path: yoga_enums.unit.yaml
   - path: yoga_style.unit.yaml
   - path: yoga_node.unit.yaml
-  - path: yoga_algorithm.unit.yaml
+  #- path: yoga_algorithm.unit.yaml

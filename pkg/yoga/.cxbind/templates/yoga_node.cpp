@@ -9,7 +9,7 @@
 #include <crunge/yoga/crunge-yoga.h>
 #include <crunge/yoga/conversions.h>
 
-#include <yoga/node/Node.h>
+#include "../Node.h"
 
 namespace py = pybind11;
 

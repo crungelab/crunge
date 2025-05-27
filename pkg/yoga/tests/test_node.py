@@ -19,11 +19,14 @@ def main():
     root.insert_child(child, 0)
 
     # Calculate layout for the root node
-    root.calculate_layout(width=100, height=100)
+    root.calculate_layout(width=100, height=100, direction=yoga.Direction.LTR)
 
     # Print the layout of the root and child nodes
-    print(f"Root Node Layout: {root.get_layout()}")
-    print(f"Child Node Layout: {child.get_layout()}")
-    
+    root_layout = root.get_computed_layout()
+    child_layout = child.get_computed_layout()
+    #print(f"Root Node Layout: {root_layout}")
+    print(f"Root Node Layout: left={root_layout.left}, top={root_layout.top}, width={root_layout.width}, height={root_layout.height}")
+    print(f"Child Node Layout: left={child_layout.left}, top={child_layout.top}, width={child_layout.width}, height={child_layout.height}")
+
 if __name__ == "__main__":
     main()
