@@ -6,6 +6,8 @@ sources:
 target: src/yoga_node_py_auto.cpp
 
 excludes: [
+  'struct/YGNode',
+  'ctor/facebook::yoga::Node::Node',
   # Uses function pointers
   'method/facebook::yoga::Node::getDirtiedFunc',
   'method/facebook::yoga::Node::style',

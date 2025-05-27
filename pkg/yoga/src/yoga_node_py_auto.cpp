@@ -87,18 +87,9 @@ void init_yoga_node_py_auto(py::module &_yoga, Registry &registry) {
     ;
 
 
-    py::class_<YGNode> YGNode(_yoga, "YGNode");
-    registry.on(_yoga, "YGNode", YGNode);
     py::class_<facebook::yoga::Node> Node(_yoga, "Node");
     registry.on(_yoga, "Node", Node);
         Node
-        .def(py::init<>())
-        .def(py::init<const facebook::yoga::Config *>()
-        , py::arg("config")
-        )
-        .def(py::init<const facebook::yoga::Node &>()
-        , py::arg("node")
-        )
         .def("get_context", &facebook::yoga::Node::getContext
             , py::return_value_policy::automatic_reference)
         .def("always_forms_containing_block", &facebook::yoga::Node::alwaysFormsContainingBlock
