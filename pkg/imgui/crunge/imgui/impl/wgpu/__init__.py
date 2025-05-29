@@ -58,6 +58,7 @@ class WgpuRenderer(Renderer):
     def create(self):
         super().create()
         self._set_pixel_ratio(self._window)
+        return self
 
     def _set_pixel_ratio(self, window):
         window_size = window.get_size()

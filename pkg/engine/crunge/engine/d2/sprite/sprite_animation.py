@@ -1,7 +1,7 @@
 from .sprite import Sprite
 
 
-DEFAULT_DURATION = 1/24
+DEFAULT_DURATION = 1/12
 
 
 class SpriteAnimationFrame:

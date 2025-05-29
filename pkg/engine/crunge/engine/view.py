@@ -29,9 +29,9 @@ class View(Widget):
         for layer in self.layers:
             layer.size = self.size
 
-    def _create(self):
+    def create(self):
         #logger.debug("View.create")
-        super()._create()
+        super().create()
         if not self.window:
             raise ValueError("View.window is not set")
         self.size = self.window.size

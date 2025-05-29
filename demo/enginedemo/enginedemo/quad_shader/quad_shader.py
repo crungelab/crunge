@@ -81,6 +81,8 @@ class QuadShaderLayer(DemoLayer):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
+        return self
+
     def draw(self, renderer: Renderer):
         # logger.debug("render")
         color_attachments = [

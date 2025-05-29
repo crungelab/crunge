@@ -17,7 +17,11 @@ from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLo
 class SpriteAnimationDemo(Demo):
     def __init__(self):
         super().__init__()
+
+    def create(self):
+        super().create()
         self.reset()
+        return self
 
     def kill(self):
         self.node.destroy()
@@ -84,6 +88,7 @@ class SpriteAnimationDemo(Demo):
         animator.add_animation(run_left)
 
     def update(self, delta_time):
+        #logger.debug(f"Update: {delta_time}")
         self.animator.update(delta_time)
         return super().update(delta_time)
 

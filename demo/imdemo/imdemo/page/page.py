@@ -12,9 +12,10 @@ class Page(ImGuiView):
         self.fullheight = True
         #self.reset()
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         self.reset()
+        return self
 
     def reset(self):
         pass

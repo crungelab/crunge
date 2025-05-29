@@ -16,8 +16,8 @@ class ScratchLayer(ViewLayer):
         self.vu_list: list[Vu2D] = []
 
     '''
-    def _create(self, view):
-        super()._create(view)
+    def create(self, view):
+        super().create(view)
         return self
     '''
 

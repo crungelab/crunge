@@ -61,13 +61,13 @@ class Window(Frame):
         self.channel = channel
     '''
 
-    def _create(self):
+    def create(self):
         logger.debug("Window.create")
         self.create_window()
         self.create_device_objects()
         self.create_viewport()
         self.create_renderer()
-        return super()._create()
+        return super().create()
 
     def create_window(self):
         self.window = sdl.create_window(

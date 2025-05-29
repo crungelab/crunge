@@ -14,7 +14,12 @@ from .floor import Floor
 class BallsDemo(Demo):
     def __init__(self):
         super().__init__()
+        #self.reset()
+    
+    def create(self):
+        super().create()
         self.reset()
+        return self
 
     def reset(self):
         self.scene.clear()

@@ -25,10 +25,11 @@ class ThingsDemo(Demo):
         self.sprite = None
         self.atlas = None
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         self.draw_options = DrawOptions(self.view.scratch)
         self.reset()
+        return self
 
     def reset(self):
         self.scene.clear()

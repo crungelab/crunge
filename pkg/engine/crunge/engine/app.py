@@ -9,7 +9,8 @@ from crunge import sdl
 from .window import Window
 from .scheduler import Scheduler
 from .service import Service
-#from .channel import Channel
+
+# from .channel import Channel
 
 
 class App(Window):
@@ -24,7 +25,7 @@ class App(Window):
 
     def remove_service(self, service: Service):
         self.services.remove(service)
-    
+
     def create_window(self):
         success = sdl.init(sdl.InitFlags.INIT_VIDEO)
         logger.debug(f"SDL_Init: {success}")
@@ -37,12 +38,15 @@ class App(Window):
         self.enable()
         self.running = True
 
+        target_frame_time = 1 / 60  # 60 FPS
         last_time = time.perf_counter()
-        target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
         sdl.start_text_input(self.window)
 
         while self.running:
+            # --- Mark the start of the frame
+            frame_start = time.perf_counter()
+
             self.instance.process_events()
 
             while event := sdl.poll_event():
@@ -50,29 +54,29 @@ class App(Window):
                 if event.type == sdl.EventType.QUIT:
                     self.running = False
 
+            # Compute frame delta
             now = time.perf_counter()
             frame_time = now - last_time
 
-            # Calculate how much time is left to delay to maintain 60 FPS
-            time_left = target_frame_time - frame_time
+            # Game update & render
+            self.update(frame_time)
+            self.frame()
 
-            # If there's time left in this frame, delay the next frame
+            # Calculate how much time is left to maintain 60 FPS
+            elapsed = time.perf_counter() - frame_start
+            time_left = target_frame_time - elapsed
             if time_left > 0:
                 time.sleep(time_left)
 
-            # Update last_time for the next frame, considering the sleep
-            last_time = time.perf_counter()
-
-            self.update(frame_time)
-
-            self.frame()
+            # Set up for next frame
+            last_time = frame_start
 
         sdl.stop_text_input(self.window)
         # self.device.destroy()
         return self
 
     def update(self, delta_time: float):
-        #Scheduler().update(delta_time)
+        # Scheduler().update(delta_time)
         for service in self.services:
             service.update(delta_time)
         super().update(delta_time)

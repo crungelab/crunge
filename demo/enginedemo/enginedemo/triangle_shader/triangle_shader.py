@@ -64,6 +64,8 @@ class TriangleShaderLayer(DemoLayer):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
+        return self
+
     def draw(self, renderer: Renderer):
         # logger.debug("draw")
         color_attachments = [

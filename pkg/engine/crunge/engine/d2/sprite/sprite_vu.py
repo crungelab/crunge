@@ -71,8 +71,8 @@ class SpriteVu(Vu2D):
         #logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         group = self.group
         if group is not None:
             group.append(self)

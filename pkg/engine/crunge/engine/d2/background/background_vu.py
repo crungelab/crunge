@@ -66,8 +66,8 @@ class BackgroundVu(Vu2D):
         #logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         self.create_program()
         self.create_buffer()
         self.create_bind_group()

@@ -34,8 +34,8 @@ class Entity2D(Node2D):
         value.enable()
 
     '''
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         if self.vu is not None and self.layer is not None:
             self.layer.add_sprite(self.vu)
     '''
@@ -63,8 +63,9 @@ class EntityGroup2D(Entity2D):
         self.nodes.append(node)
         return node
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         for node in self.nodes:
             node.gid = self.id
             self.layer.attach(node)
+        return self

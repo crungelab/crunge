@@ -18,29 +18,13 @@ class Base:
     def create(self):
         if self.created:
             return
-        self._create()
         self.created = True
-        self._post_create()
         return self
-
-    def _create(self) -> None:
-        pass
-
-    def _post_create(self) -> None:
-        pass
 
     def destroy(self) -> None:
         if not self.created:
             return
-        self._destroy()
-        self.on_destroy()
         self.created = False
-
-    def _destroy(self) -> None:
-        pass
-
-    def on_destroy(self) -> None:
-        pass
 
     def enable(self) -> None:
         if not self.created:

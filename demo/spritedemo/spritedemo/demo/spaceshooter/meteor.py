@@ -32,8 +32,8 @@ class Meteor(DynamicEntity2D):
         shape.collision_type = CollisionType.METEOR
         super().add_shape(shape)
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         linear_velocity = (random.uniform(*self.linear_velocity_range[0]), 
                            random.uniform(*self.linear_velocity_range[1]))
         self.body.velocity = linear_velocity
@@ -41,6 +41,7 @@ class Meteor(DynamicEntity2D):
         angular_velocity = random.uniform(*self.angular_velocity_range)
         self.body.angular_velocity = angular_velocity
         #self.body.mass = 1
+        return self
 
     def create_fragment(self, cls, position, velocity):
         fragment = cls(position).create()

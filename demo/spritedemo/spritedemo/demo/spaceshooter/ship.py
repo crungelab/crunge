@@ -53,8 +53,8 @@ class Ship(DynamicEntity2D):
         shape.collision_type = CollisionType.SHIP
         super().add_shape(shape)
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         self.front_thruster = Thruster(self.body, glm.vec2(0, self.size.y / 2), glm.vec2(0, -100))
         self.attach(self.front_thruster)
 
@@ -66,6 +66,7 @@ class Ship(DynamicEntity2D):
 
         self.right_thruster = Thruster(self.body, glm.vec2(self.size.x / 2, 0), glm.vec2(100, 0), -5)
         self.attach(self.right_thruster)
+        return self
 
     def update(self, delta_time: float):
         super().update(delta_time)

@@ -23,7 +23,11 @@ class InstancingDemo(Demo):
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         self.color = tuple(Color.WHITE.value)
         self.sprite = Sprite(texture, color=glm.vec4(self.color))
+
+    def create(self):
+        super().create()
         self.reset()
+        return self
 
     def kill(self):
         for node in self.nodes:
@@ -50,7 +54,7 @@ class InstancingDemo(Demo):
 
         for row in range(grid_size):
             for col in range(grid_size):
-                vu = SpriteVu(self.sprite).config(group=self.sprite_vu_group).create()
+                vu = SpriteVu(self.sprite).config(group=self.sprite_vu_group)
                 node = Node2D(vu=vu).config(scale=glm.vec2(self.scale, self.scale))
                 
                 # Calculate position based on grid and spacing

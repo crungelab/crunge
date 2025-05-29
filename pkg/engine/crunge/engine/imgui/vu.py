@@ -101,7 +101,8 @@ class ImGuiVu(Vu):
         self.sampler = DefaultSampler()
         self.image_bind_groups = {}
 
-    def _create(self):
+    def create(self):
+        super().create()
         self.create_device_objects()
         return self
 

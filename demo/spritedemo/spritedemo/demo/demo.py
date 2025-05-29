@@ -24,7 +24,6 @@ class Demo(engine.App):
             self.__class__.__name__,
             resizable=True,
         )
-        self.delta_time = 0
 
         self.resource_root = (
             Path(__file__).parent.parent.parent.parent.parent / "resources"
@@ -41,8 +40,8 @@ class Demo(engine.App):
     def camera(self) -> Camera2D:
         return self.view.camera
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         self.create_view()
         return self
 

@@ -46,15 +46,15 @@ class ImGuiLayer(ViewLayer):
         self.dropboard = Dropboard()
         self.last_mouse = glm.vec2(-sys.float_info.max, -sys.float_info.max)
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         self.vu = ImGuiVu()
         self._set_pixel_ratio()
         return self
 
     '''
-    def _create(self, view: engine.View):
-        super()._create(view)
+    def create(self, view: engine.View):
+        super().create(view)
         self.vu = ImGuiVu()
         self._set_pixel_ratio()
         return self

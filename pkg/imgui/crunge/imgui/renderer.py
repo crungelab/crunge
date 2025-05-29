@@ -24,6 +24,7 @@ class Renderer(ABC):
     def create(self):
         self._create_device_objects()
         self.refresh_font_texture()
+        return self
 
     @abstractmethod
     def render(self, draw_data):

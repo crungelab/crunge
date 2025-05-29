@@ -57,11 +57,14 @@ class PhysicsEntity2D(Entity2D):
         else:
             self._physics = physics
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         self.body = self.create_body()
         self.shapes = self.create_shapes()
+        self.add_shapes()
+        return self
 
+    '''
     def _post_create(self):
         super()._post_create()
         """
@@ -69,6 +72,7 @@ class PhysicsEntity2D(Entity2D):
             globe.physics_engine.space.add(self.body)
         """
         self.add_shapes()
+    '''
 
     def destroy(self):
         self.remove_shapes()
@@ -146,12 +150,13 @@ class PhysicsGroup2D(PhysicsEntity2D):
         self.nodes.append(node)
         return node
 
-    def _create(self):
-        super()._create()
+    def create(self):
+        super().create()
         for node in self.nodes:
             node.gid = self.id
             # model.physics = self.physics
             self.layer.attach(node)
+        return self
 
     def update(self, delta_time):
         points = [node.position for node in self.nodes]
