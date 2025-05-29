@@ -20,15 +20,15 @@ USES_CORE(${THIS})
 USES_YOGA(${THIS})
 
 set(SOURCES
-    src/Node.cpp
+    src/Layout.cpp
     src/Config.cpp
     src/bindings/yoga_py_module.cpp
     #src/bindings/yoga_py.cpp
     #src/bindings/yoga_numeric_py_auto.cpp
     src/bindings/yoga_enums_py_auto.cpp
     src/bindings/yoga_style_py_auto.cpp
-    src/bindings/yoga_node_py.cpp
-    src/bindings/yoga_node_py_auto.cpp
+    src/bindings/yoga_layout_py.cpp
+    src/bindings/yoga_layout_py_auto.cpp
     #src/bindings/yoga_algorithm_py_auto.cpp
 )
 

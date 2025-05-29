@@ -9,7 +9,7 @@ def main():
     style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
     print(f"Updated Style: {style}")
 
-    root = yoga.Node()
+    root = yoga.Layout()
     root.set_style(style)
 
 if __name__ == "__main__":

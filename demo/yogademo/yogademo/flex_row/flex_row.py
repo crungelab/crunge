@@ -21,16 +21,16 @@ class FlexRowDemo(Demo):
         root_style = yoga.Style()
 
         root_style.set_flex_direction(yoga.FlexDirection.ROW)
-        root_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(256))
+        root_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(512))
         root_style.set_dimension(
-            yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(256)
+            yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(512)
         )
         root_style.set_padding(yoga.Edge.ALL, yoga.StyleLength.points(32))
 
-        self.root = root = yoga.Node()
+        self.root = root = yoga.Layout()
         root.set_style(root_style)
 
-        child0 = yoga.Node()
+        child0 = yoga.Layout()
         child0_style = yoga.Style()
         child0_style.set_flex_grow(0.25)
         child0_style.set_margin(yoga.Edge.RIGHT, yoga.StyleLength.points(10))
@@ -40,7 +40,7 @@ class FlexRowDemo(Demo):
         root.add_child(child0)
         #root.insert_child(child0, 0)
 
-        child1 = yoga.Node()
+        child1 = yoga.Layout()
         child1_style = yoga.Style()
         child1_style.set_flex_grow(0.75)
 
@@ -53,20 +53,20 @@ class FlexRowDemo(Demo):
         #yoga.calculate_layout(root, math.nan, math.nan, yoga.Direction.LTR)
         #yoga.calculate_layout(root, 100, 100, yoga.Direction.LTR)
         #root.calculate_layout(100, 100, yoga.Direction.LTR)
-        root.calculate_layout(math.nan, math.nan, yoga.Direction.LTR)
+        root.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
 
-        self.debug_node(root)
+        self.debug_layout(root)
 
     def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
-            self.render_node(self.root, canvas)
+            self.render_layout(self.root, canvas)
 
-    def render_node(self, node: yoga.Node, canvas: skia.Canvas, depth=0, max_depth=6):
-        layout = node.get_computed_layout()
-        left = layout.left
-        top = layout.top
-        width = layout.width
-        height = layout.height
+    def render_layout(self, node: yoga.Layout, canvas: skia.Canvas, depth=0, max_depth=6):
+        bounds = node.get_computed_bounds()
+        left = bounds.left
+        top = bounds.top
+        width = bounds.width
+        height = bounds.height
         #logger.debug(f"Rendering node at depth {depth}: Left={left}, Top={top}, Width={width}, Height={height}")
 
         # Calculate shade of grey (darker at depth 0, lighter as depth increases)
@@ -86,7 +86,7 @@ class FlexRowDemo(Demo):
         '''
 
         for child in node.children:
-            self.render_node(child, canvas, depth=depth + 1, max_depth=max_depth)
+            self.render_layout(child, canvas, depth=depth + 1, max_depth=max_depth)
         '''
         child_count = node.get_child_count()
         logger.debug(f"Node {depth} has {child_count} children")

@@ -9,20 +9,20 @@
 #include <crunge/yoga/crunge-yoga.h>
 #include <crunge/yoga/conversions.h>
 
-#include "../Node.h"
+#include "../Layout.h"
 
 namespace py = pybind11;
 
-void init_yoga_node_py_auto(py::module &_yoga, Registry &registry) {
-    py::class_<Layout> Layout(_yoga, "Layout");
-    registry.on(_yoga, "Layout", Layout);
-        Layout
-        .def_readwrite("left", &Layout::left)
-        .def_readwrite("right", &Layout::right)
-        .def_readwrite("top", &Layout::top)
-        .def_readwrite("bottom", &Layout::bottom)
-        .def_readwrite("width", &Layout::width)
-        .def_readwrite("height", &Layout::height)
+void init_yoga_layout_py_auto(py::module &_yoga, Registry &registry) {
+    py::class_<Bounds> Bounds(_yoga, "Bounds");
+    registry.on(_yoga, "Bounds", Bounds);
+        Bounds
+        .def_readwrite("left", &Bounds::left)
+        .def_readwrite("right", &Bounds::right)
+        .def_readwrite("top", &Bounds::top)
+        .def_readwrite("bottom", &Bounds::bottom)
+        .def_readwrite("width", &Bounds::width)
+        .def_readwrite("height", &Bounds::height)
     ;
 
 
@@ -44,334 +44,334 @@ void init_yoga_node_py_auto(py::module &_yoga, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<Node> Node(_yoga, "Node");
-    registry.on(_yoga, "Node", Node);
+    py::class_<Layout> Layout(_yoga, "Layout");
+    registry.on(_yoga, "Layout", Layout);
         Layout
-        .def_static("create_default", &Node::createDefault
+        .def_static("create_default", &Layout::createDefault
             , py::return_value_policy::automatic_reference)
-        .def_static("create_with_config", &Node::createWithConfig
+        .def_static("create_with_config", &Layout::createWithConfig
             , py::arg("config")
             , py::return_value_policy::automatic_reference)
-        .def_static("destroy", &Node::destroy
+        .def_static("destroy", &Layout::destroy
             , py::arg("node")
             , py::return_value_policy::automatic_reference)
-        .def("reset", &Node::reset
+        .def("reset", &Layout::reset
             , py::return_value_policy::automatic_reference)
-        .def("copy_style", &Node::copyStyle
+        .def("copy_style", &Layout::copyStyle
             , py::arg("other")
             , py::return_value_policy::automatic_reference)
-        .def("set_position_type", &Node::setPositionType
+        .def("set_position_type", &Layout::setPositionType
             , py::arg("position_type")
             , py::return_value_policy::automatic_reference)
-        .def("set_position", &Node::setPosition
+        .def("set_position", &Layout::setPosition
             , py::arg("edge")
             , py::arg("position")
             , py::return_value_policy::automatic_reference)
-        .def("set_position_percent", &Node::setPositionPercent
+        .def("set_position_percent", &Layout::setPositionPercent
             , py::arg("edge")
             , py::arg("position")
             , py::return_value_policy::automatic_reference)
-        .def("set_position_auto", &Node::setPositionAuto
+        .def("set_position_auto", &Layout::setPositionAuto
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("set_align_content", &Node::setAlignContent
+        .def("set_align_content", &Layout::setAlignContent
             , py::arg("align_content")
             , py::return_value_policy::automatic_reference)
-        .def("set_align_items", &Node::setAlignItems
+        .def("set_align_items", &Layout::setAlignItems
             , py::arg("align_items")
             , py::return_value_policy::automatic_reference)
-        .def("set_align_self", &Node::setAlignSelf
+        .def("set_align_self", &Layout::setAlignSelf
             , py::arg("align_self")
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_direction", &Node::setFlexDirection
+        .def("set_flex_direction", &Layout::setFlexDirection
             , py::arg("flex_direction")
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_wrap", &Node::setFlexWrap
+        .def("set_flex_wrap", &Layout::setFlexWrap
             , py::arg("flex_wrap")
             , py::return_value_policy::automatic_reference)
-        .def("set_justify_content", &Node::setJustifyContent
+        .def("set_justify_content", &Layout::setJustifyContent
             , py::arg("justify_content")
             , py::return_value_policy::automatic_reference)
-        .def("set_direction", &Node::setDirection
+        .def("set_direction", &Layout::setDirection
             , py::arg("direction")
             , py::return_value_policy::automatic_reference)
-        .def("set_margin", &Node::setMargin
+        .def("set_margin", &Layout::setMargin
             , py::arg("edge")
             , py::arg("margin")
             , py::return_value_policy::automatic_reference)
-        .def("set_margin_percent", &Node::setMarginPercent
+        .def("set_margin_percent", &Layout::setMarginPercent
             , py::arg("edge")
             , py::arg("margin")
             , py::return_value_policy::automatic_reference)
-        .def("set_margin_auto", &Node::setMarginAuto
+        .def("set_margin_auto", &Layout::setMarginAuto
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("set_overflow", &Node::setOverflow
+        .def("set_overflow", &Layout::setOverflow
             , py::arg("overflow")
             , py::return_value_policy::automatic_reference)
-        .def("set_display", &Node::setDisplay
+        .def("set_display", &Layout::setDisplay
             , py::arg("display")
             , py::return_value_policy::automatic_reference)
-        .def("set_flex", &Node::setFlex
+        .def("set_flex", &Layout::setFlex
             , py::arg("flex")
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_basis", &Node::setFlexBasis
+        .def("set_flex_basis", &Layout::setFlexBasis
             , py::arg("flex_basis")
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_basis_percent", &Node::setFlexBasisPercent
+        .def("set_flex_basis_percent", &Layout::setFlexBasisPercent
             , py::arg("flex_basis")
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_basis_auto", &Node::setFlexBasisAuto
+        .def("set_flex_basis_auto", &Layout::setFlexBasisAuto
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_basis_max_content", &Node::setFlexBasisMaxContent
+        .def("set_flex_basis_max_content", &Layout::setFlexBasisMaxContent
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_basis_fit_content", &Node::setFlexBasisFitContent
+        .def("set_flex_basis_fit_content", &Layout::setFlexBasisFitContent
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_basis_stretch", &Node::setFlexBasisStretch
+        .def("set_flex_basis_stretch", &Layout::setFlexBasisStretch
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_grow", &Node::setFlexGrow
+        .def("set_flex_grow", &Layout::setFlexGrow
             , py::arg("flex_grow")
             , py::return_value_policy::automatic_reference)
-        .def("set_flex_shrink", &Node::setFlexShrink
+        .def("set_flex_shrink", &Layout::setFlexShrink
             , py::arg("flex_shrink")
             , py::return_value_policy::automatic_reference)
-        .def("set_width", &Node::setWidth
+        .def("set_width", &Layout::setWidth
             , py::arg("width")
             , py::return_value_policy::automatic_reference)
-        .def("set_width_percent", &Node::setWidthPercent
+        .def("set_width_percent", &Layout::setWidthPercent
             , py::arg("width")
             , py::return_value_policy::automatic_reference)
-        .def("set_width_auto", &Node::setWidthAuto
+        .def("set_width_auto", &Layout::setWidthAuto
             , py::return_value_policy::automatic_reference)
-        .def("set_width_max_content", &Node::setWidthMaxContent
+        .def("set_width_max_content", &Layout::setWidthMaxContent
             , py::return_value_policy::automatic_reference)
-        .def("set_width_fit_content", &Node::setWidthFitContent
+        .def("set_width_fit_content", &Layout::setWidthFitContent
             , py::return_value_policy::automatic_reference)
-        .def("set_width_stretch", &Node::setWidthStretch
+        .def("set_width_stretch", &Layout::setWidthStretch
             , py::return_value_policy::automatic_reference)
-        .def("set_height", &Node::setHeight
+        .def("set_height", &Layout::setHeight
             , py::arg("height")
             , py::return_value_policy::automatic_reference)
-        .def("set_height_percent", &Node::setHeightPercent
+        .def("set_height_percent", &Layout::setHeightPercent
             , py::arg("height")
             , py::return_value_policy::automatic_reference)
-        .def("set_height_auto", &Node::setHeightAuto
+        .def("set_height_auto", &Layout::setHeightAuto
             , py::return_value_policy::automatic_reference)
-        .def("set_height_max_content", &Node::setHeightMaxContent
+        .def("set_height_max_content", &Layout::setHeightMaxContent
             , py::return_value_policy::automatic_reference)
-        .def("set_height_fit_content", &Node::setHeightFitContent
+        .def("set_height_fit_content", &Layout::setHeightFitContent
             , py::return_value_policy::automatic_reference)
-        .def("set_height_stretch", &Node::setHeightStretch
+        .def("set_height_stretch", &Layout::setHeightStretch
             , py::return_value_policy::automatic_reference)
-        .def("set_min_width", &Node::setMinWidth
+        .def("set_min_width", &Layout::setMinWidth
             , py::arg("min_width")
             , py::return_value_policy::automatic_reference)
-        .def("set_min_width_percent", &Node::setMinWidthPercent
+        .def("set_min_width_percent", &Layout::setMinWidthPercent
             , py::arg("min_width")
             , py::return_value_policy::automatic_reference)
-        .def("set_min_width_max_content", &Node::setMinWidthMaxContent
+        .def("set_min_width_max_content", &Layout::setMinWidthMaxContent
             , py::return_value_policy::automatic_reference)
-        .def("set_min_width_fit_content", &Node::setMinWidthFitContent
+        .def("set_min_width_fit_content", &Layout::setMinWidthFitContent
             , py::return_value_policy::automatic_reference)
-        .def("set_min_width_stretch", &Node::setMinWidthStretch
+        .def("set_min_width_stretch", &Layout::setMinWidthStretch
             , py::return_value_policy::automatic_reference)
-        .def("set_min_height", &Node::setMinHeight
+        .def("set_min_height", &Layout::setMinHeight
             , py::arg("min_height")
             , py::return_value_policy::automatic_reference)
-        .def("set_min_height_percent", &Node::setMinHeightPercent
+        .def("set_min_height_percent", &Layout::setMinHeightPercent
             , py::arg("min_height")
             , py::return_value_policy::automatic_reference)
-        .def("set_min_height_max_content", &Node::setMinHeightMaxContent
+        .def("set_min_height_max_content", &Layout::setMinHeightMaxContent
             , py::return_value_policy::automatic_reference)
-        .def("set_min_height_fit_content", &Node::setMinHeightFitContent
+        .def("set_min_height_fit_content", &Layout::setMinHeightFitContent
             , py::return_value_policy::automatic_reference)
-        .def("set_min_height_stretch", &Node::setMinHeightStretch
+        .def("set_min_height_stretch", &Layout::setMinHeightStretch
             , py::return_value_policy::automatic_reference)
-        .def("set_max_width", &Node::setMaxWidth
+        .def("set_max_width", &Layout::setMaxWidth
             , py::arg("max_width")
             , py::return_value_policy::automatic_reference)
-        .def("set_max_width_percent", &Node::setMaxWidthPercent
+        .def("set_max_width_percent", &Layout::setMaxWidthPercent
             , py::arg("max_width")
             , py::return_value_policy::automatic_reference)
-        .def("set_max_width_max_content", &Node::setMaxWidthMaxContent
+        .def("set_max_width_max_content", &Layout::setMaxWidthMaxContent
             , py::return_value_policy::automatic_reference)
-        .def("set_max_width_fit_content", &Node::setMaxWidthFitContent
+        .def("set_max_width_fit_content", &Layout::setMaxWidthFitContent
             , py::return_value_policy::automatic_reference)
-        .def("set_max_width_stretch", &Node::setMaxWidthStretch
+        .def("set_max_width_stretch", &Layout::setMaxWidthStretch
             , py::return_value_policy::automatic_reference)
-        .def("set_max_height", &Node::setMaxHeight
+        .def("set_max_height", &Layout::setMaxHeight
             , py::arg("max_height")
             , py::return_value_policy::automatic_reference)
-        .def("set_max_height_percent", &Node::setMaxHeightPercent
+        .def("set_max_height_percent", &Layout::setMaxHeightPercent
             , py::arg("max_height")
             , py::return_value_policy::automatic_reference)
-        .def("set_max_height_max_content", &Node::setMaxHeightMaxContent
+        .def("set_max_height_max_content", &Layout::setMaxHeightMaxContent
             , py::return_value_policy::automatic_reference)
-        .def("set_max_height_fit_content", &Node::setMaxHeightFitContent
+        .def("set_max_height_fit_content", &Layout::setMaxHeightFitContent
             , py::return_value_policy::automatic_reference)
-        .def("set_max_height_stretch", &Node::setMaxHeightStretch
+        .def("set_max_height_stretch", &Layout::setMaxHeightStretch
             , py::return_value_policy::automatic_reference)
-        .def("set_aspect_ratio", &Node::setAspectRatio
+        .def("set_aspect_ratio", &Layout::setAspectRatio
             , py::arg("aspect_ratio")
             , py::return_value_policy::automatic_reference)
-        .def("set_border", &Node::setBorder
+        .def("set_border", &Layout::setBorder
             , py::arg("edge")
             , py::arg("border")
             , py::return_value_policy::automatic_reference)
-        .def("set_padding", &Node::setPadding
+        .def("set_padding", &Layout::setPadding
             , py::arg("edge")
             , py::arg("padding")
             , py::return_value_policy::automatic_reference)
-        .def("set_padding_percent", &Node::setPaddingPercent
+        .def("set_padding_percent", &Layout::setPaddingPercent
             , py::arg("edge")
             , py::arg("padding")
             , py::return_value_policy::automatic_reference)
-        .def("set_gap", &Node::setGap
+        .def("set_gap", &Layout::setGap
             , py::arg("gutter")
             , py::arg("gap_length")
             , py::return_value_policy::automatic_reference)
-        .def("set_gap_percent", &Node::setGapPercent
+        .def("set_gap_percent", &Layout::setGapPercent
             , py::arg("gutter")
             , py::arg("gap_length")
             , py::return_value_policy::automatic_reference)
-        .def("set_box_sizing", &Node::setBoxSizing
+        .def("set_box_sizing", &Layout::setBoxSizing
             , py::arg("box_sizing")
             , py::return_value_policy::automatic_reference)
-        .def("get_position_type", &Node::getPositionType
+        .def("get_position_type", &Layout::getPositionType
             , py::return_value_policy::automatic_reference)
-        .def("get_position", &Node::getPosition
+        .def("get_position", &Layout::getPosition
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("get_align_content", &Node::getAlignContent
+        .def("get_align_content", &Layout::getAlignContent
             , py::return_value_policy::automatic_reference)
-        .def("get_align_items", &Node::getAlignItems
+        .def("get_align_items", &Layout::getAlignItems
             , py::return_value_policy::automatic_reference)
-        .def("get_align_self", &Node::getAlignSelf
+        .def("get_align_self", &Layout::getAlignSelf
             , py::return_value_policy::automatic_reference)
-        .def("get_flex_direction", &Node::getFlexDirection
+        .def("get_flex_direction", &Layout::getFlexDirection
             , py::return_value_policy::automatic_reference)
-        .def("get_flex_wrap", &Node::getFlexWrap
+        .def("get_flex_wrap", &Layout::getFlexWrap
             , py::return_value_policy::automatic_reference)
-        .def("get_justify_content", &Node::getJustifyContent
+        .def("get_justify_content", &Layout::getJustifyContent
             , py::return_value_policy::automatic_reference)
-        .def("get_direction", &Node::getDirection
+        .def("get_direction", &Layout::getDirection
             , py::return_value_policy::automatic_reference)
-        .def("get_margin", &Node::getMargin
+        .def("get_margin", &Layout::getMargin
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("get_overflow", &Node::getOverflow
+        .def("get_overflow", &Layout::getOverflow
             , py::return_value_policy::automatic_reference)
-        .def("get_display", &Node::getDisplay
+        .def("get_display", &Layout::getDisplay
             , py::return_value_policy::automatic_reference)
-        .def("get_flex_basis", &Node::getFlexBasis
+        .def("get_flex_basis", &Layout::getFlexBasis
             , py::return_value_policy::automatic_reference)
-        .def("get_flex_grow", &Node::getFlexGrow
+        .def("get_flex_grow", &Layout::getFlexGrow
             , py::return_value_policy::automatic_reference)
-        .def("get_flex_shrink", &Node::getFlexShrink
+        .def("get_flex_shrink", &Layout::getFlexShrink
             , py::return_value_policy::automatic_reference)
-        .def("get_width", &Node::getWidth
+        .def("get_width", &Layout::getWidth
             , py::return_value_policy::automatic_reference)
-        .def("get_height", &Node::getHeight
+        .def("get_height", &Layout::getHeight
             , py::return_value_policy::automatic_reference)
-        .def("get_min_width", &Node::getMinWidth
+        .def("get_min_width", &Layout::getMinWidth
             , py::return_value_policy::automatic_reference)
-        .def("get_min_height", &Node::getMinHeight
+        .def("get_min_height", &Layout::getMinHeight
             , py::return_value_policy::automatic_reference)
-        .def("get_max_width", &Node::getMaxWidth
+        .def("get_max_width", &Layout::getMaxWidth
             , py::return_value_policy::automatic_reference)
-        .def("get_max_height", &Node::getMaxHeight
+        .def("get_max_height", &Layout::getMaxHeight
             , py::return_value_policy::automatic_reference)
-        .def("get_aspect_ratio", &Node::getAspectRatio
+        .def("get_aspect_ratio", &Layout::getAspectRatio
             , py::return_value_policy::automatic_reference)
-        .def("get_border", &Node::getBorder
+        .def("get_border", &Layout::getBorder
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("get_padding", &Node::getPadding
+        .def("get_padding", &Layout::getPadding
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("get_gap", &Node::getGap
+        .def("get_gap", &Layout::getGap
             , py::arg("gutter")
             , py::return_value_policy::automatic_reference)
-        .def("get_box_sizing", &Node::getBoxSizing
+        .def("get_box_sizing", &Layout::getBoxSizing
             , py::return_value_policy::automatic_reference)
-        .def("insert_child", &Node::insertChild
+        .def("insert_child", &Layout::insertChild
             , py::arg("child")
             , py::arg("index")
             , py::return_value_policy::automatic_reference)
-        .def("add_child", &Node::addChild
+        .def("add_child", &Layout::addChild
             , py::arg("child")
             , py::return_value_policy::automatic_reference)
-        .def("remove_child", &Node::removeChild
+        .def("remove_child", &Layout::removeChild
             , py::arg("child")
             , py::return_value_policy::automatic_reference)
-        .def("get_child_count", &Node::getChildCount
+        .def("get_child_count", &Layout::getChildCount
             , py::return_value_policy::automatic_reference)
-        .def("get_parent", &Node::getParent
+        .def("get_parent", &Layout::getParent
             , py::return_value_policy::automatic_reference)
-        .def("get_child", &Node::getChild
+        .def("get_child", &Layout::getChild
             , py::arg("index")
             , py::return_value_policy::automatic_reference)
-        .def("set_measure_func", &Node::setMeasureFunc
+        .def("set_measure_func", &Layout::setMeasureFunc
             , py::arg("measure_func")
             , py::return_value_policy::automatic_reference)
-        .def("unset_measure_func", &Node::unsetMeasureFunc
+        .def("unset_measure_func", &Layout::unsetMeasureFunc
             , py::return_value_policy::automatic_reference)
-        .def("call_measure_func", &Node::callMeasureFunc
+        .def("call_measure_func", &Layout::callMeasureFunc
             , py::arg("width")
             , py::arg("width_mode")
             , py::arg("height")
             , py::arg("height_mode")
             , py::return_value_policy::automatic_reference)
-        .def("set_dirtied_func", &Node::setDirtiedFunc
+        .def("set_dirtied_func", &Layout::setDirtiedFunc
             , py::arg("dirtied_func")
             , py::return_value_policy::automatic_reference)
-        .def("unset_dirtied_func", &Node::unsetDirtiedFunc
+        .def("unset_dirtied_func", &Layout::unsetDirtiedFunc
             , py::return_value_policy::automatic_reference)
-        .def("call_dirtied_func", &Node::callDirtiedFunc
+        .def("call_dirtied_func", &Layout::callDirtiedFunc
             , py::return_value_policy::automatic_reference)
-        .def("mark_dirty", &Node::markDirty
+        .def("mark_dirty", &Layout::markDirty
             , py::return_value_policy::automatic_reference)
-        .def("is_dirty", &Node::isDirty
+        .def("is_dirty", &Layout::isDirty
             , py::return_value_policy::automatic_reference)
-        .def("mark_layout_seen", &Node::markLayoutSeen
+        .def("mark_layout_seen", &Layout::markLayoutSeen
             , py::return_value_policy::automatic_reference)
-        .def("has_new_layout", &Node::hasNewLayout
+        .def("has_new_layout", &Layout::hasNewLayout
             , py::return_value_policy::automatic_reference)
-        .def("calculate_layout", &Node::calculateLayout
+        .def("calculate_bounds", &Layout::calculateBounds
             , py::arg("width")
             , py::arg("height")
             , py::arg("direction")
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_left", &Node::getComputedLeft
+        .def("get_computed_left", &Layout::getComputedLeft
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_right", &Node::getComputedRight
+        .def("get_computed_right", &Layout::getComputedRight
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_top", &Node::getComputedTop
+        .def("get_computed_top", &Layout::getComputedTop
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_bottom", &Node::getComputedBottom
+        .def("get_computed_bottom", &Layout::getComputedBottom
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_width", &Node::getComputedWidth
+        .def("get_computed_width", &Layout::getComputedWidth
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_height", &Node::getComputedHeight
+        .def("get_computed_height", &Layout::getComputedHeight
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_layout", &Node::getComputedLayout
+        .def("get_computed_bounds", &Layout::getComputedBounds
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_margin", &Node::getComputedMargin
+        .def("get_computed_margin", &Layout::getComputedMargin
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_border", &Node::getComputedBorder
+        .def("get_computed_border", &Layout::getComputedBorder
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("get_computed_padding", &Node::getComputedPadding
+        .def("get_computed_padding", &Layout::getComputedPadding
             , py::arg("edge")
             , py::return_value_policy::automatic_reference)
-        .def("set_is_reference_baseline", &Node::setIsReferenceBaseline
+        .def("set_is_reference_baseline", &Layout::setIsReferenceBaseline
             , py::arg("is_reference_baseline")
             , py::return_value_policy::automatic_reference)
-        .def("is_reference_baseline", &Node::isReferenceBaseline
+        .def("is_reference_baseline", &Layout::isReferenceBaseline
             , py::return_value_policy::automatic_reference)
-        .def_readwrite("children", &Node::py_children)
-        .def("set_always_forms_containing_block", &Node::setAlwaysFormsContainingBlock
+        .def_readwrite("children", &Layout::py_children)
+        .def("set_always_forms_containing_block", &Layout::setAlwaysFormsContainingBlock
             , py::arg("always_form_containing_block")
             , py::return_value_policy::automatic_reference)
     ;

@@ -9,10 +9,10 @@
 #include <crunge/yoga/crunge-yoga.h>
 #include <crunge/yoga/conversions.h>
 
-#include "../Node.h"
+#include "../Layout.h"
 
 namespace py = pybind11;
 
-void init_yoga_node_py_auto(py::module &_yoga, Registry &registry) {
+void init_yoga_layout_py_auto(py::module &_yoga, Registry &registry) {
 {{body}}
 }

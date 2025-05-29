@@ -185,12 +185,12 @@ class Demo:
         self.configure_surface(size)
         logger.debug(f"Resized to {size}")
 
-    def debug_node(self, node: yoga.Node):
-        layout = node.get_computed_layout()
-        left = layout.left
-        top = layout.top
-        width = layout.width
-        height = layout.height
+    def debug_layout(self, layout: yoga.Layout):
+        bounds = layout.get_computed_bounds()
+        left = bounds.left
+        top = bounds.top
+        width = bounds.width
+        height = bounds.height
         print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
-        for child in node.children:
-            self.debug_node(child)
+        for child in layout.children:
+            self.debug_layout(child)

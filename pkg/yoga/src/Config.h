@@ -10,7 +10,7 @@
 #include <yoga/Yoga.h>
 
 class Config {
-  friend class Node;
+  friend class Layout;
 
  public:
   static Config* create(void);
