@@ -15,12 +15,6 @@ class ScratchLayer(ViewLayer):
         super().__init__("ScratchLayer")
         self.vu_list: list[Vu2D] = []
 
-    '''
-    def create(self, view):
-        super().create(view)
-        return self
-    '''
-
     def add_vu(self, vu: Vu2D):
         self.vu_list.append(vu)
     

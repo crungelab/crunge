@@ -33,13 +33,6 @@ class Entity2D(Node2D):
         self._brain.node = self
         value.enable()
 
-    '''
-    def create(self):
-        super().create()
-        if self.vu is not None and self.layer is not None:
-            self.layer.add_sprite(self.vu)
-    '''
-
     def update(self, delta_time: float):
         super().update(delta_time)
         self.update_brain(delta_time)
@@ -63,9 +56,8 @@ class EntityGroup2D(Entity2D):
         self.nodes.append(node)
         return node
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         for node in self.nodes:
             node.gid = self.id
             self.layer.attach(node)
-        return self

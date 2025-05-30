@@ -29,9 +29,9 @@ class View(Pane):
         for layer in self.layers:
             layer.size = self.size
 
-    def create(self):
+    def _create(self):
         #logger.debug("View.create")
-        #super().create()
+        super()._create()
         if not self.window:
             raise ValueError("View.window is not set")
         self.size = self.window.size
@@ -40,8 +40,7 @@ class View(Pane):
         self.create_device_objects()
         self.create_camera()
         self.create_renderer()
-        #return self
-        return super().create()
+        #super()._create()
 
     def create_device_objects(self):
         pass

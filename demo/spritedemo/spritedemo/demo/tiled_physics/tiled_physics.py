@@ -24,11 +24,9 @@ class TiledPhysicsDemo(Demo):
         super().__init__()
         self.debug_draw_enabled = False
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         self.draw_options = DrawOptions(self.view.scratch)
-        self.reset()
-        return self
 
     def create_view(self):
         super().create_view()

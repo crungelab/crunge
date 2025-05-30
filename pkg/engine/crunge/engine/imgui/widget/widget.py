@@ -15,8 +15,8 @@ class Widget(engine.Pane):
         self.gui = gui
         return self
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         for child in self.children:
             child.create()
         return self

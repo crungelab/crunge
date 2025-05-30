@@ -21,10 +21,9 @@ class Scene(Base, Generic[T_Node]):
         return self.primary_layer.nodes
     '''
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         self.create_layers()
-        return self
 
     def create_layers(self):
         raise NotImplementedError

@@ -10,14 +10,6 @@ class Page(ImGuiView):
         self.fullwidth = True
         self.fullheight = True
 
-    def create(self):
-        super().create()
-        self.reset()
-        return self
-
-    def reset(self):
-        pass
-
     @classmethod
     def produce(cls, app, name, title):
         page = cls(name, title).config(window=app).create()

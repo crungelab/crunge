@@ -24,11 +24,6 @@ class InstancingDemo(Demo):
         self.color = tuple(Color.WHITE.value)
         self.sprite = Sprite(texture, color=glm.vec4(self.color))
 
-    def create(self):
-        super().create()
-        self.reset()
-        return self
-
     def kill(self):
         for node in self.nodes:
             node.destroy()

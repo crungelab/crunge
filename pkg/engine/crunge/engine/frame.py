@@ -27,13 +27,12 @@ class Frame(Pane):
         if self.view is not None:
             self.view.size = self.size
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         logger.debug("Frame.create")
         if self._view is not None:
             self._view.config(window=self).create()
             self.view = self._view
-        return self
 
     def push_view(self, new_view):
         #logger.debug('push_view')

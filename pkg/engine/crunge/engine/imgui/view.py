@@ -10,8 +10,7 @@ class ImGuiView(View):
         super().__init__(layers=layers)
         self.gui: ImGuiLayer = None
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         self.gui = ImGuiLayer().config(view=self).create()
         self.add_layer(self.gui)
-        return self

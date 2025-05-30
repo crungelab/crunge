@@ -23,8 +23,8 @@ class Zone(Base):
     def height(self):
         return self.size.y
     
-    def create(self) -> None:
-        super().create()
+    def _create(self) -> None:
+        super()._create()
         self.create_meteors(100)
 
     def create_meteor(self, position: glm.vec2):

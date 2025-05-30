@@ -22,11 +22,10 @@ class ViewLayer(Pane):
         self.view = view
         return self
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         #logger.debug("Layer.create")
         self.size = self.view.size
-        return self
 
     @property
     def window(self):

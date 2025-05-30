@@ -30,8 +30,8 @@ class TriangleShaderLayer(DemoLayer):
     def __init__(self):
         super().__init__()
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         self.shader_module = self.gfx.create_shader_module(shader_code)
 
         color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
@@ -63,8 +63,6 @@ class TriangleShaderLayer(DemoLayer):
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
-
-        return self
 
     def draw(self, renderer: Renderer):
         # logger.debug("draw")

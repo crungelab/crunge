@@ -30,8 +30,8 @@ class TriangleMsaaLayer(DemoLayer):
     def __init__(self):
         super().__init__()
 
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         self.shader_module = self.gfx.create_shader_module(shader_code)
 
         color_targets = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
@@ -68,8 +68,6 @@ class TriangleMsaaLayer(DemoLayer):
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
-
-        return self
 
     def draw(self, renderer: Renderer):
         # logger.debug("draw")
@@ -110,7 +108,10 @@ class TriangleMsaaLayer(DemoLayer):
 
 class TriangleMsaaDemo(Demo):
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True, use_msaa=True)
+        self.viewport = SurfaceViewport(
+            self.size, self.window, use_depth_stencil=True, use_msaa=True
+        )
+
 
 def main():
     TriangleMsaaDemo(DemoView(layers=[TriangleMsaaLayer()])).create().run()

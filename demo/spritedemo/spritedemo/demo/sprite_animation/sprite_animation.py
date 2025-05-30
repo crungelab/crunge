@@ -18,11 +18,6 @@ class SpriteAnimationDemo(Demo):
     def __init__(self):
         super().__init__()
 
-    def create(self):
-        super().create()
-        self.reset()
-        return self
-
     def kill(self):
         self.node.destroy()
         self.node = None

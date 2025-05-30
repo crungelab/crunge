@@ -16,10 +16,9 @@ class BallsDemo(Demo):
         super().__init__()
         #self.reset()
     
-    def create(self):
-        super().create()
+    def _create(self):
+        super()._create()
         self.reset()
-        return self
 
     def reset(self):
         self.scene.clear()
