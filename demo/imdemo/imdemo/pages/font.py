@@ -1,19 +1,15 @@
-from pathlib import Path
-
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class FontPage(Page):
     def reset(self):
         io = imgui.get_io()
-        font_path = self.window.resource_root / 'DroidSans.ttf'
-        #self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0)
+        font_path = self.window.resource_root / "DroidSans.ttf"
+        # self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0)
         self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0)
-        #self.window.gui.renderer.refresh_font_texture()
+        # self.window.gui.renderer.refresh_font_texture()
         layer = self.get_layer("ImGuiLayer")
         layer.vu.refresh_font_texture()
 
@@ -21,10 +17,10 @@ class FontPage(Page):
         imgui.begin("Font")
 
         imgui.text("Text displayed using default font")
-        '''
+        """
         with imgui.font(self.font):
             imgui.text("Text displayed using custom font")
-        '''
+        """
         imgui.push_font(self.font)
         imgui.text("Text displayed using custom font")
         imgui.pop_font()
@@ -32,6 +28,6 @@ class FontPage(Page):
         imgui.end()
         super().draw(renderer)
 
+
 def install(app: App):
-    #app.add_page(FontPage, "font", "Font")
     app.add_channel(PageChannel(FontPage, "font", "Font"))

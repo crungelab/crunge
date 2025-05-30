@@ -3,3 +3,4 @@
 -e ../../pkg/wgpu
 -e ../../pkg/imgui
 -e ../../pkg/engine
+-e ../../pkg/demo

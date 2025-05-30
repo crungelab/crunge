@@ -6,11 +6,11 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
-from .widget import Widget
+from .pane import Pane
 from .view_layer import ViewLayer
 
 
-class View(Widget):
+class View(Pane):
     def __init__(self, layers: list[ViewLayer] = []) -> None:
         #super().__init__(size)
         super().__init__()
@@ -31,7 +31,7 @@ class View(Widget):
 
     def create(self):
         #logger.debug("View.create")
-        super().create()
+        #super().create()
         if not self.window:
             raise ValueError("View.window is not set")
         self.size = self.window.size
@@ -40,7 +40,8 @@ class View(Widget):
         self.create_device_objects()
         self.create_camera()
         self.create_renderer()
-        return self
+        #return self
+        return super().create()
 
     def create_device_objects(self):
         pass

@@ -9,7 +9,7 @@ from .controller import Controller
 from .renderer import Renderer
 
 
-class Widget(Node["Widget"]):
+class Pane(Node["Pane"]):
     def __init__(self, size = glm.ivec2()) -> None:
         super().__init__()
         self._size = size
@@ -87,7 +87,7 @@ class Widget(Node["Widget"]):
             #child.draw(renderer)
             self.draw_child(renderer, child)
 
-    def draw_child(self, renderer: Renderer, child: "Widget"):
+    def draw_child(self, renderer: Renderer, child: "Pane"):
         child.draw(renderer)
 
     def update(self, delta_time: float):

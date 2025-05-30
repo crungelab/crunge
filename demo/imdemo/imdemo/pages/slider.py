@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class FloatSliderPage(Page):
@@ -44,7 +42,5 @@ class IntSliderPage(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(FloatSliderPage, "floatslider", "Slider - Float")
     app.add_channel(PageChannel(FloatSliderPage, "floatslider", "Slider - Float"))
-    #app.add_page(IntSliderPage, "intslider", "Slider - Integer")
     app.add_channel(PageChannel(IntSliderPage, "intslider", "Slider - Integer"))

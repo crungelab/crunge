@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class Button(Page):
@@ -63,9 +61,6 @@ class RadioButtonPage(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(Button, "button", "Buttons")
     app.add_channel(PageChannel(Button, "button", "Buttons"))
-    #app.add_page(ColorButton, "colorbutton", "Buttons - Color")
     app.add_channel(PageChannel(ColorButton, "colorbutton", "Buttons - Color"))
-    #app.add_page(RadioButtonPage, "radiobutton", "Buttons - Radio")
     app.add_channel(PageChannel(RadioButtonPage, "radiobutton", "Buttons - Radio"))

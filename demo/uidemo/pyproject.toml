@@ -1,0 +1,12 @@
+[tool.setuptools]
+packages = ["uidemo"]
+
+[project]
+name = "uidemo"
+version = "0.1.0"
+description = 'Crunge UI Demo'
+requires-python = ">=3.10"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+]

@@ -2,7 +2,6 @@ from crunge.engine import Renderer
 from crunge.engine.imgui import ImGuiView
 from crunge import imgui
 
-#class Page(engine.View):
 class Page(ImGuiView):
     def __init__(self, name, title):
         super().__init__()
@@ -10,7 +9,6 @@ class Page(ImGuiView):
         self.title = title
         self.fullwidth = True
         self.fullheight = True
-        #self.reset()
 
     def create(self):
         super().create()
@@ -22,9 +20,7 @@ class Page(ImGuiView):
 
     @classmethod
     def produce(cls, app, name, title):
-        #page = cls(name, title).create(app)
         page = cls(name, title).config(window=app).create()
-        #page.reset()
         return page
 
     def draw(self, renderer: Renderer):

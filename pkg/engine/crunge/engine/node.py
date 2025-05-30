@@ -140,7 +140,7 @@ class Node(Dispatcher, Generic[T_Node]):
             child.draw(renderer)
 
     def post_draw(self, renderer: Renderer):
-        # logger.debug("Widget.post_draw")
+        # logger.debug("Node.post_draw")
         if self.vu is not None:
             self.vu.post_draw(renderer)
         for child in self.children:

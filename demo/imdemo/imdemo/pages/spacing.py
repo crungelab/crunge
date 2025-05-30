@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class SpacingPage(Page):
@@ -23,5 +21,4 @@ class SpacingPage(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(SpacingPage, "spacing", "Spacing")
     app.add_channel(PageChannel(SpacingPage, "spacing", "Spacing"))

@@ -10,8 +10,6 @@ from .window import Window
 from .scheduler import Scheduler
 from .service import Service
 
-# from .channel import Channel
-
 
 class App(Window):
     def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
@@ -72,11 +70,9 @@ class App(Window):
             last_time = frame_start
 
         sdl.stop_text_input(self.window)
-        # self.device.destroy()
         return self
 
     def update(self, delta_time: float):
-        # Scheduler().update(delta_time)
         for service in self.services:
             service.update(delta_time)
         super().update(delta_time)

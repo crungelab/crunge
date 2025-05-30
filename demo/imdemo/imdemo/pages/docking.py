@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 '''
@@ -60,5 +58,4 @@ class DockingPage(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(DockingPage, "docking", "Docking")
     app.add_channel(PageChannel(DockingPage, "docking", "Docking"))

@@ -1,10 +1,8 @@
 from contextlib import contextmanager
 
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 lorem_ipsum = '''
@@ -64,5 +62,4 @@ class TabsPage(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(TabsPage, "tabs", "Tabs")
     app.add_channel(PageChannel(TabsPage, "tabs", "Tabs"))

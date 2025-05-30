@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .widget import Widget
+    from .pane import Pane
 
 class Part:
     def __init__(self):
-        self.widget: "Widget" = None
+        self.widget: "Pane" = None

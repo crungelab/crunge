@@ -1,13 +1,11 @@
 import random
 
-from crunge.engine import Renderer
+from crunge.engine import Renderer, App
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
 from crunge import imgui
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.demo import Page, PageChannel
 
 
 MESSAGES = [
@@ -33,5 +31,4 @@ class ImageButton(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(ImageButton, "imagebutton", "Image Button")
     app.add_channel(PageChannel(ImageButton, "imagebutton", "Image Button"))

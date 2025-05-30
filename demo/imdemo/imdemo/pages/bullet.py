@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class Bullet(Page):
@@ -24,7 +22,5 @@ class BulletText(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(Bullet, "bullet", "Bullets")
     app.add_channel(PageChannel(Bullet, "bullet", "Bullets"))
-    #app.add_page(BulletText,  "bullettext", "Bullets with Text")
     app.add_channel(PageChannel(BulletText, "bullettext", "Bullets with Text"))

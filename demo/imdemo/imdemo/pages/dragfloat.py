@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 
@@ -71,11 +69,7 @@ class DragFloat4(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(DragFloat, "dragfloat", "Drag Float")
     app.add_channel(PageChannel(DragFloat, "dragfloat", "Drag Float"))
-    #app.add_page(DragFloat2, "dragfloat2", "Drag Float 2")
     app.add_channel(PageChannel(DragFloat2, "dragfloat2", "Drag Float 2"))
-    #app.add_page(DragFloat3, "dragfloat3", "Drag Float 3")
     app.add_channel(PageChannel(DragFloat3, "dragfloat3", "Drag Float 3"))
-    #app.add_page(DragFloat4, "dragfloat4", "Drag Float 4")
     app.add_channel(PageChannel(DragFloat4, "dragfloat4", "Drag Float 4"))

@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class Group(Page):
@@ -27,5 +25,4 @@ class Group(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(Group, "group", "Group")
     app.add_channel(PageChannel(Group, "group", "Group"))

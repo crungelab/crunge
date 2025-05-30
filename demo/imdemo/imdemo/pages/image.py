@@ -1,12 +1,11 @@
 from crunge import imgui
 
-from crunge.engine import Renderer
+from crunge.engine import Renderer, App
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 
 
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.demo import Page, PageChannel
 
 
 class ImagePage(Page):
@@ -23,5 +22,4 @@ class ImagePage(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(ImagePage, "image", "Image")
     app.add_channel(PageChannel(ImagePage, "image", "Image"))

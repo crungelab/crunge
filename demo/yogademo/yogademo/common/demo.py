@@ -12,47 +12,41 @@ from crunge import yoga
 
 from .renderer import Renderer
 
+
 class Demo:
     kWidth = 1024
     kHeight = 768
-
-    device: wgpu.Device = None
-    queue: wgpu.Queue = None
-    pipeline: wgpu.RenderPipeline = None
-
-    surface: wgpu.Surface = None
-
-    depth_stencil_view: wgpu.TextureView = None
 
     def __init__(self):
         super().__init__()
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
         self.wgpu_context = wgpu.Context()
-        self.skia_context = skia.create_context(self.wgpu_context.instance, self.wgpu_context.device)
+        self.skia_context = skia.create_context(
+            self.wgpu_context.instance, self.wgpu_context.device
+        )
         recorder_options = skia.create_standard_recorder_options()
-        #self.recorder = self.skia_context.make_recorder(skia.RecorderOptions())
+        # self.recorder = self.skia_context.make_recorder(skia.RecorderOptions())
         self.recorder = self.skia_context.make_recorder(recorder_options)
-
 
     @property
     def instance(self) -> wgpu.Instance:
         return self.wgpu_context.instance
-    
+
     @property
     def adapter(self) -> wgpu.Adapter:
         return self.wgpu_context.adapter
-    
+
     @property
     def device(self) -> wgpu.Device:
         return self.wgpu_context.device
-    
+
     @property
     def queue(self) -> wgpu.Queue:
         return self.wgpu_context.queue
-    
+
     @contextlib.contextmanager
-    def canvas_target(self, target: wgpu.Texture = None) :
+    def canvas_target(self, target: wgpu.Texture = None):
         if target is None:
             surface_texture = wgpu.SurfaceTexture()
             self.surface.get_current_texture(surface_texture)
@@ -73,12 +67,14 @@ class Demo:
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
 
-        self.window = glfw.create_window(self.size.x, self.size.y, self.name, None, None)
+        self.window = glfw.create_window(
+            self.size.x, self.size.y, self.name, None, None
+        )
 
         def resize_cb(window, w, h):
             self.resize(glm.ivec2(w, h))
-        glfw.set_window_size_callback(self.window, resize_cb)
 
+        glfw.set_window_size_callback(self.window, resize_cb)
 
     def create_device_objects(self):
         pass
@@ -97,7 +93,7 @@ class Demo:
             format=wgpu.TextureFormat.BGRA8_UNORM,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
-            #present_mode=wgpu.PresentMode.MAILBOX,
+            # present_mode=wgpu.PresentMode.MAILBOX,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)
@@ -108,7 +104,7 @@ class Demo:
         logger.debug("Creating surface")
         if sys.platform == "darwin":
             handle = glfw.get_cocoa_window(self.window)
-            #TODO: Implement SurfaceDescriptorFromMetalLayer
+            # TODO: Implement SurfaceDescriptorFromMetalLayer
         elif sys.platform == "win32":
             wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
             handle = glfw.get_win32_window(self.window)
@@ -119,8 +115,7 @@ class Demo:
             handle = glfw.get_x11_window(self.window)
             display = glfw.get_x11_display()
             wsd = wgpu.SurfaceSourceXlibWindow(
-                window=handle,
-                display=as_capsule(display)
+                window=handle, display=as_capsule(display)
             )
 
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
@@ -142,7 +137,7 @@ class Demo:
         self.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
 
-        renderer = Renderer(backbufferView, self.depth_stencil_view)
+        renderer = Renderer(backbufferView)
         self.render(renderer)
         self.surface.present()
 
@@ -157,7 +152,7 @@ class Demo:
         while not glfw.window_should_close(self.window):
             self.instance.process_events()
             glfw.poll_events()
-            #self.instance.process_events()
+            # self.instance.process_events()
 
             now = time.perf_counter()
             frame_time = now - last_time
@@ -173,7 +168,6 @@ class Demo:
             last_time = time.perf_counter()
 
             self.frame()
-
 
     def resize(self, size: glm.ivec2):
         logger.debug(f"Resizing to {size}")

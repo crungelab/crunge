@@ -2,10 +2,8 @@ from loguru import logger
 
 from crunge import imgui
 from crunge.imgui import rel
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class FontImage(Page):
@@ -27,5 +25,4 @@ class FontImage(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(FontImage, "fontimage", "Font Image")
     app.add_channel(PageChannel(FontImage, "fontimage", "Font Image"))

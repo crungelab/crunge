@@ -8,7 +8,7 @@ from .controller import Controller
 from .renderer import Renderer
 from .node import Node
 from .vu import Vu
-from .widget import Widget
+from .pane import Pane
 from .window import Window
 from .app import App
 from .scheduler import Scheduler

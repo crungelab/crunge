@@ -5,12 +5,12 @@ if TYPE_CHECKING:
 
 from loguru import logger
 
-from .widget import Widget
+from .pane import Pane
 from .renderer import Renderer
 from .vu import Vu
 
 
-class ViewLayer(Widget):
+class ViewLayer(Pane):
     def __init__(self, name: str, priority: int = 0, vu: Vu = None) -> None:
         super().__init__()
         self.name = name

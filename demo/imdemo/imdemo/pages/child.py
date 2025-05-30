@@ -1,8 +1,6 @@
 from crunge import imgui
-from crunge.engine import Renderer
-
-from ..app import App
-from ..page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class Child(Page):
@@ -20,5 +18,4 @@ class Child(Page):
         super().draw(renderer)
 
 def install(app: App):
-    #app.add_page(Child, "child", "Child")
     app.add_channel(PageChannel(Child, "child", "Child"))
