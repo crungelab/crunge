@@ -21,11 +21,11 @@ class ScratchLayer(ViewLayer):
     def remove_vu(self, vu: Vu2D):
         self.vu_list.remove(vu)
     
-    def draw_line(self, begin: glm.vec2, end: glm.vec2, color=Color.WHITE):
+    def draw_line(self, begin: glm.vec2, end: glm.vec2, color=glm.vec4(Color.WHITE.value)):
         line = Line2D(begin, end, color)
         self.add_vu(line)
 
-    def draw_polygon(self, points: list[glm.vec2], color=Color.WHITE):
+    def draw_polygon(self, points: list[glm.vec2], color=glm.vec4(Color.WHITE.value)):
         '''
         for i in range(len(points) - 1):
             self.draw_line(points[i], points[i + 1], color)
@@ -34,7 +34,7 @@ class ScratchLayer(ViewLayer):
         polygon = Polygon2D(points, color)
         self.add_vu(polygon)
     
-    def draw_circle(self, center: glm.vec2, radius: float, segments: int = 32, color=Color.WHITE):
+    def draw_circle(self, center: glm.vec2, radius: float, segments: int = 32, color=glm.vec4(Color.WHITE.value)):
         circle = Circle2D(center, radius, segments, color)
         self.add_vu(circle)
 

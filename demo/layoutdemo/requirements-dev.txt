@@ -1,0 +1,8 @@
+-e ../../pkg/core
+-e ../../pkg/wgpu
+-e ../../pkg/skia
+-e ../../pkg/sdl
+-e ../../pkg/imgui
+-e ../../pkg/yoga
+-e ../../pkg/engine
+-e ../../pkg/demo
