@@ -17,7 +17,6 @@ def main():
     wgpu_context = wgpu.Context()
     device = wgpu_context.device
 
-    #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(source=shader_code)
     wgsl_desc = wgpu.ShaderSourceWGSL(code=shader_code)
     print(wgsl_desc)
     descriptor = wgpu.ShaderModuleDescriptor()

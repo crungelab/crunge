@@ -2,9 +2,9 @@ import numpy as np
 
 from crunge import imgui
 from crunge import implot
-from crunge.engine import Renderer
 
-from . import Page
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class BarPlotPage(Page):
@@ -39,6 +39,6 @@ class BarPlotH(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(BarPlotPage, "bar", "Bar Plot")
-    app.add_page(BarPlotH, "bar_h", "Bar Plot - Horizontal")
+def install(app: App):
+    app.add_channel(PageChannel(BarPlotPage, "bar", "Bar Plot"))
+    app.add_channel(PageChannel(BarPlotH, "bar_h", "Bar Plot - Horizontal"))

@@ -12,6 +12,9 @@ authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 dependencies = [
 ]
 
+[project.scripts]
+imflodemo = 'imflodemo.cli:cli'
+
 [tool.hatch.envs.default]
 python = "3.10"
 

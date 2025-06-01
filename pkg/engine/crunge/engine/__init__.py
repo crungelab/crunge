@@ -5,6 +5,7 @@
 from .base import Base
 from .dispatcher import Dispatcher
 from .controller import Controller
+from .gfx import Gfx
 from .renderer import Renderer
 from .node import Node
 from .vu import Vu

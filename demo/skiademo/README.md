@@ -1,4 +1,5 @@
 ```bash
+python -m skiademo.blend_mode
 python -m skiademo.rectangle
 python -m skiademo.text
 python -m skiademo.text_blob

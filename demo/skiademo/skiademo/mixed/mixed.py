@@ -61,14 +61,7 @@ class MixedDemo(Demo):
         fragmentState = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
-            target_count=1,
             targets=colorTargetStates,
-        )
-
-        logger.debug("Creating depthStencilState")
-        depthStencilState = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
-            depth_write_enabled=False,
         )
 
         logger.debug("Creating primitive")
@@ -85,7 +78,6 @@ class MixedDemo(Demo):
             label="Main Render Pipeline",
             vertex=vertex_state,
             primitive=primitive,
-            depth_stencil=depthStencilState,
             fragment=fragmentState,
         )
         logger.debug(descriptor)
@@ -100,22 +92,13 @@ class MixedDemo(Demo):
                 view=renderer.view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
-                clear_color=wgpu.Color(0, 0, 0, 1),
+                clear_value=wgpu.Color(0, 0, 0, 1),
             )
         ]
 
-        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.depth_stencil_view,
-            depth_load_op=wgpu.LoadOp.CLEAR,
-            depth_store_op=wgpu.StoreOp.STORE,
-            depth_clear_value=0,
-        )
-
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
-            color_attachment_count=1,
             color_attachments=color_attachments,
-            depth_stencil_attachment=depth_stencil_attachment,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
@@ -125,7 +108,7 @@ class MixedDemo(Demo):
         pass_enc.end()
         commands = encoder.finish()
 
-        self.queue.submit(1, commands)
+        self.queue.submit([commands])
 
         # Skia rendering
 

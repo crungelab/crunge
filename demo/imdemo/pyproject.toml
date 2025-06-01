@@ -6,9 +6,11 @@ build-backend = "hatchling.build"
 name = "imdemo"
 version = "0.1.0"
 description = 'Crunge ImGui Demo'
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
-    "imageio ==2.34.2",
 ]
+
+[project.scripts]
+imdemo = 'imdemo.cli:cli'

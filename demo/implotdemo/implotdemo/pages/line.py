@@ -2,9 +2,9 @@ import numpy as np
 
 from crunge import imgui
 from crunge import implot
-from crunge.engine import Renderer
 
-from . import Page
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class LinePlotPage(Page):
@@ -26,5 +26,5 @@ class LinePlotPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(LinePlotPage, "line", "Line Plot")
+def install(app: App):
+    app.add_channel(PageChannel(LinePlotPage, "line", "Line Plot"))

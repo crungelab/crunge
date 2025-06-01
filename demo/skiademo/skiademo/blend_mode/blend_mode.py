@@ -43,7 +43,7 @@ def draw_utf8_string(canvas, text, x, y, font, paint):
     canvas.draw_text_blob(blob, x, y, paint)
     #canvas.draw_text_blob(skia.TextBlob(text, font), x, y, paint)
 
-class TextDemo(Demo):
+class BlendModeDemo(Demo):
     def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
             rect = skia.Rect(0.0, 0.0, 64.0, 64.0)
@@ -116,7 +116,7 @@ class TextDemo(Demo):
     '''
 
 def main():
-    TextDemo().run()
+    BlendModeDemo().run()
 
 
 if __name__ == "__main__":

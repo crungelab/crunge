@@ -1,8 +1,10 @@
+from crunge.engine import Renderer, App
+from crunge.demo import PageChannel
+
 from imflodemo.nodes.sine import SineNode
 from imflodemo.nodes.scope import ScopeNode
 
-from ...app import App
-from ...page import Page, PageChannel
+from ...page import Page
 
 
 class SinePage(Page):
@@ -13,6 +15,4 @@ class SinePage(Page):
 
 
 def install(app: App):
-    #app.add_page(SinePage, "sine", "Sine Wave")
-    #app.add_channel(ClassChannel(SinePage, "sine", "Sine Wave"))
     app.add_channel(PageChannel(SinePage, "sine", "Sine Wave"))

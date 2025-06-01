@@ -2,9 +2,9 @@ import numpy as np
 
 from crunge import imgui
 from crunge import implot
-from crunge.engine import Renderer
 
-from . import Page
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 
 class ScatterPlotPage(Page):
@@ -26,5 +26,5 @@ class ScatterPlotPage(Page):
         imgui.end()
         super().draw(renderer)
 
-def install(app):
-    app.add_page(ScatterPlotPage, "scatter", "Scatter Plot")
+def install(app: App):
+    app.add_channel(PageChannel(ScatterPlotPage, "scatter", "Scatter Plot"))

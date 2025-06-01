@@ -21,34 +21,31 @@ class Demo:
 
     surface: wgpu.Surface = None
 
-    depth_stencil_view: wgpu.TextureView = None
-
     def __init__(self):
         super().__init__()
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
-        self.context = wgpu.Context()
-        self.skia_context = skia.create_context(self.context.instance, self.context.device)
+        self.wgpu_context = wgpu.Context()
+        self.skia_context = skia.create_context(self.wgpu_context.instance, self.wgpu_context.device)
         recorder_options = skia.create_standard_recorder_options()
-        #self.recorder = self.skia_context.make_recorder(skia.RecorderOptions())
         self.recorder = self.skia_context.make_recorder(recorder_options)
 
 
     @property
     def instance(self) -> wgpu.Instance:
-        return self.context.instance
+        return self.wgpu_context.instance
     
     @property
     def adapter(self) -> wgpu.Adapter:
-        return self.context.adapter
+        return self.wgpu_context.adapter
     
     @property
     def device(self) -> wgpu.Device:
-        return self.context.device
+        return self.wgpu_context.device
     
     @property
     def queue(self) -> wgpu.Queue:
-        return self.context.queue
+        return self.wgpu_context.queue
     
     @contextlib.contextmanager
     def canvas_target(self, target: wgpu.Texture = None) :
@@ -141,7 +138,7 @@ class Demo:
         self.surface.get_current_texture(surface_texture)
         backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
 
-        renderer = Renderer(backbufferView, self.depth_stencil_view)
+        renderer = Renderer(backbufferView)
         self.render(renderer)
         self.surface.present()
 

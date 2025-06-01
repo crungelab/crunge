@@ -14,53 +14,28 @@ from . import globals
 class Gfx:
     def __init__(self) -> None:
         logger.debug("Creating Gfx")
-        '''
-        instance_capabilities = wgpu.InstanceCapabilities()
-        instance_capabilities.timed_wait_any_enable = True
-
-        instance_descriptor = wgpu.InstanceDescriptor()
-        instance_descriptor.capabilities = instance_capabilities
-        self.instance = wgpu.create_instance(instance_descriptor)
-        '''
-        #self.instance = wgpu.create_instance()
-        #self.instance = utils.create_instance()
-
-        #self.adapter = self.instance.request_adapter()
-        #self.adapter = utils.request_adapter(self.instance)
-
-        #self.device = utils.create_device(self.adapter)
-        #self.device = self.adapter.create_device()
-        self.context = wgpu.Context()
-        #self.instance = self.context.instance
-        #self.adapter = self.context.adapter
-        #self.device = self.context.device
-        #self.queue = self.context.queue
-
-        #self.device.set_label("Primary Device")
-        #self.device.enable_logging()
-        #self.queue = self.device.get_queue()
+        self.wgpu_context = wgpu.Context()
         globals.set_gfx(self)
 
     @property
     def instance(self) -> wgpu.Instance:
-        return self.context.instance
+        return self.wgpu_context.instance
     
     @property
     def adapter(self) -> wgpu.Adapter:
-        return self.context.adapter
+        return self.wgpu_context.adapter
     
     @property
     def device(self) -> wgpu.Device:
-        return self.context.device
+        return self.wgpu_context.device
     
     @property
     def queue(self) -> wgpu.Queue:
-        return self.context.queue
+        return self.wgpu_context.queue
 
     def create_shader_module(self, code: str) -> wgpu.ShaderModule:
         #logger.debug(f"Creating shader module from code: {code}")
         logger.debug(f"Creating shader module")
-        #wgsl_desc = wgpu.ShaderModuleWGSLDescriptor(code=code)
         wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
         sm_descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
         shader_module = self.device.create_shader_module(sm_descriptor)

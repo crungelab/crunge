@@ -19,4 +19,3 @@ class Widget(engine.Pane):
         super()._create()
         for child in self.children:
             child.create()
-        return self

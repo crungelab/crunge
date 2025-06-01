@@ -2,10 +2,9 @@ import numpy as np
 
 from crunge import imgui
 from crunge import implot
-from crunge.engine import Renderer
 
-from . import Page
-
+from crunge.engine import Renderer, App
+from crunge.demo import Page, PageChannel
 
 class ShadedPlotPage(Page):
     def reset(self):
@@ -24,4 +23,4 @@ class ShadedPlotPage(Page):
         super().draw(renderer)
 
 def install(app):
-    app.add_page(ShadedPlotPage, "shaded", "Shaded Plot")
+    app.add_channel(PageChannel(ShadedPlotPage, "shaded", "Shaded Plot"))

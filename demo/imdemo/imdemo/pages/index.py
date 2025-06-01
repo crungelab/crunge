@@ -6,7 +6,7 @@ from crunge.demo import Page, PageChannel
 class Index(Page):
     def draw(self, renderer: Renderer):
         imgui.begin("Index")
-        imgui.text("Welcome to the imgui Demo!")
+        imgui.text("Welcome to the ImGui Demo!")
         imgui.end()
         super().draw(renderer)
 

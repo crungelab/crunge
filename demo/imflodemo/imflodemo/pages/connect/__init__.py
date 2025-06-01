@@ -1,9 +1,10 @@
-from ...app import App
-
-from ...page import Page, PageChannel
+from crunge.engine import Renderer, App
+from crunge.demo import PageChannel
 
 from imflodemo.nodes.volume import VolumeNode
 from imflodemo.nodes.led import LedNode
+
+from ...page import Page
 
 
 class ConnectPage(Page):
