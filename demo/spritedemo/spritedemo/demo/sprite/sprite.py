@@ -25,7 +25,7 @@ class SpriteDemo(Demo):
     def reset(self):
         self.angle = 0
         self.scale = 1.0
-        self.color = tuple(Color.WHITE.value)
+        self.color = Color.WHITE.value
 
         self.scene.clear()
 

@@ -21,7 +21,7 @@ class InstancingDemo(Demo):
         super().__init__()
         self.nodes: list[Node2D] = []
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
-        self.color = tuple(Color.WHITE.value)
+        self.color = Color.WHITE.value
         self.sprite = Sprite(texture, color=glm.vec4(self.color))
 
     def kill(self):
@@ -34,8 +34,7 @@ class InstancingDemo(Demo):
 
         self.angle = 0
         self.scale = INITIAL_SCALE
-        #self.color = 1.0, 1.0, 1.0, 1.0
-        self.color = tuple(Color.WHITE.value)
+        self.color = Color.WHITE.value
 
         self.scene.clear()
 
