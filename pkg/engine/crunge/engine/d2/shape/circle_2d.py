@@ -7,8 +7,10 @@ import glm
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
+from ... import colors
+from ...color import Color
 from ...renderer import Renderer
-from ...uniforms import cast_matrix4, cast_vec4
+from ...uniforms import cast_matrix4, cast_vec4, cast_tuple4f
 
 # from ..resource.bind_group_layout import BindGroupLayout
 
@@ -49,7 +51,7 @@ class Circle2D(Vu2D):
         center: glm.vec2,
         radius: float,
         segments: int = 32,
-        color=glm.vec4(1.0, 1.0, 1.0, 1.0),
+        color: Color = colors.WHITE,
     ) -> None:
         """
         Create a Circle2D instance.
@@ -163,7 +165,9 @@ class Circle2D(Vu2D):
         renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
         material_uniform = MaterialUniform()
-        material_uniform.color = cast_vec4(self.color)
+        #material_uniform.color = cast_vec4(self.color)
+        material_uniform.color = cast_tuple4f(self.color)
+
 
         renderer.device.queue.write_buffer(
             self.material_uniform_buffer, 0, material_uniform

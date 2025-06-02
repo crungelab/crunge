@@ -8,11 +8,12 @@ from crunge import wgpu
 from ...math import Rect2i
 from ...resource import ImageTexture, Material, Sampler
 
-from ...uniforms import cast_vec4, cast_vec2
+from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
 from ..uniforms_2d import (
     MaterialUniform,
 )
 
+from ... import colors
 from .sprite_sampler import DefaultSpriteSampler
 from .sprite_program import SpriteProgram
 
@@ -23,7 +24,7 @@ class Sprite(Material):
         texture: ImageTexture,
         rect: Rect2i = None,
         sampler: Sampler = None,
-        color=glm.vec4(1.0, 1.0, 1.0, 1.0),
+        color=colors.WHITE,
         points=None,
         collision_rect: Rect2i = None,
     ) -> None:
@@ -170,7 +171,8 @@ class Sprite(Material):
 
     def update_gpu(self):
         uniform = MaterialUniform()
-        uniform.color = cast_vec4(self.color)
+        #uniform.color = cast_vec4(self.color)
+        uniform.color = cast_tuple4f(self.color)
 
         uniform.rect = cast_vec4(
             glm.vec4(self.rect.x, self.rect.y, self.rect.width, self.rect.height)

@@ -13,6 +13,7 @@ from crunge.engine.d2.sprite.group.instanced_sprite_vu_group import InstancedSpr
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 from crunge.engine.color import Color
+from crunge.engine import colors
 
 INITIAL_SCALE = 0.5
 
@@ -21,8 +22,8 @@ class InstancingDemo(Demo):
         super().__init__()
         self.nodes: list[Node2D] = []
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
-        self.color = Color.WHITE.value
-        self.sprite = Sprite(texture, color=glm.vec4(self.color))
+        self.color = colors.WHITE
+        self.sprite = Sprite(texture, color=self.color)
 
     def kill(self):
         for node in self.nodes:
@@ -34,7 +35,7 @@ class InstancingDemo(Demo):
 
         self.angle = 0
         self.scale = INITIAL_SCALE
-        self.color = Color.WHITE.value
+        self.color = colors.WHITE
 
         self.scene.clear()
 
@@ -80,9 +81,10 @@ class InstancingDemo(Demo):
             for node in self.nodes:
                 node.scale = glm.vec2(self.scale, self.scale)
 
-        changed, self.color = imgui.color_edit4("Tint", self.color)
+        changed, color = imgui.color_edit4("Tint", self.color)
         if changed:
-            self.sprite.color = glm.vec4(self.color)
+            self.color = color
+            self.sprite.color = color
 
         if imgui.button("Reset"):
             self.reset()

@@ -1,26 +1,39 @@
 from enum import Enum
 import glm
 
+from .types import Tuple4f
 
-class Color(Enum):
-    RED = (1.0, 0.0, 0.0, 1.0)  # Red with full opacity
-    GREEN = (0.0, 1.0, 0.0, 1.0)  # Green with full opacity
-    BLUE = (0.0, 0.0, 1.0, 1.0)  # Blue with full opacity
-    WHITE = (1.0, 1.0, 1.0, 1.0)  # White with full opacity
-    BLACK = (0.0, 0.0, 0.0, 1.0)  # Black with full opacity
-    TRANSPARENT = (0.0, 0.0, 0.0, 0.0)  # Fully transparent
+class Color(Tuple4f):
+    def __new__(cls, r: float, g: float, b: float, a: float = 1.0):
+        return super().__new__(cls, (r, g, b, a))  # type: ignore
 
-    # More colors
-    YELLOW = (1.0, 1.0, 0.0, 1.0)  # Yellow
-    CYAN = (0.0, 1.0, 1.0, 1.0)  # Cyan
-    MAGENTA = (1.0, 0.0, 1.0, 1.0)  # Magenta
-    ORANGE = (1.0, 0.5, 0.0, 1.0)  # Orange
-    PURPLE = (0.5, 0.0, 0.5, 1.0)  # Purple
-    PINK = (1.0, 0.75, 0.8, 1.0)  # Pink
-    GRAY = (0.5, 0.5, 0.5, 1.0)  # Gray
-    BROWN = (0.65, 0.16, 0.16, 1.0)  # Brown
-    GOLD = (1.0, 0.84, 0.0, 1.0)  # Gold
-    SILVER = (0.75, 0.75, 0.75, 1.0)  # Silver
+    @property
+    def r(self) -> float:
+        return self[0]
+
+    @property
+    def g(self) -> float:
+        return self[1]
+
+    @property
+    def b(self) -> float:
+        return self[2]
+
+    @property
+    def a(self) -> float:
+        return self[3]
+
+    def to_rgba(self):
+        return (self.r, self.g, self.b, self.a)
+
+    def to_argb_int(self):
+        return rgba_tuple_to_argb_int(self.to_rgba())
+
+    def to_vec4(self):
+        return glm.vec4(self.r, self.g, self.b, self.a)
+
+    def __repr__(self):
+        return f"Color(r={self.r}, g={self.g}, b={self.b}, a={self.a})"
 
 
 def rgba_tuple_to_argb_int(rgba):

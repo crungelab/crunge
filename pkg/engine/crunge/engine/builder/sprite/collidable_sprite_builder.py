@@ -5,6 +5,7 @@ import numpy as np
 from loguru import logger
 import glm
 
+from ... import colors
 from ...math import Rect2i
 from ...resource.texture import ImageTexture
 from ...resource import Sampler
@@ -13,7 +14,7 @@ from ...d2.sprite import Sprite
 from .sprite_builder import SpriteBuilder
 
 class CollidableSpriteBuilder(SpriteBuilder):
-    def build(self, texture: ImageTexture, rect: Rect2i = None, sampler:Sampler = None, color=glm.vec4(1.0, 1.0, 1.0, 1.0)) -> Sprite:
+    def build(self, texture: ImageTexture, rect: Rect2i = None, sampler:Sampler = None, color=colors.WHITE) -> Sprite:
         #logger.debug(f"Building Sprite: {texture.image.name}")
 
         x = rect.x

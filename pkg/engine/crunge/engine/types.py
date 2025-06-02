@@ -1,0 +1,6 @@
+Tuple4f = tuple[float, float, float, float]
+Tuple2f = tuple[float, float]
+Tuple2i = tuple[int, int]
+Tuple3f = tuple[float, float, float]
+Tuple3i = tuple[int, int, int]
+Tuple4i = tuple[int, int, int, int]

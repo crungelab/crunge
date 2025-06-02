@@ -7,6 +7,7 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from ..demo import Demo
+from crunge.engine import Color, colors
 from crunge.engine.d2.shape.line_2d import Line2D
 from crunge.engine.d2.node_2d import Node2D
 
@@ -23,7 +24,7 @@ class LineDemo(Demo):
     def reset(self):
         self.angle = 0
         self.scale = 1.0
-        self.color = 1.0, 1.0, 1.0, 1.0
+        self.color = colors.WHITE
 
         self.scene.clear()
 
@@ -56,29 +57,10 @@ class LineDemo(Demo):
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 
-        changed, self.color = imgui.color_edit4("Color", self.color)
+        changed, color = imgui.color_edit4("Color", self.color)
         if changed:
-            self.sprite.color = glm.vec4(self.color)
-
-
-        #TODO: Implement alpha and color
-        '''
-        # Alpha
-        changed, self.alpha = imgui.drag_int("Alpha", self.alpha, 1, 0, 255)
-        self.sprite.alpha = self.alpha
-
-        # Color
-        _, self.color_enabled = imgui.checkbox("Tint", self.color_enabled)
-        if self.color_enabled:
-            changed, self.color = imgui.color_edit3("Color", *self.color)
-            self.sprite.color = (
-                int(self.color[0] * 255),
-                int(self.color[1] * 255),
-                int(self.color[2] * 255),
-            )
-        else:
-            self.sprite.color = 255, 255, 255
-        '''
+            self.color = color
+            self.sprite.color = color
 
         if imgui.button("Reset"):
             self.reset()

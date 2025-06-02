@@ -13,6 +13,7 @@ from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.builder.sprite.background_sprite_builder import BackgroundSpriteBuilder
 from crunge.engine.color import Color
+from crunge.engine import colors
 
 
 class BackgroundDemo(Demo):
@@ -27,7 +28,7 @@ class BackgroundDemo(Demo):
     def reset(self):
         self.angle = 0
         self.scale = 1.0
-        self.color = Color.WHITE.value
+        self.color = colors.WHITE
 
         self.scene.clear()
 
@@ -56,9 +57,10 @@ class BackgroundDemo(Demo):
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 
-        changed, self.color = imgui.color_edit4("Tint", self.color)
+        changed, color = imgui.color_edit4("Tint", self.color)
         if changed:
-            self.sprite.color = glm.vec4(self.color)
+            self.color = color
+            self.sprite.color = color
 
         if imgui.button("Reset"):
             self.reset()

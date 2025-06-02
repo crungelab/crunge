@@ -12,6 +12,7 @@ from ctypes import (
 
 import glm
 
+from .types import Tuple4f
 
 class Vec2(Structure):
     _fields_ = [
@@ -80,6 +81,8 @@ def cast_vec3(vec: glm.vec3):
 def cast_vec4(vec: glm.vec4):
     return Vec4(vec.x, vec.y, vec.z, vec.w)
 
+def cast_tuple4f(tuple: Tuple4f):
+    return Vec4(*tuple)
 
 def cast_matrix4(matrix: glm.mat4):
     ptr = glm.value_ptr(matrix)

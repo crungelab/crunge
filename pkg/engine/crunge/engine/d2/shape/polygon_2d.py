@@ -8,8 +8,8 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ...renderer import Renderer
-from ...uniforms import cast_matrix4, cast_vec4
-
+from ...uniforms import cast_matrix4, cast_vec4, cast_tuple4f
+from ... import colors
 # from ..resource.bind_group_layout import BindGroupLayout
 
 from ..vu_2d import Vu2D
@@ -45,7 +45,7 @@ class Polygon2D(Vu2D):
     material_uniform_buffer_size: int = 0
 
     def __init__(
-        self, points: list[glm.vec2], color=glm.vec4(1.0, 1.0, 1.0, 1.0)
+        self, points: list[glm.vec2], color=colors.WHITE
     ) -> None:
         super().__init__()
         self.points = points
@@ -156,7 +156,8 @@ class Polygon2D(Vu2D):
         renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
         material_uniform = MaterialUniform()
-        material_uniform.color = cast_vec4(self.color)
+        #material_uniform.color = cast_vec4(self.color)
+        material_uniform.color = cast_tuple4f(self.color)
 
         renderer.device.queue.write_buffer(
             self.material_uniform_buffer, 0, material_uniform

@@ -8,13 +8,15 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ...renderer import Renderer
-from ...uniforms import cast_matrix4, cast_vec4
+from ...uniforms import cast_matrix4, cast_vec4, cast_tuple4f
 
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
     MaterialUniform,
 )
+
+from ... import colors
 
 from .line_program_2d import LineProgram2D
 
@@ -40,7 +42,7 @@ class Line2D(Vu2D):
     material_uniform_buffer_size: int = 0
 
     def __init__(
-        self, begin: glm.vec2, end: glm.vec2, color=glm.vec4(1.0, 1.0, 1.0, 1.0)
+        self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE
     ) -> None:
         super().__init__()
         self.begin = begin
@@ -142,7 +144,9 @@ class Line2D(Vu2D):
         renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
         material_uniform = MaterialUniform()
-        material_uniform.color = cast_vec4(self.color)
+        #material_uniform.color = cast_vec4(self.color)
+        material_uniform.color = cast_tuple4f(self.color)
+
 
         renderer.device.queue.write_buffer(
             self.material_uniform_buffer, 0, material_uniform
