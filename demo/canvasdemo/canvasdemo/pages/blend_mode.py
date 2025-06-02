@@ -45,7 +45,8 @@ def draw_utf8_string(canvas, text, x, y, font, paint):
 
 class BlendModePage(Page):
     def draw(self, renderer: Renderer):
-        with self.canvas_target(renderer) as canvas:
+        #with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             rect = skia.Rect(0.0, 0.0, 64.0, 64.0)
             #font = skia.Font(None, 24)
             font = skia.Font()

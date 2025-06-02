@@ -39,7 +39,7 @@ class TurbulentPerlinNoisePage(Page):
             self.reset()
         imgui.end()
 
-        with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             gradient_paint = skia.Paint()
 
             # shader = skia.PerlinNoiseShader.make_turbulence(0.05, 0.05, 4, 0.0)

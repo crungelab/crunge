@@ -4,6 +4,7 @@ from crunge import skia
 from crunge import imgui
 from crunge.engine import Renderer, App
 from crunge.engine.color import Color, rgba_tuple_to_argb_int
+from crunge.engine import colors
 from crunge.demo import PageChannel
 
 from ..page import Page
@@ -12,8 +13,8 @@ from ..page import Page
 class LinearGradientPage(Page):
     def reset(self):
         super().reset()
-        self.color_1 = Color.BLUE.value
-        self.color_2 = Color.YELLOW.value
+        self.color_1 = colors.BLUE
+        self.color_2 = colors.YELLOW
 
     def draw(self, renderer: Renderer):
         imgui.begin("Linear Gradient")
@@ -23,7 +24,7 @@ class LinearGradientPage(Page):
             self.reset()
         imgui.end()
 
-        with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             gradient_paint = skia.Paint()
             # logger.debug(f"gradient_paint: {gradient_paint}")
 

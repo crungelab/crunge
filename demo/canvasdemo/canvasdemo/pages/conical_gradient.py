@@ -3,7 +3,8 @@ from loguru import logger
 from crunge import skia
 from crunge import imgui
 from crunge.engine import Renderer, App
-from crunge.engine.color import Color, rgba_tuple_to_argb_int
+from crunge.engine.color import rgba_tuple_to_argb_int
+from crunge.engine import colors
 from crunge.demo import PageChannel
 
 from ..page import Page
@@ -12,8 +13,8 @@ from ..page import Page
 class ConicalGradientPage(Page):
     def reset(self):
         super().reset()
-        self.color_1 = Color.BLUE.value
-        self.color_2 = Color.YELLOW.value
+        self.color_1 = colors.BLUE
+        self.color_2 = colors.YELLOW
 
     def draw(self, renderer: Renderer):
         imgui.begin("Conical Gradient")
@@ -23,7 +24,8 @@ class ConicalGradientPage(Page):
             self.reset()
         imgui.end()
 
-        with self.canvas_target(renderer) as canvas:
+        #with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             gradient_paint = skia.Paint()
 
             shader = skia.GradientShader.make_two_point_conical(

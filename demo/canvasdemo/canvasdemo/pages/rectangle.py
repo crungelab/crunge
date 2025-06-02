@@ -9,7 +9,7 @@ from ..page import Page
 
 class RectanglePage(Page):
     def draw(self, renderer: Renderer):
-        with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             paint = skia.Paint()
             paint.set_color(0xFFFFFFFF)
             canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)

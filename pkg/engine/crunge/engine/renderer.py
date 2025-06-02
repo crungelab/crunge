@@ -1,21 +1,11 @@
-from .base import Base
-from .viewport import Viewport
-
-"""
-from .base import Base
-
-from .viewport import Viewport
-
-class Renderer(Base):
-    def __init__(self, viewport: Viewport) -> None:
-        super().__init__()
-        self.viewport = viewport
-"""
-
 from typing import TYPE_CHECKING
+import contextlib
 
 from crunge import wgpu
+from crunge import skia
 
+from .base import Base
+from .viewport import Viewport
 
 if TYPE_CHECKING:
     from .d2.camera_2d import Camera2D
@@ -39,6 +29,11 @@ class Renderer(Base):
         self.camera_3d = camera_3d
 
         self.pass_enc: wgpu.RenderPassEncoder = None
+
+        # Skia
+        self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)
+        recorder_options = skia.create_standard_recorder_options()
+        self.recorder = self.skia_context.make_recorder(recorder_options)
 
     def __enter__(self):
         self.begin()
@@ -65,11 +60,10 @@ class Renderer(Base):
                     load_op=wgpu.LoadOp.CLEAR,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
-                    # clear_value=wgpu.Color(.5, .5, .5, 1),
                 )
             ]
 
-        depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
+        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
             view=self.viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
@@ -79,39 +73,14 @@ class Renderer(Base):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachments=color_attachments,
-            depth_stencil_attachment=depthStencilAttach,
+            depth_stencil_attachment=depth_stencil_attachment,
         )
-
-        """
-        color_attachments = [
-            wgpu.RenderPassColorAttachment(
-                view=self.viewport.color_texture_view,
-                load_op=wgpu.LoadOp.CLEAR,
-                store_op=wgpu.StoreOp.STORE,
-                clear_value=wgpu.Color(0, 0, 0, 1),
-            )
-        ]
-
-        depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=self.viewport.depth_stencil_texture_view,
-            depth_load_op=wgpu.LoadOp.CLEAR,
-            depth_store_op=wgpu.StoreOp.STORE,
-            depth_clear_value=1.0,
-        )
-
-        renderpass = wgpu.RenderPassDescriptor(
-            label="Main Render Pass",
-            color_attachment_count=1,
-            color_attachments=color_attachments,
-            depth_stencil_attachment=depthStencilAttach,
-        )
-        """
 
         self.encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(
             renderpass
         )
-        #self.camera.bind(self.pass_enc)
+
         if self.camera_2d is not None:
             self.camera_2d.bind(self.pass_enc)
         elif self.camera_3d is not None:
@@ -121,3 +90,16 @@ class Renderer(Base):
         self.pass_enc.end()
         command_buffer = self.encoder.finish()
         self.queue.submit([command_buffer])
+
+    @contextlib.contextmanager
+    def canvas_target(self) :
+        target = self.viewport.color_texture
+        skia_surface = skia.create_surface(target, self.recorder)
+        canvas = skia_surface.get_canvas()
+        yield canvas
+        recording = self.recorder.snap()
+        if recording:
+            insert_info = skia.InsertRecordingInfo()
+            insert_info.f_recording = recording
+            self.skia_context.insert_recording(insert_info)
+            self.skia_context.submit(skia.SyncToCpu.K_NO)

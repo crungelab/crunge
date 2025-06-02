@@ -9,7 +9,7 @@ from ..page import Page
 
 class DropShadowPage(Page):
     def draw(self, renderer: Renderer):
-        with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             canvas.draw_color(skia.colors.WHITE)
 
             filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.colors.BLACK)

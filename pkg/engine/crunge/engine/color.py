@@ -27,7 +27,8 @@ class Color(Tuple4f):
         return (self.r, self.g, self.b, self.a)
 
     def to_argb_int(self):
-        return rgba_tuple_to_argb_int(self.to_rgba())
+        #return rgba_tuple_to_argb_int(self.to_rgba())
+        return rgba_tuple_to_argb_int(self)
 
     def to_vec4(self):
         return glm.vec4(self.r, self.g, self.b, self.a)

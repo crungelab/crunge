@@ -9,7 +9,7 @@ from ..page import Page
 
 class TextBlobPage(Page):
     def draw(self, renderer: Renderer):
-        with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             # canvas.clear(0xFF00FF00)  # Clear with a color
 
             paint = skia.Paint()

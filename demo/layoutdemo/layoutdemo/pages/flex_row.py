@@ -60,7 +60,8 @@ class FlexRowPage(Page):
         self.debug_layout(root)
 
     def draw(self, renderer: Renderer):
-        with self.canvas_target(renderer) as canvas:
+        #with self.canvas_target(renderer) as canvas:
+        with renderer.canvas_target() as canvas:
             self.draw_layout(self.root, canvas)
         super().draw(renderer)
 
