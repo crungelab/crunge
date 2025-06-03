@@ -1,6 +1,8 @@
 from typing import TYPE_CHECKING
 import contextlib
 
+from loguru import logger
+
 from crunge import wgpu
 from crunge import skia
 
@@ -41,6 +43,7 @@ class Renderer(Base):
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.end()
+        return self
 
     def begin(self):
         if self.viewport.use_msaa:
@@ -92,7 +95,7 @@ class Renderer(Base):
         self.queue.submit([command_buffer])
 
     @contextlib.contextmanager
-    def canvas_target(self) :
+    def canvas_target(self):
         target = self.viewport.color_texture
         skia_surface = skia.create_surface(target, self.recorder)
         canvas = skia_surface.get_canvas()
@@ -102,4 +105,5 @@ class Renderer(Base):
             insert_info = skia.InsertRecordingInfo()
             insert_info.f_recording = recording
             self.skia_context.insert_recording(insert_info)
-            self.skia_context.submit(skia.SyncToCpu.K_NO)
+            #self.skia_context.submit(skia.SyncToCpu.K_NO)
+            self.skia_context.submit(skia.SyncToCpu.K_YES)

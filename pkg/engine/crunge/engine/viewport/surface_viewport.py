@@ -64,7 +64,8 @@ class SurfaceViewport(Viewport):
             width=size.x,
             height=size.y,
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            #usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING,
             present_mode=wgpu.PresentMode.FIFO,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )

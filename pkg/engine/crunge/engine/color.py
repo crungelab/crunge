@@ -39,4 +39,9 @@ class Color(Tuple4f):
 
 def rgba_tuple_to_argb_int(rgba):
     r, g, b, a = [int(round(x * 255.0)) for x in rgba]
+    #r, g, b, a = [int(x * 255.0) for x in rgba]
+    return (a << 24) | (r << 16) | (g << 8) | b
+
+def space_debug_color_to_argb_int(rgba):
+    r, g, b, a = [int(round(x)) for x in rgba]
     return (a << 24) | (r << 16) | (g << 8) | b

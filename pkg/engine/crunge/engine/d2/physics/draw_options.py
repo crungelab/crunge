@@ -1,11 +1,9 @@
 from loguru import logger
 
-import glm
-
 import pymunk
 from pymunk.space_debug_draw_options import SpaceDebugColor
-from pymunk.vec2d import Vec2d
 
+from ... import colors
 from crunge.engine.d2.scratch_layer import ScratchLayer
 
 class DrawOptions(pymunk.SpaceDebugDrawOptions):
@@ -13,7 +11,8 @@ class DrawOptions(pymunk.SpaceDebugDrawOptions):
         super().__init__()
         self.scratch = scratch
         self.flags = pymunk.SpaceDebugDrawOptions.DRAW_SHAPES
-        self.shape_outline_color = SpaceDebugColor(1, 0, 1, 255)
+        #self.shape_outline_color = SpaceDebugColor(1, 0, 1, 255)
+        self.shape_outline_color = colors.PURPLE
         self.constraint_color = SpaceDebugColor(0, 0, 0, 255)
         self.collision_point_color = SpaceDebugColor(0, 0, 0, 255)
         self.body_outline_color = SpaceDebugColor(0, 0, 0, 255)

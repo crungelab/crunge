@@ -1,2 +1,5 @@
 source: '../../depot/skia/include/core/SkPaint.h'
 target: 'src/skia_paint_py_auto.cpp'
+
+#specs:
+#  'class/SkPaint': { gen_kw_init: true }

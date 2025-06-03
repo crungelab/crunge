@@ -61,6 +61,7 @@ void init_skia_image_py_auto(py::module &, Registry &registry);
 
 void init_skia_standard_recorder_options_py(py::module &, Registry &registry);
 
+void init_skia_path_py_auto(py::module &, Registry &registry);
 // NOTE: initialization/binding order does matter!
 // This popped up using default arguments that use structure constructors
 
@@ -128,4 +129,6 @@ PYBIND11_MODULE(_skia, m)
     init_skia_image_py_auto(m, r);
 
     init_skia_standard_recorder_options_py(m, r);
+
+    init_skia_path_py_auto(m, r);
 }

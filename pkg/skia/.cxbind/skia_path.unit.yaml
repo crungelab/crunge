@@ -1,0 +1,9 @@
+#source: '../../depot/skia/include/core/SkPath.h'
+sources:
+  - ../../depot/skia/include/core/SkPathTypes.h
+  - ../../depot/skia/include/core/SkPath.h
+
+target: 'src/skia_path_py_auto.cpp'
+
+excludes:
+  - class/SkPath::RawIter

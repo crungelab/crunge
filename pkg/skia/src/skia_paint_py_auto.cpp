@@ -202,6 +202,11 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("storage")
             , py::arg("style")
             , py::return_value_policy::reference)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            SkPaint obj{};
+            return obj;
+        }), py::return_value_policy::automatic_reference);
     ;
 
 
