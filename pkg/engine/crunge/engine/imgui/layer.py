@@ -4,7 +4,6 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from crunge import engine
 from crunge.engine import Renderer
 
 from crunge import sdl
@@ -33,7 +32,7 @@ class ImGuiLayer(ViewLayer):
     vu: ImGuiVu = None
 
     def __init__(self):
-        super().__init__("ImGuiLayer")
+        super().__init__("ImGuiLayer", priority=1000)
         if not self.context:
             ImGuiLayer.context = imgui.create_context()
             imgui.set_current_context(self.context)

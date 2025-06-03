@@ -16,7 +16,7 @@ from ..color import rgba_tuple_to_argb_int
 
 class ScratchLayer(ViewLayer):
     def __init__(self):
-        super().__init__("ScratchLayer")
+        super().__init__("ScratchLayer", priority=900)
         self.draw_calls = []
 
     def add_call(self, call):
