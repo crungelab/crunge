@@ -17,24 +17,16 @@ class KinematicPhysics(Physics):
         position = node.position + self.position
         body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
         body.node = node
-        #body.position = tuple(node.position)
         body.position = pymunk.Vec2d(position.x, position.y)
         body.angle = math.radians(node.angle)
         return body
 
 
 class CollisionHandler:
-    def __init__(self, handler):
-        self.handler = handler
-        handler.begin = lambda arbiter, space, data: self.begin(arbiter, space, data)
-        handler.pre_solve = lambda arbiter, space, data: self.pre_solve(
-            arbiter, space, data
-        )
-        handler.post_solve = lambda arbiter, space, data: self.post_solve(
-            arbiter, space, data
-        )
-        handler.separate = lambda arbiter, space, data: self.separate(
-            arbiter, space, data
+    def __init__(self, space: pymunk.Space, collision_type_a: int, collision_type_b: int):
+        space.on_collision(
+            collision_type_a, collision_type_b, begin=self.begin, pre_solve=self.pre_solve,
+            post_solve=self.post_solve, separate=self.separate
         )
 
     def begin(self, arbiter, space, data):
@@ -49,10 +41,12 @@ class CollisionHandler:
     def separate(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kshape.body.node.grounded = False
-        pass
 
 
 class KinematicStaticHandler(CollisionHandler):
+    def __init__(self, space: pymunk.Space):
+        super().__init__(space, PT_KINEMATIC, PT_STATIC)
+
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
@@ -69,6 +63,9 @@ class KinematicStaticHandler(CollisionHandler):
 
 
 class KinematicKinematicHandler(CollisionHandler):
+    def __init__(self, space: pymunk.Space):
+        super().__init__(space, PT_KINEMATIC, PT_KINEMATIC)
+
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
@@ -85,6 +82,8 @@ class KinematicKinematicHandler(CollisionHandler):
 
 
 class KinematicDynamicHandler(CollisionHandler):
+    def __init__(self, space: pymunk.Space):
+        super().__init__(space, PT_KINEMATIC, PT_DYNAMIC)
 
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
@@ -117,12 +116,6 @@ class KinematicPhysicsEngine(PhysicsEngine2D):
 
     def _create(self):
         super()._create()
-        self.kinematic_static_handler = KinematicStaticHandler(
-            self.space.add_collision_handler(PT_KINEMATIC, PT_STATIC)
-        )
-        self.kinematic_static_handler = KinematicKinematicHandler(
-            self.space.add_collision_handler(PT_KINEMATIC, PT_KINEMATIC)
-        )
-        self.kinematic_dynamic_handler = KinematicDynamicHandler(
-            self.space.add_collision_handler(PT_KINEMATIC, PT_DYNAMIC)
-        )
+        self.kinematic_static_handler = KinematicStaticHandler(self.space)
+        self.kinematic_static_handler = KinematicKinematicHandler(self.space)
+        self.kinematic_dynamic_handler = KinematicDynamicHandler(self.space)
