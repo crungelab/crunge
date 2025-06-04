@@ -3,13 +3,13 @@ from typing import Any, Callable
 from loguru import logger
 import glm
 
-from .node import Node
-from .part import Part
-from .controller import Controller
-from .renderer import Renderer
+from ..node import Node
+from ..part import Part
+from ..controller import Controller
+from ..renderer import Renderer
 
 
-class Pane(Node["Pane"]):
+class Widget(Node["Widget"]):
     def __init__(self, size = glm.ivec2()) -> None:
         super().__init__()
         self._size = size
@@ -87,7 +87,7 @@ class Pane(Node["Pane"]):
             #child.draw(renderer)
             self.draw_child(renderer, child)
 
-    def draw_child(self, renderer: Renderer, child: "Pane"):
+    def draw_child(self, renderer: Renderer, child: "Widget"):
         child.draw(renderer)
 
     def update(self, delta_time: float):

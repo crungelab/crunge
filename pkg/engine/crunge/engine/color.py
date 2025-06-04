@@ -42,6 +42,6 @@ def rgba_tuple_to_argb_int(rgba):
     #r, g, b, a = [int(x * 255.0) for x in rgba]
     return (a << 24) | (r << 16) | (g << 8) | b
 
-def space_debug_color_to_argb_int(rgba):
+def rgba_int_tuple_to_argb_int(rgba):
     r, g, b, a = [int(round(x)) for x in rgba]
     return (a << 24) | (r << 16) | (g << 8) | b

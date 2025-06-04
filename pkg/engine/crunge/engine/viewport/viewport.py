@@ -2,6 +2,7 @@ import glm
 
 from crunge.core.event_source import EventSource
 from crunge import wgpu
+from crunge import skia
 
 from ..base import Base
 
@@ -27,6 +28,13 @@ class Viewport(Base):
         self.msaa_texture: wgpu.Texture = None
         self.msaa_texture_view: wgpu.TextureView = None
 
+        # Skia
+        self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)
+        recorder_options = skia.create_standard_recorder_options()
+        self.recorder = self.skia_context.make_recorder(recorder_options)
+        self.skia_surface: skia.Surface = None # segfaults if we don't hang on to a reference
+        self.canvas: skia.Canvas = None
+
         self.create_device_objects()
 
     @property
@@ -51,6 +59,14 @@ class Viewport(Base):
     @property
     def height(self) -> int:
         return self._size.y
+
+    def __enter__(self):
+        self.frame()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.present()
+        return self
 
     def frame(self) -> None:
         pass

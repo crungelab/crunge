@@ -33,9 +33,15 @@ class Renderer(Base):
         self.pass_enc: wgpu.RenderPassEncoder = None
 
         # Skia
+        '''
         self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)
         recorder_options = skia.create_standard_recorder_options()
         self.recorder = self.skia_context.make_recorder(recorder_options)
+        '''
+
+    @property
+    def canvas(self) -> skia.Canvas:
+        return self.viewport.canvas
 
     def __enter__(self):
         self.begin()
@@ -96,6 +102,18 @@ class Renderer(Base):
 
     @contextlib.contextmanager
     def canvas_target(self):
+        yield self.viewport.canvas
+        recording = self.viewport.recorder.snap()
+        if recording:
+            insert_info = skia.InsertRecordingInfo()
+            insert_info.f_recording = recording
+            self.viewport.skia_context.insert_recording(insert_info)
+            self.viewport.skia_context.submit(skia.SyncToCpu.K_NO)
+            #self.skia_context.submit(skia.SyncToCpu.K_YES)
+
+    '''
+    @contextlib.contextmanager
+    def canvas_target(self):
         target = self.viewport.color_texture
         skia_surface = skia.create_surface(target, self.recorder)
         canvas = skia_surface.get_canvas()
@@ -107,3 +125,4 @@ class Renderer(Base):
             self.skia_context.insert_recording(insert_info)
             self.skia_context.submit(skia.SyncToCpu.K_NO)
             #self.skia_context.submit(skia.SyncToCpu.K_YES)
+    '''

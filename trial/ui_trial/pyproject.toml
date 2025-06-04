@@ -1,0 +1,12 @@
+[tool.setuptools]
+packages = ["ui_trial"]
+
+[project]
+name = "ui_trial"
+version = "0.1.0"
+description = 'Crunge UI Trial'
+requires-python = ">=3.10"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+]

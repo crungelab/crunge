@@ -3,7 +3,7 @@ from uuid import uuid4
 from crunge import engine
 from ..layer import ImGuiLayer
 
-class Widget(engine.Pane):
+class Widget(engine.Widget):
     def __init__(self, children=[]):
         super().__init__()
         self.id = uuid4()

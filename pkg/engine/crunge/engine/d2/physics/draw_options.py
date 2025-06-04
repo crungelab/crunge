@@ -11,7 +11,7 @@ class DrawOptions(pymunk.SpaceDebugDrawOptions):
         super().__init__()
         self.scratch = scratch
         self.flags = pymunk.SpaceDebugDrawOptions.DRAW_SHAPES
-        #self.shape_outline_color = SpaceDebugColor(1, 0, 1, 255)
+        #self.shape_outline_color = SpaceDebugColor(255, 0, 255, 255)
         self.shape_outline_color = colors.PURPLE
         self.constraint_color = SpaceDebugColor(0, 0, 0, 255)
         self.collision_point_color = SpaceDebugColor(0, 0, 0, 255)
@@ -34,10 +34,6 @@ class DrawOptions(pymunk.SpaceDebugDrawOptions):
         #pass
         logger.debug(f"a: {a}, b: {b}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
 
-    def draw_dot(self, size, pos, color):
-        #pass
-        logger.debug(f"size: {size}, pos: {pos}, color: {color}")
-
     def draw_polygon(self, verts, radius, outline_color, fill_color):
         #pass
         #logger.debug(f"verts: {verts}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
@@ -52,6 +48,9 @@ class DrawOptions(pymunk.SpaceDebugDrawOptions):
     def draw_dot(self, size, pos, color):
         #pass
         logger.debug(f"size: {size}, pos: {pos}, color: {color}")
+
+    def draw_shape(self, shape: pymunk.Shape) -> None:
+        logger.debug(f"shape: {shape}")
 
     def draw_text(self, pos, text):
         #pass

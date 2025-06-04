@@ -26,9 +26,7 @@ class ScratchLayer(ViewLayer):
         #logger.debug(f"DemoView.draw_line({begin}, {end}, {color})")
         def draw(renderer: Renderer, canvas: skia.Canvas):
             paint = skia.Paint()
-            #paint.set_color(rgba_tuple_to_argb_int(color))
             paint.set_color(rgba_tuple_to_argb_int(color))
-            #canvas.draw_line(begin, end, paint)
             canvas.draw_line(begin[0], begin[1], end[0], end[1], paint)
 
         self.add_call(draw)

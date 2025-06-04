@@ -1,3 +1,3 @@
 ```bash
-python -m uidemo.triangle_index
+python -m implotdemo
 ```

@@ -1,11 +1,11 @@
 from loguru import logger
 import glm
 
-from .pane import Pane
+from .widget import Widget
 from .view import View
 
 
-class Frame(Pane):
+class Frame(Widget):
     def __init__(self, size=glm.ivec2(), view: View = None) -> None:
         super().__init__(size)
         self._view = view

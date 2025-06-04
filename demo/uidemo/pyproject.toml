@@ -1,5 +1,6 @@
-[tool.setuptools]
-packages = ["uidemo"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "uidemo"
@@ -10,3 +11,9 @@ authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
 ]
+
+[project.scripts]
+uidemo = 'uidemo.cli:cli'
+
+[tool.hatch.envs.default]
+python = "3.10"

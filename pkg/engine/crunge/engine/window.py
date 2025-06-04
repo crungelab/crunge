@@ -99,6 +99,15 @@ class Window(Frame):
         self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True)
 
     def frame(self):
+        with self.viewport as viewport:
+            self.renderer.viewport = viewport
+
+            self.pre_draw(self.renderer)
+            self.draw(self.renderer)
+            self.post_draw(self.renderer)
+
+    '''
+    def frame(self):
         self.viewport.frame()
         self.renderer.viewport = self.viewport
 
@@ -107,6 +116,7 @@ class Window(Frame):
         self.post_draw(self.renderer)
 
         self.viewport.present()
+    '''
 
     def on_window(self, event: sdl.WindowEvent):
         #logger.debug("window event")

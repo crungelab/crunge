@@ -6,11 +6,11 @@ if TYPE_CHECKING:
 from loguru import logger
 import glm
 
-from .pane import Pane
+from .widget import Widget
 from .view_layer import ViewLayer
 
 
-class View(Pane):
+class View(Widget):
     def __init__(self, layers: list[ViewLayer] = []) -> None:
         #super().__init__(size)
         super().__init__()

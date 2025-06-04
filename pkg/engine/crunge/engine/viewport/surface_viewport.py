@@ -6,6 +6,7 @@ import glm
 from .viewport import Viewport
 
 from crunge import wgpu
+from crunge import skia
 from crunge import sdl
 
 
@@ -78,6 +79,11 @@ class SurfaceViewport(Viewport):
         self.surface.get_current_texture(surface_texture)
         self.color_texture = surface_texture.texture
         self.color_texture_view = surface_texture.texture.create_view()
+
+        # Skia
+        self.skia_surface = skia.create_surface(self.color_texture, self.recorder)
+        self.canvas = self.skia_surface.get_canvas()
+
 
     def present(self) -> None:
         self.surface.present()

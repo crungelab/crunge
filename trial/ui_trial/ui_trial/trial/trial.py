@@ -5,13 +5,15 @@ import glm
 
 from crunge import engine
 
-from .demo_view import DemoView
+from .trial_view import TrialView
 
-class Demo(engine.App):
+class Trial(engine.App):
+    view: TrialView
+
     kWidth = 1024
     kHeight = 768
 
-    def __init__(self, view=DemoView()):
+    def __init__(self, view=TrialView()):
         super().__init__(
             glm.ivec2(self.kWidth, self.kHeight),
             self.__class__.__name__,
