@@ -34,7 +34,8 @@ class TreePage(Page):
         self.root = root = yoga.Layout()
         root.set_style(
             yoga.StyleBuilder()
-            .flex_direction(yoga.FlexDirection.ROW)
+            #.flex_direction(yoga.FlexDirection.ROW)
+            .flex_direction(yoga.FlexDirection.COLUMN)
             #.align_items(yoga.Align.CENTER)
             .width(256)
             .height(256)

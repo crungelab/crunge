@@ -1,20 +1,22 @@
 from loguru import logger
 import glm
 
+from crunge import yoga
+
 from .widget import Widget
 from .view import View
 
 
 class Frame(Widget):
-    def __init__(self, size=glm.ivec2(), view: View = None) -> None:
-        super().__init__(size)
+    def __init__(self, layout: yoga.Layout = None, view: View = None) -> None:
+        super().__init__(layout)
         self._view = view
         self.view_stack: list[View] = []
 
     @property
     def view(self):
         return self._view
-    
+
     @view.setter
     def view(self, view: View):
         self._view = view
@@ -35,12 +37,12 @@ class Frame(Widget):
             self.view = self._view
 
     def push_view(self, new_view):
-        #logger.debug('push_view')
+        # logger.debug('push_view')
         self.view_stack.append(self.view)
         self.view = new_view
 
     def pop_view(self):
-        #logger.debug('pop_view')
+        # logger.debug('pop_view')
         if self.view:
             self.view.disable()
         self.view = self.view_stack.pop()

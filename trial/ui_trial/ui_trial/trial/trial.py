@@ -4,6 +4,7 @@ from loguru import logger
 import glm
 
 from crunge import engine
+from crunge.yoga import LayoutBuilder
 
 from .trial_view import TrialView
 
@@ -15,7 +16,7 @@ class Trial(engine.App):
 
     def __init__(self, view=TrialView()):
         super().__init__(
-            glm.ivec2(self.kWidth, self.kHeight),
+            LayoutBuilder().width(self.kWidth).height(self.kHeight).build(),
             self.__class__.__name__,
             view=view,
             resizable=True,

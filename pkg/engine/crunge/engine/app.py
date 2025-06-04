@@ -5,6 +5,7 @@ from loguru import logger
 import glm
 
 from crunge import sdl
+from crunge import yoga
 
 from .window import Window
 from .scheduler import Scheduler
@@ -12,8 +13,10 @@ from .service import Service
 
 
 class App(Window):
-    def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
-        super().__init__(size, title, view=view, resizable=resizable)
+    def __init__(
+        self, layout: yoga.Layout = None, title="", view=None, resizable=False
+    ):
+        super().__init__(layout, title, view=view, resizable=resizable)
         self.running = False
         self.services: List[Service] = []
         self.add_service(Scheduler())

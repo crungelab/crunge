@@ -4,6 +4,7 @@ from loguru import logger
 import glm
 
 from crunge import sdl
+from crunge import yoga
 
 from . import globals
 from .scheduler import Scheduler
@@ -14,8 +15,10 @@ from .channel import Channel
 
 
 class Window(Frame):
-    def __init__(self, size=glm.ivec2(), title="", view=None, resizable=False):
-        super().__init__(size, view=view)
+    def __init__(
+        self, layout: yoga.Layout = None, title="", view=None, resizable=False
+    ):
+        super().__init__(layout, view=view)
         globals.set_current_window(self)
         self.name = title
 
@@ -29,7 +32,7 @@ class Window(Frame):
     @property
     def channel(self) -> Channel:
         return self._channel
-    
+
     @channel.setter
     def channel(self, channel: Channel):
         self._channel = channel
@@ -41,25 +44,26 @@ class Window(Frame):
         if channel.name in self.channels:
             raise ValueError(f"Channel already exists for name: {channel.name}")
         self.channels[channel.name] = channel
-    
+
     def show_channel(self, name: str):
-        #logger.debug(f"show {name}")
+        # logger.debug(f"show {name}")
         def callback(delta_time: float):
             channel = self.channels.get(name)
             if channel is None:
                 raise ValueError(f"Channel not found for name: {name}")
 
             self.channel = channel
+
         Scheduler().schedule_once(callback, 0)
 
-    '''
+    """
     def show_channel(self, name: str):
         channel = self.channels.get(name)
         if channel is None:
             raise ValueError(f"Channel not found for name: {name}")
 
         self.channel = channel
-    '''
+    """
 
     def _create(self):
         logger.debug("Window.create")
@@ -95,7 +99,7 @@ class Window(Frame):
         pass
 
     def create_viewport(self):
-        #self.viewport = SurfaceViewport(self.size, self.window)
+        # self.viewport = SurfaceViewport(self.size, self.window)
         self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True)
 
     def frame(self):
@@ -106,7 +110,7 @@ class Window(Frame):
             self.draw(self.renderer)
             self.post_draw(self.renderer)
 
-    '''
+    """
     def frame(self):
         self.viewport.frame()
         self.renderer.viewport = self.viewport
@@ -116,10 +120,10 @@ class Window(Frame):
         self.post_draw(self.renderer)
 
         self.viewport.present()
-    '''
+    """
 
     def on_window(self, event: sdl.WindowEvent):
-        #logger.debug("window event")
+        # logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
                 self.size = glm.ivec2(event.data1, event.data2)

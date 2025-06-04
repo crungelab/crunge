@@ -3,17 +3,24 @@ from pathlib import Path
 from loguru import logger
 import glm
 
+from crunge.yoga import LayoutBuilder
 from crunge import engine
 from crunge.engine.resource.resource_manager import ResourceManager
+
 from .page import Page
 from .menubar import MenubarLocation
+
 
 class Demo(engine.App):
     kWidth = 1280
     kHeight = 800
 
     def __init__(self, name: str, package_name: str, resource_root: Path):
-        super().__init__(glm.ivec2(self.kWidth, self.kHeight), name, resizable=True)
+        super().__init__(
+            LayoutBuilder().width(self.kWidth).height(self.kHeight).build(),
+            name,
+            resizable=True,
+        )
         self.package_name = package_name
         self.resource_root = resource_root
         ResourceManager().add_path_variables(

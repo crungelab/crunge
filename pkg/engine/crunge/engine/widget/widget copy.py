@@ -1,4 +1,3 @@
-import math
 from typing import Any, Callable
 
 from loguru import logger
@@ -13,41 +12,18 @@ from ..renderer import Renderer
 
 
 class Widget(Node["Widget"]):
-    def __init__(self, layout: yoga.Layout = None) -> None:
+    def __init__(self, size = glm.ivec2()) -> None:
         super().__init__()
-        if layout is None:
-            layout = yoga.Layout()
-        self.layout = layout
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
-        self._size = glm.ivec2(0, 0)
+        self._size = size
         self._controller: Controller = None
         self.parts: list[Part] = []
         self.priority = 0
-        # self.on_dirty()
-
-    def _create(self):
-        super()._create()
-        # self.on_dirty()
-
-    def on_dirty(self):
-        # logger.debug(f"Widget.on_dirty: {self}, {self.layout}")
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
-        self.size = glm.ivec2(
-            self.layout.get_computed_width(), self.layout.get_computed_height()
-        )
+        self.layout: yoga.Layout = yoga.Layout()
 
     @property
-    def position(self) -> glm.ivec2:
-        return glm.ivec2(
-            self.layout.get_computed_left(), self.layout.get_computed_top()
-        )
-
-    @property
-    def size(self) -> glm.ivec2:
-        return glm.ivec2(
-            self.layout.get_computed_width(), self.layout.get_computed_height()
-        )
-
+    def size(self):
+        return self._size
+    
     @property
     def bounds(self) -> yoga.Bounds:
         bounds = self.layout.get_computed_bounds()
@@ -56,19 +32,12 @@ class Widget(Node["Widget"]):
         width = bounds.width
         height = bounds.height
         print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
-        return bounds
-
+    
     @size.setter
     def size(self, value: glm.ivec2):
-        if not isinstance(value, glm.ivec2):
-            raise TypeError(f"Expected glm.ivec2, got {type(value)}")
         changed = self._size != value
         self._size = value
-        self.layout.set_width(value.x)
-        self.layout.set_height(value.y)
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         if changed:
-            logger.debug(f"Widget size changed: {self}, {self.size}")
             self.on_size()
 
     def on_size(self):
@@ -77,15 +46,15 @@ class Widget(Node["Widget"]):
     @property
     def width(self):
         return self.size.x
-
+    
     @width.setter
     def width(self, value):
         self.size.x = value
-
+    
     @property
     def height(self):
         return self.size.y
-
+    
     @height.setter
     def height(self, value):
         self.size.y = value
@@ -112,9 +81,9 @@ class Widget(Node["Widget"]):
         super().disable()
         if self.controller is not None:
             self.controller.disable()
-
+    
     def dispatch(self, event):
-        # logger.debug(f"Widget.dispatch: {self}, {self.children}, {event}")
+        #logger.debug(f"Widget.dispatch: {self}, {self.children}, {event}")
         for child in self.children[::-1]:
             if child.dispatch(event):
                 return True
@@ -127,7 +96,7 @@ class Widget(Node["Widget"]):
         if self.vu is not None:
             self.vu.draw(renderer)
         for child in self.children:
-            # child.draw(renderer)
+            #child.draw(renderer)
             self.draw_child(renderer, child)
 
     def draw_child(self, renderer: Renderer, child: "Widget"):
@@ -153,11 +122,3 @@ class Widget(Node["Widget"]):
             if isinstance(part, part_type):
                 return part
         return None
-
-    def on_attached(self):
-        logger.debug(f"Widget.on_attached: {self}")
-        logger.debug(f"Parent: {self.parent}")
-        logger.debug(f"Widget layout: {self.layout}")
-        logger.debug(f"Parent layout: {self.parent.layout}")
-        self.parent.layout.add_child(self.layout)
-        super().on_attached()  # Call the parent method to ensure proper attachment behavior

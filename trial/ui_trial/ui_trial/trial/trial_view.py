@@ -8,7 +8,9 @@ from .trial_layer import TrialLayer
 class TrialView(ImGuiView):
     def __init__(self, layers=[]):
         super().__init__(layers=layers)
+        
+    def _create(self):
+        super()._create()
         widget_layer = TrialLayer()
         self.add_layer(widget_layer)
         self.ui = widget_layer
-        

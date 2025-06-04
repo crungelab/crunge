@@ -12,7 +12,6 @@ from .view_layer import ViewLayer
 
 class View(Widget):
     def __init__(self, layers: list[ViewLayer] = []) -> None:
-        #super().__init__(size)
         super().__init__()
         self.window: "Window" = None
         self.layers_by_name: Dict[str, ViewLayer] = {}
@@ -28,6 +27,7 @@ class View(Widget):
         super().on_size()
         for layer in self.layers:
             layer.size = self.size
+            logger.debug(f"View.on_size: {self.size}, layer: {layer.name}")
 
     def _create(self):
         #logger.debug("View.create")
