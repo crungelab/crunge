@@ -12,11 +12,14 @@ from .scheduler import Scheduler
 from .service import Service
 
 
+sdl.init(sdl.InitFlags.INIT_VIDEO)
+
+
 class App(Window):
     def __init__(
-        self, layout: yoga.Layout = None, title="", view=None, resizable=False
+        self, style: yoga.Style = yoga.Style(), title="", view=None, resizable=False
     ):
-        super().__init__(layout, title, view=view, resizable=resizable)
+        super().__init__(style, title, view=view, resizable=resizable)
         self.running = False
         self.services: List[Service] = []
         self.add_service(Scheduler())
@@ -28,8 +31,8 @@ class App(Window):
         self.services.remove(service)
 
     def create_window(self):
-        success = sdl.init(sdl.InitFlags.INIT_VIDEO)
-        logger.debug(f"SDL_Init: {success}")
+        #success = sdl.init(sdl.InitFlags.INIT_VIDEO)
+        #logger.debug(f"SDL_Init: {success}")
         super().create_window()
 
     def quit(self):

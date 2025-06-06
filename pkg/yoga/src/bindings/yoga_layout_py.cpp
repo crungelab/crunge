@@ -18,6 +18,7 @@ namespace py = pybind11;
 
 void init_yoga_layout_py(py::module &_yoga, Registry &registry) {
     PYEXTEND_BEGIN(Layout, Layout)
+
     _Layout.def(py::init<>(&Layout::createDefault));
     //_Layout.def(py::init<Config *>(), Layout::createWithConfig, py::arg("config"), py::return_value_policy::take_ownership);
 
@@ -30,6 +31,14 @@ void init_yoga_layout_py(py::module &_yoga, Registry &registry) {
         node->setStyle(style);
         node->markDirtyAndPropagate();
     }, py::arg("style"));
+
+    _Layout.def("get_style", [](Layout& self) -> facebook::yoga::Style& {
+        auto node = static_cast<facebook::yoga::Node*>(self.m_node);
+        if (!node) {
+            throw std::runtime_error("Layout is not initialized.");
+        }
+        return node->style();
+    });
 
     PYEXTEND_END
 

@@ -1,4 +1,5 @@
 from typing import List, Dict
+import math
 
 from loguru import logger
 import glm
@@ -16,9 +17,9 @@ from .channel import Channel
 
 class Window(Frame):
     def __init__(
-        self, layout: yoga.Layout = None, title="", view=None, resizable=False
+        self, style: yoga.Style = yoga.Style(), title="", view=None, resizable=False
     ):
-        super().__init__(layout, view=view)
+        super().__init__(style, view=view)
         globals.set_current_window(self)
         self.name = title
 
@@ -55,15 +56,6 @@ class Window(Frame):
             self.channel = channel
 
         Scheduler().schedule_once(callback, 0)
-
-    """
-    def show_channel(self, name: str):
-        channel = self.channels.get(name)
-        if channel is None:
-            raise ValueError(f"Channel not found for name: {name}")
-
-        self.channel = channel
-    """
 
     def _create(self):
         logger.debug("Window.create")
@@ -103,12 +95,14 @@ class Window(Frame):
         self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True)
 
     def frame(self):
-        with self.viewport as viewport:
-            self.renderer.viewport = viewport
-
-            self.pre_draw(self.renderer)
-            self.draw(self.renderer)
-            self.post_draw(self.renderer)
+        try:
+            with self.viewport as viewport:
+                self.pre_draw(self.renderer)
+                self.draw(self.renderer)
+                self.post_draw(self.renderer)
+        except Exception as e:
+            logger.error(f"Error during frame: {e}")
+            raise e
 
     """
     def frame(self):

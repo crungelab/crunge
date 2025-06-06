@@ -10,6 +10,7 @@ from . import (
     Direction,
     Edge,
     StyleSizeLength,
+    StyleLength,
 )
 
 
@@ -41,8 +42,14 @@ class StyleBuilder:
         self.dimension(Dimension.HEIGHT, StyleSizeLength.points(value))
         return self
 
+    def size(self, width, height):
+        self.width(width)
+        self.height(height)
+        return self
+
     def margin(self, edge, value):
-        self.style.set_margin(edge, value)
+        #self.style.set_margin(edge, value)
+        self.style.set_margin(edge, StyleLength.points(value))
         return self
 
     def padding(self, edge, value):

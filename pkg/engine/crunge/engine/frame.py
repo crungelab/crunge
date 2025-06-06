@@ -8,8 +8,8 @@ from .view import View
 
 
 class Frame(Widget):
-    def __init__(self, layout: yoga.Layout = None, view: View = None) -> None:
-        super().__init__(layout)
+    def __init__(self, style: yoga.Style = yoga.Style(), view: View = None) -> None:
+        super().__init__(style)
         self._view = view
         self.view_stack: list[View] = []
 

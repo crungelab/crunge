@@ -13,16 +13,16 @@ from ..renderer import Renderer
 
 
 class Widget(Node["Widget"]):
-    def __init__(self, layout: yoga.Layout = None) -> None:
+    def __init__(self, style: yoga.Style = yoga.Style()) -> None:
         super().__init__()
-        if layout is None:
-            layout = yoga.Layout()
-        self.layout = layout
+        self.layout = yoga.Layout()
+        self.layout.set_style(style)
         self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         self._size = glm.ivec2(0, 0)
         self._controller: Controller = None
         self.parts: list[Part] = []
         self.priority = 0
+        self.hovered = False
         # self.on_dirty()
 
     def _create(self):
@@ -35,6 +35,17 @@ class Widget(Node["Widget"]):
         self.size = glm.ivec2(
             self.layout.get_computed_width(), self.layout.get_computed_height()
         )
+
+    @property
+    def style(self) -> yoga.Style:
+        return self.layout.get_style()
+    
+    @style.setter
+    def style(self, value: yoga.Style):
+        if not isinstance(value, yoga.Style):
+            raise TypeError(f"Expected yoga.Style, got {type(value)}")
+        self.layout.set_style(value)
+        #self.on_dirty()
 
     @property
     def position(self) -> glm.ivec2:
@@ -50,13 +61,7 @@ class Widget(Node["Widget"]):
 
     @property
     def bounds(self) -> yoga.Bounds:
-        bounds = self.layout.get_computed_bounds()
-        left = bounds.left
-        top = bounds.top
-        width = bounds.width
-        height = bounds.height
-        print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
-        return bounds
+        return self.layout.get_computed_bounds()
 
     @size.setter
     def size(self, value: glm.ivec2):
@@ -67,6 +72,7 @@ class Widget(Node["Widget"]):
         self.layout.set_width(value.x)
         self.layout.set_height(value.y)
         self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
+
         if changed:
             logger.debug(f"Widget size changed: {self}, {self.size}")
             self.on_size()
@@ -155,9 +161,16 @@ class Widget(Node["Widget"]):
         return None
 
     def on_attached(self):
-        logger.debug(f"Widget.on_attached: {self}")
-        logger.debug(f"Parent: {self.parent}")
-        logger.debug(f"Widget layout: {self.layout}")
-        logger.debug(f"Parent layout: {self.parent.layout}")
+        #logger.debug(f"Widget.on_attached: {self}")
+        #logger.debug(f"Parent: {self.parent}")
+        #logger.debug(f"Widget layout: {self.layout}")
+        #logger.debug(f"Parent layout: {self.parent.layout}")
         self.parent.layout.add_child(self.layout)
         super().on_attached()  # Call the parent method to ensure proper attachment behavior
+
+    def hit_test(self, x: float, y: float) -> bool:
+        position = self.position
+        size = self.size
+        if position.x <= x <= position.x + size.x and position.y <= y <= position.y + size.y:
+            return True
+        return False

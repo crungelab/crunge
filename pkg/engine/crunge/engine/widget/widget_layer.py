@@ -1,5 +1,9 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
 
+from loguru import logger
+
+from crunge import yoga
+
 from .. import Renderer
 from . import Widget
 
@@ -12,9 +16,24 @@ if TYPE_CHECKING:
 class WidgetLayer(ViewLayer):
     def __init__(self):
         super().__init__("WidgetLayer", priority=950)
-        #self.root: Widget = None
-        self.root: Widget = Widget()
+        #self.root: Widget = Widget()
 
+    def draw(self, renderer: Renderer) -> None:
+        with renderer.canvas_target() as canvas:
+            super().draw(renderer)
+
+    def update(self, dt: float) -> None:
+        super().update(dt)
+        self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
+        bounds = self.bounds
+
+        left = bounds.left
+        top = bounds.top
+        width = bounds.width
+        height = bounds.height
+        #print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
+
+    '''
     @property
     def nodes(self):
         return self.root.children
@@ -40,3 +59,4 @@ class WidgetLayer(ViewLayer):
 
     def detach(self, node: Widget) -> None:
         self.root.detach(node)
+    '''
