@@ -10,6 +10,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge.imgui import Key
 
+from ..viewport import ViewportListener
 from ..view_layer import ViewLayer
 
 from .vu import ImGuiVu
@@ -27,7 +28,7 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
     return 1.0, 1.0
 
 
-class ImGuiLayer(ViewLayer):
+class ImGuiLayer(ViewLayer, ViewportListener):
     context = None
     vu: ImGuiVu = None
 
@@ -48,11 +49,19 @@ class ImGuiLayer(ViewLayer):
     def _create(self):
         super()._create()
         self.vu = ImGuiVu()
+        self.window.viewport.add_listener(self)
         self._set_pixel_ratio()
 
+    def on_viewport_size(self, size: glm.ivec2):
+        logger.debug(f"ImGuiLayer.on_size: {size}")
+        self._set_pixel_ratio()
+
+    '''
     def on_size(self):
         super().on_size()
+        logger.debug(f"ImGuiLayer.on_size: {self.size}")
         self._set_pixel_ratio()
+    '''
 
     def _set_pixel_ratio(self):
         window_size = self.window.get_size()

@@ -8,7 +8,7 @@ from crunge.core.event_source import Subscription
 
 from crunge import wgpu
 
-from ..viewport import Viewport
+from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
 
 from .node_3d import Node3D
@@ -23,7 +23,7 @@ class CameraProgram3D(Program3D):
     pass
 
 
-class Camera3D(Node3D):
+class Camera3D(Node3D, ViewportListener):
     def __init__(
         self,
         size=glm.ivec2(),
@@ -79,9 +79,12 @@ class Camera3D(Node3D):
     def viewport(self, viewport: Viewport):
         self._viewport = viewport
         if viewport is not None:
+            '''
             self.viewport_size_subscription = viewport.size_events.subscribe(
                 self.on_viewport_size
             )
+            '''
+            viewport.add_listener(self)
 
     def on_viewport_size(self, size: glm.ivec2):
         self.size = size

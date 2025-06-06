@@ -17,24 +17,52 @@ class Widget(Node["Widget"]):
         super().__init__()
         self.layout = yoga.Layout()
         self.layout.set_style(style)
+        self.layout.set_dirtied_func(self.mark_layout_dirty)
         self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         self._size = glm.ivec2(0, 0)
         self._controller: Controller = None
         self.parts: list[Part] = []
         self.priority = 0
         self.hovered = False
-        # self.on_dirty()
+        self.layout_dirty = False
 
     def _create(self):
         super()._create()
-        # self.on_dirty()
 
-    def on_dirty(self):
-        # logger.debug(f"Widget.on_dirty: {self}, {self.layout}")
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
-        self.size = glm.ivec2(
+    def mark_layout_dirty(self):
+        logger.debug(f"Widget.mark_layout_dirty: {self}")
+        self.layout_dirty = True
+
+    def apply_layout(self):
+        #logger.debug(f"Widget.apply_layout: {self}")
+        if not self.layout_dirty:
+            return
+
+        self.on_layout()
+        self.layout_dirty = False
+
+        for child in self.children:
+            child.apply_layout()
+
+    '''
+    def apply_layout(self):
+        #logger.debug(f"Widget.apply_layout: {self}")
+        if not self.layout.has_new_layout():
+            return
+
+        self.on_layout()
+        self.layout.mark_layout_seen()
+
+        for child in self.children:
+            child.apply_layout()
+    '''
+
+    def on_layout(self):
+        logger.debug(f"Widget.on_layout: {self}")
+        #self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
+        self._set_size(glm.ivec2(
             self.layout.get_computed_width(), self.layout.get_computed_height()
-        )
+        ))
 
     @property
     def style(self) -> yoga.Style:
@@ -45,7 +73,6 @@ class Widget(Node["Widget"]):
         if not isinstance(value, yoga.Style):
             raise TypeError(f"Expected yoga.Style, got {type(value)}")
         self.layout.set_style(value)
-        #self.on_dirty()
 
     @property
     def position(self) -> glm.ivec2:
@@ -63,6 +90,28 @@ class Widget(Node["Widget"]):
     def bounds(self) -> yoga.Bounds:
         return self.layout.get_computed_bounds()
 
+    def _set_size(self, value: glm.ivec2) -> bool:
+        logger.debug(f"Widget._set_size: {self}, {value}")
+        if not isinstance(value, glm.ivec2):
+            raise TypeError(f"Expected glm.ivec2, got {type(value)}")
+        changed = self._size != value
+        self._size = value
+
+        if changed:
+            logger.debug(f"Widget size changed: {self}, {self.size}")
+            self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
+            self.on_size()
+
+        return changed
+
+    @size.setter
+    def size(self, value: glm.ivec2):
+        self.layout.set_width(value.x)
+        self.layout.set_height(value.y)
+        #self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
+        self._set_size(value)
+
+    '''
     @size.setter
     def size(self, value: glm.ivec2):
         if not isinstance(value, glm.ivec2):
@@ -76,6 +125,7 @@ class Widget(Node["Widget"]):
         if changed:
             logger.debug(f"Widget size changed: {self}, {self.size}")
             self.on_size()
+    '''
 
     def on_size(self):
         pass

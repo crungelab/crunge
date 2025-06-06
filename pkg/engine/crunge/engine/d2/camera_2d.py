@@ -10,7 +10,7 @@ from crunge.core.event_source import Subscription
 
 from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
-from ..viewport import Viewport
+from ..viewport import Viewport, ViewportListener
 
 from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
@@ -23,7 +23,7 @@ class CameraProgram2D(Program2D):
     pass
 
 
-class Camera2D(Node2D):
+class Camera2D(Node2D, ViewportListener):
     def __init__(self, position=glm.vec3(0.0, 0.0, 2), viewport_size=glm.vec2(1024, 768), zoom=1.0):
         self._zoom = zoom
         self.uniform_buffer: wgpu.Buffer = None
@@ -36,12 +36,11 @@ class Camera2D(Node2D):
 
         self._viewport: Viewport = None
         self.viewport_size = viewport_size
-        self.viewport_size_subscription: Subscription[glm.ivec2] = None
+        #self.viewport_size_subscription: Subscription[glm.ivec2] = None
 
         self.create_buffers()
         self.create_bind_groups()
 
-        #super().__init__(position, size)
         super().__init__(position)
 
     @property
@@ -53,9 +52,12 @@ class Camera2D(Node2D):
         self._viewport = viewport
         if viewport is not None:
             self.on_viewport_size(viewport.size)
+            viewport.add_listener(self)
+            '''
             self.viewport_size_subscription = viewport.size_events.subscribe(
                 self.on_viewport_size
             )
+            '''
 
     @property
     def zoom(self):

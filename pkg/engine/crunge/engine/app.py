@@ -1,5 +1,6 @@
 from typing import List, Dict
 import sys, time
+import math
 
 from loguru import logger
 import glm
@@ -7,7 +8,7 @@ import glm
 from crunge import sdl
 from crunge import yoga
 
-from .window import Window
+from .window import Window, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from .scheduler import Scheduler
 from .service import Service
 
@@ -17,9 +18,14 @@ sdl.init(sdl.InitFlags.INIT_VIDEO)
 
 class App(Window):
     def __init__(
-        self, style: yoga.Style = yoga.Style(), title="", view=None, resizable=False
+        self,
+        width: int = DEFAULT_WIDTH,
+        height: int = DEFAULT_HEIGHT,
+        title: str = "Crunge App",
+        view=None,
+        resizable=False,
     ):
-        super().__init__(style, title, view=view, resizable=resizable)
+        super().__init__(width, height, title, view=view, resizable=resizable)
         self.running = False
         self.services: List[Service] = []
         self.add_service(Scheduler())
@@ -31,8 +37,8 @@ class App(Window):
         self.services.remove(service)
 
     def create_window(self):
-        #success = sdl.init(sdl.InitFlags.INIT_VIDEO)
-        #logger.debug(f"SDL_Init: {success}")
+        # success = sdl.init(sdl.InitFlags.INIT_VIDEO)
+        # logger.debug(f"SDL_Init: {success}")
         super().create_window()
 
     def quit(self):
@@ -63,6 +69,7 @@ class App(Window):
             frame_time = now - last_time
 
             # Game update & render
+            self.apply_layout()
             self.update(frame_time)
             self.frame()
 
@@ -78,6 +85,10 @@ class App(Window):
         sdl.stop_text_input(self.window)
         return self
 
+    def apply_layout(self):
+        self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
+        return super().apply_layout()
+    
     def update(self, delta_time: float):
         for service in self.services:
             service.update(delta_time)

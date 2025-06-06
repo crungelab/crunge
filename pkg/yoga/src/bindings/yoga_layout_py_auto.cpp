@@ -26,24 +26,6 @@ void init_yoga_layout_py_auto(py::module &_yoga, Registry &registry) {
     ;
 
 
-    py::class_<MeasureCallback> MeasureCallback(_yoga, "MeasureCallback");
-    registry.on(_yoga, "MeasureCallback", MeasureCallback);
-        MeasureCallback
-        .def("measure", &MeasureCallback::measure
-            , py::arg("width")
-            , py::arg("width_mode")
-            , py::arg("height")
-            , py::arg("height_mode")
-            , py::return_value_policy::automatic_reference)
-    ;
-
-    py::class_<DirtiedCallback> DirtiedCallback(_yoga, "DirtiedCallback");
-    registry.on(_yoga, "DirtiedCallback", DirtiedCallback);
-        DirtiedCallback
-        .def("dirtied", &DirtiedCallback::dirtied
-            , py::return_value_policy::automatic_reference)
-    ;
-
     py::class_<Layout> Layout(_yoga, "Layout");
     registry.on(_yoga, "Layout", Layout);
         Layout

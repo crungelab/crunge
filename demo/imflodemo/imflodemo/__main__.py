@@ -2,9 +2,9 @@ import os, sys
 
 sys.path.append(os.getcwd())
 
-from imflodemo import App
+from imflodemo import ImFloDemo
 
-app = App().create()
+app = ImFloDemo().create()
 
 app.use('basic')
 app.use('connect')

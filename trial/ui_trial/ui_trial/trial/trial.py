@@ -1,12 +1,11 @@
 from pathlib import Path
 
 from loguru import logger
-import glm
 
 from crunge import engine
-from crunge.yoga import StyleBuilder
 
 from .trial_view import TrialView
+
 
 class Trial(engine.App):
     view: TrialView
@@ -16,9 +15,12 @@ class Trial(engine.App):
 
     def __init__(self, view=TrialView()):
         super().__init__(
-            StyleBuilder().size(self.kWidth, self.kHeight).build(),
+            self.kWidth,
+            self.kHeight,
             self.__class__.__name__,
             view=view,
             resizable=True,
         )
-        self.resource_root = Path(__file__).parent.parent.parent.parent.parent / "resources"
+        self.resource_root = (
+            Path(__file__).parent.parent.parent.parent.parent / "resources"
+        )

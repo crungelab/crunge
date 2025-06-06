@@ -23,11 +23,13 @@ class View(Widget):
     def layers(self) -> List[ViewLayer]:
         return self.children
 
+    '''
     def on_size(self):
         super().on_size()
         for layer in self.layers:
             layer.size = self.size
             logger.debug(f"View.on_size: {self.size}, layer: {layer.name}")
+    '''
 
     def _create(self):
         #logger.debug("View.create")

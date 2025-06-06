@@ -15,13 +15,10 @@ from .demo_view import DemoView
 
 class Demo(engine.App):
     view: DemoView
-    kWidth = 1024
-    kHeight = 768
 
     def __init__(self):
         super().__init__(
-            glm.ivec2(self.kWidth, self.kHeight),
-            self.__class__.__name__,
+            title=self.__class__.__name__,
             resizable=True,
         )
 

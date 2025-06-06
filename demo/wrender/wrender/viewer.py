@@ -29,11 +29,8 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS")) / "Models"
 class Viewer(engine.App):
     view: View3D
 
-    kWidth = 1024
-    kHeight = 768
-
     def __init__(self):
-        super().__init__(glm.ivec2(self.kWidth, self.kHeight), "WRender", resizable=True)
+        super().__init__(title="WRender", resizable=True)
         self.delta_time = 0
 
     @property
@@ -124,7 +121,7 @@ class Viewer(engine.App):
                     "Exit", "Ctrl+Q", False, True
                 )
                 if clicked_exit:
-                    exit(1)
+                    self.quit()
 
                 imgui.end_menu()
 

@@ -24,10 +24,12 @@ class Frame(Widget):
         self.attach(view)
         view.enable()
 
+    '''
     def on_size(self):
         super().on_size()
         if self.view is not None:
             self.view.size = self.size
+    '''
 
     def _create(self):
         super()._create()

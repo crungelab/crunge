@@ -4,5 +4,6 @@
 -e ../../pkg/imnodes
 -e ../../pkg/wgpu
 -e ../../pkg/skia
+-e ../../pkg/yoga
 -e ../../pkg/sdl
 -e ../../pkg/engine

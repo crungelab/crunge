@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
+
 import glm
 
 from crunge.core.event_source import EventSource
@@ -5,6 +7,10 @@ from crunge import wgpu
 from crunge import skia
 
 from ..base import Base
+
+class ViewportListener():
+    def on_viewport_size(self, viewport: "Viewport") -> None:
+        pass
 
 
 class Viewport(Base):
@@ -15,7 +21,8 @@ class Viewport(Base):
         use_msaa: bool = False,
     ):
         self._size = size
-        self.size_events = EventSource[glm.ivec2]()
+        #self.size_events = EventSource[glm.ivec2]()
+        self.listeners: List[ViewportListener] = []
 
         self.use_depth_stencil = use_depth_stencil
         self.use_msaa = use_msaa
@@ -37,6 +44,10 @@ class Viewport(Base):
 
         self.create_device_objects()
 
+    def add_listener(self, listener: ViewportListener) -> None:
+        if listener not in self.listeners:
+            self.listeners.append(listener)
+
     @property
     def size(self) -> glm.ivec2:
         return self._size
@@ -50,7 +61,9 @@ class Viewport(Base):
 
     def on_size(self) -> None:
         self.create_device_objects()
-        self.size_events.publish(self._size)
+        #self.size_events.publish(self._size)
+        for listener in self.listeners:
+            listener.on_viewport_size(self._size)
 
     @property
     def width(self) -> int:

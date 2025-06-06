@@ -34,7 +34,7 @@ namespace py = pybind11;
 #include <yoga/enums/Unit.h>
 #include <yoga/enums/Wrap.h>
 
-
+/*
 class MeasureCallback
 {
 public:
@@ -49,6 +49,7 @@ public:
   virtual ~DirtiedCallback() {}
   virtual void dirtied() = 0;
 };
+*/
 
 class Layout
 {
@@ -211,7 +212,7 @@ public: // Tree hierarchy inspectors
   Layout *getChild(unsigned index);
 
 public: // Measure func mutators
-  void setMeasureFunc(MeasureCallback *measureFunc);
+  void setMeasureFunc(py::function measureFunc);
   void unsetMeasureFunc(void);
 
 public: // Measure func inspectors
@@ -222,7 +223,7 @@ public: // Measure func inspectors
       int heightMode) const;
 
 public: // Dirtied func mutators
-  void setDirtiedFunc(DirtiedCallback *dirtiedFunc);
+  void setDirtiedFunc(py::function dirtiedFunc);
   void unsetDirtiedFunc(void);
 
 public: // Dirtied func inspectors
@@ -260,8 +261,13 @@ public:
 
   YGNodeRef m_node;
 
+  py::function m_measureFunc;
+  py::function m_dirtiedFunc;
+  
+  /*
   std::unique_ptr<MeasureCallback> m_measureFunc;
   std::unique_ptr<DirtiedCallback> m_dirtiedFunc;
+  */
 
   std::vector<pybind11::object> py_children;
 

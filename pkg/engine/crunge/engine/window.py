@@ -14,11 +14,14 @@ from .viewport import SurfaceViewport
 from .renderer import Renderer
 from .channel import Channel
 
+DEFAULT_WIDTH = 1280
+DEFAULT_HEIGHT = 720
 
 class Window(Frame):
     def __init__(
-        self, style: yoga.Style = yoga.Style(), title="", view=None, resizable=False
+        self, width: int = DEFAULT_WIDTH, height: int = DEFAULT_HEIGHT, title="", view=None, resizable=False
     ):
+        style = yoga.StyleBuilder().size(width, height).build()
         super().__init__(style, view=view)
         globals.set_current_window(self)
         self.name = title

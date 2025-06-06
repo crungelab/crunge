@@ -2,6 +2,7 @@
 -e ../../pkg/sdl
 -e ../../pkg/wgpu
 -e ../../pkg/skia
+-e ../../pkg/yoga
 -e ../../pkg/imgui
 -e ../../pkg/gltf
 -e ../../pkg/engine

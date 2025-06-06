@@ -24,7 +24,7 @@ class WidgetLayer(ViewLayer):
 
     def update(self, dt: float) -> None:
         super().update(dt)
-        self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
+        #self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
         bounds = self.bounds
 
         left = bounds.left
