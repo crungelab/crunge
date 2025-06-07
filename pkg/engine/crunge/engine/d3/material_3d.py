@@ -1,8 +1,6 @@
 from crunge import wgpu
 
-from ..resource.material import Material
-from ..resource.texture import Texture
-#from .bind_group_layout import BindGroupLayout
+from ..resource import Texture, Material
 
 
 class Material3D(Material):
@@ -14,7 +12,7 @@ class Material3D(Material):
         self.bind_group_layout: wgpu.BindGroupLayout = None
         self.bind_group: wgpu.BindGroup = None
 
-        self.alpha_mode: str = 'OPAQUE'
+        self.alpha_mode: str = "OPAQUE"
         self.alpha_cutoff: float = 0.5
         self.double_sided: bool = False
 
@@ -36,27 +34,27 @@ class Material3D(Material):
 
     @property
     def has_base_color_texture(self):
-        return self.has_texture('baseColor')
-    
+        return self.has_texture("baseColor")
+
     @property
     def has_metallic_roughness_texture(self):
-        return self.has_texture('metallicRoughness')
-    
+        return self.has_texture("metallicRoughness")
+
     @property
     def has_normal_texture(self):
-        return self.has_texture('normal')
+        return self.has_texture("normal")
 
     @property
     def has_occlusion_texture(self):
-        return self.has_texture('occlusion')
-    
+        return self.has_texture("occlusion")
+
     @property
     def has_emissive_texture(self):
-        return self.has_texture('emissive')
+        return self.has_texture("emissive")
 
     @property
     def has_environment_texture(self):
-        return self.has_texture('environment')
+        return self.has_texture("environment")
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(2, self.bind_group)

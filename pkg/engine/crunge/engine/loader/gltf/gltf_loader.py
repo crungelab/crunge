@@ -37,10 +37,10 @@ class GltfLoader(Loader):
 
     def load(self, scene_path:Path) -> Scene3D:
         loader = gltf.TinyGLTF()
-        logger.debug(f"loader: {loader}")
+        #logger.debug(f"loader: {loader}")
 
         self.tf_model = tf_model = gltf.Model()
-        logger.debug(f"tf_model_: {self.tf_model}")
+        #logger.debug(f"tf_model_: {self.tf_model}")
 
         self.create_context()
 

@@ -81,7 +81,7 @@ class SamplerBuilder(GltfBuilder):
 
         tf_sampler = self.tf_model.samplers[self.sampler_index]
 
-        logger.debug(f"Building sampler {tf_sampler.name} (index: {self.sampler_index})")
+        logger.debug(f"Building Sampler: {tf_sampler.name} (index: {self.sampler_index})")
 
         sampler_desc = wgpu.SamplerDescriptor(
             #address_mode_u=wgpu.AddressMode.REPEAT,

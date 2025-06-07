@@ -28,7 +28,7 @@ class MeshBuilder(GltfBuilder):
 
         self.tf_mesh: gltf.Mesh = self.tf_model.meshes[self.index]
 
-        logger.debug(f"Building mesh {self.tf_mesh.name} (index: {self.index})")
+        logger.debug(f"Building Mesh: {self.tf_mesh.name} (index: {self.index})")
 
         self.mesh = mesh = Mesh3D()
         self.build_primitives()

@@ -75,19 +75,19 @@ fn GetSurface(input : VertexOutput) -> Surface {
   let baseColor = material.baseColorFactor;
   {% endif %}
 
-  {%if alpha_mode == 'MASK' %}
-  if ((surface.baseColor.a < material.alphaCutoff)) {
-    // Violates uniformity analysis:
-    discard;
-  }
-  {% endif %}
-
   {% if material.has_base_color_texture %}
   let baseColorMap = linearSample(baseColorTexture, baseColorSampler, uv);
   surface.baseColor = baseColor * baseColorMap;
   {% else %}
   surface.baseColor = baseColor;
   {% endif %}
+
+  {%if alpha_mode == 'MASK' %}
+  if (surface.baseColor.a < material.alphaCutoff) {
+    discard;
+  }
+  {% endif %}
+
   surface.albedo = surface.baseColor.rgb;
 
   {% if material.has_metallic_roughness_texture %}

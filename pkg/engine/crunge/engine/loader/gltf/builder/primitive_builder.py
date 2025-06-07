@@ -53,7 +53,6 @@ class PrimitiveBuilder(GltfBuilder):
 
     def build_attributes(self):
         tf_primitive = self.tf_primitive
-        #attributes: dict = tf_primitive.attributes.copy()
         attributes: dict = tf_primitive.attributes
         pos = attributes.get("POSITION", None)
         if pos is not None:
@@ -107,7 +106,6 @@ class PrimitiveBuilder(GltfBuilder):
         elif name == "WEIGHTS_0":
             return
         else:
-            # logger.debug(f"Unknown attribute: {name}")
             raise Exception(f"Unknown attribute: {name}")
 
         # logger.debug(f"data: {data}")
@@ -240,13 +238,21 @@ class PrimitiveBuilder(GltfBuilder):
             targets=color_targets,
         )
 
-        depthStencilState = wgpu.DepthStencilState(
+        depth_write_enabled=True
+        if self.material.alpha_mode == "BLEND":
+            depth_write_enabled = False
+
+        depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
-            depth_write_enabled=True,
+            depth_write_enabled=depth_write_enabled,
             depth_compare=wgpu.CompareFunction.LESS,
         )
 
-        primitive = wgpu.PrimitiveState(cull_mode=wgpu.CullMode.BACK)
+        cull_mode = wgpu.CullMode.BACK
+        if self.material.double_sided:
+            cull_mode = wgpu.CullMode.NONE
+
+        primitive = wgpu.PrimitiveState(cull_mode=cull_mode)
 
         camera_bgl = self.program.camera_bind_group_layout
 
@@ -269,7 +275,7 @@ class PrimitiveBuilder(GltfBuilder):
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             primitive=primitive,
-            depth_stencil=depthStencilState,
+            depth_stencil=depth_stencil_state,
             multisample=multisample,
             fragment=fragmentState,
         )

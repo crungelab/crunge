@@ -18,17 +18,15 @@ class SceneBuilder(GltfBuilder):
         self.tf_scene = tf_scene
     
     def build(self) -> Scene3D:
+        logger.debug(f"Building Scene: {self.tf_scene.name}")
         self.build_nodes()
         return self.scene
     
     def build_nodes(self) -> None:
         for sc_node in self.tf_scene.nodes:
-            node = self.tf_model.nodes[sc_node]
-            self.build_node(node)
+            tf_node = self.tf_model.nodes[sc_node]
+            self.build_node(tf_node)
 
     def build_node(self, tf_node) -> None:
-        logger.debug(f"tf_node: {tf_node}")
-        #node_builder = NodeBuilder(self.tf_model, tf_node)
-        node_builder = PolyNodeBuilder(self.context, tf_node)
-        node = node_builder.build()
+        node = PolyNodeBuilder(self.context, tf_node).build()
         self.scene.primary_layer.attach(node)
