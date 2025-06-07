@@ -1,22 +1,31 @@
+from typing import Callable, List
 from ctypes import sizeof
 
 from loguru import logger
 import glm
 
 from crunge.core import klass
-from crunge.core.event_source import Subscription
+#from crunge.core.event_source import Subscription
 
 from crunge import wgpu
 
 from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
 
+from .renderer_3d import Renderer3D
 from .node_3d import Node3D
 from .uniforms_3d import (
     CameraUniform,
 )
 from .program_3d import Program3D
 
+
+DrawCallback = Callable[[Renderer3D], None]
+
+class DeferredDraw:
+    def __init__(self, node: Node3D, callback: DrawCallback):
+        self.node = node
+        self.callback = callback
 
 @klass.singleton
 class CameraProgram3D(Program3D):
@@ -46,7 +55,9 @@ class Camera3D(Node3D, ViewportListener):
         self._far = far
 
         self._viewport: Viewport = None
-        self.viewport_size_subscription: Subscription[glm.ivec2] = None
+        #self.viewport_size_subscription: Subscription[glm.ivec2] = None
+
+        self.deferred_draws: List[DeferredDraw] = []
 
         self.create_buffers()
         self.create_bind_group()
@@ -169,3 +180,16 @@ class Camera3D(Node3D, ViewportListener):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(0, self.bind_group)
+
+    def defer_draw(self, node: Node3D, callback: DrawCallback):
+        self.deferred_draws.append(DeferredDraw(node, callback))
+
+    def flush_deferred(self, renderer: Renderer3D):
+        # Optional: sort by depth
+        self.deferred_draws.sort(
+            key=lambda d: self.depth_of(d.node.center_in_world()),
+            reverse=True,
+        )
+        for d in self.deferred_draws:
+            d.callback(renderer)
+        self.deferred_draws.clear()

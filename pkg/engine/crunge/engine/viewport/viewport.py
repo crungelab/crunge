@@ -79,7 +79,6 @@ class Viewport(Base):
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.present()
-        return self
 
     def frame(self) -> None:
         pass

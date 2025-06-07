@@ -14,7 +14,6 @@ from ..uniforms import cast_vec3, cast_matrix4
 from .program_3d import Program3D
 from .node_3d import Node3D
 from .uniforms_3d import (
-    CameraUniform,
     ModelUniform,
 )
 from .mesh_3d import Mesh3D
@@ -28,10 +27,9 @@ class MeshInstance3DProgram(Program3D):
 
 class MeshInstance3D(Node3D):
     def __init__(self) -> None:
-        # super().__init__()
+        super().__init__()
         self.program = MeshInstance3DProgram()
         self.model_bind_group: wgpu.BindGroup = None
-        # self.mesh: Mesh3D = None
         self._mesh: Mesh3D = None
 
         # Uniform Buffers
@@ -42,7 +40,6 @@ class MeshInstance3D(Node3D):
             wgpu.BufferUsage.UNIFORM,
         )
         self.build_bindgroup()
-        super().__init__()
 
     @property
     def mesh(self) -> Mesh3D:

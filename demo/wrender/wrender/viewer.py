@@ -21,8 +21,6 @@ from crunge.engine.d3.scene_3d import Scene3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
 from crunge.engine.d3.view_3d import View3D
 
-#models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
-#models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS")) / "Models"
 
 

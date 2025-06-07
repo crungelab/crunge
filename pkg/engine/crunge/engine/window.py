@@ -107,18 +107,6 @@ class Window(Frame):
             logger.error(f"Error during frame: {e}")
             raise e
 
-    """
-    def frame(self):
-        self.viewport.frame()
-        self.renderer.viewport = self.viewport
-
-        self.pre_draw(self.renderer)
-        self.draw(self.renderer)
-        self.post_draw(self.renderer)
-
-        self.viewport.present()
-    """
-
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")
         match event.type:

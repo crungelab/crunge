@@ -6,25 +6,23 @@ import glm
 from crunge import wgpu
 from crunge import gltf
 
-from ..constants import SAMPLE_COUNT
+#from ..constants import SAMPLE_COUNT
 from ..debug import (
     debug_accessor,
     debug_material,
 )
 
-from crunge.engine.d3.primitive_3d import Primitive3D, Primitive3DProgram
+from ....d3.primitive_3d import Primitive3D, Primitive3DProgram
+from ....d3.material_3d import Material3D
+
+from ..normals import compute_normals
 
 from . import GltfBuilder
 from .builder_context import BuilderContext
-
 from .vertex_table import VertexTable
 from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, TangentColumn
-
 from .material_builder import MaterialBuilder
-
-from crunge.engine.d3.material_3d import Material3D
-
-from ..normals import compute_normals
+from .program_builder import ProgramBuilder
 
 
 class PrimitiveBuilder(GltfBuilder):
@@ -160,6 +158,7 @@ class PrimitiveBuilder(GltfBuilder):
         self.context.array_cache[accessor_index] = array
         return array
 
+    '''
     def build_vertex_attributes(self):
         logger.debug("Creating vertex attributes")
         vert_attributes = wgpu.VertexAttributes()
@@ -174,6 +173,7 @@ class PrimitiveBuilder(GltfBuilder):
             )
             offset += column.struct_size
         return vert_attributes
+    '''
 
     def build_material(self):
         if self.tf_primitive.material < 0:
@@ -183,6 +183,10 @@ class PrimitiveBuilder(GltfBuilder):
         self.material = MaterialBuilder(self.context, tf_primitive.material).build()
         self.primitive.material = self.material
 
+    def build_program(self):
+        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+
+    '''
     def build_program(self):
         logger.debug("Creating Program")
 
@@ -282,3 +286,4 @@ class PrimitiveBuilder(GltfBuilder):
         logger.debug("Creating render pipeline")
         self.program.pipeline = self.device.create_render_pipeline(rp_descriptor)
         self.primitive.program = self.program
+        '''

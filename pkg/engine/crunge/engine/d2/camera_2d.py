@@ -6,7 +6,7 @@ from loguru import logger
 
 from crunge import wgpu
 from crunge.core import klass
-from crunge.core.event_source import Subscription
+#from crunge.core.event_source import Subscription
 
 from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3, cast_vec2

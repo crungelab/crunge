@@ -1,27 +1,27 @@
 from loguru import logger
-import glm
-
-from crunge import wgpu
 
 from crunge.engine.imgui import ImGuiView
 
 from ..renderer import Renderer
 
+from .renderer_3d import Renderer3D
 from .scene_3d import Scene3D
 from .camera_3d import Camera3D
 
 
 class View3D(ImGuiView):
+    renderer: Renderer3D
+
     def __init__(self, scene: Scene3D) -> None:
         super().__init__()
         self.scene = scene
-        self.camera:Camera3D = None
+        self.camera: Camera3D = None
 
     def create_camera(self):
         self.camera = Camera3D(size=self.size)
 
     def create_renderer(self):
-        self.renderer = Renderer(self.window.viewport, camera_3d=self.camera)
+        self.renderer = Renderer3D(self.window.viewport, self.camera)
 
     def draw(self, renderer: Renderer):
         with self.renderer:

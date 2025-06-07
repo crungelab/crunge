@@ -20,6 +20,9 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         self._scale = glm.vec3(1.0)
         self._matrix = glm.mat4(1.0)
         self._transform = glm.mat4(1.0)
+        #self.update_matrix()
+
+    def _create(self):
         self.update_matrix()
 
     @property
