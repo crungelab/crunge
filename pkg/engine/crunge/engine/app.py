@@ -86,8 +86,10 @@ class App(Window):
         return self
 
     def apply_layout(self):
+        if not self.layout.is_dirty():
+            return
         self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
-        return super().apply_layout()
+        super().apply_layout()
     
     def update(self, delta_time: float):
         for service in self.services:

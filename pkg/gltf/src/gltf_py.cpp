@@ -68,7 +68,7 @@ py::object get_buffer_array(const tinygltf::Buffer& self, size_t byte_offset, si
     }
 }
 
-py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
+/*py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
     auto data = self.image.data();
     auto size = self.image.size();
     // Create a memory view of the existing image data
@@ -76,9 +76,30 @@ py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
         data,                                              // Pointer to data
         sizeof(unsigned char),                             // Size of each element
         py::format_descriptor<unsigned char>::format().c_str(),    // Format descriptor for NumPy
-        {size},                                            // Shape (1D)
+        //{size},                                            // Shape (1D)
+        {self.width, self.height}, // Shape (2D)
         {sizeof(unsigned char)}                            // Strides
     ));
+}*/
+
+py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
+    ssize_t height = self.height;
+    ssize_t width = self.width;
+    ssize_t channels = 4;  // RGBA, tinygltf uses 4 channels for typical color images
+    ssize_t itemsize = sizeof(unsigned char);
+
+    // Each row: width * 4 (channels) * 1 (byte per channel)
+    std::vector<ssize_t> shape = {height, width, channels};
+    std::vector<ssize_t> strides = {width * channels * itemsize, channels * itemsize, itemsize};
+
+    // Tinygltf uses std::vector<unsigned char> for image data, guaranteed contiguous
+    unsigned char* data = const_cast<unsigned char*>(self.image.data());
+
+    return py::array_t<unsigned char>(
+        shape,
+        strides,
+        data
+    );
 }
 
 // Wrapper function

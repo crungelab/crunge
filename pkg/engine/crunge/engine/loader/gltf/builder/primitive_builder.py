@@ -4,7 +4,6 @@ import numpy as np
 import glm
 
 from crunge import wgpu
-from crunge.wgpu import utils
 from crunge import gltf
 
 from ..constants import SAMPLE_COUNT
@@ -23,11 +22,9 @@ from .vertex_column import PosColumn, NormalColumn, UvColumn, RgbaColumn, Tangen
 
 from .material_builder import MaterialBuilder
 
-# from crunge.engine.resource.material import Material
 from crunge.engine.d3.material_3d import Material3D
 
 from ..normals import compute_normals
-from ..tangents import compute_tangents
 
 
 class PrimitiveBuilder(GltfBuilder):
@@ -56,7 +53,8 @@ class PrimitiveBuilder(GltfBuilder):
 
     def build_attributes(self):
         tf_primitive = self.tf_primitive
-        attributes: dict = tf_primitive.attributes.copy()
+        #attributes: dict = tf_primitive.attributes.copy()
+        attributes: dict = tf_primitive.attributes
         pos = attributes.get("POSITION", None)
         if pos is not None:
             self.build_attribute(("POSITION", pos))
@@ -72,7 +70,7 @@ class PrimitiveBuilder(GltfBuilder):
 
         if self.vertex_table.has("uv"):
             if not self.vertex_table.has("tangent"):
-                tangents = compute_tangents(
+                tangents = gltf.compute_tangents(
                     self.primitive.index_data,
                     self.vertex_table.get("pos").data,
                     self.vertex_table.get("uv").data,
@@ -181,8 +179,6 @@ class PrimitiveBuilder(GltfBuilder):
 
     def build_material(self):
         if self.tf_primitive.material < 0:
-            # self.material = Material3D()
-            # self.primitive.material = self.material
             return
         tf_primitive = self.tf_primitive
         logger.debug(f"primitive.material: {tf_primitive.material}")

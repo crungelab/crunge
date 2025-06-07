@@ -1,20 +1,23 @@
 import os
 from pathlib import Path
 
+from loguru import logger
 
 from crunge.engine.loader.gltf import GltfLoader
 
 from .viewer import Viewer
 
-#models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
-#models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS"))
 
 class WRender(Viewer):
     def __init__(self):
         super().__init__()
+        log_level = "DEBUG"
+        log_format = "<level>{level: <8}</level> | {file}:{line: >4} - {message}"
+        logger.add("wrender.log", mode="w", level=log_level, format=log_format, colorize=False, backtrace=True, diagnose=True)
 
     def run(self):
+        self.enable()
         #scene_path = models_root / "BoxVertexColors" / "glTF" / "BoxVertexColors.gltf"
         #scene_path = models_root / "BoxTextured" / "glTF" / "BoxTextured.gltf"
         #scene_path = models_root / "Cube" / "glTF" / "Cube.gltf"
@@ -66,7 +69,7 @@ class WRender(Viewer):
         super().run()
 
 def main():
-    WRender().create().run()
+    WRender().run()
 
 if __name__ == "__main__":
     main()

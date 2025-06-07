@@ -10,7 +10,6 @@ class Image(Resource):
 
     @property
     def size(self) -> glm.ivec2:
-        #return self.data.shape[:2]
         return glm.ivec2(self.width, self.height)
     
     @property

@@ -14,10 +14,6 @@ class PolyNodeBuilder(GltfBuilder):
         if (self.tf_node.mesh >= 0) and (self.tf_node.mesh < len(self.tf_model.meshes)):
             from .mesh_node_builder import MeshNodeBuilder
             builder = MeshNodeBuilder(self.context, self.tf_node)
-            '''
-            from .mesh_builder import MeshBuilder
-            builder = MeshBuilder(self.context, self.tf_node)
-            '''
         else:
             from .node_builder import NodeBuilder
             builder = NodeBuilder(self.context, self.tf_node)

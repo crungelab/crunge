@@ -26,6 +26,8 @@ class Material3D(Material):
         self.emissive_factor: tuple = (0, 0, 0)
 
     def add_texture(self, texture: Texture):
+        if texture.name in self.texture_set:
+            return
         self.textures.append(texture)
         self.texture_set.add(texture.name)
 

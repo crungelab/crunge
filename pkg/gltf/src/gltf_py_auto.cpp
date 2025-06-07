@@ -31,12 +31,6 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .export_values()
     ;
     _gltf
-    .def("get_component_size_in_bytes", &tinygltf::GetComponentSizeInBytes
-        , py::arg("component_type")
-        , py::return_value_policy::automatic_reference)
-    .def("get_num_components_in_type", &tinygltf::GetNumComponentsInType
-        , py::arg("ty")
-        , py::return_value_policy::automatic_reference)
     .def("is_data_uri", &tinygltf::IsDataURI
         , py::arg("in")
         , py::return_value_policy::automatic_reference)

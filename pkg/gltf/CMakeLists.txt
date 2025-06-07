@@ -7,7 +7,7 @@ include(../../cmake/Gltf.cmake)
 set(THIS crunge-gltf)
 set(MODULE gltf)
 
-project(${THIS} VERSION "0.1" LANGUAGES CXX)
+project(${THIS} VERSION "0.1" LANGUAGES CXX C)
 
 find_package(Python COMPONENTS Interpreter Development)
 
@@ -17,6 +17,8 @@ set(HEADERS
 set(SOURCES
     src/gltf_py_auto.cpp
     src/gltf_py.cpp
+    src/mikktspace/mikktspace.c
+    src/mikktspace_py.cpp
 )
 
 pybind11_add_module(${THIS} MODULE src/gltf_py_module.cpp)
