@@ -120,10 +120,8 @@ class ImGuiVu(Vu):
             "VERTEX",
             imgui.VERTEX_SIZE * 65536,
             wgpu.BufferUsage.VERTEX,
-            # self.device, "VERTEX", imgui.VERTEX_SIZE * 131072, wgpu.BufferUsage.VERTEX
         )
         self.index_buffer = utils.create_buffer(
-            # self.device, "INDEX", imgui.INDEX_SIZE * 65536, wgpu.BufferUsage.INDEX
             self.device,
             "INDEX",
             imgui.INDEX_SIZE * 131072,

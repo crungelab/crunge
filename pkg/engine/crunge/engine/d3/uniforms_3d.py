@@ -49,7 +49,39 @@ assert sizeof(AmbientLightUniform) % 16 == 0
 logger.debug(f"sizeof(AmbientLightUniform): {sizeof(AmbientLightUniform)}")
 assert sizeof(AmbientLightUniform) == 48
 
+'''
+class LightUniform(Structure):
+    _fields_ = [
+        ("position", Vec3),
+        ("color", Vec3),
+        ("range", c_float),
+        ("_pad1", c_float * 3), # pad to 16 bytes (range + 3*pad = 16)
+        ("energy", c_float),
+        ("_pad2", c_float * 3),
+        # ("_pad1", c_float * 2),
+    ]
 
+# Total size: 16 (position) + 16 (color) + 16 (rest) = 48 bytes, which is 3 * 16 bytes
+
+#assert sizeof(LightUniform) == 48
+assert sizeof(LightUniform) % 16 == 0
+'''
+
+class LightUniform(Structure):
+    _fields_ = [
+        ("position", Vec3),   # 16 bytes
+        ("color", Vec3),      # 16 bytes
+        ("range", c_float),   # 4 bytes
+        ("energy", c_float),  # 4 bytes
+        ("_pad1", c_float * 2),  # pad to 16 bytes (range + energy + 2*pad = 16)
+    ]
+
+# Total size: 16 (position) + 16 (color) + 16 (rest) = 48 bytes, which is 3 * 16 bytes
+
+assert sizeof(LightUniform) == 48
+assert sizeof(LightUniform) % 16 == 0
+
+'''
 class LightUniform(Structure):
     _fields_ = [
         ("position", Vec3),
@@ -63,3 +95,4 @@ class LightUniform(Structure):
 
 
 assert sizeof(LightUniform) % 16 == 0
+'''

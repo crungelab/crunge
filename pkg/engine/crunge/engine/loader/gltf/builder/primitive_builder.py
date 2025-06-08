@@ -97,6 +97,8 @@ class PrimitiveBuilder(GltfBuilder):
             self.vertex_table.add_column(TangentColumn("tangent", data))
         elif name == "TEXCOORD_0":
             self.vertex_table.add_column(UvColumn("uv", data))
+        elif name == "TEXCOORD_1":
+            self.vertex_table.add_column(UvColumn("uv1", data))
         elif name == "COLOR_0":
             self.vertex_table.add_column(RgbaColumn("color", data))
         elif name == "JOINTS_0":

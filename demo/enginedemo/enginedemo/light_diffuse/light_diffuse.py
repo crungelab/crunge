@@ -23,9 +23,18 @@ class DiffuseLightDemo(GltfDemo):
     def draw(self, renderer: Renderer):
         imgui.begin(self.title)
         light = self.scene.lighting.lights[0]
+
         changed, newColor = imgui.color_edit3("Diffuse Color", list(light.color))
         if changed:
             light.color = glm.vec3(newColor)
+
+        changed, energy = imgui.slider_float("Diffuse Energy", light.energy, 0.0, 100.0)
+        if changed:
+            light.energy = energy
+
+        changed, range = imgui.slider_float("Diffuse Range", light.range, 0.0, 100.0)
+        if changed:
+            light.range = range
 
         imgui.end()
 

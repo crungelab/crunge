@@ -41,8 +41,8 @@ class Gfx:
         shader_module = self.device.create_shader_module(sm_descriptor)
         return shader_module
 
-    def create_buffer(self, size: int, usage: wgpu.BufferUsage, data: bytes = None) -> wgpu.Buffer:
-        return utils.create_buffer(self.device, size, usage, data)
+    def create_buffer(self, label: str, size: int, usage: wgpu.BufferUsage) -> wgpu.Buffer:
+        return utils.create_buffer(self.device, label, size, usage)
     
     def create_buffer_from_ndarray(
         self, label: str, data: np.ndarray, usage: wgpu.BufferUsage

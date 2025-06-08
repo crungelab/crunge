@@ -16,8 +16,8 @@ class Light3D(Node3D):
     def __init__(self, position=glm.vec3()) -> None:
         super().__init__(position=position)
         self._color = glm.vec3(1.0, 1.0, 1.0)
-        self.energy = 1.0
-        self.range = 10.0
+        self._energy = 1.0
+        self._range = 10.0
 
         self.uniform_buffer_size = sizeof(LightUniform)
         self.uniform_buffer = self.gfx.create_buffer(
@@ -34,6 +34,24 @@ class Light3D(Node3D):
     @color.setter
     def color(self, color: glm.vec3):
         self._color = color
+        self.gpu_update_light()
+
+    @property
+    def energy(self):
+        return self._energy
+
+    @energy.setter
+    def energy(self, energy: float):
+        self._energy = energy
+        self.gpu_update_light()
+
+    @property
+    def range(self):
+        return self._range
+
+    @range.setter
+    def range(self, range: float):
+        self._range = range
         self.gpu_update_light()
 
     def on_attached(self):

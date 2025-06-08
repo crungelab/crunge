@@ -137,12 +137,12 @@ fn GetLight(input : VertexOutput) -> Light {
   light.kind = LightKind_Point;
   light.v = normalize(lightUniform.position - input.frag_pos);
   //light.v = lightUniform.position - input.frag_pos;
-  //light.color = lightUniform.color;
-  light.color = vec3<f32>(1.0, 1.0, 1.0);
-  //light.range = lightUniform.range;
-  light.range = 10.0;
-  //light.energy = lightUniform.energy;
-  light.energy = 10.0;
+  light.color = lightUniform.color;
+  //light.color = vec3<f32>(1.0, 1.0, 1.0);
+  light.range = lightUniform.range;
+  //light.range = 10.0;
+  light.energy = lightUniform.energy;
+  //light.energy = 10.0;
   return light;
 }
 

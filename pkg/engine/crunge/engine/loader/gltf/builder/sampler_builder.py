@@ -79,10 +79,29 @@ class SamplerBuilder(GltfBuilder):
         if self.sampler_index in self.context.sampler_cache:
             return self.context.sampler_cache[self.sampler_index]
 
-        tf_sampler = self.tf_model.samplers[self.sampler_index]
+        tf_sampler = self.tf_model.samplers[self.sampler_index] if self.sampler_index >= 0 else None
 
-        logger.debug(f"Building Sampler: {tf_sampler.name} (index: {self.sampler_index})")
+        #logger.debug(f"Building Sampler: {tf_sampler.name} (index: {self.sampler_index})")
 
+        address_mode_u = wrap_s_map[tf_sampler.wrap_s] if tf_sampler else wgpu.AddressMode.REPEAT
+        address_mode_v = wrap_t_map[tf_sampler.wrap_t] if tf_sampler else wgpu.AddressMode.REPEAT
+        # Default to LINEAR for min and mag filters if not specified
+        min_filter = min_filter_map.get(tf_sampler.min_filter, wgpu.FilterMode.LINEAR) if tf_sampler else wgpu.FilterMode.LINEAR
+        mag_filter = mag_filter_map.get(tf_sampler.mag_filter, wgpu.FilterMode.LINEAR) if tf_sampler else wgpu.FilterMode.LINEAR
+
+        sampler_desc = wgpu.SamplerDescriptor(
+            address_mode_u=address_mode_u,
+            address_mode_v=address_mode_v,
+            address_mode_w=wgpu.AddressMode.REPEAT,  # Assuming 2D texture, so W is not used
+            min_filter=min_filter,
+            mag_filter=mag_filter,
+            mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
+            lod_min_clamp=0,
+            lod_max_clamp=100,
+            compare=wgpu.CompareFunction.UNDEFINED,
+            #max_anisotropy=16,  # Optional, can be set if needed
+        )                             
+        '''
         sampler_desc = wgpu.SamplerDescriptor(
             #address_mode_u=wgpu.AddressMode.REPEAT,
             address_mode_u=wrap_s_map.get(tf_sampler.wrap_s, wgpu.AddressMode.REPEAT),
@@ -98,8 +117,9 @@ class SamplerBuilder(GltfBuilder):
             lod_min_clamp=0,
             lod_max_clamp=100,
             compare=wgpu.CompareFunction.UNDEFINED,
-            max_anisotropy=16,
+            #max_anisotropy=16,
         )
+        '''
 
         sampler = Sampler(self.gfx.device.create_sampler(sampler_desc))
 
