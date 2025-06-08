@@ -92,37 +92,16 @@ class SamplerBuilder(GltfBuilder):
         sampler_desc = wgpu.SamplerDescriptor(
             address_mode_u=address_mode_u,
             address_mode_v=address_mode_v,
-            address_mode_w=wgpu.AddressMode.REPEAT,  # Assuming 2D texture, so W is not used
+            #address_mode_w=wgpu.AddressMode.REPEAT,  # Assuming 2D texture, so W is not used
             min_filter=min_filter,
             mag_filter=mag_filter,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
             lod_min_clamp=0,
             lod_max_clamp=100,
-            compare=wgpu.CompareFunction.UNDEFINED,
+            #compare=wgpu.CompareFunction.UNDEFINED,
             #max_anisotropy=16,  # Optional, can be set if needed
         )                             
-        '''
-        sampler_desc = wgpu.SamplerDescriptor(
-            #address_mode_u=wgpu.AddressMode.REPEAT,
-            address_mode_u=wrap_s_map.get(tf_sampler.wrap_s, wgpu.AddressMode.REPEAT),
-            #address_mode_v=wgpu.AddressMode.REPEAT,
-            address_mode_v=wrap_t_map.get(tf_sampler.wrap_t, wgpu.AddressMode.REPEAT),
-            #address_mode_w=wgpu.AddressMode.REPEAT,
-            address_mode_w=wgpu.AddressMode.REPEAT,  # Assuming 2D texture, so W is not used
-            #min_filter=wgpu.FilterMode.LINEAR,
-            min_filter=min_filter_map.get(tf_sampler.min_filter, wgpu.FilterMode.LINEAR),
-            #mag_filter=wgpu.FilterMode.LINEAR,
-            mag_filter=mag_filter_map.get(tf_sampler.mag_filter, wgpu.FilterMode.LINEAR),
-            mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
-            lod_min_clamp=0,
-            lod_max_clamp=100,
-            compare=wgpu.CompareFunction.UNDEFINED,
-            #max_anisotropy=16,
-        )
-        '''
 
         sampler = Sampler(self.gfx.device.create_sampler(sampler_desc))
-
-        #sampler = None
         self.context.sampler_cache[self.sampler_index] = sampler
         return sampler

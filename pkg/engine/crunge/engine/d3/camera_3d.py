@@ -5,7 +5,6 @@ from loguru import logger
 import glm
 
 from crunge.core import klass
-#from crunge.core.event_source import Subscription
 
 from crunge import wgpu
 
@@ -41,7 +40,7 @@ class Camera3D(Node3D, ViewportListener):
         near=0.1,
         far=100.0,
     ):
-        #super().__init__(position)
+        super().__init__(position)
         self.view_matrix = glm.mat4(1.0)
         self.projection_matrix = glm.mat4(1.0)
         self._size = size
@@ -55,14 +54,11 @@ class Camera3D(Node3D, ViewportListener):
         self._far = far
 
         self._viewport: Viewport = None
-        #self.viewport_size_subscription: Subscription[glm.ivec2] = None
 
         self.deferred_draws: List[DeferredDraw] = []
 
         self.create_buffers()
         self.create_bind_group()
-
-        super().__init__(position)
 
     @property
     def near(self):
@@ -188,11 +184,11 @@ class Camera3D(Node3D, ViewportListener):
         return glm.distance(self.position, node.position)
 
     def flush_deferred(self, renderer: Renderer3D):
-        # Optional: sort by depth
+        # sort by depth
         self.deferred_draws.sort(
             key=lambda d: self.depth_of(d.node),
             reverse=True,
         )
         for d in self.deferred_draws:
-            d.callback(renderer, d.node)
+            d.callback(renderer)
         self.deferred_draws.clear()

@@ -1,3 +1,4 @@
+from loguru import logger
 from ctypes import sizeof
 
 import glm
@@ -23,9 +24,9 @@ class Light3D(Node3D):
         self.uniform_buffer = self.gfx.create_buffer(
             "Light Uniform Buffer",
             self.uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
+            wgpu.BufferUsage.UNIFORM | wgpu.BufferUsage.COPY_DST,
         )
-        self.gpu_update_light()
+        self.gpu_update_model()
 
     @property
     def color(self):
@@ -34,7 +35,7 @@ class Light3D(Node3D):
     @color.setter
     def color(self, color: glm.vec3):
         self._color = color
-        self.gpu_update_light()
+        self.gpu_update_model()
 
     @property
     def energy(self):
@@ -43,7 +44,7 @@ class Light3D(Node3D):
     @energy.setter
     def energy(self, energy: float):
         self._energy = energy
-        self.gpu_update_light()
+        self.gpu_update_model()
 
     @property
     def range(self):
@@ -52,7 +53,7 @@ class Light3D(Node3D):
     @range.setter
     def range(self, range: float):
         self._range = range
-        self.gpu_update_light()
+        self.gpu_update_model()
 
     def on_attached(self):
         self.scene.lighting.add_light(self)
@@ -60,17 +61,11 @@ class Light3D(Node3D):
     def on_detached(self):
         self.scene.lighting.remove_light(self)
 
-    def gpu_update_light(self):
+    def gpu_update_model(self):
+        super().gpu_update_model()
         light_uniform = LightUniform()
 
-        # light_uniform.position.x = self.position.x
-        # light_uniform.position.y = self.position.y
-        # light_uniform.position.z = self.position.z
         light_uniform.position = cast_vec3(self.position)
-
-        # light_uniform.color.x = self.color.x
-        # light_uniform.color.y = self.color.y
-        # light_uniform.color.z = self.color.z
         light_uniform.color = cast_vec3(self.color)
 
         light_uniform.range = self.range

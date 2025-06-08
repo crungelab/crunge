@@ -6,7 +6,6 @@ import glm
 from crunge import wgpu
 from crunge import gltf
 
-#from ..constants import SAMPLE_COUNT
 from ..debug import (
     debug_accessor,
     debug_material,
@@ -51,7 +50,7 @@ class PrimitiveBuilder(GltfBuilder):
 
     def build_attributes(self):
         tf_primitive = self.tf_primitive
-        attributes: dict = tf_primitive.attributes
+        attributes: dict = tf_primitive.attributes.copy()
         pos = attributes.get("POSITION", None)
         if pos is not None:
             self.build_attribute(("POSITION", pos))
@@ -185,13 +184,19 @@ class PrimitiveBuilder(GltfBuilder):
         self.material = MaterialBuilder(self.context, tf_primitive.material).build()
         self.primitive.material = self.material
 
+    '''
     def build_program(self):
-        if not self.material.alpha_mode == "BLEND":
+        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+        self.primitive.deferred = True
+
+    '''
+
+    def build_program(self):
+        if self.material.alpha_mode == "OPAQUE" or self.material.alpha_mode == "MASK":
             logger.debug("Creating Program for OPAQUE/MASK material")
             self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
             return
         
         logger.debug("Creating Program for BLEND material")
-        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material, write_color=False).build()
-        self.primitive.deferred_program = ProgramBuilder(self.context, self.vertex_table, self.material, write_depth=False).build()
-    
+        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+        self.primitive.deferred = True

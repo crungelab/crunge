@@ -93,8 +93,8 @@ fn GetSurface(input : VertexOutput) -> Surface {
   {% if material.has_metallic_roughness_texture %}
   let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
   surface.metallic = material.metallicFactor * metalRough.b;
-  //surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
-  surface.roughness = material.roughnessFactor * metalRough.g;
+  surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
+  //surface.roughness = material.roughnessFactor * metalRough.g;
 
   {% else %}
   surface.metallic = material.metallicFactor;
@@ -135,14 +135,14 @@ fn GetLight(input : VertexOutput) -> Light {
   //light.kind = LightKind_Spot;
   //light.kind = LightKind_Directional;
   light.kind = LightKind_Point;
-  light.v = normalize(lightUniform.position - input.frag_pos);
-  //light.v = lightUniform.position - input.frag_pos;
+  //light.v = normalize(lightUniform.position - input.frag_pos);
+  light.v = lightUniform.position - input.frag_pos;
   light.color = lightUniform.color;
   //light.color = vec3<f32>(1.0, 1.0, 1.0);
-  light.range = lightUniform.range;
-  //light.range = 10.0;
-  light.energy = lightUniform.energy;
-  //light.energy = 10.0;
+  //light.range = lightUniform.range;
+  light.range = 10.0;
+  //light.energy = lightUniform.energy;
+  light.energy = 20.0;
   return light;
 }
 

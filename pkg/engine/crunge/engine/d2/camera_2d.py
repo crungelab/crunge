@@ -6,7 +6,6 @@ from loguru import logger
 
 from crunge import wgpu
 from crunge.core import klass
-#from crunge.core.event_source import Subscription
 
 from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
@@ -36,7 +35,6 @@ class Camera2D(Node2D, ViewportListener):
 
         self._viewport: Viewport = None
         self.viewport_size = viewport_size
-        #self.viewport_size_subscription: Subscription[glm.ivec2] = None
 
         self.create_buffers()
         self.create_bind_groups()
@@ -53,11 +51,6 @@ class Camera2D(Node2D, ViewportListener):
         if viewport is not None:
             self.on_viewport_size(viewport.size)
             viewport.add_listener(self)
-            '''
-            self.viewport_size_subscription = viewport.size_events.subscribe(
-                self.on_viewport_size
-            )
-            '''
 
     @property
     def zoom(self):
@@ -99,12 +92,6 @@ class Camera2D(Node2D, ViewportListener):
         logger.debug(f"Camera2D: on_viewport_size: {size}")
         self.update_matrix()
 
-    '''
-    def on_size(self) -> None:
-        super().on_size()
-        self.update_matrix()
-    '''
-
     def update_matrix(self):
         super().update_matrix()
         viewport_size = self.viewport_size
@@ -125,26 +112,6 @@ class Camera2D(Node2D, ViewportListener):
         )
 
         self.update_gpu()
-
-    '''
-    def update_matrix(self):
-        super().update_matrix()
-        ortho_left = self.x - (self.width * self.zoom) / 2
-        ortho_right = self.x + (self.width * self.zoom) / 2
-        ortho_bottom = self.y - (self.height * self.zoom) / 2
-        ortho_top = self.y + (self.height * self.zoom) / 2
-
-        self.frustrum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
-
-        ortho_near = -1  # Near clipping plane
-        ortho_far = 1  # Far clipping plane
-
-        self.projection_matrix = glm.ortho(
-            ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far
-        )
-
-        self.update_gpu()
-    '''
         
     def update_gpu(self):
         camera_uniform = CameraUniform()

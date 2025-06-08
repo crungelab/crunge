@@ -31,6 +31,7 @@ class MeshInstance3D(Node3D):
         self.program = MeshInstance3DProgram()
         self.model_bind_group: wgpu.BindGroup = None
         self._mesh: Mesh3D = None
+        self.deferred = False
 
         # Uniform Buffers
         self.model_uniform_buffer_size = sizeof(ModelUniform)
@@ -86,14 +87,24 @@ class MeshInstance3D(Node3D):
 
         self.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
 
         for primitive in self.mesh.primitives:
-            primitive.draw(renderer, self)
+            primitive.draw(renderer)
 
         super().draw(renderer)
+
+    def draw(self, renderer: Renderer):
+        if self.deferred:
+            renderer.camera_3d.defer_draw(self, self.draw_deferred)
+            return
+
+        self._draw(renderer)
+
+    def draw_deferred(self, renderer: Renderer):
+        self._draw(renderer)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(3, self.model_bind_group)

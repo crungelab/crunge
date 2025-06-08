@@ -23,3 +23,6 @@ class MeshNodeBuilder(NodeBuilder):
     def build_node(self):
         super().build_node()
         self.node.mesh = MeshBuilder(self.context, self.tf_node.mesh).build()
+        for primitive in self.node.mesh.primitives:
+            if primitive.deferred:
+                self.node.deferred = True

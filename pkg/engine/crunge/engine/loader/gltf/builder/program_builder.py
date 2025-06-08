@@ -56,6 +56,7 @@ class ProgramBuilder(GltfBuilder):
         blend_state: wgpu.BlendState = None
 
         if self.material.alpha_mode == "BLEND" and self.write_color:
+            logger.debug("Using blend state for alpha mode 'BLEND'")
             blend_state = wgpu.BlendState(
                 color=wgpu.BlendComponent(
                     operation=wgpu.BlendOperation.ADD,
@@ -69,7 +70,8 @@ class ProgramBuilder(GltfBuilder):
                 ),
             )
 
-        write_mask = wgpu.ColorWriteMask.ALL if self.write_color else wgpu.ColorWriteMask.NONE
+        #write_mask = wgpu.ColorWriteMask.ALL if self.write_color else wgpu.ColorWriteMask.NONE
+        write_mask = wgpu.ColorWriteMask.ALL
         logger.debug(f"Color write mask: {write_mask}")
 
         color_targets = [
@@ -89,10 +91,12 @@ class ProgramBuilder(GltfBuilder):
         depth_write_enabled = self.write_depth
         logger.debug(f"Depth write enabled: {depth_write_enabled}")
 
+        depth_compare = wgpu.CompareFunction.LESS_EQUAL if depth_write_enabled else wgpu.CompareFunction.NEVER
+
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
             depth_write_enabled=depth_write_enabled,
-            depth_compare=wgpu.CompareFunction.LESS,
+            depth_compare=depth_compare,
         )
 
         cull_mode = wgpu.CullMode.NONE if self.material.double_sided else wgpu.CullMode.BACK
