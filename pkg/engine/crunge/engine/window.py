@@ -94,7 +94,6 @@ class Window(Frame):
         pass
 
     def create_viewport(self):
-        # self.viewport = SurfaceViewport(self.size, self.window)
         self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True)
 
     def frame(self):

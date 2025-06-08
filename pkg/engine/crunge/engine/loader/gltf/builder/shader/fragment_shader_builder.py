@@ -1,11 +1,9 @@
-from textwrap import dedent
-
 from loguru import logger
 
 from crunge import wgpu
 
 from crunge.engine.resource.texture.cube_texture import CubeTexture
-from .....resource.material import Material
+from crunge.engine.d3.material_3d import Material3D
 
 from ..vertex_table import VertexTable
 from ..builder_context import BuilderContext
@@ -21,7 +19,7 @@ class Binding:
         self.group = group
 
 class FragmentShaderBuilder(ShaderBuilder):
-    def __init__(self, context: BuilderContext, vertex_table: VertexTable, material: Material) -> None:
+    def __init__(self, context: BuilderContext, vertex_table: VertexTable, material: Material3D) -> None:
         super().__init__(context, vertex_table)
         self.material = material
         self.bindings: list[Binding] = []

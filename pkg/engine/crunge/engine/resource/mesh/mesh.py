@@ -11,6 +11,7 @@ class Mesh(Resource):
         self.primitives: List[Primitive] = []
 
     def add_primitive(self, primitive: Primitive):
+        primitive.mesh = self
         self.primitives.append(primitive)
         self.compute_bounds()
 

@@ -184,106 +184,12 @@ class PrimitiveBuilder(GltfBuilder):
         self.primitive.material = self.material
 
     def build_program(self):
-        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
-
-    '''
-    def build_program(self):
-        logger.debug("Creating Program")
-
-        vs_module: wgpu.ShaderModule = self.context.vertex_shader_builder_class(
-            self.context, self.vertex_table
-        ).build()
-        fs_module: wgpu.ShaderModule = self.context.fragment_shader_builder_class(
-            self.context, self.vertex_table, self.material
-        ).build()
-
-        vertAttributes = self.build_vertex_attributes()
-
-        vertBufferLayouts = [
-            wgpu.VertexBufferLayout(
-                array_stride=self.vertex_table.vertex_size,
-                attributes=vertAttributes,
-            )
-        ]
-
-        vertex_state = wgpu.VertexState(
-            module=vs_module,
-            entry_point="vs_main",
-            buffers=vertBufferLayouts,
-        )
-
-        blend_state: wgpu.BlendState = None
-
-        if self.material.alpha_mode == "BLEND":
-            blend_state = wgpu.BlendState(
-                alpha=wgpu.BlendComponent(
-                    operation=wgpu.BlendOperation.ADD,
-                    src_factor=wgpu.BlendFactor.ONE,
-                    dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-                ),
-                color=wgpu.BlendComponent(
-                    operation=wgpu.BlendOperation.ADD,
-                    src_factor=wgpu.BlendFactor.SRC_ALPHA,
-                    dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-                ),
-            )
-
-        color_targets = [
-            wgpu.ColorTargetState(
-                format=wgpu.TextureFormat.BGRA8_UNORM,
-                blend=blend_state,
-                write_mask=wgpu.ColorWriteMask.ALL,
-            )
-        ]
-
-        fragmentState = wgpu.FragmentState(
-            module=fs_module,
-            entry_point="fs_main",
-            targets=color_targets,
-        )
-
-        depth_write_enabled=True
-        if self.material.alpha_mode == "BLEND":
-            depth_write_enabled = False
-
-        depth_stencil_state = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH24_PLUS,
-            depth_write_enabled=depth_write_enabled,
-            depth_compare=wgpu.CompareFunction.LESS,
-        )
-
-        cull_mode = wgpu.CullMode.BACK
-        if self.material.double_sided:
-            cull_mode = wgpu.CullMode.NONE
-
-        primitive = wgpu.PrimitiveState(cull_mode=cull_mode)
-
-        camera_bgl = self.program.camera_bind_group_layout
-
-        light_bgl = self.program.light_bind_group_layout
-
-        material_bgl = self.material.bind_group_layout
-
-        model_bgl = self.program.model_bind_group_layout
-
-        bind_group_layouts = [camera_bgl, light_bgl, material_bgl, model_bgl]
-
-        pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=bind_group_layouts)
-
-        multisample = wgpu.MultisampleState(
-            count=SAMPLE_COUNT,
-        )
-
-        rp_descriptor = wgpu.RenderPipelineDescriptor(
-            label="Main Render Pipeline",
-            layout=self.device.create_pipeline_layout(pl_desc),
-            vertex=vertex_state,
-            primitive=primitive,
-            depth_stencil=depth_stencil_state,
-            multisample=multisample,
-            fragment=fragmentState,
-        )
-        logger.debug("Creating render pipeline")
-        self.program.pipeline = self.device.create_render_pipeline(rp_descriptor)
-        self.primitive.program = self.program
-        '''
+        if not self.material.alpha_mode == "BLEND":
+            logger.debug("Creating Program for OPAQUE/MASK material")
+            self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+            return
+        
+        logger.debug("Creating Program for BLEND material")
+        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material, write_color=False).build()
+        self.primitive.deferred_program = ProgramBuilder(self.context, self.vertex_table, self.material, write_depth=False).build()
+    

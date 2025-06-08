@@ -49,10 +49,6 @@ class TextureBuilder(Builder):
             mag_filter=wgpu.FilterMode.LINEAR,
             min_filter=wgpu.FilterMode.LINEAR,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
-            #lod_min_clamp=0,
-            #lod_max_clamp=100,
-            #compare=wgpu.CompareFunction.UNDEFINED,
-            #anisotropy=16,
         )
 
         self.texture.sampler = self.device.create_sampler(sampler_desc)

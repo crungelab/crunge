@@ -9,7 +9,6 @@ import glm
 
 from ..math import Bounds3
 from ..scene_node import SceneNode
-#from .vu_3d import Vu3D
 
 class Node3D(SceneNode["Node3D", "Scene3D"]):
     def __init__(self, position = glm.vec3()) -> None:

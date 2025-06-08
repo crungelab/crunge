@@ -184,12 +184,15 @@ class Camera3D(Node3D, ViewportListener):
     def defer_draw(self, node: Node3D, callback: DrawCallback):
         self.deferred_draws.append(DeferredDraw(node, callback))
 
+    def depth_of(self, node: Node3D) -> float:
+        return glm.distance(self.position, node.position)
+
     def flush_deferred(self, renderer: Renderer3D):
         # Optional: sort by depth
         self.deferred_draws.sort(
-            key=lambda d: self.depth_of(d.node.center_in_world()),
+            key=lambda d: self.depth_of(d.node),
             reverse=True,
         )
         for d in self.deferred_draws:
-            d.callback(renderer)
+            d.callback(renderer, d.node)
         self.deferred_draws.clear()

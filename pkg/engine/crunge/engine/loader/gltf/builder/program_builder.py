@@ -1,10 +1,7 @@
 from loguru import logger
 
-import numpy as np
-
 from crunge import wgpu
 
-from ....resource.image import Image
 from ....d3.material_3d import Material3D
 from ....d3.primitive_3d import Primitive3DProgram
 
@@ -17,11 +14,18 @@ from .vertex_table import VertexTable
 
 class ProgramBuilder(GltfBuilder):
     def __init__(
-        self, context: BuilderContext, vertex_table: VertexTable, material: Material3D
+        self,
+        context: BuilderContext,
+        vertex_table: VertexTable,
+        material: Material3D,
+        write_depth: bool = True,
+        write_color: bool = True,
     ) -> None:
         super().__init__(context)
         self.vertex_table = vertex_table
         self.material = material
+        self.write_depth = write_depth
+        self.write_color = write_color
         self.program = Primitive3DProgram()
 
     def build(self) -> Primitive3DProgram:
@@ -51,37 +55,39 @@ class ProgramBuilder(GltfBuilder):
 
         blend_state: wgpu.BlendState = None
 
-        if self.material.alpha_mode == "BLEND":
+        if self.material.alpha_mode == "BLEND" and self.write_color:
             blend_state = wgpu.BlendState(
-                alpha=wgpu.BlendComponent(
-                    operation=wgpu.BlendOperation.ADD,
-                    src_factor=wgpu.BlendFactor.ONE,
-                    dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-                ),
                 color=wgpu.BlendComponent(
                     operation=wgpu.BlendOperation.ADD,
                     src_factor=wgpu.BlendFactor.SRC_ALPHA,
                     dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
                 ),
+                alpha=wgpu.BlendComponent(
+                    operation=wgpu.BlendOperation.ADD,
+                    src_factor=wgpu.BlendFactor.ONE,
+                    dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+                ),
             )
+
+        write_mask = wgpu.ColorWriteMask.ALL if self.write_color else wgpu.ColorWriteMask.NONE
+        logger.debug(f"Color write mask: {write_mask}")
 
         color_targets = [
             wgpu.ColorTargetState(
                 format=wgpu.TextureFormat.BGRA8_UNORM,
                 blend=blend_state,
-                write_mask=wgpu.ColorWriteMask.ALL,
+                write_mask=write_mask,
             )
         ]
 
-        fragmentState = wgpu.FragmentState(
+        fragment_state = wgpu.FragmentState(
             module=fs_module,
             entry_point="fs_main",
             targets=color_targets,
         )
 
-        depth_write_enabled=True
-        if self.material.alpha_mode == "BLEND":
-            depth_write_enabled = False
+        depth_write_enabled = self.write_depth
+        logger.debug(f"Depth write enabled: {depth_write_enabled}")
 
         depth_stencil_state = wgpu.DepthStencilState(
             format=wgpu.TextureFormat.DEPTH24_PLUS,
@@ -89,10 +95,9 @@ class ProgramBuilder(GltfBuilder):
             depth_compare=wgpu.CompareFunction.LESS,
         )
 
-        cull_mode = wgpu.CullMode.BACK
-        if self.material.double_sided:
-            cull_mode = wgpu.CullMode.NONE
-
+        cull_mode = wgpu.CullMode.NONE if self.material.double_sided else wgpu.CullMode.BACK
+        logger.debug(f"Cull mode: {cull_mode}")
+    
         primitive = wgpu.PrimitiveState(cull_mode=cull_mode)
 
         bind_group_layouts = [
@@ -115,7 +120,7 @@ class ProgramBuilder(GltfBuilder):
             primitive=primitive,
             depth_stencil=depth_stencil_state,
             multisample=multisample,
-            fragment=fragmentState,
+            fragment=fragment_state,
         )
         logger.debug("Creating render pipeline")
         self.program.pipeline = self.device.create_render_pipeline(rp_descriptor)

@@ -89,8 +89,9 @@ class MeshInstance3D(Node3D):
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
+
         for primitive in self.mesh.primitives:
-            primitive.draw(renderer)
+            primitive.draw(renderer, self)
 
         super().draw(renderer)
 

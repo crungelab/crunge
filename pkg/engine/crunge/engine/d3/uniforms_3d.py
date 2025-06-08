@@ -11,8 +11,6 @@ from ctypes import (
 )
 
 from loguru import logger
-import numpy as np
-import glm
 
 from ..uniforms import Vec3, Mat4
 
