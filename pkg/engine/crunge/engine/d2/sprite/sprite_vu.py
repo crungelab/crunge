@@ -121,29 +121,19 @@ class SpriteVu(Vu2D):
 
         self.bind_group = self.device.create_bind_group(bind_group_desc)
 
-    def on_transform(self):
+    def on_transform(self) -> None:
         super().on_transform()
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
         self.buffer[self.buffer_index] = model_uniform
 
-        """
-        model_uniform = ModelUniform()
-        model_uniform.transform.data = cast_matrix4(self.transform)
-
-        self.model_uniform_buffer[0] = model_uniform
-        """
-        # self.buffer[0].transform.data = cast_matrix4(self.transform)
-        # self.buffer[self.buffer_index].transform.data = cast_matrix4(self.transform)
-        # self.buffer.upload()
-
-    def bind(self, pass_enc: wgpu.RenderPassEncoder):
+    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         pass_enc.set_pipeline(self.program.pipeline)
         self.sprite.bind(pass_enc)
         pass_enc.set_bind_group(2, self.bind_group)
 
-    def draw(self, renderer: Renderer):
+    def draw(self, renderer: Renderer) -> None:
         if not self.manual_draw:
             return
         # logger.debug("Drawing sprite")

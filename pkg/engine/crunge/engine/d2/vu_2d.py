@@ -1,7 +1,7 @@
 from loguru import logger
 import glm
 
-from ..math import Rect2, Bounds2
+from ..math import Bounds2
 
 from ..vu import Vu
 

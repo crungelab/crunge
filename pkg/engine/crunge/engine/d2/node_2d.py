@@ -10,6 +10,7 @@ import glm
 from ..math import Bounds2
 from ..scene_node import SceneNode
 
+
 class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
@@ -17,7 +18,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         rotation=0.0,
         scale=glm.vec2(1.0),
         vu: "Vu2D" = None,
-        model=None,
+        model: Any = None
     ) -> None:
         super().__init__(vu, model)
         self._position = position
@@ -26,16 +27,18 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._scale = scale
         self._matrix = glm.mat4(1.0)
         self.bounds = Bounds2()
-        #self.velocity = glm.vec2(0.0)
         self._velocity = glm.vec2(0.0)
-        self.angular_velocity = 0.0 # radians per second
+        self.angular_velocity = 0.0  # radians per second
 
+        # self.update_matrix()
+
+    def _create(self):
         self.update_matrix()
 
     @property
     def velocity(self):
         return self._velocity
-    
+
     @velocity.setter
     def velocity(self, value: glm.vec2):
         self._velocity = value
@@ -52,7 +55,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @property
     def x(self):
         return self._position.x
-    
+
     @x.setter
     def x(self, value: float):
         self._position.x = value
@@ -61,7 +64,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @property
     def y(self):
         return self._position.y
-    
+
     @y.setter
     def y(self, value: float):
         self._position.y = value
@@ -79,7 +82,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @property
     def rotation(self):
         return self._rotation
-    
+
     @rotation.setter
     def rotation(self, value: float):
         self._rotation = value
@@ -95,7 +98,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         # logger.debug(f"class: {self.__class__}, angle: {value}, rotation: {self._rotation}")
         self.update_matrix()
 
-    '''
+    """
     @property
     def size(self) -> glm.vec2:
         if self.model is not None:
@@ -111,7 +114,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         #logger.debug(f"class: {self.__class__}, size: {size}")
 
         return size
-    '''
+    """
+
     @property
     def size(self) -> glm.vec2:
         if self.model is not None:
@@ -121,7 +125,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         else:
             size = glm.vec2(1.0) * self.scale
 
-        #logger.debug(f"class: {self.__class__}, size: {size}")
+        # logger.debug(f"class: {self.__class__}, size: {size}")
 
         return size
 
@@ -149,7 +153,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @property
     def matrix(self):
         return self._matrix
-    
+
     @matrix.setter
     def matrix(self, value):
         self._matrix = value
@@ -164,9 +168,9 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     def on_transform(self):
         local_bounds = self.get_local_bounds()
-        #logger.debug(f"class: {self.__class__}, local_bounds: {local_bounds}")
+        # logger.debug(f"class: {self.__class__}, local_bounds: {local_bounds}")
         self.bounds = local_bounds.to_global(self.transform)
-        #logger.debug(f"class: {self.__class__}, bounds: {self.bounds}")
+        # logger.debug(f"class: {self.__class__}, bounds: {self.bounds}")
 
         for listener in self.listeners:
             listener.on_node_transform_change(self)
@@ -174,7 +178,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def update_matrix(self):
         x = self._position.x
         y = self._position.y
-        #logger.debug(f"class: {self.__class__}, x: {x}, y: {y}")
+        # logger.debug(f"class: {self.__class__}, x: {x}, y: {y}")
         z = self._depth
 
         matrix = glm.mat4(1.0)  # Identity matrix

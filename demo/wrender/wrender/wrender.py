@@ -27,9 +27,9 @@ class WRender(Viewer):
         #scene_path = models_root / "Character" / "Character.gltf"
         #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
-        #model = "2CylinderEngine"
         #model = "ABeautifulGame"
-        model = "AlphaBlendModeTest" # TODO: Alpha mask not working properly
+        model = "AlphaBlendModeTest"
+        #model = "TransmissionTest" # TODO: Needs extensions: KHR_materials_transmission
         #model = "AttenuationTest" # TODO: Needs extensions: KHR_materials_transmission and KHR_materials_volume
         #model = "Avocado"
         #model = "Box"
@@ -45,15 +45,16 @@ class WRender(Viewer):
         #model = "Duck"
         #model = "EnvironmentTest"
         #model = "FlightHelmet"
-        #model = "Fox" #No normals, no indices
+        #model = "Fox" #TODO: No normals, no indices
         #model = "GearboxAssy"
         #model = "Lantern"
         #model = "MetalRoughSpheres"
         #model = "SimpleMeshes"
         #model = "Suzanne"
 
-        #scene_path = models_root / model / "glTF" / f"{model}.gltf"
         scene_path = models_root / "Models" / model / "glTF" / f"{model}.gltf"
+
+        #scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Binary" / f"{model}.glb"
 
@@ -63,9 +64,8 @@ class WRender(Viewer):
 
         scene = GltfLoader().load(scene_path)
 
-        #Viewer().create().show(scene)
-        #Viewer().create().show(scene).run()
         self.show(scene)
+
         super().run()
 
 def main():

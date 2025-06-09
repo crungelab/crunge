@@ -1,7 +1,7 @@
 from loguru import logger
 import glm
 
-from ..math import Rect2
+from ..math import Bounds3
 from ..vu import Vu
 from .node_3d import Node3D
 
@@ -9,7 +9,7 @@ class Vu3D(Vu[Node3D]):
     def __init__(self) -> None:
         super().__init__()
         self._transform = glm.mat4(1.0)
-        #self.aabb = Rect2(0, 0, 0, 0)
+        self.bounds = Bounds3()
 
     @property
     def transform(self) -> glm.mat4:
@@ -22,8 +22,6 @@ class Vu3D(Vu[Node3D]):
 
     def on_transform(self):
         pass
-        #self.aabb = self.get_world_aabb()
-        #logger.debug(f"Vu2D: {self.aabb}")
 
     @property
     def size(self) -> glm.vec3:

@@ -13,6 +13,7 @@ from ..uniforms import cast_vec3, cast_matrix4
 
 from .program_3d import Program3D
 from .node_3d import Node3D
+from .vu_3d import Vu3D
 from .uniforms_3d import (
     ModelUniform,
 )
@@ -25,12 +26,12 @@ class MeshInstance3DProgram(Program3D):
     pass
 
 
-class MeshInstance3D(Node3D):
-    def __init__(self) -> None:
+class MeshVu3D(Vu3D):
+    def __init__(self, mesh: Mesh3D = None) -> None:
         super().__init__()
         self.program = MeshInstance3DProgram()
         self.model_bind_group: wgpu.BindGroup = None
-        self._mesh: Mesh3D = None
+        self._mesh: Mesh3D = mesh
         self.deferred = False
 
         # Uniform Buffers
@@ -52,10 +53,16 @@ class MeshInstance3D(Node3D):
         self.bounds = mesh.bounds
         self.gpu_update_model()
 
+    def on_transform(self):
+        super().on_transform()
+        self.gpu_update_model()
+
+    '''
     def update_bounds(self):
         if self.mesh:
             self.bounds = self.mesh.bounds.to_global(self.transform)
         return super().update_bounds()
+    '''
 
     def build_bindgroup(self):
         logger.debug("Creating bind group")

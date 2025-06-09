@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Any
 
 if TYPE_CHECKING:
     from .scene_3d import Scene3D
@@ -10,16 +10,18 @@ import glm
 from ..math import Bounds3
 from ..scene_node import SceneNode
 
+
 class Node3D(SceneNode["Node3D", "Scene3D"]):
-    def __init__(self, position = glm.vec3()) -> None:
-        super().__init__()
+    def __init__(
+        self, position=glm.vec3(), vu: "Vu3D" = None, model: Any = None
+    ) -> None:
+        super().__init__(vu, model)
         self.bounds = Bounds3()
         self._position = position
         self._orientation = glm.quat(1.0, 0.0, 0.0, 0.0)
         self._scale = glm.vec3(1.0)
         self._matrix = glm.mat4(1.0)
         self._transform = glm.mat4(1.0)
-        #self.update_matrix()
 
     def _create(self):
         self.update_matrix()
@@ -27,7 +29,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
     @property
     def position(self) -> glm.vec3:
         return self._position
-    
+
     @position.setter
     def position(self, value: glm.vec3):
         self._position = value
@@ -36,7 +38,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
     @property
     def orientation(self) -> glm.quat:
         return self._orientation
-    
+
     @orientation.setter
     def orientation(self, value: glm.quat):
         self._orientation = value
@@ -45,7 +47,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
     @property
     def scale(self) -> glm.vec3:
         return self._scale
-    
+
     @scale.setter
     def scale(self, value: glm.vec3):
         self._scale = value
@@ -54,7 +56,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
     @property
     def matrix(self) -> glm.mat4:
         return self._matrix
-    
+
     @matrix.setter
     def matrix(self, value: glm.mat4):
         self._matrix = value
@@ -63,7 +65,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
     @property
     def transform(self) -> glm.mat4:
         return self._transform
-    
+
     @transform.setter
     def transform(self, value: glm.mat4):
         self._transform = value
@@ -80,6 +82,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         for listener in self.listeners:
             listener.on_node_transform_change(self)
 
+    #TODO: DEPRECATED: this should be handled by the Vu class
     def gpu_update_model(self):
         pass
 
@@ -104,6 +107,9 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
             child.update_transform()
 
     def update_bounds(self):
+        if self.model:
+            self.bounds = self.model.bounds.to_global(self.transform)
+
         for child in self.children:
             self.bounds.merge(child.bounds)
-        #logger.debug(f"{self.__class__.__name__} bounds: {self.bounds}")
+        # logger.debug(f"{self.__class__.__name__} bounds: {self.bounds}")

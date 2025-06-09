@@ -96,6 +96,12 @@ class Viewer(engine.App):
         self.controller = ArcballCameraController(self, self.camera, target, max_extent)
         self.controller.activate()
 
+        '''
+        light = self.scene.lighting.lights[0]
+        light_distance = max_extent * 1.5  # Adjust the light distance as needed
+        light.position = glm.vec3(center.x + light_distance, center.y + light_distance, center.z + light_distance)
+        '''
+
         return self
 
     def draw(self, renderer: Renderer):

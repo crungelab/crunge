@@ -13,6 +13,7 @@ from ..uniforms import cast_vec3, cast_matrix4
 
 from .renderer_3d import Renderer3D
 from .node_3d import Node3D
+from .vu_3d import Vu3D
 from .uniforms_3d import (
     CameraUniform,
 )
@@ -22,8 +23,9 @@ from .program_3d import Program3D
 DrawCallback = Callable[[Renderer3D], None]
 
 class DeferredDraw:
-    def __init__(self, node: Node3D, callback: DrawCallback):
-        self.node = node
+    def __init__(self, vu: Vu3D, callback: DrawCallback):
+        self.vu = vu
+        self.node = vu.node
         self.callback = callback
 
 @klass.singleton
@@ -86,11 +88,6 @@ class Camera3D(Node3D, ViewportListener):
     def viewport(self, viewport: Viewport):
         self._viewport = viewport
         if viewport is not None:
-            '''
-            self.viewport_size_subscription = viewport.size_events.subscribe(
-                self.on_viewport_size
-            )
-            '''
             viewport.add_listener(self)
 
     def on_viewport_size(self, size: glm.ivec2):
