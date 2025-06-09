@@ -16,6 +16,11 @@ class Bounds3:
         """Returns the center point of the bounding box."""
         return (self.min + self.max) * 0.5
 
+    @property
+    def max_extent(self) -> float:
+        """Returns the maximum extent of the bounding box."""
+        return max(self.size.x, self.size.y, self.size.z)
+
     def expand(self, point: glm.vec3) -> None:
         """Expands the bounding box to include the given point."""
         self.min = glm.vec3(min(self.min.x, point.x), min(self.min.y, point.y), min(self.min.z, point.z))

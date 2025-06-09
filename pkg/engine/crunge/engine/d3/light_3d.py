@@ -14,11 +14,11 @@ from .uniforms_3d import (
 
 
 class Light3D(Node3D):
-    def __init__(self, position=glm.vec3()) -> None:
+    def __init__(self, position=glm.vec3(), color=glm.vec3(1.0, 1.0, 1.0), energy=1.0, range=10.0) -> None:
         super().__init__(position=position)
-        self._color = glm.vec3(1.0, 1.0, 1.0)
-        self._energy = 1.0
-        self._range = 10.0
+        self._color = color
+        self._energy = energy
+        self._range = range
 
         self.uniform_buffer_size = sizeof(LightUniform)
         self.uniform_buffer = self.gfx.create_buffer(
@@ -43,6 +43,7 @@ class Light3D(Node3D):
 
     @energy.setter
     def energy(self, energy: float):
+        logger.debug(f"Setting energy: {energy}")
         self._energy = energy
         self.gpu_update_model()
 
@@ -68,8 +69,8 @@ class Light3D(Node3D):
         light_uniform.position = cast_vec3(self.position)
         light_uniform.color = cast_vec3(self.color)
 
-        light_uniform.range = self.range
         light_uniform.energy = self.energy
+        light_uniform.range = self.range
 
         self.device.queue.write_buffer(self.uniform_buffer, 0, light_uniform)
 

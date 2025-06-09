@@ -58,15 +58,54 @@ class ArcballCameraController(CameraController):
 
     def pan(self, mouse_delta):
         zoom_amount = abs(glm.length(self.camera_position - self.camera_target_position)) * self.pan_speed
-        motion = glm.vec3(mouse_delta.x * zoom_amount, mouse_delta.y * zoom_amount, 0.0)
-        #motion = glm.vec3(-mouse_delta.x * zoom_amount, -mouse_delta.y * zoom_amount, 0.0)
+        #motion = glm.vec3(mouse_delta.x * zoom_amount, mouse_delta.y * zoom_amount, 0.0)
+        motion = glm.vec3(-mouse_delta.x * zoom_amount, -mouse_delta.y * zoom_amount, 0.0)
 
         self.next_position += motion
-        #self.camera_target_position += motion
 
     def zoom(self, zoom_amount):
         direction = glm.normalize(self.camera_target_position - self.camera_position)
+        current_distance = glm.length(self.camera_position - self.camera_target_position)
+
+        # Proportional zoom speed (tweak factor to taste)
+        zoom_factor = 0.1  # e.g., 10% of current distance per "tick"
+        delta = zoom_factor * current_distance * zoom_amount
+
+        # New distance after zooming
+        new_distance = current_distance - delta
+        min_distance = self.max_extent * 0.1
+        max_distance = self.max_extent * 10.0
+
+        # Clamp distance
+        new_distance = np.clip(new_distance, min_distance, max_distance)
+        self.next_position = self.camera_target_position - direction * new_distance
+
+    '''
+    def zoom(self, zoom_amount):
+        # Current direction vector and distance
+        direction = glm.normalize(self.camera_target_position - self.camera_position)
+        current_distance = glm.length(self.camera_position - self.camera_target_position)
+
+        # How much to zoom
+        delta = self.zoom_speed * zoom_amount
+
+        # Proposed new distance
+        new_distance = current_distance - delta  # Zoom in means get *closer*, so subtract
+        min_distance = self.max_extent * 0.1     # Or some small constant (not zero!)
+        max_distance = self.max_extent * 10.0    # Optional: clamp max distance
+
+        # Clamp the distance to [min_distance, max_distance]
+        new_distance = np.clip(new_distance, min_distance, max_distance)
+
+        # Set new camera position accordingly
+        self.next_position = self.camera_target_position - direction * new_distance
+    '''
+
+    '''
+    def zoom(self, zoom_amount):
+        direction = glm.normalize(self.camera_target_position - self.camera_position)
         self.next_position += direction * self.zoom_speed * zoom_amount
+    '''
 
     def update(self, delta_time):
         # Interpolate orientation and position smoothly

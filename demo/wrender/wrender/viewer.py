@@ -20,6 +20,7 @@ from crunge.engine.loader.gltf import GltfLoader
 from crunge.engine.d3.scene_3d import Scene3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
 from crunge.engine.d3.view_3d import View3D
+from crunge.engine.d3.director_3d import Director3D
 
 models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS")) / "Models"
 
@@ -30,13 +31,16 @@ class Viewer(engine.App):
     def __init__(self):
         super().__init__(title="WRender", resizable=True)
         self.delta_time = 0
+        self.director: Director3D = None
 
     @property
     def camera(self):
         return self.view.camera
-    
+
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True, use_msaa=True)
+        self.viewport = SurfaceViewport(
+            self.size, self.window, use_depth_stencil=True, use_msaa=True
+        )
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
@@ -44,7 +48,15 @@ class Viewer(engine.App):
 
     def open(self):
         logger.debug("Opening scene")
-        scene_path = tkinter.filedialog.askopenfilename(initialdir = models_root, title = "Select file", filetypes = (("gltf files","*.gltf"),("glb files","*.glb"),("all files","*.*")))
+        scene_path = tkinter.filedialog.askopenfilename(
+            initialdir=models_root,
+            title="Select file",
+            filetypes=(
+                ("gltf files", "*.gltf"),
+                ("glb files", "*.glb"),
+                ("all files", "*.*"),
+            ),
+        )
         if not scene_path:
             return
         scene = GltfLoader().load(scene_path)
@@ -55,57 +67,43 @@ class Viewer(engine.App):
         self.scene = scene
         self.create_view(scene)
 
-        # Step 1: Calculate the size and center of the model
-        bounds = self.scene.bounds
-        size = bounds.size
-        #center = self.scene.root.bounds.center
-        center = bounds.center
+        self.director = Director3D(scene)
 
-        # Step 2: Determine the maximum extent of the model
-        max_extent = max(size.x, size.y, size.z)
-        logger.debug(f"Model size: {size}, center: {center}, max extent: {max_extent}")
+        light = self.scene.lighting.lights[0]
 
-        # Step 3: Set up the camera's field of view (FOV) in radians
-        fov = glm.radians(45.0)  # 45 degrees
-
-        # Step 4: Calculate the camera distance
-        camera_distance = max_extent / (2 * math.tan(fov / 2))
-
-        # Optional: Add some padding factor to move the camera further back
-        padding_factor = 1.5
-        camera_distance *= padding_factor
-
-        # Step 5: Position the camera along the z-axis, looking at the model
-        camera_position = glm.vec3(center.x, center.y, center.z + camera_distance)
-        logger.debug(f"Camera position: {camera_position}")
-        target = center
-
-        # Step 6: Define the near and far planes
-        # Set near plane based on a fraction of camera distance or a minimum value
-        #near_plane = max(0.1, camera_distance * 0.01)
-        near_plane = max_extent * 0.01
-
-        # Calculate distance to farthest point from the camera to determine the far plane
-        farthest_point = max_extent - center
-        far_plane = glm.length(camera_position - (center + farthest_point)) + max_extent
-        far_plane = far_plane * 10
-
-        self.camera.position = camera_position
-        self.camera.near = near_plane
-        self.camera.far = far_plane
+        self.director.place_camera_and_light(self.camera, light)
+        target = self.director.get_target_position()
+        max_extent = self.director.get_max_extent()
         self.controller = ArcballCameraController(self, self.camera, target, max_extent)
         self.controller.activate()
-
-        '''
-        light = self.scene.lighting.lights[0]
-        light_distance = max_extent * 1.5  # Adjust the light distance as needed
-        light.position = glm.vec3(center.x + light_distance, center.y + light_distance, center.z + light_distance)
-        '''
 
         return self
 
     def draw(self, renderer: Renderer):
         self.draw_mainmenu()
+
+        imgui.begin("Scene Properties")
+
+        light = self.scene.lighting.lights[0]
+
+        changed, position = imgui.drag_float3("Diffuse Position", tuple(light.position))
+        if changed:
+            light.position = glm.vec3(position)
+
+        changed, color = imgui.color_edit3("Diffuse Color", list(light.color))
+        if changed:
+            light.color = glm.vec3(color)
+
+        changed, energy = imgui.slider_float("Diffuse Energy", light.energy, 0.0, 100.0)
+        if changed:
+            light.energy = energy
+
+        changed, range = imgui.slider_float("Diffuse Range", light.range, 1.0, 20.0)
+        if changed:
+            light.range = range
+
+        imgui.end()
+
         super().draw(renderer)
 
     def draw_mainmenu(self):

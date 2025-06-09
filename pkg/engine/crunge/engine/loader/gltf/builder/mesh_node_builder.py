@@ -19,10 +19,7 @@ class MeshNodeBuilder(NodeBuilder):
     def __init__(self, context: BuilderContext, tf_node: gltf.Node) -> None:
         super().__init__(context, tf_node)
 
-    def create_node(self):
-        self.node = Node3D()
-
-    def build_node(self):
+    def build_node(self) -> None:
         super().build_node()
         mesh = MeshBuilder(self.context, self.tf_node.mesh).build()
 
@@ -34,12 +31,3 @@ class MeshNodeBuilder(NodeBuilder):
 
         self.node.vu = vu
         self.node.model = mesh
-
-    '''
-    def build_node(self):
-        super().build_node()
-        self.node.mesh = MeshBuilder(self.context, self.tf_node.mesh).build()
-        for primitive in self.node.mesh.primitives:
-            if primitive.deferred:
-                self.node.deferred = True
-    '''

@@ -12,8 +12,9 @@ struct AmbientLight {
 struct LightUniform {
     position: vec3<f32>,
     color: vec3<f32>,
-    range: f32,
+    _pad0: f32, // Padding to prevent the  WGSL compiler from sucking up a float after a vec3.
     energy: f32,
+    range: f32,
 }
 @group(1) @binding(1) var<uniform> lightUniform : LightUniform;
 
@@ -28,6 +29,6 @@ struct Light {
   position: vec3<f32>,
   v : vec3<f32>,
   color : vec3<f32>,
-  range : f32,
   energy : f32,
+  range : f32,
 }

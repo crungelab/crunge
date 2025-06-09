@@ -22,11 +22,13 @@ from .program_3d import Program3D
 
 DrawCallback = Callable[[Renderer3D], None]
 
+
 class DeferredDraw:
     def __init__(self, vu: Vu3D, callback: DrawCallback):
         self.vu = vu
         self.node = vu.node
         self.callback = callback
+
 
 @klass.singleton
 class CameraProgram3D(Program3D):
@@ -65,7 +67,7 @@ class Camera3D(Node3D, ViewportListener):
     @property
     def near(self):
         return self._near
-    
+
     @near.setter
     def near(self, value):
         self._near = value
@@ -74,7 +76,7 @@ class Camera3D(Node3D, ViewportListener):
     @property
     def far(self):
         return self._far
-    
+
     @far.setter
     def far(self, value):
         self._far = value
@@ -96,7 +98,7 @@ class Camera3D(Node3D, ViewportListener):
     @property
     def size(self):
         return self._size
-    
+
     @size.setter
     def size(self, size: glm.ivec2):
         self._size = size
@@ -163,13 +165,9 @@ class Camera3D(Node3D, ViewportListener):
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
         camera_uniform.position = cast_vec3(self.position)
-        #logger.debug(f"camera_uniform.position: {camera_uniform.position.x}, {camera_uniform.position.y}, {camera_uniform.position.z}")
+        # logger.debug(f"camera_uniform.position: {camera_uniform.position.x}, {camera_uniform.position.y}, {camera_uniform.position.z}")
 
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            camera_uniform
-        )
+        self.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(0, self.bind_group)

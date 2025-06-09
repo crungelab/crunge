@@ -16,6 +16,7 @@ class GltfDemo(Viewer):
         return GltfLoader()
 
     def run(self):
+        self.enable()
         importer = self.create_importer()
         scene = importer.load(self.scene_path)
         self.show(scene)
