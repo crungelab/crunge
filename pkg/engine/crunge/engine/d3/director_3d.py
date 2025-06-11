@@ -15,19 +15,50 @@ class Director3D:
         bounds = self.scene.bounds
         size = bounds.size
         max_extent = max(size.x, size.y, size.z)
-        logger.debug(f"Model size: {size}, max extent: {max_extent}")
+        #logger.debug(f"Model size: {size}, max extent: {max_extent}")
         return max_extent
 
     def get_center(self) -> glm.vec3:
         bounds = self.scene.bounds
         center = bounds.center
-        logger.debug(f"Model center: {center}")
+        #logger.debug(f"Model center: {center}")
         return center
 
     def get_target_position(self) -> glm.vec3:
         center = self.get_center()
-        logger.debug(f"Model center: {center}")
+        #logger.debug(f"Camera target: {center}")
         return center
+
+    def get_light_position_limits(self):
+        center = self.get_center()
+        extent = self.get_max_extent()
+        pos_min = [center.x - 2 * extent, center.y - 2 * extent, center.z - 2 * extent]
+        pos_max = [center.x + 2 * extent, center.y + 2 * extent, center.z + 2 * extent]
+        speed = extent * 0.01
+        return (speed, pos_min, pos_max)
+
+    def get_light_energy_limits(self):
+        extent = self.get_max_extent()
+        energy_min = 0.0
+        energy_max = extent ** 2 * 10
+        speed = energy_max * 0.01
+        return (speed, energy_min, energy_max)
+
+    '''
+    def get_light_energy_limits(self, base_energy=20.0):
+        extent = self.get_max_extent()
+        energy_min = 0.0
+        energy_max = base_energy * (extent ** 2) * 10
+        speed = energy_max * 0.01
+        return (speed, energy_min, energy_max)
+    '''
+
+    def get_light_range_limits(self):
+        extent = self.get_max_extent()
+        range_min = extent * 0.1
+        range_max = extent * 5.0
+        speed = extent * 0.01
+        return (speed, range_min, range_max)
 
     def place_camera_and_light(self, camera: Camera3D, light: Light3D):
         self.place_camera(camera)
@@ -67,12 +98,14 @@ class Director3D:
     def place_light(self, light: Light3D):
         max_extent = self.get_max_extent()
         center = self.get_center()
+
         # Step 3: Set up the camera's field of view (FOV) in radians
         fov = glm.radians(45.0)  # 45 degrees
 
-        # Step 4: Calculate the camera distance
         light_distance = max_extent / (2 * math.tan(fov / 2)) * .25
 
         light.position = glm.vec3(center.x + light_distance, center.y + light_distance, center.z + light_distance)
+
+        light.energy = max_extent ** 2  # or try ** 2.2, see below
 
         light.range = max_extent  # Adjust the light range as needed
