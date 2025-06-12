@@ -23,6 +23,8 @@ class Material3D(Material):
         self.occlusion_strength: float = 1
         self.emissive_factor: tuple = (0, 0, 0)
 
+        self.transmission_factor: float = 0
+
     def add_texture(self, texture: Texture):
         if texture.name in self.texture_set:
             return

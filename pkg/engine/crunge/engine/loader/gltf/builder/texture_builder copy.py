@@ -17,18 +17,18 @@ class TextureBuilder(GltfBuilder):
     texture: Texture = None
 
     def __init__(
-        self, context: BuilderContext, name: str, texture_index: int
+        self, context: BuilderContext, name: str, texture_info: gltf.TextureInfo
     ) -> None:
         super().__init__(context)
         self.name = name
-        self.texture_index = texture_index
+        self.texture_info = texture_info
         self.texture: Texture = None
 
     def build(self) -> Texture:
-        if self.texture_index in self.context.texture_cache:
-            return self.context.texture_cache[self.texture_index]
+        if self.texture_info.index in self.context.texture_cache:
+            return self.context.texture_cache[self.texture_info.index]
 
-        tf_texture = self.tf_model.textures[self.texture_index]
+        tf_texture = self.tf_model.textures[self.texture_info.index]
         #debug_texture(tf_texture)
 
         im = ImageBuilder(self.context, tf_texture.source).build()
@@ -80,5 +80,5 @@ class TextureBuilder(GltfBuilder):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-        self.context.texture_cache[self.texture_index] = self.texture
+        self.context.texture_cache[self.texture_info.index] = self.texture
         return self.texture

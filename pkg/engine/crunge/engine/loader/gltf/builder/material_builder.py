@@ -1,4 +1,5 @@
 import importlib.resources
+import json
 
 from loguru import logger
 
@@ -62,7 +63,7 @@ class MaterialBuilder(GltfBuilder):
 
         # Base Color Texture
         if pbr.base_color_texture.index >= 0:
-            self.build_texture("baseColor", pbr.base_color_texture)
+            self.build_texture("baseColor", pbr.base_color_texture.index)
 
         # Metallic Factor
         metallic_factor = pbr.metallic_factor
@@ -76,17 +77,17 @@ class MaterialBuilder(GltfBuilder):
 
         # Metallic Roughness Texture
         if pbr.metallic_roughness_texture.index >= 0:
-            self.build_texture("metallicRoughness", pbr.metallic_roughness_texture)
+            self.build_texture("metallicRoughness", pbr.metallic_roughness_texture.index)
             self.use_environment_map = True
 
         # Normal Texture
         if tf_material.normal_texture.index >= 0:
-            self.build_texture("normal", tf_material.normal_texture)
+            self.build_texture("normal", tf_material.normal_texture.index)
 
         # Occlusion Texture
         if tf_material.occlusion_texture.index >= 0:
             self.material.occlusion_strength = tf_material.occlusion_texture.strength
-            self.build_texture("occlusion", tf_material.occlusion_texture)
+            self.build_texture("occlusion", tf_material.occlusion_texture.index)
 
         # Emissive Factor
         emissive_factor = tf_material.emissive_factor
@@ -95,11 +96,13 @@ class MaterialBuilder(GltfBuilder):
 
         # Emissive Texture
         if tf_material.emissive_texture.index >= 0:
-            self.build_texture("emissive", tf_material.emissive_texture)
+            self.build_texture("emissive", tf_material.emissive_texture.index)
 
         # Environment Map
         if self.use_environment_map:
             self.build_environment_map()
+
+        self.build_transmission()
 
         self.build_bind_group_layout()
         self.build_bind_group()
@@ -107,9 +110,15 @@ class MaterialBuilder(GltfBuilder):
         self.context.material_cache[self.material_index] = self.material
         return self.material
 
+    def build_texture(self, name: str, texture_index: int) -> None:
+        texture = TextureBuilder(self.context, name, texture_index).build()
+        self.material.add_texture(texture)
+
+    '''
     def build_texture(self, name: str, texture_info: gltf.TextureInfo) -> None:
         texture = TextureBuilder(self.context, name, texture_info).build()
         self.material.add_texture(texture)
+    '''
 
     def build_environment_map(self) -> None:
         # texture = self.build_environment_texture()
@@ -146,6 +155,30 @@ class MaterialBuilder(GltfBuilder):
         texture.view = texture.texture.create_view(texture_view_desc)
         texture.sampler = self.gfx.device.create_sampler()
         return texture
+
+    def build_transmission(self) -> None:
+        extension = self.tf_material.extensions.get("KHR_materials_transmission")
+        if extension is None:
+            return
+        logger.debug(f"Transmission Extension: {extension}")
+        transmission_factor = extension.get("transmissionFactor").get_number_as_double()
+        logger.debug(f"Transmission Factor: {transmission_factor}")
+        self.material.transmission_factor = transmission_factor
+
+        transmissionTexture = extension.get("transmissionTexture")
+        logger.debug(type(transmissionTexture.type()))
+
+        if transmissionTexture.type() == gltf.Type.NULL_TYPE:
+            return
+
+        logger.debug(f"Transmission Texture: {transmissionTexture}, type: {transmissionTexture.type()}")
+
+        texture_value = transmissionTexture.get("index")
+        texture_index = texture_value.get_number_as_int()
+        logger.debug(f"Transmission Texture Index: {texture_index}")
+
+        if texture_index >= 0:  # Texture is present
+            self.build_texture("transmission", texture_index)
 
     def build_bind_group_layout(self) -> wgpu.BindGroupLayout:
         material_bgl_entries = []

@@ -5,14 +5,15 @@ specs:
   # Wrapped
   # These write to err and warn.  Not good
   'function/tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
+  #'class.tinygltf::Value': {exclude: true}
+  'method/tinygltf::Value::Get': {exclude: true} #TODO: pybind11 doesn't like the signatures?
+  'method/tinygltf::Value::Type': {exclude: true} #Returns char instead of enum
 
   # Internal / Ignored
 
   'struct/tinygltf::FsCallbacks': {exclude: true}
   'struct/tinygltf::URICallbacks': {exclude: true}
-  #'class.tinygltf::Value': {exclude: true}
-  'method/tinygltf::Value::Get': {exclude: true}
-
+  
   # Not sure why it's choking on the last void*
   'function/tinygltf::GetFileSizeInBytes': {exclude: true}
   # std::ostream& ??

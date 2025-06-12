@@ -67,9 +67,8 @@ class ArcballCameraController(CameraController):
         direction = glm.normalize(self.camera_target_position - self.camera_position)
         current_distance = glm.length(self.camera_position - self.camera_target_position)
 
-        # Proportional zoom speed (tweak factor to taste)
-        zoom_factor = 0.1  # e.g., 10% of current distance per "tick"
-        delta = zoom_factor * current_distance * zoom_amount
+        # Proportional delta (tweak factor to taste)
+        delta = self.zoom_speed * current_distance * zoom_amount
 
         # New distance after zooming
         new_distance = current_distance - delta
@@ -79,27 +78,6 @@ class ArcballCameraController(CameraController):
         # Clamp distance
         new_distance = np.clip(new_distance, min_distance, max_distance)
         self.next_position = self.camera_target_position - direction * new_distance
-
-    '''
-    def zoom(self, zoom_amount):
-        # Current direction vector and distance
-        direction = glm.normalize(self.camera_target_position - self.camera_position)
-        current_distance = glm.length(self.camera_position - self.camera_target_position)
-
-        # How much to zoom
-        delta = self.zoom_speed * zoom_amount
-
-        # Proposed new distance
-        new_distance = current_distance - delta  # Zoom in means get *closer*, so subtract
-        min_distance = self.max_extent * 0.1     # Or some small constant (not zero!)
-        max_distance = self.max_extent * 10.0    # Optional: clamp max distance
-
-        # Clamp the distance to [min_distance, max_distance]
-        new_distance = np.clip(new_distance, min_distance, max_distance)
-
-        # Set new camera position accordingly
-        self.next_position = self.camera_target_position - direction * new_distance
-    '''
 
     '''
     def zoom(self, zoom_amount):

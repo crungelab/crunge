@@ -79,8 +79,6 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def(py::init<const tinygltf::Value &>()
         , py::arg("")
         )
-        .def("type", &tinygltf::Value::Type
-            , py::return_value_policy::automatic_reference)
         .def("is_bool", &tinygltf::Value::IsBool
             , py::return_value_policy::automatic_reference)
         .def("is_int", &tinygltf::Value::IsInt

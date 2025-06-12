@@ -118,6 +118,17 @@ std::tuple<bool, std::string, std::string> LoadASCIIFromFileWrapper(
 }
 
 void init_main(py::module &_gltf, Registry &registry) {
+    PYEXTEND_BEGIN(tinygltf::Value, Value)
+        _Value.def("get", [](const tinygltf::Value &self, const std::string &key) -> const tinygltf::Value& {
+            return self.Get(key);
+        }, py::arg("key"), py::return_value_policy::reference);
+
+        _Value.def("type", [](const tinygltf::Value &self) -> const tinygltf::Type {
+            return static_cast<tinygltf::Type>(self.Type());
+        }, py::return_value_policy::reference);
+
+    PYEXTEND_END
+
     PYEXTEND_BEGIN(tinygltf::Buffer, Buffer)
         _Buffer.def("get_array", &get_buffer_array, py::arg("byte_offset"), py::arg("count"), py::arg("type"), py::arg("component_type"));
     PYEXTEND_END

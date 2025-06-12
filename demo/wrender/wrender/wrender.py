@@ -28,8 +28,8 @@ class WRender(Viewer):
         #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
         #model = "ABeautifulGame"
-        model = "AlphaBlendModeTest"
-        #model = "TransmissionTest" # TODO: Needs extensions: KHR_materials_transmission
+        #model = "AlphaBlendModeTest"
+        model = "TransmissionTest" # TODO: Needs extensions: KHR_materials_transmission
         #model = "AttenuationTest" # TODO: Needs extensions: KHR_materials_transmission and KHR_materials_volume
         #model = "Avocado"
         #model = "Box"
