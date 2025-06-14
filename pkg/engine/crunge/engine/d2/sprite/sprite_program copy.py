@@ -27,7 +27,7 @@ struct Material {
     flipV : u32, // 1 = true, 0 = false
 }
 
-@group({{BindGroupIndex.CAMERA}}) @binding({{CameraBGL.Index.CAMERA_UNIFORM}}) var<uniform> camera : Camera;
+@group(0) @binding(0) var<uniform> camera : Camera;
 
 @group(1) @binding(0) var mySampler: sampler;
 @group(1) @binding(1) var myTexture : texture_2d<f32>;

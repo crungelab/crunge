@@ -15,6 +15,7 @@ from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
 
 from .program_2d import Program2D
+from .bindings_2d import BindGroupIndex, CameraBindGroup
 
 
 @klass.singleton
@@ -23,7 +24,12 @@ class CameraProgram2D(Program2D):
 
 
 class Camera2D(Node2D, ViewportListener):
-    def __init__(self, position=glm.vec3(0.0, 0.0, 2), viewport_size=glm.vec2(1024, 768), zoom=1.0):
+    def __init__(
+        self,
+        position=glm.vec3(0.0, 0.0, 2),
+        viewport_size=glm.vec2(1024, 768),
+        zoom=1.0,
+    ):
         self._zoom = zoom
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
@@ -37,7 +43,7 @@ class Camera2D(Node2D, ViewportListener):
         self.viewport_size = viewport_size
 
         self.create_buffers()
-        self.create_bind_groups()
+        self.create_bind_group()
 
         super().__init__(position)
 
@@ -70,6 +76,13 @@ class Camera2D(Node2D, ViewportListener):
             wgpu.BufferUsage.UNIFORM,
         )
 
+    def create_bind_group(self):
+        self.bind_group = CameraBindGroup(
+            self.uniform_buffer,
+            self.uniform_buffer_size,
+        )
+
+    """
     def create_bind_groups(self):
         camera_bindgroup_entries = [
             wgpu.BindGroupEntry(
@@ -86,6 +99,7 @@ class Camera2D(Node2D, ViewportListener):
         )
 
         self.bind_group = self.device.create_bind_group(camera_bind_group_desc)
+    """
 
     def on_viewport_size(self, size: glm.ivec2):
         self.viewport_size = glm.vec2(size.x, size.y)
@@ -112,7 +126,7 @@ class Camera2D(Node2D, ViewportListener):
         )
 
         self.update_gpu()
-        
+
     def update_gpu(self):
         camera_uniform = CameraUniform()
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
@@ -122,14 +136,11 @@ class Camera2D(Node2D, ViewportListener):
             glm.vec3(self.position.x, self.position.y, 0)
         )
 
-        self.device.queue.write_buffer(
-            self.uniform_buffer,
-            0,
-            camera_uniform
-        )
+        self.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        pass_enc.set_bind_group(0, self.bind_group)
+        # pass_enc.set_bind_group(0, self.bind_group)
+        pass_enc.set_bind_group(BindGroupIndex.CAMERA, self.bind_group.get())
 
     def unproject(self, mouse_vec: glm.vec2):
         mx = mouse_vec.x

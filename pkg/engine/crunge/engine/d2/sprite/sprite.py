@@ -7,16 +7,16 @@ from crunge import wgpu
 
 from ...math import Rect2i
 from ...resource import ImageTexture, Material, Sampler
+from ... import colors
 
 from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
 from ..uniforms_2d import (
     MaterialUniform,
 )
+from ..bindings_2d import BindGroupIndex, MaterialBindGroup
 
-from ... import colors
 from .sprite_sampler import DefaultSpriteSampler
 from .sprite_program import SpriteProgram
-
 
 class Sprite(Material):
     def __init__(
@@ -40,7 +40,8 @@ class Sprite(Material):
         self.points = points
         self.collision_rect = collision_rect
         self.program = SpriteProgram()
-        self.bind_group: wgpu.BindGroup = None
+        #self.bind_group: wgpu.BindGroup = None
+        self.bind_group: MaterialBindGroup = None
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
 
@@ -147,6 +148,15 @@ class Sprite(Material):
         )
 
     def create_bind_group(self):
+        self.bind_group = MaterialBindGroup(
+            self.sampler.sampler,
+            self.texture.view,
+            self.uniform_buffer,
+            self.uniform_buffer_size,
+        )
+
+    '''
+    def create_bind_group(self):
         sampler = self.sampler.sampler
 
         bindgroup_entries = wgpu.BindGroupEntries(
@@ -168,6 +178,7 @@ class Sprite(Material):
         )
 
         self.bind_group = self.device.create_bind_group(bind_group_desc)
+    '''
 
     def update_gpu(self):
         uniform = MaterialUniform()
@@ -185,4 +196,5 @@ class Sprite(Material):
         self.device.queue.write_buffer(self.uniform_buffer, 0, uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        pass_enc.set_bind_group(1, self.bind_group)
+        #pass_enc.set_bind_group(1, self.bind_group)
+        pass_enc.set_bind_group(BindGroupIndex.MATERIAL, self.bind_group.get())

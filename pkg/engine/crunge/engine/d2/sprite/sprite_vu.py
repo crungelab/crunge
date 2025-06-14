@@ -14,6 +14,7 @@ from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
 )
+from ..bindings_2d import BindGroupIndex, ModelBindGroup
 
 from .sprite_program import SpriteProgram
 from .sprite import Sprite
@@ -27,7 +28,8 @@ class SpriteVu(Vu2D):
         super().__init__()
         self.sprite = sprite
 
-        self.bind_group: wgpu.BindGroup = None
+        # self.bind_group: wgpu.BindGroup = None
+        self.bind_group: ModelBindGroup = None
         self.buffer: UniformBuffer[ModelUniform] = None
         self._buffer_index = 0
 
@@ -49,14 +51,14 @@ class SpriteVu(Vu2D):
     def size(self) -> glm.vec2:
         if self.sprite is None:
             return glm.vec2(1.0)
-        #return glm.vec2(self.sprite.size)
+        # return glm.vec2(self.sprite.size)
         return glm.vec2(self.sprite.rect.size)
 
-    '''
+    """
     @property
     def size(self) -> glm.vec2:
         return glm.vec2(self.sprite.size)
-    '''
+    """
 
     @property
     def width(self) -> float:
@@ -68,7 +70,7 @@ class SpriteVu(Vu2D):
 
     def on_node_model_change(self, node: Node2D) -> None:
         super().on_node_model_change(node)
-        #logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
+        # logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
 
     def _create(self):
@@ -103,6 +105,13 @@ class SpriteVu(Vu2D):
         self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
 
     def create_bind_group(self):
+        self.bind_group = ModelBindGroup(
+            self.buffer.get(),
+            self.buffer.size,
+        )
+
+    """
+    def create_bind_group(self):
         bindgroup_entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
@@ -120,6 +129,7 @@ class SpriteVu(Vu2D):
         )
 
         self.bind_group = self.device.create_bind_group(bind_group_desc)
+    """
 
     def on_transform(self) -> None:
         super().on_transform()
@@ -131,7 +141,8 @@ class SpriteVu(Vu2D):
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         pass_enc.set_pipeline(self.program.pipeline)
         self.sprite.bind(pass_enc)
-        pass_enc.set_bind_group(2, self.bind_group)
+        #pass_enc.set_bind_group(2, self.bind_group)
+        pass_enc.set_bind_group(BindGroupIndex.MODEL, self.bind_group.get())
 
     def draw(self, renderer: Renderer) -> None:
         if not self.manual_draw:

@@ -16,9 +16,11 @@ from crunge.core import klass
 from crunge import wgpu
 
 from ..program import Program
-from ..resource.bind_group.bind_group_layout import BindGroupLayout
+#from ..resource.bind_group.bind_group_layout import BindGroupLayout
+from .bindings_2d import CameraBGL, MaterialBGL, ModelBGL
 
 
+'''
 @klass.singleton
 class CameraBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
@@ -84,7 +86,7 @@ class ModelBindGroupLayout(BindGroupLayout):
         bind_group_layout = self.device.create_bind_group_layout(model_bgl_desc)
         logger.debug(f"model_bgl: {bind_group_layout}")
         super().__init__(bind_group_layout)
-
+'''
 
 class Program2D(Program):
     def __init__(self):
@@ -92,15 +94,15 @@ class Program2D(Program):
 
     @property
     def camera_bind_group_layout(self):
-        return CameraBindGroupLayout().get()
+        return CameraBGL().get()
 
     @property
     def material_bind_group_layout(self):
-        return MaterialBindGroupLayout().get()
+        return MaterialBGL().get()
 
     @property
     def model_bind_group_layout(self):
-        return ModelBindGroupLayout().get()
+        return ModelBGL().get()
 
     @property
     def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:
