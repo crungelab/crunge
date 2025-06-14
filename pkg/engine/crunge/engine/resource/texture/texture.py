@@ -16,13 +16,14 @@ class Texture(Resource):
         self,
         texture: wgpu.Texture,
         size: glm.ivec3,
+        sampler: wgpu.Sampler = None,
     ):
         super().__init__()
         self.texture = texture
         self._size = size
+        self.sampler = sampler
 
         self._view: wgpu.TextureView = None
-        self.sampler: wgpu.Sampler = None
 
     def __str__(self):
         #return f"Texture(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, size={self.size})"

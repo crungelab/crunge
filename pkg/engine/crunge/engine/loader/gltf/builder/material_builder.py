@@ -156,6 +156,9 @@ class MaterialBuilder(GltfBuilder):
         texture.sampler = self.gfx.device.create_sampler()
         return texture
 
+    def build_snapshot_texture(self) -> Texture:
+        texture = Texture()
+        
     def build_transmission(self) -> None:
         extension = self.tf_material.extensions.get("KHR_materials_transmission")
         if extension is None:
@@ -165,11 +168,16 @@ class MaterialBuilder(GltfBuilder):
         logger.debug(f"Transmission Factor: {transmission_factor}")
         self.material.transmission_factor = transmission_factor
 
+        transmissionTexture = extension.get("transmissionTexture", None)
+        if transmissionTexture is None:
+            return
+        '''
         transmissionTexture = extension.get("transmissionTexture")
         logger.debug(type(transmissionTexture.type()))
 
         if transmissionTexture.type() == gltf.Type.NULL_TYPE:
             return
+        '''
 
         logger.debug(f"Transmission Texture: {transmissionTexture}, type: {transmissionTexture.type()}")
 

@@ -119,9 +119,20 @@ std::tuple<bool, std::string, std::string> LoadASCIIFromFileWrapper(
 
 void init_main(py::module &_gltf, Registry &registry) {
     PYEXTEND_BEGIN(tinygltf::Value, Value)
+        _Value.def("get", [](const tinygltf::Value &self, const std::string &key, py::object default_value) -> py::object {
+            static tinygltf::Value null_value;
+            const tinygltf::Value& result = self.Get(key);
+            // Prefer this if available:
+            if (result == null_value) {
+                return default_value;
+            }
+            return py::cast(&result, py::return_value_policy::reference);
+        }, py::arg("key"), py::arg("default") = py::none());
+        /*
         _Value.def("get", [](const tinygltf::Value &self, const std::string &key) -> const tinygltf::Value& {
             return self.Get(key);
         }, py::arg("key"), py::return_value_policy::reference);
+        */
 
         _Value.def("type", [](const tinygltf::Value &self) -> const tinygltf::Type {
             return static_cast<tinygltf::Type>(self.Type());

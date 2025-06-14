@@ -11,5 +11,6 @@ class Renderer3D(Renderer):
         super().__init__(viewport, camera_3d=camera)
 
     def end(self):
+        self.viewport.snap()
         self.camera_3d.flush_deferred(self)
         super().end()

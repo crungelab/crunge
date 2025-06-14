@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
 
 import glm
 
-from crunge.core.event_source import EventSource
 from crunge import wgpu
 from crunge import skia
 
@@ -19,21 +18,27 @@ class Viewport(Base):
         size: glm.ivec2,
         use_depth_stencil: bool = False,
         use_msaa: bool = False,
+        use_snapshot: bool = False,
     ):
         self._size = size
-        #self.size_events = EventSource[glm.ivec2]()
         self.listeners: List[ViewportListener] = []
 
         self.use_depth_stencil = use_depth_stencil
         self.use_msaa = use_msaa
         self.sample_count = 4 if use_msaa else 1
+        self.use_snapshot = use_snapshot
 
         self.color_texture: wgpu.Texture = None
         self.color_texture_view: wgpu.TextureView = None
+
         self.depth_stencil_texture: wgpu.Texture = None
         self.depth_stencil_texture_view: wgpu.TextureView = None
+
         self.msaa_texture: wgpu.Texture = None
         self.msaa_texture_view: wgpu.TextureView = None
+
+        self.snapshot_texture: wgpu.Texture = None
+        self.snapshot_texture_view: wgpu.TextureView = None
 
         # Skia
         self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)
@@ -61,7 +66,6 @@ class Viewport(Base):
 
     def on_size(self) -> None:
         self.create_device_objects()
-        #self.size_events.publish(self._size)
         for listener in self.listeners:
             listener.on_viewport_size(self._size)
 
@@ -91,6 +95,8 @@ class Viewport(Base):
             self.create_depth_stencil()
         if self.use_msaa:
             self.create_msaa()
+        if self.use_snapshot:
+            self.create_snapshot()
 
     def create_depth_stencil(self) -> None:
         descriptor = wgpu.TextureDescriptor(
@@ -104,7 +110,7 @@ class Viewport(Base):
 
     def create_msaa(self) -> None:
         descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_SRC,
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.BGRA8_UNORM,
             sample_count=self.sample_count,
@@ -112,3 +118,34 @@ class Viewport(Base):
         )
         self.msaa_texture = self.device.create_texture(descriptor)
         self.msaa_texture_view = self.msaa_texture.create_view()
+
+    def create_snapshot(self) -> None:
+        descriptor = wgpu.TextureDescriptor(
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_DST,
+            size=wgpu.Extent3D(self.width, self.height, 1),
+            format=wgpu.TextureFormat.BGRA8_UNORM,
+            sample_count=self.sample_count,
+            mip_level_count=1,
+        )
+        self.snapshot_texture = self.device.create_texture(descriptor)
+        self.snapshot_texture_view = self.msaa_texture.create_view()
+
+    def snap(self):
+        if not self.use_snapshot:
+            raise RuntimeError("Snapshot is not enabled for this viewport.")
+        
+        if self.snapshot_texture is None:
+            self.create_snapshot()
+        
+        # Create a command encoder to copy the MSAA texture to the snapshot texture
+        encoder = self.device.create_command_encoder()
+        source=wgpu.TexelCopyTextureInfo(texture=self.msaa_texture)
+        destination=wgpu.TexelCopyTextureInfo(texture=self.snapshot_texture)
+        encoder.copy_texture_to_texture(
+            source=source,
+            destination=destination,
+            copy_size=wgpu.Extent3D(self.width, self.height, 1),
+        )
+        
+        # Submit the commands
+        self.device.queue.submit([encoder.finish()])

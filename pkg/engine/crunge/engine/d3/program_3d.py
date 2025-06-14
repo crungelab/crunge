@@ -51,6 +51,7 @@ class LightBindGroupLayout(BindGroupLayout):
 class MaterialBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
         material_bgl_entries = [
+            # Sampler
             wgpu.BindGroupLayoutEntry(
                 binding=0,
                 visibility=wgpu.ShaderStage.FRAGMENT,
@@ -58,6 +59,7 @@ class MaterialBindGroupLayout(BindGroupLayout):
                     type=wgpu.SamplerBindingType.FILTERING
                 ),
             ),
+            # Texture
             wgpu.BindGroupLayoutEntry(
                 binding=1,
                 visibility=wgpu.ShaderStage.FRAGMENT,
@@ -66,6 +68,7 @@ class MaterialBindGroupLayout(BindGroupLayout):
                     view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
             ),
+            # Material
             wgpu.BindGroupLayoutEntry(
                 binding=2,
                 visibility=wgpu.ShaderStage.FRAGMENT,

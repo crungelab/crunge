@@ -39,7 +39,7 @@ class Viewer(engine.App):
 
     def create_viewport(self):
         self.viewport = SurfaceViewport(
-            self.size, self.window, use_depth_stencil=True, use_msaa=True
+            self.size, self.window, use_depth_stencil=True, use_msaa=True, use_snapshot=True
         )
 
     def create_view(self, scene: Scene3D):

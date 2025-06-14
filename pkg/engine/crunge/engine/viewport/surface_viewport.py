@@ -17,8 +17,9 @@ class SurfaceViewport(Viewport):
         window: sdl.Window,
         use_depth_stencil: bool = False,
         use_msaa: bool = False,
+        use_snapshot: bool = False,
     ):
-        super().__init__(size, use_depth_stencil, use_msaa)
+        super().__init__(size, use_depth_stencil, use_msaa, use_snapshot)
         self.window = window
         self.surface: wgpu.Surface = None
         self.create_surface()
