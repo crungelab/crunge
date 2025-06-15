@@ -40,9 +40,9 @@ struct Material {
 
 @group(0) @binding(0) var<uniform> camera : Camera;
 
-@group(1) @binding(0) var mySampler: sampler;
-@group(1) @binding(1) var myTexture : texture_2d<f32>;
-@group(1) @binding(2) var<uniform> material : Material;
+@group(1) @binding(0) var<uniform> material : Material;
+@group(1) @binding(1) var mySampler: sampler;
+@group(1) @binding(2) var myTexture : texture_2d<f32>;
 
 @group(2) @binding(0) var<storage, read> models: array<Model>;
 
@@ -126,7 +126,7 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
 @klass.singleton
 class ModelBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
-        model_bgl_entries = [
+        entries = [
             wgpu.BindGroupLayoutEntry(
                 binding=0,
                 visibility=wgpu.ShaderStage.VERTEX,
@@ -135,11 +135,7 @@ class ModelBindGroupLayout(BindGroupLayout):
                 ),
             ),
         ]
-
-        model_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=model_bgl_entries)
-        bind_group_layout = self.device.create_bind_group_layout(model_bgl_desc)
-        logger.debug(f"model_bgl: {bind_group_layout}")
-        super().__init__(bind_group_layout)
+        super().__init__(entries=entries, label="ModelBindGroupLayout")
 
 
 @klass.singleton

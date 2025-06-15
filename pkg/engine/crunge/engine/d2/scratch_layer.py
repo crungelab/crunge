@@ -16,6 +16,7 @@ class ScratchLayer(ViewLayer):
         self.vu_list: list[Vu2D] = []
 
     def add_vu(self, vu: Vu2D):
+        vu.enable()
         self.vu_list.append(vu)
     
     def remove_vu(self, vu: Vu2D):
@@ -26,11 +27,6 @@ class ScratchLayer(ViewLayer):
         self.add_vu(line)
 
     def draw_polygon(self, points: list[glm.vec2], color=colors.WHITE):
-        '''
-        for i in range(len(points) - 1):
-            self.draw_line(points[i], points[i + 1], color)
-        self.draw_line(points[-1], points[0], color)
-        '''
         polygon = Polygon2D(points, color)
         self.add_vu(polygon)
     

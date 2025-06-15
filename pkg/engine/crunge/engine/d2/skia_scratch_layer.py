@@ -6,11 +6,6 @@ from crunge import skia
 from ..renderer import Renderer
 from ..view_layer import ViewLayer
 
-from .vu_2d import Vu2D
-from .shape.line_2d import Line2D
-from .shape.polygon_2d import Polygon2D
-from .shape.circle_2d import Circle2D
-
 from .. import colors
 from ..color import rgba_tuple_to_argb_int
 
@@ -40,26 +35,12 @@ class ScratchLayer(ViewLayer):
             for pt in points[1:]:
                 path.line_to(*pt)
             path.close()
-            # Fill
-            '''
-            paint = skia.Paint(
-                Color=rgba_tuple_to_argb_int(color),
-                Style=skia.Paint.kFill_Style,
-            )
-            self.canvas.draw_path(path, paint)
-            '''
-            # Stroke
-            '''
-            outline_paint = skia.Paint(
-                Color=rgba_tuple_to_argb_int(outline_color),
-                Style=skia.Paint.Style.K_STROKE_STYLE,
-                StrokeWidth=1.0,
-            )
-            '''
+
             outline_paint = skia.Paint()
             outline_paint.set_color(rgba_tuple_to_argb_int(outline_color))
             outline_paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             outline_paint.set_stroke_width(1.0)
+
             canvas.draw_path(path, outline_paint)
         
         self.add_call(draw)
@@ -69,22 +50,11 @@ class ScratchLayer(ViewLayer):
             #logger.debug(f"draw_circle({center}, {radius}, {segments}, {color})")
             paint = skia.Paint()
             paint.set_color(rgba_tuple_to_argb_int(color))
-            #paint.set_color(0xFF00FFFF)
             paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             paint.set_stroke_width(2)  # Set the outline thickness as needed
             canvas.draw_circle(skia.Point(center.x, center.y), radius, paint)
-            #canvas.draw_circle(skia.Point(10, 10), 10, paint)
 
         self.add_call(draw)
-
-    '''
-    def draw(self, renderer: Renderer):
-        # logger.debug("DemoView.draw()")
-        for call in self.draw_calls:
-            call(renderer)
-
-        super().draw(renderer)
-    '''
 
     def post_draw(self, renderer: Renderer):
         with renderer.canvas_target() as canvas:

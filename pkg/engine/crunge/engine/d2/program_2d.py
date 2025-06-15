@@ -1,14 +1,35 @@
 from loguru import logger
+from jinja2 import (
+    Environment,
+    BaseLoader,
+    ChoiceLoader,
+    PackageLoader,
+    select_autoescape,
+)
 
 from crunge import wgpu
 
 from ..program import Program
-from .bindings_2d import CameraBGL, MaterialBGL, ModelBGL
+from .bindings_2d import (
+    BindGroupIndex,
+    CameraBindIndex,
+    MaterialBindIndex,
+    ModelBindIndex,
+    CameraBGL,
+    MaterialBGL,
+    ModelBGL,
+)
 
 
 class Program2D(Program):
     def __init__(self):
-        super().__init__()
+        super().__init__([PackageLoader("crunge.engine.d2", "templates")])
+        self.template_dict = {
+            "BindGroupIndex": BindGroupIndex,
+            "CameraBindIndex": CameraBindIndex,
+            "MaterialBindIndex": MaterialBindIndex,
+            "ModelBindIndex": ModelBindIndex,
+        }
 
     @property
     def camera_bind_group_layout(self):

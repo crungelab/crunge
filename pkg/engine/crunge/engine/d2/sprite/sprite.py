@@ -149,10 +149,10 @@ class Sprite(Material):
 
     def create_bind_group(self):
         self.bind_group = MaterialBindGroup(
-            self.sampler.sampler,
-            self.texture.view,
             self.uniform_buffer,
             self.uniform_buffer_size,
+            self.sampler.sampler,
+            self.texture.view,
         )
 
     '''

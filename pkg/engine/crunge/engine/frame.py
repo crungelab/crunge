@@ -19,6 +19,11 @@ class Frame(Widget):
 
     @view.setter
     def view(self, view: View):
+        if self._view is not None:
+            self._view.disable()
+            #self._view.config(window=None)
+            self.detach(self._view)
+
         self._view = view
         self.children.clear()
         self.attach(view)

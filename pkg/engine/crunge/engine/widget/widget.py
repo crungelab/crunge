@@ -218,6 +218,11 @@ class Widget(Node["Widget"]):
         self.parent.layout.add_child(self.layout)
         super().on_attached()  # Call the parent method to ensure proper attachment behavior
 
+    def on_detached(self):
+        if self.parent is not None:
+            self.parent.layout.remove_child(self.layout)
+        super().on_detached()
+
     def hit_test(self, x: float, y: float) -> bool:
         position = self.position
         size = self.size

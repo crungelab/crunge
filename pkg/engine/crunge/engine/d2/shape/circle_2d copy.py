@@ -7,6 +7,8 @@ import glm
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
+from ... import colors
+from ...color import Color
 from ...renderer import Renderer
 from ...uniforms import cast_matrix4, cast_tuple4f
 
@@ -16,9 +18,7 @@ from ..uniforms_2d import (
     MaterialUniform,
 )
 
-from ... import colors
-
-from .line_program_2d import LineProgram2D
+from .polygon_program_2d import PolygonProgram2D
 
 # Define the structured dtype for the combined data
 vertex_dtype = np.dtype(
@@ -28,7 +28,7 @@ vertex_dtype = np.dtype(
 )
 
 
-class Line2D(Vu2D):
+class Circle2D(Vu2D):
     material_bind_group: wgpu.BindGroup = None
     model_bind_group: wgpu.BindGroup = None
 
@@ -42,26 +42,32 @@ class Line2D(Vu2D):
     material_uniform_buffer_size: int = 0
 
     def __init__(
-        self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE
+        self,
+        center: glm.vec2,
+        radius: float,
+        segments: int = 32,
+        color: Color = colors.WHITE,
     ) -> None:
+        """
+        Create a Circle2D instance.
+        :param center: Center of the circle as glm.vec2.
+        :param radius: Radius of the circle.
+        :param segments: Number of line segments used to approximate the circle.
+        :param color: Color of the circle as glm.vec4.
+        """
         super().__init__()
-        self.begin = begin
-        self.end = end
-        self.points = [begin, end]
-        self._color = color
-        self.program = LineProgram2D()
-
-    def _create(self):
-        super()._create()
+        self.center = center
+        self.radius = radius
+        self.segments = segments
+        self.color = color
+        self.program = PolygonProgram2D()
         self.create_vertices()
         self.create_buffers()
         self.create_bind_groups()
-        self.on_transform()
-        self.on_material()
 
     @property
     def size(self) -> glm.vec2:
-        return glm.vec2(1.0, 1.0)
+        return glm.vec2(self.radius * 2.0, self.radius * 2.0)
 
     @property
     def width(self) -> int:
@@ -71,20 +77,17 @@ class Line2D(Vu2D):
     def height(self) -> int:
         return self.size.y
 
-    @property
-    def color(self) -> glm.vec4:
-        return self._color
-
-    @color.setter
-    def color(self, value: glm.vec4) -> None:
-        self._color = value
-        self.on_material()
-
     def create_vertices(self):
-        # Create an empty array with the structured dtype
-        self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
-        # Fill the array with data
-        self.vertices["position"] = self.points
+        # Generate the circle points
+        theta = np.linspace(0, 2 * np.pi, self.segments, endpoint=False)
+        x = self.center.x + self.radius * np.cos(theta)
+        y = self.center.y + self.radius * np.sin(theta)
+        points = np.column_stack((x, y))
+
+        # Create the vertices array and add the closing vertex
+        self.vertices = np.empty(self.segments + 1, dtype=vertex_dtype)
+        self.vertices["position"][:-1] = points
+        self.vertices["position"][-1] = points[0]  # Close the loop
 
     def update_vertices(self):
         self.create_vertices()
@@ -150,25 +153,23 @@ class Line2D(Vu2D):
 
         self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
 
-    def on_transform(self) -> None:
-        super().on_transform()
+    def draw(self, renderer: Renderer):
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
-        self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
+        renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
-    def on_material(self) -> None:
-        #super().on_material()
         material_uniform = MaterialUniform()
         material_uniform.color = cast_tuple4f(self.color)
-        self.gfx.queue.write_buffer(
+
+
+        renderer.device.queue.write_buffer(
             self.material_uniform_buffer, 0, material_uniform
         )
 
-    def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
         pass_enc.set_bind_group(1, self.material_bind_group)
         pass_enc.set_bind_group(2, self.model_bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.draw(2, 1, 0, 0)  # Drawing 2 vertices (a single line)
+        pass_enc.draw(len(self.vertices), 1, 0, 0)  # Dynamic vertex count

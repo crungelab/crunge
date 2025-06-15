@@ -8,9 +8,8 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ...renderer import Renderer
-from ...uniforms import cast_matrix4, cast_vec4, cast_tuple4f
+from ...uniforms import cast_matrix4, cast_tuple4f
 from ... import colors
-# from ..resource.bind_group_layout import BindGroupLayout
 
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
@@ -18,9 +17,6 @@ from ..uniforms_2d import (
     MaterialUniform,
 )
 
-# from .program_2d import Program2D
-
-# from .line_program_2d import LineProgram2D
 from .polygon_program_2d import PolygonProgram2D
 
 # Define the structured dtype for the combined data
@@ -44,17 +40,19 @@ class Polygon2D(Vu2D):
     material_uniform_buffer: wgpu.Buffer = None
     material_uniform_buffer_size: int = 0
 
-    def __init__(
-        self, points: list[glm.vec2], color=colors.WHITE
-    ) -> None:
+    def __init__(self, points: list[glm.vec2], color=colors.WHITE) -> None:
         super().__init__()
         self.points = points
-        self.color = color
-        # self.program = LineProgram2D()  # Assuming it is renamed to PolygonProgram2D
+        self._color = color
         self.program = PolygonProgram2D()
+
+    def _create(self):
+        super()._create()
         self.create_vertices()
         self.create_buffers()
         self.create_bind_groups()
+        self.on_transform()
+        self.on_material()
 
     @property
     def size(self) -> glm.vec2:
@@ -68,13 +66,14 @@ class Polygon2D(Vu2D):
     def height(self) -> int:
         return self.size.y
 
-    """
-    def create_vertices(self):
-        # Create an empty array with the structured dtype
-        self.vertices = np.empty(len(self.points), dtype=vertex_dtype)
-        # Fill the array with data
-        self.vertices["position"] = self.points
-    """
+    @property
+    def color(self) -> glm.vec4:
+        return self._color
+
+    @color.setter
+    def color(self, value: glm.vec4) -> None:
+        self._color = value
+        self.on_material()
 
     def create_vertices(self):
         # Create an empty array with the structured dtype
@@ -149,20 +148,22 @@ class Polygon2D(Vu2D):
 
         self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
 
-    def draw(self, renderer: Renderer):
+    def on_transform(self) -> None:
+        super().on_transform()
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
-        renderer.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
+        self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
+    def on_material(self) -> None:
+        #super().on_material()
         material_uniform = MaterialUniform()
-        #material_uniform.color = cast_vec4(self.color)
         material_uniform.color = cast_tuple4f(self.color)
-
-        renderer.device.queue.write_buffer(
+        self.gfx.queue.write_buffer(
             self.material_uniform_buffer, 0, material_uniform
         )
 
+    def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
         pass_enc.set_bind_group(1, self.material_bind_group)

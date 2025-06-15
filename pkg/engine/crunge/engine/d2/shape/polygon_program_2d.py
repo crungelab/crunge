@@ -8,65 +8,20 @@ from crunge import wgpu
 from crunge.engine.d2.program_2d import Program2D
 
 from ...resource.bind_group.bind_group_layout import BindGroupLayout
-
-
-shader_code = """
-struct Camera {
-    projection : mat4x4<f32>,
-    view : mat4x4<f32>,
-    position: vec3<f32>,
-}
-
-struct Model {
-    transform : mat4x4<f32>,
-}
-
-struct Material {
-    color : vec4<f32>,
-}
-
-@group(0) @binding(0) var<uniform> camera : Camera;
-
-@group(1) @binding(0) var<uniform> material : Material;
-
-@group(2) @binding(0) var<uniform> model : Model;
-
-struct VertexInput {
-  @location(0) pos: vec4<f32>,
-}
-
-struct VertexOutput {
-  @builtin(position) vertex_pos : vec4<f32>,
-}
-
-@vertex
-fn vs_main(in : VertexInput) -> VertexOutput {
-  let vert_pos = camera.projection * camera.view * model.transform * in.pos;
-  return VertexOutput(vert_pos);
-}
-
-@fragment
-fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
-    return material.color;
-}
-"""
+from ...loader.shader_loader import ShaderLoader
 
 
 @klass.singleton
 class MaterialBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
-        material_bgl_entries = [
+        entries = [
             wgpu.BindGroupLayoutEntry(
                 binding=0,
                 visibility=wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
         ]
-
-        material_bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=material_bgl_entries)
-        bind_group_layout = self.device.create_bind_group_layout(material_bgl_desc)
-        logger.debug(f"material_bgl: {bind_group_layout}")
-        super().__init__(bind_group_layout)
+        super().__init__(entries, label="PolygonMaterialBindGroupLayout")
 
 
 @klass.singleton
@@ -82,7 +37,9 @@ class PolygonProgram2D(Program2D):
         return MaterialBindGroupLayout().get()
 
     def create_render_pipeline(self):
-        shader_module = self.gfx.create_shader_module(shader_code)
+        shader_module = ShaderLoader(self.template_env, self.template_dict).load(
+            "polygon.wgsl"
+        )
 
         vertAttributes = [
             wgpu.VertexAttribute(

@@ -52,20 +52,21 @@ class CameraBindGroup(BindGroup):
 
 
 class MaterialBindIndex:
-    SAMPLER = 0
-    TEXTURE = 1
-    MATERIAL_UNIFORM = 2
+    MATERIAL_UNIFORM = 0
+    SAMPLER = 1
+    TEXTURE = 2
 
 
 @klass.singleton
 class MaterialBGL(BindGroupLayout):
-    class Index:
-        SAMPLER = 0
-        TEXTURE = 1
-        MATERIAL_UNIFORM = 2
-
     def __init__(self) -> None:
         entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=MaterialBindIndex.MATERIAL_UNIFORM,
+                # visibility=wgpu.ShaderStage.FRAGMENT,
+                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
             wgpu.BindGroupLayoutEntry(
                 binding=MaterialBindIndex.SAMPLER,
                 visibility=wgpu.ShaderStage.FRAGMENT,
@@ -81,12 +82,6 @@ class MaterialBGL(BindGroupLayout):
                     view_dimension=wgpu.TextureViewDimension.E2D,
                 ),
             ),
-            wgpu.BindGroupLayoutEntry(
-                binding=MaterialBindIndex.MATERIAL_UNIFORM,
-                # visibility=wgpu.ShaderStage.FRAGMENT,
-                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
         ]
 
         super().__init__(entries=entries, label="Material Bind Group Layout")
@@ -95,22 +90,22 @@ class MaterialBGL(BindGroupLayout):
 class MaterialBindGroup(BindGroup):
     def __init__(
         self,
-        sampler: wgpu.Sampler,
-        texture_view: wgpu.TextureView,
         uniform_buffer: wgpu.Buffer,
         uniform_buffer_size: int,
+        sampler: wgpu.Sampler,
+        texture_view: wgpu.TextureView,
         index: int = BindGroupIndex.MATERIAL,
     ) -> None:
         entries = wgpu.BindGroupEntries(
             [
-                wgpu.BindGroupEntry(binding=MaterialBindIndex.SAMPLER, sampler=sampler),
-                wgpu.BindGroupEntry(
-                    binding=MaterialBindIndex.TEXTURE, texture_view=texture_view
-                ),
                 wgpu.BindGroupEntry(
                     binding=MaterialBindIndex.MATERIAL_UNIFORM,
                     buffer=uniform_buffer,
                     size=uniform_buffer_size,
+                ),
+                wgpu.BindGroupEntry(binding=MaterialBindIndex.SAMPLER, sampler=sampler),
+                wgpu.BindGroupEntry(
+                    binding=MaterialBindIndex.TEXTURE, texture_view=texture_view
                 ),
             ]
         )

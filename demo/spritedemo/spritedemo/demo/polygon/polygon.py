@@ -8,19 +8,11 @@ from crunge.engine import Renderer
 
 from ..demo import Demo
 from crunge.engine import Color, colors
-from crunge.engine.d2.shape.line_2d import Line2D
 from crunge.engine.d2.node_2d import Node2D
+from crunge.engine.d2.shape.polygon_2d import Polygon2D
 
 
-class LineDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-
-    def kill(self):
-        self.node.destroy()
-        self.node = None
-        
+class PolygonDemo(Demo):
     def reset(self):
         self.angle = 0
         self.scale = 1.0
@@ -28,7 +20,14 @@ class LineDemo(Demo):
 
         self.scene.clear()
 
-        shape = self.shape = Line2D(glm.vec2(0, 0), glm.vec2(100, 100))
+        shape = self.shape = Polygon2D(
+            [
+                glm.vec2(0, 0),
+                glm.vec2(100, 0),
+                glm.vec2(100, 100),
+                glm.vec2(0, 100),
+            ],
+        )
         node = self.node = Node2D(vu=shape)
         x = self.width / 2
         y = self.height / 2
@@ -36,18 +35,15 @@ class LineDemo(Demo):
 
         self.scene.attach(self.node)
 
-
+    def kill(self):
+        self.node.destroy()
+        self.node = None
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
-        imgui.begin("Line")
-
-        # Position
-        changed, position = imgui.drag_float2("Position", tuple(self.node.position))
-        if changed:
-            self.node.position = glm.vec2(position)
+        imgui.begin("Polygon")
 
         # Rotation
         changed, self.angle = imgui.drag_float(
@@ -77,8 +73,9 @@ class LineDemo(Demo):
 
         super().draw(renderer)
 
+
 def main():
-    LineDemo().create().run()
+    PolygonDemo().create().run()
 
 
 if __name__ == "__main__":

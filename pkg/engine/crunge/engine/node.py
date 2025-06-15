@@ -100,9 +100,10 @@ class Node(Dispatcher, Generic[T_Node]):
         self.enable()
 
     def detach(self, child: "Node[T_Node]"):
+        child.on_detached()
         child.parent = None
         self.children.remove(child)
-        child.on_detached()
+        #child.on_detached()
 
     def on_detached(self):
         pass
