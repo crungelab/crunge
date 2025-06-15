@@ -1,7 +1,4 @@
-import os, sys
-import ctypes
 from ctypes import Structure, c_float, c_uint32, sizeof
-from pathlib import Path
 
 from loguru import logger
 import glm
@@ -14,7 +11,6 @@ import crunge.wgpu.utils as utils
 
 from crunge import imgui
 
-from ..math import Rect2i
 from ..renderer import Renderer
 from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture2D
@@ -187,7 +183,7 @@ class ImGuiVu(Vu):
         vs_module = self.gfx.create_shader_module(vs_shader_code)
         fs_module = self.gfx.create_shader_module(fs_shader_code)
 
-        vertAttributes = [
+        vertex_attributes = [
             wgpu.VertexAttribute(
                 format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
             ),
@@ -203,10 +199,10 @@ class ImGuiVu(Vu):
             ),
         ]
 
-        vertBufferLayouts = [
+        vertex_buffer_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=sizeof(ImDrawVert),
-                attributes=vertAttributes,
+                attributes=vertex_attributes,
             )
         ]
 
@@ -231,7 +227,7 @@ class ImGuiVu(Vu):
             )
         ]
 
-        fragmentState = wgpu.FragmentState(
+        fragment_state = wgpu.FragmentState(
             module=fs_module,
             entry_point="main",
             targets=color_targets,
@@ -240,7 +236,7 @@ class ImGuiVu(Vu):
         vertex_state = wgpu.VertexState(
             module=vs_module,
             entry_point="main",
-            buffers=vertBufferLayouts,
+            buffers=vertex_buffer_layouts,
         )
 
         bgl_entries = [
@@ -299,7 +295,7 @@ class ImGuiVu(Vu):
             vertex=vertex_state,
             primitive=primitive,
             # depth_stencil=depth_stencil_state,
-            fragment=fragmentState,
+            fragment=fragment_state,
         )
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
@@ -313,13 +309,13 @@ class ImGuiVu(Vu):
             wgpu.BindGroupEntry(binding=2, texture_view=self.texture.view),
         ]
 
-        bindGroupDesc = wgpu.BindGroupDescriptor(
+        bind_group_desc = wgpu.BindGroupDescriptor(
             label="Texture bind group",
             layout=self.pipeline.get_bind_group_layout(0),
             entries=bindgroup_entries,
         )
 
-        self.bindGroup = self.device.create_bind_group(bindGroupDesc)
+        self.bind_group = self.device.create_bind_group(bind_group_desc)
         logger.debug("create_pipeline done")
 
     def create_image_bind_group(self, tex_id):
@@ -346,19 +342,7 @@ class ImGuiVu(Vu):
         self, draw_data: imgui.DrawData, pass_enc: wgpu.RenderPassEncoder
     ):
         # logger.debug("render_draw_data")
-        """
-        float scWidth = window().swapchain_size_.width;
-        float scHeight = window().swapchain_size_.height;
-
-        // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-        float fbWidth = drawData.DisplaySize.x * drawData.FramebufferScale.x;
-        float fbHeight = drawData.DisplaySize.y * drawData.FramebufferScale.y;
-        if (fbWidth <= 0 || fbHeight <= 0)
-            return;
-        """
-        # sc_width = self.width
         sc_width = self.wnd.width
-        # sc_height = self.height
         sc_height = self.wnd.height
         fb_width = draw_data.display_size[0] * draw_data.framebuffer_scale[0]
         fb_height = draw_data.display_size[1] * draw_data.framebuffer_scale[1]
@@ -382,15 +366,6 @@ class ImGuiVu(Vu):
                 commands.vtx_buffer_data,
             )
 
-            """
-            utils.write_buffer(
-                self.device,
-                self.vertex_buffer,
-                vtx_offset * imgui.VERTEX_SIZE,
-                commands.vtx_buffer_data,
-                commands.vtx_buffer_size * imgui.VERTEX_SIZE,
-            )
-            """
             # logger.debug('write index_buffer')
             utils.write_buffer(
                 self.device,
@@ -398,16 +373,6 @@ class ImGuiVu(Vu):
                 idx_offset * imgui.INDEX_SIZE,
                 commands.idx_buffer_data,
             )
-
-            """
-            utils.write_buffer(
-                self.device,
-                self.index_buffer,
-                idx_offset * imgui.INDEX_SIZE,
-                commands.idx_buffer_data,
-                commands.idx_buffer_size * imgui.INDEX_SIZE,
-            )
-            """
 
             for command in commands:
                 if command.user_callback:
@@ -418,7 +383,6 @@ class ImGuiVu(Vu):
                     )
                 else:
                     tex_id = command.texture_id
-                    # tex_id = command.get_tex_id()
                     # logger.debug(f"tex_id: {tex_id}")
                     bind_group = self.image_bind_groups.get(tex_id)
                     if bind_group is None:
@@ -489,7 +453,6 @@ class ImGuiVu(Vu):
         if fb_width == 0 or fb_height == 0:
             return
 
-        # def ortho(left: glm_typing.Number, right: glm_typing.Number, bottom: glm_typing.Number, top: glm_typing.Number, zNear: glm_typing.Number, zFar: glm_typing.Number, /) -> mat4x4: ...
         mvp = glm.ortho(0.0, display_width, display_height, 0.0, -1.0, 1.0)
 
         uniforms = Uniforms()
@@ -502,7 +465,6 @@ class ImGuiVu(Vu):
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                # view=renderer.texture_view,
                 view=renderer.viewport.color_texture_view,
                 load_op=wgpu.LoadOp.LOAD,
                 store_op=wgpu.StoreOp.STORE,
@@ -517,7 +479,7 @@ class ImGuiVu(Vu):
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
-        pass_enc.set_bind_group(0, self.bindGroup)
+        pass_enc.set_bind_group(0, self.bind_group)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
         self.render_draw_data(draw_data, pass_enc)

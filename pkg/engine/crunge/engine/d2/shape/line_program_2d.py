@@ -41,16 +41,16 @@ class LineProgram2D(Program2D):
             "line.wgsl"
         )
 
-        vertAttributes = [
+        vertex_attributes = [
             wgpu.VertexAttribute(
                 format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
             ),
         ]
 
-        vertBufferLayouts = [
+        vertex_buffer_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=2 * sizeof(c_float),
-                attributes=vertAttributes,
+                attributes=vertex_attributes,
             )
         ]
 
@@ -75,7 +75,7 @@ class LineProgram2D(Program2D):
             )
         ]
 
-        fragmentState = wgpu.FragmentState(
+        fragment_state = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
             targets=color_targets,
@@ -84,7 +84,7 @@ class LineProgram2D(Program2D):
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            buffers=vertBufferLayouts,
+            buffers=vertex_buffer_layouts,
         )
 
         depth_stencil_state = wgpu.DepthStencilState(
@@ -105,7 +105,7 @@ class LineProgram2D(Program2D):
             primitive=primitive,
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
-            fragment=fragmentState,
+            fragment=fragment_state,
             depth_stencil=depth_stencil_state,
         )
 

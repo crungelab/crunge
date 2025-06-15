@@ -41,16 +41,16 @@ class PolygonProgram2D(Program2D):
             "polygon.wgsl"
         )
 
-        vertAttributes = [
+        vertex_attributes = [
             wgpu.VertexAttribute(
                 format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
             ),
         ]
 
-        vertBufferLayouts = [
+        vertex_buffer_layouts = [
             wgpu.VertexBufferLayout(
                 array_stride=2 * sizeof(c_float),
-                attributes=vertAttributes,
+                attributes=vertex_attributes,
             )
         ]
 
@@ -84,7 +84,7 @@ class PolygonProgram2D(Program2D):
         vertex_state = wgpu.VertexState(
             module=shader_module,
             entry_point="vs_main",
-            buffers=vertBufferLayouts,
+            buffers=vertex_buffer_layouts,
         )
 
         depth_stencil_state = wgpu.DepthStencilState(
