@@ -4,7 +4,7 @@ from jinja2 import PackageLoader
 from crunge import wgpu
 
 from ..program import Program
-from .bindings_2d import (
+from .bindings import (
     BindGroupIndex,
     CameraBindIndex,
     MaterialBindIndex,

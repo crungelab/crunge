@@ -15,7 +15,7 @@ from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
 
 from .program_2d import Program2D
-from .bindings_2d import BindGroupIndex, CameraBindGroup
+from .bindings import BindGroupIndex, CameraBindGroup
 
 
 @klass.singleton

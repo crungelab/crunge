@@ -3,52 +3,9 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ..resource.bind_group import BindGroupLayout, BindGroup
+from ...resource.bind_group import BindGroupLayout, BindGroup
 
-
-class BindGroupIndex:
-    # VIEWPORT = 0
-    CAMERA = 0
-    # LIGHT = auto()
-    MATERIAL = 1
-    MODEL = 2
-
-
-class CameraBindIndex:
-    CAMERA_UNIFORM = 0
-
-
-@klass.singleton
-class CameraBGL(BindGroupLayout):
-    def __init__(self) -> None:
-        entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=CameraBindIndex.CAMERA_UNIFORM,
-                visibility=wgpu.ShaderStage.VERTEX,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-        super().__init__(entries=entries, label="Camera Bind Group Layout")
-
-
-class CameraBindGroup(BindGroup):
-    def __init__(
-        self,
-        uniform_buffer: wgpu.Buffer,
-        uniform_buffer_size: int,
-        index: int = BindGroupIndex.CAMERA,
-    ) -> None:
-        entries = [
-            wgpu.BindGroupEntry(
-                binding=CameraBindIndex.CAMERA_UNIFORM,
-                buffer=uniform_buffer,
-                size=uniform_buffer_size,
-            ),
-        ]
-
-        super().__init__(
-            entries=entries, layout=CameraBGL(), label="Camera Bind Group", index=index
-        )
+from . import BindGroupIndex
 
 
 class MaterialBindIndex:
@@ -86,7 +43,7 @@ class MaterialBGL(BindGroupLayout):
 
         super().__init__(entries=entries, label="Material Bind Group Layout")
 
-
+    
 class MaterialBindGroup(BindGroup):
     def __init__(
         self,
@@ -114,39 +71,3 @@ class MaterialBindGroup(BindGroup):
             entries=entries, layout=MaterialBGL(), label="Material Bind Group", index=index
         )
 
-
-class ModelBindIndex:
-    MODEL_UNIFORM = 0
-
-@klass.singleton
-class ModelBGL(BindGroupLayout):
-    def __init__(self) -> None:
-        entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=ModelBindIndex.MODEL_UNIFORM,
-                visibility=wgpu.ShaderStage.VERTEX,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-
-        super().__init__(entries=entries, label="Model Bind Group Layout")
-
-
-class ModelBindGroup(BindGroup):
-    def __init__(
-        self,
-        uniform_buffer: wgpu.Buffer,
-        uniform_buffer_size: int,
-        index: int = BindGroupIndex.MODEL,
-    ) -> None:
-        entries = [
-            wgpu.BindGroupEntry(
-                binding=ModelBindIndex.MODEL_UNIFORM,
-                buffer=uniform_buffer,
-                size=uniform_buffer_size,
-            ),
-        ]
-
-        super().__init__(
-            entries=entries, layout=ModelBGL(), label="Model Bind Group", index=index
-        )
