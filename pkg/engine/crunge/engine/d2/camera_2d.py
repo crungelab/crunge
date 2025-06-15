@@ -140,7 +140,9 @@ class Camera2D(Node2D, ViewportListener):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         # pass_enc.set_bind_group(0, self.bind_group)
-        pass_enc.set_bind_group(BindGroupIndex.CAMERA, self.bind_group.get())
+        #pass_enc.set_bind_group(BindGroupIndex.CAMERA, self.bind_group.get())
+        self.bind_group.bind(pass_enc)
+
 
     def unproject(self, mouse_vec: glm.vec2):
         mx = mouse_vec.x

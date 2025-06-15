@@ -1,23 +1,13 @@
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
-
 from loguru import logger
+from jinja2 import Template
 
 from crunge.core import klass
 from crunge import wgpu
 
 from ..program_2d import Program2D
+from ..bindings_2d import BindGroupIndex, CameraBindIndex, MaterialBindIndex, ModelBindIndex
 
-shader_code = """
+shader_template_code = """
 struct Camera {
     projection : mat4x4<f32>,
     view : mat4x4<f32>,
@@ -120,6 +110,13 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     return color * material.color;
 }
 """
+
+shader_code = Template(shader_template_code).render(
+    BindGroupIndex=BindGroupIndex,
+    CameraBindIndex=CameraBindIndex,
+    MaterialBindIndex=MaterialBindIndex,
+    ModelBindIndex=ModelBindIndex,
+)
 
 
 @klass.singleton

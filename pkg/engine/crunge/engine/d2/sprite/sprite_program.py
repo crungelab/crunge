@@ -5,7 +5,7 @@ from crunge.core import klass
 from crunge import wgpu
 
 from ..program_2d import Program2D
-from ..bindings_2d import BindGroupIndex, CameraBGL, MaterialBGL, ModelBGL
+from ..bindings_2d import BindGroupIndex, CameraBindIndex, MaterialBindIndex, ModelBindIndex
 
 shader_template_code = """
 struct Camera {
@@ -27,13 +27,13 @@ struct Material {
     flipV : u32, // 1 = true, 0 = false
 }
 
-@group({{BindGroupIndex.CAMERA}}) @binding({{CameraBGL.Index.CAMERA_UNIFORM}}) var<uniform> camera : Camera;
+@group({{BindGroupIndex.CAMERA}}) @binding({{CameraBindIndex.CAMERA_UNIFORM}}) var<uniform> camera : Camera;
 
-@group(1) @binding(0) var mySampler: sampler;
-@group(1) @binding(1) var myTexture : texture_2d<f32>;
-@group(1) @binding(2) var<uniform> material : Material;
+@group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.SAMPLER}}) var mySampler: sampler;
+@group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.TEXTURE}}) var myTexture : texture_2d<f32>;
+@group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.MATERIAL_UNIFORM}}) var<uniform> material : Material;
 
-@group(2) @binding(0) var<uniform> model : Model;
+@group({{BindGroupIndex.MODEL}}) @binding({{ModelBindIndex.MODEL_UNIFORM}}) var<uniform> model : Model;
 
 struct VertexOutput {
   @builtin(position) vertex_pos : vec4<f32>,
@@ -116,9 +116,9 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
 
 shader_code = Template(shader_template_code).render(
     BindGroupIndex=BindGroupIndex,
-    CameraBGL=CameraBGL(),
-    MaterialBGL=MaterialBGL(),
-    ModelBGL=ModelBGL(),
+    CameraBindIndex=CameraBindIndex,
+    MaterialBindIndex=MaterialBindIndex,
+    ModelBindIndex=ModelBindIndex,
 )
 
 

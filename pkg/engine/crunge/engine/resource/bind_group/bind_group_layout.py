@@ -1,3 +1,5 @@
+from typing import List
+
 from loguru import logger
 
 from crunge import wgpu
@@ -6,9 +8,14 @@ from ..resource import Resource
 
 
 class BindGroupLayout(Resource):
-    def __init__(self, bind_group_layout: wgpu.BindGroupLayout) -> None:
+    def __init__(
+        self,
+        entries: List[wgpu.BindGroupEntry],
+        label: str = None,
+    ) -> None:
         super().__init__()
-        self.bind_group_layout = bind_group_layout
+        bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=entries, label=label)
+        self.bind_group_layout = self.device.create_bind_group_layout(bgl_desc)
 
     def get(self) -> wgpu.BindGroupLayout:
         return self.bind_group_layout

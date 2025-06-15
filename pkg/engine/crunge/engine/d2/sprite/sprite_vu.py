@@ -142,7 +142,8 @@ class SpriteVu(Vu2D):
         pass_enc.set_pipeline(self.program.pipeline)
         self.sprite.bind(pass_enc)
         #pass_enc.set_bind_group(2, self.bind_group)
-        pass_enc.set_bind_group(BindGroupIndex.MODEL, self.bind_group.get())
+        #pass_enc.set_bind_group(BindGroupIndex.MODEL, self.bind_group.get())
+        self.bind_group.bind(pass_enc)
 
     def draw(self, renderer: Renderer) -> None:
         if not self.manual_draw:

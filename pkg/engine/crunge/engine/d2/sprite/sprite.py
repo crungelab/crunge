@@ -197,4 +197,5 @@ class Sprite(Material):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         #pass_enc.set_bind_group(1, self.bind_group)
-        pass_enc.set_bind_group(BindGroupIndex.MATERIAL, self.bind_group.get())
+        #pass_enc.set_bind_group(BindGroupIndex.MATERIAL, self.bind_group.get())
+        self.bind_group.bind(pass_enc)
