@@ -13,7 +13,7 @@ class CameraBindIndex:
 
 
 @klass.singleton
-class CameraBGL(BindGroupLayout):
+class CameraBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
         entries = [
             wgpu.BindGroupLayoutEntry(
@@ -41,5 +41,5 @@ class CameraBindGroup(BindGroup):
         ]
 
         super().__init__(
-            entries=entries, layout=CameraBGL(), label="Camera Bind Group", index=index
+            entries=entries, layout=CameraBindGroupLayout(), label="Camera Bind Group", index=index
         )

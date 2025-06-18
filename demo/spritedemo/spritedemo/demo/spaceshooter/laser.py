@@ -21,9 +21,8 @@ class Laser(DynamicEntity2D):
         
         sprite = atlas.get("laserBlue01.png")
 
-        self.vu = SpriteVu(sprite).create()
-        #self.size = glm.vec2(sprite.size)
-        self.ttl = 0.5
+        self.vu = SpriteVu(sprite)
+        self.ttl = 1.0
 
     def add_shape(self, shape):
         shape.collision_type = CollisionType.LASER

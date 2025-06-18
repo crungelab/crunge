@@ -82,25 +82,6 @@ class Camera2D(Node2D, ViewportListener):
             self.uniform_buffer_size,
         )
 
-    """
-    def create_bind_groups(self):
-        camera_bindgroup_entries = [
-            wgpu.BindGroupEntry(
-                binding=0,
-                buffer=self.uniform_buffer,
-                size=self.uniform_buffer_size,
-            ),
-        ]
-
-        camera_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Camera bind group",
-            layout=CameraProgram2D().camera_bind_group_layout,
-            entries=camera_bindgroup_entries,
-        )
-
-        self.bind_group = self.device.create_bind_group(camera_bind_group_desc)
-    """
-
     def on_viewport_size(self, size: glm.ivec2):
         self.viewport_size = glm.vec2(size.x, size.y)
         logger.debug(f"Camera2D: on_viewport_size: {size}")

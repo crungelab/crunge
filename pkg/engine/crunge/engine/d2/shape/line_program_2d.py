@@ -7,21 +7,9 @@ from crunge import wgpu
 
 from crunge.engine.d2.program_2d import Program2D
 
-from ...resource.bind_group.bind_group_layout import BindGroupLayout
 from ...loader.shader_loader import ShaderLoader
 
-
-@klass.singleton
-class MaterialBindGroupLayout(BindGroupLayout):
-    def __init__(self) -> None:
-        entries = [
-            wgpu.BindGroupLayoutEntry(
-                binding=0,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
-            ),
-        ]
-        super().__init__(entries, label="LineMaterialBindGroupLayout")
+from ..bindings import ShapeBindGroupLayout
 
 
 @klass.singleton
@@ -34,7 +22,7 @@ class LineProgram2D(Program2D):
 
     @property
     def material_bind_group_layout(self):
-        return MaterialBindGroupLayout().get()
+        return ShapeBindGroupLayout().get()
 
     def create_render_pipeline(self):
         shader_module = ShaderLoader(self.template_env, self.template_dict).load(

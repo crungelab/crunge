@@ -14,9 +14,10 @@ from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
 )
+from ..bindings import ModelBindGroup
+from ..sprite import Sprite
 
 from .background_program import BackgroundProgram
-from ..sprite import Sprite
 
 
 class BackgroundVu(Vu2D):
@@ -79,23 +80,10 @@ class BackgroundVu(Vu2D):
         self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
 
     def create_bind_group(self):
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.buffer.get(),
-                    size=self.buffer.size,
-                ),
-            ]
+        self.bind_group = ModelBindGroup(
+            self.buffer.get(),
+            self.buffer.size,
         )
-
-        bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Model Bind Group",
-            layout=self.program.pipeline.get_bind_group_layout(2),
-            entries=bindgroup_entries,
-        )
-
-        self.bind_group = self.device.create_bind_group(bind_group_desc)
 
     def on_transform(self):
         super().on_transform()
@@ -107,7 +95,7 @@ class BackgroundVu(Vu2D):
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)
         self.sprite.bind(pass_enc)
-        pass_enc.set_bind_group(2, self.bind_group)
+        self.bind_group.bind(pass_enc)
 
     def draw(self, renderer: Renderer):
         # logger.debug("Drawing sprite")

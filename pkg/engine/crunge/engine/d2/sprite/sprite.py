@@ -11,9 +11,9 @@ from ... import colors
 
 from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
 from ..uniforms_2d import (
-    MaterialUniform,
+    SpriteUniform,
 )
-from ..bindings import BindGroupIndex, MaterialBindGroup
+from ..bindings import BindGroupIndex, SpriteBindGroup
 
 from .sprite_sampler import DefaultSpriteSampler
 from .sprite_program import SpriteProgram
@@ -41,7 +41,7 @@ class Sprite(Material):
         self.collision_rect = collision_rect
         self.program = SpriteProgram()
         #self.bind_group: wgpu.BindGroup = None
-        self.bind_group: MaterialBindGroup = None
+        self.bind_group: SpriteBindGroup = None
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
 
@@ -140,7 +140,7 @@ class Sprite(Material):
 
     def create_buffers(self):
         # Uniform Buffers
-        self.uniform_buffer_size = sizeof(MaterialUniform)
+        self.uniform_buffer_size = sizeof(SpriteUniform)
         self.uniform_buffer = self.gfx.create_buffer(
             "Material Buffer",
             self.uniform_buffer_size,
@@ -148,41 +148,15 @@ class Sprite(Material):
         )
 
     def create_bind_group(self):
-        self.bind_group = MaterialBindGroup(
+        self.bind_group = SpriteBindGroup(
             self.uniform_buffer,
             self.uniform_buffer_size,
             self.sampler.sampler,
             self.texture.view,
         )
 
-    '''
-    def create_bind_group(self):
-        sampler = self.sampler.sampler
-
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(binding=0, sampler=sampler),
-                wgpu.BindGroupEntry(binding=1, texture_view=self.texture.view),
-                wgpu.BindGroupEntry(
-                    binding=2,
-                    buffer=self.uniform_buffer,
-                    size=self.uniform_buffer_size,
-                ),
-            ]
-        )
-
-        bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Material Bind Group",
-            layout=self.program.pipeline.get_bind_group_layout(1),
-            entries=bindgroup_entries,
-        )
-
-        self.bind_group = self.device.create_bind_group(bind_group_desc)
-    '''
-
     def update_gpu(self):
-        uniform = MaterialUniform()
-        #uniform.color = cast_vec4(self.color)
+        uniform = SpriteUniform()
         uniform.color = cast_tuple4f(self.color)
 
         uniform.rect = cast_vec4(
@@ -196,6 +170,4 @@ class Sprite(Material):
         self.device.queue.write_buffer(self.uniform_buffer, 0, uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        #pass_enc.set_bind_group(1, self.bind_group)
-        #pass_enc.set_bind_group(BindGroupIndex.MATERIAL, self.bind_group.get())
         self.bind_group.bind(pass_enc)

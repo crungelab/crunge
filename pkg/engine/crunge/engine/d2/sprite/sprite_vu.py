@@ -14,7 +14,7 @@ from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
 )
-from ..bindings import BindGroupIndex, ModelBindGroup
+from ..bindings import ModelBindGroup
 
 from .sprite_program import SpriteProgram
 from .sprite import Sprite
@@ -110,27 +110,6 @@ class SpriteVu(Vu2D):
             self.buffer.size,
         )
 
-    """
-    def create_bind_group(self):
-        bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.buffer.get(),
-                    size=self.buffer.size,
-                ),
-            ]
-        )
-
-        bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Model Bind Group",
-            layout=self.program.pipeline.get_bind_group_layout(2),
-            entries=bindgroup_entries,
-        )
-
-        self.bind_group = self.device.create_bind_group(bind_group_desc)
-    """
-
     def on_transform(self) -> None:
         super().on_transform()
         model_uniform = ModelUniform()
@@ -141,8 +120,6 @@ class SpriteVu(Vu2D):
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         pass_enc.set_pipeline(self.program.pipeline)
         self.sprite.bind(pass_enc)
-        #pass_enc.set_bind_group(2, self.bind_group)
-        #pass_enc.set_bind_group(BindGroupIndex.MODEL, self.bind_group.get())
         self.bind_group.bind(pass_enc)
 
     def draw(self, renderer: Renderer) -> None:

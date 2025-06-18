@@ -14,8 +14,9 @@ from ... import colors
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
-    MaterialUniform,
+    ShapeUniform,
 )
+from ..bindings import ModelBindGroup, ShapeBindGroup
 
 from .polygon_program_2d import PolygonProgram2D
 
@@ -28,8 +29,8 @@ vertex_dtype = np.dtype(
 
 
 class Polygon2D(Vu2D):
-    material_bind_group: wgpu.BindGroup = None
-    model_bind_group: wgpu.BindGroup = None
+    material_bind_group: ShapeBindGroup = None
+    model_bind_group: ModelBindGroup = None
 
     vertices: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
@@ -102,7 +103,7 @@ class Polygon2D(Vu2D):
             wgpu.BufferUsage.UNIFORM,
         )
 
-        self.material_uniform_buffer_size = sizeof(MaterialUniform)
+        self.material_uniform_buffer_size = sizeof(ShapeUniform)
         self.material_uniform_buffer = self.gfx.create_buffer(
             "Material Buffer",
             self.material_uniform_buffer_size,
@@ -110,43 +111,14 @@ class Polygon2D(Vu2D):
         )
 
     def create_bind_groups(self):
-        material_bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.material_uniform_buffer,
-                    size=self.material_uniform_buffer_size,
-                ),
-            ]
+        self.model_bind_group = ModelBindGroup(
+            self.model_uniform_buffer,
+            self.model_uniform_buffer_size,
         )
-
-        material_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Material Bind Group",
-            layout=self.program.pipeline.get_bind_group_layout(1),
-            entries=material_bindgroup_entries,
+        self.material_bind_group = ShapeBindGroup(
+            self.material_uniform_buffer,
+            self.material_uniform_buffer_size,
         )
-
-        self.material_bind_group = self.device.create_bind_group(
-            material_bind_group_desc
-        )
-
-        model_bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.model_uniform_buffer,
-                    size=self.model_uniform_buffer_size,
-                ),
-            ]
-        )
-
-        model_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Model Bind Group",
-            layout=self.program.pipeline.get_bind_group_layout(2),
-            entries=model_bindgroup_entries,
-        )
-
-        self.model_bind_group = self.device.create_bind_group(model_bind_group_desc)
 
     def on_transform(self) -> None:
         super().on_transform()
@@ -157,7 +129,7 @@ class Polygon2D(Vu2D):
 
     def on_material(self) -> None:
         #super().on_material()
-        material_uniform = MaterialUniform()
+        material_uniform = ShapeUniform()
         material_uniform.color = cast_tuple4f(self.color)
         self.gfx.queue.write_buffer(
             self.material_uniform_buffer, 0, material_uniform
@@ -166,7 +138,7 @@ class Polygon2D(Vu2D):
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
-        pass_enc.set_bind_group(1, self.material_bind_group)
-        pass_enc.set_bind_group(2, self.model_bind_group)
+        self.model_bind_group.bind(pass_enc)
+        self.material_bind_group.bind(pass_enc)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(len(self.vertices), 1, 0, 0)  # Dynamic vertex count

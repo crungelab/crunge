@@ -11,8 +11,6 @@ from ctypes import (
 )
 
 from loguru import logger
-import numpy as np
-import glm
 
 from ..uniforms import Vec2, Vec3, Vec4, Mat4
 
@@ -36,7 +34,7 @@ class ModelUniform(Structure):
 assert sizeof(ModelUniform) % 16 == 0
 
 
-class MaterialUniform(Structure):
+class SpriteUniform(Structure):
     _fields_ = [
         ("color", Vec4),
         ("rect", Vec4),
@@ -46,7 +44,15 @@ class MaterialUniform(Structure):
         ("_pad1", c_float * 4),
     ]
 
-assert sizeof(MaterialUniform) % 16 == 0
+assert sizeof(SpriteUniform) % 16 == 0
+
+
+class ShapeUniform(Structure):
+    _fields_ = [
+        ("color", Vec4),
+    ]
+
+assert sizeof(SpriteUniform) % 16 == 0
 
 
 class LightUniform(Structure):

@@ -132,7 +132,8 @@ class Viewport(Base):
 
     def snap(self):
         if not self.use_snapshot:
-            raise RuntimeError("Snapshot is not enabled for this viewport.")
+            #raise RuntimeError("Snapshot is not enabled for this viewport.")
+            return
         
         if self.snapshot_texture is None:
             self.create_snapshot()

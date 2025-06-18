@@ -7,11 +7,11 @@ from ..program import Program
 from .bindings import (
     BindGroupIndex,
     CameraBindIndex,
-    MaterialBindIndex,
+    SpriteBindIndex,
     ModelBindIndex,
-    CameraBGL,
-    MaterialBGL,
-    ModelBGL,
+    CameraBindGroupLayout,
+    SpriteBindGroupLayout,
+    ModelBindGroupLayout,
 )
 
 
@@ -21,21 +21,21 @@ class Program2D(Program):
         self.template_dict = {
             "BindGroupIndex": BindGroupIndex,
             "CameraBindIndex": CameraBindIndex,
-            "MaterialBindIndex": MaterialBindIndex,
+            "MaterialBindIndex": SpriteBindIndex,
             "ModelBindIndex": ModelBindIndex,
         }
 
     @property
     def camera_bind_group_layout(self):
-        return CameraBGL().get()
+        return CameraBindGroupLayout().get()
 
     @property
     def material_bind_group_layout(self):
-        return MaterialBGL().get()
+        return SpriteBindGroupLayout().get()
 
     @property
     def model_bind_group_layout(self):
-        return ModelBGL().get()
+        return ModelBindGroupLayout().get()
 
     @property
     def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:

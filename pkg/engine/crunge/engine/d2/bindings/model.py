@@ -11,7 +11,7 @@ class ModelBindIndex:
     MODEL_UNIFORM = 0
 
 @klass.singleton
-class ModelBGL(BindGroupLayout):
+class ModelBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
         entries = [
             wgpu.BindGroupLayoutEntry(
@@ -40,5 +40,5 @@ class ModelBindGroup(BindGroup):
         ]
 
         super().__init__(
-            entries=entries, layout=ModelBGL(), label="Model Bind Group", index=index
+            entries=entries, layout=ModelBindGroupLayout(), label="Model Bind Group", index=index
         )
