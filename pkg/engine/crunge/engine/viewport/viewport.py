@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
+from ctypes import sizeof
 
 import glm
 
@@ -6,6 +7,9 @@ from crunge import wgpu
 from crunge import skia
 
 from ..base import Base
+from ..uniforms import ViewportUniform, cast_vec2
+
+from ..bindings import ViewportBindGroup
 
 class ViewportListener():
     def on_viewport_size(self, viewport: "Viewport") -> None:
@@ -48,6 +52,10 @@ class Viewport(Base):
         self.canvas: skia.Canvas = None
 
         self.create_device_objects()
+        self.create_buffers()
+        self.create_bind_group()
+        self.update_gpu()
+
 
     def add_listener(self, listener: ViewportListener) -> None:
         if listener not in self.listeners:
@@ -66,6 +74,7 @@ class Viewport(Base):
 
     def on_size(self) -> None:
         self.create_device_objects()
+        self.update_gpu()
         for listener in self.listeners:
             listener.on_viewport_size(self._size)
 
@@ -150,3 +159,27 @@ class Viewport(Base):
         
         # Submit the commands
         self.device.queue.submit([encoder.finish()])
+
+    def create_buffers(self):
+        # Uniform Buffers
+        self.uniform_buffer_size = sizeof(ViewportUniform)
+        self.uniform_buffer = self.gfx.create_buffer(
+            "Viewport Uniform Buffer",
+            self.uniform_buffer_size,
+            wgpu.BufferUsage.UNIFORM,
+        )
+
+    def create_bind_group(self):
+        self.bind_group = ViewportBindGroup(
+            self.uniform_buffer,
+            self.uniform_buffer_size,
+        )
+
+    def bind(self, pass_enc: wgpu.RenderPassEncoder):
+        self.bind_group.bind(pass_enc)
+
+    def update_gpu(self):
+        uniform = ViewportUniform()
+        uniform.size = cast_vec2(self.size)
+
+        self.device.queue.write_buffer(self.uniform_buffer, 0, uniform)

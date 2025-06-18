@@ -4,6 +4,13 @@ from jinja2 import PackageLoader
 from crunge import wgpu
 
 from ..program import Program
+
+from ..bindings import (
+    GlobalBindGroupIndex,
+    ViewportBindGroupLayout,
+    ViewportBindIndex,
+)
+
 from .bindings import (
     BindGroupIndex,
     CameraBindIndex,
@@ -20,30 +27,36 @@ class Program2D(Program):
         super().__init__([PackageLoader("crunge.engine.d2", "templates")])
         self.template_dict = {
             "BindGroupIndex": BindGroupIndex,
+            "ViewportBindIndex": ViewportBindIndex,
             "CameraBindIndex": CameraBindIndex,
             "MaterialBindIndex": SpriteBindIndex,
             "ModelBindIndex": ModelBindIndex,
         }
 
     @property
+    def viewport_bind_group_layout(self):
+        return ViewportBindGroupLayout()
+    
+    @property
     def camera_bind_group_layout(self):
-        return CameraBindGroupLayout().get()
+        return CameraBindGroupLayout()
 
     @property
     def material_bind_group_layout(self):
-        return SpriteBindGroupLayout().get()
+        return SpriteBindGroupLayout()
 
     @property
     def model_bind_group_layout(self):
-        return ModelBindGroupLayout().get()
+        return ModelBindGroupLayout()
 
     @property
     def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:
         bind_group_layouts = wgpu.BindGroupLayouts(
             [
-                self.camera_bind_group_layout,
-                self.material_bind_group_layout,
-                self.model_bind_group_layout,
+                self.viewport_bind_group_layout.get(),
+                self.camera_bind_group_layout.get(),
+                self.material_bind_group_layout.get(),
+                self.model_bind_group_layout.get(),
             ]
         )
         return bind_group_layouts

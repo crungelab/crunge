@@ -15,7 +15,7 @@ from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
 
 from .program_2d import Program2D
-from .bindings import BindGroupIndex, CameraBindGroup
+from .bindings import CameraBindGroup
 
 
 @klass.singleton
@@ -112,7 +112,7 @@ class Camera2D(Node2D, ViewportListener):
         camera_uniform = CameraUniform()
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
-        camera_uniform.viewport = cast_vec2(self.viewport_size)
+        #camera_uniform.viewport = cast_vec2(self.viewport_size)
         camera_uniform.position = cast_vec3(
             glm.vec3(self.position.x, self.position.y, 0)
         )
@@ -120,10 +120,7 @@ class Camera2D(Node2D, ViewportListener):
         self.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        # pass_enc.set_bind_group(0, self.bind_group)
-        #pass_enc.set_bind_group(BindGroupIndex.CAMERA, self.bind_group.get())
         self.bind_group.bind(pass_enc)
-
 
     def unproject(self, mouse_vec: glm.vec2):
         mx = mouse_vec.x

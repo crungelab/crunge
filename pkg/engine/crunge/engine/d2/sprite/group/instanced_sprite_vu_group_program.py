@@ -45,7 +45,7 @@ class InstancedSpriteVuGroupProgram(Program2D):
 
     @property
     def model_bind_group_layout(self):
-        return ModelBindGroupLayout().get()
+        return ModelBindGroupLayout()
 
     def create_render_pipeline(self):
         shader_module = ShaderLoader(self.template_env, self.template_dict).load(

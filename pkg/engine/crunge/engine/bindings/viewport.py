@@ -3,43 +3,43 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ...resource.bind_group import BindGroupLayout, BindGroup
+from ..resource.bind_group import BindGroupLayout, BindGroup
 
-from . import BindGroupIndex
+from . import GlobalBindGroupIndex
 
-class ModelBindIndex:
-    MODEL_UNIFORM = 0
+
+class ViewportBindIndex:
+    VIEWPORT_UNIFORM = 0
+
 
 @klass.singleton
-class ModelBindGroupLayout(BindGroupLayout):
+class ViewportBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
         entries = [
             wgpu.BindGroupLayoutEntry(
-                binding=ModelBindIndex.MODEL_UNIFORM,
+                binding=ViewportBindIndex.VIEWPORT_UNIFORM,
                 visibility=wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
         ]
+        super().__init__(entries=entries, label="Viewport Bind Group Layout")
 
-        super().__init__(entries=entries, label="Model Bind Group Layout")
 
-
-class ModelBindGroup(BindGroup):
+class ViewportBindGroup(BindGroup):
     def __init__(
         self,
         uniform_buffer: wgpu.Buffer,
         uniform_buffer_size: int,
-        index: int = BindGroupIndex.MODEL,
-        layout = ModelBindGroupLayout()
+        index: int = GlobalBindGroupIndex.VIEWPORT,
     ) -> None:
         entries = [
             wgpu.BindGroupEntry(
-                binding=ModelBindIndex.MODEL_UNIFORM,
+                binding=ViewportBindIndex.VIEWPORT_UNIFORM,
                 buffer=uniform_buffer,
                 size=uniform_buffer_size,
             ),
         ]
 
         super().__init__(
-            entries=entries, layout=layout, label="Model Bind Group", index=index
+            entries=entries, layout=ViewportBindGroupLayout(), label="Viewport Bind Group", index=index
         )

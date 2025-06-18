@@ -1,9 +1,9 @@
 class BindGroupIndex:
-    # VIEWPORT = 0
-    CAMERA = 0
+    VIEWPORT = 0
+    CAMERA = 1
     # LIGHT = 2
-    MATERIAL = 1
-    MODEL = 2
+    MATERIAL = 2
+    MODEL = 3
 
 
 from .camera import CameraBindGroup, CameraBindGroupLayout, CameraBindIndex

@@ -82,6 +82,8 @@ class Renderer(Base):
             renderpass
         )
 
+        self.viewport.bind(self.pass_enc)
+
         if self.camera_2d is not None:
             self.camera_2d.bind(self.pass_enc)
         elif self.camera_3d is not None:

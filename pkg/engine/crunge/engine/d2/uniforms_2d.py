@@ -14,11 +14,17 @@ from loguru import logger
 
 from ..uniforms import Vec2, Vec3, Vec4, Mat4
 
+class ViewportUniform(Structure):
+    _fields_ = [
+        ("size", Vec2),
+        #("_pad1", c_float * 4),
+    ]
+
 class CameraUniform(Structure):
     _fields_ = [
         ("projection", Mat4),
         ("view", Mat4),
-        ("viewport", Vec2),
+        #("viewport", Vec2),
         ("position", Vec3),
         ("_pad1", c_float * 4),
     ]

@@ -12,7 +12,7 @@ from ctypes import (
 
 import glm
 
-from .types import Tuple4f
+from ..types import Tuple4f
 
 class Vec2(Structure):
     _fields_ = [
@@ -92,3 +92,5 @@ def cast_matrix4(matrix: glm.mat4):
 def cast_matrix3(matrix: glm.mat3):
     ptr = glm.value_ptr(matrix)
     return cast(ptr, POINTER(c_float * 9)).contents
+
+from .viewport import ViewportUniform
