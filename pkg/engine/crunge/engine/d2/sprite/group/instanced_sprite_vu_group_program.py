@@ -1,15 +1,3 @@
-from ctypes import (
-    Structure,
-    c_float,
-    c_uint32,
-    sizeof,
-    c_bool,
-    c_int,
-    c_void_p,
-    cast,
-    POINTER,
-)
-
 from loguru import logger
 
 from crunge.core import klass
@@ -73,7 +61,7 @@ class InstancedSpriteVuGroupProgram(Program2D):
             )
         ]
 
-        fragmentState = wgpu.FragmentState(
+        fragment_state = wgpu.FragmentState(
             module=shader_module,
             entry_point="fs_main",
             targets=color_targets,
@@ -102,7 +90,7 @@ class InstancedSpriteVuGroupProgram(Program2D):
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             primitive=primitive,
-            fragment=fragmentState,
+            fragment=fragment_state,
             depth_stencil=depth_stencil_state,
         )
 

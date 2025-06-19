@@ -30,18 +30,17 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         self.count = count
         self.batches: list[InstancedSpriteVuBatch] = []
 
-        self.bind_group: wgpu.BindGroup = None
-        # self.buffer = UniformBuffer(ModelUniform, size, label="SpriteRenderGroup Buffer")
-        self.buffer = UniformBuffer(
+        self.model_bind_group: ModelBindGroup = None
+        self.model_storage_buffer = UniformBuffer(
             ModelUniform,
             count,
             wgpu.BufferUsage.STORAGE,
             label="SpriteRenderGroup Buffer",
         )
-        logger.debug(f"Model Uniform Buffer: {self.buffer}")
+        logger.debug(f"Model Uniform Buffer: {self.model_storage_buffer}")
 
         self.program = InstancedSpriteVuGroupProgram()
-        self.create_bind_group()
+        self.create_model_bind_group()
 
     def clear(self):
         super().clear()
@@ -49,7 +48,7 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
 
     def append(self, sprite: SpriteVu) -> None:
         super().append(sprite)
-        sprite.buffer = self.buffer
+        sprite.buffer = self.model_storage_buffer
         sprite.buffer_index = len(self.members) - 1
         self.batch(sprite)
 
@@ -71,38 +70,16 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         for member in self.members:
             self.batch(member)
 
-    def create_bind_group(self):
-        self.bind_group = ModelBindGroup(
-            self.buffer.get(),
-            self.buffer.size,
+    def create_model_bind_group(self):
+        self.model_bind_group = ModelBindGroup(
+            self.model_storage_buffer.get(),
+            self.model_storage_buffer.size,
             layout=self.program.model_bind_group_layout,
         )
 
-    '''
-    def create_bind_group(self):
-        model_bindgroup_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.buffer.get(),
-                    size=self.buffer.size,
-                ),
-            ]
-        )
-
-        model_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Model Bind Group",
-            layout=self.program.pipeline.get_bind_group_layout(2),
-            entries=model_bindgroup_entries,
-        )
-
-        self.bind_group = self.device.create_bind_group(model_bind_group_desc)
-    '''
-
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.pipeline)
-        #pass_enc.set_bind_group(2, self.bind_group.get())
-        self.bind_group.bind(pass_enc)
+        self.model_bind_group.bind(pass_enc)
 
     def draw(self, renderer: Renderer):
         if len(self.batches) == 0:
@@ -113,15 +90,3 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         for batch in self.batches:
             batch.sprite_vu.sprite.bind(pass_enc)
             pass_enc.draw(4, batch.instance_count, 0, batch.first_instance)
-
-    '''
-    def draw(self, renderer: Renderer):
-        if len(self.members) == 0:
-            return
-        # logger.debug("Drawing sprites")
-        pass_enc = renderer.pass_enc
-        self.bind(pass_enc)
-        # logger.debug(f"Drawing {len(self.members)} sprites")
-        # exit()
-        pass_enc.draw(4, len(self.members))
-    '''

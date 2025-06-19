@@ -8,7 +8,7 @@ from crunge.engine import Base
 
 class Program(Base):
     def __init__(self, template_loaders: List[BaseLoader] = []):
-        self.template_loader_stack: List[BaseLoader] = [PackageLoader("crunge.engine", "templates")]
+        self.template_loader_stack: List[BaseLoader] = [PackageLoader("crunge.engine.resources", "shaders")]
         self.template_loader_stack.extend(template_loaders)
 
         self.update_template_env()

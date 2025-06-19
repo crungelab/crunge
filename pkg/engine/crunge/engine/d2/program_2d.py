@@ -1,5 +1,7 @@
+from typing import List
+
 from loguru import logger
-from jinja2 import PackageLoader
+from jinja2 import BaseLoader, PackageLoader
 
 from crunge import wgpu
 
@@ -23,8 +25,10 @@ from .bindings import (
 
 
 class Program2D(Program):
-    def __init__(self):
-        super().__init__([PackageLoader("crunge.engine.d2", "templates")])
+    def __init__(self, template_loaders: List[BaseLoader] = []):
+        template_loaders.append(PackageLoader("crunge.engine.resources.shaders", "d2"))
+        super().__init__(template_loaders)
+        #super().__init__([PackageLoader("crunge.engine.resources.shaders", "d2")])
         self.template_dict = {
             "BindGroupIndex": BindGroupIndex,
             "ViewportBindIndex": ViewportBindIndex,

@@ -16,3 +16,4 @@ from .material import (
     ShapeBindIndex,
 )
 from .model import ModelBindGroup, ModelBindGroupLayout, ModelBindIndex
+from .emitter import EmitterBindGroup, EmitterBindGroupLayout, EmitterBindIndex
