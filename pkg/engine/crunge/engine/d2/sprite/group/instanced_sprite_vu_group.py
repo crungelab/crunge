@@ -74,11 +74,11 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         self.model_bind_group = ModelBindGroup(
             self.model_storage_buffer.get(),
             self.model_storage_buffer.size,
-            layout=self.program.model_bind_group_layout,
+            layout=self.program.render_pipeline.model_bind_group_layout,
         )
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        pass_enc.set_pipeline(self.program.pipeline)
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)
 
     def draw(self, renderer: Renderer):

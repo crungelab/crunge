@@ -33,7 +33,7 @@ class Button(Widget):
     def draw(self, renderer: Renderer):
         canvas = renderer.canvas
         
-        position = self.position
+        position = self.global_position
         size = self.size
 
         canvas.draw_rect(skia.Rect(position.x, position.y, size.x, size.y), BG_PAINT)

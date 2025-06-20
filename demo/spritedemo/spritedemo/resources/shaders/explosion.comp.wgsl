@@ -1,11 +1,4 @@
-struct Particle {
-    position: vec2<f32>,
-    velocity: vec2<f32>,
-    color: vec4<f32>,
-    age: f32,
-    lifespan: f32,
-}
-@group(0) @binding(0) var<storage, read_write> particles: array<Particle>;
+{% include '_particle.comp.wgsl' %}
 
 @compute @workgroup_size(64) // Adjust workgroup size based on your needs
 fn cs_main(@builtin(global_invocation_id) global_id : vec3<u32>) {

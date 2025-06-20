@@ -89,6 +89,7 @@ class App(Window):
         if not self.layout.is_dirty():
             return
         self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
+        #self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         super().apply_layout()
     
     def update(self, delta_time: float):

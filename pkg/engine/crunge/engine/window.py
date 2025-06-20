@@ -81,10 +81,12 @@ class Window(Frame):
         size = self.size
         if not size.x or not size.y:
             return
-        self.viewport.size = size
+        #self.viewport.size = size
+        self.viewport.size = glm.ivec2(self.get_framebuffer_size())
+
         logger.debug(f"Resized to {size}")
 
-    def get_size(self):
+    def get_window_size(self):
         return sdl.get_window_size(self.window)
 
     def get_framebuffer_size(self):
@@ -110,7 +112,8 @@ class Window(Frame):
         # logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
-                self.size = glm.ivec2(event.data1, event.data2)
+                #self.size = glm.ivec2(event.data1, event.data2)
+                self.size = glm.ivec2(self.get_framebuffer_size())
             case _:
                 # pass
                 return super().on_window(event)

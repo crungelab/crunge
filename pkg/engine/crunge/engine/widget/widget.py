@@ -15,16 +15,17 @@ from ..renderer import Renderer
 class Widget(Node["Widget"]):
     def __init__(self, style: yoga.Style = yoga.Style()) -> None:
         super().__init__()
-        self.layout = yoga.Layout()
-        self.layout.set_style(style)
-        self.layout.set_dirtied_func(self.mark_layout_dirty)
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         self._size = glm.ivec2(0, 0)
         self._controller: Controller = None
         self.parts: list[Part] = []
         self.priority = 0
         self.hovered = False
+        # Layout
         self.layout_dirty = False
+        self.layout = yoga.Layout()
+        self.layout.set_style(style)
+        self.layout.set_dirtied_func(self.mark_layout_dirty)
+        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
 
     def _create(self):
         super()._create()
@@ -33,6 +34,7 @@ class Widget(Node["Widget"]):
         logger.debug(f"Widget.mark_layout_dirty: {self}")
         self.layout_dirty = True
 
+    '''
     def apply_layout(self):
         #logger.debug(f"Widget.apply_layout: {self}")
         if not self.layout_dirty:
@@ -55,11 +57,9 @@ class Widget(Node["Widget"]):
 
         for child in self.children:
             child.apply_layout()
-    '''
 
     def on_layout(self):
         logger.debug(f"Widget.on_layout: {self}")
-        #self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         self._set_size(glm.ivec2(
             self.layout.get_computed_width(), self.layout.get_computed_height()
         ))
@@ -74,11 +74,34 @@ class Widget(Node["Widget"]):
             raise TypeError(f"Expected yoga.Style, got {type(value)}")
         self.layout.set_style(value)
 
+    '''
+    @property
+    def position(self) -> glm.ivec2:
+        pos = glm.ivec2(
+            self.layout.get_computed_left(), self.layout.get_computed_top()
+        )
+        if self.parent is None:
+            return pos
+        pos = pos + self.parent.position
+        return pos
+    '''
+
     @property
     def position(self) -> glm.ivec2:
         return glm.ivec2(
             self.layout.get_computed_left(), self.layout.get_computed_top()
         )
+    
+    @property
+    def global_position(self) -> glm.ivec2:
+        pos = self.position
+        if self.parent is not None:
+            return self.parent.global_position + pos
+        return pos
+
+    @property
+    def bounds(self) -> yoga.Bounds:
+        return self.layout.get_computed_bounds()
 
     @property
     def size(self) -> glm.ivec2:
@@ -86,20 +109,13 @@ class Widget(Node["Widget"]):
             self.layout.get_computed_width(), self.layout.get_computed_height()
         )
 
-    @property
-    def bounds(self) -> yoga.Bounds:
-        return self.layout.get_computed_bounds()
-
     def _set_size(self, value: glm.ivec2) -> bool:
         logger.debug(f"Widget._set_size: {self}, {value}")
-        if not isinstance(value, glm.ivec2):
-            raise TypeError(f"Expected glm.ivec2, got {type(value)}")
         changed = self._size != value
         self._size = value
 
         if changed:
             logger.debug(f"Widget size changed: {self}, {self.size}")
-            self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
             self.on_size()
 
         return changed
@@ -108,27 +124,11 @@ class Widget(Node["Widget"]):
     def size(self, value: glm.ivec2):
         self.layout.set_width(value.x)
         self.layout.set_height(value.y)
-        #self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         self._set_size(value)
-
-    '''
-    @size.setter
-    def size(self, value: glm.ivec2):
-        if not isinstance(value, glm.ivec2):
-            raise TypeError(f"Expected glm.ivec2, got {type(value)}")
-        changed = self._size != value
-        self._size = value
-        self.layout.set_width(value.x)
-        self.layout.set_height(value.y)
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
-
-        if changed:
-            logger.debug(f"Widget size changed: {self}, {self.size}")
-            self.on_size()
-    '''
 
     def on_size(self):
         pass
+        #self.layout.mark_dirty()
 
     @property
     def width(self):
@@ -224,7 +224,7 @@ class Widget(Node["Widget"]):
         super().on_detached()
 
     def hit_test(self, x: float, y: float) -> bool:
-        position = self.position
+        position = self.global_position
         size = self.size
         if position.x <= x <= position.x + size.x and position.y <= y <= position.y + size.y:
             return True

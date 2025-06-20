@@ -93,7 +93,7 @@ class BackgroundVu(Vu2D):
         self.buffer[self.buffer_index] = model_uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        pass_enc.set_pipeline(self.program.pipeline)
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.sprite.bind(pass_enc)
         self.bind_group.bind(pass_enc)
 

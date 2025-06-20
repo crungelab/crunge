@@ -137,7 +137,7 @@ class Polygon2D(Vu2D):
 
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
-        pass_enc.set_pipeline(self.program.pipeline)
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)
         self.material_bind_group.bind(pass_enc)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)

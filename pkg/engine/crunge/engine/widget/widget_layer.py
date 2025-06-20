@@ -22,6 +22,7 @@ class WidgetLayer(ViewLayer):
         with renderer.canvas_target() as canvas:
             super().draw(renderer)
 
+    '''
     def update(self, dt: float) -> None:
         super().update(dt)
         #self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
@@ -32,6 +33,7 @@ class WidgetLayer(ViewLayer):
         width = bounds.width
         height = bounds.height
         #print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
+    '''
 
     '''
     @property

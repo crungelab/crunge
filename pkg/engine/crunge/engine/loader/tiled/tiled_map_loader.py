@@ -5,6 +5,7 @@ from loguru import logger
 from pytmx import TiledMap
 
 from crunge.engine.loader import Loader
+from crunge.engine.resource.resource_manager import ResourceManager
 
 from .builder.builder_context import BuilderContext
 from .builder.map_builder import MapBuilder, DefaultMapBuilder
@@ -26,8 +27,9 @@ class TiledMapLoader(Loader):
         
 
 
-    def load(self, filename: Path):
-        logger.debug(f"Loading map: {filename}")
-        map = TiledMap(filename)
+    def load(self, path: Path):
+        path = ResourceManager().resolve_path(path)
+        logger.debug(f"Loading map: {path}")
+        map = TiledMap(path)
         self.context.map = map
         self.map_builder.build()

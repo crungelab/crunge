@@ -10,24 +10,15 @@ from crunge.engine.d2.program_2d import Program2D
 from ...loader.shader_loader import ShaderLoader
 
 from ..bindings import ShapeBindGroupLayout
+from ..render_pipeline_2d import RenderPipeline2D
 
-@klass.singleton
-class PolygonProgram2D(Program2D):
-    pipeline: wgpu.RenderPipeline = None
 
-    def __init__(self):
-        super().__init__()
-        self.create_render_pipeline()
-
+class PolygonRenderPipeline2D(RenderPipeline2D):
     @property
     def material_bind_group_layout(self):
-        return ShapeBindGroupLayout().get()
+        return ShapeBindGroupLayout()
 
-    def create_render_pipeline(self):
-        shader_module = ShaderLoader(self.template_env, self.template_dict).load(
-            "polygon.wgsl"
-        )
-
+    def create_vertex_state(self):
         vertex_attributes = [
             wgpu.VertexAttribute(
                 format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
@@ -41,60 +32,28 @@ class PolygonProgram2D(Program2D):
             )
         ]
 
-        blend_state = wgpu.BlendState(
-            alpha=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.ONE,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-            color=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.SRC_ALPHA,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-        )
-
-        color_targets = [
-            wgpu.ColorTargetState(
-                format=wgpu.TextureFormat.BGRA8_UNORM,
-                blend=blend_state,
-                write_mask=wgpu.ColorWriteMask.ALL,
-            )
-        ]
-
-        fragmentState = wgpu.FragmentState(
-            module=shader_module,
-            entry_point="fs_main",
-            targets=color_targets,
-        )
-
         vertex_state = wgpu.VertexState(
-            module=shader_module,
+            module=self.vertex_shader_module,
             entry_point="vs_main",
             buffers=vertex_buffer_layouts,
         )
+        return vertex_state
 
-        depth_stencil_state = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH24_PLUS,
-            # depth_write_enabled=True,
-            depth_write_enabled=False,
-            # depth_compare = wgpu.CompareFunction.LESS,
+    def create_primitive_state(self):
+        return wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.LINE_STRIP)
+
+@klass.singleton
+class PolygonProgram2D(Program2D):
+    def __init__(self):
+        super().__init__()
+        self.render_pipeline: PolygonRenderPipeline2D = None
+        self.create_render_pipeline()
+
+    def create_render_pipeline(self):
+        shader_module = ShaderLoader(self.template_env, self.template_dict).load(
+            "polygon.wgsl"
         )
 
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            bind_group_layouts=self.bind_group_layouts
-        )
-
-        # primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.LINE_LIST)
-        primitive = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.LINE_STRIP)
-
-        descriptor = wgpu.RenderPipelineDescriptor(
-            label="Main Render Pipeline",
-            primitive=primitive,
-            layout=self.device.create_pipeline_layout(pl_desc),
-            vertex=vertex_state,
-            fragment=fragmentState,
-            depth_stencil=depth_stencil_state,
-        )
-
-        self.pipeline = self.device.create_render_pipeline(descriptor)
+        self.render_pipeline = PolygonRenderPipeline2D(
+            vertex_shader_module=shader_module, fragment_shader_module=shader_module
+        ).create()

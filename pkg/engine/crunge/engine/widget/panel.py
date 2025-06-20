@@ -17,6 +17,16 @@ class Panel(Widget):
         self.paint = paint
 
     def draw(self, renderer: Renderer):
+        canvas = renderer.canvas
+
+        position = self.global_position
+        size = self.size
+
+        canvas.draw_rect(skia.Rect(position.x, position.y, size.x, size.y), self.paint)
+        super().draw(renderer)
+
+    '''
+    def draw(self, renderer: Renderer):
         try:
             canvas = renderer.canvas
             bounds = self.bounds
@@ -29,3 +39,4 @@ class Panel(Widget):
         except(Exception) as e:
             logger.error(f"Unexpected error drawing panel: {e}")
         super().draw(renderer)
+    '''

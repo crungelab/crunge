@@ -72,3 +72,15 @@ class LightUniform(Structure):
 
 
 #assert sizeof(LightUniform) % 16 == 0
+
+class ParticleUniform(Structure):
+    _fields_ = [
+        ("position", Vec2),
+        ("velocity", Vec2),
+        ("color", Vec4),
+        ("age", c_float),
+        ("lifespan", c_float),
+        ("_pad1", c_float * 2),
+    ]
+
+assert sizeof(ParticleUniform) % 16 == 0
