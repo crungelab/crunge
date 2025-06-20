@@ -114,6 +114,7 @@ class MaterialBuilder(GltfBuilder):
         texture = TextureBuilder(self.context, name, texture_index).build()
         self.material.add_texture(texture)
 
+    # Note: I had to change this because gltf extensions use indexes instead of TextureInfo
     '''
     def build_texture(self, name: str, texture_info: gltf.TextureInfo) -> None:
         texture = TextureBuilder(self.context, name, texture_info).build()

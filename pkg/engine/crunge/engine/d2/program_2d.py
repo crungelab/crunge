@@ -18,9 +18,6 @@ from .bindings import (
     CameraBindIndex,
     SpriteBindIndex,
     ModelBindIndex,
-    CameraBindGroupLayout,
-    SpriteBindGroupLayout,
-    ModelBindGroupLayout,
 )
 
 
@@ -29,6 +26,7 @@ class Program2D(Program):
         template_loaders.append(PackageLoader("crunge.engine.resources.shaders", "d2"))
         super().__init__(template_loaders)
         self.template_dict = {
+            "GlobalBindGroupIndex": GlobalBindGroupIndex,
             "BindGroupIndex": BindGroupIndex,
             "ViewportBindIndex": ViewportBindIndex,
             "CameraBindIndex": CameraBindIndex,

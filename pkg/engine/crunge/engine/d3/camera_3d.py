@@ -38,7 +38,7 @@ class CameraProgram3D(Program3D):
 class Camera3D(Node3D, ViewportListener):
     def __init__(
         self,
-        size=glm.ivec2(),
+        viewport_size=glm.vec2(1024, 768),
         position=glm.vec3(0.0, 0.0, 4.0),
         up=glm.vec3(0.0, 1.0, 0.0),
         near=0.1,
@@ -47,7 +47,6 @@ class Camera3D(Node3D, ViewportListener):
         super().__init__(position)
         self.view_matrix = glm.mat4(1.0)
         self.projection_matrix = glm.mat4(1.0)
-        self._size = size
         self.zoom = 45.0
 
         self.up = up
@@ -58,6 +57,7 @@ class Camera3D(Node3D, ViewportListener):
         self._far = far
 
         self._viewport: Viewport = None
+        self.viewport_size = viewport_size
 
         self.deferred_draws: List[DeferredDraw] = []
 
@@ -90,18 +90,12 @@ class Camera3D(Node3D, ViewportListener):
     def viewport(self, viewport: Viewport):
         self._viewport = viewport
         if viewport is not None:
+            self.on_viewport_size(viewport.size)
             viewport.add_listener(self)
 
     def on_viewport_size(self, size: glm.ivec2):
-        self.size = size
-
-    @property
-    def size(self):
-        return self._size
-
-    @size.setter
-    def size(self, size: glm.ivec2):
-        self._size = size
+        self.viewport_size = glm.vec2(size.x, size.y)
+        logger.debug(f"Camera3D: on_viewport_size: {size}")
         self.update_matrix()
 
     @property
@@ -143,17 +137,10 @@ class Camera3D(Node3D, ViewportListener):
         self.right = self.orientation * glm.vec3(1.0, 0.0, 0.0)
         self.up = self.orientation * glm.vec3(0.0, 1.0, 0.0)
 
-    def on_viewport_size(self, size: glm.ivec2):
-        self.size = glm.vec2(size.x, size.y)
-
-    def on_size(self) -> None:
-        super().on_size()
-        self.update_matrix()
-
     def update_matrix(self):
         super().update_matrix()
         self.update_camera_vectors()
-        size = self.size
+        size = self.viewport_size
         aspect = float(size.x) / float(size.y)
         fovy = glm.radians(60.0)
         self.projection_matrix = glm.perspective(fovy, aspect, self.near, self.far)

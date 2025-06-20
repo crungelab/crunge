@@ -4,6 +4,12 @@ from ..gltf_builder import GltfBuilder
 from ..builder_context import BuilderContext
 from ..vertex_table import VertexTable
 
+from .....bindings import (
+    GlobalBindGroupIndex,
+    ViewportBindGroupLayout,
+    ViewportBindIndex,
+)
+
 
 class Attribute:
     def __init__(self, name: str, type: str, location: int) -> None:
@@ -11,19 +17,24 @@ class Attribute:
         self.type = type
         self.location = location
 
+
 class Vertex:
     attributes: list[Attribute]
+
     def __init__(self):
         self.attributes = []
-    
+
     def add_attribute(self, attribute: Attribute):
         self.attributes.append(attribute)
+
 
 class VertexInput(Vertex):
     pass
 
+
 class VertexOutput(Vertex):
     pass
+
 
 class ShaderBuilder(GltfBuilder):
     def __init__(self, context: BuilderContext, vertex_table: VertexTable) -> None:
@@ -35,26 +46,38 @@ class ShaderBuilder(GltfBuilder):
     def build(self):
         self.build_vertex_input()
         self.build_vertex_output()
-    
+
     def build_vertex_input(self):
         for column in self.vertex_table.columns:
-            #self(f'@location({column.location}) {column.name}: {column.input_type},')
-            self.vertex_input.add_attribute(Attribute(column.name, column.input_type, column.location))
-
+            # self(f'@location({column.location}) {column.name}: {column.input_type},')
+            self.vertex_input.add_attribute(
+                Attribute(column.name, column.input_type, column.location)
+            )
 
     def build_vertex_output(self):
         for column in self.vertex_table.columns:
-            #self(f'@location({column.location}) {column.name}: {column.output_type},')
-            self.vertex_output.add_attribute(Attribute(column.name, column.output_type, column.location))
+            self.vertex_output.add_attribute(
+                Attribute(column.name, column.output_type, column.location)
+            )
+
         location = self.vertex_table.columns[-1].location + 1
-        #self(f'@location({location}) frag_pos: vec3<f32>,')
-        self.vertex_output.add_attribute(Attribute('frag_pos', 'vec3<f32>', location))
+        self.vertex_output.add_attribute(Attribute("frag_pos", "vec3<f32>", location))
+
         location += 1
-        if self.vertex_table.has('tangent'):
-            #self(f'@location({location}) bitangent: vec3<f32>,')
-            self.vertex_output.add_attribute(Attribute('bitangent', 'vec3<f32>', location))
+        if self.vertex_table.has("tangent"):
+            self.vertex_output.add_attribute(
+                Attribute("bitangent", "vec3<f32>", location)
+            )
 
     def generate(self, template_name: str):
-
         template = self.context.template_env.get_template(template_name)
-        return template.render(self.__dict__)
+        dict = self.__dict__.copy()
+        dict.update(
+            {
+                "GlobalBindGroupIndex": GlobalBindGroupIndex,
+                "ViewportBindIndex": ViewportBindIndex,
+            }
+        )
+
+        return template.render(dict)
+        # return template.render(self.__dict__)

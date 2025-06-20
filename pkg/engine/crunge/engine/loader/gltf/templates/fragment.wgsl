@@ -1,10 +1,11 @@
-{% include '_vertex_output.wgsl' %}
+{% include '_viewport.wgsl' %}
 {% include '_camera.wgsl' %}
 {% include '_model.wgsl' %}
 {% include '_light.wgsl' %}
 {% include '_lighting.wgsl' %}
 {% include '_environment.wgsl' %}
 {% include '_bindings.wgsl' %}
+{% include '_vertex_output.wgsl' %}
 
 // Utility function for gamma correction
 const GAMMA = 2.200000048;

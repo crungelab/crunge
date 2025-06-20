@@ -2,7 +2,13 @@ from typing import List
 from pathlib import Path
 
 from loguru import logger
-from jinja2 import Environment, BaseLoader, ChoiceLoader, PackageLoader, select_autoescape
+from jinja2 import (
+    Environment,
+    BaseLoader,
+    ChoiceLoader,
+    PackageLoader,
+    select_autoescape,
+)
 
 from crunge import gltf
 
@@ -17,7 +23,10 @@ from .builder.scene_builder import SceneBuilder
 class GltfLoader(Loader):
     def __init__(self, template_loaders: List[BaseLoader] = []) -> None:
         super().__init__()
-        self.template_loader_stack: List[BaseLoader] = [PackageLoader("crunge.engine.loader.gltf", "templates")]
+        self.template_loader_stack: List[BaseLoader] = [
+            PackageLoader("crunge.engine.resources.shaders", ""),
+            PackageLoader("crunge.engine.loader.gltf", "templates"),
+        ]
         self.template_loader_stack.extend(template_loaders)
         self.tf_model = None
 
@@ -28,19 +37,18 @@ class GltfLoader(Loader):
         loaders = list(reversed(self.template_loader_stack))
         logger.debug(f"loaders: {loaders}")
         template_env = Environment(
-            loader = ChoiceLoader(loaders),
-            autoescape=select_autoescape()
+            loader=ChoiceLoader(loaders), autoescape=select_autoescape()
         )
 
         scene = Scene3D().create()
         self.context = BuilderContext(scene, self.tf_model, template_env)
 
-    def load(self, scene_path:Path) -> Scene3D:
+    def load(self, scene_path: Path) -> Scene3D:
         loader = gltf.TinyGLTF()
-        #logger.debug(f"loader: {loader}")
+        # logger.debug(f"loader: {loader}")
 
         self.tf_model = tf_model = gltf.Model()
-        #logger.debug(f"tf_model_: {self.tf_model}")
+        # logger.debug(f"tf_model_: {self.tf_model}")
 
         self.create_context()
 
