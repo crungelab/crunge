@@ -44,7 +44,7 @@ class Renderer(Base):
         self.end()
 
     def begin(self):
-        if self.viewport.use_msaa:
+        if self.viewport.render_options.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.msaa_texture_view,

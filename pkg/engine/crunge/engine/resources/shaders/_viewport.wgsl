@@ -4,3 +4,5 @@ struct Viewport {
 }
 
 @group({{GlobalBindGroupIndex.VIEWPORT}}) @binding({{ViewportBindIndex.VIEWPORT_UNIFORM}}) var<uniform> viewport : Viewport;
+@group({{GlobalBindGroupIndex.VIEWPORT}}) @binding({{ViewportBindIndex.SAMPLER}}) var snapshotSampler: sampler;
+@group({{GlobalBindGroupIndex.VIEWPORT}}) @binding({{ViewportBindIndex.TEXTURE}}) var snapshotTexture : texture_2d<f32>;

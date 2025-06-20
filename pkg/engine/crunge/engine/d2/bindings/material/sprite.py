@@ -10,8 +10,8 @@ from .. import BindGroupIndex
 
 class SpriteBindIndex:
     MATERIAL_UNIFORM = 0
-    SAMPLER = 1
-    TEXTURE = 2
+    TEXTURE = 1
+    SAMPLER = 2
 
 
 @klass.singleton
@@ -25,18 +25,18 @@ class SpriteBindGroupLayout(BindGroupLayout):
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
             wgpu.BindGroupLayoutEntry(
-                binding=SpriteBindIndex.SAMPLER,
-                visibility=wgpu.ShaderStage.FRAGMENT,
-                sampler=wgpu.SamplerBindingLayout(
-                    type=wgpu.SamplerBindingType.FILTERING
-                ),
-            ),
-            wgpu.BindGroupLayoutEntry(
                 binding=SpriteBindIndex.TEXTURE,
                 visibility=wgpu.ShaderStage.FRAGMENT,
                 texture=wgpu.TextureBindingLayout(
                     sample_type=wgpu.TextureSampleType.FLOAT,
                     view_dimension=wgpu.TextureViewDimension.E2D,
+                ),
+            ),
+            wgpu.BindGroupLayoutEntry(
+                binding=SpriteBindIndex.SAMPLER,
+                visibility=wgpu.ShaderStage.FRAGMENT,
+                sampler=wgpu.SamplerBindingLayout(
+                    type=wgpu.SamplerBindingType.FILTERING
                 ),
             ),
         ]
@@ -49,23 +49,21 @@ class SpriteBindGroup(BindGroup):
         self,
         uniform_buffer: wgpu.Buffer,
         uniform_buffer_size: int,
-        sampler: wgpu.Sampler,
         texture_view: wgpu.TextureView,
+        sampler: wgpu.Sampler,
         index: int = BindGroupIndex.MATERIAL,
     ) -> None:
-        entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=SpriteBindIndex.MATERIAL_UNIFORM,
-                    buffer=uniform_buffer,
-                    size=uniform_buffer_size,
-                ),
-                wgpu.BindGroupEntry(binding=SpriteBindIndex.SAMPLER, sampler=sampler),
-                wgpu.BindGroupEntry(
-                    binding=SpriteBindIndex.TEXTURE, texture_view=texture_view
-                ),
-            ]
-        )
+        entries = [
+            wgpu.BindGroupEntry(
+                binding=SpriteBindIndex.MATERIAL_UNIFORM,
+                buffer=uniform_buffer,
+                size=uniform_buffer_size,
+            ),
+            wgpu.BindGroupEntry(
+                binding=SpriteBindIndex.TEXTURE, texture_view=texture_view
+            ),
+            wgpu.BindGroupEntry(binding=SpriteBindIndex.SAMPLER, sampler=sampler),
+        ]
 
         super().__init__(
             entries=entries,

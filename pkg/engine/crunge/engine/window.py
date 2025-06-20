@@ -12,6 +12,7 @@ from .scheduler import Scheduler
 from .frame import Frame
 from .viewport import SurfaceViewport
 from .renderer import Renderer
+from .render_options import RenderOptions
 from .channel import Channel
 
 DEFAULT_WIDTH = 1280
@@ -27,6 +28,8 @@ class Window(Frame):
         self.name = title
 
         self.window: sdl.Window = None
+        #self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True, use_snapshot=True)
+        self.render_options = RenderOptions(use_depth_stencil=True, use_snapshot=True)
         self.viewport: SurfaceViewport = None
         self.renderer: Renderer = None
 
@@ -96,7 +99,7 @@ class Window(Frame):
         pass
 
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True)
+        self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
 
     def frame(self):
         try:

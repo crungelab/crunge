@@ -10,6 +10,7 @@ from ..base import Base
 from ..uniforms import ViewportUniform, cast_vec2
 
 from ..bindings import ViewportBindGroup
+from ..render_options import RenderOptions
 
 class ViewportListener():
     def on_viewport_size(self, viewport: "Viewport") -> None:
@@ -20,18 +21,18 @@ class Viewport(Base):
     def __init__(
         self,
         size: glm.ivec2,
-        use_depth_stencil: bool = False,
-        use_msaa: bool = False,
-        use_snapshot: bool = False,
+        render_options: RenderOptions = RenderOptions(),
     ):
         self._size = size
+        self.render_options = render_options
         self.listeners: List[ViewportListener] = []
 
+        '''
         self.use_depth_stencil = use_depth_stencil
         self.use_msaa = use_msaa
         self.sample_count = 4 if use_msaa else 1
         self.use_snapshot = use_snapshot
-
+        '''
         self.color_texture: wgpu.Texture = None
         self.color_texture_view: wgpu.TextureView = None
 
@@ -43,6 +44,7 @@ class Viewport(Base):
 
         self.snapshot_texture: wgpu.Texture = None
         self.snapshot_texture_view: wgpu.TextureView = None
+        self.snapshot_sampler: wgpu.Sampler = None
 
         # Skia
         self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)
@@ -100,11 +102,11 @@ class Viewport(Base):
         pass
 
     def create_device_objects(self) -> None:
-        if self.use_depth_stencil:
+        if self.render_options.use_depth_stencil:
             self.create_depth_stencil()
-        if self.use_msaa:
+        if self.render_options.use_msaa:
             self.create_msaa()
-        if self.use_snapshot:
+        if self.render_options.use_snapshot:
             self.create_snapshot()
 
     def create_depth_stencil(self) -> None:
@@ -112,32 +114,35 @@ class Viewport(Base):
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.DEPTH24_PLUS,
-            sample_count=self.sample_count,
+            sample_count=self.render_options.sample_count,
         )
         self.depth_stencil_texture = self.device.create_texture(descriptor)
         self.depth_stencil_texture_view = self.depth_stencil_texture.create_view()
 
     def create_msaa(self) -> None:
         descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_SRC,
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_SRC | wgpu.TextureUsage.TEXTURE_BINDING,
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            sample_count=self.sample_count,
+            sample_count=self.render_options.sample_count,
             mip_level_count=1,
+            label="MSAA Texture",
         )
         self.msaa_texture = self.device.create_texture(descriptor)
         self.msaa_texture_view = self.msaa_texture.create_view()
 
     def create_snapshot(self) -> None:
         descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_DST,
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            sample_count=self.sample_count,
+            sample_count=self.render_options.sample_count,
             mip_level_count=1,
+            label="Snapshot Texture",
         )
         self.snapshot_texture = self.device.create_texture(descriptor)
-        self.snapshot_texture_view = self.msaa_texture.create_view()
+        self.snapshot_texture_view = self.snapshot_texture.create_view()
+        self.snapshot_sampler = self.device.create_sampler()
 
     def snap(self):
         if not self.use_snapshot:
@@ -173,6 +178,8 @@ class Viewport(Base):
         self.bind_group = ViewportBindGroup(
             self.uniform_buffer,
             self.uniform_buffer_size,
+            self.snapshot_texture_view,
+            self.snapshot_sampler,
         )
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):

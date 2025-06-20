@@ -151,8 +151,8 @@ class Sprite(Material):
         self.bind_group = SpriteBindGroup(
             self.uniform_buffer,
             self.uniform_buffer_size,
-            self.sampler.sampler,
             self.texture.view,
+            self.sampler.sampler,
         )
 
     def update_gpu(self):

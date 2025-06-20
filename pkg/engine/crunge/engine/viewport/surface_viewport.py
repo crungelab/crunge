@@ -9,17 +9,16 @@ from crunge import wgpu
 from crunge import skia
 from crunge import sdl
 
+from ..render_options import RenderOptions
 
 class SurfaceViewport(Viewport):
     def __init__(
         self,
         size: glm.ivec2,
         window: sdl.Window,
-        use_depth_stencil: bool = False,
-        use_msaa: bool = False,
-        use_snapshot: bool = False,
+        render_options: RenderOptions = RenderOptions(),
     ):
-        super().__init__(size, use_depth_stencil, use_msaa, use_snapshot)
+        super().__init__(size, render_options)
         self.window = window
         self.surface: wgpu.Surface = None
         self.create_surface()

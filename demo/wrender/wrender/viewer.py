@@ -14,6 +14,7 @@ from crunge import engine
 
 from crunge.engine.viewport import SurfaceViewport
 from crunge.engine import Renderer, Scheduler
+from crunge.engine.render_options import RenderOptions
 
 from crunge.engine.loader.gltf import GltfLoader
 
@@ -32,15 +33,16 @@ class Viewer(engine.App):
         super().__init__(title="WRender", resizable=True)
         self.delta_time = 0
         self.director: Director3D = None
+        self.render_options = RenderOptions(
+            use_depth_stencil=True, use_msaa=True, use_snapshot=True
+        )
 
     @property
     def camera(self):
         return self.view.camera
 
     def create_viewport(self):
-        self.viewport = SurfaceViewport(
-            self.size, self.window, use_depth_stencil=True, use_msaa=True, use_snapshot=True
-        )
+        self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
@@ -86,9 +88,19 @@ class Viewer(engine.App):
 
         light = self.scene.lighting.lights[0]
 
-        light_position_speed, light_position_min, light_position_max, = self.director.get_light_position_limits()
+        (
+            light_position_speed,
+            light_position_min,
+            light_position_max,
+        ) = self.director.get_light_position_limits()
 
-        changed, position = imgui.drag_float3("Diffuse Position", tuple(light.position), light_position_speed, light_position_min[0], light_position_max[0])
+        changed, position = imgui.drag_float3(
+            "Diffuse Position",
+            tuple(light.position),
+            light_position_speed,
+            light_position_min[0],
+            light_position_max[0],
+        )
         if changed:
             light.position = glm.vec3(position)
 
@@ -96,17 +108,25 @@ class Viewer(engine.App):
         if changed:
             light.color = glm.vec3(color)
 
-        light_energy_speed, light_energy_min, light_energy_max = self.director.get_light_energy_limits()
-        #changed, energy = imgui.slider_float("Diffuse Energy", light.energy, 0.0, 100.0)
-        #changed, energy = imgui.drag_float("Diffuse Energy", light.energy, light_energy_speed, light_energy_min, light_energy_max)
-        changed, energy = imgui.slider_float("Diffuse Energy", light.energy, light_energy_min, light_energy_max)
+        light_energy_speed, light_energy_min, light_energy_max = (
+            self.director.get_light_energy_limits()
+        )
+        # changed, energy = imgui.slider_float("Diffuse Energy", light.energy, 0.0, 100.0)
+        # changed, energy = imgui.drag_float("Diffuse Energy", light.energy, light_energy_speed, light_energy_min, light_energy_max)
+        changed, energy = imgui.slider_float(
+            "Diffuse Energy", light.energy, light_energy_min, light_energy_max
+        )
         if changed:
             light.energy = energy
 
-        light_range_speed, light_range_min, light_range_max = self.director.get_light_range_limits()
+        light_range_speed, light_range_min, light_range_max = (
+            self.director.get_light_range_limits()
+        )
 
-        #changed, range = imgui.slider_float("Diffuse Range", light.range, 1.0, 20.0)
-        changed, range = imgui.slider_float("Diffuse Range", light.range, light_range_min, light_range_max)
+        # changed, range = imgui.slider_float("Diffuse Range", light.range, 1.0, 20.0)
+        changed, range = imgui.slider_float(
+            "Diffuse Range", light.range, light_range_min, light_range_max
+        )
         if changed:
             light.range = range
 
