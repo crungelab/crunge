@@ -9,10 +9,12 @@ from crunge import skia
 from ..base import Base
 from ..uniforms import ViewportUniform, cast_vec2
 
-from ..bindings import ViewportBindGroup
+# from ..bindings import ViewportBindGroup
 from ..render_options import RenderOptions
+from ..blitter import Blitter
 
-class ViewportListener():
+
+class ViewportListener:
     def on_viewport_size(self, viewport: "Viewport") -> None:
         pass
 
@@ -27,12 +29,12 @@ class Viewport(Base):
         self.render_options = render_options
         self.listeners: List[ViewportListener] = []
 
-        '''
+        """
         self.use_depth_stencil = use_depth_stencil
         self.use_msaa = use_msaa
         self.sample_count = 4 if use_msaa else 1
         self.use_snapshot = use_snapshot
-        '''
+        """
         self.color_texture: wgpu.Texture = None
         self.color_texture_view: wgpu.TextureView = None
 
@@ -45,19 +47,21 @@ class Viewport(Base):
         self.snapshot_texture: wgpu.Texture = None
         self.snapshot_texture_view: wgpu.TextureView = None
         self.snapshot_sampler: wgpu.Sampler = None
+        self.blitter: Blitter = None
 
         # Skia
         self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)
         recorder_options = skia.create_standard_recorder_options()
         self.recorder = self.skia_context.make_recorder(recorder_options)
-        self.skia_surface: skia.Surface = None # segfaults if we don't hang on to a reference
+        self.skia_surface: skia.Surface = (
+            None  # segfaults if we don't hang on to a reference
+        )
         self.canvas: skia.Canvas = None
 
         self.create_device_objects()
         self.create_buffers()
-        self.create_bind_group()
+        # self.create_bind_group()
         self.update_gpu()
-
 
     def add_listener(self, listener: ViewportListener) -> None:
         if listener not in self.listeners:
@@ -121,7 +125,9 @@ class Viewport(Base):
 
     def create_msaa(self) -> None:
         descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_SRC | wgpu.TextureUsage.TEXTURE_BINDING,
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT
+            | wgpu.TextureUsage.COPY_SRC
+            | wgpu.TextureUsage.TEXTURE_BINDING,
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.BGRA8_UNORM,
             sample_count=self.render_options.sample_count,
@@ -133,28 +139,48 @@ class Viewport(Base):
 
     def create_snapshot(self) -> None:
         descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
+            # usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT
+            | wgpu.TextureUsage.COPY_DST
+            | wgpu.TextureUsage.TEXTURE_BINDING,
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            sample_count=self.render_options.sample_count,
-            mip_level_count=1,
+            # sample_count=self.render_options.sample_count,
+            # mip_level_count=1,
             label="Snapshot Texture",
         )
         self.snapshot_texture = self.device.create_texture(descriptor)
         self.snapshot_texture_view = self.snapshot_texture.create_view()
         self.snapshot_sampler = self.device.create_sampler()
+        if self.color_texture is not None:
+            self.blitter = Blitter(self.color_texture, self.snapshot_texture)
+
+    '''
+    def snap(self):
+        if not self.render_options.use_snapshot:
+            # raise RuntimeError("Snapshot is not enabled for this viewport.")
+            return
+
+        if self.snapshot_texture is None:
+            self.create_snapshot()
+
+        #blitter = Blitter(self.color_texture, self.snapshot_texture)
+        #blitter.blit()
+        if self.blitter is not None:
+            self.blitter.blit()
+    '''
 
     def snap(self):
-        if not self.use_snapshot:
+        if not self.render_options.use_snapshot:
             #raise RuntimeError("Snapshot is not enabled for this viewport.")
             return
         
         if self.snapshot_texture is None:
             self.create_snapshot()
         
-        # Create a command encoder to copy the MSAA texture to the snapshot texture
+        # Create a command encoder to copy the color texture to the snapshot texture
         encoder = self.device.create_command_encoder()
-        source=wgpu.TexelCopyTextureInfo(texture=self.msaa_texture)
+        source=wgpu.TexelCopyTextureInfo(texture=self.color_texture)
         destination=wgpu.TexelCopyTextureInfo(texture=self.snapshot_texture)
         encoder.copy_texture_to_texture(
             source=source,
@@ -174,6 +200,7 @@ class Viewport(Base):
             wgpu.BufferUsage.UNIFORM,
         )
 
+    """
     def create_bind_group(self):
         self.bind_group = ViewportBindGroup(
             self.uniform_buffer,
@@ -181,9 +208,12 @@ class Viewport(Base):
             self.snapshot_texture_view,
             self.snapshot_sampler,
         )
+    """
 
+    """
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.bind_group.bind(pass_enc)
+    """
 
     def update_gpu(self):
         uniform = ViewportUniform()

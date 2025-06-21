@@ -14,7 +14,7 @@ from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
 )
-from ..bindings import ModelBindGroup
+from ..bindings_2d import ModelBindGroup
 
 from .sprite_program import SpriteProgram
 from .sprite import Sprite

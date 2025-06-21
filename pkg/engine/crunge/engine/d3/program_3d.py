@@ -5,8 +5,8 @@ from crunge import wgpu
 
 from ..program import Program
 from ..resource.bind_group.bind_group_layout import BindGroupLayout
-
-
+from ..bindings import CameraBindGroupLayout
+'''
 @klass.singleton
 class CameraBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
@@ -18,7 +18,7 @@ class CameraBindGroupLayout(BindGroupLayout):
             ),
         ]
         super().__init__(entries, label="CameraBindGroupLayout")
-
+'''
 
 class LightBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:

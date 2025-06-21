@@ -33,6 +33,7 @@ struct Material {
   metallicFactor : f32,
   roughnessFactor : f32,
   alphaCutoff : f32,
+  transmissionFactor : f32,
 }
 
 fn GetMaterial() -> Material {
@@ -43,6 +44,8 @@ fn GetMaterial() -> Material {
   material.metallicFactor = {{ metallic_factor }};
   material.roughnessFactor = {{ roughness_factor }};
   material.alphaCutoff = {{ alpha_cutoff }};
+  material.transmissionFactor = {{ transmission_factor }};
+
   return material;
 }
 
@@ -57,6 +60,7 @@ struct Surface {
   ao : f32,
   emissive : vec3<f32>,
   v : vec3<f32>,
+  transmission: f32,
 }
 
 fn GetSurface(input : VertexOutput) -> Surface {
@@ -128,6 +132,17 @@ fn GetSurface(input : VertexOutput) -> Surface {
   surface.emissive = material.emissiveFactor;
   {% endif %}
 
+  //let screenUv = vec2<f32>(input.frag_pos.x / viewport.size.x, input.frag_pos.y / viewport.size.y);
+  {% if material.has_transmission_texture %}
+  let transmissionMap = textureSample(transmissionTexture, transmissionSampler, uv);
+  //let transmissionTexture = textureLoad(transmissionTexture, vec2<i32>(screenUv * vec2<f32>(textureDimensions(transmissionTexture))));
+  surface.transmission = (material.transmissionFactor * transmissionMap.r);
+  //surface.transmission = material.transmissionFactor * textureSample(snapshotTexture, snapshotSampler, screenUv).rgb;
+  {% else %}
+  surface.transmission = material.transmissionFactor;
+  //surface.transmission = material.transmissionFactor * textureSample(snapshotTexture, snapshotSampler, screenUv).rgb;
+  {% endif %}
+
   return surface;
 }
 
@@ -186,5 +201,17 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
     // Combine all components: Ambient, Diffuse, Specular, Environment, and Emissive
     let rgb = ambient + Lo + environmentReflection + surface.emissive;
     let finalColor = linearToSRGB(rgb);
-    return vec4<f32>(finalColor, surface.baseColor.a);
+    //return vec4<f32>(finalColor, surface.baseColor.a);
+    // --- TRANSMISSION BLEND ---
+    let transmission = surface.transmission; // use red or average, depending on how you stored it
+
+    // Sample background at the current screen location
+    let screenUv = vec2<f32>(input.frag_pos.x / viewport.size.x, input.frag_pos.y / viewport.size.y);
+    let backgroundColor = textureSample(snapshotTexture, snapshotSampler, screenUv).rgb;
+
+    // Blend: transmission replaces surface color proportionally
+    let mixedColor = mix(finalColor, backgroundColor, transmission);
+
+    // Optionally, set alpha to 1 (opaque) or keep surface.baseColor.a if you support alpha blending
+    return vec4<f32>(mixedColor, 1.0);
 }

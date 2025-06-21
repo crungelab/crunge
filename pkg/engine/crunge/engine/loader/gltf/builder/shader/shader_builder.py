@@ -5,9 +5,9 @@ from ..builder_context import BuilderContext
 from ..vertex_table import VertexTable
 
 from .....bindings import (
-    GlobalBindGroupIndex,
-    ViewportBindGroupLayout,
-    ViewportBindIndex,
+    BindGroupIndex,
+    CameraBindGroupLayout,
+    CameraBindIndex,
 )
 
 
@@ -74,8 +74,8 @@ class ShaderBuilder(GltfBuilder):
         dict = self.__dict__.copy()
         dict.update(
             {
-                "GlobalBindGroupIndex": GlobalBindGroupIndex,
-                "ViewportBindIndex": ViewportBindIndex,
+                "BindGroupIndex": BindGroupIndex,
+                "CameraBindIndex": CameraBindIndex,
             }
         )
 

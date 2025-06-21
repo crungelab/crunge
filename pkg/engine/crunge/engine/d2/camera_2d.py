@@ -10,12 +10,13 @@ from crunge.core import klass
 from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
 from ..viewport import Viewport, ViewportListener
+from ..bindings import CameraBindGroup
 
 from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
 
 from .program_2d import Program2D
-from .bindings import CameraBindGroup
+#from .bindings import CameraBindGroup
 
 
 @klass.singleton
@@ -43,9 +44,14 @@ class Camera2D(Node2D, ViewportListener):
         self.viewport_size = viewport_size
 
         self.create_buffers()
-        self.create_bind_group()
+        #self.create_bind_group()
+        self.bind_group: CameraBindGroup = None
 
         super().__init__(position)
+
+    def _create(self):
+        super()._create()
+        self.create_bind_group()
 
     @property
     def viewport(self):
@@ -80,8 +86,19 @@ class Camera2D(Node2D, ViewportListener):
         self.bind_group = CameraBindGroup(
             self.uniform_buffer,
             self.uniform_buffer_size,
+            self.viewport.uniform_buffer,
+            self.viewport.uniform_buffer_size,
+            self.viewport.snapshot_texture_view,
+            self.viewport.snapshot_sampler,
         )
 
+    '''
+    def create_bind_group(self):
+        self.bind_group = CameraBindGroup(
+            self.uniform_buffer,
+            self.uniform_buffer_size,
+        )
+    '''
     def on_viewport_size(self, size: glm.ivec2):
         self.viewport_size = glm.vec2(size.x, size.y)
         logger.debug(f"Camera2D: on_viewport_size: {size}")

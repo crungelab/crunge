@@ -5,7 +5,7 @@ from crunge.core import klass
 
 from ..resource.bind_group import BindGroupLayout, BindGroup
 
-from . import GlobalBindGroupIndex
+from . import BindGroupIndex
 
 
 class ViewportBindIndex:
@@ -49,7 +49,7 @@ class ViewportBindGroup(BindGroup):
         uniform_buffer_size: int,
         texture_view: wgpu.TextureView,
         sampler: wgpu.Sampler,
-        index: int = GlobalBindGroupIndex.VIEWPORT,
+        index: int = BindGroupIndex.VIEWPORT,
     ) -> None:
         entries = [
             wgpu.BindGroupEntry(

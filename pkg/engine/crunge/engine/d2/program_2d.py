@@ -8,14 +8,15 @@ from crunge import wgpu
 from ..program import Program
 
 from ..bindings import (
-    GlobalBindGroupIndex,
-    ViewportBindGroupLayout,
-    ViewportBindIndex,
-)
-
-from .bindings import (
     BindGroupIndex,
     CameraBindIndex,
+    #ViewportBindGroupLayout,
+    #ViewportBindIndex,
+)
+
+from .bindings_2d import (
+    BindGroupIndex,
+    #CameraBindIndex,
     SpriteBindIndex,
     ModelBindIndex,
 )
@@ -26,9 +27,9 @@ class Program2D(Program):
         template_loaders.append(PackageLoader("crunge.engine.resources.shaders", "d2"))
         super().__init__(template_loaders)
         self.template_dict = {
-            "GlobalBindGroupIndex": GlobalBindGroupIndex,
             "BindGroupIndex": BindGroupIndex,
-            "ViewportBindIndex": ViewportBindIndex,
+            "BindGroupIndex": BindGroupIndex,
+            #"ViewportBindIndex": ViewportBindIndex,
             "CameraBindIndex": CameraBindIndex,
             "MaterialBindIndex": SpriteBindIndex,
             "ModelBindIndex": ModelBindIndex,

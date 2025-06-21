@@ -5,7 +5,7 @@ from crunge import wgpu
 from ....renderer import Renderer
 from ....buffer import UniformBuffer
 from ...uniforms_2d import ModelUniform
-from ...bindings import ModelBindGroup
+from ...bindings_2d import ModelBindGroup
 
 from ..sprite import Sprite
 from ..sprite_vu import SpriteVu

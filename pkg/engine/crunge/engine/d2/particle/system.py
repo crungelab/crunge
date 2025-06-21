@@ -12,7 +12,7 @@ from ...uniforms import cast_matrix4, cast_tuple4f
 from ..vu_2d import Vu2D
 
 from ..uniforms_2d import Vec2, ModelUniform, ParticleUniform
-from ..bindings import EmitterBindGroup
+from ..bindings_2d import EmitterBindGroup
 
 from ..program_2d import Program2D
 

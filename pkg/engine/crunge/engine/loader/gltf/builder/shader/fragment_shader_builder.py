@@ -31,6 +31,7 @@ class FragmentShaderBuilder(ShaderBuilder):
         self.emissive_factor = material.emissive_factor
         self.alpha_mode = material.alpha_mode
         self.alpha_cutoff = material.alpha_cutoff
+        self.transmission_factor = material.transmission_factor
 
     def add_binding(self, binding: Binding):
         self.bindings.append(binding)

@@ -7,11 +7,12 @@ from crunge import wgpu
 from ..render_pipeline import RenderPipeline
 
 from ..bindings import (
-    ViewportBindGroupLayout,
+    #ViewportBindGroupLayout,
+    CameraBindGroupLayout
 )
 
-from .bindings import (
-    CameraBindGroupLayout,
+from .bindings_2d import (
+    #CameraBindGroupLayout,
     SpriteBindGroupLayout,
     ModelBindGroupLayout,
 )
@@ -23,9 +24,11 @@ class RenderPipeline2D(RenderPipeline):
         self.vertex_shader_module = vertex_shader_module
         self.fragment_shader_module = fragment_shader_module
 
+    '''
     @property
     def viewport_bind_group_layout(self):
         return ViewportBindGroupLayout()
+    '''
 
     @property
     def camera_bind_group_layout(self):
@@ -42,7 +45,7 @@ class RenderPipeline2D(RenderPipeline):
     @property
     def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:
         bind_group_layouts = [
-            self.viewport_bind_group_layout.get(),
+            #self.viewport_bind_group_layout.get(),
             self.camera_bind_group_layout.get(),
             self.material_bind_group_layout.get(),
             self.model_bind_group_layout.get(),

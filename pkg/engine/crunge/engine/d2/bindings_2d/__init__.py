@@ -1,12 +1,19 @@
 class BindGroupIndex:
+    CAMERA = 0
+    # LIGHT = 2
+    MATERIAL = 1
+    MODEL = 2
+
+'''
+class BindGroupIndex:
     VIEWPORT = 0
     CAMERA = 1
     # LIGHT = 2
     MATERIAL = 2
     MODEL = 3
+'''
 
-
-from .camera import CameraBindGroup, CameraBindGroupLayout, CameraBindIndex
+#from .camera import CameraBindGroup, CameraBindGroupLayout, CameraBindIndex
 from .material import (
     SpriteBindGroup,
     SpriteBindGroupLayout,

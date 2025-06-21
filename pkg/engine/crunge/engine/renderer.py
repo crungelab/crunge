@@ -25,8 +25,10 @@ class Renderer(Base):
         self.viewport = viewport
         if camera_2d is not None:
             camera_2d.viewport = viewport
+            camera_2d.enable()
         elif camera_3d is not None:
             camera_3d.viewport = viewport
+            camera_3d.enable()
         self.camera_2d = camera_2d
         self.camera_3d = camera_3d
 
@@ -49,6 +51,7 @@ class Renderer(Base):
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.msaa_texture_view,
                     resolve_target=self.viewport.color_texture_view,
+                    #resolve_target=self.viewport.snapshot_texture_view,
                     load_op=wgpu.LoadOp.CLEAR,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
@@ -82,7 +85,7 @@ class Renderer(Base):
             renderpass
         )
 
-        self.viewport.bind(self.pass_enc)
+        #self.viewport.bind(self.pass_enc)
 
         if self.camera_2d is not None:
             self.camera_2d.bind(self.pass_enc)

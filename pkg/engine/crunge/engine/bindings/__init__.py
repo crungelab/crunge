@@ -1,4 +1,10 @@
-class GlobalBindGroupIndex:
-    VIEWPORT = 0
+class BindGroupIndex:
+    #VIEWPORT = 0
+    CAMERA = 0
 
-from .viewport import ViewportBindGroup, ViewportBindGroupLayout, ViewportBindIndex
+#from .viewport import ViewportBindGroup, ViewportBindGroupLayout, ViewportBindIndex
+from .camera import (
+    CameraBindGroup,
+    CameraBindGroupLayout,
+    CameraBindIndex,
+)

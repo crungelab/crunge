@@ -10,6 +10,7 @@ from crunge import wgpu
 
 from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
+from ..bindings import CameraBindGroup
 
 from .renderer_3d import Renderer3D
 from .node_3d import Node3D
@@ -62,6 +63,10 @@ class Camera3D(Node3D, ViewportListener):
         self.deferred_draws: List[DeferredDraw] = []
 
         self.create_buffers()
+        self.bind_group: CameraBindGroup = None
+
+    def _create(self):
+        super()._create()
         self.create_bind_group()
 
     @property
@@ -112,6 +117,17 @@ class Camera3D(Node3D, ViewportListener):
         )
 
     def create_bind_group(self):
+        self.bind_group = CameraBindGroup(
+            self.uniform_buffer,
+            self.uniform_buffer_size,
+            self.viewport.uniform_buffer,
+            self.viewport.uniform_buffer_size,
+            self.viewport.snapshot_texture_view,
+            self.viewport.snapshot_sampler,
+        )
+
+    '''
+    def create_bind_group(self):
         camera_bindgroup_entries = [
             wgpu.BindGroupEntry(
                 binding=0,
@@ -127,6 +143,7 @@ class Camera3D(Node3D, ViewportListener):
         )
 
         self.bind_group = self.device.create_bind_group(camera_bind_group_desc)
+    '''
 
     def look_at(self, target: glm.vec3):
         self.view_matrix = glm.lookAt(self.position, target, self.up)
@@ -157,7 +174,8 @@ class Camera3D(Node3D, ViewportListener):
         self.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        pass_enc.set_bind_group(0, self.bind_group)
+        #pass_enc.set_bind_group(0, self.bind_group)
+        self.bind_group.bind(pass_enc)
 
     def defer_draw(self, node: Node3D, callback: DrawCallback):
         self.deferred_draws.append(DeferredDraw(node, callback))
