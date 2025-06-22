@@ -10,7 +10,7 @@ from .scene_builder import SceneBuilder
 from .viewer import Viewer
 
 #models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
-models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS"))  / "Models"
+models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class GltfV:
     def __init__(self):

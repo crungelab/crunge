@@ -57,10 +57,6 @@ class CubeDemo(Demo):
     kUVByteOffset = 4 * sizeof(c_float)
     kCubeDataStride = 6
 
-    def __init__(self):
-        super().__init__()
-        self.resize_camera(self.size)
-
     def create_device_objects(self):
         self.create_buffers()
         self.create_pipeline()

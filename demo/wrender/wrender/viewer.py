@@ -23,7 +23,7 @@ from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
 from crunge.engine.d3.view_3d import View3D
 from crunge.engine.d3.director_3d import Director3D
 
-models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS")) / "Models"
+models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 
 class Viewer(engine.App):

@@ -1,10 +1,11 @@
 from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
 
+from loguru import logger
+
+from crunge import yoga
+
 if TYPE_CHECKING:
     from .window import Window
-
-from loguru import logger
-import glm
 
 from .widget import Widget
 from .view_layer import ViewLayer
@@ -12,7 +13,8 @@ from .view_layer import ViewLayer
 
 class View(Widget):
     def __init__(self, layers: list[ViewLayer] = []) -> None:
-        super().__init__()
+        style = yoga.StyleBuilder().size_percent(100, 100).build()
+        super().__init__(style)
         self.window: "Window" = None
         self.layers_by_name: Dict[str, ViewLayer] = {}
 
@@ -36,7 +38,7 @@ class View(Widget):
         super()._create()
         if not self.window:
             raise ValueError("View.window is not set")
-        self.size = self.window.size
+        #self.size = self.window.size
         for layer in self.layers:
             layer.config(view=self).create()
         self.create_device_objects()

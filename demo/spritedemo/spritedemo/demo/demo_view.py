@@ -9,9 +9,12 @@ class DemoView(SceneView2D):
     renderer: Renderer2D = None
 
     def create_camera(self):
-        self.camera = Camera2D(
-            glm.vec2(self.width / 2, self.height / 2), glm.vec2(self.width, self.height)
-        )
+        self.camera = Camera2D()
 
     def create_renderer(self):
         self.renderer = Renderer2D(self.window.viewport, camera=self.camera)
+
+    def on_layout(self):
+        super().on_layout()
+        self.camera.position = glm.vec2(self.width / 2, self.height / 2)
+

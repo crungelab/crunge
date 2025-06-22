@@ -11,7 +11,7 @@ from crunge import sdl
 from crunge import engine
 from crunge import imgui
 
-from crunge.engine import Renderer, Scheduler
+from crunge.engine import RenderOptions, Renderer, Scheduler
 from crunge.engine.viewport import SurfaceViewport
 
 from crunge.engine.loader.gltf import GltfLoader
@@ -24,7 +24,7 @@ from crunge.engine.d3.view_3d import View3D
 from crunge.engine.d3.director_3d import Director3D
 
 #models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
-models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
+models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS"))
 
 
 class Viewer(engine.App):
@@ -32,7 +32,7 @@ class Viewer(engine.App):
 
     def __init__(self):
         super().__init__(title="Gltf Viewer", resizable=True)
-        #self.camera: Camera3D = None
+        self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True)
         self.delta_time = 0
 
     @property
@@ -40,7 +40,7 @@ class Viewer(engine.App):
         return self.view.camera
 
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.size, self.window, use_depth_stencil=True, use_msaa=True)
+        self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")

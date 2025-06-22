@@ -72,7 +72,6 @@ class CubesDemo(Demo):
 
     def __init__(self):
         super().__init__()
-        self.resize_camera(self.size)
         self.model_matrices = glm.array.zeros(num_instances, glm.mat4)
         for i in range(num_instances):
             self.model_matrices[i] = glm.mat4(1.0)

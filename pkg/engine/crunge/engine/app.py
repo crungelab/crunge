@@ -69,7 +69,6 @@ class App(Window):
             frame_time = now - last_time
 
             # Game update & render
-            self.apply_layout()
             self.update(frame_time)
             self.frame()
 
@@ -95,4 +94,7 @@ class App(Window):
     def update(self, delta_time: float):
         for service in self.services:
             service.update(delta_time)
+
+        self.apply_layout()
+
         super().update(delta_time)

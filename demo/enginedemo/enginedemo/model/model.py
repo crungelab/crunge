@@ -74,10 +74,6 @@ class ModelDemo(Demo):
     kUVByteOffset = 3 * sizeof(c_float)
     kVertexDataStride = 5
 
-    def __init__(self):
-        super().__init__()
-        self.resize_camera(self.size)
-
     def on_size(self):
         super().on_size()
         self.resize_camera(self.size)

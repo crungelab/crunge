@@ -38,17 +38,29 @@ class StyleBuilder:
         self.dimension(Dimension.WIDTH, StyleSizeLength.points(value))
         return self
 
+    def width_percent(self, value):
+        self.dimension(Dimension.WIDTH, StyleSizeLength.percent(value))
+        return self
+
     def height(self, value):
         self.dimension(Dimension.HEIGHT, StyleSizeLength.points(value))
+        return self
+    
+    def height_percent(self, value):
+        self.dimension(Dimension.HEIGHT, StyleSizeLength.percent(value))
         return self
 
     def size(self, width, height):
         self.width(width)
         self.height(height)
         return self
+    
+    def size_percent(self, width, height):
+        self.width_percent(width)
+        self.height_percent(height)
+        return self
 
     def margin(self, edge, value):
-        #self.style.set_margin(edge, value)
         self.style.set_margin(edge, StyleLength.points(value))
         return self
 
@@ -61,7 +73,7 @@ class StyleBuilder:
         return self
 
     def position(self, edge, value):
-        self.style.set_position(edge, value)
+        self.style.set_position(edge, StyleLength.points(value))
         return self
 
     def align_items(self, value):

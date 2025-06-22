@@ -1,13 +1,8 @@
-import time
-import sys
-
 from loguru import logger
-import glm
 
 from crunge import wgpu
-from crunge import imgui
 
-from crunge.engine import Renderer
+from crunge.engine import RenderOptions, Renderer
 from crunge.engine.viewport import SurfaceViewport
 
 from ..demo import Demo, DemoView, DemoLayer
@@ -109,7 +104,7 @@ class TriangleMsaaLayer(DemoLayer):
 class TriangleMsaaDemo(Demo):
     def create_viewport(self):
         self.viewport = SurfaceViewport(
-            self.size, self.window, use_depth_stencil=True, use_msaa=True
+            self.size, self.window, RenderOptions(use_depth_stencil=True, use_msaa=True)
         )
 
 

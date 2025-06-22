@@ -28,8 +28,20 @@ class MixedPage(Page):
 
     depth_stencil_view: wgpu.TextureView = None
 
-    def resize(self, size: glm.ivec2):
-        super().resize(size)
+
+    def on_layout(self):
+        super().on_layout()
+        self.size = glm.vec2(self.window.width, self.window.height)
+        logger.debug(f"MixedPage size: {self.size}")
+        self.create_device_objects()
+    '''
+    def _create(self):
+        super()._create()
+        self.create_device_objects()
+    '''
+
+    def on_size(self):
+        super().on_size()
         self.create_depth_stencil_view()
 
     def create_device_objects(self):
@@ -37,6 +49,7 @@ class MixedPage(Page):
         self.create_pipeline()
 
     def create_depth_stencil_view(self):
+        logger.debug("Creating depth stencil view")
         descriptor = wgpu.TextureDescriptor(
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             size=wgpu.Extent3D(self.size.x, self.size.y, 1),

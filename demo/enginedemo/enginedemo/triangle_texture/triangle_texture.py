@@ -42,9 +42,6 @@ class TriangleTextureDemo(Demo):
     texture: wgpu.Texture = None
     sampler: wgpu.Sampler = None
 
-    kWidth = 800
-    kHeight = 600
-
     def __init__(self):
         super().__init__()
 

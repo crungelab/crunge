@@ -197,11 +197,11 @@ class InstancedTextDemo(Demo):
                 size=Vec2(uv_w, uv_h),
             )
 
-            px = cursor_x + offset_x / self.kWidth
-            py = cursor_y + offset_y / self.kHeight
+            px = cursor_x + offset_x / self.width
+            py = cursor_y + offset_y / self.height
 
-            sx = size_x / self.kWidth
-            sy = -size_y / self.kHeight
+            sx = size_x / self.width
+            sy = -size_y / self.height
 
             instances.append(
                 GlyphInstance(
@@ -211,8 +211,8 @@ class InstancedTextDemo(Demo):
                 )
             )
 
-            cursor_x += advance_x / self.kWidth
-            cursor_y += advance_y / self.kHeight
+            cursor_x += advance_x / self.width
+            cursor_y += advance_y / self.height
 
         # logger.debug(f"Uvs: {uvs}")
         self.instance_count = len(instances)

@@ -25,7 +25,7 @@ class Widget(Node["Widget"]):
         self.layout = yoga.Layout()
         self.layout.set_style(style)
         self.layout.set_dirtied_func(self.mark_layout_dirty)
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
+        #self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
 
     def _create(self):
         super()._create()
@@ -94,10 +94,10 @@ class Widget(Node["Widget"]):
     
     @property
     def global_position(self) -> glm.ivec2:
-        pos = self.position
-        if self.parent is not None:
-            return self.parent.global_position + pos
-        return pos
+        if self.parent is None:
+            return glm.ivec2(0, 0)
+
+        return self.parent.global_position + self.position
 
     @property
     def bounds(self) -> yoga.Bounds:

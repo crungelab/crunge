@@ -36,7 +36,7 @@ def main():
     models_root = (
         Path(__file__).parent.parent.parent.parent.parent / "resources" / "models"
     )
-    models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
+    models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS"))
 
     # model = "2CylinderEngine"
     # model = "Avocado"
@@ -61,6 +61,7 @@ def main():
     #model = "Suzanne"
 
     scene_path = models_root / model / "glTF" / f"{model}.gltf"
+    
     # scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
     # scene_path = models_root / model / "glTF-Binary" / f"{model}.glb"
 

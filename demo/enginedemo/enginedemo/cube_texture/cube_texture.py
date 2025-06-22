@@ -64,10 +64,6 @@ class CubeTextureDemo(Demo):
     kUVByteOffset = 4 * sizeof(c_float)
     kCubeDataStride = 6
 
-    def __init__(self):
-        super().__init__()
-        self.resize_camera(self.size)
-
     def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
@@ -299,7 +295,7 @@ class CubeTextureDemo(Demo):
 
 
 def main():
-    CubeTextureDemo().create().run()
+    CubeTextureDemo().run()
 
 
 if __name__ == "__main__":

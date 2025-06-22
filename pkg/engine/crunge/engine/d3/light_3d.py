@@ -43,7 +43,6 @@ class Light3D(Node3D):
 
     @energy.setter
     def energy(self, energy: float):
-        logger.debug(f"Setting energy: {energy}")
         self._energy = energy
         self.gpu_update_model()
 

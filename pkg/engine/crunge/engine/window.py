@@ -65,6 +65,8 @@ class Window(Frame):
 
     def _create(self):
         logger.debug("Window.create")
+        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
+        logger.debug(f"Window.size: {self.size}")
         self.create_window()
         self.create_device_objects()
         self.create_viewport()

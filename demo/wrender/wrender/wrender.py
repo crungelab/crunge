@@ -7,7 +7,7 @@ from crunge.engine.loader.gltf import GltfLoader
 
 from .viewer import Viewer
 
-models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS"))
+models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 class WRender(Viewer):
     def __init__(self):
@@ -52,7 +52,7 @@ class WRender(Viewer):
         #model = "SimpleMeshes"
         #model = "Suzanne"
 
-        scene_path = models_root / "Models" / model / "glTF" / f"{model}.gltf"
+        scene_path = models_root / model / "glTF" / f"{model}.gltf"
 
         #scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
