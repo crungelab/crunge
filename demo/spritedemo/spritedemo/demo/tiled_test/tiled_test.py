@@ -13,10 +13,6 @@ from ..demo import Demo
 
 
 class TiledLoaderDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-
     def reset(self):
         self.scene.clear()
         self.create_map()

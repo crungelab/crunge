@@ -4,6 +4,7 @@ import glm
 from crunge import wgpu
 from crunge import skia
 from crunge.engine import Renderer, App
+from crunge.engine.d2.renderer_2d import Renderer2D
 from crunge.demo import PageChannel
 
 from ..page import Page
@@ -26,36 +27,20 @@ fn fs_main() -> @location(0) vec4<f32> {
 class MixedPage(Page):
     """Mixed demo using Skia and WGPU"""
 
-    depth_stencil_view: wgpu.TextureView = None
+    def __init__(self, name: str, title: str):
+        super().__init__(name, title)
+        #self.renderer = Renderer2D(self.window.viewport)
 
-
-    def on_layout(self):
-        super().on_layout()
-        self.size = glm.vec2(self.window.width, self.window.height)
-        logger.debug(f"MixedPage size: {self.size}")
-        self.create_device_objects()
-    '''
     def _create(self):
         super()._create()
         self.create_device_objects()
-    '''
 
     def on_size(self):
         super().on_size()
-        self.create_depth_stencil_view()
 
     def create_device_objects(self):
-        self.create_depth_stencil_view()
+        super().create_device_objects()
         self.create_pipeline()
-
-    def create_depth_stencil_view(self):
-        logger.debug("Creating depth stencil view")
-        descriptor = wgpu.TextureDescriptor(
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
-            size=wgpu.Extent3D(self.size.x, self.size.y, 1),
-            format=wgpu.TextureFormat.DEPTH32_FLOAT,
-        )
-        self.depth_stencil_view = self.device.create_texture(descriptor).create_view()
 
     def create_pipeline(self):
         logger.debug("Creating pipeline")
@@ -99,28 +84,10 @@ class MixedPage(Page):
         logger.debug(self.pipeline)
 
     def draw(self, renderer: Renderer):
-        color_attachments = [
-            wgpu.RenderPassColorAttachment(
-                view=renderer.viewport.color_texture.create_view(),
-                load_op=wgpu.LoadOp.CLEAR,
-                store_op=wgpu.StoreOp.STORE,
-                clear_value=wgpu.Color(0, 0, 0, 1),
-            )
-        ]
-
-        renderpass = wgpu.RenderPassDescriptor(
-            label="Main Render Pass",
-            color_attachments=color_attachments,
-        )
-
-        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
-        pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
-        pass_enc.set_pipeline(self.pipeline)
-        pass_enc.draw(3)
-        pass_enc.end()
-        commands = encoder.finish()
-
-        self.queue.submit([commands])
+        with renderer:
+            pass_enc = renderer.pass_enc
+            pass_enc.set_pipeline(self.pipeline)
+            pass_enc.draw(3)
 
         # Skia rendering
 

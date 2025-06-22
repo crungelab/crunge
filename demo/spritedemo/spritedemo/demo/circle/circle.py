@@ -23,11 +23,7 @@ class CircleDemo(Demo):
         shape = self.shape = Circle2D(
             glm.vec2(0, 0), radius=100.0, segments=32, color=self.color
         )
-        node = self.node = Node2D(vu=shape)
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-
+        self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
 
     def kill(self):

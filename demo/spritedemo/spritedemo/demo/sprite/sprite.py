@@ -15,14 +15,6 @@ from ..demo import Demo
 
 
 class SpriteDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-
-    def kill(self):
-        self.node.destroy()
-        self.node = None
-        
     def reset(self):
         self.angle = 0
         self.scale = 1.0
@@ -32,15 +24,12 @@ class SpriteDemo(Demo):
 
         sprite = self.sprite = SpriteLoader().load(":images:/playerShip1_orange.png")
 
-        node = self.node = Node2D(vu=SpriteVu(), model=sprite)
-
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-
+        self.node = Node2D(vu=SpriteVu(), model=sprite)
         self.scene.attach(self.node)
 
-
+    def kill(self):
+        self.node.destroy()
+        self.node = None
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
@@ -75,6 +64,7 @@ class SpriteDemo(Demo):
         imgui.end()
 
         super().draw(renderer)
+
 
 def main():
     SpriteDemo().create().run()

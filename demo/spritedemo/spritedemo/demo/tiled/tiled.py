@@ -13,13 +13,13 @@ from ..demo import Demo
 
 
 class TiledLoaderDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-
     def reset(self):
         self.scene.clear()
         self.create_map()
+
+    def on_size(self):
+        super().on_size()
+        self.center_camera()
 
     def create_view(self):
         super().create_view()

@@ -20,6 +20,9 @@ class SpritesDemo(Demo):
         self.alpha = 255
         self.color_enabled = True
         self.color = 1, 1, 1
+
+    def intro(self):
+        super().intro()
         # Ship1
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         sprite = Sprite(texture)
@@ -41,6 +44,10 @@ class SpritesDemo(Demo):
         node.angle = 45
 
         self.scene.attach(self.node)
+
+    def on_size(self):
+        super().on_size()
+        self.center_camera()
 
     def reset(self):
         self.angle = 0

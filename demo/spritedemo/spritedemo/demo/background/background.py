@@ -16,15 +16,7 @@ from crunge.engine.color import Color
 from crunge.engine import colors
 
 
-class BackgroundDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-
-    def kill(self):
-        self.node.destroy()
-        self.node = None
-        
+class BackgroundDemo(Demo):        
     def reset(self):
         self.angle = 0
         self.scale = 1.0
@@ -36,7 +28,9 @@ class BackgroundDemo(Demo):
         self.node = Node2D(vu=BackgroundVu(), model=sprite)
         self.scene.attach(self.node)
 
-
+    def kill(self):
+        self.node.destroy()
+        self.node = None
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)

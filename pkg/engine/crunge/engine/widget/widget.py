@@ -21,14 +21,14 @@ class Widget(Node["Widget"]):
         self.priority = 0
         self.hovered = False
         # Layout
+        self.introduced = False
         self.layout_dirty = False
         self.layout = yoga.Layout()
         self.layout.set_style(style)
         self.layout.set_dirtied_func(self.mark_layout_dirty)
-        #self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
 
-    def _create(self):
-        super()._create()
+    def intro(self):
+        pass
 
     def mark_layout_dirty(self):
         logger.debug(f"Widget.mark_layout_dirty: {self}")
@@ -63,6 +63,9 @@ class Widget(Node["Widget"]):
         self._set_size(glm.ivec2(
             self.layout.get_computed_width(), self.layout.get_computed_height()
         ))
+        if not self.introduced:
+            self.intro()
+            self.introduced = True
 
     @property
     def style(self) -> yoga.Style:

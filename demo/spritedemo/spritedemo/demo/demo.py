@@ -43,7 +43,12 @@ class Demo(engine.App):
 
     def create_view(self):
         logger.debug("Creating view")
-        self.view = DemoView(self.scene).config(window=self).create()
+        self.view = DemoView(self.scene).config(window=self)
+
+    def center_camera(self):
+        if self.camera:
+            self.camera.position = glm.vec2(self.width / 2, self.height / 2)
+            #self.camera.zoom = 1.0
 
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.key

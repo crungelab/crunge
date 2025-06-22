@@ -13,14 +13,6 @@ from crunge.engine.d2.node_2d import Node2D
 
 
 class LineDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-
-    def kill(self):
-        self.node.destroy()
-        self.node = None
-        
     def reset(self):
         self.angle = 0
         self.scale = 1.0
@@ -29,14 +21,12 @@ class LineDemo(Demo):
         self.scene.clear()
 
         shape = self.shape = Line2D(glm.vec2(0, 0), glm.vec2(100, 100))
-        node = self.node = Node2D(vu=shape)
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-
+        self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
 
-
+    def kill(self):
+        self.node.destroy()
+        self.node = None
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
@@ -76,6 +66,7 @@ class LineDemo(Demo):
         imgui.end()
 
         super().draw(renderer)
+
 
 def main():
     LineDemo().create().run()

@@ -23,16 +23,23 @@ class RenderPass(Generic[T], Base):
         self.pass_enc: wgpu.RenderPassEncoder = None
 
     def begin(self, encoder: wgpu.CommandEncoder):
-        if not self.first:
-            self.viewport.snap(encoder)
-            
+        raise NotImplementedError("Subclasses must implement the begin method.")
+
+    def end(self):
+        self.pass_enc.end()
+
+
+class DefaultRenderPass(RenderPass["Renderer"]):
+    def __init__(self, viewport: Viewport) -> None:
+        super().__init__(viewport, first=True)
+
+    def begin(self, encoder: wgpu.CommandEncoder):
         if self.viewport.render_options.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.msaa_texture_view,
                     resolve_target=self.viewport.color_texture_view,
-                    #load_op=wgpu.LoadOp.CLEAR,
-                    load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
+                    load_op=wgpu.LoadOp.CLEAR,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
                 )
@@ -41,13 +48,12 @@ class RenderPass(Generic[T], Base):
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.color_texture_view,
-                    #load_op=wgpu.LoadOp.CLEAR,
-                    load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
+                    load_op=wgpu.LoadOp.CLEAR,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
                 )
             ]
-
+        '''
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
             view=self.viewport.depth_stencil_texture_view,
             #depth_load_op=wgpu.LoadOp.CLEAR,
@@ -55,16 +61,28 @@ class RenderPass(Generic[T], Base):
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
         )
+        '''
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachments=color_attachments,
-            depth_stencil_attachment=depth_stencil_attachment,
+            #depth_stencil_attachment=depth_stencil_attachment,
         )
 
-        self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(
+        self.pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(
             renderpass
         )
 
-    def end(self):
-        self.pass_enc.end()
+    '''
+    @contextlib.contextmanager
+    def __call__(self, encoder: wgpu.CommandEncoder):
+        self.begin(encoder)
+        try:
+            yield self.pass_enc 
+        finally:
+            self.end()
+            self.viewport.snap(encoder)
+            self.viewport.render_pass = None
+            self.viewport.render_pass_queue.append(self)
+            logger.debug("DefaultRenderPass ended and queued.")
+    '''

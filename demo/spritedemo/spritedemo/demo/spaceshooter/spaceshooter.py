@@ -16,10 +16,6 @@ from .collision_type import CollisionType
 
 
 class SpaceShooter(Demo):
-    def __init__(self):
-        super().__init__()
-        self.reset()
-
     def reset(self):
         self.scene.clear()
         self.camera_target = glm.vec2(0, 0)

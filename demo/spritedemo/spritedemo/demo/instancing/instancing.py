@@ -24,11 +24,6 @@ class InstancingDemo(Demo):
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         self.color = colors.WHITE
         self.sprite = Sprite(texture, color=self.color)
-
-    def kill(self):
-        for node in self.nodes:
-            node.destroy()
-        self.nodes.clear()
         
     def reset(self):
         self.sprite_vu_group = InstancedSpriteVuGroup(1024)
@@ -41,6 +36,14 @@ class InstancingDemo(Demo):
 
         self.create_sprites()
 
+    def on_size(self):
+        super().on_size()
+        self.center_camera()
+
+    def kill(self):
+        for node in self.nodes:
+            node.destroy()
+        self.nodes.clear()
 
     def create_sprites(self):
         # Set grid size and spacing

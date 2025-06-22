@@ -14,14 +14,7 @@ from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
 
-class SpriteAnimationDemo(Demo):
-    def __init__(self):
-        super().__init__()
-
-    def kill(self):
-        self.node.destroy()
-        self.node = None
-        
+class SpriteAnimationDemo(Demo):        
     def reset(self):
         self.angle = 0
         self.scale = 1.0
@@ -33,20 +26,18 @@ class SpriteAnimationDemo(Demo):
         )
         logger.debug(f"atlas: {atlas}")
 
-        sprite = self.sprite = atlas.get("idle")
+        self.sprite = atlas.get("idle")
 
-
-        node = self.node = Node2D(vu=SpriteVu(), model=sprite)
-
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-
+        self.node = Node2D(vu=SpriteVu(), model=self.sprite)
         self.scene.attach(self.node)
 
-        animator = self.animator = SpriteAnimator(node)
+        animator = self.animator = SpriteAnimator(self.node)
         self.create_animations()
         animator.play("walkRight")
+
+    def kill(self):
+        self.node.destroy()
+        self.node = None
 
     def create_animations(self):
         self.create_walk_animations()

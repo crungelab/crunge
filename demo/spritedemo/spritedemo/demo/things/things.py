@@ -43,6 +43,10 @@ class ThingsDemo(Demo):
 
         self.sprite = atlas.get("bomb.png")
 
+    def on_size(self):
+        super().on_size()
+        self.center_camera()
+
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         x, y = event.x, event.y
         self.last_mouse = glm.vec2(x, y)

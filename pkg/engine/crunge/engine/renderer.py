@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, List
-from typing import Generic, TypeVar, Optional
+from typing import Optional
 import contextlib
 
 from loguru import logger
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .d3.camera_3d import Camera3D
     from .d3.lighting_3d import Lighting3D
 
-from .render_pass import RenderPass
+from .render_pass import RenderPass, DefaultRenderPass
 
 
 class Renderer(Base):
@@ -38,9 +38,10 @@ class Renderer(Base):
         self.camera_3d = camera_3d
         self.lighting_3d = lighting_3d
 
-        self.render_passes: List[T] = []
+        #self.render_passes: List[RenderPass] = []
+        self.render_passes: List[RenderPass] = [DefaultRenderPass(viewport)]
         self.render_pass: RenderPass = None
-        self.render_pass_queue: List[T] = []
+        self.render_pass_queue: List[RenderPass] = []
         self.first_pass = True
         self.encoder: wgpu.CommandEncoder = None
 

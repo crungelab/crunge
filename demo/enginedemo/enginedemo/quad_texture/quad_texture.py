@@ -1,7 +1,4 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import c_float, sizeof
 
 from loguru import logger
 import numpy as np
@@ -183,11 +180,21 @@ class QuadTextureDemo(Demo):
         )
         self.texture = self.device.create_texture(descriptor)
 
-        self.sampler = self.device.create_sampler()
+        sampler_desc = wgpu.SamplerDescriptor(
+            min_filter=wgpu.FilterMode.LINEAR,
+            mag_filter=wgpu.FilterMode.LINEAR,
+            mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
+            address_mode_u=wgpu.AddressMode.REPEAT,
+            address_mode_v=wgpu.AddressMode.REPEAT,
+            address_mode_w=wgpu.AddressMode.REPEAT,
+            max_anisotropy=1,
+        )
+
+        self.sampler = self.device.create_sampler(sampler_desc)
 
         data = np.zeros((4 * 1024 * 1024,), dtype=np.uint8)
         for i in range(0, data.size):
-            data[i] = i % 253
+            data[i] = i % 256
 
         self.queue.write_texture(
             # Tells wgpu where to copy the pixel data

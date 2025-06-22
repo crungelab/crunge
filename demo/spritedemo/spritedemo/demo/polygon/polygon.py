@@ -28,11 +28,7 @@ class PolygonDemo(Demo):
                 glm.vec2(0, 100),
             ],
         )
-        node = self.node = Node2D(vu=shape)
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-
+        self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
 
     def kill(self):
