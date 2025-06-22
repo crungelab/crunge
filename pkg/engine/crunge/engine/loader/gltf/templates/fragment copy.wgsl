@@ -181,50 +181,45 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
     var surface = GetSurface(input);
     var light = GetLight(input);
 
-    // 1. Calculate the total incoming reflected/specular light
     let Lo = lightRadiance(light, surface);
 
+    // Environment reflection
     {% if material.has_environment_texture %}
     let environmentReflection = getEnvironmentReflection(surface);
     {% else %}
     let environmentReflection = vec3<f32>(0.0);
     {% endif %}
 
-    let specular = Lo + environmentReflection;
+    // Ambient lighting scaled by occlusion
+    let ambientStrength = .1;
+    let ambient = surface.albedo * surface.ao * ambientStrength;
 
-    // 2. Calculate the color of the light that passes through the surface
-    //var snapshotUv = (input.position.xy / input.position.w) * 0.5 + 0.5;
-    //var snapshotUv = input.position.xy / viewport.size;
-    //var snapshotUv = (input.position.xy) * 0.5 + 0.5;
-    //snapshotUv.y = 1.0 - snapshotUv.y; // Flip Y for correct sampling
-    //var snapshotUv = (input.position.xy / viewport.size) * 0.5 + 0.5;
-    var snapshotUv = input.position.xy * 0.5 + 0.5;
+    // Combine all components: Ambient, Diffuse, Specular, Environment, and Emissive
+    let rgb = ambient + Lo + environmentReflection + surface.emissive;
+    //let finalColor = linearToSRGB(rgb);
+    //return vec4<f32>(finalColor, surface.baseColor.a);
+    // --- TRANSMISSION BLEND ---
+    let transmission = surface.transmission; // use red or average, depending on how you stored it
 
+    // Sample background at the current screen location
+    //let snapshotUv = vec2<f32>(input.frag_pos.x / viewport.size.x, input.frag_pos.y / viewport.size.y);
+    //let screen_uv = input.frag_pos.xy / viewport.size.xy; // Convert to [0,1] range
+    //let snapshotUv = screen_uv * 2.0 - 1.0; // Convert to NDC [-1,1] range
+    //let snapshotUv = input.frag_pos.xy;
+    //let snapshotUv = (input.vertex_pos.xy / input.vertex_pos.w) * 0.5 + 0.5;
+    var snapshotUv = (input.vertex_pos.xy / input.vertex_pos.w) * 0.5 + 0.5;
+    snapshotUv.y = 1.0 - snapshotUv.y; // <-- Add this line to flip the Y-axis
 
+    //let snapshotUv = screen_uv * 0.5 + vec2(0.5);  // NDC [-1,1] → UV [0,1]
     let backgroundColor = textureSample(snapshotTexture, snapshotSampler, snapshotUv).rgb;
 
-    // The transmitted light is tinted by the surface's albedo
-    let transmittedLight = backgroundColor * surface.albedo;
+    // Blend: transmission replaces surface color proportionally
+    let mixedColor = mix(rgb, backgroundColor, transmission);
+    //let mixedColor = backgroundColor; //for testing, replace with background color
 
-    // 3. Use Fresnel to determine the mix ratio between reflection and transmission
-    // This calculates how much light reflects vs. passes through at different angles.
-    // We can reuse the f0 from your surface struct.
-    let n = surface.normal;
-    let v = surface.v;
-    let f0 = surface.f0;
-    let fresnel = FresnelSchlick(max(dot(n, v), 0.0), f0);
-
-    // 4. Combine reflected and transmitted light
-    // The specular reflection is mixed with the transmitted light based on the Fresnel term.
-    // This entire result is then scaled by the transmission factor.
-    let transmissiveComponent = mix(specular, transmittedLight, fresnel);
-    
-    // 5. Final color calculation
-    // Mix the opaque surface color with the transmissive result
-    let ambientStrength = .1;
-    let opaqueComponent = (surface.albedo * ambientStrength) * surface.ao + specular + surface.emissive;
-    let mixedColor = mix(opaqueComponent, transmissiveComponent, surface.transmission);
-
+    // Optionally, set alpha to 1 (opaque) or keep surface.baseColor.a if you support alpha blending
+    //return vec4<f32>(mixedColor, surface.baseColor.a);
     let finalColor = linearToSRGB(mixedColor);
     return vec4<f32>(finalColor, surface.baseColor.a);
+
 }

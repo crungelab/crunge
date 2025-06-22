@@ -21,7 +21,7 @@ class View3D(ImGuiView):
         self.camera = Camera3D(viewport_size=self.window.viewport.size)
 
     def create_renderer(self):
-        self.renderer = Renderer3D(self.window.viewport, self.camera)
+        self.renderer = Renderer3D(self.window.viewport, self.camera, self.scene.lighting)
 
     def draw(self, renderer: Renderer):
         with self.renderer:

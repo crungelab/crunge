@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
 from ctypes import sizeof
 
+from loguru import logger
 import glm
 
 from crunge import wgpu
@@ -139,21 +140,37 @@ class Viewport(Base):
 
     def create_snapshot(self) -> None:
         descriptor = wgpu.TextureDescriptor(
-            # usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT
             | wgpu.TextureUsage.COPY_DST
             | wgpu.TextureUsage.TEXTURE_BINDING,
             size=wgpu.Extent3D(self.width, self.height, 1),
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            # sample_count=self.render_options.sample_count,
-            # mip_level_count=1,
+            mip_level_count=1,
             label="Snapshot Texture",
         )
         self.snapshot_texture = self.device.create_texture(descriptor)
         self.snapshot_texture_view = self.snapshot_texture.create_view()
-        self.snapshot_sampler = self.device.create_sampler()
+
+        sampler_desc = wgpu.SamplerDescriptor(
+            min_filter=wgpu.FilterMode.LINEAR,
+            #min_filter=wgpu.FilterMode.NEAREST,
+            mag_filter=wgpu.FilterMode.LINEAR,
+            #mag_filter=wgpu.FilterMode.NEAREST,
+            mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
+            address_mode_u=wgpu.AddressMode.CLAMP_TO_EDGE,
+            address_mode_v=wgpu.AddressMode.CLAMP_TO_EDGE,
+            address_mode_w=wgpu.AddressMode.CLAMP_TO_EDGE,
+            max_anisotropy=1,
+        )
+
+        self.snapshot_sampler = self.device.create_sampler(sampler_desc)
+
+        # This is commented out because it causes a segfault when resizing the viewport.
+        # It seems to be related to the Blitter holding a reference to the textures.
+        '''
         if self.color_texture is not None:
             self.blitter = Blitter(self.color_texture, self.snapshot_texture)
+        '''
 
     '''
     def snap(self):
@@ -170,16 +187,16 @@ class Viewport(Base):
             self.blitter.blit()
     '''
 
-    def snap(self):
+    def snap(self, encoder: wgpu.CommandEncoder):
         if not self.render_options.use_snapshot:
             #raise RuntimeError("Snapshot is not enabled for this viewport.")
             return
         
         if self.snapshot_texture is None:
             self.create_snapshot()
-        
+
         # Create a command encoder to copy the color texture to the snapshot texture
-        encoder = self.device.create_command_encoder()
+        #encoder = self.device.create_command_encoder()
         source=wgpu.TexelCopyTextureInfo(texture=self.color_texture)
         destination=wgpu.TexelCopyTextureInfo(texture=self.snapshot_texture)
         encoder.copy_texture_to_texture(
@@ -189,7 +206,7 @@ class Viewport(Base):
         )
         
         # Submit the commands
-        self.device.queue.submit([encoder.finish()])
+        #self.device.queue.submit([encoder.finish()])
 
     def create_buffers(self):
         # Uniform Buffers

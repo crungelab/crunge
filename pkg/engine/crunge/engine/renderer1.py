@@ -1,5 +1,4 @@
-from typing import TYPE_CHECKING, List
-from typing import Generic, TypeVar, Optional
+from typing import TYPE_CHECKING
 import contextlib
 
 from loguru import logger
@@ -14,8 +13,6 @@ if TYPE_CHECKING:
     from .d2.camera_2d import Camera2D
     from .d3.camera_3d import Camera3D
     from .d3.lighting_3d import Lighting3D
-
-from .render_pass import RenderPass
 
 
 class Renderer(Base):
@@ -38,17 +35,7 @@ class Renderer(Base):
         self.camera_3d = camera_3d
         self.lighting_3d = lighting_3d
 
-        self.render_passes: List[T] = []
-        self.render_pass: RenderPass = None
-        self.render_pass_queue: List[T] = []
-        self.first_pass = True
-        self.encoder: wgpu.CommandEncoder = None
-
-    @property
-    def pass_enc(self) -> wgpu.RenderPassEncoder:
-        if not self.render_pass:
-            raise RuntimeError("No render pass has been started.")
-        return self.render_pass.pass_enc
+        self.pass_enc: wgpu.RenderPassEncoder = None
 
     @property
     def canvas(self) -> skia.Canvas:
@@ -59,31 +46,50 @@ class Renderer(Base):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.first_pass = False
         self.end()
-        command_buffer = self.encoder.finish()
-        self.queue.submit([command_buffer])
-
-    def queue_render_pass(self, render_pass: RenderPass):
-        """Queue a render pass to be executed later."""
-        self.render_pass_queue.append(render_pass)
-
-    def dequeue_render_pass(self) -> Optional[RenderPass]:
-        """Dequeue a render pass from the queue."""
-        if self.render_pass_queue:
-            return self.render_pass_queue.pop(0)
-        return None
 
     def begin(self):
-        self.first_pass = True
-        self.render_pass_queue = self.render_passes.copy()
-        self.render_pass = self.dequeue_render_pass()
-        self.encoder = self.device.create_command_encoder()
+        if self.viewport.render_options.use_msaa:
+            color_attachments = [
+                wgpu.RenderPassColorAttachment(
+                    view=self.viewport.msaa_texture_view,
+                    resolve_target=self.viewport.color_texture_view,
+                    #resolve_target=self.viewport.snapshot_texture_view,
+                    load_op=wgpu.LoadOp.CLEAR,
+                    store_op=wgpu.StoreOp.STORE,
+                    clear_value=wgpu.Color(0, 0, 0, 1),
+                )
+            ]
+        else:
+            color_attachments = [
+                wgpu.RenderPassColorAttachment(
+                    view=self.viewport.color_texture_view,
+                    load_op=wgpu.LoadOp.CLEAR,
+                    store_op=wgpu.StoreOp.STORE,
+                    clear_value=wgpu.Color(0, 0, 0, 1),
+                )
+            ]
 
-        self.begin_pass()
+        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
+            view=self.viewport.depth_stencil_texture_view,
+            depth_load_op=wgpu.LoadOp.CLEAR,
+            depth_store_op=wgpu.StoreOp.STORE,
+            depth_clear_value=1.0,
+        )
 
-    def begin_pass(self):
-        self.render_pass.begin(self.encoder)
+        renderpass = wgpu.RenderPassDescriptor(
+            label="Main Render Pass",
+            color_attachments=color_attachments,
+            depth_stencil_attachment=depth_stencil_attachment,
+        )
+
+        self.encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+        self.pass_enc: wgpu.RenderPassEncoder = self.encoder.begin_render_pass(
+            renderpass
+        )
+
+        #self.viewport.bind(self.pass_enc)
+
         if self.camera_2d is not None:
             self.camera_2d.bind(self.pass_enc)
         elif self.camera_3d is not None:
@@ -92,16 +98,10 @@ class Renderer(Base):
         if self.lighting_3d is not None:
             self.lighting_3d.bind(self.pass_enc)
 
-
     def end(self):
-        self.end_pass()
-        while (render_pass := self.dequeue_render_pass()) is not None:
-            self.render_pass = render_pass
-            self.begin_pass()
-            self.end_pass()
-
-    def end_pass(self):
-        self.render_pass.end()
+        self.pass_enc.end()
+        command_buffer = self.encoder.finish()
+        self.queue.submit([command_buffer])
 
     @contextlib.contextmanager
     def canvas_target(self):

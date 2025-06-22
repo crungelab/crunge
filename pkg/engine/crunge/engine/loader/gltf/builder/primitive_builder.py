@@ -60,7 +60,7 @@ class PrimitiveBuilder(GltfBuilder):
 
         if not self.vertex_table.has("normal"):
             normals = compute_normals(
-                self.primitive.index_data, self.vertex_table.get("pos").data
+                self.primitive.index_data, self.vertex_table.get("position").data
             )
             self.vertex_table.add_column(NormalColumn("normal", normals))
 
@@ -68,7 +68,7 @@ class PrimitiveBuilder(GltfBuilder):
             if not self.vertex_table.has("tangent"):
                 tangents = gltf.compute_tangents(
                     self.primitive.index_data,
-                    self.vertex_table.get("pos").data,
+                    self.vertex_table.get("position").data,
                     self.vertex_table.get("uv").data,
                     self.vertex_table.get("normal").data,
                 )
@@ -82,7 +82,7 @@ class PrimitiveBuilder(GltfBuilder):
         data = self.build_array(accessor_index)
 
         if name == "POSITION":
-            self.vertex_table.add_column(PosColumn("pos", data))
+            self.vertex_table.add_column(PosColumn("position", data))
             min_values = accessor.min_values
             max_values = accessor.max_values
             min = glm.vec3(min_values[0], min_values[1], min_values[2])
@@ -190,7 +190,25 @@ class PrimitiveBuilder(GltfBuilder):
         self.primitive.deferred = True
 
     '''
+    
+    def build_program(self):
+        is_opaque = self.material.alpha_mode == "OPAQUE" or self.material.alpha_mode == "MASK"
+        is_transmissive = self.material.transmission_factor > 0.0
+        is_blend = self.material.alpha_mode == "BLEND"
 
+        if is_opaque and not is_transmissive:
+            logger.debug("Creating Program for OPAQUE/MASK material")
+            self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+            self.primitive.deferred = False
+            return
+
+        if is_transmissive or is_blend:
+            logger.debug("Creating Program for BLEND/TRANSMISSIVE material")
+            self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+            self.primitive.deferred = True
+            return
+
+    '''
     def build_program(self):
         if self.material.alpha_mode == "OPAQUE" or self.material.alpha_mode == "MASK":
             logger.debug("Creating Program for OPAQUE/MASK material")
@@ -200,3 +218,4 @@ class PrimitiveBuilder(GltfBuilder):
         logger.debug("Creating Program for BLEND material")
         self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
         self.primitive.deferred = True
+    '''

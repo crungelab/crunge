@@ -103,6 +103,7 @@ class Camera2D(Node2D, ViewportListener):
         self.viewport_size = glm.vec2(size.x, size.y)
         logger.debug(f"Camera2D: on_viewport_size: {size}")
         self.update_matrix()
+        self.create_bind_group()
 
     def update_matrix(self):
         super().update_matrix()

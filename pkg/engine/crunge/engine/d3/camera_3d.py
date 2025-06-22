@@ -1,4 +1,4 @@
-from typing import Callable, List
+from typing import Callable, List, TYPE_CHECKING
 from ctypes import sizeof
 
 from loguru import logger
@@ -12,7 +12,8 @@ from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
 from ..bindings import CameraBindGroup
 
-from .renderer_3d import Renderer3D
+if TYPE_CHECKING:
+    from .renderer_3d import Renderer3D
 from .node_3d import Node3D
 from .vu_3d import Vu3D
 from .uniforms_3d import (
@@ -21,7 +22,7 @@ from .uniforms_3d import (
 from .program_3d import Program3D
 
 
-DrawCallback = Callable[[Renderer3D], None]
+DrawCallback = Callable[["Renderer3D"], None]
 
 
 class DeferredDraw:
@@ -102,6 +103,7 @@ class Camera3D(Node3D, ViewportListener):
         self.viewport_size = glm.vec2(size.x, size.y)
         logger.debug(f"Camera3D: on_viewport_size: {size}")
         self.update_matrix()
+        self.create_bind_group() # create a new bind group with the updated viewport
 
     @property
     def transform_matrix(self):
@@ -183,12 +185,13 @@ class Camera3D(Node3D, ViewportListener):
     def depth_of(self, node: Node3D) -> float:
         return glm.distance(self.position, node.position)
 
-    def flush_deferred(self, renderer: Renderer3D):
+    def flush_deferred(self, renderer: "Renderer3D"):
         # sort by depth
         self.deferred_draws.sort(
             key=lambda d: self.depth_of(d.node),
             reverse=True,
         )
         for d in self.deferred_draws:
+            #logger.debug(f"Camera3D: flushing deferred draw for {d.node}")
             d.callback(renderer)
         self.deferred_draws.clear()

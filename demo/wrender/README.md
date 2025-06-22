@@ -18,3 +18,9 @@ wrender profile
 pip install snakeviz
 snakeviz wrender.prof
 ```
+
+## RenderDoc
+```bash
+renderdoccmd capture python -m wrender
+qrenderdoc
+```

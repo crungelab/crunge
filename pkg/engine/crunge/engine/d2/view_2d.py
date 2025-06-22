@@ -3,7 +3,7 @@ import glm
 
 from crunge.engine.imgui import ImGuiView
 
-from ..renderer import Renderer
+from .renderer_2d import Renderer2D
 
 from .camera_2d import Camera2D
 
@@ -29,4 +29,4 @@ class View2D(ImGuiView):
         )
 
     def create_renderer(self):
-        self.renderer = Renderer(self.window.viewport, camera_2d=self.camera)
+        self.renderer = Renderer2D(self.window.viewport, camera=self.camera)
