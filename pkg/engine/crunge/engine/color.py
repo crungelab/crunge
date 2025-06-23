@@ -1,4 +1,3 @@
-from enum import Enum
 import glm
 
 from .types import Tuple4f

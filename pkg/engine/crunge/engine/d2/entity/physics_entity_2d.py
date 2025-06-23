@@ -196,29 +196,3 @@ class DynamicEntity2D(PhysicsEntity2D):
         geom=geom.HullGeom(),
     ):
         super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
-
-
-class KinematicEntity2D(PhysicsEntity2D):
-    def __init__(
-        self,
-        position=glm.vec2(),
-        rotation=0.0,
-        scale=glm.vec2(1.0),
-        vu=None,
-        model=None,
-        brain=None,
-        physics=physics.KinematicPhysics(),
-        geom=geom.HullGeom(),
-    ):
-        super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
-        self.grounded = False
-        self.laddered = False
-        self.jumping = False
-        self.falling = False
-        self.mounted = False
-        self.punching = False
-
-    def update(self, delta_time=1 / 60):
-        super().update(delta_time)
-        if not self.laddered and not self.mounted:
-            self.body.velocity += (0, int(GRAVITY[1] * delta_time))

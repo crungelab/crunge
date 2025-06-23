@@ -1,4 +1,5 @@
 import math
+from enum import Enum
 
 from loguru import logger
 import glm
@@ -6,6 +7,13 @@ import pymunk
 
 from .constants import *
 from . import Physics, PhysicsEngine2D
+
+class KinematicState(Enum):
+    GROUNDED = 0
+    JUMPING = 1
+    CLIMBING = 2
+    FALLING = 3
+    MOUNTED = 4
 
 
 class KinematicPhysics(Physics):
@@ -40,7 +48,8 @@ class CollisionHandler:
 
     def separate(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
-        kshape.body.node.grounded = False
+        #kshape.body.node.grounded = False
+        kshape.body.node.kinematic_state = KinematicState.FALLING
 
 
 class KinematicStaticHandler(CollisionHandler):
@@ -50,10 +59,13 @@ class KinematicStaticHandler(CollisionHandler):
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
-        kbody.node.grounded = True
+        kbody.node.kinematic_state = KinematicState.GROUNDED
+        
         velocity = kbody.velocity
+        
         if velocity[1] < 0:
             velocity = pymunk.Vec2d(velocity[0], 0)
+            
         kbody.velocity = velocity
 
         n = -arbiter.contact_point_set.normal
@@ -69,7 +81,8 @@ class KinematicKinematicHandler(CollisionHandler):
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
-        kbody.node.grounded = True
+        #kbody.node.grounded = True
+        kbody.node.kinematic_state = KinematicState.GROUNDED
         velocity = kbody.velocity
         if velocity[1] < 0:
             velocity = pymunk.Vec2d(velocity[0], 0)
@@ -89,9 +102,10 @@ class KinematicDynamicHandler(CollisionHandler):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
         knode = kbody.node
-        knode.grounded = True
+        knode.kinematic_state = KinematicState.GROUNDED
 
         velocity = kbody.velocity
+
         if velocity[1] < 0:
             velocity = pymunk.Vec2d(velocity[0], 0)
 
