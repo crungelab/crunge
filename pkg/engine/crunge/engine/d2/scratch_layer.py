@@ -38,11 +38,5 @@ class ScratchLayer(ViewLayer):
         # logger.debug("DemoView.draw()")
         for vu in self.vu_list:
             vu.draw(renderer)
-
-        super().draw(renderer)
-
-    def post_draw(self, renderer: Renderer):
         self.vu_list.clear()
-        super().post_draw(renderer)
-
-
+        super().draw(renderer)

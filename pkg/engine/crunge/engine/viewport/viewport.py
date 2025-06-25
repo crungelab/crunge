@@ -68,6 +68,9 @@ class Viewport(Base):
         if listener not in self.listeners:
             self.listeners.append(listener)
 
+    def remove_listener(self, listener: ViewportListener) -> None:
+        self.listeners.remove(listener)
+
     @property
     def size(self) -> glm.ivec2:
         return self._size

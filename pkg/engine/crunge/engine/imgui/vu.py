@@ -440,8 +440,8 @@ class ImGuiVu(Vu):
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    def post_draw(self, renderer: Renderer):
-        # logger.debug("ImGuiRenderer.post_draw")
+    def render(self, renderer: Renderer):
+        #logger.debug("ImGuiVu.draw")
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()

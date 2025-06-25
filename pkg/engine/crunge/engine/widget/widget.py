@@ -162,13 +162,13 @@ class Widget(Node["Widget"]):
         self._controller = controller
         controller.enable()
 
-    def enable(self):
-        super().enable()
+    def _enable(self):
+        super()._enable()
         if self.controller is not None:
             self.controller.enable()
 
-    def disable(self):
-        super().disable()
+    def _disable(self):
+        super()._disable()
         if self.controller is not None:
             self.controller.disable()
 
@@ -181,6 +181,7 @@ class Widget(Node["Widget"]):
             self.controller.dispatch(event)
         return super().dispatch(event)
 
+    '''
     def draw(self, renderer: Renderer):
         # logger.debug("Widget.draw")
         if self.vu is not None:
@@ -191,7 +192,8 @@ class Widget(Node["Widget"]):
 
     def draw_child(self, renderer: Renderer, child: "Widget"):
         child.draw(renderer)
-
+    '''
+    
     def update(self, delta_time: float):
         # logger.debug("Widget.update")
         if self.controller is not None:

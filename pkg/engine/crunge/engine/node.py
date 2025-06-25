@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
 
+from loguru import logger
+
 if TYPE_CHECKING:
     from .vu import Vu
     from .model import Model
@@ -65,16 +67,6 @@ class Node(Dispatcher, Generic[T_Node]):
     def remove_listener(self, listener: NodeListener[T_Node]) -> None:
         self.listeners.remove(listener)
 
-    '''
-    @property
-    def parent(self):
-        return self._parent
-
-    @parent.setter
-    def parent(self, parent):
-        self._parent = parent
-    '''
-
     def clear(self):
         for child in self.children:
             child.clear()
@@ -88,6 +80,20 @@ class Node(Dispatcher, Generic[T_Node]):
         for child in self.children:
             child.destroy()
         self.clear()
+
+    def _enable(self) -> None:
+        super()._enable()
+        if self.vu is not None:
+            self.vu.enable()
+        for child in self.children:
+            child.enable()
+
+    def _disable(self):
+        super()._disable()
+        if self.vu is not None:
+            self.vu.disable()
+        for child in self.children:
+            child.disable()
 
     def attach(self, child: "Node[T_Node]"):
         child.parent = self
@@ -126,29 +132,29 @@ class Node(Dispatcher, Generic[T_Node]):
         """
         self.children.sort(key=key, reverse=reverse)
 
-
-    def pre_draw(self, renderer: Renderer):
-        # logger.debug("Node.pre_draw")
-        if self.vu is not None:
-            self.vu.pre_draw(renderer)
-        for child in self.children:
-            child.pre_draw(renderer)
-
+    '''
     def draw(self, renderer: Renderer):
+        logger.debug("Node.draw")
         if self.vu is not None:
             self.vu.draw(renderer)
         for child in self.children:
             child.draw(renderer)
+    '''
 
-    def post_draw(self, renderer: Renderer):
-        # logger.debug("Node.post_draw")
+    def draw(self, renderer: Renderer):
+        #logger.debug(f"Node.draw: {self}")
         if self.vu is not None:
-            self.vu.post_draw(renderer)
+            self.vu.draw(renderer)
         for child in self.children:
-            child.post_draw(renderer)
+            # child.draw(renderer)
+            self.draw_child(renderer, child)
+
+    def draw_child(self, renderer: Renderer, child: "Node[T_Node]"):
+        child.draw(renderer)
 
     def update(self, delta_time: float):
         if self.vu is not None:
             self.vu.update(delta_time)
         for child in self.children:
             child.update(delta_time)
+

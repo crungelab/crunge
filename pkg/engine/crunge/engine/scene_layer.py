@@ -22,14 +22,8 @@ class SceneLayer(Base, Generic[T_Node]):
     def clear(self):
         self.root.clear()
 
-    def pre_draw(self, renderer: Renderer):
-        self.root.pre_draw(renderer)
-
     def draw(self, renderer: Renderer):
         self.root.draw(renderer)
-
-    def post_draw(self, renderer: Renderer):
-        self.root.post_draw(renderer)
 
     def update(self, dt: float):
         self.root.update(dt)

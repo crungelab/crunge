@@ -9,6 +9,7 @@ from crunge import yoga
 
 from . import globals
 from .scheduler import Scheduler
+from .node import NodeListener
 from .frame import Frame
 from .viewport import SurfaceViewport
 from .renderer import Renderer
@@ -18,6 +19,20 @@ from .channel import Channel
 DEFAULT_WIDTH = 1280
 DEFAULT_HEIGHT = 720
 
+
+class WindowListener(NodeListener):
+    def on_window_size(self, size: glm.ivec2):
+        pass
+
+    def on_pre_frame(self):
+        pass
+
+    def on_post_frame(self):
+        pass
+
+    def on_channel(self, channel: Channel):
+        pass
+
 class Window(Frame):
     def __init__(
         self, width: int = DEFAULT_WIDTH, height: int = DEFAULT_HEIGHT, title="", view=None, resizable=False
@@ -26,6 +41,7 @@ class Window(Frame):
         super().__init__(style, view=view)
         globals.set_current_window(self)
         self.name = title
+        self.listeners: List[WindowListener] = []
 
         self.window: sdl.Window = None
         #self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True, use_snapshot=True)
@@ -103,12 +119,22 @@ class Window(Frame):
     def create_viewport(self):
         self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
 
+    def pre_frame(self):
+        for listener in self.listeners:
+            if isinstance(listener, WindowListener):
+                listener.on_pre_frame()
+
+    def post_frame(self):
+        for listener in self.listeners:
+            if isinstance(listener, WindowListener):
+                listener.on_post_frame()
+
     def frame(self):
         try:
-            with self.viewport as viewport:
-                self.pre_draw(self.renderer)
+            self.pre_frame()
+            with self.viewport:
                 self.draw(self.renderer)
-                self.post_draw(self.renderer)
+            self.post_frame()
         except Exception as e:
             logger.error(f"Error during frame: {e}")
             raise e

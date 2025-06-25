@@ -56,7 +56,7 @@ class ScratchLayer(ViewLayer):
 
         self.add_call(draw)
 
-    def post_draw(self, renderer: Renderer):
+    def draw(self, renderer: Renderer):
         with renderer.canvas_target() as canvas:
             canvas.save()
 
@@ -72,6 +72,6 @@ class ScratchLayer(ViewLayer):
             canvas.restore()
 
         self.draw_calls.clear()
-        super().post_draw(renderer)
+        super().draw(renderer)
 
 

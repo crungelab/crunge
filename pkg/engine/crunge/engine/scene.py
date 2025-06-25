@@ -47,17 +47,9 @@ class Scene(Base, Generic[T_Node]):
         for layer in self.layers:
             layer.clear()
 
-    def pre_draw(self, renderer: Renderer):
-        for layer in self.layers:
-            layer.pre_draw(renderer)
-
     def draw(self, renderer: Renderer):
         for layer in self.layers:
             layer.draw(renderer)
-
-    def post_draw(self, renderer: Renderer):
-        for layer in self.layers:
-            layer.post_draw(renderer)
 
     def update(self, dt: float):
         for layer in self.layers:

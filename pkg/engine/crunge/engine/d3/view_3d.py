@@ -26,4 +26,4 @@ class View3D(ImGuiView):
     def draw(self, renderer: Renderer):
         with self.renderer:
             self.scene.draw(self.renderer)
-            super().draw(self.renderer)
+        super().draw(self.renderer)

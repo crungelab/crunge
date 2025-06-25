@@ -48,6 +48,8 @@ class Page(ImGuiView):
         imgui.set_next_window_pos((x, y), imgui.Cond.ONCE)
         imgui.set_next_window_size((width, height), imgui.Cond.ONCE)
 
+        super().draw(renderer)
+
     def draw_navbar(self):
         imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, self.window.height - 32 - 16), imgui.Cond.ONCE)

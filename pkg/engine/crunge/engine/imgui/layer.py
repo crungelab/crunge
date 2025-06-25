@@ -12,6 +12,7 @@ from crunge.imgui import Key
 
 from ..viewport import ViewportListener
 from ..view_layer import ViewLayer
+from ..window import WindowListener
 
 from .vu import ImGuiVu
 from .scancode_map import scancode_map
@@ -28,7 +29,7 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
     return 1.0, 1.0
 
 
-class ImGuiLayer(ViewLayer, ViewportListener):
+class ImGuiLayer(ViewLayer, ViewportListener, WindowListener):
     context = None
     vu: ImGuiVu = None
 
@@ -49,12 +50,27 @@ class ImGuiLayer(ViewLayer, ViewportListener):
     def _create(self):
         super()._create()
         self.vu = ImGuiVu()
-        self.window.viewport.add_listener(self)
         self._set_pixel_ratio()
 
+    def _enable(self):
+        super()._enable()
+        logger.debug("enable")
+        self.window.viewport.add_listener(self)
+        self.window.add_listener(self)
+
+    def _disable(self):
+        super()._disable()
+        logger.debug("ImGuiLayer.disable")
+        self.window.viewport.remove_listener(self)
+        self.window.remove_listener(self)
+    
     def on_viewport_size(self, size: glm.ivec2):
         logger.debug(f"ImGuiLayer.on_size: {size}")
         self._set_pixel_ratio()
+
+    def on_pre_frame(self):
+        #logger.debug("ImGuiLayer.on_pre_frame")
+        imgui.new_frame()
 
     '''
     def on_size(self):
@@ -71,21 +87,17 @@ class ImGuiLayer(ViewLayer, ViewportListener):
         pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 
-    def pre_draw(self, renderer: Renderer):
-        # logger.debug("ImGuiLayer.pre_draw")
-        imgui.new_frame()
+    def draw(self, renderer: Renderer):
         if self.default_font:
             imgui.push_font(self.default_font)
 
-        super().pre_draw(renderer)
+        super().draw(renderer)
 
-    def post_draw(self, renderer: Renderer):
-        # logger.debug("ImGuiLayer.post_draw")
         if self.default_font:
             imgui.pop_font()
 
+        self.vu.render(renderer)
         imgui.end_frame()
-        super().post_draw(renderer)
 
     def on_text_input(self, event: sdl.TextInputEvent):
         # logger.debug(f"text: {event.text}")

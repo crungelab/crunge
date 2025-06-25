@@ -37,12 +37,24 @@ class Base:
             return
         self.created = False
 
+    def _enable(self) -> None:
+        pass
+
     def enable(self) -> None:
+        if self.enabled:
+            return
         if not self.created:
             self.create()  # Ensure the object is created
+        self._enable()
         self.enabled = True
 
+    def _disable(self) -> None:
+        pass
+
     def disable(self):
+        if not self.enabled:
+            return
+        self._disable()
         self.enabled = False
 
     @property
