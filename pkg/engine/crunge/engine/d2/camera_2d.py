@@ -38,7 +38,7 @@ class Camera2D(Node2D, ViewportListener):
         self.projection_matrix = glm.mat4(1.0)
         self.view_matrix = glm.mat4(1.0)
 
-        self.frustrum: Bounds2 = None
+        self.frustum: Bounds2 = None
 
         self._viewport: Viewport = None
         self.viewport_size = viewport_size
@@ -115,7 +115,7 @@ class Camera2D(Node2D, ViewportListener):
         ortho_bottom = self.y - (viewport_height * self.zoom) / 2
         ortho_top = self.y + (viewport_height * self.zoom) / 2
 
-        self.frustrum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
+        self.frustum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
 
         ortho_near = -1  # Near clipping plane
         ortho_far = 1  # Far clipping plane
@@ -148,7 +148,7 @@ class Camera2D(Node2D, ViewportListener):
         viewportWidth = viewport.width
         viewPortHeight = viewport.height
 
-        frustrum = self.frustrum
+        frustrum = self.frustum
         glOrthoWidth = frustrum.width
         glOrthoHeight = frustrum.height
 
