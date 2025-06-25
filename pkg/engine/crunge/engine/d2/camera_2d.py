@@ -148,9 +148,9 @@ class Camera2D(Node2D, ViewportListener):
         viewportWidth = viewport.width
         viewPortHeight = viewport.height
 
-        frustrum = self.frustum
-        glOrthoWidth = frustrum.width
-        glOrthoHeight = frustrum.height
+        frustum = self.frustum
+        glOrthoWidth = frustum.width
+        glOrthoHeight = frustum.height
 
         # Convert mouse coordinates to NDC
         x_ndc = (2.0 * mx / viewportWidth) - 1.0

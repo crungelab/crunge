@@ -14,17 +14,9 @@ class SpriteVuGroup(VuGroup[SpriteVu]):
     def draw(self, renderer: Renderer) -> None:
         for sprite in self.members:
             #logger.debug(f"SpriteGroup.draw: {sprite}")
-            frustrum = renderer.camera_2d.frustum
-            if sprite.bounds.intersects(frustrum):
+            frustum = renderer.camera_2d.frustum
+            if sprite.bounds.intersects(frustum):
                 sprite.draw(renderer)
-
-    '''
-    def draw(self, renderer: Renderer) -> None:
-        for sprite in self.members:
-            projection = renderer.camera_2d.projection
-            if sprite.aabb.intersects(projection):
-                sprite.draw(renderer)
-    '''
 
     def update(self, delta_time: float) -> None:
         for sprite in self.members:
