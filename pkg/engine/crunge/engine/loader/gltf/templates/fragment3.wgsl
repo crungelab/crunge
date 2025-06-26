@@ -172,79 +172,72 @@ fn getEnvironmentReflection(surface: Surface) -> vec3<f32> {
 }
 {% endif %}
 
-@fragment
-fn fs_main(input : VertexOutput, @builtin(front_facing) front_facing: bool) -> @location(0) vec4<f32> {
-    var surface = GetSurface(input);
-    if (!front_facing) {
-      surface.normal = -surface.normal;
-    }
+// ... (keep all previous helper functions, structs, and includes) ...
 
+@fragment
+fn fs_main(input : VertexOutput, @builtin(front_facing) is_front: bool) -> @location(0) vec4<f32> {
+    var surface = GetSurface(input);
     var light = GetLight(input);
 
-    // --- 1. Calculate Lighting Contributions ---
+    // --- 1. Fix for Two-Sided Rendering ---
+    if (!is_front) {
+        surface.normal = -surface.normal;
+    }
 
-    // Calculate direct lighting (from point/spot/directional lights).
-    // This typically includes both diffuse and specular components from the BRDF.
+    // --- 2. Implement the Layered BRDF Formula ---
+
+    // The formula is: fresnel_mix(layer, base)
+    // We will calculate the 'layer' and 'base' components first.
+
+    // A) Calculate the 'layer' component: specular_brdf()
+    // This is the total specular reflection from all light sources. We will use the
+    // existing lighting functions to get this.
     let directLighting = lightRadiance(light, surface);
-
-    // Calculate indirect lighting (reflections from the environment map).
     {% if material.has_environment_texture %}
     let indirectLighting = getEnvironmentReflection(surface);
     {% else %}
     let indirectLighting = vec3<f32>(0.0);
     {% endif %}
-
-    // Combine all potential reflected light. This is what would be reflected
-    // by a fully opaque version of the material.
-    let totalReflectedLight = directLighting + indirectLighting;
+    // 'layer' represents the total reflected light from an equivalent opaque surface.
+    let layer = directLighting + indirectLighting;
 
 
-    // --- 2. Define Opaque vs. Transmissive Appearance ---
+    // B) Calculate the 'base' component: mix(diffuse_brdf, specular_btdf * baseColor, transmission)
+    // This component represents the light that enters the surface.
 
-    // The final color is a mix between a fully opaque and a fully transmissive
-    // version of the material, controlled by `surface.transmission`.
+    // B.1 - The diffuse part of the base (for when transmission is 0).
+    // We'll use a simple ambient term for this, as the direct lighting is already
+    // part of the 'layer' reflection. This prevents double-counting light.
+    let ambient = (surface.albedo * 0.1) * surface.ao;
+    let diffuse_base = ambient;
 
-    // A) Define the appearance if the material is fully OPAQUE.
-    // This is standard PBR shading: ambient occlusion + total reflection + emission.
-    let ambientStrength = 0.1;
-    let opaqueComponent = (surface.albedo * ambientStrength) * surface.ao + totalReflectedLight + surface.emissive;
-
-    // B) Define the appearance if the material is fully TRANSMISSIVE.
-    // This involves light passing through the object from behind.
-
-    // Get the color of the scene behind the fragment using screen-space UVs.
+    // B.2 - The transmissive part of the base (for when transmission is 1).
+    // This implements the `specular_btdf` by blurring the background based on roughness.
     let snapshotUv = input.position.xy / viewport.size;
-    let backgroundColor = textureSample(snapshotTexture, snapshotSampler, snapshotUv).rgb;
 
-    // The light passing through the object is tinted by the surface's color (albedo).
-    let transmittedLight = backgroundColor * surface.albedo;
-
-    // A transmissive surface still has specular reflections. The ratio of reflection
-    // to transmission depends on the viewing angle, an effect modeled by the Fresnel equations.
-    let n = surface.normal;
-    let v = surface.v;
-    let f0 = surface.f0;
-    let fresnel = FresnelSchlick(max(dot(n, v), 0.0), f0);
-
-    // The final color for the transmissive surface is a mix of the light that reflects
-    // and the light that passes through. The `fresnel` term is the mixing factor.
-    // Correct formulation: mix(light_that_passes_through, light_that_reflects, reflection_ratio)
-    let transmissiveComponent = mix(transmittedLight, totalReflectedLight, fresnel);
+    // For rough transmission ("frosted glass"), we sample a higher mip level of the
+    // background texture. NOTE: This requires your `snapshotTexture` to have mipmaps.
+    const MAX_MIP_LEVEL = 8.0; // Adjust based on your snapshot texture's mip count.
+    let mipLevel = surface.roughness * surface.roughness * MAX_MIP_LEVEL; // Squaring roughness gives a more perceptual result
+    let backgroundColor = textureSampleLevel(snapshotTexture, snapshotSampler, snapshotUv, mipLevel).rgb;
     
+    // The transmitted light is tinted by the material's color.
+    let transmissive_base = backgroundColor * surface.albedo;
 
-    // --- 3. Final Color Calculation ---
+    // B.3 - Mix the diffuse and transmissive parts to get the final 'base' color.
+    let base = mix(diffuse_base, transmissive_base, surface.transmission);
 
-    // Blend between the opaque and transmissive appearances using the material's transmission factor.
-    let mixedColor = mix(opaqueComponent, transmissiveComponent, surface.transmission);
 
-    // Apply gamma correction for display.
-    let finalColor = linearToSRGB(mixedColor);
+    // C) Combine 'layer' and 'base' using fresnel_mix
+    // The final color is `base * (1 - F) + layer * F`, where F is the Fresnel term.
+    let fresnel = FresnelSchlick(max(dot(surface.normal, surface.v), 0.0), surface.f0);
+    let finalLinearColor = base * (vec3<f32>(1.0) - fresnel) + layer * fresnel;
 
-    // For proper blending by the GPU, the final alpha should also be affected by transmission.
-    // A fully transmissive material should have its color determined by what's behind it,
-    // which corresponds to an effective alpha of 0.
-    let finalAlpha = surface.baseColor.a * (1.0 - surface.transmission);
-    //let finalAlpha = surface.baseColor.a;
 
-    return vec4<f32>(finalColor, finalAlpha);
+    // --- 3. Final Output ---
+    let finalColorWithEmission = finalLinearColor + surface.emissive;
+    let finalSrgbColor = linearToSRGB(finalColorWithEmission);
+    let finalAlpha = surface.baseColor.a;
+
+    return vec4<f32>(finalSrgbColor, finalAlpha);
 }
