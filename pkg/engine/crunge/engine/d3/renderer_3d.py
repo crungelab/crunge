@@ -14,6 +14,10 @@ class Renderer3D(Renderer):
         ]
 
     def end_pass(self):
-        self.camera_3d.flush_deferred(self)
+        if not self.render_pass.first:
+            self.camera_3d.flush_deferred(self)
         super().end_pass()
+        if self.render_pass.first:
+            self.viewport.snap(self.encoder)
+
         #self.viewport.snap(self.encoder)

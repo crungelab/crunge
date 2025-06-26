@@ -25,7 +25,7 @@ class RenderPass(Generic[T], Base):
     def begin(self, encoder: wgpu.CommandEncoder):
         raise NotImplementedError("Subclasses must implement the begin method.")
 
-    def end(self):
+    def end(self, encoder: wgpu.CommandEncoder):
         self.pass_enc.end()
 
 

@@ -17,9 +17,10 @@ class RenderPass3D(RenderPass["Renderer3D"]):
         super().__init__(viewport=viewport, first=first)
 
     def begin(self, encoder: wgpu.CommandEncoder):
+        '''
         if not self.first:
             self.viewport.snap(encoder)
-            
+        ''' 
         if self.viewport.render_options.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
@@ -59,3 +60,10 @@ class RenderPass3D(RenderPass["Renderer3D"]):
         self.pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(
             renderpass
         )
+        
+    def end(self, encoder: wgpu.CommandEncoder):
+        super().end(encoder)
+        '''
+        if self.first:
+            self.viewport.snap(encoder)
+        '''

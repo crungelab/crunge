@@ -102,7 +102,7 @@ class Renderer(Base):
             self.end_pass()
 
     def end_pass(self):
-        self.render_pass.end()
+        self.render_pass.end(self.encoder)
 
     @contextlib.contextmanager
     def canvas_target(self):

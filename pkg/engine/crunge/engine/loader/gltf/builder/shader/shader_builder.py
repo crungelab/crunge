@@ -56,6 +56,8 @@ class ShaderBuilder(GltfBuilder):
 
     def build_vertex_output(self):
         for column in self.vertex_table.columns:
+            if column.name in ["position"]:
+                continue
             self.vertex_output.add_attribute(
                 Attribute(column.name, column.output_type, column.location)
             )
