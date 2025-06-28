@@ -110,6 +110,7 @@ class Camera2D(Node2D, ViewportListener):
         viewport_size = self.viewport_size
         viewport_width = viewport_size.x
         viewport_height = viewport_size.y
+
         ortho_left = self.x - (viewport_width * self.zoom) / 2
         ortho_right = self.x + (viewport_width * self.zoom) / 2
         ortho_bottom = self.y - (viewport_height * self.zoom) / 2

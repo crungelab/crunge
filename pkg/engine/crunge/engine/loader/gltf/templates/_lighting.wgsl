@@ -50,7 +50,8 @@ fn lightRadiance(light : Light, surface : Surface) -> vec3<f32> {
   let kD = ((vec3(1.0) - F) * (1.0 - surface.metallic));
   let NdotL = max(dot(surface.normal, L), 0.0);
   let numerator = ((NDF * G) * F);
-  let denominator = max(((4.0 * max(dot(surface.normal, surface.v), 0.0)) * NdotL), 0.001);
+  //let denominator = max(((4.0 * max(dot(surface.normal, surface.v), 0.0)) * NdotL), 0.001);
+  let denominator = max( (max(dot(surface.normal, surface.v), 0.0) * NdotL), 0.001);
   let specular = (numerator / vec3(denominator));
   let radiance = ((light.color * light.energy) * lightAttenuation(light));
   return (((((kD * surface.albedo) / vec3(PI)) + specular) * radiance) * NdotL);

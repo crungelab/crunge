@@ -99,25 +99,29 @@ fn GetSurface(input : VertexOutput) -> Surface {
   let metalRough = textureSample(metallicRoughnessTexture, metallicRoughnessSampler, uv);
   surface.metallic = material.metallicFactor * metalRough.b;
   surface.roughness = clamp(material.roughnessFactor * metalRough.g, 0.04, 1.0);
+  //surface.roughness = material.roughnessFactor * metalRough.g;
+
   {% else %}
   surface.metallic = material.metallicFactor;
-  surface.roughness = clamp(material.roughnessFactor, 0.04, 1.0);
+  surface.roughness = material.roughnessFactor;
   {% endif %}
 
-  let dielectricSpec = vec3<f32>(0.04);
+  let dielectricSpec = vec3<f32>(0.039999999);
   surface.f0 = mix(dielectricSpec, surface.albedo, surface.metallic);
   
+
   {% if material.has_normal_texture %}
   let tbn = mat3x3(input.tangent, input.bitangent, input.normal);
   let normalMap = textureSample(normalTexture, normalSampler, uv).rgb;
-  surface.normal = normalize(tbn * ((2.0 * normalMap) - vec3(1.0)));
+  surface.normal = normalize((tbn * ((2.0 * normalMap) - vec3(1.0))));
   {% else %}
   surface.normal = normalize(input.normal);
+  //surface.normal = input.normal;
   {% endif %}
 
   {% if material.has_occlusion_texture %}
   let occlusionMap = textureSample(occlusionTexture, occlusionSampler, uv);
-  surface.ao = mix(1.0, occlusionMap.r, material.occlusionStrength);
+  surface.ao = (material.occlusionStrength * occlusionMap.r);
   {% else %}
   surface.ao = 1.0;
   {% endif %}
@@ -130,7 +134,7 @@ fn GetSurface(input : VertexOutput) -> Surface {
 
   {% if material.has_transmission_texture %}
   let transmissionMap = textureSample(transmissionTexture, transmissionSampler, uv);
-  surface.transmission = material.transmissionFactor * transmissionMap.r;
+  surface.transmission = (material.transmissionFactor * transmissionMap.r);
   {% else %}
   surface.transmission = material.transmissionFactor;
   {% endif %}
@@ -140,22 +144,31 @@ fn GetSurface(input : VertexOutput) -> Surface {
 
 fn GetLight(input : VertexOutput) -> Light {
   var light : Light;
+  //light.kind = LightKind_Spot;
+  //light.kind = LightKind_Directional;
   light.kind = LightKind_Point;
   light.position = lightUniform.position;
+  //light.v = normalize(lightUniform.position - input.frag_pos);
   light.v = light.position - input.frag_pos;
   light.color = lightUniform.color;
+  //light.color = vec3<f32>(1.0, 1.0, 1.0);
   light.energy = lightUniform.energy;
+  //light.energy = 20.0;
   light.range = lightUniform.range;
+  //light.range = 10.0;
   return light;
 }
 
 {% if material.has_environment_texture %}
 fn getEnvironmentReflection(surface: Surface) -> vec3<f32> {
+    //let envDir = normalize(-reflect(surface.v, surface.normal));
     let envDir = -reflect(surface.v, surface.normal);
     let envColor = textureSample(environmentTexture, environmentSampler, envDir).rgb;
 
-    // Attenuate reflection by roughness and metallic
+    // Attenuate reflection by roughness (rough surfaces should be less reflective)
     let reflectionStrength = (1.0 - surface.roughness) * surface.metallic;
+
+    // Further scale the environment reflection to control shininess
     let adjustedReflection = envColor * reflectionStrength;
 
     // Apply fresnel to control edge reflections
@@ -164,51 +177,6 @@ fn getEnvironmentReflection(surface: Surface) -> vec3<f32> {
 }
 {% endif %}
 
-// Compute transmission UV with simple refraction
-fn getTransmissionUV(surface: Surface, screenUv: vec2<f32>) -> vec2<f32> {
-    // Simple screen-space distortion based on surface normal
-    let refractionStrength = 0.02 * surface.transmission;
-    
-    // Use the surface normal's XY components to offset the UV
-    let screenOffset = surface.normal.xy * refractionStrength;
-    
-    return clamp(screenUv + screenOffset, vec2<f32>(0.0), vec2<f32>(1.0));
-}
-
-// Sample transmission with roughness-based blur and frosted effect
-fn sampleTransmissionWithRoughness(surface: Surface, screenUv: vec2<f32>) -> vec3<f32> {
-    let transmissionUv = getTransmissionUV(surface, screenUv);
-    
-    let pixelSize = 1.0 / viewport.size;
-    let blurRadius = surface.roughness * 4.0; // Scale blur by roughness
-    
-    var totalColor = vec3<f32>(0.0);
-    var totalWeight = 0.0;
-    
-    // 9-tap blur pattern for frosted glass effect
-    for (var x = -1; x <= 1; x = x + 1) {
-        for (var y = -1; y <= 1; y = y + 1) {
-            let offset = vec2<f32>(f32(x), f32(y)) * pixelSize * blurRadius;
-            let sampleUv = clamp(transmissionUv + offset, vec2<f32>(0.0), vec2<f32>(1.0));
-            
-            // Gaussian-like weight
-            let weight = exp(-0.5 * (f32(x * x + y * y)));
-            
-            totalColor += textureSample(snapshotTexture, snapshotSampler, sampleUv).rgb * weight;
-            totalWeight += weight;
-        }
-    }
-    
-    let blurredBackground = totalColor / totalWeight;
-    
-    // Create frosted effect by mixing with a brightened, desaturated version
-    let frostedIntensity = pow(surface.roughness, 2) * 0.3;
-    let brightness = dot(blurredBackground, vec3<f32>(0.299, 0.587, 0.114));
-    let frostedColor = mix(blurredBackground, vec3<f32>(brightness), frostedIntensity);
-    
-    return frostedColor;
-}
-
 @fragment
 fn fs_main(input : VertexOutput, @builtin(front_facing) front_facing: bool) -> @location(0) vec4<f32> {
     var surface = GetSurface(input);
@@ -216,23 +184,20 @@ fn fs_main(input : VertexOutput, @builtin(front_facing) front_facing: bool) -> @
       surface.normal = -surface.normal;
     }
 
-    // Calculate screen UV coordinates
-    let screenUv = input.position.xy / viewport.size;
-    
-    // Sample background with roughness-based blur
-    let backgroundColor = sampleTransmissionWithRoughness(surface, screenUv);
-    
-    // Apply transmission effect according to glTF spec
-    let transmission = surface.transmission;
-    
-    // For transmission, we need to mix the base color with the background
-    // The transmission factor controls how much background shows through
-    let transmittedColor = backgroundColor * surface.baseColor.rgb;
-    
-    // Mix between opaque surface and transmitted background
-    surface.albedo = mix(surface.albedo, transmittedColor, transmission);
+    // --- TRANSMISSION BLEND ---
+    let transmission = surface.transmission; // use red or average, depending on how you stored it
+
+    // Sample background at the current screen location
+    let snapshotUv = input.position.xy / viewport.size;
+
+    //let snapshotUv = screen_uv * 0.5 + vec2(0.5);  // NDC [-1,1] → UV [0,1]
+    let backgroundColor = textureSample(snapshotTexture, snapshotSampler, snapshotUv).rgb;
+
+    // Blend: transmission replaces surface color proportionally
+    surface.albedo = mix(surface.albedo, backgroundColor * surface.albedo, transmission);
 
     var light = GetLight(input);
+
     let Lo = lightRadiance(light, surface);
 
     // Environment reflection
@@ -243,17 +208,13 @@ fn fs_main(input : VertexOutput, @builtin(front_facing) front_facing: bool) -> @
     {% endif %}
 
     // Ambient lighting scaled by occlusion
-    let ambientStrength = 0.1;
+    let ambientStrength = .1;
     let ambient = surface.albedo * surface.ao * ambientStrength;
 
-    // Combine all components
+    // Combine all components: Ambient, Diffuse, Specular, Environment, and Emissive
     let rgb = ambient + Lo + environmentReflection + surface.emissive;
 
-    // Apply gamma correction
     let finalColor = linearToSRGB(rgb);
-    
-    // For transmission materials, alpha should be affected by transmission
-    let finalAlpha = mix(surface.baseColor.a, 1.0 - transmission, transmission);
-    
-    return vec4<f32>(finalColor, finalAlpha);
+    return vec4<f32>(finalColor, surface.baseColor.a);
+
 }
