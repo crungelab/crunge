@@ -25,20 +25,11 @@ class View(Widget):
     def layers(self) -> List[ViewLayer]:
         return self.children
 
-    '''
-    def on_size(self):
-        super().on_size()
-        for layer in self.layers:
-            layer.size = self.size
-            logger.debug(f"View.on_size: {self.size}, layer: {layer.name}")
-    '''
-
     def _create(self):
         #logger.debug("View.create")
         super()._create()
         if not self.window:
             raise ValueError("View.window is not set")
-        #self.size = self.window.size
         for layer in self.layers:
             layer.config(view=self).create()
         self.create_device_objects()

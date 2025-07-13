@@ -64,7 +64,7 @@ class TiledPhysicsDemo(Demo):
         self.scene.attach(ball)
 
     def create_map(self):
-        context = SceneBuilderContext(scene=self.scene)
+        context = SceneBuilderContext(self.scene)
 
         def create_node_cb(position, sprite, properties):
             return Tile(position, sprite)

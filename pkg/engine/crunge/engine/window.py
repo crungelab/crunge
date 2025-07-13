@@ -60,7 +60,6 @@ class Window(Frame):
     def channel(self, channel: Channel):
         self._channel = channel
         view = channel()
-        view.config(window=self)
         self.view = view
 
     def add_channel(self, channel: Channel):

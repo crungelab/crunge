@@ -70,7 +70,7 @@ class SpriteVu(Vu2D):
 
     def on_node_model_change(self, node: Node2D) -> None:
         super().on_node_model_change(node)
-        # logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
+        #logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
 
     def _create(self):

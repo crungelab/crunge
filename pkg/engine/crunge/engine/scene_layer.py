@@ -15,6 +15,14 @@ class SceneLayer(Base, Generic[T_Node]):
         self.scene: Scene[T_Node] = None
         self.root: "SceneNode[T_Node]" = None
 
+    def __iter__(self):
+        """Make Layer iterable by returning iterator over sprites"""
+        return iter(self.nodes)
+
+    def __len__(self):
+        """Return the number of sprites in the layer"""
+        return len(self.nodes)
+
     @property
     def nodes(self):
         return self.root.children

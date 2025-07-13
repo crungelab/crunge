@@ -22,26 +22,18 @@ class Frame(Widget):
     def view(self, view: View):
         if self._view is not None and self._view != view:
             self._view.disable()
-            #self._view.config(window=None)
             self.detach(self._view)
 
+        view.window = self
         self._view = view
         self.children.clear()
         self.attach(view)
         view.enable()
 
-    '''
-    def on_size(self):
-        super().on_size()
-        if self.view is not None:
-            self.view.size = self.size
-    '''
-
     def _create(self):
         super()._create()
         logger.debug("Frame.create")
         if self._view is not None:
-            self._view.config(window=self).create()
             self.view = self._view
 
     def push_view(self, new_view):

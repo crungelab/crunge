@@ -4,7 +4,7 @@ from pytmx import TiledObject
 
 from crunge.engine.math import Rect2i
 from crunge.engine.d2.sprite import Sprite, SpriteVu
-from crunge.engine.d2.sprite.sprite_sampler import DefaultSpriteSampler, RepeatingSpriteSampler
+from crunge.engine.d2.sprite.sprite_sampler import DefaultSpriteSampler
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
@@ -36,17 +36,16 @@ class DefaultObjectBuilder(ObjectBuilder):
             x = obj.x
             y = self.context.size.y - obj.y - obj.height
             lower_left = glm.vec2(x, y)
+            logger.debug(f"lower_left: {lower_left}")
+
             width = obj.width
             height = obj.height
-            logger.debug(f"lower_left: {lower_left}")
-            #lower_left = glm.vec2(x, y)
 
             size = glm.vec2(width, height)
 
             # Calculate half dimensions for centering
             center = size / 2.0
-            #center = glm.vec2(width / 2, height / 2)
-            #center.y = -center.y
+
             logger.debug(f"center: {center}")
             
             # Handle rotation in radians
@@ -54,23 +53,14 @@ class DefaultObjectBuilder(ObjectBuilder):
             logger.debug(f"rotation: {rotation}")
 
             rotated_offset = glm.rotate(center, rotation)
-            #rotated_offset = glm.vec2(0, 0)
-            '''
-            rotated_offset = glm.vec2(
-                center.x * glm.cos(rotation) - center.y * glm.sin(rotation),
-                center.x * glm.sin(rotation) + center.y * glm.cos(rotation)
-            )'
-            '''
             logger.debug(f"rotated_offset: {rotated_offset}")
+
             position = lower_left + rotated_offset
             position.y = position.y + self.context.map.tileheight
             logger.debug(f"position: {position}")
 
             # Calculate scale
             scale = glm.vec2(width / atlas_size.x, height / atlas_size.y)
-
-            # Choose sampler based on atlas size
-            #sampler = DefaultSpriteSampler() if size <= atlas_size else RepeatingSpriteSampler()
             sampler = DefaultSpriteSampler()
 
             # Build the sprite

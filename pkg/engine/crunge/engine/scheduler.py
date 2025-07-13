@@ -59,6 +59,7 @@ class Scheduler(Service):
         logger.debug(f"Scheduled one-time task {func.__name__} after {delay} seconds.")
 
     def update(self, delta_time: float) -> None:
+        #logger.debug(f"Scheduler update called with delta_time: {delta_time:.2f}s")
         """
         Process scheduled tasks and execute any that are due.
         Passes `delta_time` to each scheduled function.
