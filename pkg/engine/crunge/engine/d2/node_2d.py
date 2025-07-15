@@ -30,8 +30,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._velocity = glm.vec2(0.0)
         self.angular_velocity = 0.0  # radians per second
 
-        # self.update_matrix()
-
     def _create(self):
         self.update_matrix()
 

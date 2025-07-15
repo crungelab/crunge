@@ -8,9 +8,17 @@ from ..object_builder import ObjectBuilder, DefaultObjectBuilder
 
 from .object_group_builder import ObjectGroupBuilder
 
+
 class DefaultObjectGroupBuilder(ObjectGroupBuilder):
     def __init__(self, context: BuilderContext, object_builder: ObjectBuilder = None):
-        super().__init__(context, object_builder if object_builder is not None else DefaultObjectBuilder(context))
+        super().__init__(
+            context,
+            (
+                object_builder
+                if object_builder is not None
+                else DefaultObjectBuilder(context)
+            ),
+        )
 
     def build(self, layer: TiledObjectGroup):
         self.context.layer = SceneLayer2D(name=layer.name)

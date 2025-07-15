@@ -29,7 +29,8 @@ class MapBuilder(TiledBuilder):
         self.object_group_builders.update(builders)
 
     def build(self):
-        for layer_id, layer in enumerate(self.map.visible_layers):
+        #for layer_id, layer in enumerate(self.map.visible_layers):
+        for layer_id, layer in enumerate(self.map.layers):
             logger.debug(f"MapBuilder.build: {layer}")
             self.build_layer(layer, layer_id)
     

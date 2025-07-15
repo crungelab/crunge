@@ -20,6 +20,17 @@ class SceneLayer2D(SceneLayer[Node2D]):
     def __repr__(self):
         return str(self)
 
+    def depth_sort(self):
+        nodes = self.nodes
+        has_swapped = True
+        while(has_swapped):
+            has_swapped = False
+            for i in range(len(nodes) - 1):
+                if nodes[i].z > nodes[i+1].z:
+                    #self.swap(i, i+1)
+                    nodes[i], nodes[i+1] = nodes[i+1], nodes[i]
+                    has_swapped = True
+
     def query_intersection(self, bounds: Bounds2):
         result:list[Node2D] = []
         for node in self.nodes:

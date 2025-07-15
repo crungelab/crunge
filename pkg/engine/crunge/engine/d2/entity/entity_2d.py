@@ -17,7 +17,6 @@ class Entity2D(Node2D):
         brain=None,
     ):
         super().__init__(position, rotation, scale, vu, model)
-        self.layer = None
         self._brain = None
         if brain is not None:
             self.brain = brain
