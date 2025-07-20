@@ -67,7 +67,7 @@ class SpriteDemo(Demo):
 
 
 def main():
-    SpriteDemo().create().run()
+    SpriteDemo().run()
 
 
 if __name__ == "__main__":

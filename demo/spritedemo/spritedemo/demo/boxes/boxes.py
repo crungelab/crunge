@@ -66,7 +66,7 @@ class BoxesDemo(Demo):
         super().update(delta_time)
 
 def main():
-    BoxesDemo().create().run()
+    BoxesDemo().run()
 
 
 if __name__ == "__main__":

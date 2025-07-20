@@ -64,7 +64,7 @@ class BallsDemo(Demo):
         super().update(delta_time)
 
 def main():
-    BallsDemo().create().run()
+    BallsDemo().run()
 
 
 if __name__ == "__main__":

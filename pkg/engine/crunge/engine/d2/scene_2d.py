@@ -13,5 +13,4 @@ class Scene2D(Scene[Node2D]):
 
     def create_layers(self):
         self.primary_layer = SceneLayer2D('primary')
-        self.primary_layer.scene = self
         self.add_layer(self.primary_layer)

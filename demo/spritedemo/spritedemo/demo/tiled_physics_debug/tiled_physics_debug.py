@@ -5,7 +5,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge.engine import Renderer
 from crunge.engine.d2.physics import DynamicPhysicsEngine
-from crunge.engine.d2.physics.draw_options import DrawOptions
+from crunge.engine.d2.physics.space_debug_layer import SpaceDebugLayer
 
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.tiled.builder.builder_context import SceneBuilderContext
@@ -19,17 +19,17 @@ from ..demo import Demo
 from .ball import Ball
 from .tile import Tile
 
-class TiledPhysicsDemo(Demo):
+class TiledPhysicsDebugDemo(Demo):
     def __init__(self):
         super().__init__()
         self.debug_draw_enabled = False
 
     def _create(self):
         super()._create()
-        self.draw_options = DrawOptions(self.view.scratch)
 
     def create_view(self):
         super().create_view()
+        self.view.add_layer(SpaceDebugLayer())
         self.camera.zoom = 2.0
 
     def reset(self):
@@ -78,12 +78,11 @@ class TiledPhysicsDemo(Demo):
         map_loader.load(tmx_path)
 
     def draw(self, renderer: Renderer):
-        # Display timings
         update_output = f"Update time: {self.update_time:.3f}"
         drawing_output = f"Drawing time: {self.draw_time:.3f}"
 
-        imgui.begin("Tiled Physics Demo")
 
+        imgui.begin("Tiled Physics Demo")
         imgui.text(update_output)
         imgui.text(drawing_output)
 
@@ -96,9 +95,6 @@ class TiledPhysicsDemo(Demo):
 
         imgui.end()
 
-        if self.debug_draw_enabled:
-            self.physics_engine.debug_draw(self.draw_options)
-
         super().draw(renderer)
 
     def update(self, delta_time: float):
@@ -106,7 +102,7 @@ class TiledPhysicsDemo(Demo):
         super().update(delta_time)
 
 def main():
-    TiledPhysicsDemo().run()
+    TiledPhysicsDebugDemo().run()
 
 
 if __name__ == "__main__":

@@ -67,7 +67,7 @@ class BackgroundDemo(Demo):
         super().draw(renderer)
 
 def main():
-    BackgroundDemo().create().run()
+    BackgroundDemo().run()
 
 
 if __name__ == "__main__":

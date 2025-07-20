@@ -16,28 +16,28 @@ class SceneLayer(Base, Generic[T_Node]):
         self.root: "SceneNode[T_Node]" = None
 
     def __iter__(self):
-        """Make Layer iterable by returning iterator over sprites"""
+        """Make Layer iterable by returning iterator over nodes"""
         return iter(self.nodes)
 
     def __len__(self):
-        """Return the number of sprites in the layer"""
+        """Return the number of nodes in the layer"""
         return len(self.nodes)
 
     @property
-    def nodes(self):
+    def nodes(self) -> List[T_Node]:
         return self.root.children
 
-    def clear(self):
+    def clear(self) -> None:
         self.root.clear()
 
-    def draw(self, renderer: Renderer):
+    def draw(self, renderer: Renderer) -> None:
         self.root.draw(renderer)
 
-    def update(self, dt: float):
+    def update(self, dt: float) -> None:
         self.root.update(dt)
 
-    def attach(self, node: T_Node):
+    def attach(self, node: T_Node) -> None:
         self.root.attach(node)
 
-    def detach(self, node: T_Node):
+    def detach(self, node: T_Node) -> None:
         self.root.detach(node)

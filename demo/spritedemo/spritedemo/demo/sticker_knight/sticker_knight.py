@@ -36,7 +36,7 @@ class StickerKnightDemo(Demo):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
-        imgui.begin("Tiled")
+        imgui.begin("Sticker Knight")
 
         if imgui.button("Reset"):
             self.reset()
@@ -47,7 +47,7 @@ class StickerKnightDemo(Demo):
 
 
 def main():
-    StickerKnightDemo().create().run()
+    StickerKnightDemo().run()
 
 
 if __name__ == "__main__":

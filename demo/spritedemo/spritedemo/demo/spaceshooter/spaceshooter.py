@@ -164,7 +164,7 @@ class SpaceShooter(Demo):
 
 
 def main():
-    SpaceShooter().create().run()
+    SpaceShooter().run()
 
 
 if __name__ == "__main__":

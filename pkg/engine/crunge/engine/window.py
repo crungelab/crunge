@@ -49,6 +49,7 @@ class Window(Frame):
         self.viewport: SurfaceViewport = None
         self.renderer: Renderer = None
 
+        # TODO: This should go in the Frame class
         self._channel: Channel = None
         self.channels: Dict[str, Channel] = {}
 

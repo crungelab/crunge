@@ -107,7 +107,7 @@ class ThingsDemo(Demo):
 
 
 def main():
-    ThingsDemo().create().run()
+    ThingsDemo().run()
 
 
 if __name__ == "__main__":

@@ -67,7 +67,7 @@ class InstancingDemo(Demo):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
-        imgui.begin("Ship")
+        imgui.begin("Instancing")
 
         # Rotation
         changed, self.angle = imgui.drag_float(
@@ -102,9 +102,11 @@ class InstancingDemo(Demo):
         with self.view.renderer as renderer:
             self.sprite_vu_group.draw(renderer)
 
+        #super().draw(renderer)
+
 
 def main():
-    InstancingDemo().create().run()
+    InstancingDemo().run()
 
 
 if __name__ == "__main__":

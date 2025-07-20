@@ -1,4 +1,5 @@
 from pathlib import Path
+import timeit
 
 from loguru import logger
 import glm
@@ -6,6 +7,7 @@ import glm
 from crunge import sdl
 from crunge import engine
 
+from crunge.engine import Renderer
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.d2.scene_2d import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
@@ -33,6 +35,10 @@ class Demo(engine.App):
 
         self.scene = Scene2D().create()
 
+        self.draw_time = 0
+        self.update_time = 0
+
+
     @property
     def camera(self) -> Camera2D:
         return self.view.camera
@@ -54,3 +60,19 @@ class Demo(engine.App):
         down = event.down
         if key == sdl.SDLK_ESCAPE and down:
             self.quit()
+
+    def draw(self, renderer: Renderer):
+        # Start timing how long this takes
+        draw_start_time = timeit.default_timer()
+
+        super().draw(renderer)
+
+        self.draw_time = timeit.default_timer() - draw_start_time
+
+    def update(self, delta_time: float):
+        start_time = timeit.default_timer()
+
+        super().update(delta_time)
+
+        # Save the time it took to do this.
+        self.update_time = timeit.default_timer() - start_time

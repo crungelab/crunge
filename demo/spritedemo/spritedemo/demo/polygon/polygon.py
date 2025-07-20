@@ -71,7 +71,7 @@ class PolygonDemo(Demo):
 
 
 def main():
-    PolygonDemo().create().run()
+    PolygonDemo().run()
 
 
 if __name__ == "__main__":

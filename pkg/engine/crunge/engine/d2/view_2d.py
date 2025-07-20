@@ -8,7 +8,7 @@ from .renderer_2d import Renderer2D
 from .camera_2d import Camera2D
 
 #from .scratch_layer import ScratchLayer
-from .skia_scratch_layer import ScratchLayer
+from .scratch_layer import ScratchLayer
 
 
 class View2D(ImGuiView):
@@ -19,7 +19,7 @@ class View2D(ImGuiView):
 
     def _create(self):
         super()._create()
-        self.scratch = ScratchLayer().config(view=self).create()
+        self.scratch = ScratchLayer()
         self.add_layer(self.scratch)
 
     def create_camera(self):

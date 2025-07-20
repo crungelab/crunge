@@ -33,6 +33,7 @@ class TiledLoaderDemo(Demo):
 
     def draw(self, renderer: Renderer):
         self.view.scratch.draw_circle(glm.vec2(0, 0), 10, color=glm.vec4(1, 0, 0, 1))
+
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
@@ -47,7 +48,7 @@ class TiledLoaderDemo(Demo):
 
 
 def main():
-    TiledLoaderDemo().create().run()
+    TiledLoaderDemo().run()
 
 
 if __name__ == "__main__":

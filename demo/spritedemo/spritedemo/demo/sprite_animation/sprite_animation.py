@@ -115,7 +115,7 @@ class SpriteAnimationDemo(Demo):
         super().draw(renderer)
 
 def main():
-    SpriteAnimationDemo().create().run()
+    SpriteAnimationDemo().run()
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLo
 from ..demo import Demo
 
 
-class TextureAtlasDemo(Demo):
+class SpriteAtlasDemo(Demo):
     def __init__(self):
         super().__init__()
         self.angle = 0
@@ -89,7 +89,7 @@ class TextureAtlasDemo(Demo):
 
 
 def main():
-    TextureAtlasDemo().create().run()
+    SpriteAtlasDemo().run()
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 from ..demo import Demo
 
 
-class TiledLoaderDemo(Demo):
+class TiledTestDemo(Demo):
     def reset(self):
         self.scene.clear()
         self.create_map()
@@ -43,7 +43,7 @@ class TiledLoaderDemo(Demo):
 
 
 def main():
-    TiledLoaderDemo().create().run()
+    TiledTestDemo().run()
 
 
 if __name__ == "__main__":

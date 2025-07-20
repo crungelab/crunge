@@ -63,16 +63,6 @@ class PhysicsEntity2D(Entity2D):
         self.shapes = self.create_shapes()
         self.add_shapes()
 
-    '''
-    def _post_create(self):
-        super()._post_create()
-        """
-        if self.body is not None:
-            globe.physics_engine.space.add(self.body)
-        """
-        self.add_shapes()
-    '''
-
     def destroy(self):
         self.remove_shapes()
         super().destroy()
