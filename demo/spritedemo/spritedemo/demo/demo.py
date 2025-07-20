@@ -33,8 +33,6 @@ class Demo(engine.App):
             images=self.resource_root / "images",
         )
 
-        self.scene = Scene2D().create()
-
         self.draw_time = 0
         self.update_time = 0
 
@@ -43,10 +41,16 @@ class Demo(engine.App):
     def camera(self) -> Camera2D:
         return self.view.camera
 
-    def _create(self):
-        super()._create()
+    def reset(self):
+        super().reset()
+        self.create_scene()
         self.create_view()
+        self.center_camera()
 
+    def create_scene(self):
+        logger.debug("Creating scene")
+        self.scene = Scene2D().create()
+        
     def create_view(self):
         logger.debug("Creating view")
         self.view = DemoView(self.scene)
@@ -54,6 +58,11 @@ class Demo(engine.App):
     def center_camera(self):
         if self.camera:
             self.camera.position = glm.vec2(self.viewport.width / 2, self.viewport.height / 2) * self.camera.zoom
+            #self.camera.position = glm.vec2(self.width / 2, self.height / 2) * self.camera.zoom
+
+    def on_size(self):
+        super().on_size()
+        self.center_camera()
 
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.key

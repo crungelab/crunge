@@ -14,9 +14,13 @@ from ..demo import Demo
 
 class TiledTestDemo(Demo):
     def reset(self):
-        self.scene.clear()
+        super().reset()
+        #self.scene.clear()
         self.create_map()
 
+    def center_camera(self):
+        pass
+    
     def create_view(self):
         super().create_view()
         self.camera.zoom = 2.0

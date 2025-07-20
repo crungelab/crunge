@@ -25,16 +25,16 @@ class ModelBindGroupLayout(BindGroupLayout):
         super().__init__(entries=entries, label="ModelBindGroupLayout")
 
 
-class InstancedSpriteVuGroupRenderPipeline(RenderPipeline2D):
+class SpriteInstanceRenderPipeline(RenderPipeline2D):
     @property
     def model_bind_group_layout(self):
         return ModelBindGroupLayout()
 
 @klass.singleton
-class InstancedSpriteVuGroupProgram(Program2D):
+class SpriteInstanceGroupProgram(Program2D):
     def __init__(self):
         super().__init__()
-        self.render_pipeline: InstancedSpriteVuGroupRenderPipeline = None
+        self.render_pipeline: SpriteInstanceRenderPipeline = None
         self.create_render_pipeline()
 
     def create_render_pipeline(self):
@@ -42,6 +42,6 @@ class InstancedSpriteVuGroupProgram(Program2D):
             "instanced_sprite.wgsl"
         )
 
-        self.render_pipeline = InstancedSpriteVuGroupRenderPipeline(
+        self.render_pipeline = SpriteInstanceRenderPipeline(
             vertex_shader_module=shader_module, fragment_shader_module=shader_module
         ).create()

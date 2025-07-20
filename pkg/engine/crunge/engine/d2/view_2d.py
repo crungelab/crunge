@@ -7,7 +7,6 @@ from .renderer_2d import Renderer2D
 
 from .camera_2d import Camera2D
 
-#from .scratch_layer import ScratchLayer
 from .scratch_layer import ScratchLayer
 
 

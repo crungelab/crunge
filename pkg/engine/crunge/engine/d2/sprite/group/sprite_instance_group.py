@@ -11,24 +11,24 @@ from ..sprite import Sprite
 from ..sprite_vu import SpriteVu
 
 from .sprite_vu_group import SpriteVuGroup
-from .instanced_sprite_vu_group_program import InstancedSpriteVuGroupProgram
+from .sprite_instance_group_program import SpriteInstanceGroupProgram
 
 ELEMENTS = 32
 
 
-class InstancedSpriteVuBatch:
+class SpriteInstanceBatch:
     def __init__(self, sprite_vu: SpriteVu, first_instance: int) -> None:
         self.sprite_vu = sprite_vu
         self.first_instance = first_instance
         self.instance_count = 1
 
 
-class InstancedSpriteVuGroup(SpriteVuGroup):
+class SpriteInstanceGroup(SpriteVuGroup):
     def __init__(self, count: int = ELEMENTS) -> None:
         super().__init__()
         self.is_render_group = True
         self.count = count
-        self.batches: list[InstancedSpriteVuBatch] = []
+        self.batches: list[SpriteInstanceBatch] = []
 
         self.model_bind_group: ModelBindGroup = None
         self.model_storage_buffer = UniformBuffer(
@@ -39,7 +39,7 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         )
         logger.debug(f"Model Uniform Buffer: {self.model_storage_buffer}")
 
-        self.program = InstancedSpriteVuGroupProgram()
+        self.program = SpriteInstanceGroupProgram()
         self.create_model_bind_group()
 
     def clear(self):
@@ -49,7 +49,7 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
     def append(self, sprite: SpriteVu) -> None:
         super().append(sprite)
         sprite.buffer = self.model_storage_buffer
-        sprite.buffer_index = len(self.members) - 1
+        sprite.buffer_index = len(self.visuals) - 1
         self.batch(sprite)
 
     def remove(self, vu):
@@ -60,14 +60,14 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         # Compare by texture until I start registering materials
         if len(self.batches) == 0 or self.batches[-1].sprite_vu.sprite.texture != member.sprite.texture:
             self.batches.append(
-                InstancedSpriteVuBatch(member, member.buffer_index)
+                SpriteInstanceBatch(member, member.buffer_index)
             )
         else:
             self.batches[-1].instance_count += 1
 
     def batch_all(self):
         self.batches.clear()
-        for member in self.members:
+        for member in self.visuals:
             self.batch(member)
 
     def create_model_bind_group(self):

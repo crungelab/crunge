@@ -16,16 +16,21 @@ from ..demo import Demo
 
 class SpriteDemo(Demo):
     def reset(self):
+        super().reset()
+
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
 
-        self.scene.clear()
+        #self.scene.clear()
 
         sprite = self.sprite = SpriteLoader().load(":images:/playerShip1_orange.png")
 
         self.node = Node2D(vu=SpriteVu(), model=sprite)
         self.scene.attach(self.node)
+
+    def center_camera(self):
+        pass
 
     def kill(self):
         self.node.destroy()

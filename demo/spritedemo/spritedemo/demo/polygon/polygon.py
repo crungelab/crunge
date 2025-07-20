@@ -14,11 +14,13 @@ from crunge.engine.d2.shape.polygon_2d import Polygon2D
 
 class PolygonDemo(Demo):
     def reset(self):
+        super().reset()
+        
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
 
-        self.scene.clear()
+        #self.scene.clear()
 
         shape = self.shape = Polygon2D(
             [
@@ -30,6 +32,9 @@ class PolygonDemo(Demo):
         )
         self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
+
+    def center_camera(self):
+        pass
 
     def kill(self):
         self.node.destroy()

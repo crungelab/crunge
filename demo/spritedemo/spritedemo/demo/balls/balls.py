@@ -13,15 +13,12 @@ from .floor import Floor
 
 class BallsDemo(Demo):
     def reset(self):
-        self.scene.clear()
+        super().reset()
+        #self.scene.clear()
         self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine().create()
         self.create_floor()
-
-    def on_size(self):
-        super().on_size()
-        self.center_camera()
-        
+     
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         x, y = event.x, event.y
         self.last_mouse = glm.vec2(x, y)

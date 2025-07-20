@@ -20,27 +20,17 @@ from .ball import Ball
 from .tile import Tile
 
 class TiledPhysicsDebugDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.debug_draw_enabled = False
-
-    def _create(self):
-        super()._create()
-
     def create_view(self):
         super().create_view()
         self.view.add_layer(SpaceDebugLayer())
         self.camera.zoom = 2.0
 
     def reset(self):
-        self.scene.clear()
+        super().reset()
+        self.debug_draw_enabled = False
         self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine().create()
         self.create_map()
-
-    def on_size(self):
-        super().on_size()
-        self.center_camera()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         x, y = event.x, event.y
@@ -72,7 +62,6 @@ class TiledPhysicsDebugDemo(Demo):
         tile_layer_builder = DefaultTileLayerBuilder(context, tile_builder=DefaultTileBuilder(context, create_node_cb=create_node_cb))
         map_builder = DefaultMapBuilder(context, tile_layer_builder=tile_layer_builder)
         map_loader = TiledMapLoader(context, map_builder=map_builder)
-        #map_loader = TiledMapLoader(context)
 
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
         map_loader.load(tmx_path)

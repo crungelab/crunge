@@ -11,6 +11,20 @@ class Scene2D(Scene[Node2D]):
         super().__init__()
         self.bounds = Bounds2()
 
+    @property
+    def primary_layer(self) -> SceneLayer2D:
+        if not self.layers:
+            #raise ValueError("No layers in the scene.")
+            self.create_default_layer()
+        return self.layers[0]
+    
+    def create_default_layer(self) -> None:
+        """Create and return the default primary layer for the scene."""
+        layer = SceneLayer2D('primary')
+        self.add_layer(layer)
+
+    '''
     def create_layers(self):
         self.primary_layer = SceneLayer2D('primary')
         self.add_layer(self.primary_layer)
+    '''

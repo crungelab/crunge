@@ -14,11 +14,13 @@ from crunge.engine.d2.shape.circle_2d import Circle2D
 
 class CircleDemo(Demo):
     def reset(self):
+        super().reset()
+
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
 
-        self.scene.clear()
+        #self.scene.clear()
 
         shape = self.shape = Circle2D(
             glm.vec2(0, 0), radius=100.0, segments=32, color=self.color
@@ -26,6 +28,9 @@ class CircleDemo(Demo):
         self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
 
+    def center_camera(self):
+        pass
+    
     def kill(self):
         self.node.destroy()
         self.node = None

@@ -6,13 +6,9 @@ from crunge import wgpu
 
 from ..render_pipeline import RenderPipeline
 
-from ..bindings import (
-    #ViewportBindGroupLayout,
-    CameraBindGroupLayout
-)
+from ..bindings import CameraBindGroupLayout
 
 from .bindings_2d import (
-    #CameraBindGroupLayout,
     SpriteBindGroupLayout,
     ModelBindGroupLayout,
 )
@@ -23,12 +19,6 @@ class RenderPipeline2D(RenderPipeline):
         super().__init__()
         self.vertex_shader_module = vertex_shader_module
         self.fragment_shader_module = fragment_shader_module
-
-    '''
-    @property
-    def viewport_bind_group_layout(self):
-        return ViewportBindGroupLayout()
-    '''
 
     @property
     def camera_bind_group_layout(self):
@@ -45,20 +35,19 @@ class RenderPipeline2D(RenderPipeline):
     @property
     def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:
         bind_group_layouts = [
-            #self.viewport_bind_group_layout.get(),
             self.camera_bind_group_layout.get(),
             self.material_bind_group_layout.get(),
             self.model_bind_group_layout.get(),
         ]
 
         return bind_group_layouts
-    
+
     def create_vertex_state(self):
         return wgpu.VertexState(
             module=self.vertex_shader_module,
             entry_point="vs_main",
         )
-    
+
     def create_fragment_state(self):
         # Had to hold on to blend_state because of garbage collection issues
         # TODO: Why isn't color_targets having the same issue?
@@ -94,44 +83,8 @@ class RenderPipeline2D(RenderPipeline):
         return wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_STRIP)
 
     def _create(self):
-        '''
-        vertex_state = wgpu.VertexState(
-            module=self.vertex_shader_module,
-            entry_point="vs_main",
-        )
-        '''
         vertex_state = self.create_vertex_state()
-        '''
-        blend_state = wgpu.BlendState(
-            alpha=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.ONE,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-            color=wgpu.BlendComponent(
-                operation=wgpu.BlendOperation.ADD,
-                src_factor=wgpu.BlendFactor.SRC_ALPHA,
-                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
-            ),
-        )
-
-        color_targets = [
-            wgpu.ColorTargetState(
-                format=wgpu.TextureFormat.BGRA8_UNORM,
-                blend=blend_state,
-                write_mask=wgpu.ColorWriteMask.ALL,
-            )
-        ]
-
-        fragment_state = wgpu.FragmentState(
-            module=self.fragment_shader_module,
-            entry_point="fs_main",
-            targets=color_targets,
-        )
-        '''
         fragment_state = self.create_fragment_state()
-
-        #primitive_state = wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_STRIP)
         primitive_state = self.create_primitive_state()
 
         depth_stencil_state = wgpu.DepthStencilState(
@@ -146,7 +99,7 @@ class RenderPipeline2D(RenderPipeline):
         )
 
         descriptor = wgpu.RenderPipelineDescriptor(
-            label="Sprite Render Pipeline",
+            label="Render Pipeline 2D",
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             primitive=primitive_state,

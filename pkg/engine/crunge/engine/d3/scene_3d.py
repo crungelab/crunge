@@ -20,12 +20,29 @@ class Scene3D(Scene[Node3D]):
     def bounds(self) -> Bounds3:
         return self.primary_layer.bounds
 
+    @property
+    def primary_layer(self) -> SceneLayer3D:
+        if not self.layers:
+            #raise ValueError("No layers in the scene.")
+            self.create_default_layer()
+        return self.layers[0]
+    
+    def create_default_layer(self) -> None:
+        """Create and return the default primary layer for the scene."""
+        layer = SceneLayer3D('primary')
+        self.add_layer(layer)
+        position=glm.vec3(2.0, 2.0, 2.0)
+        layer.attach(OmniLight3D(position=position, color=glm.vec3(1.0, 1.0, 1.0), energy=1.0))
+
+
+    '''
     def create_layers(self):
         self.primary_layer = SceneLayer3D('primary')
         self.primary_layer.scene = self
         position=glm.vec3(2.0, 2.0, 2.0)
         self.primary_layer.attach(OmniLight3D(position=position, color=glm.vec3(1.0, 1.0, 1.0), energy=1.0))
         self.add_layer(self.primary_layer)
+    '''
 
     @property
     def ambient_light(self):

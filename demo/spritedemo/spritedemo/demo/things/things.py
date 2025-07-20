@@ -17,20 +17,12 @@ from .floor import Floor
 
 
 class ThingsDemo(Demo):
-    def __init__(self):
-        super().__init__()
-        self.draw_options: DrawOptions = None
-        self.physics_engine: DynamicPhysicsEngine = None
+    def reset(self):
+        super().reset()
         self.debug_draw_enabled = False
-        self.sprite = None
-        self.atlas = None
-
-    def _create(self):
-        super()._create()
         self.draw_options = DrawOptions(self.view.scratch)
 
-    def reset(self):
-        self.scene.clear()
+        #self.scene.clear()
         self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine()
         self.physics_engine.create()
@@ -42,10 +34,6 @@ class ThingsDemo(Demo):
         logger.debug(f"atlas: {atlas}")
 
         self.sprite = atlas.get("bomb.png")
-
-    def on_size(self):
-        super().on_size()
-        self.center_camera()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         x, y = event.x, event.y

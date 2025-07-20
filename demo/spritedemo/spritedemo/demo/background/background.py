@@ -18,11 +18,13 @@ from crunge.engine import colors
 
 class BackgroundDemo(Demo):        
     def reset(self):
+        super().reset()
+        
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
 
-        self.scene.clear()
+        #self.scene.clear()
 
         sprite = self.sprite = SpriteLoader(sprite_builder=BackgroundSpriteBuilder()).load(":images:/backgroundColorGrass.png")
         self.node = Node2D(vu=BackgroundVu(), model=sprite)

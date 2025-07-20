@@ -14,12 +14,8 @@ from ..demo import Demo
 
 class TiledLoaderDemo(Demo):
     def reset(self):
-        self.scene.clear()
+        super().reset()
         self.create_map()
-
-    def on_size(self):
-        super().on_size()
-        self.center_camera()
 
     def create_view(self):
         super().create_view()

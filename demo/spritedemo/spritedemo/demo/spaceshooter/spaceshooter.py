@@ -17,7 +17,8 @@ from .collision_type import CollisionType
 
 class SpaceShooter(Demo):
     def reset(self):
-        self.scene.clear()
+        super().reset()
+        #self.scene.clear()
         self.camera_target = glm.vec2(0, 0)
 
         self.create_physics_engine()
@@ -26,6 +27,9 @@ class SpaceShooter(Demo):
         zone = Zone(
             self.scene, glm.vec2(0, 0), glm.vec2(self.width * 2, self.height * 2)
         ).create()
+
+    def center_camera(self):
+        pass
 
     def create_physics_engine(self):
         self.physics_engine = engine = DynamicPhysicsEngine(gravity=(0, 0))

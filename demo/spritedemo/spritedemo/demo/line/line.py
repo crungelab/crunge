@@ -14,15 +14,20 @@ from crunge.engine.d2.node_2d import Node2D
 
 class LineDemo(Demo):
     def reset(self):
+        super().reset()
+
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
 
-        self.scene.clear()
+        #self.scene.clear()
 
         shape = self.shape = Line2D(glm.vec2(0, 0), glm.vec2(100, 100))
         self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
+
+    def center_camera(self):
+        pass
 
     def kill(self):
         self.node.destroy()

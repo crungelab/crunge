@@ -16,10 +16,12 @@ from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLo
 
 class SpriteAnimationDemo(Demo):        
     def reset(self):
+        super().reset()
+
         self.angle = 0
         self.scale = 1.0
 
-        self.scene.clear()
+        #self.scene.clear()
 
         atlas = self.atlas = XmlSpriteAtlasLoader().load(
             ":resources:/characters/robot/sheet.xml"
@@ -34,6 +36,9 @@ class SpriteAnimationDemo(Demo):
         animator = self.animator = SpriteAnimator(self.node)
         self.create_animations()
         animator.play("walkRight")
+
+    def center_camera(self):
+        pass
 
     def kill(self):
         self.node.destroy()

@@ -8,8 +8,7 @@ from crunge.engine import Renderer
 
 from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite, SpriteVu
-
-from crunge.engine.d2.sprite.group.sprite_instance_layer import SpriteInstanceLayer
+from crunge.engine.d2.sprite.group.sprite_instance_group import SpriteInstanceGroup
 
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
@@ -18,7 +17,6 @@ from crunge.engine import colors
 
 INITIAL_SCALE = 0.5
 
-
 class InstancingDemo(Demo):
     def __init__(self):
         super().__init__()
@@ -26,40 +24,44 @@ class InstancingDemo(Demo):
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         self.color = colors.WHITE
         self.sprite = Sprite(texture, color=self.color)
-
-    def create_scene(self):
-        super().create_scene()
-        layer = SpriteInstanceLayer("sprites", 1024)
-        self.scene.add_layer(layer)
-
+        
     def reset(self):
-        super().reset()
+        self.sprite_vu_group = SpriteInstanceGroup(1024)
 
         self.angle = 0
         self.scale = INITIAL_SCALE
         self.color = colors.WHITE
 
+        self.scene.clear()
+
+        self.create_sprites()
+
+    def on_size(self):
+        super().on_size()
+        self.center_camera()
+
+    def kill(self):
+        for node in self.nodes:
+            node.destroy()
+        self.nodes.clear()
+
+    def create_sprites(self):
         # Set grid size and spacing
         grid_size = 10
         spacing = 64  # Adjust spacing between sprites as needed
 
         for row in range(grid_size):
             for col in range(grid_size):
-                vu = SpriteVu(self.sprite)
+                vu = SpriteVu(self.sprite).config(group=self.sprite_vu_group)
                 node = Node2D(vu=vu).config(scale=glm.vec2(self.scale, self.scale))
-
+                
                 # Calculate position based on grid and spacing
                 x = col * spacing - (grid_size * spacing) / 2 + self.width / 2
                 y = row * spacing - (grid_size * spacing) / 2 + self.height / 2
-
+                
                 node.position = glm.vec2(x, y)
                 self.nodes.append(node)
                 self.scene.attach(node)
-
-    def kill(self):
-        for node in self.nodes:
-            node.destroy()
-        self.nodes.clear()
 
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
@@ -94,6 +96,11 @@ class InstancingDemo(Demo):
             self.kill()
 
         imgui.end()
+
+        #super().draw(renderer)
+
+        with self.view.renderer as renderer:
+            self.sprite_vu_group.draw(renderer)
 
         super().draw(renderer)
 
