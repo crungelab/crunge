@@ -51,14 +51,7 @@ class SpriteVu(Vu2D):
     def size(self) -> glm.vec2:
         if self.sprite is None:
             return glm.vec2(1.0)
-        # return glm.vec2(self.sprite.size)
         return glm.vec2(self.sprite.rect.size)
-
-    """
-    @property
-    def size(self) -> glm.vec2:
-        return glm.vec2(self.sprite.size)
-    """
 
     @property
     def width(self) -> float:
@@ -125,6 +118,12 @@ class SpriteVu(Vu2D):
     def draw(self, renderer: Renderer) -> None:
         if not self.manual_draw:
             return
+        
+        frustum = renderer.camera_2d.frustum
+        if not self.bounds.intersects(frustum):
+            #logger.debug(f"SpriteVu: {self} is not in frustum: {frustum}")
+            return
+        
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)

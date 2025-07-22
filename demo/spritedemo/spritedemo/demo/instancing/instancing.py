@@ -9,7 +9,7 @@ from crunge.engine import Renderer
 from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 
-from crunge.engine.d2.sprite.group.sprite_instance_layer import SpriteInstanceLayer
+from crunge.engine.d2.sprite.group.instanced_sprite_layer import InstancedSpriteLayer
 
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
@@ -29,7 +29,7 @@ class InstancingDemo(Demo):
 
     def create_scene(self):
         super().create_scene()
-        layer = SpriteInstanceLayer("sprites", 1024)
+        layer = InstancedSpriteLayer("sprites", 1024)
         self.scene.add_layer(layer)
 
     def reset(self):

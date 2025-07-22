@@ -169,6 +169,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         # logger.debug(f"class: {self.__class__}, local_bounds: {local_bounds}")
         self.bounds = local_bounds.to_global(self.transform)
         # logger.debug(f"class: {self.__class__}, bounds: {self.bounds}")
+        if not self.bounds.is_valid():
+            logger.warning(f"Invalid bounds for {self}: {self.bounds}")
 
         for listener in self.listeners:
             listener.on_node_transform_change(self)

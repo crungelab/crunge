@@ -11,12 +11,12 @@ from ..sprite import Sprite
 from ..sprite_vu import SpriteVu
 
 from .sprite_vu_group import SpriteVuGroup
-from .sprite_instance_group_program import SpriteInstanceGroupProgram
+from .instanced_sprite_program import InstancedSpriteProgram
 
 ELEMENTS = 32
 
 
-class SpriteInstanceBatch:
+class InstancedSpriteVuBatch:
     def __init__(self, sprite_vu: SpriteVu, first_instance: int) -> None:
         self.sprite_vu = sprite_vu
         self.first_instance = first_instance
@@ -28,12 +28,12 @@ class SpriteInstanceBatch:
         self.sprite_vu.sprite.bind(pass_enc)
         pass_enc.draw(4, self.instance_count, 0, self.first_instance)
 
-class SpriteInstanceGroup(SpriteVuGroup):
+class InstancedSpriteVuGroup(SpriteVuGroup):
     def __init__(self, count: int = ELEMENTS) -> None:
         super().__init__()
         self.is_render_group = True
         self.count = count
-        self.batches: list[SpriteInstanceBatch] = []
+        self.batches: list[InstancedSpriteVuBatch] = []
 
         self.model_bind_group: ModelBindGroup = None
         self.model_storage_buffer = UniformBuffer(
@@ -44,7 +44,7 @@ class SpriteInstanceGroup(SpriteVuGroup):
         )
         logger.debug(f"Model Uniform Buffer: {self.model_storage_buffer}")
 
-        self.program = SpriteInstanceGroupProgram()
+        self.program = InstancedSpriteProgram()
         self.create_model_bind_group()
 
     def clear(self):
@@ -66,7 +66,7 @@ class SpriteInstanceGroup(SpriteVuGroup):
         # Compare by texture until I start registering materials
         if len(self.batches) == 0 or self.batches[-1].sprite_vu.sprite.texture != member.sprite.texture:
             self.batches.append(
-                SpriteInstanceBatch(member, member.buffer_index)
+                InstancedSpriteVuBatch(member, member.buffer_index)
             )
         else:
             self.batches[-1].instance_count += 1

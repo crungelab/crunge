@@ -16,7 +16,7 @@ from ..uniforms_2d import (
 from ..bindings_2d import BindGroupIndex, SpriteBindGroup
 
 from .sprite_sampler import DefaultSpriteSampler
-from .sprite_program import SpriteProgram
+
 
 class Sprite(Material):
     def __init__(
@@ -39,7 +39,6 @@ class Sprite(Material):
         self._color = color
         self.points = points
         self.collision_rect = collision_rect
-        self.program = SpriteProgram()
         self.bind_group: SpriteBindGroup = None
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
