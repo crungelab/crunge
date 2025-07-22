@@ -59,6 +59,7 @@ class Demo(engine.App):
         if self.camera:
             self.camera.position = glm.vec2(self.viewport.width / 2, self.viewport.height / 2) * self.camera.zoom
             #self.camera.position = glm.vec2(self.width / 2, self.height / 2) * self.camera.zoom
+            logger.debug(f"Camera centered at {self.camera.position}")
 
     def on_size(self):
         super().on_size()

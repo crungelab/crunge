@@ -73,6 +73,7 @@ class Node(Dispatcher, Generic[T_Node]):
         self.children.clear()
 
     def destroy(self):
+        logger.debug(f"Destroying node: {self}")
         if self.parent:
             self.parent.detach(self)
         if self.vu:
@@ -108,8 +109,8 @@ class Node(Dispatcher, Generic[T_Node]):
     def detach(self, child: "Node[T_Node]"):
         child.on_detached()
         child.parent = None
-        if child in self.children:
-            self.children.remove(child)
+        #if child in self.children:
+        self.children.remove(child)
         #child.on_detached()
 
     def on_detached(self):

@@ -40,7 +40,6 @@ class Sprite(Material):
         self.points = points
         self.collision_rect = collision_rect
         self.program = SpriteProgram()
-        #self.bind_group: wgpu.BindGroup = None
         self.bind_group: SpriteBindGroup = None
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0

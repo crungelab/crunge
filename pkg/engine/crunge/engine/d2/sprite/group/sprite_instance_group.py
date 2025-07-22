@@ -22,6 +22,11 @@ class SpriteInstanceBatch:
         self.first_instance = first_instance
         self.instance_count = 1
 
+    def draw(self, renderer: Renderer):
+        # logger.debug("Drawing sprites")
+        pass_enc = renderer.pass_enc
+        self.sprite_vu.sprite.bind(pass_enc)
+        pass_enc.draw(4, self.instance_count, 0, self.first_instance)
 
 class SpriteInstanceGroup(SpriteVuGroup):
     def __init__(self, count: int = ELEMENTS) -> None:
@@ -48,6 +53,7 @@ class SpriteInstanceGroup(SpriteVuGroup):
 
     def append(self, sprite: SpriteVu) -> None:
         super().append(sprite)
+        sprite.group = self
         sprite.buffer = self.model_storage_buffer
         sprite.buffer_index = len(self.visuals) - 1
         self.batch(sprite)
@@ -88,5 +94,16 @@ class SpriteInstanceGroup(SpriteVuGroup):
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
         for batch in self.batches:
+            batch.draw(renderer)
+
+    '''
+    def draw(self, renderer: Renderer):
+        if len(self.batches) == 0:
+            return
+        # logger.debug("Drawing sprites")
+        pass_enc = renderer.pass_enc
+        self.bind(pass_enc)
+        for batch in self.batches:
             batch.sprite_vu.sprite.bind(pass_enc)
             pass_enc.draw(4, batch.instance_count, 0, batch.first_instance)
+    '''

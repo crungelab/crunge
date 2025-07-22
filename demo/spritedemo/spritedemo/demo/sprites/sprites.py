@@ -26,34 +26,25 @@ class SpritesDemo(Demo):
         # Ship1
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         sprite = Sprite(texture)
-        x = self.width / 4
-        y = self.height / 4
-        '''
-        x = self.viewport.width / 4
-        y = self.viewport.height / 4
-        '''
 
-        position = glm.vec2(x, y)
-        node = self.node = Node2D(position, vu=SpriteVu(), model=sprite)
-        node.angle = 45
+        node = self.node = Node2D(vu=SpriteVu(), model=sprite)
 
         self.scene.attach(self.node)
 
         # Ship2
         texture = ImageTextureLoader().load(":images:/playerShip1_blue.png")
         sprite = Sprite(texture)
-        x = self.width / 2
-        y = self.height / 2
-        '''
-        x = self.viewport.width / 2
-        y = self.viewport.height / 2
-        '''
+        x = 128
+        y = 128
         
         position = glm.vec2(x, y)
-        node = self.node = Node2D(position, vu=SpriteVu(), model=sprite)
+        node = Node2D(position, vu=SpriteVu(), model=sprite)
 
-        self.scene.attach(self.node)
+        self.scene.attach(node)
 
+    def center_camera(self):
+        pass
+    
     def draw(self, renderer: Renderer):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)

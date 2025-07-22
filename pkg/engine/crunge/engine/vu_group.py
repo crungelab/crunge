@@ -18,6 +18,10 @@ class VuGroup(Vu, Generic[T_Vu]):
         self.visuals.extend(members)
 
     def remove(self, vu: T_Vu) -> None:
+        '''
+        if not vu in self.visuals:
+            return
+        '''
         self.visuals.remove(vu)
 
     def clear(self) -> None:
