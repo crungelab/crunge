@@ -4,8 +4,8 @@ from crunge.core import klass
 from crunge import wgpu
 
 from ..program import Program
-from ..resource.bind_group.bind_group_layout import BindGroupLayout
-from ..bindings import CameraBindGroupLayout
+from ..binding.bind_group_layout import BindGroupLayout
+from ..binding import CameraBindGroupLayout
 '''
 @klass.singleton
 class CameraBindGroupLayout(BindGroupLayout):

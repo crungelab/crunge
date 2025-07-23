@@ -6,9 +6,9 @@ from crunge import wgpu
 
 from ..render_pipeline import RenderPipeline
 
-from ..bindings import CameraBindGroupLayout
+from ..binding import CameraBindGroupLayout
 
-from .bindings_2d import (
+from .binding_2d import (
     SpriteBindGroupLayout,
     ModelBindGroupLayout,
 )

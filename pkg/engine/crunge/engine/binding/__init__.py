@@ -1,8 +1,9 @@
+from .bind_group_layout import BindGroupLayout
+from .bind_group import BindGroup
+
 class BindGroupIndex:
-    #VIEWPORT = 0
     CAMERA = 0
 
-#from .viewport import ViewportBindGroup, ViewportBindGroupLayout, ViewportBindIndex
 from .camera import (
     CameraBindGroup,
     CameraBindGroupLayout,

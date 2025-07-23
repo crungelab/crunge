@@ -10,13 +10,12 @@ from crunge.core import klass
 from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
 from ..viewport import Viewport, ViewportListener
-from ..bindings import CameraBindGroup
+from ..binding import CameraBindGroup
 
 from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
 
 from .program_2d import Program2D
-#from .bindings import CameraBindGroup
 
 
 @klass.singleton

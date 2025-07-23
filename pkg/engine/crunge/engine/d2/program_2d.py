@@ -5,12 +5,12 @@ from jinja2 import BaseLoader, PackageLoader
 
 from ..program import Program
 
-from ..bindings import (
+from ..binding import (
     BindGroupIndex,
     CameraBindIndex,
 )
 
-from .bindings_2d import (
+from .binding_2d import (
     BindGroupIndex,
     SpriteBindIndex,
     ModelBindIndex,

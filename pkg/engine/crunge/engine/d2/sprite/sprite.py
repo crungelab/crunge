@@ -13,7 +13,7 @@ from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
 from ..uniforms_2d import (
     SpriteUniform,
 )
-from ..bindings_2d import BindGroupIndex, SpriteBindGroup
+from ..binding_2d import BindGroupIndex, SpriteBindGroup
 
 from .sprite_sampler import DefaultSpriteSampler
 

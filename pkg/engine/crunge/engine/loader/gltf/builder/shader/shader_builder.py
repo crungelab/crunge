@@ -4,9 +4,8 @@ from ..gltf_builder import GltfBuilder
 from ..builder_context import BuilderContext
 from ..vertex_table import VertexTable
 
-from .....bindings import (
+from .....binding import (
     BindGroupIndex,
-    CameraBindGroupLayout,
     CameraBindIndex,
 )
 

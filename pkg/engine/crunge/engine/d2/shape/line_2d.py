@@ -16,7 +16,7 @@ from ..uniforms_2d import (
     ModelUniform,
     ShapeUniform,
 )
-from ..bindings_2d import ModelBindGroup, ShapeBindGroup
+from ..binding_2d import ModelBindGroup, ShapeBindGroup
 
 from .line_program_2d import LineProgram2D
 

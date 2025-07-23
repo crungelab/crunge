@@ -4,10 +4,10 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ..resource import Resource
+from ..base import Base
 
 
-class BindGroupLayout(Resource):
+class BindGroupLayout(Base):
     def __init__(
         self,
         entries: List[wgpu.BindGroupEntry],

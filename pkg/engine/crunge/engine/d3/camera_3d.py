@@ -10,7 +10,7 @@ from crunge import wgpu
 
 from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
-from ..bindings import CameraBindGroup
+from ..binding import CameraBindGroup
 
 if TYPE_CHECKING:
     from .renderer_3d import Renderer3D

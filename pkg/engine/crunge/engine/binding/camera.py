@@ -3,7 +3,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ..resource.bind_group import BindGroupLayout, BindGroup
+from . import BindGroupLayout, BindGroup
 
 from . import BindGroupIndex
 

@@ -10,7 +10,6 @@ from crunge import skia
 from ..base import Base
 from ..uniforms import ViewportUniform, cast_vec2
 
-# from ..bindings import ViewportBindGroup
 from ..render_options import RenderOptions
 from ..blitter import Blitter
 
@@ -30,12 +29,6 @@ class Viewport(Base):
         self.render_options = render_options
         self.listeners: List[ViewportListener] = []
 
-        """
-        self.use_depth_stencil = use_depth_stencil
-        self.use_msaa = use_msaa
-        self.sample_count = 4 if use_msaa else 1
-        self.use_snapshot = use_snapshot
-        """
         self.color_texture: wgpu.Texture = None
         self.color_texture_view: wgpu.TextureView = None
 
@@ -219,21 +212,6 @@ class Viewport(Base):
             self.uniform_buffer_size,
             wgpu.BufferUsage.UNIFORM,
         )
-
-    """
-    def create_bind_group(self):
-        self.bind_group = ViewportBindGroup(
-            self.uniform_buffer,
-            self.uniform_buffer_size,
-            self.snapshot_texture_view,
-            self.snapshot_sampler,
-        )
-    """
-
-    """
-    def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        self.bind_group.bind(pass_enc)
-    """
 
     def update_gpu(self):
         uniform = ViewportUniform()

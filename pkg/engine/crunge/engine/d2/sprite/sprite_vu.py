@@ -14,7 +14,7 @@ from ..vu_2d import Vu2D
 from ..uniforms_2d import (
     ModelUniform,
 )
-from ..bindings_2d import ModelBindGroup
+from ..binding_2d import ModelBindGroup
 
 from .sprite_program import SpriteProgram
 from .sprite import Sprite
@@ -32,7 +32,6 @@ class SpriteVu(Vu2D):
         self.program: SpriteProgram = None
         self.manual_draw = True
 
-        # self.bind_group: wgpu.BindGroup = None
         self.bind_group: ModelBindGroup = None
         self.buffer: UniformBuffer[ModelUniform] = None
         self._buffer_index = 0
