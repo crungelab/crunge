@@ -1,4 +1,4 @@
-from .builder_context import BuilderContext, SceneBuilderContext
+from .builder_context import BuilderContext
 from .map_builder import MapBuilder, DefaultMapBuilder
 from .object_builder import ObjectBuilder, DefaultObjectBuilder
 from .object_group_builder import ObjectGroupBuilder, DefaultObjectGroupBuilder

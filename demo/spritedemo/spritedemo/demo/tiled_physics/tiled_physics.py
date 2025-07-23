@@ -8,7 +8,7 @@ from crunge.engine.d2.physics import DynamicPhysicsEngine
 from crunge.engine.d2.physics.draw_options import DrawOptions
 
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.loader.tiled.builder.builder_context import SceneBuilderContext
+from crunge.engine.loader.tiled.builder.builder_context import BuilderContext
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
 from crunge.engine.loader.tiled.builder.tile_layer_builder import DefaultTileLayerBuilder
@@ -57,7 +57,7 @@ class TiledPhysicsDemo(Demo):
         self.scene.attach(ball)
 
     def create_map(self):
-        context = SceneBuilderContext(self.scene)
+        context = BuilderContext(self.scene)
 
         def create_node_cb(position, sprite, properties):
             return Tile(position, sprite)

@@ -1,4 +1,3 @@
-from typing import TYPE_CHECKING
 from ctypes import sizeof
 
 from loguru import logger
@@ -17,9 +16,6 @@ from ..uniforms_2d import (
 from ..binding_2d import SpriteBindGroup
 
 from .sprite_sampler import DefaultSpriteSampler
-
-if TYPE_CHECKING:
-    from .group.sprite_group import SpriteGroup
 
 
 class Sprite(Material):
@@ -43,9 +39,6 @@ class Sprite(Material):
         self._color = color
         self.points = points
         self.collision_rect = collision_rect
-
-        self.group: "SpriteGroup" = None
-
         self.bind_group: SpriteBindGroup = None
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0

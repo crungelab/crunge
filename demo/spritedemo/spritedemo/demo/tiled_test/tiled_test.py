@@ -5,7 +5,7 @@ from crunge import imgui
 from crunge.engine import Renderer
 
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.loader.tiled.builder.builder_context import SceneBuilderContext
+from crunge.engine.loader.tiled.builder import BuilderContext
 from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 
@@ -26,7 +26,7 @@ class TiledTestDemo(Demo):
         self.camera.zoom = 2.0
 
     def create_map(self):
-        context = SceneBuilderContext(scene=self.scene)
+        context = BuilderContext(scene=self.scene)
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/test.tmx")
         map_loader = TiledMapLoader(context, map_builder=DefaultMapBuilder(context))
         map_loader.load(tmx_path)

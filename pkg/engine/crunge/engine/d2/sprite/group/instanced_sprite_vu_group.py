@@ -1,13 +1,7 @@
 from loguru import logger
 
-from crunge import wgpu
-
 from ....renderer import Renderer
-from ....buffer import UniformBuffer
-from ...uniforms_2d import ModelUniform
-from ...binding_2d import ModelBindGroup
 
-from ..sprite import Sprite
 from ..sprite_vu import SpriteVu
 
 from .buffered_sprite_vu_group import BufferedSpriteVuGroup
