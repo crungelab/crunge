@@ -8,8 +8,7 @@ from ...binding_2d import ModelBindGroup
 
 from ..sprite import Sprite
 from ..sprite_vu import SpriteVu
-
-from .sprite_vu_group import SpriteVuGroup
+from ..sprite_vu_group import SpriteVuGroup
 
 ELEMENTS = 32
 

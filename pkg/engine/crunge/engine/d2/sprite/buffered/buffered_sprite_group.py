@@ -8,7 +8,7 @@ from ...binding_2d import SpriteBindGroup
 
 from ..sprite import Sprite
 
-from .sprite_group import SpriteGroup
+from ..sprite_group import SpriteGroup
 
 ELEMENTS = 32
 

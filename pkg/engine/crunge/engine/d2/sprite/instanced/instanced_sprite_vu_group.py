@@ -3,8 +3,8 @@ from loguru import logger
 from ....renderer import Renderer
 
 from ..sprite_vu import SpriteVu
+from ..buffered import BufferedSpriteVuGroup
 
-from .buffered_sprite_vu_group import BufferedSpriteVuGroup
 from .instanced_sprite_program import InstancedSpriteProgram
 
 ELEMENTS = 32

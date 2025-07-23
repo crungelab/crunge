@@ -1,8 +1,8 @@
 from loguru import logger
 
-from ....resource.material import MaterialGroup
+from ...resource.material import MaterialGroup
 
-from .. import Sprite
+from . import Sprite
 
 
 class SpriteGroup(MaterialGroup[Sprite]):

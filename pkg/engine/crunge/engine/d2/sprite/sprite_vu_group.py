@@ -1,9 +1,9 @@
 from loguru import logger
 
-from ....renderer import Renderer
-from ....vu_group import VuGroup
+from ...renderer import Renderer
+from ...vu_group import VuGroup
 
-from .. import SpriteVu
+from . import SpriteVu
 
 
 class SpriteVuGroup(VuGroup[SpriteVu]):

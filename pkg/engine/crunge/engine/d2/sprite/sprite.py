@@ -19,7 +19,7 @@ from ..binding_2d import SpriteBindGroup
 from .sprite_sampler import DefaultSpriteSampler
 
 if TYPE_CHECKING:
-    from .group.sprite_group import SpriteGroup
+    from .sprite_group import SpriteGroup
 
 
 class Sprite(Material):

@@ -20,7 +20,7 @@ from .sprite_program import SpriteProgram
 from .sprite import Sprite
 
 if TYPE_CHECKING:
-    from .group.sprite_vu_group import SpriteVuGroup
+    from .sprite_vu_group import SpriteVuGroup
 
 
 class SpriteVu(Vu2D):

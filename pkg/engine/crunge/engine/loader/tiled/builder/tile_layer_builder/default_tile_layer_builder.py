@@ -2,7 +2,7 @@ import glm
 from pytmx import TiledTileLayer
 
 from crunge.engine.d2.scene_layer_2d import SceneLayer2D
-from crunge.engine.d2.sprite.group.instanced_sprite_layer import InstancedSpriteLayer
+from crunge.engine.d2.sprite.instanced import InstancedSpriteLayer
 
 from crunge.engine.math import Bounds2
 
