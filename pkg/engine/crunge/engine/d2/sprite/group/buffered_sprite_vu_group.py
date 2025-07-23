@@ -29,17 +29,15 @@ class BufferedSpriteVuGroup(SpriteVuGroup):
         )
         logger.debug(f"Model Uniform Buffer: {self.model_storage_buffer}")
 
+    def _create(self):
+        super()._create()
         self.create_model_bind_group()
 
-    def clear(self):
-        super().clear()
-        self.batches.clear()
-
-    def append(self, sprite: SpriteVu) -> None:
-        super().append(sprite)
-        #sprite.group = self
-        sprite.buffer = self.model_storage_buffer
-        sprite.buffer_index = len(self.visuals) - 1
+    def append(self, vu: SpriteVu) -> None:
+        super().append(vu)
+        vu.group = self
+        vu.buffer = self.model_storage_buffer
+        vu.buffer_index = len(self.visuals) - 1
 
     def create_model_bind_group(self):
         self.model_bind_group = ModelBindGroup(

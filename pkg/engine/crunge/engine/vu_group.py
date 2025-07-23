@@ -8,10 +8,12 @@ T_Vu = TypeVar("T_Vu", bound=Vu)
 
 class VuGroup(Vu, Generic[T_Vu]):
     def __init__(self):
+        super().__init__()
         self.visuals: List[T_Vu] = []
         self.is_render_group = False
 
     def append(self, vu: T_Vu) -> None:
+        vu.group = self
         self.visuals.append(vu)
 
     def extend(self, members: List[T_Vu]) -> None:

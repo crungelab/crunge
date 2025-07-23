@@ -8,7 +8,7 @@ from .instanced_sprite_vu_group import InstancedSpriteVuGroup
 class InstancedSpriteLayer(SceneLayer2D):
     def __init__(self, name: str = "SpriteInstanceLayer", count: int = 32) -> None:
         super().__init__(name)
-        self.vu_group = InstancedSpriteVuGroup(count)
+        self.vu_group = InstancedSpriteVuGroup(count).create()
 
     def draw(self, renderer: Renderer) -> None:
         self.vu_group.draw(renderer)

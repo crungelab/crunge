@@ -53,7 +53,6 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
 
     def append(self, sprite: SpriteVu) -> None:
         super().append(sprite)
-        #sprite.group = self
         sprite.buffer = self.model_storage_buffer
         sprite.buffer_index = len(self.visuals) - 1
         self.batch(sprite)

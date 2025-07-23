@@ -28,15 +28,15 @@ class SpriteVu(Vu2D):
         super().__init__()
         self.sprite = sprite
 
+        self.group: "SpriteVuGroup" = None
+        self.program: SpriteProgram = None
+        self.manual_draw = True
+
         # self.bind_group: wgpu.BindGroup = None
         self.bind_group: ModelBindGroup = None
         self.buffer: UniformBuffer[ModelUniform] = None
         self._buffer_index = 0
 
-        self.program: SpriteProgram = None
-        self.group: "SpriteVuGroup" = None
-
-        self.manual_draw = True
 
     @property
     def buffer_index(self) -> int:
