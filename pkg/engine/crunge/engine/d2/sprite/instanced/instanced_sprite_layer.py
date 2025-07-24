@@ -4,11 +4,13 @@ from ... import Node2D
 from ...scene_layer_2d import SceneLayer2D
 
 from .instanced_sprite_vu_group import InstancedSpriteVuGroup
+#from ..buffered.buffered_sprite_group import BufferedSpriteGroup
 
 class InstancedSpriteLayer(SceneLayer2D):
     def __init__(self, name: str = "SpriteInstanceLayer", count: int = 32) -> None:
         super().__init__(name)
         self.vu_group = InstancedSpriteVuGroup(count).create()
+        #self.sprite_group = BufferedSpriteGroup(count).create()
 
     def draw(self, renderer: Renderer) -> None:
         self.vu_group.draw(renderer)

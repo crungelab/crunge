@@ -1,12 +1,14 @@
 from typing import TypeVar, Generic, List
 
+from ...base import Base
 from .material import Material
 
 T_Material = TypeVar("T_Material", bound=Material)
 
 
-class MaterialGroup(Generic[T_Material]):
+class MaterialGroup(Base, Generic[T_Material]):
     def __init__(self):
+        super().__init__()
         self.materials: List[T_Material] = []
 
     def append(self, vu: T_Material) -> None:

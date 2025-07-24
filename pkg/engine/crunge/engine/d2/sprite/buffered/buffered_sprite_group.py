@@ -4,7 +4,7 @@ from crunge import wgpu
 
 from ....buffer import UniformBuffer
 from ...uniforms_2d import SpriteUniform
-from ...binding_2d import SpriteBindGroup
+from ...binding_2d import SpriteBindGroup, SpriteBindGroupLayout
 
 from ..sprite import Sprite
 
@@ -41,8 +41,7 @@ class BufferedSpriteGroup(SpriteGroup):
     def create_bind_group(self):
         self.bind_group = SpriteBindGroup(
             self.storage_buffer.get(),
-            self.storage_buffer.size,
-            layout=self.program.render_pipeline.sprite_bind_group_layout,
+            self.storage_buffer.size
         )
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
