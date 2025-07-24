@@ -34,7 +34,7 @@ class BufferedSpriteVuGroup(SpriteVuGroup):
 
     def append(self, vu: SpriteVu) -> None:
         super().append(vu)
-        vu.group = self
+        #vu.group = self
         vu.buffer = self.storage_buffer
         vu.buffer_index = len(self.visuals) - 1
 

@@ -1,5 +1,7 @@
 from typing import TypeVar, Generic, List
 
+from loguru import logger
+
 from .renderer import Renderer
 from .vu import Vu
 
@@ -14,16 +16,16 @@ class VuGroup(Vu, Generic[T_Vu]):
 
     def append(self, vu: T_Vu) -> None:
         vu.group = self
+        if vu in self.visuals:
+            raise ValueError("Vu already in group")
         self.visuals.append(vu)
 
     def extend(self, members: List[T_Vu]) -> None:
         self.visuals.extend(members)
 
     def remove(self, vu: T_Vu) -> None:
-        '''
-        if not vu in self.visuals:
-            return
-        '''
+        logger.debug(f"Removing {vu} from {self}")
+        vu.group = None
         self.visuals.remove(vu)
 
     def clear(self) -> None:
