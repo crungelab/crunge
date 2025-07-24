@@ -6,6 +6,6 @@ struct Material {
     flipV : u32, // 1 = true, 0 = false
 }
 
-@group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.MATERIAL_UNIFORM}}) var<uniform> material : Material;
+//@group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.MATERIAL_UNIFORM}}) var<uniform> material : Material;
 @group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.SAMPLER}}) var mySampler: sampler;
 @group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.TEXTURE}}) var myTexture : texture_2d<f32>;

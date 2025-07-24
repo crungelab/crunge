@@ -5,9 +5,8 @@
 {% include '_sprite.wgsl' %}
 
 struct VertexOutput {
-    @builtin(position) vertex_pos : vec4<f32>,
-    @location(0) uv: vec2<f32>,
-    @location(1) color: vec4<f32>,
+  @builtin(position) vertex_pos : vec4<f32>,
+  @location(0) uv: vec2<f32>,
 }
 
 @vertex
@@ -22,16 +21,16 @@ fn vs_main(@builtin(vertex_index) idx: u32) -> VertexOutput {
     let uv = compute_uv(
         idx,
         rect,
-        model.textureSize,
-        model.flipH != 0u,
-        model.flipV != 0u
+        material.textureSize,
+        material.flipH != 0u,
+        material.flipV != 0u
     );
 
-    return VertexOutput(vert_pos, uv,  model.color);
+    return VertexOutput(vert_pos, uv);
 }
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     let color = textureSample(myTexture, mySampler, in.uv);
-    return color * in.color;
+    return color * material.color;
 }

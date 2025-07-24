@@ -5,7 +5,7 @@ import glm
 
 from crunge import wgpu
 
-from ...uniforms import cast_matrix4, cast_vec4, cast_vec2, cast_tuple4f
+from ...uniforms import cast_matrix4
 from ...renderer import Renderer
 from ...buffer import UniformBuffer
 
@@ -64,7 +64,6 @@ class SpriteVu(Vu2D):
         super().on_node_model_change(node)
         #logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
-        self.update_gpu()
 
     def _create(self):
         super()._create()
@@ -105,24 +104,10 @@ class SpriteVu(Vu2D):
 
     def on_transform(self) -> None:
         super().on_transform()
-        self.update_gpu()
+        model_uniform = ModelUniform()
+        model_uniform.transform.data = cast_matrix4(self.transform)
 
-    def update_gpu(self):
-        uniform = ModelUniform()
-        uniform.transform.data = cast_matrix4(self.transform)
-
-        uniform.color = cast_tuple4f(self.sprite.color)
-
-        rect = self.sprite.rect
-        uniform.rect = cast_vec4(
-            glm.vec4(rect.x, rect.y, rect.width, rect.height)
-        )
-        uniform.texture_size = cast_vec2(self.sprite.texture.size)
-
-        uniform.flip_h = 1 if self.sprite.flip_h else 0
-        uniform.flip_v = 1 if self.sprite.flip_v else 0
-
-        self.buffer[self.buffer_index] = uniform
+        self.buffer[self.buffer_index] = model_uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         pass_enc.set_pipeline(self.program.render_pipeline.get())

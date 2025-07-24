@@ -9,14 +9,21 @@ from .. import BindGroupIndex
 
 
 class SpriteBindIndex:
-    TEXTURE = 0
-    SAMPLER = 1
+    MATERIAL_UNIFORM = 0
+    TEXTURE = 1
+    SAMPLER = 2
 
 
 @klass.singleton
 class SpriteBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
         entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=SpriteBindIndex.MATERIAL_UNIFORM,
+                # visibility=wgpu.ShaderStage.FRAGMENT,
+                visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
+                buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
+            ),
             wgpu.BindGroupLayoutEntry(
                 binding=SpriteBindIndex.TEXTURE,
                 visibility=wgpu.ShaderStage.FRAGMENT,
@@ -47,6 +54,11 @@ class SpriteBindGroup(BindGroup):
         index: int = BindGroupIndex.MATERIAL,
     ) -> None:
         entries = [
+            wgpu.BindGroupEntry(
+                binding=SpriteBindIndex.MATERIAL_UNIFORM,
+                buffer=uniform_buffer,
+                size=uniform_buffer_size,
+            ),
             wgpu.BindGroupEntry(
                 binding=SpriteBindIndex.TEXTURE, texture_view=texture_view
             ),
