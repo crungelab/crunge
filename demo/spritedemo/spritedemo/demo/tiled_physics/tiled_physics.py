@@ -70,16 +70,10 @@ class TiledPhysicsDemo(Demo):
         map_loader.load(tmx_path)
 
     def draw(self, renderer: Renderer):
-        # Display timings
-        update_output = f"Update time: {self.update_time:.3f}"
-        drawing_output = f"Drawing time: {self.draw_time:.3f}"
-
         imgui.begin("Tiled Physics Demo")
-
-        imgui.text(update_output)
-        imgui.text(drawing_output)
-
         imgui.text("Click to create balls")
+
+        self.draw_stats()
 
         _, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)
 

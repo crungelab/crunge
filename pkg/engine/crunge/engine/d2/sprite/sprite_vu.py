@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 class SpriteVu(Vu2D):
     def __init__(self, sprite: Sprite = None) -> None:
         super().__init__()
-        self.sprite = sprite
+        self._sprite = sprite
 
         self.group: "SpriteVuGroup" = None
         self.program: SpriteProgram = None
@@ -37,6 +37,16 @@ class SpriteVu(Vu2D):
         self._buffer_index = 0
 
 
+    @property
+    def sprite(self) -> Sprite:
+        return self._sprite
+    
+    @sprite.setter
+    def sprite(self, value: Sprite):
+        self._sprite = value
+        if self.enabled:
+            self.update_gpu()
+    
     @property
     def buffer_index(self) -> int:
         return self._buffer_index
@@ -64,7 +74,6 @@ class SpriteVu(Vu2D):
         super().on_node_model_change(node)
         #logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
-        self.update_gpu()
 
     def _create(self):
         super()._create()
@@ -105,7 +114,8 @@ class SpriteVu(Vu2D):
 
     def on_transform(self) -> None:
         super().on_transform()
-        self.update_gpu()
+        if self.enabled:
+            self.update_gpu()
 
     def update_gpu(self):
         uniform = ModelUniform()

@@ -86,6 +86,8 @@ class SpaceShooter(Demo):
 
         imgui.begin("Ship")
 
+        self.draw_stats()
+        
         if imgui.button("Reset"):
             self.reset()
 

@@ -5,6 +5,7 @@ from loguru import logger
 import glm
 
 from crunge import sdl
+from crunge import imgui
 from crunge import engine
 
 from crunge.engine import Renderer
@@ -78,6 +79,13 @@ class Demo(engine.App):
         super().draw(renderer)
 
         self.draw_time = timeit.default_timer() - draw_start_time
+
+    def draw_stats(self):
+            # Display timings
+        update_output = f"Update time: {self.update_time:.3f}"
+        drawing_output = f"Drawing time: {self.draw_time:.3f}"
+        imgui.text(update_output)
+        imgui.text(drawing_output)
 
     def update(self, delta_time: float):
         start_time = timeit.default_timer()

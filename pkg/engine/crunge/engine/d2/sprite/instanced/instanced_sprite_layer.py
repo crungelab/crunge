@@ -19,8 +19,6 @@ class InstancedSpriteLayer(SceneLayer2D):
         self.vu_group.append(node.vu)
         super().attach(node)
 
-    '''
     def detach(self, node: Node2D) -> None:
         self.vu_group.remove(node.vu)
         super().detach(node)
-    '''
