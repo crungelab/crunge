@@ -38,6 +38,12 @@ class BufferedSpriteVuGroup(SpriteVuGroup):
         vu.buffer = self.storage_buffer
         vu.buffer_index = len(self.visuals) - 1
 
+    def remove(self, vu: SpriteVu):
+        super().remove(vu)
+        #vu.group = None
+        for index, vu in enumerate(self.visuals):
+            vu.buffer_index = index
+
     def create_bind_group(self):
         self.bind_group = ModelBindGroup(
             self.storage_buffer.get(),

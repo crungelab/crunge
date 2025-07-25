@@ -173,6 +173,7 @@ class Sprite(Material):
         uniform.flip_v = 1 if self.flip_v else 0
 
         self.device.queue.write_buffer(self.uniform_buffer, 0, uniform)
+        
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.bind_group.bind(pass_enc)

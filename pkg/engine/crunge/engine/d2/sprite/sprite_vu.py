@@ -93,6 +93,7 @@ class SpriteVu(Vu2D):
     def destroy(self):
         if self.group is not None:
             self.group.remove(self)
+        super().destroy()
 
     """
     def __del__(self):
