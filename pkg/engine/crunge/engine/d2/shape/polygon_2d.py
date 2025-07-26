@@ -29,7 +29,6 @@ vertex_dtype = np.dtype(
 
 
 class Polygon2D(Vu2D):
-    material_bind_group: ShapeBindGroup = None
     model_bind_group: ModelBindGroup = None
 
     vertices: np.ndarray = None
@@ -37,9 +36,6 @@ class Polygon2D(Vu2D):
 
     model_uniform_buffer: wgpu.Buffer = None
     model_uniform_buffer_size: int = 0
-
-    material_uniform_buffer: wgpu.Buffer = None
-    material_uniform_buffer_size: int = 0
 
     def __init__(self, points: list[glm.vec2], color=colors.WHITE) -> None:
         super().__init__()
@@ -53,7 +49,6 @@ class Polygon2D(Vu2D):
         self.create_buffers()
         self.create_bind_groups()
         self.on_transform()
-        self.on_material()
 
     @property
     def size(self) -> glm.vec2:
@@ -74,7 +69,7 @@ class Polygon2D(Vu2D):
     @color.setter
     def color(self, value: glm.vec4) -> None:
         self._color = value
-        self.on_material()
+        self.update_gpu()
 
     def create_vertices(self):
         # Create an empty array with the structured dtype
@@ -103,42 +98,26 @@ class Polygon2D(Vu2D):
             wgpu.BufferUsage.UNIFORM,
         )
 
-        self.material_uniform_buffer_size = sizeof(ShapeUniform)
-        self.material_uniform_buffer = self.gfx.create_buffer(
-            "Material Buffer",
-            self.material_uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-
     def create_bind_groups(self):
         self.model_bind_group = ModelBindGroup(
             self.model_uniform_buffer,
             self.model_uniform_buffer_size,
         )
-        self.material_bind_group = ShapeBindGroup(
-            self.material_uniform_buffer,
-            self.material_uniform_buffer_size,
-        )
 
     def on_transform(self) -> None:
         super().on_transform()
+        self.update_gpu()
+
+    def update_gpu(self):
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
+        model_uniform.color = cast_tuple4f(self.color)
 
         self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
-
-    def on_material(self) -> None:
-        #super().on_material()
-        material_uniform = ShapeUniform()
-        material_uniform.color = cast_tuple4f(self.color)
-        self.gfx.queue.write_buffer(
-            self.material_uniform_buffer, 0, material_uniform
-        )
 
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)
-        self.material_bind_group.bind(pass_enc)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(len(self.vertices), 1, 0, 0)  # Dynamic vertex count

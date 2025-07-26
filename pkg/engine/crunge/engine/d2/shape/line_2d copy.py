@@ -13,9 +13,10 @@ from ... import colors
 
 from ..vu_2d import Vu2D
 from ..uniforms_2d import (
-    ModelUniform
+    ModelUniform,
+    ShapeUniform,
 )
-from ..binding_2d import ModelBindGroup
+from ..binding_2d import ModelBindGroup, ShapeBindGroup
 
 from .line_program_2d import LineProgram2D
 
@@ -29,12 +30,16 @@ vertex_dtype = np.dtype(
 
 class Line2D(Vu2D):
     model_bind_group: ModelBindGroup = None
+    material_bind_group: ShapeBindGroup = None
 
     vertices: np.ndarray = None
     vertex_buffer: wgpu.Buffer = None
 
     model_uniform_buffer: wgpu.Buffer = None
     model_uniform_buffer_size: int = 0
+
+    material_uniform_buffer: wgpu.Buffer = None
+    material_uniform_buffer_size: int = 0
 
     def __init__(
         self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE
@@ -52,6 +57,7 @@ class Line2D(Vu2D):
         self.create_buffers()
         self.create_bind_groups()
         self.on_transform()
+        self.on_material()
 
     @property
     def size(self) -> glm.vec2:
@@ -72,7 +78,7 @@ class Line2D(Vu2D):
     @color.setter
     def color(self, value: glm.vec4) -> None:
         self._color = value
-        self.update_gpu()
+        self.on_material()
 
     def create_vertices(self):
         # Create an empty array with the structured dtype
@@ -98,26 +104,42 @@ class Line2D(Vu2D):
             wgpu.BufferUsage.UNIFORM,
         )
 
+        self.material_uniform_buffer_size = sizeof(ShapeUniform)
+        self.material_uniform_buffer = self.gfx.create_buffer(
+            "Material Buffer",
+            self.material_uniform_buffer_size,
+            wgpu.BufferUsage.UNIFORM,
+        )
+
     def create_bind_groups(self):
         self.model_bind_group = ModelBindGroup(
             self.model_uniform_buffer,
             self.model_uniform_buffer_size,
         )
+        self.material_bind_group = ShapeBindGroup(
+            self.material_uniform_buffer,
+            self.material_uniform_buffer_size,
+        )
 
     def on_transform(self) -> None:
         super().on_transform()
-        self.update_gpu()
-
-    def update_gpu(self):
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
-        model_uniform.color = cast_tuple4f(self.color)
 
         self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
-        
+
+    def on_material(self) -> None:
+        #super().on_material()
+        material_uniform = ShapeUniform()
+        material_uniform.color = cast_tuple4f(self.color)
+        self.gfx.queue.write_buffer(
+            self.material_uniform_buffer, 0, material_uniform
+        )
+
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)
+        self.material_bind_group.bind(pass_enc)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(2, 1, 0, 0)  # Drawing 2 vertices (a single line)

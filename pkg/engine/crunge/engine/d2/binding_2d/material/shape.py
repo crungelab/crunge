@@ -9,7 +9,7 @@ from .. import BindGroupIndex
 
 
 class ShapeBindIndex:
-    MATERIAL_UNIFORM = 0
+    MODEL_UNIFORM = 0
 
 
 @klass.singleton
@@ -17,7 +17,7 @@ class ShapeBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
         entries = [
             wgpu.BindGroupLayoutEntry(
-                binding=ShapeBindIndex.MATERIAL_UNIFORM,
+                binding=ShapeBindIndex.MODEL_UNIFORM,
                 # visibility=wgpu.ShaderStage.FRAGMENT,
                 visibility=wgpu.ShaderStage.VERTEX | wgpu.ShaderStage.FRAGMENT,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
@@ -32,12 +32,12 @@ class ShapeBindGroup(BindGroup):
         self,
         uniform_buffer: wgpu.Buffer,
         uniform_buffer_size: int,
-        index: int = BindGroupIndex.MATERIAL,
+        index: int = BindGroupIndex.MODEL,
     ) -> None:
         entries = wgpu.BindGroupEntries(
             [
                 wgpu.BindGroupEntry(
-                    binding=ShapeBindIndex.MATERIAL_UNIFORM,
+                    binding=ShapeBindIndex.MODEL_UNIFORM,
                     buffer=uniform_buffer,
                     size=uniform_buffer_size,
                 ),

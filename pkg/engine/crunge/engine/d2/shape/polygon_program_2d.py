@@ -8,6 +8,7 @@ from crunge import wgpu
 from crunge.engine.d2.program_2d import Program2D
 
 from ...loader.shader_loader import ShaderLoader
+from ...binding import BindGroupLayout
 
 from ..binding_2d import ShapeBindGroupLayout
 from ..render_pipeline_2d import RenderPipeline2D
@@ -16,7 +17,7 @@ from ..render_pipeline_2d import RenderPipeline2D
 class PolygonRenderPipeline2D(RenderPipeline2D):
     @property
     def material_bind_group_layout(self):
-        return ShapeBindGroupLayout()
+        return BindGroupLayout(entries=[], label="Polygon Material Layout")
 
     def create_vertex_state(self):
         vertex_attributes = [

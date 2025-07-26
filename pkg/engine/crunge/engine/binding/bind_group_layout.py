@@ -3,6 +3,7 @@ from typing import List
 from loguru import logger
 
 from crunge import wgpu
+from crunge.core import klass
 
 from ..base import Base
 

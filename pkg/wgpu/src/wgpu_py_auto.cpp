@@ -3446,43 +3446,244 @@ py::class_<Limits> _Limits(m, "Limits");
 registry.on(m, "Limits", _Limits);
 
 _Limits
-    .def_readonly("next_in_chain", &pywgpu::Limits::nextInChain)
-    .def_readonly("max_texture_dimension_1D", &pywgpu::Limits::maxTextureDimension1D)
-    .def_readonly("max_texture_dimension_2D", &pywgpu::Limits::maxTextureDimension2D)
-    .def_readonly("max_texture_dimension_3D", &pywgpu::Limits::maxTextureDimension3D)
-    .def_readonly("max_texture_array_layers", &pywgpu::Limits::maxTextureArrayLayers)
-    .def_readonly("max_bind_groups", &pywgpu::Limits::maxBindGroups)
-    .def_readonly("max_bind_groups_plus_vertex_buffers", &pywgpu::Limits::maxBindGroupsPlusVertexBuffers)
-    .def_readonly("max_bindings_per_bind_group", &pywgpu::Limits::maxBindingsPerBindGroup)
-    .def_readonly("max_dynamic_uniform_buffers_per_pipeline_layout", &pywgpu::Limits::maxDynamicUniformBuffersPerPipelineLayout)
-    .def_readonly("max_dynamic_storage_buffers_per_pipeline_layout", &pywgpu::Limits::maxDynamicStorageBuffersPerPipelineLayout)
-    .def_readonly("max_sampled_textures_per_shader_stage", &pywgpu::Limits::maxSampledTexturesPerShaderStage)
-    .def_readonly("max_samplers_per_shader_stage", &pywgpu::Limits::maxSamplersPerShaderStage)
-    .def_readonly("max_storage_buffers_per_shader_stage", &pywgpu::Limits::maxStorageBuffersPerShaderStage)
-    .def_readonly("max_storage_textures_per_shader_stage", &pywgpu::Limits::maxStorageTexturesPerShaderStage)
-    .def_readonly("max_uniform_buffers_per_shader_stage", &pywgpu::Limits::maxUniformBuffersPerShaderStage)
-    .def_readonly("max_uniform_buffer_binding_size", &pywgpu::Limits::maxUniformBufferBindingSize)
-    .def_readonly("max_storage_buffer_binding_size", &pywgpu::Limits::maxStorageBufferBindingSize)
-    .def_readonly("min_uniform_buffer_offset_alignment", &pywgpu::Limits::minUniformBufferOffsetAlignment)
-    .def_readonly("min_storage_buffer_offset_alignment", &pywgpu::Limits::minStorageBufferOffsetAlignment)
-    .def_readonly("max_vertex_buffers", &pywgpu::Limits::maxVertexBuffers)
-    .def_readonly("max_buffer_size", &pywgpu::Limits::maxBufferSize)
-    .def_readonly("max_vertex_attributes", &pywgpu::Limits::maxVertexAttributes)
-    .def_readonly("max_vertex_buffer_array_stride", &pywgpu::Limits::maxVertexBufferArrayStride)
-    .def_readonly("max_inter_stage_shader_variables", &pywgpu::Limits::maxInterStageShaderVariables)
-    .def_readonly("max_color_attachments", &pywgpu::Limits::maxColorAttachments)
-    .def_readonly("max_color_attachment_bytes_per_sample", &pywgpu::Limits::maxColorAttachmentBytesPerSample)
-    .def_readonly("max_compute_workgroup_storage_size", &pywgpu::Limits::maxComputeWorkgroupStorageSize)
-    .def_readonly("max_compute_invocations_per_workgroup", &pywgpu::Limits::maxComputeInvocationsPerWorkgroup)
-    .def_readonly("max_compute_workgroup_size_x", &pywgpu::Limits::maxComputeWorkgroupSizeX)
-    .def_readonly("max_compute_workgroup_size_y", &pywgpu::Limits::maxComputeWorkgroupSizeY)
-    .def_readonly("max_compute_workgroup_size_z", &pywgpu::Limits::maxComputeWorkgroupSizeZ)
-    .def_readonly("max_compute_workgroups_per_dimension", &pywgpu::Limits::maxComputeWorkgroupsPerDimension)
-    .def_readonly("max_storage_buffers_in_vertex_stage", &pywgpu::Limits::maxStorageBuffersInVertexStage)
-    .def_readonly("max_storage_textures_in_vertex_stage", &pywgpu::Limits::maxStorageTexturesInVertexStage)
-    .def_readonly("max_storage_buffers_in_fragment_stage", &pywgpu::Limits::maxStorageBuffersInFragmentStage)
-    .def_readonly("max_storage_textures_in_fragment_stage", &pywgpu::Limits::maxStorageTexturesInFragmentStage)
-    .def(py::init<>())
+    .def_readwrite("next_in_chain", &pywgpu::Limits::nextInChain)
+    .def_readwrite("max_texture_dimension_1D", &pywgpu::Limits::maxTextureDimension1D)
+    .def_readwrite("max_texture_dimension_2D", &pywgpu::Limits::maxTextureDimension2D)
+    .def_readwrite("max_texture_dimension_3D", &pywgpu::Limits::maxTextureDimension3D)
+    .def_readwrite("max_texture_array_layers", &pywgpu::Limits::maxTextureArrayLayers)
+    .def_readwrite("max_bind_groups", &pywgpu::Limits::maxBindGroups)
+    .def_readwrite("max_bind_groups_plus_vertex_buffers", &pywgpu::Limits::maxBindGroupsPlusVertexBuffers)
+    .def_readwrite("max_bindings_per_bind_group", &pywgpu::Limits::maxBindingsPerBindGroup)
+    .def_readwrite("max_dynamic_uniform_buffers_per_pipeline_layout", &pywgpu::Limits::maxDynamicUniformBuffersPerPipelineLayout)
+    .def_readwrite("max_dynamic_storage_buffers_per_pipeline_layout", &pywgpu::Limits::maxDynamicStorageBuffersPerPipelineLayout)
+    .def_readwrite("max_sampled_textures_per_shader_stage", &pywgpu::Limits::maxSampledTexturesPerShaderStage)
+    .def_readwrite("max_samplers_per_shader_stage", &pywgpu::Limits::maxSamplersPerShaderStage)
+    .def_readwrite("max_storage_buffers_per_shader_stage", &pywgpu::Limits::maxStorageBuffersPerShaderStage)
+    .def_readwrite("max_storage_textures_per_shader_stage", &pywgpu::Limits::maxStorageTexturesPerShaderStage)
+    .def_readwrite("max_uniform_buffers_per_shader_stage", &pywgpu::Limits::maxUniformBuffersPerShaderStage)
+    .def_readwrite("max_uniform_buffer_binding_size", &pywgpu::Limits::maxUniformBufferBindingSize)
+    .def_readwrite("max_storage_buffer_binding_size", &pywgpu::Limits::maxStorageBufferBindingSize)
+    .def_readwrite("min_uniform_buffer_offset_alignment", &pywgpu::Limits::minUniformBufferOffsetAlignment)
+    .def_readwrite("min_storage_buffer_offset_alignment", &pywgpu::Limits::minStorageBufferOffsetAlignment)
+    .def_readwrite("max_vertex_buffers", &pywgpu::Limits::maxVertexBuffers)
+    .def_readwrite("max_buffer_size", &pywgpu::Limits::maxBufferSize)
+    .def_readwrite("max_vertex_attributes", &pywgpu::Limits::maxVertexAttributes)
+    .def_readwrite("max_vertex_buffer_array_stride", &pywgpu::Limits::maxVertexBufferArrayStride)
+    .def_readwrite("max_inter_stage_shader_variables", &pywgpu::Limits::maxInterStageShaderVariables)
+    .def_readwrite("max_color_attachments", &pywgpu::Limits::maxColorAttachments)
+    .def_readwrite("max_color_attachment_bytes_per_sample", &pywgpu::Limits::maxColorAttachmentBytesPerSample)
+    .def_readwrite("max_compute_workgroup_storage_size", &pywgpu::Limits::maxComputeWorkgroupStorageSize)
+    .def_readwrite("max_compute_invocations_per_workgroup", &pywgpu::Limits::maxComputeInvocationsPerWorkgroup)
+    .def_readwrite("max_compute_workgroup_size_x", &pywgpu::Limits::maxComputeWorkgroupSizeX)
+    .def_readwrite("max_compute_workgroup_size_y", &pywgpu::Limits::maxComputeWorkgroupSizeY)
+    .def_readwrite("max_compute_workgroup_size_z", &pywgpu::Limits::maxComputeWorkgroupSizeZ)
+    .def_readwrite("max_compute_workgroups_per_dimension", &pywgpu::Limits::maxComputeWorkgroupsPerDimension)
+    .def_readwrite("max_storage_buffers_in_vertex_stage", &pywgpu::Limits::maxStorageBuffersInVertexStage)
+    .def_readwrite("max_storage_textures_in_vertex_stage", &pywgpu::Limits::maxStorageTexturesInVertexStage)
+    .def_readwrite("max_storage_buffers_in_fragment_stage", &pywgpu::Limits::maxStorageBuffersInFragmentStage)
+    .def_readwrite("max_storage_textures_in_fragment_stage", &pywgpu::Limits::maxStorageTexturesInFragmentStage)
+    .def(py::init([](const py::kwargs& kwargs) {
+        pywgpu::Limits obj{};
+        static const std::set<std::string> allowed = {"next_in_chain", "max_texture_dimension_1D", "max_texture_dimension_2D", "max_texture_dimension_3D", "max_texture_array_layers", "max_bind_groups", "max_bind_groups_plus_vertex_buffers", "max_bindings_per_bind_group", "max_dynamic_uniform_buffers_per_pipeline_layout", "max_dynamic_storage_buffers_per_pipeline_layout", "max_sampled_textures_per_shader_stage", "max_samplers_per_shader_stage", "max_storage_buffers_per_shader_stage", "max_storage_textures_per_shader_stage", "max_uniform_buffers_per_shader_stage", "max_uniform_buffer_binding_size", "max_storage_buffer_binding_size", "min_uniform_buffer_offset_alignment", "min_storage_buffer_offset_alignment", "max_vertex_buffers", "max_buffer_size", "max_vertex_attributes", "max_vertex_buffer_array_stride", "max_inter_stage_shader_variables", "max_color_attachments", "max_color_attachment_bytes_per_sample", "max_compute_workgroup_storage_size", "max_compute_invocations_per_workgroup", "max_compute_workgroup_size_x", "max_compute_workgroup_size_y", "max_compute_workgroup_size_z", "max_compute_workgroups_per_dimension", "max_storage_buffers_in_vertex_stage", "max_storage_textures_in_vertex_stage", "max_storage_buffers_in_fragment_stage", "max_storage_textures_in_fragment_stage"};
+        static const std::set<std::string> required = {};
+        
+        // Check for unknown keys
+        for (auto& item : kwargs) {
+            std::string key = py::cast<std::string>(item.first);
+            if (!allowed.count(key)) {
+                throw py::key_error("Unknown keyword argument: '" + key + "'");
+            }
+        }
+
+        // Check for required keys
+        for (const auto& key : required) {
+            if (!kwargs.contains(key.c_str())) {
+                throw py::key_error("Missing required keyword argument: '" + key + "'");
+            }
+        }
+        
+        if (kwargs.contains("next_in_chain"))
+        {
+            auto value = kwargs["next_in_chain"].cast<ChainedStructOut *>();
+            obj.nextInChain = value;
+        }
+        if (kwargs.contains("max_texture_dimension_1D"))
+        {
+            auto value = kwargs["max_texture_dimension_1D"].cast<uint32_t>();
+            obj.maxTextureDimension1D = value;
+        }
+        if (kwargs.contains("max_texture_dimension_2D"))
+        {
+            auto value = kwargs["max_texture_dimension_2D"].cast<uint32_t>();
+            obj.maxTextureDimension2D = value;
+        }
+        if (kwargs.contains("max_texture_dimension_3D"))
+        {
+            auto value = kwargs["max_texture_dimension_3D"].cast<uint32_t>();
+            obj.maxTextureDimension3D = value;
+        }
+        if (kwargs.contains("max_texture_array_layers"))
+        {
+            auto value = kwargs["max_texture_array_layers"].cast<uint32_t>();
+            obj.maxTextureArrayLayers = value;
+        }
+        if (kwargs.contains("max_bind_groups"))
+        {
+            auto value = kwargs["max_bind_groups"].cast<uint32_t>();
+            obj.maxBindGroups = value;
+        }
+        if (kwargs.contains("max_bind_groups_plus_vertex_buffers"))
+        {
+            auto value = kwargs["max_bind_groups_plus_vertex_buffers"].cast<uint32_t>();
+            obj.maxBindGroupsPlusVertexBuffers = value;
+        }
+        if (kwargs.contains("max_bindings_per_bind_group"))
+        {
+            auto value = kwargs["max_bindings_per_bind_group"].cast<uint32_t>();
+            obj.maxBindingsPerBindGroup = value;
+        }
+        if (kwargs.contains("max_dynamic_uniform_buffers_per_pipeline_layout"))
+        {
+            auto value = kwargs["max_dynamic_uniform_buffers_per_pipeline_layout"].cast<uint32_t>();
+            obj.maxDynamicUniformBuffersPerPipelineLayout = value;
+        }
+        if (kwargs.contains("max_dynamic_storage_buffers_per_pipeline_layout"))
+        {
+            auto value = kwargs["max_dynamic_storage_buffers_per_pipeline_layout"].cast<uint32_t>();
+            obj.maxDynamicStorageBuffersPerPipelineLayout = value;
+        }
+        if (kwargs.contains("max_sampled_textures_per_shader_stage"))
+        {
+            auto value = kwargs["max_sampled_textures_per_shader_stage"].cast<uint32_t>();
+            obj.maxSampledTexturesPerShaderStage = value;
+        }
+        if (kwargs.contains("max_samplers_per_shader_stage"))
+        {
+            auto value = kwargs["max_samplers_per_shader_stage"].cast<uint32_t>();
+            obj.maxSamplersPerShaderStage = value;
+        }
+        if (kwargs.contains("max_storage_buffers_per_shader_stage"))
+        {
+            auto value = kwargs["max_storage_buffers_per_shader_stage"].cast<uint32_t>();
+            obj.maxStorageBuffersPerShaderStage = value;
+        }
+        if (kwargs.contains("max_storage_textures_per_shader_stage"))
+        {
+            auto value = kwargs["max_storage_textures_per_shader_stage"].cast<uint32_t>();
+            obj.maxStorageTexturesPerShaderStage = value;
+        }
+        if (kwargs.contains("max_uniform_buffers_per_shader_stage"))
+        {
+            auto value = kwargs["max_uniform_buffers_per_shader_stage"].cast<uint32_t>();
+            obj.maxUniformBuffersPerShaderStage = value;
+        }
+        if (kwargs.contains("max_uniform_buffer_binding_size"))
+        {
+            auto value = kwargs["max_uniform_buffer_binding_size"].cast<uint64_t>();
+            obj.maxUniformBufferBindingSize = value;
+        }
+        if (kwargs.contains("max_storage_buffer_binding_size"))
+        {
+            auto value = kwargs["max_storage_buffer_binding_size"].cast<uint64_t>();
+            obj.maxStorageBufferBindingSize = value;
+        }
+        if (kwargs.contains("min_uniform_buffer_offset_alignment"))
+        {
+            auto value = kwargs["min_uniform_buffer_offset_alignment"].cast<uint32_t>();
+            obj.minUniformBufferOffsetAlignment = value;
+        }
+        if (kwargs.contains("min_storage_buffer_offset_alignment"))
+        {
+            auto value = kwargs["min_storage_buffer_offset_alignment"].cast<uint32_t>();
+            obj.minStorageBufferOffsetAlignment = value;
+        }
+        if (kwargs.contains("max_vertex_buffers"))
+        {
+            auto value = kwargs["max_vertex_buffers"].cast<uint32_t>();
+            obj.maxVertexBuffers = value;
+        }
+        if (kwargs.contains("max_buffer_size"))
+        {
+            auto value = kwargs["max_buffer_size"].cast<uint64_t>();
+            obj.maxBufferSize = value;
+        }
+        if (kwargs.contains("max_vertex_attributes"))
+        {
+            auto value = kwargs["max_vertex_attributes"].cast<uint32_t>();
+            obj.maxVertexAttributes = value;
+        }
+        if (kwargs.contains("max_vertex_buffer_array_stride"))
+        {
+            auto value = kwargs["max_vertex_buffer_array_stride"].cast<uint32_t>();
+            obj.maxVertexBufferArrayStride = value;
+        }
+        if (kwargs.contains("max_inter_stage_shader_variables"))
+        {
+            auto value = kwargs["max_inter_stage_shader_variables"].cast<uint32_t>();
+            obj.maxInterStageShaderVariables = value;
+        }
+        if (kwargs.contains("max_color_attachments"))
+        {
+            auto value = kwargs["max_color_attachments"].cast<uint32_t>();
+            obj.maxColorAttachments = value;
+        }
+        if (kwargs.contains("max_color_attachment_bytes_per_sample"))
+        {
+            auto value = kwargs["max_color_attachment_bytes_per_sample"].cast<uint32_t>();
+            obj.maxColorAttachmentBytesPerSample = value;
+        }
+        if (kwargs.contains("max_compute_workgroup_storage_size"))
+        {
+            auto value = kwargs["max_compute_workgroup_storage_size"].cast<uint32_t>();
+            obj.maxComputeWorkgroupStorageSize = value;
+        }
+        if (kwargs.contains("max_compute_invocations_per_workgroup"))
+        {
+            auto value = kwargs["max_compute_invocations_per_workgroup"].cast<uint32_t>();
+            obj.maxComputeInvocationsPerWorkgroup = value;
+        }
+        if (kwargs.contains("max_compute_workgroup_size_x"))
+        {
+            auto value = kwargs["max_compute_workgroup_size_x"].cast<uint32_t>();
+            obj.maxComputeWorkgroupSizeX = value;
+        }
+        if (kwargs.contains("max_compute_workgroup_size_y"))
+        {
+            auto value = kwargs["max_compute_workgroup_size_y"].cast<uint32_t>();
+            obj.maxComputeWorkgroupSizeY = value;
+        }
+        if (kwargs.contains("max_compute_workgroup_size_z"))
+        {
+            auto value = kwargs["max_compute_workgroup_size_z"].cast<uint32_t>();
+            obj.maxComputeWorkgroupSizeZ = value;
+        }
+        if (kwargs.contains("max_compute_workgroups_per_dimension"))
+        {
+            auto value = kwargs["max_compute_workgroups_per_dimension"].cast<uint32_t>();
+            obj.maxComputeWorkgroupsPerDimension = value;
+        }
+        if (kwargs.contains("max_storage_buffers_in_vertex_stage"))
+        {
+            auto value = kwargs["max_storage_buffers_in_vertex_stage"].cast<uint32_t>();
+            obj.maxStorageBuffersInVertexStage = value;
+        }
+        if (kwargs.contains("max_storage_textures_in_vertex_stage"))
+        {
+            auto value = kwargs["max_storage_textures_in_vertex_stage"].cast<uint32_t>();
+            obj.maxStorageTexturesInVertexStage = value;
+        }
+        if (kwargs.contains("max_storage_buffers_in_fragment_stage"))
+        {
+            auto value = kwargs["max_storage_buffers_in_fragment_stage"].cast<uint32_t>();
+            obj.maxStorageBuffersInFragmentStage = value;
+        }
+        if (kwargs.contains("max_storage_textures_in_fragment_stage"))
+        {
+            auto value = kwargs["max_storage_textures_in_fragment_stage"].cast<uint32_t>();
+            obj.maxStorageTexturesInFragmentStage = value;
+        }
+        return obj;
+    }), py::return_value_policy::automatic_reference)
     ;
 
 py::class_<AdapterPropertiesSubgroups, ChainedStructOut> _AdapterPropertiesSubgroups(m, "AdapterPropertiesSubgroups");
