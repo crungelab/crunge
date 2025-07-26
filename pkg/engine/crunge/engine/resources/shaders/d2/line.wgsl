@@ -1,5 +1,6 @@
 {% include '_camera.wgsl' %}
 {% include '_model.wgsl' %}
+{% include '_node.wgsl' %}
 
 
 struct Material {

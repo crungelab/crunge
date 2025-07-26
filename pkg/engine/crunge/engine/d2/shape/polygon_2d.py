@@ -44,11 +44,14 @@ class Polygon2D(Vu2D):
         self.program = PolygonProgram2D()
 
     def _create(self):
+        self.create_vertices()
         super()._create()
+        '''
         self.create_vertices()
         self.create_buffers()
         self.create_bind_groups()
         self.on_transform()
+        '''
 
     @property
     def size(self) -> glm.vec2:
@@ -87,6 +90,7 @@ class Polygon2D(Vu2D):
         )
 
     def create_buffers(self):
+        super().create_buffers()
         self.vertex_buffer = utils.create_buffer_from_ndarray(
             self.gfx.device, "VERTEX", self.vertices, wgpu.BufferUsage.VERTEX
         )
@@ -99,25 +103,35 @@ class Polygon2D(Vu2D):
         )
 
     def create_bind_groups(self):
+        super().create_bind_groups()
         self.model_bind_group = ModelBindGroup(
             self.model_uniform_buffer,
             self.model_uniform_buffer_size,
         )
 
+    '''
     def on_transform(self) -> None:
         super().on_transform()
         self.update_gpu()
+    '''
 
     def update_gpu(self):
+        super().update_gpu()
         model_uniform = ModelUniform()
-        model_uniform.transform.data = cast_matrix4(self.transform)
+        #model_uniform.transform.data = cast_matrix4(self.transform)
         model_uniform.color = cast_tuple4f(self.color)
 
         self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
-    def draw(self, renderer: Renderer):
-        pass_enc = renderer.pass_enc
-        pass_enc.set_pipeline(self.program.render_pipeline.get())
+    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
+        super().bind(pass_enc)
         self.model_bind_group.bind(pass_enc)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
+
+    def draw(self, renderer: Renderer):
+        pass_enc = renderer.pass_enc
+        self.bind(pass_enc)
+        #pass_enc.set_pipeline(self.program.render_pipeline.get())
+        #self.model_bind_group.bind(pass_enc)
+        #pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(len(self.vertices), 1, 0, 0)  # Dynamic vertex count
