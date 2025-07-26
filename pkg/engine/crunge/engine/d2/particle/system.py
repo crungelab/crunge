@@ -13,6 +13,7 @@ from ..vu_2d import Vu2D
 
 from ..uniforms_2d import Vec2, ModelUniform, ParticleUniform
 from ..binding_2d import EmitterBindGroup
+#from ..binding_2d import ModelBindGroup
 
 from ..program_2d import Program2D
 
@@ -28,13 +29,13 @@ class ParticleSystem2D(Vu2D):
 
         self.model_uniform_buffer: wgpu.Buffer = None
         self.model_uniform_buffer_size: int = 0
-        
+
         self.particles_buffer: wgpu.Buffer = None
 
         self.create_spawner()
         self.create_particles()
         self.create_buffers()
-        self.create_bindgroups()
+        self.create_bind_groups()
 
     @property
     def size(self):
@@ -61,6 +62,7 @@ class ParticleSystem2D(Vu2D):
     '''
 
     def create_buffers(self):
+        super().create_buffers()
         self.particles_buffer = utils.create_buffer_from_ctypes_array(
             self.device, "PARTICLES", self.particles, wgpu.BufferUsage.STORAGE
         )
@@ -73,7 +75,9 @@ class ParticleSystem2D(Vu2D):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def create_bindgroups(self):
+    def create_bind_groups(self):
+        super().create_bind_groups()
+
         compute_bindgroup_entries = [
             wgpu.BindGroupEntry(binding=0, buffer=self.particles_buffer),
         ]
@@ -85,7 +89,7 @@ class ParticleSystem2D(Vu2D):
         )
 
         self.compute_bind_group = self.device.create_bind_group(compute_bind_group_desc)
-        logger.debug(self.compute_bind_group)
+        #logger.debug(self.compute_bind_group)
 
         self.model_bind_group = EmitterBindGroup(
             self.model_uniform_buffer,
@@ -94,17 +98,30 @@ class ParticleSystem2D(Vu2D):
             storage_buffer_size=self.particles_buffer_size,
         )
 
+    '''
     def on_transform(self):
         super().on_transform()
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
         self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
+    '''
 
+    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
+        super().bind(pass_enc)
+        self.model_bind_group.bind(pass_enc)
+
+    '''
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)
+        pass_enc.draw(4, self.num_particles)
+    '''
+
+    def draw(self, renderer: Renderer):
+        pass_enc = renderer.pass_enc
+        self.bind(pass_enc)
         pass_enc.draw(4, self.num_particles)
 
     def update(self, delta_time: float):

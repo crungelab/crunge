@@ -77,8 +77,8 @@ class SpriteVu(Vu2D):
             return
 
         self.create_program()
-        self.create_buffer()
-        self.create_bind_group()
+        self.create_buffers()
+        self.create_bind_groups()
 
     def destroy(self):
         if self.group is not None:
@@ -93,10 +93,10 @@ class SpriteVu(Vu2D):
     def create_program(self):
         self.program = SpriteProgram()
 
-    def create_buffer(self):
+    def create_buffers(self):
         self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
 
-    def create_bind_group(self):
+    def create_bind_groups(self):
         self.bind_group = ModelBindGroup(
             self.buffer.get(),
             self.buffer.size,

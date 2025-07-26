@@ -70,16 +70,16 @@ class BackgroundVu(Vu2D):
     def _create(self):
         super()._create()
         self.create_program()
-        self.create_buffer()
-        self.create_bind_group()
+        self.create_buffers()
+        self.create_bind_groups()
 
     def create_program(self):
         self.program = BackgroundProgram()
 
-    def create_buffer(self):
+    def create_buffers(self):
         self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
 
-    def create_bind_group(self):
+    def create_bind_groups(self):
         self.bind_group = ModelBindGroup(
             self.buffer.get(),
             self.buffer.size,
