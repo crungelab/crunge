@@ -18,7 +18,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         rotation=0.0,
         scale=glm.vec2(1.0),
         vu: "Vu2D" = None,
-        model: Any = None
+        model: Any = None,
     ) -> None:
         super().__init__(vu, model)
         self._position = position
@@ -95,24 +95,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._rotation = glm.radians(value)
         # logger.debug(f"class: {self.__class__}, angle: {value}, rotation: {self._rotation}")
         self.update_matrix()
-
-    """
-    @property
-    def size(self) -> glm.vec2:
-        if self.model is not None:
-            if self.model.collision_rect is not None:
-                size = glm.vec2(self.model.collision_rect.width, self.model.collision_rect.height) * self.scale
-            else:
-                size = glm.vec2(self.model.size.x, self.model.size.y) * self.scale
-        elif self.vu is not None:
-            size = self.vu.size * self.scale
-        else:
-            size = glm.vec2(1.0) * self.scale
-
-        #logger.debug(f"class: {self.__class__}, size: {size}")
-
-        return size
-    """
 
     @property
     def size(self) -> glm.vec2:

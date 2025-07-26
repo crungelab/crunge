@@ -47,10 +47,7 @@ class Sprite(Material):
         self.group: "SpriteGroup" = None
 
         self.bind_group: SpriteBindGroup = None
-        self.uniform_buffer: wgpu.Buffer = None
-        self.uniform_buffer_size: int = 0
 
-        self.create_buffers()
         self.create_bind_group()
 
         self._rect: Rect2i = None
@@ -143,37 +140,14 @@ class Sprite(Material):
         self.update_gpu()
         return self
 
-    def create_buffers(self):
-        # Uniform Buffers
-        self.uniform_buffer_size = sizeof(SpriteUniform)
-        self.uniform_buffer = self.gfx.create_buffer(
-            "Material Buffer",
-            self.uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-
     def create_bind_group(self):
         self.bind_group = SpriteBindGroup(
-            self.uniform_buffer,
-            self.uniform_buffer_size,
             self.texture.view,
             self.sampler.sampler,
         )
 
     def update_gpu(self):
-        uniform = SpriteUniform()
-        uniform.color = cast_tuple4f(self.color)
-
-        uniform.rect = cast_vec4(
-            glm.vec4(self.rect.x, self.rect.y, self.rect.width, self.rect.height)
-        )
-        uniform.texture_size = cast_vec2(self.texture.size)
-
-        uniform.flip_h = 1 if self.flip_h else 0
-        uniform.flip_v = 1 if self.flip_v else 0
-
-        self.device.queue.write_buffer(self.uniform_buffer, 0, uniform)
-        
+        pass        
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.bind_group.bind(pass_enc)

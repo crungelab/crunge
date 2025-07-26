@@ -40,8 +40,6 @@ class SpriteBindGroupLayout(BindGroupLayout):
 class SpriteBindGroup(BindGroup):
     def __init__(
         self,
-        uniform_buffer: wgpu.Buffer,
-        uniform_buffer_size: int,
         texture_view: wgpu.TextureView,
         sampler: wgpu.Sampler,
         index: int = BindGroupIndex.MATERIAL,
