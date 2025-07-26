@@ -26,9 +26,9 @@ class Vu2D(Vu[Node2D]):
         self._transform = glm.mat4(1.0)
         self.bounds = Bounds2()
 
-        self.bind_group: NodeBindGroup = None
-        self.buffer: UniformBuffer[NodeUniform] = None
-        self._buffer_index = 0
+        self.node_bind_group: NodeBindGroup = None
+        self.node_buffer: UniformBuffer[NodeUniform] = None
+        self._node_buffer_index = 0
 
         self.group: "VuGroup" = None
         self.program: Program2D = None
@@ -55,24 +55,24 @@ class Vu2D(Vu[Node2D]):
         super().destroy()
 
     def create_buffers(self):
-        self.buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")
+        self.node_buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")
 
     def create_bind_groups(self):
-        self.bind_group = NodeBindGroup(
-            self.buffer.get(),
-            self.buffer.size,
+        self.node_bind_group = NodeBindGroup(
+            self.node_buffer.get(),
+            self.node_buffer.size,
         )
 
     def create_program(self):
         pass
 
     @property
-    def buffer_index(self) -> int:
-        return self._buffer_index
+    def node_buffer_index(self) -> int:
+        return self._node_buffer_index
 
-    @buffer_index.setter
-    def buffer_index(self, value: int):
-        self._buffer_index = value
+    @node_buffer_index.setter
+    def node_buffer_index(self, value: int):
+        self._node_buffer_index = value
         self.on_transform()
 
     @property
@@ -114,8 +114,8 @@ class Vu2D(Vu[Node2D]):
         uniform = NodeUniform()
         uniform.transform.data = cast_matrix4(self.transform)
 
-        self.buffer[self.buffer_index] = uniform
+        self.node_buffer[self.node_buffer_index] = uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         pass_enc.set_pipeline(self.program.render_pipeline.get())
-        self.bind_group.bind(pass_enc)
+        self.node_bind_group.bind(pass_enc)

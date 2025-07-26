@@ -53,8 +53,8 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
 
     def append(self, sprite: SpriteVu) -> None:
         super().append(sprite)
-        sprite.buffer = self.model_storage_buffer
-        sprite.buffer_index = len(self.visuals) - 1
+        sprite.node_buffer = self.model_storage_buffer
+        sprite.node_buffer_index = len(self.visuals) - 1
         self.batch(sprite)
 
     def remove(self, vu):
@@ -65,7 +65,7 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         # Compare by texture until I start registering materials
         if len(self.batches) == 0 or self.batches[-1].sprite_vu.sprite.texture != member.sprite.texture:
             self.batches.append(
-                InstancedSpriteVuBatch(member, member.buffer_index)
+                InstancedSpriteVuBatch(member, member.node_buffer_index)
             )
         else:
             self.batches[-1].instance_count += 1

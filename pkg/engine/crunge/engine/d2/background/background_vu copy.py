@@ -32,11 +32,11 @@ class BackgroundVu(Vu2D):
         self.program: BackgroundProgram = None
 
     @property
-    def buffer_index(self) -> int:
+    def node_buffer_index(self) -> int:
         return self._buffer_index
 
-    @buffer_index.setter
-    def buffer_index(self, value: int):
+    @node_buffer_index.setter
+    def node_buffer_index(self, value: int):
         self._buffer_index = value
         self.on_transform()
 
@@ -90,7 +90,7 @@ class BackgroundVu(Vu2D):
         model_uniform = ModelUniform()
         model_uniform.transform.data = cast_matrix4(self.transform)
 
-        self.buffer[self.buffer_index] = model_uniform
+        self.buffer[self.node_buffer_index] = model_uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_pipeline(self.program.render_pipeline.get())
