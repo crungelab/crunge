@@ -6,11 +6,12 @@ from crunge import wgpu
 
 from ..render_pipeline import RenderPipeline
 
-from ..binding import CameraBindGroupLayout
+from ..binding import SceneBindGroupLayout
 
 from .binding_2d import (
     SpriteBindGroupLayout,
     ModelBindGroupLayout,
+    NodeBindGroupLayout,
 )
 
 
@@ -21,8 +22,8 @@ class RenderPipeline2D(RenderPipeline):
         self.fragment_shader_module = fragment_shader_module
 
     @property
-    def camera_bind_group_layout(self):
-        return CameraBindGroupLayout()
+    def scene_bind_group_layout(self):
+        return SceneBindGroupLayout()
 
     @property
     def material_bind_group_layout(self):
@@ -33,11 +34,16 @@ class RenderPipeline2D(RenderPipeline):
         return ModelBindGroupLayout()
 
     @property
+    def node_bind_group_layout(self):
+        return NodeBindGroupLayout()
+
+    @property
     def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:
         bind_group_layouts = [
-            self.camera_bind_group_layout.get(),
+            self.scene_bind_group_layout.get(),
             self.material_bind_group_layout.get(),
             self.model_bind_group_layout.get(),
+            self.node_bind_group_layout.get(),
         ]
 
         return bind_group_layouts

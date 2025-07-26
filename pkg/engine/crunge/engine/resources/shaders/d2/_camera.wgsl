@@ -4,4 +4,4 @@ struct Camera {
     position: vec3<f32>,
 }
 
-@group({{BindGroupIndex.CAMERA}}) @binding({{CameraBindIndex.CAMERA_UNIFORM}}) var<uniform> camera : Camera;
+@group({{BindGroupIndex.SCENE}}) @binding({{SceneBindIndex.CAMERA_UNIFORM}}) var<uniform> camera : Camera;

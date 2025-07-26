@@ -19,7 +19,7 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(in : VertexInput) -> VertexOutput {
-  let vert_pos = camera.projection * camera.view * model.transform * in.pos;
+  let vert_pos = camera.projection * camera.view * node.transform * in.pos;
   return VertexOutput(vert_pos, model.color);
 }
 

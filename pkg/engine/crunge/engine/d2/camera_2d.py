@@ -10,7 +10,7 @@ from crunge.core import klass
 from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
 from ..viewport import Viewport, ViewportListener
-from ..binding import CameraBindGroup
+from ..binding import SceneBindGroup
 
 from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
@@ -44,7 +44,7 @@ class Camera2D(Node2D, ViewportListener):
 
         self.create_buffers()
         #self.create_bind_group()
-        self.bind_group: CameraBindGroup = None
+        self.bind_group: SceneBindGroup = None
 
         super().__init__(position)
 
@@ -82,7 +82,7 @@ class Camera2D(Node2D, ViewportListener):
         )
 
     def create_bind_group(self):
-        self.bind_group = CameraBindGroup(
+        self.bind_group = SceneBindGroup(
             self.uniform_buffer,
             self.uniform_buffer_size,
             self.viewport.uniform_buffer,

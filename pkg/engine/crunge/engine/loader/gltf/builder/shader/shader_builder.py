@@ -6,7 +6,7 @@ from ..vertex_table import VertexTable
 
 from .....binding import (
     BindGroupIndex,
-    CameraBindIndex,
+    SceneBindIndex,
 )
 
 
@@ -76,7 +76,7 @@ class ShaderBuilder(GltfBuilder):
         dict.update(
             {
                 "BindGroupIndex": BindGroupIndex,
-                "CameraBindIndex": CameraBindIndex,
+                "SceneBindIndex": SceneBindIndex,
             }
         )
 

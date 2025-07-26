@@ -32,14 +32,21 @@ class CameraUniform(Structure):
 
 #assert sizeof(CameraUniform) % 16 == 0
 
-class ModelUniform(Structure):
+class NodeUniform(Structure):
     _fields_ = [
         ("transform", Mat4),
+    ]
+
+assert sizeof(NodeUniform) % 16 == 0
+
+class ModelUniform(Structure):
+    _fields_ = [
         ("color", Vec4),
         ("rect", Vec4),
         ("texture_size", Vec2),
         ("flip_h", c_uint32),
         ("flip_v", c_uint32),
+        ("_pad1", c_float * 4),
     ]
 
 assert sizeof(ModelUniform) % 16 == 0

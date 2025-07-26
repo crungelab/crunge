@@ -15,7 +15,7 @@ fn vs_main(@builtin(vertex_index) idx: u32) -> VertexOutput {
     let y = f32((idx & 2u) >> 1) * 2.0 - 1.0; // Generates -1.0 or 1.0
 
     let quad_pos = vec4<f32>(x * 0.5, y * 0.5, 0.0, 1.0); // Scale quad by 0.5
-    let vert_pos = camera.projection * camera.view * model.transform * quad_pos;
+    let vert_pos = camera.projection * camera.view * node.transform * quad_pos;
 
     // Calculate UV coordinates dynamically
     let rect = material.spriteRect;

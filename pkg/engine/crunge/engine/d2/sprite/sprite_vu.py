@@ -11,10 +11,8 @@ from ...buffer import UniformBuffer
 
 from ..node_2d import Node2D
 from ..vu_2d import Vu2D
-from ..uniforms_2d import (
-    ModelUniform,
-)
-from ..binding_2d import ModelBindGroup
+from ..uniforms_2d import NodeUniform
+from ..binding_2d import NodeBindGroup
 
 from .sprite_program import SpriteProgram
 from .sprite import Sprite
@@ -32,8 +30,8 @@ class SpriteVu(Vu2D):
         self.program: SpriteProgram = None
         self.manual_draw = True
 
-        self.bind_group: ModelBindGroup = None
-        self.buffer: UniformBuffer[ModelUniform] = None
+        self.bind_group: NodeBindGroup = None
+        self.buffer: UniformBuffer[NodeUniform] = None
         self._buffer_index = 0
 
 
@@ -105,10 +103,10 @@ class SpriteVu(Vu2D):
         self.program = SpriteProgram()
 
     def create_buffer(self):
-        self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
+        self.buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")
 
     def create_bind_group(self):
-        self.bind_group = ModelBindGroup(
+        self.bind_group = NodeBindGroup(
             self.buffer.get(),
             self.buffer.size,
         )
@@ -119,19 +117,8 @@ class SpriteVu(Vu2D):
             self.update_gpu()
 
     def update_gpu(self):
-        uniform = ModelUniform()
+        uniform = NodeUniform()
         uniform.transform.data = cast_matrix4(self.transform)
-
-        uniform.color = cast_tuple4f(self.sprite.color)
-
-        rect = self.sprite.rect
-        uniform.rect = cast_vec4(
-            glm.vec4(rect.x, rect.y, rect.width, rect.height)
-        )
-        uniform.texture_size = cast_vec2(self.sprite.texture.size)
-
-        uniform.flip_h = 1 if self.sprite.flip_h else 0
-        uniform.flip_v = 1 if self.sprite.flip_v else 0
 
         self.buffer[self.buffer_index] = uniform
 

@@ -10,7 +10,7 @@ from crunge import wgpu
 
 from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
-from ..binding import CameraBindGroup
+from ..binding import SceneBindGroup
 
 if TYPE_CHECKING:
     from .renderer_3d import Renderer3D
@@ -64,7 +64,7 @@ class Camera3D(Node3D, ViewportListener):
         self.deferred_draws: List[DeferredDraw] = []
 
         self.create_buffers()
-        self.bind_group: CameraBindGroup = None
+        self.bind_group: SceneBindGroup = None
 
     def _create(self):
         super()._create()
@@ -119,7 +119,7 @@ class Camera3D(Node3D, ViewportListener):
         )
 
     def create_bind_group(self):
-        self.bind_group = CameraBindGroup(
+        self.bind_group = SceneBindGroup(
             self.uniform_buffer,
             self.uniform_buffer_size,
             self.viewport.uniform_buffer,

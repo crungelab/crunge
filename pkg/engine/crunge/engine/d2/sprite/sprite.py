@@ -10,12 +10,11 @@ from ...math import Rect2i
 from ...resource import ImageTexture, Material, Sampler
 from ... import colors
 
-from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
-from ..uniforms_2d import (
-    SpriteUniform,
-)
-from ..binding_2d import SpriteBindGroup
+from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f, cast_matrix4
+from ..uniforms_2d import ModelUniform
+from ...buffer import UniformBuffer
 
+from ..binding_2d import SpriteBindGroup, ModelBindGroup
 from .sprite_sampler import DefaultSpriteSampler
 
 if TYPE_CHECKING:
@@ -46,9 +45,14 @@ class Sprite(Material):
 
         self.group: "SpriteGroup" = None
 
-        self.bind_group: SpriteBindGroup = None
+        self.material_bind_group: SpriteBindGroup = None
+        self.model_bind_group: ModelBindGroup = None
 
-        self.create_bind_group()
+        self.buffer: UniformBuffer[ModelUniform] = None
+        self._buffer_index = 0
+
+        self.create_buffer()
+        self.create_bind_groups()
 
         self._rect: Rect2i = None
         self.rect = rect
@@ -62,6 +66,15 @@ class Sprite(Material):
         return str(self)
 
     @property
+    def buffer_index(self) -> int:
+        return self._buffer_index
+
+    @buffer_index.setter
+    def buffer_index(self, value: int):
+        self._buffer_index = value
+        self.update_gpu()
+
+    @property
     def texture(self):
         return self._texture
 
@@ -70,7 +83,7 @@ class Sprite(Material):
         old_texture = self._texture
         self._texture = value
         if old_texture is not None and old_texture.texture != value.texture:
-            self.create_bind_group()
+            self.create_bind_groups()
         # logger.debug(f"Setting texture: {value}")
         self.update_gpu()
 
@@ -140,14 +153,34 @@ class Sprite(Material):
         self.update_gpu()
         return self
 
-    def create_bind_group(self):
-        self.bind_group = SpriteBindGroup(
+    def create_buffer(self):
+        self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
+
+    def create_bind_groups(self):
+        self.material_bind_group = SpriteBindGroup(
             self.texture.view,
             self.sampler.sampler,
         )
+        self.model_bind_group = ModelBindGroup(
+            self.buffer.get(),
+            self.buffer.size,
+        )
 
     def update_gpu(self):
-        pass        
+        uniform = ModelUniform()
+        uniform.color = cast_tuple4f(self.color)
+
+        rect = self.rect
+        uniform.rect = cast_vec4(
+            glm.vec4(rect.x, rect.y, rect.width, rect.height)
+        )
+        uniform.texture_size = cast_vec2(self.texture.size)
+
+        uniform.flip_h = 1 if self.flip_h else 0
+        uniform.flip_v = 1 if self.flip_v else 0
+
+        self.buffer[self.buffer_index] = uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        self.bind_group.bind(pass_enc)
+        self.material_bind_group.bind(pass_enc)
+        self.model_bind_group.bind(pass_enc)

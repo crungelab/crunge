@@ -5,7 +5,7 @@ from crunge import wgpu
 
 from ..program import Program
 from ..binding.bind_group_layout import BindGroupLayout
-from ..binding import CameraBindGroupLayout
+from ..binding import SceneBindGroupLayout
 '''
 @klass.singleton
 class CameraBindGroupLayout(BindGroupLayout):
@@ -95,7 +95,7 @@ class Program3D(Program):
 
     @property
     def camera_bind_group_layout(self):
-        return CameraBindGroupLayout().get()
+        return SceneBindGroupLayout().get()
 
     @property
     def light_bind_group_layout(self):

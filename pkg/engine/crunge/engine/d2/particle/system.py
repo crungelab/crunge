@@ -28,6 +28,7 @@ class ParticleSystem2D(Vu2D):
 
         self.model_uniform_buffer: wgpu.Buffer = None
         self.model_uniform_buffer_size: int = 0
+        
         self.particles_buffer: wgpu.Buffer = None
 
         self.create_spawner()

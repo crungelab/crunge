@@ -3,43 +3,43 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ...resource.bind_group import BindGroupLayout, BindGroup
+from ...binding import BindGroupLayout, BindGroup
 
 from . import BindGroupIndex
 
 
-class CameraBindIndex:
+class SceneBindIndex:
     CAMERA_UNIFORM = 0
 
 
 @klass.singleton
-class CameraBindGroupLayout(BindGroupLayout):
+class SceneBindGroupLayout(BindGroupLayout):
     def __init__(self) -> None:
         entries = [
             wgpu.BindGroupLayoutEntry(
-                binding=CameraBindIndex.CAMERA_UNIFORM,
+                binding=SceneBindIndex.CAMERA_UNIFORM,
                 visibility=wgpu.ShaderStage.VERTEX,
                 buffer=wgpu.BufferBindingLayout(type=wgpu.BufferBindingType.UNIFORM),
             ),
         ]
-        super().__init__(entries=entries, label="Camera Bind Group Layout")
+        super().__init__(entries=entries, label="Scene Bind Group Layout")
 
 
-class CameraBindGroup(BindGroup):
+class SceneBindGroup(BindGroup):
     def __init__(
         self,
         uniform_buffer: wgpu.Buffer,
         uniform_buffer_size: int,
-        index: int = BindGroupIndex.CAMERA,
+        index: int = BindGroupIndex.SCENE,
     ) -> None:
         entries = [
             wgpu.BindGroupEntry(
-                binding=CameraBindIndex.CAMERA_UNIFORM,
+                binding=SceneBindIndex.CAMERA_UNIFORM,
                 buffer=uniform_buffer,
                 size=uniform_buffer_size,
             ),
         ]
 
         super().__init__(
-            entries=entries, layout=CameraBindGroupLayout(), label="Camera Bind Group", index=index
+            entries=entries, layout=SceneBindGroupLayout(), label="Scene Bind Group", index=index
         )
