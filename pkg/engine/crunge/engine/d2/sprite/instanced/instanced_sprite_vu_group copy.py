@@ -83,7 +83,7 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
         )
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        pass_enc.set_pipeline(self.program.render_pipeline.get())
+        #pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)
 
     def draw(self, renderer: Renderer):
@@ -91,6 +91,7 @@ class InstancedSpriteVuGroup(SpriteVuGroup):
             return
         # logger.debug("Drawing sprites")
         pass_enc = renderer.pass_enc
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.bind(pass_enc)
         for batch in self.batches:
             batch.draw(renderer)

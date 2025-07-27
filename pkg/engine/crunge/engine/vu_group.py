@@ -4,11 +4,13 @@ from loguru import logger
 
 from .renderer import Renderer
 from .vu import Vu
+from .base import Base
 
 T_Vu = TypeVar("T_Vu", bound=Vu)
 
 
-class VuGroup(Vu, Generic[T_Vu]):
+#class VuGroup(Vu, Generic[T_Vu]):
+class VuGroup(Base, Generic[T_Vu]):
     def __init__(self):
         super().__init__()
         self.visuals: List[T_Vu] = []

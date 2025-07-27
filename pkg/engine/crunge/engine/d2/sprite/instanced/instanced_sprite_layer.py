@@ -1,16 +1,19 @@
+from loguru import logger
+
 from .... import Renderer
 
 from ... import Node2D
 from ...scene_layer_2d import SceneLayer2D
 
 from .instanced_sprite_vu_group import InstancedSpriteVuGroup
-#from ..buffered.buffered_sprite_group import BufferedSpriteGroup
+from ..dynamic.dynamic_sprite_group import DynamicSpriteGroup
 
 class InstancedSpriteLayer(SceneLayer2D):
-    def __init__(self, name: str = "SpriteInstanceLayer", count: int = 32) -> None:
+    def __init__(self, name: str = "SpriteInstanceLayer", count: int = 32, sprite_group: DynamicSpriteGroup = None) -> None:
         super().__init__(name)
-        self.vu_group = InstancedSpriteVuGroup(count).create()
-        #self.sprite_group = BufferedSpriteGroup(count).create()
+        logger.debug(f"InstancedSpriteLayer: {name}, count: {count}, sprite_group: {sprite_group}")
+        self.vu_group = InstancedSpriteVuGroup(count, sprite_group).enable()
+        self.sprite_group = sprite_group
 
     def draw(self, renderer: Renderer) -> None:
         self.vu_group.draw(renderer)

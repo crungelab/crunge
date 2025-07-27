@@ -101,6 +101,7 @@ class RenderPipeline2D(RenderPipeline):
         )
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
+            label="Render Pipeline 2D Layout",
             bind_group_layouts=self.bind_group_layouts
         )
 

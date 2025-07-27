@@ -182,5 +182,8 @@ class Sprite(Material):
         self.buffer[self.buffer_index] = uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        self.material_bind_group.bind(pass_enc)
+        self.bind_material(pass_enc)
         self.model_bind_group.bind(pass_enc)
+
+    def bind_material(self, pass_enc: wgpu.RenderPassEncoder):
+        self.material_bind_group.bind(pass_enc)

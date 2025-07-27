@@ -35,6 +35,7 @@ class Vu2D(Vu[Node2D]):
         self.manual_draw = True
 
     def _create(self):
+        #raise NotImplementedError("SpriteVu should not be created directly, use SpriteVuGroup instead")
         super()._create()
         group = self.group
         if group is not None:
@@ -117,5 +118,5 @@ class Vu2D(Vu[Node2D]):
         self.node_buffer[self.node_buffer_index] = uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
-        pass_enc.set_pipeline(self.program.render_pipeline.get())
+        #pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.node_bind_group.bind(pass_enc)

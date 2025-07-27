@@ -53,7 +53,7 @@ class TiledPhysicsDemo(Demo):
 
     def create_ball(self, position):
         ball = Ball(position)
-        ball.create()
+        #ball.create()
         self.scene.attach(ball)
 
     def create_map(self):

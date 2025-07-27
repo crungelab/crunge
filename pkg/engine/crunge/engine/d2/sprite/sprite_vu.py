@@ -138,6 +138,13 @@ class SpriteVu(Vu2D):
         self.bind_group.bind(pass_enc)
     '''
 
+    def update_gpu(self):
+        uniform = NodeUniform()
+        uniform.transform.data = cast_matrix4(self.transform)
+        uniform.model_index = self.sprite.buffer_index
+        #logger.debug(f"SpriteVu: update_gpu: {uniform.model_index}")
+        self.node_buffer[self.node_buffer_index] = uniform
+
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         super().bind(pass_enc)
         self.sprite.bind(pass_enc)
@@ -153,5 +160,6 @@ class SpriteVu(Vu2D):
         
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.bind(pass_enc)
         pass_enc.draw(4)

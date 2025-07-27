@@ -4,13 +4,14 @@ from ...renderer import Renderer
 from ...vu_group import VuGroup
 
 from . import SpriteVu
-
+from . import SpriteGroup
 
 class SpriteVuGroup(VuGroup[SpriteVu]):
-    def __init__(self):
+    def __init__(self, sprite_group: SpriteGroup) -> None:
         super().__init__()
-        self.is_buffered_group = False
+        self.is_dynamic_group = False
         self.is_render_group = False
+        self.sprite_group = sprite_group
 
 
     '''

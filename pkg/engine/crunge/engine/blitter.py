@@ -49,6 +49,7 @@ class Blitter(Program):
         # Create render pipeline
         self.pipeline = self.device.create_render_pipeline(
             wgpu.RenderPipelineDescriptor(
+                label="Blitter Pipeline",
                 layout=pipeline_layout,
                 vertex=wgpu.VertexState(
                     module=shader_module,

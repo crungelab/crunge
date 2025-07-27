@@ -3,7 +3,8 @@ from loguru import logger
 from ....renderer import Renderer
 
 from ..sprite_vu import SpriteVu
-from ..buffered import BufferedSpriteVuGroup
+from ..sprite_group import SpriteGroup
+from ..dynamic import DynamicSpriteVuGroup
 
 from .instanced_sprite_program import InstancedSpriteProgram
 
@@ -17,14 +18,15 @@ class InstancedSpriteVuBatch:
         self.instance_count = 1
 
     def draw(self, renderer: Renderer):
-        # logger.debug("Drawing sprites")
+        #logger.debug("Drawing sprites")
         pass_enc = renderer.pass_enc
-        self.sprite_vu.sprite.bind(pass_enc)
+        #self.sprite_vu.sprite.bind(pass_enc)
+        self.sprite_vu.sprite.bind_material(pass_enc)
         pass_enc.draw(4, self.instance_count, 0, self.first_instance)
 
-class InstancedSpriteVuGroup(BufferedSpriteVuGroup):
-    def __init__(self, count: int = ELEMENTS) -> None:
-        super().__init__(count)
+class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
+    def __init__(self, count: int = ELEMENTS, sprite_group: SpriteGroup = None) -> None:
+        super().__init__(count, sprite_group)
         self.is_render_group = True
         self.batches: list[InstancedSpriteVuBatch] = []
         self.program = InstancedSpriteProgram()
@@ -58,8 +60,8 @@ class InstancedSpriteVuGroup(BufferedSpriteVuGroup):
     def draw(self, renderer: Renderer):
         if len(self.batches) == 0:
             return
-        # logger.debug("Drawing sprites")
         pass_enc = renderer.pass_enc
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.bind(pass_enc)
         for batch in self.batches:
             batch.draw(renderer)

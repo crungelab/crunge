@@ -10,6 +10,7 @@ from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 
 from crunge.engine.d2.sprite.instanced.instanced_sprite_layer import InstancedSpriteLayer
+from crunge.engine.d2.sprite.dynamic import DynamicSpriteGroup
 
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
@@ -23,14 +24,18 @@ class InstancingDemo(Demo):
     def __init__(self):
         super().__init__()
         self.nodes: list[Node2D] = []
-        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
+        #texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         self.color = colors.WHITE
-        self.sprite = Sprite(texture, color=self.color)
+        #self.sprite = Sprite(texture, color=self.color)
 
     def create_scene(self):
         super().create_scene()
-        layer = InstancedSpriteLayer("sprites", 1024)
+        sprite_group = DynamicSpriteGroup().enable()
+        layer = InstancedSpriteLayer("sprites", 1024, sprite_group)
         self.scene.add_layer(layer)
+        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
+        self.sprite = Sprite(texture, color=self.color)
+        sprite_group.append(self.sprite)
 
     def reset(self):
         super().reset()

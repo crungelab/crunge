@@ -30,6 +30,20 @@ class NodeBindGroupLayout(BindGroupLayout):
 
         super().__init__(entries=entries, label=label)
 
+@klass.singleton
+class DynamicNodeBindGroupLayout(BindGroupLayout):
+    def __init__(self) -> None:
+        entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(
+                    type=wgpu.BufferBindingType.READ_ONLY_STORAGE
+                ),
+            ),
+        ]
+        super().__init__(entries=entries, label="NodeBindGroupLayout")
+
 
 class NodeBindGroup(BindGroup):
     def __init__(

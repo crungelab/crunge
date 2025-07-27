@@ -13,6 +13,6 @@ from .material import (
     ShapeBindGroupLayout,
     ShapeBindIndex,
 )
-from .model import ModelBindGroup, ModelBindGroupLayout, ModelBindIndex
-from .node import NodeBindGroup, NodeBindGroupLayout, NodeBindIndex
+from .model import ModelBindGroup, ModelBindGroupLayout, DynamicModelBindGroupLayout, ModelBindIndex
+from .node import NodeBindGroup, NodeBindGroupLayout, DynamicNodeBindGroupLayout, NodeBindIndex
 from .emitter import EmitterBindGroup, EmitterBindGroupLayout, EmitterBindIndex

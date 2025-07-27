@@ -1,5 +1,5 @@
 struct Model {
-    transform : mat4x4<f32>,
+    //transform : mat4x4<f32>,
     color : vec4<f32>,
     spriteRect : vec4<f32>, // x, y, width, height
     textureSize : vec2<f32>,

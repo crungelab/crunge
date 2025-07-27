@@ -36,6 +36,11 @@ class DefaultTileBuilder(TileBuilder):
                 atlas, Rect2i(0, 0, atlas.width, atlas.height)
             )
 
+        if hasattr(self.layer, 'sprite_group'):
+            sprite_group = self.layer.sprite_group
+            sprite_group.append(sprite)
+
+
         logger.debug(f"sprite: {sprite}")
 
         if self.create_node_cb is not None:

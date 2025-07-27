@@ -40,13 +40,14 @@ class Base:
     def _enable(self) -> None:
         pass
 
-    def enable(self) -> None:
+    def enable(self):
         if self.enabled:
-            return
+            return self
         if not self.created:
             self.create()  # Ensure the object is created
         self._enable()
         self.enabled = True
+        return self
 
     def _disable(self) -> None:
         pass

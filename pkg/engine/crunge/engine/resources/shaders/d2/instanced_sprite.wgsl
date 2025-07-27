@@ -1,6 +1,7 @@
 {% include '_camera.wgsl' %}
 {% include '_material.wgsl' %}
-{% include '_instanced_model.wgsl' %}
+{% include '_dynamic_model.wgsl' %}
+{% include '_dynamic_node.wgsl' %}
 {% include '_sprite.wgsl' %}
 
 struct VertexOutput {
@@ -11,24 +12,26 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) instanceIndex: u32) -> VertexOutput {
-    let instance = models[instanceIndex];
+    let node = nodes[instanceIndex];
     let x = f32((vertexIndex & 1u) << 1) - 1.0; // Generates -1.0 or 1.0
     let y = f32((vertexIndex & 2u) >> 1) * 2.0 - 1.0; // Generates -1.0 or 1.0
 
     let quad_pos = vec4<f32>(x * 0.5, y * 0.5, 0.0, 1.0); // Scale quad by 0.5
-    let vert_pos = camera.projection * camera.view * instance.transform * quad_pos;
+    let vert_pos = camera.projection * camera.view * node.transform * quad_pos;
 
     // Extract UV coordinates from the vec4 (only use x and y)
     // Compute UV for the current vertex with flipping
+    let model = models[node.model_index];
+
     let uv = compute_uv(
         vertexIndex,
-        instance.spriteRect,
-        instance.textureSize,
-        instance.flipH != 0u,
-        instance.flipV != 0u
+        model.spriteRect,
+        model.textureSize,
+        model.flipH != 0u,
+        model.flipV != 0u
     );
 
-    return VertexOutput(vert_pos, uv, instance.color);
+    return VertexOutput(vert_pos, uv, model.color);
 }
 
 @fragment

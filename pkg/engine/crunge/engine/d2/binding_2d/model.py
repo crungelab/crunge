@@ -35,6 +35,21 @@ class ModelBindGroupLayoutBase(BindGroupLayout):
 class ModelBindGroupLayout(ModelBindGroupLayoutBase):
     pass
 
+@klass.singleton
+class DynamicModelBindGroupLayout(BindGroupLayout):
+    def __init__(self) -> None:
+        entries = [
+            wgpu.BindGroupLayoutEntry(
+                binding=0,
+                visibility=wgpu.ShaderStage.VERTEX,
+                buffer=wgpu.BufferBindingLayout(
+                    type=wgpu.BufferBindingType.READ_ONLY_STORAGE
+                ),
+            ),
+        ]
+        super().__init__(entries=entries, label="ModelBindGroupLayout")
+
+
 class ModelBindGroup(BindGroup):
     def __init__(
         self,

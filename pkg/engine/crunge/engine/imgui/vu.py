@@ -290,7 +290,7 @@ class ImGuiVu(Vu):
         """
 
         descriptor = wgpu.RenderPipelineDescriptor(
-            label="Main Render Pipeline",
+            label="ImGui Render Pipeline",
             layout=self.device.create_pipeline_layout(pl_desc),
             vertex=vertex_state,
             primitive=primitive,
