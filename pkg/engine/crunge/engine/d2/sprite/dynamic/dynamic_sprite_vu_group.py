@@ -47,7 +47,7 @@ class DynamicSpriteVuGroup(SpriteVuGroup):
 
     def append(self, vu: SpriteVu) -> None:
         super().append(vu)
-        #vu.group = self
+        vu.group = self
         vu.node_buffer = self.node_buffer
         vu.node_buffer_index = len(self.visuals) - 1
 

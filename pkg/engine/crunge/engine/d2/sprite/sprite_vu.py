@@ -41,11 +41,19 @@ class SpriteVu(Vu2D):
         return self._sprite
     
     @sprite.setter
-    def sprite(self, value: Sprite):
-        self._sprite = value
+    def sprite(self, sprite: Sprite):
+        self._sprite = sprite
+        if self.group is not None and sprite.group is None:
+        #if self.group is not None:
+            #exit()
+            self.group.sprite_group.append(sprite)
         if self.enabled:
             self.update_gpu()
-    
+
+    def on_group(self) -> None:
+        if self.sprite.group is None:
+            self.group.sprite_group.append(self.sprite)
+
     '''
     @property
     def buffer_index(self) -> int:
@@ -105,6 +113,16 @@ class SpriteVu(Vu2D):
         if self.group is not None:
             self.group.remove(self)
     """
+
+    '''
+    def _create(self):
+        super()._create()
+        #raise NotImplementedError("SpriteVu._create() not implemented")
+        #if self.group is not None and self.sprite.group is None:
+        if self.group is not None:
+            #exit()
+            self.group.sprite_group.append(self.sprite)
+    '''
 
     def create_program(self):
         self.program = SpriteProgram()

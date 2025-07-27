@@ -30,12 +30,12 @@ class InstancingDemo(Demo):
 
     def create_scene(self):
         super().create_scene()
-        sprite_group = DynamicSpriteGroup().enable()
+        sprite_group = DynamicSpriteGroup(1024).enable()
         layer = InstancedSpriteLayer("sprites", 1024, sprite_group)
         self.scene.add_layer(layer)
         texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
         self.sprite = Sprite(texture, color=self.color)
-        sprite_group.append(self.sprite)
+        #sprite_group.append(self.sprite)
 
     def reset(self):
         super().reset()

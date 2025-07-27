@@ -30,7 +30,7 @@ class Vu2D(Vu[Node2D]):
         self.node_buffer: UniformBuffer[NodeUniform] = None
         self._node_buffer_index = 0
 
-        self.group: "VuGroup" = None
+        self._group: "VuGroup" = None
         self.program: Program2D = None
         self.manual_draw = True
 
@@ -39,7 +39,7 @@ class Vu2D(Vu[Node2D]):
         super()._create()
         group = self.group
         if group is not None:
-            group.append(self)
+            #group.append(self)
             if group.is_render_group:
                 self.manual_draw = False
 
@@ -67,6 +67,18 @@ class Vu2D(Vu[Node2D]):
     def create_program(self):
         pass
 
+    @property
+    def group(self) -> "VuGroup":
+        return self._group
+
+    @group.setter
+    def group(self, value: "VuGroup"):
+        self._group = value
+        self.on_group()
+
+    def on_group(self) -> None:
+        pass
+                
     @property
     def node_buffer_index(self) -> int:
         return self._node_buffer_index

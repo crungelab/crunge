@@ -13,9 +13,9 @@ class SpriteLayer(SceneLayer2D):
         self.sprite_group: SpriteGroup = None
 
     def attach(self, node: Node2D) -> None:
-        self.vu_group.append(node.vu)
         super().attach(node)
+        self.vu_group.append(node.vu)
 
     def detach(self, node: Node2D) -> None:
-        self.vu_group.remove(node.vu)
         super().detach(node)
+        self.vu_group.remove(node.vu)

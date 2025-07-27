@@ -34,8 +34,18 @@ class Node(Dispatcher, Generic[T_Node]):
         self.children: List["Node[T_Node]"] = []
         self.listeners: List[NodeListener[T_Node]] = []
 
+        #self.vu = vu
+        #self._vu = vu
+        #self._model = model
         self.vu = vu
         self.model = model
+
+    '''
+    def _create(self):
+        super()._create()
+        self.vu = self._vu
+        self.model = self._model
+    '''
 
     @property
     def vu(self) -> "Vu":
