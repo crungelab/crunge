@@ -121,6 +121,7 @@ class ParticleSystem2D(Vu2D):
 
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.bind(pass_enc)
         pass_enc.draw(4, self.num_particles)
 

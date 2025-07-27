@@ -20,6 +20,9 @@ class InstancedSpriteLayer(SceneLayer2D):
 
     def attach(self, node: Node2D) -> None:
         self.vu_group.append(node.vu)
+        sprite = node.vu.sprite
+        if sprite.group is None:
+            self.sprite_group.append(sprite)
         super().attach(node)
 
     def detach(self, node: Node2D) -> None:

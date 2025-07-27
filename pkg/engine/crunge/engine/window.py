@@ -130,6 +130,13 @@ class Window(Frame):
                 listener.on_post_frame()
 
     def frame(self):
+        self.pre_frame()
+        with self.viewport:
+            self.draw(self.renderer)
+        self.post_frame()
+
+    '''
+    def frame(self):
         try:
             self.pre_frame()
             with self.viewport:
@@ -138,6 +145,7 @@ class Window(Frame):
         except Exception as e:
             logger.error(f"Error during frame: {e}")
             raise e
+    '''
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")
