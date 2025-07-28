@@ -1,4 +1,5 @@
 from typing import List, Dict
+import timeit
 import sys, time
 import math
 
@@ -69,8 +70,13 @@ class App(Window):
             frame_time = now - last_time
 
             # Game update & render
+            update_start_time = timeit.default_timer()
             self.update(frame_time)
+            self.update_time = timeit.default_timer() - update_start_time
+
+            frame_start_time = timeit.default_timer()
             self.frame()
+            self.frame_time = timeit.default_timer() - frame_start_time
 
             # Calculate how much time is left to maintain 60 FPS
             elapsed = time.perf_counter() - frame_start

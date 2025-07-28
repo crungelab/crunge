@@ -127,7 +127,7 @@ class Line2D(Vu2D):
     def draw(self, renderer: Renderer):
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
-        #pass_enc.set_pipeline(self.program.render_pipeline.get())
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
         #self.model_bind_group.bind(pass_enc)
         #pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(2, 1, 0, 0)  # Drawing 2 vertices (a single line)

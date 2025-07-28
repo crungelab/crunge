@@ -176,7 +176,7 @@ class SpriteVu(Vu2D):
         #uniform.model_index = self.sprite_membership.index
         if self.sprite_membership is not None:
             uniform.model_index = self.sprite_membership.index
-        else:
+        elif self.sprite is not None:
             uniform.model_index = self.sprite.buffer_index
         #logger.debug(f"SpriteVu: update_gpu: {uniform.model_index}")
         self.node_buffer[self.node_buffer_index] = uniform
