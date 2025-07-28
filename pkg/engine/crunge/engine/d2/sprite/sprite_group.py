@@ -1,11 +1,11 @@
 from loguru import logger
 
-from ...resource.material import MaterialGroup
+from ...resource.model import ModelGroup
 
 from . import Sprite
 
 
-class SpriteGroup(MaterialGroup[Sprite]):
+class SpriteGroup(ModelGroup[Sprite]):
     def __init__(self):
         super().__init__()
         self.is_dynamic_group = False

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 from ctypes import sizeof
 
 from loguru import logger
@@ -7,7 +7,7 @@ import glm
 from crunge import wgpu
 
 from ...math import Rect2i
-from ...resource import ImageTexture, Material, Sampler
+from ...resource import ImageTexture, Model, Sampler
 from ... import colors
 
 from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f, cast_matrix4
@@ -20,8 +20,13 @@ from .sprite_sampler import DefaultSpriteSampler
 if TYPE_CHECKING:
     from .sprite_group import SpriteGroup
 
+class SpriteMembership:
+    def __init__(self, group: "SpriteGroup", buffer: UniformBuffer[ModelUniform], index: int) -> None:
+        self.group: "SpriteGroup" = group
+        self.buffer: UniformBuffer[ModelUniform] = buffer
+        self.index = index
 
-class Sprite(Material):
+class Sprite(Model):
     def __init__(
         self,
         texture: ImageTexture,
@@ -43,7 +48,8 @@ class Sprite(Material):
         self.points = points
         self.collision_rect = collision_rect
 
-        self.group: "SpriteGroup" = None
+        #self.group: "SpriteGroup" = None
+        self.memberships: List[SpriteMembership] = []
 
         self.material_bind_group: SpriteBindGroup = None
         self.model_bind_group: ModelBindGroup = None
@@ -64,6 +70,19 @@ class Sprite(Material):
 
     def __repr__(self):
         return str(self)
+
+    def add_membership(self, membership: SpriteMembership) -> None:
+        self.memberships.append(membership)
+        self.update_gpu()
+
+    def get_membership(self, group: "SpriteGroup") -> SpriteMembership:
+        for membership in self.memberships:
+            if membership.group == group:
+                return membership
+        return None
+
+    def is_member_of(self, group: "SpriteGroup") -> bool:
+        return any(membership.group == group for membership in self.memberships)
 
     @property
     def buffer_index(self) -> int:
@@ -167,6 +186,31 @@ class Sprite(Material):
         )
 
     def update_gpu(self):
+        self.update_buffer(self.buffer, self.buffer_index)
+        for membership in self.memberships:
+            self.update_buffer(membership.buffer, membership.index)
+            
+    def update_buffer(self, buffer: UniformBuffer[ModelUniform], index: int):
+        uniform = ModelUniform()
+        uniform.color = cast_tuple4f(self.color)
+
+        rect = self.rect
+        uniform.rect = cast_vec4(
+            glm.vec4(rect.x, rect.y, rect.width, rect.height)
+        )
+        uniform.texture_size = cast_vec2(self.texture.size)
+
+        uniform.flip_h = 1 if self.flip_h else 0
+        uniform.flip_v = 1 if self.flip_v else 0
+
+        try:
+            buffer[index] = uniform
+        except IndexError as e:
+            logger.error(f"IndexError: {index} out of bounds for buffer of size {buffer.size}")
+            raise e
+
+    '''
+    def update_gpu(self):
         uniform = ModelUniform()
         uniform.color = cast_tuple4f(self.color)
 
@@ -180,6 +224,7 @@ class Sprite(Material):
         uniform.flip_v = 1 if self.flip_v else 0
 
         self.buffer[self.buffer_index] = uniform
+    '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.bind_material(pass_enc)

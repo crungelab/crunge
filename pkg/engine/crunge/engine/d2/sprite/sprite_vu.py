@@ -15,7 +15,7 @@ from ..uniforms_2d import NodeUniform
 from ..binding_2d import NodeBindGroup
 
 from .sprite_program import SpriteProgram
-from .sprite import Sprite
+from .sprite import Sprite, SpriteMembership
 
 if TYPE_CHECKING:
     from .sprite_vu_group import SpriteVuGroup
@@ -25,6 +25,7 @@ class SpriteVu(Vu2D):
     def __init__(self, sprite: Sprite = None) -> None:
         super().__init__()
         self._sprite = sprite
+        self.sprite_membership: SpriteMembership = None
 
         '''
         self.group: "SpriteVuGroup" = None
@@ -43,16 +44,28 @@ class SpriteVu(Vu2D):
     @sprite.setter
     def sprite(self, sprite: Sprite):
         self._sprite = sprite
+        '''
         if self.group is not None and sprite.group is None:
         #if self.group is not None:
             #exit()
             self.group.sprite_group.append(sprite)
+        '''
+        if self.group is not None:
+            if not self.sprite.is_member_of(self.group.sprite_group):
+                self.sprite_membership = self.group.sprite_group.append(sprite)
+            else:
+                self.sprite_membership = self.sprite.get_membership(self.group.sprite_group)
+
         if self.enabled:
             self.update_gpu()
 
     def on_group(self) -> None:
+        '''
         if self.sprite.group is None:
             self.group.sprite_group.append(self.sprite)
+        '''
+        if not self.sprite.is_member_of(self.group.sprite_group):
+            self.sprite_membership = self.group.sprite_group.append(self.sprite)
 
     '''
     @property
@@ -159,7 +172,12 @@ class SpriteVu(Vu2D):
     def update_gpu(self):
         uniform = NodeUniform()
         uniform.transform.data = cast_matrix4(self.transform)
-        uniform.model_index = self.sprite.buffer_index
+        #uniform.model_index = self.sprite.buffer_index
+        #uniform.model_index = self.sprite_membership.index
+        if self.sprite_membership is not None:
+            uniform.model_index = self.sprite_membership.index
+        else:
+            uniform.model_index = self.sprite.buffer_index
         #logger.debug(f"SpriteVu: update_gpu: {uniform.model_index}")
         self.node_buffer[self.node_buffer_index] = uniform
 
