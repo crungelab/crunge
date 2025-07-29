@@ -14,14 +14,12 @@ class SpriteVuGroup(VuGroup[SpriteVu]):
         self.sprite_group = sprite_group
 
 
-    '''
     def draw(self, renderer: Renderer) -> None:
         frustum = renderer.camera_2d.frustum
         for vu in self.visuals:
             #logger.debug(f"SpriteVuGroup.draw: {vu}")
             if vu.bounds.intersects(frustum):
                 vu.draw(renderer)
-    '''
     
     def update(self, delta_time: float) -> None:
         for vu in self.visuals:

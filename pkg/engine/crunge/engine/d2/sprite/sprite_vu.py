@@ -5,20 +5,15 @@ import glm
 
 from crunge import wgpu
 
-from ...uniforms import cast_matrix4, cast_vec4, cast_vec2, cast_tuple4f
+from ...uniforms import cast_matrix4
 from ...renderer import Renderer
-from ...buffer import UniformBuffer
 
 from ..node_2d import Node2D
 from ..vu_2d import Vu2D
 from ..uniforms_2d import NodeUniform
-from ..binding_2d import NodeBindGroup
 
 from .sprite_program import SpriteProgram
 from .sprite import Sprite, SpriteMembership
-
-if TYPE_CHECKING:
-    from .sprite_vu_group import SpriteVuGroup
 
 
 class SpriteVu(Vu2D):
@@ -27,56 +22,28 @@ class SpriteVu(Vu2D):
         self._sprite = sprite
         self.sprite_membership: SpriteMembership = None
 
-        '''
-        self.group: "SpriteVuGroup" = None
-        self.program: SpriteProgram = None
-        self.manual_draw = True
-
-        self.bind_group: NodeBindGroup = None
-        self.buffer: UniformBuffer[NodeUniform] = None
-        self._buffer_index = 0
-        '''
-
     @property
     def sprite(self) -> Sprite:
         return self._sprite
-    
+
     @sprite.setter
     def sprite(self, sprite: Sprite):
         self._sprite = sprite
-        '''
-        if self.group is not None and sprite.group is None:
-        #if self.group is not None:
-            #exit()
-            self.group.sprite_group.append(sprite)
-        '''
+
         if self.group is not None:
             if not self.sprite.is_member_of(self.group.sprite_group):
                 self.sprite_membership = self.group.sprite_group.append(sprite)
             else:
-                self.sprite_membership = self.sprite.get_membership(self.group.sprite_group)
+                self.sprite_membership = self.sprite.get_membership(
+                    self.group.sprite_group
+                )
 
         if self.enabled:
             self.update_gpu()
 
     def on_group(self) -> None:
-        '''
-        if self.sprite.group is None:
-            self.group.sprite_group.append(self.sprite)
-        '''
         if not self.sprite.is_member_of(self.group.sprite_group):
             self.sprite_membership = self.group.sprite_group.append(self.sprite)
-
-    '''
-    @property
-    def buffer_index(self) -> int:
-        return self._buffer_index
-
-    @buffer_index.setter
-    def buffer_index(self, value: int):
-        self._buffer_index = value
-        self.on_transform()
-    '''
 
     @property
     def size(self) -> glm.vec2:
@@ -94,91 +61,22 @@ class SpriteVu(Vu2D):
 
     def on_node_model_change(self, node: Node2D) -> None:
         super().on_node_model_change(node)
-        #logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
+        # logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
-
-    '''
-    def _create(self):
-        super()._create()
-        group = self.group
-        if group is not None:
-            group.append(self)
-            if group.is_render_group:
-                self.manual_draw = False
-
-        if not self.manual_draw:
-            return
-
-        self.create_program()
-        self.create_buffer()
-        self.create_bind_group()
-    '''
-
-    '''
-    def destroy(self):
-        if self.group is not None:
-            self.group.remove(self)
-        super().destroy()
-    '''
-
-    """
-    def __del__(self):
-        if self.group is not None:
-            self.group.remove(self)
-    """
-
-    '''
-    def _create(self):
-        super()._create()
-        #raise NotImplementedError("SpriteVu._create() not implemented")
-        #if self.group is not None and self.sprite.group is None:
-        if self.group is not None:
-            #exit()
-            self.group.sprite_group.append(self.sprite)
-    '''
 
     def create_program(self):
         self.program = SpriteProgram()
 
-    '''
-    def create_buffer(self):
-        self.buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")
-
-    def create_bind_group(self):
-        self.bind_group = NodeBindGroup(
-            self.buffer.get(),
-            self.buffer.size,
-        )
-    '''
-
-    '''
-    def on_transform(self) -> None:
-        super().on_transform()
-        if self.enabled:
-            self.update_gpu()
-
     def update_gpu(self):
         uniform = NodeUniform()
         uniform.transform.data = cast_matrix4(self.transform)
 
-        self.buffer[self.buffer_index] = uniform
-
-    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
-        pass_enc.set_pipeline(self.program.render_pipeline.get())
-        self.sprite.bind(pass_enc)
-        self.bind_group.bind(pass_enc)
-    '''
-
-    def update_gpu(self):
-        uniform = NodeUniform()
-        uniform.transform.data = cast_matrix4(self.transform)
-        #uniform.model_index = self.sprite.buffer_index
-        #uniform.model_index = self.sprite_membership.index
         if self.sprite_membership is not None:
             uniform.model_index = self.sprite_membership.index
         elif self.sprite is not None:
             uniform.model_index = self.sprite.buffer_index
-        #logger.debug(f"SpriteVu: update_gpu: {uniform.model_index}")
+
+        # logger.debug(f"SpriteVu: update_gpu: {uniform.model_index}")
         self.node_buffer[self.node_buffer_index] = uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
@@ -188,12 +86,12 @@ class SpriteVu(Vu2D):
     def draw(self, renderer: Renderer) -> None:
         if not self.manual_draw:
             return
-        
+
         frustum = renderer.camera_2d.frustum
         if not self.bounds.intersects(frustum):
-            #logger.debug(f"SpriteVu: {self} is not in frustum: {frustum}")
+            # logger.debug(f"SpriteVu: {self} is not in frustum: {frustum}")
             return
-        
+
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())

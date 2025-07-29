@@ -82,10 +82,8 @@ class Demo(engine.App):
 
     def draw_stats(self):
             # Display timings
-        update_output = f"Update time: {self.update_time:.3f}"
-        drawing_output = f"Drawing time: {self.draw_time:.3f}"
-        imgui.text(update_output)
-        imgui.text(drawing_output)
+        imgui.text(f"Update time: {self.update_time:.4f}")
+        imgui.text(f"Drawing time: {self.draw_time:.4f}")
 
     def update(self, delta_time: float):
         start_time = timeit.default_timer()

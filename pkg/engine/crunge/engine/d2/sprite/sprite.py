@@ -20,11 +20,15 @@ from .sprite_sampler import DefaultSpriteSampler
 if TYPE_CHECKING:
     from .sprite_group import SpriteGroup
 
+
 class SpriteMembership:
-    def __init__(self, group: "SpriteGroup", buffer: UniformBuffer[ModelUniform], index: int) -> None:
+    def __init__(
+        self, group: "SpriteGroup", buffer: UniformBuffer[ModelUniform], index: int
+    ) -> None:
         self.group: "SpriteGroup" = group
         self.buffer: UniformBuffer[ModelUniform] = buffer
         self.index = index
+
 
 class Sprite(Model):
     def __init__(
@@ -48,7 +52,7 @@ class Sprite(Model):
         self.points = points
         self.collision_rect = collision_rect
 
-        #self.group: "SpriteGroup" = None
+        # self.group: "SpriteGroup" = None
         self.memberships: List[SpriteMembership] = []
 
         self.material_bind_group: SpriteBindGroup = None
@@ -115,27 +119,11 @@ class Sprite(Model):
         self._rect = value
         self.update_gpu()
 
-    """
-    @property
-    def x(self):
-        return self.rect.x
-
-    @property
-    def y(self):
-        return self.rect.y
-    """
-
     @property
     def size(self):
         if self.collision_rect is not None:
             return self.collision_rect.size
         return self.rect.size
-
-    """
-    @property
-    def size(self):
-        return self.rect.size
-    """
 
     @property
     def width(self):
@@ -189,15 +177,13 @@ class Sprite(Model):
         self.update_buffer(self.buffer, self.buffer_index)
         for membership in self.memberships:
             self.update_buffer(membership.buffer, membership.index)
-            
+
     def update_buffer(self, buffer: UniformBuffer[ModelUniform], index: int):
         uniform = ModelUniform()
         uniform.color = cast_tuple4f(self.color)
 
         rect = self.rect
-        uniform.rect = cast_vec4(
-            glm.vec4(rect.x, rect.y, rect.width, rect.height)
-        )
+        uniform.rect = cast_vec4(glm.vec4(rect.x, rect.y, rect.width, rect.height))
         uniform.texture_size = cast_vec2(self.texture.size)
 
         uniform.flip_h = 1 if self.flip_h else 0
@@ -206,25 +192,10 @@ class Sprite(Model):
         try:
             buffer[index] = uniform
         except IndexError as e:
-            logger.error(f"IndexError: {index} out of bounds for buffer of size {buffer.size}")
+            logger.error(
+                f"IndexError: {index} out of bounds for buffer of size {buffer.size}"
+            )
             raise e
-
-    '''
-    def update_gpu(self):
-        uniform = ModelUniform()
-        uniform.color = cast_tuple4f(self.color)
-
-        rect = self.rect
-        uniform.rect = cast_vec4(
-            glm.vec4(rect.x, rect.y, rect.width, rect.height)
-        )
-        uniform.texture_size = cast_vec2(self.texture.size)
-
-        uniform.flip_h = 1 if self.flip_h else 0
-        uniform.flip_v = 1 if self.flip_v else 0
-
-        self.buffer[self.buffer_index] = uniform
-    '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.bind_material(pass_enc)

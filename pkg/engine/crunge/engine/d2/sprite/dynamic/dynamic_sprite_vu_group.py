@@ -3,8 +3,8 @@ from loguru import logger
 from crunge import wgpu
 
 from ....buffer import UniformBuffer
-from ...uniforms_2d import ModelUniform, NodeUniform
-from ...binding_2d import DynamicModelBindGroupLayout, ModelBindGroup, DynamicNodeBindGroupLayout, NodeBindGroup
+from ...uniforms_2d import NodeUniform
+from ...binding_2d import DynamicNodeBindGroupLayout, NodeBindGroup
 
 from ..sprite import Sprite
 from ..sprite_vu import SpriteVu
@@ -20,18 +20,7 @@ class DynamicSpriteVuGroup(SpriteVuGroup):
         self.is_dynamic_group = True
         self.count = count
 
-        '''
-        self.model_bind_group: DynamicModelBindGroupLayout = None
-        self.model_buffer = UniformBuffer(
-            ModelUniform,
-            count,
-            wgpu.BufferUsage.STORAGE,
-            label="DynamicSpriteVuGroup Model Buffer",
-        )
-        logger.debug(f"Model Uniform Buffer: {self.model_buffer}")
-        '''
-
-        self.node_bind_group: DynamicNodeBindGroupLayout = None
+        self.node_bind_group: NodeBindGroup = None
         self.node_buffer = UniformBuffer(
             NodeUniform,
             count,
@@ -58,13 +47,6 @@ class DynamicSpriteVuGroup(SpriteVuGroup):
             vu.node_buffer_index = index
 
     def create_bind_groups(self):
-        '''
-        self.model_bind_group = ModelBindGroup(
-            self.model_buffer.get(),
-            self.model_buffer.size,
-            layout=self.program.render_pipeline.model_bind_group_layout,
-        )
-        '''
         self.node_bind_group = NodeBindGroup(
             self.node_buffer.get(),
             self.node_buffer.size,
@@ -72,7 +54,5 @@ class DynamicSpriteVuGroup(SpriteVuGroup):
         )
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        #pass_enc.set_pipeline(self.program.render_pipeline.get())
-        #self.model_bind_group.bind(pass_enc)
         self.sprite_group.bind(pass_enc)
         self.node_bind_group.bind(pass_enc)

@@ -72,9 +72,8 @@ class TiledPhysicsDebugDemo(Demo):
 
 
         imgui.begin("Tiled Physics Demo")
-        imgui.text(update_output)
-        imgui.text(drawing_output)
-
+        self.draw_stats()
+        
         imgui.text("Click to create balls")
 
         _, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)

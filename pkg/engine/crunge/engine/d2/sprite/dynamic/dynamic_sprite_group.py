@@ -33,17 +33,8 @@ class DynamicSpriteGroup(SpriteGroup):
         self.create_bind_group()
 
     def append(self, sprite: Sprite) -> None:
-        '''
-        if sprite in self.models:
-            logger.warning(f"Sprite {sprite} already in group {self}")
-            return
-        '''
         super().append(sprite)
-        '''
-        sprite.group = self
-        sprite.buffer = self.storage_buffer
-        sprite.buffer_index = len(self.models) - 1
-        '''
+
         membership = SpriteMembership(self, self.storage_buffer, len(self.models) - 1)
         sprite.add_membership(membership)
         return membership
