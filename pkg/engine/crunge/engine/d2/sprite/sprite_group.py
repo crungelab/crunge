@@ -4,7 +4,7 @@ from crunge import wgpu
 
 from ...resource.model import ModelGroup
 
-from . import Sprite
+from .sprite import Sprite, SpriteMembership
 
 
 class SpriteGroup(ModelGroup[Sprite]):
@@ -12,5 +12,8 @@ class SpriteGroup(ModelGroup[Sprite]):
         super().__init__()
         self.is_dynamic_group = False
 
+    def create_membership(self, sprite: Sprite) -> SpriteMembership:
+        raise NotImplementedError("SpriteGroup.create_membership should be implemented in subclasses")
+    
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         raise NotImplementedError("SpriteGroup.bind should be implemented in subclasses")

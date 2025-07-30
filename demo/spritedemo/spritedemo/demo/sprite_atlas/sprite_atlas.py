@@ -15,30 +15,6 @@ from ..demo import Demo
 class SpriteAtlasDemo(Demo):
     def __init__(self):
         super().__init__()
-        '''
-        self.angle = 0
-        self.scale = 1.0
-        self.alpha = 255
-        self.color_enabled = True
-        self.color = 1, 1, 1
-        '''
-
-        '''
-        atlas = self.atlas = XmlSpriteAtlasLoader().load(
-            ":resources:/platformer/Spritesheets/spritesheet_tiles.xml"
-        )
-        logger.debug(f"atlas: {atlas}")
-
-        sprite = self.sprite = atlas.get("bomb.png")
-
-        self.sprite_vu = vu = SpriteVu(sprite).create()
-        node = self.node = Node2D(vu=vu)
-        x = self.width / 2
-        y = self.height / 2
-        node.position = glm.vec2(x, y)
-
-        self.scene.attach(self.node)
-        '''
 
     def reset(self):
         super().reset()
@@ -56,8 +32,10 @@ class SpriteAtlasDemo(Demo):
 
         sprite = self.sprite = atlas.get("bomb.png")
 
-        self.sprite_vu = vu = SpriteVu(sprite).create()
-        node = self.node = Node2D(vu=vu)
+        #self.sprite_vu = vu = SpriteVu(sprite).create()
+        #node = self.node = Node2D(vu=vu)
+        self.sprite_vu = vu = SpriteVu()
+        node = self.node = Node2D(vu=vu, model=sprite)
         x = self.width / 2
         y = self.height / 2
         node.position = glm.vec2(x, y)

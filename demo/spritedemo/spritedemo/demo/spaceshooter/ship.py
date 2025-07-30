@@ -81,5 +81,6 @@ class Ship(DynamicEntity2D):
         direction = glm.vec2(math.cos(rotation), math.sin(rotation))
         position = self.position + direction * spawn_distance
 
-        laser = Laser(position, self.angle, missile_speed).create()
+        #laser = Laser(position, self.angle, missile_speed).create()
+        laser = Laser(position, self.angle, missile_speed)
         self.layer.attach(laser)

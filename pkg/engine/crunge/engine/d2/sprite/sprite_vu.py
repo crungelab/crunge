@@ -16,16 +16,40 @@ from .sprite_program import SpriteProgram
 from .sprite import Sprite, SpriteMembership
 
 
+if TYPE_CHECKING:
+    from .sprite_vu_group import SpriteVuGroup
+
 class SpriteVu(Vu2D):
+    group: "SpriteVuGroup"
+    
     def __init__(self, sprite: Sprite = None) -> None:
         super().__init__()
-        self._sprite = sprite
+        #self._sprite = sprite
         self.sprite_membership: SpriteMembership = None
+        self.sprite = sprite
 
     @property
     def sprite(self) -> Sprite:
-        return self._sprite
+        #return self._sprite
+        return self.sprite_membership.sprite if self.sprite_membership is not None else None
 
+    @sprite.setter
+    def sprite(self, sprite: Sprite):
+        if sprite is None:
+            return
+
+        #self._sprite = sprite
+
+        sprite_group = self.group.sprite_group if self.group is not None else None
+        self.sprite_membership = sprite.join(sprite_group)
+
+        if self.enabled:
+            self.update_gpu()
+
+    def on_group(self) -> None:
+        self.sprite_membership = self.sprite.join(self.group.sprite_group)
+
+    '''
     @sprite.setter
     def sprite(self, sprite: Sprite):
         self._sprite = sprite
@@ -44,6 +68,7 @@ class SpriteVu(Vu2D):
     def on_group(self) -> None:
         if not self.sprite.is_member_of(self.group.sprite_group):
             self.sprite_membership = self.group.sprite_group.append(self.sprite)
+    '''
 
     @property
     def size(self) -> glm.vec2:
@@ -73,15 +98,19 @@ class SpriteVu(Vu2D):
 
         if self.sprite_membership is not None:
             uniform.model_index = self.sprite_membership.index
+        '''
         elif self.sprite is not None:
             uniform.model_index = self.sprite.buffer_index
+        '''
 
         # logger.debug(f"SpriteVu: update_gpu: {uniform.model_index}")
         self.node_buffer[self.node_buffer_index] = uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         super().bind(pass_enc)
-        self.sprite.bind(pass_enc)
+        #self.sprite.bind(pass_enc)
+        #self.sprite.bind_material(pass_enc)
+        self.sprite_membership.bind(pass_enc)
 
     def draw(self, renderer: Renderer) -> None:
         if not self.manual_draw:

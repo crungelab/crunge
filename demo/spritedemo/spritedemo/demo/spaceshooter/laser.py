@@ -16,13 +16,26 @@ class Laser(DynamicEntity2D):
         super().__init__(position, geom=BoxGeom())
         self.angle = angle
         self.speed = speed
+
         atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
         sprite = atlas.get("laserBlue01.png")
 
         self.vu = SpriteVu(sprite)
+
         self.ttl = 1.0
+
+    '''
+    def _create(self):
+        super()._create()
+        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        logger.debug(f"atlas: {atlas}")
+        
+        sprite = atlas.get("laserBlue01.png")
+
+        self.vu = SpriteVu(sprite)
+    '''
 
     def add_shape(self, shape):
         shape.collision_type = CollisionType.LASER

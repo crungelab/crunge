@@ -67,6 +67,8 @@ class ThingsDemo(Demo):
         imgui.begin("Shapes")
         imgui.text("Click to create shapes")
 
+        self.draw_stats()
+
         _, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)
 
         if imgui.button("Reset"):

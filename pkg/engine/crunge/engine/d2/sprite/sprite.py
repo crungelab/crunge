@@ -23,12 +23,17 @@ if TYPE_CHECKING:
 
 class SpriteMembership:
     def __init__(
-        self, group: "SpriteGroup", buffer: UniformBuffer[ModelUniform], index: int
+        self, sprite: "Sprite",group: "SpriteGroup", buffer: UniformBuffer[ModelUniform], index: int, bind_group: ModelBindGroup = None
     ) -> None:
+        self.sprite: "Sprite" = sprite
         self.group: "SpriteGroup" = group
         self.buffer: UniformBuffer[ModelUniform] = buffer
         self.index = index
+        self.bind_group = bind_group
 
+    def bind(self, pass_enc: wgpu.RenderPassEncoder):
+        self.sprite.bind_material(pass_enc)
+        self.bind_group.bind(pass_enc)
 
 class Sprite(Model):
     def __init__(
@@ -56,24 +61,43 @@ class Sprite(Model):
         self.memberships: List[SpriteMembership] = []
 
         self.material_bind_group: SpriteBindGroup = None
-        self.model_bind_group: ModelBindGroup = None
+        #self.model_bind_group: ModelBindGroup = None
 
-        self.buffer: UniformBuffer[ModelUniform] = None
-        self._buffer_index = 0
+        #self.buffer: UniformBuffer[ModelUniform] = None
+        #self._buffer_index = 0
 
-        self.create_buffer()
+        #self.create_buffer()
         self.create_bind_groups()
 
         self._rect: Rect2i = None
         self.rect = rect
 
-        self.update_gpu()
+        #self.update_gpu()
 
     def __str__(self):
         return f"Sprite(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, rect={self.rect})"
 
     def __repr__(self):
         return str(self)
+
+    def join(self, group: "SpriteGroup") -> SpriteMembership:
+        from .global_sprite_group import GlobalSpriteGroup
+        if group is None:
+            group = GlobalSpriteGroup()
+        membership = self.get_membership(group)
+        if membership is None:
+            membership = group.create_membership(self)
+            self.add_membership(membership)
+        return membership
+
+    '''
+    def join(self, group: "SpriteGroup") -> SpriteMembership:
+        membership = self.get_membership(group)
+        if membership is None:
+            membership = group.create_membership(self)
+            self.add_membership(membership)
+        return membership
+    '''
 
     def add_membership(self, membership: SpriteMembership) -> None:
         self.memberships.append(membership)
@@ -88,6 +112,7 @@ class Sprite(Model):
     def is_member_of(self, group: "SpriteGroup") -> bool:
         return any(membership.group == group for membership in self.memberships)
 
+    '''
     @property
     def buffer_index(self) -> int:
         return self._buffer_index
@@ -96,6 +121,7 @@ class Sprite(Model):
     def buffer_index(self, value: int):
         self._buffer_index = value
         self.update_gpu()
+    '''
 
     @property
     def texture(self):
@@ -160,21 +186,25 @@ class Sprite(Model):
         self.update_gpu()
         return self
 
+    '''
     def create_buffer(self):
         self.buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
-
+    '''
+    
     def create_bind_groups(self):
         self.material_bind_group = SpriteBindGroup(
             self.texture.view,
             self.sampler.sampler,
         )
+        '''
         self.model_bind_group = ModelBindGroup(
             self.buffer.get(),
             self.buffer.size,
         )
+        '''
 
     def update_gpu(self):
-        self.update_buffer(self.buffer, self.buffer_index)
+        #self.update_buffer(self.buffer, self.buffer_index)
         for membership in self.memberships:
             self.update_buffer(membership.buffer, membership.index)
 
@@ -199,7 +229,7 @@ class Sprite(Model):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.bind_material(pass_enc)
-        self.model_bind_group.bind(pass_enc)
+        #self.model_bind_group.bind(pass_enc)
 
     def bind_material(self, pass_enc: wgpu.RenderPassEncoder):
         self.material_bind_group.bind(pass_enc)
