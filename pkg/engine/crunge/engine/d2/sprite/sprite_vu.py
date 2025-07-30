@@ -29,7 +29,7 @@ class SpriteVu(Vu2D):
 
     @property
     def sprite(self) -> Sprite:
-        return self.sprite_membership.sprite if self.sprite_membership is not None else None
+        return self.sprite_membership.member if self.sprite_membership is not None else None
 
     @sprite.setter
     def sprite(self, sprite: Sprite):

@@ -6,7 +6,7 @@ import glm
 from crunge import wgpu
 
 from ...math import Rect2i
-from ...resource import ImageTexture, Model, Sampler
+from ...resource import ImageTexture, Model, ModelMembership, Sampler
 from ... import colors
 
 from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
@@ -20,17 +20,18 @@ if TYPE_CHECKING:
     from .sprite_group import SpriteGroup
 
 
-class SpriteMembership:
+class SpriteMembership(ModelMembership):
     def __init__(
         self,
-        sprite: "Sprite",
+        model: "Sprite",
         group: "SpriteGroup",
         buffer: UniformBuffer[ModelUniform],
         index: int,
         bind_group: ModelBindGroup = None,
     ) -> None:
-        self.sprite: "Sprite" = sprite
-        self.group: "SpriteGroup" = group
+        super().__init__(model, group, index)
+        #self.model: "Sprite" = model
+        #self.group: "SpriteGroup" = group
         self.buffer: UniformBuffer[ModelUniform] = buffer
         self.index = index
         self.bind_group = bind_group

@@ -34,7 +34,7 @@ class DynamicSpriteGroup(SpriteGroup):
 
     def create_membership(self, sprite: Sprite) -> SpriteMembership:
         super().append(sprite)
-        membership = SpriteMembership(sprite, self, self.storage_buffer, len(self.models) - 1)
+        membership = SpriteMembership(sprite, self, self.storage_buffer, len(self.memberships) - 1)
         return membership
 
     def create_bind_group(self):
