@@ -18,11 +18,11 @@ class InstancedSpriteVuBatch:
         self.instance_count = 1
 
     def draw(self, renderer: Renderer):
-        #logger.debug("Drawing sprites")
+        # logger.debug("Drawing sprites")
         pass_enc = renderer.pass_enc
-        #self.sprite_vu.sprite.bind(pass_enc)
-        self.sprite_vu.sprite.bind_material(pass_enc)
+        self.sprite_vu.sprite.bind(pass_enc, self.sprite_vu.sprite_membership)
         pass_enc.draw(4, self.instance_count, 0, self.first_instance)
+
 
 class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
     def __init__(self, count: int = ELEMENTS, sprite_group: SpriteGroup = None) -> None:
@@ -44,8 +44,11 @@ class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
         self.batch_all()
 
     def batch(self, member: SpriteVu):
-        # Compare by texture until I start registering materials
-        if len(self.batches) == 0 or self.batches[-1].sprite_vu.sprite.texture != member.sprite.texture:
+        # TODO: Compare by texture until I start registering materials
+        if (
+            len(self.batches) == 0
+            or self.batches[-1].sprite_vu.sprite.texture != member.sprite.texture
+        ):
             self.batches.append(
                 InstancedSpriteVuBatch(member, member.node_buffer_index)
             )
