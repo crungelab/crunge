@@ -23,17 +23,14 @@ if TYPE_CHECKING:
 class SpriteMembership(ModelMembership):
     def __init__(
         self,
-        model: "Sprite",
         group: "SpriteGroup",
-        buffer: UniformBuffer[ModelUniform],
+        member: "Sprite",
         index: int,
+        buffer: UniformBuffer[ModelUniform],
         bind_group: ModelBindGroup = None,
     ) -> None:
-        super().__init__(model, group, index)
-        #self.model: "Sprite" = model
-        #self.group: "SpriteGroup" = group
+        super().__init__(group, member, index)
         self.buffer: UniformBuffer[ModelUniform] = buffer
-        self.index = index
         self.bind_group = bind_group
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):

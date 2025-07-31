@@ -21,8 +21,7 @@ class DefaultTileLayerBuilder(TileLayerBuilder):
         size = self.context.size
         #scene_layer = SceneLayer2D(name=layer.name)
         sprite_group = DynamicSpriteGroup(1024).enable()
-        logger.debug(f"Sprite Group: {sprite_group}")
-        scene_layer = InstancedSpriteLayer(name=layer.name, count=1024, sprite_group=sprite_group).enable()
+        scene_layer = InstancedSpriteLayer(name=layer.name, count=1024, sprite_group=sprite_group)
         scene_layer.bounds = Bounds2(0, 0, size.x, size.y)
         self.context.layer = scene_layer
         super().build(layer, layer_id)

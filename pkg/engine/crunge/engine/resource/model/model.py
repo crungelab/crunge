@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 T_Model = TypeVar("T_Membership", bound="Model")
 
 class ModelMembership:
-    def __init__(self, member: "Model", group: "ModelGroup", index: int) -> None:
-        self.member: "Model" = member
+    def __init__(self, group: "ModelGroup", member: "Model", index: int) -> None:
         self.group: "ModelGroup" = group
+        self.member: "Model" = member
         self.index = index
 
 

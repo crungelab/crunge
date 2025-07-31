@@ -51,6 +51,8 @@ class BoxesDemo(Demo):
         imgui.begin("Boxes Demo")
         imgui.text("Click to create boxes")
 
+        self.draw_stats()
+        
         if imgui.button("Reset"):
             self.reset()
 

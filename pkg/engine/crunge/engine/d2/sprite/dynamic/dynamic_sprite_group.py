@@ -27,6 +27,7 @@ class DynamicSpriteGroup(SpriteGroup):
             label="DynamicSpriteGroup Buffer",
         )
         logger.debug(f"Model Uniform Buffer: {self.storage_buffer}")
+        self.create_bind_group()
 
     def _create(self):
         super()._create()
@@ -34,7 +35,7 @@ class DynamicSpriteGroup(SpriteGroup):
 
     def create_membership(self, sprite: Sprite) -> SpriteMembership:
         super().append(sprite)
-        membership = SpriteMembership(sprite, self, self.storage_buffer, len(self.memberships) - 1)
+        membership = SpriteMembership(self, sprite, len(self.memberships) - 1, self.storage_buffer)
         return membership
 
     def create_bind_group(self):

@@ -23,5 +23,5 @@ class GlobalSpriteGroup(SpriteGroup):
             buffer.size,
         )
 
-        membership = SpriteMembership(sprite, self, buffer, 0, bind_group)
+        membership = SpriteMembership(self, sprite, 0, buffer, bind_group)
         return membership
