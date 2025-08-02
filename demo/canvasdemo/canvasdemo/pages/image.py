@@ -32,9 +32,8 @@ shader = image.make_shader(
 
 class ImageDemo(Page):
     def _draw(self):
-        renderer = Renderer.get_current()
-        with renderer.canvas_target() as canvas:
-            canvas.draw_image(image, 0, 0)
+        canvas = Renderer.get_current().canvas
+        canvas.draw_image(image, 0, 0)
         super()._draw()
 
 

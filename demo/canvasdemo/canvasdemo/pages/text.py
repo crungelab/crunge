@@ -8,20 +8,19 @@ from ..page import Page
 
 
 class TextPage(Page):
-    def _draw(self):
-        renderer = Renderer.get_current()
-        
-        with renderer.canvas_target() as canvas:
-            # canvas.clear(0xFF00FF00)  # Clear with a color
+    def reset(self):
+        self.font = skia.Font()
+        self.font.set_size(36)
 
-            paint = skia.Paint()
-            paint.set_color(0xFFFF00FF)
-            # font = skia.Font(None, 36)
-            font = skia.Font()
-            font.set_size(36)
-            # font.set_typeface(skia.Typeface('Arial'))
-            # font.set_typeface(None)
-            canvas.draw_string("Hello Skia!", 10, 32, font, paint)
+    def _draw(self):
+        canvas = Renderer.get_current().canvas
+        
+        # canvas.clear(0xFF00FF00)  # Clear with a color
+
+        paint = skia.Paint()
+        paint.set_color(0xFFFF00FF)
+        canvas.draw_string("Hello Skia!", 10, 32, self.font, paint)
+
         super()._draw()
 
 

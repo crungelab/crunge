@@ -1,5 +1,4 @@
 from crunge import imgui
-from crunge.engine import Renderer
 
 from .widget import Widget
 

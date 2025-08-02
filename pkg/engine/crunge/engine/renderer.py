@@ -121,6 +121,12 @@ class Renderer(Base):
     @contextlib.contextmanager
     def canvas_target(self):
         yield self.viewport.canvas
+        self.viewport.submit_canvas()
+
+    '''
+    @contextlib.contextmanager
+    def canvas_target(self):
+        yield self.viewport.canvas
         recording = self.viewport.recorder.snap()
         if recording:
             insert_info = skia.InsertRecordingInfo()
@@ -128,3 +134,4 @@ class Renderer(Base):
             self.viewport.skia_context.insert_recording(insert_info)
             self.viewport.skia_context.submit(skia.SyncToCpu.K_NO)
             #self.skia_context.submit(skia.SyncToCpu.K_YES)
+    '''

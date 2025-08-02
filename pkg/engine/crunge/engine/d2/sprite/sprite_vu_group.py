@@ -15,6 +15,7 @@ class SpriteVuGroup(VuGroup[SpriteVu]):
 
 
     def _draw(self) -> None:
+        renderer = Renderer.get_current()
         frustum = renderer.camera_2d.frustum
         for vu in self.visuals:
             #logger.debug(f"SpriteVuGroup.draw: {vu}")

@@ -1,7 +1,6 @@
 from loguru import logger
 
 from crunge import imgui
-from crunge.engine import Renderer
 
 from . import Widget
 
@@ -12,10 +11,10 @@ class WidgetGroup(Widget):
         self.drag_index = -1
         self.dragging = None
 
-    def draw_sortable(self, renderer: Renderer, callback=lambda i, j: None):
+    def draw_sortable(self, callback=lambda i, j: None):
         hovered_index = -1
         for i, child in enumerate(self.children):
-            self.draw_child(renderer, child)
+            self.draw_child(child)
             if imgui.is_item_hovered(imgui.HoveredFlags.RECT_ONLY):
                 hovered_index = i
 

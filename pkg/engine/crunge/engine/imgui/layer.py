@@ -4,8 +4,6 @@ from pathlib import Path
 from loguru import logger
 import glm
 
-from crunge.engine import Renderer
-
 from crunge import sdl
 from crunge import imgui
 from crunge.imgui import Key

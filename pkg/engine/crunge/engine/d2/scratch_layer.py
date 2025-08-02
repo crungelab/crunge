@@ -32,7 +32,7 @@ class ScratchLayer(ViewLayer):
 
     def draw_line(self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE):
         # logger.debug(f"DemoView.draw_line({begin}, {end}, {color})")
-        def draw(renderer: Renderer, canvas: skia.Canvas):
+        def draw(canvas: skia.Canvas):
             paint = skia.Paint()
             paint.set_color(rgba_tuple_to_argb_int(color))
             canvas.draw_line(begin[0], begin[1], end[0], end[1], paint)
@@ -40,7 +40,7 @@ class ScratchLayer(ViewLayer):
         self.add_call(draw)
 
     def draw_polygon(self, points: list[glm.vec2], outline_color=colors.WHITE):
-        def draw(renderer: Renderer, canvas: skia.Canvas):
+        def draw(canvas: skia.Canvas):
             path = skia.Path()
             if not points:
                 return
@@ -61,7 +61,7 @@ class ScratchLayer(ViewLayer):
     def draw_circle(
         self, center: glm.vec2, radius: float, segments: int = 32, color=colors.WHITE
     ):
-        def draw(renderer: Renderer, canvas: skia.Canvas):
+        def draw(canvas: skia.Canvas):
             # logger.debug(f"draw_circle({center}, {radius}, {segments}, {color})")
             paint = skia.Paint()
             paint.set_color(rgba_tuple_to_argb_int(color))
@@ -74,14 +74,12 @@ class ScratchLayer(ViewLayer):
     def draw_text(
         self, text: str, position: glm.vec2, color=colors.WHITE, font_size=36
     ):
-        def draw(renderer: Renderer, canvas: skia.Canvas):
+        def draw(canvas: skia.Canvas):
             paint = skia.Paint()
             paint.set_color(rgba_tuple_to_argb_int(color))
-            # font = skia.Font()
-            # font.set_size(font_size)
+
             font = self.create_font(font_size)
 
-            # canvas.draw_string(text, position.x, position.y, font, paint)
             # Save current canvas state
             canvas.save()
             # Flip Y back for text (since global is -scale)
@@ -93,21 +91,6 @@ class ScratchLayer(ViewLayer):
 
         self.add_call(draw)
 
-    """
-    def draw_text(self, text: str, position: glm.vec2, color=colors.WHITE):
-            def draw(renderer: Renderer, canvas: skia.Canvas):
-                paint = skia.Paint()
-                #paint.set_color(0xFFFF00FF)
-                paint.set_color(rgba_tuple_to_argb_int(color))
-                # font = skia.Font(None, 36)
-                font = skia.Font()
-                font.set_size(36)
-                # font.set_typeface(skia.Typeface('Arial'))
-                # font.set_typeface(None)
-                canvas.draw_string(text, position.x, position.y, font, paint)
-
-            self.add_call(draw)
-    """
 
     def _draw(self):
         renderer = Renderer.get_current()
@@ -127,7 +110,7 @@ class ScratchLayer(ViewLayer):
             canvas.translate(-camera_x, -camera_y)  # pan to camera
 
             for call in self.draw_calls:
-                call(renderer, canvas)
+                call(canvas)
 
             canvas.restore()
 

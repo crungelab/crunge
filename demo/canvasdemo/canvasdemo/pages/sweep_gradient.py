@@ -9,26 +9,25 @@ from ..page import Page
 
 class SweepGradientPage(Page):
     def _draw(self):
-        renderer = Renderer.get_current()
+        canvas = Renderer.get_current().canvas
         
-        with renderer.canvas_target() as canvas:
-            gradient_paint = skia.Paint()
+        gradient_paint = skia.Paint()
 
-            shader = skia.GradientShader.make_sweep(
-                128.0,
-                128.0,
-                [
-                    skia.colors.CYAN,
-                    skia.colors.MAGENTA,
-                    skia.colors.YELLOW,
-                    skia.colors.CYAN,
-                ],
-            )
-            # logger.debug(f"shader: {shader}")
+        shader = skia.GradientShader.make_sweep(
+            128.0,
+            128.0,
+            [
+                skia.colors.CYAN,
+                skia.colors.MAGENTA,
+                skia.colors.YELLOW,
+                skia.colors.CYAN,
+            ],
+        )
+        # logger.debug(f"shader: {shader}")
 
-            gradient_paint.set_shader(shader)
-            canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
-            # canvas.draw_paint(paint)
+        gradient_paint.set_shader(shader)
+        canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
+
         super()._draw()
 
 

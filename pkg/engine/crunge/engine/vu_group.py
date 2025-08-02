@@ -2,7 +2,6 @@ from typing import TypeVar, Generic, List
 
 from loguru import logger
 
-from .renderer import Renderer
 from .vu import Vu
 from .base import Base
 

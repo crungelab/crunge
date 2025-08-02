@@ -9,11 +9,10 @@ from ..page import Page
 
 class CirclePage(Page):
     def _draw(self):
-        renderer = Renderer.get_current()
-        with renderer.canvas_target() as canvas:
-            paint = skia.Paint()
-            paint.set_color(0xFFFFFFFF)
-            canvas.draw_circle(skia.Point(10, 10), 10, paint)
+        canvas = Renderer.get_current().canvas
+        paint = skia.Paint()
+        paint.set_color(0xFFFFFFFF)
+        canvas.draw_circle(skia.Point(10, 10), 10, paint)
         super()._draw()
 
 def install(app: App):

@@ -16,6 +16,5 @@ class Label(Widget):
         font.set_size(36)
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        canvas = renderer.canvas
+        canvas = Renderer.get_current().canvas
         canvas.draw_string(self.text, 10, 32, self.font, self.paint)

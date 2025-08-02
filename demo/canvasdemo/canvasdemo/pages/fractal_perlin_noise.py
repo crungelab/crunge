@@ -48,23 +48,22 @@ class FractalPerlinNoisePage(Page):
             self.reset()
         imgui.end()
 
-        renderer = Renderer.get_current()
-        with renderer.canvas_target() as canvas:
-            gradient_paint = skia.Paint()
+        canvas = Renderer.get_current().canvas
+        gradient_paint = skia.Paint()
 
-            # shader = skia.PerlinNoiseShader.make_fractal_noise(0.05, 0.05, 4, 0.0)
-            shader = skia.PerlinNoiseShader.make_fractal_noise(
-                self.base_frequency_x,
-                self.base_frequency_y,
-                self.num_octaves,
-                self.seed,
-                None,  # tileSize
-            )
-            # logger.debug(f"shader: {shader}")
+        # shader = skia.PerlinNoiseShader.make_fractal_noise(0.05, 0.05, 4, 0.0)
+        shader = skia.PerlinNoiseShader.make_fractal_noise(
+            self.base_frequency_x,
+            self.base_frequency_y,
+            self.num_octaves,
+            self.seed,
+            None,  # tileSize
+        )
+        # logger.debug(f"shader: {shader}")
 
-            gradient_paint.set_shader(shader)
-            canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
-            # canvas.draw_paint(paint)
+        gradient_paint.set_shader(shader)
+        canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
+
         super()._draw()
 
 

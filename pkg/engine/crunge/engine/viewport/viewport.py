@@ -204,6 +204,14 @@ class Viewport(Base):
         # Submit the commands
         #self.device.queue.submit([encoder.finish()])
 
+    def submit_canvas(self):
+        recording = self.recorder.snap()
+        if recording:
+            insert_info = skia.InsertRecordingInfo()
+            insert_info.f_recording = recording
+            self.skia_context.insert_recording(insert_info)
+            self.skia_context.submit(skia.SyncToCpu.K_NO)
+
     def create_buffers(self):
         # Uniform Buffers
         self.uniform_buffer_size = sizeof(ViewportUniform)

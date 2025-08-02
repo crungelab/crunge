@@ -1,7 +1,6 @@
 from loguru import logger
 import glm
 
-from ..renderer import Renderer
 from .scene_2d import Scene2D
 from .view_2d import View2D
 

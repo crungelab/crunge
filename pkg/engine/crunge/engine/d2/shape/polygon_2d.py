@@ -8,7 +8,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ...renderer import Renderer
-from ...uniforms import cast_matrix4, cast_tuple4f
+from ...uniforms import cast_tuple4f
 from ... import colors
 
 from ..vu_2d import Vu2D
@@ -108,12 +108,6 @@ class Polygon2D(Vu2D):
             self.model_uniform_buffer,
             self.model_uniform_buffer_size,
         )
-
-    '''
-    def on_transform(self) -> None:
-        super().on_transform()
-        self.update_gpu()
-    '''
 
     def update_gpu(self):
         super().update_gpu()

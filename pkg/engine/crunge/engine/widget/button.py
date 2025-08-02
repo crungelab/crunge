@@ -31,8 +31,7 @@ class Button(Widget):
         self.font.set_size(self.size.y * 0.75)
         
     def _draw(self):
-        renderer = Renderer.get_current()
-        canvas = renderer.canvas
+        canvas = Renderer.get_current().canvas
         
         position = self.global_position
         size = self.size

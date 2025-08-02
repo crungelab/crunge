@@ -1,7 +1,5 @@
 from loguru import logger
 
-from .... import Renderer
-
 from ... import Node2D
 from ...scene_layer_2d import SceneLayer2D
 

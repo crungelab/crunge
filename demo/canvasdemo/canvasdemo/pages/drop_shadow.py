@@ -8,20 +8,21 @@ from ..page import Page
 
 
 class DropShadowPage(Page):
+    def reset(self):
+        self.font = skia.Font()
+        self.font.set_size(120)
+        # self.font.set_typeface(skia.Typeface('Arial'))
+        # self.font.set_typeface(None)
+
     def _draw(self):
-        renderer = Renderer.get_current()
-        with renderer.canvas_target() as canvas:
-            canvas.draw_color(skia.colors.WHITE)
+        canvas = Renderer.get_current().canvas
+        canvas.draw_color(skia.colors.WHITE)
 
-            filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.colors.BLACK)
-            filter_paint = skia.Paint()
-            filter_paint.set_image_filter(filter)
+        filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.colors.BLACK)
+        filter_paint = skia.Paint()
+        filter_paint.set_image_filter(filter)
 
-            font = skia.Font()
-            font.set_size(120)
-            # font.set_typeface(skia.Typeface('Arial'))
-            # font.set_typeface(None)
-            canvas.draw_string("Hello Skia!", 0, 160, font, filter_paint)
+        canvas.draw_string("Hello Skia!", 0, 160, self.font, filter_paint)
         super()._draw()
 
 

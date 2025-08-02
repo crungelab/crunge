@@ -7,7 +7,6 @@ if TYPE_CHECKING:
     from .model import Model
 
 from .dispatcher import Dispatcher
-from .renderer import Renderer
 
 T_Node = TypeVar("T_Node")
 
@@ -155,7 +154,7 @@ class Node(Dispatcher, Generic[T_Node]):
 
     def draw(self):
         self._draw()
-        
+
     def _draw(self):
         #logger.debug(f"Node.draw: {self}")
         if self.vu is not None:

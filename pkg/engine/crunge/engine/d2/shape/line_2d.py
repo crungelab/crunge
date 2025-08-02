@@ -8,7 +8,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ...renderer import Renderer
-from ...uniforms import cast_matrix4, cast_tuple4f
+from ...uniforms import cast_tuple4f
 from ... import colors
 
 from ..vu_2d import Vu2D

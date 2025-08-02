@@ -1,4 +1,3 @@
-import math
 from typing import Any, Callable
 
 from loguru import logger
@@ -9,7 +8,6 @@ from crunge import yoga
 from ..node import Node
 from ..part import Part
 from ..controller import Controller
-from ..renderer import Renderer
 
 
 class Widget(Node["Widget"]):
@@ -76,18 +74,6 @@ class Widget(Node["Widget"]):
         if not isinstance(value, yoga.Style):
             raise TypeError(f"Expected yoga.Style, got {type(value)}")
         self.layout.set_style(value)
-
-    '''
-    @property
-    def position(self) -> glm.ivec2:
-        pos = glm.ivec2(
-            self.layout.get_computed_left(), self.layout.get_computed_top()
-        )
-        if self.parent is None:
-            return pos
-        pos = pos + self.parent.position
-        return pos
-    '''
 
     @property
     def position(self) -> glm.ivec2:
@@ -180,19 +166,6 @@ class Widget(Node["Widget"]):
         if self.controller is not None:
             self.controller.dispatch(event)
         return super().dispatch(event)
-
-    '''
-    def _draw(self):
-        # logger.debug("Widget.draw")
-        if self.vu is not None:
-            self.vu.draw(renderer)
-        for child in self.children:
-            # child.draw(renderer)
-            self.draw_child(renderer, child)
-
-    def draw_child(self, renderer: Renderer, child: "Widget"):
-        child.draw(renderer)
-    '''
     
     def update(self, delta_time: float):
         # logger.debug("Widget.update")

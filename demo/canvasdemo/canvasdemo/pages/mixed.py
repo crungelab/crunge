@@ -29,7 +29,7 @@ class MixedPage(Page):
 
     def __init__(self, name: str, title: str):
         super().__init__(name, title)
-        #self.renderer = Renderer2D(self.window.viewport)
+        # self.renderer = Renderer2D(self.window.viewport)
 
     def _create(self):
         super()._create()
@@ -85,7 +85,7 @@ class MixedPage(Page):
 
     def _draw(self):
         renderer = Renderer.get_current()
-        
+
         with renderer:
             pass_enc = renderer.pass_enc
             pass_enc.set_pipeline(self.pipeline)
@@ -93,10 +93,11 @@ class MixedPage(Page):
 
         # Skia rendering
 
-        with renderer.canvas_target() as canvas:
-            paint = skia.Paint()
-            paint.set_color(0xFFFFFFFF)
-            canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
+        canvas = renderer.canvas
+
+        paint = skia.Paint()
+        paint.set_color(0xFFFFFFFF)
+        canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
 
         super()._draw()
 

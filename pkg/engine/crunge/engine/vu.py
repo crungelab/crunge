@@ -1,10 +1,9 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
 
-from .renderer import Renderer
 from .base import Base
 from .node import Node, NodeListener
 
-T_Node = TypeVar("T_Node")
+T_Node = TypeVar("T_Node", bound=Node)
 
 class Vu(Base, NodeListener, Generic[T_Node]):
     def __init__(self) -> None:

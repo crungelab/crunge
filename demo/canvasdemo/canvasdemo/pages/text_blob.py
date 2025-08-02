@@ -8,21 +8,20 @@ from ..page import Page
 
 
 class TextBlobPage(Page):
-    def _draw(self):
-        renderer = Renderer.get_current()
-        
-        with renderer.canvas_target() as canvas:
-            # canvas.clear(0xFF00FF00)  # Clear with a color
+    def reset(self):
+        self.font = skia.Font()
+        self.font.set_size(36)
 
-            paint = skia.Paint()
-            paint.set_color(0xFFFF00FF)
-            # font = skia.Font(None, 36)
-            font = skia.Font()
-            font.set_size(36)
-            # font.set_typeface(skia.Typeface('Arial'))
-            # font.set_typeface(None)
-            blob = skia.TextBlob.make_from_string("Hello Skia!", font)
-            canvas.draw_text_blob(blob, 10, 32, paint)
+    def _draw(self):
+        canvas = Renderer.get_current().canvas
+        
+        # canvas.clear(0xFF00FF00)  # Clear with a color
+
+        paint = skia.Paint()
+        paint.set_color(0xFFFF00FF)
+        blob = skia.TextBlob.make_from_string("Hello Skia!", self.font)
+        canvas.draw_text_blob(blob, 10, 32, paint)
+
         super()._draw()
 
 

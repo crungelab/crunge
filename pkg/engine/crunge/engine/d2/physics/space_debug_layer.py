@@ -87,7 +87,32 @@ class SpaceDebugLayer(ViewLayer, SpaceDebugDrawOptions):
         space = globe.physics_engine.space
 
         renderer = Renderer.get_current()
-        
+
+        canvas = renderer.canvas
+        self.canvas = canvas
+
+        canvas.save()
+
+        canvas.translate(renderer.viewport.width // 2, renderer.viewport.height // 2)
+        scale = 1 / renderer.camera_2d.zoom
+        canvas.scale(scale, -scale)  # Invert Y-axis for Skia
+        camera_x, camera_y = renderer.camera_2d.position.x, renderer.camera_2d.position.y
+        canvas.translate(-camera_x, -camera_y)     # pan to camera
+
+        space.debug_draw(self)
+
+        canvas.restore()
+
+        self.canvas = None
+
+        super()._draw()
+
+    '''
+    def _draw(self):
+        space = globe.physics_engine.space
+
+        renderer = Renderer.get_current()
+
         with renderer.canvas_target() as canvas:
             self.canvas = canvas
 
@@ -106,5 +131,5 @@ class SpaceDebugLayer(ViewLayer, SpaceDebugDrawOptions):
             self.canvas = None
 
         super()._draw()
-
+    '''
 

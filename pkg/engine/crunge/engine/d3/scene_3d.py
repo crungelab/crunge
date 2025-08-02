@@ -2,7 +2,6 @@ from loguru import logger
 import glm
 
 from ..math import Bounds3
-from ..renderer import Renderer
 from ..scene import Scene
 
 from .node_3d import Node3D
