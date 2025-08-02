@@ -92,7 +92,7 @@ class ExplosionVu(Vu2D):
 
         self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)

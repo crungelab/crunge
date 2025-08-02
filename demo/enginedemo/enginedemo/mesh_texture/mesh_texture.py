@@ -331,7 +331,9 @@ class MeshTextureDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 # view=renderer.texture_view,
@@ -367,7 +369,7 @@ class MeshTextureDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
     def frame(self):
         transform = self.transform_matrix

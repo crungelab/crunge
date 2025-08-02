@@ -28,14 +28,15 @@ shader = image.make_shader(
 
 
 class ImageShaderPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
         with renderer.canvas_target() as canvas:
             canvas.clear(skia.colors.WHITE)
 
             paint = skia.Paint()
             paint.set_shader(shader)
             canvas.draw_paint(paint)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

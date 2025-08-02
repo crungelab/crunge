@@ -6,9 +6,9 @@ from crunge.demo import Page, PageChannel
 
 
 class DemoPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         implot.show_demo_window()
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

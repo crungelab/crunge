@@ -20,7 +20,7 @@ class IblEquirectangularDemo(GltfDemo):
         importer = GltfLoader(template_loaders=[FileSystemLoader(template_dir)])
         return importer
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         light = self.scene.lighting.lights[0]
         changed, newColor = imgui.color_edit3("Diffuse Color", list(light.color))
@@ -29,7 +29,7 @@ class IblEquirectangularDemo(GltfDemo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

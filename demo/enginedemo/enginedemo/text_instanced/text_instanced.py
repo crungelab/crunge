@@ -316,7 +316,8 @@ class InstancedTextDemo(Demo):
 
         self.bind_group = self.device.create_bind_group(bind_group_desc)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
         encoder = self.device.create_command_encoder()
         render_pass = encoder.begin_render_pass(
             wgpu.RenderPassDescriptor(
@@ -337,6 +338,8 @@ class InstancedTextDemo(Demo):
         command_buffer = encoder.finish()
 
         self.queue.submit([command_buffer])
+
+        super()._draw()
 
 
 def main():

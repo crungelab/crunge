@@ -15,14 +15,6 @@ class PanelTrial(Trial):
 
         self.view.ui.attach(panel)
 
-    '''
-    def draw(self, renderer: Renderer):
-        if imgui.begin("Panel"):
-            imgui.text("This is a panel widget.")
-            imgui.end()
-
-        super().draw(renderer)
-    '''
 
 def main():
     PanelTrial().run()

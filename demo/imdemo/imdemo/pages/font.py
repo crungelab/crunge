@@ -13,7 +13,7 @@ class FontPage(Page):
         layer = self.get_layer("ImGuiLayer")
         layer.vu.refresh_font_texture()
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Font")
 
         imgui.text("Text displayed using default font")
@@ -26,7 +26,7 @@ class FontPage(Page):
         imgui.pop_font()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

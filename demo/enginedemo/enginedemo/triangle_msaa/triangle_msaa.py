@@ -64,8 +64,9 @@ class TriangleMsaaLayer(DemoLayer):
 
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
-    def draw(self, renderer: Renderer):
-        # logger.debug("draw")
+    def _draw(self):
+        renderer = Renderer.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=renderer.viewport.msaa_texture_view,
@@ -98,7 +99,7 @@ class TriangleMsaaLayer(DemoLayer):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
 
 class TriangleMsaaDemo(Demo):

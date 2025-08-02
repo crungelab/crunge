@@ -22,13 +22,13 @@ class ImageButton(Page):
         self.texture = ImageTextureLoader().load(image_path)
         self.message = ''
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Image Button")
         if imgui.image_button("Image Button", self.texture.id, (self.texture.size.x, self.texture.size.y)):
             self.message = MESSAGES[random.randint(0, len(MESSAGES)-1)]
         imgui.text(self.message)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(ImageButton, "imagebutton", "Image Button"))

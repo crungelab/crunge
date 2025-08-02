@@ -44,8 +44,9 @@ def draw_utf8_string(canvas, text, x, y, font, paint):
     #canvas.draw_text_blob(skia.TextBlob(text, font), x, y, paint)
 
 class BlendModePage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         #with self.canvas_target(renderer) as canvas:
+        renderer = Renderer.get_current()
         with renderer.canvas_target() as canvas:
             rect = skia.Rect(0.0, 0.0, 64.0, 64.0)
             #font = skia.Font(None, 24)
@@ -101,7 +102,7 @@ class BlendModePage(Page):
                     canvas.draw_paint(src)
                     canvas.draw_rect(rect, stroke)
 
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(BlendModePage, "blend_mode", "Blend Mode"))

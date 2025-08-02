@@ -83,9 +83,11 @@ class SpaceDebugLayer(ViewLayer, SpaceDebugDrawOptions):
         #pass
         logger.debug(f"transform: {transform}")
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         space = globe.physics_engine.space
 
+        renderer = Renderer.get_current()
+        
         with renderer.canvas_target() as canvas:
             self.canvas = canvas
 
@@ -103,6 +105,6 @@ class SpaceDebugLayer(ViewLayer, SpaceDebugDrawOptions):
 
             self.canvas = None
 
-        super().draw(renderer)
+        super()._draw()
 
 

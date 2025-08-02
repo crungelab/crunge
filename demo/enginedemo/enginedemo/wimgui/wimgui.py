@@ -451,13 +451,13 @@ class WImGuiDemo(Demo):
     def pre_draw(self, renderer: Renderer):
         imgui.new_frame()
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         # logger.debug("draw")
         self.draw_buttons()
         self.draw_more_buttons()
         imgui.show_demo_window()
 
-        super().draw(renderer)
+        super()._draw()
 
     def post_draw(self, renderer: Renderer):
         # logger.debug("render")

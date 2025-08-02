@@ -105,7 +105,9 @@ class TriangleIndexDemo(Demo):
             self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 #view=renderer.texture_view,
@@ -132,7 +134,7 @@ class TriangleIndexDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

@@ -8,7 +8,7 @@ class Combo(Page):
         self.options = ["first", "second", "third"]
         self.current = 2
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: combo widget")
 
         clicked, self.current = imgui.combo(
@@ -16,7 +16,7 @@ class Combo(Page):
         )
         imgui.text(f"You chose:  {self.options[self.current]}")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Combo, "combo", "Combo"))

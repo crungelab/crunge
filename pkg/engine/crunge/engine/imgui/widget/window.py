@@ -12,9 +12,9 @@ class Window(Widget):
         self.closable = True if on_close is not None else False
         self.flags = flags
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         collapsed, opened = imgui.begin(self.title, self.closable, flags=self.flags)
-        super().draw(renderer)
+        super()._draw()
         imgui.end()
         if not opened and self.closable:
             self.on_close()

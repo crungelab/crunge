@@ -43,7 +43,7 @@ class SpriteAtlasDemo(Demo):
         self.scene.attach(self.node)
 
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         # imgui.set_next_window_position(288, 32, imgui.ONCE)
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
@@ -84,7 +84,7 @@ class SpriteAtlasDemo(Demo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

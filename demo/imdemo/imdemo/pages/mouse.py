@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class MousePage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         #imgui.text(str(imgui.is_mouse_down(0)))
@@ -14,7 +14,7 @@ class MousePage(Page):
         imgui.label_text(str(imgui.is_mouse_down(2)), "middle button")
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(MousePage, "mouse", "Mouse"))

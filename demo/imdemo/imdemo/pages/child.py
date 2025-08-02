@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Child(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: child region")
 
         #imgui.begin_child("region", (150, -50), border=True)
@@ -15,7 +15,7 @@ class Child(Page):
 
         imgui.text("outside region")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Child, "child", "Child"))

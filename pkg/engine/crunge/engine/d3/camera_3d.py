@@ -193,5 +193,5 @@ class Camera3D(Node3D, ViewportListener):
         )
         for d in self.deferred_draws:
             #logger.debug(f"Camera3D: flushing deferred draw for {d.node}")
-            d.callback(renderer)
+            d.callback()
         self.deferred_draws.clear()

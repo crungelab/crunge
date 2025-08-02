@@ -7,7 +7,7 @@ class Button(Page):
     def reset(self):
         self.message = ""
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: buttons")
 
         if imgui.button("Button 1"):
@@ -16,7 +16,7 @@ class Button(Page):
             self.message = "You pressed 2!"
         imgui.text(self.message)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 RED = (1, 0, 0, 1)
 GREEN = (0, 1, 0, 1)
@@ -28,7 +28,7 @@ class ColorButton(Page):
         self.color = (0,0,0,0)
         self.color_name = ''
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: color button")
         if imgui.color_button("Button 1", RED, 0, (10, 10)):
             self.color = RED
@@ -45,20 +45,20 @@ class ColorButton(Page):
         #gui.text(f"You chose {self.color}")
         imgui.text_colored(self.color, f"You chose {self.color_name}")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class RadioButtonPage(Page):
     def reset(self):
         self.radio_active = False
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         if imgui.radio_button("Radio button", self.radio_active):
             self.radio_active = not self.radio_active
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Button, "button", "Buttons"))

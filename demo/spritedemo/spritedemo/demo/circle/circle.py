@@ -35,7 +35,7 @@ class CircleDemo(Demo):
         self.node.destroy()
         self.node = None
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
@@ -67,7 +67,7 @@ class CircleDemo(Demo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

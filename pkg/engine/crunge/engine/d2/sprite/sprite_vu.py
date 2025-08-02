@@ -81,9 +81,11 @@ class SpriteVu(Vu2D):
         super().bind(pass_enc)
         self.sprite.bind(pass_enc, self.sprite_membership)
 
-    def draw(self, renderer: Renderer) -> None:
+    def _draw(self) -> None:
         if not self.manual_draw:
             return
+        
+        renderer = Renderer.get_current()
 
         frustum = renderer.camera_2d.frustum
         if not self.bounds.intersects(frustum):

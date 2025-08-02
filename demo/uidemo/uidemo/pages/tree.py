@@ -69,14 +69,15 @@ class TreePage(Page):
 
         self.debug_layout(root)
 
-    def draw(self, renderer: Renderer):
-        #with self.canvas_target(renderer) as canvas:
+    def _draw(self):
+        renderer = Renderer.get_current()
+
         with renderer.canvas_target() as canvas:
             # paint = skia.Paint()
             # paint.set_color(0xFFFFFFFF)
             # canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
             self.draw_layout(self.root, canvas)
-        super().draw(renderer)
+        super()._draw()
 
     def draw_layout(self, node: yoga.Layout, canvas: skia.Canvas, depth=0, max_depth=6):
         bounds = node.get_computed_bounds()

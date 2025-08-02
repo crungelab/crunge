@@ -10,7 +10,7 @@ class ListboxPage(Page):
         self.options = OPTIONS
         self.current = 2
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         clicked, self.current = imgui.list_box(
@@ -20,13 +20,13 @@ class ListboxPage(Page):
         imgui.same_line()
         imgui.text(self.options[self.current])
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class CustomListboxPage(Page):
     def reset(self):
         self.selected = 'second'
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         if imgui.begin_list_box("Custom List", (200, 100)):
@@ -42,7 +42,7 @@ class CustomListboxPage(Page):
         imgui.text(self.selected)
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(ListboxPage, "listbox", "Listbox"))

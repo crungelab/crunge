@@ -17,8 +17,9 @@ class InstancedSpriteVuBatch:
         self.first_instance = first_instance
         self.instance_count = 1
 
-    def draw(self, renderer: Renderer):
+    def draw(self):
         # logger.debug("Drawing sprites")
+        renderer = Renderer.get_current()
         pass_enc = renderer.pass_enc
         self.sprite_vu.sprite.bind(pass_enc, self.sprite_vu.sprite_membership)
         pass_enc.draw(4, self.instance_count, 0, self.first_instance)
@@ -60,11 +61,12 @@ class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
         for member in self.visuals:
             self.batch(member)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         if len(self.batches) == 0:
             return
+        renderer = Renderer.get_current()
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.bind(pass_enc)
         for batch in self.batches:
-            batch.draw(renderer)
+            batch.draw()

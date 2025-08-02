@@ -87,7 +87,7 @@ class Page(ImGuiView):
             self.server.shutdown()
         self.gui.clear()
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
 
@@ -124,7 +124,7 @@ class Page(ImGuiView):
 
         self.draw_transport()
         self.window.gui.draw()
-        super().draw(renderer)
+        super()._draw()
 
     def draw_navbar(self):
         imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.Cond.ONCE)

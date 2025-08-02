@@ -1,6 +1,8 @@
 from typing import TYPE_CHECKING, List
 from typing import Optional
+
 import contextlib
+from contextvars import ContextVar
 
 from loguru import logger
 
@@ -17,6 +19,7 @@ if TYPE_CHECKING:
 
 from .render_pass import RenderPass, DefaultRenderPass
 
+renderer: ContextVar[Optional["Renderer"]] = ContextVar("renderer", default=None)
 
 class Renderer(Base):
     def __init__(
@@ -56,6 +59,7 @@ class Renderer(Base):
         return self.viewport.canvas
 
     def __enter__(self):
+        self.make_current()
         self.begin()
         return self
 
@@ -65,6 +69,16 @@ class Renderer(Base):
         command_buffer = self.encoder.finish()
         self.queue.submit([command_buffer])
 
+    def make_current(self):
+        """Make the renderer current for the current context."""
+        global renderer
+        renderer.set(self)
+
+    @classmethod
+    def get_current(cls) -> Optional["Renderer"]:
+        """Get the current renderer."""
+        return renderer.get()
+    
     def queue_render_pass(self, render_pass: RenderPass):
         """Queue a render pass to be executed later."""
         self.render_pass_queue.append(render_pass)

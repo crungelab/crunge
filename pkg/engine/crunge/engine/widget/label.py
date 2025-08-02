@@ -15,6 +15,7 @@ class Label(Widget):
         self.font = font = skia.Font()
         font.set_size(36)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
         canvas = renderer.canvas
         canvas.draw_string(self.text, 10, 32, self.font, self.paint)

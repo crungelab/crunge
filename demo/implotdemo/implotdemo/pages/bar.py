@@ -12,7 +12,7 @@ class BarPlotPage(Page):
         self.a = np.random.rand(10)
         self.b = np.random.rand(10)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         if implot.begin_plot("My Plot"):
@@ -21,14 +21,14 @@ class BarPlotPage(Page):
             implot.end_plot()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class BarPlotH(Page):
     def reset(self):
         self.a = np.random.rand(10)
         self.b = np.random.rand(10)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         if implot.begin_plot("My Plot"):
@@ -37,7 +37,7 @@ class BarPlotH(Page):
             implot.end_plot()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(BarPlotPage, "bar", "Bar Plot"))

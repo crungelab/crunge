@@ -12,15 +12,6 @@ class LabelTrial(Trial):
         super().reset()
         self.view.ui.attach(Label("Hello, World!"))
 
-    '''
-    def draw(self, renderer: Renderer):
-        if imgui.begin("Panel"):
-            imgui.text("This is a panel widget.")
-            imgui.end()
-
-        super().draw(renderer)
-    '''
-
 def main():
     LabelTrial().run()
 

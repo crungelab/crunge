@@ -7,7 +7,7 @@ class SelectablePage(Page):
     def reset(self):
         self.selected = [False, False]
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         _, self.selected[0] = imgui.selectable(
             "1. I am selectable", self.selected[0]
@@ -17,7 +17,7 @@ class SelectablePage(Page):
         )
         imgui.text("3. I am not selectable")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(SelectablePage, "selectable", "Selectable"))

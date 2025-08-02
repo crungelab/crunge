@@ -8,7 +8,9 @@ from ..page import Page
 
 
 class SweepGradientPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         with renderer.canvas_target() as canvas:
             gradient_paint = skia.Paint()
 
@@ -27,7 +29,7 @@ class SweepGradientPage(Page):
             gradient_paint.set_shader(shader)
             canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
             # canvas.draw_paint(paint)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

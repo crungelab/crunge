@@ -37,7 +37,7 @@ class TabsPage(Page):
         self.tabs = [True, True]
         self.color = 1,1,1
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         imgui.begin_child("item view", (0, -imgui.get_frame_height_with_spacing())) #Leave room for 1 line below us
@@ -59,7 +59,7 @@ class TabsPage(Page):
 
         imgui.text("outside region")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(TabsPage, "tabs", "Tabs"))

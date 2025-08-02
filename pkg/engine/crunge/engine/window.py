@@ -136,7 +136,8 @@ class Window(Frame):
     def frame(self):
         self.pre_frame()
         with self.viewport:
-            self.draw(self.renderer)
+            self.renderer.make_current()
+            self.draw()
         self.post_frame()
 
     '''

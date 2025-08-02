@@ -31,7 +31,7 @@ class TiledTestDemo(Demo):
         map_loader = TiledMapLoader(context, map_builder=DefaultMapBuilder(context))
         map_loader.load(tmx_path)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         self.view.scratch.draw_circle(glm.vec2(0, 0), 10, color=glm.vec4(1, 0, 0, 1))
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
@@ -43,7 +43,7 @@ class TiledTestDemo(Demo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

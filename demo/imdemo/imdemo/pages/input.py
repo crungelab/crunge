@@ -7,7 +7,7 @@ class Input(Page):
     def reset(self):
         self.test_input = 0
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         imgui.text("This is the test window.")
@@ -16,14 +16,14 @@ class Input(Page):
         imgui.end()
 
         # ludi.draw_text(str(self.test_input), 0, 0, ludi.color.WHITE_SMOKE, 64)
-        super().draw(renderer)
+        super()._draw()
 
 
 class InputDouble(Page):
     def reset(self):
         self.double_val = 3.14159265358979323846
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Test Window")
 
         imgui.text("This is the test window.")
@@ -33,14 +33,14 @@ class InputDouble(Page):
         imgui.end()
 
         # ludi.draw_text(str(self.double_val), 0, 0, ludi.color.WHITE_SMOKE, 64)
-        super().draw(renderer)
+        super()._draw()
 
 
 class InputFloat(Page):
     def reset(self):
         self.float_val = 0.4
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Test Window")
 
         imgui.text("This is the test window.")
@@ -49,7 +49,7 @@ class InputFloat(Page):
         imgui.end()
 
         # ludi.draw_text(str(self.float_val), 0, 0, ludi.color.WHITE_SMOKE, 64)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

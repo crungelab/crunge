@@ -5,7 +5,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Rect(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Rectangle")
         draw_list = imgui.get_window_draw_list()
         p1 = rel(20, 35)
@@ -16,10 +16,10 @@ class Rect(Page):
         p2 = rel(180, 80)
         draw_list.add_rect(p1, p2, color, rounding=5, thickness=3)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class RectFilled(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Rectangle Filled")
         draw_list = imgui.get_window_draw_list()
         color = imgui.get_color_u32((1, 1, 0, 1))
@@ -30,7 +30,7 @@ class RectFilled(Page):
         p2 = rel(180, 80)
         draw_list.add_rect_filled(p1, p2, color, 5)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Rect, "rect", "Rectangle"))

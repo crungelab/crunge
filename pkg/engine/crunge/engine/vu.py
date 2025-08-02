@@ -20,7 +20,10 @@ class Vu(Base, NodeListener, Generic[T_Node]):
         self._node = value
         value.add_listener(self)
 
-    def draw(self, renderer: Renderer):
+    def draw(self):
+        self._draw()
+
+    def _draw(self):
         pass
 
     def update(self, delta_time: float):

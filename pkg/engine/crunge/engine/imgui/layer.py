@@ -87,16 +87,16 @@ class ImGuiLayer(ViewLayer, ViewportListener, WindowListener):
         pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         if self.default_font:
             imgui.push_font(self.default_font)
 
-        super().draw(renderer)
+        super()._draw()
 
         if self.default_font:
             imgui.pop_font()
 
-        self.vu.render(renderer)
+        self.vu.render()
         imgui.end_frame()
 
     def on_text_input(self, event: sdl.TextInputEvent):

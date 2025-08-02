@@ -7,7 +7,7 @@ class TextInputPage(Page):
     def reset(self):
         self.text_val = 'Type your message here.'
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         changed, self.text_val = imgui.input_text(
             'Text',
@@ -18,13 +18,13 @@ class TextInputPage(Page):
         imgui.same_line()
         imgui.text(self.text_val)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class MultiTextInputPage(Page):
     def reset(self):
         self.text_val = 'Type your message here.'
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         changed, self.text_val = imgui.input_text_multiline(
             'Message',
@@ -37,7 +37,7 @@ class MultiTextInputPage(Page):
         imgui.same_line()
         imgui.text(self.text_val)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(TextInputPage, "textinput", "Text Input"))

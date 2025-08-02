@@ -7,14 +7,14 @@ class CollapsingHeader(Page):
     def reset(self):
         self.visible = True
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: collapsing header")
         expanded, self.visible = imgui.collapsing_header("Expand me!", self.visible)
 
         if expanded:
             imgui.text("Now you see me!")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(CollapsingHeader, "collapsingheader", "Collapsing Header"))

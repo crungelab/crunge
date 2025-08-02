@@ -23,7 +23,7 @@ class View3D(ImGuiView):
     def create_renderer(self):
         self.renderer = Renderer3D(self.window.viewport, self.camera, self.scene.lighting)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         with self.renderer:
-            self.scene.draw(self.renderer)
-        super().draw(self.renderer)
+            self.scene.draw()
+        super()._draw()

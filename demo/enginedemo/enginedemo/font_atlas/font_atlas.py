@@ -253,7 +253,9 @@ class FontAtlasDemo(Demo):
             wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 # view=renderer.texture_view,
@@ -281,7 +283,7 @@ class FontAtlasDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

@@ -72,11 +72,11 @@ class Demo(engine.App):
         if key == sdl.SDLK_ESCAPE and down:
             self.quit()
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         # Start timing how long this takes
         draw_start_time = timeit.default_timer()
 
-        super().draw(renderer)
+        super()._draw()
 
         self.draw_time = timeit.default_timer() - draw_start_time
 

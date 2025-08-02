@@ -12,7 +12,7 @@ class KeyboardPage(Page):
         super().__init__(name, title)
         self.key = None
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         imgui.text("Press any key to see its state")
@@ -26,7 +26,7 @@ class KeyboardPage(Page):
             imgui.text("No key pressed yet")
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
     def on_key(self, event: sdl.KeyboardEvent):
         self.key = key_map[event.key]

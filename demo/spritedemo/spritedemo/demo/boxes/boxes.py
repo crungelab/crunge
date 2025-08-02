@@ -47,7 +47,7 @@ class BoxesDemo(Demo):
         floor.create()
         self.scene.attach(floor)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Boxes Demo")
         imgui.text("Click to create boxes")
 
@@ -57,7 +57,7 @@ class BoxesDemo(Demo):
             self.reset()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
     def update(self, delta_time: float):
         self.physics_engine.update(1/60)

@@ -216,7 +216,9 @@ class QuadTextureDemo(Demo):
             wgpu.Extent3D(1024, 1024, 1),
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 # view=renderer.texture_view,
@@ -244,7 +246,7 @@ class QuadTextureDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

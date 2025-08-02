@@ -16,7 +16,7 @@ class LinearGradientPage(Page):
         self.color_1 = colors.BLUE
         self.color_2 = colors.YELLOW
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Linear Gradient")
         changed, self.color_1 = imgui.color_edit4("Color 1", self.color_1)
         changed, self.color_2 = imgui.color_edit4("Color 2", self.color_2)
@@ -24,6 +24,7 @@ class LinearGradientPage(Page):
             self.reset()
         imgui.end()
 
+        renderer = Renderer.get_current()
         with renderer.canvas_target() as canvas:
             gradient_paint = skia.Paint()
             # logger.debug(f"gradient_paint: {gradient_paint}")
@@ -39,7 +40,7 @@ class LinearGradientPage(Page):
             gradient_paint.set_shader(shader)
             canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
             # canvas.draw_paint(paint)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

@@ -71,9 +71,9 @@ class Viewer(engine.App):
 
         return self
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         self.draw_mainmenu()
-        super().draw(renderer)
+        super()._draw()
 
     def draw_mainmenu(self):
         if imgui.begin_main_menu_bar():

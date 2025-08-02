@@ -83,7 +83,9 @@ class MixedPage(Page):
         self.pipeline = self.device.create_render_pipeline(descriptor)
         logger.debug(self.pipeline)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         with renderer:
             pass_enc = renderer.pass_enc
             pass_enc.set_pipeline(self.pipeline)
@@ -96,7 +98,7 @@ class MixedPage(Page):
             paint.set_color(0xFFFFFFFF)
             canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

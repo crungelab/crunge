@@ -136,7 +136,7 @@ class Line2D(Vu2D):
             self.material_uniform_buffer, 0, material_uniform
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.model_bind_group.bind(pass_enc)

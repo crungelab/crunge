@@ -23,8 +23,8 @@ class InstancedSpriteLayer(SceneLayer2D):
         self.vu_group = InstancedSpriteVuGroup(count, sprite_group).enable()
         self.sprite_group = sprite_group
 
-    def draw(self, renderer: Renderer) -> None:
-        self.vu_group.draw(renderer)
+    def _draw(self) -> None:
+        self.vu_group.draw()
 
     def attach(self, node: Node2D) -> None:
         self.vu_group.append(node.vu)

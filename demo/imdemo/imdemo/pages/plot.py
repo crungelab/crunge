@@ -11,21 +11,21 @@ class PlotHistogramPage(Page):
     def reset(self):
         self.values = array('f', [random() for _ in range(20)])
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         imgui.plot_histogram("histogram(random())", self.values)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class PlotLinesPage(Page):
     def reset(self):
         self.values = array('f', [sin(x * 0.1) for x in range(100)])
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         imgui.plot_lines("Sin(t)", self.values)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(PlotHistogramPage, "plothistogram", "Plot - Histogram"))

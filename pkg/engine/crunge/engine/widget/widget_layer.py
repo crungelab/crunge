@@ -9,6 +9,8 @@ class WidgetLayer(ViewLayer):
     def __init__(self):
         super().__init__("WidgetLayer", priority=950)
 
-    def draw(self, renderer: Renderer) -> None:
+    def _draw(self) -> None:
+        renderer = Renderer.get_current()
+
         with renderer.canvas_target() as canvas:
-            super().draw(renderer)
+            super()._draw()

@@ -31,10 +31,11 @@ shader = image.make_shader(
 
 
 class ImageDemo(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
         with renderer.canvas_target() as canvas:
             canvas.draw_image(image, 0, 0)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

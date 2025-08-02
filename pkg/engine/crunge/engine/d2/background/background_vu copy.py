@@ -97,7 +97,7 @@ class BackgroundVu(Vu2D):
         self.sprite.bind(pass_enc)
         self.bind_group.bind(pass_enc)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)

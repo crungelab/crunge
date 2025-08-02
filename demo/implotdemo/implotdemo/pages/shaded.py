@@ -11,7 +11,7 @@ class ShadedPlotPage(Page):
         self.a = np.random.rand(10)
         self.b = np.random.rand(10)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         if implot.begin_plot("My Plot"):
@@ -20,7 +20,7 @@ class ShadedPlotPage(Page):
             implot.end_plot()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app):
     app.add_channel(PageChannel(ShadedPlotPage, "shaded", "Shaded Plot"))

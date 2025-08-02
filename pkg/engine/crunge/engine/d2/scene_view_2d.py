@@ -10,10 +10,10 @@ class SceneView2D(View2D):
         super().__init__()
         self.scene = scene
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         with self.renderer:
-            self.scene.draw(self.renderer)
-        super().draw(self.renderer)
+            self.scene.draw()
+        super()._draw()
 
     def update(self, dt: float):
         self.scene.update(dt)

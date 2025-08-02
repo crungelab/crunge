@@ -223,7 +223,9 @@ class CubesDemo(Demo):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=renderer.viewport.color_texture_view,
@@ -258,7 +260,7 @@ class CubesDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
     def frame(self):
         self.update_transformation_matrices()

@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Dummy(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: dummy elements")
 
         imgui.text("Some text with bullets:")
@@ -15,7 +15,7 @@ class Dummy(Page):
         imgui.bullet_text("Text after dummy")
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Dummy, "dummy", "Dummy"))

@@ -440,7 +440,7 @@ class ImGuiVu(Vu):
             vtx_offset += commands.vtx_buffer_size
             idx_offset += commands.idx_buffer_size
 
-    def render(self, renderer: Renderer):
+    def render(self):
         #logger.debug("ImGuiVu.draw")
         imgui.render()
         io = imgui.get_io()
@@ -463,6 +463,8 @@ class ImGuiVu(Vu):
 
         draw_data.scale_clip_rects(fb_scale)
 
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=renderer.viewport.color_texture_view,

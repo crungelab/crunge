@@ -18,7 +18,7 @@ class Page(ImGuiView):
         page = cls(name, title).config(window=app).create()
         return page
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
 
@@ -48,7 +48,7 @@ class Page(ImGuiView):
         imgui.set_next_window_pos((x, y), imgui.Cond.ONCE)
         imgui.set_next_window_size((width, height), imgui.Cond.ONCE)
 
-        super().draw(renderer)
+        super()._draw()
 
     def draw_navbar(self):
         imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.Cond.ONCE)

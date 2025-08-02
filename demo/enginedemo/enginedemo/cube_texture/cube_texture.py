@@ -252,7 +252,7 @@ class CubeTextureDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=renderer.viewport.color_texture_view,
@@ -286,7 +286,7 @@ class CubeTextureDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
     def frame(self):
         transform = self.transform_matrix

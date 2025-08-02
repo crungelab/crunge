@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Popup(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: simple popup")
 
         if imgui.button("select"):
@@ -21,29 +21,29 @@ class Popup(Page):
             imgui.end_popup()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class PopupContextView(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: popup context view")
         imgui.text("Right-click to set value.")
         if imgui.begin_popup_context_item("Item Context Menu"):
             imgui.selectable("Set to Zero", True)
             imgui.end_popup()
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class PopupContextWindow(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: popup context window")
         if imgui.begin_popup_context_window():
             imgui.selectable("Clear", True)
             imgui.end_popup()
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class PopupModal(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: simple popup modal")
 
         if imgui.button("Open Modal popup"):
@@ -60,7 +60,7 @@ class PopupModal(Page):
             imgui.end_popup()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Popup, "popup", "Popup"))

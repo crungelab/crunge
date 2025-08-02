@@ -20,7 +20,7 @@ class AmbientLightDemo(GltfDemo):
         importer = GltfLoader(template_loaders=[FileSystemLoader(template_dir)])
         return importer
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         changed, newColor = imgui.color_edit3("Ambient Color", list(self.scene.ambient_light.color))
@@ -29,7 +29,7 @@ class AmbientLightDemo(GltfDemo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class SeparatorPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         imgui.text("Some text with bullets")
@@ -18,7 +18,7 @@ class SeparatorPage(Page):
         imgui.bullet_text("Bullet A")
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(SeparatorPage, "separator", "Separator"))

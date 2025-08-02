@@ -307,7 +307,9 @@ class ParticlesDemo(Demo):
 
         # exit()
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 # view=renderer.texture_view,
@@ -336,7 +338,7 @@ class ParticlesDemo(Demo):
         self.queue.submit([command_buffer])
 
         self.draw_gui()
-        super().draw(renderer)
+        super()._draw()
 
     def draw_gui(self):
         imgui.begin("Sparks")

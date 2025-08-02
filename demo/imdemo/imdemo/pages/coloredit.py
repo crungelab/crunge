@@ -8,7 +8,7 @@ class ColorEdit3(Page):
         self.color_1 = 1., .0, .5
         self.color_2 = 0., .8, .3
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: color edit without alpha")
 
         # note: first element of return two-tuple notifies if the color was changed
@@ -18,13 +18,13 @@ class ColorEdit3(Page):
         changed, self.color_2 = imgui.color_edit3("Color 2", self.color_2)
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class ColorEdit4(Page):
     def reset(self):
         self.color = 1., .0, .5, 1.
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: color edit with alpha")
 
         # note: first element of return two-tuple notifies if the color was changed
@@ -34,7 +34,7 @@ class ColorEdit4(Page):
         _, self.color = imgui.color_edit4("No Alpha", self.color, imgui.ColorEditFlags.NO_ALPHA)
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(ColorEdit3, "coloredit3", "Color Edit 3"))

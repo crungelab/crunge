@@ -20,7 +20,7 @@ class AmbientDiffuseLightDemo(GltfDemo):
         importer = GltfLoader(template_loaders=[FileSystemLoader(template_dir)])
         return importer
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         imgui.begin_group()
@@ -40,7 +40,7 @@ class AmbientDiffuseLightDemo(GltfDemo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

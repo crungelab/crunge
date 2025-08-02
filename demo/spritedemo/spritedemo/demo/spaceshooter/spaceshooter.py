@@ -80,7 +80,7 @@ class SpaceShooter(Demo):
         self.node = ship
         self.scene.attach(ship)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
@@ -93,7 +93,7 @@ class SpaceShooter(Demo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
     def update(self, delta_time: float):
         self.physics_engine.update(1 / 60)

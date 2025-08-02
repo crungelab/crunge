@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Group(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: item groups")
 
         imgui.begin_group()
@@ -22,7 +22,7 @@ class Group(Page):
         imgui.end_group()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Group, "group", "Group"))

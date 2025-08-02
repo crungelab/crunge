@@ -26,7 +26,9 @@ class Primitive3D(Primitive):
         self.deferred = False
         self.material: Material3D = None
 
-    def draw(self, renderer: Renderer):
+    def draw(self):
+        renderer = Renderer.get_current()
+        
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
         self.material.bind(pass_enc)

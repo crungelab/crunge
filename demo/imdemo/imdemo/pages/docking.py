@@ -30,7 +30,7 @@ class DockingPage(Page):
         io = imgui.get_io()
         io.config_flags |= imgui.ConfigFlags.DOCKING_ENABLE
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         #gui.begin(self.title, True, imgui.WINDOW_FLAGS_DOCK_NODE_HOST)
         imgui.begin(self.title, True)
 
@@ -55,7 +55,7 @@ class DockingPage(Page):
         imgui.end_child()
         imgui.text("outside region")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(DockingPage, "docking", "Docking"))

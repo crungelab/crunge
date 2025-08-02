@@ -45,7 +45,7 @@ class SpritesDemo(Demo):
     def center_camera(self):
         pass
     
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
@@ -69,7 +69,7 @@ class SpritesDemo(Demo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
 
 def main():

@@ -63,7 +63,7 @@ class ThingsDemo(Demo):
         floor.create()
         self.scene.attach(floor)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Shapes")
         imgui.text("Click to create shapes")
 
@@ -89,7 +89,7 @@ class ThingsDemo(Demo):
         if self.debug_draw_enabled:
             self.physics_engine.debug_draw(self.draw_options)
 
-        super().draw(renderer)
+        super()._draw()
 
     def update(self, delta_time: float):
         self.physics_engine.update(1 / 60)

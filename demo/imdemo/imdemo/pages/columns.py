@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Columns(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: Columns - File list")
         imgui.columns(4, 'fileList')
         imgui.separator()
@@ -37,7 +37,7 @@ class Columns(Page):
 
         imgui.columns(1)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Columns, "columns", "Columns"))

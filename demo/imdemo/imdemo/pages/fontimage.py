@@ -7,7 +7,7 @@ from crunge.demo import Page, PageChannel
 
 
 class FontImage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Font Image")
         fonts = imgui.get_io().fonts
         texture_id = fonts.tex_id
@@ -22,7 +22,7 @@ class FontImage(Page):
             texture_id, pos, pos2, col=imgui.color_convert_float4_to_u32((0.5,0.5,1,1))
         )
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(FontImage, "fontimage", "Font Image"))

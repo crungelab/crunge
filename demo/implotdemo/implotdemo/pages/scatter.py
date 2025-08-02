@@ -12,7 +12,7 @@ class ScatterPlotPage(Page):
         self.a = np.random.rand(10)
         self.b = np.random.rand(10)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.set_next_window_pos((16, 32), imgui.Cond.FIRST_USE_EVER )
         imgui.set_next_window_size((512, 512), imgui.Cond.FIRST_USE_EVER )
 
@@ -24,7 +24,7 @@ class ScatterPlotPage(Page):
             implot.end_plot()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(ScatterPlotPage, "scatter", "Scatter Plot"))

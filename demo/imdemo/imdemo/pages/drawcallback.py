@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class DrawCallbackPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         def draw_text(draw_list, cmd):
@@ -19,7 +19,7 @@ class DrawCallbackPage(Page):
         draw_list.add_callback(draw_text, None)
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(DrawCallbackPage, "drawcallback", "Draw Callback"))

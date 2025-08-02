@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class ColorsPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         style = imgui.get_style()
         
         imgui.begin("Colors")
@@ -15,7 +15,7 @@ class ColorsPage(Page):
             imgui.next_column()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(ColorsPage, "colors", "Colors"))

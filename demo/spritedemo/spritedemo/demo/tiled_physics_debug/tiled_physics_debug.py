@@ -66,7 +66,7 @@ class TiledPhysicsDebugDemo(Demo):
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
         map_loader.load(tmx_path)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         update_output = f"Update time: {self.update_time:.3f}"
         drawing_output = f"Drawing time: {self.draw_time:.3f}"
 
@@ -83,7 +83,7 @@ class TiledPhysicsDebugDemo(Demo):
 
         imgui.end()
 
-        super().draw(renderer)
+        super()._draw()
 
     def update(self, delta_time: float):
         self.physics_engine.update(1/60)

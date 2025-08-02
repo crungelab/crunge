@@ -182,7 +182,7 @@ class Widget(Node["Widget"]):
         return super().dispatch(event)
 
     '''
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         # logger.debug("Widget.draw")
         if self.vu is not None:
             self.vu.draw(renderer)

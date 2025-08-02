@@ -8,7 +8,9 @@ from ..page import Page
 
 
 class TextBlobPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         with renderer.canvas_target() as canvas:
             # canvas.clear(0xFF00FF00)  # Clear with a color
 
@@ -21,7 +23,7 @@ class TextBlobPage(Page):
             # font.set_typeface(None)
             blob = skia.TextBlob.make_from_string("Hello Skia!", font)
             canvas.draw_text_blob(blob, 10, 32, paint)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

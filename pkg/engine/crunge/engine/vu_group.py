@@ -45,9 +45,12 @@ class VuGroup(Base, Generic[T_Vu]):
     def __str__(self) -> str:
         return repr(self)
 
-    def draw(self, renderer: Renderer) -> None:
+    def draw(self) -> None:
+        self._draw()
+
+    def _draw(self) -> None:
         for vu in self.visuals:
-            vu.draw(renderer)
+            vu.draw()
 
     def update(self, delta_time: float) -> None:
         for vu in self.visuals:

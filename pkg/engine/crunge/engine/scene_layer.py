@@ -30,8 +30,11 @@ class SceneLayer(Base, Generic[T_Node]):
     def clear(self) -> None:
         self.root.clear()
 
-    def draw(self, renderer: Renderer) -> None:
-        self.root.draw(renderer)
+    def draw(self) -> None:
+        self._draw()
+
+    def _draw(self) -> None:
+        self.root.draw()
 
     def update(self, dt: float) -> None:
         self.root.update(dt)

@@ -124,7 +124,8 @@ class Line2D(Vu2D):
         self.model_bind_group.bind(pass_enc)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
         pass_enc.set_pipeline(self.program.render_pipeline.get())

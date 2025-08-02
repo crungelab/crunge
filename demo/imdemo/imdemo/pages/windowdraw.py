@@ -5,7 +5,7 @@ from crunge.demo import Page, PageChannel
 
 
 class WindowDraw(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         sz = 16
         draw_list = imgui.get_window_draw_list()
         rgba_color = imgui.get_color_u32((1, 1, 1, 1))
@@ -20,7 +20,7 @@ class WindowDraw(Page):
 
             p1 = rel(20, i * 16)
             draw_list.add_text(p1, rgba_color, name)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

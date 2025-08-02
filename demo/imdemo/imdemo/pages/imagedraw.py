@@ -14,14 +14,14 @@ class ImageDraw(Page):
         image_path = ResourceManager().resolve_path(":resources:/robocute.png")
         self.texture = ImageTextureLoader().load(image_path)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Image Draw")
         draw_list = imgui.get_window_draw_list()
         pos = rel(0,0)
         pos2 = self.texture.size[0] + pos[0], self.texture.size[1] + pos[1]
         draw_list.add_image(self.texture.id, pos, pos2)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 
 class ImageRoundedDraw(Page):
@@ -30,7 +30,7 @@ class ImageRoundedDraw(Page):
         image_path = ResourceManager().resolve_path(":resources:/robocute.png")
         self.texture = ImageTextureLoader().load(image_path)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Image Rounded Draw")
         draw_list = imgui.get_window_draw_list()
         pos = rel(0,0)
@@ -40,7 +40,7 @@ class ImageRoundedDraw(Page):
         color = imgui.get_color_u32((1, 1, 0, 1))
         draw_list.add_image_rounded(self.texture.id, pos, pos2, (0,0), (1,1), color, rounding=10)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(ImageDraw, "imagedraw", "Image Draw"))

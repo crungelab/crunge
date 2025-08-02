@@ -7,7 +7,7 @@ class FloatSliderPage(Page):
     def reset(self):
         self.value = 88
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         width = 20
         height = 100
 
@@ -20,13 +20,13 @@ class FloatSliderPage(Page):
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.value))
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class IntSliderPage(Page):
     def reset(self):
         self.value = 88
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         width = 20
         height = 100
 
@@ -39,7 +39,7 @@ class IntSliderPage(Page):
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.value))
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(FloatSliderPage, "floatslider", "Slider - Float"))

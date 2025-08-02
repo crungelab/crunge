@@ -54,9 +54,12 @@ class Scene(Base, Generic[T_Node]):
         for layer in self.layers:
             layer.clear()
 
-    def draw(self, renderer: Renderer):
+    def draw(self):
+        self._draw()
+
+    def _draw(self):
         for layer in self.layers:
-            layer.draw(renderer)
+            layer.draw()
 
     def update(self, dt: float):
         for layer in self.layers:

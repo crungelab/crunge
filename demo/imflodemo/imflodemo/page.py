@@ -22,7 +22,7 @@ class Page(demo.Page):
     def update(self, delta_time):
         self.graph.update(delta_time)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         self.graph.draw()
         
-        super().draw(renderer)
+        super()._draw()

@@ -69,7 +69,7 @@ class TiledPhysicsDemo(Demo):
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
         map_loader.load(tmx_path)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Tiled Physics Demo")
         imgui.text("Click to create balls")
 
@@ -85,7 +85,7 @@ class TiledPhysicsDemo(Demo):
         if self.debug_draw_enabled:
             self.physics_engine.debug_draw(self.draw_options)
 
-        super().draw(renderer)
+        super()._draw()
 
     def update(self, delta_time: float):
         self.physics_engine.update(1/60)

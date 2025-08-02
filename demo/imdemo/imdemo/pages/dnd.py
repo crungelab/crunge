@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class DnD(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: drag and drop")
 
         imgui.button('source')
@@ -22,7 +22,7 @@ class DnD(Page):
             imgui.end_drag_drop_target()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(DnD, "dnd", "Drag & Drop"))

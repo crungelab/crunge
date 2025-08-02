@@ -109,7 +109,9 @@ class ScratchLayer(ViewLayer):
             self.add_call(draw)
     """
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         with renderer.canvas_target() as canvas:
             canvas.save()
 
@@ -130,4 +132,4 @@ class ScratchLayer(ViewLayer):
             canvas.restore()
 
         self.draw_calls.clear()
-        super().draw(renderer)
+        super()._draw()

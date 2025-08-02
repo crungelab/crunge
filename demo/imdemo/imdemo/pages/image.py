@@ -14,12 +14,12 @@ class ImagePage(Page):
         image_path = ResourceManager().resolve_path(":resources:/robocute.png")
         self.texture = ImageTextureLoader().load(image_path)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         size = self.texture.width, self.texture.height
         imgui.image(self.texture.id, size)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(ImagePage, "image", "Image"))

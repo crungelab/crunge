@@ -45,7 +45,7 @@ class BallsDemo(Demo):
         floor = Floor(position, glm.vec2(self.width, 20))
         self.scene.attach(floor)
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Balls Demo")
         imgui.text("Click to create balls")
 
@@ -53,7 +53,7 @@ class BallsDemo(Demo):
             self.reset()
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
     def update(self, delta_time: float):
         self.physics_engine.update(1/60)

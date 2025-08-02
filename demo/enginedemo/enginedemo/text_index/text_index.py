@@ -247,7 +247,9 @@ class TextDemo(Demo):
             wgpu.Extent3D(rgba_data.shape[1], rgba_data.shape[0], 1),
         )
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
+        
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 # view=renderer.texture_view,
@@ -275,7 +277,7 @@ class TextDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-        super().draw(renderer)
+        super()._draw()
 
     def shape_text(self, text: str):
         # Load font data

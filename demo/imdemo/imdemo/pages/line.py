@@ -5,7 +5,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Line(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Line")
         draw_list = imgui.get_window_draw_list()
         color = imgui.get_color_u32((1, 1, 0, 1))
@@ -16,10 +16,10 @@ class Line(Page):
         p2 = rel(20, 80)
         draw_list.add_line(p1, p2, color, 3)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 class PolyLine(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Poly Line")
         draw_list = imgui.get_window_draw_list()
         color = imgui.get_color_u32((1, 1, 0, 1))
@@ -32,7 +32,7 @@ class PolyLine(Page):
         p3 = rel(145, 80)
         draw_list.add_polyline([p1, p2, p3],  color, closed=True, thickness=3)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Line, "line", "Line"))

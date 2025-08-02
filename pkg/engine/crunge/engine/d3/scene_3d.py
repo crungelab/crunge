@@ -48,6 +48,6 @@ class Scene3D(Scene[Node3D]):
     def ambient_light(self):
         return self.lighting.ambient_light
 
-    def draw(self, renderer: Renderer):
+    def _draw(self):
             #self.lighting.bind(renderer.pass_enc)
-            super().draw(renderer)
+            super()._draw()

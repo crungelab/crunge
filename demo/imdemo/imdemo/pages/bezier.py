@@ -5,7 +5,7 @@ from crunge.demo import Page, PageChannel
 
 
 class BezierCubic(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Bezier Cubic")
         draw_list = imgui.get_window_draw_list()
         p1 = rel(20, 35)
@@ -15,11 +15,11 @@ class BezierCubic(Page):
         color = imgui.get_color_u32((1, 1, 0, 1))
         draw_list.add_bezier_cubic(p1, p2, p3, p4, color, thickness=3)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 
 class BezierQuadratic(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Bezier Quadratic")
         draw_list = imgui.get_window_draw_list()
         p1 = rel(20, 35)
@@ -28,7 +28,7 @@ class BezierQuadratic(Page):
         color = imgui.get_color_u32((1, 1, 0, 1))
         draw_list.add_bezier_quadratic(p1, p2, p3, color, thickness=3)
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

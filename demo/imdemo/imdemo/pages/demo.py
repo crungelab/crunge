@@ -4,9 +4,9 @@ from crunge.demo import Page, PageChannel
 
 
 class DemoPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.show_demo_window()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(DemoPage, 'demo', 'Demo in Demo'))

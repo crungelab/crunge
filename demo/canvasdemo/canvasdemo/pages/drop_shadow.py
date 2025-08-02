@@ -8,7 +8,8 @@ from ..page import Page
 
 
 class DropShadowPage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
+        renderer = Renderer.get_current()
         with renderer.canvas_target() as canvas:
             canvas.draw_color(skia.colors.WHITE)
 
@@ -21,7 +22,7 @@ class DropShadowPage(Page):
             # font.set_typeface(skia.Typeface('Arial'))
             # font.set_typeface(None)
             canvas.draw_string("Hello Skia!", 0, 160, font, filter_paint)
-        super().draw(renderer)
+        super()._draw()
 
 
 def install(app: App):

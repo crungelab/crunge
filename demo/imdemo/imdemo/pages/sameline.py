@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class SameLinePage(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin("Example: same line widgets")
 
         imgui.text("same_line() with defaults:")
@@ -20,7 +20,7 @@ class SameLinePage(Page):
         imgui.button("no")
 
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(SameLinePage, "sameline", "Same Line"))

@@ -4,13 +4,13 @@ from . import Page
 
 
 class About(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
 
         imgui.text("Welcome to the AimPyo Demo!")
         
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app):
     app.add_page(About, "help")

@@ -4,22 +4,22 @@ from crunge.demo import Page, PageChannel
 
 
 class Bullet(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         for i in range(10):
             imgui.bullet()
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 
 class BulletText(Page):
-    def draw(self, renderer: Renderer):
+    def _draw(self):
         imgui.begin(self.title)
         imgui.bullet_text("Bullet 1")
         imgui.bullet_text("Bullet 2")
         imgui.bullet_text("Bullet 3")
         imgui.end()
-        super().draw(renderer)
+        super()._draw()
 
 def install(app: App):
     app.add_channel(PageChannel(Bullet, "bullet", "Bullets"))
