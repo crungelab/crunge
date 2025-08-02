@@ -49,6 +49,22 @@ class Gfx:
     ) -> wgpu.Buffer:
         return utils.create_buffer_from_ndarray(self.device, label, data, usage)
 
+    def create_texture(
+        self,
+        label: str,
+        width: int,
+        height: int,
+        format: wgpu.TextureFormat,
+        usage: wgpu.TextureUsage,
+    ) -> wgpu.Texture:
+        descriptor = wgpu.TextureDescriptor(
+            dimension=wgpu.TextureDimension.E2D,
+            size=wgpu.Extent3D(width, height, 1),
+            format=format,
+            usage=usage,
+        )
+        return self.device.create_texture(descriptor)
+
     def load_texture(self, path: Path) -> wgpu.Texture:
         im = iio.imread(path)
         shape = im.shape

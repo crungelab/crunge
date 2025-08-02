@@ -8,7 +8,8 @@ __all__ = ["cli"]
 def factory():
     app = ImGuiDemo().create()
     app.use_all()
-    app.show_channel("index")
+    #app.show_channel("index")
+    app.show_channel("offscreen")
 
     return app
 

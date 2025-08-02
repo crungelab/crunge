@@ -54,7 +54,6 @@ class Viewport(Base):
 
         self.create_device_objects()
         self.create_buffers()
-        # self.create_bind_group()
         self.update_gpu()
 
     def add_listener(self, listener: ViewportListener) -> None:
