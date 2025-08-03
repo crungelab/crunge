@@ -13,7 +13,7 @@ from crunge.engine import colors
 from crunge.demo import Page, PageChannel
 
 
-class OffscreenPage(Page):
+class OffscreenCanvasPage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
         self.color_1 = colors.BLUE
@@ -62,4 +62,4 @@ class OffscreenPage(Page):
         renderer.viewport.submit_canvas()
 
 def install(app: App):
-    app.add_channel(PageChannel(OffscreenPage, "offscreen", "Offscreen"))
+    app.add_channel(PageChannel(OffscreenCanvasPage, "offscreen_canvas", "Offscreen Canvas"))

@@ -13,6 +13,7 @@ class Bounds2:
         top: float = 0.0,
     ):
         # self.min = min
+        #logger.debug(f"Bounds2: init: left={left}, bottom={bottom}, right={right}, top={top}")
         self.min = glm.vec2(left, bottom)
         # self.max = max
         self.max = glm.vec2(right, top)

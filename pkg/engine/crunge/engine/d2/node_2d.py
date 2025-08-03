@@ -31,6 +31,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self.angular_velocity = 0.0  # radians per second
 
     def _create(self):
+        super()._create()
         self.update_matrix()
 
     @property

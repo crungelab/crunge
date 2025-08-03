@@ -22,10 +22,15 @@ class View2D(ImGuiView):
         self.add_layer(self.scratch)
 
     def create_camera(self):
+        self.camera = Camera2D(glm.vec2(self.width / 2, self.height / 2))
+
+    """
+    def create_camera(self):
         self.camera = Camera2D(
             glm.vec2(self.width / 2, self.height / 2),
             glm.vec2(self.width, self.height)
         )
+    """
 
     def create_renderer(self):
         self.renderer = Renderer2D(self.window.viewport, camera=self.camera)

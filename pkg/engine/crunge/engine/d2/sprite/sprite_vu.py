@@ -5,6 +5,7 @@ import glm
 
 from crunge import wgpu
 
+from ...math import Bounds2
 from ...uniforms import cast_matrix4
 from ...renderer import Renderer
 
@@ -88,6 +89,7 @@ class SpriteVu(Vu2D):
         renderer = Renderer.get_current()
 
         frustum = renderer.camera_2d.frustum
+        
         if not self.bounds.intersects(frustum):
             # logger.debug(f"SpriteVu: {self} is not in frustum: {frustum}")
             return
@@ -97,3 +99,24 @@ class SpriteVu(Vu2D):
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.bind(pass_enc)
         pass_enc.draw(4)
+
+    def update_transform(self, position: glm.vec3, size: glm.vec2, rotation=0.0, scale=glm.vec3(1,1,1), depth=0.0):
+        x = position.x
+        y = position.y
+        z = depth
+
+        model = glm.mat4(1.0)  # Identity matrix
+        model = glm.translate(model, glm.vec3(x, y, z))
+        model = glm.scale(
+            model,
+            glm.vec3(size.x * scale.x, size.y * scale.y, 1),
+        )
+        self.transform = model
+
+            
+        self.bounds = Bounds2(
+            x - size.x / 2,
+            y - size.y / 2,
+            size.x,
+            size.y,
+        )

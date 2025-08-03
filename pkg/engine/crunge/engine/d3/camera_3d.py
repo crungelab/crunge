@@ -40,7 +40,7 @@ class CameraProgram3D(Program3D):
 class Camera3D(Node3D, ViewportListener):
     def __init__(
         self,
-        viewport_size=glm.vec2(1024, 768),
+        #viewport_size=glm.vec2(1024, 768),
         position=glm.vec3(0.0, 0.0, 4.0),
         up=glm.vec3(0.0, 1.0, 0.0),
         near=0.1,
@@ -59,7 +59,8 @@ class Camera3D(Node3D, ViewportListener):
         self._far = far
 
         self._viewport: Viewport = None
-        self.viewport_size = viewport_size
+        #self.viewport_size = viewport_size
+        self.viewport_size = glm.vec2(0, 0)
 
         self.deferred_draws: List[DeferredDraw] = []
 

@@ -26,8 +26,8 @@ class CameraProgram2D(Program2D):
 class Camera2D(Node2D, ViewportListener):
     def __init__(
         self,
-        position=glm.vec3(0.0, 0.0, 2),
-        viewport_size=glm.vec2(1024, 768),
+        position=glm.vec2(0.0, 0.0),
+        #viewport_size=glm.vec2(1024, 768),
         zoom=1.0,
     ):
         self._zoom = zoom
@@ -40,7 +40,8 @@ class Camera2D(Node2D, ViewportListener):
         self.frustum: Bounds2 = None
 
         self._viewport: Viewport = None
-        self.viewport_size = viewport_size
+        #self.viewport_size = viewport_size
+        self.viewport_size = glm.vec2(1024, 768)
 
         self.create_buffers()
         #self.create_bind_group()

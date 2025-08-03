@@ -58,6 +58,29 @@ class Renderer(Base):
     def canvas(self) -> skia.Canvas:
         return self.viewport.canvas
 
+    @contextlib.contextmanager
+    def use(self):
+        prev_renderer = self.get_current()
+        self.make_current()
+        yield self
+        prev_renderer.make_current()
+
+    @contextlib.contextmanager
+    def render(self):
+        prev_renderer = self.get_current()
+        self.make_current()
+        self.begin()
+
+        yield self
+
+        self.first_pass = False
+        self.end()
+        command_buffer = self.encoder.finish()
+        self.queue.submit([command_buffer])
+
+        prev_renderer.make_current()
+
+    '''
     def __enter__(self):
         self.make_current()
         self.begin()
@@ -68,7 +91,8 @@ class Renderer(Base):
         self.end()
         command_buffer = self.encoder.finish()
         self.queue.submit([command_buffer])
-
+    '''
+    
     def make_current(self):
         """Make the renderer current for the current context."""
         global renderer
