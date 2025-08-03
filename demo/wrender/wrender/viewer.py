@@ -61,7 +61,9 @@ class Viewer(engine.App):
         )
         if not scene_path:
             return
+        scene_path = Path(scene_path)
         scene = GltfLoader().load(scene_path)
+
         Scheduler().schedule_once(lambda dt: self.show(scene))
 
     def show(self, scene: Scene3D):

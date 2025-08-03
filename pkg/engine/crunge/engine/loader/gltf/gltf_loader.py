@@ -52,7 +52,16 @@ class GltfLoader(Loader):
 
         self.create_context()
 
-        res, err, warn = loader.load_ascii_from_file(tf_model, str(scene_path))
+        if scene_path.suffix == ".gltf":
+            logger.debug(f"Loading glTF file: {scene_path}")
+            res, err, warn = loader.load_ascii_from_file(tf_model, str(scene_path))
+        elif scene_path.suffix == ".glb":
+            logger.debug(f"Loading glTF binary file: {scene_path}")
+            res, err, warn = loader.load_binary_from_file(tf_model, str(scene_path))
+        else:
+            logger.error(f"Unsupported file format: {scene_path.suffix}")
+            return None
+        #res, err, warn = loader.load_ascii_from_file(tf_model, str(scene_path))
 
         logger.debug(f"res: {res}")
 

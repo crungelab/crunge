@@ -19,10 +19,11 @@ T_Resource = TypeVar("T_Resource", bound=Texture)
 
 
 class TextureDetails:
-    def __init__(self, texture: wgpu.Texture, width: int, height: int) -> None:
+    def __init__(self, texture: wgpu.Texture, width: int, height: int, depth: int) -> None:
         self.texture = texture
         self.width = width
         self.height = height
+        self.depth = depth
 
 
 class TextureLoaderBase(ResourceLoader[T_Resource]):
@@ -83,4 +84,4 @@ class TextureLoaderBase(ResourceLoader[T_Resource]):
                 wgpu.Extent3D(im_width, im_height, im_depth),
             )
 
-        return TextureDetails(texture, im_width, im_height)
+        return TextureDetails(texture, im_width, im_height, len(images))

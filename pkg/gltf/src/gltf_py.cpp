@@ -117,6 +117,21 @@ std::tuple<bool, std::string, std::string> LoadASCIIFromFileWrapper(
     return std::make_tuple(result, err, warn);
 }
 
+// Wrapper function
+std::tuple<bool, std::string, std::string> LoadBinaryFromFileWrapper(
+    tinygltf::TinyGLTF &loader, 
+    tinygltf::Model *model, 
+    const std::string &filename, 
+    tinygltf::SectionCheck::Enum check_sections) {
+
+    std::string err;
+    std::string warn;
+
+    bool result = loader.LoadBinaryFromFile(model, &err, &warn, filename, check_sections);
+
+    return std::make_tuple(result, err, warn);
+}
+
 void init_main(py::module &_gltf, Registry &registry) {
     PYEXTEND_BEGIN(tinygltf::Value, Value)
         _Value.def("get", [](const tinygltf::Value &self, const std::string &key, py::object default_value) -> py::object {
@@ -153,5 +168,11 @@ void init_main(py::module &_gltf, Registry &registry) {
         , py::arg("model")
         , py::arg("filename")
         , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION);
+
+        _TinyGLTF.def("load_binary_from_file", &LoadBinaryFromFileWrapper
+        , py::arg("model")
+        , py::arg("filename")
+        , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION);
+
     PYEXTEND_END
 }

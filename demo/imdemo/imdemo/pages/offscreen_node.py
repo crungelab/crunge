@@ -8,13 +8,14 @@ from crunge.engine.viewport.offscreen_viewport import OffscreenViewport
 from crunge.engine.resource.texture import Texture2D
 
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
+from crunge.engine.d2 import Node2D
 from crunge.engine.d2.renderer_2d import Renderer2D
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.d2.camera_2d import Camera2D
 from crunge.demo import Page, PageChannel
 
 
-class OffscreenSpritePage(Page):
+class OffscreenNodePage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
         self.viewport_size = glm.ivec2(256, 256)
@@ -27,14 +28,8 @@ class OffscreenSpritePage(Page):
         self.renderer = Renderer2D(self.viewport, camera=self.camera)
 
         sprite = self.sprite = SpriteLoader().load(":resources:/robocute.png")
-        self.sprite_vu = SpriteVu(sprite).enable()
-        self.sprite_vu.update_transform(
-            position=glm.vec3(0, 0, 0),
-            size=sprite.rect.size,
-            rotation=0.0,
-            scale=glm.vec3(1, 1, 1),
-            depth=0.0
-        )
+        self.sprite_vu = SpriteVu(sprite)
+        self.node = Node2D(vu=self.sprite_vu).enable()
 
     def _draw(self):
         imgui.begin(self.title)
@@ -44,14 +39,14 @@ class OffscreenSpritePage(Page):
 
         with self.viewport:
             with self.renderer.render():
-                self.draw_sprite()
+                self.draw_node()
 
         super()._draw()
 
-    def draw_sprite(self):
-        self.sprite_vu.draw()
+    def draw_node(self):
+        self.node.draw()
 
 def install(app: App):
     app.add_channel(
-        PageChannel(OffscreenSpritePage, "offscreen_sprite", "Offscreen Sprite")
+        PageChannel(OffscreenNodePage, "offscreen_node", "Offscreen Node")
     )

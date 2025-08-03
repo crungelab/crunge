@@ -10,7 +10,8 @@ def factory():
     app.use_all()
     #app.show_channel("index")
     #app.show_channel("offscreen_canvas")
-    app.show_channel("offscreen_sprite")
+    #app.show_channel("offscreen_sprite")
+    app.show_channel("offscreen_node")
 
     return app
 
