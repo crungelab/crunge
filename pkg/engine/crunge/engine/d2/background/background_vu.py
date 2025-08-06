@@ -23,9 +23,6 @@ class BackgroundVu(SpriteVu):
         self.program = BackgroundProgram()
 
     def _draw(self) -> None:
-        if not self.manual_draw:
-            return
-
         renderer = Renderer.get_current()
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())

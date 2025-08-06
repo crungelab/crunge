@@ -38,7 +38,6 @@ class Vu2D(Vu[Node2D]):
         super()._create()
         group = self.group
         if group is not None:
-            #group.append(self)
             if group.is_render_group:
                 self.manual_draw = False
 

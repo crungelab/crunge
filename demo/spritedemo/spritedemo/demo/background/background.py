@@ -4,8 +4,6 @@ from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
-from crunge.engine.math import Rect2i
 
 from ..demo import Demo
 from crunge.engine.d2.background import BackgroundVu
@@ -23,8 +21,6 @@ class BackgroundDemo(Demo):
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
-
-        #self.scene.clear()
 
         sprite = self.sprite = SpriteLoader(sprite_builder=BackgroundSpriteBuilder()).load(":images:/backgroundColorGrass.png")
         self.node = Node2D(vu=BackgroundVu(), model=sprite)

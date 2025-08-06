@@ -13,7 +13,7 @@ from crunge.engine.resource.texture.cube_texture import CubeTexture
 
 from crunge.engine.loader.texture.texture_2d_loader import Texture2DLoader
 from crunge.engine.loader.texture.cube_texture_loader import CubeTextureLoader
-from crunge.engine.loader.image_loader import HdrImageLoader
+from crunge.engine.loader.image.image_loader import HdrImageLoader
 
 from . import GltfBuilder
 from .builder_context import BuilderContext

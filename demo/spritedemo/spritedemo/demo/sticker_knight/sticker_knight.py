@@ -1,8 +1,6 @@
 from loguru import logger
-import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
 
 from crunge.engine.resource.resource_manager import ResourceManager
 

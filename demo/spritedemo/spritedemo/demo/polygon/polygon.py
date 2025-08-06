@@ -1,13 +1,10 @@
-from pathlib import Path
-
 from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine import Color, colors
+from crunge.engine import colors
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.d2.shape.polygon_2d import Polygon2D
 
@@ -15,12 +12,10 @@ from crunge.engine.d2.shape.polygon_2d import Polygon2D
 class PolygonDemo(Demo):
     def reset(self):
         super().reset()
-        
+
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
-
-        #self.scene.clear()
 
         shape = self.shape = Polygon2D(
             [

@@ -1,10 +1,7 @@
-from pathlib import Path
-
 from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
 
 from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite, SpriteVu

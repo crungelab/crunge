@@ -8,7 +8,7 @@ from crunge import wgpu
 from crunge.wgpu import utils
 
 from ..resource_loader import ResourceLoader
-from ..image_loader import ImageLoader
+from ..image.image_loader import ImageLoader
 
 from ...resource.resource_manager import ResourceManager
 from ...resource.texture import Texture, TextureKit

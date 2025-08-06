@@ -4,8 +4,8 @@ import imageio.v3 as iio
 import numpy as np
 from loguru import logger
 
-from .loader import Loader
-from ..resource.image import Image
+from ..loader import Loader
+from ...resource.image import Image
 
 class ImageLoader(Loader):
     def __init__(self) -> None:

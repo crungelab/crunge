@@ -1,15 +1,13 @@
-from pathlib import Path
-
 from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
 
-from ..demo import Demo
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+
+from ..demo import Demo
 
 
 class SpritesDemo(Demo):

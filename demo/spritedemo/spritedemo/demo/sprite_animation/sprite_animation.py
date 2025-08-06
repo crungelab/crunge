@@ -1,16 +1,11 @@
-from pathlib import Path
-
 from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine.color import Color
 from crunge.engine.d2.sprite import Sprite, SpriteVu, SpriteAnimation, SpriteAnimationFrame, SpriteAnimator
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
 
@@ -20,8 +15,6 @@ class SpriteAnimationDemo(Demo):
 
         self.angle = 0
         self.scale = 1.0
-
-        #self.scene.clear()
 
         atlas = self.atlas = XmlSpriteAtlasLoader().load(
             ":resources:/characters/robot/sheet.xml"

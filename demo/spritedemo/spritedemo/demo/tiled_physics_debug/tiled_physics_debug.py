@@ -3,7 +3,7 @@ import glm
 
 from crunge import sdl
 from crunge import imgui
-from crunge.engine import Renderer
+
 from crunge.engine.d2.physics import DynamicPhysicsEngine
 from crunge.engine.d2.physics.space_debug_layer import SpaceDebugLayer
 

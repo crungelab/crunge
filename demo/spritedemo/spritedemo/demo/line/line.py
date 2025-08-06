@@ -1,13 +1,10 @@
-from pathlib import Path
-
 from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
 
 from ..demo import Demo
-from crunge.engine import Color, colors
+from crunge.engine import colors
 from crunge.engine.d2.shape.line_2d import Line2D
 from crunge.engine.d2.node_2d import Node2D
 
@@ -19,8 +16,6 @@ class LineDemo(Demo):
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
-
-        #self.scene.clear()
 
         shape = self.shape = Line2D(glm.vec2(0, 0), glm.vec2(100, 100))
         self.node = Node2D(vu=shape)

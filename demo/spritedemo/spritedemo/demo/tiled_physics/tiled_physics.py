@@ -3,7 +3,7 @@ import glm
 
 from crunge import sdl
 from crunge import imgui
-from crunge.engine import Renderer
+
 from crunge.engine.d2.physics import DynamicPhysicsEngine
 from crunge.engine.d2.physics.draw_options import DrawOptions
 
@@ -30,7 +30,6 @@ class TiledPhysicsDemo(Demo):
         self.debug_draw_enabled = False
         self.draw_options = DrawOptions(self.view.scratch)
 
-        #self.scene.clear()
         self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine().create()
         self.create_map()
@@ -53,7 +52,6 @@ class TiledPhysicsDemo(Demo):
 
     def create_ball(self, position):
         ball = Ball(position)
-        #ball.create()
         self.scene.attach(ball)
 
     def create_map(self):

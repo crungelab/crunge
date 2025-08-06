@@ -8,7 +8,6 @@ from crunge import sdl
 from crunge import imgui
 from crunge import engine
 
-from crunge.engine import Renderer
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.d2.scene_2d import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
@@ -37,7 +36,6 @@ class Demo(engine.App):
         self.draw_time = 0
         self.update_time = 0
 
-
     @property
     def camera(self) -> Camera2D:
         return self.view.camera
@@ -51,15 +49,17 @@ class Demo(engine.App):
     def create_scene(self):
         logger.debug("Creating scene")
         self.scene = Scene2D().create()
-        
+
     def create_view(self):
         logger.debug("Creating view")
         self.view = DemoView(self.scene)
 
     def center_camera(self):
         if self.camera:
-            self.camera.position = glm.vec2(self.viewport.width / 2, self.viewport.height / 2) * self.camera.zoom
-            #self.camera.position = glm.vec2(self.width / 2, self.height / 2) * self.camera.zoom
+            self.camera.position = (
+                glm.vec2(self.viewport.width / 2, self.viewport.height / 2)
+                * self.camera.zoom
+            )
             logger.debug(f"Camera centered at {self.camera.position}")
 
     def on_size(self):
@@ -81,7 +81,7 @@ class Demo(engine.App):
         self.draw_time = timeit.default_timer() - draw_start_time
 
     def draw_stats(self):
-            # Display timings
+        # Display timings
         imgui.text(f"Update time: {self.update_time:.4f}")
         imgui.text(f"Drawing time: {self.draw_time:.4f}")
 

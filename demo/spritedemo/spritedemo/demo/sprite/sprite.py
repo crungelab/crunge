@@ -1,10 +1,7 @@
-from pathlib import Path
-
 from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine import Renderer
 
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.d2.node_2d import Node2D
@@ -21,8 +18,6 @@ class SpriteDemo(Demo):
         self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
-
-        #self.scene.clear()
 
         sprite = self.sprite = SpriteLoader().load(":images:/playerShip1_orange.png")
 

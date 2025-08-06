@@ -3,7 +3,6 @@ import glm
 
 from crunge import sdl
 from crunge import imgui
-from crunge.engine import Renderer
 
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
@@ -22,7 +21,6 @@ class ThingsDemo(Demo):
         self.debug_draw_enabled = False
         self.draw_options = DrawOptions(self.view.scratch)
 
-        #self.scene.clear()
         self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine()
         self.physics_engine.create()

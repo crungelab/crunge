@@ -3,7 +3,7 @@ import glm
 
 from crunge import sdl
 from crunge import imgui
-from crunge.engine import Renderer
+
 from crunge.engine.d2.physics import DynamicPhysicsEngine
 
 from ..demo import Demo
@@ -18,7 +18,6 @@ from .collision_type import CollisionType
 class SpaceShooter(Demo):
     def reset(self):
         super().reset()
-        #self.scene.clear()
         self.camera_target = glm.vec2(0, 0)
 
         self.create_physics_engine()

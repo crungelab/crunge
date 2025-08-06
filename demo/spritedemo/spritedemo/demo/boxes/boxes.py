@@ -3,7 +3,7 @@ import glm
 
 from crunge import sdl
 from crunge import imgui
-from crunge.engine import Renderer
+
 from crunge.engine.d2.physics import DynamicPhysicsEngine
 
 from ..demo import Demo
@@ -11,10 +11,10 @@ from ..demo import Demo
 from .box import Box
 from .floor import Floor
 
+
 class BoxesDemo(Demo):
     def reset(self):
         super().reset()
-        #self.scene.clear()
         self.last_mouse = glm.vec2()
         self.physics_engine = DynamicPhysicsEngine().create()
         self.create_floor()
@@ -35,7 +35,6 @@ class BoxesDemo(Demo):
             logger.debug(f"Creating box at {x}, {y}")
             self.create_box(world_vec)
 
-
     def create_box(self, position):
         self.scene.attach(Box(position))
 
@@ -52,7 +51,7 @@ class BoxesDemo(Demo):
         imgui.text("Click to create boxes")
 
         self.draw_stats()
-        
+
         if imgui.button("Reset"):
             self.reset()
 
@@ -60,9 +59,10 @@ class BoxesDemo(Demo):
         super()._draw()
 
     def update(self, delta_time: float):
-        self.physics_engine.update(1/60)
+        self.physics_engine.update(1 / 60)
         self.scene.update(delta_time)
         super().update(delta_time)
+
 
 def main():
     BoxesDemo().run()
