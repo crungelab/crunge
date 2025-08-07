@@ -10,7 +10,6 @@ from crunge.engine.d2.program_2d import Program2D
 from ...loader.shader_loader import ShaderLoader
 from ...binding import BindGroupLayout
 
-from ..binding_2d import ShapeBindGroupLayout
 from ..render_pipeline_2d import RenderPipeline2D
 
 

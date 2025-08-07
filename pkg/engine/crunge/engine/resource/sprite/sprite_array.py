@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 import glm
 
@@ -7,12 +7,12 @@ from crunge import wgpu
 from ...d2.sprite import Sprite
 from ..image import Image
 
-from . import ImageTexture
+from ..texture.image_texture_array import ImageTextureArray
 
 
-class SpriteAtlas(ImageTexture):
-    def __init__(self, texture: wgpu.Texture, size: glm.ivec2, image: Image):
-        super().__init__(texture, size, image)
+class SpriteArray(ImageTextureArray):
+    def __init__(self, texture: wgpu.Texture, size: glm.ivec2, images: List[Image]):
+        super().__init__(texture, size, images)
         self.sprites: list[Sprite] = []
         self.sprite_map: Dict[str, Sprite] = {}
 

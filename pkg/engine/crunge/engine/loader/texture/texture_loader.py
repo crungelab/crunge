@@ -26,7 +26,7 @@ class TextureDetails:
         self.depth = depth
 
 
-class TextureLoaderBase(ResourceLoader[T_Resource]):
+class TextureLoader(ResourceLoader[T_Resource]):
     def __init__(
         self,
         kit: TextureKit = ResourceManager().texture_kit,

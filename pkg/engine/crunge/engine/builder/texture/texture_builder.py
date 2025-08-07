@@ -1,11 +1,9 @@
-from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
+from typing import TypeVar, Generic, Dict, List
 from typing import List
-from pathlib import Path
 
 from loguru import logger
 
 from crunge import wgpu
-from crunge.wgpu import utils
 
 from ..resource_builder import ResourceBuilder
 

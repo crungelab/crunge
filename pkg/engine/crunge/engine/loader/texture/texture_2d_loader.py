@@ -7,12 +7,12 @@ import glm
 from ...resource.resource_manager import ResourceManager
 from ...resource.texture import Texture2D
 
-from .texture_loader_base import TextureLoaderBase
+from .texture_loader import TextureLoader
 
 T_Texture = TypeVar("T_Texture", bound=Texture2D)
 
 #class Texture2DLoader(TextureLoaderBase[Texture2D]):
-class Texture2DLoader(TextureLoaderBase[T_Texture], Generic[T_Texture]):
+class Texture2DLoader(TextureLoader[T_Texture], Generic[T_Texture]):
     def load(self, path: Path, name: str = None) -> T_Texture:
         path = ResourceManager().resolve_path(path)
 

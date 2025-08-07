@@ -21,14 +21,14 @@ class ImageTextureBuilder(TextureBuilder[ImageTexture]):
         super().__init__(kit)
 
     def build(self, image: Image) -> ImageTexture:
-        wgpu_texture = self.build_wpgu_texture(image)
+        wgpu_texture = self.build_wgpu_texture(image)
         return (
             ImageTexture(wgpu_texture, image.size, image)
             .set_name(image.name)
             .set_path(image.path)
         )
 
-    def build_wpgu_texture(self, image: Image) -> ImageTexture:
+    def build_wgpu_texture(self, image: Image) -> ImageTexture:
         # logger.debug(f"Building ImageTexture: {image.name}")
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,

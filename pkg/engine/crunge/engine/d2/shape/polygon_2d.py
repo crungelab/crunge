@@ -16,7 +16,7 @@ from ..uniforms_2d import (
     ModelUniform,
     ShapeUniform,
 )
-from ..binding_2d import ModelBindGroup, ShapeBindGroup
+from ..binding_2d import ModelBindGroup
 
 from .polygon_program_2d import PolygonProgram2D
 

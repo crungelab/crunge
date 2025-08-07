@@ -5,14 +5,14 @@ import glm
 
 from ...math import Rect2i
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture.sprite_strip import SpriteStrip
-from ...resource.texture.sprite_grid import SpriteGrid
+from ...resource.sprite.sprite_strip import SpriteStrip
+from ...resource.sprite.sprite_grid import SpriteGrid
 from ...d2.sprite import Sprite
 
-from ..texture.texture_loader_base import TextureLoaderBase
+from ..texture.texture_loader import TextureLoader
 
 
-class SpriteGridLoader(TextureLoaderBase[SpriteStrip]):
+class SpriteGridLoader(TextureLoader[SpriteStrip]):
     def __init__(self) -> None:
         super().__init__()
 

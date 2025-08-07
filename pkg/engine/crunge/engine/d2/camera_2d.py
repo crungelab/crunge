@@ -8,7 +8,7 @@ from crunge import wgpu
 from crunge.core import klass
 
 from ..math import Bounds2
-from ..uniforms import cast_matrix4, cast_vec3, cast_vec2
+from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport, ViewportListener
 from ..binding import SceneBindGroup
 
@@ -27,7 +27,6 @@ class Camera2D(Node2D, ViewportListener):
     def __init__(
         self,
         position=glm.vec2(0.0, 0.0),
-        #viewport_size=glm.vec2(1024, 768),
         zoom=1.0,
     ):
         self._zoom = zoom
@@ -40,8 +39,7 @@ class Camera2D(Node2D, ViewportListener):
         self.frustum: Bounds2 = None
 
         self._viewport: Viewport = None
-        #self.viewport_size = viewport_size
-        self.viewport_size = glm.vec2(1024, 768)
+        self.viewport_size = glm.vec2(0, 0)
 
         self.create_buffers()
         #self.create_bind_group()

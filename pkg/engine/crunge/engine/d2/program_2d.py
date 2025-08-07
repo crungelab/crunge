@@ -12,7 +12,7 @@ from ..binding import (
 
 from .binding_2d import (
     BindGroupIndex,
-    SpriteBindIndex,
+    MaterialBindIndex,
     ModelBindIndex,
     NodeBindIndex,
 )
@@ -25,7 +25,7 @@ class Program2D(Program):
         self.template_dict = {
             "BindGroupIndex": BindGroupIndex,
             "SceneBindIndex": SceneBindIndex,
-            "MaterialBindIndex": SpriteBindIndex,
+            "MaterialBindIndex": MaterialBindIndex,
             "ModelBindIndex": ModelBindIndex,
             "NodeBindIndex": NodeBindIndex,
         }

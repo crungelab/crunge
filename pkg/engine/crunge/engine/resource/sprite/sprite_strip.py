@@ -1,6 +1,6 @@
 import glm
 
-from . import Texture
+from ..texture import Texture
 from ...d2.sprite import Sprite
 
 class SpriteStrip(Texture):

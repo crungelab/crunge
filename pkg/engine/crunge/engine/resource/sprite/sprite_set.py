@@ -1,18 +1,26 @@
-from typing import Dict, List
+from typing import Dict
+from typing import TypeVar, Generic
+
+
 
 import glm
 
 from crunge import wgpu
 
 from ...d2.sprite import Sprite
+
+from ..resource import Resource
 from ..image import Image
 
-from .image_texture_array import ImageTextureArray
+from ..texture import ImageTexture
 
 
-class SpriteArray(ImageTextureArray):
-    def __init__(self, texture: wgpu.Texture, size: glm.ivec2, images: List[Image]):
-        super().__init__(texture, size, images)
+T_Texture = TypeVar("T_Texture", bound=ImageTexture)
+
+class SpriteSet(Resource, Generic[T_Texture]):
+    def __init__(self, texture: T_Texture | None = None) -> None:
+        super().__init__()
+        self.texture: T_Texture | None = texture
         self.sprites: list[Sprite] = []
         self.sprite_map: Dict[str, Sprite] = {}
 

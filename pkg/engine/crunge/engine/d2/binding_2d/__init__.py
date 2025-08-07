@@ -6,12 +6,9 @@ class BindGroupIndex:
 
 
 from .material import (
-    SpriteBindGroup,
-    SpriteBindGroupLayout,
-    SpriteBindIndex,
-    ShapeBindGroup,
-    ShapeBindGroupLayout,
-    ShapeBindIndex,
+    MaterialBindGroup,
+    MaterialBindGroupLayout,
+    MaterialBindIndex,
 )
 from .model import ModelBindGroup, ModelBindGroupLayout, DynamicModelBindGroupLayout, ModelBindIndex
 from .node import NodeBindGroup, NodeBindGroupLayout, DynamicNodeBindGroupLayout, NodeBindIndex

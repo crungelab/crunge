@@ -2,12 +2,12 @@ from .resource import Resource
 from .texture import TextureKit
 from .material import MaterialKit
 
-from .texture.sprite_atlas_kit import SpriteAtlasKit
+from .sprite.sprite_set_kit import SpriteSetKit
 
 class ResourceGroup:
     def __init__(self) -> None:
         self.texture_kit = TextureKit()
-        self.texture_atlas_kit = SpriteAtlasKit()
+        self.sprite_set_kit = SpriteSetKit()
         self.material_kit = MaterialKit()
 
     def add(self, resource: Resource) -> int:

@@ -34,8 +34,6 @@ class SpriteArrayDemo(Demo):
 
         sprite = self.sprite = atlas.get("bomb.png")
 
-        # self.sprite_vu = vu = SpriteVu(sprite).create()
-        # node = self.node = Node2D(vu=vu)
         self.sprite_vu = vu = SpriteVu()
         node = self.node = Node2D(vu=vu, model=sprite)
         x = self.width / 2
@@ -45,7 +43,6 @@ class SpriteArrayDemo(Demo):
         self.scene.attach(self.node)
 
     def _draw(self):
-        # imgui.set_next_window_position(288, 32, imgui.ONCE)
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 

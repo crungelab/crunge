@@ -13,7 +13,7 @@ from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
 from ..uniforms_2d import ModelUniform
 from ...buffer import UniformBuffer
 
-from ..binding_2d import SpriteBindGroup, ModelBindGroup
+from ..binding_2d import MaterialBindGroup, ModelBindGroup
 from .sprite_sampler import DefaultSpriteSampler
 
 if TYPE_CHECKING:
@@ -62,7 +62,7 @@ class Sprite(Model):
 
         self.memberships: List[SpriteMembership] = []
 
-        self.material_bind_group: SpriteBindGroup = None
+        self.material_bind_group: MaterialBindGroup = None
 
         self.create_bind_groups()
 
@@ -163,7 +163,7 @@ class Sprite(Model):
         return self
 
     def create_bind_groups(self):
-        self.material_bind_group = SpriteBindGroup(
+        self.material_bind_group = MaterialBindGroup(
             self.texture.view,
             self.sampler.sampler,
         )

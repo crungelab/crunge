@@ -1,8 +1,8 @@
 from loguru import logger
 
 from ..resource_kit import ResourceKit
-from .sprite_atlas import SpriteAtlas
+from .sprite_set import SpriteSet
 
-class SpriteAtlasKit(ResourceKit[SpriteAtlas]):
+class SpriteSetKit(ResourceKit[SpriteSet]):
     def __init__(self):
         super().__init__()

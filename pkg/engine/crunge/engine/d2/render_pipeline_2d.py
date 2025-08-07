@@ -9,7 +9,7 @@ from ..render_pipeline import RenderPipeline
 from ..binding import SceneBindGroupLayout
 
 from .binding_2d import (
-    SpriteBindGroupLayout,
+    MaterialBindGroupLayout,
     ModelBindGroupLayout,
     NodeBindGroupLayout,
 )
@@ -27,7 +27,7 @@ class RenderPipeline2D(RenderPipeline):
 
     @property
     def material_bind_group_layout(self):
-        return SpriteBindGroupLayout()
+        return MaterialBindGroupLayout()
 
     @property
     def model_bind_group_layout(self):

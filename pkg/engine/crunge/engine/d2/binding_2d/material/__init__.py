@@ -1,2 +1,1 @@
-from .sprite import SpriteBindGroup, SpriteBindGroupLayout, SpriteBindIndex
-from .shape import ShapeBindGroup, ShapeBindGroupLayout, ShapeBindIndex
+from .material import MaterialBindGroup, MaterialBindGroupLayout, MaterialBindIndex

@@ -10,25 +10,27 @@ from crunge.wgpu import utils
 from ..resource_builder import ResourceBuilder
 
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture import ImageTexture, TextureKit
+from ...resource.texture import ImageTextureArray, TextureKit
 from ...resource.image import Image
 
 from .texture_builder import TextureBuilder
 
 
-class ImageTextureArrayBuilder(TextureBuilder[ImageTexture]):
+class ImageTextureArrayBuilder(TextureBuilder[ImageTextureArray]):
     def __init__(self, kit: TextureKit = ResourceManager().texture_kit) -> None:
         super().__init__(kit)
 
-    def build(self, image: Image) -> ImageTexture:
-        wgpu_texture = self.build_wpgu_texture(image)
+    def build(self, images: List[Image]) -> ImageTextureArray:
+        wgpu_texture, im_width, im_height = self.build_wgpu_texture(images)
         return (
-            ImageTexture(wgpu_texture, image.size, image)
-            .set_name(image.name)
-            .set_path(image.path)
+            ImageTextureArray(wgpu_texture, images[0].size, images[0])
+            .set_name(images[0].name)
+            .set_path(images[0].path)
         )
 
-    def build_wpgu_texture(self, image: Image) -> ImageTexture:
+
+    '''
+    def build_wgpu_texture(self, image: Image) -> ImageTexture:
         # logger.debug(f"Building ImageTexture: {image.name}")
         descriptor = wgpu.TextureDescriptor(
             dimension=wgpu.TextureDimension.E2D,
@@ -72,3 +74,4 @@ class ImageTextureArrayBuilder(TextureBuilder[ImageTexture]):
         )
 
         return texture
+    '''

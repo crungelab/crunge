@@ -5,14 +5,14 @@ from lxml import etree
 
 from ...math import Rect2i
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture.sprite_atlas import SpriteAtlas
+from ...resource.sprite.sprite_atlas import SpriteAtlas
 
 from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder, CollidableSpriteBuilder
 
-from ..texture.texture_loader_base import TextureLoaderBase
+from ..texture.texture_loader import TextureLoader
 
 
-class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
+class XmlSpriteAtlasLoader(TextureLoader[SpriteAtlas]):
     def __init__(
         #self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()
         self, sprite_builder: SpriteBuilder = CollidableSpriteBuilder()
@@ -56,8 +56,6 @@ class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
 
         self.kit.add(atlas)
 
-        #builder = CollidableSpriteBuilder()
-
         # Iterate over each SubTexture element
         for sub_texture in root.findall("SubTexture"):
             # Extract attributes
@@ -68,7 +66,7 @@ class XmlSpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
             height = sub_texture.get("height")
 
             sprite = self.sprite_builder.build(
-                atlas, Rect2i(int(x), int(y), int(width), int(height))
+                atlas.texture, Rect2i(int(x), int(y), int(width), int(height))
             ).set_name(name)
 
             atlas.add(sprite)

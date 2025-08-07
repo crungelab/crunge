@@ -36,12 +36,6 @@ class DefaultTileBuilder(TileBuilder):
                 atlas, Rect2i(0, 0, atlas.width, atlas.height)
             )
 
-        '''
-        if hasattr(self.layer, 'sprite_group'):
-            sprite_group = self.layer.sprite_group
-            sprite_group.append(sprite)
-        '''
-
         logger.debug(f"sprite: {sprite}")
 
         if self.create_node_cb is not None:
@@ -50,7 +44,6 @@ class DefaultTileBuilder(TileBuilder):
             node = self.create_node(position, sprite, properties)
 
         if node is not None:
-            #self.context.layer.attach(node)
             self.layer.attach(node)
 
     def create_node(self, position: glm.vec2, sprite: Sprite, properties: dict):

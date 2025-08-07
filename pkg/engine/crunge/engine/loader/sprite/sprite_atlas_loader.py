@@ -4,13 +4,13 @@ from loguru import logger
 
 from ...math import Rect2i
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture.sprite_atlas import SpriteAtlas
+from ...resource.sprite.sprite_atlas import SpriteAtlas
 from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
 
-from ..texture.texture_loader_base import TextureLoaderBase
+from ..texture.texture_loader import TextureLoader
 
 
-class SpriteAtlasLoader(TextureLoaderBase[SpriteAtlas]):
+class SpriteAtlasLoader(TextureLoader[SpriteAtlas]):
     def __init__(self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()) -> None:
         super().__init__()
         self.sprite_builder = sprite_builder

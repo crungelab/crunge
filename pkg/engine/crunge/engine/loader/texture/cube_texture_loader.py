@@ -6,12 +6,12 @@ from loguru import logger
 
 from crunge.engine.math import Rect2i
 
-from .texture_loader_base import TextureLoaderBase
+from .texture_loader import TextureLoader
 
 from ...resource.texture.cube_texture import CubeTexture
 
 
-class CubeTextureLoader(TextureLoaderBase):
+class CubeTextureLoader(TextureLoader):
     def __init__(self) -> None:
         super().__init__()
 
