@@ -7,7 +7,8 @@ from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.sprite.sprite_sampler import DefaultSpriteSampler
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
-from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+#from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
 
 from ..builder_context import BuilderContext
 from .object_builder import ObjectBuilder
@@ -30,7 +31,7 @@ class DefaultObjectBuilder(ObjectBuilder):
             # Load the texture atlas
             image = obj.image
             path = image[0]
-            atlas = ImageTextureLoader().load(path)
+            atlas = SpriteTextureLoader().load(path)
             atlas_size = glm.vec2(atlas.size.xy)
 
             x = obj.x

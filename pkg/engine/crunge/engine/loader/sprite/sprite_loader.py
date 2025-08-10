@@ -9,13 +9,15 @@ from ...d2.sprite import Sprite
 from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, CollidableSpriteBuilder
 
 from ..loader import Loader
-from ..texture.image_texture_loader import ImageTextureLoader
+#from ..texture.image_texture_loader import ImageTextureLoader
+from ..texture.sprite_texture_loader import SpriteTextureLoader
 
 
 class SpriteLoader(Loader):
     def __init__(
         self,
-        texture_loader: ImageTextureLoader = ImageTextureLoader(),
+        #texture_loader: ImageTextureLoader = ImageTextureLoader(),
+        texture_loader: SpriteTextureLoader = SpriteTextureLoader(),
         #sprite_builder: SpriteBuilder = DefaultSpriteBuilder(),
         sprite_builder: SpriteBuilder = CollidableSpriteBuilder(),
     ) -> None:

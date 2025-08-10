@@ -21,7 +21,8 @@ class CollidableSpriteBuilder(SpriteBuilder):
         y = rect.y
         height = rect.height
         width = rect.width
-        region = texture.image.data[y:y+height, x:x+width]
+        #region = texture.image.data[y:y+height, x:x+width]
+        region = texture.images[0].data[y:y+height, x:x+width]
 
         #Extract the alpha channel
         if region.shape[2] < 4:

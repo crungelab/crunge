@@ -5,7 +5,7 @@ from crunge import imgui
 
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
 
 from ..demo import Demo
 
@@ -22,7 +22,7 @@ class SpritesDemo(Demo):
         self.color = 1, 1, 1
 
         # Ship1
-        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
+        texture = SpriteTextureLoader().load(":images:/playerShip1_orange.png")
         sprite = Sprite(texture)
 
         node = self.node = Node2D(vu=SpriteVu(), model=sprite)
@@ -30,7 +30,7 @@ class SpritesDemo(Demo):
         self.scene.attach(self.node)
 
         # Ship2
-        texture = ImageTextureLoader().load(":images:/playerShip1_blue.png")
+        texture = SpriteTextureLoader().load(":images:/playerShip1_blue.png")
         sprite = Sprite(texture)
         x = 128
         y = 128

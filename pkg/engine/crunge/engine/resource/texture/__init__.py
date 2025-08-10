@@ -4,3 +4,4 @@ from .texture_2d import Texture2D
 from .texture_2d_array import Texture2dArray
 from .image_texture import ImageTexture
 from .image_texture_array import ImageTextureArray
+from .sprite_texture import SpriteTexture

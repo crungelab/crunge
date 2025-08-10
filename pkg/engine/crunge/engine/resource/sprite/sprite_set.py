@@ -3,19 +3,13 @@ from typing import TypeVar, Generic
 
 
 
-import glm
-
-from crunge import wgpu
-
 from ...d2.sprite import Sprite
 
 from ..resource import Resource
-from ..image import Image
-
-from ..texture import ImageTexture
+from ..texture import SpriteTexture
 
 
-T_Texture = TypeVar("T_Texture", bound=ImageTexture)
+T_Texture = TypeVar("T_Texture", bound=SpriteTexture)
 
 class SpriteSet(Resource, Generic[T_Texture]):
     def __init__(self, texture: T_Texture | None = None) -> None:

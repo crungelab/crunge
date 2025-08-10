@@ -47,6 +47,7 @@ class Sprite(Model):
         color=colors.WHITE,
         points=None,
         collision_rect: Rect2i = None,
+        layer: int = 0,
     ) -> None:
         super().__init__()
         self._texture = texture
@@ -56,6 +57,7 @@ class Sprite(Model):
         self.flip_v = False
 
         self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
+        self.layer = layer
         self._color = color
         self.points = points
         self.collision_rect = collision_rect
@@ -182,6 +184,8 @@ class Sprite(Model):
 
         uniform.flip_h = 1 if self.flip_h else 0
         uniform.flip_v = 1 if self.flip_v else 0
+
+        uniform.layer = self.layer
 
         try:
             buffer[index] = uniform

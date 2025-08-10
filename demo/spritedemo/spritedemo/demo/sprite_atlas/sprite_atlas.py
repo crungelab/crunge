@@ -66,8 +66,8 @@ class SpriteAtlasDemo(Demo):
         if imgui.begin_list_box("##Textures", (-1, -1)):
 
             for name, sprite in self.atlas.sprite_map.items():
-                opened, selected = imgui.selectable(name, sprite == self.sprite)
-                if opened:
+                clicked, selected = imgui.selectable(name, sprite == self.sprite)
+                if clicked:
                     logger.debug(f"Selected: {name}")
                     self.sprite = sprite
                     self.sprite_vu.sprite = sprite

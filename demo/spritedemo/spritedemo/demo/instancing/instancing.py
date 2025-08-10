@@ -11,7 +11,7 @@ from crunge.engine.d2.sprite.instanced import InstancedSpriteLayer
 from crunge.engine.d2.sprite.dynamic import DynamicSpriteGroup
 
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
 from crunge.engine import colors
 
 INITIAL_SCALE = 0.5
@@ -28,7 +28,7 @@ class InstancingDemo(Demo):
         self.sprite_group = DynamicSpriteGroup(1024)
         layer = InstancedSpriteLayer("sprites", 1024, self.sprite_group)
         self.scene.add_layer(layer)
-        texture = ImageTextureLoader().load(":images:/playerShip1_orange.png")
+        texture = SpriteTextureLoader().load(":images:/playerShip1_orange.png")
         self.sprite = Sprite(texture, color=self.color)
 
     def reset(self):

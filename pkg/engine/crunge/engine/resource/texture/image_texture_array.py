@@ -13,7 +13,7 @@ class ImageTextureArray(Texture2dArray):
         self,
         texture: wgpu.Texture,
         size: glm.ivec2,
-        images: List[Image],
+        images: List[Image] = [],
     ):
         super().__init__(texture, size)
         self.images = images

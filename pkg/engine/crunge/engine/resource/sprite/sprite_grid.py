@@ -1,11 +1,11 @@
 import glm
 
-from ..texture import Texture
+from ..texture import SpriteTexture
 from ...d2.sprite import Sprite
 from .sprite_strip import SpriteStrip
 
 
-class SpriteGrid(Texture):
+class SpriteGrid(SpriteTexture):
     def __init__(self, texture, size: glm.ivec2):
         super().__init__(texture, size)
         self.rows: list[SpriteStrip] = []

@@ -7,30 +7,26 @@ from loguru import logger
 from crunge import wgpu
 from crunge.wgpu import utils
 
-from ..resource_builder import ResourceBuilder
-
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture import ImageTexture, TextureKit
+from ...resource.texture import SpriteTexture, TextureKit
 from ...resource.image import Image
 
 from .texture_builder import TextureBuilder
 
 
-class ImageTextureBuilder(TextureBuilder[ImageTexture]):
+class SpriteTextureBuilder(TextureBuilder[SpriteTexture]):
     def __init__(self, kit: TextureKit = ResourceManager().texture_kit) -> None:
         super().__init__(kit)
 
-    def build(self, image: Image) -> ImageTexture:
-        wgpu_texture = self.build_wgpu_texture(image)
+    def build(self, images: List[Image]) -> SpriteTexture:
+        wgpu_texture, im_width, im_height = self.build_wgpu_texture(images)
         return (
-            ImageTexture(wgpu_texture, image.size, image)
-            .set_name(image.name)
-            .set_path(image.path)
+            SpriteTexture(wgpu_texture, images[0].size, images)
+            .set_name(images[0].name)
+            .set_path(images[0].path)
         )
 
-    def build_wgpu_texture(self, image: Image) -> ImageTexture:
-        texture, im_width, im_height = super().build_wgpu_texture([image])
-        return texture
+
     '''
     def build_wgpu_texture(self, image: Image) -> ImageTexture:
         # logger.debug(f"Building ImageTexture: {image.name}")

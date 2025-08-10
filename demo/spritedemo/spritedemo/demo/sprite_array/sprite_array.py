@@ -32,7 +32,7 @@ class SpriteArrayDemo(Demo):
         atlas = self.atlas = SpriteArrayLoader().load(paths)
         logger.debug(f"atlas: {atlas}")
 
-        sprite = self.sprite = atlas.get("bomb.png")
+        sprite = self.sprite = atlas.get("keyGreen.png")
 
         self.sprite_vu = vu = SpriteVu()
         node = self.node = Node2D(vu=vu, model=sprite)
@@ -69,12 +69,9 @@ class SpriteArrayDemo(Demo):
         if imgui.begin_list_box("Textures", (-1, -1)):
 
             for name, sprite in self.atlas.sprite_map.items():
-                # opened, selected = imgui.selectable(name, texture == self.texture)
-                opened, selected = imgui.selectable(name, sprite == self.sprite)
-                if opened:
+                clicked, selected = imgui.selectable(name, sprite == self.sprite)
+                if clicked:
                     logger.debug(f"Selected: {name}")
-                    # self.texture = texture
-
                     self.sprite = sprite
                     self.sprite_vu.sprite = sprite
 

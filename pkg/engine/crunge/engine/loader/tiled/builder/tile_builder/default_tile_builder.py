@@ -5,7 +5,8 @@ from crunge.engine.math import Rect2i
 from crunge.engine.d2.sprite import Sprite, SpriteVu, SpriteLayer
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
-from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+#from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
+from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
 
 from ..builder_context import BuilderContext
 
@@ -24,7 +25,7 @@ class DefaultTileBuilder(TileBuilder):
     def build(self, position: glm.vec2, image: tuple, properties: dict):
         logger.debug(f"process_tile: {position}, {image}, {properties}")
         path = image[0]
-        atlas = ImageTextureLoader().load(path)
+        atlas = SpriteTextureLoader().load(path)
         # logger.debug(f"atlas: {atlas}")
         sprite_builder = CollidableSpriteBuilder()
         rect = image[1]

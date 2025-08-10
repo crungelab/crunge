@@ -12,5 +12,5 @@ from .sprite_builder import SpriteBuilder
 
 class BackgroundSpriteBuilder(SpriteBuilder):
     def build(self, texture: ImageTexture, rect: Rect2i = None, color=colors.WHITE) -> Sprite:
-        logger.debug(f"Building Background Sprite: {texture.image.name}")
+        logger.debug(f"Building Background Sprite: {texture.name}")
         return Sprite(texture, rect, RepeatingSpriteSampler(), color)
