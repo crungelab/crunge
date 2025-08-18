@@ -70,11 +70,8 @@ class PhysicsEntity2D(Entity2D):
     def update(self, delta_time: float):
         if self.body:
             body_position = glm.vec2(self.body.position.x, self.body.position.y)
-            # self.position = body_position
-            # self.position = body_position - self.physics.position
             rotated_offset = glm.rotate(self.physics.position, self.body.angle)
             self.position = body_position - rotated_offset
-
             self.angle = math.degrees(self.body.angle)
             # logger.debug(f"position: {self.position}")
             # logger.debug(f"angle: {self.angle}")
@@ -116,7 +113,6 @@ class PhysicsEntity2D(Entity2D):
         position = -self.physics.position
         tx = position.x
         ty = position.y
-        # t = pymunk.Transform(a=a, d=d)
         t = pymunk.Transform(a=a, d=d, tx=tx, ty=ty)
         # logger.debug(f"t: {t}")
         return t
@@ -142,7 +138,6 @@ class PhysicsGroup2D(PhysicsEntity2D):
         super()._create()
         for node in self.nodes:
             node.gid = self.id
-            # model.physics = self.physics
             self.layer.attach(node)
 
     def update(self, delta_time):

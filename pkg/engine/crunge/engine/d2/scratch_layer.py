@@ -58,6 +58,14 @@ class ScratchLayer(ViewLayer):
 
         self.add_call(draw)
 
+    def draw_dot(self, size: float, position: glm.vec2, color=colors.WHITE):
+        def draw(canvas: skia.Canvas):
+            paint = skia.Paint()
+            paint.set_color(rgba_tuple_to_argb_int(color))
+            canvas.draw_circle(skia.Point(position.x, position.y), size, paint)
+
+        self.add_call(draw)
+
     def draw_circle(
         self, center: glm.vec2, radius: float, segments: int = 32, color=colors.WHITE
     ):

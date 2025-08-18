@@ -4,9 +4,6 @@ import glm
 from crunge import sdl
 from crunge import imgui
 
-from crunge.engine.d2.physics import DynamicPhysicsEngine
-from crunge.engine.d2.physics.draw_options import DrawOptions
-
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.tiled.builder.builder_context import BuilderContext
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
@@ -14,24 +11,19 @@ from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
 from crunge.engine.loader.tiled.builder.tile_layer_builder import DefaultTileLayerBuilder
 from crunge.engine.loader.tiled.builder.tile_builder import DefaultTileBuilder
 
-from ..demo import Demo
+from ..physics_demo import PhysicsDemo
 
 from .ball import Ball
 from .tile import Tile
 
-class TiledPhysicsDemo(Demo):
+class TiledPhysicsDemo(PhysicsDemo):
     def create_view(self):
         super().create_view()
         self.camera.zoom = 2.0
 
     def reset(self):
         super().reset()
-
-        self.debug_draw_enabled = False
-        self.draw_options = DrawOptions(self.view.scratch)
-
         self.last_mouse = glm.vec2()
-        self.physics_engine = DynamicPhysicsEngine().create()
         self.create_map()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
@@ -72,16 +64,12 @@ class TiledPhysicsDemo(Demo):
         imgui.text("Click to create balls")
 
         self.draw_stats()
-
-        _, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)
+        self.draw_physics_options()
 
         if imgui.button("Reset"):
             self.reset()
 
         imgui.end()
-
-        if self.debug_draw_enabled:
-            self.physics_engine.debug_draw(self.draw_options)
 
         super()._draw()
 

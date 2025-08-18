@@ -22,7 +22,7 @@ class SpriteStripLoader(TextureLoader[SpriteStrip]):
         if atlas := self.kit.get_by_path(path):
             return atlas
 
-        logger.debug(f"Loading TextureStrip: {name}")
+        logger.debug(f"Loading SpriteStrip: {name}")
 
         if not path.exists():
             raise Exception(f"Image file not found: {path}")
@@ -42,7 +42,7 @@ class SpriteStripLoader(TextureLoader[SpriteStrip]):
             h = frame_size.y
 
             rect = Rect2i(int(x), int(y), int(w), int(h))
-            logger.debug(f"Frame {i}: {rect}")
+            #logger.debug(f"Frame {i}: {rect}")
             # Create a new texture
             sprite = Sprite(
                 atlas, rect

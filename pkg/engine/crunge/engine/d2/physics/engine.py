@@ -20,6 +20,12 @@ class PhysicsEngine2D(PhysicsEngine):
         self.space.gravity = gravity
         self.space.iterations = iterations
 
+        # Enable sleeping
+        self.space.sleep_time_threshold = 0.5     # default is disabled
+        self.space.idle_speed_threshold = 0.1     # m/s-ish
+        # Optional global damping helps bodies settle
+        self.space.damping = 0.99
+
     def update(self, delta_time=1 / 60.0):
         # logger.debug('PhysicsEngine.update')
         self.space.step(delta_time)

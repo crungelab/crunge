@@ -4,20 +4,16 @@ import glm
 from crunge import sdl
 from crunge import imgui
 
-from crunge.engine.d2.physics import DynamicPhysicsEngine
-
-from ..demo import Demo
+from ..physics_demo import PhysicsDemo
 
 from .ball import Ball
 from .floor import Floor
 
 
-class BallsDemo(Demo):
+class BallsDemo(PhysicsDemo):
     def reset(self):
         super().reset()
-        # self.scene.clear()
         self.last_mouse = glm.vec2()
-        self.physics_engine = DynamicPhysicsEngine().create()
         self.create_floor()
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
@@ -48,6 +44,9 @@ class BallsDemo(Demo):
     def _draw(self):
         imgui.begin("Balls Demo")
         imgui.text("Click to create balls")
+
+        self.draw_stats()
+        self.draw_physics_options()
 
         if imgui.button("Reset"):
             self.reset()

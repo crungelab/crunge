@@ -98,7 +98,8 @@ class KinematicDynamicHandler(CollisionHandler):
     def __init__(self, space: pymunk.Space):
         super().__init__(space, PT_KINEMATIC, PT_DYNAMIC)
 
-    def pre_solve(self, arbiter, space, data):
+    #def pre_solve(self, arbiter, space, data):
+    def post_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
         knode = kbody.node
@@ -112,6 +113,10 @@ class KinematicDynamicHandler(CollisionHandler):
         normal = -arbiter.contact_point_set.normal
         penetration = -arbiter.contact_point_set.points[0].distance
         body = arbiter.shapes[1].body
+
+        if body.is_sleeping:
+            body.activate()
+
         impulse = arbiter.total_impulse
         position = arbiter.contact_point_set.points[0].point_b
         kbody.position += normal * penetration

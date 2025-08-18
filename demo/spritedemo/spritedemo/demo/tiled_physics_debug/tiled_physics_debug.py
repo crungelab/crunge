@@ -67,10 +67,6 @@ class TiledPhysicsDebugDemo(Demo):
         map_loader.load(tmx_path)
 
     def _draw(self):
-        update_output = f"Update time: {self.update_time:.3f}"
-        drawing_output = f"Drawing time: {self.draw_time:.3f}"
-
-
         imgui.begin("Tiled Physics Demo")
         self.draw_stats()
         

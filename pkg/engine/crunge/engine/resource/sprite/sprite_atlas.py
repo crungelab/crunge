@@ -8,5 +8,5 @@ from .sprite_set import SpriteSet
 class SpriteAtlas(SpriteSet[SpriteTexture]):
     def __init__(self, texture: SpriteTexture):
         super().__init__(texture)
-        self.sprites: list[Sprite] = []
-        self.sprite_map: Dict[str, Sprite] = {}
+        #self.sprites: list[Sprite] = []
+        #self.sprite_map: Dict[str, Sprite] = {}
