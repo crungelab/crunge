@@ -1,7 +1,4 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import c_float, sizeof
 
 from loguru import logger
 import numpy as np
@@ -9,7 +6,7 @@ import numpy as np
 from crunge import wgpu
 import crunge.wgpu.utils as utils
 
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -41,9 +38,6 @@ class TriangleTextureDemo(Demo):
 
     texture: wgpu.Texture = None
     sampler: wgpu.Sampler = None
-
-    def __init__(self):
-        super().__init__()
 
     def create_device_objects(self):
         self.create_buffers()
@@ -196,12 +190,11 @@ class TriangleTextureDemo(Demo):
         )
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                # view=renderer.texture_view,
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -229,7 +222,7 @@ class TriangleTextureDemo(Demo):
 
 
 def main():
-    TriangleTextureDemo().create().run()
+    TriangleTextureDemo().run()
 
 
 if __name__ == "__main__":

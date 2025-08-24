@@ -8,6 +8,7 @@ from .dispatcher import Dispatcher
 from .controller import Controller
 from .gfx import Gfx
 from .render_options import RenderOptions
+from .viewport import Viewport
 from .renderer import Renderer
 from .node import Node
 from .vu import Vu

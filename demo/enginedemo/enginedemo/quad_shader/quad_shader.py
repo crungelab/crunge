@@ -1,12 +1,7 @@
-import time
-import sys
-
 from loguru import logger
-import glm
 
 from crunge import wgpu
-from crunge import imgui
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo, DemoView, DemoLayer
 
@@ -23,30 +18,8 @@ fn fs_main() -> @location(0) vec4<f32> {
 }
 """
 
-'''
-shader_code = """
-@vertex
-fn vs_main(@builtin(vertex_index) idx: u32) -> @builtin(position) vec4<f32> {
-    var positions = array<vec2<f32>, 4>(
-        vec2<f32>(-0.5, 0.5),  // top left
-        vec2<f32>(-0.5, -0.5), // bottom left
-        vec2<f32>(0.5, 0.5),   // top right
-        vec2<f32>(0.5, -0.5)   // bottom right
-    );
-    return vec4<f32>(positions[idx], 0.0, 1.0);
-}
-@fragment
-fn fs_main() -> @location(0) vec4<f32> {
-    return vec4<f32>(0.0, 0.502, 1.0, 1.0); // 0x80/0xff ~= 0.502
-}
-"""
-'''
-
 
 class QuadShaderLayer(DemoLayer):
-    def __init__(self):
-        super().__init__()
-
     def _create(self):
         super()._create()
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -82,11 +55,11 @@ class QuadShaderLayer(DemoLayer):
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def _draw(self):
-        renderer = Renderer.get_current()
+        viewport = Viewport.get_current()
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -94,7 +67,7 @@ class QuadShaderLayer(DemoLayer):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.viewport.depth_stencil_texture_view,
+            view=viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -123,7 +96,7 @@ class QuadShaderDemo(Demo):
 
 
 def main():
-    QuadShaderDemo(DemoView(layers=[QuadShaderLayer()])).create().run()
+    QuadShaderDemo(DemoView(layers=[QuadShaderLayer()])).run()
 
 
 if __name__ == "__main__":

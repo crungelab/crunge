@@ -156,36 +156,3 @@ fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
 
   return vec4<f32>(linearToSRGB(diffuse), color.a);
 }
-
-/*
-fn GetLight(input : VertexOutput) -> Light {
-  var light : Light;
-  //light.kind = LightKind_Spot;
-  //light.kind = LightKind_Directional;
-  light.kind = LightKind_Point;
-  //light.v = normalize(lightUniform.position - input.frag_pos);
-  light.position = lightUniform.position;
-  light.v = light.position - input.frag_pos;
-  light.color = lightUniform.color;
-  light.energy = lightUniform.energy;
-  //light.energy = 1.0;
-  light.range = lightUniform.range;
-  //light.range = 10.0;
-  return light;
-}
-
-@fragment
-fn fs_main(input : VertexOutput) -> @location(0) vec4<f32> {
-  let surface = GetSurface(input);
-  let light = GetLight(input);
-
-  let color = surface.baseColor;
-
-  let normal = surface.normal;
-  let N = normalize(normal);
-  let L = normalize(light.position);
-  let diffuse_strength = max(dot(N, L), 0.0);
-  let diffuse = diffuse_strength * light.color * color.rgb;
-  return vec4<f32>(linearToSRGB(diffuse), color.a);
-}
-*/

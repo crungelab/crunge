@@ -8,7 +8,7 @@ import PIL.Image
 import uharfbuzz as hb
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 from ..demo import Demo
 
 
@@ -317,13 +317,13 @@ class InstancedTextDemo(Demo):
         self.bind_group = self.device.create_bind_group(bind_group_desc)
 
     def _draw(self):
-        renderer = Renderer.get_current()
+        viewport = Viewport.get_current()
         encoder = self.device.create_command_encoder()
         render_pass = encoder.begin_render_pass(
             wgpu.RenderPassDescriptor(
                 color_attachments=[
                     wgpu.RenderPassColorAttachment(
-                        view=renderer.viewport.color_texture_view,
+                        view=viewport.color_texture_view,
                         load_op=wgpu.LoadOp.CLEAR,
                         store_op=wgpu.StoreOp.STORE,
                         clear_value=wgpu.Color(0.0, 0.0, 0.0, 1.0),

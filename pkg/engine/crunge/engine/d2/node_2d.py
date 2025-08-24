@@ -48,6 +48,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @position.setter
     def position(self, value: glm.vec2):
+        if value == self._position:
+            return
         self._position = value
         self.update_matrix()
 
@@ -84,6 +86,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @rotation.setter
     def rotation(self, value: float):
+        if value == self._rotation:
+            return
         self._rotation = value
         self.update_matrix()
 
@@ -93,9 +97,15 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @angle.setter
     def angle(self, value: float):
+        self.rotation = glm.radians(value)
+
+    '''
+    @angle.setter
+    def angle(self, value: float):
         self._rotation = glm.radians(value)
         # logger.debug(f"class: {self.__class__}, angle: {value}, rotation: {self._rotation}")
         self.update_matrix()
+    '''
 
     @property
     def size(self) -> glm.vec2:

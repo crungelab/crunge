@@ -35,11 +35,11 @@ class OffscreenViewport(Viewport):
         )
         self.color_texture_view = self.color_texture.create_view()
 
-    def frame(self) -> None:
+    def begin_frame(self) -> None:
         # Skia
         self.skia_surface = skia.create_surface(self.color_texture, self.recorder)
         self.canvas = self.skia_surface.get_canvas()
 
 
-    def present(self) -> None:
+    def end_frame(self) -> None:
         pass

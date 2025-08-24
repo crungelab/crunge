@@ -86,7 +86,7 @@ class MixedPage(Page):
     def _draw(self):
         renderer = Renderer.get_current()
 
-        with renderer:
+        with renderer.render():
             pass_enc = renderer.pass_enc
             pass_enc.set_pipeline(self.pipeline)
             pass_enc.draw(3)

@@ -121,8 +121,7 @@ fn GetSurface(input : VertexOutput) -> Surface {
 fn GetAmbientLight() -> AmbientLight {
   var light : AmbientLight;
   light.color = ambientLightUniform.color;
-  //light.energy = ambientLightUniform.energy;
-  light.energy = 1.0;
+  light.energy = ambientLightUniform.energy;
   return light;
 }
 
@@ -131,14 +130,11 @@ fn GetLight(input : VertexOutput) -> Light {
   //light.kind = LightKind_Spot;
   //light.kind = LightKind_Directional;
   light.kind = LightKind_Point;
-  //light.v = normalize(lightUniform.position - input.frag_pos);
   light.position = lightUniform.position;
   light.v = lightUniform.position - input.frag_pos;
   light.color = lightUniform.color;
-  //light.range = lightUniform.range;
-  light.range = 10.0;
-  //light.energy = lightUniform.energy;
-  light.energy = 1.0;
+  light.range = lightUniform.range;
+  light.energy = lightUniform.energy;
   return light;
 }
 

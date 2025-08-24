@@ -63,7 +63,8 @@ class Renderer(Base):
         prev_renderer = self.get_current()
         self.make_current()
         yield self
-        prev_renderer.make_current()
+        if prev_renderer is not None:
+            prev_renderer.make_current()
 
     @contextlib.contextmanager
     def render(self):
@@ -78,7 +79,8 @@ class Renderer(Base):
         command_buffer = self.encoder.finish()
         self.queue.submit([command_buffer])
 
-        prev_renderer.make_current()
+        if prev_renderer is not None:
+            prev_renderer.make_current()
 
     '''
     def __enter__(self):
@@ -95,7 +97,6 @@ class Renderer(Base):
     
     def make_current(self):
         """Make the renderer current for the current context."""
-        global renderer
         renderer.set(self)
 
     @classmethod

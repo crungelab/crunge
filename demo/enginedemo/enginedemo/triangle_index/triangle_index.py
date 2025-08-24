@@ -1,14 +1,11 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import c_float, sizeof
 
 from loguru import logger
 import numpy as np
 
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -46,9 +43,6 @@ class TriangleIndexDemo(Demo):
     kWidth = 1024
     kHeight = 768
 
-    def __init__(self):
-        super().__init__()
-
     def create_device_objects(self):
         self.create_buffers()
         self.create_pipeline()
@@ -58,18 +52,16 @@ class TriangleIndexDemo(Demo):
 
         # Pipeline creation
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=4 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4, offset=0, shader_location=0
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4,
+                offset=4 * sizeof(c_float),
+                shader_location=1,
+            ),
+        ]
 
         vb_layouts = [
             wgpu.VertexBufferLayout(
@@ -106,12 +98,11 @@ class TriangleIndexDemo(Demo):
         )
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                #view=renderer.texture_view,
-                view = renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -138,7 +129,7 @@ class TriangleIndexDemo(Demo):
 
 
 def main():
-    TriangleIndexDemo().create().run()
+    TriangleIndexDemo().run()
 
 
 if __name__ == "__main__":

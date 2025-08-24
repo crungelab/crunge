@@ -33,9 +33,15 @@ class WindowListener(NodeListener):
     def on_channel(self, channel: Channel):
         pass
 
+
 class Window(Frame):
     def __init__(
-        self, width: int = DEFAULT_WIDTH, height: int = DEFAULT_HEIGHT, title="", view=None, resizable=False
+        self,
+        width: int = DEFAULT_WIDTH,
+        height: int = DEFAULT_HEIGHT,
+        title="",
+        view=None,
+        resizable=False,
     ):
         style = yoga.StyleBuilder().size(width, height).build()
         super().__init__(style, view=view)
@@ -44,7 +50,7 @@ class Window(Frame):
         self.listeners: List[WindowListener] = []
 
         self.window: sdl.Window = None
-        #self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True, use_snapshot=True)
+        # self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True, use_snapshot=True)
         self.render_options = RenderOptions(use_depth_stencil=True, use_snapshot=True)
         self.viewport: SurfaceViewport = None
         self.renderer: Renderer = None
@@ -55,7 +61,6 @@ class Window(Frame):
 
         self.update_time: float = 0.0
         self.frame_time: float = 0.0
-
 
     @property
     def channel(self) -> Channel:
@@ -106,7 +111,7 @@ class Window(Frame):
         size = self.size
         if not size.x or not size.y:
             return
-        #self.viewport.size = size
+        # self.viewport.size = size
         self.viewport.size = glm.ivec2(self.get_framebuffer_size())
 
         logger.debug(f"Resized to {size}")
@@ -135,28 +140,25 @@ class Window(Frame):
 
     def frame(self):
         self.pre_frame()
-        with self.viewport:
-            self.renderer.make_current()
-            self.draw()
+        with self.viewport.frame():
+            with self.renderer.use():
+                self.draw()
         self.post_frame()
 
     '''
     def frame(self):
-        try:
-            self.pre_frame()
-            with self.viewport:
-                self.draw(self.renderer)
-            self.post_frame()
-        except Exception as e:
-            logger.error(f"Error during frame: {e}")
-            raise e
+        self.pre_frame()
+        with self.viewport:
+            self.renderer.make_current()
+            self.draw()
+        self.post_frame()
     '''
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
-                #self.size = glm.ivec2(event.data1, event.data2)
+                # self.size = glm.ivec2(event.data1, event.data2)
                 self.size = glm.ivec2(self.get_framebuffer_size())
             case _:
                 # pass

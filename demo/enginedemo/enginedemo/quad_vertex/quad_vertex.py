@@ -1,13 +1,10 @@
 from ctypes import c_float, sizeof
-import time
-import sys
 
 from loguru import logger
-import numpy as np
 
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -42,9 +39,6 @@ class QuadVertexDemo(Demo):
     kWidth = 1024
     kHeight = 768
 
-    def __init__(self):
-        super().__init__()
-
     def create_device_objects(self):
         self.create_buffers()
         self.create_pipeline()
@@ -59,18 +53,16 @@ class QuadVertexDemo(Demo):
 
         # Pipeline creation
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X3,
-                    offset=2 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X3,
+                offset=2 * sizeof(c_float),
+                shader_location=1,
+            ),
+        ]
 
         vb_layouts = [
             wgpu.VertexBufferLayout(
@@ -99,11 +91,11 @@ class QuadVertexDemo(Demo):
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view = renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -119,7 +111,6 @@ class QuadVertexDemo(Demo):
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        # pass_enc.draw(3)
         pass_enc.draw(6)
         pass_enc.end()
         command_buffer = encoder.finish()
@@ -130,7 +121,7 @@ class QuadVertexDemo(Demo):
 
 
 def main():
-    QuadVertexDemo().create().run()
+    QuadVertexDemo().run()
 
 
 if __name__ == "__main__":

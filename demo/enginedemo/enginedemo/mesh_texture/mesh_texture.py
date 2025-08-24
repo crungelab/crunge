@@ -1,11 +1,8 @@
 from enum import IntEnum
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import Structure, c_float, sizeof
 import time
-import sys
 import math
 import glm
-from pathlib import Path
 
 from loguru import logger
 import numpy as np
@@ -14,7 +11,7 @@ import imageio.v3 as iio
 
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -100,12 +97,6 @@ class MeshTextureDemo(Demo):
 
     index_data: np.ndarray = None
     index_buffer: wgpu.Buffer = None
-
-    def __init__(self):
-        super().__init__()
-
-    def on_size(self):
-        super().on_size()
 
     def create_device_objects(self):
         self.create_meshes()
@@ -332,12 +323,11 @@ class MeshTextureDemo(Demo):
         )
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                # view=renderer.texture_view,
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -345,7 +335,7 @@ class MeshTextureDemo(Demo):
         ]
 
         depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.viewport.depth_stencil_texture_view,
+            view=viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
@@ -378,7 +368,7 @@ class MeshTextureDemo(Demo):
 
 
 def main():
-    MeshTextureDemo().create().run()
+    MeshTextureDemo().run()
 
 
 if __name__ == "__main__":

@@ -1,11 +1,7 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import c_float, sizeof
 import random
 
 from loguru import logger
-import numpy as np
 import glm
 
 from crunge import wgpu
@@ -13,7 +9,7 @@ from crunge import imgui
 
 import crunge.wgpu.utils as utils
 
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -201,7 +197,6 @@ class ParticlesDemo(Demo):
         compute_pl_desc = wgpu.ComputePipelineDescriptor(
             label="Main Compute Pipeline",
             layout=self.device.create_pipeline_layout(compute_pll_desc),
-            # compute=wgpu.ProgrammableStageDescriptor(
             compute=wgpu.ComputeState(
                 module=self.cs_module,
                 entry_point="cs_main",
@@ -308,12 +303,11 @@ class ParticlesDemo(Demo):
         # exit()
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                # view=renderer.texture_view,
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -338,6 +332,7 @@ class ParticlesDemo(Demo):
         self.queue.submit([command_buffer])
 
         self.draw_gui()
+
         super()._draw()
 
     def draw_gui(self):
@@ -385,8 +380,6 @@ class ParticlesDemo(Demo):
         compute_pass = encoder.begin_compute_pass(compute_pass)
         compute_pass.set_pipeline(self.compute_pipeline)
         compute_pass.set_bind_group(0, self.compute_bind_group)
-        # compute_pass.dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
-        # compute_pass.dispatch_workgroups(4, 4, 1)
         compute_pass.dispatch_workgroups(1)
         compute_pass.end()
         command_buffer = encoder.finish()
@@ -395,7 +388,7 @@ class ParticlesDemo(Demo):
 
 
 def main():
-    ParticlesDemo().create().run()
+    ParticlesDemo().run()
 
 
 if __name__ == "__main__":

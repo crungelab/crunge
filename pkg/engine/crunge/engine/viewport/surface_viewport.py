@@ -75,7 +75,7 @@ class SurfaceViewport(Viewport):
         self.surface.configure(config)
         logger.debug(f"Surface configured to size: {size}")
 
-    def frame(self) -> None:
+    def begin_frame(self) -> None:
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         self.color_texture = surface_texture.texture
@@ -86,5 +86,5 @@ class SurfaceViewport(Viewport):
         self.canvas = self.skia_surface.get_canvas()
 
 
-    def present(self) -> None:
+    def end_frame(self) -> None:
         self.surface.present()

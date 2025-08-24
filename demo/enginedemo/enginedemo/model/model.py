@@ -1,8 +1,7 @@
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import Structure, c_float, sizeof
 import time
 import math
 import glm
-from pathlib import Path
 
 from loguru import logger
 import numpy as np
@@ -10,6 +9,8 @@ import trimesh as tm
 
 from crunge import wgpu
 from crunge.wgpu import utils
+
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -327,10 +328,12 @@ class ModelDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    def render(self, view: wgpu.TextureView):
+    def _draw(self):
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -362,20 +365,16 @@ class ModelDemo(Demo):
 
         self.queue.submit([command_buffer])
 
+        super()._draw()
+
     def frame(self):
         transform = self.transform_matrix
         self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
-        surface_texture = wgpu.SurfaceTexture()
-        self.viewport.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
-
-        backbufferView.set_label("Back Buffer Texture View")
-        self.render(backbufferView)
-        self.viewport.present()
+        super().frame()
 
 
 def main():
-    ModelDemo().create().run()
+    ModelDemo().run()
 
 
 if __name__ == "__main__":

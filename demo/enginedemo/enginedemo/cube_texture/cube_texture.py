@@ -1,18 +1,14 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
+from ctypes import c_float, sizeof
 import time
-import sys
 import math
 import glm
-from pathlib import Path
 
 from loguru import logger
-import numpy as np
 import imageio.v3 as iio
 
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -212,7 +208,6 @@ class CubeTextureDemo(Demo):
         logger.debug(shape)
         im_width = shape[0]
         im_height = shape[1]
-        # im_depth = shape[2]
         im_depth = 1
 
         descriptor = wgpu.TextureDescriptor(
@@ -253,17 +248,19 @@ class CubeTextureDemo(Demo):
         )
 
     def _draw(self):
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
             )
         ]
 
-        depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.viewport.depth_stencil_texture_view,
+        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
+            view=viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
@@ -272,7 +269,7 @@ class CubeTextureDemo(Demo):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachments=color_attachments,
-            depth_stencil_attachment=depthStencilAttach,
+            depth_stencil_attachment=depth_stencil_attachment,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()

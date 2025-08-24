@@ -42,7 +42,7 @@ class OffscreenSpritePage(Page):
         imgui.image(self.texture.id, size)
         imgui.end()
 
-        with self.viewport:
+        with self.viewport.frame():
             with self.renderer.render():
                 self.draw_sprite()
 

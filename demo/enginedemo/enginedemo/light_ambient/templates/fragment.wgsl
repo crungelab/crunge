@@ -121,8 +121,7 @@ fn GetSurface(input : VertexOutput) -> Surface {
 fn GetAmbientLight() -> AmbientLight {
   var light : AmbientLight;
   light.color = ambientLightUniform.color;
-  //light.energy = ambientLightUniform.energy;
-  light.energy = 1.0;
+  light.energy = ambientLightUniform.energy;
   return light;
 }
 

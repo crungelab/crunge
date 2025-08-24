@@ -3,7 +3,7 @@ import glm
 from crunge import imgui
 from crunge import skia
 
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.viewport.offscreen_viewport import OffscreenViewport
 from crunge.engine.resource.texture import Texture2D
@@ -26,7 +26,6 @@ class OffscreenCanvasPage(Page):
             self.viewport_size
         )
         ResourceManager().texture_kit.add(self.texture)
-        self.renderer = Renderer(self.viewport)
 
     def _draw(self):
         imgui.begin(self.title)
@@ -34,15 +33,13 @@ class OffscreenCanvasPage(Page):
         imgui.image(self.texture.id, size)
         imgui.end()
 
-        with self.viewport:
+        with self.viewport.frame():
             self.draw_radial_gradient()
 
         super()._draw()
 
     def draw_radial_gradient(self):
-        #renderer = Renderer.get_current()
-        renderer = self.renderer
-        canvas = renderer.canvas
+        canvas = self.viewport.canvas
 
         gradient_paint = skia.Paint()
 
@@ -59,7 +56,7 @@ class OffscreenCanvasPage(Page):
         gradient_paint.set_shader(shader)
         canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
 
-        renderer.viewport.submit_canvas()
+        self.viewport.submit_canvas()
 
 def install(app: App):
     app.add_channel(PageChannel(OffscreenCanvasPage, "offscreen_canvas", "Offscreen Canvas"))

@@ -7,7 +7,7 @@ from loguru import logger
 
 from crunge import wgpu
 from crunge.wgpu import utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -162,19 +162,19 @@ class CubeDemo(Demo):
         )
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
             )
         ]
 
-        depthStencilAttach = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.viewport.depth_stencil_texture_view,
+        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
+            view=viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
@@ -183,7 +183,7 @@ class CubeDemo(Demo):
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachments=color_attachments,
-            depth_stencil_attachment=depthStencilAttach,
+            depth_stencil_attachment=depth_stencil_attachment,
         )
 
         encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
@@ -206,7 +206,7 @@ class CubeDemo(Demo):
 
 
 def main():
-    CubeDemo().create().run()
+    CubeDemo().run()
 
 
 if __name__ == "__main__":

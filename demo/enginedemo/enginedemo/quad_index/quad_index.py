@@ -1,14 +1,10 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
+from ctypes import c_float, sizeof
 
 from loguru import logger
-import numpy as np
 
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -43,9 +39,6 @@ class QuadIndexDemo(Demo):
 
     kWidth = 1024
     kHeight = 768
-
-    def __init__(self):
-        super().__init__()
 
     def create_device_objects(self):
         self.create_buffers()
@@ -108,12 +101,11 @@ class QuadIndexDemo(Demo):
         )
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                # view=renderer.texture_view,
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -140,7 +132,7 @@ class QuadIndexDemo(Demo):
 
 
 def main():
-    QuadIndexDemo().create().run()
+    QuadIndexDemo().run()
 
 
 if __name__ == "__main__":

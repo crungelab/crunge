@@ -1,5 +1,8 @@
-from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
+from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any, Optional
 from ctypes import sizeof
+
+import contextlib
+from contextvars import ContextVar
 
 from loguru import logger
 import glm
@@ -13,6 +16,7 @@ from ..uniforms import ViewportUniform, cast_vec2
 from ..render_options import RenderOptions
 from ..blitter import Blitter
 
+viewport: ContextVar[Optional["Viewport"]] = ContextVar("viewport", default=None)
 
 class ViewportListener:
     def on_viewport_size(self, viewport: "Viewport") -> None:
@@ -88,17 +92,42 @@ class Viewport(Base):
     def height(self) -> int:
         return self._size.y
 
+    '''
     def __enter__(self):
-        self.frame()
+        self.begin_frame()
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.present()
+        self.end_frame()
+    '''
 
-    def frame(self) -> None:
+    def make_current(self):
+        """Make the renderer current for the current context."""
+        global viewport
+        viewport.set(self)
+
+    @classmethod
+    def get_current(cls) -> Optional["Viewport"]:
+        """Get the current viewport."""
+        return viewport.get()
+
+    @contextlib.contextmanager
+    def frame(self):
+        prev_viewport = self.get_current()
+        self.make_current()
+        self.begin_frame()
+
+        yield self
+
+        self.end_frame()
+
+        if prev_viewport is not None:
+            prev_viewport.make_current()
+
+    def begin_frame(self) -> None:
         pass
 
-    def present(self) -> None:
+    def end_frame(self) -> None:
         pass
 
     def create_device_objects(self) -> None:

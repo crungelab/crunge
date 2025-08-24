@@ -1,13 +1,8 @@
-import time
-import sys
-
 from loguru import logger
-import glm
 
 from crunge import wgpu
-from crunge import imgui
 
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 
 from ..demo import Demo, DemoView, DemoLayer
@@ -27,9 +22,6 @@ fn fs_main() -> @location(0) vec4<f32> {
 
 
 class TriangleShaderLayer(DemoLayer):
-    def __init__(self):
-        super().__init__()
-
     def _create(self):
         super()._create()
         self.shader_module = self.gfx.create_shader_module(shader_code)
@@ -65,12 +57,11 @@ class TriangleShaderLayer(DemoLayer):
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def _draw(self):
-        renderer = Renderer.get_current()
+        viewport = Viewport.get_current()
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                # view=renderer.texture_view,
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -78,7 +69,7 @@ class TriangleShaderLayer(DemoLayer):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.viewport.depth_stencil_texture_view,
+            view=viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -106,7 +97,7 @@ class TriangleShaderDemo(Demo):
     pass
 
 def main():
-    TriangleShaderDemo(DemoView(layers=[TriangleShaderLayer()])).create().run()
+    TriangleShaderDemo(DemoView(layers=[TriangleShaderLayer()])).run()
 
 
 if __name__ == "__main__":

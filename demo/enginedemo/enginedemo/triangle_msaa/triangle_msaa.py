@@ -2,7 +2,7 @@ from loguru import logger
 
 from crunge import wgpu
 
-from crunge.engine import RenderOptions, Renderer
+from crunge.engine import RenderOptions, Viewport
 from crunge.engine.viewport import SurfaceViewport
 
 from ..demo import Demo, DemoView, DemoLayer
@@ -22,9 +22,6 @@ fn fs_main() -> @location(0) vec4<f32> {
 
 
 class TriangleMsaaLayer(DemoLayer):
-    def __init__(self):
-        super().__init__()
-
     def _create(self):
         super()._create()
         self.shader_module = self.gfx.create_shader_module(shader_code)
@@ -65,12 +62,12 @@ class TriangleMsaaLayer(DemoLayer):
         self.pipeline = self.device.create_render_pipeline(descriptor)
 
     def _draw(self):
-        renderer = Renderer.get_current()
+        viewport = Viewport.get_current()
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.viewport.msaa_texture_view,
-                resolve_target=renderer.viewport.color_texture_view,
+                view=viewport.msaa_texture_view,
+                resolve_target=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -78,7 +75,7 @@ class TriangleMsaaLayer(DemoLayer):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=renderer.viewport.depth_stencil_texture_view,
+            view=viewport.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -110,7 +107,7 @@ class TriangleMsaaDemo(Demo):
 
 
 def main():
-    TriangleMsaaDemo(DemoView(layers=[TriangleMsaaLayer()])).create().run()
+    TriangleMsaaDemo(DemoView(layers=[TriangleMsaaLayer()])).run()
 
 
 if __name__ == "__main__":

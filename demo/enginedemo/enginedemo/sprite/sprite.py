@@ -1,8 +1,4 @@
-import ctypes
-from ctypes import Structure, c_float, c_uint32, sizeof, c_bool, c_int, c_void_p
-import time
-import sys
-from pathlib import Path
+from ctypes import c_float, sizeof
 
 from loguru import logger
 import numpy as np
@@ -11,7 +7,7 @@ import glm
 
 from crunge import wgpu
 import crunge.wgpu.utils as utils
-from crunge.engine import Renderer
+from crunge.engine import Viewport
 
 from ..demo import Demo
 
@@ -80,9 +76,6 @@ class SpriteDemo(Demo):
     texture: wgpu.Texture = None
     sampler: wgpu.Sampler = None
 
-    def __init__(self):
-        super().__init__()
-
     def create_device_objects(self):
         self.create_buffers()
         self.create_textures()
@@ -91,18 +84,16 @@ class SpriteDemo(Demo):
     def create_pipeline(self):
         shader_module = self.gfx.create_shader_module(shader_code)
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=2 * sizeof(c_float),
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=2 * sizeof(c_float),
+                shader_location=1,
+            ),
+        ]
 
         vb_layouts = [
             wgpu.VertexBufferLayout(
@@ -247,11 +238,11 @@ class SpriteDemo(Demo):
         )
 
     def _draw(self):
-        renderer = Renderer.get_current()
-        
+        viewport = Viewport.get_current()
+
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=renderer.viewport.color_texture_view,
+                view=viewport.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -308,7 +299,7 @@ class SpriteDemo(Demo):
 
 
 def main():
-    SpriteDemo().create().run()
+    SpriteDemo().run()
 
 
 if __name__ == "__main__":

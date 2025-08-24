@@ -1,5 +1,6 @@
 struct AmbientLightUniform {
     color: vec3<f32>,
+    _pad0: f32, // Padding to prevent the  WGSL compiler from sucking up a float after a vec3.
     energy: f32,
 }
 @group(1) @binding(0) var<uniform> ambientLightUniform : AmbientLightUniform;

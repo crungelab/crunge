@@ -79,7 +79,7 @@ def main():
     # scene_path = models_root / "torusknot.gltf"
     #scene_path = models_root / "Fourareen" / "fourareen.gltf"
 
-    IblEquirectangularDemo(scene_path=scene_path).create().run()
+    IblEquirectangularDemo(scene_path=scene_path).run()
 
 
 if __name__ == "__main__":

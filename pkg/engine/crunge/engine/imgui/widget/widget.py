@@ -9,7 +9,6 @@ class Widget(engine.Widget):
         self.id = uuid4()
         self.add_children(children)
         self.gui = None
-        self.visible = True
 
     def set_gui(self, gui: ImGuiLayer):
         self.gui = gui

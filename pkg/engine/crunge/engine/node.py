@@ -33,11 +33,10 @@ class Node(Dispatcher, Generic[T_Node]):
         self.children: List["Node[T_Node]"] = []
         self.listeners: List[NodeListener[T_Node]] = []
 
-        #self.vu = vu
-        #self._vu = vu
-        #self._model = model
         self.vu = vu
         self.model = model
+        self.visible = True
+
 
     '''
     def _create(self):
@@ -153,14 +152,15 @@ class Node(Dispatcher, Generic[T_Node]):
     '''
 
     def draw(self):
+        if not self.visible:
+            return
         self._draw()
 
     def _draw(self):
-        #logger.debug(f"Node.draw: {self}")
         if self.vu is not None:
             self.vu.draw()
         for child in self.children:
-            # child.draw(renderer)
+            # child.draw()
             self.draw_child(child)
 
     def draw_child(self, child: "Node[T_Node]"):
