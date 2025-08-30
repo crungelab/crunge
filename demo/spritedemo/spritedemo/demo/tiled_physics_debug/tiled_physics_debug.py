@@ -22,7 +22,8 @@ from .tile import Tile
 class TiledPhysicsDebugDemo(Demo):
     def create_view(self):
         super().create_view()
-        self.view.add_layer(SpaceDebugLayer())
+        self.debug_layer = SpaceDebugLayer()
+        self.view.add_layer(self.debug_layer)
         self.camera.zoom = 2.0
 
     def reset(self):
@@ -72,7 +73,8 @@ class TiledPhysicsDebugDemo(Demo):
         
         imgui.text("Click to create balls")
 
-        _, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)
+        #_, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)
+        _, self.debug_layer.visible = imgui.checkbox("Debug Draw", self.debug_layer.visible)
 
         if imgui.button("Reset"):
             self.reset()

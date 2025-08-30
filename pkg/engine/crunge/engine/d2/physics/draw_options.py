@@ -11,21 +11,13 @@ class DrawOptions(pymunk.SpaceDebugDrawOptions):
         super().__init__()
         self.scratch = scratch
         #self.flags = pymunk.SpaceDebugDrawOptions.DRAW_SHAPES
-        #self.shape_outline_color = SpaceDebugColor(255, 0, 255, 255)
         self.shape_outline_color = colors.PURPLE
-        #self.constraint_color = SpaceDebugColor(0, 0, 0, 255)
         self.constraint_color = colors.BLACK
-        #self.collision_point_color = SpaceDebugColor(0, 0, 0, 255)
         self.collision_point_color = colors.BLACK
-        #self.body_outline_color = SpaceDebugColor(0, 0, 0, 255)
         self.body_outline_color = colors.BLACK
-        #self.body_line_color = SpaceDebugColor(0, 0, 0, 255)
         self.body_line_color = colors.BLACK
-        #self.constraint_line_color = SpaceDebugColor(0, 0, 0, 255)
         self.constraint_line_color = colors.BLACK
-        #self.collision_point_outline_color = SpaceDebugColor(0, 0, 0, 255)
         self.collision_point_outline_color = colors.BLACK
-        #self.data = None
         self.shape_sleeping_color = colors.BLUE
         self.shape_static_color = colors.GREEN
         self.shape_kinematic_color = colors.YELLOW

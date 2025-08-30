@@ -23,7 +23,7 @@ class DefaultTileBuilder(TileBuilder):
         return self.context.layer
     
     def build(self, position: glm.vec2, image: tuple, properties: dict):
-        logger.debug(f"process_tile: {position}, {image}, {properties}")
+        #logger.debug(f"process_tile: {position}, {image}, {properties}")
         path = image[0]
         atlas = SpriteTextureLoader().load(path)
         # logger.debug(f"atlas: {atlas}")
@@ -37,7 +37,7 @@ class DefaultTileBuilder(TileBuilder):
                 atlas, Rect2i(0, 0, atlas.width, atlas.height)
             )
 
-        logger.debug(f"sprite: {sprite}")
+        #logger.debug(f"sprite: {sprite}")
 
         if self.create_node_cb is not None:
             node = self.create_node_cb(position, sprite, properties)

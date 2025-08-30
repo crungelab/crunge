@@ -20,7 +20,7 @@ class DefaultObjectGroupBuilder(ObjectGroupBuilder):
             ),
         )
 
-    def build(self, layer: TiledObjectGroup):
+    def build(self, layer: TiledObjectGroup, layer_id: int):
         self.context.layer = SceneLayer2D(name=layer.name)
-        super().build(layer)
+        super().build(layer, layer_id)
         self.context.scene.add_layer(self.context.layer)

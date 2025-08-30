@@ -10,7 +10,7 @@ class ObjectGroupBuilder(TiledBuilder):
         super().__init__(context)
         self.object_builder = object_builder
 
-    def build(self, layer: TiledObjectGroup):
+    def build(self, layer: TiledObjectGroup, layer_id: int):
         self.context.opacity = layer.opacity
         for obj in layer:
             self.object_builder.build(obj)

@@ -98,6 +98,7 @@ class RenderPipeline2D(RenderPipeline):
             # depth_write_enabled=True,
             depth_write_enabled=False,
             # depth_compare = wgpu.CompareFunction.LESS,
+            depth_compare = wgpu.CompareFunction.ALWAYS
         )
 
         pl_desc = wgpu.PipelineLayoutDescriptor(
