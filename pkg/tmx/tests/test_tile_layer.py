@@ -12,3 +12,7 @@ map.load(str(path))
 for layer in map.layers:
     #print(layer.get_name())
     print(layer.name)
+    if isinstance(layer, tmx.TileLayer):
+        print("is tile layer")
+        for tile in layer.tiles:
+            print(tile.id)

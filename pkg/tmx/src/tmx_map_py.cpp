@@ -22,6 +22,10 @@ namespace py = pybind11;
 void init_tmx_map_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::Map, Map)
+    _Map.def_property_readonly("tilesets", [](tmx::Map& m){
+        return m.getTilesets();
+    });
+
     _Map.def_property_readonly("layers", [](tmx::Map& m){
         // Return a Python list of typed layers with correct dynamic cast
         py::list lst;

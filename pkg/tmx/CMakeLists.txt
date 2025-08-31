@@ -15,7 +15,10 @@ set(HEADERS
 )
 
 set(SOURCES
+    src/tmx_tileset_py_auto.cpp
+    src/tmx_layer_py.cpp
     src/tmx_layer_py_auto.cpp
+    src/tmx_tile_layer_py.cpp
     src/tmx_tile_layer_py_auto.cpp
     src/tmx_object_group_py_auto.cpp
     src/tmx_map_py_auto.cpp

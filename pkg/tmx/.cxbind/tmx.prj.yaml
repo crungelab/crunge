@@ -14,4 +14,5 @@ unit_files:
   - path: tmx_layer.unit.yaml
   - path: tmx_tile_layer.unit.yaml
   - path: tmx_object_group.unit.yaml
+  - path: tmx_tileset.unit.yaml
 

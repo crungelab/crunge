@@ -9,6 +9,6 @@ path = maps_root / "level1.tmx"
 map = tmx.Map()
 map.load(str(path))
 
-for layer in map.layers:
-    #print(layer.get_name())
-    print(layer.name)
+for tileset in map.tilesets:
+    print(tileset.get_name())
+    #print(tileset.name)
