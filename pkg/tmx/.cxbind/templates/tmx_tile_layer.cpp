@@ -11,9 +11,10 @@
 #include <crunge/tmx/conversions.h>
 
 #include <tmxlite/Map.hpp>
+#include <tmxlite/TileLayer.hpp>
 
 namespace py = pybind11;
 
-void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
+void init_tmx_tile_layer_py_auto(py::module &_tmx, Registry &registry) {
 {{body}}
 }

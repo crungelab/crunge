@@ -1,0 +1,10 @@
+source: '../../depot/tmxlite/tmxlite/include/tmxlite/ObjectGroup.hpp'
+target: 'src/tmx_object_group_py_auto.cpp'
+
+excludes: [
+  'method/tmx::ObjectGroup::parse'
+]
+
+specs:
+  'class/tmx::ObjectGroup':
+    extends: ['tmx::Layer']

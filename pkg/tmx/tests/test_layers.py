@@ -8,3 +8,6 @@ path = maps_root / "level1.tmx"
 
 map = tmx.Map()
 map.load(str(path))
+
+for layer in map.layers:
+    print(layer.get_name())

@@ -15,7 +15,11 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/tmx_py.cpp
+    src/tmx_layer_py_auto.cpp
+    src/tmx_tile_layer_py_auto.cpp
+    src/tmx_object_group_py_auto.cpp
+    src/tmx_map_py_auto.cpp
+    src/tmx_map_py.cpp
 )
 
 pybind11_add_module(${THIS} MODULE src/tmx_py_module.cpp)
@@ -32,7 +36,7 @@ target_include_directories(${THIS}
 	PUBLIC
 		$<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${SDL_ROOT}>
+        $<BUILD_INTERFACE:${TMX_ROOT}>
 	PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )

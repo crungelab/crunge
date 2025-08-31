@@ -99,7 +99,9 @@ add_subdirectory(pkg/nanort)
 #
 # TmxLite
 #
-set(TMXLITE_STATIC_LIB, TRUE)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+set(TMXLITE_STATIC_LIB TRUE)
 add_subdirectory(depot/tmxlite/tmxlite)
 add_subdirectory(pkg/tmx)
 

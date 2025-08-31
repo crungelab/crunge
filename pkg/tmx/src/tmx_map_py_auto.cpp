@@ -10,11 +10,13 @@
 #include <crunge/tmx/crunge-tmx.h>
 #include <crunge/tmx/conversions.h>
 
+#include <tmxlite/Map.hpp>
+
 namespace py = pybind11;
 
-void init_tmx_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::Version> Version(_sdl, "Version");
-    registry.on(_sdl, "Version", Version);
+void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
+    py::class_<tmx::Version> Version(_tmx, "Version");
+    registry.on(_tmx, "Version", Version);
         Version
         .def_readwrite("upper", &tmx::Version::upper)
         .def_readwrite("lower", &tmx::Version::lower)
@@ -24,7 +26,7 @@ void init_tmx_py_auto(py::module &_tmx, Registry &registry) {
         )
     ;
 
-    py::enum_<tmx::Orientation>(_sdl, "Orientation", py::arithmetic())
+    py::enum_<tmx::Orientation>(_tmx, "Orientation", py::arithmetic())
         .value("ORTHOGONAL", tmx::Orientation::Orthogonal)
         .value("ISOMETRIC", tmx::Orientation::Isometric)
         .value("STAGGERED", tmx::Orientation::Staggered)
@@ -32,7 +34,7 @@ void init_tmx_py_auto(py::module &_tmx, Registry &registry) {
         .value("NONE", tmx::Orientation::None)
         .export_values()
     ;
-    py::enum_<tmx::RenderOrder>(_sdl, "RenderOrder", py::arithmetic())
+    py::enum_<tmx::RenderOrder>(_tmx, "RenderOrder", py::arithmetic())
         .value("RIGHT_DOWN", tmx::RenderOrder::RightDown)
         .value("RIGHT_UP", tmx::RenderOrder::RightUp)
         .value("LEFT_DOWN", tmx::RenderOrder::LeftDown)
@@ -40,20 +42,20 @@ void init_tmx_py_auto(py::module &_tmx, Registry &registry) {
         .value("NONE", tmx::RenderOrder::None)
         .export_values()
     ;
-    py::enum_<tmx::StaggerAxis>(_sdl, "StaggerAxis", py::arithmetic())
+    py::enum_<tmx::StaggerAxis>(_tmx, "StaggerAxis", py::arithmetic())
         .value("X", tmx::StaggerAxis::X)
         .value("Y", tmx::StaggerAxis::Y)
         .value("NONE", tmx::StaggerAxis::None)
         .export_values()
     ;
-    py::enum_<tmx::StaggerIndex>(_sdl, "StaggerIndex", py::arithmetic())
+    py::enum_<tmx::StaggerIndex>(_tmx, "StaggerIndex", py::arithmetic())
         .value("EVEN", tmx::StaggerIndex::Even)
         .value("ODD", tmx::StaggerIndex::Odd)
         .value("NONE", tmx::StaggerIndex::None)
         .export_values()
     ;
-    py::class_<tmx::Map> Map(_sdl, "Map");
-    registry.on(_sdl, "Map", Map);
+    py::class_<tmx::Map> Map(_tmx, "Map");
+    registry.on(_tmx, "Map", Map);
         Map
         .def(py::init<>())
         .def("load", &tmx::Map::load
@@ -84,8 +86,6 @@ void init_tmx_py_auto(py::module &_tmx, Registry &registry) {
         .def("get_background_colour", &tmx::Map::getBackgroundColour
             , py::return_value_policy::reference)
         .def("get_tilesets", &tmx::Map::getTilesets
-            , py::return_value_policy::reference)
-        .def("get_layers", &tmx::Map::getLayers
             , py::return_value_policy::reference)
         .def("get_class", &tmx::Map::getClass
             , py::return_value_policy::reference)
