@@ -1,0 +1,2 @@
+source: '../../depot/tmxlite/tmxlite/include/tmxlite/Map.hpp'
+target: 'src/tmx_map_py_auto.cpp'

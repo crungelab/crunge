@@ -28,6 +28,8 @@ set(BVH_ROOT ${CRUNGE_ROOT}/depot/bvh)
 
 set(NANORT_ROOT ${CRUNGE_ROOT}/depot/nanort)
 
+set(TMX_ROOT ${CRUNGE_ROOT}/depot/tmxlite)
+
 set(CRUNGE_COMPILE_DEFS 
     NOMINMAX=1
 )

@@ -1,0 +1,13 @@
+module: _sdl
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-I../../depot/tmxlite/tmxlite/include',
+  '-DTMXLITE_EXPORT_API=',
+]
+
+prefixes: [SDL_]
+
+unit_files:
+  - path: tmx_map.unit.yaml

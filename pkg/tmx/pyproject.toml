@@ -3,39 +3,29 @@ requires = ["cxbuild==0.2", "setuptools", "wheel"]
 build-backend = "cxbuild.backend"
 
 [tool.setuptools]
-packages = []
+packages = ["crunge", "crunge.tmx"]
+
 
 [project]
-name = "crunge-root"
+name = "crunge-tmx"
 version = "0.1.0"
-description = 'Creative coding extensions for Python'
-readme = "README.md"
+description = 'Crunge TMX Extension'
+#readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE" }
+#license = { file = "LICENSE" }
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 
-[tool.cxbuild]
-projects = [
-  "pkg/imgui",
-  "pkg/implot",
-  "pkg/imnodes",
-  "pkg/wgpu",
-  "pkg/skia",
-  "pkg/yoga",
-  "pkg/gltf",
-  "pkg/sdl",
-  "pkg/nanort",
-  "pkg/tmx",
-  ]
-plugins = ["cxbind"]
+[tool.cxbuild.project]
 
-[tool.hatch.envs.default]
-python="3.10.11"
+[tool.cxbuild.extension]
+name="crunge.tmx._tmx"
+

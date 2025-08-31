@@ -8,8 +8,8 @@ class Pybind11(GitSolution):
 
 class ImGui(GitSolution):
     path = "depot/imgui"
-    url = 'https://github.com/ocornut/imgui'
-    branch = 'docking'
+    url = "https://github.com/ocornut/imgui"
+    branch = "docking"
     # url = "https://github.com/crungelab/imgui"
     # branch = "crunge"
 
@@ -21,7 +21,7 @@ class ImPlot(GitSolution):
 
 class ImNodes(GitSolution):
     path = "depot/imnodes"
-    url = 'https://github.com/Nelarius/imnodes'
+    url = "https://github.com/Nelarius/imnodes"
     # url = "https://github.com/crungelab/imnodes"
     # branch = 'crunge'
 
@@ -51,6 +51,11 @@ class IconFontCppHeaders(GitSolution):
 class Nanort(GitSolution):
     path = "depot/nanort"
     url = "https://github.com/lighttransport/nanort"
+
+
+class TmxLite(GitSolution):
+    path = "depot/tmxlite"
+    url = "https://github.com/fallahn/tmxlite"
 
 
 solutions = [

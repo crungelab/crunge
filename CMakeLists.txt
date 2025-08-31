@@ -96,3 +96,10 @@ add_subdirectory(pkg/yoga)
 #
 add_subdirectory(pkg/nanort)
 
+#
+# TmxLite
+#
+set(TMXLITE_STATIC_LIB, TRUE)
+add_subdirectory(depot/tmxlite/tmxlite)
+add_subdirectory(pkg/tmx)
+
