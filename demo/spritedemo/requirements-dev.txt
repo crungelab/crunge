@@ -5,3 +5,4 @@
 -e ../../pkg/yoga
 -e ../../pkg/imgui
 -e ../../pkg/engine
+-e ../../pkg/tmx

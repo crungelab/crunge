@@ -12,3 +12,7 @@ map.load(str(path))
 for tileset in map.tilesets:
     print(tileset.get_name())
     #print(tileset.name)
+    tiles = tileset.get_tiles()
+    for tile in tiles:
+        print(tile.id)
+        print(tile.image_path)

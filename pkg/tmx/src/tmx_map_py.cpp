@@ -19,11 +19,44 @@
 
 namespace py = pybind11;
 
+static const tmx::Tileset* find_tileset_for_gid(const std::vector<tmx::Tileset>& sets, std::uint32_t gid) {
+    if (gid == 0) return nullptr; // empty tile
+    for (const auto& ts : sets) {
+        if (ts.getTileCount() == 0) continue;
+        if (ts.hasTile(gid)) {
+            return &ts;
+        }
+    }
+    return nullptr; // may be null if gid < min firstGID
+}
+
+/*
+static const tmx::Tileset* find_tileset_for_gid(const std::vector<tmx::Tileset>& sets, std::uint32_t gid) {
+    if (gid == 0) return nullptr; // empty tile
+    const tmx::Tileset* match = nullptr;
+    for (const auto& ts : sets) {
+        if (gid >= ts.getFirstGID()) {
+            if (!match || ts.getFirstGID() > match->getFirstGID())
+                match = &ts;
+        }
+    }
+    return match; // may be null if gid < min firstGID
+}
+*/
+
 void init_tmx_map_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::Map, Map)
     _Map.def_property_readonly("tilesets", [](tmx::Map& m){
         return m.getTilesets();
+    });
+
+    _Map.def_property_readonly("tile_size", [](tmx::Map& m){
+        return m.getTileSize();
+    });
+
+    _Map.def_property_readonly("tile_count", [](tmx::Map& m){
+        return m.getTileCount();
     });
 
     _Map.def_property_readonly("layers", [](tmx::Map& m){
@@ -102,6 +135,15 @@ void init_tmx_map_py(py::module &_tmx, Registry &registry)
         return lst;
     }, py::return_value_policy::reference_internal)
     */
+    _Map.def("get_tile", [](tmx::Map& m, std::uint32_t gid) {
+        const tmx::Tileset* tileset = find_tileset_for_gid(m.getTilesets(), gid);
+        if (!tileset) return py::object(py::none());
+
+        // Get the tile from the tileset
+        auto id = gid - tileset->getFirstGID() + 1;
+        const tmx::Tileset::Tile* tile = tileset->getTile(id);
+        return tile ? py::cast(tile) : py::object(py::none());
+    });
 
     PYEXTEND_END
 }

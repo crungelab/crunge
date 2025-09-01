@@ -2,7 +2,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from pytmx import TiledMap
+from crunge import tmx
 
 from crunge.engine.loader import Loader
 from crunge.engine.resource.resource_manager import ResourceManager
@@ -26,6 +26,7 @@ class TiledMapLoader(Loader):
     def load(self, path: Path):
         path = ResourceManager().resolve_path(path)
         logger.debug(f"Loading map: {path}")
-        map = TiledMap(path)
+        map = tmx.Map()
+        map.load(str(path))
         self.context.map = map
         self.map_builder.build()

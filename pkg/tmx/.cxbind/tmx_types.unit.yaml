@@ -1,0 +1,9 @@
+source: '../../depot/tmxlite/tmxlite/include/tmxlite/Types.hpp'
+target: 'src/tmx_types_py_auto.cpp'
+
+specs:
+  'class_template/tmx::Vector2':
+    specializations:
+      - kind: class_template_specialization
+        name: Vector2u
+        args: [unsigned]

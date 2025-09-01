@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from loguru import logger
-from pytmx import TiledTileLayer, TiledObjectGroup, TiledElement, TiledImageLayer
+from crunge import tmx
 
 from ..tiled_builder import TiledBuilder
 from ..builder_context import BuilderContext
@@ -41,32 +41,32 @@ class MapBuilder(TiledBuilder):
         #for layer_id, layer in enumerate(self.map.visible_layers):
         for layer_id, layer in enumerate(self.map.layers):
             logger.debug(f"MapBuilder.build: {layer}")
-            logger.debug(f": {layer.properties}")
+            #logger.debug(f": {layer.properties}")
             self.build_layer(layer, layer_id)
     
-    def build_layer(self, layer: TiledElement, layer_id: int):
-        if isinstance(layer, TiledTileLayer):
+    def build_layer(self, layer: tmx.Layer, layer_id: int):
+        if isinstance(layer, tmx.TileLayer):
             self.build_tile_layer(layer, layer_id)
-        elif isinstance(layer, TiledObjectGroup):
+        elif isinstance(layer, tmx.ObjectGroup):
             self.build_object_group(layer, layer_id)
-        elif isinstance(layer, TiledImageLayer):
+        elif isinstance(layer, tmx.ImageLayer):
             self.build_image_layer(layer, layer_id)
         else:
             raise ValueError(f"Unsupported element type: {type(layer)}")
 
-    def build_tile_layer(self, layer: TiledTileLayer, layer_id: int):
+    def build_tile_layer(self, layer: tmx.TileLayer, layer_id: int):
         if layer.name in self.tile_layer_builders:
             self.tile_layer_builders[layer.name].build(layer, layer_id)
         else:
             self.tile_layer_builder.build(layer, layer_id)
 
-    def build_object_group(self, group: TiledObjectGroup, layer_id: int):
+    def build_object_group(self, group: tmx.ObjectGroup, layer_id: int):
         if group.name in self.object_group_builders:
             self.object_group_builders[group.name].build(group, layer_id)
         else:
             self.object_group_builder.build(group, layer_id)
 
-    def build_image_layer(self, layer: TiledImageLayer, layer_id: int):
+    def build_image_layer(self, layer: tmx.ImageLayer, layer_id: int):
         if layer.name in self.image_layer_builders:
             self.image_layer_builders[layer.name].build(layer, layer_id)
         else:

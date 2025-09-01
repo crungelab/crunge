@@ -1,6 +1,8 @@
 from loguru import logger
 import glm
 
+from crunge import tmx
+
 from crunge.engine.math import Rect2i
 from crunge.engine.d2.sprite import Sprite, SpriteVu, SpriteLayer
 from crunge.engine.d2.node_2d import Node2D
@@ -22,13 +24,21 @@ class DefaultTileBuilder(TileBuilder):
     def layer(self) -> SpriteLayer:
         return self.context.layer
     
-    def build(self, position: glm.vec2, image: tuple, properties: dict):
+    def build(self, position: glm.vec2, tile: tmx.TilesetTile, properties: dict):
         #logger.debug(f"process_tile: {position}, {image}, {properties}")
-        path = image[0]
+        path = tile.image_path
         atlas = SpriteTextureLoader().load(path)
         # logger.debug(f"atlas: {atlas}")
         sprite_builder = CollidableSpriteBuilder()
-        rect = image[1]
+        image_position = tile.image_position
+        tx = image_position.x
+        ty = image_position.y
+        image_size = tile.image_size
+        tw = image_size.x
+        th = image_size.y
+        sprite = sprite_builder.build(atlas, Rect2i(tx, ty, tw, th))
+
+        '''
         if rect:
             tx, ty, tw, th = rect
             sprite = sprite_builder.build(atlas, Rect2i(tx, ty, tw, th))
@@ -36,7 +46,7 @@ class DefaultTileBuilder(TileBuilder):
             sprite = sprite_builder.build(
                 atlas, Rect2i(0, 0, atlas.width, atlas.height)
             )
-
+        '''
         #logger.debug(f"sprite: {sprite}")
 
         if self.create_node_cb is not None:

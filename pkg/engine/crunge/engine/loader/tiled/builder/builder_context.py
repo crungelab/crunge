@@ -21,8 +21,22 @@ class BuilderContext:
     @map.setter
     def map(self, map: TiledMap):
         self._map = map
+        tile_size = map.tile_size
+        tw = tile_size.x
+        th = tile_size.y
+
+        tile_count = map.tile_count
+        mw = tile_count.x
+        mh = tile_count.y - 1
+        self.size = glm.ivec2(mw * tw, mh * th)
+
+    '''
+    @map.setter
+    def map(self, map: TiledMap):
+        self._map = map
         tw = map.tilewidth
         th = map.tileheight
         mw = map.width
         mh = map.height - 1
         self.size = glm.ivec2(mw * tw, mh * th)
+    '''

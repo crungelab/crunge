@@ -1,0 +1,6 @@
+source: '../../depot/tmxlite/tmxlite/include/tmxlite/Object.hpp'
+target: 'src/tmx_object_py_auto.cpp'
+
+excludes: [
+  'method/tmx::Object::parse'
+]

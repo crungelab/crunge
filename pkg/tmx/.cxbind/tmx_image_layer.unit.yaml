@@ -1,0 +1,10 @@
+source: '../../depot/tmxlite/tmxlite/include/tmxlite/ImageLayer.hpp'
+target: 'src/tmx_image_layer_py_auto.cpp'
+
+excludes: [
+  'method/tmx::ImageLayer::parse'
+]
+
+specs:
+  'class/tmx::ImageLayer':
+    extends: ['tmx::Layer']
