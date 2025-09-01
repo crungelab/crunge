@@ -13,7 +13,7 @@
 #include <crunge/tmx/conversions.h>
 
 #include <tmxlite/Map.hpp>
-#include <tmxlite/Layer.hpp>
+#include <tmxlite/Object.hpp>
 
 namespace py = pybind11;
 
@@ -46,29 +46,23 @@ static py::object property_to_py(const tmx::Property& p) {
     }
 }
 
-void init_tmx_layer_py(py::module &_tmx, Registry &registry)
+void init_tmx_object_py(py::module &_tmx, Registry &registry)
 {
-    PYEXTEND_BEGIN(tmx::Layer, Layer)
-    _Layer.def_property_readonly("name", [](tmx::Layer& l){
+    PYEXTEND_BEGIN(tmx::Object, Object)
+    _Object.def_property_readonly("name", [](tmx::Object& l){
         return l.getName();
     });
 
-    _Layer.def_property_readonly("properties", [](tmx::Layer& L){
+    _Object.def_property_readonly("properties", [](const tmx::Object& L){
         py::dict d;
         for (auto& prop : L.getProperties())
             d[py::str(prop.getName())] = property_to_py(prop);
         return d;
     });
 
-    _Layer.def_property_readonly("opacity", [](tmx::Layer& l){
-        return l.getOpacity();
+    _Object.def_property_readonly("rotation", [](tmx::Object& l){
+        return l.getRotation();
     });
-
-    /*
-    _Layer.def_property_readonly("properties", [](tmx::Layer& l){
-        return l.getProperties();
-    });
-    */
 
     PYEXTEND_END
 }

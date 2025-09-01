@@ -10,5 +10,13 @@ map = tmx.Map()
 map.load(str(path))
 
 for tileset in map.tilesets:
+    if tileset.name != "stickers":
+        continue
     print(tileset.name)
     print(tileset.get_tile_count())
+    #print(tileset.name)
+    tiles = tileset.tiles
+
+    for tile in tiles:
+        print(tile.id)
+        print(tile.image_path)

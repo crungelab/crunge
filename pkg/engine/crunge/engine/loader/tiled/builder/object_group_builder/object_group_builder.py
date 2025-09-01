@@ -1,4 +1,4 @@
-from pytmx import TiledObjectGroup
+from crunge import tmx
 
 from ..object_builder import ObjectBuilder
 from ..tiled_builder import TiledBuilder
@@ -10,7 +10,7 @@ class ObjectGroupBuilder(TiledBuilder):
         super().__init__(context)
         self.object_builder = object_builder
 
-    def build(self, layer: TiledObjectGroup, layer_id: int):
-        #self.context.opacity = layer.opacity
+    def build(self, layer: tmx.ObjectGroup, layer_id: int):
+        self.context.opacity = layer.opacity
         for obj in layer.get_objects():
             self.object_builder.build(obj)

@@ -1,5 +1,5 @@
 import glm
-from pytmx import TiledMap
+from crunge import tmx
 
 from crunge.engine.d2.scene_2d import Scene2D
 from crunge.engine.d2.scene_layer_2d import SceneLayer2D
@@ -10,7 +10,7 @@ class BuilderContext:
         self.scene = scene
         self.layer: SceneLayer2D = None
 
-        self._map: TiledMap = None
+        self._map: tmx.Map = None
         self.size = glm.ivec2()
         self.opacity: float = 1.0
 
@@ -19,7 +19,7 @@ class BuilderContext:
         return self._map
 
     @map.setter
-    def map(self, map: TiledMap):
+    def map(self, map: tmx.Map):
         self._map = map
         tile_size = map.tile_size
         tw = tile_size.x

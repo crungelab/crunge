@@ -17,18 +17,6 @@
 
 namespace py = pybind11;
 
-/*
-Boolean,
-Float,
-Int,
-String,
-Colour,
-File,
-Object,
-Class,
-Undef
-*/
-
 static py::object property_to_py(const tmx::Property& p) {
     using t = tmx::Property::Type;
     switch (p.getType()) {
@@ -46,29 +34,36 @@ static py::object property_to_py(const tmx::Property& p) {
     }
 }
 
-void init_tmx_layer_py(py::module &_tmx, Registry &registry)
+void init_tmx_tileset_py(py::module &_tmx, Registry &registry)
 {
-    PYEXTEND_BEGIN(tmx::Layer, Layer)
-    _Layer.def_property_readonly("name", [](tmx::Layer& l){
+    PYEXTEND_BEGIN(tmx::Tileset, Tileset)
+
+    _Tileset.def_property_readonly("name", [](tmx::Tileset& l){
         return l.getName();
     });
 
-    _Layer.def_property_readonly("properties", [](tmx::Layer& L){
+    _Tileset.def_property_readonly("properties", [](tmx::Tileset& L){
         py::dict d;
         for (auto& prop : L.getProperties())
             d[py::str(prop.getName())] = property_to_py(prop);
         return d;
     });
 
-    _Layer.def_property_readonly("opacity", [](tmx::Layer& l){
-        return l.getOpacity();
+    _Tileset.def_property_readonly("tiles", [](tmx::Tileset& l){
+        return l.getTiles();
     });
-
-    /*
-    _Layer.def_property_readonly("properties", [](tmx::Layer& l){
-        return l.getProperties();
-    });
-    */
 
     PYEXTEND_END
+
+    PYEXTEND_BEGIN(tmx::Tileset::Tile, TilesetTile)
+
+    _TilesetTile.def_property_readonly("properties", [](tmx::Tileset::Tile& L){
+        py::dict d;
+        for (auto& prop : L.properties)
+            d[py::str(prop.getName())] = property_to_py(prop);
+        return d;
+    });
+
+    PYEXTEND_END
+
 }

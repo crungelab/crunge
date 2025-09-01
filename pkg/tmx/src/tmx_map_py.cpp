@@ -138,11 +138,14 @@ void init_tmx_map_py(py::module &_tmx, Registry &registry)
     _Map.def("get_tile", [](tmx::Map& m, std::uint32_t gid) {
         const tmx::Tileset* tileset = find_tileset_for_gid(m.getTilesets(), gid);
         if (!tileset) return py::object(py::none());
+        std::cout << "Found tileset: " << tileset->getName() << std::endl;
 
         // Get the tile from the tileset
-        auto id = gid - tileset->getFirstGID() + 1;
-        const tmx::Tileset::Tile* tile = tileset->getTile(id);
-        return tile ? py::cast(tile) : py::object(py::none());
+        //auto id = gid - tileset->getFirstGID() + 1;
+        //const tmx::Tileset::Tile* tile = tileset->getTile(id);
+        const tmx::Tileset::Tile* tile = tileset->getTile(gid);
+        //return tile ? py::cast(tile) : py::object(py::none());
+        return py::cast(tile);
     });
 
     PYEXTEND_END

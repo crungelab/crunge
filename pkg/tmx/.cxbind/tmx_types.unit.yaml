@@ -7,3 +7,17 @@ specs:
       - kind: class_template_specialization
         name: Vector2u
         args: [unsigned]
+
+      - kind: class_template_specialization
+        name: Vector2f
+        args: [float]
+
+  'class_template/tmx::Rectangle':
+    specializations:
+      - kind: class_template_specialization
+        name: FloatRect
+        args: [float]
+
+      - kind: class_template_specialization
+        name: IntRect
+        args: [int]

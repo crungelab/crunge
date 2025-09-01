@@ -47,7 +47,6 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
 
             TilesetTile
             .def_readwrite("animation", &tmx::Tileset::Tile::animation)
-            .def_readwrite("properties", &tmx::Tileset::Tile::properties)
             .def_readwrite("object_group", &tmx::Tileset::Tile::objectGroup)
             .def_readwrite("image_path", &tmx::Tileset::Tile::imagePath)
             .def_readwrite("image_size", &tmx::Tileset::Tile::imageSize)

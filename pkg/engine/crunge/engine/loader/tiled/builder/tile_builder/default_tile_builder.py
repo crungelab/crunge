@@ -25,6 +25,7 @@ class DefaultTileBuilder(TileBuilder):
         return self.context.layer
     
     def build(self, position: glm.vec2, tile: tmx.TilesetTile, properties: dict):
+        properties["type"] = tile.class_name  # TODO:?
         #logger.debug(f"process_tile: {position}, {image}, {properties}")
         path = tile.image_path
         atlas = SpriteTextureLoader().load(path)

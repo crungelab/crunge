@@ -8,6 +8,7 @@ from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.sprite.sprite_sampler import DefaultSpriteSampler
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
+#from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
 
 from ..builder_context import BuilderContext
@@ -32,12 +33,17 @@ class DefaultObjectBuilder(ObjectBuilder):
         if tile is None:
             return
 
-        properties["type"] = tile.class_name  # TODO:?
+        properties['type'] = tile.class_name
 
         image_path = tile.image_path
         atlas = SpriteTextureLoader().load(image_path)
         atlas_size = glm.vec2(atlas.size.xy)
 
+        '''
+        image_size = tile.image_size
+        width = image_size.x
+        height = image_size.y
+        '''
         aabb = obj.get_aabb()
         width = aabb.width
         height = aabb.height
@@ -49,11 +55,16 @@ class DefaultObjectBuilder(ObjectBuilder):
 
         logger.debug(f"center: {center}")
 
+        '''
+        position = obj.get_position()
+        x = position.x
+        y = self.context.size.y - position.y - height
+        '''
         x = aabb.left
-        y = self.context.size.y - aabb.top
+        y = self.context.size.y - aabb.top - height
         lower_left = glm.vec2(x, y)
         logger.debug(f"lower_left: {lower_left}")
-
+        
         # Handle rotation in radians
         rotation = -glm.radians(obj.rotation)
         logger.debug(f"rotation: {rotation}")
@@ -73,10 +84,8 @@ class DefaultObjectBuilder(ObjectBuilder):
         sprite_builder = CollidableSpriteBuilder()
         color = glm.vec4(1.0, 1.0, 1.0, self.context.opacity)
         sprite = sprite_builder.build(
-            atlas,
-            Rect2i(0, 0, atlas_size.x, atlas_size.y),
-            sampler=sampler,
-            color=color,
+            #atlas, Rect2i(0, 0, width, height), sampler=sampler, color=color
+            atlas, Rect2i(0, 0, atlas_size.x, atlas_size.y), sampler=sampler, color=color
         )
 
         logger.debug(f"sprite: {sprite}")
@@ -90,13 +99,6 @@ class DefaultObjectBuilder(ObjectBuilder):
         if node is not None:
             self.context.layer.attach(node)
 
-    def create_node(
-        self,
-        position: glm.vec2,
-        rotation: float,
-        scale: glm.vec2,
-        sprite: Sprite,
-        properties: dict,
-    ):
+    def create_node(self, position: glm.vec2, rotation: float, scale: glm.vec2, sprite: Sprite, properties: dict):
         node = Node2D(position, rotation, scale, vu=SpriteVu(), model=sprite)
         return node

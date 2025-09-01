@@ -25,10 +25,10 @@ class TileLayerBuilder(TiledBuilder):
         for j in range(map_size.y):
             for i in range(map_size.x):
                 tile_gid = tiles[j * map_size.x + i].id
-                tileset_tile = map.get_tile(tile_gid)
-                if tileset_tile is None:
+                tile = map.get_tile(tile_gid)
+                if tile is None:
                     continue
-                properties = None
+                properties = tile.properties
                 #y = layer.height - y - 1
                 x = i * tile_width + half_tile_width
                 y = (j - 1) * tile_height + half_tile_height
@@ -37,7 +37,7 @@ class TileLayerBuilder(TiledBuilder):
 
                 y = self.context.size.y - y
 
-                self.tile_builder.build(glm.vec2(x, y), tileset_tile, properties)
+                self.tile_builder.build(glm.vec2(x, y), tile, properties)
     '''
     def build(self, layer: tmx.TileLayer, layer_id: int):
         map = self.map

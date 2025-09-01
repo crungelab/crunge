@@ -1,6 +1,6 @@
 from loguru import logger
 import glm
-from pytmx import TiledTileLayer
+from crunge import tmx
 
 from crunge.engine.math import Bounds2
 from crunge.engine.d2.scene_layer_2d import SceneLayer2D
@@ -17,7 +17,7 @@ class DefaultTileLayerBuilder(TileLayerBuilder):
     def __init__(self, context: BuilderContext, tile_builder: TileBuilder = None):
         super().__init__(context, tile_builder if tile_builder is not None else DefaultTileBuilder(context))
 
-    def build(self, layer: TiledTileLayer, layer_id: int):
+    def build(self, layer: tmx.TileLayer, layer_id: int):
         size = self.context.size
         #scene_layer = SceneLayer2D(name=layer.name)
         sprite_group = DynamicSpriteGroup(1024).enable()

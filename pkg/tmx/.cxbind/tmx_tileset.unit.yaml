@@ -2,5 +2,6 @@ source: '../../depot/tmxlite/tmxlite/include/tmxlite/Tileset.hpp'
 target: 'src/tmx_tileset_py_auto.cpp'
 
 excludes: [
-  'method/tmx::Tileset::parse'
+  'method/tmx::Tileset::parse',
+  'field/tmx::Tileset::Tile::properties'
 ]
