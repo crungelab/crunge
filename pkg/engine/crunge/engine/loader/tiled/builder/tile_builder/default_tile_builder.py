@@ -7,7 +7,6 @@ from crunge.engine.math import Rect2i
 from crunge.engine.d2.sprite import Sprite, SpriteVu, SpriteLayer
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
-#from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
 
 from ..builder_context import BuilderContext
@@ -24,7 +23,7 @@ class DefaultTileBuilder(TileBuilder):
     def layer(self) -> SpriteLayer:
         return self.context.layer
     
-    def build(self, position: glm.vec2, tile: tmx.TilesetTile, properties: dict):
+    def build(self, position: glm.vec2, tile: tmx.TilesetTile, tile_gid: int, properties: dict):
         properties["type"] = tile.class_name  # TODO:?
         #logger.debug(f"process_tile: {position}, {image}, {properties}")
         path = tile.image_path
@@ -37,16 +36,15 @@ class DefaultTileBuilder(TileBuilder):
         image_size = tile.image_size
         tw = image_size.x
         th = image_size.y
-        sprite = sprite_builder.build(atlas, Rect2i(tx, ty, tw, th))
 
-        '''
-        if rect:
-            tx, ty, tw, th = rect
+        logger.debug(f"tile_gid: {tile_gid}, path: {path}, pos: {image_position}, size: {image_size}")
+        logger.debug(f"sprites: {len(self.context.sprites)}")
+        sprite = self.context.sprites[tile_gid]
+        if sprite is None:
             sprite = sprite_builder.build(atlas, Rect2i(tx, ty, tw, th))
-        else:
-            sprite = sprite_builder.build(
-                atlas, Rect2i(0, 0, atlas.width, atlas.height)
-            )
+            self.context.sprites[tile_gid] = sprite
+        '''
+        sprite = sprite_builder.build(atlas, Rect2i(tx, ty, tw, th))
         '''
         #logger.debug(f"sprite: {sprite}")
 

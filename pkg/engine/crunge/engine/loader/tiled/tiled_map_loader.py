@@ -29,4 +29,8 @@ class TiledMapLoader(Loader):
         map = tmx.Map()
         map.load(str(path))
         self.context.map = map
+        
+        sprite_count = map.max_gid + 1
+        self.context.init_sprites(sprite_count)
+
         self.map_builder.build()

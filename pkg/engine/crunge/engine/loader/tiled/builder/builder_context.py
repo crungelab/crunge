@@ -3,7 +3,7 @@ from crunge import tmx
 
 from crunge.engine.d2.scene_2d import Scene2D
 from crunge.engine.d2.scene_layer_2d import SceneLayer2D
-
+from crunge.engine.d2.sprite import Sprite
 
 class BuilderContext:
     def __init__(self, scene: Scene2D):
@@ -13,6 +13,8 @@ class BuilderContext:
         self._map: tmx.Map = None
         self.size = glm.ivec2()
         self.opacity: float = 1.0
+
+        self.sprites: list[Sprite] = []
 
     @property
     def map(self):
@@ -30,13 +32,5 @@ class BuilderContext:
         mh = tile_count.y - 1
         self.size = glm.ivec2(mw * tw, mh * th)
 
-    '''
-    @map.setter
-    def map(self, map: TiledMap):
-        self._map = map
-        tw = map.tilewidth
-        th = map.tileheight
-        mw = map.width
-        mh = map.height - 1
-        self.size = glm.ivec2(mw * tw, mh * th)
-    '''
+    def init_sprites(self, count: int):
+        self.sprites = [None] * count

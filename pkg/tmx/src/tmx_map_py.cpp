@@ -59,6 +59,16 @@ void init_tmx_map_py(py::module &_tmx, Registry &registry)
         return m.getTileCount();
     });
 
+    _Map.def_property_readonly("max_gid", [](tmx::Map& m){
+        std::uint32_t max_gid = 0;
+        for (auto& ts : m.getTilesets()) {
+            if (ts.getTileCount() == 0) continue;
+            auto ts_max_gid = ts.getLastGID();
+            max_gid = std::max(max_gid, ts_max_gid);
+        }
+        return max_gid;
+    });
+
     _Map.def_property_readonly("layers", [](tmx::Map& m){
         // Return a Python list of typed layers with correct dynamic cast
         py::list lst;
