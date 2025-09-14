@@ -5,3 +5,12 @@ excludes: [
   'ctor/tmx::Layer::Layer',
   'method/tmx::Layer::parse'
 ]
+
+specs:
+  'class/tmx::Layer':
+    properties:
+      - name: "name"
+        getter: "getName"
+
+      - name: "opacity"
+        getter: "getOpacity"

@@ -127,6 +127,8 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
         .def("get_tile", &tmx::Tileset::getTile
             , py::arg("id")
             , py::return_value_policy::automatic_reference)
+        .def_property_readonly("name", &tmx::Tileset::getName)
+        .def_property_readonly("tiles", &tmx::Tileset::getTiles)
     ;
 
 

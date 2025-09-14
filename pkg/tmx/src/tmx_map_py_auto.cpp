@@ -107,6 +107,9 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("get_parallax_origin", &tmx::Map::getParallaxOrigin
             , py::return_value_policy::automatic_reference)
+        .def_property_readonly("tilesets", &tmx::Map::getTilesets)
+        .def_property_readonly("tile_size", &tmx::Map::getTileSize)
+        .def_property_readonly("tile_count", &tmx::Map::getTileCount)
     ;
 
 

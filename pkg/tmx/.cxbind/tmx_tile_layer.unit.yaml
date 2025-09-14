@@ -8,3 +8,7 @@ excludes: [
 specs:
   'class/tmx::TileLayer':
     extends: ['tmx::Layer']
+    properties:
+      - name: "tiles"
+        getter: "getTiles"
+

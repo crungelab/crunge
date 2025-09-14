@@ -30,23 +30,10 @@ static const tmx::Tileset* find_tileset_for_gid(const std::vector<tmx::Tileset>&
     return nullptr; // may be null if gid < min firstGID
 }
 
-/*
-static const tmx::Tileset* find_tileset_for_gid(const std::vector<tmx::Tileset>& sets, std::uint32_t gid) {
-    if (gid == 0) return nullptr; // empty tile
-    const tmx::Tileset* match = nullptr;
-    for (const auto& ts : sets) {
-        if (gid >= ts.getFirstGID()) {
-            if (!match || ts.getFirstGID() > match->getFirstGID())
-                match = &ts;
-        }
-    }
-    return match; // may be null if gid < min firstGID
-}
-*/
-
 void init_tmx_map_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::Map, Map)
+    /*
     _Map.def_property_readonly("tilesets", [](tmx::Map& m){
         return m.getTilesets();
     });
@@ -58,6 +45,7 @@ void init_tmx_map_py(py::module &_tmx, Registry &registry)
     _Map.def_property_readonly("tile_count", [](tmx::Map& m){
         return m.getTileCount();
     });
+    */
 
     _Map.def_property_readonly("max_gid", [](tmx::Map& m){
         std::uint32_t max_gid = 0;
@@ -145,16 +133,12 @@ void init_tmx_map_py(py::module &_tmx, Registry &registry)
         return lst;
     }, py::return_value_policy::reference_internal)
     */
+
     _Map.def("get_tile", [](tmx::Map& m, std::uint32_t gid) {
         const tmx::Tileset* tileset = find_tileset_for_gid(m.getTilesets(), gid);
         if (!tileset) return py::object(py::none());
-        std::cout << "Found tileset: " << tileset->getName() << std::endl;
-
-        // Get the tile from the tileset
-        //auto id = gid - tileset->getFirstGID() + 1;
-        //const tmx::Tileset::Tile* tile = tileset->getTile(id);
+        //std::cout << "Found tileset: " << tileset->getName() << std::endl;
         const tmx::Tileset::Tile* tile = tileset->getTile(gid);
-        //return tile ? py::cast(tile) : py::object(py::none());
         return py::cast(tile);
     });
 

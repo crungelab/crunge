@@ -4,3 +4,15 @@ target: 'src/tmx_map_py_auto.cpp'
 excludes: [
   'method/tmx::Map::getLayers'
 ]
+
+specs:
+  'class/tmx::Map':
+    properties:
+      - name: "tilesets"
+        getter: "getTilesets"
+
+      - name: "tile_size"
+        getter: "getTileSize"
+
+      - name: "tile_count"
+        getter: "getTileCount"

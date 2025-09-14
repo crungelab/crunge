@@ -49,9 +49,14 @@ static py::object property_to_py(const tmx::Property& p) {
 void init_tmx_layer_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::Layer, Layer)
+    /*
     _Layer.def_property_readonly("name", [](tmx::Layer& l){
         return l.getName();
     });
+    _Layer.def_property_readonly("opacity", [](tmx::Layer& l){
+        return l.getOpacity();
+    });
+    */
 
     _Layer.def_property_readonly("properties", [](tmx::Layer& L){
         py::dict d;
@@ -59,16 +64,6 @@ void init_tmx_layer_py(py::module &_tmx, Registry &registry)
             d[py::str(prop.getName())] = property_to_py(prop);
         return d;
     });
-
-    _Layer.def_property_readonly("opacity", [](tmx::Layer& l){
-        return l.getOpacity();
-    });
-
-    /*
-    _Layer.def_property_readonly("properties", [](tmx::Layer& l){
-        return l.getProperties();
-    });
-    */
 
     PYEXTEND_END
 }

@@ -46,6 +46,8 @@ void init_tmx_layer_py_auto(py::module &_tmx, Registry &registry) {
             , py::return_value_policy::reference)
         .def("get_properties", &tmx::Layer::getProperties
             , py::return_value_policy::reference)
+        .def_property_readonly("name", &tmx::Layer::getName)
+        .def_property_readonly("opacity", &tmx::Layer::getOpacity)
     ;
 
 

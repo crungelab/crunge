@@ -5,3 +5,12 @@ excludes: [
   'method/tmx::Tileset::parse',
   'field/tmx::Tileset::Tile::properties'
 ]
+
+specs:
+  'class/tmx::Tileset':
+    properties:
+      - name: "name"
+        getter: "getName"
+
+      - name: "tiles"
+        getter: "getTiles"

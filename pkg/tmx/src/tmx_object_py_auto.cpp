@@ -96,6 +96,8 @@ void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
             , py::return_value_policy::reference)
         .def("get_tileset_name", &tmx::Object::getTilesetName
             , py::return_value_policy::reference)
+        .def_property_readonly("name", &tmx::Object::getName)
+        .def_property_readonly("rotation", &tmx::Object::getRotation)
     ;
 
 
