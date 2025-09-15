@@ -40,6 +40,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     template_ImVector<ImDrawCmd>(_imgui, "Vector_DrawCmd");
     template_ImVector<ImDrawVert>(_imgui, "Vector_DrawVert");
     template_ImVector<ImFontGlyph>(_imgui, "Vector_FontGlyph");
+    template_ImVector<ImTextureData*>(_imgui, "Vector_TextureData");
 
     /*
         ImGuiContext needs to be an opaque type.  Wrap it with PyCapsule
@@ -168,6 +169,12 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         if (key >= IM_ARRAYSIZE(self.KeyMap)) throw py::index_error();
         self.KeyMap[key] = value;
     }, py::arg("key"), py::arg("value"));*/
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(ImDrawCmd, DrawCmd)
+    _DrawCmd.def_property_readonly("texture_id", [](const ImDrawCmd& self) {
+        return self.GetTexID();
+    });
     PYEXTEND_END
 
     /*
@@ -306,6 +313,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("glyph_ranges") = std::vector<ImWchar>()  // Default empty vector
     , py::return_value_policy::automatic_reference);
 
+    /*
     _FontAtlas.def("get_tex_data_as_alpha8", [](ImFontAtlas& self)
     {
         unsigned char* pixels;
@@ -332,6 +340,23 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         //return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
         return std::make_tuple(data, width, height, bytes_per_pixel);
     });
+    */
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(ImTextureData, TextureData)
+    _TextureData.def_property_readonly("pixels", [](ImTextureData& t) -> py::object {
+        if (!t.Pixels || t.Width <= 0 || t.Height <= 0 || t.BytesPerPixel <= 0)
+            return py::none();
+        const ssize_t size = (ssize_t)t.Width * t.Height * t.BytesPerPixel;
+        // 1-D view is fine for upload; if you prefer HWC strides, use from_buffer(...)
+        return py::memoryview::from_memory((void*)t.Pixels, size, /*readonly=*/true);
+    });
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(ImTextureRef, TextureRef)
+    _TextureRef.def_property_readonly("texture_id", [](ImTextureRef& t) {
+        return t.GetTexID();
+    });
     PYEXTEND_END
 
     _imgui.def("init", []()
@@ -341,7 +366,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         io.DisplaySize = ImVec2(800.0, 600.0);
         unsigned char* pixels;
         int w, h;
-        io.Fonts->GetTexDataAsAlpha8(&pixels, &w, &h, nullptr);
+        //io.Fonts->GetTexDataAsAlpha8(&pixels, &w, &h, nullptr);
     });
 
     _imgui.def("input_text", [](const char* label, char* data, size_t max_size, ImGuiInputTextFlags flags)

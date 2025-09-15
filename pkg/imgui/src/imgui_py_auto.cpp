@@ -39,6 +39,15 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         )
     ;
 
+    py::class_<ImTextureRef> TextureRef(_imgui, "TextureRef");
+    registry.on(_imgui, "TextureRef", TextureRef);
+        TextureRef
+        .def(py::init<>())
+        .def(py::init<unsigned long long>()
+        , py::arg("tex_id")
+        )
+    ;
+
     _imgui
     .def("create_context", [](ImFontAtlas * shared_font_atlas)
         {
@@ -228,9 +237,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("set_window_focus", py::overload_cast<>(&ImGui::SetWindowFocus)
         , py::return_value_policy::automatic_reference)
-    .def("set_window_font_scale", &ImGui::SetWindowFontScale
-        , py::arg("scale")
-        , py::return_value_policy::automatic_reference)
     .def("set_window_pos", py::overload_cast<const char *, const ImVec2 &, int>(&ImGui::SetWindowPos)
         , py::arg("name")
         , py::arg("pos")
@@ -279,8 +285,15 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("push_font", &ImGui::PushFont
         , py::arg("font")
+        , py::arg("font_size_base_unscaled")
         , py::return_value_policy::automatic_reference)
     .def("pop_font", &ImGui::PopFont
+        , py::return_value_policy::automatic_reference)
+    .def("get_font", &ImGui::GetFont
+        , py::return_value_policy::automatic_reference)
+    .def("get_font_size", &ImGui::GetFontSize
+        , py::return_value_policy::automatic_reference)
+    .def("get_font_baked", &ImGui::GetFontBaked
         , py::return_value_policy::automatic_reference)
     .def("push_style_color", py::overload_cast<int, unsigned int>(&ImGui::PushStyleColor)
         , py::arg("idx")
@@ -332,10 +345,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::arg("wrap_local_pos_x") = 0.0f
         , py::return_value_policy::automatic_reference)
     .def("pop_text_wrap_pos", &ImGui::PopTextWrapPos
-        , py::return_value_policy::automatic_reference)
-    .def("get_font", &ImGui::GetFont
-        , py::return_value_policy::automatic_reference)
-    .def("get_font_size", &ImGui::GetFontSize
         , py::return_value_policy::automatic_reference)
     .def("get_font_tex_uv_white_pixel", &ImGui::GetFontTexUvWhitePixel
         , py::return_value_policy::automatic_reference)
@@ -559,16 +568,22 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::arg("url") = nullptr
         , py::return_value_policy::automatic_reference)
     .def("image", &ImGui::Image
-        , py::arg("user_texture_id")
+        , py::arg("tex_ref")
         , py::arg("image_size")
         , py::arg("uv0") = ImVec2(0,0)
         , py::arg("uv1") = ImVec2(1,1)
+        , py::return_value_policy::automatic_reference)
+    .def("image_with_bg", &ImGui::ImageWithBg
+        , py::arg("tex_ref")
+        , py::arg("image_size")
+        , py::arg("uv0") = ImVec2(0,0)
+        , py::arg("uv1") = ImVec2(1,1)
+        , py::arg("bg_col") = ImVec4(0,0,0,0)
         , py::arg("tint_col") = ImVec4(1,1,1,1)
-        , py::arg("border_col") = ImVec4(0,0,0,0)
         , py::return_value_policy::automatic_reference)
     .def("image_button", &ImGui::ImageButton
         , py::arg("str_id")
-        , py::arg("user_texture_id")
+        , py::arg("tex_ref")
         , py::arg("image_size")
         , py::arg("uv0") = ImVec2(0,0)
         , py::arg("uv1") = ImVec2(1,1)
@@ -1420,6 +1435,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     .def("set_keyboard_focus_here", &ImGui::SetKeyboardFocusHere
         , py::arg("offset") = 0
         , py::return_value_policy::automatic_reference)
+    .def("set_nav_cursor_visible", &ImGui::SetNavCursorVisible
+        , py::arg("visible")
+        , py::return_value_policy::automatic_reference)
     .def("set_next_item_allow_overlap", &ImGui::SetNextItemAllowOverlap
         , py::return_value_policy::automatic_reference)
     .def("is_item_hovered", &ImGui::IsItemHovered
@@ -1569,6 +1587,10 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     .def("is_mouse_double_clicked", &ImGui::IsMouseDoubleClicked
         , py::arg("button")
         , py::return_value_policy::automatic_reference)
+    .def("is_mouse_released_with_delay", &ImGui::IsMouseReleasedWithDelay
+        , py::arg("button")
+        , py::arg("delay")
+        , py::return_value_policy::automatic_reference)
     .def("get_mouse_clicked_count", &ImGui::GetMouseClickedCount
         , py::arg("button")
         , py::return_value_policy::automatic_reference)
@@ -1625,7 +1647,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             auto ret = ImGui::SaveIniSettingsToMemory(out_ini_size);
             return std::make_tuple(ret, out_ini_size);
         }
-        , py::arg("out_ini_size") = 0
+        , py::arg("out_ini_size") = nullptr
         , py::return_value_policy::automatic_reference)
     .def("debug_text_encoding", &ImGui::DebugTextEncoding
         , py::arg("text")
@@ -1692,12 +1714,12 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("NO_NAV", ImGuiWindowFlags_::ImGuiWindowFlags_NoNav)
         .value("NO_DECORATION", ImGuiWindowFlags_::ImGuiWindowFlags_NoDecoration)
         .value("NO_INPUTS", ImGuiWindowFlags_::ImGuiWindowFlags_NoInputs)
+        .value("DOCK_NODE_HOST", ImGuiWindowFlags_::ImGuiWindowFlags_DockNodeHost)
         .value("CHILD_WINDOW", ImGuiWindowFlags_::ImGuiWindowFlags_ChildWindow)
         .value("TOOLTIP", ImGuiWindowFlags_::ImGuiWindowFlags_Tooltip)
         .value("POPUP", ImGuiWindowFlags_::ImGuiWindowFlags_Popup)
         .value("MODAL", ImGuiWindowFlags_::ImGuiWindowFlags_Modal)
         .value("CHILD_MENU", ImGuiWindowFlags_::ImGuiWindowFlags_ChildMenu)
-        .value("DOCK_NODE_HOST", ImGuiWindowFlags_::ImGuiWindowFlags_DockNodeHost)
         .export_values()
     ;
     py::enum_<ImGuiChildFlags_>(_imgui, "ChildFlags", py::arithmetic())
@@ -1742,12 +1764,14 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("DISPLAY_EMPTY_REF_VAL", ImGuiInputTextFlags_::ImGuiInputTextFlags_DisplayEmptyRefVal)
         .value("NO_HORIZONTAL_SCROLL", ImGuiInputTextFlags_::ImGuiInputTextFlags_NoHorizontalScroll)
         .value("NO_UNDO_REDO", ImGuiInputTextFlags_::ImGuiInputTextFlags_NoUndoRedo)
+        .value("ELIDE_LEFT", ImGuiInputTextFlags_::ImGuiInputTextFlags_ElideLeft)
         .value("CALLBACK_COMPLETION", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackCompletion)
         .value("CALLBACK_HISTORY", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackHistory)
         .value("CALLBACK_ALWAYS", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackAlways)
         .value("CALLBACK_CHAR_FILTER", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackCharFilter)
         .value("CALLBACK_RESIZE", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackResize)
         .value("CALLBACK_EDIT", ImGuiInputTextFlags_::ImGuiInputTextFlags_CallbackEdit)
+        .value("WORD_WRAP", ImGuiInputTextFlags_::ImGuiInputTextFlags_WordWrap)
         .export_values()
     ;
     py::enum_<ImGuiTreeNodeFlags_>(_imgui, "TreeNodeFlags", py::arithmetic())
@@ -1765,10 +1789,14 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("FRAME_PADDING", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_FramePadding)
         .value("SPAN_AVAIL_WIDTH", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanAvailWidth)
         .value("SPAN_FULL_WIDTH", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanFullWidth)
-        .value("SPAN_TEXT_WIDTH", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanTextWidth)
+        .value("SPAN_LABEL_WIDTH", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanLabelWidth)
         .value("SPAN_ALL_COLUMNS", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_SpanAllColumns)
-        .value("NAV_LEFT_JUMPS_BACK_HERE", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_NavLeftJumpsBackHere)
+        .value("LABEL_SPAN_ALL_COLUMNS", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_LabelSpanAllColumns)
+        .value("NAV_LEFT_JUMPS_TO_PARENT", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_NavLeftJumpsToParent)
         .value("COLLAPSING_HEADER", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_CollapsingHeader)
+        .value("DRAW_LINES_NONE", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DrawLinesNone)
+        .value("DRAW_LINES_FULL", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DrawLinesFull)
+        .value("DRAW_LINES_TO_NODES", ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DrawLinesToNodes)
         .export_values()
     ;
     py::enum_<ImGuiPopupFlags_>(_imgui, "PopupFlags", py::arithmetic())
@@ -1794,6 +1822,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("DISABLED", ImGuiSelectableFlags_::ImGuiSelectableFlags_Disabled)
         .value("ALLOW_OVERLAP", ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowOverlap)
         .value("HIGHLIGHT", ImGuiSelectableFlags_::ImGuiSelectableFlags_Highlight)
+        .value("SELECT_ON_NAV", ImGuiSelectableFlags_::ImGuiSelectableFlags_SelectOnNav)
         .export_values()
     ;
     py::enum_<ImGuiComboFlags_>(_imgui, "ComboFlags", py::arithmetic())
@@ -1818,7 +1847,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("NO_TAB_LIST_SCROLLING_BUTTONS", ImGuiTabBarFlags_::ImGuiTabBarFlags_NoTabListScrollingButtons)
         .value("NO_TOOLTIP", ImGuiTabBarFlags_::ImGuiTabBarFlags_NoTooltip)
         .value("DRAW_SELECTED_OVERLINE", ImGuiTabBarFlags_::ImGuiTabBarFlags_DrawSelectedOverline)
-        .value("FITTING_POLICY_RESIZE_DOWN", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyResizeDown)
+        .value("FITTING_POLICY_MIXED", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyMixed)
+        .value("FITTING_POLICY_SHRINK", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyShrink)
         .value("FITTING_POLICY_SCROLL", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyScroll)
         .value("FITTING_POLICY_MASK", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyMask_)
         .value("FITTING_POLICY_DEFAULT", ImGuiTabBarFlags_::ImGuiTabBarFlags_FittingPolicyDefault_)
@@ -1910,50 +1940,52 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("FLOAT", ImGuiDataType_::ImGuiDataType_Float)
         .value("DOUBLE", ImGuiDataType_::ImGuiDataType_Double)
         .value("BOOL", ImGuiDataType_::ImGuiDataType_Bool)
+        .value("STRING", ImGuiDataType_::ImGuiDataType_String)
         .value("COUNT", ImGuiDataType_::ImGuiDataType_COUNT)
         .export_values()
     ;
     py::enum_<ImGuiDir>(_imgui, "Dir", py::arithmetic())
-        .value("DIR_NONE", ImGuiDir::ImGuiDir_None)
-        .value("DIR_LEFT", ImGuiDir::ImGuiDir_Left)
-        .value("DIR_RIGHT", ImGuiDir::ImGuiDir_Right)
-        .value("DIR_UP", ImGuiDir::ImGuiDir_Up)
-        .value("DIR_DOWN", ImGuiDir::ImGuiDir_Down)
-        .value("DIR_COUNT", ImGuiDir::ImGuiDir_COUNT)
+        .value("NONE", ImGuiDir::ImGuiDir_None)
+        .value("LEFT", ImGuiDir::ImGuiDir_Left)
+        .value("RIGHT", ImGuiDir::ImGuiDir_Right)
+        .value("UP", ImGuiDir::ImGuiDir_Up)
+        .value("DOWN", ImGuiDir::ImGuiDir_Down)
+        .value("COUNT", ImGuiDir::ImGuiDir_COUNT)
         .export_values()
     ;
     py::enum_<ImGuiSortDirection>(_imgui, "SortDirection", py::arithmetic())
-        .value("SORT_DIRECTION_NONE", ImGuiSortDirection::ImGuiSortDirection_None)
-        .value("SORT_DIRECTION_ASCENDING", ImGuiSortDirection::ImGuiSortDirection_Ascending)
-        .value("SORT_DIRECTION_DESCENDING", ImGuiSortDirection::ImGuiSortDirection_Descending)
+        .value("NONE", ImGuiSortDirection::ImGuiSortDirection_None)
+        .value("ASCENDING", ImGuiSortDirection::ImGuiSortDirection_Ascending)
+        .value("DESCENDING", ImGuiSortDirection::ImGuiSortDirection_Descending)
         .export_values()
     ;
     py::enum_<ImGuiKey>(_imgui, "Key", py::arithmetic())
-        .value("KEY_NONE", ImGuiKey::ImGuiKey_None)
-        .value("KEY_TAB", ImGuiKey::ImGuiKey_Tab)
-        .value("KEY_LEFT_ARROW", ImGuiKey::ImGuiKey_LeftArrow)
-        .value("KEY_RIGHT_ARROW", ImGuiKey::ImGuiKey_RightArrow)
-        .value("KEY_UP_ARROW", ImGuiKey::ImGuiKey_UpArrow)
-        .value("KEY_DOWN_ARROW", ImGuiKey::ImGuiKey_DownArrow)
-        .value("KEY_PAGE_UP", ImGuiKey::ImGuiKey_PageUp)
-        .value("KEY_PAGE_DOWN", ImGuiKey::ImGuiKey_PageDown)
-        .value("KEY_HOME", ImGuiKey::ImGuiKey_Home)
-        .value("KEY_END", ImGuiKey::ImGuiKey_End)
-        .value("KEY_INSERT", ImGuiKey::ImGuiKey_Insert)
-        .value("KEY_DELETE", ImGuiKey::ImGuiKey_Delete)
-        .value("KEY_BACKSPACE", ImGuiKey::ImGuiKey_Backspace)
-        .value("KEY_SPACE", ImGuiKey::ImGuiKey_Space)
-        .value("KEY_ENTER", ImGuiKey::ImGuiKey_Enter)
-        .value("KEY_ESCAPE", ImGuiKey::ImGuiKey_Escape)
-        .value("KEY_LEFT_CTRL", ImGuiKey::ImGuiKey_LeftCtrl)
-        .value("KEY_LEFT_SHIFT", ImGuiKey::ImGuiKey_LeftShift)
-        .value("KEY_LEFT_ALT", ImGuiKey::ImGuiKey_LeftAlt)
-        .value("KEY_LEFT_SUPER", ImGuiKey::ImGuiKey_LeftSuper)
-        .value("KEY_RIGHT_CTRL", ImGuiKey::ImGuiKey_RightCtrl)
-        .value("KEY_RIGHT_SHIFT", ImGuiKey::ImGuiKey_RightShift)
-        .value("KEY_RIGHT_ALT", ImGuiKey::ImGuiKey_RightAlt)
-        .value("KEY_RIGHT_SUPER", ImGuiKey::ImGuiKey_RightSuper)
-        .value("KEY_MENU", ImGuiKey::ImGuiKey_Menu)
+        .value("NONE", ImGuiKey::ImGuiKey_None)
+        .value("NAMED_KEY_BEGIN", ImGuiKey::ImGuiKey_NamedKey_BEGIN)
+        .value("TAB", ImGuiKey::ImGuiKey_Tab)
+        .value("LEFT_ARROW", ImGuiKey::ImGuiKey_LeftArrow)
+        .value("RIGHT_ARROW", ImGuiKey::ImGuiKey_RightArrow)
+        .value("UP_ARROW", ImGuiKey::ImGuiKey_UpArrow)
+        .value("DOWN_ARROW", ImGuiKey::ImGuiKey_DownArrow)
+        .value("PAGE_UP", ImGuiKey::ImGuiKey_PageUp)
+        .value("PAGE_DOWN", ImGuiKey::ImGuiKey_PageDown)
+        .value("HOME", ImGuiKey::ImGuiKey_Home)
+        .value("END", ImGuiKey::ImGuiKey_End)
+        .value("INSERT", ImGuiKey::ImGuiKey_Insert)
+        .value("DELETE", ImGuiKey::ImGuiKey_Delete)
+        .value("BACKSPACE", ImGuiKey::ImGuiKey_Backspace)
+        .value("SPACE", ImGuiKey::ImGuiKey_Space)
+        .value("ENTER", ImGuiKey::ImGuiKey_Enter)
+        .value("ESCAPE", ImGuiKey::ImGuiKey_Escape)
+        .value("LEFT_CTRL", ImGuiKey::ImGuiKey_LeftCtrl)
+        .value("LEFT_SHIFT", ImGuiKey::ImGuiKey_LeftShift)
+        .value("LEFT_ALT", ImGuiKey::ImGuiKey_LeftAlt)
+        .value("LEFT_SUPER", ImGuiKey::ImGuiKey_LeftSuper)
+        .value("RIGHT_CTRL", ImGuiKey::ImGuiKey_RightCtrl)
+        .value("RIGHT_SHIFT", ImGuiKey::ImGuiKey_RightShift)
+        .value("RIGHT_ALT", ImGuiKey::ImGuiKey_RightAlt)
+        .value("RIGHT_SUPER", ImGuiKey::ImGuiKey_RightSuper)
+        .value("MENU", ImGuiKey::ImGuiKey_Menu)
         .value("KEY_0", ImGuiKey::ImGuiKey_0)
         .value("KEY_1", ImGuiKey::ImGuiKey_1)
         .value("KEY_2", ImGuiKey::ImGuiKey_2)
@@ -1964,138 +1996,135 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("KEY_7", ImGuiKey::ImGuiKey_7)
         .value("KEY_8", ImGuiKey::ImGuiKey_8)
         .value("KEY_9", ImGuiKey::ImGuiKey_9)
-        .value("KEY_A", ImGuiKey::ImGuiKey_A)
-        .value("KEY_B", ImGuiKey::ImGuiKey_B)
-        .value("KEY_C", ImGuiKey::ImGuiKey_C)
-        .value("KEY_D", ImGuiKey::ImGuiKey_D)
-        .value("KEY_E", ImGuiKey::ImGuiKey_E)
-        .value("KEY_F", ImGuiKey::ImGuiKey_F)
-        .value("KEY_G", ImGuiKey::ImGuiKey_G)
-        .value("KEY_H", ImGuiKey::ImGuiKey_H)
-        .value("KEY_I", ImGuiKey::ImGuiKey_I)
-        .value("KEY_J", ImGuiKey::ImGuiKey_J)
-        .value("KEY_K", ImGuiKey::ImGuiKey_K)
-        .value("KEY_L", ImGuiKey::ImGuiKey_L)
-        .value("KEY_M", ImGuiKey::ImGuiKey_M)
-        .value("KEY_N", ImGuiKey::ImGuiKey_N)
-        .value("KEY_O", ImGuiKey::ImGuiKey_O)
-        .value("KEY_P", ImGuiKey::ImGuiKey_P)
-        .value("KEY_Q", ImGuiKey::ImGuiKey_Q)
-        .value("KEY_R", ImGuiKey::ImGuiKey_R)
-        .value("KEY_S", ImGuiKey::ImGuiKey_S)
-        .value("KEY_T", ImGuiKey::ImGuiKey_T)
-        .value("KEY_U", ImGuiKey::ImGuiKey_U)
-        .value("KEY_V", ImGuiKey::ImGuiKey_V)
-        .value("KEY_W", ImGuiKey::ImGuiKey_W)
-        .value("KEY_X", ImGuiKey::ImGuiKey_X)
-        .value("KEY_Y", ImGuiKey::ImGuiKey_Y)
-        .value("KEY_Z", ImGuiKey::ImGuiKey_Z)
-        .value("KEY_F1", ImGuiKey::ImGuiKey_F1)
-        .value("KEY_F2", ImGuiKey::ImGuiKey_F2)
-        .value("KEY_F3", ImGuiKey::ImGuiKey_F3)
-        .value("KEY_F4", ImGuiKey::ImGuiKey_F4)
-        .value("KEY_F5", ImGuiKey::ImGuiKey_F5)
-        .value("KEY_F6", ImGuiKey::ImGuiKey_F6)
-        .value("KEY_F7", ImGuiKey::ImGuiKey_F7)
-        .value("KEY_F8", ImGuiKey::ImGuiKey_F8)
-        .value("KEY_F9", ImGuiKey::ImGuiKey_F9)
-        .value("KEY_F10", ImGuiKey::ImGuiKey_F10)
-        .value("KEY_F11", ImGuiKey::ImGuiKey_F11)
-        .value("KEY_F12", ImGuiKey::ImGuiKey_F12)
-        .value("KEY_F13", ImGuiKey::ImGuiKey_F13)
-        .value("KEY_F14", ImGuiKey::ImGuiKey_F14)
-        .value("KEY_F15", ImGuiKey::ImGuiKey_F15)
-        .value("KEY_F16", ImGuiKey::ImGuiKey_F16)
-        .value("KEY_F17", ImGuiKey::ImGuiKey_F17)
-        .value("KEY_F18", ImGuiKey::ImGuiKey_F18)
-        .value("KEY_F19", ImGuiKey::ImGuiKey_F19)
-        .value("KEY_F20", ImGuiKey::ImGuiKey_F20)
-        .value("KEY_F21", ImGuiKey::ImGuiKey_F21)
-        .value("KEY_F22", ImGuiKey::ImGuiKey_F22)
-        .value("KEY_F23", ImGuiKey::ImGuiKey_F23)
-        .value("KEY_F24", ImGuiKey::ImGuiKey_F24)
-        .value("KEY_APOSTROPHE", ImGuiKey::ImGuiKey_Apostrophe)
-        .value("KEY_COMMA", ImGuiKey::ImGuiKey_Comma)
-        .value("KEY_MINUS", ImGuiKey::ImGuiKey_Minus)
-        .value("KEY_PERIOD", ImGuiKey::ImGuiKey_Period)
-        .value("KEY_SLASH", ImGuiKey::ImGuiKey_Slash)
-        .value("KEY_SEMICOLON", ImGuiKey::ImGuiKey_Semicolon)
-        .value("KEY_EQUAL", ImGuiKey::ImGuiKey_Equal)
-        .value("KEY_LEFT_BRACKET", ImGuiKey::ImGuiKey_LeftBracket)
-        .value("KEY_BACKSLASH", ImGuiKey::ImGuiKey_Backslash)
-        .value("KEY_RIGHT_BRACKET", ImGuiKey::ImGuiKey_RightBracket)
-        .value("KEY_GRAVE_ACCENT", ImGuiKey::ImGuiKey_GraveAccent)
-        .value("KEY_CAPS_LOCK", ImGuiKey::ImGuiKey_CapsLock)
-        .value("KEY_SCROLL_LOCK", ImGuiKey::ImGuiKey_ScrollLock)
-        .value("KEY_NUM_LOCK", ImGuiKey::ImGuiKey_NumLock)
-        .value("KEY_PRINT_SCREEN", ImGuiKey::ImGuiKey_PrintScreen)
-        .value("KEY_PAUSE", ImGuiKey::ImGuiKey_Pause)
-        .value("KEY_KEYPAD0", ImGuiKey::ImGuiKey_Keypad0)
-        .value("KEY_KEYPAD1", ImGuiKey::ImGuiKey_Keypad1)
-        .value("KEY_KEYPAD2", ImGuiKey::ImGuiKey_Keypad2)
-        .value("KEY_KEYPAD3", ImGuiKey::ImGuiKey_Keypad3)
-        .value("KEY_KEYPAD4", ImGuiKey::ImGuiKey_Keypad4)
-        .value("KEY_KEYPAD5", ImGuiKey::ImGuiKey_Keypad5)
-        .value("KEY_KEYPAD6", ImGuiKey::ImGuiKey_Keypad6)
-        .value("KEY_KEYPAD7", ImGuiKey::ImGuiKey_Keypad7)
-        .value("KEY_KEYPAD8", ImGuiKey::ImGuiKey_Keypad8)
-        .value("KEY_KEYPAD9", ImGuiKey::ImGuiKey_Keypad9)
-        .value("KEY_KEYPAD_DECIMAL", ImGuiKey::ImGuiKey_KeypadDecimal)
-        .value("KEY_KEYPAD_DIVIDE", ImGuiKey::ImGuiKey_KeypadDivide)
-        .value("KEY_KEYPAD_MULTIPLY", ImGuiKey::ImGuiKey_KeypadMultiply)
-        .value("KEY_KEYPAD_SUBTRACT", ImGuiKey::ImGuiKey_KeypadSubtract)
-        .value("KEY_KEYPAD_ADD", ImGuiKey::ImGuiKey_KeypadAdd)
-        .value("KEY_KEYPAD_ENTER", ImGuiKey::ImGuiKey_KeypadEnter)
-        .value("KEY_KEYPAD_EQUAL", ImGuiKey::ImGuiKey_KeypadEqual)
-        .value("KEY_APP_BACK", ImGuiKey::ImGuiKey_AppBack)
-        .value("KEY_APP_FORWARD", ImGuiKey::ImGuiKey_AppForward)
-        .value("KEY_GAMEPAD_START", ImGuiKey::ImGuiKey_GamepadStart)
-        .value("KEY_GAMEPAD_BACK", ImGuiKey::ImGuiKey_GamepadBack)
-        .value("KEY_GAMEPAD_FACE_LEFT", ImGuiKey::ImGuiKey_GamepadFaceLeft)
-        .value("KEY_GAMEPAD_FACE_RIGHT", ImGuiKey::ImGuiKey_GamepadFaceRight)
-        .value("KEY_GAMEPAD_FACE_UP", ImGuiKey::ImGuiKey_GamepadFaceUp)
-        .value("KEY_GAMEPAD_FACE_DOWN", ImGuiKey::ImGuiKey_GamepadFaceDown)
-        .value("KEY_GAMEPAD_DPAD_LEFT", ImGuiKey::ImGuiKey_GamepadDpadLeft)
-        .value("KEY_GAMEPAD_DPAD_RIGHT", ImGuiKey::ImGuiKey_GamepadDpadRight)
-        .value("KEY_GAMEPAD_DPAD_UP", ImGuiKey::ImGuiKey_GamepadDpadUp)
-        .value("KEY_GAMEPAD_DPAD_DOWN", ImGuiKey::ImGuiKey_GamepadDpadDown)
-        .value("KEY_GAMEPAD_L1", ImGuiKey::ImGuiKey_GamepadL1)
-        .value("KEY_GAMEPAD_R1", ImGuiKey::ImGuiKey_GamepadR1)
-        .value("KEY_GAMEPAD_L2", ImGuiKey::ImGuiKey_GamepadL2)
-        .value("KEY_GAMEPAD_R2", ImGuiKey::ImGuiKey_GamepadR2)
-        .value("KEY_GAMEPAD_L3", ImGuiKey::ImGuiKey_GamepadL3)
-        .value("KEY_GAMEPAD_R3", ImGuiKey::ImGuiKey_GamepadR3)
-        .value("KEY_GAMEPAD_L_STICK_LEFT", ImGuiKey::ImGuiKey_GamepadLStickLeft)
-        .value("KEY_GAMEPAD_L_STICK_RIGHT", ImGuiKey::ImGuiKey_GamepadLStickRight)
-        .value("KEY_GAMEPAD_L_STICK_UP", ImGuiKey::ImGuiKey_GamepadLStickUp)
-        .value("KEY_GAMEPAD_L_STICK_DOWN", ImGuiKey::ImGuiKey_GamepadLStickDown)
-        .value("KEY_GAMEPAD_R_STICK_LEFT", ImGuiKey::ImGuiKey_GamepadRStickLeft)
-        .value("KEY_GAMEPAD_R_STICK_RIGHT", ImGuiKey::ImGuiKey_GamepadRStickRight)
-        .value("KEY_GAMEPAD_R_STICK_UP", ImGuiKey::ImGuiKey_GamepadRStickUp)
-        .value("KEY_GAMEPAD_R_STICK_DOWN", ImGuiKey::ImGuiKey_GamepadRStickDown)
-        .value("KEY_MOUSE_LEFT", ImGuiKey::ImGuiKey_MouseLeft)
-        .value("KEY_MOUSE_RIGHT", ImGuiKey::ImGuiKey_MouseRight)
-        .value("KEY_MOUSE_MIDDLE", ImGuiKey::ImGuiKey_MouseMiddle)
-        .value("KEY_MOUSE_X1", ImGuiKey::ImGuiKey_MouseX1)
-        .value("KEY_MOUSE_X2", ImGuiKey::ImGuiKey_MouseX2)
-        .value("KEY_MOUSE_WHEEL_X", ImGuiKey::ImGuiKey_MouseWheelX)
-        .value("KEY_MOUSE_WHEEL_Y", ImGuiKey::ImGuiKey_MouseWheelY)
-        .value("KEY_RESERVED_FOR_MOD_CTRL", ImGuiKey::ImGuiKey_ReservedForModCtrl)
-        .value("KEY_RESERVED_FOR_MOD_SHIFT", ImGuiKey::ImGuiKey_ReservedForModShift)
-        .value("KEY_RESERVED_FOR_MOD_ALT", ImGuiKey::ImGuiKey_ReservedForModAlt)
-        .value("KEY_RESERVED_FOR_MOD_SUPER", ImGuiKey::ImGuiKey_ReservedForModSuper)
-        .value("KEY_COUNT", ImGuiKey::ImGuiKey_COUNT)
+        .value("A", ImGuiKey::ImGuiKey_A)
+        .value("B", ImGuiKey::ImGuiKey_B)
+        .value("C", ImGuiKey::ImGuiKey_C)
+        .value("D", ImGuiKey::ImGuiKey_D)
+        .value("E", ImGuiKey::ImGuiKey_E)
+        .value("F", ImGuiKey::ImGuiKey_F)
+        .value("G", ImGuiKey::ImGuiKey_G)
+        .value("H", ImGuiKey::ImGuiKey_H)
+        .value("I", ImGuiKey::ImGuiKey_I)
+        .value("J", ImGuiKey::ImGuiKey_J)
+        .value("K", ImGuiKey::ImGuiKey_K)
+        .value("L", ImGuiKey::ImGuiKey_L)
+        .value("M", ImGuiKey::ImGuiKey_M)
+        .value("N", ImGuiKey::ImGuiKey_N)
+        .value("O", ImGuiKey::ImGuiKey_O)
+        .value("P", ImGuiKey::ImGuiKey_P)
+        .value("Q", ImGuiKey::ImGuiKey_Q)
+        .value("R", ImGuiKey::ImGuiKey_R)
+        .value("S", ImGuiKey::ImGuiKey_S)
+        .value("T", ImGuiKey::ImGuiKey_T)
+        .value("U", ImGuiKey::ImGuiKey_U)
+        .value("V", ImGuiKey::ImGuiKey_V)
+        .value("W", ImGuiKey::ImGuiKey_W)
+        .value("X", ImGuiKey::ImGuiKey_X)
+        .value("Y", ImGuiKey::ImGuiKey_Y)
+        .value("Z", ImGuiKey::ImGuiKey_Z)
+        .value("F1", ImGuiKey::ImGuiKey_F1)
+        .value("F2", ImGuiKey::ImGuiKey_F2)
+        .value("F3", ImGuiKey::ImGuiKey_F3)
+        .value("F4", ImGuiKey::ImGuiKey_F4)
+        .value("F5", ImGuiKey::ImGuiKey_F5)
+        .value("F6", ImGuiKey::ImGuiKey_F6)
+        .value("F7", ImGuiKey::ImGuiKey_F7)
+        .value("F8", ImGuiKey::ImGuiKey_F8)
+        .value("F9", ImGuiKey::ImGuiKey_F9)
+        .value("F10", ImGuiKey::ImGuiKey_F10)
+        .value("F11", ImGuiKey::ImGuiKey_F11)
+        .value("F12", ImGuiKey::ImGuiKey_F12)
+        .value("F13", ImGuiKey::ImGuiKey_F13)
+        .value("F14", ImGuiKey::ImGuiKey_F14)
+        .value("F15", ImGuiKey::ImGuiKey_F15)
+        .value("F16", ImGuiKey::ImGuiKey_F16)
+        .value("F17", ImGuiKey::ImGuiKey_F17)
+        .value("F18", ImGuiKey::ImGuiKey_F18)
+        .value("F19", ImGuiKey::ImGuiKey_F19)
+        .value("F20", ImGuiKey::ImGuiKey_F20)
+        .value("F21", ImGuiKey::ImGuiKey_F21)
+        .value("F22", ImGuiKey::ImGuiKey_F22)
+        .value("F23", ImGuiKey::ImGuiKey_F23)
+        .value("F24", ImGuiKey::ImGuiKey_F24)
+        .value("APOSTROPHE", ImGuiKey::ImGuiKey_Apostrophe)
+        .value("COMMA", ImGuiKey::ImGuiKey_Comma)
+        .value("MINUS", ImGuiKey::ImGuiKey_Minus)
+        .value("PERIOD", ImGuiKey::ImGuiKey_Period)
+        .value("SLASH", ImGuiKey::ImGuiKey_Slash)
+        .value("SEMICOLON", ImGuiKey::ImGuiKey_Semicolon)
+        .value("EQUAL", ImGuiKey::ImGuiKey_Equal)
+        .value("LEFT_BRACKET", ImGuiKey::ImGuiKey_LeftBracket)
+        .value("BACKSLASH", ImGuiKey::ImGuiKey_Backslash)
+        .value("RIGHT_BRACKET", ImGuiKey::ImGuiKey_RightBracket)
+        .value("GRAVE_ACCENT", ImGuiKey::ImGuiKey_GraveAccent)
+        .value("CAPS_LOCK", ImGuiKey::ImGuiKey_CapsLock)
+        .value("SCROLL_LOCK", ImGuiKey::ImGuiKey_ScrollLock)
+        .value("NUM_LOCK", ImGuiKey::ImGuiKey_NumLock)
+        .value("PRINT_SCREEN", ImGuiKey::ImGuiKey_PrintScreen)
+        .value("PAUSE", ImGuiKey::ImGuiKey_Pause)
+        .value("KEYPAD0", ImGuiKey::ImGuiKey_Keypad0)
+        .value("KEYPAD1", ImGuiKey::ImGuiKey_Keypad1)
+        .value("KEYPAD2", ImGuiKey::ImGuiKey_Keypad2)
+        .value("KEYPAD3", ImGuiKey::ImGuiKey_Keypad3)
+        .value("KEYPAD4", ImGuiKey::ImGuiKey_Keypad4)
+        .value("KEYPAD5", ImGuiKey::ImGuiKey_Keypad5)
+        .value("KEYPAD6", ImGuiKey::ImGuiKey_Keypad6)
+        .value("KEYPAD7", ImGuiKey::ImGuiKey_Keypad7)
+        .value("KEYPAD8", ImGuiKey::ImGuiKey_Keypad8)
+        .value("KEYPAD9", ImGuiKey::ImGuiKey_Keypad9)
+        .value("KEYPAD_DECIMAL", ImGuiKey::ImGuiKey_KeypadDecimal)
+        .value("KEYPAD_DIVIDE", ImGuiKey::ImGuiKey_KeypadDivide)
+        .value("KEYPAD_MULTIPLY", ImGuiKey::ImGuiKey_KeypadMultiply)
+        .value("KEYPAD_SUBTRACT", ImGuiKey::ImGuiKey_KeypadSubtract)
+        .value("KEYPAD_ADD", ImGuiKey::ImGuiKey_KeypadAdd)
+        .value("KEYPAD_ENTER", ImGuiKey::ImGuiKey_KeypadEnter)
+        .value("KEYPAD_EQUAL", ImGuiKey::ImGuiKey_KeypadEqual)
+        .value("APP_BACK", ImGuiKey::ImGuiKey_AppBack)
+        .value("APP_FORWARD", ImGuiKey::ImGuiKey_AppForward)
+        .value("OEM102", ImGuiKey::ImGuiKey_Oem102)
+        .value("GAMEPAD_START", ImGuiKey::ImGuiKey_GamepadStart)
+        .value("GAMEPAD_BACK", ImGuiKey::ImGuiKey_GamepadBack)
+        .value("GAMEPAD_FACE_LEFT", ImGuiKey::ImGuiKey_GamepadFaceLeft)
+        .value("GAMEPAD_FACE_RIGHT", ImGuiKey::ImGuiKey_GamepadFaceRight)
+        .value("GAMEPAD_FACE_UP", ImGuiKey::ImGuiKey_GamepadFaceUp)
+        .value("GAMEPAD_FACE_DOWN", ImGuiKey::ImGuiKey_GamepadFaceDown)
+        .value("GAMEPAD_DPAD_LEFT", ImGuiKey::ImGuiKey_GamepadDpadLeft)
+        .value("GAMEPAD_DPAD_RIGHT", ImGuiKey::ImGuiKey_GamepadDpadRight)
+        .value("GAMEPAD_DPAD_UP", ImGuiKey::ImGuiKey_GamepadDpadUp)
+        .value("GAMEPAD_DPAD_DOWN", ImGuiKey::ImGuiKey_GamepadDpadDown)
+        .value("GAMEPAD_L1", ImGuiKey::ImGuiKey_GamepadL1)
+        .value("GAMEPAD_R1", ImGuiKey::ImGuiKey_GamepadR1)
+        .value("GAMEPAD_L2", ImGuiKey::ImGuiKey_GamepadL2)
+        .value("GAMEPAD_R2", ImGuiKey::ImGuiKey_GamepadR2)
+        .value("GAMEPAD_L3", ImGuiKey::ImGuiKey_GamepadL3)
+        .value("GAMEPAD_R3", ImGuiKey::ImGuiKey_GamepadR3)
+        .value("GAMEPAD_L_STICK_LEFT", ImGuiKey::ImGuiKey_GamepadLStickLeft)
+        .value("GAMEPAD_L_STICK_RIGHT", ImGuiKey::ImGuiKey_GamepadLStickRight)
+        .value("GAMEPAD_L_STICK_UP", ImGuiKey::ImGuiKey_GamepadLStickUp)
+        .value("GAMEPAD_L_STICK_DOWN", ImGuiKey::ImGuiKey_GamepadLStickDown)
+        .value("GAMEPAD_R_STICK_LEFT", ImGuiKey::ImGuiKey_GamepadRStickLeft)
+        .value("GAMEPAD_R_STICK_RIGHT", ImGuiKey::ImGuiKey_GamepadRStickRight)
+        .value("GAMEPAD_R_STICK_UP", ImGuiKey::ImGuiKey_GamepadRStickUp)
+        .value("GAMEPAD_R_STICK_DOWN", ImGuiKey::ImGuiKey_GamepadRStickDown)
+        .value("MOUSE_LEFT", ImGuiKey::ImGuiKey_MouseLeft)
+        .value("MOUSE_RIGHT", ImGuiKey::ImGuiKey_MouseRight)
+        .value("MOUSE_MIDDLE", ImGuiKey::ImGuiKey_MouseMiddle)
+        .value("MOUSE_X1", ImGuiKey::ImGuiKey_MouseX1)
+        .value("MOUSE_X2", ImGuiKey::ImGuiKey_MouseX2)
+        .value("MOUSE_WHEEL_X", ImGuiKey::ImGuiKey_MouseWheelX)
+        .value("MOUSE_WHEEL_Y", ImGuiKey::ImGuiKey_MouseWheelY)
+        .value("RESERVED_FOR_MOD_CTRL", ImGuiKey::ImGuiKey_ReservedForModCtrl)
+        .value("RESERVED_FOR_MOD_SHIFT", ImGuiKey::ImGuiKey_ReservedForModShift)
+        .value("RESERVED_FOR_MOD_ALT", ImGuiKey::ImGuiKey_ReservedForModAlt)
+        .value("RESERVED_FOR_MOD_SUPER", ImGuiKey::ImGuiKey_ReservedForModSuper)
+        .value("NAMED_KEY_END", ImGuiKey::ImGuiKey_NamedKey_END)
+        .value("NAMED_KEY_COUNT", ImGuiKey::ImGuiKey_NamedKey_COUNT)
         .value("MOD_NONE", ImGuiKey::ImGuiMod_None)
         .value("MOD_CTRL", ImGuiKey::ImGuiMod_Ctrl)
         .value("MOD_SHIFT", ImGuiKey::ImGuiMod_Shift)
         .value("MOD_ALT", ImGuiKey::ImGuiMod_Alt)
         .value("MOD_SUPER", ImGuiKey::ImGuiMod_Super)
         .value("MOD_MASK", ImGuiKey::ImGuiMod_Mask_)
-        .value("KEY_NAMED_KEY_BEGIN", ImGuiKey::ImGuiKey_NamedKey_BEGIN)
-        .value("KEY_NAMED_KEY_END", ImGuiKey::ImGuiKey_NamedKey_END)
-        .value("KEY_NAMED_KEY_COUNT", ImGuiKey::ImGuiKey_NamedKey_COUNT)
-        .value("KEY_KEYS_DATA_SIZE", ImGuiKey::ImGuiKey_KeysData_SIZE)
-        .value("KEY_KEYS_DATA_OFFSET", ImGuiKey::ImGuiKey_KeysData_OFFSET)
         .export_values()
     ;
     py::enum_<ImGuiInputFlags_>(_imgui, "InputFlags", py::arithmetic())
@@ -2116,15 +2145,11 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("NONE", ImGuiConfigFlags_::ImGuiConfigFlags_None)
         .value("NAV_ENABLE_KEYBOARD", ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableKeyboard)
         .value("NAV_ENABLE_GAMEPAD", ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableGamepad)
-        .value("NAV_ENABLE_SET_MOUSE_POS", ImGuiConfigFlags_::ImGuiConfigFlags_NavEnableSetMousePos)
-        .value("NAV_NO_CAPTURE_KEYBOARD", ImGuiConfigFlags_::ImGuiConfigFlags_NavNoCaptureKeyboard)
         .value("NO_MOUSE", ImGuiConfigFlags_::ImGuiConfigFlags_NoMouse)
         .value("NO_MOUSE_CURSOR_CHANGE", ImGuiConfigFlags_::ImGuiConfigFlags_NoMouseCursorChange)
         .value("NO_KEYBOARD", ImGuiConfigFlags_::ImGuiConfigFlags_NoKeyboard)
         .value("DOCKING_ENABLE", ImGuiConfigFlags_::ImGuiConfigFlags_DockingEnable)
         .value("VIEWPORTS_ENABLE", ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable)
-        .value("DPI_ENABLE_SCALE_VIEWPORTS", ImGuiConfigFlags_::ImGuiConfigFlags_DpiEnableScaleViewports)
-        .value("DPI_ENABLE_SCALE_FONTS", ImGuiConfigFlags_::ImGuiConfigFlags_DpiEnableScaleFonts)
         .value("IS_SRGB", ImGuiConfigFlags_::ImGuiConfigFlags_IsSRGB)
         .value("IS_TOUCH_SCREEN", ImGuiConfigFlags_::ImGuiConfigFlags_IsTouchScreen)
         .export_values()
@@ -2135,6 +2160,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("HAS_MOUSE_CURSORS", ImGuiBackendFlags_::ImGuiBackendFlags_HasMouseCursors)
         .value("HAS_SET_MOUSE_POS", ImGuiBackendFlags_::ImGuiBackendFlags_HasSetMousePos)
         .value("RENDERER_HAS_VTX_OFFSET", ImGuiBackendFlags_::ImGuiBackendFlags_RendererHasVtxOffset)
+        .value("RENDERER_HAS_TEXTURES", ImGuiBackendFlags_::ImGuiBackendFlags_RendererHasTextures)
         .value("PLATFORM_HAS_VIEWPORTS", ImGuiBackendFlags_::ImGuiBackendFlags_PlatformHasViewports)
         .value("HAS_MOUSE_HOVERED_VIEWPORT", ImGuiBackendFlags_::ImGuiBackendFlags_HasMouseHoveredViewport)
         .value("RENDERER_HAS_VIEWPORTS", ImGuiBackendFlags_::ImGuiBackendFlags_RendererHasViewports)
@@ -2174,6 +2200,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("RESIZE_GRIP", ImGuiCol_::ImGuiCol_ResizeGrip)
         .value("RESIZE_GRIP_HOVERED", ImGuiCol_::ImGuiCol_ResizeGripHovered)
         .value("RESIZE_GRIP_ACTIVE", ImGuiCol_::ImGuiCol_ResizeGripActive)
+        .value("INPUT_TEXT_CURSOR", ImGuiCol_::ImGuiCol_InputTextCursor)
         .value("TAB_HOVERED", ImGuiCol_::ImGuiCol_TabHovered)
         .value("TAB", ImGuiCol_::ImGuiCol_Tab)
         .value("TAB_SELECTED", ImGuiCol_::ImGuiCol_TabSelected)
@@ -2194,8 +2221,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("TABLE_ROW_BG_ALT", ImGuiCol_::ImGuiCol_TableRowBgAlt)
         .value("TEXT_LINK", ImGuiCol_::ImGuiCol_TextLink)
         .value("TEXT_SELECTED_BG", ImGuiCol_::ImGuiCol_TextSelectedBg)
+        .value("TREE_LINES", ImGuiCol_::ImGuiCol_TreeLines)
         .value("DRAG_DROP_TARGET", ImGuiCol_::ImGuiCol_DragDropTarget)
-        .value("NAV_HIGHLIGHT", ImGuiCol_::ImGuiCol_NavHighlight)
+        .value("NAV_CURSOR", ImGuiCol_::ImGuiCol_NavCursor)
         .value("NAV_WINDOWING_HIGHLIGHT", ImGuiCol_::ImGuiCol_NavWindowingHighlight)
         .value("NAV_WINDOWING_DIM_BG", ImGuiCol_::ImGuiCol_NavWindowingDimBg)
         .value("MODAL_WINDOW_DIM_BG", ImGuiCol_::ImGuiCol_ModalWindowDimBg)
@@ -2223,14 +2251,20 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("CELL_PADDING", ImGuiStyleVar_::ImGuiStyleVar_CellPadding)
         .value("SCROLLBAR_SIZE", ImGuiStyleVar_::ImGuiStyleVar_ScrollbarSize)
         .value("SCROLLBAR_ROUNDING", ImGuiStyleVar_::ImGuiStyleVar_ScrollbarRounding)
+        .value("SCROLLBAR_PADDING", ImGuiStyleVar_::ImGuiStyleVar_ScrollbarPadding)
         .value("GRAB_MIN_SIZE", ImGuiStyleVar_::ImGuiStyleVar_GrabMinSize)
         .value("GRAB_ROUNDING", ImGuiStyleVar_::ImGuiStyleVar_GrabRounding)
+        .value("IMAGE_BORDER_SIZE", ImGuiStyleVar_::ImGuiStyleVar_ImageBorderSize)
         .value("TAB_ROUNDING", ImGuiStyleVar_::ImGuiStyleVar_TabRounding)
         .value("TAB_BORDER_SIZE", ImGuiStyleVar_::ImGuiStyleVar_TabBorderSize)
+        .value("TAB_MIN_WIDTH_BASE", ImGuiStyleVar_::ImGuiStyleVar_TabMinWidthBase)
+        .value("TAB_MIN_WIDTH_SHRINK", ImGuiStyleVar_::ImGuiStyleVar_TabMinWidthShrink)
         .value("TAB_BAR_BORDER_SIZE", ImGuiStyleVar_::ImGuiStyleVar_TabBarBorderSize)
         .value("TAB_BAR_OVERLINE_SIZE", ImGuiStyleVar_::ImGuiStyleVar_TabBarOverlineSize)
         .value("TABLE_ANGLED_HEADERS_ANGLE", ImGuiStyleVar_::ImGuiStyleVar_TableAngledHeadersAngle)
         .value("TABLE_ANGLED_HEADERS_TEXT_ALIGN", ImGuiStyleVar_::ImGuiStyleVar_TableAngledHeadersTextAlign)
+        .value("TREE_LINES_SIZE", ImGuiStyleVar_::ImGuiStyleVar_TreeLinesSize)
+        .value("TREE_LINES_ROUNDING", ImGuiStyleVar_::ImGuiStyleVar_TreeLinesRounding)
         .value("BUTTON_TEXT_ALIGN", ImGuiStyleVar_::ImGuiStyleVar_ButtonTextAlign)
         .value("SELECTABLE_TEXT_ALIGN", ImGuiStyleVar_::ImGuiStyleVar_SelectableTextAlign)
         .value("SEPARATOR_TEXT_BORDER_SIZE", ImGuiStyleVar_::ImGuiStyleVar_SeparatorTextBorderSize)
@@ -2246,6 +2280,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("MOUSE_BUTTON_RIGHT", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonRight)
         .value("MOUSE_BUTTON_MIDDLE", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonMiddle)
         .value("MOUSE_BUTTON_MASK", ImGuiButtonFlags_::ImGuiButtonFlags_MouseButtonMask_)
+        .value("ENABLE_NAV", ImGuiButtonFlags_::ImGuiButtonFlags_EnableNav)
         .export_values()
     ;
     py::enum_<ImGuiColorEditFlags_>(_imgui, "ColorEditFlags", py::arithmetic())
@@ -2260,9 +2295,10 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("NO_SIDE_PREVIEW", ImGuiColorEditFlags_::ImGuiColorEditFlags_NoSidePreview)
         .value("NO_DRAG_DROP", ImGuiColorEditFlags_::ImGuiColorEditFlags_NoDragDrop)
         .value("NO_BORDER", ImGuiColorEditFlags_::ImGuiColorEditFlags_NoBorder)
-        .value("ALPHA_BAR", ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaBar)
-        .value("ALPHA_PREVIEW", ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaPreview)
+        .value("ALPHA_OPAQUE", ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaOpaque)
+        .value("ALPHA_NO_BG", ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaNoBg)
         .value("ALPHA_PREVIEW_HALF", ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaPreviewHalf)
+        .value("ALPHA_BAR", ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaBar)
         .value("HDR", ImGuiColorEditFlags_::ImGuiColorEditFlags_HDR)
         .value("DISPLAY_RGB", ImGuiColorEditFlags_::ImGuiColorEditFlags_DisplayRGB)
         .value("DISPLAY_HSV", ImGuiColorEditFlags_::ImGuiColorEditFlags_DisplayHSV)
@@ -2274,6 +2310,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("INPUT_RGB", ImGuiColorEditFlags_::ImGuiColorEditFlags_InputRGB)
         .value("INPUT_HSV", ImGuiColorEditFlags_::ImGuiColorEditFlags_InputHSV)
         .value("DEFAULT_OPTIONS", ImGuiColorEditFlags_::ImGuiColorEditFlags_DefaultOptions_)
+        .value("ALPHA_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_AlphaMask_)
         .value("DISPLAY_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_DisplayMask_)
         .value("DATA_TYPE_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_DataTypeMask_)
         .value("PICKER_MASK", ImGuiColorEditFlags_::ImGuiColorEditFlags_PickerMask_)
@@ -2282,11 +2319,14 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     ;
     py::enum_<ImGuiSliderFlags_>(_imgui, "SliderFlags", py::arithmetic())
         .value("NONE", ImGuiSliderFlags_::ImGuiSliderFlags_None)
-        .value("ALWAYS_CLAMP", ImGuiSliderFlags_::ImGuiSliderFlags_AlwaysClamp)
         .value("LOGARITHMIC", ImGuiSliderFlags_::ImGuiSliderFlags_Logarithmic)
         .value("NO_ROUND_TO_FORMAT", ImGuiSliderFlags_::ImGuiSliderFlags_NoRoundToFormat)
         .value("NO_INPUT", ImGuiSliderFlags_::ImGuiSliderFlags_NoInput)
         .value("WRAP_AROUND", ImGuiSliderFlags_::ImGuiSliderFlags_WrapAround)
+        .value("CLAMP_ON_INPUT", ImGuiSliderFlags_::ImGuiSliderFlags_ClampOnInput)
+        .value("CLAMP_ZERO_RANGE", ImGuiSliderFlags_::ImGuiSliderFlags_ClampZeroRange)
+        .value("NO_SPEED_TWEAKS", ImGuiSliderFlags_::ImGuiSliderFlags_NoSpeedTweaks)
+        .value("ALWAYS_CLAMP", ImGuiSliderFlags_::ImGuiSliderFlags_AlwaysClamp)
         .value("INVALID_MASK", ImGuiSliderFlags_::ImGuiSliderFlags_InvalidMask_)
         .export_values()
     ;
@@ -2307,15 +2347,17 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("RESIZE_NESW", ImGuiMouseCursor_::ImGuiMouseCursor_ResizeNESW)
         .value("RESIZE_NWSE", ImGuiMouseCursor_::ImGuiMouseCursor_ResizeNWSE)
         .value("HAND", ImGuiMouseCursor_::ImGuiMouseCursor_Hand)
+        .value("WAIT", ImGuiMouseCursor_::ImGuiMouseCursor_Wait)
+        .value("PROGRESS", ImGuiMouseCursor_::ImGuiMouseCursor_Progress)
         .value("NOT_ALLOWED", ImGuiMouseCursor_::ImGuiMouseCursor_NotAllowed)
         .value("COUNT", ImGuiMouseCursor_::ImGuiMouseCursor_COUNT)
         .export_values()
     ;
     py::enum_<ImGuiMouseSource>(_imgui, "MouseSource", py::arithmetic())
-        .value("MOUSE_SOURCE_MOUSE", ImGuiMouseSource::ImGuiMouseSource_Mouse)
-        .value("MOUSE_SOURCE_TOUCH_SCREEN", ImGuiMouseSource::ImGuiMouseSource_TouchScreen)
-        .value("MOUSE_SOURCE_PEN", ImGuiMouseSource::ImGuiMouseSource_Pen)
-        .value("MOUSE_SOURCE_COUNT", ImGuiMouseSource::ImGuiMouseSource_COUNT)
+        .value("MOUSE", ImGuiMouseSource::ImGuiMouseSource_Mouse)
+        .value("TOUCH_SCREEN", ImGuiMouseSource::ImGuiMouseSource_TouchScreen)
+        .value("PEN", ImGuiMouseSource::ImGuiMouseSource_Pen)
+        .value("COUNT", ImGuiMouseSource::ImGuiMouseSource_COUNT)
         .export_values()
     ;
     py::enum_<ImGuiCond_>(_imgui, "Cond", py::arithmetic())
@@ -2432,11 +2474,15 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     py::class_<ImGuiStyle> Style(_imgui, "Style");
     registry.on(_imgui, "Style", Style);
         Style
+        .def_readwrite("font_size_base", &ImGuiStyle::FontSizeBase)
+        .def_readwrite("font_scale_main", &ImGuiStyle::FontScaleMain)
+        .def_readwrite("font_scale_dpi", &ImGuiStyle::FontScaleDpi)
         .def_readwrite("alpha", &ImGuiStyle::Alpha)
         .def_readwrite("disabled_alpha", &ImGuiStyle::DisabledAlpha)
         .def_readwrite("window_padding", &ImGuiStyle::WindowPadding)
         .def_readwrite("window_rounding", &ImGuiStyle::WindowRounding)
         .def_readwrite("window_border_size", &ImGuiStyle::WindowBorderSize)
+        .def_readwrite("window_border_hover_padding", &ImGuiStyle::WindowBorderHoverPadding)
         .def_readwrite("window_min_size", &ImGuiStyle::WindowMinSize)
         .def_readwrite("window_title_align", &ImGuiStyle::WindowTitleAlign)
         .def_readwrite("window_menu_button_position", &ImGuiStyle::WindowMenuButtonPosition)
@@ -2455,16 +2501,24 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("columns_min_spacing", &ImGuiStyle::ColumnsMinSpacing)
         .def_readwrite("scrollbar_size", &ImGuiStyle::ScrollbarSize)
         .def_readwrite("scrollbar_rounding", &ImGuiStyle::ScrollbarRounding)
+        .def_readwrite("scrollbar_padding", &ImGuiStyle::ScrollbarPadding)
         .def_readwrite("grab_min_size", &ImGuiStyle::GrabMinSize)
         .def_readwrite("grab_rounding", &ImGuiStyle::GrabRounding)
         .def_readwrite("log_slider_deadzone", &ImGuiStyle::LogSliderDeadzone)
+        .def_readwrite("image_border_size", &ImGuiStyle::ImageBorderSize)
         .def_readwrite("tab_rounding", &ImGuiStyle::TabRounding)
         .def_readwrite("tab_border_size", &ImGuiStyle::TabBorderSize)
-        .def_readwrite("tab_min_width_for_close_button", &ImGuiStyle::TabMinWidthForCloseButton)
+        .def_readwrite("tab_min_width_base", &ImGuiStyle::TabMinWidthBase)
+        .def_readwrite("tab_min_width_shrink", &ImGuiStyle::TabMinWidthShrink)
+        .def_readwrite("tab_close_button_min_width_selected", &ImGuiStyle::TabCloseButtonMinWidthSelected)
+        .def_readwrite("tab_close_button_min_width_unselected", &ImGuiStyle::TabCloseButtonMinWidthUnselected)
         .def_readwrite("tab_bar_border_size", &ImGuiStyle::TabBarBorderSize)
         .def_readwrite("tab_bar_overline_size", &ImGuiStyle::TabBarOverlineSize)
         .def_readwrite("table_angled_headers_angle", &ImGuiStyle::TableAngledHeadersAngle)
         .def_readwrite("table_angled_headers_text_align", &ImGuiStyle::TableAngledHeadersTextAlign)
+        .def_readwrite("tree_lines_flags", &ImGuiStyle::TreeLinesFlags)
+        .def_readwrite("tree_lines_size", &ImGuiStyle::TreeLinesSize)
+        .def_readwrite("tree_lines_rounding", &ImGuiStyle::TreeLinesRounding)
         .def_readwrite("color_button_position", &ImGuiStyle::ColorButtonPosition)
         .def_readwrite("button_text_align", &ImGuiStyle::ButtonTextAlign)
         .def_readwrite("selectable_text_align", &ImGuiStyle::SelectableTextAlign)
@@ -2506,6 +2560,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("config_flags", &ImGuiIO::ConfigFlags)
         .def_readwrite("backend_flags", &ImGuiIO::BackendFlags)
         .def_readwrite("display_size", &ImGuiIO::DisplaySize)
+        .def_readwrite("display_framebuffer_scale", &ImGuiIO::DisplayFramebufferScale)
         .def_readwrite("delta_time", &ImGuiIO::DeltaTime)
         .def_readwrite("ini_saving_rate", &ImGuiIO::IniSavingRate)
         .def_property("ini_filename",
@@ -2518,10 +2573,15 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         )
         .def_readwrite("user_data", &ImGuiIO::UserData)
         .def_readwrite("fonts", &ImGuiIO::Fonts)
-        .def_readwrite("font_global_scale", &ImGuiIO::FontGlobalScale)
-        .def_readwrite("font_allow_user_scaling", &ImGuiIO::FontAllowUserScaling)
         .def_readwrite("font_default", &ImGuiIO::FontDefault)
-        .def_readwrite("display_framebuffer_scale", &ImGuiIO::DisplayFramebufferScale)
+        .def_readwrite("font_allow_user_scaling", &ImGuiIO::FontAllowUserScaling)
+        .def_readwrite("config_nav_swap_gamepad_buttons", &ImGuiIO::ConfigNavSwapGamepadButtons)
+        .def_readwrite("config_nav_move_set_mouse_pos", &ImGuiIO::ConfigNavMoveSetMousePos)
+        .def_readwrite("config_nav_capture_keyboard", &ImGuiIO::ConfigNavCaptureKeyboard)
+        .def_readwrite("config_nav_escape_clear_focus_item", &ImGuiIO::ConfigNavEscapeClearFocusItem)
+        .def_readwrite("config_nav_escape_clear_focus_window", &ImGuiIO::ConfigNavEscapeClearFocusWindow)
+        .def_readwrite("config_nav_cursor_visible_auto", &ImGuiIO::ConfigNavCursorVisibleAuto)
+        .def_readwrite("config_nav_cursor_visible_always", &ImGuiIO::ConfigNavCursorVisibleAlways)
         .def_readwrite("config_docking_no_split", &ImGuiIO::ConfigDockingNoSplit)
         .def_readwrite("config_docking_with_shift", &ImGuiIO::ConfigDockingWithShift)
         .def_readwrite("config_docking_always_tab_bar", &ImGuiIO::ConfigDockingAlwaysTabBar)
@@ -2530,15 +2590,18 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("config_viewports_no_task_bar_icon", &ImGuiIO::ConfigViewportsNoTaskBarIcon)
         .def_readwrite("config_viewports_no_decoration", &ImGuiIO::ConfigViewportsNoDecoration)
         .def_readwrite("config_viewports_no_default_parent", &ImGuiIO::ConfigViewportsNoDefaultParent)
+        .def_readwrite("config_viewport_platform_focus_sets_im_gui_focus", &ImGuiIO::ConfigViewportPlatformFocusSetsImGuiFocus)
+        .def_readwrite("config_dpi_scale_fonts", &ImGuiIO::ConfigDpiScaleFonts)
+        .def_readwrite("config_dpi_scale_viewports", &ImGuiIO::ConfigDpiScaleViewports)
         .def_readwrite("mouse_draw_cursor", &ImGuiIO::MouseDrawCursor)
         .def_readwrite("config_mac_osx_behaviors", &ImGuiIO::ConfigMacOSXBehaviors)
-        .def_readwrite("config_nav_swap_gamepad_buttons", &ImGuiIO::ConfigNavSwapGamepadButtons)
         .def_readwrite("config_input_trickle_event_queue", &ImGuiIO::ConfigInputTrickleEventQueue)
         .def_readwrite("config_input_text_cursor_blink", &ImGuiIO::ConfigInputTextCursorBlink)
         .def_readwrite("config_input_text_enter_keep_active", &ImGuiIO::ConfigInputTextEnterKeepActive)
         .def_readwrite("config_drag_click_to_input_text", &ImGuiIO::ConfigDragClickToInputText)
         .def_readwrite("config_windows_resize_from_edges", &ImGuiIO::ConfigWindowsResizeFromEdges)
         .def_readwrite("config_windows_move_from_title_bar_only", &ImGuiIO::ConfigWindowsMoveFromTitleBarOnly)
+        .def_readwrite("config_windows_copy_contents_with_ctrl_c", &ImGuiIO::ConfigWindowsCopyContentsWithCtrlC)
         .def_readwrite("config_scrollbar_scroll_by_page", &ImGuiIO::ConfigScrollbarScrollByPage)
         .def_readwrite("config_memory_compact_timer", &ImGuiIO::ConfigMemoryCompactTimer)
         .def_readwrite("mouse_double_click_time", &ImGuiIO::MouseDoubleClickTime)
@@ -2546,8 +2609,13 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("mouse_drag_threshold", &ImGuiIO::MouseDragThreshold)
         .def_readwrite("key_repeat_delay", &ImGuiIO::KeyRepeatDelay)
         .def_readwrite("key_repeat_rate", &ImGuiIO::KeyRepeatRate)
+        .def_readwrite("config_error_recovery", &ImGuiIO::ConfigErrorRecovery)
+        .def_readwrite("config_error_recovery_enable_assert", &ImGuiIO::ConfigErrorRecoveryEnableAssert)
+        .def_readwrite("config_error_recovery_enable_debug_log", &ImGuiIO::ConfigErrorRecoveryEnableDebugLog)
+        .def_readwrite("config_error_recovery_enable_tooltip", &ImGuiIO::ConfigErrorRecoveryEnableTooltip)
         .def_readwrite("config_debug_is_debugger_present", &ImGuiIO::ConfigDebugIsDebuggerPresent)
         .def_readwrite("config_debug_highlight_id_conflicts", &ImGuiIO::ConfigDebugHighlightIdConflicts)
+        .def_readwrite("config_debug_highlight_id_conflicts_show_item_picker", &ImGuiIO::ConfigDebugHighlightIdConflictsShowItemPicker)
         .def_readwrite("config_debug_begin_return_value_once", &ImGuiIO::ConfigDebugBeginReturnValueOnce)
         .def_readwrite("config_debug_begin_return_value_loop", &ImGuiIO::ConfigDebugBeginReturnValueLoop)
         .def_readwrite("config_debug_ignore_focus_loss", &ImGuiIO::ConfigDebugIgnoreFocusLoss)
@@ -2651,6 +2719,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readonly("mouse_clicked_count", &ImGuiIO::MouseClickedCount)
         .def_readonly("mouse_clicked_last_count", &ImGuiIO::MouseClickedLastCount)
         .def_readonly("mouse_released", &ImGuiIO::MouseReleased)
+        .def_readonly("mouse_released_time", &ImGuiIO::MouseReleasedTime)
         .def_readonly("mouse_down_owned", &ImGuiIO::MouseDownOwned)
         .def_readonly("mouse_down_owned_unless_popup_close", &ImGuiIO::MouseDownOwnedUnlessPopupClose)
         .def_readwrite("mouse_wheel_request_axis_swap", &ImGuiIO::MouseWheelRequestAxisSwap)
@@ -2662,8 +2731,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("pen_pressure", &ImGuiIO::PenPressure)
         .def_readwrite("app_focus_lost", &ImGuiIO::AppFocusLost)
         .def_readwrite("app_accepting_events", &ImGuiIO::AppAcceptingEvents)
-        .def_readwrite("backend_using_legacy_key_arrays", &ImGuiIO::BackendUsingLegacyKeyArrays)
-        .def_readwrite("backend_using_legacy_nav_input_array", &ImGuiIO::BackendUsingLegacyNavInputArray)
         .def_readwrite("input_queue_surrogate", &ImGuiIO::InputQueueSurrogate)
         .def_readwrite("input_queue_characters", &ImGuiIO::InputQueueCharacters)
         .def(py::init<>())
@@ -2887,6 +2954,11 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
+    py::enum_<ImGuiListClipperFlags_>(_imgui, "ListClipperFlags", py::arithmetic())
+        .value("NONE", ImGuiListClipperFlags_::ImGuiListClipperFlags_None)
+        .value("NO_SET_TABLE_ROW_COUNTERS", ImGuiListClipperFlags_::ImGuiListClipperFlags_NoSetTableRowCounters)
+        .export_values()
+    ;
     py::class_<ImColor> Color(_imgui, "Color");
     registry.on(_imgui, "Color", Color);
         Color
@@ -2910,12 +2982,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def(py::init<unsigned int>()
         , py::arg("rgba")
         )
-        .def("set_hsv", &ImColor::SetHSV
-            , py::arg("h")
-            , py::arg("s")
-            , py::arg("v")
-            , py::arg("a") = 1.0f
-            , py::return_value_policy::automatic_reference)
         .def_static("hsv", &ImColor::HSV
             , py::arg("h")
             , py::arg("s")
@@ -2956,9 +3022,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     ;
 
     py::enum_<ImGuiSelectionRequestType>(_imgui, "SelectionRequestType", py::arithmetic())
-        .value("SELECTION_REQUEST_TYPE_NONE", ImGuiSelectionRequestType::ImGuiSelectionRequestType_None)
-        .value("SELECTION_REQUEST_TYPE_SET_ALL", ImGuiSelectionRequestType::ImGuiSelectionRequestType_SetAll)
-        .value("SELECTION_REQUEST_TYPE_SET_RANGE", ImGuiSelectionRequestType::ImGuiSelectionRequestType_SetRange)
+        .value("NONE", ImGuiSelectionRequestType::ImGuiSelectionRequestType_None)
+        .value("SET_ALL", ImGuiSelectionRequestType::ImGuiSelectionRequestType_SetAll)
+        .value("SET_RANGE", ImGuiSelectionRequestType::ImGuiSelectionRequestType_SetRange)
         .export_values()
     ;
     py::class_<ImGuiSelectionRequest> SelectionRequest(_imgui, "SelectionRequest");
@@ -2975,15 +3041,15 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     registry.on(_imgui, "DrawCmd", DrawCmd);
         DrawCmd
         .def_readwrite("clip_rect", &ImDrawCmd::ClipRect)
-        .def_readwrite("texture_id", &ImDrawCmd::TextureId)
+        .def_readwrite("tex_ref", &ImDrawCmd::TexRef)
         .def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset)
         .def_readwrite("idx_offset", &ImDrawCmd::IdxOffset)
         .def_readwrite("elem_count", &ImDrawCmd::ElemCount)
         .def_readwrite("user_callback", &ImDrawCmd::UserCallback)
         .def_readwrite("user_callback_data", &ImDrawCmd::UserCallbackData)
+        .def_readwrite("user_callback_data_size", &ImDrawCmd::UserCallbackDataSize)
+        .def_readwrite("user_callback_data_offset", &ImDrawCmd::UserCallbackDataOffset)
         .def(py::init<>())
-        .def("get_tex_id", &ImDrawCmd::GetTexID
-            , py::return_value_policy::automatic_reference)
     ;
 
     py::class_<ImDrawVert> DrawVert(_imgui, "DrawVert");
@@ -2998,7 +3064,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     registry.on(_imgui, "DrawCmdHeader", DrawCmdHeader);
         DrawCmdHeader
         .def_readwrite("clip_rect", &ImDrawCmdHeader::ClipRect)
-        .def_readwrite("texture_id", &ImDrawCmdHeader::TextureId)
+        .def_readwrite("tex_ref", &ImDrawCmdHeader::TexRef)
         .def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset)
     ;
 
@@ -3007,9 +3073,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     py::class_<ImDrawListSplitter> DrawListSplitter(_imgui, "DrawListSplitter");
     registry.on(_imgui, "DrawListSplitter", DrawListSplitter);
         DrawListSplitter
-        .def(py::init<>())
-        .def("clear", &ImDrawListSplitter::Clear
-            , py::return_value_policy::automatic_reference)
         .def("clear_free_memory", &ImDrawListSplitter::ClearFreeMemory
             , py::return_value_policy::automatic_reference)
         .def("split", &ImDrawListSplitter::Split
@@ -3066,14 +3129,10 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("pop_clip_rect", &ImDrawList::PopClipRect
             , py::return_value_policy::automatic_reference)
-        .def("push_texture_id", &ImDrawList::PushTextureID
-            , py::arg("texture_id")
+        .def("push_texture", &ImDrawList::PushTexture
+            , py::arg("tex_ref")
             , py::return_value_policy::automatic_reference)
-        .def("pop_texture_id", &ImDrawList::PopTextureID
-            , py::return_value_policy::automatic_reference)
-        .def("get_clip_rect_min", &ImDrawList::GetClipRectMin
-            , py::return_value_policy::automatic_reference)
-        .def("get_clip_rect_max", &ImDrawList::GetClipRectMax
+        .def("pop_texture", &ImDrawList::PopTexture
             , py::return_value_policy::automatic_reference)
         .def("add_line", &ImDrawList::AddLine
             , py::arg("p1")
@@ -3179,7 +3238,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("text_begin")
             , py::arg("text_end") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def("add_text", py::overload_cast<const ImFont *, float, const ImVec2 &, unsigned int, const char *, const char *, float, const ImVec4 *>(&ImDrawList::AddText)
+        .def("add_text", py::overload_cast<ImFont *, float, const ImVec2 &, unsigned int, const char *, const char *, float, const ImVec4 *>(&ImDrawList::AddText)
             , py::arg("font")
             , py::arg("font_size")
             , py::arg("pos")
@@ -3224,7 +3283,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
         .def("add_image", &ImDrawList::AddImage
-            , py::arg("user_texture_id")
+            , py::arg("tex_ref")
             , py::arg("p_min")
             , py::arg("p_max")
             , py::arg("uv_min") = ImVec2(0,0)
@@ -3232,7 +3291,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("col") = IM_COL32_WHITE
             , py::return_value_policy::automatic_reference)
         .def("add_image_quad", &ImDrawList::AddImageQuad
-            , py::arg("user_texture_id")
+            , py::arg("tex_ref")
             , py::arg("p1")
             , py::arg("p2")
             , py::arg("p3")
@@ -3244,7 +3303,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("col") = IM_COL32_WHITE
             , py::return_value_policy::automatic_reference)
         .def("add_image_rounded", &ImDrawList::AddImageRounded
-            , py::arg("user_texture_id")
+            , py::arg("tex_ref")
             , py::arg("p_min")
             , py::arg("p_max")
             , py::arg("uv_min")
@@ -3252,25 +3311,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("col")
             , py::arg("rounding")
             , py::arg("flags") = 0
-            , py::return_value_policy::automatic_reference)
-        .def("path_clear", &ImDrawList::PathClear
-            , py::return_value_policy::automatic_reference)
-        .def("path_line_to", &ImDrawList::PathLineTo
-            , py::arg("pos")
-            , py::return_value_policy::automatic_reference)
-        .def("path_line_to_merge_duplicate", &ImDrawList::PathLineToMergeDuplicate
-            , py::arg("pos")
-            , py::return_value_policy::automatic_reference)
-        .def("path_fill_convex", &ImDrawList::PathFillConvex
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
-        .def("path_fill_concave", &ImDrawList::PathFillConcave
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
-        .def("path_stroke", &ImDrawList::PathStroke
-            , py::arg("col")
-            , py::arg("flags") = 0
-            , py::arg("thickness") = 1.0f
             , py::return_value_policy::automatic_reference)
         .def("path_arc_to", &ImDrawList::PathArcTo
             , py::arg("center")
@@ -3312,19 +3352,12 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("add_callback", &ImDrawList::AddCallback
             , py::arg("callback")
-            , py::arg("callback_data")
+            , py::arg("userdata")
+            , py::arg("userdata_size") = 0
             , py::return_value_policy::automatic_reference)
         .def("add_draw_cmd", &ImDrawList::AddDrawCmd
             , py::return_value_policy::automatic_reference)
         .def("clone_output", &ImDrawList::CloneOutput
-            , py::return_value_policy::automatic_reference)
-        .def("channels_split", &ImDrawList::ChannelsSplit
-            , py::arg("count")
-            , py::return_value_policy::automatic_reference)
-        .def("channels_merge", &ImDrawList::ChannelsMerge
-            , py::return_value_policy::automatic_reference)
-        .def("channels_set_current", &ImDrawList::ChannelsSetCurrent
-            , py::arg("n")
             , py::return_value_policy::automatic_reference)
         .def("prim_reserve", &ImDrawList::PrimReserve
             , py::arg("idx_count")
@@ -3357,19 +3390,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("uv_d")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
-        .def("prim_write_vtx", &ImDrawList::PrimWriteVtx
-            , py::arg("pos")
-            , py::arg("uv")
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
-        .def("prim_write_idx", &ImDrawList::PrimWriteIdx
-            , py::arg("idx")
-            , py::return_value_policy::automatic_reference)
-        .def("prim_vtx", &ImDrawList::PrimVtx
-            , py::arg("pos")
-            , py::arg("uv")
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
     ;
 
     py::class_<ImDrawData> DrawData(_imgui, "DrawData");
@@ -3383,6 +3403,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("display_size", &ImDrawData::DisplaySize)
         .def_readwrite("framebuffer_scale", &ImDrawData::FramebufferScale)
         .def_readwrite("owner_viewport", &ImDrawData::OwnerViewport)
+        .def_readwrite("textures", &ImDrawData::Textures)
         .def(py::init<>())
         .def("clear", &ImDrawData::Clear
             , py::return_value_policy::automatic_reference)
@@ -3396,29 +3417,108 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
+    py::enum_<ImTextureFormat>(_imgui, "TextureFormat", py::arithmetic())
+        .value("RGBA32", ImTextureFormat::ImTextureFormat_RGBA32)
+        .value("ALPHA8", ImTextureFormat::ImTextureFormat_Alpha8)
+        .export_values()
+    ;
+    py::enum_<ImTextureStatus>(_imgui, "TextureStatus", py::arithmetic())
+        .value("OK", ImTextureStatus::ImTextureStatus_OK)
+        .value("DESTROYED", ImTextureStatus::ImTextureStatus_Destroyed)
+        .value("WANT_CREATE", ImTextureStatus::ImTextureStatus_WantCreate)
+        .value("WANT_UPDATES", ImTextureStatus::ImTextureStatus_WantUpdates)
+        .value("WANT_DESTROY", ImTextureStatus::ImTextureStatus_WantDestroy)
+        .export_values()
+    ;
+    py::class_<ImTextureRect> TextureRect(_imgui, "TextureRect");
+    registry.on(_imgui, "TextureRect", TextureRect);
+        TextureRect
+        .def_readwrite("x", &ImTextureRect::x)
+        .def_readwrite("y", &ImTextureRect::y)
+        .def_readwrite("w", &ImTextureRect::w)
+        .def_readwrite("h", &ImTextureRect::h)
+    ;
+
+    py::class_<ImTextureData> TextureData(_imgui, "TextureData");
+    registry.on(_imgui, "TextureData", TextureData);
+        TextureData
+        .def_readwrite("unique_id", &ImTextureData::UniqueID)
+        .def_readwrite("status", &ImTextureData::Status)
+        .def_readwrite("backend_user_data", &ImTextureData::BackendUserData)
+        .def_readwrite("tex_id", &ImTextureData::TexID)
+        .def_readwrite("format", &ImTextureData::Format)
+        .def_readwrite("width", &ImTextureData::Width)
+        .def_readwrite("height", &ImTextureData::Height)
+        .def_readwrite("bytes_per_pixel", &ImTextureData::BytesPerPixel)
+        .def_readwrite("used_rect", &ImTextureData::UsedRect)
+        .def_readwrite("update_rect", &ImTextureData::UpdateRect)
+        .def_readwrite("updates", &ImTextureData::Updates)
+        .def_readwrite("unused_frames", &ImTextureData::UnusedFrames)
+        .def_readwrite("ref_count", &ImTextureData::RefCount)
+        .def_readwrite("use_colors", &ImTextureData::UseColors)
+        .def_readwrite("want_destroy_next_frame", &ImTextureData::WantDestroyNextFrame)
+        .def(py::init<>())
+        .def("create", &ImTextureData::Create
+            , py::arg("format")
+            , py::arg("w")
+            , py::arg("h")
+            , py::return_value_policy::automatic_reference)
+        .def("destroy_pixels", &ImTextureData::DestroyPixels
+            , py::return_value_policy::automatic_reference)
+        .def("get_pixels", &ImTextureData::GetPixels
+            , py::return_value_policy::automatic_reference)
+        .def("get_pixels_at", &ImTextureData::GetPixelsAt
+            , py::arg("x")
+            , py::arg("y")
+            , py::return_value_policy::automatic_reference)
+        .def("get_size_in_bytes", &ImTextureData::GetSizeInBytes
+            , py::return_value_policy::automatic_reference)
+        .def("get_pitch", &ImTextureData::GetPitch
+            , py::return_value_policy::automatic_reference)
+        .def("get_tex_ref", &ImTextureData::GetTexRef
+            , py::return_value_policy::automatic_reference)
+        .def("get_tex_id", &ImTextureData::GetTexID
+            , py::return_value_policy::automatic_reference)
+        .def("set_tex_id", &ImTextureData::SetTexID
+            , py::arg("tex_id")
+            , py::return_value_policy::automatic_reference)
+        .def("set_status", &ImTextureData::SetStatus
+            , py::arg("status")
+            , py::return_value_policy::automatic_reference)
+    ;
+
     py::class_<ImFontConfig> FontConfig(_imgui, "FontConfig");
     registry.on(_imgui, "FontConfig", FontConfig);
         FontConfig
+        .def_readonly("name", &ImFontConfig::Name)
         .def_readwrite("font_data", &ImFontConfig::FontData)
         .def_readwrite("font_data_size", &ImFontConfig::FontDataSize)
         .def_readwrite("font_data_owned_by_atlas", &ImFontConfig::FontDataOwnedByAtlas)
-        .def_readwrite("font_no", &ImFontConfig::FontNo)
-        .def_readwrite("size_pixels", &ImFontConfig::SizePixels)
+        .def_readwrite("merge_mode", &ImFontConfig::MergeMode)
+        .def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH)
+        .def_readwrite("pixel_snap_v", &ImFontConfig::PixelSnapV)
         .def_readwrite("oversample_h", &ImFontConfig::OversampleH)
         .def_readwrite("oversample_v", &ImFontConfig::OversampleV)
-        .def_readwrite("pixel_snap_h", &ImFontConfig::PixelSnapH)
-        .def_readwrite("glyph_extra_spacing", &ImFontConfig::GlyphExtraSpacing)
-        .def_readwrite("glyph_offset", &ImFontConfig::GlyphOffset)
+        .def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar)
+        .def_readwrite("size_pixels", &ImFontConfig::SizePixels)
         .def_readwrite("glyph_ranges", &ImFontConfig::GlyphRanges)
+        .def_readwrite("glyph_exclude_ranges", &ImFontConfig::GlyphExcludeRanges)
+        .def_readwrite("glyph_offset", &ImFontConfig::GlyphOffset)
         .def_readwrite("glyph_min_advance_x", &ImFontConfig::GlyphMinAdvanceX)
         .def_readwrite("glyph_max_advance_x", &ImFontConfig::GlyphMaxAdvanceX)
-        .def_readwrite("merge_mode", &ImFontConfig::MergeMode)
-        .def_readwrite("font_builder_flags", &ImFontConfig::FontBuilderFlags)
+        .def_readwrite("glyph_extra_advance_x", &ImFontConfig::GlyphExtraAdvanceX)
+        .def_readwrite("font_no", &ImFontConfig::FontNo)
+        .def_readwrite("font_loader_flags", &ImFontConfig::FontLoaderFlags)
         .def_readwrite("rasterizer_multiply", &ImFontConfig::RasterizerMultiply)
         .def_readwrite("rasterizer_density", &ImFontConfig::RasterizerDensity)
-        .def_readwrite("ellipsis_char", &ImFontConfig::EllipsisChar)
-        .def_readonly("name", &ImFontConfig::Name)
+        .def_readwrite("flags", &ImFontConfig::Flags)
         .def_readwrite("dst_font", &ImFontConfig::DstFont)
+        //render_wrapped_field
+        .def_property("font_loader",
+            [](const ImFontConfig& self){ return py::capsule(self.FontLoader, "ImFontLoader"); },
+            [](ImFontConfig& self, const py::capsule& value){ self.FontLoader = value; }
+        )
+        .def_readwrite("font_loader_data", &ImFontConfig::FontLoaderData)
         .def(py::init<>())
     ;
 
@@ -3434,6 +3534,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("v0", &ImFontGlyph::V0)
         .def_readwrite("u1", &ImFontGlyph::U1)
         .def_readwrite("v1", &ImFontGlyph::V1)
+        .def_readwrite("pack_id", &ImFontGlyph::PackId)
+        .def(py::init<>())
     ;
 
     py::class_<ImFontGlyphRangesBuilder> FontGlyphRangesBuilder(_imgui, "FontGlyphRangesBuilder");
@@ -3441,17 +3543,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         FontGlyphRangesBuilder
         .def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars)
         .def(py::init<>())
-        .def("clear", &ImFontGlyphRangesBuilder::Clear
-            , py::return_value_policy::automatic_reference)
-        .def("get_bit", &ImFontGlyphRangesBuilder::GetBit
-            , py::arg("n")
-            , py::return_value_policy::automatic_reference)
-        .def("set_bit", &ImFontGlyphRangesBuilder::SetBit
-            , py::arg("n")
-            , py::return_value_policy::automatic_reference)
-        .def("add_char", &ImFontGlyphRangesBuilder::AddChar
-            , py::arg("c")
-            , py::return_value_policy::automatic_reference)
         .def("add_text", &ImFontGlyphRangesBuilder::AddText
             , py::arg("text")
             , py::arg("text_end") = nullptr
@@ -3464,20 +3555,16 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImFontAtlasCustomRect> FontAtlasCustomRect(_imgui, "FontAtlasCustomRect");
-    registry.on(_imgui, "FontAtlasCustomRect", FontAtlasCustomRect);
-        FontAtlasCustomRect
-        .def_readwrite("width", &ImFontAtlasCustomRect::Width)
-        .def_readwrite("height", &ImFontAtlasCustomRect::Height)
-        .def_readwrite("x", &ImFontAtlasCustomRect::X)
-        .def_readwrite("y", &ImFontAtlasCustomRect::Y)
-        .def_readwrite("glyph_id", &ImFontAtlasCustomRect::GlyphID)
-        .def_readwrite("glyph_advance_x", &ImFontAtlasCustomRect::GlyphAdvanceX)
-        .def_readwrite("glyph_offset", &ImFontAtlasCustomRect::GlyphOffset)
-        .def_readwrite("font", &ImFontAtlasCustomRect::Font)
+    py::class_<ImFontAtlasRect> FontAtlasRect(_imgui, "FontAtlasRect");
+    registry.on(_imgui, "FontAtlasRect", FontAtlasRect);
+        FontAtlasRect
+        .def_readwrite("x", &ImFontAtlasRect::x)
+        .def_readwrite("y", &ImFontAtlasRect::y)
+        .def_readwrite("w", &ImFontAtlasRect::w)
+        .def_readwrite("h", &ImFontAtlasRect::h)
+        .def_readwrite("uv0", &ImFontAtlasRect::uv0)
+        .def_readwrite("uv1", &ImFontAtlasRect::uv1)
         .def(py::init<>())
-        .def("is_packed", &ImFontAtlasCustomRect::IsPacked
-            , py::return_value_policy::automatic_reference)
     ;
 
     py::enum_<ImFontAtlasFlags_>(_imgui, "FontAtlasFlags", py::arithmetic())
@@ -3500,113 +3587,172 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def("add_font_from_memory_ttf", &ImFontAtlas::AddFontFromMemoryTTF
             , py::arg("font_data")
             , py::arg("font_data_size")
-            , py::arg("size_pixels")
+            , py::arg("size_pixels") = 0.0f
             , py::arg("font_cfg") = nullptr
             , py::arg("glyph_ranges") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("add_font_from_memory_compressed_ttf", &ImFontAtlas::AddFontFromMemoryCompressedTTF
             , py::arg("compressed_font_data")
             , py::arg("compressed_font_data_size")
-            , py::arg("size_pixels")
+            , py::arg("size_pixels") = 0.0f
             , py::arg("font_cfg") = nullptr
             , py::arg("glyph_ranges") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("add_font_from_memory_compressed_base85ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
             , py::arg("compressed_font_data_base85")
-            , py::arg("size_pixels")
+            , py::arg("size_pixels") = 0.0f
             , py::arg("font_cfg") = nullptr
             , py::arg("glyph_ranges") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def("clear_input_data", &ImFontAtlas::ClearInputData
-            , py::return_value_policy::automatic_reference)
-        .def("clear_tex_data", &ImFontAtlas::ClearTexData
-            , py::return_value_policy::automatic_reference)
-        .def("clear_fonts", &ImFontAtlas::ClearFonts
+        .def("remove_font", &ImFontAtlas::RemoveFont
+            , py::arg("font")
             , py::return_value_policy::automatic_reference)
         .def("clear", &ImFontAtlas::Clear
             , py::return_value_policy::automatic_reference)
-        .def("build", &ImFontAtlas::Build
+        .def("compact_cache", &ImFontAtlas::CompactCache
             , py::return_value_policy::automatic_reference)
-        .def("is_built", &ImFontAtlas::IsBuilt
+        .def("set_font_loader", [](ImFontAtlas& self, const py::capsule& font_loader)
+            {
+                self.SetFontLoader(font_loader);
+                return ;
+            }
+            , py::arg("font_loader")
             , py::return_value_policy::automatic_reference)
-        .def("set_tex_id", &ImFontAtlas::SetTexID
-            , py::arg("id")
+        .def("clear_input_data", &ImFontAtlas::ClearInputData
+            , py::return_value_policy::automatic_reference)
+        .def("clear_fonts", &ImFontAtlas::ClearFonts
+            , py::return_value_policy::automatic_reference)
+        .def("clear_tex_data", &ImFontAtlas::ClearTexData
             , py::return_value_policy::automatic_reference)
         .def("get_glyph_ranges_default", &ImFontAtlas::GetGlyphRangesDefault
             , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_greek", &ImFontAtlas::GetGlyphRangesGreek
+        .def("add_custom_rect", &ImFontAtlas::AddCustomRect
+            , py::arg("width")
+            , py::arg("height")
+            , py::arg("out_r") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_korean", &ImFontAtlas::GetGlyphRangesKorean
+        .def("remove_custom_rect", &ImFontAtlas::RemoveCustomRect
+            , py::arg("id")
             , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_japanese", &ImFontAtlas::GetGlyphRangesJapanese
-            , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_chinese_full", &ImFontAtlas::GetGlyphRangesChineseFull
-            , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_chinese_simplified_common", &ImFontAtlas::GetGlyphRangesChineseSimplifiedCommon
-            , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_cyrillic", &ImFontAtlas::GetGlyphRangesCyrillic
-            , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_thai", &ImFontAtlas::GetGlyphRangesThai
-            , py::return_value_policy::automatic_reference)
-        .def("get_glyph_ranges_vietnamese", &ImFontAtlas::GetGlyphRangesVietnamese
+        .def("get_custom_rect", &ImFontAtlas::GetCustomRect
+            , py::arg("id")
+            , py::arg("out_r")
             , py::return_value_policy::automatic_reference)
         .def_readwrite("flags", &ImFontAtlas::Flags)
-        .def_readwrite("tex_id", &ImFontAtlas::TexID)
-        .def_readwrite("tex_desired_width", &ImFontAtlas::TexDesiredWidth)
+        .def_readwrite("tex_desired_format", &ImFontAtlas::TexDesiredFormat)
         .def_readwrite("tex_glyph_padding", &ImFontAtlas::TexGlyphPadding)
-        .def_readwrite("locked", &ImFontAtlas::Locked)
+        .def_readwrite("tex_min_width", &ImFontAtlas::TexMinWidth)
+        .def_readwrite("tex_min_height", &ImFontAtlas::TexMinHeight)
+        .def_readwrite("tex_max_width", &ImFontAtlas::TexMaxWidth)
+        .def_readwrite("tex_max_height", &ImFontAtlas::TexMaxHeight)
         .def_readwrite("user_data", &ImFontAtlas::UserData)
-        .def_readwrite("tex_ready", &ImFontAtlas::TexReady)
+        .def_readwrite("tex_ref", &ImFontAtlas::TexRef)
+        .def_readwrite("tex_data", &ImFontAtlas::TexData)
+        .def_readwrite("tex_list", &ImFontAtlas::TexList)
+        .def_readwrite("locked", &ImFontAtlas::Locked)
+        .def_readwrite("renderer_has_textures", &ImFontAtlas::RendererHasTextures)
+        .def_readwrite("tex_is_built", &ImFontAtlas::TexIsBuilt)
         .def_readwrite("tex_pixels_use_colors", &ImFontAtlas::TexPixelsUseColors)
-        .def_readwrite("tex_width", &ImFontAtlas::TexWidth)
-        .def_readwrite("tex_height", &ImFontAtlas::TexHeight)
         .def_readwrite("tex_uv_scale", &ImFontAtlas::TexUvScale)
         .def_readwrite("tex_uv_white_pixel", &ImFontAtlas::TexUvWhitePixel)
+        .def_readwrite("sources", &ImFontAtlas::Sources)
         .def_readonly("tex_uv_lines", &ImFontAtlas::TexUvLines)
-        .def_readwrite("font_builder_flags", &ImFontAtlas::FontBuilderFlags)
-        .def_readwrite("pack_id_mouse_cursors", &ImFontAtlas::PackIdMouseCursors)
-        .def_readwrite("pack_id_lines", &ImFontAtlas::PackIdLines)
+        .def_readwrite("tex_next_unique_id", &ImFontAtlas::TexNextUniqueID)
+        .def_readwrite("font_next_unique_id", &ImFontAtlas::FontNextUniqueID)
+        .def_readwrite("draw_list_shared_datas", &ImFontAtlas::DrawListSharedDatas)
+        //render_wrapped_field
+        .def_property("builder",
+            [](const ImFontAtlas& self){ return py::capsule(self.Builder, "ImFontAtlasBuilder"); },
+            [](ImFontAtlas& self, const py::capsule& value){ self.Builder = value; }
+        )
+        //render_wrapped_field
+        .def_property("font_loader",
+            [](const ImFontAtlas& self){ return py::capsule(self.FontLoader, "ImFontLoader"); },
+            [](ImFontAtlas& self, const py::capsule& value){ self.FontLoader = value; }
+        )
+        .def_property("font_loader_name",
+            [](const ImFontAtlas& self){ return self.FontLoaderName; },
+            [](ImFontAtlas& self, const char* source){ self.FontLoaderName = strdup(source); }
+        )
+        .def_readwrite("font_loader_data", &ImFontAtlas::FontLoaderData)
+        .def_readwrite("font_loader_flags", &ImFontAtlas::FontLoaderFlags)
+        .def_readwrite("ref_count", &ImFontAtlas::RefCount)
+        //render_wrapped_field
+        .def_property("owner_context",
+            [](const ImFontAtlas& self){ return py::capsule(self.OwnerContext, "ImGuiContext"); },
+            [](ImFontAtlas& self, const py::capsule& value){ self.OwnerContext = value; }
+        )
     ;
 
+    py::class_<ImFontBaked> FontBaked(_imgui, "FontBaked");
+    registry.on(_imgui, "FontBaked", FontBaked);
+        FontBaked
+        .def_readwrite("index_advance_x", &ImFontBaked::IndexAdvanceX)
+        .def_readwrite("fallback_advance_x", &ImFontBaked::FallbackAdvanceX)
+        .def_readwrite("size", &ImFontBaked::Size)
+        .def_readwrite("rasterizer_density", &ImFontBaked::RasterizerDensity)
+        .def_readwrite("index_lookup", &ImFontBaked::IndexLookup)
+        .def_readwrite("glyphs", &ImFontBaked::Glyphs)
+        .def_readwrite("fallback_glyph_index", &ImFontBaked::FallbackGlyphIndex)
+        .def_readwrite("ascent", &ImFontBaked::Ascent)
+        .def_readwrite("descent", &ImFontBaked::Descent)
+        .def_readwrite("last_used_frame", &ImFontBaked::LastUsedFrame)
+        .def_readwrite("baked_id", &ImFontBaked::BakedId)
+        .def_readwrite("container_font", &ImFontBaked::ContainerFont)
+        .def_readwrite("font_loader_datas", &ImFontBaked::FontLoaderDatas)
+        .def(py::init<>())
+        .def("clear_output_data", &ImFontBaked::ClearOutputData
+            , py::return_value_policy::automatic_reference)
+        .def("find_glyph", &ImFontBaked::FindGlyph
+            , py::arg("c")
+            , py::return_value_policy::automatic_reference)
+        .def("find_glyph_no_fallback", &ImFontBaked::FindGlyphNoFallback
+            , py::arg("c")
+            , py::return_value_policy::automatic_reference)
+        .def("get_char_advance", &ImFontBaked::GetCharAdvance
+            , py::arg("c")
+            , py::return_value_policy::automatic_reference)
+        .def("is_glyph_loaded", &ImFontBaked::IsGlyphLoaded
+            , py::arg("c")
+            , py::return_value_policy::automatic_reference)
+    ;
+
+    py::enum_<ImFontFlags_>(_imgui, "FontFlags", py::arithmetic())
+        .value("NONE", ImFontFlags_::ImFontFlags_None)
+        .value("NO_LOAD_ERROR", ImFontFlags_::ImFontFlags_NoLoadError)
+        .value("NO_LOAD_GLYPHS", ImFontFlags_::ImFontFlags_NoLoadGlyphs)
+        .value("LOCK_BAKED_SIZES", ImFontFlags_::ImFontFlags_LockBakedSizes)
+        .export_values()
+    ;
     py::class_<ImFont> Font(_imgui, "Font");
     registry.on(_imgui, "Font", Font);
         Font
-        .def_readwrite("index_advance_x", &ImFont::IndexAdvanceX)
-        .def_readwrite("fallback_advance_x", &ImFont::FallbackAdvanceX)
-        .def_readwrite("font_size", &ImFont::FontSize)
-        .def_readwrite("index_lookup", &ImFont::IndexLookup)
-        .def_readwrite("glyphs", &ImFont::Glyphs)
-        .def_readwrite("fallback_glyph", &ImFont::FallbackGlyph)
+        .def_readwrite("last_baked", &ImFont::LastBaked)
         .def_readwrite("container_atlas", &ImFont::ContainerAtlas)
-        .def_readwrite("config_data", &ImFont::ConfigData)
-        .def_readwrite("config_data_count", &ImFont::ConfigDataCount)
-        .def_readwrite("fallback_char", &ImFont::FallbackChar)
+        .def_readwrite("flags", &ImFont::Flags)
+        .def_readwrite("current_rasterizer_density", &ImFont::CurrentRasterizerDensity)
+        .def_readwrite("font_id", &ImFont::FontId)
+        .def_readwrite("legacy_size", &ImFont::LegacySize)
+        .def_readwrite("sources", &ImFont::Sources)
         .def_readwrite("ellipsis_char", &ImFont::EllipsisChar)
-        .def_readwrite("ellipsis_char_count", &ImFont::EllipsisCharCount)
-        .def_readwrite("ellipsis_width", &ImFont::EllipsisWidth)
-        .def_readwrite("ellipsis_char_step", &ImFont::EllipsisCharStep)
-        .def_readwrite("dirty_lookup_tables", &ImFont::DirtyLookupTables)
-        .def_readwrite("scale", &ImFont::Scale)
-        .def_readwrite("ascent", &ImFont::Ascent)
-        .def_readwrite("descent", &ImFont::Descent)
-        .def_readwrite("metrics_total_surface", &ImFont::MetricsTotalSurface)
-        .def_readonly("used4k_pages_map", &ImFont::Used4kPagesMap)
+        .def_readwrite("fallback_char", &ImFont::FallbackChar)
+        .def_readonly("used8k_pages_map", &ImFont::Used8kPagesMap)
+        .def_readwrite("ellipsis_auto_bake", &ImFont::EllipsisAutoBake)
+        .def_readwrite("remap_pairs", &ImFont::RemapPairs)
         .def(py::init<>())
-        .def("find_glyph", &ImFont::FindGlyph
-            , py::arg("c")
-            , py::return_value_policy::automatic_reference)
-        .def("find_glyph_no_fallback", &ImFont::FindGlyphNoFallback
-            , py::arg("c")
-            , py::return_value_policy::automatic_reference)
-        .def("get_char_advance", &ImFont::GetCharAdvance
+        .def("is_glyph_in_font", &ImFont::IsGlyphInFont
             , py::arg("c")
             , py::return_value_policy::automatic_reference)
         .def("is_loaded", &ImFont::IsLoaded
             , py::return_value_policy::automatic_reference)
         .def("get_debug_name", &ImFont::GetDebugName
             , py::return_value_policy::automatic_reference)
-        .def("calc_word_wrap_position_a", &ImFont::CalcWordWrapPositionA
-            , py::arg("scale")
+        .def("get_font_baked", &ImFont::GetFontBaked
+            , py::arg("font_size")
+            , py::arg("density") = -1.0f
+            , py::return_value_policy::automatic_reference)
+        .def("calc_word_wrap_position", &ImFont::CalcWordWrapPosition
+            , py::arg("size")
             , py::arg("text")
             , py::arg("text_end")
             , py::arg("wrap_width")
@@ -3617,6 +3763,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("pos")
             , py::arg("col")
             , py::arg("c")
+            , py::arg("cpu_fine_clip") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("render_text", &ImFont::RenderText
             , py::arg("draw_list")
@@ -3627,36 +3774,13 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("text_begin")
             , py::arg("text_end")
             , py::arg("wrap_width") = 0.0f
-            , py::arg("cpu_fine_clip") = false
-            , py::return_value_policy::automatic_reference)
-        .def("build_lookup_table", &ImFont::BuildLookupTable
+            , py::arg("flags") = 0
             , py::return_value_policy::automatic_reference)
         .def("clear_output_data", &ImFont::ClearOutputData
             , py::return_value_policy::automatic_reference)
-        .def("grow_index", &ImFont::GrowIndex
-            , py::arg("new_size")
-            , py::return_value_policy::automatic_reference)
-        .def("add_glyph", &ImFont::AddGlyph
-            , py::arg("src_cfg")
-            , py::arg("c")
-            , py::arg("x0")
-            , py::arg("y0")
-            , py::arg("x1")
-            , py::arg("y1")
-            , py::arg("u0")
-            , py::arg("v0")
-            , py::arg("u1")
-            , py::arg("v1")
-            , py::arg("advance_x")
-            , py::return_value_policy::automatic_reference)
         .def("add_remap_char", &ImFont::AddRemapChar
-            , py::arg("dst")
-            , py::arg("src")
-            , py::arg("overwrite_dst") = true
-            , py::return_value_policy::automatic_reference)
-        .def("set_glyph_visible", &ImFont::SetGlyphVisible
-            , py::arg("c")
-            , py::arg("visible")
+            , py::arg("from_codepoint")
+            , py::arg("to_codepoint")
             , py::return_value_policy::automatic_reference)
         .def("is_glyph_range_unused", &ImFont::IsGlyphRangeUnused
             , py::arg("c_begin")
@@ -3689,6 +3813,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("flags", &ImGuiViewport::Flags)
         .def_readwrite("pos", &ImGuiViewport::Pos)
         .def_readwrite("size", &ImGuiViewport::Size)
+        .def_readwrite("framebuffer_scale", &ImGuiViewport::FramebufferScale)
         .def_readwrite("work_pos", &ImGuiViewport::WorkPos)
         .def_readwrite("work_size", &ImGuiViewport::WorkSize)
         .def_readwrite("dpi_scale", &ImGuiViewport::DpiScale)
@@ -3713,8 +3838,10 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     registry.on(_imgui, "PlatformImeData", PlatformImeData);
         PlatformImeData
         .def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible)
+        .def_readwrite("want_text_input", &ImGuiPlatformImeData::WantTextInput)
         .def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos)
         .def_readwrite("input_line_height", &ImGuiPlatformImeData::InputLineHeight)
+        .def_readwrite("viewport_id", &ImGuiPlatformImeData::ViewportId)
         .def(py::init<>())
     ;
 

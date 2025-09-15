@@ -11,94 +11,109 @@ defaults:
   'out_ini_size': '0'
 
 specs:
-  # Wrapped
-
   'struct/ImGuiContext':
     wrapper: 'py::capsule'
 
-  #TODO:  I can probably generate the next four if I use a wrapper for the opaque type.
-  #'struct/ImGuiContext': {exclude: true}
-  #'function/ImGui::CreateContext': {exclude: true}
-  #'function/ImGui::DestroyContext': {exclude: true}
-  #'function/ImGui::GetCurrentContext': {exclude: true}
-  #'function/ImGui::SetCurrentContext': {exclude: true}
+  'struct/ImFontLoader':
+    wrapper: 'py::capsule'
 
-  'function/ImGui::SetDragDropPayload': {exclude: true}
-  'function/ImGui::Combo': {exclude: true}
-  'function/ImGui::MenuItem': {exclude: true}
-  'function/ImGui::Selectable': {exclude: true}
-  'function/ImGui::ListBox': {exclude: true}
-  'function/ImGui::InputText': {exclude: true}
-  'function/ImGui::InputTextMultiline': {exclude: true}
-  'function/ImGui::CollapsingHeader': {exclude: true}
-  'function/ImGui::PlotLines': {exclude: true}
-  'function/ImGui::PlotHistogram': {exclude: true}
-  'field/ImDrawData::CmdLists': {exclude: true}
-  'function/ImGui::AddPolyline': {exclude: true}
-  'field/ImGui::MouseDown': {exclude: true}
-  'field/ImGui::KeysDown': {exclude: true}
-  'field/ImGui::KeyMap': {exclude: true}
-  'field/ImGui::InputCharacters': {exclude: true} #TODO: renamed?
-  'field/ImGui::NavInputs': {exclude: true} #TODO: renamed?
-  'method/ImFontAtlas::AddFontFromFileTTF': {exclude: true}
-  'method/ImFontAtlas::GetTexDataAsAlpha8': {exclude: true}
-  'method/ImFontAtlas::GetTexDataAsRGBA32': {exclude: true}
-  'field/ImFontAtlas::FontBuilderIO': {exclude: true} #Internal
+  'struct/ImFontAtlasBuilder':
+    wrapper: 'py::capsule'
 
-  'field/ImGuiStyle::Colors': {exclude: true}
+excludes:
+  # Wrapped
+  - 'function/ImGui::SetDragDropPayload'
+  - 'function/ImGui::Combo'
+  - 'function/ImGui::MenuItem'
+  - 'function/ImGui::Selectable'
+  - 'function/ImGui::ListBox'
+  - 'function/ImGui::InputText'
+  - 'function/ImGui::InputTextMultiline'
+  - 'function/ImGui::CollapsingHeader'
+  - 'function/ImGui::PlotLines'
+  - 'function/ImGui::PlotHistogram'
+  - 'function/ImGui::AddPolyline'
+
+  - 'field/ImDrawData::CmdLists'
+
+  - 'field/ImGui::MouseDown'
+  - 'field/ImGui::KeysDown'
+  - 'field/ImGui::KeyMap'
+  - 'field/ImGui::InputCharacters' #TODO: renamed?
+  - 'field/ImGui::NavInputs' #TODO: renamed?
+
+  - 'method/ImFontAtlas::AddFontFromFileTTF'
+  - 'method/ImFontAtlas::GetTexDataAsAlpha8'
+  - 'method/ImFontAtlas::GetTexDataAsRGBA32'
+  - 'field/ImFontAtlas::FontBuilderIO'  #Internal
+
+  - 'field/ImTextureData::Pixels'  #Wrapped
+
+  - 'field/ImGuiStyle::Colors'
 
   # Internal / Ignored
 
-  'function/ImGui::TableGetColumnName': {exclude: true} #TODO: wrap or something
-  'field/ImGuiTableColumnSortSpecs::SortDirection': {exclude: true}
-  'field/ImFontGlyph::Colored': {exclude: true}
-  'function/ImGui::GetAllocatorFunctions': {exclude: true}
-  'field/ImGuiTextFilter::Filters': {exclude: true}
-  'field/ImGuiStorage::Data': {exclude: true}
-  'field/ImFontAtlas::TexPixelsAlpha8': {exclude: true}
-  'field/ImFontAtlas::TexPixelsRGBA32': {exclude: true}
-  #'field/ImFontAtlas::TexWidth': {exclude: true}
-  #'field/ImFontAtlas::TexHeight': {exclude: true}
-  #'field/ImFontAtlas::TexUvScale': {exclude: true}
-  #'field/ImFontAtlas::TexUvWhitePixel': {exclude: true}
-  'field/ImFontAtlas::Fonts': {exclude: true}
-  'field/ImFontAtlas::CustomRects': {exclude: true}
-  'field/ImFontAtlas::ConfigData': {exclude: true}
-  'field/ImFontAtlas::CustomRectIds': {exclude: true}
-  'method/ImFontAtlas::AddCustomRectRegular': {exclude: true}
-  'method/ImFontAtlas::AddCustomRectFontGlyph': {exclude: true}
-  'method/ImFontAtlas::GetCustomRectByIndex': {exclude: true}
-  'method/ImFontAtlas::CalcCustomRectUV': {exclude: true}
-  'method/ImFontAtlas::GetMouseCursorTexData': {exclude: true}
-  'field/ImFontGlyph::Codepoint': {exclude: true}
-  'field/ImFontGlyph::Visible': {exclude: true}
-  'method/ImFont::CalcTextSizeA': {exclude: true}
-  'function/ImGui::SetNextWindowSizeConstraints': {exclude: true}
-  'function/ImGui::SetAllocatorFunctions': {exclude: true}
-  'function/ImGui::MemAlloc': {exclude: true}
-  'function/ImGui::MemFree': {exclude: true}
-  'method/ImGuiIO::GetClipboardTextFn': {exclude: true}
-  'method/ImGuiIO::SetClipboardTextFn': {exclude: true}
-  'method/ImGuiIO::ImeSetInputScreenPosFn': {exclude: true}
-  #'field/ImDrawCmd::UserCallback': {exclude: true}
-  'field/ImColor::HSV': {exclude: true}
-  'struct/ImGuiTextBuffer': {exclude: true} #TODO:Is this causing the link error? ImGuiTextBuffer::EmptyString
-  'struct/CustomRect': {exclude: true}
-  'struct/ImGuiPlatformIO': {exclude: true}
-  'struct/ImGuiPlatformMonitor': {exclude: true}
-  'struct/ImGuiDockContext': {exclude: true}
-  'struct/ImGuiDockNodeSettings': {exclude: true}
-  'struct/ImGuiListClipper': {exclude: true}
-  'field/ImGuiIO::SetPlatformImeDataFn': {exclude: true}
-  'field/ImGuiIO::Ctx': {exclude: true}
-  'struct/ImGuiDockRequest': {exclude: true}
-  'field/ImGuiInputTextCallbackData::Ctx': {exclude: true}
+  - 'function/ImGui::TableGetColumnName' #TODO: wrap or something
+  - 'field/ImGuiTableColumnSortSpecs::SortDirection'
 
-  'struct/ImGuiSelectionBasicStorage': {exclude: true}
-  'struct/ImGuiSelectionExternalStorage': {exclude: true}
+    # Can't bind to bitmap fields
+  - 'field/ImFontGlyph::Colored'
+  - 'field/ImFontGlyph::Visible'
+  - 'field/ImFontGlyph::SourceIdx'
+  - 'field/ImFontGlyph::Codepoint'
 
-  'ctor/ImDrawList::ImDrawList': {exclude: true}
+    # Can't bind to bitmap fields
+  - 'field/ImFontBaked::MetricsTotalSurface'
+  - 'field/ImFontBaked::WantDestroy'
+  - 'field/ImFontBaked::LoadNoFallback'
+  - 'field/ImFontBaked::LoadNoRenderOnLayout'
+  
 
-  'function/ImGui::GetDrawListSharedData': {exclude: true}
+  - 'function/ImGui::GetAllocatorFunctions'
+  - 'field/ImGuiTextFilter::Filters'
+  - 'field/ImGuiStorage::Data'
+
+  - 'field/ImFontAtlas::TexPixelsAlpha8'
+  - 'field/ImFontAtlas::TexPixelsRGBA32'
+  - 'field/ImFontAtlas::Fonts'
+  - 'field/ImFontAtlas::CustomRects'
+  - 'field/ImFontAtlas::ConfigData'
+  - 'field/ImFontAtlas::CustomRectIds'
+  - 'method/ImFontAtlas::AddCustomRectRegular'
+  - 'method/ImFontAtlas::AddCustomRectFontGlyph'
+  - 'method/ImFontAtlas::GetCustomRectByIndex'
+  - 'method/ImFontAtlas::CalcCustomRectUV'
+  - 'method/ImFontAtlas::GetMouseCursorTexData'
+
+  - 'method/ImFont::CalcTextSizeA'
+
+  - 'function/ImGui::SetNextWindowSizeConstraints'
+  - 'function/ImGui::SetAllocatorFunctions'
+  - 'function/ImGui::MemAlloc'
+  - 'function/ImGui::MemFree'
+
+  - 'method/ImGuiIO::GetClipboardTextFn'
+  - 'method/ImGuiIO::SetClipboardTextFn'
+  - 'method/ImGuiIO::ImeSetInputScreenPosFn'
+
+  - 'field/ImColor::HSV'
+  - 'struct/ImGuiTextBuffer' #TODO:Is this causing the link error? ImGuiTextBuffer::EmptyString
+  - 'struct/CustomRect'
+  - 'struct/ImGuiPlatformIO'
+  - 'struct/ImGuiPlatformMonitor'
+  - 'struct/ImGuiDockContext'
+  - 'struct/ImGuiDockNodeSettings'
+  - 'struct/ImGuiListClipper'
+  - 'field/ImGuiIO::SetPlatformImeDataFn'
+  - 'field/ImGuiIO::Ctx'
+  - 'struct/ImGuiDockRequest'
+  - 'field/ImGuiInputTextCallbackData::Ctx'
+
+  - 'struct/ImGuiSelectionBasicStorage'
+  - 'struct/ImGuiSelectionExternalStorage'
+
+  - 'ctor/ImDrawList::ImDrawList'
+
+  - 'function/ImGui::GetDrawListSharedData'
 
   # Overloads

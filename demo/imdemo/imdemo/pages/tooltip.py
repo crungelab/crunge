@@ -11,8 +11,11 @@ class Tooltip(Page):
             imgui.begin_tooltip()
             imgui.text("This button is clickable.")
             imgui.text("This button has full window tooltip.")
-            tex_id = imgui.get_io().fonts.tex_id
-            imgui.image(tex_id, (512, 64), border_col=(1, 0, 0, 1))
+            tex_id = imgui.get_io().fonts.tex_ref.texture_id
+            #imgui.image(imgui.TextureRef(tex_id), (512, 64), border_col=(1, 0, 0, 1))
+            height = imgui.get_io().fonts.tex_data.height
+            width = imgui.get_io().fonts.tex_data.width
+            imgui.image(imgui.TextureRef(tex_id), (width, height))
             imgui.end_tooltip()
         imgui.end()
         super()._draw()

@@ -114,6 +114,7 @@ class ImGuiVu(Vu):
 
     def create_device_objects(self):
         self.create_buffers()
+        # NOTE: do NOT build/upload font atlas here anymore (ImGui 1.92+)
         self.create_pipeline()
 
     def create_buffers(self):
@@ -235,22 +236,8 @@ class ImGuiVu(Vu):
             wgpu_texture = self.device.create_texture(texture_desc)
             texture = Texture2D(wgpu_texture, glm.ivec2(width, height))
             ResourceManager().add(texture)
-            tex.set_tex_id(texture.id)
-
             logger.debug(f"ImGuiVu: created dynamic texture id={texture.id} size=({width}x{height})")
 
-        if status == imgui.TextureStatus.WANT_UPDATES:
-            texture = ResourceManager().texture_kit.get(tex.tex_id)
-            if texture is None:
-                logger.warning(f"ImGuiVu: missing dynamic texture id={tex.tex_id}")
-                tex.set_status(imgui.TextureStatus.DESTROYED)
-                return
-            pixels = tex.pixels  # bytes-like
-            width  = tex.width
-            height = tex.height
-            bpp = tex.bytes_per_pixel
-
-        if status == imgui.TextureStatus.WANT_CREATE or status == imgui.TextureStatus.WANT_UPDATES:
             self.queue.write_texture(
                 # Tells wgpu where to copy the pixel data
                 wgpu.TexelCopyTextureInfo(
@@ -271,6 +258,10 @@ class ImGuiVu(Vu):
                 wgpu.Extent3D(width, height, 1),
             )
 
+
+
+            # Assign the texture view as ImGui's TextureId
+            tex.set_tex_id(texture.id)
             tex.set_status(imgui.TextureStatus.OK)
 
         if status == imgui.TextureStatus.WANT_DESTROY:
@@ -285,10 +276,92 @@ class ImGuiVu(Vu):
                 pass
             tex.set_tex_id(imgui.TextureId.INVALID)
             tex.set_status(imgui.TextureStatus.DESTROYED)
+            tex.backend_user_data = None
             # Purge any cached bindgroup keyed by this id
             self.image_bind_groups.pop(view, None)
 
         
+    def _update_imgui_textures(self, draw_data: imgui.DrawData):
+        #logger.debug("_update_imgui_textures")
+        textures_list = draw_data.textures
+        if not textures_list:
+            return
+
+        for tex in textures_list:
+            status = tex.status  # WantCreate / WantUpdate / WantDestroy / OK
+            if status == imgui.TextureStatus.OK:
+                continue
+
+            if status == imgui.TextureStatus.WANT_DESTROY:
+                # The tex.tex_id is a TextureView we created before.
+                try:
+                    view = tex.tex_id  # likely a WGPUTextureView handle
+                    if view:
+                        # If your binding needs explicit release, do it here.
+                        # e.g., self.device.release_texture_view(view)  # adapt if needed
+                        pass
+                except Exception:
+                    pass
+                tex.set_tex_id(imgui.TextureId.INVALID)
+                tex.set_status(imgui.TextureStatus.DESTROYED)
+                tex.backend_user_data = None
+                # Purge any cached bindgroup keyed by this id
+                self.image_bind_groups.pop(view, None)
+                continue
+
+            # For WANT_CREATE / WANT_UPDATE we (re)upload pixels into a fresh GPU texture
+            # Expecting RGBA32 pixels according to 1.92 protocol
+            pixels = tex.pixels  # bytes-like
+            width  = tex.width
+            height = tex.height
+            bpp = tex.bytes_per_pixel
+
+            # Create GPU texture
+            texture_desc = wgpu.TextureDescriptor(
+                label="Dear ImGui Texture",
+                dimension=wgpu.TextureDimension.E2D,
+                size=wgpu.Extent3D(width, height, 1),
+                sample_count=1,
+                format=wgpu.TextureFormat.RGBA8_UNORM,
+                mip_level_count=1,
+                usage=wgpu.TextureUsage.COPY_DST | wgpu.TextureUsage.TEXTURE_BINDING,
+            )
+
+            wgpu_texture = self.device.create_texture(texture_desc)
+            texture = Texture2D(wgpu_texture, glm.ivec2(width, height))
+            ResourceManager().add(texture)
+            logger.debug(f"ImGuiVu: created dynamic texture id={texture.id} size=({width}x{height})")
+
+            self.queue.write_texture(
+                # Tells wgpu where to copy the pixel data
+                wgpu.TexelCopyTextureInfo(
+                    texture=texture.texture,
+                    mip_level=0,
+                    origin=wgpu.Origin3D(0, 0, 0),
+                    aspect=wgpu.TextureAspect.ALL,
+                ),
+                # The actual pixel data
+                pixels,
+                # The layout of the texture
+                wgpu.TexelCopyBufferLayout(
+                    offset=0,
+                    bytes_per_row=width * bpp,
+                    rows_per_image=height,
+                ),
+                # The texture size
+                wgpu.Extent3D(width, height, 1),
+            )
+
+
+
+            # Assign the texture view as ImGui's TextureId
+            tex.set_tex_id(texture.id)
+            tex.set_status(imgui.TextureStatus.OK)
+            # Optionally keep GPU handles in backend_user_data if you need to release them later
+            #tex.backend_user_data = {"texture": texture, "view": texture.view}
+
+    # --------------------------------------------------------------------------
+
     def create_image_bind_group(self, tex_id):
         # logger.debug("create_image_bind_group")
         texture = ResourceManager().texture_kit.get(tex_id)
@@ -309,6 +382,46 @@ class ImGuiVu(Vu):
 
         return self.device.create_bind_group(bindGroupDesc)
 
+    '''
+    def _bind_group_for_tex_id(self, tex_id):
+        """
+        Make a bindgroup for either:
+        - your own engine texture id (found via ResourceManager), or
+        - a raw WGPUTextureView produced by ImGui (fonts/dynamic textures).
+        """
+        logger.debug(f"_bind_group_for_tex_id: {tex_id}")
+        # Cached?
+        bg = self.image_bind_groups.get(tex_id)
+        if bg is not None:
+            return bg
+
+        texture_view = None
+
+        # Case 1: your engine-managed images (via ResourceManager)
+        texture = ResourceManager().texture_kit.get(tex_id)
+        if texture is not None:
+            texture_view = texture.view
+
+        # Case 2: ImGui-provided (font/dynamic) texture views
+        if texture is None:
+            # If your binding surfaces WGPUTextureView objects directly, we can use them.
+            # If it returns an int handle, you’ll need a small wrapper here to turn it into a TextureView object.
+            texture_view = tex_id  # assume already a WGPUTextureView-compatible object
+
+        bindgroup_entries = list(self.common_bind_group_prefix) + [
+            wgpu.BindGroupEntry(binding=2, texture_view=texture_view)
+        ]
+
+        bg = self.device.create_bind_group(
+            wgpu.BindGroupDescriptor(
+                label="ImGui Texture bind group",
+                layout=self.pipeline.get_bind_group_layout(0),
+                entries=bindgroup_entries,
+            )
+        )
+        self.image_bind_groups[tex_id] = bg
+        return bg
+    '''
 
     def render_draw_data(self, draw_data: imgui.DrawData, pass_enc: wgpu.RenderPassEncoder):
         sc_width  = self.wnd.width
@@ -338,8 +451,9 @@ class ImGuiVu(Vu):
                     continue
 
                 # Per-draw texture bind (font or user image)
-                tex_id = command.texture_id
+                tex_id = command.tex_ref.id
                 
+                #bind_group = self._bind_group_for_tex_id(tex_id)
                 bind_group = self.image_bind_groups.get(tex_id)
                 if bind_group is None:
                     bind_group = self.create_image_bind_group(tex_id)

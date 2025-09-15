@@ -1,11 +1,10 @@
-import glm
-
 from ..texture import SpriteTexture
 from ...d2.sprite import Sprite
+from .sprite_set import SpriteSet
 
-class SpriteStrip(SpriteTexture):
-    def __init__(self, texture, size: glm.ivec2):
-        super().__init__(texture, size)
+class SpriteStrip(SpriteSet):
+    def __init__(self, texture: SpriteTexture) -> None:
+        super().__init__(texture)
         self.sprites: list[Sprite] = []
 
     def __getitem__(self, index: int) -> Sprite:

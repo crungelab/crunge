@@ -7,10 +7,9 @@ from ...resource.texture.sprite_texture import SpriteTexture
 
 from ...builder.texture.sprite_texture_builder import SpriteTextureBuilder
 
-from .texture_2d_loader import Texture2DLoader
+from .texture_2d_array_loader import Texture2dArrayLoader
 
-
-class SpriteTextureLoader(Texture2DLoader[SpriteTexture]):
+class SpriteTextureLoader(Texture2dArrayLoader[SpriteTexture]):
     def load(self, path: Path, name: str = None) -> SpriteTexture:
         path = ResourceManager().resolve_path(path)
 

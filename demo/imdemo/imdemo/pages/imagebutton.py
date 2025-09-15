@@ -24,7 +24,7 @@ class ImageButton(Page):
 
     def _draw(self):
         imgui.begin("Image Button")
-        if imgui.image_button("Image Button", self.texture.id, (self.texture.size.x, self.texture.size.y)):
+        if imgui.image_button("Image Button", imgui.TextureRef(self.texture.id), (self.texture.size.x, self.texture.size.y)):
             self.message = MESSAGES[random.randint(0, len(MESSAGES)-1)]
         imgui.text(self.message)
         imgui.end()

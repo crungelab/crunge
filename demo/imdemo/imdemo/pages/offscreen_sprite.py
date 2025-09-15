@@ -39,7 +39,7 @@ class OffscreenSpritePage(Page):
     def _draw(self):
         imgui.begin(self.title)
         size = self.viewport.width, self.viewport.height
-        imgui.image(self.texture.id, size)
+        imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
 
         with self.viewport.frame():

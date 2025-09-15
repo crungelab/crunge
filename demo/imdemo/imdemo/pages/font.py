@@ -11,7 +11,7 @@ class FontPage(Page):
         self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0)
         # self.window.gui.renderer.refresh_font_texture()
         layer = self.get_layer("ImGuiLayer")
-        layer.vu.refresh_font_texture()
+        #layer.vu.refresh_font_texture()
 
     def _draw(self):
         imgui.begin("Font")
@@ -21,7 +21,7 @@ class FontPage(Page):
         with imgui.font(self.font):
             imgui.text("Text displayed using custom font")
         """
-        imgui.push_font(self.font)
+        imgui.push_font(self.font, 0.0)
         imgui.text("Text displayed using custom font")
         imgui.pop_font()
 

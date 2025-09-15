@@ -12,6 +12,9 @@ from .texture_loader import TextureLoader
 T_Texture = TypeVar("T_Texture", bound=Texture2dArray)
 
 class Texture2dArrayLoader(TextureLoader[T_Texture], Generic[T_Texture]):
+    def __init__(self, kit = ResourceManager().texture_2d_array_kit):
+        super().__init__(kit)
+
     def load(self, paths: List[Path], name: str = None) -> T_Texture:
         #if texture:= self.kit.get_by_path(path):
         #if texture:= self.kit.get_by_name(name) or self.kit.get_by_path(path):

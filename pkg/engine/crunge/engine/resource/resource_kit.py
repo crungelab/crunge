@@ -44,8 +44,8 @@ class ResourceKit(Base, Generic[T_Resource]):
     def add(self, resource: T_Resource) -> int:
         resource_id = resource.id
         if resource_id is None:
-            resource_id = self.next_id
-            self.next_id += 1
+            resource_id = ResourceKit.next_id
+            ResourceKit.next_id += 1
             resource.set_id(resource_id)
 
         #self.resources[resource_id] = resource
