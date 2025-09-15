@@ -22,8 +22,8 @@ class MaterialBindGroupLayout(BindGroupLayout):
                 visibility=wgpu.ShaderStage.FRAGMENT,
                 texture=wgpu.TextureBindingLayout(
                     sample_type=wgpu.TextureSampleType.FLOAT,
-                    #view_dimension=wgpu.TextureViewDimension.E2D,
-                    view_dimension=wgpu.TextureViewDimension.E2D_ARRAY,
+                    view_dimension=wgpu.TextureViewDimension.E2D,
+                    #view_dimension=wgpu.TextureViewDimension.E2D_ARRAY,
                 ),
             ),
             wgpu.BindGroupLayoutEntry(

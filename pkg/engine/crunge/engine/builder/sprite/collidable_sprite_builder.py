@@ -20,8 +20,8 @@ class CollidableSpriteBuilder(SpriteBuilder):
         height = rect.height
         width = rect.width
 
-        # region = texture.image.data[y:y+height, x:x+width]
-        region = texture.images[0].data[y:y+height, x:x+width]
+        region = texture.image.data[y:y+height, x:x+width]
+        #region = texture.images[0].data[y:y+height, x:x+width]
 
         # Must be RGBA for alpha-based masking
         if region.ndim < 3 or region.shape[2] < 4:

@@ -52,18 +52,18 @@ class ImGuiLayer(ViewLayer, ViewportListener, WindowListener):
 
     def _enable(self):
         super()._enable()
-        logger.debug("enable")
+        #logger.debug("enable")
         self.window.viewport.add_listener(self)
         self.window.add_listener(self)
 
     def _disable(self):
         super()._disable()
-        logger.debug("ImGuiLayer.disable")
+        #logger.debug("disable")
         self.window.viewport.remove_listener(self)
         self.window.remove_listener(self)
     
     def on_viewport_size(self, size: glm.ivec2):
-        logger.debug(f"ImGuiLayer.on_size: {size}")
+        #logger.debug(f"ImGuiLayer.on_size: {size}")
         self._set_pixel_ratio()
 
     def on_pre_frame(self):

@@ -11,6 +11,6 @@ class SpriteAtlasBuilder(SpriteSetBuilder[SpriteAtlas]):
         super().__init__(texture_builder=SpriteTextureBuilder(), kit=kit)
 
     def build(self, image: Image) -> SpriteAtlas:
-        texture = self.texture_builder.build([image])
+        texture = self.texture_builder.build(image)
         atlas = SpriteAtlas(texture)
         return atlas

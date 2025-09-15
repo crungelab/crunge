@@ -32,11 +32,6 @@ class Texture(Resource):
     def __repr__(self):
         return str(self)
 
-    """
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.texture}, {self.x}, {self.y}, {self.width}, {self.height}, {self.coords})"
-    """
-
     @property
     def size(self) -> glm.ivec3:
         return self._size

@@ -7,7 +7,6 @@ from .resource import Resource
 
 T_Resource = TypeVar("T_Resource", bound=Resource)
 
-
 class ResourceKit(Base, Generic[T_Resource]):
     registry: Dict[int, T_Resource] = {}
     next_id: int = 1
@@ -16,7 +15,6 @@ class ResourceKit(Base, Generic[T_Resource]):
         #self.resources: Dict[int, T_Resource] = {}
         self.resources_by_name: Dict[str, int] = {}
         self.resources_by_path: Dict[Path, int] = {}
-        #self.next_id: int = 1
 
     def load(self, path: Path) -> T_Resource:
         raise NotImplementedError
@@ -44,8 +42,8 @@ class ResourceKit(Base, Generic[T_Resource]):
     def add(self, resource: T_Resource) -> int:
         resource_id = resource.id
         if resource_id is None:
-            resource_id = self.next_id
-            self.next_id += 1
+            resource_id = ResourceKit.next_id
+            ResourceKit.next_id += 1
             resource.set_id(resource_id)
 
         #self.resources[resource_id] = resource

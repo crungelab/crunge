@@ -1625,7 +1625,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             auto ret = ImGui::SaveIniSettingsToMemory(out_ini_size);
             return std::make_tuple(ret, out_ini_size);
         }
-        , py::arg("out_ini_size") = 0
+        , py::arg("out_ini_size") = nullptr
         , py::return_value_policy::automatic_reference)
     .def("debug_text_encoding", &ImGui::DebugTextEncoding
         , py::arg("text")
@@ -2910,12 +2910,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def(py::init<unsigned int>()
         , py::arg("rgba")
         )
-        .def("set_hsv", &ImColor::SetHSV
-            , py::arg("h")
-            , py::arg("s")
-            , py::arg("v")
-            , py::arg("a") = 1.0f
-            , py::return_value_policy::automatic_reference)
         .def_static("hsv", &ImColor::HSV
             , py::arg("h")
             , py::arg("s")
@@ -2982,8 +2976,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("user_callback", &ImDrawCmd::UserCallback)
         .def_readwrite("user_callback_data", &ImDrawCmd::UserCallbackData)
         .def(py::init<>())
-        .def("get_tex_id", &ImDrawCmd::GetTexID
-            , py::return_value_policy::automatic_reference)
     ;
 
     py::class_<ImDrawVert> DrawVert(_imgui, "DrawVert");
@@ -3007,9 +2999,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
     py::class_<ImDrawListSplitter> DrawListSplitter(_imgui, "DrawListSplitter");
     registry.on(_imgui, "DrawListSplitter", DrawListSplitter);
         DrawListSplitter
-        .def(py::init<>())
-        .def("clear", &ImDrawListSplitter::Clear
-            , py::return_value_policy::automatic_reference)
         .def("clear_free_memory", &ImDrawListSplitter::ClearFreeMemory
             , py::return_value_policy::automatic_reference)
         .def("split", &ImDrawListSplitter::Split
@@ -3070,10 +3059,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("texture_id")
             , py::return_value_policy::automatic_reference)
         .def("pop_texture_id", &ImDrawList::PopTextureID
-            , py::return_value_policy::automatic_reference)
-        .def("get_clip_rect_min", &ImDrawList::GetClipRectMin
-            , py::return_value_policy::automatic_reference)
-        .def("get_clip_rect_max", &ImDrawList::GetClipRectMax
             , py::return_value_policy::automatic_reference)
         .def("add_line", &ImDrawList::AddLine
             , py::arg("p1")
@@ -3253,25 +3238,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("rounding")
             , py::arg("flags") = 0
             , py::return_value_policy::automatic_reference)
-        .def("path_clear", &ImDrawList::PathClear
-            , py::return_value_policy::automatic_reference)
-        .def("path_line_to", &ImDrawList::PathLineTo
-            , py::arg("pos")
-            , py::return_value_policy::automatic_reference)
-        .def("path_line_to_merge_duplicate", &ImDrawList::PathLineToMergeDuplicate
-            , py::arg("pos")
-            , py::return_value_policy::automatic_reference)
-        .def("path_fill_convex", &ImDrawList::PathFillConvex
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
-        .def("path_fill_concave", &ImDrawList::PathFillConcave
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
-        .def("path_stroke", &ImDrawList::PathStroke
-            , py::arg("col")
-            , py::arg("flags") = 0
-            , py::arg("thickness") = 1.0f
-            , py::return_value_policy::automatic_reference)
         .def("path_arc_to", &ImDrawList::PathArcTo
             , py::arg("center")
             , py::arg("radius")
@@ -3318,14 +3284,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("clone_output", &ImDrawList::CloneOutput
             , py::return_value_policy::automatic_reference)
-        .def("channels_split", &ImDrawList::ChannelsSplit
-            , py::arg("count")
-            , py::return_value_policy::automatic_reference)
-        .def("channels_merge", &ImDrawList::ChannelsMerge
-            , py::return_value_policy::automatic_reference)
-        .def("channels_set_current", &ImDrawList::ChannelsSetCurrent
-            , py::arg("n")
-            , py::return_value_policy::automatic_reference)
         .def("prim_reserve", &ImDrawList::PrimReserve
             , py::arg("idx_count")
             , py::arg("vtx_count")
@@ -3355,19 +3313,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("uv_b")
             , py::arg("uv_c")
             , py::arg("uv_d")
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
-        .def("prim_write_vtx", &ImDrawList::PrimWriteVtx
-            , py::arg("pos")
-            , py::arg("uv")
-            , py::arg("col")
-            , py::return_value_policy::automatic_reference)
-        .def("prim_write_idx", &ImDrawList::PrimWriteIdx
-            , py::arg("idx")
-            , py::return_value_policy::automatic_reference)
-        .def("prim_vtx", &ImDrawList::PrimVtx
-            , py::arg("pos")
-            , py::arg("uv")
             , py::arg("col")
             , py::return_value_policy::automatic_reference)
     ;
@@ -3441,17 +3386,6 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         FontGlyphRangesBuilder
         .def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars)
         .def(py::init<>())
-        .def("clear", &ImFontGlyphRangesBuilder::Clear
-            , py::return_value_policy::automatic_reference)
-        .def("get_bit", &ImFontGlyphRangesBuilder::GetBit
-            , py::arg("n")
-            , py::return_value_policy::automatic_reference)
-        .def("set_bit", &ImFontGlyphRangesBuilder::SetBit
-            , py::arg("n")
-            , py::return_value_policy::automatic_reference)
-        .def("add_char", &ImFontGlyphRangesBuilder::AddChar
-            , py::arg("c")
-            , py::return_value_policy::automatic_reference)
         .def("add_text", &ImFontGlyphRangesBuilder::AddText
             , py::arg("text")
             , py::arg("text_end") = nullptr

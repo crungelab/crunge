@@ -12,9 +12,9 @@ from ..texture import SpriteTexture
 T_Texture = TypeVar("T_Texture", bound=SpriteTexture)
 
 class SpriteSet(Resource, Generic[T_Texture]):
-    def __init__(self, texture: T_Texture | None = None) -> None:
+    def __init__(self, texture: T_Texture) -> None:
         super().__init__()
-        self.texture: T_Texture | None = texture
+        self.texture: T_Texture = texture
         self.sprites: list[Sprite] = []
         self.sprite_map: Dict[str, Sprite] = {}
 

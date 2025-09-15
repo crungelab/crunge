@@ -6,15 +6,22 @@ import glm
 
 from ...resource.resource_manager import ResourceManager
 from ...resource.texture import Texture2dArray
+from ...resource.texture import TextureKit
 
 from .texture_loader import TextureLoader
 
 T_Texture = TypeVar("T_Texture", bound=Texture2dArray)
 
 class Texture2dArrayLoader(TextureLoader[T_Texture], Generic[T_Texture]):
+    def __init__(
+        self,
+        kit: TextureKit = ResourceManager().texture_array_kit,
+    ) -> None:
+        super().__init__(kit)
+
     def load(self, paths: List[Path], name: str = None) -> T_Texture:
         #if texture:= self.kit.get_by_path(path):
-        #if texture:= self.kit.get_by_name(name) or self.kit.get_by_path(path):
+        #if texture:= self.kit.get_by_name(name) or self.kit.get_by_path(paths[0]):
         if texture:= self.kit.get_by_name(name):
             return texture
 

@@ -29,7 +29,7 @@ class ImageTextureBuilder(TextureBuilder[ImageTexture]):
         )
 
     def build_wgpu_texture(self, image: Image) -> ImageTexture:
-        texture, im_width, im_height = super().build_wgpu_texture([image])
+        texture, im_width, im_height = super().build_wgpu_texture(image)
         return texture
     '''
     def build_wgpu_texture(self, image: Image) -> ImageTexture:

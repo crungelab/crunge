@@ -39,7 +39,7 @@ fn vs_main(@builtin(vertex_index) idx: u32) -> VertexOutput {
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    //let color = textureSample(myTexture, mySampler, in.uv);
-    let color = textureSample(myTexture, mySampler, in.uv, in.layer);
+    let color = textureSample(myTexture, mySampler, in.uv);
+    //let color = textureSample(myTexture, mySampler, in.uv, in.layer);
     return color * in.color;
 }
