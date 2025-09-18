@@ -1,4 +1,4 @@
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.demo import PageChannel
 
 from imflodemo.nodes.sine import SineNode

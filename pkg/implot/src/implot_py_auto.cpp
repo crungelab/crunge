@@ -169,6 +169,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("NONE", ImPlotPieChartFlags_::ImPlotPieChartFlags_None)
         .value("NORMALIZE", ImPlotPieChartFlags_::ImPlotPieChartFlags_Normalize)
         .value("IGNORE_HIDDEN", ImPlotPieChartFlags_::ImPlotPieChartFlags_IgnoreHidden)
+        .value("EXPLODING", ImPlotPieChartFlags_::ImPlotPieChartFlags_Exploding)
         .export_values()
     ;
     py::enum_<ImPlotHeatmapFlags_>(_implot, "HeatmapFlags", py::arithmetic())
@@ -324,9 +325,9 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("SCOTT", ImPlotBin_::ImPlotBin_Scott)
         .export_values()
     ;
-    py::class_<ImPlotPoint> Point(_implot, "Point");
-    registry.on(_implot, "Point", Point);
-        Point
+    py::class_<ImPlotPoint> _Point(_implot, "Point");
+    registry.on(_implot, "Point", _Point);
+        _Point
         .def_readwrite("x", &ImPlotPoint::x)
         .def_readwrite("y", &ImPlotPoint::y)
         .def(py::init<>())
@@ -339,9 +340,9 @@ void init_generated(py::module &_implot, Registry &registry) {
         )
     ;
 
-    py::class_<ImPlotRange> Range(_implot, "Range");
-    registry.on(_implot, "Range", Range);
-        Range
+    py::class_<ImPlotRange> _Range(_implot, "Range");
+    registry.on(_implot, "Range", _Range);
+        _Range
         .def_readwrite("min", &ImPlotRange::Min)
         .def_readwrite("max", &ImPlotRange::Max)
         .def(py::init<>())
@@ -359,9 +360,9 @@ void init_generated(py::module &_implot, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImPlotRect> Rect(_implot, "Rect");
-    registry.on(_implot, "Rect", Rect);
-        Rect
+    py::class_<ImPlotRect> _Rect(_implot, "Rect");
+    registry.on(_implot, "Rect", _Rect);
+        _Rect
         .def_readwrite("x", &ImPlotRect::X)
         .def_readwrite("y", &ImPlotRect::Y)
         .def(py::init<>())
@@ -386,9 +387,9 @@ void init_generated(py::module &_implot, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImPlotStyle> Style(_implot, "Style");
-    registry.on(_implot, "Style", Style);
-        Style
+    py::class_<ImPlotStyle> _Style(_implot, "Style");
+    registry.on(_implot, "Style", _Style);
+        _Style
         .def_readwrite("line_weight", &ImPlotStyle::LineWeight)
         .def_readwrite("marker", &ImPlotStyle::Marker)
         .def_readwrite("marker_size", &ImPlotStyle::MarkerSize)
@@ -424,9 +425,9 @@ void init_generated(py::module &_implot, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<ImPlotInputMap> InputMap(_implot, "InputMap");
-    registry.on(_implot, "InputMap", InputMap);
-        InputMap
+    py::class_<ImPlotInputMap> _InputMap(_implot, "InputMap");
+    registry.on(_implot, "InputMap", _InputMap);
+        _InputMap
         .def_readwrite("pan", &ImPlotInputMap::Pan)
         .def_readwrite("pan_mod", &ImPlotInputMap::PanMod)
         .def_readwrite("fit", &ImPlotInputMap::Fit)
@@ -644,7 +645,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("plot_image", &ImPlot::PlotImage
         , py::arg("label_id")
-        , py::arg("user_texture_id")
+        , py::arg("tex_ref")
         , py::arg("bounds_min")
         , py::arg("bounds_max")
         , py::arg("uv0") = ImVec2(0,0)

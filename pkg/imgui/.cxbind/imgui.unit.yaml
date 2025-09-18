@@ -54,20 +54,7 @@ excludes:
   # Internal / Ignored
 
   - 'function/ImGui::TableGetColumnName' #TODO: wrap or something
-  - 'field/ImGuiTableColumnSortSpecs::SortDirection'
-
-    # Can't bind to bitmap fields
-  - 'field/ImFontGlyph::Colored'
-  - 'field/ImFontGlyph::Visible'
-  - 'field/ImFontGlyph::SourceIdx'
-  - 'field/ImFontGlyph::Codepoint'
-
-    # Can't bind to bitmap fields
-  - 'field/ImFontBaked::MetricsTotalSurface'
-  - 'field/ImFontBaked::WantDestroy'
-  - 'field/ImFontBaked::LoadNoFallback'
-  - 'field/ImFontBaked::LoadNoRenderOnLayout'
-  
+  - 'field/ImGuiTableColumnSortSpecs::SortDirection'  
 
   - 'function/ImGui::GetAllocatorFunctions'
   - 'field/ImGuiTextFilter::Filters'

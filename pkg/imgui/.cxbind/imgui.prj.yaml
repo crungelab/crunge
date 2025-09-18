@@ -1,4 +1,4 @@
-module: _imgui
+module: imgui
 
 flags: [
   '-x', 'c++',

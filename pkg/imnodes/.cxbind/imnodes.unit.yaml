@@ -13,26 +13,16 @@ specs:
   'struct/ImNodesEditorContext':
     wrapper: 'py::capsule'
 
-
-  #'function/ImNodes::CreateContext': {exclude: true}
-  #'function/ImNodes::DestroyContext': {exclude: true}
-  #'function/ImNodes::GetCurrentContext': {exclude: true}
-  #'function/ImNodes::SetCurrentContext': {exclude: true}
-
-  #'function/ImNodes::EditorContext': {exclude: true}
-
-  #'function/ImNodes::EditorContextCreate': {exclude: true}
-  #'function/ImNodes::EditorContextFree': {exclude: true}
-  #'function/ImNodes::EditorContextSet': {exclude: true}
-  'function/ImNodes::MiniMap': {exclude: true}
+excludes:
+  - 'function/ImNodes::MiniMap'
   # Internal / Ignored
 
   # These three have member names same as struct names
-  'struct/ImNodesIO::EmulateThreeButtonMouse': {exclude: true}
-  'struct/ImNodesIO::LinkDetachWithModifierClick': {exclude: true}
-  'struct/ImNodesIO::MultipleSelectModifier': {exclude: true}
+  - 'struct/ImNodesIO::EmulateThreeButtonMouse'
+  - 'struct/ImNodesIO::LinkDetachWithModifierClick'
+  - 'struct/ImNodesIO::MultipleSelectModifier'
 
-  'function/SaveEditorStateToIniString': {exclude: true}
-  'function/LoadEditorStateFromIniFile': {exclude: true}
-  'function/LoadEditorStateFromIniString': {exclude: true}
-  'function/SaveEditorStateToIniFile': {exclude: true}
+  - 'function/SaveEditorStateToIniString'
+  - 'function/LoadEditorStateFromIniFile'
+  - 'function/LoadEditorStateFromIniString'
+  - 'function/SaveEditorStateToIniFile'

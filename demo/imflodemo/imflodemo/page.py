@@ -1,4 +1,3 @@
-from crunge.engine import Renderer
 from crunge import demo
 from imflo.graph import Graph
 

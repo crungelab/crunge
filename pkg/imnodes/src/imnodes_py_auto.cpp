@@ -92,9 +92,9 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("ENABLE_LINK_CREATION_ON_SNAP", ImNodesAttributeFlags_::ImNodesAttributeFlags_EnableLinkCreationOnSnap)
         .export_values()
     ;
-    py::class_<ImNodesIO> IO(_imnodes, "IO");
-    registry.on(_imnodes, "IO", IO);
-        IO
+    py::class_<ImNodesIO> _IO(_imnodes, "IO");
+    registry.on(_imnodes, "IO", _IO);
+        _IO
         .def_readwrite("emulate_three_button_mouse", &ImNodesIO::EmulateThreeButtonMouse)
         .def_readwrite("link_detach_with_modifier_click", &ImNodesIO::LinkDetachWithModifierClick)
         .def_readwrite("multiple_select_modifier", &ImNodesIO::MultipleSelectModifier)
@@ -103,9 +103,9 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<ImNodesStyle> Style(_imnodes, "Style");
-    registry.on(_imnodes, "Style", Style);
-        Style
+    py::class_<ImNodesStyle> _Style(_imnodes, "Style");
+    registry.on(_imnodes, "Style", _Style);
+        _Style
         .def_readwrite("grid_spacing", &ImNodesStyle::GridSpacing)
         .def_readwrite("node_corner_rounding", &ImNodesStyle::NodeCornerRounding)
         .def_readwrite("node_padding", &ImNodesStyle::NodePadding)

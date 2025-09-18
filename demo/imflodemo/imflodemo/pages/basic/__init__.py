@@ -2,7 +2,7 @@ from imflodemo.nodes.volume import VolumeNode
 from imflodemo.nodes.led import LedNode
 from imflo.wire import Wire
 
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.demo import PageChannel
 
 from ...page import Page

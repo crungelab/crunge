@@ -11,9 +11,9 @@
 namespace py = pybind11;
 
 void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
-    py::class_<ImVec2> Vec2(_imgui, "Vec2");
-    registry.on(_imgui, "Vec2", Vec2);
-        Vec2
+    py::class_<ImVec2> _Vec2(_imgui, "Vec2");
+    registry.on(_imgui, "Vec2", _Vec2);
+        _Vec2
         .def_readwrite("x", &ImVec2::x)
         .def_readwrite("y", &ImVec2::y)
         .def(py::init<>())
@@ -23,9 +23,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         )
     ;
 
-    py::class_<ImVec4> Vec4(_imgui, "Vec4");
-    registry.on(_imgui, "Vec4", Vec4);
-        Vec4
+    py::class_<ImVec4> _Vec4(_imgui, "Vec4");
+    registry.on(_imgui, "Vec4", _Vec4);
+        _Vec4
         .def_readwrite("x", &ImVec4::x)
         .def_readwrite("y", &ImVec4::y)
         .def_readwrite("z", &ImVec4::z)
@@ -39,9 +39,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         )
     ;
 
-    py::class_<ImTextureRef> TextureRef(_imgui, "TextureRef");
-    registry.on(_imgui, "TextureRef", TextureRef);
-        TextureRef
+    py::class_<ImTextureRef> _TextureRef(_imgui, "TextureRef");
+    registry.on(_imgui, "TextureRef", _TextureRef);
+        _TextureRef
         .def(py::init<>())
         .def(py::init<unsigned long long>()
         , py::arg("tex_id")
@@ -2451,29 +2451,29 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("CELL_BG", ImGuiTableBgTarget_::ImGuiTableBgTarget_CellBg)
         .export_values()
     ;
-    py::class_<ImGuiTableSortSpecs> TableSortSpecs(_imgui, "TableSortSpecs");
-    registry.on(_imgui, "TableSortSpecs", TableSortSpecs);
-        TableSortSpecs
+    py::class_<ImGuiTableSortSpecs> _TableSortSpecs(_imgui, "TableSortSpecs");
+    registry.on(_imgui, "TableSortSpecs", _TableSortSpecs);
+        _TableSortSpecs
         .def_readwrite("specs", &ImGuiTableSortSpecs::Specs)
         .def_readwrite("specs_count", &ImGuiTableSortSpecs::SpecsCount)
         .def_readwrite("specs_dirty", &ImGuiTableSortSpecs::SpecsDirty)
         .def(py::init<>())
     ;
 
-    py::class_<ImGuiTableColumnSortSpecs> TableColumnSortSpecs(_imgui, "TableColumnSortSpecs");
-    registry.on(_imgui, "TableColumnSortSpecs", TableColumnSortSpecs);
-        TableColumnSortSpecs
+    py::class_<ImGuiTableColumnSortSpecs> _TableColumnSortSpecs(_imgui, "TableColumnSortSpecs");
+    registry.on(_imgui, "TableColumnSortSpecs", _TableColumnSortSpecs);
+        _TableColumnSortSpecs
         .def_readwrite("column_user_id", &ImGuiTableColumnSortSpecs::ColumnUserID)
         .def_readwrite("column_index", &ImGuiTableColumnSortSpecs::ColumnIndex)
         .def_readwrite("sort_order", &ImGuiTableColumnSortSpecs::SortOrder)
         .def(py::init<>())
     ;
 
-    py::class_<ImNewWrapper> NewWrapper(_imgui, "NewWrapper");
-    registry.on(_imgui, "NewWrapper", NewWrapper);
-    py::class_<ImGuiStyle> Style(_imgui, "Style");
-    registry.on(_imgui, "Style", Style);
-        Style
+    py::class_<ImNewWrapper> _NewWrapper(_imgui, "NewWrapper");
+    registry.on(_imgui, "NewWrapper", _NewWrapper);
+    py::class_<ImGuiStyle> _Style(_imgui, "Style");
+    registry.on(_imgui, "Style", _Style);
+        _Style
         .def_readwrite("font_size_base", &ImGuiStyle::FontSizeBase)
         .def_readwrite("font_scale_main", &ImGuiStyle::FontScaleMain)
         .def_readwrite("font_scale_dpi", &ImGuiStyle::FontScaleDpi)
@@ -2545,18 +2545,18 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImGuiKeyData> KeyData(_imgui, "KeyData");
-    registry.on(_imgui, "KeyData", KeyData);
-        KeyData
+    py::class_<ImGuiKeyData> _KeyData(_imgui, "KeyData");
+    registry.on(_imgui, "KeyData", _KeyData);
+        _KeyData
         .def_readwrite("down", &ImGuiKeyData::Down)
         .def_readwrite("down_duration", &ImGuiKeyData::DownDuration)
         .def_readwrite("down_duration_prev", &ImGuiKeyData::DownDurationPrev)
         .def_readwrite("analog_value", &ImGuiKeyData::AnalogValue)
     ;
 
-    py::class_<ImGuiIO> IO(_imgui, "IO");
-    registry.on(_imgui, "IO", IO);
-        IO
+    py::class_<ImGuiIO> _IO(_imgui, "IO");
+    registry.on(_imgui, "IO", _IO);
+        _IO
         .def_readwrite("config_flags", &ImGuiIO::ConfigFlags)
         .def_readwrite("backend_flags", &ImGuiIO::BackendFlags)
         .def_readwrite("display_size", &ImGuiIO::DisplaySize)
@@ -2736,9 +2736,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<ImGuiInputTextCallbackData> InputTextCallbackData(_imgui, "InputTextCallbackData");
-    registry.on(_imgui, "InputTextCallbackData", InputTextCallbackData);
-        InputTextCallbackData
+    py::class_<ImGuiInputTextCallbackData> _InputTextCallbackData(_imgui, "InputTextCallbackData");
+    registry.on(_imgui, "InputTextCallbackData", _InputTextCallbackData);
+        _InputTextCallbackData
         .def_readwrite("event_flag", &ImGuiInputTextCallbackData::EventFlag)
         .def_readwrite("flags", &ImGuiInputTextCallbackData::Flags)
         .def_readwrite("user_data", &ImGuiInputTextCallbackData::UserData)
@@ -2772,18 +2772,18 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImGuiSizeCallbackData> SizeCallbackData(_imgui, "SizeCallbackData");
-    registry.on(_imgui, "SizeCallbackData", SizeCallbackData);
-        SizeCallbackData
+    py::class_<ImGuiSizeCallbackData> _SizeCallbackData(_imgui, "SizeCallbackData");
+    registry.on(_imgui, "SizeCallbackData", _SizeCallbackData);
+        _SizeCallbackData
         .def_readwrite("user_data", &ImGuiSizeCallbackData::UserData)
         .def_readwrite("pos", &ImGuiSizeCallbackData::Pos)
         .def_readwrite("current_size", &ImGuiSizeCallbackData::CurrentSize)
         .def_readwrite("desired_size", &ImGuiSizeCallbackData::DesiredSize)
     ;
 
-    py::class_<ImGuiWindowClass> WindowClass(_imgui, "WindowClass");
-    registry.on(_imgui, "WindowClass", WindowClass);
-        WindowClass
+    py::class_<ImGuiWindowClass> _WindowClass(_imgui, "WindowClass");
+    registry.on(_imgui, "WindowClass", _WindowClass);
+        _WindowClass
         .def_readwrite("class_id", &ImGuiWindowClass::ClassId)
         .def_readwrite("parent_viewport_id", &ImGuiWindowClass::ParentViewportId)
         .def_readwrite("focus_route_parent_window_id", &ImGuiWindowClass::FocusRouteParentWindowId)
@@ -2796,9 +2796,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<ImGuiPayload> Payload(_imgui, "Payload");
-    registry.on(_imgui, "Payload", Payload);
-        Payload
+    py::class_<ImGuiPayload> _Payload(_imgui, "Payload");
+    registry.on(_imgui, "Payload", _Payload);
+        _Payload
         .def_readwrite("data", &ImGuiPayload::Data)
         .def_readwrite("data_size", &ImGuiPayload::DataSize)
         .def_readwrite("source_id", &ImGuiPayload::SourceId)
@@ -2819,16 +2819,16 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImGuiOnceUponAFrame> OnceUponAFrame(_imgui, "OnceUponAFrame");
-    registry.on(_imgui, "OnceUponAFrame", OnceUponAFrame);
-        OnceUponAFrame
+    py::class_<ImGuiOnceUponAFrame> _OnceUponAFrame(_imgui, "OnceUponAFrame");
+    registry.on(_imgui, "OnceUponAFrame", _OnceUponAFrame);
+        _OnceUponAFrame
         .def(py::init<>())
         .def_readwrite("ref_frame", &ImGuiOnceUponAFrame::RefFrame)
     ;
 
-    py::class_<ImGuiTextFilter> TextFilter(_imgui, "TextFilter");
-    registry.on(_imgui, "TextFilter", TextFilter);
-        TextFilter
+    py::class_<ImGuiTextFilter> _TextFilter(_imgui, "TextFilter");
+    registry.on(_imgui, "TextFilter", _TextFilter);
+        _TextFilter
         .def(py::init<const char *>()
         , py::arg("default_filter") = nullptr
         )
@@ -2848,9 +2848,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::class_<ImGuiTextFilter::ImGuiTextRange> TextFilterTextRange(_imgui, "TextFilterTextRange");
-        registry.on(_imgui, "TextFilterTextRange", TextFilterTextRange);
-            TextFilterTextRange
+        py::class_<ImGuiTextFilter::ImGuiTextRange> _TextFilterTextRange(_imgui, "TextFilterTextRange");
+        registry.on(_imgui, "TextFilterTextRange", _TextFilterTextRange);
+            _TextFilterTextRange
             .def_property("b",
                 [](const ImGuiTextFilter::ImGuiTextRange& self){ return self.b; },
                 [](ImGuiTextFilter::ImGuiTextRange& self, const char* source){ self.b = strdup(source); }
@@ -2872,14 +2872,14 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
                 , py::return_value_policy::automatic_reference)
         ;
 
-        TextFilter
+        _TextFilter
         .def_readonly("input_buf", &ImGuiTextFilter::InputBuf)
         .def_readwrite("count_grep", &ImGuiTextFilter::CountGrep)
     ;
 
-    py::class_<ImGuiStoragePair> StoragePair(_imgui, "StoragePair");
-    registry.on(_imgui, "StoragePair", StoragePair);
-        StoragePair
+    py::class_<ImGuiStoragePair> _StoragePair(_imgui, "StoragePair");
+    registry.on(_imgui, "StoragePair", _StoragePair);
+        _StoragePair
         .def_readwrite("key", &ImGuiStoragePair::key)
         .def(py::init<unsigned int, int>()
         , py::arg("_key")
@@ -2895,9 +2895,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         )
     ;
 
-    py::class_<ImGuiStorage> Storage(_imgui, "Storage");
-    registry.on(_imgui, "Storage", Storage);
-        Storage
+    py::class_<ImGuiStorage> _Storage(_imgui, "Storage");
+    registry.on(_imgui, "Storage", _Storage);
+        _Storage
         .def("clear", &ImGuiStorage::Clear
             , py::return_value_policy::automatic_reference)
         .def("get_int", &ImGuiStorage::GetInt
@@ -2959,9 +2959,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("NO_SET_TABLE_ROW_COUNTERS", ImGuiListClipperFlags_::ImGuiListClipperFlags_NoSetTableRowCounters)
         .export_values()
     ;
-    py::class_<ImColor> Color(_imgui, "Color");
-    registry.on(_imgui, "Color", Color);
-        Color
+    py::class_<ImColor> _Color(_imgui, "Color");
+    registry.on(_imgui, "Color", _Color);
+        _Color
         .def_readwrite("value", &ImColor::Value)
         .def(py::init<>())
         .def(py::init<float, float, float, float>()
@@ -3010,9 +3010,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("NAV_WRAP_X", ImGuiMultiSelectFlags_::ImGuiMultiSelectFlags_NavWrapX)
         .export_values()
     ;
-    py::class_<ImGuiMultiSelectIO> MultiSelectIO(_imgui, "MultiSelectIO");
-    registry.on(_imgui, "MultiSelectIO", MultiSelectIO);
-        MultiSelectIO
+    py::class_<ImGuiMultiSelectIO> _MultiSelectIO(_imgui, "MultiSelectIO");
+    registry.on(_imgui, "MultiSelectIO", _MultiSelectIO);
+        _MultiSelectIO
         .def_readwrite("requests", &ImGuiMultiSelectIO::Requests)
         .def_readwrite("range_src_item", &ImGuiMultiSelectIO::RangeSrcItem)
         .def_readwrite("nav_id_item", &ImGuiMultiSelectIO::NavIdItem)
@@ -3027,9 +3027,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("SET_RANGE", ImGuiSelectionRequestType::ImGuiSelectionRequestType_SetRange)
         .export_values()
     ;
-    py::class_<ImGuiSelectionRequest> SelectionRequest(_imgui, "SelectionRequest");
-    registry.on(_imgui, "SelectionRequest", SelectionRequest);
-        SelectionRequest
+    py::class_<ImGuiSelectionRequest> _SelectionRequest(_imgui, "SelectionRequest");
+    registry.on(_imgui, "SelectionRequest", _SelectionRequest);
+        _SelectionRequest
         .def_readwrite("type", &ImGuiSelectionRequest::Type)
         .def_readwrite("selected", &ImGuiSelectionRequest::Selected)
         .def_readwrite("range_direction", &ImGuiSelectionRequest::RangeDirection)
@@ -3037,9 +3037,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("range_last_item", &ImGuiSelectionRequest::RangeLastItem)
     ;
 
-    py::class_<ImDrawCmd> DrawCmd(_imgui, "DrawCmd");
-    registry.on(_imgui, "DrawCmd", DrawCmd);
-        DrawCmd
+    py::class_<ImDrawCmd> _DrawCmd(_imgui, "DrawCmd");
+    registry.on(_imgui, "DrawCmd", _DrawCmd);
+        _DrawCmd
         .def_readwrite("clip_rect", &ImDrawCmd::ClipRect)
         .def_readwrite("tex_ref", &ImDrawCmd::TexRef)
         .def_readwrite("vtx_offset", &ImDrawCmd::VtxOffset)
@@ -3052,27 +3052,27 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<ImDrawVert> DrawVert(_imgui, "DrawVert");
-    registry.on(_imgui, "DrawVert", DrawVert);
-        DrawVert
+    py::class_<ImDrawVert> _DrawVert(_imgui, "DrawVert");
+    registry.on(_imgui, "DrawVert", _DrawVert);
+        _DrawVert
         .def_readwrite("pos", &ImDrawVert::pos)
         .def_readwrite("uv", &ImDrawVert::uv)
         .def_readwrite("col", &ImDrawVert::col)
     ;
 
-    py::class_<ImDrawCmdHeader> DrawCmdHeader(_imgui, "DrawCmdHeader");
-    registry.on(_imgui, "DrawCmdHeader", DrawCmdHeader);
-        DrawCmdHeader
+    py::class_<ImDrawCmdHeader> _DrawCmdHeader(_imgui, "DrawCmdHeader");
+    registry.on(_imgui, "DrawCmdHeader", _DrawCmdHeader);
+        _DrawCmdHeader
         .def_readwrite("clip_rect", &ImDrawCmdHeader::ClipRect)
         .def_readwrite("tex_ref", &ImDrawCmdHeader::TexRef)
         .def_readwrite("vtx_offset", &ImDrawCmdHeader::VtxOffset)
     ;
 
-    py::class_<ImDrawChannel> DrawChannel(_imgui, "DrawChannel");
-    registry.on(_imgui, "DrawChannel", DrawChannel);
-    py::class_<ImDrawListSplitter> DrawListSplitter(_imgui, "DrawListSplitter");
-    registry.on(_imgui, "DrawListSplitter", DrawListSplitter);
-        DrawListSplitter
+    py::class_<ImDrawChannel> _DrawChannel(_imgui, "DrawChannel");
+    registry.on(_imgui, "DrawChannel", _DrawChannel);
+    py::class_<ImDrawListSplitter> _DrawListSplitter(_imgui, "DrawListSplitter");
+    registry.on(_imgui, "DrawListSplitter", _DrawListSplitter);
+        _DrawListSplitter
         .def("clear_free_memory", &ImDrawListSplitter::ClearFreeMemory
             , py::return_value_policy::automatic_reference)
         .def("split", &ImDrawListSplitter::Split
@@ -3113,9 +3113,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("ALLOW_VTX_OFFSET", ImDrawListFlags_::ImDrawListFlags_AllowVtxOffset)
         .export_values()
     ;
-    py::class_<ImDrawList> DrawList(_imgui, "DrawList");
-    registry.on(_imgui, "DrawList", DrawList);
-        DrawList
+    py::class_<ImDrawList> _DrawList(_imgui, "DrawList");
+    registry.on(_imgui, "DrawList", _DrawList);
+        _DrawList
         .def_readwrite("cmd_buffer", &ImDrawList::CmdBuffer)
         .def_readwrite("idx_buffer", &ImDrawList::IdxBuffer)
         .def_readwrite("vtx_buffer", &ImDrawList::VtxBuffer)
@@ -3392,9 +3392,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImDrawData> DrawData(_imgui, "DrawData");
-    registry.on(_imgui, "DrawData", DrawData);
-        DrawData
+    py::class_<ImDrawData> _DrawData(_imgui, "DrawData");
+    registry.on(_imgui, "DrawData", _DrawData);
+        _DrawData
         .def_readwrite("valid", &ImDrawData::Valid)
         .def_readwrite("cmd_lists_count", &ImDrawData::CmdListsCount)
         .def_readwrite("total_idx_count", &ImDrawData::TotalIdxCount)
@@ -3430,18 +3430,18 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("WANT_DESTROY", ImTextureStatus::ImTextureStatus_WantDestroy)
         .export_values()
     ;
-    py::class_<ImTextureRect> TextureRect(_imgui, "TextureRect");
-    registry.on(_imgui, "TextureRect", TextureRect);
-        TextureRect
+    py::class_<ImTextureRect> _TextureRect(_imgui, "TextureRect");
+    registry.on(_imgui, "TextureRect", _TextureRect);
+        _TextureRect
         .def_readwrite("x", &ImTextureRect::x)
         .def_readwrite("y", &ImTextureRect::y)
         .def_readwrite("w", &ImTextureRect::w)
         .def_readwrite("h", &ImTextureRect::h)
     ;
 
-    py::class_<ImTextureData> TextureData(_imgui, "TextureData");
-    registry.on(_imgui, "TextureData", TextureData);
-        TextureData
+    py::class_<ImTextureData> _TextureData(_imgui, "TextureData");
+    registry.on(_imgui, "TextureData", _TextureData);
+        _TextureData
         .def_readwrite("unique_id", &ImTextureData::UniqueID)
         .def_readwrite("status", &ImTextureData::Status)
         .def_readwrite("backend_user_data", &ImTextureData::BackendUserData)
@@ -3487,9 +3487,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImFontConfig> FontConfig(_imgui, "FontConfig");
-    registry.on(_imgui, "FontConfig", FontConfig);
-        FontConfig
+    py::class_<ImFontConfig> _FontConfig(_imgui, "FontConfig");
+    registry.on(_imgui, "FontConfig", _FontConfig);
+        _FontConfig
         .def_readonly("name", &ImFontConfig::Name)
         .def_readwrite("font_data", &ImFontConfig::FontData)
         .def_readwrite("font_data_size", &ImFontConfig::FontDataSize)
@@ -3522,9 +3522,25 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<ImFontGlyph> FontGlyph(_imgui, "FontGlyph");
-    registry.on(_imgui, "FontGlyph", FontGlyph);
-        FontGlyph
+    py::class_<ImFontGlyph> _FontGlyph(_imgui, "FontGlyph");
+    registry.on(_imgui, "FontGlyph", _FontGlyph);
+        _FontGlyph
+        .def_property("colored",
+            [](ImFontGlyph& self){ return self.Colored; },
+            [](ImFontGlyph& self, unsigned int source){ self.Colored = source; }
+        )
+        .def_property("visible",
+            [](ImFontGlyph& self){ return self.Visible; },
+            [](ImFontGlyph& self, unsigned int source){ self.Visible = source; }
+        )
+        .def_property("source_idx",
+            [](ImFontGlyph& self){ return self.SourceIdx; },
+            [](ImFontGlyph& self, unsigned int source){ self.SourceIdx = source; }
+        )
+        .def_property("codepoint",
+            [](ImFontGlyph& self){ return self.Codepoint; },
+            [](ImFontGlyph& self, unsigned int source){ self.Codepoint = source; }
+        )
         .def_readwrite("advance_x", &ImFontGlyph::AdvanceX)
         .def_readwrite("x0", &ImFontGlyph::X0)
         .def_readwrite("y0", &ImFontGlyph::Y0)
@@ -3538,9 +3554,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<ImFontGlyphRangesBuilder> FontGlyphRangesBuilder(_imgui, "FontGlyphRangesBuilder");
-    registry.on(_imgui, "FontGlyphRangesBuilder", FontGlyphRangesBuilder);
-        FontGlyphRangesBuilder
+    py::class_<ImFontGlyphRangesBuilder> _FontGlyphRangesBuilder(_imgui, "FontGlyphRangesBuilder");
+    registry.on(_imgui, "FontGlyphRangesBuilder", _FontGlyphRangesBuilder);
+        _FontGlyphRangesBuilder
         .def_readwrite("used_chars", &ImFontGlyphRangesBuilder::UsedChars)
         .def(py::init<>())
         .def("add_text", &ImFontGlyphRangesBuilder::AddText
@@ -3555,9 +3571,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImFontAtlasRect> FontAtlasRect(_imgui, "FontAtlasRect");
-    registry.on(_imgui, "FontAtlasRect", FontAtlasRect);
-        FontAtlasRect
+    py::class_<ImFontAtlasRect> _FontAtlasRect(_imgui, "FontAtlasRect");
+    registry.on(_imgui, "FontAtlasRect", _FontAtlasRect);
+        _FontAtlasRect
         .def_readwrite("x", &ImFontAtlasRect::x)
         .def_readwrite("y", &ImFontAtlasRect::y)
         .def_readwrite("w", &ImFontAtlasRect::w)
@@ -3574,9 +3590,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("NO_BAKED_LINES", ImFontAtlasFlags_::ImFontAtlasFlags_NoBakedLines)
         .export_values()
     ;
-    py::class_<ImFontAtlas> FontAtlas(_imgui, "FontAtlas");
-    registry.on(_imgui, "FontAtlas", FontAtlas);
-        FontAtlas
+    py::class_<ImFontAtlas> _FontAtlas(_imgui, "FontAtlas");
+    registry.on(_imgui, "FontAtlas", _FontAtlas);
+        _FontAtlas
         .def(py::init<>())
         .def("add_font", &ImFontAtlas::AddFont
             , py::arg("font_cfg")
@@ -3684,9 +3700,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         )
     ;
 
-    py::class_<ImFontBaked> FontBaked(_imgui, "FontBaked");
-    registry.on(_imgui, "FontBaked", FontBaked);
-        FontBaked
+    py::class_<ImFontBaked> _FontBaked(_imgui, "FontBaked");
+    registry.on(_imgui, "FontBaked", _FontBaked);
+        _FontBaked
         .def_readwrite("index_advance_x", &ImFontBaked::IndexAdvanceX)
         .def_readwrite("fallback_advance_x", &ImFontBaked::FallbackAdvanceX)
         .def_readwrite("size", &ImFontBaked::Size)
@@ -3696,6 +3712,22 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("fallback_glyph_index", &ImFontBaked::FallbackGlyphIndex)
         .def_readwrite("ascent", &ImFontBaked::Ascent)
         .def_readwrite("descent", &ImFontBaked::Descent)
+        .def_property("metrics_total_surface",
+            [](ImFontBaked& self){ return self.MetricsTotalSurface; },
+            [](ImFontBaked& self, unsigned int source){ self.MetricsTotalSurface = source; }
+        )
+        .def_property("want_destroy",
+            [](ImFontBaked& self){ return self.WantDestroy; },
+            [](ImFontBaked& self, unsigned int source){ self.WantDestroy = source; }
+        )
+        .def_property("load_no_fallback",
+            [](ImFontBaked& self){ return self.LoadNoFallback; },
+            [](ImFontBaked& self, unsigned int source){ self.LoadNoFallback = source; }
+        )
+        .def_property("load_no_render_on_layout",
+            [](ImFontBaked& self){ return self.LoadNoRenderOnLayout; },
+            [](ImFontBaked& self, unsigned int source){ self.LoadNoRenderOnLayout = source; }
+        )
         .def_readwrite("last_used_frame", &ImFontBaked::LastUsedFrame)
         .def_readwrite("baked_id", &ImFontBaked::BakedId)
         .def_readwrite("container_font", &ImFontBaked::ContainerFont)
@@ -3724,9 +3756,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("LOCK_BAKED_SIZES", ImFontFlags_::ImFontFlags_LockBakedSizes)
         .export_values()
     ;
-    py::class_<ImFont> Font(_imgui, "Font");
-    registry.on(_imgui, "Font", Font);
-        Font
+    py::class_<ImFont> _Font(_imgui, "Font");
+    registry.on(_imgui, "Font", _Font);
+        _Font
         .def_readwrite("last_baked", &ImFont::LastBaked)
         .def_readwrite("container_atlas", &ImFont::ContainerAtlas)
         .def_readwrite("flags", &ImFont::Flags)
@@ -3806,9 +3838,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .value("IS_FOCUSED", ImGuiViewportFlags_::ImGuiViewportFlags_IsFocused)
         .export_values()
     ;
-    py::class_<ImGuiViewport> Viewport(_imgui, "Viewport");
-    registry.on(_imgui, "Viewport", Viewport);
-        Viewport
+    py::class_<ImGuiViewport> _Viewport(_imgui, "Viewport");
+    registry.on(_imgui, "Viewport", _Viewport);
+        _Viewport
         .def_readwrite("id", &ImGuiViewport::ID)
         .def_readwrite("flags", &ImGuiViewport::Flags)
         .def_readwrite("pos", &ImGuiViewport::Pos)
@@ -3834,9 +3866,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<ImGuiPlatformImeData> PlatformImeData(_imgui, "PlatformImeData");
-    registry.on(_imgui, "PlatformImeData", PlatformImeData);
-        PlatformImeData
+    py::class_<ImGuiPlatformImeData> _PlatformImeData(_imgui, "PlatformImeData");
+    registry.on(_imgui, "PlatformImeData", _PlatformImeData);
+        _PlatformImeData
         .def_readwrite("want_visible", &ImGuiPlatformImeData::WantVisible)
         .def_readwrite("want_text_input", &ImGuiPlatformImeData::WantTextInput)
         .def_readwrite("input_pos", &ImGuiPlatformImeData::InputPos)

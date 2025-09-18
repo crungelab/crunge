@@ -57,7 +57,7 @@ class Widget(Node["Widget"]):
             child.apply_layout()
 
     def on_layout(self):
-        logger.debug(f"Widget.on_layout: {self}")
+        #logger.debug(f"Widget.on_layout: {self}")
         self._set_size(glm.ivec2(
             self.layout.get_computed_width(), self.layout.get_computed_height()
         ))
@@ -99,12 +99,12 @@ class Widget(Node["Widget"]):
         )
 
     def _set_size(self, value: glm.ivec2) -> bool:
-        logger.debug(f"Widget._set_size: {self}, {value}")
+        #logger.debug(f"Widget._set_size: {self}, {value}")
         changed = self._size != value
         self._size = value
 
         if changed:
-            logger.debug(f"Widget size changed: {self}, {self.size}")
+            #logger.debug(f"Widget size changed: {self}, {self.size}")
             self.on_size()
 
         return changed

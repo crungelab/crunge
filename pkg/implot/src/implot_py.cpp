@@ -19,40 +19,6 @@ namespace py = pybind11;
 char ImGuiTextBuffer::EmptyString[1] = { 0 };
 
 void init_main(py::module &_implot, Registry &registry) {
-    /*
-        ImPlotContext needs to be an opaque type.  Wrap it with PyCapsule
-    */
-    //IMPLOT_API ImPlotContext* CreateContext();
-    /*
-    _implot.def("create_context", []()
-    {
-        return py::capsule(ImPlot::CreateContext(), "ImPlotContext");
-    }
-    , py::return_value_policy::automatic_reference);
-
-    //IMPLOT_API void DestroyContext(ImPlotContext* ctx = NULL);
-    _implot.def("destroy_context", [](py::capsule& ctx)
-    {
-        ImPlot::DestroyContext(ctx);
-    }
-    , py::arg("ctx") = nullptr
-    , py::return_value_policy::automatic_reference);
-
-    //IMPLOT_API ImPlotContext* GetCurrentContext();
-    _implot.def("get_current_context", []()
-    {
-        return (void*)ImPlot::GetCurrentContext();
-    }
-    , py::return_value_policy::automatic_reference);
-
-    //IMPLOT_API void SetCurrentContext(ImPlotContext* ctx);
-    _implot.def("set_current_context", [](py::capsule& ctx)
-    {
-        ImPlot::SetCurrentContext(ctx);
-    }
-    , py::arg("ctx")
-    , py::return_value_policy::automatic_reference);
-    */
 
     //template <typename T> IMPLOT_API void PlotLine(const char* label_id, const T* values, int count, double xscale=1, double x0=0, int offset=0, int stride=sizeof(T));
     _implot.def("plot_line", [](const char* label_id, const py::array_t<double>& values, int count)

@@ -3,7 +3,6 @@ from crunge.engine import Renderer, App
 from crunge.demo import Page, PageChannel
 
 
-
 class DragFloat(Page):
     def reset(self):
         self.value = 42.0
@@ -11,7 +10,8 @@ class DragFloat(Page):
     def _draw(self):
         imgui.begin("Example: drag float")
         changed, self.value = imgui.drag_float(
-            "Default", self.value,
+            "Default",
+            self.value,
         )
         changed, self.value = imgui.drag_float(
             "Less precise", self.value, format="%.1f"
@@ -20,21 +20,21 @@ class DragFloat(Page):
         imgui.end()
         super()._draw()
 
+
 class DragFloat2(Page):
     def reset(self):
         self.values = 88.0, 42.0
 
     def _draw(self):
         imgui.begin("Example: drag float 2")
-        changed, self.values = imgui.drag_float2(
-            "Default", self.values
-        )
+        changed, self.values = imgui.drag_float2("Default", self.values)
         changed, self.values = imgui.drag_float2(
             "Less precise", self.values, format="%.1f"
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.values))
         imgui.end()
         super()._draw()
+
 
 class DragFloat3(Page):
     def reset(self):
@@ -42,15 +42,14 @@ class DragFloat3(Page):
 
     def _draw(self):
         imgui.begin("Example: drag float 3")
-        changed, self.values = imgui.drag_float3(
-            "Default", self.values
-        )
+        changed, self.values = imgui.drag_float3("Default", self.values)
         changed, self.values = imgui.drag_float3(
             "Less precise", self.values, format="%.1f"
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.values))
         imgui.end()
         super()._draw()
+
 
 class DragFloat4(Page):
     def reset(self):
@@ -58,15 +57,14 @@ class DragFloat4(Page):
 
     def _draw(self):
         imgui.begin("Example: drag float 4")
-        changed, self.values = imgui.drag_float4(
-            "Default", self.values
-        )
+        changed, self.values = imgui.drag_float4("Default", self.values)
         changed, self.values = imgui.drag_float4(
             "Less precise", self.values, format="%.1f"
         )
         imgui.text("Changed: %s, Values: %s" % (changed, self.values))
         imgui.end()
         super()._draw()
+
 
 def install(app: App):
     app.add_channel(PageChannel(DragFloat, "dragfloat", "Drag Float"))

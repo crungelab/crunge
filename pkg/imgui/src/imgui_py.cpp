@@ -42,43 +42,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     template_ImVector<ImFontGlyph>(_imgui, "Vector_FontGlyph");
     template_ImVector<ImTextureData*>(_imgui, "Vector_TextureData");
 
-    /*
-        ImGuiContext needs to be an opaque type.  Wrap it with PyCapsule
-    */
-   /*
-    //ImGuiContext* ImGui::CreateContext(ImFontAtlas* shared_font_atlas)
-    _imgui.def("create_context", [](ImFontAtlas* shared_font_atlas)
-    {
-        return py::capsule(ImGui::CreateContext(shared_font_atlas), "ImGuiContext");
-    }
-    , py::arg("shared_font_atlas") = nullptr
-    , py::return_value_policy::automatic_reference);
-
-    //void ImGui::DestroyContext(ImGuiContext* ctx)
-    _imgui.def("destroy_context", [](py::capsule& ctx)
-    {
-        ImGui::DestroyContext(ctx);
-    }
-    , py::arg("ctx") = nullptr
-    , py::return_value_policy::automatic_reference);
-
-    //ImGuiContext* ImGui::GetCurrentContext()
-    _imgui.def("get_current_context", []()
-    {
-        return (void*)ImGui::GetCurrentContext();
-    }
-    , py::return_value_policy::automatic_reference);
-
-    //void ImGui::SetCurrentContext(ImGuiContext* ctx)
-    _imgui.def("set_current_context", [](py::capsule& ctx)
-    {
-        ImGui::SetCurrentContext(ctx);
-    }
-    , py::arg("ctx")
-    , py::return_value_policy::automatic_reference);
-
     //bool ImGui::SetDragDropPayload(const char* type, const void* data, size_t data_size, ImGuiCond cond)
-    */
     _imgui.def("set_drag_drop_payload", [](std::string type, std::string data, ImGuiCond cond)
     {
         return ImGui::SetDragDropPayload(type.c_str(), data.c_str(), data.length(), cond);
@@ -144,31 +108,6 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         if (button >= IM_ARRAYSIZE(self.MouseDown)) throw py::index_error();
         self.MouseDown[button] = down;
     }, py::arg("button"), py::arg("down"));
-
-    /*IO.def("set_key_down", [](ImGuiIO& self, int key, bool down)
-    {
-        if (key < 0) throw py::index_error();
-        if (key >= IM_ARRAYSIZE(self.KeysDown)) throw py::index_error();
-        self.KeysDown[key] = down;
-    }, py::arg("key"), py::arg("down"));*/
-
-    /*IO.def_property_readonly("key_map", [](const ImGuiIO &io) {
-        auto result = PyList_New(ImGuiKey_COUNT);
-        //auto keymap = ImGui::GetIO().KeyMap;
-        auto keymap = io.KeyMap;
-        for(int i = 0; i < ImGuiKey_COUNT; ++i ) {
-            PyList_SetItem(result, i, PyLong_FromLong(keymap[i]));
-        }
-        //return list;
-        return py::reinterpret_steal<py::object>(result);
-    });*/
-
-    /*IO.def("set_key_map", [](ImGuiIO& self, int key, int value)
-    {
-        if (key < 0) throw py::index_error();
-        if (key >= IM_ARRAYSIZE(self.KeyMap)) throw py::index_error();
-        self.KeyMap[key] = value;
-    }, py::arg("key"), py::arg("value"));*/
     PYEXTEND_END
 
     PYEXTEND_BEGIN(ImDrawCmd, DrawCmd)
@@ -286,17 +225,14 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     PYEXTEND_BEGIN(ImDrawVert, DrawVert)
     _DrawVert.def_property_readonly_static("pos_offset", [](py::object)
     {
-        //return IM_OFFSETOF(ImDrawVert, pos);
         return offsetof(ImDrawVert, pos);
     });
     _DrawVert.def_property_readonly_static("uv_offset", [](py::object)
     {
-        //return IM_OFFSETOF(ImDrawVert, uv);
         return offsetof(ImDrawVert, uv);
     });
     _DrawVert.def_property_readonly_static("col_offset", [](py::object)
     {
-        //return IM_OFFSETOF(ImDrawVert, col);
         return offsetof(ImDrawVert, col);
     });
     PYEXTEND_END
@@ -312,35 +248,6 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("font_cfg") = nullptr
     , py::arg("glyph_ranges") = std::vector<ImWchar>()  // Default empty vector
     , py::return_value_policy::automatic_reference);
-
-    /*
-    _FontAtlas.def("get_tex_data_as_alpha8", [](ImFontAtlas& self)
-    {
-        unsigned char* pixels;
-        int width, height, bytes_per_pixel;
-        self.GetTexDataAsAlpha8(&pixels, &width, &height, &bytes_per_pixel);
-        std::string data((char*)pixels, width * height * bytes_per_pixel);
-        return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
-    });
-    _FontAtlas.def("get_tex_data_as_rgba32", [](ImFontAtlas& self)
-    {
-        unsigned char* pixels;
-        int width, height, bytes_per_pixel;
-        self.GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixel);
-        std::string data((char*)pixels, width * height * bytes_per_pixel);
-        return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
-    });
-    _FontAtlas.def("get_tex_data_as_rgba32_array", [](ImFontAtlas& self)
-    {
-        unsigned char* pixels;
-        int width, height, bytes_per_pixel;
-        self.GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixel);
-        //std::string data((char*)pixels, width * height * bytes_per_pixel);
-        py::array_t<unsigned char> data(width * height * bytes_per_pixel, pixels);
-        //return std::make_tuple(py::bytes(data), width, height, bytes_per_pixel);
-        return std::make_tuple(data, width, height, bytes_per_pixel);
-    });
-    */
     PYEXTEND_END
 
     PYEXTEND_BEGIN(ImTextureData, TextureData)
@@ -359,6 +266,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     });
     PYEXTEND_END
 
+    /*
     _imgui.def("init", []()
     {
         ImGui::CreateContext();
@@ -368,7 +276,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         int w, h;
         //io.Fonts->GetTexDataAsAlpha8(&pixels, &w, &h, nullptr);
     });
-
+    */
     _imgui.def("input_text", [](const char* label, char* data, size_t max_size, ImGuiInputTextFlags flags)
     {
         max_size++;
@@ -384,6 +292,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("max_size")
     , py::arg("flags") = 0
     , py::return_value_policy::automatic_reference);
+
     _imgui.def("input_text_multiline", [](const char* label, char* data, size_t max_size, const ImVec2& size, ImGuiInputTextFlags flags)
     {
         max_size++;
@@ -400,6 +309,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("size") = ImVec2(0,0)
     , py::arg("flags") = 0
     , py::return_value_policy::automatic_reference);
+
     _imgui.def("menu_item", [](const char * label, const char * shortcut, bool * p_selected, bool enabled)
     {
         auto ret = ImGui::MenuItem(label, shortcut, p_selected, enabled);
@@ -410,6 +320,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("p_selected")
     , py::arg("enabled") = true
     , py::return_value_policy::automatic_reference);
+
     _imgui.def("combo", [](const char* label, int * current_item, std::vector<std::string> items, int popup_max_height_in_items)
     {
         std::vector<const char*> ptrs;
@@ -475,6 +386,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("scale_max") = FLT_MAX
     , py::arg("graph_size") = ImVec2(0,0)
     );
+
     _imgui.def("plot_histogram", [](const char* label, std::vector<float> values, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size)
     {
         ImGui::PlotHistogram(label, values.data(), values.size(), values_offset, overlay_text, scale_min, scale_max, graph_size, sizeof(float));

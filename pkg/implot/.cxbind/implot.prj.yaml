@@ -1,4 +1,4 @@
-module: _implot
+module: implot
 
 flags: [
   '-x', 'c++',

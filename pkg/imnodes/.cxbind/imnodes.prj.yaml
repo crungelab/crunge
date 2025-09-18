@@ -1,4 +1,4 @@
-module: _imnodes
+module: imnodes
 
 flags: [
     '-x', 'c++',
