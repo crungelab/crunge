@@ -266,17 +266,6 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     });
     PYEXTEND_END
 
-    /*
-    _imgui.def("init", []()
-    {
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize = ImVec2(800.0, 600.0);
-        unsigned char* pixels;
-        int w, h;
-        //io.Fonts->GetTexDataAsAlpha8(&pixels, &w, &h, nullptr);
-    });
-    */
     _imgui.def("input_text", [](const char* label, char* data, size_t max_size, ImGuiInputTextFlags flags)
     {
         max_size++;

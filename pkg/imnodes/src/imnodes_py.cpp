@@ -44,14 +44,5 @@ void MiniMap(
       , py::arg("hovering_callback") = nullptr
       , py::arg("hovering_callback_data") = nullptr
       , py::return_value_policy::automatic_reference);
-
-    /*_imnodes.def("mini_map",
-      [](const float                              minimap_size_fraction = 0.2f,
-        const ImNodesMiniMapLocation             location = ImNodesMiniMapLocation_TopLeft) {
-          return ImNodes::MiniMap(minimap_size_fraction, location);
-      }
-      , py::arg("size_fraction")
-      , py::arg("location")
-      , py::return_value_policy::automatic_reference);*/
 }
 

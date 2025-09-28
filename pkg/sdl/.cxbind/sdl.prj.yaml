@@ -1,4 +1,4 @@
-module: _sdl
+module: sdl
 
 flags: [
   '-x', 'c++',

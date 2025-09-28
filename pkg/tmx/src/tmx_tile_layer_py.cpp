@@ -21,11 +21,5 @@ void init_tmx_tile_layer_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::TileLayer, TileLayer)
 
-    /*
-    _TileLayer.def_property_readonly("tiles", [](tmx::TileLayer& l){
-        return l.getTiles();
-    });
-    */
-
     PYEXTEND_END
 }

@@ -21,9 +21,9 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         .value("SYSTEM_THEME_DARK", SDL_SystemTheme::SDL_SYSTEM_THEME_DARK)
         .export_values()
     ;
-    py::class_<SDL_DisplayMode> DisplayMode(_sdl, "DisplayMode");
-    registry.on(_sdl, "DisplayMode", DisplayMode);
-        DisplayMode
+    py::class_<SDL_DisplayMode> _DisplayMode(_sdl, "DisplayMode");
+    registry.on(_sdl, "DisplayMode", _DisplayMode);
+        _DisplayMode
         .def_readwrite("display_id", &SDL_DisplayMode::displayID)
         .def_readwrite("format", &SDL_DisplayMode::format)
         .def_readwrite("w", &SDL_DisplayMode::w)
@@ -48,58 +48,44 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         .value("FLASH_UNTIL_FOCUSED", SDL_FlashOperation::SDL_FLASH_UNTIL_FOCUSED)
         .export_values()
     ;
-    py::enum_<SDL_GLattr>(_sdl, "GLattr", py::arithmetic())
-        .value("GL_RED_SIZE", SDL_GLattr::SDL_GL_RED_SIZE)
-        .value("GL_GREEN_SIZE", SDL_GLattr::SDL_GL_GREEN_SIZE)
-        .value("GL_BLUE_SIZE", SDL_GLattr::SDL_GL_BLUE_SIZE)
-        .value("GL_ALPHA_SIZE", SDL_GLattr::SDL_GL_ALPHA_SIZE)
-        .value("GL_BUFFER_SIZE", SDL_GLattr::SDL_GL_BUFFER_SIZE)
-        .value("GL_DOUBLEBUFFER", SDL_GLattr::SDL_GL_DOUBLEBUFFER)
-        .value("GL_DEPTH_SIZE", SDL_GLattr::SDL_GL_DEPTH_SIZE)
-        .value("GL_STENCIL_SIZE", SDL_GLattr::SDL_GL_STENCIL_SIZE)
-        .value("GL_ACCUM_RED_SIZE", SDL_GLattr::SDL_GL_ACCUM_RED_SIZE)
-        .value("GL_ACCUM_GREEN_SIZE", SDL_GLattr::SDL_GL_ACCUM_GREEN_SIZE)
-        .value("GL_ACCUM_BLUE_SIZE", SDL_GLattr::SDL_GL_ACCUM_BLUE_SIZE)
-        .value("GL_ACCUM_ALPHA_SIZE", SDL_GLattr::SDL_GL_ACCUM_ALPHA_SIZE)
-        .value("GL_STEREO", SDL_GLattr::SDL_GL_STEREO)
-        .value("GL_MULTISAMPLEBUFFERS", SDL_GLattr::SDL_GL_MULTISAMPLEBUFFERS)
-        .value("GL_MULTISAMPLESAMPLES", SDL_GLattr::SDL_GL_MULTISAMPLESAMPLES)
-        .value("GL_ACCELERATED_VISUAL", SDL_GLattr::SDL_GL_ACCELERATED_VISUAL)
-        .value("GL_RETAINED_BACKING", SDL_GLattr::SDL_GL_RETAINED_BACKING)
-        .value("GL_CONTEXT_MAJOR_VERSION", SDL_GLattr::SDL_GL_CONTEXT_MAJOR_VERSION)
-        .value("GL_CONTEXT_MINOR_VERSION", SDL_GLattr::SDL_GL_CONTEXT_MINOR_VERSION)
-        .value("GL_CONTEXT_FLAGS", SDL_GLattr::SDL_GL_CONTEXT_FLAGS)
-        .value("GL_CONTEXT_PROFILE_MASK", SDL_GLattr::SDL_GL_CONTEXT_PROFILE_MASK)
-        .value("GL_SHARE_WITH_CURRENT_CONTEXT", SDL_GLattr::SDL_GL_SHARE_WITH_CURRENT_CONTEXT)
-        .value("GL_FRAMEBUFFER_SRGB_CAPABLE", SDL_GLattr::SDL_GL_FRAMEBUFFER_SRGB_CAPABLE)
-        .value("GL_CONTEXT_RELEASE_BEHAVIOR", SDL_GLattr::SDL_GL_CONTEXT_RELEASE_BEHAVIOR)
-        .value("GL_CONTEXT_RESET_NOTIFICATION", SDL_GLattr::SDL_GL_CONTEXT_RESET_NOTIFICATION)
-        .value("GL_CONTEXT_NO_ERROR", SDL_GLattr::SDL_GL_CONTEXT_NO_ERROR)
-        .value("GL_FLOATBUFFERS", SDL_GLattr::SDL_GL_FLOATBUFFERS)
-        .value("GL_EGL_PLATFORM", SDL_GLattr::SDL_GL_EGL_PLATFORM)
+    py::enum_<SDL_ProgressState>(_sdl, "ProgressState", py::arithmetic())
+        .value("PROGRESS_STATE_INVALID", SDL_ProgressState::SDL_PROGRESS_STATE_INVALID)
+        .value("PROGRESS_STATE_NONE", SDL_ProgressState::SDL_PROGRESS_STATE_NONE)
+        .value("PROGRESS_STATE_INDETERMINATE", SDL_ProgressState::SDL_PROGRESS_STATE_INDETERMINATE)
+        .value("PROGRESS_STATE_NORMAL", SDL_ProgressState::SDL_PROGRESS_STATE_NORMAL)
+        .value("PROGRESS_STATE_PAUSED", SDL_ProgressState::SDL_PROGRESS_STATE_PAUSED)
+        .value("PROGRESS_STATE_ERROR", SDL_ProgressState::SDL_PROGRESS_STATE_ERROR)
         .export_values()
     ;
-    py::enum_<SDL_GLprofile>(_sdl, "GLprofile", py::arithmetic())
-        .value("GL_CONTEXT_PROFILE_CORE", SDL_GLprofile::SDL_GL_CONTEXT_PROFILE_CORE)
-        .value("GL_CONTEXT_PROFILE_COMPATIBILITY", SDL_GLprofile::SDL_GL_CONTEXT_PROFILE_COMPATIBILITY)
-        .value("GL_CONTEXT_PROFILE_ES", SDL_GLprofile::SDL_GL_CONTEXT_PROFILE_ES)
-        .export_values()
-    ;
-    py::enum_<SDL_GLcontextFlag>(_sdl, "GLcontextFlag", py::arithmetic())
-        .value("GL_CONTEXT_DEBUG_FLAG", SDL_GLcontextFlag::SDL_GL_CONTEXT_DEBUG_FLAG)
-        .value("GL_CONTEXT_FORWARD_COMPATIBLE_FLAG", SDL_GLcontextFlag::SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG)
-        .value("GL_CONTEXT_ROBUST_ACCESS_FLAG", SDL_GLcontextFlag::SDL_GL_CONTEXT_ROBUST_ACCESS_FLAG)
-        .value("GL_CONTEXT_RESET_ISOLATION_FLAG", SDL_GLcontextFlag::SDL_GL_CONTEXT_RESET_ISOLATION_FLAG)
-        .export_values()
-    ;
-    py::enum_<SDL_GLcontextReleaseFlag>(_sdl, "GLcontextReleaseFlag", py::arithmetic())
-        .value("GL_CONTEXT_RELEASE_BEHAVIOR_NONE", SDL_GLcontextReleaseFlag::SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE)
-        .value("GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH", SDL_GLcontextReleaseFlag::SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH)
-        .export_values()
-    ;
-    py::enum_<SDL_GLContextResetNotification>(_sdl, "GLContextResetNotification", py::arithmetic())
-        .value("GL_CONTEXT_RESET_NO_NOTIFICATION", SDL_GLContextResetNotification::SDL_GL_CONTEXT_RESET_NO_NOTIFICATION)
-        .value("GL_CONTEXT_RESET_LOSE_CONTEXT", SDL_GLContextResetNotification::SDL_GL_CONTEXT_RESET_LOSE_CONTEXT)
+    py::enum_<SDL_GLAttr>(_sdl, "GLAttr", py::arithmetic())
+        .value("GL_RED_SIZE", SDL_GLAttr::SDL_GL_RED_SIZE)
+        .value("GL_GREEN_SIZE", SDL_GLAttr::SDL_GL_GREEN_SIZE)
+        .value("GL_BLUE_SIZE", SDL_GLAttr::SDL_GL_BLUE_SIZE)
+        .value("GL_ALPHA_SIZE", SDL_GLAttr::SDL_GL_ALPHA_SIZE)
+        .value("GL_BUFFER_SIZE", SDL_GLAttr::SDL_GL_BUFFER_SIZE)
+        .value("GL_DOUBLEBUFFER", SDL_GLAttr::SDL_GL_DOUBLEBUFFER)
+        .value("GL_DEPTH_SIZE", SDL_GLAttr::SDL_GL_DEPTH_SIZE)
+        .value("GL_STENCIL_SIZE", SDL_GLAttr::SDL_GL_STENCIL_SIZE)
+        .value("GL_ACCUM_RED_SIZE", SDL_GLAttr::SDL_GL_ACCUM_RED_SIZE)
+        .value("GL_ACCUM_GREEN_SIZE", SDL_GLAttr::SDL_GL_ACCUM_GREEN_SIZE)
+        .value("GL_ACCUM_BLUE_SIZE", SDL_GLAttr::SDL_GL_ACCUM_BLUE_SIZE)
+        .value("GL_ACCUM_ALPHA_SIZE", SDL_GLAttr::SDL_GL_ACCUM_ALPHA_SIZE)
+        .value("GL_STEREO", SDL_GLAttr::SDL_GL_STEREO)
+        .value("GL_MULTISAMPLEBUFFERS", SDL_GLAttr::SDL_GL_MULTISAMPLEBUFFERS)
+        .value("GL_MULTISAMPLESAMPLES", SDL_GLAttr::SDL_GL_MULTISAMPLESAMPLES)
+        .value("GL_ACCELERATED_VISUAL", SDL_GLAttr::SDL_GL_ACCELERATED_VISUAL)
+        .value("GL_RETAINED_BACKING", SDL_GLAttr::SDL_GL_RETAINED_BACKING)
+        .value("GL_CONTEXT_MAJOR_VERSION", SDL_GLAttr::SDL_GL_CONTEXT_MAJOR_VERSION)
+        .value("GL_CONTEXT_MINOR_VERSION", SDL_GLAttr::SDL_GL_CONTEXT_MINOR_VERSION)
+        .value("GL_CONTEXT_FLAGS", SDL_GLAttr::SDL_GL_CONTEXT_FLAGS)
+        .value("GL_CONTEXT_PROFILE_MASK", SDL_GLAttr::SDL_GL_CONTEXT_PROFILE_MASK)
+        .value("GL_SHARE_WITH_CURRENT_CONTEXT", SDL_GLAttr::SDL_GL_SHARE_WITH_CURRENT_CONTEXT)
+        .value("GL_FRAMEBUFFER_SRGB_CAPABLE", SDL_GLAttr::SDL_GL_FRAMEBUFFER_SRGB_CAPABLE)
+        .value("GL_CONTEXT_RELEASE_BEHAVIOR", SDL_GLAttr::SDL_GL_CONTEXT_RELEASE_BEHAVIOR)
+        .value("GL_CONTEXT_RESET_NOTIFICATION", SDL_GLAttr::SDL_GL_CONTEXT_RESET_NOTIFICATION)
+        .value("GL_CONTEXT_NO_ERROR", SDL_GLAttr::SDL_GL_CONTEXT_NO_ERROR)
+        .value("GL_FLOATBUFFERS", SDL_GLAttr::SDL_GL_FLOATBUFFERS)
+        .value("GL_EGL_PLATFORM", SDL_GLAttr::SDL_GL_EGL_PLATFORM)
         .export_values()
     ;
     _sdl
@@ -150,7 +136,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h")
         , py::arg("refresh_rate")
         , py::arg("include_high_density_modes")
-        , py::arg("mode")
+        , py::arg("closest")
         , py::return_value_policy::automatic_reference)
     .def("get_desktop_display_mode", &SDL_GetDesktopDisplayMode
         , py::arg("display_id")
@@ -685,6 +671,36 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("window")
         , py::arg("operation")
         , py::return_value_policy::automatic_reference)
+    .def("set_window_progress_state", [](const SDLWindowWrapper& window, SDL_ProgressState state)
+        {
+            auto ret = SDL_SetWindowProgressState(window, state);
+            return ret;
+        }
+        , py::arg("window")
+        , py::arg("state")
+        , py::return_value_policy::automatic_reference)
+    .def("get_window_progress_state", [](const SDLWindowWrapper& window)
+        {
+            auto ret = SDL_GetWindowProgressState(window);
+            return ret;
+        }
+        , py::arg("window")
+        , py::return_value_policy::automatic_reference)
+    .def("set_window_progress_value", [](const SDLWindowWrapper& window, float value)
+        {
+            auto ret = SDL_SetWindowProgressValue(window, value);
+            return ret;
+        }
+        , py::arg("window")
+        , py::arg("value")
+        , py::return_value_policy::automatic_reference)
+    .def("get_window_progress_value", [](const SDLWindowWrapper& window)
+        {
+            auto ret = SDL_GetWindowProgressValue(window);
+            return ret;
+        }
+        , py::arg("window")
+        , py::return_value_policy::automatic_reference)
     .def("destroy_window", [](const SDLWindowWrapper& window)
         {
             SDL_DestroyWindow(window);
@@ -698,21 +714,21 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("disable_screen_saver", &SDL_DisableScreenSaver
         , py::return_value_policy::automatic_reference)
-    .def("gl_load_library", &SDL_GL_LoadLibrary
+    .def("gl__load_library", &SDL_GL_LoadLibrary
         , py::arg("path")
         , py::return_value_policy::automatic_reference)
-    .def("gl_unload_library", &SDL_GL_UnloadLibrary
+    .def("gl__unload_library", &SDL_GL_UnloadLibrary
         , py::return_value_policy::automatic_reference)
-    .def("gl_extension_supported", &SDL_GL_ExtensionSupported
+    .def("gl__extension_supported", &SDL_GL_ExtensionSupported
         , py::arg("extension")
         , py::return_value_policy::automatic_reference)
-    .def("gl_reset_attributes", &SDL_GL_ResetAttributes
+    .def("gl__reset_attributes", &SDL_GL_ResetAttributes
         , py::return_value_policy::automatic_reference)
-    .def("gl_set_attribute", &SDL_GL_SetAttribute
+    .def("gl__set_attribute", &SDL_GL_SetAttribute
         , py::arg("attr")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
-    .def("gl_get_attribute", [](SDL_GLattr attr, int * value)
+    .def("gl__get_attribute", [](SDL_GLAttr attr, int * value)
         {
             auto ret = SDL_GL_GetAttribute(attr, value);
             return std::make_tuple(ret, value);
@@ -720,39 +736,40 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("attr")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
-    .def("gl_get_current_window", []()
+    .def("gl__get_current_window", []()
         {
             auto ret = SDLWindowWrapper(SDL_GL_GetCurrentWindow());
             return ret;
         }
         , py::return_value_policy::automatic_reference)
-    .def("egl_get_current_display", &SDL_EGL_GetCurrentDisplay
+    .def("egl__get_current_display", &SDL_EGL_GetCurrentDisplay
         , py::return_value_policy::automatic_reference)
-    .def("egl_get_current_config", &SDL_EGL_GetCurrentConfig
+    .def("egl__get_current_config", &SDL_EGL_GetCurrentConfig
         , py::return_value_policy::automatic_reference)
-    .def("egl_get_window_surface", [](const SDLWindowWrapper& window)
+    .def("egl__get_window_surface", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_EGL_GetWindowSurface(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-    .def("egl_set_attribute_callbacks", &SDL_EGL_SetAttributeCallbacks
+    .def("egl__set_attribute_callbacks", &SDL_EGL_SetAttributeCallbacks
         , py::arg("platform_attrib_callback")
         , py::arg("surface_attrib_callback")
         , py::arg("context_attrib_callback")
+        , py::arg("userdata")
         , py::return_value_policy::automatic_reference)
-    .def("gl_set_swap_interval", &SDL_GL_SetSwapInterval
+    .def("gl__set_swap_interval", &SDL_GL_SetSwapInterval
         , py::arg("interval")
         , py::return_value_policy::automatic_reference)
-    .def("gl_get_swap_interval", [](int * interval)
+    .def("gl__get_swap_interval", [](int * interval)
         {
             auto ret = SDL_GL_GetSwapInterval(interval);
             return std::make_tuple(ret, interval);
         }
         , py::arg("interval")
         , py::return_value_policy::automatic_reference)
-    .def("gl_swap_window", [](const SDLWindowWrapper& window)
+    .def("gl__swap_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GL_SwapWindow(window);
             return ret;

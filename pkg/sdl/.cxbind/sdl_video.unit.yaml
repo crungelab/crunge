@@ -14,31 +14,30 @@ specs:
       w: { default: 0}
       h: { default: 0}
 
+excludes:
   # Wrapped
-
-  #'struct.SDL_Window':
-  #  wrapper: 'SDLWindowWrapper'
 
   # Internal / Ignored
 
   # error: invalid conversion from ‘void (*)()’ to ‘const void*
-  'function/SDL_GL_GetProcAddress': {exclude: true}
-  'function/SDL_EGL_GetProcAddress': {exclude: true}
+  - 'function/SDL_GL_GetProcAddress'
+  - 'function/SDL_EGL_GetProcAddress'
 
   #no known conversion for argument 1 from ‘std::__tuple_element_t<0, std::tuple<const SDL_DisplayMode**, int*> >’ {aka ‘const SDL_DisplayMode**’} to ‘const pybind11::detail::type_caster_base<SDL_DisplayMode>::itype*’ {aka ‘const SDL_DisplayMode*’}
-  'function/SDL_GetFullscreenDisplayModes': {exclude: true}
+  - 'function/SDL_GetFullscreenDisplayModes'
 
-  'function/SDL_GL_MakeCurrent': {exclude: true}
-  'function/SDL_GL_DeleteContext': {exclude: true}
-  'function/SDL_GL_GetCurrentContext': {exclude: true}
-  'function/SDL_GL_CreateContext': {exclude: true}
-  'function/SDL_GL_DestroyContext': {exclude: true}
+  #  If I wrapped SDL_GLContext with py::capsule these would probably compile:  TODO?
+  - 'function/SDL_GL_MakeCurrent'
+  - 'function/SDL_GL_DeleteContext'
+  - 'function/SDL_GL_GetCurrentContext'
+  - 'function/SDL_GL_CreateContext'
+  - 'function/SDL_GL_DestroyContext'
 
   #callback
-  'function/SDL_SetWindowHitTest': {exclude: true}
+  - 'function/SDL_SetWindowHitTest'
   #SDL_Window **SDLCALL SDL_GetWindows(int *count)
-  'function/SDL_GetWindows': {exclude: true}
+  - 'function/SDL_GetWindows'
 
-  'field/SDL_DisplayMode::internal': {exclude: true}
+  - 'field/SDL_DisplayMode::internal'
 
   # Overloads

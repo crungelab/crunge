@@ -33,19 +33,6 @@ static const tmx::Tileset* find_tileset_for_gid(const std::vector<tmx::Tileset>&
 void init_tmx_map_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::Map, Map)
-    /*
-    _Map.def_property_readonly("tilesets", [](tmx::Map& m){
-        return m.getTilesets();
-    });
-
-    _Map.def_property_readonly("tile_size", [](tmx::Map& m){
-        return m.getTileSize();
-    });
-
-    _Map.def_property_readonly("tile_count", [](tmx::Map& m){
-        return m.getTileCount();
-    });
-    */
 
     _Map.def_property_readonly("max_gid", [](tmx::Map& m){
         std::uint32_t max_gid = 0;

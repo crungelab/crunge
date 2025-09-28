@@ -49,15 +49,6 @@ static py::object property_to_py(const tmx::Property& p) {
 void init_tmx_object_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::Object, Object)
-    /*
-    _Object.def_property_readonly("name", [](tmx::Object& l){
-        return l.getName();
-    });
-
-    _Object.def_property_readonly("rotation", [](tmx::Object& l){
-        return l.getRotation();
-    });
-    */
 
     _Object.def_property_readonly("properties", [](const tmx::Object& L){
         py::dict d;

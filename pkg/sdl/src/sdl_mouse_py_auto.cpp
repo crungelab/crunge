@@ -99,6 +99,10 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("x")
         , py::arg("y")
         , py::return_value_policy::automatic_reference)
+    .def("set_relative_mouse_transform", &SDL_SetRelativeMouseTransform
+        , py::arg("callback")
+        , py::arg("userdata")
+        , py::return_value_policy::automatic_reference)
     .def("set_window_relative_mouse_mode", [](const SDLWindowWrapper& window, bool enabled)
         {
             auto ret = SDL_SetWindowRelativeMouseMode(window, enabled);

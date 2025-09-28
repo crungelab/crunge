@@ -44,8 +44,6 @@ void init_sdl_py(py::module &_sdl, Registry &registry)
 
     PYCLASS(_sdl, SDLWindowWrapper, Window);
     PYCLASS(_sdl, SDLCursorWrapper, Cursor);
-    /*PYCLASS_BEGIN(_sdl, SDLWindowWrapper, Window)
-    PYCLASS_END(_sdl, SDLWindowWrapper, Window)*/
 
     _sdl.def(
         "poll_event", []()

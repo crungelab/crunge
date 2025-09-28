@@ -38,16 +38,6 @@ void init_tmx_tileset_py(py::module &_tmx, Registry &registry)
 {
     PYEXTEND_BEGIN(tmx::Tileset, Tileset)
 
-    /*
-    _Tileset.def_property_readonly("name", [](tmx::Tileset& l){
-        return l.getName();
-    });
-
-    _Tileset.def_property_readonly("tiles", [](tmx::Tileset& l){
-        return l.getTiles();
-    });
-    */
-
     _Tileset.def_property_readonly("properties", [](tmx::Tileset& L){
         py::dict d;
         for (auto& prop : L.getProperties())
