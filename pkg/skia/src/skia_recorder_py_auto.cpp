@@ -21,9 +21,9 @@
 namespace py = pybind11;
 
 void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<skgpu::graphite::RecorderOptions> RecorderOptions(_skia, "RecorderOptions");
-    registry.on(_skia, "RecorderOptions", RecorderOptions);
-        RecorderOptions
+    py::class_<skgpu::graphite::RecorderOptions> _RecorderOptions(_skia, "RecorderOptions");
+    registry.on(_skia, "RecorderOptions", _RecorderOptions);
+        _RecorderOptions
         .def(py::init<>())
         .def(py::init<const skgpu::graphite::RecorderOptions &>()
         , py::arg("")
@@ -33,9 +33,9 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
         .def_readwrite("f_require_ordered_recordings", &skgpu::graphite::RecorderOptions::fRequireOrderedRecordings)
     ;
 
-    py::class_<skgpu::graphite::Recorder> Recorder(_skia, "Recorder");
-    registry.on(_skia, "Recorder", Recorder);
-        Recorder
+    py::class_<skgpu::graphite::Recorder> _Recorder(_skia, "Recorder");
+    registry.on(_skia, "Recorder", _Recorder);
+        _Recorder
         .def("backend", &skgpu::graphite::Recorder::backend
             , py::return_value_policy::automatic_reference)
         .def("snap", &skgpu::graphite::Recorder::snap

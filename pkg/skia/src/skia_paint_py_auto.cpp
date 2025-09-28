@@ -23,9 +23,9 @@
 namespace py = pybind11;
 
 void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkPaint> Paint(_skia, "Paint");
-    registry.on(_skia, "Paint", Paint);
-        Paint
+    py::class_<SkPaint> _Paint(_skia, "Paint");
+    registry.on(_skia, "Paint", _Paint);
+        _Paint
         .def(py::init<>())
         .def(py::init<const SkRGBA4f<kUnpremul_SkAlphaType> &, SkColorSpace *>()
         , py::arg("color")
@@ -48,13 +48,13 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkPaint::Style>(Paint, "Style", py::arithmetic())
+        py::enum_<SkPaint::Style>(_Paint, "Style", py::arithmetic())
             .value("K_FILL_STYLE", SkPaint::Style::kFill_Style)
             .value("K_STROKE_STYLE", SkPaint::Style::kStroke_Style)
             .value("K_STROKE_AND_FILL_STYLE", SkPaint::Style::kStrokeAndFill_Style)
             .export_values()
         ;
-        Paint
+        _Paint
         .def("get_style", &SkPaint::getStyle
             , py::return_value_policy::automatic_reference)
         .def("set_style", &SkPaint::setStyle
@@ -106,7 +106,7 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkPaint::Cap>(Paint, "Cap", py::arithmetic())
+        py::enum_<SkPaint::Cap>(_Paint, "Cap", py::arithmetic())
             .value("K_BUTT_CAP", SkPaint::Cap::kButt_Cap)
             .value("K_ROUND_CAP", SkPaint::Cap::kRound_Cap)
             .value("K_SQUARE_CAP", SkPaint::Cap::kSquare_Cap)
@@ -114,7 +114,7 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             .value("K_DEFAULT_CAP", SkPaint::Cap::kDefault_Cap)
             .export_values()
         ;
-        py::enum_<SkPaint::Join>(Paint, "Join", py::arithmetic())
+        py::enum_<SkPaint::Join>(_Paint, "Join", py::arithmetic())
             .value("K_MITER_JOIN", SkPaint::Join::kMiter_Join)
             .value("K_ROUND_JOIN", SkPaint::Join::kRound_Join)
             .value("K_BEVEL_JOIN", SkPaint::Join::kBevel_Join)
@@ -122,7 +122,7 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             .value("K_DEFAULT_JOIN", SkPaint::Join::kDefault_Join)
             .export_values()
         ;
-        Paint
+        _Paint
         .def("get_stroke_cap", &SkPaint::getStrokeCap
             , py::return_value_policy::automatic_reference)
         .def("set_stroke_cap", &SkPaint::setStrokeCap
@@ -202,11 +202,6 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("storage")
             , py::arg("style")
             , py::return_value_policy::reference)
-        .def(py::init([](const py::kwargs& kwargs)
-        {
-            SkPaint obj{};
-            return obj;
-        }), py::return_value_policy::automatic_reference);
     ;
 
 

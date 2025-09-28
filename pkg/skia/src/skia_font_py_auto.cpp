@@ -19,15 +19,15 @@
 namespace py = pybind11;
 
 void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkFont> Font(_skia, "Font");
-    registry.on(_skia, "Font", Font);
-        py::enum_<SkFont::Edging>(Font, "Edging", py::arithmetic())
+    py::class_<SkFont> _Font(_skia, "Font");
+    registry.on(_skia, "Font", _Font);
+        py::enum_<SkFont::Edging>(_Font, "Edging", py::arithmetic())
             .value("K_ALIAS", SkFont::Edging::kAlias)
             .value("K_ANTI_ALIAS", SkFont::Edging::kAntiAlias)
             .value("K_SUBPIXEL_ANTI_ALIAS", SkFont::Edging::kSubpixelAntiAlias)
             .export_values()
         ;
-        Font
+        _Font
         .def("is_force_auto_hinting", &SkFont::isForceAutoHinting
             , py::return_value_policy::automatic_reference)
         .def("is_embedded_bitmaps", &SkFont::isEmbeddedBitmaps

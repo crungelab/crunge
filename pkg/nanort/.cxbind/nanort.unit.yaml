@@ -2,12 +2,12 @@ source: '../../depot/nanort/nanort.h'
 target: 'src/nanort_py_auto.cpp'
 
 specs:
-  'class_template/nanort::BVHAccel':
+  'class_template@nanort::BVHAccel':
     specializations:
       - pyname: BVHAccel
         args: [double]
 
-  'class_template/nanort::Ray':
+  'class_template@nanort::Ray':
     specializations:
       - pyname: Ray
         args: [double]

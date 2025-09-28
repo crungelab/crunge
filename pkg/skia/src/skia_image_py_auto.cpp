@@ -91,9 +91,9 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkImage,sk_sp<SkImage>> Image(_skia, "Image");
-    registry.on(_skia, "Image", Image);
-        Image
+    py::class_<SkImage,sk_sp<SkImage>> _Image(_skia, "Image");
+    registry.on(_skia, "Image", _Image);
+        _Image
         .def("image_info", &SkImage::imageInfo
             , py::return_value_policy::reference)
         .def("width", &SkImage::width
@@ -167,12 +167,12 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkImage::CachingHint>(Image, "CachingHint", py::arithmetic())
+        py::enum_<SkImage::CachingHint>(_Image, "CachingHint", py::arithmetic())
             .value("K_ALLOW_CACHING_HINT", SkImage::CachingHint::kAllow_CachingHint)
             .value("K_DISALLOW_CACHING_HINT", SkImage::CachingHint::kDisallow_CachingHint)
             .export_values()
         ;
-        Image
+        _Image
         .def("read_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, int, int, SkImage::CachingHint>(&SkImage::readPixels, py::const_)
             , py::arg("dst_info")
             , py::arg("dst_pixels")
@@ -189,9 +189,9 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::class_<SkImage::AsyncReadResult> ImageAsyncReadResult(_skia, "ImageAsyncReadResult");
-        registry.on(_skia, "ImageAsyncReadResult", ImageAsyncReadResult);
-            ImageAsyncReadResult
+        py::class_<SkImage::AsyncReadResult> _ImageAsyncReadResult(_skia, "ImageAsyncReadResult");
+        registry.on(_skia, "ImageAsyncReadResult", _ImageAsyncReadResult);
+            _ImageAsyncReadResult
             .def("count", &SkImage::AsyncReadResult::count
                 , py::return_value_policy::automatic_reference)
             .def("data", &SkImage::AsyncReadResult::data
@@ -202,19 +202,19 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
                 , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkImage::RescaleGamma>(Image, "RescaleGamma", py::arithmetic())
+        py::enum_<SkImage::RescaleGamma>(_Image, "RescaleGamma", py::arithmetic())
             .value("K_SRC", SkImage::RescaleGamma::kSrc)
             .value("K_LINEAR", SkImage::RescaleGamma::kLinear)
             .export_values()
         ;
-        py::enum_<SkImage::RescaleMode>(Image, "RescaleMode", py::arithmetic())
+        py::enum_<SkImage::RescaleMode>(_Image, "RescaleMode", py::arithmetic())
             .value("K_NEAREST", SkImage::RescaleMode::kNearest)
             .value("K_LINEAR", SkImage::RescaleMode::kLinear)
             .value("K_REPEATED_LINEAR", SkImage::RescaleMode::kRepeatedLinear)
             .value("K_REPEATED_CUBIC", SkImage::RescaleMode::kRepeatedCubic)
             .export_values()
         ;
-        Image
+        _Image
         .def("async_rescale_and_read_pixels", &SkImage::asyncRescaleAndReadPixels
             , py::arg("info")
             , py::arg("src_rect")
@@ -261,13 +261,13 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::class_<SkImage::RequiredProperties> ImageRequiredProperties(_skia, "ImageRequiredProperties");
-        registry.on(_skia, "ImageRequiredProperties", ImageRequiredProperties);
-            ImageRequiredProperties
+        py::class_<SkImage::RequiredProperties> _ImageRequiredProperties(_skia, "ImageRequiredProperties");
+        registry.on(_skia, "ImageRequiredProperties", _ImageRequiredProperties);
+            _ImageRequiredProperties
             .def_readwrite("f_mipmapped", &SkImage::RequiredProperties::fMipmapped)
         ;
 
-        Image
+        _Image
         .def("make_subset", py::overload_cast<skgpu::graphite::Recorder *, const SkIRect &, SkImage::RequiredProperties>(&SkImage::makeSubset, py::const_)
             , py::arg("")
             , py::arg("subset")
@@ -284,11 +284,11 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkImage::LegacyBitmapMode>(Image, "LegacyBitmapMode", py::arithmetic())
+        py::enum_<SkImage::LegacyBitmapMode>(_Image, "LegacyBitmapMode", py::arithmetic())
             .value("K_RO_LEGACY_BITMAP_MODE", SkImage::LegacyBitmapMode::kRO_LegacyBitmapMode)
             .export_values()
         ;
-        Image
+        _Image
         .def("as_legacy_bitmap", &SkImage::asLegacyBitmap
             , py::arg("bitmap")
             , py::arg("legacy_bitmap_mode") = SkImage::LegacyBitmapMode::kRO_LegacyBitmapMode

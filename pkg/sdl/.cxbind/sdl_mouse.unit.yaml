@@ -4,5 +4,5 @@ target: 'src/sdl_mouse_py_auto.cpp'
 prefixes: [SDL_EVENT_]
 
 specs:
-  'struct/SDL_Cursor':
+  'struct@SDL_Cursor':
     wrapper: 'SDLCursorWrapper'

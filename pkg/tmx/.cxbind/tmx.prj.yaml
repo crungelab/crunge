@@ -1,4 +1,4 @@
-module: _tmx
+module: tmx
 
 flags: [
   '-x', 'c++',

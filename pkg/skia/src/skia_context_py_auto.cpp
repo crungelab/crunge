@@ -66,9 +66,9 @@ namespace py = pybind11;
 using namespace skgpu::graphite;
 
 void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<skgpu::graphite::Context> Context(_skia, "Context");
-    registry.on(_skia, "Context", Context);
-        Context
+    py::class_<skgpu::graphite::Context> _Context(_skia, "Context");
+    registry.on(_skia, "Context", _Context);
+        _Context
         .def("backend", &skgpu::graphite::Context::backend
             , py::return_value_policy::automatic_reference)
         .def("make_recorder", &skgpu::graphite::Context::makeRecorder
@@ -182,9 +182,9 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::class_<skgpu::graphite::Context::ContextID> ContextContextID(_skia, "ContextContextID");
-        registry.on(_skia, "ContextContextID", ContextContextID);
-            ContextContextID
+        py::class_<skgpu::graphite::Context::ContextID> _ContextContextID(_skia, "ContextContextID");
+        registry.on(_skia, "ContextContextID", _ContextContextID);
+            _ContextContextID
             .def_static("next", &skgpu::graphite::Context::ContextID::Next
                 , py::return_value_policy::automatic_reference)
             .def(py::init<>())
@@ -194,7 +194,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
                 , py::return_value_policy::automatic_reference)
         ;
 
-        Context
+        _Context
         .def("context_id", &skgpu::graphite::Context::contextID
             , py::return_value_policy::automatic_reference)
     ;

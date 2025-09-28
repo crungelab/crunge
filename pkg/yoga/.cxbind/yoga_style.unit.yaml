@@ -7,4 +7,4 @@ sources:
 target: 'src/bindings/yoga_style_py_auto.cpp'
 
 specs:
-  'class/facebook::yoga::Style': {gen_init: true}
+  'class@facebook::yoga::Style': {gen_init: true}

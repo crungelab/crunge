@@ -6,5 +6,5 @@ sources:
 
 excludes: [
   # Need to specify as overloaded.  Ignoring for now.
-  'function/facebook::yoga::maxOrDefined',
+  'function@facebook::yoga::maxOrDefined',
 ]

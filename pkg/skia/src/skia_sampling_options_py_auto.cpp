@@ -28,9 +28,9 @@ void init_skia_sampling_options_py_auto(py::module &_skia, Registry &registry) {
         .value("K_LAST", SkMipmapMode::kLast)
         .export_values()
     ;
-    py::class_<SkCubicResampler> CubicResampler(_skia, "CubicResampler");
-    registry.on(_skia, "CubicResampler", CubicResampler);
-        CubicResampler
+    py::class_<SkCubicResampler> _CubicResampler(_skia, "CubicResampler");
+    registry.on(_skia, "CubicResampler", _CubicResampler);
+        _CubicResampler
         .def_readwrite("b", &SkCubicResampler::B)
         .def_readwrite("c", &SkCubicResampler::C)
         .def_static("mitchell", &SkCubicResampler::Mitchell
@@ -39,9 +39,9 @@ void init_skia_sampling_options_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkSamplingOptions> SamplingOptions(_skia, "SamplingOptions");
-    registry.on(_skia, "SamplingOptions", SamplingOptions);
-        SamplingOptions
+    py::class_<SkSamplingOptions> _SamplingOptions(_skia, "SamplingOptions");
+    registry.on(_skia, "SamplingOptions", _SamplingOptions);
+        _SamplingOptions
         .def_readonly("max_aniso", &SkSamplingOptions::maxAniso)
         .def_readonly("use_cubic", &SkSamplingOptions::useCubic)
         .def_readonly("cubic", &SkSamplingOptions::cubic)

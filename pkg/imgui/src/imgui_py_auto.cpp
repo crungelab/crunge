@@ -18,8 +18,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("y", &ImVec2::y)
         .def(py::init<>())
         .def(py::init<float, float>()
-        , py::arg("_x")
-        , py::arg("_y")
+        , py::arg("x")
+        , py::arg("y")
         )
     ;
 
@@ -32,10 +32,10 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("w", &ImVec4::w)
         .def(py::init<>())
         .def(py::init<float, float, float, float>()
-        , py::arg("_x")
-        , py::arg("_y")
-        , py::arg("_z")
-        , py::arg("_w")
+        , py::arg("x")
+        , py::arg("y")
+        , py::arg("z")
+        , py::arg("w")
         )
     ;
 
@@ -1523,9 +1523,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::arg("r")
         , py::arg("g")
         , py::arg("b")
-        , py::arg("out_h")
-        , py::arg("out_s")
-        , py::arg("out_v")
+        , py::arg("out_h") = 0
+        , py::arg("out_s") = 0
+        , py::arg("out_v") = 0
         , py::return_value_policy::automatic_reference)
     .def("color_convert_hs_vto_rgb", [](float h, float s, float v, float & out_r, float & out_g, float & out_b)
         {
@@ -1535,9 +1535,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::arg("h")
         , py::arg("s")
         , py::arg("v")
-        , py::arg("out_r")
-        , py::arg("out_g")
-        , py::arg("out_b")
+        , py::arg("out_r") = 0
+        , py::arg("out_g") = 0
+        , py::arg("out_b") = 0
         , py::return_value_policy::automatic_reference)
     .def("is_key_down", &ImGui::IsKeyDown
         , py::arg("key")
@@ -2861,8 +2861,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             )
             .def(py::init<>())
             .def(py::init<const char *, const char *>()
-            , py::arg("_b")
-            , py::arg("_e")
+            , py::arg("b")
+            , py::arg("e")
             )
             .def("empty", &ImGuiTextFilter::ImGuiTextRange::empty
                 , py::return_value_policy::automatic_reference)
@@ -2882,16 +2882,16 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         _StoragePair
         .def_readwrite("key", &ImGuiStoragePair::key)
         .def(py::init<unsigned int, int>()
-        , py::arg("_key")
-        , py::arg("_val")
+        , py::arg("key")
+        , py::arg("val")
         )
         .def(py::init<unsigned int, float>()
-        , py::arg("_key")
-        , py::arg("_val")
+        , py::arg("key")
+        , py::arg("val")
         )
         .def(py::init<unsigned int, void *>()
-        , py::arg("_key")
-        , py::arg("_val")
+        , py::arg("key")
+        , py::arg("val")
         )
     ;
 
@@ -3614,7 +3614,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::arg("font_cfg") = nullptr
             , py::arg("glyph_ranges") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def("add_font_from_memory_compressed_base85ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
+        .def("add_font_from_memory_compressed_base85_ttf", &ImFontAtlas::AddFontFromMemoryCompressedBase85TTF
             , py::arg("compressed_font_data_base85")
             , py::arg("size_pixels") = 0.0f
             , py::arg("font_cfg") = nullptr
@@ -3652,7 +3652,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("get_custom_rect", &ImFontAtlas::GetCustomRect
             , py::arg("id")
-            , py::arg("out_r")
+            , py::arg("out_r") = 0
             , py::return_value_policy::automatic_reference)
         .def_readwrite("flags", &ImFontAtlas::Flags)
         .def_readwrite("tex_desired_format", &ImFontAtlas::TexDesiredFormat)

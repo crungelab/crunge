@@ -1,8 +1,8 @@
 source: '../../depot/skia/include/core/SkColor.h'
 target: 'src/skia_color_py_auto.cpp'
 
-specs:
+excludes:
   # Wrapped
   # Internal / Ignored
-  'function/SkHSVToColor': {exclude: true}
+  - 'function@SkHSVToColor'
   # Overloads

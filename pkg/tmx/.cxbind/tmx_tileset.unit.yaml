@@ -1,13 +1,12 @@
 source: '../../depot/tmxlite/tmxlite/include/tmxlite/Tileset.hpp'
 target: 'src/tmx_tileset_py_auto.cpp'
 
-excludes: [
-  'method/tmx::Tileset::parse',
-  'field/tmx::Tileset::Tile::properties'
-]
+excludes:
+  - 'method@tmx::Tileset::parse'
+  - 'field@tmx::Tileset::Tile::properties'
 
 specs:
-  'class/tmx::Tileset':
+  'class@tmx::Tileset':
     properties:
       - name: "name"
         getter: "getName"

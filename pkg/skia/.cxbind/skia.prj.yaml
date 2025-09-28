@@ -1,4 +1,4 @@
-module: _skia
+module: skia
 
 flags: [
   '-x', 'c++',

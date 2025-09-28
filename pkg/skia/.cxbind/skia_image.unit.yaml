@@ -2,22 +2,24 @@ source: '../../depot/skia/include/core/SkImage.h'
 target: 'src/skia_image_py_auto.cpp'
 
 specs:
-  'class/SkImage':
+  'class@SkImage':
     holder: sk_sp
+
+excludes:
   # Wrapped
   # Internal / Ignored
   # Ganesh related
-  'method/SkImage::isValid' : { exclude: true }
-  'method/SkImage::makeNonTextureImage' : { exclude: true }
+  - 'method@SkImage::isValid'
+  - 'method@SkImage::makeNonTextureImage'
 
-  'method/SkImage::readPixels/bool (GrDirectContext *, const SkImageInfo &, void *, size_t, int, int, CachingHint) const' : { exclude: true }
-  'method/SkImage::readPixels/bool (GrDirectContext *, const SkPixmap &, int, int, CachingHint) const' : { exclude: true }
-  'method/SkImage::makeSubset/sk_sp<SkImage> (GrDirectContext *, const SkIRect &) const' : { exclude: true }
+  - 'method@SkImage::readPixels@bool (GrDirectContext *, const SkImageInfo &, void *, size_t, int, int, CachingHint) const'
+  - 'method@SkImage::readPixels@bool (GrDirectContext *, const SkPixmap &, int, int, CachingHint) const'
+  - 'method@SkImage::makeSubset@sk_sp<SkImage> (GrDirectContext *, const SkIRect &) const'
 
-  'method/SkImage::makeRasterImage/sk_sp<SkImage> (GrDirectContext *, CachingHint) const' : { exclude: true }
-  'method/SkImage::makeColorTypeAndColorSpace/sk_sp<SkImage> (GrDirectContext *, SkColorType, sk_sp<SkColorSpace>) const' : { exclude: true }
-  'method/SkImage::makeColorSpace/sk_sp<SkImage> (GrDirectContext *, sk_sp<SkColorSpace>) const' : { exclude: true }
+  - 'method@SkImage::makeRasterImage@sk_sp<SkImage> (GrDirectContext *, CachingHint) const'
+  - 'method@SkImage::makeColorTypeAndColorSpace@sk_sp<SkImage> (GrDirectContext *, SkColorType, sk_sp<SkColorSpace>) const'
+  - 'method@SkImage::makeColorSpace@sk_sp<SkImage> (GrDirectContext *, sk_sp<SkColorSpace>) const'
 
-  'function/SkImages::DeferredFromGenerator' : { exclude: true } #pybind11 doesn't like std::unique_ptr as parameter
+  - 'function@SkImages::DeferredFromGenerator' #pybind11 doesn't like std::unique_ptr as parameter
   
   # Overloads

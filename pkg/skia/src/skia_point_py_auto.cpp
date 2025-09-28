@@ -15,9 +15,9 @@
 namespace py = pybind11;
 
 void init_skia_point_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkIPoint> IPoint(_skia, "IPoint");
-    registry.on(_skia, "IPoint", IPoint);
-        IPoint
+    py::class_<SkIPoint> _IPoint(_skia, "IPoint");
+    registry.on(_skia, "IPoint", _IPoint);
+        _IPoint
         .def_readwrite("f_x", &SkIPoint::fX)
         .def_readwrite("f_y", &SkIPoint::fY)
         .def_static("make", &SkIPoint::Make
@@ -40,9 +40,9 @@ void init_skia_point_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkPoint> Point(_skia, "Point");
-    registry.on(_skia, "Point", Point);
-        Point
+    py::class_<SkPoint> _Point(_skia, "Point");
+    registry.on(_skia, "Point", _Point);
+        _Point
         .def_readwrite("f_x", &SkPoint::fX)
         .def_readwrite("f_y", &SkPoint::fY)
         .def_static("make", &SkPoint::Make

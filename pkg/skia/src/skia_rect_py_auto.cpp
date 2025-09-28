@@ -15,9 +15,9 @@
 namespace py = pybind11;
 
 void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkIRect> IRect(_skia, "IRect");
-    registry.on(_skia, "IRect", IRect);
-        IRect
+    py::class_<SkIRect> _IRect(_skia, "IRect");
+    registry.on(_skia, "IRect", _IRect);
+        _IRect
         .def_readwrite("f_left", &SkIRect::fLeft)
         .def_readwrite("f_top", &SkIRect::fTop)
         .def_readwrite("f_right", &SkIRect::fRight)
@@ -118,9 +118,6 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
         .def("contains", py::overload_cast<const SkIRect &>(&SkIRect::contains, py::const_)
             , py::arg("r")
             , py::return_value_policy::automatic_reference)
-        .def("contains", py::overload_cast<const SkRect &>(&SkIRect::contains, py::const_)
-            , py::arg("r")
-            , py::return_value_policy::automatic_reference)
         .def("contains_no_empty_check", &SkIRect::containsNoEmptyCheck
             , py::arg("r")
             , py::return_value_policy::automatic_reference)
@@ -140,9 +137,9 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkRect> Rect(_skia, "Rect");
-    registry.on(_skia, "Rect", Rect);
-        Rect
+    py::class_<SkRect> _Rect(_skia, "Rect");
+    registry.on(_skia, "Rect", _Rect);
+        _Rect
         .def_readwrite("f_left", &SkRect::fLeft)
         .def_readwrite("f_top", &SkRect::fTop)
         .def_readwrite("f_right", &SkRect::fRight)

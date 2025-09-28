@@ -17,8 +17,8 @@ sources:
   - ../../depot/yoga/yoga/enums/Wrap.h
 
 excludes:
-  - 'function/facebook::yoga::ordinalCount'
-  - 'function/facebook::yoga::scopedEnum'
-  - 'function/facebook::yoga::unscopedEnum'
-  - 'function/facebook::yoga::toString'
-  - 'function/facebook::yoga::inexactEquals'
+  - 'function@facebook::yoga::ordinalCount'
+  - 'function@facebook::yoga::scopedEnum'
+  - 'function@facebook::yoga::unscopedEnum'
+  - 'function@facebook::yoga::toString'
+  - 'function@facebook::yoga::inexactEquals'

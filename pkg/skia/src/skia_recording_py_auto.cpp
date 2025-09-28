@@ -14,7 +14,7 @@
 namespace py = pybind11;
 
 void init_skia_recording_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<skgpu::graphite::Recording> Recording(_skia, "Recording");
-    registry.on(_skia, "Recording", Recording);
+    py::class_<skgpu::graphite::Recording> _Recording(_skia, "Recording");
+    registry.on(_skia, "Recording", _Recording);
 
 }

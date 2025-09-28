@@ -16,36 +16,36 @@
 namespace py = pybind11;
 
 void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::Tileset> Tileset(_tmx, "Tileset");
-    registry.on(_tmx, "Tileset", Tileset);
-        Tileset
+    py::class_<tmx::Tileset> _Tileset(_tmx, "Tileset");
+    registry.on(_tmx, "Tileset", _Tileset);
+        _Tileset
         .def(py::init<const std::basic_string<char> &>()
         , py::arg("working_dir") = ""
         )
         ;
 
-        py::class_<tmx::Tileset::Tile> TilesetTile(_tmx, "TilesetTile");
-        registry.on(_tmx, "TilesetTile", TilesetTile);
-            TilesetTile
+        py::class_<tmx::Tileset::Tile> _TilesetTile(_tmx, "TilesetTile");
+        registry.on(_tmx, "TilesetTile", _TilesetTile);
+            _TilesetTile
             .def_readwrite("id", &tmx::Tileset::Tile::ID)
             .def_readwrite("terrain_indices", &tmx::Tileset::Tile::terrainIndices)
             .def_readwrite("probability", &tmx::Tileset::Tile::probability)
             ;
 
-            py::class_<tmx::Tileset::Tile::Animation> TilesetTileAnimation(_tmx, "TilesetTileAnimation");
-            registry.on(_tmx, "TilesetTileAnimation", TilesetTileAnimation);
-                py::class_<tmx::Tileset::Tile::Animation::Frame> TilesetTileAnimationFrame(_tmx, "TilesetTileAnimationFrame");
-                registry.on(_tmx, "TilesetTileAnimationFrame", TilesetTileAnimationFrame);
-                    TilesetTileAnimationFrame
+            py::class_<tmx::Tileset::Tile::Animation> _TilesetTileAnimation(_tmx, "TilesetTileAnimation");
+            registry.on(_tmx, "TilesetTileAnimation", _TilesetTileAnimation);
+                py::class_<tmx::Tileset::Tile::Animation::Frame> _TilesetTileAnimationFrame(_tmx, "TilesetTileAnimationFrame");
+                registry.on(_tmx, "TilesetTileAnimationFrame", _TilesetTileAnimationFrame);
+                    _TilesetTileAnimationFrame
                     .def_readwrite("tile_id", &tmx::Tileset::Tile::Animation::Frame::tileID)
                     .def_readwrite("duration", &tmx::Tileset::Tile::Animation::Frame::duration)
                 ;
 
-                TilesetTileAnimation
+                _TilesetTileAnimation
                 .def_readwrite("frames", &tmx::Tileset::Tile::Animation::frames)
             ;
 
-            TilesetTile
+            _TilesetTile
             .def_readwrite("animation", &tmx::Tileset::Tile::animation)
             .def_readwrite("object_group", &tmx::Tileset::Tile::objectGroup)
             .def_readwrite("image_path", &tmx::Tileset::Tile::imagePath)
@@ -54,15 +54,15 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
             .def_readwrite("class_name", &tmx::Tileset::Tile::className)
         ;
 
-        py::class_<tmx::Tileset::Terrain> TilesetTerrain(_tmx, "TilesetTerrain");
-        registry.on(_tmx, "TilesetTerrain", TilesetTerrain);
-            TilesetTerrain
+        py::class_<tmx::Tileset::Terrain> _TilesetTerrain(_tmx, "TilesetTerrain");
+        registry.on(_tmx, "TilesetTerrain", _TilesetTerrain);
+            _TilesetTerrain
             .def_readwrite("name", &tmx::Tileset::Terrain::name)
             .def_readwrite("tile_id", &tmx::Tileset::Terrain::tileID)
             .def_readwrite("properties", &tmx::Tileset::Terrain::properties)
         ;
 
-        py::enum_<tmx::Tileset::ObjectAlignment>(Tileset, "ObjectAlignment", py::arithmetic())
+        py::enum_<tmx::Tileset::ObjectAlignment>(_Tileset, "ObjectAlignment", py::arithmetic())
             .value("UNSPECIFIED", tmx::Tileset::ObjectAlignment::Unspecified)
             .value("TOP_LEFT", tmx::Tileset::ObjectAlignment::TopLeft)
             .value("TOP", tmx::Tileset::ObjectAlignment::Top)
@@ -75,7 +75,7 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
             .value("BOTTOM_RIGHT", tmx::Tileset::ObjectAlignment::BottomRight)
             .export_values()
         ;
-        Tileset
+        _Tileset
         .def("load_without_map", &tmx::Tileset::loadWithoutMap
             , py::arg("path")
             , py::return_value_policy::automatic_reference)

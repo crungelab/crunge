@@ -23,11 +23,5 @@ void init_skia_alpha_type_py_auto(py::module &_skia, Registry &registry) {
         .value("K_LAST_ENUM_SK_ALPHA_TYPE", SkAlphaType::kLastEnum_SkAlphaType)
         .export_values()
     ;
-    _skia
-    .def("alpha_type_is_opaque", &SkAlphaTypeIsOpaque
-        , py::arg("at")
-        , py::return_value_policy::automatic_reference)
-    ;
-
 
 }

@@ -16,9 +16,9 @@
 namespace py = pybind11;
 
 void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::Text> Text(_tmx, "Text");
-    registry.on(_tmx, "Text", Text);
-        Text
+    py::class_<tmx::Text> _Text(_tmx, "Text");
+    registry.on(_tmx, "Text", _Text);
+        _Text
         .def_readwrite("font_family", &tmx::Text::fontFamily)
         .def_readwrite("pixel_size", &tmx::Text::pixelSize)
         .def_readwrite("wrap", &tmx::Text::wrap)
@@ -30,30 +30,30 @@ void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
         .def_readwrite("kerning", &tmx::Text::kerning)
         ;
 
-        py::enum_<tmx::Text::HAlign>(Text, "HAlign", py::arithmetic())
+        py::enum_<tmx::Text::HAlign>(_Text, "HAlign", py::arithmetic())
             .value("LEFT", tmx::Text::HAlign::Left)
             .value("CENTRE", tmx::Text::HAlign::Centre)
             .value("RIGHT", tmx::Text::HAlign::Right)
             .export_values()
         ;
-        Text
+        _Text
         .def_readwrite("h_align", &tmx::Text::hAlign)
         ;
 
-        py::enum_<tmx::Text::VAlign>(Text, "VAlign", py::arithmetic())
+        py::enum_<tmx::Text::VAlign>(_Text, "VAlign", py::arithmetic())
             .value("TOP", tmx::Text::VAlign::Top)
             .value("CENTRE", tmx::Text::VAlign::Centre)
             .value("BOTTOM", tmx::Text::VAlign::Bottom)
             .export_values()
         ;
-        Text
+        _Text
         .def_readwrite("v_align", &tmx::Text::vAlign)
         .def_readwrite("content", &tmx::Text::content)
     ;
 
-    py::class_<tmx::Object> Object(_tmx, "Object");
-    registry.on(_tmx, "Object", Object);
-        py::enum_<tmx::Object::Shape>(Object, "Shape", py::arithmetic())
+    py::class_<tmx::Object> _Object(_tmx, "Object");
+    registry.on(_tmx, "Object", _Object);
+        py::enum_<tmx::Object::Shape>(_Object, "Shape", py::arithmetic())
             .value("RECTANGLE", tmx::Object::Shape::Rectangle)
             .value("ELLIPSE", tmx::Object::Shape::Ellipse)
             .value("POINT", tmx::Object::Shape::Point)
@@ -62,7 +62,7 @@ void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
             .value("TEXT", tmx::Object::Shape::Text)
             .export_values()
         ;
-        Object
+        _Object
         .def(py::init<>())
         .def("get_uid", &tmx::Object::getUID
             , py::return_value_policy::automatic_reference)

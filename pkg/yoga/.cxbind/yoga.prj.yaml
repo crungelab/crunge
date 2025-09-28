@@ -1,4 +1,4 @@
-module: _yoga
+module: yoga
 
 flags: [
   '-x', 'c++',

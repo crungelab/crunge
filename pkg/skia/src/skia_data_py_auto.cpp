@@ -16,9 +16,9 @@
 namespace py = pybind11;
 
 void init_skia_data_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkData,sk_sp<SkData>> Data(_skia, "Data");
-    registry.on(_skia, "Data", Data);
-        Data
+    py::class_<SkData,sk_sp<SkData>> _Data(_skia, "Data");
+    registry.on(_skia, "Data", _Data);
+        _Data
         .def("size", &SkData::size
             , py::return_value_policy::automatic_reference)
         .def("is_empty", &SkData::isEmpty

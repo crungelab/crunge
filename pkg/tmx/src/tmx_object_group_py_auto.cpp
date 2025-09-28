@@ -16,14 +16,14 @@
 namespace py = pybind11;
 
 void init_tmx_object_group_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::ObjectGroup, tmx::Layer> ObjectGroup(_tmx, "ObjectGroup");
-    registry.on(_tmx, "ObjectGroup", ObjectGroup);
-        py::enum_<tmx::ObjectGroup::DrawOrder>(ObjectGroup, "DrawOrder", py::arithmetic())
+    py::class_<tmx::ObjectGroup, tmx::Layer> _ObjectGroup(_tmx, "ObjectGroup");
+    registry.on(_tmx, "ObjectGroup", _ObjectGroup);
+        py::enum_<tmx::ObjectGroup::DrawOrder>(_ObjectGroup, "DrawOrder", py::arithmetic())
             .value("INDEX", tmx::ObjectGroup::DrawOrder::Index)
             .value("TOP_DOWN", tmx::ObjectGroup::DrawOrder::TopDown)
             .export_values()
         ;
-        ObjectGroup
+        _ObjectGroup
         .def(py::init<>())
         .def("get_type", &tmx::ObjectGroup::getType
             , py::return_value_policy::automatic_reference)

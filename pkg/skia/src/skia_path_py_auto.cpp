@@ -70,9 +70,9 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         .export_values()
     ;
 
-    py::class_<SkPath> Path(_skia, "Path");
-    registry.on(_skia, "Path", Path);
-        Path
+    py::class_<SkPath> _Path(_skia, "Path");
+    registry.on(_skia, "Path", _Path);
+        _Path
         .def_static("make", &SkPath::Make
             , py::arg("")
             , py::arg("point_count")
@@ -347,12 +347,12 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::reference)
         ;
 
-        py::enum_<SkPath::ArcSize>(Path, "ArcSize", py::arithmetic())
+        py::enum_<SkPath::ArcSize>(_Path, "ArcSize", py::arithmetic())
             .value("K_SMALL_ARC_SIZE", SkPath::ArcSize::kSmall_ArcSize)
             .value("K_LARGE_ARC_SIZE", SkPath::ArcSize::kLarge_ArcSize)
             .export_values()
         ;
-        Path
+        _Path
         .def("arc_to", py::overload_cast<float, float, float, SkPath::ArcSize, SkPathDirection, float, float>(&SkPath::arcTo)
             , py::arg("rx")
             , py::arg("ry")
@@ -464,12 +464,12 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::reference)
         ;
 
-        py::enum_<SkPath::AddPathMode>(Path, "AddPathMode", py::arithmetic())
+        py::enum_<SkPath::AddPathMode>(_Path, "AddPathMode", py::arithmetic())
             .value("K_APPEND_ADD_PATH_MODE", SkPath::AddPathMode::kAppend_AddPathMode)
             .value("K_EXTEND_ADD_PATH_MODE", SkPath::AddPathMode::kExtend_AddPathMode)
             .export_values()
         ;
-        Path
+        _Path
         .def("add_path", py::overload_cast<const SkPath &, float, float, SkPath::AddPathMode>(&SkPath::addPath)
             , py::arg("src")
             , py::arg("dx")
@@ -526,19 +526,19 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkPath::SegmentMask>(Path, "SegmentMask", py::arithmetic())
+        py::enum_<SkPath::SegmentMask>(_Path, "SegmentMask", py::arithmetic())
             .value("K_LINE_SEGMENT_MASK", SkPath::SegmentMask::kLine_SegmentMask)
             .value("K_QUAD_SEGMENT_MASK", SkPath::SegmentMask::kQuad_SegmentMask)
             .value("K_CONIC_SEGMENT_MASK", SkPath::SegmentMask::kConic_SegmentMask)
             .value("K_CUBIC_SEGMENT_MASK", SkPath::SegmentMask::kCubic_SegmentMask)
             .export_values()
         ;
-        Path
+        _Path
         .def("get_segment_masks", &SkPath::getSegmentMasks
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkPath::Verb>(Path, "Verb", py::arithmetic())
+        py::enum_<SkPath::Verb>(_Path, "Verb", py::arithmetic())
             .value("K_MOVE_VERB", SkPath::Verb::kMove_Verb)
             .value("K_LINE_VERB", SkPath::Verb::kLine_Verb)
             .value("K_QUAD_VERB", SkPath::Verb::kQuad_Verb)
@@ -548,9 +548,9 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             .value("K_DONE_VERB", SkPath::Verb::kDone_Verb)
             .export_values()
         ;
-        py::class_<SkPath::Iter> PathIter(_skia, "PathIter");
-        registry.on(_skia, "PathIter", PathIter);
-            PathIter
+        py::class_<SkPath::Iter> _PathIter(_skia, "PathIter");
+        registry.on(_skia, "PathIter", _PathIter);
+            _PathIter
             .def(py::init<>())
             .def(py::init<const SkPath &, bool>()
             , py::arg("path")
@@ -575,7 +575,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
                 , py::return_value_policy::automatic_reference)
         ;
 
-        Path
+        _Path
         .def("contains", &SkPath::contains
             , py::arg("x")
             , py::arg("y")

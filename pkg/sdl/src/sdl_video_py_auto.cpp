@@ -714,21 +714,21 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("disable_screen_saver", &SDL_DisableScreenSaver
         , py::return_value_policy::automatic_reference)
-    .def("gl__load_library", &SDL_GL_LoadLibrary
+    .def("gl_load_library", &SDL_GL_LoadLibrary
         , py::arg("path")
         , py::return_value_policy::automatic_reference)
-    .def("gl__unload_library", &SDL_GL_UnloadLibrary
+    .def("gl_unload_library", &SDL_GL_UnloadLibrary
         , py::return_value_policy::automatic_reference)
-    .def("gl__extension_supported", &SDL_GL_ExtensionSupported
+    .def("gl_extension_supported", &SDL_GL_ExtensionSupported
         , py::arg("extension")
         , py::return_value_policy::automatic_reference)
-    .def("gl__reset_attributes", &SDL_GL_ResetAttributes
+    .def("gl_reset_attributes", &SDL_GL_ResetAttributes
         , py::return_value_policy::automatic_reference)
-    .def("gl__set_attribute", &SDL_GL_SetAttribute
+    .def("gl_set_attribute", &SDL_GL_SetAttribute
         , py::arg("attr")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
-    .def("gl__get_attribute", [](SDL_GLAttr attr, int * value)
+    .def("gl_get_attribute", [](SDL_GLAttr attr, int * value)
         {
             auto ret = SDL_GL_GetAttribute(attr, value);
             return std::make_tuple(ret, value);
@@ -736,40 +736,40 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("attr")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
-    .def("gl__get_current_window", []()
+    .def("gl_get_current_window", []()
         {
             auto ret = SDLWindowWrapper(SDL_GL_GetCurrentWindow());
             return ret;
         }
         , py::return_value_policy::automatic_reference)
-    .def("egl__get_current_display", &SDL_EGL_GetCurrentDisplay
+    .def("egl_get_current_display", &SDL_EGL_GetCurrentDisplay
         , py::return_value_policy::automatic_reference)
-    .def("egl__get_current_config", &SDL_EGL_GetCurrentConfig
+    .def("egl_get_current_config", &SDL_EGL_GetCurrentConfig
         , py::return_value_policy::automatic_reference)
-    .def("egl__get_window_surface", [](const SDLWindowWrapper& window)
+    .def("egl_get_window_surface", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_EGL_GetWindowSurface(window);
             return ret;
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
-    .def("egl__set_attribute_callbacks", &SDL_EGL_SetAttributeCallbacks
+    .def("egl_set_attribute_callbacks", &SDL_EGL_SetAttributeCallbacks
         , py::arg("platform_attrib_callback")
         , py::arg("surface_attrib_callback")
         , py::arg("context_attrib_callback")
         , py::arg("userdata")
         , py::return_value_policy::automatic_reference)
-    .def("gl__set_swap_interval", &SDL_GL_SetSwapInterval
+    .def("gl_set_swap_interval", &SDL_GL_SetSwapInterval
         , py::arg("interval")
         , py::return_value_policy::automatic_reference)
-    .def("gl__get_swap_interval", [](int * interval)
+    .def("gl_get_swap_interval", [](int * interval)
         {
             auto ret = SDL_GL_GetSwapInterval(interval);
             return std::make_tuple(ret, interval);
         }
         , py::arg("interval")
         , py::return_value_policy::automatic_reference)
-    .def("gl__swap_window", [](const SDLWindowWrapper& window)
+    .def("gl_swap_window", [](const SDLWindowWrapper& window)
         {
             auto ret = SDL_GL_SwapWindow(window);
             return ret;

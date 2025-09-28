@@ -7,12 +7,11 @@ sources:
 
 target: src/bindings/yoga_layout_py_auto.cpp
 
-excludes: [
-  'field/Layout::m_node',
-  'field/Layout::m_measureFunc',
-  'field/Layout::m_dirtiedFunc',
-  'method/Layout::fromYGNode'
-]
+excludes:
+  - 'field@Layout::m_node'
+  - 'field@Layout::m_measureFunc'
+  - 'field@Layout::m_dirtiedFunc'
+  - 'method@Layout::fromYGNode'
 
 specs:
-  'field/Layout::py_children': { pyname: children }
+  'field@Layout::py_children': { pyname: children }

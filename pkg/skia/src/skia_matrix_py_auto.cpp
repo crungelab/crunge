@@ -22,9 +22,9 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
         .value("K_YES", SkApplyPerspectiveClip::kYes)
         .export_values()
     ;
-    py::class_<SkMatrix> Matrix(_skia, "Matrix");
-    registry.on(_skia, "Matrix", Matrix);
-        Matrix
+    py::class_<SkMatrix> _Matrix(_skia, "Matrix");
+    registry.on(_skia, "Matrix", _Matrix);
+        _Matrix
         .def(py::init<>())
         .def_static("scale", &SkMatrix::Scale
             , py::arg("sx")
@@ -56,14 +56,14 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkMatrix::ScaleToFit>(Matrix, "ScaleToFit", py::arithmetic())
+        py::enum_<SkMatrix::ScaleToFit>(_Matrix, "ScaleToFit", py::arithmetic())
             .value("K_FILL_SCALE_TO_FIT", SkMatrix::ScaleToFit::kFill_ScaleToFit)
             .value("K_START_SCALE_TO_FIT", SkMatrix::ScaleToFit::kStart_ScaleToFit)
             .value("K_CENTER_SCALE_TO_FIT", SkMatrix::ScaleToFit::kCenter_ScaleToFit)
             .value("K_END_SCALE_TO_FIT", SkMatrix::ScaleToFit::kEnd_ScaleToFit)
             .export_values()
         ;
-        Matrix
+        _Matrix
         .def_static("make_all", &SkMatrix::MakeAll
             , py::arg("scale_x")
             , py::arg("skew_x")
@@ -77,7 +77,7 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkMatrix::TypeMask>(Matrix, "TypeMask", py::arithmetic())
+        py::enum_<SkMatrix::TypeMask>(_Matrix, "TypeMask", py::arithmetic())
             .value("K_IDENTITY_MASK", SkMatrix::TypeMask::kIdentity_Mask)
             .value("K_TRANSLATE_MASK", SkMatrix::TypeMask::kTranslate_Mask)
             .value("K_SCALE_MASK", SkMatrix::TypeMask::kScale_Mask)
@@ -85,7 +85,7 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             .value("K_PERSPECTIVE_MASK", SkMatrix::TypeMask::kPerspective_Mask)
             .export_values()
         ;
-        Matrix
+        _Matrix
         .def("get_type", &SkMatrix::getType
             , py::return_value_policy::automatic_reference)
         .def("is_identity", &SkMatrix::isIdentity

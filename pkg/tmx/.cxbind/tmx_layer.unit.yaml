@@ -1,13 +1,12 @@
 source: '../../depot/tmxlite/tmxlite/include/tmxlite/Layer.hpp'
 target: 'src/tmx_layer_py_auto.cpp'
 
-excludes: [
-  'ctor/tmx::Layer::Layer',
-  'method/tmx::Layer::parse'
-]
+excludes:
+  - 'ctor@tmx::Layer::Layer'
+  - 'method@tmx::Layer::parse'
 
 specs:
-  'class/tmx::Layer':
+  'class@tmx::Layer':
     properties:
       - name: "name"
         getter: "getName"

@@ -15,9 +15,9 @@
 namespace py = pybind11;
 
 void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::Vector2<unsigned>> Vector2_unsigned(_tmx, "Vector2_unsigned");
-    registry.on(_tmx, "Vector2_unsigned", Vector2_unsigned);
-        Vector2_unsigned
+    py::class_<tmx::Vector2<unsigned>> _Vector2u(_tmx, "Vector2u");
+    registry.on(_tmx, "Vector2u", _Vector2u);
+        _Vector2u
         .def(py::init<>())
         .def(py::init<unsigned, unsigned>()
         , py::arg("x")
@@ -27,9 +27,9 @@ void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
         .def_readwrite("y", &tmx::Vector2<unsigned>::y)
     ;
 
-    py::class_<tmx::Vector2<float>> Vector2_float(_tmx, "Vector2_float");
-    registry.on(_tmx, "Vector2_float", Vector2_float);
-        Vector2_float
+    py::class_<tmx::Vector2<float>> _Vector2f(_tmx, "Vector2f");
+    registry.on(_tmx, "Vector2f", _Vector2f);
+        _Vector2f
         .def(py::init<>())
         .def(py::init<float, float>()
         , py::arg("x")
@@ -39,9 +39,9 @@ void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
         .def_readwrite("y", &tmx::Vector2<float>::y)
     ;
 
-    py::class_<tmx::Rectangle<float>> Rectangle_float(_tmx, "Rectangle_float");
-    registry.on(_tmx, "Rectangle_float", Rectangle_float);
-        Rectangle_float
+    py::class_<tmx::Rectangle<float>> _FloatRect(_tmx, "FloatRect");
+    registry.on(_tmx, "FloatRect", _FloatRect);
+        _FloatRect
         .def(py::init<>())
         .def(py::init<float, float, float, float>()
         , py::arg("l")
@@ -55,9 +55,9 @@ void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
         .def_readwrite("height", &tmx::Rectangle<float>::height)
     ;
 
-    py::class_<tmx::Rectangle<int>> Rectangle_int(_tmx, "Rectangle_int");
-    registry.on(_tmx, "Rectangle_int", Rectangle_int);
-        Rectangle_int
+    py::class_<tmx::Rectangle<int>> _IntRect(_tmx, "IntRect");
+    registry.on(_tmx, "IntRect", _IntRect);
+        _IntRect
         .def(py::init<>())
         .def(py::init<int, int, int, int>()
         , py::arg("l")
@@ -71,9 +71,9 @@ void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
         .def_readwrite("height", &tmx::Rectangle<int>::height)
     ;
 
-    py::class_<tmx::Colour> Colour(_tmx, "Colour");
-    registry.on(_tmx, "Colour", Colour);
-        Colour
+    py::class_<tmx::Colour> _Colour(_tmx, "Colour");
+    registry.on(_tmx, "Colour", _Colour);
+        _Colour
         .def(py::init<unsigned char, unsigned char, unsigned char, unsigned char>()
         , py::arg("red") = 0
         , py::arg("green") = 0

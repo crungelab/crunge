@@ -14,9 +14,9 @@
 namespace py = pybind11;
 
 void init_yoga_layout_py_auto(py::module &_yoga, Registry &registry) {
-    py::class_<Bounds> Bounds(_yoga, "Bounds");
-    registry.on(_yoga, "Bounds", Bounds);
-        Bounds
+    py::class_<Bounds> _Bounds(_yoga, "Bounds");
+    registry.on(_yoga, "Bounds", _Bounds);
+        _Bounds
         .def_readwrite("left", &Bounds::left)
         .def_readwrite("right", &Bounds::right)
         .def_readwrite("top", &Bounds::top)
@@ -26,9 +26,9 @@ void init_yoga_layout_py_auto(py::module &_yoga, Registry &registry) {
     ;
 
 
-    py::class_<Layout> Layout(_yoga, "Layout");
-    registry.on(_yoga, "Layout", Layout);
-        Layout
+    py::class_<Layout> _Layout(_yoga, "Layout");
+    registry.on(_yoga, "Layout", _Layout);
+        _Layout
         .def_static("create_default", &Layout::createDefault
             , py::return_value_policy::automatic_reference)
         .def_static("create_with_config", &Layout::createWithConfig

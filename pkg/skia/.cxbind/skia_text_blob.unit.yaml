@@ -5,8 +5,5 @@ defaults:
   encoding: SkTextEncoding::kUTF8
 
 specs:
-  'class/SkTextBlob':
+  'class@SkTextBlob':
     holder: sk_sp
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

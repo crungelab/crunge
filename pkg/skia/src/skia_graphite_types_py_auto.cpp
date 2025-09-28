@@ -18,9 +18,9 @@
 namespace py = pybind11;
 
 void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<skgpu::graphite::InsertRecordingInfo> InsertRecordingInfo(_skia, "InsertRecordingInfo");
-    registry.on(_skia, "InsertRecordingInfo", InsertRecordingInfo);
-        InsertRecordingInfo
+    py::class_<skgpu::graphite::InsertRecordingInfo> _InsertRecordingInfo(_skia, "InsertRecordingInfo");
+    registry.on(_skia, "InsertRecordingInfo", _InsertRecordingInfo);
+        _InsertRecordingInfo
         .def_readwrite("f_recording", &skgpu::graphite::InsertRecordingInfo::fRecording)
         .def_readwrite("f_target_surface", &skgpu::graphite::InsertRecordingInfo::fTargetSurface)
         .def_readwrite("f_target_translation", &skgpu::graphite::InsertRecordingInfo::fTargetTranslation)
@@ -35,9 +35,9 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
         .def(py::init<>())
     ;
 
-    py::class_<skgpu::graphite::InsertFinishInfo> InsertFinishInfo(_skia, "InsertFinishInfo");
-    registry.on(_skia, "InsertFinishInfo", InsertFinishInfo);
-        InsertFinishInfo
+    py::class_<skgpu::graphite::InsertFinishInfo> _InsertFinishInfo(_skia, "InsertFinishInfo");
+    registry.on(_skia, "InsertFinishInfo", _InsertFinishInfo);
+        _InsertFinishInfo
         .def(py::init<>())
         .def(py::init<void *, void (*)(void *, skgpu::CallbackResult)>()
         , py::arg("context")

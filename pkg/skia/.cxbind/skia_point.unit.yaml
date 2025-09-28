@@ -2,11 +2,10 @@
 source: '../../depot/skia/include/private/base/SkPoint_impl.h'
 target: 'src/skia_point_py_auto.cpp'
 
-specs:
+excludes:
   # Wrapped
   # Internal / Ignored
-  #'method/SkIPoint::Make': {exclude: true}
-  'method/SkPoint::Offset': {exclude: true}
-  'method/SkPoint::Length': {exclude: true}
-  'method/SkPoint::Normalize': {exclude: true}
+  - 'method@SkPoint::Offset'
+  - 'method@SkPoint::Length'
+  - 'method@SkPoint::Normalize'
   # Overloads

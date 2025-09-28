@@ -5,11 +5,11 @@ prefixes: [SDL_EVENT_]
 
 excludes:
   # Wrapped
-  - 'function/SDL_PollEvent'
+  - 'function@SDL_PollEvent'
   # Internal / Ignored
-  - 'function/SDL_GetEventFilter'
-  - 'field/SDL_TextEditingCandidatesEvent::candidates'
-  - 'function/SDL_GetWindowFromEvent'
-  - 'field/SDL_ClipboardEvent::mime_types' #const char **mime_types;
+  - 'function@SDL_GetEventFilter'
+  - 'field@SDL_TextEditingCandidatesEvent::candidates'
+  - 'function@SDL_GetWindowFromEvent'
+  - 'field@SDL_ClipboardEvent::mime_types' #const char **mime_types;
 
   # Overloads

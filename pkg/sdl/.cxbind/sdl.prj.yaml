@@ -18,5 +18,5 @@ unit_files:
   - path: sdl_video.unit.yaml
 
 specs:
-  'struct/SDL_Window':
+  'struct@SDL_Window':
     wrapper: 'SDLWindowWrapper'

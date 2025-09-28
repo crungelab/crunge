@@ -23,11 +23,11 @@
 namespace py = pybind11;
 
 void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkImageFilters> ImageFilters(_skia, "ImageFilters");
-    registry.on(_skia, "ImageFilters", ImageFilters);
-        py::class_<SkImageFilters::CropRect> ImageFiltersCropRect(_skia, "ImageFiltersCropRect");
-        registry.on(_skia, "ImageFiltersCropRect", ImageFiltersCropRect);
-            ImageFiltersCropRect
+    py::class_<SkImageFilters> _ImageFilters(_skia, "ImageFilters");
+    registry.on(_skia, "ImageFilters", _ImageFilters);
+        py::class_<SkImageFilters::CropRect> _ImageFiltersCropRect(_skia, "ImageFiltersCropRect");
+        registry.on(_skia, "ImageFiltersCropRect", _ImageFiltersCropRect);
+            _ImageFiltersCropRect
             .def(py::init<>())
             .def(py::init<const SkIRect &>()
             , py::arg("crop")
@@ -49,7 +49,7 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
             )
         ;
 
-        ImageFilters
+        _ImageFilters
         .def_static("arithmetic", &SkImageFilters::Arithmetic
             , py::arg("k1")
             , py::arg("k2")
@@ -234,12 +234,12 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkImageFilters::Dither>(ImageFilters, "Dither", py::arithmetic())
+        py::enum_<SkImageFilters::Dither>(_ImageFilters, "Dither", py::arithmetic())
             .value("K_NO", SkImageFilters::Dither::kNo)
             .value("K_YES", SkImageFilters::Dither::kYes)
             .export_values()
         ;
-        ImageFilters
+        _ImageFilters
         .def_static("shader", py::overload_cast<sk_sp<SkShader>, const SkImageFilters::CropRect &>(&SkImageFilters::Shader)
             , py::arg("shader")
             , py::arg("crop_rect") = SkImageFilters::CropRect{}

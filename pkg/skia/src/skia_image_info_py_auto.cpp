@@ -73,9 +73,9 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkColorInfo> ColorInfo(_skia, "ColorInfo");
-    registry.on(_skia, "ColorInfo", ColorInfo);
-        ColorInfo
+    py::class_<SkColorInfo> _ColorInfo(_skia, "ColorInfo");
+    registry.on(_skia, "ColorInfo", _ColorInfo);
+        _ColorInfo
         .def(py::init<>())
         .def(py::init<SkColorType, SkAlphaType, sk_sp<SkColorSpace>>()
         , py::arg("ct")
@@ -112,9 +112,9 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkImageInfo> ImageInfo(_skia, "ImageInfo");
-    registry.on(_skia, "ImageInfo", ImageInfo);
-        ImageInfo
+    py::class_<SkImageInfo> _ImageInfo(_skia, "ImageInfo");
+    registry.on(_skia, "ImageInfo", _ImageInfo);
+        _ImageInfo
         .def(py::init<>())
         .def_static("make", py::overload_cast<int, int, SkColorType, SkAlphaType>(&SkImageInfo::Make)
             , py::arg("width")

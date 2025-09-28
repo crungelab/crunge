@@ -3,16 +3,16 @@ target: 'src/implot_py_auto.cpp'
 
 specs:
   # TODO: include imgui_inc.yaml from imgui's .cxbind directory?
-  'struct/ImGuiContext':
+  'struct@ImGuiContext':
     wrapper: 'py::capsule'
 
-  'struct/ImPlotContext':
+  'struct@ImPlotContext':
     wrapper: 'py::capsule'
 
 excludes:
-  - 'function/ImPlot::PixelsToPlot'
-  - 'function/ImPlot::SetNextPlotTicksX'
-  - 'function/ImPlot::SetNextPlotTicksY'
-  - 'function/ImPlot::SetupAxisTicks' #TODO: need to wrap this
+  - 'function@ImPlot::PixelsToPlot'
+  - 'function@ImPlot::SetNextPlotTicksX'
+  - 'function@ImPlot::SetNextPlotTicksY'
+  - 'function@ImPlot::SetupAxisTicks' #TODO: need to wrap this
 
-  - 'method/ImPlotRect::Contains' #TODO: overload problems
+  - 'method@ImPlotRect::Contains' #TODO: overload problems

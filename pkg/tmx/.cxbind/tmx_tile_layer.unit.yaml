@@ -1,12 +1,11 @@
 source: '../../depot/tmxlite/tmxlite/include/tmxlite/TileLayer.hpp'
 target: 'src/tmx_tile_layer_py_auto.cpp'
 
-excludes: [
-  'method/tmx::TileLayer::parse'
-]
+excludes:
+  - 'method@tmx::TileLayer::parse'
 
 specs:
-  'class/tmx::TileLayer':
+  'class@tmx::TileLayer':
     extends: ['tmx::Layer']
     properties:
       - name: "tiles"

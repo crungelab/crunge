@@ -2,9 +2,5 @@ source: '../../depot/skia/include/core/SkData.h'
 target: 'src/skia_data_py_auto.cpp'
 
 specs:
-  'class/SkData':
+  'class@SkData':
     holder: sk_sp
-
-  # Wrapped
-  # Internal / Ignored
-  # Overloads

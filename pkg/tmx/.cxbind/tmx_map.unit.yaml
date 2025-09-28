@@ -1,12 +1,11 @@
 source: '../../depot/tmxlite/tmxlite/include/tmxlite/Map.hpp'
 target: 'src/tmx_map_py_auto.cpp'
 
-excludes: [
-  'method/tmx::Map::getLayers'
-]
+excludes:
+  - 'method@tmx::Map::getLayers'
 
 specs:
-  'class/tmx::Map':
+  'class@tmx::Map':
     properties:
       - name: "tilesets"
         getter: "getTilesets"

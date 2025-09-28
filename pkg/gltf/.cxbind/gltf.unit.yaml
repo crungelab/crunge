@@ -4,20 +4,20 @@ target: 'src/gltf_py_auto.cpp'
 excludes:
   # Wrapped
   # These write to err and warn.  Not good
-  - 'function/tinygltf::TinyGLTF::LoadASCIIFromFile'
+  - 'function@tinygltf::TinyGLTF::LoadASCIIFromFile'
   #'class.tinygltf::Value': {exclude: true}
-  - 'method/tinygltf::Value::Get' #TODO: pybind11 doesn't like the signatures?
-  - 'method/tinygltf::Value::Type' #Returns char instead of enum
+  - 'method@tinygltf::Value::Get' #TODO: pybind11 doesn't like the signatures?
+  - 'method@tinygltf::Value::Type' #Returns char instead of enum
 
   # Internal / Ignored
 
-  - 'struct/tinygltf::FsCallbacks'
-  - 'struct/tinygltf::URICallbacks'
+  - 'struct@tinygltf::FsCallbacks'
+  - 'struct@tinygltf::URICallbacks'
   
   # Not sure why it's choking on the last void*
-  - 'function/tinygltf::GetFileSizeInBytes'
+  - 'function@tinygltf::GetFileSizeInBytes'
   # std::ostream& ??
-  - 'method/tinygltf::TinyGLTF::WriteGltfSceneToStream'
+  - 'method@tinygltf::TinyGLTF::WriteGltfSceneToStream'
 
 
   # Overloads

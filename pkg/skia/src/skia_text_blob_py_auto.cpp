@@ -21,9 +21,9 @@ template<>
 struct py::detail::has_operator_delete<SkTextBlob, void> : std::false_type {};
 
 void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkTextBlob,sk_sp<SkTextBlob>> TextBlob(_skia, "TextBlob");
-    registry.on(_skia, "TextBlob", TextBlob);
-        TextBlob
+    py::class_<SkTextBlob,sk_sp<SkTextBlob>> _TextBlob(_skia, "TextBlob");
+    registry.on(_skia, "TextBlob", _TextBlob);
+        _TextBlob
         .def("bounds", &SkTextBlob::bounds
             , py::return_value_policy::reference)
         .def("unique_id", &SkTextBlob::uniqueID
@@ -85,17 +85,17 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::class_<SkTextBlob::Iter> TextBlobIter(_skia, "TextBlobIter");
-        registry.on(_skia, "TextBlobIter", TextBlobIter);
-            py::class_<SkTextBlob::Iter::Run> TextBlobIterRun(_skia, "TextBlobIterRun");
-            registry.on(_skia, "TextBlobIterRun", TextBlobIterRun);
-                TextBlobIterRun
+        py::class_<SkTextBlob::Iter> _TextBlobIter(_skia, "TextBlobIter");
+        registry.on(_skia, "TextBlobIter", _TextBlobIter);
+            py::class_<SkTextBlob::Iter::Run> _TextBlobIterRun(_skia, "TextBlobIterRun");
+            registry.on(_skia, "TextBlobIterRun", _TextBlobIterRun);
+                _TextBlobIterRun
                 .def_readwrite("f_typeface", &SkTextBlob::Iter::Run::fTypeface)
                 .def_readwrite("f_glyph_count", &SkTextBlob::Iter::Run::fGlyphCount)
                 .def_readwrite("f_glyph_indices", &SkTextBlob::Iter::Run::fGlyphIndices)
             ;
 
-            TextBlobIter
+            _TextBlobIter
             .def(py::init<const SkTextBlob &>()
             , py::arg("")
             )
@@ -104,32 +104,32 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
                 , py::return_value_policy::automatic_reference)
             ;
 
-            py::class_<SkTextBlob::Iter::ExperimentalRun> TextBlobIterExperimentalRun(_skia, "TextBlobIterExperimentalRun");
-            registry.on(_skia, "TextBlobIterExperimentalRun", TextBlobIterExperimentalRun);
-                TextBlobIterExperimentalRun
+            py::class_<SkTextBlob::Iter::ExperimentalRun> _TextBlobIterExperimentalRun(_skia, "TextBlobIterExperimentalRun");
+            registry.on(_skia, "TextBlobIterExperimentalRun", _TextBlobIterExperimentalRun);
+                _TextBlobIterExperimentalRun
                 .def_readwrite("font", &SkTextBlob::Iter::ExperimentalRun::font)
                 .def_readwrite("count", &SkTextBlob::Iter::ExperimentalRun::count)
                 .def_readwrite("glyphs", &SkTextBlob::Iter::ExperimentalRun::glyphs)
                 .def_readwrite("positions", &SkTextBlob::Iter::ExperimentalRun::positions)
             ;
 
-            TextBlobIter
+            _TextBlobIter
             .def("experimental_next", &SkTextBlob::Iter::experimentalNext
                 , py::arg("")
                 , py::return_value_policy::automatic_reference)
         ;
 
-    py::class_<SkTextBlobBuilder> TextBlobBuilder(_skia, "TextBlobBuilder");
-    registry.on(_skia, "TextBlobBuilder", TextBlobBuilder);
-        TextBlobBuilder
+    py::class_<SkTextBlobBuilder> _TextBlobBuilder(_skia, "TextBlobBuilder");
+    registry.on(_skia, "TextBlobBuilder", _TextBlobBuilder);
+        _TextBlobBuilder
         .def(py::init<>())
         .def("make", &SkTextBlobBuilder::make
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::class_<SkTextBlobBuilder::RunBuffer> TextBlobBuilderRunBuffer(_skia, "TextBlobBuilderRunBuffer");
-        registry.on(_skia, "TextBlobBuilderRunBuffer", TextBlobBuilderRunBuffer);
-            TextBlobBuilderRunBuffer
+        py::class_<SkTextBlobBuilder::RunBuffer> _TextBlobBuilderRunBuffer(_skia, "TextBlobBuilderRunBuffer");
+        registry.on(_skia, "TextBlobBuilderRunBuffer", _TextBlobBuilderRunBuffer);
+            _TextBlobBuilderRunBuffer
             .def_readwrite("glyphs", &SkTextBlobBuilder::RunBuffer::glyphs)
             .def_readwrite("pos", &SkTextBlobBuilder::RunBuffer::pos)
             .def_property("utf8text",
@@ -143,7 +143,7 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
                 , py::return_value_policy::automatic_reference)
         ;
 
-        TextBlobBuilder
+        _TextBlobBuilder
         .def("alloc_run", &SkTextBlobBuilder::allocRun
             , py::arg("font")
             , py::arg("count")

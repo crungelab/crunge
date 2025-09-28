@@ -14,9 +14,9 @@
 namespace py = pybind11;
 
 void init_yoga_style_py_auto(py::module &_yoga, Registry &registry) {
-    py::class_<facebook::yoga::StyleLength> StyleLength(_yoga, "StyleLength");
-    registry.on(_yoga, "StyleLength", StyleLength);
-        StyleLength
+    py::class_<facebook::yoga::StyleLength> _StyleLength(_yoga, "StyleLength");
+    registry.on(_yoga, "StyleLength", _StyleLength);
+        _StyleLength
         .def(py::init<>())
         .def_static("points", &facebook::yoga::StyleLength::points
             , py::arg("value")
@@ -49,9 +49,9 @@ void init_yoga_style_py_auto(py::module &_yoga, Registry &registry) {
     ;
 
 
-    py::class_<facebook::yoga::StyleSizeLength> StyleSizeLength(_yoga, "StyleSizeLength");
-    registry.on(_yoga, "StyleSizeLength", StyleSizeLength);
-        StyleSizeLength
+    py::class_<facebook::yoga::StyleSizeLength> _StyleSizeLength(_yoga, "StyleSizeLength");
+    registry.on(_yoga, "StyleSizeLength", _StyleSizeLength);
+        _StyleSizeLength
         .def(py::init<>())
         .def_static("points", &facebook::yoga::StyleSizeLength::points
             , py::arg("value")
@@ -96,9 +96,9 @@ void init_yoga_style_py_auto(py::module &_yoga, Registry &registry) {
     ;
 
 
-    py::class_<facebook::yoga::Style> Style(_yoga, "Style");
-    registry.on(_yoga, "Style", Style);
-        Style
+    py::class_<facebook::yoga::Style> _Style(_yoga, "Style");
+    registry.on(_yoga, "Style", _Style);
+        _Style
         .def("direction", &facebook::yoga::Style::direction
             , py::return_value_policy::automatic_reference)
         .def("set_direction", &facebook::yoga::Style::setDirection

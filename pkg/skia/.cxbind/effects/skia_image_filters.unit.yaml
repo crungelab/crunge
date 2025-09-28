@@ -6,8 +6,8 @@ defaults:
   'colorSpace': nullptr
   'input': nullptr
 
-specs:
+excludes:
   # Wrapped
   #Internal / Ignored
-  'ctor/SkImageFilters::CropRect::CropRect/void (const std::nullopt_t &)' : {exclude: true}
+  - 'ctor@SkImageFilters::CropRect::CropRect@void (const std::nullopt_t &)'
   # Overloads

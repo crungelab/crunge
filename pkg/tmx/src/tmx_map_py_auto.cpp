@@ -15,9 +15,9 @@
 namespace py = pybind11;
 
 void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::Version> Version(_tmx, "Version");
-    registry.on(_tmx, "Version", Version);
-        Version
+    py::class_<tmx::Version> _Version(_tmx, "Version");
+    registry.on(_tmx, "Version", _Version);
+        _Version
         .def_readwrite("upper", &tmx::Version::upper)
         .def_readwrite("lower", &tmx::Version::lower)
         .def(py::init<unsigned short, unsigned short>()
@@ -54,9 +54,9 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
         .value("NONE", tmx::StaggerIndex::None)
         .export_values()
     ;
-    py::class_<tmx::Map> Map(_tmx, "Map");
-    registry.on(_tmx, "Map", Map);
-        Map
+    py::class_<tmx::Map> _Map(_tmx, "Map");
+    registry.on(_tmx, "Map", _Map);
+        _Map
         .def(py::init<>())
         .def("load", &tmx::Map::load
             , py::arg("")

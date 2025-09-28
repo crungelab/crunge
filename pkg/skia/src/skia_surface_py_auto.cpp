@@ -34,19 +34,11 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("row_bytes")
         , py::arg("surface_props")
         , py::return_value_policy::automatic_reference)
-    .def("raster", py::overload_cast<const SkImageInfo &, const SkSurfaceProps *>(&SkSurfaces::Raster)
-        , py::arg("image_info")
-        , py::arg("props") = nullptr
-        , py::return_value_policy::automatic_reference)
     .def("wrap_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
         , py::arg("image_info")
         , py::arg("pixels")
         , py::arg("row_bytes")
         , py::arg("surface_props") = nullptr
-        , py::return_value_policy::automatic_reference)
-    .def("wrap_pixels", py::overload_cast<const SkPixmap &, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
-        , py::arg("pm")
-        , py::arg("props") = nullptr
         , py::return_value_policy::automatic_reference)
     .def("wrap_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, void (void *, void *), void *, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
         , py::arg("image_info")
@@ -58,9 +50,9 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<SkSurface> Surface(_skia, "Surface");
-    registry.on(_skia, "Surface", Surface);
-        Surface
+    py::class_<SkSurface> _Surface(_skia, "Surface");
+    registry.on(_skia, "Surface", _Surface);
+        _Surface
         .def("width", &SkSurface::width
             , py::return_value_policy::automatic_reference)
         .def("height", &SkSurface::height
@@ -71,12 +63,12 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkSurface::ContentChangeMode>(Surface, "ContentChangeMode", py::arithmetic())
+        py::enum_<SkSurface::ContentChangeMode>(_Surface, "ContentChangeMode", py::arithmetic())
             .value("K_DISCARD_CONTENT_CHANGE_MODE", SkSurface::ContentChangeMode::kDiscard_ContentChangeMode)
             .value("K_RETAIN_CONTENT_CHANGE_MODE", SkSurface::ContentChangeMode::kRetain_ContentChangeMode)
             .export_values()
         ;
-        Surface
+        _Surface
         .def("notify_content_will_change", &SkSurface::notifyContentWillChange
             , py::arg("mode")
             , py::return_value_policy::automatic_reference)
@@ -84,7 +76,7 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         ;
 
-        py::enum_<SkSurface::BackendHandleAccess>(Surface, "BackendHandleAccess", py::arithmetic())
+        py::enum_<SkSurface::BackendHandleAccess>(_Surface, "BackendHandleAccess", py::arithmetic())
             .value("K_FLUSH_READ", SkSurface::BackendHandleAccess::kFlushRead)
             .value("K_FLUSH_WRITE", SkSurface::BackendHandleAccess::kFlushWrite)
             .value("K_DISCARD_WRITE", SkSurface::BackendHandleAccess::kDiscardWrite)
@@ -93,7 +85,7 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             .value("K_DISCARD_WRITE_BACKEND_HANDLE_ACCESS", SkSurface::BackendHandleAccess::kDiscardWrite_BackendHandleAccess)
             .export_values()
         ;
-        Surface
+        _Surface
         .def("get_canvas", &SkSurface::getCanvas
             , py::return_value_policy::automatic_reference)
         .def("capabilities", &SkSurface::capabilities

@@ -16,9 +16,9 @@
 namespace py = pybind11;
 
 void init_tmx_image_layer_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::ImageLayer, tmx::Layer> ImageLayer(_tmx, "ImageLayer");
-    registry.on(_tmx, "ImageLayer", ImageLayer);
-        ImageLayer
+    py::class_<tmx::ImageLayer, tmx::Layer> _ImageLayer(_tmx, "ImageLayer");
+    registry.on(_tmx, "ImageLayer", _ImageLayer);
+        _ImageLayer
         .def(py::init<const std::basic_string<char> &>()
         , py::arg("")
         )

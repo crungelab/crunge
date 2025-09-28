@@ -16,16 +16,6 @@ namespace py = pybind11;
 
 void init_skia_color_py_auto(py::module &_skia, Registry &registry) {
     _skia
-    .def("color_set_argb", &SkColorSetARGB
-        , py::arg("a")
-        , py::arg("r")
-        , py::arg("g")
-        , py::arg("b")
-        , py::return_value_policy::automatic_reference)
-    .def("color_set_a", &SkColorSetA
-        , py::arg("c")
-        , py::arg("a")
-        , py::return_value_policy::automatic_reference)
     .def("rgb_to_hsv", [](unsigned int red, unsigned int green, unsigned int blue, std::array<SkScalar, 3>& hsv)
         {
             SkRGBToHSV(red, green, blue, &hsv[0]);
@@ -34,14 +24,6 @@ void init_skia_color_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("red")
         , py::arg("green")
         , py::arg("blue")
-        , py::arg("hsv")
-        , py::return_value_policy::automatic_reference)
-    .def("color_to_hsv", [](unsigned int color, std::array<SkScalar, 3>& hsv)
-        {
-            SkColorToHSV(color, &hsv[0]);
-            return hsv;
-        }
-        , py::arg("color")
         , py::arg("hsv")
         , py::return_value_policy::automatic_reference)
     .def("pre_multiply_argb", &SkPreMultiplyARGB

@@ -16,16 +16,16 @@
 namespace py = pybind11;
 
 void init_tmx_layer_py_auto(py::module &_tmx, Registry &registry) {
-    py::class_<tmx::Layer> Layer(_tmx, "Layer");
-    registry.on(_tmx, "Layer", Layer);
-        py::enum_<tmx::Layer::Type>(Layer, "Type", py::arithmetic())
+    py::class_<tmx::Layer> _Layer(_tmx, "Layer");
+    registry.on(_tmx, "Layer", _Layer);
+        py::enum_<tmx::Layer::Type>(_Layer, "Type", py::arithmetic())
             .value("TILE", tmx::Layer::Type::Tile)
             .value("OBJECT", tmx::Layer::Type::Object)
             .value("IMAGE", tmx::Layer::Type::Image)
             .value("GROUP", tmx::Layer::Type::Group)
             .export_values()
         ;
-        Layer
+        _Layer
         .def("get_type", &tmx::Layer::getType
             , py::return_value_policy::automatic_reference)
         .def("get_class", &tmx::Layer::getClass

@@ -4,25 +4,25 @@ target: 'src/imnodes_py_auto.cpp'
 specs:
   # Wrapped
   # TODO: include imgui_inc.yaml from imgui's .cxbind directory?
-  'struct/ImGuiContext':
+  'struct@ImGuiContext':
     wrapper: 'py::capsule'
 
-  'struct/ImNodesContext':
+  'struct@ImNodesContext':
     wrapper: 'py::capsule'
 
-  'struct/ImNodesEditorContext':
+  'struct@ImNodesEditorContext':
     wrapper: 'py::capsule'
 
 excludes:
-  - 'function/ImNodes::MiniMap'
+  - 'function@ImNodes::MiniMap'
   # Internal / Ignored
 
   # These three have member names same as struct names
-  - 'struct/ImNodesIO::EmulateThreeButtonMouse'
-  - 'struct/ImNodesIO::LinkDetachWithModifierClick'
-  - 'struct/ImNodesIO::MultipleSelectModifier'
+  - 'struct@ImNodesIO::EmulateThreeButtonMouse'
+  - 'struct@ImNodesIO::LinkDetachWithModifierClick'
+  - 'struct@ImNodesIO::MultipleSelectModifier'
 
-  - 'function/SaveEditorStateToIniString'
-  - 'function/LoadEditorStateFromIniFile'
-  - 'function/LoadEditorStateFromIniString'
-  - 'function/SaveEditorStateToIniFile'
+  - 'function@SaveEditorStateToIniString'
+  - 'function@LoadEditorStateFromIniFile'
+  - 'function@LoadEditorStateFromIniString'
+  - 'function@SaveEditorStateToIniFile'

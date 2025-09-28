@@ -2,16 +2,17 @@ source: '../../depot/skia/include/gpu/graphite/GraphiteTypes.h'
 target: 'src/skia_graphite_types_py_auto.cpp'
 
 specs:
-  'struct/skgpu::graphite::InsertRecordingInfo': {gen_init: true}
+  'struct@skgpu::graphite::InsertRecordingInfo': {gen_init: true}
 
+excludes:
   # Wrapped
   # Internal / Ignored
 
   # Ignored until I can wrap callbacks
-  'field/skgpu::graphite::InsertRecordingInfo::fFinishedProc': {exclude: true}
-  'field/skgpu::graphite::InsertRecordingInfo::fFinishedWithStatsProc': {exclude: true}
+  - 'field@skgpu::graphite::InsertRecordingInfo::fFinishedProc'
+  - 'field@skgpu::graphite::InsertRecordingInfo::fFinishedWithStatsProc'
 
-  'field/skgpu::graphite::InsertFinishInfo::fFinishedProc': {exclude: true}
-  'field/skgpu::graphite::InsertFinishInfo::fFinishedWithStatsProc': {exclude: true}
+  - 'field@skgpu::graphite::InsertFinishInfo::fFinishedProc'
+  - 'field@skgpu::graphite::InsertFinishInfo::fFinishedWithStatsProc'
 
   # Overloads

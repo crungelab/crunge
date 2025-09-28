@@ -16,20 +16,20 @@
 namespace py = pybind11;
 
 void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
-    py::class_<SkGradientShader> GradientShader(_skia, "GradientShader");
-    registry.on(_skia, "GradientShader", GradientShader);
-        py::enum_<SkGradientShader::Flags>(GradientShader, "Flags", py::arithmetic())
+    py::class_<SkGradientShader> _GradientShader(_skia, "GradientShader");
+    registry.on(_skia, "GradientShader", _GradientShader);
+        py::enum_<SkGradientShader::Flags>(_GradientShader, "Flags", py::arithmetic())
             .value("K_INTERPOLATE_COLORS_IN_PREMUL_FLAG", SkGradientShader::Flags::kInterpolateColorsInPremul_Flag)
             .export_values()
         ;
-        py::class_<SkGradientShader::Interpolation> GradientShaderInterpolation(_skia, "GradientShaderInterpolation");
-        registry.on(_skia, "GradientShaderInterpolation", GradientShaderInterpolation);
-            py::enum_<SkGradientShader::Interpolation::InPremul>(GradientShaderInterpolation, "InPremul", py::arithmetic())
+        py::class_<SkGradientShader::Interpolation> _GradientShaderInterpolation(_skia, "GradientShaderInterpolation");
+        registry.on(_skia, "GradientShaderInterpolation", _GradientShaderInterpolation);
+            py::enum_<SkGradientShader::Interpolation::InPremul>(_GradientShaderInterpolation, "InPremul", py::arithmetic())
                 .value("K_NO", SkGradientShader::Interpolation::InPremul::kNo)
                 .value("K_YES", SkGradientShader::Interpolation::InPremul::kYes)
                 .export_values()
             ;
-            py::enum_<SkGradientShader::Interpolation::ColorSpace>(GradientShaderInterpolation, "ColorSpace", py::arithmetic())
+            py::enum_<SkGradientShader::Interpolation::ColorSpace>(_GradientShaderInterpolation, "ColorSpace", py::arithmetic())
                 .value("K_DESTINATION", SkGradientShader::Interpolation::ColorSpace::kDestination)
                 .value("K_SRGB_LINEAR", SkGradientShader::Interpolation::ColorSpace::kSRGBLinear)
                 .value("K_LAB", SkGradientShader::Interpolation::ColorSpace::kLab)
@@ -44,11 +44,11 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
                 .value("K_DISPLAY_P3", SkGradientShader::Interpolation::ColorSpace::kDisplayP3)
                 .value("K_REC2020", SkGradientShader::Interpolation::ColorSpace::kRec2020)
                 .value("K_PROPHOTO_RGB", SkGradientShader::Interpolation::ColorSpace::kProphotoRGB)
-                .value("K_A98RGB", SkGradientShader::Interpolation::ColorSpace::kA98RGB)
+                .value("K_A98_RGB", SkGradientShader::Interpolation::ColorSpace::kA98RGB)
                 .value("K_LAST_COLOR_SPACE", SkGradientShader::Interpolation::ColorSpace::kLastColorSpace)
                 .export_values()
             ;
-            py::enum_<SkGradientShader::Interpolation::HueMethod>(GradientShaderInterpolation, "HueMethod", py::arithmetic())
+            py::enum_<SkGradientShader::Interpolation::HueMethod>(_GradientShaderInterpolation, "HueMethod", py::arithmetic())
                 .value("K_SHORTER", SkGradientShader::Interpolation::HueMethod::kShorter)
                 .value("K_LONGER", SkGradientShader::Interpolation::HueMethod::kLonger)
                 .value("K_INCREASING", SkGradientShader::Interpolation::HueMethod::kIncreasing)
@@ -56,7 +56,7 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
                 .value("K_LAST_HUE_METHOD", SkGradientShader::Interpolation::HueMethod::kLastHueMethod)
                 .export_values()
             ;
-            GradientShaderInterpolation
+            _GradientShaderInterpolation
             .def_readwrite("f_in_premul", &SkGradientShader::Interpolation::fInPremul)
             .def_readwrite("f_color_space", &SkGradientShader::Interpolation::fColorSpace)
             .def_readwrite("f_hue_method", &SkGradientShader::Interpolation::fHueMethod)

@@ -3,6 +3,6 @@ target: src/bindings/yoga_algorithm_py_auto.cpp
 sources:
   - ../../depot/yoga/yoga/algorithm/CalculateLayout.h
 
-#excludes: [
-#  'function/facebook::yoga::maxOrDefined',
-#]
+#excludes:
+#- 'function@facebook::yoga::maxOrDefined'
+
