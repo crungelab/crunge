@@ -47,9 +47,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<tinygltf::Value> Value(_gltf, "Value");
-    registry.on(_gltf, "Value", Value);
-        Value
+    py::class_<tinygltf::Value> _Value(_gltf, "Value");
+    registry.on(_gltf, "Value", _Value);
+        _Value
         .def(py::init<>())
         .def(py::init<bool>()
         , py::arg("b")
@@ -110,9 +110,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<tinygltf::Parameter> Parameter(_gltf, "Parameter");
-    registry.on(_gltf, "Parameter", Parameter);
-        Parameter
+    py::class_<tinygltf::Parameter> _Parameter(_gltf, "Parameter");
+    registry.on(_gltf, "Parameter", _Parameter);
+        _Parameter
         .def_readwrite("bool_value", &tinygltf::Parameter::bool_value)
         .def_readwrite("has_number_value", &tinygltf::Parameter::has_number_value)
         .def_readwrite("string_value", &tinygltf::Parameter::string_value)
@@ -137,9 +137,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::AnimationChannel> AnimationChannel(_gltf, "AnimationChannel");
-    registry.on(_gltf, "AnimationChannel", AnimationChannel);
-        AnimationChannel
+    py::class_<tinygltf::AnimationChannel> _AnimationChannel(_gltf, "AnimationChannel");
+    registry.on(_gltf, "AnimationChannel", _AnimationChannel);
+        _AnimationChannel
         .def_readwrite("sampler", &tinygltf::AnimationChannel::sampler)
         .def_readwrite("target_node", &tinygltf::AnimationChannel::target_node)
         .def_readwrite("target_path", &tinygltf::AnimationChannel::target_path)
@@ -157,9 +157,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::AnimationSampler> AnimationSampler(_gltf, "AnimationSampler");
-    registry.on(_gltf, "AnimationSampler", AnimationSampler);
-        AnimationSampler
+    py::class_<tinygltf::AnimationSampler> _AnimationSampler(_gltf, "AnimationSampler");
+    registry.on(_gltf, "AnimationSampler", _AnimationSampler);
+        _AnimationSampler
         .def_readwrite("input", &tinygltf::AnimationSampler::input)
         .def_readwrite("output", &tinygltf::AnimationSampler::output)
         .def_readwrite("interpolation", &tinygltf::AnimationSampler::interpolation)
@@ -173,9 +173,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Animation> Animation(_gltf, "Animation");
-    registry.on(_gltf, "Animation", Animation);
-        Animation
+    py::class_<tinygltf::Animation> _Animation(_gltf, "Animation");
+    registry.on(_gltf, "Animation", _Animation);
+        _Animation
         .def_readwrite("name", &tinygltf::Animation::name)
         .def_readwrite("channels", &tinygltf::Animation::channels)
         .def_readwrite("samplers", &tinygltf::Animation::samplers)
@@ -189,9 +189,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Skin> Skin(_gltf, "Skin");
-    registry.on(_gltf, "Skin", Skin);
-        Skin
+    py::class_<tinygltf::Skin> _Skin(_gltf, "Skin");
+    registry.on(_gltf, "Skin", _Skin);
+        _Skin
         .def_readwrite("name", &tinygltf::Skin::name)
         .def_readwrite("inverse_bind_matrices", &tinygltf::Skin::inverseBindMatrices)
         .def_readwrite("skeleton", &tinygltf::Skin::skeleton)
@@ -206,9 +206,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Sampler> Sampler(_gltf, "Sampler");
-    registry.on(_gltf, "Sampler", Sampler);
-        Sampler
+    py::class_<tinygltf::Sampler> _Sampler(_gltf, "Sampler");
+    registry.on(_gltf, "Sampler", _Sampler);
+        _Sampler
         .def_readwrite("name", &tinygltf::Sampler::name)
         .def_readwrite("min_filter", &tinygltf::Sampler::minFilter)
         .def_readwrite("mag_filter", &tinygltf::Sampler::magFilter)
@@ -224,9 +224,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Image> Image(_gltf, "Image");
-    registry.on(_gltf, "Image", Image);
-        Image
+    py::class_<tinygltf::Image> _Image(_gltf, "Image");
+    registry.on(_gltf, "Image", _Image);
+        _Image
         .def_readwrite("name", &tinygltf::Image::name)
         .def_readwrite("width", &tinygltf::Image::width)
         .def_readwrite("height", &tinygltf::Image::height)
@@ -248,9 +248,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Texture> Texture(_gltf, "Texture");
-    registry.on(_gltf, "Texture", Texture);
-        Texture
+    py::class_<tinygltf::Texture> _Texture(_gltf, "Texture");
+    registry.on(_gltf, "Texture", _Texture);
+        _Texture
         .def_readwrite("name", &tinygltf::Texture::name)
         .def_readwrite("sampler", &tinygltf::Texture::sampler)
         .def_readwrite("source", &tinygltf::Texture::source)
@@ -264,9 +264,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::TextureInfo> TextureInfo(_gltf, "TextureInfo");
-    registry.on(_gltf, "TextureInfo", TextureInfo);
-        TextureInfo
+    py::class_<tinygltf::TextureInfo> _TextureInfo(_gltf, "TextureInfo");
+    registry.on(_gltf, "TextureInfo", _TextureInfo);
+        _TextureInfo
         .def_readwrite("index", &tinygltf::TextureInfo::index)
         .def_readwrite("tex_coord", &tinygltf::TextureInfo::texCoord)
         .def_readwrite("extras", &tinygltf::TextureInfo::extras)
@@ -279,9 +279,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::NormalTextureInfo> NormalTextureInfo(_gltf, "NormalTextureInfo");
-    registry.on(_gltf, "NormalTextureInfo", NormalTextureInfo);
-        NormalTextureInfo
+    py::class_<tinygltf::NormalTextureInfo> _NormalTextureInfo(_gltf, "NormalTextureInfo");
+    registry.on(_gltf, "NormalTextureInfo", _NormalTextureInfo);
+        _NormalTextureInfo
         .def_readwrite("index", &tinygltf::NormalTextureInfo::index)
         .def_readwrite("tex_coord", &tinygltf::NormalTextureInfo::texCoord)
         .def_readwrite("scale", &tinygltf::NormalTextureInfo::scale)
@@ -295,9 +295,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::OcclusionTextureInfo> OcclusionTextureInfo(_gltf, "OcclusionTextureInfo");
-    registry.on(_gltf, "OcclusionTextureInfo", OcclusionTextureInfo);
-        OcclusionTextureInfo
+    py::class_<tinygltf::OcclusionTextureInfo> _OcclusionTextureInfo(_gltf, "OcclusionTextureInfo");
+    registry.on(_gltf, "OcclusionTextureInfo", _OcclusionTextureInfo);
+        _OcclusionTextureInfo
         .def_readwrite("index", &tinygltf::OcclusionTextureInfo::index)
         .def_readwrite("tex_coord", &tinygltf::OcclusionTextureInfo::texCoord)
         .def_readwrite("strength", &tinygltf::OcclusionTextureInfo::strength)
@@ -311,9 +311,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::PbrMetallicRoughness> PbrMetallicRoughness(_gltf, "PbrMetallicRoughness");
-    registry.on(_gltf, "PbrMetallicRoughness", PbrMetallicRoughness);
-        PbrMetallicRoughness
+    py::class_<tinygltf::PbrMetallicRoughness> _PbrMetallicRoughness(_gltf, "PbrMetallicRoughness");
+    registry.on(_gltf, "PbrMetallicRoughness", _PbrMetallicRoughness);
+        _PbrMetallicRoughness
         .def_readwrite("base_color_factor", &tinygltf::PbrMetallicRoughness::baseColorFactor)
         .def_readwrite("base_color_texture", &tinygltf::PbrMetallicRoughness::baseColorTexture)
         .def_readwrite("metallic_factor", &tinygltf::PbrMetallicRoughness::metallicFactor)
@@ -329,14 +329,15 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Material> Material(_gltf, "Material");
-    registry.on(_gltf, "Material", Material);
-        Material
+    py::class_<tinygltf::Material> _Material(_gltf, "Material");
+    registry.on(_gltf, "Material", _Material);
+        _Material
         .def_readwrite("name", &tinygltf::Material::name)
         .def_readwrite("emissive_factor", &tinygltf::Material::emissiveFactor)
         .def_readwrite("alpha_mode", &tinygltf::Material::alphaMode)
         .def_readwrite("alpha_cutoff", &tinygltf::Material::alphaCutoff)
         .def_readwrite("double_sided", &tinygltf::Material::doubleSided)
+        .def_readwrite("lods", &tinygltf::Material::lods)
         .def_readwrite("pbr_metallic_roughness", &tinygltf::Material::pbrMetallicRoughness)
         .def_readwrite("normal_texture", &tinygltf::Material::normalTexture)
         .def_readwrite("occlusion_texture", &tinygltf::Material::occlusionTexture)
@@ -353,9 +354,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::BufferView> BufferView(_gltf, "BufferView");
-    registry.on(_gltf, "BufferView", BufferView);
-        BufferView
+    py::class_<tinygltf::BufferView> _BufferView(_gltf, "BufferView");
+    registry.on(_gltf, "BufferView", _BufferView);
+        _BufferView
         .def_readwrite("name", &tinygltf::BufferView::name)
         .def_readwrite("buffer", &tinygltf::BufferView::buffer)
         .def_readwrite("byte_offset", &tinygltf::BufferView::byteOffset)
@@ -373,9 +374,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Accessor> Accessor(_gltf, "Accessor");
-    registry.on(_gltf, "Accessor", Accessor);
-        Accessor
+    py::class_<tinygltf::Accessor> _Accessor(_gltf, "Accessor");
+    registry.on(_gltf, "Accessor", _Accessor);
+        _Accessor
         .def_readwrite("buffer_view", &tinygltf::Accessor::bufferView)
         .def_readwrite("name", &tinygltf::Accessor::name)
         .def_readwrite("byte_offset", &tinygltf::Accessor::byteOffset)
@@ -391,41 +392,12 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("max_values", &tinygltf::Accessor::maxValues)
         ;
 
-        py::class_<tinygltf::Accessor::Sparse> AccessorSparse(_gltf, "AccessorSparse");
-        registry.on(_gltf, "AccessorSparse", AccessorSparse);
-            AccessorSparse
+        py::class_<tinygltf::Accessor::Sparse> _AccessorSparse(_gltf, "AccessorSparse");
+        registry.on(_gltf, "AccessorSparse", _AccessorSparse);
+            _AccessorSparse
             .def_readwrite("count", &tinygltf::Accessor::Sparse::count)
             .def_readwrite("is_sparse", &tinygltf::Accessor::Sparse::isSparse)
-            ;
-
-            py::class_<tinygltf::Accessor::Sparse::Indices> AccessorSparseIndices(_gltf, "AccessorSparseIndices");
-            registry.on(_gltf, "AccessorSparseIndices", AccessorSparseIndices);
-                AccessorSparseIndices
-                .def_readwrite("byte_offset", &tinygltf::Accessor::Sparse::Indices::byteOffset)
-                .def_readwrite("buffer_view", &tinygltf::Accessor::Sparse::Indices::bufferView)
-                .def_readwrite("component_type", &tinygltf::Accessor::Sparse::Indices::componentType)
-                .def_readwrite("extras", &tinygltf::Accessor::Sparse::Indices::extras)
-                .def_readwrite("extensions", &tinygltf::Accessor::Sparse::Indices::extensions)
-                .def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::Indices::extras_json_string)
-                .def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::Indices::extensions_json_string)
-            ;
-
-            AccessorSparse
             .def_readwrite("indices", &tinygltf::Accessor::Sparse::indices)
-            ;
-
-            py::class_<tinygltf::Accessor::Sparse::Values> AccessorSparseValues(_gltf, "AccessorSparseValues");
-            registry.on(_gltf, "AccessorSparseValues", AccessorSparseValues);
-                AccessorSparseValues
-                .def_readwrite("buffer_view", &tinygltf::Accessor::Sparse::Values::bufferView)
-                .def_readwrite("byte_offset", &tinygltf::Accessor::Sparse::Values::byteOffset)
-                .def_readwrite("extras", &tinygltf::Accessor::Sparse::Values::extras)
-                .def_readwrite("extensions", &tinygltf::Accessor::Sparse::Values::extensions)
-                .def_readwrite("extras_json_string", &tinygltf::Accessor::Sparse::Values::extras_json_string)
-                .def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::Values::extensions_json_string)
-            ;
-
-            AccessorSparse
             .def_readwrite("values", &tinygltf::Accessor::Sparse::values)
             .def_readwrite("extras", &tinygltf::Accessor::Sparse::extras)
             .def_readwrite("extensions", &tinygltf::Accessor::Sparse::extensions)
@@ -433,7 +405,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             .def_readwrite("extensions_json_string", &tinygltf::Accessor::Sparse::extensions_json_string)
         ;
 
-        Accessor
+        _Accessor
         .def_readwrite("sparse", &tinygltf::Accessor::sparse)
         .def("byte_stride", &tinygltf::Accessor::ByteStride
             , py::arg("buffer_view_object")
@@ -444,9 +416,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::PerspectiveCamera> PerspectiveCamera(_gltf, "PerspectiveCamera");
-    registry.on(_gltf, "PerspectiveCamera", PerspectiveCamera);
-        PerspectiveCamera
+    py::class_<tinygltf::PerspectiveCamera> _PerspectiveCamera(_gltf, "PerspectiveCamera");
+    registry.on(_gltf, "PerspectiveCamera", _PerspectiveCamera);
+        _PerspectiveCamera
         .def_readwrite("aspect_ratio", &tinygltf::PerspectiveCamera::aspectRatio)
         .def_readwrite("yfov", &tinygltf::PerspectiveCamera::yfov)
         .def_readwrite("zfar", &tinygltf::PerspectiveCamera::zfar)
@@ -461,9 +433,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::PerspectiveCamera::extensions_json_string)
     ;
 
-    py::class_<tinygltf::OrthographicCamera> OrthographicCamera(_gltf, "OrthographicCamera");
-    registry.on(_gltf, "OrthographicCamera", OrthographicCamera);
-        OrthographicCamera
+    py::class_<tinygltf::OrthographicCamera> _OrthographicCamera(_gltf, "OrthographicCamera");
+    registry.on(_gltf, "OrthographicCamera", _OrthographicCamera);
+        _OrthographicCamera
         .def_readwrite("xmag", &tinygltf::OrthographicCamera::xmag)
         .def_readwrite("ymag", &tinygltf::OrthographicCamera::ymag)
         .def_readwrite("zfar", &tinygltf::OrthographicCamera::zfar)
@@ -478,9 +450,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::OrthographicCamera::extensions_json_string)
     ;
 
-    py::class_<tinygltf::Camera> Camera(_gltf, "Camera");
-    registry.on(_gltf, "Camera", Camera);
-        Camera
+    py::class_<tinygltf::Camera> _Camera(_gltf, "Camera");
+    registry.on(_gltf, "Camera", _Camera);
+        _Camera
         .def_readwrite("type", &tinygltf::Camera::type)
         .def_readwrite("name", &tinygltf::Camera::name)
         .def_readwrite("perspective", &tinygltf::Camera::perspective)
@@ -495,9 +467,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::Camera::extensions_json_string)
     ;
 
-    py::class_<tinygltf::Primitive> Primitive(_gltf, "Primitive");
-    registry.on(_gltf, "Primitive", Primitive);
-        Primitive
+    py::class_<tinygltf::Primitive> _Primitive(_gltf, "Primitive");
+    registry.on(_gltf, "Primitive", _Primitive);
+        _Primitive
         .def_readwrite("attributes", &tinygltf::Primitive::attributes)
         .def_readwrite("material", &tinygltf::Primitive::material)
         .def_readwrite("indices", &tinygltf::Primitive::indices)
@@ -513,9 +485,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Mesh> Mesh(_gltf, "Mesh");
-    registry.on(_gltf, "Mesh", Mesh);
-        Mesh
+    py::class_<tinygltf::Mesh> _Mesh(_gltf, "Mesh");
+    registry.on(_gltf, "Mesh", _Mesh);
+        _Mesh
         .def_readwrite("name", &tinygltf::Mesh::name)
         .def_readwrite("primitives", &tinygltf::Mesh::primitives)
         .def_readwrite("weights", &tinygltf::Mesh::weights)
@@ -529,9 +501,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Node> Node(_gltf, "Node");
-    registry.on(_gltf, "Node", Node);
-        Node
+    py::class_<tinygltf::Node> _Node(_gltf, "Node");
+    registry.on(_gltf, "Node", _Node);
+        _Node
         .def(py::init<>())
         .def(py::init<const tinygltf::Node &>()
         , py::arg("")
@@ -542,6 +514,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("mesh", &tinygltf::Node::mesh)
         .def_readwrite("light", &tinygltf::Node::light)
         .def_readwrite("emitter", &tinygltf::Node::emitter)
+        .def_readwrite("lods", &tinygltf::Node::lods)
         .def_readwrite("children", &tinygltf::Node::children)
         .def_readwrite("rotation", &tinygltf::Node::rotation)
         .def_readwrite("scale", &tinygltf::Node::scale)
@@ -554,9 +527,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::Node::extensions_json_string)
     ;
 
-    py::class_<tinygltf::Buffer> Buffer(_gltf, "Buffer");
-    registry.on(_gltf, "Buffer", Buffer);
-        Buffer
+    py::class_<tinygltf::Buffer> _Buffer(_gltf, "Buffer");
+    registry.on(_gltf, "Buffer", _Buffer);
+        _Buffer
         .def_readwrite("name", &tinygltf::Buffer::name)
         .def_readwrite("data", &tinygltf::Buffer::data)
         .def_readwrite("uri", &tinygltf::Buffer::uri)
@@ -570,9 +543,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Asset> Asset(_gltf, "Asset");
-    registry.on(_gltf, "Asset", Asset);
-        Asset
+    py::class_<tinygltf::Asset> _Asset(_gltf, "Asset");
+    registry.on(_gltf, "Asset", _Asset);
+        _Asset
         .def_readwrite("version", &tinygltf::Asset::version)
         .def_readwrite("generator", &tinygltf::Asset::generator)
         .def_readwrite("min_version", &tinygltf::Asset::minVersion)
@@ -587,9 +560,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::Scene> Scene(_gltf, "Scene");
-    registry.on(_gltf, "Scene", Scene);
-        Scene
+    py::class_<tinygltf::Scene> _Scene(_gltf, "Scene");
+    registry.on(_gltf, "Scene", _Scene);
+        _Scene
         .def_readwrite("name", &tinygltf::Scene::name)
         .def_readwrite("nodes", &tinygltf::Scene::nodes)
         .def_readwrite("audio_emitters", &tinygltf::Scene::audioEmitters)
@@ -603,9 +576,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     ;
 
-    py::class_<tinygltf::SpotLight> SpotLight(_gltf, "SpotLight");
-    registry.on(_gltf, "SpotLight", SpotLight);
-        SpotLight
+    py::class_<tinygltf::SpotLight> _SpotLight(_gltf, "SpotLight");
+    registry.on(_gltf, "SpotLight", _SpotLight);
+        _SpotLight
         .def_readwrite("inner_cone_angle", &tinygltf::SpotLight::innerConeAngle)
         .def_readwrite("outer_cone_angle", &tinygltf::SpotLight::outerConeAngle)
         .def(py::init<>())
@@ -618,9 +591,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::SpotLight::extensions_json_string)
     ;
 
-    py::class_<tinygltf::Light> Light(_gltf, "Light");
-    registry.on(_gltf, "Light", Light);
-        Light
+    py::class_<tinygltf::Light> _Light(_gltf, "Light");
+    registry.on(_gltf, "Light", _Light);
+        _Light
         .def_readwrite("name", &tinygltf::Light::name)
         .def_readwrite("color", &tinygltf::Light::color)
         .def_readwrite("intensity", &tinygltf::Light::intensity)
@@ -637,9 +610,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::Light::extensions_json_string)
     ;
 
-    py::class_<tinygltf::PositionalEmitter> PositionalEmitter(_gltf, "PositionalEmitter");
-    registry.on(_gltf, "PositionalEmitter", PositionalEmitter);
-        PositionalEmitter
+    py::class_<tinygltf::PositionalEmitter> _PositionalEmitter(_gltf, "PositionalEmitter");
+    registry.on(_gltf, "PositionalEmitter", _PositionalEmitter);
+        _PositionalEmitter
         .def_readwrite("cone_inner_angle", &tinygltf::PositionalEmitter::coneInnerAngle)
         .def_readwrite("cone_outer_angle", &tinygltf::PositionalEmitter::coneOuterAngle)
         .def_readwrite("cone_outer_gain", &tinygltf::PositionalEmitter::coneOuterGain)
@@ -656,9 +629,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::PositionalEmitter::extensions_json_string)
     ;
 
-    py::class_<tinygltf::AudioEmitter> AudioEmitter(_gltf, "AudioEmitter");
-    registry.on(_gltf, "AudioEmitter", AudioEmitter);
-        AudioEmitter
+    py::class_<tinygltf::AudioEmitter> _AudioEmitter(_gltf, "AudioEmitter");
+    registry.on(_gltf, "AudioEmitter", _AudioEmitter);
+        _AudioEmitter
         .def_readwrite("name", &tinygltf::AudioEmitter::name)
         .def_readwrite("gain", &tinygltf::AudioEmitter::gain)
         .def_readwrite("loop", &tinygltf::AudioEmitter::loop)
@@ -677,9 +650,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::AudioEmitter::extensions_json_string)
     ;
 
-    py::class_<tinygltf::AudioSource> AudioSource(_gltf, "AudioSource");
-    registry.on(_gltf, "AudioSource", AudioSource);
-        AudioSource
+    py::class_<tinygltf::AudioSource> _AudioSource(_gltf, "AudioSource");
+    registry.on(_gltf, "AudioSource", _AudioSource);
+        _AudioSource
         .def_readwrite("name", &tinygltf::AudioSource::name)
         .def_readwrite("uri", &tinygltf::AudioSource::uri)
         .def_readwrite("buffer_view", &tinygltf::AudioSource::bufferView)
@@ -694,9 +667,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::AudioSource::extensions_json_string)
     ;
 
-    py::class_<tinygltf::Model> Model(_gltf, "Model");
-    registry.on(_gltf, "Model", Model);
-        Model
+    py::class_<tinygltf::Model> _Model(_gltf, "Model");
+    registry.on(_gltf, "Model", _Model);
+        _Model
         .def(py::init<>())
         .def(py::init<const tinygltf::Model &>()
         , py::arg("")
@@ -727,16 +700,16 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("extensions_json_string", &tinygltf::Model::extensions_json_string)
     ;
 
-    py::enum_<tinygltf::SectionCheck::Enum>(_gltf, "Enum", py::arithmetic())
-        .value("NO_REQUIRE", tinygltf::SectionCheck::Enum::NO_REQUIRE)
-        .value("REQUIRE_VERSION", tinygltf::SectionCheck::Enum::REQUIRE_VERSION)
-        .value("REQUIRE_SCENE", tinygltf::SectionCheck::Enum::REQUIRE_SCENE)
-        .value("REQUIRE_SCENES", tinygltf::SectionCheck::Enum::REQUIRE_SCENES)
-        .value("REQUIRE_NODES", tinygltf::SectionCheck::Enum::REQUIRE_NODES)
-        .value("REQUIRE_ACCESSORS", tinygltf::SectionCheck::Enum::REQUIRE_ACCESSORS)
-        .value("REQUIRE_BUFFERS", tinygltf::SectionCheck::Enum::REQUIRE_BUFFERS)
-        .value("REQUIRE_BUFFER_VIEWS", tinygltf::SectionCheck::Enum::REQUIRE_BUFFER_VIEWS)
-        .value("REQUIRE_ALL", tinygltf::SectionCheck::Enum::REQUIRE_ALL)
+    py::enum_<tinygltf::SectionCheck>(_gltf, "SectionCheck", py::arithmetic())
+        .value("NO_REQUIRE", tinygltf::SectionCheck::NO_REQUIRE)
+        .value("REQUIRE_VERSION", tinygltf::SectionCheck::REQUIRE_VERSION)
+        .value("REQUIRE_SCENE", tinygltf::SectionCheck::REQUIRE_SCENE)
+        .value("REQUIRE_SCENES", tinygltf::SectionCheck::REQUIRE_SCENES)
+        .value("REQUIRE_NODES", tinygltf::SectionCheck::REQUIRE_NODES)
+        .value("REQUIRE_ACCESSORS", tinygltf::SectionCheck::REQUIRE_ACCESSORS)
+        .value("REQUIRE_BUFFERS", tinygltf::SectionCheck::REQUIRE_BUFFERS)
+        .value("REQUIRE_BUFFER_VIEWS", tinygltf::SectionCheck::REQUIRE_BUFFER_VIEWS)
+        .value("REQUIRE_ALL", tinygltf::SectionCheck::REQUIRE_ALL)
         .export_values()
     ;
     _gltf
@@ -744,26 +717,6 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("in_uri")
         , py::arg("out_uri")
         , py::arg("user_data")
-        , py::return_value_policy::automatic_reference)
-    .def("load_image_data", &tinygltf::LoadImageData
-        , py::arg("image")
-        , py::arg("image_idx")
-        , py::arg("err")
-        , py::arg("warn")
-        , py::arg("req_width")
-        , py::arg("req_height")
-        , py::arg("bytes")
-        , py::arg("size")
-        , py::arg("")
-        , py::return_value_policy::automatic_reference)
-    .def("write_image_data", &tinygltf::WriteImageData
-        , py::arg("basepath")
-        , py::arg("filename")
-        , py::arg("image")
-        , py::arg("embed_images")
-        , py::arg("uri_cb")
-        , py::arg("out_uri")
-        , py::arg("")
         , py::return_value_policy::automatic_reference)
     .def("file_exists", &tinygltf::FileExists
         , py::arg("abs_filename")
@@ -785,18 +738,39 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("contents")
         , py::arg("")
         , py::return_value_policy::automatic_reference)
+    .def("load_image_data", &tinygltf::LoadImageData
+        , py::arg("image")
+        , py::arg("image_idx")
+        , py::arg("err")
+        , py::arg("warn")
+        , py::arg("req_width")
+        , py::arg("req_height")
+        , py::arg("bytes")
+        , py::arg("size")
+        , py::arg("")
+        , py::return_value_policy::automatic_reference)
+    .def("write_image_data", &tinygltf::WriteImageData
+        , py::arg("basepath")
+        , py::arg("filename")
+        , py::arg("image")
+        , py::arg("embed_images")
+        , py::arg("fs_cb")
+        , py::arg("uri_cb")
+        , py::arg("out_uri")
+        , py::arg("")
+        , py::return_value_policy::automatic_reference)
     ;
 
-    py::class_<tinygltf::TinyGLTF> TinyGLTF(_gltf, "TinyGLTF");
-    registry.on(_gltf, "TinyGLTF", TinyGLTF);
-        TinyGLTF
+    py::class_<tinygltf::TinyGLTF> _TinyGLTF(_gltf, "TinyGLTF");
+    registry.on(_gltf, "TinyGLTF", _TinyGLTF);
+        _TinyGLTF
         .def(py::init<>())
         .def("load_ascii_from_file", &tinygltf::TinyGLTF::LoadASCIIFromFile
             , py::arg("model")
             , py::arg("err")
             , py::arg("warn")
             , py::arg("filename")
-            , py::arg("check_sections") = tinygltf::SectionCheck::Enum::REQUIRE_VERSION
+            , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
             , py::return_value_policy::automatic_reference)
         .def("load_ascii_from_string", &tinygltf::TinyGLTF::LoadASCIIFromString
             , py::arg("model")
@@ -805,14 +779,14 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("str")
             , py::arg("length")
             , py::arg("base_dir")
-            , py::arg("check_sections") = tinygltf::SectionCheck::Enum::REQUIRE_VERSION
+            , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
             , py::return_value_policy::automatic_reference)
         .def("load_binary_from_file", &tinygltf::TinyGLTF::LoadBinaryFromFile
             , py::arg("model")
             , py::arg("err")
             , py::arg("warn")
             , py::arg("filename")
-            , py::arg("check_sections") = tinygltf::SectionCheck::Enum::REQUIRE_VERSION
+            , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
             , py::return_value_policy::automatic_reference)
         .def("load_binary_from_memory", &tinygltf::TinyGLTF::LoadBinaryFromMemory
             , py::arg("model")
@@ -821,7 +795,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("bytes")
             , py::arg("length")
             , py::arg("base_dir") = ""
-            , py::arg("check_sections") = tinygltf::SectionCheck::Enum::REQUIRE_VERSION
+            , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
             , py::return_value_policy::automatic_reference)
         .def("write_gltf_scene_to_file", &tinygltf::TinyGLTF::WriteGltfSceneToFile
             , py::arg("model")
@@ -846,9 +820,11 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("set_uri_callbacks", &tinygltf::TinyGLTF::SetURICallbacks
             , py::arg("callbacks")
+            , py::arg("err") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("set_fs_callbacks", &tinygltf::TinyGLTF::SetFsCallbacks
             , py::arg("callbacks")
+            , py::arg("err") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("set_serialize_default_values", &tinygltf::TinyGLTF::SetSerializeDefaultValues
             , py::arg("enabled")
@@ -863,12 +839,17 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def("set_preserve_image_channels", &tinygltf::TinyGLTF::SetPreserveImageChannels
             , py::arg("onoff")
             , py::return_value_policy::automatic_reference)
+        .def("get_preserve_image_channels", &tinygltf::TinyGLTF::GetPreserveImageChannels
+            , py::return_value_policy::automatic_reference)
+        .def("set_images_as_is", &tinygltf::TinyGLTF::SetImagesAsIs
+            , py::arg("onoff")
+            , py::return_value_policy::automatic_reference)
+        .def("get_images_as_is", &tinygltf::TinyGLTF::GetImagesAsIs
+            , py::return_value_policy::automatic_reference)
         .def("set_max_external_file_size", &tinygltf::TinyGLTF::SetMaxExternalFileSize
             , py::arg("max_bytes")
             , py::return_value_policy::automatic_reference)
         .def("get_max_external_file_size", &tinygltf::TinyGLTF::GetMaxExternalFileSize
-            , py::return_value_policy::automatic_reference)
-        .def("get_preserve_image_channels", &tinygltf::TinyGLTF::GetPreserveImageChannels
             , py::return_value_policy::automatic_reference)
     ;
 

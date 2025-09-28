@@ -1,23 +1,23 @@
-source: '../../depot/gltf/tiny_gltf.h'
+source: '../../depot/tinygltf/tiny_gltf.h'
 target: 'src/gltf_py_auto.cpp'
 
-specs:
+excludes:
   # Wrapped
   # These write to err and warn.  Not good
-  'function/tinygltf::TinyGLTF::LoadASCIIFromFile' : {exclude: true}
+  - 'function/tinygltf::TinyGLTF::LoadASCIIFromFile'
   #'class.tinygltf::Value': {exclude: true}
-  'method/tinygltf::Value::Get': {exclude: true} #TODO: pybind11 doesn't like the signatures?
-  'method/tinygltf::Value::Type': {exclude: true} #Returns char instead of enum
+  - 'method/tinygltf::Value::Get' #TODO: pybind11 doesn't like the signatures?
+  - 'method/tinygltf::Value::Type' #Returns char instead of enum
 
   # Internal / Ignored
 
-  'struct/tinygltf::FsCallbacks': {exclude: true}
-  'struct/tinygltf::URICallbacks': {exclude: true}
+  - 'struct/tinygltf::FsCallbacks'
+  - 'struct/tinygltf::URICallbacks'
   
   # Not sure why it's choking on the last void*
-  'function/tinygltf::GetFileSizeInBytes': {exclude: true}
+  - 'function/tinygltf::GetFileSizeInBytes'
   # std::ostream& ??
-  'method/tinygltf::TinyGLTF::WriteGltfSceneToStream': {exclude: true}
+  - 'method/tinygltf::TinyGLTF::WriteGltfSceneToStream'
 
 
   # Overloads

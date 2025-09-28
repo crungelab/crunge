@@ -64,7 +64,7 @@ add_subdirectory(pkg/imnodes)
 #
 # TinyGLTF
 #
-add_subdirectory(depot/gltf)
+add_subdirectory(depot/tinygltf)
 set_target_properties(tinygltf PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pkg/gltf)

@@ -107,7 +107,7 @@ std::tuple<bool, std::string, std::string> LoadASCIIFromFileWrapper(
     tinygltf::TinyGLTF &loader, 
     tinygltf::Model *model, 
     const std::string &filename, 
-    tinygltf::SectionCheck::Enum check_sections) {
+    tinygltf::SectionCheck check_sections) {
 
     std::string err;
     std::string warn;
@@ -122,7 +122,7 @@ std::tuple<bool, std::string, std::string> LoadBinaryFromFileWrapper(
     tinygltf::TinyGLTF &loader, 
     tinygltf::Model *model, 
     const std::string &filename, 
-    tinygltf::SectionCheck::Enum check_sections) {
+    tinygltf::SectionCheck check_sections) {
 
     std::string err;
     std::string warn;

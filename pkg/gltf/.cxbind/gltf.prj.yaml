@@ -1,4 +1,4 @@
-module: _gltf
+module: gltf
 
 flags: [
   '-x', 'c++',

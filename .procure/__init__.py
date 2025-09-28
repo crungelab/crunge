@@ -32,9 +32,9 @@ class Dawn(GitSolution):
 
 
 class TinyGltf(GitSolution):
-    path = "depot/gltf"
-    # url = "https://github.com/syoyo/tinygltf"
-    url = "https://github.com/crungelab/tinygltf"
+    path = "depot/tinygltf"
+    url = "https://github.com/syoyo/tinygltf"
+    #url = "https://github.com/crungelab/tinygltf"
     branch = "crunge"
 
 

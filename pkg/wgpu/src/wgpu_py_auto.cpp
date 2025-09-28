@@ -873,7 +873,7 @@ _Buffer
     .def("write_mapped_range",[](pywgpu::Buffer& self, size_t offset, py::buffer data) {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
-        auto size = dataInfo.size * dataInfo.itemsize;
+        auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.WriteMappedRange(offset, _data, size);
         }
@@ -883,7 +883,7 @@ _Buffer
     .def("read_mapped_range",[](pywgpu::Buffer& self, size_t offset, py::buffer data) {
         py::buffer_info dataInfo = data.request();
         void * _data = (void *)dataInfo.ptr;
-        auto size = dataInfo.size * dataInfo.itemsize;
+        auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.ReadMappedRange(offset, _data, size);
         }
@@ -979,7 +979,7 @@ _CommandEncoder
     .def("write_buffer",[](pywgpu::CommandEncoder& self, Buffer buffer, uint64_t bufferOffset, py::buffer data) {
         py::buffer_info dataInfo = data.request();
         uint8_t const* _data = (uint8_t const*)dataInfo.ptr;
-        auto size = dataInfo.size * dataInfo.itemsize;
+        auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.WriteBuffer(buffer, bufferOffset, _data, size);
         }
@@ -1018,7 +1018,7 @@ _ComputePassEncoder
     .def("set_bind_group",[](pywgpu::ComputePassEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
         py::buffer_info dynamicOffsetsInfo = dynamicOffsets.has_value() ? dynamicOffsets.value().request() : py::buffer_info();
         uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
-        auto dynamicOffsetCount = dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize;
+        auto dynamicOffsetCount = ((dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize) + 3) & ~size_t(3);
         
         return self.SetBindGroup(groupIndex, group, dynamicOffsetCount, _dynamicOffsets);
         }
@@ -1047,7 +1047,7 @@ _ComputePassEncoder
     .def("set_immediate_data",[](pywgpu::ComputePassEncoder& self, uint32_t offset, py::buffer data) {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
-        auto size = dataInfo.size * dataInfo.itemsize;
+        auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.SetImmediateData(offset, _data, size);
         }
@@ -1396,7 +1396,7 @@ _Queue
     .def("write_buffer",[](pywgpu::Queue& self, Buffer buffer, uint64_t bufferOffset, py::buffer data) {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
-        auto size = dataInfo.size * dataInfo.itemsize;
+        auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.WriteBuffer(buffer, bufferOffset, _data, size);
         }
@@ -1406,7 +1406,7 @@ _Queue
     .def("write_texture",[](pywgpu::Queue& self, TexelCopyTextureInfo const * destination, py::buffer data, TexelCopyBufferLayout const * dataLayout, Extent3D const * writeSize) {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
-        auto dataSize = dataInfo.size * dataInfo.itemsize;
+        auto dataSize = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.WriteTexture(destination, _data, dataSize, dataLayout, writeSize);
         }
@@ -1448,7 +1448,7 @@ _RenderBundleEncoder
     .def("set_bind_group",[](pywgpu::RenderBundleEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
         py::buffer_info dynamicOffsetsInfo = dynamicOffsets.has_value() ? dynamicOffsets.value().request() : py::buffer_info();
         uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
-        auto dynamicOffsetCount = dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize;
+        auto dynamicOffsetCount = ((dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize) + 3) & ~size_t(3);
         
         return self.SetBindGroup(groupIndex, group, dynamicOffsetCount, _dynamicOffsets);
         }
@@ -1501,7 +1501,7 @@ _RenderBundleEncoder
     .def("set_immediate_data",[](pywgpu::RenderBundleEncoder& self, uint32_t offset, py::buffer data) {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
-        auto size = dataInfo.size * dataInfo.itemsize;
+        auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.SetImmediateData(offset, _data, size);
         }
@@ -1521,7 +1521,7 @@ _RenderPassEncoder
     .def("set_bind_group",[](pywgpu::RenderPassEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
         py::buffer_info dynamicOffsetsInfo = dynamicOffsets.has_value() ? dynamicOffsets.value().request() : py::buffer_info();
         uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
-        auto dynamicOffsetCount = dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize;
+        auto dynamicOffsetCount = ((dynamicOffsetsInfo.size * dynamicOffsetsInfo.itemsize) + 3) & ~size_t(3);
         
         return self.SetBindGroup(groupIndex, group, dynamicOffsetCount, _dynamicOffsets);
         }
@@ -1620,7 +1620,7 @@ _RenderPassEncoder
     .def("set_immediate_data",[](pywgpu::RenderPassEncoder& self, uint32_t offset, py::buffer data) {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
-        auto size = dataInfo.size * dataInfo.itemsize;
+        auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
         return self.SetImmediateData(offset, _data, size);
         }
