@@ -4,10 +4,10 @@ target: 'src/nanort_py_auto.cpp'
 specs:
   'class_template/nanort::BVHAccel':
     specializations:
-      - name: BVHAccelF
-        args: [float]
+      - pyname: BVHAccel
+        args: [double]
 
   'class_template/nanort::Ray':
     specializations:
-      - name: RayF
-        args: [float]
+      - pyname: Ray
+        args: [double]

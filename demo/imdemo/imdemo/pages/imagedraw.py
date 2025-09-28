@@ -35,8 +35,6 @@ class ImageRoundedDraw(Page):
         draw_list = imgui.get_window_draw_list()
         pos = rel(0,0)
         pos2 = self.texture.size[0] + pos[0], self.texture.size[1] + pos[1]
-        #draw_list.add_image(self.texture.id, pos, pos2)
-        #draw_list.add_image_rounded(texture_id, (20, 35), (180, 80), col=imgui.get_color_u32_rgba(0.5,0.5,1,1), rounding=10)
         color = imgui.get_color_u32((1, 1, 0, 1))
         draw_list.add_image_rounded(imgui.TextureRef(self.texture.id), pos, pos2, (0,0), (1,1), color, rounding=10)
         imgui.end()

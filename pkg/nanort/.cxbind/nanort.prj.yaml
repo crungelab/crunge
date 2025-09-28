@@ -1,4 +1,4 @@
-module: _nanort
+module: nanort
 
 flags: [
   '-x', 'c++',
