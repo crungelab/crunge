@@ -16,3 +16,5 @@
 
 namespace py = pybind11;
 
+void init_nanort_py(py::module &_nanort, Registry &registry) {
+}

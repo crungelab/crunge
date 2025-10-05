@@ -2,6 +2,11 @@ source: '../../depot/nanort/nanort.h'
 target: 'src/nanort_py_auto.cpp'
 
 specs:
+  'class_template@nanort::BVHBuildOptions':
+    specializations:
+      - pyname: BVHBuildOptions
+        args: [double]
+
   'class_template@nanort::BVHAccel':
     specializations:
       - pyname: BVHAccel
@@ -10,4 +15,14 @@ specs:
   'class_template@nanort::Ray':
     specializations:
       - pyname: Ray
+        args: [double]
+
+  'class_template@nanort::TriangleMesh':
+    specializations:
+      - pyname: TriangleMesh
+        args: [double]
+
+  'class_template@nanort::TriangleSAHPred':
+    specializations:
+      - pyname: TriangleSAHPred
         args: [double]

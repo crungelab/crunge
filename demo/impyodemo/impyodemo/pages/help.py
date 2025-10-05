@@ -7,7 +7,7 @@ class About(Page):
     def _draw(self):
         imgui.begin(self.title)
 
-        imgui.text("Welcome to the AimPyo Demo!")
+        imgui.text("Welcome to the ImPyo Demo!")
         
         imgui.end()
         super()._draw()

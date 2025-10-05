@@ -4,12 +4,12 @@
 
 namespace py = pybind11;
 
-void init_main(py::module &, Registry& registry);
-void init_generated(py::module &, Registry& registry);
+void init_nanort_py(py::module &, Registry& registry);
+void init_nanort_py_auto(py::module &, Registry& registry);
 
 
-PYBIND11_MODULE(_gltf, m) {
+PYBIND11_MODULE(_nanort, m) {
     Registry r;
-    init_main(m, r);
-    init_generated(m, r);
+    init_nanort_py(m, r);
+    init_nanort_py_auto(m, r);
 }
