@@ -16,7 +16,11 @@ unit_files:
   - path: sdl_properties.unit.yaml
   - path: sdl_scancode.unit.yaml
   - path: sdl_video.unit.yaml
+  - path: sdl_audio.unit.yaml
 
 specs:
   'struct@SDL_Window':
     wrapper: 'SDLWindowWrapper'
+  'struct@SDL_AudioStream':
+    wrapper: 'py::capsule'
+

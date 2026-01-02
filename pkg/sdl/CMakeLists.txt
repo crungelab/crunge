@@ -17,6 +17,7 @@ set(HEADERS
 set(SOURCES
     src/sdl_init_py_auto.cpp
     src/sdl_video_py_auto.cpp
+    #src/sdl_audio_py_auto.cpp #TODO: Fix audio bindings
     src/sdl_events_py_auto.cpp
     src/sdl_keyboard_py_auto.cpp
     src/sdl_mouse_py_auto.cpp

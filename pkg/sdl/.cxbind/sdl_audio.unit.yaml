@@ -1,0 +1,13 @@
+source: '../../depot/sdl/include/SDL3/SDL_audio.h'
+target: 'src/sdl_audio_py_auto.cpp'
+
+excludes:
+  # Wrapped
+
+  # Internal / Ignored
+
+  # TODO: callbacks are always a problem
+  - 'function@SDL_PutAudioStreamDataNoCopy'
+  - 'function@SDL_SetAudioStreamGetCallback'
+  - 'function@SDL_SetAudioStreamPutCallback'
+
