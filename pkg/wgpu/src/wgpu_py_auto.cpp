@@ -8,9 +8,2933 @@
 #include <crunge/wgpu/crunge-wgpu.h>
 #include <crunge/wgpu/conversions.h>
 
+struct LinearAlloc {
+    uint8_t* base = nullptr;
+    size_t cap = 0, off = 0;
+
+    explicit LinearAlloc(size_t capacity = 64 * 1024) {
+        base = (uint8_t*)std::malloc(capacity);
+        if (!base) throw std::bad_alloc();
+        cap = capacity;
+    }
+    ~LinearAlloc() { std::free(base); }
+
+    void* alloc(size_t n, size_t align) {
+        size_t p = (off + (align - 1)) & ~(align - 1);
+        if (p + n > cap) throw std::runtime_error("LinearAlloc overflow");
+        off = p + n;
+        return base + p;
+    }
+
+    template<class T>
+    T* alloc_array(size_t count) {
+        return reinterpret_cast<T*>(alloc(sizeof(T) * count, alignof(T)));
+    }
+
+    template<class T>
+    T* make() {
+        void* p = alloc(sizeof(T), alignof(T));
+        return new (p) T{}; // value-init
+    }
+
+    template<class T>
+    T* make_array(size_t count) {
+        T* p = alloc_array<T>(count);
+        for (size_t i = 0; i < count; ++i) {
+            new (&p[i]) T{}; // value-init each element
+        }
+        return p;
+    }
+
+    const char* copy_cstr(const std::string& s) {
+        char* p = (char*)alloc(s.size() + 1, alignof(char));
+        std::memcpy(p, s.c_str(), s.size() + 1);
+        return p;
+    }
+};
+
 namespace py = pybind11;
 
 using namespace pywgpu;
+
+pywgpu::RequestAdapterOptions* buildRequestAdapterOptions(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RequestAdapterOptions>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("feature_level").cast<FeatureLevel>();
+        obj.featureLevel = value;
+    }
+    {
+        auto value = handle.attr("power_preference").cast<PowerPreference>();
+        obj.powerPreference = value;
+    }
+    {
+        auto value = handle.attr("force_fallback_adapter").cast<Bool>();
+        obj.forceFallbackAdapter = value;
+    }
+    {
+        auto value = handle.attr("backend_type").cast<BackendType>();
+        obj.backendType = value;
+    }
+    {
+        auto value = handle.attr("compatible_surface").cast<Surface>();
+        obj.compatibleSurface = value;
+    }
+    return &obj;
+}
+
+pywgpu::DeviceDescriptor* buildDeviceDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DeviceDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto py_list = handle.attr("required_features").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<FeatureName>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<FeatureName>();
+        }
+
+        obj.requiredFeatures = value;
+        obj.requiredFeatureCount = count;
+    }
+    {
+        auto value = handle.attr("required_limits").cast<Limits const *>();
+        obj.requiredLimits = value;
+    }
+    {
+        auto value = handle.attr("default_queue").cast<QueueDescriptor>();
+        obj.defaultQueue = value;
+    }
+    {
+        auto value = handle.attr("device_lost_callback_info").cast<DeviceLostCallbackInfo>();
+        obj.deviceLostCallbackInfo = value;
+    }
+    {
+        auto value = handle.attr("uncaptured_error_callback_info").cast<UncapturedErrorCallbackInfo>();
+        obj.uncapturedErrorCallbackInfo = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnTogglesDescriptor* buildDawnTogglesDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnTogglesDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnCacheDeviceDescriptor* buildDawnCacheDeviceDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnCacheDeviceDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("isolation_key").cast<StringView>();
+        obj.isolationKey = value;
+    }
+    {
+        auto value = handle.attr("function_userdata").cast<void *>();
+        obj.functionUserdata = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnWGSLBlocklist* buildDawnWGSLBlocklist(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnWGSLBlocklist>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    return &obj;
+}
+
+pywgpu::BindGroupEntry* buildBindGroupEntry(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BindGroupEntry>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("binding").cast<uint32_t>();
+        obj.binding = value;
+    }
+    {
+        auto value = handle.attr("buffer").cast<Buffer>();
+        obj.buffer = value;
+    }
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("size").cast<uint64_t>();
+        obj.size = value;
+    }
+    {
+        auto value = handle.attr("sampler").cast<Sampler>();
+        obj.sampler = value;
+    }
+    {
+        auto value = handle.attr("texture_view").cast<TextureView>();
+        obj.textureView = value;
+    }
+    return &obj;
+}
+
+pywgpu::BindGroupDescriptor* buildBindGroupDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BindGroupDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("layout").cast<BindGroupLayout>();
+        obj.layout = value;
+    }
+    {
+        auto py_list = handle.attr("entries").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<BindGroupEntry>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<BindGroupEntry>();
+        }
+
+        obj.entries = value;
+        obj.entryCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::BufferBindingLayout* buildBufferBindingLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BufferBindingLayout>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("type").cast<BufferBindingType>();
+        obj.type = value;
+    }
+    {
+        auto value = handle.attr("has_dynamic_offset").cast<Bool>();
+        obj.hasDynamicOffset = value;
+    }
+    {
+        auto value = handle.attr("min_binding_size").cast<uint64_t>();
+        obj.minBindingSize = value;
+    }
+    return &obj;
+}
+
+pywgpu::SamplerBindingLayout* buildSamplerBindingLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SamplerBindingLayout>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("type").cast<SamplerBindingType>();
+        obj.type = value;
+    }
+    return &obj;
+}
+
+pywgpu::StaticSamplerBindingLayout* buildStaticSamplerBindingLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::StaticSamplerBindingLayout>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("sampler").cast<Sampler>();
+        obj.sampler = value;
+    }
+    {
+        auto value = handle.attr("sampled_texture_binding").cast<uint32_t>();
+        obj.sampledTextureBinding = value;
+    }
+    return &obj;
+}
+
+pywgpu::TextureBindingLayout* buildTextureBindingLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::TextureBindingLayout>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("sample_type").cast<TextureSampleType>();
+        obj.sampleType = value;
+    }
+    {
+        auto value = handle.attr("view_dimension").cast<TextureViewDimension>();
+        obj.viewDimension = value;
+    }
+    {
+        auto value = handle.attr("multisampled").cast<Bool>();
+        obj.multisampled = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceConfiguration* buildSurfaceConfiguration(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceConfiguration>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("device").cast<Device>();
+        obj.device = value;
+    }
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    {
+        auto value = handle.attr("usage").cast<TextureUsage>();
+        obj.usage = value;
+    }
+    {
+        auto value = handle.attr("width").cast<uint32_t>();
+        obj.width = value;
+    }
+    {
+        auto value = handle.attr("height").cast<uint32_t>();
+        obj.height = value;
+    }
+    {
+        auto py_list = handle.attr("view_formats").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<TextureFormat>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<TextureFormat>();
+        }
+
+        obj.viewFormats = value;
+        obj.viewFormatCount = count;
+    }
+    {
+        auto value = handle.attr("alpha_mode").cast<CompositeAlphaMode>();
+        obj.alphaMode = value;
+    }
+    {
+        auto value = handle.attr("present_mode").cast<PresentMode>();
+        obj.presentMode = value;
+    }
+    return &obj;
+}
+
+pywgpu::ExternalTextureBindingEntry* buildExternalTextureBindingEntry(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ExternalTextureBindingEntry>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("external_texture").cast<ExternalTexture>();
+        obj.externalTexture = value;
+    }
+    return &obj;
+}
+
+pywgpu::ExternalTextureBindingLayout* buildExternalTextureBindingLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ExternalTextureBindingLayout>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    return &obj;
+}
+
+pywgpu::StorageTextureBindingLayout* buildStorageTextureBindingLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::StorageTextureBindingLayout>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("access").cast<StorageTextureAccess>();
+        obj.access = value;
+    }
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    {
+        auto value = handle.attr("view_dimension").cast<TextureViewDimension>();
+        obj.viewDimension = value;
+    }
+    return &obj;
+}
+
+pywgpu::BindGroupLayoutEntry* buildBindGroupLayoutEntry(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BindGroupLayoutEntry>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("binding").cast<uint32_t>();
+        obj.binding = value;
+    }
+    {
+        auto value = handle.attr("visibility").cast<ShaderStage>();
+        obj.visibility = value;
+    }
+    {
+        auto value = handle.attr("buffer").cast<BufferBindingLayout>();
+        obj.buffer = value;
+    }
+    {
+        auto value = handle.attr("sampler").cast<SamplerBindingLayout>();
+        obj.sampler = value;
+    }
+    {
+        auto value = handle.attr("texture").cast<TextureBindingLayout>();
+        obj.texture = value;
+    }
+    {
+        auto value = handle.attr("storage_texture").cast<StorageTextureBindingLayout>();
+        obj.storageTexture = value;
+    }
+    return &obj;
+}
+
+pywgpu::BindGroupLayoutDescriptor* buildBindGroupLayoutDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BindGroupLayoutDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto py_list = handle.attr("entries").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<BindGroupLayoutEntry>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<BindGroupLayoutEntry>();
+        }
+
+        obj.entries = value;
+        obj.entryCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::BlendComponent* buildBlendComponent(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BlendComponent>();
+    {
+        auto value = handle.attr("operation").cast<BlendOperation>();
+        obj.operation = value;
+    }
+    {
+        auto value = handle.attr("src_factor").cast<BlendFactor>();
+        obj.srcFactor = value;
+    }
+    {
+        auto value = handle.attr("dst_factor").cast<BlendFactor>();
+        obj.dstFactor = value;
+    }
+    return &obj;
+}
+
+pywgpu::BufferDescriptor* buildBufferDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BufferDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("usage").cast<BufferUsage>();
+        obj.usage = value;
+    }
+    {
+        auto value = handle.attr("size").cast<uint64_t>();
+        obj.size = value;
+    }
+    {
+        auto value = handle.attr("mapped_at_creation").cast<Bool>();
+        obj.mappedAtCreation = value;
+    }
+    return &obj;
+}
+
+pywgpu::BufferHostMappedPointer* buildBufferHostMappedPointer(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BufferHostMappedPointer>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("pointer").cast<void *>();
+        obj.pointer = value;
+    }
+    {
+        auto value = handle.attr("userdata").cast<void *>();
+        obj.userdata = value;
+    }
+    return &obj;
+}
+
+pywgpu::Color* buildColor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::Color>();
+    {
+        auto value = handle.attr("r").cast<double>();
+        obj.r = value;
+    }
+    {
+        auto value = handle.attr("g").cast<double>();
+        obj.g = value;
+    }
+    {
+        auto value = handle.attr("b").cast<double>();
+        obj.b = value;
+    }
+    {
+        auto value = handle.attr("a").cast<double>();
+        obj.a = value;
+    }
+    return &obj;
+}
+
+pywgpu::ConstantEntry* buildConstantEntry(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ConstantEntry>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("key").cast<StringView>();
+        obj.key = value;
+    }
+    {
+        auto value = handle.attr("value").cast<double>();
+        obj.value = value;
+    }
+    return &obj;
+}
+
+pywgpu::CommandBufferDescriptor* buildCommandBufferDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::CommandBufferDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::CommandEncoderDescriptor* buildCommandEncoderDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::CommandEncoderDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::CompilationInfo* buildCompilationInfo(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::CompilationInfo>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto py_list = handle.attr("messages").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<CompilationMessage>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<CompilationMessage>();
+        }
+
+        obj.messages = value;
+        obj.messageCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::CompilationMessage* buildCompilationMessage(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::CompilationMessage>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("message").cast<StringView>();
+        obj.message = value;
+    }
+    {
+        auto value = handle.attr("type").cast<CompilationMessageType>();
+        obj.type = value;
+    }
+    {
+        auto value = handle.attr("line_num").cast<uint64_t>();
+        obj.lineNum = value;
+    }
+    {
+        auto value = handle.attr("line_pos").cast<uint64_t>();
+        obj.linePos = value;
+    }
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("length").cast<uint64_t>();
+        obj.length = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnCompilationMessageUtf16* buildDawnCompilationMessageUtf16(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnCompilationMessageUtf16>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("line_pos").cast<uint64_t>();
+        obj.linePos = value;
+    }
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("length").cast<uint64_t>();
+        obj.length = value;
+    }
+    return &obj;
+}
+
+pywgpu::ComputePassDescriptor* buildComputePassDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ComputePassDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("timestamp_writes").cast<PassTimestampWrites const *>();
+        obj.timestampWrites = value;
+    }
+    return &obj;
+}
+
+pywgpu::ComputePipelineDescriptor* buildComputePipelineDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ComputePipelineDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("layout").cast<PipelineLayout>();
+        obj.layout = value;
+    }
+    {
+        auto value = handle.attr("compute").cast<ComputeState>();
+        obj.compute = value;
+    }
+    return &obj;
+}
+
+pywgpu::CopyTextureForBrowserOptions* buildCopyTextureForBrowserOptions(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::CopyTextureForBrowserOptions>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("flip_y").cast<Bool>();
+        obj.flipY = value;
+    }
+    {
+        auto value = handle.attr("needs_color_space_conversion").cast<Bool>();
+        obj.needsColorSpaceConversion = value;
+    }
+    {
+        auto value = handle.attr("src_alpha_mode").cast<AlphaMode>();
+        obj.srcAlphaMode = value;
+    }
+    {
+        auto py_list = handle.attr("src_transfer_function_parameters").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<float>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<float>();
+        }
+
+        obj.srcTransferFunctionParameters = value;
+    }
+    {
+        auto py_list = handle.attr("conversion_matrix").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<float>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<float>();
+        }
+
+        obj.conversionMatrix = value;
+    }
+    {
+        auto py_list = handle.attr("dst_transfer_function_parameters").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<float>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<float>();
+        }
+
+        obj.dstTransferFunctionParameters = value;
+    }
+    {
+        auto value = handle.attr("dst_alpha_mode").cast<AlphaMode>();
+        obj.dstAlphaMode = value;
+    }
+    {
+        auto value = handle.attr("internal_usage").cast<Bool>();
+        obj.internalUsage = value;
+    }
+    return &obj;
+}
+
+pywgpu::AHardwareBufferProperties* buildAHardwareBufferProperties(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::AHardwareBufferProperties>();
+    {
+        auto value = handle.attr("y_cb_cr_info").cast<YCbCrVkDescriptor>();
+        obj.yCbCrInfo = value;
+    }
+    return &obj;
+}
+
+pywgpu::Limits* buildLimits(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::Limits>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStructOut *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("max_texture_dimension_1D").cast<uint32_t>();
+        obj.maxTextureDimension1D = value;
+    }
+    {
+        auto value = handle.attr("max_texture_dimension_2D").cast<uint32_t>();
+        obj.maxTextureDimension2D = value;
+    }
+    {
+        auto value = handle.attr("max_texture_dimension_3D").cast<uint32_t>();
+        obj.maxTextureDimension3D = value;
+    }
+    {
+        auto value = handle.attr("max_texture_array_layers").cast<uint32_t>();
+        obj.maxTextureArrayLayers = value;
+    }
+    {
+        auto value = handle.attr("max_bind_groups").cast<uint32_t>();
+        obj.maxBindGroups = value;
+    }
+    {
+        auto value = handle.attr("max_bind_groups_plus_vertex_buffers").cast<uint32_t>();
+        obj.maxBindGroupsPlusVertexBuffers = value;
+    }
+    {
+        auto value = handle.attr("max_bindings_per_bind_group").cast<uint32_t>();
+        obj.maxBindingsPerBindGroup = value;
+    }
+    {
+        auto value = handle.attr("max_dynamic_uniform_buffers_per_pipeline_layout").cast<uint32_t>();
+        obj.maxDynamicUniformBuffersPerPipelineLayout = value;
+    }
+    {
+        auto value = handle.attr("max_dynamic_storage_buffers_per_pipeline_layout").cast<uint32_t>();
+        obj.maxDynamicStorageBuffersPerPipelineLayout = value;
+    }
+    {
+        auto value = handle.attr("max_sampled_textures_per_shader_stage").cast<uint32_t>();
+        obj.maxSampledTexturesPerShaderStage = value;
+    }
+    {
+        auto value = handle.attr("max_samplers_per_shader_stage").cast<uint32_t>();
+        obj.maxSamplersPerShaderStage = value;
+    }
+    {
+        auto value = handle.attr("max_storage_buffers_per_shader_stage").cast<uint32_t>();
+        obj.maxStorageBuffersPerShaderStage = value;
+    }
+    {
+        auto value = handle.attr("max_storage_textures_per_shader_stage").cast<uint32_t>();
+        obj.maxStorageTexturesPerShaderStage = value;
+    }
+    {
+        auto value = handle.attr("max_uniform_buffers_per_shader_stage").cast<uint32_t>();
+        obj.maxUniformBuffersPerShaderStage = value;
+    }
+    {
+        auto value = handle.attr("max_uniform_buffer_binding_size").cast<uint64_t>();
+        obj.maxUniformBufferBindingSize = value;
+    }
+    {
+        auto value = handle.attr("max_storage_buffer_binding_size").cast<uint64_t>();
+        obj.maxStorageBufferBindingSize = value;
+    }
+    {
+        auto value = handle.attr("min_uniform_buffer_offset_alignment").cast<uint32_t>();
+        obj.minUniformBufferOffsetAlignment = value;
+    }
+    {
+        auto value = handle.attr("min_storage_buffer_offset_alignment").cast<uint32_t>();
+        obj.minStorageBufferOffsetAlignment = value;
+    }
+    {
+        auto value = handle.attr("max_vertex_buffers").cast<uint32_t>();
+        obj.maxVertexBuffers = value;
+    }
+    {
+        auto value = handle.attr("max_buffer_size").cast<uint64_t>();
+        obj.maxBufferSize = value;
+    }
+    {
+        auto value = handle.attr("max_vertex_attributes").cast<uint32_t>();
+        obj.maxVertexAttributes = value;
+    }
+    {
+        auto value = handle.attr("max_vertex_buffer_array_stride").cast<uint32_t>();
+        obj.maxVertexBufferArrayStride = value;
+    }
+    {
+        auto value = handle.attr("max_inter_stage_shader_variables").cast<uint32_t>();
+        obj.maxInterStageShaderVariables = value;
+    }
+    {
+        auto value = handle.attr("max_color_attachments").cast<uint32_t>();
+        obj.maxColorAttachments = value;
+    }
+    {
+        auto value = handle.attr("max_color_attachment_bytes_per_sample").cast<uint32_t>();
+        obj.maxColorAttachmentBytesPerSample = value;
+    }
+    {
+        auto value = handle.attr("max_compute_workgroup_storage_size").cast<uint32_t>();
+        obj.maxComputeWorkgroupStorageSize = value;
+    }
+    {
+        auto value = handle.attr("max_compute_invocations_per_workgroup").cast<uint32_t>();
+        obj.maxComputeInvocationsPerWorkgroup = value;
+    }
+    {
+        auto value = handle.attr("max_compute_workgroup_size_x").cast<uint32_t>();
+        obj.maxComputeWorkgroupSizeX = value;
+    }
+    {
+        auto value = handle.attr("max_compute_workgroup_size_y").cast<uint32_t>();
+        obj.maxComputeWorkgroupSizeY = value;
+    }
+    {
+        auto value = handle.attr("max_compute_workgroup_size_z").cast<uint32_t>();
+        obj.maxComputeWorkgroupSizeZ = value;
+    }
+    {
+        auto value = handle.attr("max_compute_workgroups_per_dimension").cast<uint32_t>();
+        obj.maxComputeWorkgroupsPerDimension = value;
+    }
+    {
+        auto value = handle.attr("max_storage_buffers_in_vertex_stage").cast<uint32_t>();
+        obj.maxStorageBuffersInVertexStage = value;
+    }
+    {
+        auto value = handle.attr("max_storage_textures_in_vertex_stage").cast<uint32_t>();
+        obj.maxStorageTexturesInVertexStage = value;
+    }
+    {
+        auto value = handle.attr("max_storage_buffers_in_fragment_stage").cast<uint32_t>();
+        obj.maxStorageBuffersInFragmentStage = value;
+    }
+    {
+        auto value = handle.attr("max_storage_textures_in_fragment_stage").cast<uint32_t>();
+        obj.maxStorageTexturesInFragmentStage = value;
+    }
+    return &obj;
+}
+
+pywgpu::SupportedFeatures* buildSupportedFeatures(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SupportedFeatures>();
+    {
+        auto py_list = handle.attr("features").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<FeatureName>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<FeatureName>();
+        }
+
+        obj.features = value;
+        obj.featureCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::SupportedWGSLLanguageFeatures* buildSupportedWGSLLanguageFeatures(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SupportedWGSLLanguageFeatures>();
+    {
+        auto py_list = handle.attr("features").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<WGSLLanguageFeatureName>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<WGSLLanguageFeatureName>();
+        }
+
+        obj.features = value;
+        obj.featureCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::Extent2D* buildExtent2D(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::Extent2D>();
+    {
+        auto value = handle.attr("width").cast<uint32_t>();
+        obj.width = value;
+    }
+    {
+        auto value = handle.attr("height").cast<uint32_t>();
+        obj.height = value;
+    }
+    return &obj;
+}
+
+pywgpu::Extent3D* buildExtent3D(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::Extent3D>();
+    {
+        auto value = handle.attr("width").cast<uint32_t>();
+        obj.width = value;
+    }
+    {
+        auto value = handle.attr("height").cast<uint32_t>();
+        obj.height = value;
+    }
+    {
+        auto value = handle.attr("depth_or_array_layers").cast<uint32_t>();
+        obj.depthOrArrayLayers = value;
+    }
+    return &obj;
+}
+
+pywgpu::ExternalTextureDescriptor* buildExternalTextureDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ExternalTextureDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("plane_0").cast<TextureView>();
+        obj.plane0 = value;
+    }
+    {
+        auto value = handle.attr("plane_1").cast<TextureView>();
+        obj.plane1 = value;
+    }
+    {
+        auto value = handle.attr("crop_origin").cast<Origin2D>();
+        obj.cropOrigin = value;
+    }
+    {
+        auto value = handle.attr("crop_size").cast<Extent2D>();
+        obj.cropSize = value;
+    }
+    {
+        auto value = handle.attr("apparent_size").cast<Extent2D>();
+        obj.apparentSize = value;
+    }
+    {
+        auto value = handle.attr("do_yuv_to_rgb_conversion_only").cast<Bool>();
+        obj.doYuvToRgbConversionOnly = value;
+    }
+    {
+        auto py_list = handle.attr("yuv_to_rgb_conversion_matrix").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<float>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<float>();
+        }
+
+        obj.yuvToRgbConversionMatrix = value;
+    }
+    {
+        auto py_list = handle.attr("src_transfer_function_parameters").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<float>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<float>();
+        }
+
+        obj.srcTransferFunctionParameters = value;
+    }
+    {
+        auto py_list = handle.attr("dst_transfer_function_parameters").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<float>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<float>();
+        }
+
+        obj.dstTransferFunctionParameters = value;
+    }
+    {
+        auto py_list = handle.attr("gamut_conversion_matrix").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<float>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<float>();
+        }
+
+        obj.gamutConversionMatrix = value;
+    }
+    {
+        auto value = handle.attr("mirrored").cast<Bool>();
+        obj.mirrored = value;
+    }
+    {
+        auto value = handle.attr("rotation").cast<ExternalTextureRotation>();
+        obj.rotation = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedBufferMemoryDescriptor* buildSharedBufferMemoryDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedBufferMemoryDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryDescriptor* buildSharedTextureMemoryDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedBufferMemoryBeginAccessDescriptor* buildSharedBufferMemoryBeginAccessDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedBufferMemoryBeginAccessDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("initialized").cast<Bool>();
+        obj.initialized = value;
+    }
+    {
+        auto py_list = handle.attr("fences").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<SharedFence>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<SharedFence>();
+        }
+
+        obj.fences = value;
+        obj.fenceCount = count;
+    }
+    {
+        auto py_list = handle.attr("signaled_values").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<uint64_t>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<uint64_t>();
+        }
+
+        obj.signaledValues = value;
+        obj.fenceCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryVkDedicatedAllocationDescriptor* buildSharedTextureMemoryVkDedicatedAllocationDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryVkDedicatedAllocationDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("dedicated_allocation").cast<Bool>();
+        obj.dedicatedAllocation = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryAHardwareBufferDescriptor* buildSharedTextureMemoryAHardwareBufferDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryAHardwareBufferDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("handle").cast<void *>();
+        obj.handle = value;
+    }
+    {
+        auto value = handle.attr("use_external_format").cast<Bool>();
+        obj.useExternalFormat = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryDmaBufPlane* buildSharedTextureMemoryDmaBufPlane(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryDmaBufPlane>();
+    {
+        auto value = handle.attr("fd").cast<int>();
+        obj.fd = value;
+    }
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("stride").cast<uint32_t>();
+        obj.stride = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryDmaBufDescriptor* buildSharedTextureMemoryDmaBufDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryDmaBufDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("size").cast<Extent3D>();
+        obj.size = value;
+    }
+    {
+        auto value = handle.attr("drm_format").cast<uint32_t>();
+        obj.drmFormat = value;
+    }
+    {
+        auto value = handle.attr("drm_modifier").cast<uint64_t>();
+        obj.drmModifier = value;
+    }
+    {
+        auto py_list = handle.attr("planes").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<SharedTextureMemoryDmaBufPlane>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<SharedTextureMemoryDmaBufPlane>();
+        }
+
+        obj.planes = value;
+        obj.planeCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryOpaqueFDDescriptor* buildSharedTextureMemoryOpaqueFDDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryOpaqueFDDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("vk_image_create_info").cast<void const *>();
+        obj.vkImageCreateInfo = value;
+    }
+    {
+        auto value = handle.attr("memory_FD").cast<int>();
+        obj.memoryFD = value;
+    }
+    {
+        auto value = handle.attr("memory_type_index").cast<uint32_t>();
+        obj.memoryTypeIndex = value;
+    }
+    {
+        auto value = handle.attr("allocation_size").cast<uint64_t>();
+        obj.allocationSize = value;
+    }
+    {
+        auto value = handle.attr("dedicated_allocation").cast<Bool>();
+        obj.dedicatedAllocation = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryZirconHandleDescriptor* buildSharedTextureMemoryZirconHandleDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryZirconHandleDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("memory_FD").cast<uint32_t>();
+        obj.memoryFD = value;
+    }
+    {
+        auto value = handle.attr("allocation_size").cast<uint64_t>();
+        obj.allocationSize = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryDXGISharedHandleDescriptor* buildSharedTextureMemoryDXGISharedHandleDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryDXGISharedHandleDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("handle").cast<void *>();
+        obj.handle = value;
+    }
+    {
+        auto value = handle.attr("use_keyed_mutex").cast<Bool>();
+        obj.useKeyedMutex = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryIOSurfaceDescriptor* buildSharedTextureMemoryIOSurfaceDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryIOSurfaceDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("io_surface").cast<void *>();
+        obj.ioSurface = value;
+    }
+    {
+        auto value = handle.attr("allow_storage_binding").cast<Bool>();
+        obj.allowStorageBinding = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryEGLImageDescriptor* buildSharedTextureMemoryEGLImageDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryEGLImageDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("image").cast<void *>();
+        obj.image = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryBeginAccessDescriptor* buildSharedTextureMemoryBeginAccessDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryBeginAccessDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("concurrent_read").cast<Bool>();
+        obj.concurrentRead = value;
+    }
+    {
+        auto value = handle.attr("initialized").cast<Bool>();
+        obj.initialized = value;
+    }
+    {
+        auto py_list = handle.attr("fences").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<SharedFence>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<SharedFence>();
+        }
+
+        obj.fences = value;
+        obj.fenceCount = count;
+    }
+    {
+        auto py_list = handle.attr("signaled_values").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<uint64_t>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<uint64_t>();
+        }
+
+        obj.signaledValues = value;
+        obj.fenceCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryVkImageLayoutBeginState* buildSharedTextureMemoryVkImageLayoutBeginState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryVkImageLayoutBeginState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("old_layout").cast<int32_t>();
+        obj.oldLayout = value;
+    }
+    {
+        auto value = handle.attr("new_layout").cast<int32_t>();
+        obj.newLayout = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedTextureMemoryD3DSwapchainBeginState* buildSharedTextureMemoryD3DSwapchainBeginState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedTextureMemoryD3DSwapchainBeginState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("is_swapchain").cast<Bool>();
+        obj.isSwapchain = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedFenceDescriptor* buildSharedFenceDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedFenceDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor* buildSharedFenceVkSemaphoreOpaqueFDDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("handle").cast<int>();
+        obj.handle = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedFenceSyncFDDescriptor* buildSharedFenceSyncFDDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedFenceSyncFDDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("handle").cast<int>();
+        obj.handle = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedFenceVkSemaphoreZirconHandleDescriptor* buildSharedFenceVkSemaphoreZirconHandleDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedFenceVkSemaphoreZirconHandleDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("handle").cast<uint32_t>();
+        obj.handle = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedFenceDXGISharedHandleDescriptor* buildSharedFenceDXGISharedHandleDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedFenceDXGISharedHandleDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("handle").cast<void *>();
+        obj.handle = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedFenceMTLSharedEventDescriptor* buildSharedFenceMTLSharedEventDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedFenceMTLSharedEventDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("shared_event").cast<void *>();
+        obj.sharedEvent = value;
+    }
+    return &obj;
+}
+
+pywgpu::SharedFenceEGLSyncDescriptor* buildSharedFenceEGLSyncDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SharedFenceEGLSyncDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("sync").cast<void *>();
+        obj.sync = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnFakeBufferOOMForTesting* buildDawnFakeBufferOOMForTesting(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnFakeBufferOOMForTesting>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("fake_OOM_at_wire_client_map").cast<Bool>();
+        obj.fakeOOMAtWireClientMap = value;
+    }
+    {
+        auto value = handle.attr("fake_OOM_at_native_map").cast<Bool>();
+        obj.fakeOOMAtNativeMap = value;
+    }
+    {
+        auto value = handle.attr("fake_OOM_at_device").cast<Bool>();
+        obj.fakeOOMAtDevice = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnDrmFormatProperties* buildDawnDrmFormatProperties(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnDrmFormatProperties>();
+    {
+        auto value = handle.attr("modifier").cast<uint64_t>();
+        obj.modifier = value;
+    }
+    {
+        auto value = handle.attr("modifier_plane_count").cast<uint32_t>();
+        obj.modifierPlaneCount = value;
+    }
+    return &obj;
+}
+
+pywgpu::TexelCopyBufferInfo* buildTexelCopyBufferInfo(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::TexelCopyBufferInfo>();
+    {
+        auto value = handle.attr("layout").cast<TexelCopyBufferLayout>();
+        obj.layout = value;
+    }
+    {
+        auto value = handle.attr("buffer").cast<Buffer>();
+        obj.buffer = value;
+    }
+    return &obj;
+}
+
+pywgpu::TexelCopyBufferLayout* buildTexelCopyBufferLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::TexelCopyBufferLayout>();
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("bytes_per_row").cast<uint32_t>();
+        obj.bytesPerRow = value;
+    }
+    {
+        auto value = handle.attr("rows_per_image").cast<uint32_t>();
+        obj.rowsPerImage = value;
+    }
+    return &obj;
+}
+
+pywgpu::TexelCopyTextureInfo* buildTexelCopyTextureInfo(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::TexelCopyTextureInfo>();
+    {
+        auto value = handle.attr("texture").cast<Texture>();
+        obj.texture = value;
+    }
+    {
+        auto value = handle.attr("mip_level").cast<uint32_t>();
+        obj.mipLevel = value;
+    }
+    {
+        auto value = handle.attr("origin").cast<Origin3D>();
+        obj.origin = value;
+    }
+    {
+        auto value = handle.attr("aspect").cast<TextureAspect>();
+        obj.aspect = value;
+    }
+    return &obj;
+}
+
+pywgpu::ImageCopyExternalTexture* buildImageCopyExternalTexture(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ImageCopyExternalTexture>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("external_texture").cast<ExternalTexture>();
+        obj.externalTexture = value;
+    }
+    {
+        auto value = handle.attr("origin").cast<Origin3D>();
+        obj.origin = value;
+    }
+    {
+        auto value = handle.attr("natural_size").cast<Extent2D>();
+        obj.naturalSize = value;
+    }
+    return &obj;
+}
+
+pywgpu::Future* buildFuture(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::Future>();
+    {
+        auto value = handle.attr("id").cast<uint64_t>();
+        obj.id = value;
+    }
+    return &obj;
+}
+
+pywgpu::FutureWaitInfo* buildFutureWaitInfo(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::FutureWaitInfo>();
+    {
+        auto value = handle.attr("future").cast<Future>();
+        obj.future = value;
+    }
+    {
+        auto value = handle.attr("completed").cast<Bool>();
+        obj.completed = value;
+    }
+    return &obj;
+}
+
+pywgpu::InstanceCapabilities* buildInstanceCapabilities(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::InstanceCapabilities>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStructOut *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("timed_wait_any_enable").cast<Bool>();
+        obj.timedWaitAnyEnable = value;
+    }
+    {
+        auto value = handle.attr("timed_wait_any_max_count").cast<size_t>();
+        obj.timedWaitAnyMaxCount = value;
+    }
+    return &obj;
+}
+
+pywgpu::InstanceDescriptor* buildInstanceDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::InstanceDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("capabilities").cast<InstanceCapabilities>();
+        obj.capabilities = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnWireWGSLControl* buildDawnWireWGSLControl(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnWireWGSLControl>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("enable_experimental").cast<Bool>();
+        obj.enableExperimental = value;
+    }
+    {
+        auto value = handle.attr("enable_unsafe").cast<Bool>();
+        obj.enableUnsafe = value;
+    }
+    {
+        auto value = handle.attr("enable_testing").cast<Bool>();
+        obj.enableTesting = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnInjectedInvalidSType* buildDawnInjectedInvalidSType(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnInjectedInvalidSType>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("invalid_s_type").cast<SType>();
+        obj.invalidSType = value;
+    }
+    return &obj;
+}
+
+pywgpu::VertexAttribute* buildVertexAttribute(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::VertexAttribute>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("format").cast<VertexFormat>();
+        obj.format = value;
+    }
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("shader_location").cast<uint32_t>();
+        obj.shaderLocation = value;
+    }
+    return &obj;
+}
+
+pywgpu::VertexBufferLayout* buildVertexBufferLayout(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::VertexBufferLayout>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("step_mode").cast<VertexStepMode>();
+        obj.stepMode = value;
+    }
+    {
+        auto value = handle.attr("array_stride").cast<uint64_t>();
+        obj.arrayStride = value;
+    }
+    {
+        auto py_list = handle.attr("attributes").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<VertexAttribute>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<VertexAttribute>();
+        }
+
+        obj.attributes = value;
+        obj.attributeCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::Origin3D* buildOrigin3D(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::Origin3D>();
+    {
+        auto value = handle.attr("x").cast<uint32_t>();
+        obj.x = value;
+    }
+    {
+        auto value = handle.attr("y").cast<uint32_t>();
+        obj.y = value;
+    }
+    {
+        auto value = handle.attr("z").cast<uint32_t>();
+        obj.z = value;
+    }
+    return &obj;
+}
+
+pywgpu::Origin2D* buildOrigin2D(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::Origin2D>();
+    {
+        auto value = handle.attr("x").cast<uint32_t>();
+        obj.x = value;
+    }
+    {
+        auto value = handle.attr("y").cast<uint32_t>();
+        obj.y = value;
+    }
+    return &obj;
+}
+
+pywgpu::PassTimestampWrites* buildPassTimestampWrites(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::PassTimestampWrites>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("query_set").cast<QuerySet>();
+        obj.querySet = value;
+    }
+    {
+        auto value = handle.attr("beginning_of_pass_write_index").cast<uint32_t>();
+        obj.beginningOfPassWriteIndex = value;
+    }
+    {
+        auto value = handle.attr("end_of_pass_write_index").cast<uint32_t>();
+        obj.endOfPassWriteIndex = value;
+    }
+    return &obj;
+}
+
+pywgpu::PipelineLayoutDescriptor* buildPipelineLayoutDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::PipelineLayoutDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto py_list = handle.attr("bind_group_layouts").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<BindGroupLayout>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<BindGroupLayout>();
+        }
+
+        obj.bindGroupLayouts = value;
+        obj.bindGroupLayoutCount = count;
+    }
+    {
+        auto value = handle.attr("immediate_data_range_byte_size").cast<uint32_t>();
+        obj.immediateDataRangeByteSize = value;
+    }
+    return &obj;
+}
+
+pywgpu::PipelineLayoutPixelLocalStorage* buildPipelineLayoutPixelLocalStorage(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::PipelineLayoutPixelLocalStorage>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("total_pixel_local_storage_size").cast<uint64_t>();
+        obj.totalPixelLocalStorageSize = value;
+    }
+    {
+        auto py_list = handle.attr("storage_attachments").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<PipelineLayoutStorageAttachment>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<PipelineLayoutStorageAttachment>();
+        }
+
+        obj.storageAttachments = value;
+        obj.storageAttachmentCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::PipelineLayoutStorageAttachment* buildPipelineLayoutStorageAttachment(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::PipelineLayoutStorageAttachment>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    return &obj;
+}
+
+pywgpu::ComputeState* buildComputeState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ComputeState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("module").cast<ShaderModule>();
+        obj.module = value;
+    }
+    {
+        auto value = handle.attr("entry_point").cast<StringView>();
+        obj.entryPoint = value;
+    }
+    {
+        auto py_list = handle.attr("constants").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<ConstantEntry>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<ConstantEntry>();
+        }
+
+        obj.constants = value;
+        obj.constantCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::QuerySetDescriptor* buildQuerySetDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::QuerySetDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("type").cast<QueryType>();
+        obj.type = value;
+    }
+    {
+        auto value = handle.attr("count").cast<uint32_t>();
+        obj.count = value;
+    }
+    return &obj;
+}
+
+pywgpu::QueueDescriptor* buildQueueDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::QueueDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderBundleDescriptor* buildRenderBundleDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderBundleDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderBundleEncoderDescriptor* buildRenderBundleEncoderDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderBundleEncoderDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto py_list = handle.attr("color_formats").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<TextureFormat>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<TextureFormat>();
+        }
+
+        obj.colorFormats = value;
+        obj.colorFormatCount = count;
+    }
+    {
+        auto value = handle.attr("depth_stencil_format").cast<TextureFormat>();
+        obj.depthStencilFormat = value;
+    }
+    {
+        auto value = handle.attr("sample_count").cast<uint32_t>();
+        obj.sampleCount = value;
+    }
+    {
+        auto value = handle.attr("depth_read_only").cast<Bool>();
+        obj.depthReadOnly = value;
+    }
+    {
+        auto value = handle.attr("stencil_read_only").cast<Bool>();
+        obj.stencilReadOnly = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPassColorAttachment* buildRenderPassColorAttachment(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPassColorAttachment>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("view").cast<TextureView>();
+        obj.view = value;
+    }
+    {
+        auto value = handle.attr("depth_slice").cast<uint32_t>();
+        obj.depthSlice = value;
+    }
+    {
+        auto value = handle.attr("resolve_target").cast<TextureView>();
+        obj.resolveTarget = value;
+    }
+    {
+        auto value = handle.attr("load_op").cast<LoadOp>();
+        obj.loadOp = value;
+    }
+    {
+        auto value = handle.attr("store_op").cast<StoreOp>();
+        obj.storeOp = value;
+    }
+    {
+        auto value = handle.attr("clear_value").cast<Color>();
+        obj.clearValue = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnRenderPassColorAttachmentRenderToSingleSampled* buildDawnRenderPassColorAttachmentRenderToSingleSampled(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnRenderPassColorAttachmentRenderToSingleSampled>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("implicit_sample_count").cast<uint32_t>();
+        obj.implicitSampleCount = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPassDepthStencilAttachment* buildRenderPassDepthStencilAttachment(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPassDepthStencilAttachment>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("view").cast<TextureView>();
+        obj.view = value;
+    }
+    {
+        auto value = handle.attr("depth_load_op").cast<LoadOp>();
+        obj.depthLoadOp = value;
+    }
+    {
+        auto value = handle.attr("depth_store_op").cast<StoreOp>();
+        obj.depthStoreOp = value;
+    }
+    {
+        auto value = handle.attr("depth_clear_value").cast<float>();
+        obj.depthClearValue = value;
+    }
+    {
+        auto value = handle.attr("depth_read_only").cast<Bool>();
+        obj.depthReadOnly = value;
+    }
+    {
+        auto value = handle.attr("stencil_load_op").cast<LoadOp>();
+        obj.stencilLoadOp = value;
+    }
+    {
+        auto value = handle.attr("stencil_store_op").cast<StoreOp>();
+        obj.stencilStoreOp = value;
+    }
+    {
+        auto value = handle.attr("stencil_clear_value").cast<uint32_t>();
+        obj.stencilClearValue = value;
+    }
+    {
+        auto value = handle.attr("stencil_read_only").cast<Bool>();
+        obj.stencilReadOnly = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPassDescriptor* buildRenderPassDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPassDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto py_list = handle.attr("color_attachments").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<RenderPassColorAttachment>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<RenderPassColorAttachment>();
+        }
+
+        obj.colorAttachments = value;
+        obj.colorAttachmentCount = count;
+    }
+    {
+        auto value = handle.attr("depth_stencil_attachment").cast<RenderPassDepthStencilAttachment const *>();
+        obj.depthStencilAttachment = value;
+    }
+    {
+        auto value = handle.attr("occlusion_query_set").cast<QuerySet>();
+        obj.occlusionQuerySet = value;
+    }
+    {
+        auto value = handle.attr("timestamp_writes").cast<PassTimestampWrites const *>();
+        obj.timestampWrites = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPassMaxDrawCount* buildRenderPassMaxDrawCount(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPassMaxDrawCount>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("max_draw_count").cast<uint64_t>();
+        obj.maxDrawCount = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPassDescriptorExpandResolveRect* buildRenderPassDescriptorExpandResolveRect(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPassDescriptorExpandResolveRect>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("x").cast<uint32_t>();
+        obj.x = value;
+    }
+    {
+        auto value = handle.attr("y").cast<uint32_t>();
+        obj.y = value;
+    }
+    {
+        auto value = handle.attr("width").cast<uint32_t>();
+        obj.width = value;
+    }
+    {
+        auto value = handle.attr("height").cast<uint32_t>();
+        obj.height = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPassPixelLocalStorage* buildRenderPassPixelLocalStorage(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPassPixelLocalStorage>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("total_pixel_local_storage_size").cast<uint64_t>();
+        obj.totalPixelLocalStorageSize = value;
+    }
+    {
+        auto py_list = handle.attr("storage_attachments").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<RenderPassStorageAttachment>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<RenderPassStorageAttachment>();
+        }
+
+        obj.storageAttachments = value;
+        obj.storageAttachmentCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPassStorageAttachment* buildRenderPassStorageAttachment(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPassStorageAttachment>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    {
+        auto value = handle.attr("storage").cast<TextureView>();
+        obj.storage = value;
+    }
+    {
+        auto value = handle.attr("load_op").cast<LoadOp>();
+        obj.loadOp = value;
+    }
+    {
+        auto value = handle.attr("store_op").cast<StoreOp>();
+        obj.storeOp = value;
+    }
+    {
+        auto value = handle.attr("clear_value").cast<Color>();
+        obj.clearValue = value;
+    }
+    return &obj;
+}
+
+pywgpu::VertexState* buildVertexState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::VertexState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("module").cast<ShaderModule>();
+        obj.module = value;
+    }
+    {
+        auto value = handle.attr("entry_point").cast<StringView>();
+        obj.entryPoint = value;
+    }
+    {
+        auto py_list = handle.attr("constants").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<ConstantEntry>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<ConstantEntry>();
+        }
+
+        obj.constants = value;
+        obj.constantCount = count;
+    }
+    {
+        auto py_list = handle.attr("buffers").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<VertexBufferLayout>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<VertexBufferLayout>();
+        }
+
+        obj.buffers = value;
+        obj.bufferCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::PrimitiveState* buildPrimitiveState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::PrimitiveState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("topology").cast<PrimitiveTopology>();
+        obj.topology = value;
+    }
+    {
+        auto value = handle.attr("strip_index_format").cast<IndexFormat>();
+        obj.stripIndexFormat = value;
+    }
+    {
+        auto value = handle.attr("front_face").cast<FrontFace>();
+        obj.frontFace = value;
+    }
+    {
+        auto value = handle.attr("cull_mode").cast<CullMode>();
+        obj.cullMode = value;
+    }
+    {
+        auto value = handle.attr("unclipped_depth").cast<Bool>();
+        obj.unclippedDepth = value;
+    }
+    return &obj;
+}
+
+pywgpu::DepthStencilState* buildDepthStencilState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DepthStencilState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    {
+        auto value = handle.attr("depth_write_enabled").cast<OptionalBool>();
+        obj.depthWriteEnabled = value;
+    }
+    {
+        auto value = handle.attr("depth_compare").cast<CompareFunction>();
+        obj.depthCompare = value;
+    }
+    {
+        auto value = handle.attr("stencil_front").cast<StencilFaceState>();
+        obj.stencilFront = value;
+    }
+    {
+        auto value = handle.attr("stencil_back").cast<StencilFaceState>();
+        obj.stencilBack = value;
+    }
+    {
+        auto value = handle.attr("stencil_read_mask").cast<uint32_t>();
+        obj.stencilReadMask = value;
+    }
+    {
+        auto value = handle.attr("stencil_write_mask").cast<uint32_t>();
+        obj.stencilWriteMask = value;
+    }
+    {
+        auto value = handle.attr("depth_bias").cast<int32_t>();
+        obj.depthBias = value;
+    }
+    {
+        auto value = handle.attr("depth_bias_slope_scale").cast<float>();
+        obj.depthBiasSlopeScale = value;
+    }
+    {
+        auto value = handle.attr("depth_bias_clamp").cast<float>();
+        obj.depthBiasClamp = value;
+    }
+    return &obj;
+}
+
+pywgpu::MultisampleState* buildMultisampleState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::MultisampleState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("count").cast<uint32_t>();
+        obj.count = value;
+    }
+    {
+        auto value = handle.attr("mask").cast<uint32_t>();
+        obj.mask = value;
+    }
+    {
+        auto value = handle.attr("alpha_to_coverage_enabled").cast<Bool>();
+        obj.alphaToCoverageEnabled = value;
+    }
+    return &obj;
+}
+
+pywgpu::FragmentState* buildFragmentState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::FragmentState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("module").cast<ShaderModule>();
+        obj.module = value;
+    }
+    {
+        auto value = handle.attr("entry_point").cast<StringView>();
+        obj.entryPoint = value;
+    }
+    {
+        auto py_list = handle.attr("constants").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<ConstantEntry>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<ConstantEntry>();
+        }
+
+        obj.constants = value;
+        obj.constantCount = count;
+    }
+    {
+        auto py_list = handle.attr("targets").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<ColorTargetState>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<ColorTargetState>();
+        }
+
+        obj.targets = value;
+        obj.targetCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::ColorTargetState* buildColorTargetState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ColorTargetState>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    {
+        auto value = handle.attr("blend").cast<BlendState const *>();
+        obj.blend = value;
+    }
+    {
+        auto value = handle.attr("write_mask").cast<ColorWriteMask>();
+        obj.writeMask = value;
+    }
+    return &obj;
+}
+
+pywgpu::ColorTargetStateExpandResolveTextureDawn* buildColorTargetStateExpandResolveTextureDawn(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ColorTargetStateExpandResolveTextureDawn>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("enabled").cast<Bool>();
+        obj.enabled = value;
+    }
+    return &obj;
+}
+
+pywgpu::BlendState* buildBlendState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::BlendState>();
+    {
+        auto value = handle.attr("color").cast<BlendComponent>();
+        obj.color = value;
+    }
+    {
+        auto value = handle.attr("alpha").cast<BlendComponent>();
+        obj.alpha = value;
+    }
+    return &obj;
+}
+
+pywgpu::RenderPipelineDescriptor* buildRenderPipelineDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::RenderPipelineDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("layout").cast<PipelineLayout>();
+        obj.layout = value;
+    }
+    {
+        auto value = handle.attr("vertex").cast<VertexState>();
+        obj.vertex = value;
+    }
+    {
+        auto value = handle.attr("primitive").cast<PrimitiveState>();
+        obj.primitive = value;
+    }
+    {
+        auto value = handle.attr("depth_stencil").cast<DepthStencilState const *>();
+        obj.depthStencil = value;
+    }
+    {
+        auto value = handle.attr("multisample").cast<MultisampleState>();
+        obj.multisample = value;
+    }
+    {
+        auto value = handle.attr("fragment").cast<FragmentState const *>();
+        obj.fragment = value;
+    }
+    return &obj;
+}
+
+pywgpu::SamplerDescriptor* buildSamplerDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SamplerDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("address_mode_u").cast<AddressMode>();
+        obj.addressModeU = value;
+    }
+    {
+        auto value = handle.attr("address_mode_v").cast<AddressMode>();
+        obj.addressModeV = value;
+    }
+    {
+        auto value = handle.attr("address_mode_w").cast<AddressMode>();
+        obj.addressModeW = value;
+    }
+    {
+        auto value = handle.attr("mag_filter").cast<FilterMode>();
+        obj.magFilter = value;
+    }
+    {
+        auto value = handle.attr("min_filter").cast<FilterMode>();
+        obj.minFilter = value;
+    }
+    {
+        auto value = handle.attr("mipmap_filter").cast<MipmapFilterMode>();
+        obj.mipmapFilter = value;
+    }
+    {
+        auto value = handle.attr("lod_min_clamp").cast<float>();
+        obj.lodMinClamp = value;
+    }
+    {
+        auto value = handle.attr("lod_max_clamp").cast<float>();
+        obj.lodMaxClamp = value;
+    }
+    {
+        auto value = handle.attr("compare").cast<CompareFunction>();
+        obj.compare = value;
+    }
+    {
+        auto value = handle.attr("max_anisotropy").cast<uint16_t>();
+        obj.maxAnisotropy = value;
+    }
+    return &obj;
+}
+
+pywgpu::ShaderModuleDescriptor* buildShaderModuleDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ShaderModuleDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::ShaderSourceSPIRV* buildShaderSourceSPIRV(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ShaderSourceSPIRV>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto py_list = handle.attr("code").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<uint32_t>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<uint32_t>();
+        }
+
+        obj.code = value;
+        obj.codeSize = count;
+    }
+    return &obj;
+}
+
+pywgpu::ShaderSourceWGSL* buildShaderSourceWGSL(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ShaderSourceWGSL>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("code").cast<StringView>();
+        obj.code = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnShaderModuleSPIRVOptionsDescriptor* buildDawnShaderModuleSPIRVOptionsDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnShaderModuleSPIRVOptionsDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("allow_non_uniform_derivatives").cast<Bool>();
+        obj.allowNonUniformDerivatives = value;
+    }
+    return &obj;
+}
+
+pywgpu::ShaderModuleCompilationOptions* buildShaderModuleCompilationOptions(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::ShaderModuleCompilationOptions>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("strict_math").cast<Bool>();
+        obj.strictMath = value;
+    }
+    return &obj;
+}
+
+pywgpu::StencilFaceState* buildStencilFaceState(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::StencilFaceState>();
+    {
+        auto value = handle.attr("compare").cast<CompareFunction>();
+        obj.compare = value;
+    }
+    {
+        auto value = handle.attr("fail_op").cast<StencilOperation>();
+        obj.failOp = value;
+    }
+    {
+        auto value = handle.attr("depth_fail_op").cast<StencilOperation>();
+        obj.depthFailOp = value;
+    }
+    {
+        auto value = handle.attr("pass_op").cast<StencilOperation>();
+        obj.passOp = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceDescriptor* buildSurfaceDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceSourceAndroidNativeWindow* buildSurfaceSourceAndroidNativeWindow(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceSourceAndroidNativeWindow>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("window").cast<void *>();
+        obj.window = value;
+    }
+    return &obj;
+}
+
+pywgpu::EmscriptenSurfaceSourceCanvasHTMLSelector* buildEmscriptenSurfaceSourceCanvasHTMLSelector(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::EmscriptenSurfaceSourceCanvasHTMLSelector>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("selector").cast<StringView>();
+        obj.selector = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceSourceMetalLayer* buildSurfaceSourceMetalLayer(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceSourceMetalLayer>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("layer").cast<void *>();
+        obj.layer = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceSourceWindowsHWND* buildSurfaceSourceWindowsHWND(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceSourceWindowsHWND>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("hinstance").cast<void *>();
+        obj.hinstance = value;
+    }
+    {
+        auto value = handle.attr("hwnd").cast<void *>();
+        obj.hwnd = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceSourceXCBWindow* buildSurfaceSourceXCBWindow(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceSourceXCBWindow>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("connection").cast<void *>();
+        obj.connection = value;
+    }
+    {
+        auto value = handle.attr("window").cast<uint32_t>();
+        obj.window = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceSourceXlibWindow* buildSurfaceSourceXlibWindow(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceSourceXlibWindow>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("display").cast<void *>();
+        obj.display = value;
+    }
+    {
+        auto value = handle.attr("window").cast<uint64_t>();
+        obj.window = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceSourceWaylandSurface* buildSurfaceSourceWaylandSurface(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceSourceWaylandSurface>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("display").cast<void *>();
+        obj.display = value;
+    }
+    {
+        auto value = handle.attr("surface").cast<void *>();
+        obj.surface = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceDescriptorFromWindowsCoreWindow* buildSurfaceDescriptorFromWindowsCoreWindow(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceDescriptorFromWindowsCoreWindow>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("core_window").cast<void *>();
+        obj.coreWindow = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel* buildSurfaceDescriptorFromWindowsUWPSwapChainPanel(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("swap_chain_panel").cast<void *>();
+        obj.swapChainPanel = value;
+    }
+    return &obj;
+}
+
+pywgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel* buildSurfaceDescriptorFromWindowsWinUISwapChainPanel(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("swap_chain_panel").cast<void *>();
+        obj.swapChainPanel = value;
+    }
+    return &obj;
+}
+
+pywgpu::TextureDescriptor* buildTextureDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::TextureDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("usage").cast<TextureUsage>();
+        obj.usage = value;
+    }
+    {
+        auto value = handle.attr("dimension").cast<TextureDimension>();
+        obj.dimension = value;
+    }
+    {
+        auto value = handle.attr("size").cast<Extent3D>();
+        obj.size = value;
+    }
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    {
+        auto value = handle.attr("mip_level_count").cast<uint32_t>();
+        obj.mipLevelCount = value;
+    }
+    {
+        auto value = handle.attr("sample_count").cast<uint32_t>();
+        obj.sampleCount = value;
+    }
+    {
+        auto py_list = handle.attr("view_formats").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = la.alloc_array<TextureFormat>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<TextureFormat>();
+        }
+
+        obj.viewFormats = value;
+        obj.viewFormatCount = count;
+    }
+    return &obj;
+}
+
+pywgpu::TextureBindingViewDimensionDescriptor* buildTextureBindingViewDimensionDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::TextureBindingViewDimensionDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("texture_binding_view_dimension").cast<TextureViewDimension>();
+        obj.textureBindingViewDimension = value;
+    }
+    return &obj;
+}
+
+pywgpu::TextureViewDescriptor* buildTextureViewDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::TextureViewDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    {
+        auto value = handle.attr("dimension").cast<TextureViewDimension>();
+        obj.dimension = value;
+    }
+    {
+        auto value = handle.attr("base_mip_level").cast<uint32_t>();
+        obj.baseMipLevel = value;
+    }
+    {
+        auto value = handle.attr("mip_level_count").cast<uint32_t>();
+        obj.mipLevelCount = value;
+    }
+    {
+        auto value = handle.attr("base_array_layer").cast<uint32_t>();
+        obj.baseArrayLayer = value;
+    }
+    {
+        auto value = handle.attr("array_layer_count").cast<uint32_t>();
+        obj.arrayLayerCount = value;
+    }
+    {
+        auto value = handle.attr("aspect").cast<TextureAspect>();
+        obj.aspect = value;
+    }
+    {
+        auto value = handle.attr("usage").cast<TextureUsage>();
+        obj.usage = value;
+    }
+    return &obj;
+}
+
+pywgpu::YCbCrVkDescriptor* buildYCbCrVkDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::YCbCrVkDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("vk_format").cast<uint32_t>();
+        obj.vkFormat = value;
+    }
+    {
+        auto value = handle.attr("vk_y_cb_cr_model").cast<uint32_t>();
+        obj.vkYCbCrModel = value;
+    }
+    {
+        auto value = handle.attr("vk_y_cb_cr_range").cast<uint32_t>();
+        obj.vkYCbCrRange = value;
+    }
+    {
+        auto value = handle.attr("vk_component_swizzle_red").cast<uint32_t>();
+        obj.vkComponentSwizzleRed = value;
+    }
+    {
+        auto value = handle.attr("vk_component_swizzle_green").cast<uint32_t>();
+        obj.vkComponentSwizzleGreen = value;
+    }
+    {
+        auto value = handle.attr("vk_component_swizzle_blue").cast<uint32_t>();
+        obj.vkComponentSwizzleBlue = value;
+    }
+    {
+        auto value = handle.attr("vk_component_swizzle_alpha").cast<uint32_t>();
+        obj.vkComponentSwizzleAlpha = value;
+    }
+    {
+        auto value = handle.attr("vk_x_chroma_offset").cast<uint32_t>();
+        obj.vkXChromaOffset = value;
+    }
+    {
+        auto value = handle.attr("vk_y_chroma_offset").cast<uint32_t>();
+        obj.vkYChromaOffset = value;
+    }
+    {
+        auto value = handle.attr("vk_chroma_filter").cast<FilterMode>();
+        obj.vkChromaFilter = value;
+    }
+    {
+        auto value = handle.attr("force_explicit_reconstruction").cast<Bool>();
+        obj.forceExplicitReconstruction = value;
+    }
+    {
+        auto value = handle.attr("external_format").cast<uint64_t>();
+        obj.externalFormat = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnTextureInternalUsageDescriptor* buildDawnTextureInternalUsageDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnTextureInternalUsageDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("internal_usage").cast<TextureUsage>();
+        obj.internalUsage = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnEncoderInternalUsageDescriptor* buildDawnEncoderInternalUsageDescriptor(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnEncoderInternalUsageDescriptor>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("use_internal_usages").cast<Bool>();
+        obj.useInternalUsages = value;
+    }
+    return &obj;
+}
+
+pywgpu::MemoryHeapInfo* buildMemoryHeapInfo(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::MemoryHeapInfo>();
+    {
+        auto value = handle.attr("properties").cast<HeapProperty>();
+        obj.properties = value;
+    }
+    {
+        auto value = handle.attr("size").cast<uint64_t>();
+        obj.size = value;
+    }
+    return &obj;
+}
+
+pywgpu::DawnBufferDescriptorErrorInfoFromWireClient* buildDawnBufferDescriptorErrorInfoFromWireClient(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::DawnBufferDescriptorErrorInfoFromWireClient>();
+    {
+        auto value = handle.attr("next_in_chain").cast<ChainedStruct const *>();
+        obj.nextInChain = value;
+    }
+    {
+        auto value = handle.attr("out_of_memory").cast<Bool>();
+        obj.outOfMemory = value;
+    }
+    return &obj;
+}
+
+pywgpu::SubgroupMatrixConfig* buildSubgroupMatrixConfig(py::handle handle, LinearAlloc& la) {
+    auto& obj = *la.make<pywgpu::SubgroupMatrixConfig>();
+    {
+        auto value = handle.attr("component_type").cast<SubgroupMatrixComponentType>();
+        obj.componentType = value;
+    }
+    {
+        auto value = handle.attr("result_component_type").cast<SubgroupMatrixComponentType>();
+        obj.resultComponentType = value;
+    }
+    {
+        auto value = handle.attr("M").cast<uint32_t>();
+        obj.M = value;
+    }
+    {
+        auto value = handle.attr("N").cast<uint32_t>();
+        obj.N = value;
+    }
+    {
+        auto value = handle.attr("K").cast<uint32_t>();
+        obj.K = value;
+    }
+    return &obj;
+}
+
+
 
 void init_wgpu_py_auto(py::module &m, Registry &registry) {
 py::enum_<RequestAdapterStatus>(m, "RequestAdapterStatus", py::arithmetic())
@@ -797,6 +3721,269 @@ py::enum_<HeapProperty>(m, "HeapProperty", py::arithmetic())
     }, py::is_operator());
     
 
+py::class_<AdapterInfo> _AdapterInfo(m, "AdapterInfo");
+registry.on(m, "AdapterInfo", _AdapterInfo);
+
+_AdapterInfo
+    .def_readonly("next_in_chain", &pywgpu::AdapterInfo::nextInChain)
+    .def_readonly("vendor", &pywgpu::AdapterInfo::vendor)
+    .def_readonly("architecture", &pywgpu::AdapterInfo::architecture)
+    .def_readonly("device", &pywgpu::AdapterInfo::device)
+    .def_readonly("description", &pywgpu::AdapterInfo::description)
+    .def_readonly("backend_type", &pywgpu::AdapterInfo::backendType)
+    .def_readonly("adapter_type", &pywgpu::AdapterInfo::adapterType)
+    .def_readonly("vendor_ID", &pywgpu::AdapterInfo::vendorID)
+    .def_readonly("device_ID", &pywgpu::AdapterInfo::deviceID)
+    .def_readonly("subgroup_min_size", &pywgpu::AdapterInfo::subgroupMinSize)
+    .def_readonly("subgroup_max_size", &pywgpu::AdapterInfo::subgroupMaxSize)
+    .def(py::init<>())
+    ;
+
+py::class_<SurfaceCapabilities> _SurfaceCapabilities(m, "SurfaceCapabilities");
+registry.on(m, "SurfaceCapabilities", _SurfaceCapabilities);
+
+_SurfaceCapabilities
+    .def_readonly("next_in_chain", &pywgpu::SurfaceCapabilities::nextInChain)
+    .def_readonly("usages", &pywgpu::SurfaceCapabilities::usages)
+    .def_readonly("format_count", &pywgpu::SurfaceCapabilities::formatCount)
+    .def_readonly("formats", &pywgpu::SurfaceCapabilities::formats)
+    .def_readonly("present_mode_count", &pywgpu::SurfaceCapabilities::presentModeCount)
+    .def_readonly("present_modes", &pywgpu::SurfaceCapabilities::presentModes)
+    .def_readonly("alpha_mode_count", &pywgpu::SurfaceCapabilities::alphaModeCount)
+    .def_readonly("alpha_modes", &pywgpu::SurfaceCapabilities::alphaModes)
+    .def(py::init<>())
+    ;
+
+py::class_<AdapterPropertiesSubgroups, ChainedStructOut> _AdapterPropertiesSubgroups(m, "AdapterPropertiesSubgroups");
+registry.on(m, "AdapterPropertiesSubgroups", _AdapterPropertiesSubgroups);
+
+_AdapterPropertiesSubgroups
+    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesSubgroups::nextInChain)
+    .def_readonly("subgroup_min_size", &pywgpu::AdapterPropertiesSubgroups::subgroupMinSize)
+    .def_readonly("subgroup_max_size", &pywgpu::AdapterPropertiesSubgroups::subgroupMaxSize)
+    .def(py::init<>())
+    ;
+
+py::class_<DawnExperimentalImmediateDataLimits, ChainedStructOut> _DawnExperimentalImmediateDataLimits(m, "DawnExperimentalImmediateDataLimits");
+registry.on(m, "DawnExperimentalImmediateDataLimits", _DawnExperimentalImmediateDataLimits);
+
+_DawnExperimentalImmediateDataLimits
+    .def_readonly("next_in_chain", &pywgpu::DawnExperimentalImmediateDataLimits::nextInChain)
+    .def_readonly("max_immediate_data_range_byte_size", &pywgpu::DawnExperimentalImmediateDataLimits::maxImmediateDataRangeByteSize)
+    .def(py::init<>())
+    ;
+
+py::class_<DawnTexelCopyBufferRowAlignmentLimits, ChainedStructOut> _DawnTexelCopyBufferRowAlignmentLimits(m, "DawnTexelCopyBufferRowAlignmentLimits");
+registry.on(m, "DawnTexelCopyBufferRowAlignmentLimits", _DawnTexelCopyBufferRowAlignmentLimits);
+
+_DawnTexelCopyBufferRowAlignmentLimits
+    .def_readonly("next_in_chain", &pywgpu::DawnTexelCopyBufferRowAlignmentLimits::nextInChain)
+    .def_readonly("min_texel_copy_buffer_row_alignment", &pywgpu::DawnTexelCopyBufferRowAlignmentLimits::minTexelCopyBufferRowAlignment)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedBufferMemoryProperties> _SharedBufferMemoryProperties(m, "SharedBufferMemoryProperties");
+registry.on(m, "SharedBufferMemoryProperties", _SharedBufferMemoryProperties);
+
+_SharedBufferMemoryProperties
+    .def_readonly("next_in_chain", &pywgpu::SharedBufferMemoryProperties::nextInChain)
+    .def_readonly("usage", &pywgpu::SharedBufferMemoryProperties::usage)
+    .def_readonly("size", &pywgpu::SharedBufferMemoryProperties::size)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedTextureMemoryProperties> _SharedTextureMemoryProperties(m, "SharedTextureMemoryProperties");
+registry.on(m, "SharedTextureMemoryProperties", _SharedTextureMemoryProperties);
+
+_SharedTextureMemoryProperties
+    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryProperties::nextInChain)
+    .def_readonly("usage", &pywgpu::SharedTextureMemoryProperties::usage)
+    .def_readonly("size", &pywgpu::SharedTextureMemoryProperties::size)
+    .def_readonly("format", &pywgpu::SharedTextureMemoryProperties::format)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedTextureMemoryAHardwareBufferProperties, ChainedStructOut> _SharedTextureMemoryAHardwareBufferProperties(m, "SharedTextureMemoryAHardwareBufferProperties");
+registry.on(m, "SharedTextureMemoryAHardwareBufferProperties", _SharedTextureMemoryAHardwareBufferProperties);
+
+_SharedTextureMemoryAHardwareBufferProperties
+    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryAHardwareBufferProperties::nextInChain)
+    .def_readonly("y_cb_cr_info", &pywgpu::SharedTextureMemoryAHardwareBufferProperties::yCbCrInfo)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedBufferMemoryEndAccessState> _SharedBufferMemoryEndAccessState(m, "SharedBufferMemoryEndAccessState");
+registry.on(m, "SharedBufferMemoryEndAccessState", _SharedBufferMemoryEndAccessState);
+
+_SharedBufferMemoryEndAccessState
+    .def_readonly("next_in_chain", &pywgpu::SharedBufferMemoryEndAccessState::nextInChain)
+    .def_readonly("initialized", &pywgpu::SharedBufferMemoryEndAccessState::initialized)
+    .def_readonly("fence_count", &pywgpu::SharedBufferMemoryEndAccessState::fenceCount)
+    .def_readonly("fences", &pywgpu::SharedBufferMemoryEndAccessState::fences)
+    .def_readonly("signaled_values", &pywgpu::SharedBufferMemoryEndAccessState::signaledValues)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedTextureMemoryEndAccessState> _SharedTextureMemoryEndAccessState(m, "SharedTextureMemoryEndAccessState");
+registry.on(m, "SharedTextureMemoryEndAccessState", _SharedTextureMemoryEndAccessState);
+
+_SharedTextureMemoryEndAccessState
+    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryEndAccessState::nextInChain)
+    .def_readonly("initialized", &pywgpu::SharedTextureMemoryEndAccessState::initialized)
+    .def_readonly("fence_count", &pywgpu::SharedTextureMemoryEndAccessState::fenceCount)
+    .def_readonly("fences", &pywgpu::SharedTextureMemoryEndAccessState::fences)
+    .def_readonly("signaled_values", &pywgpu::SharedTextureMemoryEndAccessState::signaledValues)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedTextureMemoryVkImageLayoutEndState, ChainedStructOut> _SharedTextureMemoryVkImageLayoutEndState(m, "SharedTextureMemoryVkImageLayoutEndState");
+registry.on(m, "SharedTextureMemoryVkImageLayoutEndState", _SharedTextureMemoryVkImageLayoutEndState);
+
+_SharedTextureMemoryVkImageLayoutEndState
+    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryVkImageLayoutEndState::nextInChain)
+    .def_readonly("old_layout", &pywgpu::SharedTextureMemoryVkImageLayoutEndState::oldLayout)
+    .def_readonly("new_layout", &pywgpu::SharedTextureMemoryVkImageLayoutEndState::newLayout)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedFenceExportInfo> _SharedFenceExportInfo(m, "SharedFenceExportInfo");
+registry.on(m, "SharedFenceExportInfo", _SharedFenceExportInfo);
+
+_SharedFenceExportInfo
+    .def_readonly("next_in_chain", &pywgpu::SharedFenceExportInfo::nextInChain)
+    .def_readonly("type", &pywgpu::SharedFenceExportInfo::type)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedFenceVkSemaphoreOpaqueFDExportInfo, ChainedStructOut> _SharedFenceVkSemaphoreOpaqueFDExportInfo(m, "SharedFenceVkSemaphoreOpaqueFDExportInfo");
+registry.on(m, "SharedFenceVkSemaphoreOpaqueFDExportInfo", _SharedFenceVkSemaphoreOpaqueFDExportInfo);
+
+_SharedFenceVkSemaphoreOpaqueFDExportInfo
+    .def_readonly("next_in_chain", &pywgpu::SharedFenceVkSemaphoreOpaqueFDExportInfo::nextInChain)
+    .def_readonly("handle", &pywgpu::SharedFenceVkSemaphoreOpaqueFDExportInfo::handle)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedFenceSyncFDExportInfo, ChainedStructOut> _SharedFenceSyncFDExportInfo(m, "SharedFenceSyncFDExportInfo");
+registry.on(m, "SharedFenceSyncFDExportInfo", _SharedFenceSyncFDExportInfo);
+
+_SharedFenceSyncFDExportInfo
+    .def_readonly("next_in_chain", &pywgpu::SharedFenceSyncFDExportInfo::nextInChain)
+    .def_readonly("handle", &pywgpu::SharedFenceSyncFDExportInfo::handle)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedFenceVkSemaphoreZirconHandleExportInfo, ChainedStructOut> _SharedFenceVkSemaphoreZirconHandleExportInfo(m, "SharedFenceVkSemaphoreZirconHandleExportInfo");
+registry.on(m, "SharedFenceVkSemaphoreZirconHandleExportInfo", _SharedFenceVkSemaphoreZirconHandleExportInfo);
+
+_SharedFenceVkSemaphoreZirconHandleExportInfo
+    .def_readonly("next_in_chain", &pywgpu::SharedFenceVkSemaphoreZirconHandleExportInfo::nextInChain)
+    .def_readonly("handle", &pywgpu::SharedFenceVkSemaphoreZirconHandleExportInfo::handle)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedFenceDXGISharedHandleExportInfo, ChainedStructOut> _SharedFenceDXGISharedHandleExportInfo(m, "SharedFenceDXGISharedHandleExportInfo");
+registry.on(m, "SharedFenceDXGISharedHandleExportInfo", _SharedFenceDXGISharedHandleExportInfo);
+
+_SharedFenceDXGISharedHandleExportInfo
+    .def_readonly("next_in_chain", &pywgpu::SharedFenceDXGISharedHandleExportInfo::nextInChain)
+    .def_readonly("handle", &pywgpu::SharedFenceDXGISharedHandleExportInfo::handle)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedFenceMTLSharedEventExportInfo, ChainedStructOut> _SharedFenceMTLSharedEventExportInfo(m, "SharedFenceMTLSharedEventExportInfo");
+registry.on(m, "SharedFenceMTLSharedEventExportInfo", _SharedFenceMTLSharedEventExportInfo);
+
+_SharedFenceMTLSharedEventExportInfo
+    .def_readonly("next_in_chain", &pywgpu::SharedFenceMTLSharedEventExportInfo::nextInChain)
+    .def_readonly("shared_event", &pywgpu::SharedFenceMTLSharedEventExportInfo::sharedEvent)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedFenceEGLSyncExportInfo, ChainedStructOut> _SharedFenceEGLSyncExportInfo(m, "SharedFenceEGLSyncExportInfo");
+registry.on(m, "SharedFenceEGLSyncExportInfo", _SharedFenceEGLSyncExportInfo);
+
+_SharedFenceEGLSyncExportInfo
+    .def_readonly("next_in_chain", &pywgpu::SharedFenceEGLSyncExportInfo::nextInChain)
+    .def_readonly("sync", &pywgpu::SharedFenceEGLSyncExportInfo::sync)
+    .def(py::init<>())
+    ;
+
+py::class_<DawnFormatCapabilities> _DawnFormatCapabilities(m, "DawnFormatCapabilities");
+registry.on(m, "DawnFormatCapabilities", _DawnFormatCapabilities);
+
+_DawnFormatCapabilities
+    .def_readonly("next_in_chain", &pywgpu::DawnFormatCapabilities::nextInChain)
+    .def(py::init<>())
+    ;
+
+py::class_<DawnDrmFormatCapabilities, ChainedStructOut> _DawnDrmFormatCapabilities(m, "DawnDrmFormatCapabilities");
+registry.on(m, "DawnDrmFormatCapabilities", _DawnDrmFormatCapabilities);
+
+_DawnDrmFormatCapabilities
+    .def_readonly("next_in_chain", &pywgpu::DawnDrmFormatCapabilities::nextInChain)
+    .def_readonly("properties_count", &pywgpu::DawnDrmFormatCapabilities::propertiesCount)
+    .def_readonly("properties", &pywgpu::DawnDrmFormatCapabilities::properties)
+    .def(py::init<>())
+    ;
+
+py::class_<SurfaceTexture> _SurfaceTexture(m, "SurfaceTexture");
+registry.on(m, "SurfaceTexture", _SurfaceTexture);
+
+_SurfaceTexture
+    .def_readonly("next_in_chain", &pywgpu::SurfaceTexture::nextInChain)
+    .def_readonly("texture", &pywgpu::SurfaceTexture::texture)
+    .def_readonly("status", &pywgpu::SurfaceTexture::status)
+    .def(py::init<>())
+    ;
+
+py::class_<DawnAdapterPropertiesPowerPreference, ChainedStructOut> _DawnAdapterPropertiesPowerPreference(m, "DawnAdapterPropertiesPowerPreference");
+registry.on(m, "DawnAdapterPropertiesPowerPreference", _DawnAdapterPropertiesPowerPreference);
+
+_DawnAdapterPropertiesPowerPreference
+    .def_readonly("next_in_chain", &pywgpu::DawnAdapterPropertiesPowerPreference::nextInChain)
+    .def_readonly("power_preference", &pywgpu::DawnAdapterPropertiesPowerPreference::powerPreference)
+    .def(py::init<>())
+    ;
+
+py::class_<AdapterPropertiesMemoryHeaps, ChainedStructOut> _AdapterPropertiesMemoryHeaps(m, "AdapterPropertiesMemoryHeaps");
+registry.on(m, "AdapterPropertiesMemoryHeaps", _AdapterPropertiesMemoryHeaps);
+
+_AdapterPropertiesMemoryHeaps
+    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesMemoryHeaps::nextInChain)
+    .def_readonly("heap_count", &pywgpu::AdapterPropertiesMemoryHeaps::heapCount)
+    .def_readonly("heap_info", &pywgpu::AdapterPropertiesMemoryHeaps::heapInfo)
+    .def(py::init<>())
+    ;
+
+py::class_<AdapterPropertiesD3D, ChainedStructOut> _AdapterPropertiesD3D(m, "AdapterPropertiesD3D");
+registry.on(m, "AdapterPropertiesD3D", _AdapterPropertiesD3D);
+
+_AdapterPropertiesD3D
+    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesD3D::nextInChain)
+    .def_readonly("shader_model", &pywgpu::AdapterPropertiesD3D::shaderModel)
+    .def(py::init<>())
+    ;
+
+py::class_<AdapterPropertiesVk, ChainedStructOut> _AdapterPropertiesVk(m, "AdapterPropertiesVk");
+registry.on(m, "AdapterPropertiesVk", _AdapterPropertiesVk);
+
+_AdapterPropertiesVk
+    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesVk::nextInChain)
+    .def_readonly("driver_version", &pywgpu::AdapterPropertiesVk::driverVersion)
+    .def(py::init<>())
+    ;
+
+py::class_<AdapterPropertiesSubgroupMatrixConfigs, ChainedStructOut> _AdapterPropertiesSubgroupMatrixConfigs(m, "AdapterPropertiesSubgroupMatrixConfigs");
+registry.on(m, "AdapterPropertiesSubgroupMatrixConfigs", _AdapterPropertiesSubgroupMatrixConfigs);
+
+_AdapterPropertiesSubgroupMatrixConfigs
+    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesSubgroupMatrixConfigs::nextInChain)
+    .def_readonly("config_count", &pywgpu::AdapterPropertiesSubgroupMatrixConfigs::configCount)
+    .def_readonly("configs", &pywgpu::AdapterPropertiesSubgroupMatrixConfigs::configs)
+    .def(py::init<>())
+    ;
+
 py::class_<Adapter> _Adapter(m, "Adapter");
 registry.on(m, "Adapter", _Adapter);
 
@@ -804,7 +3991,11 @@ _Adapter
     .def("get_instance",&pywgpu::Adapter::GetInstance
         , py::return_value_policy::automatic_reference)
         
-    .def("get_limits",&pywgpu::Adapter::GetLimits
+    .def("get_limits",[](pywgpu::Adapter& self, py::handle limits) {
+        pywgpu::Limits * _limits = buildLimits(limits);
+        
+        return self.GetLimits(_limits);
+        }
         , py::arg("limits")
         , py::return_value_policy::automatic_reference)
         
@@ -816,15 +4007,27 @@ _Adapter
         , py::arg("feature")
         , py::return_value_policy::automatic_reference)
         
-    .def("get_features",&pywgpu::Adapter::GetFeatures
+    .def("get_features",[](pywgpu::Adapter& self, py::handle features) {
+        pywgpu::SupportedFeatures * _features = buildSupportedFeatures(features);
+        
+        return self.GetFeatures(_features);
+        }
         , py::arg("features")
         , py::return_value_policy::automatic_reference)
         
-    .def("_request_device",&pywgpu::Adapter::RequestDevice
+    .def("_request_device",[](pywgpu::Adapter& self, py::handle options, RequestDeviceCallbackInfo callbackInfo) {
+        pywgpu::DeviceDescriptor const* _options = buildDeviceDescriptor(options);
+        
+        return self.RequestDevice(_options, callbackInfo);
+        }
         , py::arg("options"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_device",&pywgpu::Adapter::CreateDevice
+    .def("create_device",[](pywgpu::Adapter& self, py::handle descriptor) {
+        pywgpu::DeviceDescriptor const* _descriptor = buildDeviceDescriptor(descriptor);
+        
+        return self.CreateDevice(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
@@ -925,15 +4128,27 @@ py::class_<CommandEncoder> _CommandEncoder(m, "CommandEncoder");
 registry.on(m, "CommandEncoder", _CommandEncoder);
 
 _CommandEncoder
-    .def("finish",&pywgpu::CommandEncoder::Finish
+    .def("finish",[](pywgpu::CommandEncoder& self, py::handle descriptor) {
+        pywgpu::CommandBufferDescriptor const* _descriptor = buildCommandBufferDescriptor(descriptor);
+        
+        return self.Finish(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
-    .def("begin_compute_pass",&pywgpu::CommandEncoder::BeginComputePass
+    .def("begin_compute_pass",[](pywgpu::CommandEncoder& self, py::handle descriptor) {
+        pywgpu::ComputePassDescriptor const* _descriptor = buildComputePassDescriptor(descriptor);
+        
+        return self.BeginComputePass(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
-    .def("begin_render_pass",&pywgpu::CommandEncoder::BeginRenderPass
+    .def("begin_render_pass",[](pywgpu::CommandEncoder& self, py::handle descriptor) {
+        pywgpu::RenderPassDescriptor const* _descriptor = buildRenderPassDescriptor(descriptor);
+        
+        return self.BeginRenderPass(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
@@ -941,15 +4156,39 @@ _CommandEncoder
         , py::arg("source"), py::arg("source_offset"), py::arg("destination"), py::arg("destination_offset"), py::arg("size")
         , py::return_value_policy::automatic_reference)
         
-    .def("copy_buffer_to_texture",&pywgpu::CommandEncoder::CopyBufferToTexture
+    .def("copy_buffer_to_texture",[](pywgpu::CommandEncoder& self, py::handle source, py::handle destination, py::handle copySize) {
+        pywgpu::TexelCopyBufferInfo const* _source = buildTexelCopyBufferInfo(source);
+        
+        pywgpu::TexelCopyTextureInfo const* _destination = buildTexelCopyTextureInfo(destination);
+        
+        pywgpu::Extent3D const* _copySize = buildExtent3D(copySize);
+        
+        return self.CopyBufferToTexture(_source, _destination, _copySize);
+        }
         , py::arg("source"), py::arg("destination"), py::arg("copy_size")
         , py::return_value_policy::automatic_reference)
         
-    .def("copy_texture_to_buffer",&pywgpu::CommandEncoder::CopyTextureToBuffer
+    .def("copy_texture_to_buffer",[](pywgpu::CommandEncoder& self, py::handle source, py::handle destination, py::handle copySize) {
+        pywgpu::TexelCopyTextureInfo const* _source = buildTexelCopyTextureInfo(source);
+        
+        pywgpu::TexelCopyBufferInfo const* _destination = buildTexelCopyBufferInfo(destination);
+        
+        pywgpu::Extent3D const* _copySize = buildExtent3D(copySize);
+        
+        return self.CopyTextureToBuffer(_source, _destination, _copySize);
+        }
         , py::arg("source"), py::arg("destination"), py::arg("copy_size")
         , py::return_value_policy::automatic_reference)
         
-    .def("copy_texture_to_texture",&pywgpu::CommandEncoder::CopyTextureToTexture
+    .def("copy_texture_to_texture",[](pywgpu::CommandEncoder& self, py::handle source, py::handle destination, py::handle copySize) {
+        pywgpu::TexelCopyTextureInfo const* _source = buildTexelCopyTextureInfo(source);
+        
+        pywgpu::TexelCopyTextureInfo const* _destination = buildTexelCopyTextureInfo(destination);
+        
+        pywgpu::Extent3D const* _copySize = buildExtent3D(copySize);
+        
+        return self.CopyTextureToTexture(_source, _destination, _copySize);
+        }
         , py::arg("source"), py::arg("destination"), py::arg("copy_size")
         , py::return_value_policy::automatic_reference)
         
@@ -1074,101 +4313,193 @@ py::class_<Device> _Device(m, "Device");
 registry.on(m, "Device", _Device);
 
 _Device
-    .def("create_bind_group",&pywgpu::Device::CreateBindGroup
+    .def("create_bind_group",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::BindGroupDescriptor const* _descriptor = buildBindGroupDescriptor(descriptor);
+        
+        return self.CreateBindGroup(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_bind_group_layout",&pywgpu::Device::CreateBindGroupLayout
+    .def("create_bind_group_layout",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::BindGroupLayoutDescriptor const* _descriptor = buildBindGroupLayoutDescriptor(descriptor);
+        
+        return self.CreateBindGroupLayout(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_buffer",&pywgpu::Device::CreateBuffer
+    .def("create_buffer",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::BufferDescriptor const* _descriptor = buildBufferDescriptor(descriptor);
+        
+        return self.CreateBuffer(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_error_buffer",&pywgpu::Device::CreateErrorBuffer
+    .def("create_error_buffer",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::BufferDescriptor const* _descriptor = buildBufferDescriptor(descriptor);
+        
+        return self.CreateErrorBuffer(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_command_encoder",&pywgpu::Device::CreateCommandEncoder
+    .def("create_command_encoder",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::CommandEncoderDescriptor const* _descriptor = buildCommandEncoderDescriptor(descriptor);
+        
+        return self.CreateCommandEncoder(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
-    .def("create_compute_pipeline",&pywgpu::Device::CreateComputePipeline
+    .def("create_compute_pipeline",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::ComputePipelineDescriptor const* _descriptor = buildComputePipelineDescriptor(descriptor);
+        
+        return self.CreateComputePipeline(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("_create_compute_pipeline_async",&pywgpu::Device::CreateComputePipelineAsync
+    .def("_create_compute_pipeline_async",[](pywgpu::Device& self, py::handle descriptor, CreateComputePipelineAsyncCallbackInfo callbackInfo) {
+        pywgpu::ComputePipelineDescriptor const* _descriptor = buildComputePipelineDescriptor(descriptor);
+        
+        return self.CreateComputePipelineAsync(_descriptor, callbackInfo);
+        }
         , py::arg("descriptor"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_external_texture",&pywgpu::Device::CreateExternalTexture
+    .def("create_external_texture",[](pywgpu::Device& self, py::handle externalTextureDescriptor) {
+        pywgpu::ExternalTextureDescriptor const* _externalTextureDescriptor = buildExternalTextureDescriptor(externalTextureDescriptor);
+        
+        return self.CreateExternalTexture(_externalTextureDescriptor);
+        }
         , py::arg("external_texture_descriptor")
         , py::return_value_policy::automatic_reference)
         
     .def("create_error_external_texture",&pywgpu::Device::CreateErrorExternalTexture
         , py::return_value_policy::automatic_reference)
         
-    .def("create_pipeline_layout",&pywgpu::Device::CreatePipelineLayout
+    .def("create_pipeline_layout",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::PipelineLayoutDescriptor const* _descriptor = buildPipelineLayoutDescriptor(descriptor);
+        
+        return self.CreatePipelineLayout(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_query_set",&pywgpu::Device::CreateQuerySet
+    .def("create_query_set",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::QuerySetDescriptor const* _descriptor = buildQuerySetDescriptor(descriptor);
+        
+        return self.CreateQuerySet(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("_create_render_pipeline_async",&pywgpu::Device::CreateRenderPipelineAsync
+    .def("_create_render_pipeline_async",[](pywgpu::Device& self, py::handle descriptor, CreateRenderPipelineAsyncCallbackInfo callbackInfo) {
+        pywgpu::RenderPipelineDescriptor const* _descriptor = buildRenderPipelineDescriptor(descriptor);
+        
+        return self.CreateRenderPipelineAsync(_descriptor, callbackInfo);
+        }
         , py::arg("descriptor"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_render_bundle_encoder",&pywgpu::Device::CreateRenderBundleEncoder
+    .def("create_render_bundle_encoder",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::RenderBundleEncoderDescriptor const* _descriptor = buildRenderBundleEncoderDescriptor(descriptor);
+        
+        return self.CreateRenderBundleEncoder(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_render_pipeline",&pywgpu::Device::CreateRenderPipeline
+    .def("create_render_pipeline",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::RenderPipelineDescriptor const* _descriptor = buildRenderPipelineDescriptor(descriptor);
+        
+        return self.CreateRenderPipeline(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_sampler",&pywgpu::Device::CreateSampler
+    .def("create_sampler",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::SamplerDescriptor const* _descriptor = buildSamplerDescriptor(descriptor);
+        
+        return self.CreateSampler(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
-    .def("create_shader_module",&pywgpu::Device::CreateShaderModule
+    .def("create_shader_module",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::ShaderModuleDescriptor const* _descriptor = buildShaderModuleDescriptor(descriptor);
+        
+        return self.CreateShaderModule(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_error_shader_module",&pywgpu::Device::CreateErrorShaderModule
+    .def("create_error_shader_module",[](pywgpu::Device& self, py::handle descriptor, StringView errorMessage) {
+        pywgpu::ShaderModuleDescriptor const* _descriptor = buildShaderModuleDescriptor(descriptor);
+        
+        return self.CreateErrorShaderModule(_descriptor, errorMessage);
+        }
         , py::arg("descriptor"), py::arg("error_message")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_texture",&pywgpu::Device::CreateTexture
+    .def("create_texture",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::TextureDescriptor const* _descriptor = buildTextureDescriptor(descriptor);
+        
+        return self.CreateTexture(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("import_shared_buffer_memory",&pywgpu::Device::ImportSharedBufferMemory
+    .def("import_shared_buffer_memory",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::SharedBufferMemoryDescriptor const* _descriptor = buildSharedBufferMemoryDescriptor(descriptor);
+        
+        return self.ImportSharedBufferMemory(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("import_shared_texture_memory",&pywgpu::Device::ImportSharedTextureMemory
+    .def("import_shared_texture_memory",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::SharedTextureMemoryDescriptor const* _descriptor = buildSharedTextureMemoryDescriptor(descriptor);
+        
+        return self.ImportSharedTextureMemory(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("import_shared_fence",&pywgpu::Device::ImportSharedFence
+    .def("import_shared_fence",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::SharedFenceDescriptor const* _descriptor = buildSharedFenceDescriptor(descriptor);
+        
+        return self.ImportSharedFence(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_error_texture",&pywgpu::Device::CreateErrorTexture
+    .def("create_error_texture",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::TextureDescriptor const* _descriptor = buildTextureDescriptor(descriptor);
+        
+        return self.CreateErrorTexture(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
     .def("destroy",&pywgpu::Device::Destroy
         , py::return_value_policy::automatic_reference)
         
-    .def("get_a_hardware_buffer_properties",&pywgpu::Device::GetAHardwareBufferProperties
+    .def("get_a_hardware_buffer_properties",[](pywgpu::Device& self, void * handle, py::handle properties) {
+        pywgpu::AHardwareBufferProperties * _properties = buildAHardwareBufferProperties(properties);
+        
+        return self.GetAHardwareBufferProperties(handle, _properties);
+        }
         , py::arg("handle"), py::arg("properties")
         , py::return_value_policy::automatic_reference)
         
-    .def("get_limits",&pywgpu::Device::GetLimits
+    .def("get_limits",[](pywgpu::Device& self, py::handle limits) {
+        pywgpu::Limits * _limits = buildLimits(limits);
+        
+        return self.GetLimits(_limits);
+        }
         , py::arg("limits")
         , py::return_value_policy::automatic_reference)
         
@@ -1179,7 +4510,11 @@ _Device
         , py::arg("feature")
         , py::return_value_policy::automatic_reference)
         
-    .def("get_features",&pywgpu::Device::GetFeatures
+    .def("get_features",[](pywgpu::Device& self, py::handle features) {
+        pywgpu::SupportedFeatures * _features = buildSupportedFeatures(features);
+        
+        return self.GetFeatures(_features);
+        }
         , py::arg("features")
         , py::return_value_policy::automatic_reference)
         
@@ -1220,7 +4555,11 @@ _Device
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
         
-    .def("validate_texture_descriptor",&pywgpu::Device::ValidateTextureDescriptor
+    .def("validate_texture_descriptor",[](pywgpu::Device& self, py::handle descriptor) {
+        pywgpu::TextureDescriptor const* _descriptor = buildTextureDescriptor(descriptor);
+        
+        return self.ValidateTextureDescriptor(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
@@ -1257,11 +4596,19 @@ _SharedBufferMemory
         , py::arg("properties")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_buffer",&pywgpu::SharedBufferMemory::CreateBuffer
+    .def("create_buffer",[](pywgpu::SharedBufferMemory& self, py::handle descriptor) {
+        pywgpu::BufferDescriptor const* _descriptor = buildBufferDescriptor(descriptor);
+        
+        return self.CreateBuffer(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
-    .def("begin_access",&pywgpu::SharedBufferMemory::BeginAccess
+    .def("begin_access",[](pywgpu::SharedBufferMemory& self, Buffer buffer, py::handle descriptor) {
+        pywgpu::SharedBufferMemoryBeginAccessDescriptor const* _descriptor = buildSharedBufferMemoryBeginAccessDescriptor(descriptor);
+        
+        return self.BeginAccess(buffer, _descriptor);
+        }
         , py::arg("buffer"), py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
@@ -1286,11 +4633,19 @@ _SharedTextureMemory
         , py::arg("properties")
         , py::return_value_policy::automatic_reference)
         
-    .def("create_texture",&pywgpu::SharedTextureMemory::CreateTexture
+    .def("create_texture",[](pywgpu::SharedTextureMemory& self, py::handle descriptor) {
+        pywgpu::TextureDescriptor const* _descriptor = buildTextureDescriptor(descriptor);
+        
+        return self.CreateTexture(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
-    .def("begin_access",&pywgpu::SharedTextureMemory::BeginAccess
+    .def("begin_access",[](pywgpu::SharedTextureMemory& self, Texture texture, py::handle descriptor) {
+        pywgpu::SharedTextureMemoryBeginAccessDescriptor const* _descriptor = buildSharedTextureMemoryBeginAccessDescriptor(descriptor);
+        
+        return self.BeginAccess(texture, _descriptor);
+        }
         , py::arg("texture"), py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
@@ -1317,23 +4672,30 @@ py::class_<Instance> _Instance(m, "Instance");
 registry.on(m, "Instance", _Instance);
 
 _Instance
-    .def("create_surface",&pywgpu::Instance::CreateSurface
+    .def("create_surface",[](pywgpu::Instance& self, py::handle descriptor) {
+        pywgpu::SurfaceDescriptor const* _descriptor = buildSurfaceDescriptor(descriptor);
+        
+        return self.CreateSurface(_descriptor);
+        }
         , py::arg("descriptor")
         , py::return_value_policy::automatic_reference)
         
     .def("process_events",&pywgpu::Instance::ProcessEvents
         , py::return_value_policy::automatic_reference)
         
-    .def("wait_any",[](pywgpu::Instance& self, std::vector<pywgpu::FutureWaitInfo> futures, uint64_t timeoutNS) {
-        pywgpu::FutureWaitInfo * _futures = (pywgpu::FutureWaitInfo *)futures.data();
-        auto futureCount = futures.size();
+    .def("wait_any",[](pywgpu::Instance& self, py::handle futures, uint64_t timeoutNS) {
+        pywgpu::FutureWaitInfo * _futures = buildFutureWaitInfo(futures);
         
         return self.WaitAny(futureCount, _futures, timeoutNS);
         }
         , py::arg("futures"), py::arg("timeout_NS")
         , py::return_value_policy::automatic_reference)
         
-    .def("_request_adapter",&pywgpu::Instance::RequestAdapter
+    .def("_request_adapter",[](pywgpu::Instance& self, py::handle options, RequestAdapterCallbackInfo callbackInfo) {
+        pywgpu::RequestAdapterOptions const* _options = buildRequestAdapterOptions(options);
+        
+        return self.RequestAdapter(_options, callbackInfo);
+        }
         , py::arg("options"), py::arg("callback_info")
         , py::return_value_policy::automatic_reference)
         
@@ -1341,7 +4703,11 @@ _Instance
         , py::arg("feature")
         , py::return_value_policy::automatic_reference)
         
-    .def("get_WGSL_language_features",&pywgpu::Instance::GetWGSLLanguageFeatures
+    .def("get_WGSL_language_features",[](pywgpu::Instance& self, py::handle features) {
+        pywgpu::SupportedWGSLLanguageFeatures * _features = buildSupportedWGSLLanguageFeatures(features);
+        
+        return self.GetWGSLLanguageFeatures(_features);
+        }
         , py::arg("features")
         , py::return_value_policy::automatic_reference)
         
@@ -1403,21 +4769,47 @@ _Queue
         , py::arg("buffer"), py::arg("buffer_offset"), py::arg("data")
         , py::return_value_policy::automatic_reference)
         
-    .def("write_texture",[](pywgpu::Queue& self, TexelCopyTextureInfo const * destination, py::buffer data, TexelCopyBufferLayout const * dataLayout, Extent3D const * writeSize) {
+    .def("write_texture",[](pywgpu::Queue& self, py::handle destination, py::buffer data, py::handle dataLayout, py::handle writeSize) {
+        pywgpu::TexelCopyTextureInfo const* _destination = buildTexelCopyTextureInfo(destination);
+        
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
         auto dataSize = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
-        return self.WriteTexture(destination, _data, dataSize, dataLayout, writeSize);
+        pywgpu::TexelCopyBufferLayout const* _dataLayout = buildTexelCopyBufferLayout(dataLayout);
+        
+        pywgpu::Extent3D const* _writeSize = buildExtent3D(writeSize);
+        
+        return self.WriteTexture(_destination, _data, dataSize, _dataLayout, _writeSize);
         }
         , py::arg("destination"), py::arg("data"), py::arg("data_layout"), py::arg("write_size")
         , py::return_value_policy::automatic_reference)
         
-    .def("copy_texture_for_browser",&pywgpu::Queue::CopyTextureForBrowser
+    .def("copy_texture_for_browser",[](pywgpu::Queue& self, py::handle source, py::handle destination, py::handle copySize, py::handle options) {
+        pywgpu::TexelCopyTextureInfo const* _source = buildTexelCopyTextureInfo(source);
+        
+        pywgpu::TexelCopyTextureInfo const* _destination = buildTexelCopyTextureInfo(destination);
+        
+        pywgpu::Extent3D const* _copySize = buildExtent3D(copySize);
+        
+        pywgpu::CopyTextureForBrowserOptions const* _options = buildCopyTextureForBrowserOptions(options);
+        
+        return self.CopyTextureForBrowser(_source, _destination, _copySize, _options);
+        }
         , py::arg("source"), py::arg("destination"), py::arg("copy_size"), py::arg("options")
         , py::return_value_policy::automatic_reference)
         
-    .def("copy_external_texture_for_browser",&pywgpu::Queue::CopyExternalTextureForBrowser
+    .def("copy_external_texture_for_browser",[](pywgpu::Queue& self, py::handle source, py::handle destination, py::handle copySize, py::handle options) {
+        pywgpu::ImageCopyExternalTexture const* _source = buildImageCopyExternalTexture(source);
+        
+        pywgpu::TexelCopyTextureInfo const* _destination = buildTexelCopyTextureInfo(destination);
+        
+        pywgpu::Extent3D const* _copySize = buildExtent3D(copySize);
+        
+        pywgpu::CopyTextureForBrowserOptions const* _options = buildCopyTextureForBrowserOptions(options);
+        
+        return self.CopyExternalTextureForBrowser(_source, _destination, _copySize, _options);
+        }
         , py::arg("source"), py::arg("destination"), py::arg("copy_size"), py::arg("options")
         , py::return_value_policy::automatic_reference)
         
@@ -1490,7 +4882,11 @@ _RenderBundleEncoder
         , py::arg("buffer"), py::arg("format"), py::arg("offset") = 0, py::arg("size") = kWholeSize
         , py::return_value_policy::automatic_reference)
         
-    .def("finish",&pywgpu::RenderBundleEncoder::Finish
+    .def("finish",[](pywgpu::RenderBundleEncoder& self, py::handle descriptor) {
+        pywgpu::RenderBundleDescriptor const* _descriptor = buildRenderBundleDescriptor(descriptor);
+        
+        return self.Finish(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
@@ -1576,7 +4972,11 @@ _RenderPassEncoder
         , py::arg("reference")
         , py::return_value_policy::automatic_reference)
         
-    .def("set_blend_constant",&pywgpu::RenderPassEncoder::SetBlendConstant
+    .def("set_blend_constant",[](pywgpu::RenderPassEncoder& self, py::handle color) {
+        pywgpu::Color const* _color = buildColor(color);
+        
+        return self.SetBlendConstant(_color);
+        }
         , py::arg("color")
         , py::return_value_policy::automatic_reference)
         
@@ -1671,7 +5071,11 @@ py::class_<Surface> _Surface(m, "Surface");
 registry.on(m, "Surface", _Surface);
 
 _Surface
-    .def("configure",&pywgpu::Surface::Configure
+    .def("configure",[](pywgpu::Surface& self, py::handle config) {
+        pywgpu::SurfaceConfiguration const* _config = buildSurfaceConfiguration(config);
+        
+        return self.Configure(_config);
+        }
         , py::arg("config")
         , py::return_value_policy::automatic_reference)
         
@@ -1699,11 +5103,19 @@ py::class_<Texture> _Texture(m, "Texture");
 registry.on(m, "Texture", _Texture);
 
 _Texture
-    .def("create_view",&pywgpu::Texture::CreateView
+    .def("create_view",[](pywgpu::Texture& self, py::handle descriptor) {
+        pywgpu::TextureViewDescriptor const* _descriptor = buildTextureViewDescriptor(descriptor);
+        
+        return self.CreateView(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
-    .def("create_error_view",&pywgpu::Texture::CreateErrorView
+    .def("create_error_view",[](pywgpu::Texture& self, py::handle descriptor) {
+        pywgpu::TextureViewDescriptor const* _descriptor = buildTextureViewDescriptor(descriptor);
+        
+        return self.CreateErrorView(_descriptor);
+        }
         , py::arg("descriptor") = nullptr
         , py::return_value_policy::automatic_reference)
         
@@ -1748,7064 +5160,6 @@ _TextureView
         , py::arg("label")
         , py::return_value_policy::automatic_reference)
         
-    ;
-
-py::class_<INTERNAL_HAVE_EMDAWNWEBGPU_HEADER> _INTERNAL_HAVE_EMDAWNWEBGPU_HEADER(m, "INTERNAL_HAVE_EMDAWNWEBGPU_HEADER");
-registry.on(m, "INTERNAL_HAVE_EMDAWNWEBGPU_HEADER", _INTERNAL_HAVE_EMDAWNWEBGPU_HEADER);
-
-_INTERNAL_HAVE_EMDAWNWEBGPU_HEADER
-    .def_readwrite("unused", &pywgpu::INTERNAL_HAVE_EMDAWNWEBGPU_HEADER::unused)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::INTERNAL_HAVE_EMDAWNWEBGPU_HEADER obj{};
-        static const std::set<std::string> allowed = {"unused"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("unused"))
-        {
-            auto value = kwargs["unused"].cast<Bool>();
-            obj.unused = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RequestAdapterOptions> _RequestAdapterOptions(m, "RequestAdapterOptions");
-registry.on(m, "RequestAdapterOptions", _RequestAdapterOptions);
-
-_RequestAdapterOptions
-    .def_readwrite("next_in_chain", &pywgpu::RequestAdapterOptions::nextInChain)
-    .def_readwrite("feature_level", &pywgpu::RequestAdapterOptions::featureLevel)
-    .def_readwrite("power_preference", &pywgpu::RequestAdapterOptions::powerPreference)
-    .def_readwrite("force_fallback_adapter", &pywgpu::RequestAdapterOptions::forceFallbackAdapter)
-    .def_readwrite("backend_type", &pywgpu::RequestAdapterOptions::backendType)
-    .def_readwrite("compatible_surface", &pywgpu::RequestAdapterOptions::compatibleSurface)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RequestAdapterOptions obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "feature_level", "power_preference", "force_fallback_adapter", "backend_type", "compatible_surface"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("feature_level"))
-        {
-            auto value = kwargs["feature_level"].cast<FeatureLevel>();
-            obj.featureLevel = value;
-        }
-        if (kwargs.contains("power_preference"))
-        {
-            auto value = kwargs["power_preference"].cast<PowerPreference>();
-            obj.powerPreference = value;
-        }
-        if (kwargs.contains("force_fallback_adapter"))
-        {
-            auto value = kwargs["force_fallback_adapter"].cast<Bool>();
-            obj.forceFallbackAdapter = value;
-        }
-        if (kwargs.contains("backend_type"))
-        {
-            auto value = kwargs["backend_type"].cast<BackendType>();
-            obj.backendType = value;
-        }
-        if (kwargs.contains("compatible_surface"))
-        {
-            auto value = kwargs["compatible_surface"].cast<Surface>();
-            obj.compatibleSurface = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<AdapterInfo> _AdapterInfo(m, "AdapterInfo");
-registry.on(m, "AdapterInfo", _AdapterInfo);
-
-_AdapterInfo
-    .def_readonly("next_in_chain", &pywgpu::AdapterInfo::nextInChain)
-    .def_readonly("vendor", &pywgpu::AdapterInfo::vendor)
-    .def_readonly("architecture", &pywgpu::AdapterInfo::architecture)
-    .def_readonly("device", &pywgpu::AdapterInfo::device)
-    .def_readonly("description", &pywgpu::AdapterInfo::description)
-    .def_readonly("backend_type", &pywgpu::AdapterInfo::backendType)
-    .def_readonly("adapter_type", &pywgpu::AdapterInfo::adapterType)
-    .def_readonly("vendor_ID", &pywgpu::AdapterInfo::vendorID)
-    .def_readonly("device_ID", &pywgpu::AdapterInfo::deviceID)
-    .def_readonly("subgroup_min_size", &pywgpu::AdapterInfo::subgroupMinSize)
-    .def_readonly("subgroup_max_size", &pywgpu::AdapterInfo::subgroupMaxSize)
-    .def(py::init<>())
-    ;
-
-py::class_<DeviceDescriptor> _DeviceDescriptor(m, "DeviceDescriptor");
-registry.on(m, "DeviceDescriptor", _DeviceDescriptor);
-
-_DeviceDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::DeviceDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::DeviceDescriptor::label)
-    .def_readwrite("required_feature_count", &pywgpu::DeviceDescriptor::requiredFeatureCount)
-    .def_readwrite("required_features", &pywgpu::DeviceDescriptor::requiredFeatures)
-    .def_readwrite("required_limits", &pywgpu::DeviceDescriptor::requiredLimits)
-    .def_readwrite("default_queue", &pywgpu::DeviceDescriptor::defaultQueue)
-    .def_readwrite("device_lost_callback_info", &pywgpu::DeviceDescriptor::deviceLostCallbackInfo)
-    .def_readwrite("uncaptured_error_callback_info", &pywgpu::DeviceDescriptor::uncapturedErrorCallbackInfo)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DeviceDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "required_features", "required_limits", "default_queue", "device_lost_callback_info", "uncaptured_error_callback_info"};
-        static const std::set<std::string> required = {"device_lost_callback_info", "uncaptured_error_callback_info"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("required_features"))
-        {
-            auto _value = kwargs["required_features"].cast<std::vector<FeatureName>>();
-            auto count = _value.size();
-            auto value = new FeatureName[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.requiredFeatures = value;
-            obj.requiredFeatureCount = count;
-        }
-        if (kwargs.contains("required_limits"))
-        {
-            auto value = kwargs["required_limits"].cast<Limits const *>();
-            obj.requiredLimits = value;
-        }
-        if (kwargs.contains("default_queue"))
-        {
-            auto value = kwargs["default_queue"].cast<QueueDescriptor>();
-            obj.defaultQueue = value;
-        }
-        if (kwargs.contains("device_lost_callback_info"))
-        {
-            auto value = kwargs["device_lost_callback_info"].cast<DeviceLostCallbackInfo>();
-            obj.deviceLostCallbackInfo = value;
-        }
-        if (kwargs.contains("uncaptured_error_callback_info"))
-        {
-            auto value = kwargs["uncaptured_error_callback_info"].cast<UncapturedErrorCallbackInfo>();
-            obj.uncapturedErrorCallbackInfo = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnTogglesDescriptor, ChainedStruct> _DawnTogglesDescriptor(m, "DawnTogglesDescriptor");
-registry.on(m, "DawnTogglesDescriptor", _DawnTogglesDescriptor);
-
-_DawnTogglesDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::DawnTogglesDescriptor::nextInChain)
-    .def_readwrite("enabled_toggle_count", &pywgpu::DawnTogglesDescriptor::enabledToggleCount)
-    .def_readwrite("disabled_toggle_count", &pywgpu::DawnTogglesDescriptor::disabledToggleCount)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnTogglesDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "enabled_toggles", "disabled_toggles"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnCacheDeviceDescriptor, ChainedStruct> _DawnCacheDeviceDescriptor(m, "DawnCacheDeviceDescriptor");
-registry.on(m, "DawnCacheDeviceDescriptor", _DawnCacheDeviceDescriptor);
-
-_DawnCacheDeviceDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::DawnCacheDeviceDescriptor::nextInChain)
-    .def_readwrite("isolation_key", &pywgpu::DawnCacheDeviceDescriptor::isolationKey)
-    .def_readwrite("function_userdata", &pywgpu::DawnCacheDeviceDescriptor::functionUserdata)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnCacheDeviceDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "isolation_key", "load_data_function", "store_data_function", "function_userdata"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("isolation_key"))
-        {
-            auto value = kwargs["isolation_key"].cast<StringView>();
-            obj.isolationKey = value;
-        }
-        if (kwargs.contains("function_userdata"))
-        {
-            auto value = kwargs["function_userdata"].cast<void *>();
-            obj.functionUserdata = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnWGSLBlocklist, ChainedStruct> _DawnWGSLBlocklist(m, "DawnWGSLBlocklist");
-registry.on(m, "DawnWGSLBlocklist", _DawnWGSLBlocklist);
-
-_DawnWGSLBlocklist
-    .def_readwrite("next_in_chain", &pywgpu::DawnWGSLBlocklist::nextInChain)
-    .def_readwrite("blocklisted_feature_count", &pywgpu::DawnWGSLBlocklist::blocklistedFeatureCount)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnWGSLBlocklist obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "blocklisted_features"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BindGroupEntry> _BindGroupEntry(m, "BindGroupEntry");
-registry.on(m, "BindGroupEntry", _BindGroupEntry);
-
-_BindGroupEntry
-    .def_readwrite("next_in_chain", &pywgpu::BindGroupEntry::nextInChain)
-    .def_readwrite("binding", &pywgpu::BindGroupEntry::binding)
-    .def_readwrite("buffer", &pywgpu::BindGroupEntry::buffer)
-    .def_readwrite("offset", &pywgpu::BindGroupEntry::offset)
-    .def_readwrite("size", &pywgpu::BindGroupEntry::size)
-    .def_readwrite("sampler", &pywgpu::BindGroupEntry::sampler)
-    .def_readwrite("texture_view", &pywgpu::BindGroupEntry::textureView)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BindGroupEntry obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "binding", "buffer", "offset", "size", "sampler", "texture_view"};
-        static const std::set<std::string> required = {"binding"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("binding"))
-        {
-            auto value = kwargs["binding"].cast<uint32_t>();
-            obj.binding = value;
-        }
-        if (kwargs.contains("buffer"))
-        {
-            auto value = kwargs["buffer"].cast<Buffer>();
-            obj.buffer = value;
-        }
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("size"))
-        {
-            auto value = kwargs["size"].cast<uint64_t>();
-            obj.size = value;
-        }
-        if (kwargs.contains("sampler"))
-        {
-            auto value = kwargs["sampler"].cast<Sampler>();
-            obj.sampler = value;
-        }
-        if (kwargs.contains("texture_view"))
-        {
-            auto value = kwargs["texture_view"].cast<TextureView>();
-            obj.textureView = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BindGroupDescriptor> _BindGroupDescriptor(m, "BindGroupDescriptor");
-registry.on(m, "BindGroupDescriptor", _BindGroupDescriptor);
-
-_BindGroupDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::BindGroupDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::BindGroupDescriptor::label)
-    .def_readwrite("layout", &pywgpu::BindGroupDescriptor::layout)
-    .def_readwrite("entry_count", &pywgpu::BindGroupDescriptor::entryCount)
-    .def_readwrite("entries", &pywgpu::BindGroupDescriptor::entries)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BindGroupDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "layout", "entries"};
-        static const std::set<std::string> required = {"layout", "entries"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("layout"))
-        {
-            auto value = kwargs["layout"].cast<BindGroupLayout>();
-            obj.layout = value;
-        }
-        if (kwargs.contains("entries"))
-        {
-            auto _value = kwargs["entries"].cast<std::vector<BindGroupEntry>>();
-            auto count = _value.size();
-            auto value = new BindGroupEntry[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.entries = value;
-            obj.entryCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BufferBindingLayout> _BufferBindingLayout(m, "BufferBindingLayout");
-registry.on(m, "BufferBindingLayout", _BufferBindingLayout);
-
-_BufferBindingLayout
-    .def_readwrite("next_in_chain", &pywgpu::BufferBindingLayout::nextInChain)
-    .def_readwrite("type", &pywgpu::BufferBindingLayout::type)
-    .def_readwrite("has_dynamic_offset", &pywgpu::BufferBindingLayout::hasDynamicOffset)
-    .def_readwrite("min_binding_size", &pywgpu::BufferBindingLayout::minBindingSize)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BufferBindingLayout obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "type", "has_dynamic_offset", "min_binding_size"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("type"))
-        {
-            auto value = kwargs["type"].cast<BufferBindingType>();
-            obj.type = value;
-        }
-        if (kwargs.contains("has_dynamic_offset"))
-        {
-            auto value = kwargs["has_dynamic_offset"].cast<Bool>();
-            obj.hasDynamicOffset = value;
-        }
-        if (kwargs.contains("min_binding_size"))
-        {
-            auto value = kwargs["min_binding_size"].cast<uint64_t>();
-            obj.minBindingSize = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SamplerBindingLayout> _SamplerBindingLayout(m, "SamplerBindingLayout");
-registry.on(m, "SamplerBindingLayout", _SamplerBindingLayout);
-
-_SamplerBindingLayout
-    .def_readwrite("next_in_chain", &pywgpu::SamplerBindingLayout::nextInChain)
-    .def_readwrite("type", &pywgpu::SamplerBindingLayout::type)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SamplerBindingLayout obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "type"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("type"))
-        {
-            auto value = kwargs["type"].cast<SamplerBindingType>();
-            obj.type = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<StaticSamplerBindingLayout, ChainedStruct> _StaticSamplerBindingLayout(m, "StaticSamplerBindingLayout");
-registry.on(m, "StaticSamplerBindingLayout", _StaticSamplerBindingLayout);
-
-_StaticSamplerBindingLayout
-    .def_readwrite("next_in_chain", &pywgpu::StaticSamplerBindingLayout::nextInChain)
-    .def_readwrite("sampler", &pywgpu::StaticSamplerBindingLayout::sampler)
-    .def_readwrite("sampled_texture_binding", &pywgpu::StaticSamplerBindingLayout::sampledTextureBinding)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::StaticSamplerBindingLayout obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "sampler", "sampled_texture_binding"};
-        static const std::set<std::string> required = {"sampler"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("sampler"))
-        {
-            auto value = kwargs["sampler"].cast<Sampler>();
-            obj.sampler = value;
-        }
-        if (kwargs.contains("sampled_texture_binding"))
-        {
-            auto value = kwargs["sampled_texture_binding"].cast<uint32_t>();
-            obj.sampledTextureBinding = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<TextureBindingLayout> _TextureBindingLayout(m, "TextureBindingLayout");
-registry.on(m, "TextureBindingLayout", _TextureBindingLayout);
-
-_TextureBindingLayout
-    .def_readwrite("next_in_chain", &pywgpu::TextureBindingLayout::nextInChain)
-    .def_readwrite("sample_type", &pywgpu::TextureBindingLayout::sampleType)
-    .def_readwrite("view_dimension", &pywgpu::TextureBindingLayout::viewDimension)
-    .def_readwrite("multisampled", &pywgpu::TextureBindingLayout::multisampled)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::TextureBindingLayout obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "sample_type", "view_dimension", "multisampled"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("sample_type"))
-        {
-            auto value = kwargs["sample_type"].cast<TextureSampleType>();
-            obj.sampleType = value;
-        }
-        if (kwargs.contains("view_dimension"))
-        {
-            auto value = kwargs["view_dimension"].cast<TextureViewDimension>();
-            obj.viewDimension = value;
-        }
-        if (kwargs.contains("multisampled"))
-        {
-            auto value = kwargs["multisampled"].cast<Bool>();
-            obj.multisampled = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceCapabilities> _SurfaceCapabilities(m, "SurfaceCapabilities");
-registry.on(m, "SurfaceCapabilities", _SurfaceCapabilities);
-
-_SurfaceCapabilities
-    .def_readonly("next_in_chain", &pywgpu::SurfaceCapabilities::nextInChain)
-    .def_readonly("usages", &pywgpu::SurfaceCapabilities::usages)
-    .def_readonly("format_count", &pywgpu::SurfaceCapabilities::formatCount)
-    .def_readonly("formats", &pywgpu::SurfaceCapabilities::formats)
-    .def_readonly("present_mode_count", &pywgpu::SurfaceCapabilities::presentModeCount)
-    .def_readonly("present_modes", &pywgpu::SurfaceCapabilities::presentModes)
-    .def_readonly("alpha_mode_count", &pywgpu::SurfaceCapabilities::alphaModeCount)
-    .def_readonly("alpha_modes", &pywgpu::SurfaceCapabilities::alphaModes)
-    .def(py::init<>())
-    ;
-
-py::class_<SurfaceConfiguration> _SurfaceConfiguration(m, "SurfaceConfiguration");
-registry.on(m, "SurfaceConfiguration", _SurfaceConfiguration);
-
-_SurfaceConfiguration
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceConfiguration::nextInChain)
-    .def_readwrite("device", &pywgpu::SurfaceConfiguration::device)
-    .def_readwrite("format", &pywgpu::SurfaceConfiguration::format)
-    .def_readwrite("usage", &pywgpu::SurfaceConfiguration::usage)
-    .def_readwrite("width", &pywgpu::SurfaceConfiguration::width)
-    .def_readwrite("height", &pywgpu::SurfaceConfiguration::height)
-    .def_readwrite("view_format_count", &pywgpu::SurfaceConfiguration::viewFormatCount)
-    .def_readwrite("view_formats", &pywgpu::SurfaceConfiguration::viewFormats)
-    .def_readwrite("alpha_mode", &pywgpu::SurfaceConfiguration::alphaMode)
-    .def_readwrite("present_mode", &pywgpu::SurfaceConfiguration::presentMode)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceConfiguration obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "device", "format", "usage", "width", "height", "view_formats", "alpha_mode", "present_mode"};
-        static const std::set<std::string> required = {"device", "width", "height"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("device"))
-        {
-            auto value = kwargs["device"].cast<Device>();
-            obj.device = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<TextureFormat>();
-            obj.format = value;
-        }
-        if (kwargs.contains("usage"))
-        {
-            auto value = kwargs["usage"].cast<TextureUsage>();
-            obj.usage = value;
-        }
-        if (kwargs.contains("width"))
-        {
-            auto value = kwargs["width"].cast<uint32_t>();
-            obj.width = value;
-        }
-        if (kwargs.contains("height"))
-        {
-            auto value = kwargs["height"].cast<uint32_t>();
-            obj.height = value;
-        }
-        if (kwargs.contains("view_formats"))
-        {
-            auto _value = kwargs["view_formats"].cast<std::vector<TextureFormat>>();
-            auto count = _value.size();
-            auto value = new TextureFormat[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.viewFormats = value;
-            obj.viewFormatCount = count;
-        }
-        if (kwargs.contains("alpha_mode"))
-        {
-            auto value = kwargs["alpha_mode"].cast<CompositeAlphaMode>();
-            obj.alphaMode = value;
-        }
-        if (kwargs.contains("present_mode"))
-        {
-            auto value = kwargs["present_mode"].cast<PresentMode>();
-            obj.presentMode = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ExternalTextureBindingEntry, ChainedStruct> _ExternalTextureBindingEntry(m, "ExternalTextureBindingEntry");
-registry.on(m, "ExternalTextureBindingEntry", _ExternalTextureBindingEntry);
-
-_ExternalTextureBindingEntry
-    .def_readwrite("next_in_chain", &pywgpu::ExternalTextureBindingEntry::nextInChain)
-    .def_readwrite("external_texture", &pywgpu::ExternalTextureBindingEntry::externalTexture)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ExternalTextureBindingEntry obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "external_texture"};
-        static const std::set<std::string> required = {"external_texture"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("external_texture"))
-        {
-            auto value = kwargs["external_texture"].cast<ExternalTexture>();
-            obj.externalTexture = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ExternalTextureBindingLayout, ChainedStruct> _ExternalTextureBindingLayout(m, "ExternalTextureBindingLayout");
-registry.on(m, "ExternalTextureBindingLayout", _ExternalTextureBindingLayout);
-
-_ExternalTextureBindingLayout
-    .def_readwrite("next_in_chain", &pywgpu::ExternalTextureBindingLayout::nextInChain)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ExternalTextureBindingLayout obj{};
-        static const std::set<std::string> allowed = {"next_in_chain"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<StorageTextureBindingLayout> _StorageTextureBindingLayout(m, "StorageTextureBindingLayout");
-registry.on(m, "StorageTextureBindingLayout", _StorageTextureBindingLayout);
-
-_StorageTextureBindingLayout
-    .def_readwrite("next_in_chain", &pywgpu::StorageTextureBindingLayout::nextInChain)
-    .def_readwrite("access", &pywgpu::StorageTextureBindingLayout::access)
-    .def_readwrite("format", &pywgpu::StorageTextureBindingLayout::format)
-    .def_readwrite("view_dimension", &pywgpu::StorageTextureBindingLayout::viewDimension)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::StorageTextureBindingLayout obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "access", "format", "view_dimension"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("access"))
-        {
-            auto value = kwargs["access"].cast<StorageTextureAccess>();
-            obj.access = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<TextureFormat>();
-            obj.format = value;
-        }
-        if (kwargs.contains("view_dimension"))
-        {
-            auto value = kwargs["view_dimension"].cast<TextureViewDimension>();
-            obj.viewDimension = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BindGroupLayoutEntry> _BindGroupLayoutEntry(m, "BindGroupLayoutEntry");
-registry.on(m, "BindGroupLayoutEntry", _BindGroupLayoutEntry);
-
-_BindGroupLayoutEntry
-    .def_readwrite("next_in_chain", &pywgpu::BindGroupLayoutEntry::nextInChain)
-    .def_readwrite("binding", &pywgpu::BindGroupLayoutEntry::binding)
-    .def_readwrite("visibility", &pywgpu::BindGroupLayoutEntry::visibility)
-    .def_readwrite("buffer", &pywgpu::BindGroupLayoutEntry::buffer)
-    .def_readwrite("sampler", &pywgpu::BindGroupLayoutEntry::sampler)
-    .def_readwrite("texture", &pywgpu::BindGroupLayoutEntry::texture)
-    .def_readwrite("storage_texture", &pywgpu::BindGroupLayoutEntry::storageTexture)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BindGroupLayoutEntry obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "binding", "visibility", "buffer", "sampler", "texture", "storage_texture"};
-        static const std::set<std::string> required = {"binding"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("binding"))
-        {
-            auto value = kwargs["binding"].cast<uint32_t>();
-            obj.binding = value;
-        }
-        if (kwargs.contains("visibility"))
-        {
-            auto value = kwargs["visibility"].cast<ShaderStage>();
-            obj.visibility = value;
-        }
-        if (kwargs.contains("buffer"))
-        {
-            auto value = kwargs["buffer"].cast<BufferBindingLayout>();
-            obj.buffer = value;
-        }
-        if (kwargs.contains("sampler"))
-        {
-            auto value = kwargs["sampler"].cast<SamplerBindingLayout>();
-            obj.sampler = value;
-        }
-        if (kwargs.contains("texture"))
-        {
-            auto value = kwargs["texture"].cast<TextureBindingLayout>();
-            obj.texture = value;
-        }
-        if (kwargs.contains("storage_texture"))
-        {
-            auto value = kwargs["storage_texture"].cast<StorageTextureBindingLayout>();
-            obj.storageTexture = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BindGroupLayoutDescriptor> _BindGroupLayoutDescriptor(m, "BindGroupLayoutDescriptor");
-registry.on(m, "BindGroupLayoutDescriptor", _BindGroupLayoutDescriptor);
-
-_BindGroupLayoutDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::BindGroupLayoutDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::BindGroupLayoutDescriptor::label)
-    .def_readwrite("entry_count", &pywgpu::BindGroupLayoutDescriptor::entryCount)
-    .def_readwrite("entries", &pywgpu::BindGroupLayoutDescriptor::entries)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BindGroupLayoutDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "entries"};
-        static const std::set<std::string> required = {"entries"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("entries"))
-        {
-            auto _value = kwargs["entries"].cast<std::vector<BindGroupLayoutEntry>>();
-            auto count = _value.size();
-            auto value = new BindGroupLayoutEntry[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.entries = value;
-            obj.entryCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BlendComponent> _BlendComponent(m, "BlendComponent");
-registry.on(m, "BlendComponent", _BlendComponent);
-
-_BlendComponent
-    .def_readwrite("operation", &pywgpu::BlendComponent::operation)
-    .def_readwrite("src_factor", &pywgpu::BlendComponent::srcFactor)
-    .def_readwrite("dst_factor", &pywgpu::BlendComponent::dstFactor)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BlendComponent obj{};
-        static const std::set<std::string> allowed = {"operation", "src_factor", "dst_factor"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("operation"))
-        {
-            auto value = kwargs["operation"].cast<BlendOperation>();
-            obj.operation = value;
-        }
-        if (kwargs.contains("src_factor"))
-        {
-            auto value = kwargs["src_factor"].cast<BlendFactor>();
-            obj.srcFactor = value;
-        }
-        if (kwargs.contains("dst_factor"))
-        {
-            auto value = kwargs["dst_factor"].cast<BlendFactor>();
-            obj.dstFactor = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BufferDescriptor> _BufferDescriptor(m, "BufferDescriptor");
-registry.on(m, "BufferDescriptor", _BufferDescriptor);
-
-_BufferDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::BufferDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::BufferDescriptor::label)
-    .def_readwrite("usage", &pywgpu::BufferDescriptor::usage)
-    .def_readwrite("size", &pywgpu::BufferDescriptor::size)
-    .def_readwrite("mapped_at_creation", &pywgpu::BufferDescriptor::mappedAtCreation)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BufferDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "usage", "size", "mapped_at_creation"};
-        static const std::set<std::string> required = {"size"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("usage"))
-        {
-            auto value = kwargs["usage"].cast<BufferUsage>();
-            obj.usage = value;
-        }
-        if (kwargs.contains("size"))
-        {
-            auto value = kwargs["size"].cast<uint64_t>();
-            obj.size = value;
-        }
-        if (kwargs.contains("mapped_at_creation"))
-        {
-            auto value = kwargs["mapped_at_creation"].cast<Bool>();
-            obj.mappedAtCreation = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BufferHostMappedPointer, ChainedStruct> _BufferHostMappedPointer(m, "BufferHostMappedPointer");
-registry.on(m, "BufferHostMappedPointer", _BufferHostMappedPointer);
-
-_BufferHostMappedPointer
-    .def_readwrite("next_in_chain", &pywgpu::BufferHostMappedPointer::nextInChain)
-    .def_readwrite("pointer", &pywgpu::BufferHostMappedPointer::pointer)
-    .def_readwrite("userdata", &pywgpu::BufferHostMappedPointer::userdata)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BufferHostMappedPointer obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "pointer", "dispose_callback", "userdata"};
-        static const std::set<std::string> required = {"pointer", "dispose_callback", "userdata"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("pointer"))
-        {
-            auto value = kwargs["pointer"].cast<void *>();
-            obj.pointer = value;
-        }
-        if (kwargs.contains("userdata"))
-        {
-            auto value = kwargs["userdata"].cast<void *>();
-            obj.userdata = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<Color> _Color(m, "Color");
-registry.on(m, "Color", _Color);
-
-_Color
-    .def_readwrite("r", &pywgpu::Color::r)
-    .def_readwrite("g", &pywgpu::Color::g)
-    .def_readwrite("b", &pywgpu::Color::b)
-    .def_readwrite("a", &pywgpu::Color::a)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::Color obj{};
-        static const std::set<std::string> allowed = {"r", "g", "b", "a"};
-        static const std::set<std::string> required = {"r", "g", "b", "a"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("r"))
-        {
-            auto value = kwargs["r"].cast<double>();
-            obj.r = value;
-        }
-        if (kwargs.contains("g"))
-        {
-            auto value = kwargs["g"].cast<double>();
-            obj.g = value;
-        }
-        if (kwargs.contains("b"))
-        {
-            auto value = kwargs["b"].cast<double>();
-            obj.b = value;
-        }
-        if (kwargs.contains("a"))
-        {
-            auto value = kwargs["a"].cast<double>();
-            obj.a = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ConstantEntry> _ConstantEntry(m, "ConstantEntry");
-registry.on(m, "ConstantEntry", _ConstantEntry);
-
-_ConstantEntry
-    .def_readwrite("next_in_chain", &pywgpu::ConstantEntry::nextInChain)
-    .def_readwrite("key", &pywgpu::ConstantEntry::key)
-    .def_readwrite("value", &pywgpu::ConstantEntry::value)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ConstantEntry obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "key", "value"};
-        static const std::set<std::string> required = {"value"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("key"))
-        {
-            auto value = kwargs["key"].cast<StringView>();
-            obj.key = value;
-        }
-        if (kwargs.contains("value"))
-        {
-            auto value = kwargs["value"].cast<double>();
-            obj.value = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<CommandBufferDescriptor> _CommandBufferDescriptor(m, "CommandBufferDescriptor");
-registry.on(m, "CommandBufferDescriptor", _CommandBufferDescriptor);
-
-_CommandBufferDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::CommandBufferDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::CommandBufferDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::CommandBufferDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<CommandEncoderDescriptor> _CommandEncoderDescriptor(m, "CommandEncoderDescriptor");
-registry.on(m, "CommandEncoderDescriptor", _CommandEncoderDescriptor);
-
-_CommandEncoderDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::CommandEncoderDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::CommandEncoderDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::CommandEncoderDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<CompilationInfo> _CompilationInfo(m, "CompilationInfo");
-registry.on(m, "CompilationInfo", _CompilationInfo);
-
-_CompilationInfo
-    .def_readwrite("next_in_chain", &pywgpu::CompilationInfo::nextInChain)
-    .def_readwrite("message_count", &pywgpu::CompilationInfo::messageCount)
-    .def_readwrite("messages", &pywgpu::CompilationInfo::messages)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::CompilationInfo obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "messages"};
-        static const std::set<std::string> required = {"messages"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("messages"))
-        {
-            auto _value = kwargs["messages"].cast<std::vector<CompilationMessage>>();
-            auto count = _value.size();
-            auto value = new CompilationMessage[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.messages = value;
-            obj.messageCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<CompilationMessage> _CompilationMessage(m, "CompilationMessage");
-registry.on(m, "CompilationMessage", _CompilationMessage);
-
-_CompilationMessage
-    .def_readwrite("next_in_chain", &pywgpu::CompilationMessage::nextInChain)
-    .def_readwrite("message", &pywgpu::CompilationMessage::message)
-    .def_readwrite("type", &pywgpu::CompilationMessage::type)
-    .def_readwrite("line_num", &pywgpu::CompilationMessage::lineNum)
-    .def_readwrite("line_pos", &pywgpu::CompilationMessage::linePos)
-    .def_readwrite("offset", &pywgpu::CompilationMessage::offset)
-    .def_readwrite("length", &pywgpu::CompilationMessage::length)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::CompilationMessage obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "message", "type", "line_num", "line_pos", "offset", "length"};
-        static const std::set<std::string> required = {"line_num", "line_pos", "offset", "length"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("message"))
-        {
-            auto value = kwargs["message"].cast<StringView>();
-            obj.message = value;
-        }
-        if (kwargs.contains("type"))
-        {
-            auto value = kwargs["type"].cast<CompilationMessageType>();
-            obj.type = value;
-        }
-        if (kwargs.contains("line_num"))
-        {
-            auto value = kwargs["line_num"].cast<uint64_t>();
-            obj.lineNum = value;
-        }
-        if (kwargs.contains("line_pos"))
-        {
-            auto value = kwargs["line_pos"].cast<uint64_t>();
-            obj.linePos = value;
-        }
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("length"))
-        {
-            auto value = kwargs["length"].cast<uint64_t>();
-            obj.length = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnCompilationMessageUtf16, ChainedStruct> _DawnCompilationMessageUtf16(m, "DawnCompilationMessageUtf16");
-registry.on(m, "DawnCompilationMessageUtf16", _DawnCompilationMessageUtf16);
-
-_DawnCompilationMessageUtf16
-    .def_readwrite("next_in_chain", &pywgpu::DawnCompilationMessageUtf16::nextInChain)
-    .def_readwrite("line_pos", &pywgpu::DawnCompilationMessageUtf16::linePos)
-    .def_readwrite("offset", &pywgpu::DawnCompilationMessageUtf16::offset)
-    .def_readwrite("length", &pywgpu::DawnCompilationMessageUtf16::length)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnCompilationMessageUtf16 obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "line_pos", "offset", "length"};
-        static const std::set<std::string> required = {"line_pos", "offset", "length"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("line_pos"))
-        {
-            auto value = kwargs["line_pos"].cast<uint64_t>();
-            obj.linePos = value;
-        }
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("length"))
-        {
-            auto value = kwargs["length"].cast<uint64_t>();
-            obj.length = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ComputePassDescriptor> _ComputePassDescriptor(m, "ComputePassDescriptor");
-registry.on(m, "ComputePassDescriptor", _ComputePassDescriptor);
-
-_ComputePassDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::ComputePassDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::ComputePassDescriptor::label)
-    .def_readwrite("timestamp_writes", &pywgpu::ComputePassDescriptor::timestampWrites)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ComputePassDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "timestamp_writes"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("timestamp_writes"))
-        {
-            auto value = kwargs["timestamp_writes"].cast<PassTimestampWrites const *>();
-            obj.timestampWrites = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ComputePipelineDescriptor> _ComputePipelineDescriptor(m, "ComputePipelineDescriptor");
-registry.on(m, "ComputePipelineDescriptor", _ComputePipelineDescriptor);
-
-_ComputePipelineDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::ComputePipelineDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::ComputePipelineDescriptor::label)
-    .def_readwrite("layout", &pywgpu::ComputePipelineDescriptor::layout)
-    .def_readwrite("compute", &pywgpu::ComputePipelineDescriptor::compute)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ComputePipelineDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "layout", "compute"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("layout"))
-        {
-            auto value = kwargs["layout"].cast<PipelineLayout>();
-            obj.layout = value;
-        }
-        if (kwargs.contains("compute"))
-        {
-            auto value = kwargs["compute"].cast<ComputeState>();
-            obj.compute = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<CopyTextureForBrowserOptions> _CopyTextureForBrowserOptions(m, "CopyTextureForBrowserOptions");
-registry.on(m, "CopyTextureForBrowserOptions", _CopyTextureForBrowserOptions);
-
-_CopyTextureForBrowserOptions
-    .def_readwrite("next_in_chain", &pywgpu::CopyTextureForBrowserOptions::nextInChain)
-    .def_readwrite("flip_y", &pywgpu::CopyTextureForBrowserOptions::flipY)
-    .def_readwrite("needs_color_space_conversion", &pywgpu::CopyTextureForBrowserOptions::needsColorSpaceConversion)
-    .def_readwrite("src_alpha_mode", &pywgpu::CopyTextureForBrowserOptions::srcAlphaMode)
-    .def_readwrite("src_transfer_function_parameters", &pywgpu::CopyTextureForBrowserOptions::srcTransferFunctionParameters)
-    .def_readwrite("conversion_matrix", &pywgpu::CopyTextureForBrowserOptions::conversionMatrix)
-    .def_readwrite("dst_transfer_function_parameters", &pywgpu::CopyTextureForBrowserOptions::dstTransferFunctionParameters)
-    .def_readwrite("dst_alpha_mode", &pywgpu::CopyTextureForBrowserOptions::dstAlphaMode)
-    .def_readwrite("internal_usage", &pywgpu::CopyTextureForBrowserOptions::internalUsage)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::CopyTextureForBrowserOptions obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "flip_y", "needs_color_space_conversion", "src_alpha_mode", "src_transfer_function_parameters", "conversion_matrix", "dst_transfer_function_parameters", "dst_alpha_mode", "internal_usage"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("flip_y"))
-        {
-            auto value = kwargs["flip_y"].cast<Bool>();
-            obj.flipY = value;
-        }
-        if (kwargs.contains("needs_color_space_conversion"))
-        {
-            auto value = kwargs["needs_color_space_conversion"].cast<Bool>();
-            obj.needsColorSpaceConversion = value;
-        }
-        if (kwargs.contains("src_alpha_mode"))
-        {
-            auto value = kwargs["src_alpha_mode"].cast<AlphaMode>();
-            obj.srcAlphaMode = value;
-        }
-        if (kwargs.contains("src_transfer_function_parameters"))
-        {
-            auto _value = kwargs["src_transfer_function_parameters"].cast<std::vector<float>>();
-            auto count = _value.size();
-            auto value = new float[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.srcTransferFunctionParameters = value;
-        }
-        if (kwargs.contains("conversion_matrix"))
-        {
-            auto _value = kwargs["conversion_matrix"].cast<std::vector<float>>();
-            auto count = _value.size();
-            auto value = new float[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.conversionMatrix = value;
-        }
-        if (kwargs.contains("dst_transfer_function_parameters"))
-        {
-            auto _value = kwargs["dst_transfer_function_parameters"].cast<std::vector<float>>();
-            auto count = _value.size();
-            auto value = new float[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.dstTransferFunctionParameters = value;
-        }
-        if (kwargs.contains("dst_alpha_mode"))
-        {
-            auto value = kwargs["dst_alpha_mode"].cast<AlphaMode>();
-            obj.dstAlphaMode = value;
-        }
-        if (kwargs.contains("internal_usage"))
-        {
-            auto value = kwargs["internal_usage"].cast<Bool>();
-            obj.internalUsage = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<AHardwareBufferProperties> _AHardwareBufferProperties(m, "AHardwareBufferProperties");
-registry.on(m, "AHardwareBufferProperties", _AHardwareBufferProperties);
-
-_AHardwareBufferProperties
-    .def_readwrite("y_cb_cr_info", &pywgpu::AHardwareBufferProperties::yCbCrInfo)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::AHardwareBufferProperties obj{};
-        static const std::set<std::string> allowed = {"y_cb_cr_info"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("y_cb_cr_info"))
-        {
-            auto value = kwargs["y_cb_cr_info"].cast<YCbCrVkDescriptor>();
-            obj.yCbCrInfo = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<Limits> _Limits(m, "Limits");
-registry.on(m, "Limits", _Limits);
-
-_Limits
-    .def_readwrite("next_in_chain", &pywgpu::Limits::nextInChain)
-    .def_readwrite("max_texture_dimension_1D", &pywgpu::Limits::maxTextureDimension1D)
-    .def_readwrite("max_texture_dimension_2D", &pywgpu::Limits::maxTextureDimension2D)
-    .def_readwrite("max_texture_dimension_3D", &pywgpu::Limits::maxTextureDimension3D)
-    .def_readwrite("max_texture_array_layers", &pywgpu::Limits::maxTextureArrayLayers)
-    .def_readwrite("max_bind_groups", &pywgpu::Limits::maxBindGroups)
-    .def_readwrite("max_bind_groups_plus_vertex_buffers", &pywgpu::Limits::maxBindGroupsPlusVertexBuffers)
-    .def_readwrite("max_bindings_per_bind_group", &pywgpu::Limits::maxBindingsPerBindGroup)
-    .def_readwrite("max_dynamic_uniform_buffers_per_pipeline_layout", &pywgpu::Limits::maxDynamicUniformBuffersPerPipelineLayout)
-    .def_readwrite("max_dynamic_storage_buffers_per_pipeline_layout", &pywgpu::Limits::maxDynamicStorageBuffersPerPipelineLayout)
-    .def_readwrite("max_sampled_textures_per_shader_stage", &pywgpu::Limits::maxSampledTexturesPerShaderStage)
-    .def_readwrite("max_samplers_per_shader_stage", &pywgpu::Limits::maxSamplersPerShaderStage)
-    .def_readwrite("max_storage_buffers_per_shader_stage", &pywgpu::Limits::maxStorageBuffersPerShaderStage)
-    .def_readwrite("max_storage_textures_per_shader_stage", &pywgpu::Limits::maxStorageTexturesPerShaderStage)
-    .def_readwrite("max_uniform_buffers_per_shader_stage", &pywgpu::Limits::maxUniformBuffersPerShaderStage)
-    .def_readwrite("max_uniform_buffer_binding_size", &pywgpu::Limits::maxUniformBufferBindingSize)
-    .def_readwrite("max_storage_buffer_binding_size", &pywgpu::Limits::maxStorageBufferBindingSize)
-    .def_readwrite("min_uniform_buffer_offset_alignment", &pywgpu::Limits::minUniformBufferOffsetAlignment)
-    .def_readwrite("min_storage_buffer_offset_alignment", &pywgpu::Limits::minStorageBufferOffsetAlignment)
-    .def_readwrite("max_vertex_buffers", &pywgpu::Limits::maxVertexBuffers)
-    .def_readwrite("max_buffer_size", &pywgpu::Limits::maxBufferSize)
-    .def_readwrite("max_vertex_attributes", &pywgpu::Limits::maxVertexAttributes)
-    .def_readwrite("max_vertex_buffer_array_stride", &pywgpu::Limits::maxVertexBufferArrayStride)
-    .def_readwrite("max_inter_stage_shader_variables", &pywgpu::Limits::maxInterStageShaderVariables)
-    .def_readwrite("max_color_attachments", &pywgpu::Limits::maxColorAttachments)
-    .def_readwrite("max_color_attachment_bytes_per_sample", &pywgpu::Limits::maxColorAttachmentBytesPerSample)
-    .def_readwrite("max_compute_workgroup_storage_size", &pywgpu::Limits::maxComputeWorkgroupStorageSize)
-    .def_readwrite("max_compute_invocations_per_workgroup", &pywgpu::Limits::maxComputeInvocationsPerWorkgroup)
-    .def_readwrite("max_compute_workgroup_size_x", &pywgpu::Limits::maxComputeWorkgroupSizeX)
-    .def_readwrite("max_compute_workgroup_size_y", &pywgpu::Limits::maxComputeWorkgroupSizeY)
-    .def_readwrite("max_compute_workgroup_size_z", &pywgpu::Limits::maxComputeWorkgroupSizeZ)
-    .def_readwrite("max_compute_workgroups_per_dimension", &pywgpu::Limits::maxComputeWorkgroupsPerDimension)
-    .def_readwrite("max_storage_buffers_in_vertex_stage", &pywgpu::Limits::maxStorageBuffersInVertexStage)
-    .def_readwrite("max_storage_textures_in_vertex_stage", &pywgpu::Limits::maxStorageTexturesInVertexStage)
-    .def_readwrite("max_storage_buffers_in_fragment_stage", &pywgpu::Limits::maxStorageBuffersInFragmentStage)
-    .def_readwrite("max_storage_textures_in_fragment_stage", &pywgpu::Limits::maxStorageTexturesInFragmentStage)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::Limits obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "max_texture_dimension_1D", "max_texture_dimension_2D", "max_texture_dimension_3D", "max_texture_array_layers", "max_bind_groups", "max_bind_groups_plus_vertex_buffers", "max_bindings_per_bind_group", "max_dynamic_uniform_buffers_per_pipeline_layout", "max_dynamic_storage_buffers_per_pipeline_layout", "max_sampled_textures_per_shader_stage", "max_samplers_per_shader_stage", "max_storage_buffers_per_shader_stage", "max_storage_textures_per_shader_stage", "max_uniform_buffers_per_shader_stage", "max_uniform_buffer_binding_size", "max_storage_buffer_binding_size", "min_uniform_buffer_offset_alignment", "min_storage_buffer_offset_alignment", "max_vertex_buffers", "max_buffer_size", "max_vertex_attributes", "max_vertex_buffer_array_stride", "max_inter_stage_shader_variables", "max_color_attachments", "max_color_attachment_bytes_per_sample", "max_compute_workgroup_storage_size", "max_compute_invocations_per_workgroup", "max_compute_workgroup_size_x", "max_compute_workgroup_size_y", "max_compute_workgroup_size_z", "max_compute_workgroups_per_dimension", "max_storage_buffers_in_vertex_stage", "max_storage_textures_in_vertex_stage", "max_storage_buffers_in_fragment_stage", "max_storage_textures_in_fragment_stage"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStructOut *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("max_texture_dimension_1D"))
-        {
-            auto value = kwargs["max_texture_dimension_1D"].cast<uint32_t>();
-            obj.maxTextureDimension1D = value;
-        }
-        if (kwargs.contains("max_texture_dimension_2D"))
-        {
-            auto value = kwargs["max_texture_dimension_2D"].cast<uint32_t>();
-            obj.maxTextureDimension2D = value;
-        }
-        if (kwargs.contains("max_texture_dimension_3D"))
-        {
-            auto value = kwargs["max_texture_dimension_3D"].cast<uint32_t>();
-            obj.maxTextureDimension3D = value;
-        }
-        if (kwargs.contains("max_texture_array_layers"))
-        {
-            auto value = kwargs["max_texture_array_layers"].cast<uint32_t>();
-            obj.maxTextureArrayLayers = value;
-        }
-        if (kwargs.contains("max_bind_groups"))
-        {
-            auto value = kwargs["max_bind_groups"].cast<uint32_t>();
-            obj.maxBindGroups = value;
-        }
-        if (kwargs.contains("max_bind_groups_plus_vertex_buffers"))
-        {
-            auto value = kwargs["max_bind_groups_plus_vertex_buffers"].cast<uint32_t>();
-            obj.maxBindGroupsPlusVertexBuffers = value;
-        }
-        if (kwargs.contains("max_bindings_per_bind_group"))
-        {
-            auto value = kwargs["max_bindings_per_bind_group"].cast<uint32_t>();
-            obj.maxBindingsPerBindGroup = value;
-        }
-        if (kwargs.contains("max_dynamic_uniform_buffers_per_pipeline_layout"))
-        {
-            auto value = kwargs["max_dynamic_uniform_buffers_per_pipeline_layout"].cast<uint32_t>();
-            obj.maxDynamicUniformBuffersPerPipelineLayout = value;
-        }
-        if (kwargs.contains("max_dynamic_storage_buffers_per_pipeline_layout"))
-        {
-            auto value = kwargs["max_dynamic_storage_buffers_per_pipeline_layout"].cast<uint32_t>();
-            obj.maxDynamicStorageBuffersPerPipelineLayout = value;
-        }
-        if (kwargs.contains("max_sampled_textures_per_shader_stage"))
-        {
-            auto value = kwargs["max_sampled_textures_per_shader_stage"].cast<uint32_t>();
-            obj.maxSampledTexturesPerShaderStage = value;
-        }
-        if (kwargs.contains("max_samplers_per_shader_stage"))
-        {
-            auto value = kwargs["max_samplers_per_shader_stage"].cast<uint32_t>();
-            obj.maxSamplersPerShaderStage = value;
-        }
-        if (kwargs.contains("max_storage_buffers_per_shader_stage"))
-        {
-            auto value = kwargs["max_storage_buffers_per_shader_stage"].cast<uint32_t>();
-            obj.maxStorageBuffersPerShaderStage = value;
-        }
-        if (kwargs.contains("max_storage_textures_per_shader_stage"))
-        {
-            auto value = kwargs["max_storage_textures_per_shader_stage"].cast<uint32_t>();
-            obj.maxStorageTexturesPerShaderStage = value;
-        }
-        if (kwargs.contains("max_uniform_buffers_per_shader_stage"))
-        {
-            auto value = kwargs["max_uniform_buffers_per_shader_stage"].cast<uint32_t>();
-            obj.maxUniformBuffersPerShaderStage = value;
-        }
-        if (kwargs.contains("max_uniform_buffer_binding_size"))
-        {
-            auto value = kwargs["max_uniform_buffer_binding_size"].cast<uint64_t>();
-            obj.maxUniformBufferBindingSize = value;
-        }
-        if (kwargs.contains("max_storage_buffer_binding_size"))
-        {
-            auto value = kwargs["max_storage_buffer_binding_size"].cast<uint64_t>();
-            obj.maxStorageBufferBindingSize = value;
-        }
-        if (kwargs.contains("min_uniform_buffer_offset_alignment"))
-        {
-            auto value = kwargs["min_uniform_buffer_offset_alignment"].cast<uint32_t>();
-            obj.minUniformBufferOffsetAlignment = value;
-        }
-        if (kwargs.contains("min_storage_buffer_offset_alignment"))
-        {
-            auto value = kwargs["min_storage_buffer_offset_alignment"].cast<uint32_t>();
-            obj.minStorageBufferOffsetAlignment = value;
-        }
-        if (kwargs.contains("max_vertex_buffers"))
-        {
-            auto value = kwargs["max_vertex_buffers"].cast<uint32_t>();
-            obj.maxVertexBuffers = value;
-        }
-        if (kwargs.contains("max_buffer_size"))
-        {
-            auto value = kwargs["max_buffer_size"].cast<uint64_t>();
-            obj.maxBufferSize = value;
-        }
-        if (kwargs.contains("max_vertex_attributes"))
-        {
-            auto value = kwargs["max_vertex_attributes"].cast<uint32_t>();
-            obj.maxVertexAttributes = value;
-        }
-        if (kwargs.contains("max_vertex_buffer_array_stride"))
-        {
-            auto value = kwargs["max_vertex_buffer_array_stride"].cast<uint32_t>();
-            obj.maxVertexBufferArrayStride = value;
-        }
-        if (kwargs.contains("max_inter_stage_shader_variables"))
-        {
-            auto value = kwargs["max_inter_stage_shader_variables"].cast<uint32_t>();
-            obj.maxInterStageShaderVariables = value;
-        }
-        if (kwargs.contains("max_color_attachments"))
-        {
-            auto value = kwargs["max_color_attachments"].cast<uint32_t>();
-            obj.maxColorAttachments = value;
-        }
-        if (kwargs.contains("max_color_attachment_bytes_per_sample"))
-        {
-            auto value = kwargs["max_color_attachment_bytes_per_sample"].cast<uint32_t>();
-            obj.maxColorAttachmentBytesPerSample = value;
-        }
-        if (kwargs.contains("max_compute_workgroup_storage_size"))
-        {
-            auto value = kwargs["max_compute_workgroup_storage_size"].cast<uint32_t>();
-            obj.maxComputeWorkgroupStorageSize = value;
-        }
-        if (kwargs.contains("max_compute_invocations_per_workgroup"))
-        {
-            auto value = kwargs["max_compute_invocations_per_workgroup"].cast<uint32_t>();
-            obj.maxComputeInvocationsPerWorkgroup = value;
-        }
-        if (kwargs.contains("max_compute_workgroup_size_x"))
-        {
-            auto value = kwargs["max_compute_workgroup_size_x"].cast<uint32_t>();
-            obj.maxComputeWorkgroupSizeX = value;
-        }
-        if (kwargs.contains("max_compute_workgroup_size_y"))
-        {
-            auto value = kwargs["max_compute_workgroup_size_y"].cast<uint32_t>();
-            obj.maxComputeWorkgroupSizeY = value;
-        }
-        if (kwargs.contains("max_compute_workgroup_size_z"))
-        {
-            auto value = kwargs["max_compute_workgroup_size_z"].cast<uint32_t>();
-            obj.maxComputeWorkgroupSizeZ = value;
-        }
-        if (kwargs.contains("max_compute_workgroups_per_dimension"))
-        {
-            auto value = kwargs["max_compute_workgroups_per_dimension"].cast<uint32_t>();
-            obj.maxComputeWorkgroupsPerDimension = value;
-        }
-        if (kwargs.contains("max_storage_buffers_in_vertex_stage"))
-        {
-            auto value = kwargs["max_storage_buffers_in_vertex_stage"].cast<uint32_t>();
-            obj.maxStorageBuffersInVertexStage = value;
-        }
-        if (kwargs.contains("max_storage_textures_in_vertex_stage"))
-        {
-            auto value = kwargs["max_storage_textures_in_vertex_stage"].cast<uint32_t>();
-            obj.maxStorageTexturesInVertexStage = value;
-        }
-        if (kwargs.contains("max_storage_buffers_in_fragment_stage"))
-        {
-            auto value = kwargs["max_storage_buffers_in_fragment_stage"].cast<uint32_t>();
-            obj.maxStorageBuffersInFragmentStage = value;
-        }
-        if (kwargs.contains("max_storage_textures_in_fragment_stage"))
-        {
-            auto value = kwargs["max_storage_textures_in_fragment_stage"].cast<uint32_t>();
-            obj.maxStorageTexturesInFragmentStage = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<AdapterPropertiesSubgroups, ChainedStructOut> _AdapterPropertiesSubgroups(m, "AdapterPropertiesSubgroups");
-registry.on(m, "AdapterPropertiesSubgroups", _AdapterPropertiesSubgroups);
-
-_AdapterPropertiesSubgroups
-    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesSubgroups::nextInChain)
-    .def_readonly("subgroup_min_size", &pywgpu::AdapterPropertiesSubgroups::subgroupMinSize)
-    .def_readonly("subgroup_max_size", &pywgpu::AdapterPropertiesSubgroups::subgroupMaxSize)
-    .def(py::init<>())
-    ;
-
-py::class_<DawnExperimentalImmediateDataLimits, ChainedStructOut> _DawnExperimentalImmediateDataLimits(m, "DawnExperimentalImmediateDataLimits");
-registry.on(m, "DawnExperimentalImmediateDataLimits", _DawnExperimentalImmediateDataLimits);
-
-_DawnExperimentalImmediateDataLimits
-    .def_readonly("next_in_chain", &pywgpu::DawnExperimentalImmediateDataLimits::nextInChain)
-    .def_readonly("max_immediate_data_range_byte_size", &pywgpu::DawnExperimentalImmediateDataLimits::maxImmediateDataRangeByteSize)
-    .def(py::init<>())
-    ;
-
-py::class_<DawnTexelCopyBufferRowAlignmentLimits, ChainedStructOut> _DawnTexelCopyBufferRowAlignmentLimits(m, "DawnTexelCopyBufferRowAlignmentLimits");
-registry.on(m, "DawnTexelCopyBufferRowAlignmentLimits", _DawnTexelCopyBufferRowAlignmentLimits);
-
-_DawnTexelCopyBufferRowAlignmentLimits
-    .def_readonly("next_in_chain", &pywgpu::DawnTexelCopyBufferRowAlignmentLimits::nextInChain)
-    .def_readonly("min_texel_copy_buffer_row_alignment", &pywgpu::DawnTexelCopyBufferRowAlignmentLimits::minTexelCopyBufferRowAlignment)
-    .def(py::init<>())
-    ;
-
-py::class_<SupportedFeatures> _SupportedFeatures(m, "SupportedFeatures");
-registry.on(m, "SupportedFeatures", _SupportedFeatures);
-
-_SupportedFeatures
-    .def_readwrite("feature_count", &pywgpu::SupportedFeatures::featureCount)
-    .def_readwrite("features", &pywgpu::SupportedFeatures::features)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SupportedFeatures obj{};
-        static const std::set<std::string> allowed = {"features"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("features"))
-        {
-            auto _value = kwargs["features"].cast<std::vector<FeatureName>>();
-            auto count = _value.size();
-            auto value = new FeatureName[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.features = value;
-            obj.featureCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SupportedWGSLLanguageFeatures> _SupportedWGSLLanguageFeatures(m, "SupportedWGSLLanguageFeatures");
-registry.on(m, "SupportedWGSLLanguageFeatures", _SupportedWGSLLanguageFeatures);
-
-_SupportedWGSLLanguageFeatures
-    .def_readwrite("feature_count", &pywgpu::SupportedWGSLLanguageFeatures::featureCount)
-    .def_readwrite("features", &pywgpu::SupportedWGSLLanguageFeatures::features)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SupportedWGSLLanguageFeatures obj{};
-        static const std::set<std::string> allowed = {"features"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("features"))
-        {
-            auto _value = kwargs["features"].cast<std::vector<WGSLLanguageFeatureName>>();
-            auto count = _value.size();
-            auto value = new WGSLLanguageFeatureName[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.features = value;
-            obj.featureCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<Extent2D> _Extent2D(m, "Extent2D");
-registry.on(m, "Extent2D", _Extent2D);
-
-_Extent2D
-    .def_readwrite("width", &pywgpu::Extent2D::width)
-    .def_readwrite("height", &pywgpu::Extent2D::height)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::Extent2D obj{};
-        static const std::set<std::string> allowed = {"width", "height"};
-        static const std::set<std::string> required = {"width", "height"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("width"))
-        {
-            auto value = kwargs["width"].cast<uint32_t>();
-            obj.width = value;
-        }
-        if (kwargs.contains("height"))
-        {
-            auto value = kwargs["height"].cast<uint32_t>();
-            obj.height = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<Extent3D> _Extent3D(m, "Extent3D");
-registry.on(m, "Extent3D", _Extent3D);
-
-_Extent3D
-    .def_readwrite("width", &pywgpu::Extent3D::width)
-    .def_readwrite("height", &pywgpu::Extent3D::height)
-    .def_readwrite("depth_or_array_layers", &pywgpu::Extent3D::depthOrArrayLayers)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::Extent3D obj{};
-        static const std::set<std::string> allowed = {"width", "height", "depth_or_array_layers"};
-        static const std::set<std::string> required = {"width"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("width"))
-        {
-            auto value = kwargs["width"].cast<uint32_t>();
-            obj.width = value;
-        }
-        if (kwargs.contains("height"))
-        {
-            auto value = kwargs["height"].cast<uint32_t>();
-            obj.height = value;
-        }
-        if (kwargs.contains("depth_or_array_layers"))
-        {
-            auto value = kwargs["depth_or_array_layers"].cast<uint32_t>();
-            obj.depthOrArrayLayers = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ExternalTextureDescriptor> _ExternalTextureDescriptor(m, "ExternalTextureDescriptor");
-registry.on(m, "ExternalTextureDescriptor", _ExternalTextureDescriptor);
-
-_ExternalTextureDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::ExternalTextureDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::ExternalTextureDescriptor::label)
-    .def_readwrite("plane_0", &pywgpu::ExternalTextureDescriptor::plane0)
-    .def_readwrite("plane_1", &pywgpu::ExternalTextureDescriptor::plane1)
-    .def_readwrite("crop_origin", &pywgpu::ExternalTextureDescriptor::cropOrigin)
-    .def_readwrite("crop_size", &pywgpu::ExternalTextureDescriptor::cropSize)
-    .def_readwrite("apparent_size", &pywgpu::ExternalTextureDescriptor::apparentSize)
-    .def_readwrite("do_yuv_to_rgb_conversion_only", &pywgpu::ExternalTextureDescriptor::doYuvToRgbConversionOnly)
-    .def_readwrite("yuv_to_rgb_conversion_matrix", &pywgpu::ExternalTextureDescriptor::yuvToRgbConversionMatrix)
-    .def_readwrite("src_transfer_function_parameters", &pywgpu::ExternalTextureDescriptor::srcTransferFunctionParameters)
-    .def_readwrite("dst_transfer_function_parameters", &pywgpu::ExternalTextureDescriptor::dstTransferFunctionParameters)
-    .def_readwrite("gamut_conversion_matrix", &pywgpu::ExternalTextureDescriptor::gamutConversionMatrix)
-    .def_readwrite("mirrored", &pywgpu::ExternalTextureDescriptor::mirrored)
-    .def_readwrite("rotation", &pywgpu::ExternalTextureDescriptor::rotation)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ExternalTextureDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "plane_0", "plane_1", "crop_origin", "crop_size", "apparent_size", "do_yuv_to_rgb_conversion_only", "yuv_to_rgb_conversion_matrix", "src_transfer_function_parameters", "dst_transfer_function_parameters", "gamut_conversion_matrix", "mirrored", "rotation"};
-        static const std::set<std::string> required = {"plane_0", "src_transfer_function_parameters", "dst_transfer_function_parameters", "gamut_conversion_matrix"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("plane_0"))
-        {
-            auto value = kwargs["plane_0"].cast<TextureView>();
-            obj.plane0 = value;
-        }
-        if (kwargs.contains("plane_1"))
-        {
-            auto value = kwargs["plane_1"].cast<TextureView>();
-            obj.plane1 = value;
-        }
-        if (kwargs.contains("crop_origin"))
-        {
-            auto value = kwargs["crop_origin"].cast<Origin2D>();
-            obj.cropOrigin = value;
-        }
-        if (kwargs.contains("crop_size"))
-        {
-            auto value = kwargs["crop_size"].cast<Extent2D>();
-            obj.cropSize = value;
-        }
-        if (kwargs.contains("apparent_size"))
-        {
-            auto value = kwargs["apparent_size"].cast<Extent2D>();
-            obj.apparentSize = value;
-        }
-        if (kwargs.contains("do_yuv_to_rgb_conversion_only"))
-        {
-            auto value = kwargs["do_yuv_to_rgb_conversion_only"].cast<Bool>();
-            obj.doYuvToRgbConversionOnly = value;
-        }
-        if (kwargs.contains("yuv_to_rgb_conversion_matrix"))
-        {
-            auto _value = kwargs["yuv_to_rgb_conversion_matrix"].cast<std::vector<float>>();
-            auto count = _value.size();
-            auto value = new float[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.yuvToRgbConversionMatrix = value;
-        }
-        if (kwargs.contains("src_transfer_function_parameters"))
-        {
-            auto _value = kwargs["src_transfer_function_parameters"].cast<std::vector<float>>();
-            auto count = _value.size();
-            auto value = new float[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.srcTransferFunctionParameters = value;
-        }
-        if (kwargs.contains("dst_transfer_function_parameters"))
-        {
-            auto _value = kwargs["dst_transfer_function_parameters"].cast<std::vector<float>>();
-            auto count = _value.size();
-            auto value = new float[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.dstTransferFunctionParameters = value;
-        }
-        if (kwargs.contains("gamut_conversion_matrix"))
-        {
-            auto _value = kwargs["gamut_conversion_matrix"].cast<std::vector<float>>();
-            auto count = _value.size();
-            auto value = new float[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.gamutConversionMatrix = value;
-        }
-        if (kwargs.contains("mirrored"))
-        {
-            auto value = kwargs["mirrored"].cast<Bool>();
-            obj.mirrored = value;
-        }
-        if (kwargs.contains("rotation"))
-        {
-            auto value = kwargs["rotation"].cast<ExternalTextureRotation>();
-            obj.rotation = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedBufferMemoryProperties> _SharedBufferMemoryProperties(m, "SharedBufferMemoryProperties");
-registry.on(m, "SharedBufferMemoryProperties", _SharedBufferMemoryProperties);
-
-_SharedBufferMemoryProperties
-    .def_readonly("next_in_chain", &pywgpu::SharedBufferMemoryProperties::nextInChain)
-    .def_readonly("usage", &pywgpu::SharedBufferMemoryProperties::usage)
-    .def_readonly("size", &pywgpu::SharedBufferMemoryProperties::size)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedBufferMemoryDescriptor> _SharedBufferMemoryDescriptor(m, "SharedBufferMemoryDescriptor");
-registry.on(m, "SharedBufferMemoryDescriptor", _SharedBufferMemoryDescriptor);
-
-_SharedBufferMemoryDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedBufferMemoryDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::SharedBufferMemoryDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedBufferMemoryDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryProperties> _SharedTextureMemoryProperties(m, "SharedTextureMemoryProperties");
-registry.on(m, "SharedTextureMemoryProperties", _SharedTextureMemoryProperties);
-
-_SharedTextureMemoryProperties
-    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryProperties::nextInChain)
-    .def_readonly("usage", &pywgpu::SharedTextureMemoryProperties::usage)
-    .def_readonly("size", &pywgpu::SharedTextureMemoryProperties::size)
-    .def_readonly("format", &pywgpu::SharedTextureMemoryProperties::format)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedTextureMemoryAHardwareBufferProperties, ChainedStructOut> _SharedTextureMemoryAHardwareBufferProperties(m, "SharedTextureMemoryAHardwareBufferProperties");
-registry.on(m, "SharedTextureMemoryAHardwareBufferProperties", _SharedTextureMemoryAHardwareBufferProperties);
-
-_SharedTextureMemoryAHardwareBufferProperties
-    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryAHardwareBufferProperties::nextInChain)
-    .def_readonly("y_cb_cr_info", &pywgpu::SharedTextureMemoryAHardwareBufferProperties::yCbCrInfo)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedTextureMemoryDescriptor> _SharedTextureMemoryDescriptor(m, "SharedTextureMemoryDescriptor");
-registry.on(m, "SharedTextureMemoryDescriptor", _SharedTextureMemoryDescriptor);
-
-_SharedTextureMemoryDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::SharedTextureMemoryDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedBufferMemoryBeginAccessDescriptor> _SharedBufferMemoryBeginAccessDescriptor(m, "SharedBufferMemoryBeginAccessDescriptor");
-registry.on(m, "SharedBufferMemoryBeginAccessDescriptor", _SharedBufferMemoryBeginAccessDescriptor);
-
-_SharedBufferMemoryBeginAccessDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedBufferMemoryBeginAccessDescriptor::nextInChain)
-    .def_readwrite("initialized", &pywgpu::SharedBufferMemoryBeginAccessDescriptor::initialized)
-    .def_readwrite("fence_count", &pywgpu::SharedBufferMemoryBeginAccessDescriptor::fenceCount)
-    .def_readwrite("fences", &pywgpu::SharedBufferMemoryBeginAccessDescriptor::fences)
-    .def_readwrite("signaled_values", &pywgpu::SharedBufferMemoryBeginAccessDescriptor::signaledValues)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedBufferMemoryBeginAccessDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "initialized", "fences", "signaled_values"};
-        static const std::set<std::string> required = {"initialized"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("initialized"))
-        {
-            auto value = kwargs["initialized"].cast<Bool>();
-            obj.initialized = value;
-        }
-        if (kwargs.contains("fences"))
-        {
-            auto _value = kwargs["fences"].cast<std::vector<SharedFence>>();
-            auto count = _value.size();
-            auto value = new SharedFence[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.fences = value;
-            obj.fenceCount = count;
-        }
-        if (kwargs.contains("signaled_values"))
-        {
-            auto _value = kwargs["signaled_values"].cast<std::vector<uint64_t>>();
-            auto count = _value.size();
-            auto value = new uint64_t[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.signaledValues = value;
-            obj.fenceCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedBufferMemoryEndAccessState> _SharedBufferMemoryEndAccessState(m, "SharedBufferMemoryEndAccessState");
-registry.on(m, "SharedBufferMemoryEndAccessState", _SharedBufferMemoryEndAccessState);
-
-_SharedBufferMemoryEndAccessState
-    .def_readonly("next_in_chain", &pywgpu::SharedBufferMemoryEndAccessState::nextInChain)
-    .def_readonly("initialized", &pywgpu::SharedBufferMemoryEndAccessState::initialized)
-    .def_readonly("fence_count", &pywgpu::SharedBufferMemoryEndAccessState::fenceCount)
-    .def_readonly("fences", &pywgpu::SharedBufferMemoryEndAccessState::fences)
-    .def_readonly("signaled_values", &pywgpu::SharedBufferMemoryEndAccessState::signaledValues)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedTextureMemoryVkDedicatedAllocationDescriptor, ChainedStruct> _SharedTextureMemoryVkDedicatedAllocationDescriptor(m, "SharedTextureMemoryVkDedicatedAllocationDescriptor");
-registry.on(m, "SharedTextureMemoryVkDedicatedAllocationDescriptor", _SharedTextureMemoryVkDedicatedAllocationDescriptor);
-
-_SharedTextureMemoryVkDedicatedAllocationDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryVkDedicatedAllocationDescriptor::nextInChain)
-    .def_readwrite("dedicated_allocation", &pywgpu::SharedTextureMemoryVkDedicatedAllocationDescriptor::dedicatedAllocation)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryVkDedicatedAllocationDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "dedicated_allocation"};
-        static const std::set<std::string> required = {"dedicated_allocation"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("dedicated_allocation"))
-        {
-            auto value = kwargs["dedicated_allocation"].cast<Bool>();
-            obj.dedicatedAllocation = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryAHardwareBufferDescriptor, ChainedStruct> _SharedTextureMemoryAHardwareBufferDescriptor(m, "SharedTextureMemoryAHardwareBufferDescriptor");
-registry.on(m, "SharedTextureMemoryAHardwareBufferDescriptor", _SharedTextureMemoryAHardwareBufferDescriptor);
-
-_SharedTextureMemoryAHardwareBufferDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryAHardwareBufferDescriptor::nextInChain)
-    .def_readwrite("handle", &pywgpu::SharedTextureMemoryAHardwareBufferDescriptor::handle)
-    .def_readwrite("use_external_format", &pywgpu::SharedTextureMemoryAHardwareBufferDescriptor::useExternalFormat)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryAHardwareBufferDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "handle", "use_external_format"};
-        static const std::set<std::string> required = {"handle", "use_external_format"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("handle"))
-        {
-            auto value = kwargs["handle"].cast<void *>();
-            obj.handle = value;
-        }
-        if (kwargs.contains("use_external_format"))
-        {
-            auto value = kwargs["use_external_format"].cast<Bool>();
-            obj.useExternalFormat = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryDmaBufPlane> _SharedTextureMemoryDmaBufPlane(m, "SharedTextureMemoryDmaBufPlane");
-registry.on(m, "SharedTextureMemoryDmaBufPlane", _SharedTextureMemoryDmaBufPlane);
-
-_SharedTextureMemoryDmaBufPlane
-    .def_readwrite("fd", &pywgpu::SharedTextureMemoryDmaBufPlane::fd)
-    .def_readwrite("offset", &pywgpu::SharedTextureMemoryDmaBufPlane::offset)
-    .def_readwrite("stride", &pywgpu::SharedTextureMemoryDmaBufPlane::stride)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryDmaBufPlane obj{};
-        static const std::set<std::string> allowed = {"fd", "offset", "stride"};
-        static const std::set<std::string> required = {"fd", "offset", "stride"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("fd"))
-        {
-            auto value = kwargs["fd"].cast<int>();
-            obj.fd = value;
-        }
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("stride"))
-        {
-            auto value = kwargs["stride"].cast<uint32_t>();
-            obj.stride = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryDmaBufDescriptor, ChainedStruct> _SharedTextureMemoryDmaBufDescriptor(m, "SharedTextureMemoryDmaBufDescriptor");
-registry.on(m, "SharedTextureMemoryDmaBufDescriptor", _SharedTextureMemoryDmaBufDescriptor);
-
-_SharedTextureMemoryDmaBufDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryDmaBufDescriptor::nextInChain)
-    .def_readwrite("size", &pywgpu::SharedTextureMemoryDmaBufDescriptor::size)
-    .def_readwrite("drm_format", &pywgpu::SharedTextureMemoryDmaBufDescriptor::drmFormat)
-    .def_readwrite("drm_modifier", &pywgpu::SharedTextureMemoryDmaBufDescriptor::drmModifier)
-    .def_readwrite("plane_count", &pywgpu::SharedTextureMemoryDmaBufDescriptor::planeCount)
-    .def_readwrite("planes", &pywgpu::SharedTextureMemoryDmaBufDescriptor::planes)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryDmaBufDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "size", "drm_format", "drm_modifier", "planes"};
-        static const std::set<std::string> required = {"drm_format", "drm_modifier", "planes"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("size"))
-        {
-            auto value = kwargs["size"].cast<Extent3D>();
-            obj.size = value;
-        }
-        if (kwargs.contains("drm_format"))
-        {
-            auto value = kwargs["drm_format"].cast<uint32_t>();
-            obj.drmFormat = value;
-        }
-        if (kwargs.contains("drm_modifier"))
-        {
-            auto value = kwargs["drm_modifier"].cast<uint64_t>();
-            obj.drmModifier = value;
-        }
-        if (kwargs.contains("planes"))
-        {
-            auto _value = kwargs["planes"].cast<std::vector<SharedTextureMemoryDmaBufPlane>>();
-            auto count = _value.size();
-            auto value = new SharedTextureMemoryDmaBufPlane[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.planes = value;
-            obj.planeCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryOpaqueFDDescriptor, ChainedStruct> _SharedTextureMemoryOpaqueFDDescriptor(m, "SharedTextureMemoryOpaqueFDDescriptor");
-registry.on(m, "SharedTextureMemoryOpaqueFDDescriptor", _SharedTextureMemoryOpaqueFDDescriptor);
-
-_SharedTextureMemoryOpaqueFDDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryOpaqueFDDescriptor::nextInChain)
-    .def_readwrite("vk_image_create_info", &pywgpu::SharedTextureMemoryOpaqueFDDescriptor::vkImageCreateInfo)
-    .def_readwrite("memory_FD", &pywgpu::SharedTextureMemoryOpaqueFDDescriptor::memoryFD)
-    .def_readwrite("memory_type_index", &pywgpu::SharedTextureMemoryOpaqueFDDescriptor::memoryTypeIndex)
-    .def_readwrite("allocation_size", &pywgpu::SharedTextureMemoryOpaqueFDDescriptor::allocationSize)
-    .def_readwrite("dedicated_allocation", &pywgpu::SharedTextureMemoryOpaqueFDDescriptor::dedicatedAllocation)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryOpaqueFDDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "vk_image_create_info", "memory_FD", "memory_type_index", "allocation_size", "dedicated_allocation"};
-        static const std::set<std::string> required = {"vk_image_create_info", "memory_FD", "memory_type_index", "allocation_size", "dedicated_allocation"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("vk_image_create_info"))
-        {
-            auto value = kwargs["vk_image_create_info"].cast<void const *>();
-            obj.vkImageCreateInfo = value;
-        }
-        if (kwargs.contains("memory_FD"))
-        {
-            auto value = kwargs["memory_FD"].cast<int>();
-            obj.memoryFD = value;
-        }
-        if (kwargs.contains("memory_type_index"))
-        {
-            auto value = kwargs["memory_type_index"].cast<uint32_t>();
-            obj.memoryTypeIndex = value;
-        }
-        if (kwargs.contains("allocation_size"))
-        {
-            auto value = kwargs["allocation_size"].cast<uint64_t>();
-            obj.allocationSize = value;
-        }
-        if (kwargs.contains("dedicated_allocation"))
-        {
-            auto value = kwargs["dedicated_allocation"].cast<Bool>();
-            obj.dedicatedAllocation = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryZirconHandleDescriptor, ChainedStruct> _SharedTextureMemoryZirconHandleDescriptor(m, "SharedTextureMemoryZirconHandleDescriptor");
-registry.on(m, "SharedTextureMemoryZirconHandleDescriptor", _SharedTextureMemoryZirconHandleDescriptor);
-
-_SharedTextureMemoryZirconHandleDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryZirconHandleDescriptor::nextInChain)
-    .def_readwrite("memory_FD", &pywgpu::SharedTextureMemoryZirconHandleDescriptor::memoryFD)
-    .def_readwrite("allocation_size", &pywgpu::SharedTextureMemoryZirconHandleDescriptor::allocationSize)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryZirconHandleDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "memory_FD", "allocation_size"};
-        static const std::set<std::string> required = {"memory_FD", "allocation_size"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("memory_FD"))
-        {
-            auto value = kwargs["memory_FD"].cast<uint32_t>();
-            obj.memoryFD = value;
-        }
-        if (kwargs.contains("allocation_size"))
-        {
-            auto value = kwargs["allocation_size"].cast<uint64_t>();
-            obj.allocationSize = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryDXGISharedHandleDescriptor, ChainedStruct> _SharedTextureMemoryDXGISharedHandleDescriptor(m, "SharedTextureMemoryDXGISharedHandleDescriptor");
-registry.on(m, "SharedTextureMemoryDXGISharedHandleDescriptor", _SharedTextureMemoryDXGISharedHandleDescriptor);
-
-_SharedTextureMemoryDXGISharedHandleDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryDXGISharedHandleDescriptor::nextInChain)
-    .def_readwrite("handle", &pywgpu::SharedTextureMemoryDXGISharedHandleDescriptor::handle)
-    .def_readwrite("use_keyed_mutex", &pywgpu::SharedTextureMemoryDXGISharedHandleDescriptor::useKeyedMutex)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryDXGISharedHandleDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "handle", "use_keyed_mutex"};
-        static const std::set<std::string> required = {"handle", "use_keyed_mutex"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("handle"))
-        {
-            auto value = kwargs["handle"].cast<void *>();
-            obj.handle = value;
-        }
-        if (kwargs.contains("use_keyed_mutex"))
-        {
-            auto value = kwargs["use_keyed_mutex"].cast<Bool>();
-            obj.useKeyedMutex = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryIOSurfaceDescriptor, ChainedStruct> _SharedTextureMemoryIOSurfaceDescriptor(m, "SharedTextureMemoryIOSurfaceDescriptor");
-registry.on(m, "SharedTextureMemoryIOSurfaceDescriptor", _SharedTextureMemoryIOSurfaceDescriptor);
-
-_SharedTextureMemoryIOSurfaceDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryIOSurfaceDescriptor::nextInChain)
-    .def_readwrite("io_surface", &pywgpu::SharedTextureMemoryIOSurfaceDescriptor::ioSurface)
-    .def_readwrite("allow_storage_binding", &pywgpu::SharedTextureMemoryIOSurfaceDescriptor::allowStorageBinding)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryIOSurfaceDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "io_surface", "allow_storage_binding"};
-        static const std::set<std::string> required = {"io_surface"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("io_surface"))
-        {
-            auto value = kwargs["io_surface"].cast<void *>();
-            obj.ioSurface = value;
-        }
-        if (kwargs.contains("allow_storage_binding"))
-        {
-            auto value = kwargs["allow_storage_binding"].cast<Bool>();
-            obj.allowStorageBinding = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryEGLImageDescriptor, ChainedStruct> _SharedTextureMemoryEGLImageDescriptor(m, "SharedTextureMemoryEGLImageDescriptor");
-registry.on(m, "SharedTextureMemoryEGLImageDescriptor", _SharedTextureMemoryEGLImageDescriptor);
-
-_SharedTextureMemoryEGLImageDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryEGLImageDescriptor::nextInChain)
-    .def_readwrite("image", &pywgpu::SharedTextureMemoryEGLImageDescriptor::image)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryEGLImageDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "image"};
-        static const std::set<std::string> required = {"image"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("image"))
-        {
-            auto value = kwargs["image"].cast<void *>();
-            obj.image = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryBeginAccessDescriptor> _SharedTextureMemoryBeginAccessDescriptor(m, "SharedTextureMemoryBeginAccessDescriptor");
-registry.on(m, "SharedTextureMemoryBeginAccessDescriptor", _SharedTextureMemoryBeginAccessDescriptor);
-
-_SharedTextureMemoryBeginAccessDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryBeginAccessDescriptor::nextInChain)
-    .def_readwrite("concurrent_read", &pywgpu::SharedTextureMemoryBeginAccessDescriptor::concurrentRead)
-    .def_readwrite("initialized", &pywgpu::SharedTextureMemoryBeginAccessDescriptor::initialized)
-    .def_readwrite("fence_count", &pywgpu::SharedTextureMemoryBeginAccessDescriptor::fenceCount)
-    .def_readwrite("fences", &pywgpu::SharedTextureMemoryBeginAccessDescriptor::fences)
-    .def_readwrite("signaled_values", &pywgpu::SharedTextureMemoryBeginAccessDescriptor::signaledValues)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryBeginAccessDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "concurrent_read", "initialized", "fences", "signaled_values"};
-        static const std::set<std::string> required = {"concurrent_read", "initialized", "fences", "signaled_values"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("concurrent_read"))
-        {
-            auto value = kwargs["concurrent_read"].cast<Bool>();
-            obj.concurrentRead = value;
-        }
-        if (kwargs.contains("initialized"))
-        {
-            auto value = kwargs["initialized"].cast<Bool>();
-            obj.initialized = value;
-        }
-        if (kwargs.contains("fences"))
-        {
-            auto _value = kwargs["fences"].cast<std::vector<SharedFence>>();
-            auto count = _value.size();
-            auto value = new SharedFence[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.fences = value;
-            obj.fenceCount = count;
-        }
-        if (kwargs.contains("signaled_values"))
-        {
-            auto _value = kwargs["signaled_values"].cast<std::vector<uint64_t>>();
-            auto count = _value.size();
-            auto value = new uint64_t[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.signaledValues = value;
-            obj.fenceCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryEndAccessState> _SharedTextureMemoryEndAccessState(m, "SharedTextureMemoryEndAccessState");
-registry.on(m, "SharedTextureMemoryEndAccessState", _SharedTextureMemoryEndAccessState);
-
-_SharedTextureMemoryEndAccessState
-    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryEndAccessState::nextInChain)
-    .def_readonly("initialized", &pywgpu::SharedTextureMemoryEndAccessState::initialized)
-    .def_readonly("fence_count", &pywgpu::SharedTextureMemoryEndAccessState::fenceCount)
-    .def_readonly("fences", &pywgpu::SharedTextureMemoryEndAccessState::fences)
-    .def_readonly("signaled_values", &pywgpu::SharedTextureMemoryEndAccessState::signaledValues)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedTextureMemoryVkImageLayoutBeginState, ChainedStruct> _SharedTextureMemoryVkImageLayoutBeginState(m, "SharedTextureMemoryVkImageLayoutBeginState");
-registry.on(m, "SharedTextureMemoryVkImageLayoutBeginState", _SharedTextureMemoryVkImageLayoutBeginState);
-
-_SharedTextureMemoryVkImageLayoutBeginState
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryVkImageLayoutBeginState::nextInChain)
-    .def_readwrite("old_layout", &pywgpu::SharedTextureMemoryVkImageLayoutBeginState::oldLayout)
-    .def_readwrite("new_layout", &pywgpu::SharedTextureMemoryVkImageLayoutBeginState::newLayout)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryVkImageLayoutBeginState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "old_layout", "new_layout"};
-        static const std::set<std::string> required = {"old_layout", "new_layout"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("old_layout"))
-        {
-            auto value = kwargs["old_layout"].cast<int32_t>();
-            obj.oldLayout = value;
-        }
-        if (kwargs.contains("new_layout"))
-        {
-            auto value = kwargs["new_layout"].cast<int32_t>();
-            obj.newLayout = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedTextureMemoryVkImageLayoutEndState, ChainedStructOut> _SharedTextureMemoryVkImageLayoutEndState(m, "SharedTextureMemoryVkImageLayoutEndState");
-registry.on(m, "SharedTextureMemoryVkImageLayoutEndState", _SharedTextureMemoryVkImageLayoutEndState);
-
-_SharedTextureMemoryVkImageLayoutEndState
-    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryVkImageLayoutEndState::nextInChain)
-    .def_readonly("old_layout", &pywgpu::SharedTextureMemoryVkImageLayoutEndState::oldLayout)
-    .def_readonly("new_layout", &pywgpu::SharedTextureMemoryVkImageLayoutEndState::newLayout)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedTextureMemoryD3DSwapchainBeginState, ChainedStruct> _SharedTextureMemoryD3DSwapchainBeginState(m, "SharedTextureMemoryD3DSwapchainBeginState");
-registry.on(m, "SharedTextureMemoryD3DSwapchainBeginState", _SharedTextureMemoryD3DSwapchainBeginState);
-
-_SharedTextureMemoryD3DSwapchainBeginState
-    .def_readwrite("next_in_chain", &pywgpu::SharedTextureMemoryD3DSwapchainBeginState::nextInChain)
-    .def_readwrite("is_swapchain", &pywgpu::SharedTextureMemoryD3DSwapchainBeginState::isSwapchain)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedTextureMemoryD3DSwapchainBeginState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "is_swapchain"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("is_swapchain"))
-        {
-            auto value = kwargs["is_swapchain"].cast<Bool>();
-            obj.isSwapchain = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceDescriptor> _SharedFenceDescriptor(m, "SharedFenceDescriptor");
-registry.on(m, "SharedFenceDescriptor", _SharedFenceDescriptor);
-
-_SharedFenceDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedFenceDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::SharedFenceDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedFenceDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceVkSemaphoreOpaqueFDDescriptor, ChainedStruct> _SharedFenceVkSemaphoreOpaqueFDDescriptor(m, "SharedFenceVkSemaphoreOpaqueFDDescriptor");
-registry.on(m, "SharedFenceVkSemaphoreOpaqueFDDescriptor", _SharedFenceVkSemaphoreOpaqueFDDescriptor);
-
-_SharedFenceVkSemaphoreOpaqueFDDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor::nextInChain)
-    .def_readwrite("handle", &pywgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor::handle)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "handle"};
-        static const std::set<std::string> required = {"handle"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("handle"))
-        {
-            auto value = kwargs["handle"].cast<int>();
-            obj.handle = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceSyncFDDescriptor, ChainedStruct> _SharedFenceSyncFDDescriptor(m, "SharedFenceSyncFDDescriptor");
-registry.on(m, "SharedFenceSyncFDDescriptor", _SharedFenceSyncFDDescriptor);
-
-_SharedFenceSyncFDDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedFenceSyncFDDescriptor::nextInChain)
-    .def_readwrite("handle", &pywgpu::SharedFenceSyncFDDescriptor::handle)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedFenceSyncFDDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "handle"};
-        static const std::set<std::string> required = {"handle"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("handle"))
-        {
-            auto value = kwargs["handle"].cast<int>();
-            obj.handle = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceVkSemaphoreZirconHandleDescriptor, ChainedStruct> _SharedFenceVkSemaphoreZirconHandleDescriptor(m, "SharedFenceVkSemaphoreZirconHandleDescriptor");
-registry.on(m, "SharedFenceVkSemaphoreZirconHandleDescriptor", _SharedFenceVkSemaphoreZirconHandleDescriptor);
-
-_SharedFenceVkSemaphoreZirconHandleDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedFenceVkSemaphoreZirconHandleDescriptor::nextInChain)
-    .def_readwrite("handle", &pywgpu::SharedFenceVkSemaphoreZirconHandleDescriptor::handle)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedFenceVkSemaphoreZirconHandleDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "handle"};
-        static const std::set<std::string> required = {"handle"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("handle"))
-        {
-            auto value = kwargs["handle"].cast<uint32_t>();
-            obj.handle = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceDXGISharedHandleDescriptor, ChainedStruct> _SharedFenceDXGISharedHandleDescriptor(m, "SharedFenceDXGISharedHandleDescriptor");
-registry.on(m, "SharedFenceDXGISharedHandleDescriptor", _SharedFenceDXGISharedHandleDescriptor);
-
-_SharedFenceDXGISharedHandleDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedFenceDXGISharedHandleDescriptor::nextInChain)
-    .def_readwrite("handle", &pywgpu::SharedFenceDXGISharedHandleDescriptor::handle)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedFenceDXGISharedHandleDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "handle"};
-        static const std::set<std::string> required = {"handle"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("handle"))
-        {
-            auto value = kwargs["handle"].cast<void *>();
-            obj.handle = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceMTLSharedEventDescriptor, ChainedStruct> _SharedFenceMTLSharedEventDescriptor(m, "SharedFenceMTLSharedEventDescriptor");
-registry.on(m, "SharedFenceMTLSharedEventDescriptor", _SharedFenceMTLSharedEventDescriptor);
-
-_SharedFenceMTLSharedEventDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedFenceMTLSharedEventDescriptor::nextInChain)
-    .def_readwrite("shared_event", &pywgpu::SharedFenceMTLSharedEventDescriptor::sharedEvent)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedFenceMTLSharedEventDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "shared_event"};
-        static const std::set<std::string> required = {"shared_event"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("shared_event"))
-        {
-            auto value = kwargs["shared_event"].cast<void *>();
-            obj.sharedEvent = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceEGLSyncDescriptor, ChainedStruct> _SharedFenceEGLSyncDescriptor(m, "SharedFenceEGLSyncDescriptor");
-registry.on(m, "SharedFenceEGLSyncDescriptor", _SharedFenceEGLSyncDescriptor);
-
-_SharedFenceEGLSyncDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SharedFenceEGLSyncDescriptor::nextInChain)
-    .def_readwrite("sync", &pywgpu::SharedFenceEGLSyncDescriptor::sync)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SharedFenceEGLSyncDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "sync"};
-        static const std::set<std::string> required = {"sync"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("sync"))
-        {
-            auto value = kwargs["sync"].cast<void *>();
-            obj.sync = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnFakeBufferOOMForTesting, ChainedStruct> _DawnFakeBufferOOMForTesting(m, "DawnFakeBufferOOMForTesting");
-registry.on(m, "DawnFakeBufferOOMForTesting", _DawnFakeBufferOOMForTesting);
-
-_DawnFakeBufferOOMForTesting
-    .def_readwrite("next_in_chain", &pywgpu::DawnFakeBufferOOMForTesting::nextInChain)
-    .def_readwrite("fake_OOM_at_wire_client_map", &pywgpu::DawnFakeBufferOOMForTesting::fakeOOMAtWireClientMap)
-    .def_readwrite("fake_OOM_at_native_map", &pywgpu::DawnFakeBufferOOMForTesting::fakeOOMAtNativeMap)
-    .def_readwrite("fake_OOM_at_device", &pywgpu::DawnFakeBufferOOMForTesting::fakeOOMAtDevice)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnFakeBufferOOMForTesting obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "fake_OOM_at_wire_client_map", "fake_OOM_at_native_map", "fake_OOM_at_device"};
-        static const std::set<std::string> required = {"fake_OOM_at_wire_client_map", "fake_OOM_at_native_map", "fake_OOM_at_device"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("fake_OOM_at_wire_client_map"))
-        {
-            auto value = kwargs["fake_OOM_at_wire_client_map"].cast<Bool>();
-            obj.fakeOOMAtWireClientMap = value;
-        }
-        if (kwargs.contains("fake_OOM_at_native_map"))
-        {
-            auto value = kwargs["fake_OOM_at_native_map"].cast<Bool>();
-            obj.fakeOOMAtNativeMap = value;
-        }
-        if (kwargs.contains("fake_OOM_at_device"))
-        {
-            auto value = kwargs["fake_OOM_at_device"].cast<Bool>();
-            obj.fakeOOMAtDevice = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SharedFenceExportInfo> _SharedFenceExportInfo(m, "SharedFenceExportInfo");
-registry.on(m, "SharedFenceExportInfo", _SharedFenceExportInfo);
-
-_SharedFenceExportInfo
-    .def_readonly("next_in_chain", &pywgpu::SharedFenceExportInfo::nextInChain)
-    .def_readonly("type", &pywgpu::SharedFenceExportInfo::type)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedFenceVkSemaphoreOpaqueFDExportInfo, ChainedStructOut> _SharedFenceVkSemaphoreOpaqueFDExportInfo(m, "SharedFenceVkSemaphoreOpaqueFDExportInfo");
-registry.on(m, "SharedFenceVkSemaphoreOpaqueFDExportInfo", _SharedFenceVkSemaphoreOpaqueFDExportInfo);
-
-_SharedFenceVkSemaphoreOpaqueFDExportInfo
-    .def_readonly("next_in_chain", &pywgpu::SharedFenceVkSemaphoreOpaqueFDExportInfo::nextInChain)
-    .def_readonly("handle", &pywgpu::SharedFenceVkSemaphoreOpaqueFDExportInfo::handle)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedFenceSyncFDExportInfo, ChainedStructOut> _SharedFenceSyncFDExportInfo(m, "SharedFenceSyncFDExportInfo");
-registry.on(m, "SharedFenceSyncFDExportInfo", _SharedFenceSyncFDExportInfo);
-
-_SharedFenceSyncFDExportInfo
-    .def_readonly("next_in_chain", &pywgpu::SharedFenceSyncFDExportInfo::nextInChain)
-    .def_readonly("handle", &pywgpu::SharedFenceSyncFDExportInfo::handle)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedFenceVkSemaphoreZirconHandleExportInfo, ChainedStructOut> _SharedFenceVkSemaphoreZirconHandleExportInfo(m, "SharedFenceVkSemaphoreZirconHandleExportInfo");
-registry.on(m, "SharedFenceVkSemaphoreZirconHandleExportInfo", _SharedFenceVkSemaphoreZirconHandleExportInfo);
-
-_SharedFenceVkSemaphoreZirconHandleExportInfo
-    .def_readonly("next_in_chain", &pywgpu::SharedFenceVkSemaphoreZirconHandleExportInfo::nextInChain)
-    .def_readonly("handle", &pywgpu::SharedFenceVkSemaphoreZirconHandleExportInfo::handle)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedFenceDXGISharedHandleExportInfo, ChainedStructOut> _SharedFenceDXGISharedHandleExportInfo(m, "SharedFenceDXGISharedHandleExportInfo");
-registry.on(m, "SharedFenceDXGISharedHandleExportInfo", _SharedFenceDXGISharedHandleExportInfo);
-
-_SharedFenceDXGISharedHandleExportInfo
-    .def_readonly("next_in_chain", &pywgpu::SharedFenceDXGISharedHandleExportInfo::nextInChain)
-    .def_readonly("handle", &pywgpu::SharedFenceDXGISharedHandleExportInfo::handle)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedFenceMTLSharedEventExportInfo, ChainedStructOut> _SharedFenceMTLSharedEventExportInfo(m, "SharedFenceMTLSharedEventExportInfo");
-registry.on(m, "SharedFenceMTLSharedEventExportInfo", _SharedFenceMTLSharedEventExportInfo);
-
-_SharedFenceMTLSharedEventExportInfo
-    .def_readonly("next_in_chain", &pywgpu::SharedFenceMTLSharedEventExportInfo::nextInChain)
-    .def_readonly("shared_event", &pywgpu::SharedFenceMTLSharedEventExportInfo::sharedEvent)
-    .def(py::init<>())
-    ;
-
-py::class_<SharedFenceEGLSyncExportInfo, ChainedStructOut> _SharedFenceEGLSyncExportInfo(m, "SharedFenceEGLSyncExportInfo");
-registry.on(m, "SharedFenceEGLSyncExportInfo", _SharedFenceEGLSyncExportInfo);
-
-_SharedFenceEGLSyncExportInfo
-    .def_readonly("next_in_chain", &pywgpu::SharedFenceEGLSyncExportInfo::nextInChain)
-    .def_readonly("sync", &pywgpu::SharedFenceEGLSyncExportInfo::sync)
-    .def(py::init<>())
-    ;
-
-py::class_<DawnFormatCapabilities> _DawnFormatCapabilities(m, "DawnFormatCapabilities");
-registry.on(m, "DawnFormatCapabilities", _DawnFormatCapabilities);
-
-_DawnFormatCapabilities
-    .def_readonly("next_in_chain", &pywgpu::DawnFormatCapabilities::nextInChain)
-    .def(py::init<>())
-    ;
-
-py::class_<DawnDrmFormatCapabilities, ChainedStructOut> _DawnDrmFormatCapabilities(m, "DawnDrmFormatCapabilities");
-registry.on(m, "DawnDrmFormatCapabilities", _DawnDrmFormatCapabilities);
-
-_DawnDrmFormatCapabilities
-    .def_readonly("next_in_chain", &pywgpu::DawnDrmFormatCapabilities::nextInChain)
-    .def_readonly("properties_count", &pywgpu::DawnDrmFormatCapabilities::propertiesCount)
-    .def_readonly("properties", &pywgpu::DawnDrmFormatCapabilities::properties)
-    .def(py::init<>())
-    ;
-
-py::class_<DawnDrmFormatProperties> _DawnDrmFormatProperties(m, "DawnDrmFormatProperties");
-registry.on(m, "DawnDrmFormatProperties", _DawnDrmFormatProperties);
-
-_DawnDrmFormatProperties
-    .def_readwrite("modifier", &pywgpu::DawnDrmFormatProperties::modifier)
-    .def_readwrite("modifier_plane_count", &pywgpu::DawnDrmFormatProperties::modifierPlaneCount)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnDrmFormatProperties obj{};
-        static const std::set<std::string> allowed = {"modifier", "modifier_plane_count"};
-        static const std::set<std::string> required = {"modifier", "modifier_plane_count"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("modifier"))
-        {
-            auto value = kwargs["modifier"].cast<uint64_t>();
-            obj.modifier = value;
-        }
-        if (kwargs.contains("modifier_plane_count"))
-        {
-            auto value = kwargs["modifier_plane_count"].cast<uint32_t>();
-            obj.modifierPlaneCount = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<TexelCopyBufferInfo> _TexelCopyBufferInfo(m, "TexelCopyBufferInfo");
-registry.on(m, "TexelCopyBufferInfo", _TexelCopyBufferInfo);
-
-_TexelCopyBufferInfo
-    .def_readwrite("layout", &pywgpu::TexelCopyBufferInfo::layout)
-    .def_readwrite("buffer", &pywgpu::TexelCopyBufferInfo::buffer)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::TexelCopyBufferInfo obj{};
-        static const std::set<std::string> allowed = {"layout", "buffer"};
-        static const std::set<std::string> required = {"buffer"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("layout"))
-        {
-            auto value = kwargs["layout"].cast<TexelCopyBufferLayout>();
-            obj.layout = value;
-        }
-        if (kwargs.contains("buffer"))
-        {
-            auto value = kwargs["buffer"].cast<Buffer>();
-            obj.buffer = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<TexelCopyBufferLayout> _TexelCopyBufferLayout(m, "TexelCopyBufferLayout");
-registry.on(m, "TexelCopyBufferLayout", _TexelCopyBufferLayout);
-
-_TexelCopyBufferLayout
-    .def_readwrite("offset", &pywgpu::TexelCopyBufferLayout::offset)
-    .def_readwrite("bytes_per_row", &pywgpu::TexelCopyBufferLayout::bytesPerRow)
-    .def_readwrite("rows_per_image", &pywgpu::TexelCopyBufferLayout::rowsPerImage)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::TexelCopyBufferLayout obj{};
-        static const std::set<std::string> allowed = {"offset", "bytes_per_row", "rows_per_image"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("bytes_per_row"))
-        {
-            auto value = kwargs["bytes_per_row"].cast<uint32_t>();
-            obj.bytesPerRow = value;
-        }
-        if (kwargs.contains("rows_per_image"))
-        {
-            auto value = kwargs["rows_per_image"].cast<uint32_t>();
-            obj.rowsPerImage = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<TexelCopyTextureInfo> _TexelCopyTextureInfo(m, "TexelCopyTextureInfo");
-registry.on(m, "TexelCopyTextureInfo", _TexelCopyTextureInfo);
-
-_TexelCopyTextureInfo
-    .def_readwrite("texture", &pywgpu::TexelCopyTextureInfo::texture)
-    .def_readwrite("mip_level", &pywgpu::TexelCopyTextureInfo::mipLevel)
-    .def_readwrite("origin", &pywgpu::TexelCopyTextureInfo::origin)
-    .def_readwrite("aspect", &pywgpu::TexelCopyTextureInfo::aspect)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::TexelCopyTextureInfo obj{};
-        static const std::set<std::string> allowed = {"texture", "mip_level", "origin", "aspect"};
-        static const std::set<std::string> required = {"texture"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("texture"))
-        {
-            auto value = kwargs["texture"].cast<Texture>();
-            obj.texture = value;
-        }
-        if (kwargs.contains("mip_level"))
-        {
-            auto value = kwargs["mip_level"].cast<uint32_t>();
-            obj.mipLevel = value;
-        }
-        if (kwargs.contains("origin"))
-        {
-            auto value = kwargs["origin"].cast<Origin3D>();
-            obj.origin = value;
-        }
-        if (kwargs.contains("aspect"))
-        {
-            auto value = kwargs["aspect"].cast<TextureAspect>();
-            obj.aspect = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ImageCopyExternalTexture> _ImageCopyExternalTexture(m, "ImageCopyExternalTexture");
-registry.on(m, "ImageCopyExternalTexture", _ImageCopyExternalTexture);
-
-_ImageCopyExternalTexture
-    .def_readwrite("next_in_chain", &pywgpu::ImageCopyExternalTexture::nextInChain)
-    .def_readwrite("external_texture", &pywgpu::ImageCopyExternalTexture::externalTexture)
-    .def_readwrite("origin", &pywgpu::ImageCopyExternalTexture::origin)
-    .def_readwrite("natural_size", &pywgpu::ImageCopyExternalTexture::naturalSize)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ImageCopyExternalTexture obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "external_texture", "origin", "natural_size"};
-        static const std::set<std::string> required = {"external_texture"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("external_texture"))
-        {
-            auto value = kwargs["external_texture"].cast<ExternalTexture>();
-            obj.externalTexture = value;
-        }
-        if (kwargs.contains("origin"))
-        {
-            auto value = kwargs["origin"].cast<Origin3D>();
-            obj.origin = value;
-        }
-        if (kwargs.contains("natural_size"))
-        {
-            auto value = kwargs["natural_size"].cast<Extent2D>();
-            obj.naturalSize = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<Future> _Future(m, "Future");
-registry.on(m, "Future", _Future);
-
-_Future
-    .def_readwrite("id", &pywgpu::Future::id)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::Future obj{};
-        static const std::set<std::string> allowed = {"id"};
-        static const std::set<std::string> required = {"id"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("id"))
-        {
-            auto value = kwargs["id"].cast<uint64_t>();
-            obj.id = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<FutureWaitInfo> _FutureWaitInfo(m, "FutureWaitInfo");
-registry.on(m, "FutureWaitInfo", _FutureWaitInfo);
-
-_FutureWaitInfo
-    .def_readwrite("future", &pywgpu::FutureWaitInfo::future)
-    .def_readwrite("completed", &pywgpu::FutureWaitInfo::completed)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::FutureWaitInfo obj{};
-        static const std::set<std::string> allowed = {"future", "completed"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("future"))
-        {
-            auto value = kwargs["future"].cast<Future>();
-            obj.future = value;
-        }
-        if (kwargs.contains("completed"))
-        {
-            auto value = kwargs["completed"].cast<Bool>();
-            obj.completed = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<InstanceCapabilities> _InstanceCapabilities(m, "InstanceCapabilities");
-registry.on(m, "InstanceCapabilities", _InstanceCapabilities);
-
-_InstanceCapabilities
-    .def_readwrite("next_in_chain", &pywgpu::InstanceCapabilities::nextInChain)
-    .def_readwrite("timed_wait_any_enable", &pywgpu::InstanceCapabilities::timedWaitAnyEnable)
-    .def_readwrite("timed_wait_any_max_count", &pywgpu::InstanceCapabilities::timedWaitAnyMaxCount)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::InstanceCapabilities obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "timed_wait_any_enable", "timed_wait_any_max_count"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStructOut *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("timed_wait_any_enable"))
-        {
-            auto value = kwargs["timed_wait_any_enable"].cast<Bool>();
-            obj.timedWaitAnyEnable = value;
-        }
-        if (kwargs.contains("timed_wait_any_max_count"))
-        {
-            auto value = kwargs["timed_wait_any_max_count"].cast<size_t>();
-            obj.timedWaitAnyMaxCount = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<InstanceDescriptor> _InstanceDescriptor(m, "InstanceDescriptor");
-registry.on(m, "InstanceDescriptor", _InstanceDescriptor);
-
-_InstanceDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::InstanceDescriptor::nextInChain)
-    .def_readwrite("capabilities", &pywgpu::InstanceDescriptor::capabilities)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::InstanceDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "capabilities"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("capabilities"))
-        {
-            auto value = kwargs["capabilities"].cast<InstanceCapabilities>();
-            obj.capabilities = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnWireWGSLControl, ChainedStruct> _DawnWireWGSLControl(m, "DawnWireWGSLControl");
-registry.on(m, "DawnWireWGSLControl", _DawnWireWGSLControl);
-
-_DawnWireWGSLControl
-    .def_readwrite("next_in_chain", &pywgpu::DawnWireWGSLControl::nextInChain)
-    .def_readwrite("enable_experimental", &pywgpu::DawnWireWGSLControl::enableExperimental)
-    .def_readwrite("enable_unsafe", &pywgpu::DawnWireWGSLControl::enableUnsafe)
-    .def_readwrite("enable_testing", &pywgpu::DawnWireWGSLControl::enableTesting)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnWireWGSLControl obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "enable_experimental", "enable_unsafe", "enable_testing"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("enable_experimental"))
-        {
-            auto value = kwargs["enable_experimental"].cast<Bool>();
-            obj.enableExperimental = value;
-        }
-        if (kwargs.contains("enable_unsafe"))
-        {
-            auto value = kwargs["enable_unsafe"].cast<Bool>();
-            obj.enableUnsafe = value;
-        }
-        if (kwargs.contains("enable_testing"))
-        {
-            auto value = kwargs["enable_testing"].cast<Bool>();
-            obj.enableTesting = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnInjectedInvalidSType, ChainedStruct> _DawnInjectedInvalidSType(m, "DawnInjectedInvalidSType");
-registry.on(m, "DawnInjectedInvalidSType", _DawnInjectedInvalidSType);
-
-_DawnInjectedInvalidSType
-    .def_readwrite("next_in_chain", &pywgpu::DawnInjectedInvalidSType::nextInChain)
-    .def_readwrite("invalid_s_type", &pywgpu::DawnInjectedInvalidSType::invalidSType)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnInjectedInvalidSType obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "invalid_s_type"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("invalid_s_type"))
-        {
-            auto value = kwargs["invalid_s_type"].cast<SType>();
-            obj.invalidSType = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<VertexAttribute> _VertexAttribute(m, "VertexAttribute");
-registry.on(m, "VertexAttribute", _VertexAttribute);
-
-_VertexAttribute
-    .def_readwrite("next_in_chain", &pywgpu::VertexAttribute::nextInChain)
-    .def_readwrite("format", &pywgpu::VertexAttribute::format)
-    .def_readwrite("offset", &pywgpu::VertexAttribute::offset)
-    .def_readwrite("shader_location", &pywgpu::VertexAttribute::shaderLocation)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::VertexAttribute obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "format", "offset", "shader_location"};
-        static const std::set<std::string> required = {"offset", "shader_location"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<VertexFormat>();
-            obj.format = value;
-        }
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("shader_location"))
-        {
-            auto value = kwargs["shader_location"].cast<uint32_t>();
-            obj.shaderLocation = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<VertexBufferLayout> _VertexBufferLayout(m, "VertexBufferLayout");
-registry.on(m, "VertexBufferLayout", _VertexBufferLayout);
-
-_VertexBufferLayout
-    .def_readwrite("next_in_chain", &pywgpu::VertexBufferLayout::nextInChain)
-    .def_readwrite("step_mode", &pywgpu::VertexBufferLayout::stepMode)
-    .def_readwrite("array_stride", &pywgpu::VertexBufferLayout::arrayStride)
-    .def_readwrite("attribute_count", &pywgpu::VertexBufferLayout::attributeCount)
-    .def_readwrite("attributes", &pywgpu::VertexBufferLayout::attributes)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::VertexBufferLayout obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "step_mode", "array_stride", "attributes"};
-        static const std::set<std::string> required = {"array_stride", "attributes"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("step_mode"))
-        {
-            auto value = kwargs["step_mode"].cast<VertexStepMode>();
-            obj.stepMode = value;
-        }
-        if (kwargs.contains("array_stride"))
-        {
-            auto value = kwargs["array_stride"].cast<uint64_t>();
-            obj.arrayStride = value;
-        }
-        if (kwargs.contains("attributes"))
-        {
-            auto _value = kwargs["attributes"].cast<std::vector<VertexAttribute>>();
-            auto count = _value.size();
-            auto value = new VertexAttribute[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.attributes = value;
-            obj.attributeCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<Origin3D> _Origin3D(m, "Origin3D");
-registry.on(m, "Origin3D", _Origin3D);
-
-_Origin3D
-    .def_readwrite("x", &pywgpu::Origin3D::x)
-    .def_readwrite("y", &pywgpu::Origin3D::y)
-    .def_readwrite("z", &pywgpu::Origin3D::z)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::Origin3D obj{};
-        static const std::set<std::string> allowed = {"x", "y", "z"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("x"))
-        {
-            auto value = kwargs["x"].cast<uint32_t>();
-            obj.x = value;
-        }
-        if (kwargs.contains("y"))
-        {
-            auto value = kwargs["y"].cast<uint32_t>();
-            obj.y = value;
-        }
-        if (kwargs.contains("z"))
-        {
-            auto value = kwargs["z"].cast<uint32_t>();
-            obj.z = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<Origin2D> _Origin2D(m, "Origin2D");
-registry.on(m, "Origin2D", _Origin2D);
-
-_Origin2D
-    .def_readwrite("x", &pywgpu::Origin2D::x)
-    .def_readwrite("y", &pywgpu::Origin2D::y)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::Origin2D obj{};
-        static const std::set<std::string> allowed = {"x", "y"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("x"))
-        {
-            auto value = kwargs["x"].cast<uint32_t>();
-            obj.x = value;
-        }
-        if (kwargs.contains("y"))
-        {
-            auto value = kwargs["y"].cast<uint32_t>();
-            obj.y = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<PassTimestampWrites> _PassTimestampWrites(m, "PassTimestampWrites");
-registry.on(m, "PassTimestampWrites", _PassTimestampWrites);
-
-_PassTimestampWrites
-    .def_readwrite("next_in_chain", &pywgpu::PassTimestampWrites::nextInChain)
-    .def_readwrite("query_set", &pywgpu::PassTimestampWrites::querySet)
-    .def_readwrite("beginning_of_pass_write_index", &pywgpu::PassTimestampWrites::beginningOfPassWriteIndex)
-    .def_readwrite("end_of_pass_write_index", &pywgpu::PassTimestampWrites::endOfPassWriteIndex)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::PassTimestampWrites obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "query_set", "beginning_of_pass_write_index", "end_of_pass_write_index"};
-        static const std::set<std::string> required = {"query_set"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("query_set"))
-        {
-            auto value = kwargs["query_set"].cast<QuerySet>();
-            obj.querySet = value;
-        }
-        if (kwargs.contains("beginning_of_pass_write_index"))
-        {
-            auto value = kwargs["beginning_of_pass_write_index"].cast<uint32_t>();
-            obj.beginningOfPassWriteIndex = value;
-        }
-        if (kwargs.contains("end_of_pass_write_index"))
-        {
-            auto value = kwargs["end_of_pass_write_index"].cast<uint32_t>();
-            obj.endOfPassWriteIndex = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<PipelineLayoutDescriptor> _PipelineLayoutDescriptor(m, "PipelineLayoutDescriptor");
-registry.on(m, "PipelineLayoutDescriptor", _PipelineLayoutDescriptor);
-
-_PipelineLayoutDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::PipelineLayoutDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::PipelineLayoutDescriptor::label)
-    .def_readwrite("bind_group_layout_count", &pywgpu::PipelineLayoutDescriptor::bindGroupLayoutCount)
-    .def_readwrite("bind_group_layouts", &pywgpu::PipelineLayoutDescriptor::bindGroupLayouts)
-    .def_readwrite("immediate_data_range_byte_size", &pywgpu::PipelineLayoutDescriptor::immediateDataRangeByteSize)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::PipelineLayoutDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "bind_group_layouts", "immediate_data_range_byte_size"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("bind_group_layouts"))
-        {
-            auto _value = kwargs["bind_group_layouts"].cast<std::vector<BindGroupLayout>>();
-            auto count = _value.size();
-            auto value = new BindGroupLayout[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.bindGroupLayouts = value;
-            obj.bindGroupLayoutCount = count;
-        }
-        if (kwargs.contains("immediate_data_range_byte_size"))
-        {
-            auto value = kwargs["immediate_data_range_byte_size"].cast<uint32_t>();
-            obj.immediateDataRangeByteSize = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<PipelineLayoutPixelLocalStorage, ChainedStruct> _PipelineLayoutPixelLocalStorage(m, "PipelineLayoutPixelLocalStorage");
-registry.on(m, "PipelineLayoutPixelLocalStorage", _PipelineLayoutPixelLocalStorage);
-
-_PipelineLayoutPixelLocalStorage
-    .def_readwrite("next_in_chain", &pywgpu::PipelineLayoutPixelLocalStorage::nextInChain)
-    .def_readwrite("total_pixel_local_storage_size", &pywgpu::PipelineLayoutPixelLocalStorage::totalPixelLocalStorageSize)
-    .def_readwrite("storage_attachment_count", &pywgpu::PipelineLayoutPixelLocalStorage::storageAttachmentCount)
-    .def_readwrite("storage_attachments", &pywgpu::PipelineLayoutPixelLocalStorage::storageAttachments)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::PipelineLayoutPixelLocalStorage obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "total_pixel_local_storage_size", "storage_attachments"};
-        static const std::set<std::string> required = {"total_pixel_local_storage_size"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("total_pixel_local_storage_size"))
-        {
-            auto value = kwargs["total_pixel_local_storage_size"].cast<uint64_t>();
-            obj.totalPixelLocalStorageSize = value;
-        }
-        if (kwargs.contains("storage_attachments"))
-        {
-            auto _value = kwargs["storage_attachments"].cast<std::vector<PipelineLayoutStorageAttachment>>();
-            auto count = _value.size();
-            auto value = new PipelineLayoutStorageAttachment[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.storageAttachments = value;
-            obj.storageAttachmentCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<PipelineLayoutStorageAttachment> _PipelineLayoutStorageAttachment(m, "PipelineLayoutStorageAttachment");
-registry.on(m, "PipelineLayoutStorageAttachment", _PipelineLayoutStorageAttachment);
-
-_PipelineLayoutStorageAttachment
-    .def_readwrite("next_in_chain", &pywgpu::PipelineLayoutStorageAttachment::nextInChain)
-    .def_readwrite("offset", &pywgpu::PipelineLayoutStorageAttachment::offset)
-    .def_readwrite("format", &pywgpu::PipelineLayoutStorageAttachment::format)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::PipelineLayoutStorageAttachment obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "offset", "format"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<TextureFormat>();
-            obj.format = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ComputeState> _ComputeState(m, "ComputeState");
-registry.on(m, "ComputeState", _ComputeState);
-
-_ComputeState
-    .def_readwrite("next_in_chain", &pywgpu::ComputeState::nextInChain)
-    .def_readwrite("module", &pywgpu::ComputeState::module)
-    .def_readwrite("entry_point", &pywgpu::ComputeState::entryPoint)
-    .def_readwrite("constant_count", &pywgpu::ComputeState::constantCount)
-    .def_readwrite("constants", &pywgpu::ComputeState::constants)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ComputeState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "module", "entry_point", "constants"};
-        static const std::set<std::string> required = {"module"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("module"))
-        {
-            auto value = kwargs["module"].cast<ShaderModule>();
-            obj.module = value;
-        }
-        if (kwargs.contains("entry_point"))
-        {
-            auto value = kwargs["entry_point"].cast<StringView>();
-            obj.entryPoint = value;
-        }
-        if (kwargs.contains("constants"))
-        {
-            auto _value = kwargs["constants"].cast<std::vector<ConstantEntry>>();
-            auto count = _value.size();
-            auto value = new ConstantEntry[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.constants = value;
-            obj.constantCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<QuerySetDescriptor> _QuerySetDescriptor(m, "QuerySetDescriptor");
-registry.on(m, "QuerySetDescriptor", _QuerySetDescriptor);
-
-_QuerySetDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::QuerySetDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::QuerySetDescriptor::label)
-    .def_readwrite("type", &pywgpu::QuerySetDescriptor::type)
-    .def_readwrite("count", &pywgpu::QuerySetDescriptor::count)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::QuerySetDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "type", "count"};
-        static const std::set<std::string> required = {"count"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("type"))
-        {
-            auto value = kwargs["type"].cast<QueryType>();
-            obj.type = value;
-        }
-        if (kwargs.contains("count"))
-        {
-            auto value = kwargs["count"].cast<uint32_t>();
-            obj.count = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<QueueDescriptor> _QueueDescriptor(m, "QueueDescriptor");
-registry.on(m, "QueueDescriptor", _QueueDescriptor);
-
-_QueueDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::QueueDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::QueueDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::QueueDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderBundleDescriptor> _RenderBundleDescriptor(m, "RenderBundleDescriptor");
-registry.on(m, "RenderBundleDescriptor", _RenderBundleDescriptor);
-
-_RenderBundleDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::RenderBundleDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::RenderBundleDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderBundleDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderBundleEncoderDescriptor> _RenderBundleEncoderDescriptor(m, "RenderBundleEncoderDescriptor");
-registry.on(m, "RenderBundleEncoderDescriptor", _RenderBundleEncoderDescriptor);
-
-_RenderBundleEncoderDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::RenderBundleEncoderDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::RenderBundleEncoderDescriptor::label)
-    .def_readwrite("color_format_count", &pywgpu::RenderBundleEncoderDescriptor::colorFormatCount)
-    .def_readwrite("color_formats", &pywgpu::RenderBundleEncoderDescriptor::colorFormats)
-    .def_readwrite("depth_stencil_format", &pywgpu::RenderBundleEncoderDescriptor::depthStencilFormat)
-    .def_readwrite("sample_count", &pywgpu::RenderBundleEncoderDescriptor::sampleCount)
-    .def_readwrite("depth_read_only", &pywgpu::RenderBundleEncoderDescriptor::depthReadOnly)
-    .def_readwrite("stencil_read_only", &pywgpu::RenderBundleEncoderDescriptor::stencilReadOnly)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderBundleEncoderDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "color_formats", "depth_stencil_format", "sample_count", "depth_read_only", "stencil_read_only"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("color_formats"))
-        {
-            auto _value = kwargs["color_formats"].cast<std::vector<TextureFormat>>();
-            auto count = _value.size();
-            auto value = new TextureFormat[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.colorFormats = value;
-            obj.colorFormatCount = count;
-        }
-        if (kwargs.contains("depth_stencil_format"))
-        {
-            auto value = kwargs["depth_stencil_format"].cast<TextureFormat>();
-            obj.depthStencilFormat = value;
-        }
-        if (kwargs.contains("sample_count"))
-        {
-            auto value = kwargs["sample_count"].cast<uint32_t>();
-            obj.sampleCount = value;
-        }
-        if (kwargs.contains("depth_read_only"))
-        {
-            auto value = kwargs["depth_read_only"].cast<Bool>();
-            obj.depthReadOnly = value;
-        }
-        if (kwargs.contains("stencil_read_only"))
-        {
-            auto value = kwargs["stencil_read_only"].cast<Bool>();
-            obj.stencilReadOnly = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPassColorAttachment> _RenderPassColorAttachment(m, "RenderPassColorAttachment");
-registry.on(m, "RenderPassColorAttachment", _RenderPassColorAttachment);
-
-_RenderPassColorAttachment
-    .def_readwrite("next_in_chain", &pywgpu::RenderPassColorAttachment::nextInChain)
-    .def_readwrite("view", &pywgpu::RenderPassColorAttachment::view)
-    .def_readwrite("depth_slice", &pywgpu::RenderPassColorAttachment::depthSlice)
-    .def_readwrite("resolve_target", &pywgpu::RenderPassColorAttachment::resolveTarget)
-    .def_readwrite("load_op", &pywgpu::RenderPassColorAttachment::loadOp)
-    .def_readwrite("store_op", &pywgpu::RenderPassColorAttachment::storeOp)
-    .def_readwrite("clear_value", &pywgpu::RenderPassColorAttachment::clearValue)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPassColorAttachment obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "view", "depth_slice", "resolve_target", "load_op", "store_op", "clear_value"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("view"))
-        {
-            auto value = kwargs["view"].cast<TextureView>();
-            obj.view = value;
-        }
-        if (kwargs.contains("depth_slice"))
-        {
-            auto value = kwargs["depth_slice"].cast<uint32_t>();
-            obj.depthSlice = value;
-        }
-        if (kwargs.contains("resolve_target"))
-        {
-            auto value = kwargs["resolve_target"].cast<TextureView>();
-            obj.resolveTarget = value;
-        }
-        if (kwargs.contains("load_op"))
-        {
-            auto value = kwargs["load_op"].cast<LoadOp>();
-            obj.loadOp = value;
-        }
-        if (kwargs.contains("store_op"))
-        {
-            auto value = kwargs["store_op"].cast<StoreOp>();
-            obj.storeOp = value;
-        }
-        if (kwargs.contains("clear_value"))
-        {
-            auto value = kwargs["clear_value"].cast<Color>();
-            obj.clearValue = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnRenderPassColorAttachmentRenderToSingleSampled, ChainedStruct> _DawnRenderPassColorAttachmentRenderToSingleSampled(m, "DawnRenderPassColorAttachmentRenderToSingleSampled");
-registry.on(m, "DawnRenderPassColorAttachmentRenderToSingleSampled", _DawnRenderPassColorAttachmentRenderToSingleSampled);
-
-_DawnRenderPassColorAttachmentRenderToSingleSampled
-    .def_readwrite("next_in_chain", &pywgpu::DawnRenderPassColorAttachmentRenderToSingleSampled::nextInChain)
-    .def_readwrite("implicit_sample_count", &pywgpu::DawnRenderPassColorAttachmentRenderToSingleSampled::implicitSampleCount)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnRenderPassColorAttachmentRenderToSingleSampled obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "implicit_sample_count"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("implicit_sample_count"))
-        {
-            auto value = kwargs["implicit_sample_count"].cast<uint32_t>();
-            obj.implicitSampleCount = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPassDepthStencilAttachment> _RenderPassDepthStencilAttachment(m, "RenderPassDepthStencilAttachment");
-registry.on(m, "RenderPassDepthStencilAttachment", _RenderPassDepthStencilAttachment);
-
-_RenderPassDepthStencilAttachment
-    .def_readwrite("next_in_chain", &pywgpu::RenderPassDepthStencilAttachment::nextInChain)
-    .def_readwrite("view", &pywgpu::RenderPassDepthStencilAttachment::view)
-    .def_readwrite("depth_load_op", &pywgpu::RenderPassDepthStencilAttachment::depthLoadOp)
-    .def_readwrite("depth_store_op", &pywgpu::RenderPassDepthStencilAttachment::depthStoreOp)
-    .def_readwrite("depth_clear_value", &pywgpu::RenderPassDepthStencilAttachment::depthClearValue)
-    .def_readwrite("depth_read_only", &pywgpu::RenderPassDepthStencilAttachment::depthReadOnly)
-    .def_readwrite("stencil_load_op", &pywgpu::RenderPassDepthStencilAttachment::stencilLoadOp)
-    .def_readwrite("stencil_store_op", &pywgpu::RenderPassDepthStencilAttachment::stencilStoreOp)
-    .def_readwrite("stencil_clear_value", &pywgpu::RenderPassDepthStencilAttachment::stencilClearValue)
-    .def_readwrite("stencil_read_only", &pywgpu::RenderPassDepthStencilAttachment::stencilReadOnly)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPassDepthStencilAttachment obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "view", "depth_load_op", "depth_store_op", "depth_clear_value", "depth_read_only", "stencil_load_op", "stencil_store_op", "stencil_clear_value", "stencil_read_only"};
-        static const std::set<std::string> required = {"view"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("view"))
-        {
-            auto value = kwargs["view"].cast<TextureView>();
-            obj.view = value;
-        }
-        if (kwargs.contains("depth_load_op"))
-        {
-            auto value = kwargs["depth_load_op"].cast<LoadOp>();
-            obj.depthLoadOp = value;
-        }
-        if (kwargs.contains("depth_store_op"))
-        {
-            auto value = kwargs["depth_store_op"].cast<StoreOp>();
-            obj.depthStoreOp = value;
-        }
-        if (kwargs.contains("depth_clear_value"))
-        {
-            auto value = kwargs["depth_clear_value"].cast<float>();
-            obj.depthClearValue = value;
-        }
-        if (kwargs.contains("depth_read_only"))
-        {
-            auto value = kwargs["depth_read_only"].cast<Bool>();
-            obj.depthReadOnly = value;
-        }
-        if (kwargs.contains("stencil_load_op"))
-        {
-            auto value = kwargs["stencil_load_op"].cast<LoadOp>();
-            obj.stencilLoadOp = value;
-        }
-        if (kwargs.contains("stencil_store_op"))
-        {
-            auto value = kwargs["stencil_store_op"].cast<StoreOp>();
-            obj.stencilStoreOp = value;
-        }
-        if (kwargs.contains("stencil_clear_value"))
-        {
-            auto value = kwargs["stencil_clear_value"].cast<uint32_t>();
-            obj.stencilClearValue = value;
-        }
-        if (kwargs.contains("stencil_read_only"))
-        {
-            auto value = kwargs["stencil_read_only"].cast<Bool>();
-            obj.stencilReadOnly = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPassDescriptor> _RenderPassDescriptor(m, "RenderPassDescriptor");
-registry.on(m, "RenderPassDescriptor", _RenderPassDescriptor);
-
-_RenderPassDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::RenderPassDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::RenderPassDescriptor::label)
-    .def_readwrite("color_attachment_count", &pywgpu::RenderPassDescriptor::colorAttachmentCount)
-    .def_readwrite("color_attachments", &pywgpu::RenderPassDescriptor::colorAttachments)
-    .def_readwrite("depth_stencil_attachment", &pywgpu::RenderPassDescriptor::depthStencilAttachment)
-    .def_readwrite("occlusion_query_set", &pywgpu::RenderPassDescriptor::occlusionQuerySet)
-    .def_readwrite("timestamp_writes", &pywgpu::RenderPassDescriptor::timestampWrites)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPassDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "color_attachments", "depth_stencil_attachment", "occlusion_query_set", "timestamp_writes"};
-        static const std::set<std::string> required = {"color_attachments"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("color_attachments"))
-        {
-            auto _value = kwargs["color_attachments"].cast<std::vector<RenderPassColorAttachment>>();
-            auto count = _value.size();
-            auto value = new RenderPassColorAttachment[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.colorAttachments = value;
-            obj.colorAttachmentCount = count;
-        }
-        if (kwargs.contains("depth_stencil_attachment"))
-        {
-            auto value = kwargs["depth_stencil_attachment"].cast<RenderPassDepthStencilAttachment const *>();
-            obj.depthStencilAttachment = value;
-        }
-        if (kwargs.contains("occlusion_query_set"))
-        {
-            auto value = kwargs["occlusion_query_set"].cast<QuerySet>();
-            obj.occlusionQuerySet = value;
-        }
-        if (kwargs.contains("timestamp_writes"))
-        {
-            auto value = kwargs["timestamp_writes"].cast<PassTimestampWrites const *>();
-            obj.timestampWrites = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPassMaxDrawCount, ChainedStruct> _RenderPassMaxDrawCount(m, "RenderPassMaxDrawCount");
-registry.on(m, "RenderPassMaxDrawCount", _RenderPassMaxDrawCount);
-
-_RenderPassMaxDrawCount
-    .def_readwrite("next_in_chain", &pywgpu::RenderPassMaxDrawCount::nextInChain)
-    .def_readwrite("max_draw_count", &pywgpu::RenderPassMaxDrawCount::maxDrawCount)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPassMaxDrawCount obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "max_draw_count"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("max_draw_count"))
-        {
-            auto value = kwargs["max_draw_count"].cast<uint64_t>();
-            obj.maxDrawCount = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPassDescriptorExpandResolveRect, ChainedStruct> _RenderPassDescriptorExpandResolveRect(m, "RenderPassDescriptorExpandResolveRect");
-registry.on(m, "RenderPassDescriptorExpandResolveRect", _RenderPassDescriptorExpandResolveRect);
-
-_RenderPassDescriptorExpandResolveRect
-    .def_readwrite("next_in_chain", &pywgpu::RenderPassDescriptorExpandResolveRect::nextInChain)
-    .def_readwrite("x", &pywgpu::RenderPassDescriptorExpandResolveRect::x)
-    .def_readwrite("y", &pywgpu::RenderPassDescriptorExpandResolveRect::y)
-    .def_readwrite("width", &pywgpu::RenderPassDescriptorExpandResolveRect::width)
-    .def_readwrite("height", &pywgpu::RenderPassDescriptorExpandResolveRect::height)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPassDescriptorExpandResolveRect obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "x", "y", "width", "height"};
-        static const std::set<std::string> required = {"x", "y", "width", "height"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("x"))
-        {
-            auto value = kwargs["x"].cast<uint32_t>();
-            obj.x = value;
-        }
-        if (kwargs.contains("y"))
-        {
-            auto value = kwargs["y"].cast<uint32_t>();
-            obj.y = value;
-        }
-        if (kwargs.contains("width"))
-        {
-            auto value = kwargs["width"].cast<uint32_t>();
-            obj.width = value;
-        }
-        if (kwargs.contains("height"))
-        {
-            auto value = kwargs["height"].cast<uint32_t>();
-            obj.height = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPassPixelLocalStorage, ChainedStruct> _RenderPassPixelLocalStorage(m, "RenderPassPixelLocalStorage");
-registry.on(m, "RenderPassPixelLocalStorage", _RenderPassPixelLocalStorage);
-
-_RenderPassPixelLocalStorage
-    .def_readwrite("next_in_chain", &pywgpu::RenderPassPixelLocalStorage::nextInChain)
-    .def_readwrite("total_pixel_local_storage_size", &pywgpu::RenderPassPixelLocalStorage::totalPixelLocalStorageSize)
-    .def_readwrite("storage_attachment_count", &pywgpu::RenderPassPixelLocalStorage::storageAttachmentCount)
-    .def_readwrite("storage_attachments", &pywgpu::RenderPassPixelLocalStorage::storageAttachments)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPassPixelLocalStorage obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "total_pixel_local_storage_size", "storage_attachments"};
-        static const std::set<std::string> required = {"total_pixel_local_storage_size"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("total_pixel_local_storage_size"))
-        {
-            auto value = kwargs["total_pixel_local_storage_size"].cast<uint64_t>();
-            obj.totalPixelLocalStorageSize = value;
-        }
-        if (kwargs.contains("storage_attachments"))
-        {
-            auto _value = kwargs["storage_attachments"].cast<std::vector<RenderPassStorageAttachment>>();
-            auto count = _value.size();
-            auto value = new RenderPassStorageAttachment[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.storageAttachments = value;
-            obj.storageAttachmentCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPassStorageAttachment> _RenderPassStorageAttachment(m, "RenderPassStorageAttachment");
-registry.on(m, "RenderPassStorageAttachment", _RenderPassStorageAttachment);
-
-_RenderPassStorageAttachment
-    .def_readwrite("next_in_chain", &pywgpu::RenderPassStorageAttachment::nextInChain)
-    .def_readwrite("offset", &pywgpu::RenderPassStorageAttachment::offset)
-    .def_readwrite("storage", &pywgpu::RenderPassStorageAttachment::storage)
-    .def_readwrite("load_op", &pywgpu::RenderPassStorageAttachment::loadOp)
-    .def_readwrite("store_op", &pywgpu::RenderPassStorageAttachment::storeOp)
-    .def_readwrite("clear_value", &pywgpu::RenderPassStorageAttachment::clearValue)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPassStorageAttachment obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "offset", "storage", "load_op", "store_op", "clear_value"};
-        static const std::set<std::string> required = {"storage"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("offset"))
-        {
-            auto value = kwargs["offset"].cast<uint64_t>();
-            obj.offset = value;
-        }
-        if (kwargs.contains("storage"))
-        {
-            auto value = kwargs["storage"].cast<TextureView>();
-            obj.storage = value;
-        }
-        if (kwargs.contains("load_op"))
-        {
-            auto value = kwargs["load_op"].cast<LoadOp>();
-            obj.loadOp = value;
-        }
-        if (kwargs.contains("store_op"))
-        {
-            auto value = kwargs["store_op"].cast<StoreOp>();
-            obj.storeOp = value;
-        }
-        if (kwargs.contains("clear_value"))
-        {
-            auto value = kwargs["clear_value"].cast<Color>();
-            obj.clearValue = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<VertexState> _VertexState(m, "VertexState");
-registry.on(m, "VertexState", _VertexState);
-
-_VertexState
-    .def_readwrite("next_in_chain", &pywgpu::VertexState::nextInChain)
-    .def_readwrite("module", &pywgpu::VertexState::module)
-    .def_readwrite("entry_point", &pywgpu::VertexState::entryPoint)
-    .def_readwrite("constant_count", &pywgpu::VertexState::constantCount)
-    .def_readwrite("constants", &pywgpu::VertexState::constants)
-    .def_readwrite("buffer_count", &pywgpu::VertexState::bufferCount)
-    .def_readwrite("buffers", &pywgpu::VertexState::buffers)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::VertexState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "module", "entry_point", "constants", "buffers"};
-        static const std::set<std::string> required = {"module"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("module"))
-        {
-            auto value = kwargs["module"].cast<ShaderModule>();
-            obj.module = value;
-        }
-        if (kwargs.contains("entry_point"))
-        {
-            auto value = kwargs["entry_point"].cast<StringView>();
-            obj.entryPoint = value;
-        }
-        if (kwargs.contains("constants"))
-        {
-            auto _value = kwargs["constants"].cast<std::vector<ConstantEntry>>();
-            auto count = _value.size();
-            auto value = new ConstantEntry[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.constants = value;
-            obj.constantCount = count;
-        }
-        if (kwargs.contains("buffers"))
-        {
-            auto _value = kwargs["buffers"].cast<std::vector<VertexBufferLayout>>();
-            auto count = _value.size();
-            auto value = new VertexBufferLayout[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.buffers = value;
-            obj.bufferCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<PrimitiveState> _PrimitiveState(m, "PrimitiveState");
-registry.on(m, "PrimitiveState", _PrimitiveState);
-
-_PrimitiveState
-    .def_readwrite("next_in_chain", &pywgpu::PrimitiveState::nextInChain)
-    .def_readwrite("topology", &pywgpu::PrimitiveState::topology)
-    .def_readwrite("strip_index_format", &pywgpu::PrimitiveState::stripIndexFormat)
-    .def_readwrite("front_face", &pywgpu::PrimitiveState::frontFace)
-    .def_readwrite("cull_mode", &pywgpu::PrimitiveState::cullMode)
-    .def_readwrite("unclipped_depth", &pywgpu::PrimitiveState::unclippedDepth)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::PrimitiveState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "topology", "strip_index_format", "front_face", "cull_mode", "unclipped_depth"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("topology"))
-        {
-            auto value = kwargs["topology"].cast<PrimitiveTopology>();
-            obj.topology = value;
-        }
-        if (kwargs.contains("strip_index_format"))
-        {
-            auto value = kwargs["strip_index_format"].cast<IndexFormat>();
-            obj.stripIndexFormat = value;
-        }
-        if (kwargs.contains("front_face"))
-        {
-            auto value = kwargs["front_face"].cast<FrontFace>();
-            obj.frontFace = value;
-        }
-        if (kwargs.contains("cull_mode"))
-        {
-            auto value = kwargs["cull_mode"].cast<CullMode>();
-            obj.cullMode = value;
-        }
-        if (kwargs.contains("unclipped_depth"))
-        {
-            auto value = kwargs["unclipped_depth"].cast<Bool>();
-            obj.unclippedDepth = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DepthStencilState> _DepthStencilState(m, "DepthStencilState");
-registry.on(m, "DepthStencilState", _DepthStencilState);
-
-_DepthStencilState
-    .def_readwrite("next_in_chain", &pywgpu::DepthStencilState::nextInChain)
-    .def_readwrite("format", &pywgpu::DepthStencilState::format)
-    .def_readwrite("depth_write_enabled", &pywgpu::DepthStencilState::depthWriteEnabled)
-    .def_readwrite("depth_compare", &pywgpu::DepthStencilState::depthCompare)
-    .def_readwrite("stencil_front", &pywgpu::DepthStencilState::stencilFront)
-    .def_readwrite("stencil_back", &pywgpu::DepthStencilState::stencilBack)
-    .def_readwrite("stencil_read_mask", &pywgpu::DepthStencilState::stencilReadMask)
-    .def_readwrite("stencil_write_mask", &pywgpu::DepthStencilState::stencilWriteMask)
-    .def_readwrite("depth_bias", &pywgpu::DepthStencilState::depthBias)
-    .def_readwrite("depth_bias_slope_scale", &pywgpu::DepthStencilState::depthBiasSlopeScale)
-    .def_readwrite("depth_bias_clamp", &pywgpu::DepthStencilState::depthBiasClamp)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DepthStencilState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "format", "depth_write_enabled", "depth_compare", "stencil_front", "stencil_back", "stencil_read_mask", "stencil_write_mask", "depth_bias", "depth_bias_slope_scale", "depth_bias_clamp"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<TextureFormat>();
-            obj.format = value;
-        }
-        if (kwargs.contains("depth_write_enabled"))
-        {
-            auto value = kwargs["depth_write_enabled"].cast<OptionalBool>();
-            obj.depthWriteEnabled = value;
-        }
-        if (kwargs.contains("depth_compare"))
-        {
-            auto value = kwargs["depth_compare"].cast<CompareFunction>();
-            obj.depthCompare = value;
-        }
-        if (kwargs.contains("stencil_front"))
-        {
-            auto value = kwargs["stencil_front"].cast<StencilFaceState>();
-            obj.stencilFront = value;
-        }
-        if (kwargs.contains("stencil_back"))
-        {
-            auto value = kwargs["stencil_back"].cast<StencilFaceState>();
-            obj.stencilBack = value;
-        }
-        if (kwargs.contains("stencil_read_mask"))
-        {
-            auto value = kwargs["stencil_read_mask"].cast<uint32_t>();
-            obj.stencilReadMask = value;
-        }
-        if (kwargs.contains("stencil_write_mask"))
-        {
-            auto value = kwargs["stencil_write_mask"].cast<uint32_t>();
-            obj.stencilWriteMask = value;
-        }
-        if (kwargs.contains("depth_bias"))
-        {
-            auto value = kwargs["depth_bias"].cast<int32_t>();
-            obj.depthBias = value;
-        }
-        if (kwargs.contains("depth_bias_slope_scale"))
-        {
-            auto value = kwargs["depth_bias_slope_scale"].cast<float>();
-            obj.depthBiasSlopeScale = value;
-        }
-        if (kwargs.contains("depth_bias_clamp"))
-        {
-            auto value = kwargs["depth_bias_clamp"].cast<float>();
-            obj.depthBiasClamp = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<MultisampleState> _MultisampleState(m, "MultisampleState");
-registry.on(m, "MultisampleState", _MultisampleState);
-
-_MultisampleState
-    .def_readwrite("next_in_chain", &pywgpu::MultisampleState::nextInChain)
-    .def_readwrite("count", &pywgpu::MultisampleState::count)
-    .def_readwrite("mask", &pywgpu::MultisampleState::mask)
-    .def_readwrite("alpha_to_coverage_enabled", &pywgpu::MultisampleState::alphaToCoverageEnabled)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::MultisampleState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "count", "mask", "alpha_to_coverage_enabled"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("count"))
-        {
-            auto value = kwargs["count"].cast<uint32_t>();
-            obj.count = value;
-        }
-        if (kwargs.contains("mask"))
-        {
-            auto value = kwargs["mask"].cast<uint32_t>();
-            obj.mask = value;
-        }
-        if (kwargs.contains("alpha_to_coverage_enabled"))
-        {
-            auto value = kwargs["alpha_to_coverage_enabled"].cast<Bool>();
-            obj.alphaToCoverageEnabled = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<FragmentState> _FragmentState(m, "FragmentState");
-registry.on(m, "FragmentState", _FragmentState);
-
-_FragmentState
-    .def_readwrite("next_in_chain", &pywgpu::FragmentState::nextInChain)
-    .def_readwrite("module", &pywgpu::FragmentState::module)
-    .def_readwrite("entry_point", &pywgpu::FragmentState::entryPoint)
-    .def_readwrite("constant_count", &pywgpu::FragmentState::constantCount)
-    .def_readwrite("constants", &pywgpu::FragmentState::constants)
-    .def_readwrite("target_count", &pywgpu::FragmentState::targetCount)
-    .def_readwrite("targets", &pywgpu::FragmentState::targets)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::FragmentState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "module", "entry_point", "constants", "targets"};
-        static const std::set<std::string> required = {"module", "targets"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("module"))
-        {
-            auto value = kwargs["module"].cast<ShaderModule>();
-            obj.module = value;
-        }
-        if (kwargs.contains("entry_point"))
-        {
-            auto value = kwargs["entry_point"].cast<StringView>();
-            obj.entryPoint = value;
-        }
-        if (kwargs.contains("constants"))
-        {
-            auto _value = kwargs["constants"].cast<std::vector<ConstantEntry>>();
-            auto count = _value.size();
-            auto value = new ConstantEntry[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.constants = value;
-            obj.constantCount = count;
-        }
-        if (kwargs.contains("targets"))
-        {
-            auto _value = kwargs["targets"].cast<std::vector<ColorTargetState>>();
-            auto count = _value.size();
-            auto value = new ColorTargetState[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.targets = value;
-            obj.targetCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ColorTargetState> _ColorTargetState(m, "ColorTargetState");
-registry.on(m, "ColorTargetState", _ColorTargetState);
-
-_ColorTargetState
-    .def_readwrite("next_in_chain", &pywgpu::ColorTargetState::nextInChain)
-    .def_readwrite("format", &pywgpu::ColorTargetState::format)
-    .def_readwrite("blend", &pywgpu::ColorTargetState::blend)
-    .def_readwrite("write_mask", &pywgpu::ColorTargetState::writeMask)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ColorTargetState obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "format", "blend", "write_mask"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<TextureFormat>();
-            obj.format = value;
-        }
-        if (kwargs.contains("blend"))
-        {
-            auto value = kwargs["blend"].cast<BlendState const *>();
-            obj.blend = value;
-        }
-        if (kwargs.contains("write_mask"))
-        {
-            auto value = kwargs["write_mask"].cast<ColorWriteMask>();
-            obj.writeMask = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ColorTargetStateExpandResolveTextureDawn, ChainedStruct> _ColorTargetStateExpandResolveTextureDawn(m, "ColorTargetStateExpandResolveTextureDawn");
-registry.on(m, "ColorTargetStateExpandResolveTextureDawn", _ColorTargetStateExpandResolveTextureDawn);
-
-_ColorTargetStateExpandResolveTextureDawn
-    .def_readwrite("next_in_chain", &pywgpu::ColorTargetStateExpandResolveTextureDawn::nextInChain)
-    .def_readwrite("enabled", &pywgpu::ColorTargetStateExpandResolveTextureDawn::enabled)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ColorTargetStateExpandResolveTextureDawn obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "enabled"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("enabled"))
-        {
-            auto value = kwargs["enabled"].cast<Bool>();
-            obj.enabled = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<BlendState> _BlendState(m, "BlendState");
-registry.on(m, "BlendState", _BlendState);
-
-_BlendState
-    .def_readwrite("color", &pywgpu::BlendState::color)
-    .def_readwrite("alpha", &pywgpu::BlendState::alpha)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::BlendState obj{};
-        static const std::set<std::string> allowed = {"color", "alpha"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("color"))
-        {
-            auto value = kwargs["color"].cast<BlendComponent>();
-            obj.color = value;
-        }
-        if (kwargs.contains("alpha"))
-        {
-            auto value = kwargs["alpha"].cast<BlendComponent>();
-            obj.alpha = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<RenderPipelineDescriptor> _RenderPipelineDescriptor(m, "RenderPipelineDescriptor");
-registry.on(m, "RenderPipelineDescriptor", _RenderPipelineDescriptor);
-
-_RenderPipelineDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::RenderPipelineDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::RenderPipelineDescriptor::label)
-    .def_readwrite("layout", &pywgpu::RenderPipelineDescriptor::layout)
-    .def_readwrite("vertex", &pywgpu::RenderPipelineDescriptor::vertex)
-    .def_readwrite("primitive", &pywgpu::RenderPipelineDescriptor::primitive)
-    .def_readwrite("depth_stencil", &pywgpu::RenderPipelineDescriptor::depthStencil)
-    .def_readwrite("multisample", &pywgpu::RenderPipelineDescriptor::multisample)
-    .def_readwrite("fragment", &pywgpu::RenderPipelineDescriptor::fragment)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::RenderPipelineDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "layout", "vertex", "primitive", "depth_stencil", "multisample", "fragment"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("layout"))
-        {
-            auto value = kwargs["layout"].cast<PipelineLayout>();
-            obj.layout = value;
-        }
-        if (kwargs.contains("vertex"))
-        {
-            auto value = kwargs["vertex"].cast<VertexState>();
-            obj.vertex = value;
-        }
-        if (kwargs.contains("primitive"))
-        {
-            auto value = kwargs["primitive"].cast<PrimitiveState>();
-            obj.primitive = value;
-        }
-        if (kwargs.contains("depth_stencil"))
-        {
-            auto value = kwargs["depth_stencil"].cast<DepthStencilState const *>();
-            obj.depthStencil = value;
-        }
-        if (kwargs.contains("multisample"))
-        {
-            auto value = kwargs["multisample"].cast<MultisampleState>();
-            obj.multisample = value;
-        }
-        if (kwargs.contains("fragment"))
-        {
-            auto value = kwargs["fragment"].cast<FragmentState const *>();
-            obj.fragment = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SamplerDescriptor> _SamplerDescriptor(m, "SamplerDescriptor");
-registry.on(m, "SamplerDescriptor", _SamplerDescriptor);
-
-_SamplerDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SamplerDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::SamplerDescriptor::label)
-    .def_readwrite("address_mode_u", &pywgpu::SamplerDescriptor::addressModeU)
-    .def_readwrite("address_mode_v", &pywgpu::SamplerDescriptor::addressModeV)
-    .def_readwrite("address_mode_w", &pywgpu::SamplerDescriptor::addressModeW)
-    .def_readwrite("mag_filter", &pywgpu::SamplerDescriptor::magFilter)
-    .def_readwrite("min_filter", &pywgpu::SamplerDescriptor::minFilter)
-    .def_readwrite("mipmap_filter", &pywgpu::SamplerDescriptor::mipmapFilter)
-    .def_readwrite("lod_min_clamp", &pywgpu::SamplerDescriptor::lodMinClamp)
-    .def_readwrite("lod_max_clamp", &pywgpu::SamplerDescriptor::lodMaxClamp)
-    .def_readwrite("compare", &pywgpu::SamplerDescriptor::compare)
-    .def_readwrite("max_anisotropy", &pywgpu::SamplerDescriptor::maxAnisotropy)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SamplerDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "address_mode_u", "address_mode_v", "address_mode_w", "mag_filter", "min_filter", "mipmap_filter", "lod_min_clamp", "lod_max_clamp", "compare", "max_anisotropy"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("address_mode_u"))
-        {
-            auto value = kwargs["address_mode_u"].cast<AddressMode>();
-            obj.addressModeU = value;
-        }
-        if (kwargs.contains("address_mode_v"))
-        {
-            auto value = kwargs["address_mode_v"].cast<AddressMode>();
-            obj.addressModeV = value;
-        }
-        if (kwargs.contains("address_mode_w"))
-        {
-            auto value = kwargs["address_mode_w"].cast<AddressMode>();
-            obj.addressModeW = value;
-        }
-        if (kwargs.contains("mag_filter"))
-        {
-            auto value = kwargs["mag_filter"].cast<FilterMode>();
-            obj.magFilter = value;
-        }
-        if (kwargs.contains("min_filter"))
-        {
-            auto value = kwargs["min_filter"].cast<FilterMode>();
-            obj.minFilter = value;
-        }
-        if (kwargs.contains("mipmap_filter"))
-        {
-            auto value = kwargs["mipmap_filter"].cast<MipmapFilterMode>();
-            obj.mipmapFilter = value;
-        }
-        if (kwargs.contains("lod_min_clamp"))
-        {
-            auto value = kwargs["lod_min_clamp"].cast<float>();
-            obj.lodMinClamp = value;
-        }
-        if (kwargs.contains("lod_max_clamp"))
-        {
-            auto value = kwargs["lod_max_clamp"].cast<float>();
-            obj.lodMaxClamp = value;
-        }
-        if (kwargs.contains("compare"))
-        {
-            auto value = kwargs["compare"].cast<CompareFunction>();
-            obj.compare = value;
-        }
-        if (kwargs.contains("max_anisotropy"))
-        {
-            auto value = kwargs["max_anisotropy"].cast<uint16_t>();
-            obj.maxAnisotropy = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ShaderModuleDescriptor> _ShaderModuleDescriptor(m, "ShaderModuleDescriptor");
-registry.on(m, "ShaderModuleDescriptor", _ShaderModuleDescriptor);
-
-_ShaderModuleDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::ShaderModuleDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::ShaderModuleDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ShaderModuleDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ShaderSourceSPIRV, ChainedStruct> _ShaderSourceSPIRV(m, "ShaderSourceSPIRV");
-registry.on(m, "ShaderSourceSPIRV", _ShaderSourceSPIRV);
-
-_ShaderSourceSPIRV
-    .def_readwrite("next_in_chain", &pywgpu::ShaderSourceSPIRV::nextInChain)
-    .def_readwrite("code_size", &pywgpu::ShaderSourceSPIRV::codeSize)
-    .def_readwrite("code", &pywgpu::ShaderSourceSPIRV::code)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ShaderSourceSPIRV obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "code"};
-        static const std::set<std::string> required = {"code"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("code"))
-        {
-            auto _value = kwargs["code"].cast<std::vector<uint32_t>>();
-            auto count = _value.size();
-            auto value = new uint32_t[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.code = value;
-            obj.codeSize = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ShaderSourceWGSL, ChainedStruct> _ShaderSourceWGSL(m, "ShaderSourceWGSL");
-registry.on(m, "ShaderSourceWGSL", _ShaderSourceWGSL);
-
-_ShaderSourceWGSL
-    .def_readwrite("next_in_chain", &pywgpu::ShaderSourceWGSL::nextInChain)
-    .def_readwrite("code", &pywgpu::ShaderSourceWGSL::code)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ShaderSourceWGSL obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "code"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("code"))
-        {
-            auto value = kwargs["code"].cast<StringView>();
-            obj.code = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnShaderModuleSPIRVOptionsDescriptor, ChainedStruct> _DawnShaderModuleSPIRVOptionsDescriptor(m, "DawnShaderModuleSPIRVOptionsDescriptor");
-registry.on(m, "DawnShaderModuleSPIRVOptionsDescriptor", _DawnShaderModuleSPIRVOptionsDescriptor);
-
-_DawnShaderModuleSPIRVOptionsDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::DawnShaderModuleSPIRVOptionsDescriptor::nextInChain)
-    .def_readwrite("allow_non_uniform_derivatives", &pywgpu::DawnShaderModuleSPIRVOptionsDescriptor::allowNonUniformDerivatives)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnShaderModuleSPIRVOptionsDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "allow_non_uniform_derivatives"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("allow_non_uniform_derivatives"))
-        {
-            auto value = kwargs["allow_non_uniform_derivatives"].cast<Bool>();
-            obj.allowNonUniformDerivatives = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<ShaderModuleCompilationOptions, ChainedStruct> _ShaderModuleCompilationOptions(m, "ShaderModuleCompilationOptions");
-registry.on(m, "ShaderModuleCompilationOptions", _ShaderModuleCompilationOptions);
-
-_ShaderModuleCompilationOptions
-    .def_readwrite("next_in_chain", &pywgpu::ShaderModuleCompilationOptions::nextInChain)
-    .def_readwrite("strict_math", &pywgpu::ShaderModuleCompilationOptions::strictMath)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::ShaderModuleCompilationOptions obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "strict_math"};
-        static const std::set<std::string> required = {"strict_math"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("strict_math"))
-        {
-            auto value = kwargs["strict_math"].cast<Bool>();
-            obj.strictMath = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<StencilFaceState> _StencilFaceState(m, "StencilFaceState");
-registry.on(m, "StencilFaceState", _StencilFaceState);
-
-_StencilFaceState
-    .def_readwrite("compare", &pywgpu::StencilFaceState::compare)
-    .def_readwrite("fail_op", &pywgpu::StencilFaceState::failOp)
-    .def_readwrite("depth_fail_op", &pywgpu::StencilFaceState::depthFailOp)
-    .def_readwrite("pass_op", &pywgpu::StencilFaceState::passOp)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::StencilFaceState obj{};
-        static const std::set<std::string> allowed = {"compare", "fail_op", "depth_fail_op", "pass_op"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("compare"))
-        {
-            auto value = kwargs["compare"].cast<CompareFunction>();
-            obj.compare = value;
-        }
-        if (kwargs.contains("fail_op"))
-        {
-            auto value = kwargs["fail_op"].cast<StencilOperation>();
-            obj.failOp = value;
-        }
-        if (kwargs.contains("depth_fail_op"))
-        {
-            auto value = kwargs["depth_fail_op"].cast<StencilOperation>();
-            obj.depthFailOp = value;
-        }
-        if (kwargs.contains("pass_op"))
-        {
-            auto value = kwargs["pass_op"].cast<StencilOperation>();
-            obj.passOp = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceDescriptor> _SurfaceDescriptor(m, "SurfaceDescriptor");
-registry.on(m, "SurfaceDescriptor", _SurfaceDescriptor);
-
-_SurfaceDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::SurfaceDescriptor::label)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceSourceAndroidNativeWindow, ChainedStruct> _SurfaceSourceAndroidNativeWindow(m, "SurfaceSourceAndroidNativeWindow");
-registry.on(m, "SurfaceSourceAndroidNativeWindow", _SurfaceSourceAndroidNativeWindow);
-
-_SurfaceSourceAndroidNativeWindow
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceSourceAndroidNativeWindow::nextInChain)
-    .def_readwrite("window", &pywgpu::SurfaceSourceAndroidNativeWindow::window)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceSourceAndroidNativeWindow obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "window"};
-        static const std::set<std::string> required = {"window"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("window"))
-        {
-            auto value = kwargs["window"].cast<void *>();
-            obj.window = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<EmscriptenSurfaceSourceCanvasHTMLSelector, ChainedStruct> _EmscriptenSurfaceSourceCanvasHTMLSelector(m, "EmscriptenSurfaceSourceCanvasHTMLSelector");
-registry.on(m, "EmscriptenSurfaceSourceCanvasHTMLSelector", _EmscriptenSurfaceSourceCanvasHTMLSelector);
-
-_EmscriptenSurfaceSourceCanvasHTMLSelector
-    .def_readwrite("next_in_chain", &pywgpu::EmscriptenSurfaceSourceCanvasHTMLSelector::nextInChain)
-    .def_readwrite("selector", &pywgpu::EmscriptenSurfaceSourceCanvasHTMLSelector::selector)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::EmscriptenSurfaceSourceCanvasHTMLSelector obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "selector"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("selector"))
-        {
-            auto value = kwargs["selector"].cast<StringView>();
-            obj.selector = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceSourceMetalLayer, ChainedStruct> _SurfaceSourceMetalLayer(m, "SurfaceSourceMetalLayer");
-registry.on(m, "SurfaceSourceMetalLayer", _SurfaceSourceMetalLayer);
-
-_SurfaceSourceMetalLayer
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceSourceMetalLayer::nextInChain)
-    .def_readwrite("layer", &pywgpu::SurfaceSourceMetalLayer::layer)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceSourceMetalLayer obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "layer"};
-        static const std::set<std::string> required = {"layer"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("layer"))
-        {
-            auto value = kwargs["layer"].cast<void *>();
-            obj.layer = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceSourceWindowsHWND, ChainedStruct> _SurfaceSourceWindowsHWND(m, "SurfaceSourceWindowsHWND");
-registry.on(m, "SurfaceSourceWindowsHWND", _SurfaceSourceWindowsHWND);
-
-_SurfaceSourceWindowsHWND
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceSourceWindowsHWND::nextInChain)
-    .def_readwrite("hinstance", &pywgpu::SurfaceSourceWindowsHWND::hinstance)
-    .def_readwrite("hwnd", &pywgpu::SurfaceSourceWindowsHWND::hwnd)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceSourceWindowsHWND obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "hinstance", "hwnd"};
-        static const std::set<std::string> required = {"hinstance", "hwnd"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("hinstance"))
-        {
-            auto value = kwargs["hinstance"].cast<void *>();
-            obj.hinstance = value;
-        }
-        if (kwargs.contains("hwnd"))
-        {
-            auto value = kwargs["hwnd"].cast<void *>();
-            obj.hwnd = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceSourceXCBWindow, ChainedStruct> _SurfaceSourceXCBWindow(m, "SurfaceSourceXCBWindow");
-registry.on(m, "SurfaceSourceXCBWindow", _SurfaceSourceXCBWindow);
-
-_SurfaceSourceXCBWindow
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceSourceXCBWindow::nextInChain)
-    .def_readwrite("connection", &pywgpu::SurfaceSourceXCBWindow::connection)
-    .def_readwrite("window", &pywgpu::SurfaceSourceXCBWindow::window)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceSourceXCBWindow obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "connection", "window"};
-        static const std::set<std::string> required = {"connection", "window"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("connection"))
-        {
-            auto value = kwargs["connection"].cast<void *>();
-            obj.connection = value;
-        }
-        if (kwargs.contains("window"))
-        {
-            auto value = kwargs["window"].cast<uint32_t>();
-            obj.window = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceSourceXlibWindow, ChainedStruct> _SurfaceSourceXlibWindow(m, "SurfaceSourceXlibWindow");
-registry.on(m, "SurfaceSourceXlibWindow", _SurfaceSourceXlibWindow);
-
-_SurfaceSourceXlibWindow
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceSourceXlibWindow::nextInChain)
-    .def_readwrite("display", &pywgpu::SurfaceSourceXlibWindow::display)
-    .def_readwrite("window", &pywgpu::SurfaceSourceXlibWindow::window)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceSourceXlibWindow obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "display", "window"};
-        static const std::set<std::string> required = {"display", "window"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("display"))
-        {
-            auto value = kwargs["display"].cast<void *>();
-            obj.display = value;
-        }
-        if (kwargs.contains("window"))
-        {
-            auto value = kwargs["window"].cast<uint64_t>();
-            obj.window = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceSourceWaylandSurface, ChainedStruct> _SurfaceSourceWaylandSurface(m, "SurfaceSourceWaylandSurface");
-registry.on(m, "SurfaceSourceWaylandSurface", _SurfaceSourceWaylandSurface);
-
-_SurfaceSourceWaylandSurface
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceSourceWaylandSurface::nextInChain)
-    .def_readwrite("display", &pywgpu::SurfaceSourceWaylandSurface::display)
-    .def_readwrite("surface", &pywgpu::SurfaceSourceWaylandSurface::surface)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceSourceWaylandSurface obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "display", "surface"};
-        static const std::set<std::string> required = {"display", "surface"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("display"))
-        {
-            auto value = kwargs["display"].cast<void *>();
-            obj.display = value;
-        }
-        if (kwargs.contains("surface"))
-        {
-            auto value = kwargs["surface"].cast<void *>();
-            obj.surface = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceDescriptorFromWindowsCoreWindow, ChainedStruct> _SurfaceDescriptorFromWindowsCoreWindow(m, "SurfaceDescriptorFromWindowsCoreWindow");
-registry.on(m, "SurfaceDescriptorFromWindowsCoreWindow", _SurfaceDescriptorFromWindowsCoreWindow);
-
-_SurfaceDescriptorFromWindowsCoreWindow
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceDescriptorFromWindowsCoreWindow::nextInChain)
-    .def_readwrite("core_window", &pywgpu::SurfaceDescriptorFromWindowsCoreWindow::coreWindow)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceDescriptorFromWindowsCoreWindow obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "core_window"};
-        static const std::set<std::string> required = {"core_window"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("core_window"))
-        {
-            auto value = kwargs["core_window"].cast<void *>();
-            obj.coreWindow = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceDescriptorFromWindowsUWPSwapChainPanel, ChainedStruct> _SurfaceDescriptorFromWindowsUWPSwapChainPanel(m, "SurfaceDescriptorFromWindowsUWPSwapChainPanel");
-registry.on(m, "SurfaceDescriptorFromWindowsUWPSwapChainPanel", _SurfaceDescriptorFromWindowsUWPSwapChainPanel);
-
-_SurfaceDescriptorFromWindowsUWPSwapChainPanel
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel::nextInChain)
-    .def_readwrite("swap_chain_panel", &pywgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel::swapChainPanel)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "swap_chain_panel"};
-        static const std::set<std::string> required = {"swap_chain_panel"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("swap_chain_panel"))
-        {
-            auto value = kwargs["swap_chain_panel"].cast<void *>();
-            obj.swapChainPanel = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceDescriptorFromWindowsWinUISwapChainPanel, ChainedStruct> _SurfaceDescriptorFromWindowsWinUISwapChainPanel(m, "SurfaceDescriptorFromWindowsWinUISwapChainPanel");
-registry.on(m, "SurfaceDescriptorFromWindowsWinUISwapChainPanel", _SurfaceDescriptorFromWindowsWinUISwapChainPanel);
-
-_SurfaceDescriptorFromWindowsWinUISwapChainPanel
-    .def_readwrite("next_in_chain", &pywgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel::nextInChain)
-    .def_readwrite("swap_chain_panel", &pywgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel::swapChainPanel)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "swap_chain_panel"};
-        static const std::set<std::string> required = {"swap_chain_panel"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("swap_chain_panel"))
-        {
-            auto value = kwargs["swap_chain_panel"].cast<void *>();
-            obj.swapChainPanel = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SurfaceTexture> _SurfaceTexture(m, "SurfaceTexture");
-registry.on(m, "SurfaceTexture", _SurfaceTexture);
-
-_SurfaceTexture
-    .def_readonly("next_in_chain", &pywgpu::SurfaceTexture::nextInChain)
-    .def_readonly("texture", &pywgpu::SurfaceTexture::texture)
-    .def_readonly("status", &pywgpu::SurfaceTexture::status)
-    .def(py::init<>())
-    ;
-
-py::class_<TextureDescriptor> _TextureDescriptor(m, "TextureDescriptor");
-registry.on(m, "TextureDescriptor", _TextureDescriptor);
-
-_TextureDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::TextureDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::TextureDescriptor::label)
-    .def_readwrite("usage", &pywgpu::TextureDescriptor::usage)
-    .def_readwrite("dimension", &pywgpu::TextureDescriptor::dimension)
-    .def_readwrite("size", &pywgpu::TextureDescriptor::size)
-    .def_readwrite("format", &pywgpu::TextureDescriptor::format)
-    .def_readwrite("mip_level_count", &pywgpu::TextureDescriptor::mipLevelCount)
-    .def_readwrite("sample_count", &pywgpu::TextureDescriptor::sampleCount)
-    .def_readwrite("view_format_count", &pywgpu::TextureDescriptor::viewFormatCount)
-    .def_readwrite("view_formats", &pywgpu::TextureDescriptor::viewFormats)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::TextureDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "usage", "dimension", "size", "format", "mip_level_count", "sample_count", "view_formats"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("usage"))
-        {
-            auto value = kwargs["usage"].cast<TextureUsage>();
-            obj.usage = value;
-        }
-        if (kwargs.contains("dimension"))
-        {
-            auto value = kwargs["dimension"].cast<TextureDimension>();
-            obj.dimension = value;
-        }
-        if (kwargs.contains("size"))
-        {
-            auto value = kwargs["size"].cast<Extent3D>();
-            obj.size = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<TextureFormat>();
-            obj.format = value;
-        }
-        if (kwargs.contains("mip_level_count"))
-        {
-            auto value = kwargs["mip_level_count"].cast<uint32_t>();
-            obj.mipLevelCount = value;
-        }
-        if (kwargs.contains("sample_count"))
-        {
-            auto value = kwargs["sample_count"].cast<uint32_t>();
-            obj.sampleCount = value;
-        }
-        if (kwargs.contains("view_formats"))
-        {
-            auto _value = kwargs["view_formats"].cast<std::vector<TextureFormat>>();
-            auto count = _value.size();
-            auto value = new TextureFormat[count];
-            std::copy(_value.begin(), _value.end(), value);
-            obj.viewFormats = value;
-            obj.viewFormatCount = count;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<TextureBindingViewDimensionDescriptor, ChainedStruct> _TextureBindingViewDimensionDescriptor(m, "TextureBindingViewDimensionDescriptor");
-registry.on(m, "TextureBindingViewDimensionDescriptor", _TextureBindingViewDimensionDescriptor);
-
-_TextureBindingViewDimensionDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::TextureBindingViewDimensionDescriptor::nextInChain)
-    .def_readwrite("texture_binding_view_dimension", &pywgpu::TextureBindingViewDimensionDescriptor::textureBindingViewDimension)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::TextureBindingViewDimensionDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "texture_binding_view_dimension"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("texture_binding_view_dimension"))
-        {
-            auto value = kwargs["texture_binding_view_dimension"].cast<TextureViewDimension>();
-            obj.textureBindingViewDimension = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<TextureViewDescriptor> _TextureViewDescriptor(m, "TextureViewDescriptor");
-registry.on(m, "TextureViewDescriptor", _TextureViewDescriptor);
-
-_TextureViewDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::TextureViewDescriptor::nextInChain)
-    .def_readwrite("label", &pywgpu::TextureViewDescriptor::label)
-    .def_readwrite("format", &pywgpu::TextureViewDescriptor::format)
-    .def_readwrite("dimension", &pywgpu::TextureViewDescriptor::dimension)
-    .def_readwrite("base_mip_level", &pywgpu::TextureViewDescriptor::baseMipLevel)
-    .def_readwrite("mip_level_count", &pywgpu::TextureViewDescriptor::mipLevelCount)
-    .def_readwrite("base_array_layer", &pywgpu::TextureViewDescriptor::baseArrayLayer)
-    .def_readwrite("array_layer_count", &pywgpu::TextureViewDescriptor::arrayLayerCount)
-    .def_readwrite("aspect", &pywgpu::TextureViewDescriptor::aspect)
-    .def_readwrite("usage", &pywgpu::TextureViewDescriptor::usage)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::TextureViewDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "label", "format", "dimension", "base_mip_level", "mip_level_count", "base_array_layer", "array_layer_count", "aspect", "usage"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("label"))
-        {
-            auto value = kwargs["label"].cast<StringView>();
-            obj.label = value;
-        }
-        if (kwargs.contains("format"))
-        {
-            auto value = kwargs["format"].cast<TextureFormat>();
-            obj.format = value;
-        }
-        if (kwargs.contains("dimension"))
-        {
-            auto value = kwargs["dimension"].cast<TextureViewDimension>();
-            obj.dimension = value;
-        }
-        if (kwargs.contains("base_mip_level"))
-        {
-            auto value = kwargs["base_mip_level"].cast<uint32_t>();
-            obj.baseMipLevel = value;
-        }
-        if (kwargs.contains("mip_level_count"))
-        {
-            auto value = kwargs["mip_level_count"].cast<uint32_t>();
-            obj.mipLevelCount = value;
-        }
-        if (kwargs.contains("base_array_layer"))
-        {
-            auto value = kwargs["base_array_layer"].cast<uint32_t>();
-            obj.baseArrayLayer = value;
-        }
-        if (kwargs.contains("array_layer_count"))
-        {
-            auto value = kwargs["array_layer_count"].cast<uint32_t>();
-            obj.arrayLayerCount = value;
-        }
-        if (kwargs.contains("aspect"))
-        {
-            auto value = kwargs["aspect"].cast<TextureAspect>();
-            obj.aspect = value;
-        }
-        if (kwargs.contains("usage"))
-        {
-            auto value = kwargs["usage"].cast<TextureUsage>();
-            obj.usage = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<YCbCrVkDescriptor, ChainedStruct> _YCbCrVkDescriptor(m, "YCbCrVkDescriptor");
-registry.on(m, "YCbCrVkDescriptor", _YCbCrVkDescriptor);
-
-_YCbCrVkDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::YCbCrVkDescriptor::nextInChain)
-    .def_readwrite("vk_format", &pywgpu::YCbCrVkDescriptor::vkFormat)
-    .def_readwrite("vk_y_cb_cr_model", &pywgpu::YCbCrVkDescriptor::vkYCbCrModel)
-    .def_readwrite("vk_y_cb_cr_range", &pywgpu::YCbCrVkDescriptor::vkYCbCrRange)
-    .def_readwrite("vk_component_swizzle_red", &pywgpu::YCbCrVkDescriptor::vkComponentSwizzleRed)
-    .def_readwrite("vk_component_swizzle_green", &pywgpu::YCbCrVkDescriptor::vkComponentSwizzleGreen)
-    .def_readwrite("vk_component_swizzle_blue", &pywgpu::YCbCrVkDescriptor::vkComponentSwizzleBlue)
-    .def_readwrite("vk_component_swizzle_alpha", &pywgpu::YCbCrVkDescriptor::vkComponentSwizzleAlpha)
-    .def_readwrite("vk_x_chroma_offset", &pywgpu::YCbCrVkDescriptor::vkXChromaOffset)
-    .def_readwrite("vk_y_chroma_offset", &pywgpu::YCbCrVkDescriptor::vkYChromaOffset)
-    .def_readwrite("vk_chroma_filter", &pywgpu::YCbCrVkDescriptor::vkChromaFilter)
-    .def_readwrite("force_explicit_reconstruction", &pywgpu::YCbCrVkDescriptor::forceExplicitReconstruction)
-    .def_readwrite("external_format", &pywgpu::YCbCrVkDescriptor::externalFormat)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::YCbCrVkDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "vk_format", "vk_y_cb_cr_model", "vk_y_cb_cr_range", "vk_component_swizzle_red", "vk_component_swizzle_green", "vk_component_swizzle_blue", "vk_component_swizzle_alpha", "vk_x_chroma_offset", "vk_y_chroma_offset", "vk_chroma_filter", "force_explicit_reconstruction", "external_format"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("vk_format"))
-        {
-            auto value = kwargs["vk_format"].cast<uint32_t>();
-            obj.vkFormat = value;
-        }
-        if (kwargs.contains("vk_y_cb_cr_model"))
-        {
-            auto value = kwargs["vk_y_cb_cr_model"].cast<uint32_t>();
-            obj.vkYCbCrModel = value;
-        }
-        if (kwargs.contains("vk_y_cb_cr_range"))
-        {
-            auto value = kwargs["vk_y_cb_cr_range"].cast<uint32_t>();
-            obj.vkYCbCrRange = value;
-        }
-        if (kwargs.contains("vk_component_swizzle_red"))
-        {
-            auto value = kwargs["vk_component_swizzle_red"].cast<uint32_t>();
-            obj.vkComponentSwizzleRed = value;
-        }
-        if (kwargs.contains("vk_component_swizzle_green"))
-        {
-            auto value = kwargs["vk_component_swizzle_green"].cast<uint32_t>();
-            obj.vkComponentSwizzleGreen = value;
-        }
-        if (kwargs.contains("vk_component_swizzle_blue"))
-        {
-            auto value = kwargs["vk_component_swizzle_blue"].cast<uint32_t>();
-            obj.vkComponentSwizzleBlue = value;
-        }
-        if (kwargs.contains("vk_component_swizzle_alpha"))
-        {
-            auto value = kwargs["vk_component_swizzle_alpha"].cast<uint32_t>();
-            obj.vkComponentSwizzleAlpha = value;
-        }
-        if (kwargs.contains("vk_x_chroma_offset"))
-        {
-            auto value = kwargs["vk_x_chroma_offset"].cast<uint32_t>();
-            obj.vkXChromaOffset = value;
-        }
-        if (kwargs.contains("vk_y_chroma_offset"))
-        {
-            auto value = kwargs["vk_y_chroma_offset"].cast<uint32_t>();
-            obj.vkYChromaOffset = value;
-        }
-        if (kwargs.contains("vk_chroma_filter"))
-        {
-            auto value = kwargs["vk_chroma_filter"].cast<FilterMode>();
-            obj.vkChromaFilter = value;
-        }
-        if (kwargs.contains("force_explicit_reconstruction"))
-        {
-            auto value = kwargs["force_explicit_reconstruction"].cast<Bool>();
-            obj.forceExplicitReconstruction = value;
-        }
-        if (kwargs.contains("external_format"))
-        {
-            auto value = kwargs["external_format"].cast<uint64_t>();
-            obj.externalFormat = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnTextureInternalUsageDescriptor, ChainedStruct> _DawnTextureInternalUsageDescriptor(m, "DawnTextureInternalUsageDescriptor");
-registry.on(m, "DawnTextureInternalUsageDescriptor", _DawnTextureInternalUsageDescriptor);
-
-_DawnTextureInternalUsageDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::DawnTextureInternalUsageDescriptor::nextInChain)
-    .def_readwrite("internal_usage", &pywgpu::DawnTextureInternalUsageDescriptor::internalUsage)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnTextureInternalUsageDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "internal_usage"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("internal_usage"))
-        {
-            auto value = kwargs["internal_usage"].cast<TextureUsage>();
-            obj.internalUsage = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnEncoderInternalUsageDescriptor, ChainedStruct> _DawnEncoderInternalUsageDescriptor(m, "DawnEncoderInternalUsageDescriptor");
-registry.on(m, "DawnEncoderInternalUsageDescriptor", _DawnEncoderInternalUsageDescriptor);
-
-_DawnEncoderInternalUsageDescriptor
-    .def_readwrite("next_in_chain", &pywgpu::DawnEncoderInternalUsageDescriptor::nextInChain)
-    .def_readwrite("use_internal_usages", &pywgpu::DawnEncoderInternalUsageDescriptor::useInternalUsages)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnEncoderInternalUsageDescriptor obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "use_internal_usages"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("use_internal_usages"))
-        {
-            auto value = kwargs["use_internal_usages"].cast<Bool>();
-            obj.useInternalUsages = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<DawnAdapterPropertiesPowerPreference, ChainedStructOut> _DawnAdapterPropertiesPowerPreference(m, "DawnAdapterPropertiesPowerPreference");
-registry.on(m, "DawnAdapterPropertiesPowerPreference", _DawnAdapterPropertiesPowerPreference);
-
-_DawnAdapterPropertiesPowerPreference
-    .def_readonly("next_in_chain", &pywgpu::DawnAdapterPropertiesPowerPreference::nextInChain)
-    .def_readonly("power_preference", &pywgpu::DawnAdapterPropertiesPowerPreference::powerPreference)
-    .def(py::init<>())
-    ;
-
-py::class_<MemoryHeapInfo> _MemoryHeapInfo(m, "MemoryHeapInfo");
-registry.on(m, "MemoryHeapInfo", _MemoryHeapInfo);
-
-_MemoryHeapInfo
-    .def_readwrite("properties", &pywgpu::MemoryHeapInfo::properties)
-    .def_readwrite("size", &pywgpu::MemoryHeapInfo::size)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::MemoryHeapInfo obj{};
-        static const std::set<std::string> allowed = {"properties", "size"};
-        static const std::set<std::string> required = {"size"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("properties"))
-        {
-            auto value = kwargs["properties"].cast<HeapProperty>();
-            obj.properties = value;
-        }
-        if (kwargs.contains("size"))
-        {
-            auto value = kwargs["size"].cast<uint64_t>();
-            obj.size = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<AdapterPropertiesMemoryHeaps, ChainedStructOut> _AdapterPropertiesMemoryHeaps(m, "AdapterPropertiesMemoryHeaps");
-registry.on(m, "AdapterPropertiesMemoryHeaps", _AdapterPropertiesMemoryHeaps);
-
-_AdapterPropertiesMemoryHeaps
-    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesMemoryHeaps::nextInChain)
-    .def_readonly("heap_count", &pywgpu::AdapterPropertiesMemoryHeaps::heapCount)
-    .def_readonly("heap_info", &pywgpu::AdapterPropertiesMemoryHeaps::heapInfo)
-    .def(py::init<>())
-    ;
-
-py::class_<AdapterPropertiesD3D, ChainedStructOut> _AdapterPropertiesD3D(m, "AdapterPropertiesD3D");
-registry.on(m, "AdapterPropertiesD3D", _AdapterPropertiesD3D);
-
-_AdapterPropertiesD3D
-    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesD3D::nextInChain)
-    .def_readonly("shader_model", &pywgpu::AdapterPropertiesD3D::shaderModel)
-    .def(py::init<>())
-    ;
-
-py::class_<AdapterPropertiesVk, ChainedStructOut> _AdapterPropertiesVk(m, "AdapterPropertiesVk");
-registry.on(m, "AdapterPropertiesVk", _AdapterPropertiesVk);
-
-_AdapterPropertiesVk
-    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesVk::nextInChain)
-    .def_readonly("driver_version", &pywgpu::AdapterPropertiesVk::driverVersion)
-    .def(py::init<>())
-    ;
-
-py::class_<DawnBufferDescriptorErrorInfoFromWireClient, ChainedStruct> _DawnBufferDescriptorErrorInfoFromWireClient(m, "DawnBufferDescriptorErrorInfoFromWireClient");
-registry.on(m, "DawnBufferDescriptorErrorInfoFromWireClient", _DawnBufferDescriptorErrorInfoFromWireClient);
-
-_DawnBufferDescriptorErrorInfoFromWireClient
-    .def_readwrite("next_in_chain", &pywgpu::DawnBufferDescriptorErrorInfoFromWireClient::nextInChain)
-    .def_readwrite("out_of_memory", &pywgpu::DawnBufferDescriptorErrorInfoFromWireClient::outOfMemory)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::DawnBufferDescriptorErrorInfoFromWireClient obj{};
-        static const std::set<std::string> allowed = {"next_in_chain", "out_of_memory"};
-        static const std::set<std::string> required = {};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("next_in_chain"))
-        {
-            auto value = kwargs["next_in_chain"].cast<ChainedStruct const *>();
-            obj.nextInChain = value;
-        }
-        if (kwargs.contains("out_of_memory"))
-        {
-            auto value = kwargs["out_of_memory"].cast<Bool>();
-            obj.outOfMemory = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<SubgroupMatrixConfig> _SubgroupMatrixConfig(m, "SubgroupMatrixConfig");
-registry.on(m, "SubgroupMatrixConfig", _SubgroupMatrixConfig);
-
-_SubgroupMatrixConfig
-    .def_readwrite("component_type", &pywgpu::SubgroupMatrixConfig::componentType)
-    .def_readwrite("result_component_type", &pywgpu::SubgroupMatrixConfig::resultComponentType)
-    .def_readwrite("M", &pywgpu::SubgroupMatrixConfig::M)
-    .def_readwrite("N", &pywgpu::SubgroupMatrixConfig::N)
-    .def_readwrite("K", &pywgpu::SubgroupMatrixConfig::K)
-    .def(py::init([](const py::kwargs& kwargs) {
-        pywgpu::SubgroupMatrixConfig obj{};
-        static const std::set<std::string> allowed = {"component_type", "result_component_type", "M", "N", "K"};
-        static const std::set<std::string> required = {"M", "N", "K"};
-        
-        // Check for unknown keys
-        for (auto& item : kwargs) {
-            std::string key = py::cast<std::string>(item.first);
-            if (!allowed.count(key)) {
-                throw py::key_error("Unknown keyword argument: '" + key + "'");
-            }
-        }
-
-        // Check for required keys
-        for (const auto& key : required) {
-            if (!kwargs.contains(key.c_str())) {
-                throw py::key_error("Missing required keyword argument: '" + key + "'");
-            }
-        }
-        
-        if (kwargs.contains("component_type"))
-        {
-            auto value = kwargs["component_type"].cast<SubgroupMatrixComponentType>();
-            obj.componentType = value;
-        }
-        if (kwargs.contains("result_component_type"))
-        {
-            auto value = kwargs["result_component_type"].cast<SubgroupMatrixComponentType>();
-            obj.resultComponentType = value;
-        }
-        if (kwargs.contains("M"))
-        {
-            auto value = kwargs["M"].cast<uint32_t>();
-            obj.M = value;
-        }
-        if (kwargs.contains("N"))
-        {
-            auto value = kwargs["N"].cast<uint32_t>();
-            obj.N = value;
-        }
-        if (kwargs.contains("K"))
-        {
-            auto value = kwargs["K"].cast<uint32_t>();
-            obj.K = value;
-        }
-        return obj;
-    }), py::return_value_policy::automatic_reference)
-    ;
-
-py::class_<AdapterPropertiesSubgroupMatrixConfigs, ChainedStructOut> _AdapterPropertiesSubgroupMatrixConfigs(m, "AdapterPropertiesSubgroupMatrixConfigs");
-registry.on(m, "AdapterPropertiesSubgroupMatrixConfigs", _AdapterPropertiesSubgroupMatrixConfigs);
-
-_AdapterPropertiesSubgroupMatrixConfigs
-    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesSubgroupMatrixConfigs::nextInChain)
-    .def_readonly("config_count", &pywgpu::AdapterPropertiesSubgroupMatrixConfigs::configCount)
-    .def_readonly("configs", &pywgpu::AdapterPropertiesSubgroupMatrixConfigs::configs)
-    .def(py::init<>())
     ;
 
 m.def("create_instance", &pywgpu::CreateInstance

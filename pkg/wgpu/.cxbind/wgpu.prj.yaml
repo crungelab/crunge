@@ -9,4 +9,7 @@ flags: [
 unit_files:
   - path: wgpu_hpp.unit.yaml
   - path: wgpu_cpp.unit.yaml
+  - path: wgpu_pb.unit.yaml
   - path: wgpu_py.unit.yaml
+  - path: wgpu_pyi.unit.yaml
+

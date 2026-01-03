@@ -139,7 +139,7 @@ def create_image_copy_buffer(
 def create_image_copy_texture(
     texture: wgpu.Texture,
     mip_level: int = 0,
-    origin: wgpu.Origin3D = wgpu.Origin3D(0, 0, 0),
+    origin: wgpu.Origin3D = wgpu.Origin3D(x=0, y=0, z=0),
     aspect: wgpu.TextureAspect = wgpu.TextureAspect.ALL,
 ) -> wgpu.TexelCopyTextureInfo:
     image_copy_texture = wgpu.TexelCopyTextureInfo()

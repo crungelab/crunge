@@ -2,7 +2,8 @@ import asyncio
 
 from loguru import logger
 
-from . import _wgpu as wgpu
+#from . import _wgpu as wgpu
+from crunge import wgpu
 
 wgpu.Instance._pending_futures = []
 

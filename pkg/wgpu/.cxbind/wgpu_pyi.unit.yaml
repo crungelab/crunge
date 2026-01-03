@@ -1,3 +1,3 @@
 source: '../../depot/skia/third_party/externals/dawn/src/dawn/dawn.json'
-target: 'crunge/wgpu/generated.py'
-program: dawn_py
+target: 'crunge/wgpu/_wgpu.pyi'
+program: dawn_pyi
