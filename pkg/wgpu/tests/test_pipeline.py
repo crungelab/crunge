@@ -30,9 +30,8 @@ def main():
     #colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
     #logger.debug(colorTargetState)
 
-    colorTargetStates = wgpu.ColorTargetStates(
-        [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
-    )
+    colorTargetStates = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
+
     logger.debug(colorTargetStates)
     logger.debug(colorTargetStates[0].format)
     logger.debug(colorTargetStates[0].format.value)

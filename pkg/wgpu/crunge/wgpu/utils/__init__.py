@@ -42,7 +42,7 @@ def device_cb(device, reason, message):
 
 
 device_lost_callback_info = wgpu.DeviceLostCallbackInfo(
-    wgpu.CallbackMode.ALLOW_PROCESS_EVENTS, device_cb
+    mode=wgpu.CallbackMode.ALLOW_PROCESS_EVENTS, callback=device_cb
 )
 
 
@@ -50,7 +50,7 @@ def uncaptured_error_cb(device, type, message):
     print("Uncaptured error: ", type, message)
 
 
-uncaptured_error_callback_info = wgpu.UncapturedErrorCallbackInfo(uncaptured_error_cb)
+uncaptured_error_callback_info = wgpu.UncapturedErrorCallbackInfo(callback=uncaptured_error_cb)
 
 
 def logging_cb(type: wgpu.LoggingType, message: str):

@@ -4,7 +4,7 @@
 #include <pybind11/pybind11.h>
 
 #include <crunge/wgpu/pywgpu.h>
-#include <crunge/wgpu/callbacks.h>
+//#include <crunge/wgpu/callbacks.h>
 
 
 namespace py = pybind11;
@@ -62,6 +62,7 @@ template <> struct type_caster<pywgpu::StringView> {
         }
     };
     
+/*
 template<>
     struct type_caster<pywgpu::RequestAdapterCallbackInfo> {
     public:
@@ -167,5 +168,5 @@ template<>
             return py_obj.release();
         }
     };
-
+    */
 }} // namespace pybind11::detail
