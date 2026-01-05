@@ -14,7 +14,6 @@
 
 void init_callbacks(py::module &_wgpu, Registry &registry)
 {
-    /*
     PYCLASS_BEGIN(_wgpu, crunge_wgpu::PyRequestAdapterCallbackInfo, RequestAdapterCallbackInfo)
     RequestAdapterCallbackInfo.def(py::init<pywgpu::CallbackMode, py::function>(),
                                py::arg("mode"),
@@ -40,5 +39,5 @@ void init_callbacks(py::module &_wgpu, Registry &registry)
                                py::arg("callback"));
 
     PYCLASS_END(_wgpu, crunge_wgpu::PyLoggingCallbackInfo, LoggingCallbackInfo)
-    */
+
 }
