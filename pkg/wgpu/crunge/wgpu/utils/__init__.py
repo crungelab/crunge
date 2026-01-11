@@ -153,8 +153,8 @@ def create_image_copy_texture(
 
 def create_shader_module(device: wgpu.Device, code: str) -> wgpu.ShaderModule:
     wgsl_desc = wgpu.ShaderSourceWGSL(code=code)
-    descriptor = wgpu.ShaderModuleDescriptor()
-    descriptor.next_in_chain = wgsl_desc
+    descriptor = wgpu.ShaderModuleDescriptor(next_in_chain=wgsl_desc)
+    #descriptor.next_in_chain = wgsl_desc
     return device.create_shader_module(descriptor)
 
 

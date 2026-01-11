@@ -26,9 +26,7 @@ def main():
     shader_module = utils.create_shader_module(device, shader_code)
     logger.debug(shader_module)
 
-    #logger.debug("Creating colorTargetState")
-    #colorTargetState = wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)
-    #logger.debug(colorTargetState)
+    logger.debug("Creating colorTargetStates")
 
     colorTargetStates = [wgpu.ColorTargetState(format=wgpu.TextureFormat.BGRA8_UNORM)]
 
@@ -40,7 +38,7 @@ def main():
     fragmentState = wgpu.FragmentState(
         module=shader_module,
         entry_point="fs_main",
-        target_count=1,
+        #target_count=1,
         #targets=colorTargetState,
         targets=colorTargetStates,
     )
@@ -90,8 +88,7 @@ def main():
         fragment=fragmentState,
     )
     logger.debug(descriptor)
-    #logger.debug(descriptor.fragment.targets[0].format)
-    logger.debug(descriptor.fragment.targets.format)
+    logger.debug(descriptor.fragment.targets[0].format)
 
     logger.debug("Creating render pipeline")
     pipeline = device.create_render_pipeline(descriptor)

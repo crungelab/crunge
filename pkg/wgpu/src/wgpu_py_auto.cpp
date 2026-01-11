@@ -157,11 +157,13 @@ namespace py = pybind11;
 
 using namespace pywgpu;
 
+ChainedStruct* build_chained_struct(py::handle h, BuildCtx ctx);
+
 inline void fill(pywgpu::RequestAdapterOptions& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_feature_level = handle.attr("feature_level");
@@ -200,7 +202,7 @@ inline void fill(pywgpu::DeviceDescriptor& obj, py::handle handle, BuildCtx ctx)
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -214,7 +216,7 @@ inline void fill(pywgpu::DeviceDescriptor& obj, py::handle handle, BuildCtx ctx)
     {
         auto py_list = handle.attr("required_features").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<FeatureName>(count);
+        auto* value = ctx.la.make_array<FeatureName>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<FeatureName>();
         }
@@ -251,7 +253,7 @@ inline void fill(pywgpu::DawnTogglesDescriptor& obj, py::handle handle, BuildCtx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
 }
@@ -260,7 +262,7 @@ inline void fill(pywgpu::DawnCacheDeviceDescriptor& obj, py::handle handle, Buil
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_isolation_key = handle.attr("isolation_key");
@@ -281,7 +283,7 @@ inline void fill(pywgpu::DawnWGSLBlocklist& obj, py::handle handle, BuildCtx ctx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
 }
@@ -290,7 +292,7 @@ inline void fill(pywgpu::BindGroupEntry& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_binding = handle.attr("binding");
@@ -335,7 +337,7 @@ inline void fill(pywgpu::BindGroupDescriptor& obj, py::handle handle, BuildCtx c
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -355,9 +357,9 @@ inline void fill(pywgpu::BindGroupDescriptor& obj, py::handle handle, BuildCtx c
     {
         auto py_list = handle.attr("entries").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<BindGroupEntry>(count);
+        auto* value = ctx.la.make_array<BindGroupEntry>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<BindGroupEntry>();
+            Builder<BindGroupEntry>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.entries = value;
@@ -369,7 +371,7 @@ inline void fill(pywgpu::BufferBindingLayout& obj, py::handle handle, BuildCtx c
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_type = handle.attr("type");
@@ -396,7 +398,7 @@ inline void fill(pywgpu::SamplerBindingLayout& obj, py::handle handle, BuildCtx 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_type = handle.attr("type");
@@ -411,7 +413,7 @@ inline void fill(pywgpu::StaticSamplerBindingLayout& obj, py::handle handle, Bui
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_sampler = handle.attr("sampler");
@@ -432,7 +434,7 @@ inline void fill(pywgpu::TextureBindingLayout& obj, py::handle handle, BuildCtx 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_sample_type = handle.attr("sample_type");
@@ -459,7 +461,7 @@ inline void fill(pywgpu::SurfaceConfiguration& obj, py::handle handle, BuildCtx 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_device = handle.attr("device");
@@ -497,7 +499,7 @@ inline void fill(pywgpu::SurfaceConfiguration& obj, py::handle handle, BuildCtx 
     {
         auto py_list = handle.attr("view_formats").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<TextureFormat>(count);
+        auto* value = ctx.la.make_array<TextureFormat>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<TextureFormat>();
         }
@@ -523,7 +525,7 @@ inline void fill(pywgpu::ExternalTextureBindingEntry& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_external_texture = handle.attr("external_texture");
@@ -538,7 +540,7 @@ inline void fill(pywgpu::ExternalTextureBindingLayout& obj, py::handle handle, B
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
 }
@@ -547,7 +549,7 @@ inline void fill(pywgpu::StorageTextureBindingLayout& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_access = handle.attr("access");
@@ -574,7 +576,7 @@ inline void fill(pywgpu::BindGroupLayoutEntry& obj, py::handle handle, BuildCtx 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_binding = handle.attr("binding");
@@ -615,7 +617,7 @@ inline void fill(pywgpu::BindGroupLayoutDescriptor& obj, py::handle handle, Buil
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -629,9 +631,9 @@ inline void fill(pywgpu::BindGroupLayoutDescriptor& obj, py::handle handle, Buil
     {
         auto py_list = handle.attr("entries").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<BindGroupLayoutEntry>(count);
+        auto* value = ctx.la.make_array<BindGroupLayoutEntry>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<BindGroupLayoutEntry>();
+            Builder<BindGroupLayoutEntry>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.entries = value;
@@ -664,7 +666,7 @@ inline void fill(pywgpu::BufferDescriptor& obj, py::handle handle, BuildCtx ctx)
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -697,7 +699,7 @@ inline void fill(pywgpu::BufferHostMappedPointer& obj, py::handle handle, BuildC
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_pointer = handle.attr("pointer");
@@ -745,7 +747,7 @@ inline void fill(pywgpu::ConstantEntry& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_key = handle.attr("key");
@@ -766,7 +768,7 @@ inline void fill(pywgpu::CommandBufferDescriptor& obj, py::handle handle, BuildC
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -781,7 +783,7 @@ inline void fill(pywgpu::CommandEncoderDescriptor& obj, py::handle handle, Build
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -796,7 +798,7 @@ inline void fill(pywgpu::CompilationInfo& obj, py::handle handle, BuildCtx ctx) 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_messages = handle.attr("messages");
@@ -804,9 +806,9 @@ inline void fill(pywgpu::CompilationInfo& obj, py::handle handle, BuildCtx ctx) 
     {
         auto py_list = handle.attr("messages").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<CompilationMessage>(count);
+        auto* value = ctx.la.make_array<CompilationMessage>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<CompilationMessage>();
+            Builder<CompilationMessage>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.messages = value;
@@ -818,7 +820,7 @@ inline void fill(pywgpu::CompilationMessage& obj, py::handle handle, BuildCtx ct
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_message = handle.attr("message");
@@ -863,7 +865,7 @@ inline void fill(pywgpu::DawnCompilationMessageUtf16& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_line_pos = handle.attr("line_pos");
@@ -890,7 +892,7 @@ inline void fill(pywgpu::ComputePassDescriptor& obj, py::handle handle, BuildCtx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -911,7 +913,7 @@ inline void fill(pywgpu::ComputePipelineDescriptor& obj, py::handle handle, Buil
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -937,7 +939,7 @@ inline void fill(pywgpu::CopyTextureForBrowserOptions& obj, py::handle handle, B
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_flip_y = handle.attr("flip_y");
@@ -963,7 +965,7 @@ inline void fill(pywgpu::CopyTextureForBrowserOptions& obj, py::handle handle, B
     {
         auto py_list = handle.attr("src_transfer_function_parameters").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<float>(count);
+        auto* value = ctx.la.make_array<float>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<float>();
         }
@@ -975,7 +977,7 @@ inline void fill(pywgpu::CopyTextureForBrowserOptions& obj, py::handle handle, B
     {
         auto py_list = handle.attr("conversion_matrix").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<float>(count);
+        auto* value = ctx.la.make_array<float>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<float>();
         }
@@ -987,7 +989,7 @@ inline void fill(pywgpu::CopyTextureForBrowserOptions& obj, py::handle handle, B
     {
         auto py_list = handle.attr("dst_transfer_function_parameters").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<float>(count);
+        auto* value = ctx.la.make_array<float>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<float>();
         }
@@ -1241,7 +1243,7 @@ inline void fill(pywgpu::SupportedFeatures& obj, py::handle handle, BuildCtx ctx
     {
         auto py_list = handle.attr("features").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<FeatureName>(count);
+        auto* value = ctx.la.make_array<FeatureName>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<FeatureName>();
         }
@@ -1257,7 +1259,7 @@ inline void fill(pywgpu::SupportedWGSLLanguageFeatures& obj, py::handle handle, 
     {
         auto py_list = handle.attr("features").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<WGSLLanguageFeatureName>(count);
+        auto* value = ctx.la.make_array<WGSLLanguageFeatureName>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<WGSLLanguageFeatureName>();
         }
@@ -1307,7 +1309,7 @@ inline void fill(pywgpu::ExternalTextureDescriptor& obj, py::handle handle, Buil
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -1354,7 +1356,7 @@ inline void fill(pywgpu::ExternalTextureDescriptor& obj, py::handle handle, Buil
     {
         auto py_list = handle.attr("yuv_to_rgb_conversion_matrix").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<float>(count);
+        auto* value = ctx.la.make_array<float>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<float>();
         }
@@ -1366,7 +1368,7 @@ inline void fill(pywgpu::ExternalTextureDescriptor& obj, py::handle handle, Buil
     {
         auto py_list = handle.attr("src_transfer_function_parameters").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<float>(count);
+        auto* value = ctx.la.make_array<float>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<float>();
         }
@@ -1378,7 +1380,7 @@ inline void fill(pywgpu::ExternalTextureDescriptor& obj, py::handle handle, Buil
     {
         auto py_list = handle.attr("dst_transfer_function_parameters").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<float>(count);
+        auto* value = ctx.la.make_array<float>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<float>();
         }
@@ -1390,7 +1392,7 @@ inline void fill(pywgpu::ExternalTextureDescriptor& obj, py::handle handle, Buil
     {
         auto py_list = handle.attr("gamut_conversion_matrix").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<float>(count);
+        auto* value = ctx.la.make_array<float>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<float>();
         }
@@ -1415,7 +1417,7 @@ inline void fill(pywgpu::SharedBufferMemoryDescriptor& obj, py::handle handle, B
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -1430,7 +1432,7 @@ inline void fill(pywgpu::SharedTextureMemoryDescriptor& obj, py::handle handle, 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -1445,7 +1447,7 @@ inline void fill(pywgpu::SharedBufferMemoryBeginAccessDescriptor& obj, py::handl
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_initialized = handle.attr("initialized");
@@ -1459,7 +1461,7 @@ inline void fill(pywgpu::SharedBufferMemoryBeginAccessDescriptor& obj, py::handl
     {
         auto py_list = handle.attr("fences").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<SharedFence>(count);
+        auto* value = ctx.la.make_array<SharedFence>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<SharedFence>();
         }
@@ -1472,7 +1474,7 @@ inline void fill(pywgpu::SharedBufferMemoryBeginAccessDescriptor& obj, py::handl
     {
         auto py_list = handle.attr("signaled_values").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<uint64_t>(count);
+        auto* value = ctx.la.make_array<uint64_t>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<uint64_t>();
         }
@@ -1486,7 +1488,7 @@ inline void fill(pywgpu::SharedTextureMemoryVkDedicatedAllocationDescriptor& obj
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_dedicated_allocation = handle.attr("dedicated_allocation");
@@ -1501,7 +1503,7 @@ inline void fill(pywgpu::SharedTextureMemoryAHardwareBufferDescriptor& obj, py::
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_handle = handle.attr("handle");
@@ -1543,7 +1545,7 @@ inline void fill(pywgpu::SharedTextureMemoryDmaBufDescriptor& obj, py::handle ha
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_size = handle.attr("size");
@@ -1568,9 +1570,9 @@ inline void fill(pywgpu::SharedTextureMemoryDmaBufDescriptor& obj, py::handle ha
     {
         auto py_list = handle.attr("planes").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<SharedTextureMemoryDmaBufPlane>(count);
+        auto* value = ctx.la.make_array<SharedTextureMemoryDmaBufPlane>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<SharedTextureMemoryDmaBufPlane>();
+            Builder<SharedTextureMemoryDmaBufPlane>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.planes = value;
@@ -1582,7 +1584,7 @@ inline void fill(pywgpu::SharedTextureMemoryOpaqueFDDescriptor& obj, py::handle 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_vk_image_create_info = handle.attr("vk_image_create_info");
@@ -1621,7 +1623,7 @@ inline void fill(pywgpu::SharedTextureMemoryZirconHandleDescriptor& obj, py::han
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_memory_FD = handle.attr("memory_FD");
@@ -1642,7 +1644,7 @@ inline void fill(pywgpu::SharedTextureMemoryDXGISharedHandleDescriptor& obj, py:
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_handle = handle.attr("handle");
@@ -1663,7 +1665,7 @@ inline void fill(pywgpu::SharedTextureMemoryIOSurfaceDescriptor& obj, py::handle
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_io_surface = handle.attr("io_surface");
@@ -1684,7 +1686,7 @@ inline void fill(pywgpu::SharedTextureMemoryEGLImageDescriptor& obj, py::handle 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_image = handle.attr("image");
@@ -1699,7 +1701,7 @@ inline void fill(pywgpu::SharedTextureMemoryBeginAccessDescriptor& obj, py::hand
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_concurrent_read = handle.attr("concurrent_read");
@@ -1719,7 +1721,7 @@ inline void fill(pywgpu::SharedTextureMemoryBeginAccessDescriptor& obj, py::hand
     {
         auto py_list = handle.attr("fences").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<SharedFence>(count);
+        auto* value = ctx.la.make_array<SharedFence>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<SharedFence>();
         }
@@ -1732,7 +1734,7 @@ inline void fill(pywgpu::SharedTextureMemoryBeginAccessDescriptor& obj, py::hand
     {
         auto py_list = handle.attr("signaled_values").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<uint64_t>(count);
+        auto* value = ctx.la.make_array<uint64_t>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<uint64_t>();
         }
@@ -1746,7 +1748,7 @@ inline void fill(pywgpu::SharedTextureMemoryVkImageLayoutBeginState& obj, py::ha
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_old_layout = handle.attr("old_layout");
@@ -1767,7 +1769,7 @@ inline void fill(pywgpu::SharedTextureMemoryD3DSwapchainBeginState& obj, py::han
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_is_swapchain = handle.attr("is_swapchain");
@@ -1782,7 +1784,7 @@ inline void fill(pywgpu::SharedFenceDescriptor& obj, py::handle handle, BuildCtx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -1797,7 +1799,7 @@ inline void fill(pywgpu::SharedFenceVkSemaphoreOpaqueFDDescriptor& obj, py::hand
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_handle = handle.attr("handle");
@@ -1812,7 +1814,7 @@ inline void fill(pywgpu::SharedFenceSyncFDDescriptor& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_handle = handle.attr("handle");
@@ -1827,7 +1829,7 @@ inline void fill(pywgpu::SharedFenceVkSemaphoreZirconHandleDescriptor& obj, py::
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_handle = handle.attr("handle");
@@ -1842,7 +1844,7 @@ inline void fill(pywgpu::SharedFenceDXGISharedHandleDescriptor& obj, py::handle 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_handle = handle.attr("handle");
@@ -1857,7 +1859,7 @@ inline void fill(pywgpu::SharedFenceMTLSharedEventDescriptor& obj, py::handle ha
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_shared_event = handle.attr("shared_event");
@@ -1872,7 +1874,7 @@ inline void fill(pywgpu::SharedFenceEGLSyncDescriptor& obj, py::handle handle, B
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_sync = handle.attr("sync");
@@ -1887,7 +1889,7 @@ inline void fill(pywgpu::DawnFakeBufferOOMForTesting& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_fake_OOM_at_wire_client_map = handle.attr("fake_OOM_at_wire_client_map");
@@ -1990,7 +1992,7 @@ inline void fill(pywgpu::ImageCopyExternalTexture& obj, py::handle handle, Build
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_external_texture = handle.attr("external_texture");
@@ -2051,7 +2053,7 @@ inline void fill(pywgpu::InstanceDescriptor& obj, py::handle handle, BuildCtx ct
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_capabilities = handle.attr("capabilities");
@@ -2065,7 +2067,7 @@ inline void fill(pywgpu::DawnWireWGSLControl& obj, py::handle handle, BuildCtx c
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_enable_experimental = handle.attr("enable_experimental");
@@ -2092,7 +2094,7 @@ inline void fill(pywgpu::DawnInjectedInvalidSType& obj, py::handle handle, Build
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_invalid_s_type = handle.attr("invalid_s_type");
@@ -2107,7 +2109,7 @@ inline void fill(pywgpu::VertexAttribute& obj, py::handle handle, BuildCtx ctx) 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_format = handle.attr("format");
@@ -2134,7 +2136,7 @@ inline void fill(pywgpu::VertexBufferLayout& obj, py::handle handle, BuildCtx ct
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_step_mode = handle.attr("step_mode");
@@ -2154,9 +2156,9 @@ inline void fill(pywgpu::VertexBufferLayout& obj, py::handle handle, BuildCtx ct
     {
         auto py_list = handle.attr("attributes").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<VertexAttribute>(count);
+        auto* value = ctx.la.make_array<VertexAttribute>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<VertexAttribute>();
+            Builder<VertexAttribute>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.attributes = value;
@@ -2204,7 +2206,7 @@ inline void fill(pywgpu::PassTimestampWrites& obj, py::handle handle, BuildCtx c
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_query_set = handle.attr("query_set");
@@ -2231,7 +2233,7 @@ inline void fill(pywgpu::PipelineLayoutDescriptor& obj, py::handle handle, Build
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -2245,7 +2247,7 @@ inline void fill(pywgpu::PipelineLayoutDescriptor& obj, py::handle handle, Build
     {
         auto py_list = handle.attr("bind_group_layouts").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<BindGroupLayout>(count);
+        auto* value = ctx.la.make_array<BindGroupLayout>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<BindGroupLayout>();
         }
@@ -2265,7 +2267,7 @@ inline void fill(pywgpu::PipelineLayoutPixelLocalStorage& obj, py::handle handle
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_total_pixel_local_storage_size = handle.attr("total_pixel_local_storage_size");
@@ -2279,9 +2281,9 @@ inline void fill(pywgpu::PipelineLayoutPixelLocalStorage& obj, py::handle handle
     {
         auto py_list = handle.attr("storage_attachments").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<PipelineLayoutStorageAttachment>(count);
+        auto* value = ctx.la.make_array<PipelineLayoutStorageAttachment>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<PipelineLayoutStorageAttachment>();
+            Builder<PipelineLayoutStorageAttachment>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.storageAttachments = value;
@@ -2293,7 +2295,7 @@ inline void fill(pywgpu::PipelineLayoutStorageAttachment& obj, py::handle handle
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_offset = handle.attr("offset");
@@ -2314,7 +2316,7 @@ inline void fill(pywgpu::ComputeState& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_module = handle.attr("module");
@@ -2334,9 +2336,9 @@ inline void fill(pywgpu::ComputeState& obj, py::handle handle, BuildCtx ctx) {
     {
         auto py_list = handle.attr("constants").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<ConstantEntry>(count);
+        auto* value = ctx.la.make_array<ConstantEntry>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<ConstantEntry>();
+            Builder<ConstantEntry>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.constants = value;
@@ -2348,7 +2350,7 @@ inline void fill(pywgpu::QuerySetDescriptor& obj, py::handle handle, BuildCtx ct
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -2375,7 +2377,7 @@ inline void fill(pywgpu::QueueDescriptor& obj, py::handle handle, BuildCtx ctx) 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -2390,7 +2392,7 @@ inline void fill(pywgpu::RenderBundleDescriptor& obj, py::handle handle, BuildCt
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -2405,7 +2407,7 @@ inline void fill(pywgpu::RenderBundleEncoderDescriptor& obj, py::handle handle, 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -2419,7 +2421,7 @@ inline void fill(pywgpu::RenderBundleEncoderDescriptor& obj, py::handle handle, 
     {
         auto py_list = handle.attr("color_formats").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<TextureFormat>(count);
+        auto* value = ctx.la.make_array<TextureFormat>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<TextureFormat>();
         }
@@ -2457,7 +2459,7 @@ inline void fill(pywgpu::RenderPassColorAttachment& obj, py::handle handle, Buil
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_view = handle.attr("view");
@@ -2501,7 +2503,7 @@ inline void fill(pywgpu::DawnRenderPassColorAttachmentRenderToSingleSampled& obj
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_implicit_sample_count = handle.attr("implicit_sample_count");
@@ -2516,7 +2518,7 @@ inline void fill(pywgpu::RenderPassDepthStencilAttachment& obj, py::handle handl
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_view = handle.attr("view");
@@ -2579,7 +2581,7 @@ inline void fill(pywgpu::RenderPassDescriptor& obj, py::handle handle, BuildCtx 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -2593,9 +2595,9 @@ inline void fill(pywgpu::RenderPassDescriptor& obj, py::handle handle, BuildCtx 
     {
         auto py_list = handle.attr("color_attachments").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<RenderPassColorAttachment>(count);
+        auto* value = ctx.la.make_array<RenderPassColorAttachment>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<RenderPassColorAttachment>();
+            Builder<RenderPassColorAttachment>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.colorAttachments = value;
@@ -2625,7 +2627,7 @@ inline void fill(pywgpu::RenderPassMaxDrawCount& obj, py::handle handle, BuildCt
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_max_draw_count = handle.attr("max_draw_count");
@@ -2640,7 +2642,7 @@ inline void fill(pywgpu::RenderPassDescriptorExpandResolveRect& obj, py::handle 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_x = handle.attr("x");
@@ -2673,7 +2675,7 @@ inline void fill(pywgpu::RenderPassPixelLocalStorage& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_total_pixel_local_storage_size = handle.attr("total_pixel_local_storage_size");
@@ -2687,9 +2689,9 @@ inline void fill(pywgpu::RenderPassPixelLocalStorage& obj, py::handle handle, Bu
     {
         auto py_list = handle.attr("storage_attachments").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<RenderPassStorageAttachment>(count);
+        auto* value = ctx.la.make_array<RenderPassStorageAttachment>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<RenderPassStorageAttachment>();
+            Builder<RenderPassStorageAttachment>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.storageAttachments = value;
@@ -2701,7 +2703,7 @@ inline void fill(pywgpu::RenderPassStorageAttachment& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_offset = handle.attr("offset");
@@ -2739,7 +2741,7 @@ inline void fill(pywgpu::VertexState& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_module = handle.attr("module");
@@ -2759,9 +2761,9 @@ inline void fill(pywgpu::VertexState& obj, py::handle handle, BuildCtx ctx) {
     {
         auto py_list = handle.attr("constants").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<ConstantEntry>(count);
+        auto* value = ctx.la.make_array<ConstantEntry>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<ConstantEntry>();
+            Builder<ConstantEntry>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.constants = value;
@@ -2772,9 +2774,9 @@ inline void fill(pywgpu::VertexState& obj, py::handle handle, BuildCtx ctx) {
     {
         auto py_list = handle.attr("buffers").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<VertexBufferLayout>(count);
+        auto* value = ctx.la.make_array<VertexBufferLayout>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<VertexBufferLayout>();
+            Builder<VertexBufferLayout>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.buffers = value;
@@ -2786,7 +2788,7 @@ inline void fill(pywgpu::PrimitiveState& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_topology = handle.attr("topology");
@@ -2825,7 +2827,7 @@ inline void fill(pywgpu::DepthStencilState& obj, py::handle handle, BuildCtx ctx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_format = handle.attr("format");
@@ -2892,7 +2894,7 @@ inline void fill(pywgpu::MultisampleState& obj, py::handle handle, BuildCtx ctx)
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_count = handle.attr("count");
@@ -2919,7 +2921,7 @@ inline void fill(pywgpu::FragmentState& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_module = handle.attr("module");
@@ -2939,9 +2941,9 @@ inline void fill(pywgpu::FragmentState& obj, py::handle handle, BuildCtx ctx) {
     {
         auto py_list = handle.attr("constants").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<ConstantEntry>(count);
+        auto* value = ctx.la.make_array<ConstantEntry>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<ConstantEntry>();
+            Builder<ConstantEntry>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.constants = value;
@@ -2952,9 +2954,9 @@ inline void fill(pywgpu::FragmentState& obj, py::handle handle, BuildCtx ctx) {
     {
         auto py_list = handle.attr("targets").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<ColorTargetState>(count);
+        auto* value = ctx.la.make_array<ColorTargetState>(count);
         for (uint32_t i = 0; i < count; ++i) {
-            value[i] = py_list[i].cast<ColorTargetState>();
+            Builder<ColorTargetState>(ctx).fill(value[i], py_list[i]);
         }
 
         obj.targets = value;
@@ -2966,7 +2968,7 @@ inline void fill(pywgpu::ColorTargetState& obj, py::handle handle, BuildCtx ctx)
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_format = handle.attr("format");
@@ -2993,7 +2995,7 @@ inline void fill(pywgpu::ColorTargetStateExpandResolveTextureDawn& obj, py::hand
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_enabled = handle.attr("enabled");
@@ -3021,7 +3023,7 @@ inline void fill(pywgpu::RenderPipelineDescriptor& obj, py::handle handle, Build
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -3069,7 +3071,7 @@ inline void fill(pywgpu::SamplerDescriptor& obj, py::handle handle, BuildCtx ctx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -3144,7 +3146,7 @@ inline void fill(pywgpu::ShaderModuleDescriptor& obj, py::handle handle, BuildCt
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -3159,7 +3161,7 @@ inline void fill(pywgpu::ShaderSourceSPIRV& obj, py::handle handle, BuildCtx ctx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_code = handle.attr("code");
@@ -3167,7 +3169,7 @@ inline void fill(pywgpu::ShaderSourceSPIRV& obj, py::handle handle, BuildCtx ctx
     {
         auto py_list = handle.attr("code").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<uint32_t>(count);
+        auto* value = ctx.la.make_array<uint32_t>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<uint32_t>();
         }
@@ -3181,7 +3183,7 @@ inline void fill(pywgpu::ShaderSourceWGSL& obj, py::handle handle, BuildCtx ctx)
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_code = handle.attr("code");
@@ -3196,7 +3198,7 @@ inline void fill(pywgpu::DawnShaderModuleSPIRVOptionsDescriptor& obj, py::handle
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_allow_non_uniform_derivatives = handle.attr("allow_non_uniform_derivatives");
@@ -3211,7 +3213,7 @@ inline void fill(pywgpu::ShaderModuleCompilationOptions& obj, py::handle handle,
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_strict_math = handle.attr("strict_math");
@@ -3253,7 +3255,7 @@ inline void fill(pywgpu::SurfaceDescriptor& obj, py::handle handle, BuildCtx ctx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -3268,7 +3270,7 @@ inline void fill(pywgpu::SurfaceSourceAndroidNativeWindow& obj, py::handle handl
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_window = handle.attr("window");
@@ -3283,7 +3285,7 @@ inline void fill(pywgpu::EmscriptenSurfaceSourceCanvasHTMLSelector& obj, py::han
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_selector = handle.attr("selector");
@@ -3298,7 +3300,7 @@ inline void fill(pywgpu::SurfaceSourceMetalLayer& obj, py::handle handle, BuildC
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_layer = handle.attr("layer");
@@ -3313,7 +3315,7 @@ inline void fill(pywgpu::SurfaceSourceWindowsHWND& obj, py::handle handle, Build
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_hinstance = handle.attr("hinstance");
@@ -3334,7 +3336,7 @@ inline void fill(pywgpu::SurfaceSourceXCBWindow& obj, py::handle handle, BuildCt
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_connection = handle.attr("connection");
@@ -3355,7 +3357,7 @@ inline void fill(pywgpu::SurfaceSourceXlibWindow& obj, py::handle handle, BuildC
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_display = handle.attr("display");
@@ -3376,7 +3378,7 @@ inline void fill(pywgpu::SurfaceSourceWaylandSurface& obj, py::handle handle, Bu
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_display = handle.attr("display");
@@ -3397,7 +3399,7 @@ inline void fill(pywgpu::SurfaceDescriptorFromWindowsCoreWindow& obj, py::handle
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_core_window = handle.attr("core_window");
@@ -3412,7 +3414,7 @@ inline void fill(pywgpu::SurfaceDescriptorFromWindowsUWPSwapChainPanel& obj, py:
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_swap_chain_panel = handle.attr("swap_chain_panel");
@@ -3427,7 +3429,7 @@ inline void fill(pywgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel& obj, p
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_swap_chain_panel = handle.attr("swap_chain_panel");
@@ -3442,7 +3444,7 @@ inline void fill(pywgpu::TextureDescriptor& obj, py::handle handle, BuildCtx ctx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -3491,7 +3493,7 @@ inline void fill(pywgpu::TextureDescriptor& obj, py::handle handle, BuildCtx ctx
     {
         auto py_list = handle.attr("view_formats").cast<py::sequence>();
         uint32_t count = static_cast<uint32_t>(py_list.size());
-        auto* value = ctx.la.alloc_array<TextureFormat>(count);
+        auto* value = ctx.la.make_array<TextureFormat>(count);
         for (uint32_t i = 0; i < count; ++i) {
             value[i] = py_list[i].cast<TextureFormat>();
         }
@@ -3505,7 +3507,7 @@ inline void fill(pywgpu::TextureBindingViewDimensionDescriptor& obj, py::handle 
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_texture_binding_view_dimension = handle.attr("texture_binding_view_dimension");
@@ -3520,7 +3522,7 @@ inline void fill(pywgpu::TextureViewDescriptor& obj, py::handle handle, BuildCtx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_label = handle.attr("label");
@@ -3583,7 +3585,7 @@ inline void fill(pywgpu::YCbCrVkDescriptor& obj, py::handle handle, BuildCtx ctx
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_vk_format = handle.attr("vk_format");
@@ -3664,7 +3666,7 @@ inline void fill(pywgpu::DawnTextureInternalUsageDescriptor& obj, py::handle han
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_internal_usage = handle.attr("internal_usage");
@@ -3679,7 +3681,7 @@ inline void fill(pywgpu::DawnEncoderInternalUsageDescriptor& obj, py::handle han
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_use_internal_usages = handle.attr("use_internal_usages");
@@ -3709,7 +3711,7 @@ inline void fill(pywgpu::DawnBufferDescriptorErrorInfoFromWireClient& obj, py::h
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
-        auto value = Builder<ChainedStruct>(ctx).build(handle.attr("next_in_chain"));
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
     auto py_out_of_memory = handle.attr("out_of_memory");
@@ -6813,4 +6815,116 @@ m.def("get_instance_capabilities",[](py::handle capabilities) {
 ;
 
 
+}
+
+ChainedStruct* build_chained_struct(py::handle h, BuildCtx ctx) {
+    if (h.is_none()) return nullptr;
+    auto s_type = py::cast<SType>(h.attr("s_type"));
+    switch (s_type) {
+        case SType::DawnTogglesDescriptor:
+            return Builder<DawnTogglesDescriptor>(ctx).build(h);
+        case SType::DawnCacheDeviceDescriptor:
+            return Builder<DawnCacheDeviceDescriptor>(ctx).build(h);
+        case SType::DawnWGSLBlocklist:
+            return Builder<DawnWGSLBlocklist>(ctx).build(h);
+        case SType::StaticSamplerBindingLayout:
+            return Builder<StaticSamplerBindingLayout>(ctx).build(h);
+        case SType::ExternalTextureBindingEntry:
+            return Builder<ExternalTextureBindingEntry>(ctx).build(h);
+        case SType::ExternalTextureBindingLayout:
+            return Builder<ExternalTextureBindingLayout>(ctx).build(h);
+        case SType::BufferHostMappedPointer:
+            return Builder<BufferHostMappedPointer>(ctx).build(h);
+        case SType::DawnCompilationMessageUtf16:
+            return Builder<DawnCompilationMessageUtf16>(ctx).build(h);
+        case SType::SharedTextureMemoryVkDedicatedAllocationDescriptor:
+            return Builder<SharedTextureMemoryVkDedicatedAllocationDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryAHardwareBufferDescriptor:
+            return Builder<SharedTextureMemoryAHardwareBufferDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryDmaBufDescriptor:
+            return Builder<SharedTextureMemoryDmaBufDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryOpaqueFDDescriptor:
+            return Builder<SharedTextureMemoryOpaqueFDDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryZirconHandleDescriptor:
+            return Builder<SharedTextureMemoryZirconHandleDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryDXGISharedHandleDescriptor:
+            return Builder<SharedTextureMemoryDXGISharedHandleDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryIOSurfaceDescriptor:
+            return Builder<SharedTextureMemoryIOSurfaceDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryEGLImageDescriptor:
+            return Builder<SharedTextureMemoryEGLImageDescriptor>(ctx).build(h);
+        case SType::SharedTextureMemoryVkImageLayoutBeginState:
+            return Builder<SharedTextureMemoryVkImageLayoutBeginState>(ctx).build(h);
+        case SType::SharedTextureMemoryD3DSwapchainBeginState:
+            return Builder<SharedTextureMemoryD3DSwapchainBeginState>(ctx).build(h);
+        case SType::SharedFenceVkSemaphoreOpaqueFDDescriptor:
+            return Builder<SharedFenceVkSemaphoreOpaqueFDDescriptor>(ctx).build(h);
+        case SType::SharedFenceSyncFDDescriptor:
+            return Builder<SharedFenceSyncFDDescriptor>(ctx).build(h);
+        case SType::SharedFenceVkSemaphoreZirconHandleDescriptor:
+            return Builder<SharedFenceVkSemaphoreZirconHandleDescriptor>(ctx).build(h);
+        case SType::SharedFenceDXGISharedHandleDescriptor:
+            return Builder<SharedFenceDXGISharedHandleDescriptor>(ctx).build(h);
+        case SType::SharedFenceMTLSharedEventDescriptor:
+            return Builder<SharedFenceMTLSharedEventDescriptor>(ctx).build(h);
+        case SType::SharedFenceEGLSyncDescriptor:
+            return Builder<SharedFenceEGLSyncDescriptor>(ctx).build(h);
+        case SType::DawnFakeBufferOOMForTesting:
+            return Builder<DawnFakeBufferOOMForTesting>(ctx).build(h);
+        case SType::DawnWireWGSLControl:
+            return Builder<DawnWireWGSLControl>(ctx).build(h);
+        case SType::DawnInjectedInvalidSType:
+            return Builder<DawnInjectedInvalidSType>(ctx).build(h);
+        case SType::PipelineLayoutPixelLocalStorage:
+            return Builder<PipelineLayoutPixelLocalStorage>(ctx).build(h);
+        case SType::DawnRenderPassColorAttachmentRenderToSingleSampled:
+            return Builder<DawnRenderPassColorAttachmentRenderToSingleSampled>(ctx).build(h);
+        case SType::RenderPassMaxDrawCount:
+            return Builder<RenderPassMaxDrawCount>(ctx).build(h);
+        case SType::RenderPassDescriptorExpandResolveRect:
+            return Builder<RenderPassDescriptorExpandResolveRect>(ctx).build(h);
+        case SType::RenderPassPixelLocalStorage:
+            return Builder<RenderPassPixelLocalStorage>(ctx).build(h);
+        case SType::ColorTargetStateExpandResolveTextureDawn:
+            return Builder<ColorTargetStateExpandResolveTextureDawn>(ctx).build(h);
+        case SType::ShaderSourceSPIRV:
+            return Builder<ShaderSourceSPIRV>(ctx).build(h);
+        case SType::ShaderSourceWGSL:
+            return Builder<ShaderSourceWGSL>(ctx).build(h);
+        case SType::DawnShaderModuleSPIRVOptionsDescriptor:
+            return Builder<DawnShaderModuleSPIRVOptionsDescriptor>(ctx).build(h);
+        case SType::ShaderModuleCompilationOptions:
+            return Builder<ShaderModuleCompilationOptions>(ctx).build(h);
+        case SType::SurfaceSourceAndroidNativeWindow:
+            return Builder<SurfaceSourceAndroidNativeWindow>(ctx).build(h);
+        case SType::EmscriptenSurfaceSourceCanvasHTMLSelector:
+            return Builder<EmscriptenSurfaceSourceCanvasHTMLSelector>(ctx).build(h);
+        case SType::SurfaceSourceMetalLayer:
+            return Builder<SurfaceSourceMetalLayer>(ctx).build(h);
+        case SType::SurfaceSourceWindowsHWND:
+            return Builder<SurfaceSourceWindowsHWND>(ctx).build(h);
+        case SType::SurfaceSourceXCBWindow:
+            return Builder<SurfaceSourceXCBWindow>(ctx).build(h);
+        case SType::SurfaceSourceXlibWindow:
+            return Builder<SurfaceSourceXlibWindow>(ctx).build(h);
+        case SType::SurfaceSourceWaylandSurface:
+            return Builder<SurfaceSourceWaylandSurface>(ctx).build(h);
+        case SType::SurfaceDescriptorFromWindowsCoreWindow:
+            return Builder<SurfaceDescriptorFromWindowsCoreWindow>(ctx).build(h);
+        case SType::SurfaceDescriptorFromWindowsUWPSwapChainPanel:
+            return Builder<SurfaceDescriptorFromWindowsUWPSwapChainPanel>(ctx).build(h);
+        case SType::SurfaceDescriptorFromWindowsWinUISwapChainPanel:
+            return Builder<SurfaceDescriptorFromWindowsWinUISwapChainPanel>(ctx).build(h);
+        case SType::TextureBindingViewDimensionDescriptor:
+            return Builder<TextureBindingViewDimensionDescriptor>(ctx).build(h);
+        case SType::YCbCrVkDescriptor:
+            return Builder<YCbCrVkDescriptor>(ctx).build(h);
+        case SType::DawnTextureInternalUsageDescriptor:
+            return Builder<DawnTextureInternalUsageDescriptor>(ctx).build(h);
+        case SType::DawnEncoderInternalUsageDescriptor:
+            return Builder<DawnEncoderInternalUsageDescriptor>(ctx).build(h);
+        case SType::DawnBufferDescriptorErrorInfoFromWireClient:
+            return Builder<DawnBufferDescriptorErrorInfoFromWireClient>(ctx).build(h);
+    }
+    return nullptr;
 }
