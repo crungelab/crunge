@@ -1,9 +1,9 @@
 import inspect
-import crunge.wgpu._wgpu as _wgpu
-from crunge.wgpu.generated import RequestAdapterOptions
+from crunge import wgpu
+from crunge.wgpu import RequestAdapterOptions
 
-inst = _wgpu.create_instance(None)
+inst = wgpu.create_instance(None)
 
-print("callable:", inst._request_adapter)
-print("signature:", inspect.signature(inst._request_adapter))
+print("callable:", inst.request_adapter_sync)
+print("signature:", inspect.signature(inst.request_adapter_sync))
 print("options type:", RequestAdapterOptions)

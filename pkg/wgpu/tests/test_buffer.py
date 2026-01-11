@@ -14,9 +14,9 @@ def main():
     wgpu_context = wgpu.Context()
     device = wgpu_context.device
 
-    descriptor = wgpu.BufferDescriptor()
-    descriptor.size = size
-    descriptor.usage = usage | wgpu.BufferUsage.COPY_DST
+    descriptor = wgpu.BufferDescriptor(size=size, usage=usage | wgpu.BufferUsage.COPY_DST)
+    #descriptor.size = size
+    #descriptor.usage = usage | wgpu.BufferUsage.COPY_DST
     buffer: wgpu.Buffer = device.create_buffer(descriptor)
     logger.debug(buffer)
 

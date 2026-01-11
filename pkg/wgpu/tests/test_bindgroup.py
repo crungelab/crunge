@@ -8,10 +8,8 @@ def main():
     bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=[])
     bgl = device.create_bind_group_layout(bgl_desc)
     desc = wgpu.BindGroupDescriptor(layout=bgl, entries=[])
-    #desc.layout = bgl
-    #desc.entry_count = 0
-    #desc.entries = None
     bg = device.create_bind_group(desc)
+
     print(bg)
 
 

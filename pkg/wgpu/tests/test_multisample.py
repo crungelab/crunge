@@ -11,6 +11,9 @@ def main():
         alpha_to_coverage_enabled=False,
     )
 
+    logger.debug("MultisampleState created")
+    logger.debug(multisample)
+    
     logger.debug(multisample.count)
     logger.debug(hex(multisample.mask))
     logger.debug(multisample.alpha_to_coverage_enabled)
