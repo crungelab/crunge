@@ -1,3 +1,3 @@
 ```bash
-python -m implotdemo
+python -m uidemo
 ```

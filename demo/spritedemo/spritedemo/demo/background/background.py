@@ -36,6 +36,7 @@ class BackgroundDemo(Demo):
 
         imgui.begin("Background")
 
+        '''
         # Rotation
         changed, self.angle = imgui.drag_float(
             "Angle",
@@ -48,7 +49,9 @@ class BackgroundDemo(Demo):
         changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
+        '''
 
+        # Tint
         changed, color = imgui.color_edit4("Tint", self.color)
         if changed:
             self.color = color

@@ -148,7 +148,7 @@ class MeshBuilder(Builder):
 
     def create_vertex_attributes(self):
         logger.debug("Creating vertex attributes")
-        vert_attributes = wgpu.VertexAttributes()
+        vert_attributes = []
         offset = 0
         for i, column in enumerate(self.vertex_table.columns):
             vert_attributes.append(

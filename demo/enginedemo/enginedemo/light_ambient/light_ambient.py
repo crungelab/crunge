@@ -6,7 +6,6 @@ import glm
 
 from crunge import imgui
 
-from crunge.engine.renderer import Renderer
 from crunge.engine.loader.gltf import GltfLoader
 
 from ..demo.gltf_demo import GltfDemo
@@ -23,7 +22,7 @@ class AmbientLightDemo(GltfDemo):
     def _draw(self):
         imgui.begin(self.title)
 
-        changed, newColor = imgui.color_edit3("Ambient Color", list(self.scene.ambient_light.color))
+        changed, newColor = imgui.color_edit3("Ambient Color", tuple(self.scene.ambient_light.color))
         if changed:
             self.scene.ambient_light.color = glm.vec3(newColor)
 

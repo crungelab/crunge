@@ -178,7 +178,7 @@ class MeshBuilder(NodeBuilder):
 
     def build_vertex_attributes(self):
         logger.debug("Creating vertex attributes")
-        vert_attributes = wgpu.VertexAttributes()
+        vert_attributes = []
         offset = 0
         for location, column in enumerate(self.vertex_table.columns):
             vert_attributes.append(
@@ -307,20 +307,18 @@ class MeshBuilder(NodeBuilder):
         self.mesh.pipeline = self.device.create_render_pipeline(rp_descriptor)
 
     def build_bindgroup(self):
-        bg_entries = wgpu.BindGroupEntries(
-            [
-                wgpu.BindGroupEntry(
-                    binding=0,
-                    buffer=self.mesh.camera_uniform_buffer,
-                    size=self.mesh.camera_uniform_buffer_size,
-                ),
-                wgpu.BindGroupEntry(
-                    binding=1,
-                    buffer=self.mesh.light_uniform_buffer,
-                    size=self.mesh.light_uniform_buffer_size,
-                ),
-            ]
-        )
+        bg_entries = [
+            wgpu.BindGroupEntry(
+                binding=0,
+                buffer=self.mesh.camera_uniform_buffer,
+                size=self.mesh.camera_uniform_buffer_size,
+            ),
+            wgpu.BindGroupEntry(
+                binding=1,
+                buffer=self.mesh.light_uniform_buffer,
+                size=self.mesh.light_uniform_buffer_size,
+            ),
+        ]
 
         for i, texture in enumerate(self.material.textures):
             bg_entries.append(

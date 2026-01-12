@@ -132,7 +132,7 @@ class ProgramBuilder(GltfBuilder):
 
     def build_vertex_attributes(self):
         logger.debug("Creating vertex attributes")
-        vert_attributes = wgpu.VertexAttributes()
+        vert_attributes = []
         offset = 0
         for location, column in enumerate(self.vertex_table.columns):
             vert_attributes.append(

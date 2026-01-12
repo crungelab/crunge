@@ -6,7 +6,6 @@ import glm
 
 from crunge import imgui
 
-from crunge.engine.renderer import Renderer
 from crunge.engine.loader.gltf import GltfLoader
 
 from ..demo.gltf_demo import GltfDemo
@@ -28,7 +27,7 @@ class DiffuseLightDemo(GltfDemo):
         if changed:
             light.position = glm.vec3(position)
 
-        changed, color = imgui.color_edit3("Diffuse Color", list(light.color))
+        changed, color = imgui.color_edit3("Diffuse Color", tuple(light.color))
         if changed:
             light.color = glm.vec3(color)
 

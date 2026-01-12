@@ -6,7 +6,6 @@ import glm
 
 from crunge import imgui
 
-from crunge.engine.renderer import Renderer
 from crunge.engine.loader.gltf import GltfLoader
 
 from ..demo.gltf_demo import GltfDemo
@@ -23,7 +22,7 @@ class IblEquirectangularDemo(GltfDemo):
     def _draw(self):
         imgui.begin(self.title)
         light = self.scene.lighting.lights[0]
-        changed, newColor = imgui.color_edit3("Diffuse Color", list(light.color))
+        changed, newColor = imgui.color_edit3("Diffuse Color", tuple(light.color))
         if changed:
             light.color = glm.vec3(newColor)
 

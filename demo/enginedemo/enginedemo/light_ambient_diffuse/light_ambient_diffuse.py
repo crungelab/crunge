@@ -6,7 +6,6 @@ import glm
 
 from crunge import imgui
 
-from crunge.engine.renderer import Renderer
 from crunge.engine.loader.gltf import GltfLoader
 
 from ..demo.gltf_demo import GltfDemo
@@ -25,7 +24,7 @@ class AmbientDiffuseLightDemo(GltfDemo):
 
         imgui.begin_group()
         ambient_light = self.scene.ambient_light
-        changed, newColor = imgui.color_edit3("Ambient Color", list(ambient_light.color))
+        changed, newColor = imgui.color_edit3("Ambient Color", tuple(ambient_light.color))
         if changed:
             ambient_light.color = glm.vec3(newColor)
         imgui.end_group()
@@ -33,7 +32,7 @@ class AmbientDiffuseLightDemo(GltfDemo):
         for diffuse_light in self.scene.lighting.lights:
             imgui.begin_group()
             #diffuse_light = self.scene.lighting.lights[0]
-            changed, newColor = imgui.color_edit3("Diffuse Color", list(diffuse_light.color))
+            changed, newColor = imgui.color_edit3("Diffuse Color", tuple(diffuse_light.color))
             if changed:
                 diffuse_light.color = glm.vec3(newColor)
             imgui.end_group()

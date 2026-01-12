@@ -550,7 +550,7 @@ class ComputeState:
     next_in_chain: Optional[Any] = None  # type: ChainedStruct const * , default: None
     module: Any  # type: ShaderModule , default: None
     entry_point: Optional[Any] = None  # type: StringView , default: None
-    constants: Any  # type: ConstantEntry const * , default: None
+    constants: Optional[Any] = None  # type: ConstantEntry const * , default: None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -592,7 +592,7 @@ class RenderPassColorAttachment:
     resolve_target: Optional[Any] = None  # type: TextureView , default: None
     load_op: Any = LoadOp.UNDEFINED  # type: LoadOp , default: LoadOp.UNDEFINED
     store_op: Any = StoreOp.UNDEFINED  # type: StoreOp , default: StoreOp.UNDEFINED
-    clear_value: Any  # type: Color , default: None
+    clear_value: Optional[Any] = None  # type: Color , default: None
 
 
 @dataclass(frozen=True, kw_only=True)
