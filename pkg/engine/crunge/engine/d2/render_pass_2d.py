@@ -17,10 +17,6 @@ class RenderPass2D(RenderPass["Renderer2D"]):
         super().__init__(viewport=viewport, first=first)
 
     def begin(self, encoder: wgpu.CommandEncoder):
-        '''
-        if not self.first:
-            self.viewport.snap(encoder)
-        ''' 
         if self.viewport.render_options.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(

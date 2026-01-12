@@ -10,7 +10,7 @@ class Renderer3D(Renderer):
         super().__init__(viewport, camera_3d=camera, lighting_3d=lighting)
         self.render_passes = [
             RenderPass3D(viewport, first=True),
-            RenderPass3D(viewport, first=False)
+            RenderPass3D(viewport)
         ]
 
     def end_pass(self):
@@ -19,5 +19,3 @@ class Renderer3D(Renderer):
         super().end_pass()
         if self.render_pass.first:
             self.viewport.snap(self.encoder)
-
-        #self.viewport.snap(self.encoder)

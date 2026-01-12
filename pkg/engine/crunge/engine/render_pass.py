@@ -72,17 +72,3 @@ class DefaultRenderPass(RenderPass["Renderer"]):
         self.pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(
             renderpass
         )
-
-    '''
-    @contextlib.contextmanager
-    def __call__(self, encoder: wgpu.CommandEncoder):
-        self.begin(encoder)
-        try:
-            yield self.pass_enc 
-        finally:
-            self.end()
-            self.viewport.snap(encoder)
-            self.viewport.render_pass = None
-            self.viewport.render_pass_queue.append(self)
-            logger.debug("DefaultRenderPass ended and queued.")
-    '''

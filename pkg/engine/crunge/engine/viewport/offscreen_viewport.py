@@ -11,6 +11,7 @@ from crunge import sdl
 
 from ..render_options import RenderOptions
 
+
 class OffscreenViewport(Viewport):
     def __init__(
         self,
@@ -39,7 +40,6 @@ class OffscreenViewport(Viewport):
         # Skia
         self.skia_surface = skia.create_surface(self.color_texture, self.recorder)
         self.canvas = self.skia_surface.get_canvas()
-
 
     def end_frame(self) -> None:
         pass

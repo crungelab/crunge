@@ -29,7 +29,6 @@ class MixedPage(Page):
 
     def __init__(self, name: str, title: str):
         super().__init__(name, title)
-        # self.renderer = Renderer2D(self.window.viewport)
 
     def _create(self):
         super()._create()
