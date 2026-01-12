@@ -1,0 +1,2 @@
+class BasePass:
+    pass
