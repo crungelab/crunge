@@ -275,23 +275,21 @@ class WImGuiDemo(Demo):
         vs_module = self.create_shader_module(vs_shader_code)
         fs_module = self.create_shader_module(fs_shader_code)
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=ImDrawVert.uv.offset,
-                    shader_location=1,
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.UNORM8X4,
-                    offset=ImDrawVert.col.offset,
-                    shader_location=2,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2, offset=0, shader_location=0
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=ImDrawVert.uv.offset,
+                shader_location=1,
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.UNORM8X4,
+                offset=ImDrawVert.col.offset,
+                shader_location=2,
+            ),
+        ]
 
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(

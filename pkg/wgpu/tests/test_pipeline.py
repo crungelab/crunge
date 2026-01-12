@@ -38,11 +38,8 @@ def main():
     fragmentState = wgpu.FragmentState(
         module=shader_module,
         entry_point="fs_main",
-        #target_count=1,
-        #targets=colorTargetState,
         targets=colorTargetStates,
     )
-    #fragmentState.targets=colorTargetStates[0]
 
     logger.debug(fragmentState)
     logger.debug(fragmentState.entry_point)

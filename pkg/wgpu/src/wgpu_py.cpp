@@ -94,7 +94,6 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
                                  { return self.GetQueue(); }, py::return_value_policy::automatic_reference);
     PYEXTEND_END
 
-    /*
     PYEXTEND_BEGIN(pywgpu::Extent3D, Extent3D)
     _Extent3D.def(py::init<uint32_t, uint32_t, uint32_t>(), py::arg("width"), py::arg("height") = 1, py::arg("depth") = 1);
     PYEXTEND_END
@@ -106,7 +105,6 @@ void init_wgpu_py(py::module &_wgpu, Registry &registry)
     PYEXTEND_BEGIN(pywgpu::Color, Color)
     _Color.def(py::init<float, float, float, float>(), py::arg("r"), py::arg("g"), py::arg("b"), py::arg("a"));
     PYEXTEND_END
-    */
 
     // TODO: Getting incompatible argument types when both signatures match.  Makes no sense ...
     // Fixed:  Turns out that py::buffer is not optional, but std::optional<py::buffer> is.

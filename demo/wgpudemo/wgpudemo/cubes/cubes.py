@@ -124,20 +124,18 @@ class CubesDemo(Demo):
 
         # Pipeline creation
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=self.kPositionByteOffset,
-                    shader_location=0,
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=self.kUVByteOffset,
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4,
+                offset=self.kPositionByteOffset,
+                shader_location=0,
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=self.kUVByteOffset,
+                shader_location=1,
+            ),
+        ]
 
         vb_layouts = [
             wgpu.VertexBufferLayout(

@@ -1,7 +1,7 @@
 from crunge import wgpu
 
 def main():
-    color = wgpu.Color(r=1, g=1, b=1, a=1)
+    color = wgpu.Color(1, 1, 1, 1)
     print(color.r)
     print(color.g)
     print(color.b)

@@ -101,7 +101,7 @@ class CubeDemo(Demo):
         ]
 
         logger.debug(vertBufferLayouts[0].array_stride)
-        logger.debug(vertBufferLayouts[0].attribute_count)
+        logger.debug(len(vertBufferLayouts[0].attributes))
         logger.debug(vertBufferLayouts[0].step_mode)
 
         colorTargetStates = [

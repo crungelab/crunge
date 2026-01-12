@@ -147,20 +147,18 @@ class CubeTextureDemo(Demo):
 
         # Pipeline creation
 
-        vertAttributes = wgpu.VertexAttributes(
-            [
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X4,
-                    offset=self.kPositionByteOffset,
-                    shader_location=0,
-                ),
-                wgpu.VertexAttribute(
-                    format=wgpu.VertexFormat.FLOAT32X2,
-                    offset=self.kUVByteOffset,
-                    shader_location=1,
-                ),
-            ]
-        )
+        vertAttributes = [
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X4,
+                offset=self.kPositionByteOffset,
+                shader_location=0,
+            ),
+            wgpu.VertexAttribute(
+                format=wgpu.VertexFormat.FLOAT32X2,
+                offset=self.kUVByteOffset,
+                shader_location=1,
+            ),
+        ]
 
         vertBufferLayouts = [
             wgpu.VertexBufferLayout(
@@ -215,6 +213,7 @@ class CubeTextureDemo(Demo):
         ]
 
         bgl_desc = wgpu.BindGroupLayoutDescriptor(entries=bgl_entries)
+        logger.debug(bgl_desc)
         bgl = self.device.create_bind_group_layout(bgl_desc)
 
         pl_desc = wgpu.PipelineLayoutDescriptor(bind_group_layouts=[bgl])
