@@ -5,15 +5,15 @@ import glm
 from crunge import skia
 
 from ..renderer import Renderer
-from ..view_layer import ViewLayer
+from ..overlay import Overlay
 
 from .. import colors
 from ..color import rgba_tuple_to_argb_int
 
 
-class ScratchLayer(ViewLayer):
+class ScratchOverlay(Overlay):
     def __init__(self):
-        super().__init__("ScratchLayer", priority=900)
+        super().__init__("ScratchOverlay", priority=900)
         self.draw_calls = []
         self.font_cache: Dict[int, skia.Font] = {}
 

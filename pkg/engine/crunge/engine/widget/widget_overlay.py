@@ -2,12 +2,12 @@ from loguru import logger
 
 from .. import Renderer
 
-from ..view_layer import ViewLayer
+from ..overlay import Overlay
 
 
-class WidgetLayer(ViewLayer):
+class WidgetOverlay(Overlay):
     def __init__(self):
-        super().__init__("WidgetLayer", priority=950)
+        super().__init__("WidgetOverlay", priority=950)
 
     def _draw(self) -> None:
         renderer = Renderer.get_current()

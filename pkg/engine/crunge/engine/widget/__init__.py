@@ -1,2 +1,2 @@
 from .widget import Widget
-from .widget_layer import WidgetLayer
+from .widget_overlay import WidgetOverlay

@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 from crunge import engine
-from ..layer import ImGuiLayer
+from ..overlay import ImGuiOverlay
 
 class Widget(engine.Widget):
     def __init__(self, children=[]):
@@ -10,7 +10,7 @@ class Widget(engine.Widget):
         self.add_children(children)
         self.gui = None
 
-    def set_gui(self, gui: ImGuiLayer):
+    def set_gui(self, gui: ImGuiOverlay):
         self.gui = gui
         return self
 

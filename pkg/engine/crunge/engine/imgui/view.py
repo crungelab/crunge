@@ -3,14 +3,14 @@ import glm
 
 from ..view import View
 
-from .layer import ImGuiLayer
+from .overlay import ImGuiOverlay
 
 class ImGuiView(View):
     def __init__(self, layers=[]):
         super().__init__(layers=layers)
-        self.gui: ImGuiLayer = None
+        self.gui: ImGuiOverlay = None
 
     def _create(self):
         super()._create()
-        self.gui = ImGuiLayer().config(view=self).create()
+        self.gui = ImGuiOverlay().config(view=self).create()
         self.add_layer(self.gui)

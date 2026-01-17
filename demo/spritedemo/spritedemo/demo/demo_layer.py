@@ -1,5 +1,5 @@
-from crunge.engine import ViewLayer
+from crunge.engine import Overlay
 
-class DemoLayer(ViewLayer):
+class DemoLayer(Overlay):
     def __init__(self):
         super().__init__("DemoLayer")

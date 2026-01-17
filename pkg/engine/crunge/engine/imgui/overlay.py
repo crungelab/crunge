@@ -9,7 +9,7 @@ from crunge import imgui
 from crunge.imgui import Key
 
 from ..viewport import ViewportListener
-from ..view_layer import ViewLayer
+from ..overlay import Overlay
 from ..window import WindowListener
 
 from .vu import ImGuiVu
@@ -27,14 +27,14 @@ def compute_framebuffer_scale(window_size, frame_buffer_size):
     return 1.0, 1.0
 
 
-class ImGuiLayer(ViewLayer, ViewportListener, WindowListener):
+class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
     context = None
     vu: ImGuiVu = None
 
     def __init__(self):
-        super().__init__("ImGuiLayer", priority=1000)
+        super().__init__("ImGuiOverlay", priority=1000)
         if not self.context:
-            ImGuiLayer.context = imgui.create_context()
+            ImGuiOverlay.context = imgui.create_context()
             imgui.set_current_context(self.context)
             imgui.style_colors_dark()
 

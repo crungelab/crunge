@@ -11,7 +11,7 @@ from .widget import Widget
 from .vu import Vu
 
 
-class ViewLayer(Widget):
+class Overlay(Widget):
     def __init__(self, name: str, priority: int = 0, vu: Vu = None) -> None:
         style = (
             yoga.StyleBuilder()
@@ -38,7 +38,7 @@ class ViewLayer(Widget):
         self.view: "View" = None
         self.vu = vu
 
-    def set_view(self, view):
+    def set_view(self, view: "View"):
         self.view = view
         return self
 

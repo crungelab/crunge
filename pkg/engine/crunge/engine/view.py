@@ -8,21 +8,21 @@ if TYPE_CHECKING:
     from .window import Window
 
 from .widget import Widget
-from .view_layer import ViewLayer
+from .overlay import Overlay
 
 
 class View(Widget):
-    def __init__(self, layers: list[ViewLayer] = []) -> None:
+    def __init__(self, layers: list[Overlay] = []) -> None:
         style = yoga.StyleBuilder().size_percent(100, 100).build()
         super().__init__(style)
         self.window: "Window" = None
-        self.layers_by_name: Dict[str, ViewLayer] = {}
+        self.layers_by_name: Dict[str, Overlay] = {}
 
         for layer in layers:
             self.add_layer(layer)
 
     @property
-    def layers(self) -> List[ViewLayer]:
+    def layers(self) -> List[Overlay]:
         return self.children
 
     def _create(self):
@@ -46,17 +46,17 @@ class View(Widget):
     def create_renderer(self):
         pass
 
-    def add_layer(self, layer: ViewLayer) -> ViewLayer:
+    def add_layer(self, layer: Overlay) -> Overlay:
         layer.view = self
         self.layers_by_name[layer.name] = layer
         self.attach(layer)
         self.sort_children(key=lambda child: child.priority)
         return layer
 
-    def remove_layer(self, layer: ViewLayer):
+    def remove_layer(self, layer: Overlay):
         layer.view = None
         self.layers_by_name.pop(layer.name)
         self.detach(layer)
 
-    def get_layer(self, name: str) -> ViewLayer:
+    def get_layer(self, name: str) -> Overlay:
         return self.layers_by_name[name]

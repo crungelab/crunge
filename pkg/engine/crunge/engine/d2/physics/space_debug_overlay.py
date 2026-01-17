@@ -8,12 +8,12 @@ from ... import colors
 from ...color import rgba_tuple_to_argb_int
 
 from ...renderer import Renderer
-from ...view_layer import ViewLayer
+from ...overlay import Overlay
 
 from . import globe
 
 
-class SpaceDebugLayer(ViewLayer, SpaceDebugDrawOptions):
+class SpaceDebugOverlay(Overlay, SpaceDebugDrawOptions):
     def __init__(self):
         super().__init__("space_debug", 700)
         SpaceDebugDrawOptions.__init__(self)
