@@ -9,13 +9,13 @@ from loguru import logger
 from crunge import wgpu
 from crunge import skia
 
-from .base import Base
-from .viewport import Viewport
+from ..base import Base
+from ..viewport import Viewport
 
 if TYPE_CHECKING:
-    from .d2.camera_2d import Camera2D
-    from .d3.camera_3d import Camera3D
-    from .d3.lighting_3d import Lighting3D
+    from ..d2.camera_2d import Camera2D
+    from ..d3.camera_3d import Camera3D
+    from ..d3.lighting_3d import Lighting3D
 
 from .render_pass import RenderPass, DefaultRenderPass
 

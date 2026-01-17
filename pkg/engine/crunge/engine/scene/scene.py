@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
 
-from . import Base, Vu, Renderer
+from .. import Base, Vu, Renderer
 
 from .scene_node import SceneNode
-from .scene_layer import SceneLayer
+from .layer.scene_layer import SceneLayer
 
 T_Node = TypeVar("T_Node", bound=SceneNode)
 

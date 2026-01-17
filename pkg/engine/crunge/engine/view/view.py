@@ -5,9 +5,9 @@ from loguru import logger
 from crunge import yoga
 
 if TYPE_CHECKING:
-    from .window import Window
+    from ..window import Window
 
-from .widget import Widget
+from ..widget import Widget
 from .overlay import Overlay
 
 

@@ -7,7 +7,7 @@ from loguru import logger
 from crunge import wgpu
 
 from ..viewport import Viewport
-from ..render_pass import RenderPass
+from ..renderer.render_pass import RenderPass
 
 if TYPE_CHECKING:
     from .renderer_3d import Renderer3D

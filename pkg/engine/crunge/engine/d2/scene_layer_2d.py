@@ -3,7 +3,7 @@ import glm
 
 from ..math import Bounds2
 
-from ..scene_layer import SceneLayer
+from ..scene.layer.scene_layer import SceneLayer
 from .node_2d import Node2D
 
 class SceneLayer2D(SceneLayer[Node2D]):

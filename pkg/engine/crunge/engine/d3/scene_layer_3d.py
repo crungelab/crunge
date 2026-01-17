@@ -1,7 +1,7 @@
 from loguru import logger
 
 from ..math import Bounds3
-from ..scene_layer import SceneLayer
+from ..scene.layer.scene_layer import SceneLayer
 from .node_3d import Node3D
 
 class SceneLayer3D(SceneLayer[Node3D]):

@@ -2,7 +2,7 @@ from loguru import logger
 
 from .. import Renderer
 
-from ..overlay import Overlay
+from ..view.overlay import Overlay
 
 
 class WidgetOverlay(Overlay):

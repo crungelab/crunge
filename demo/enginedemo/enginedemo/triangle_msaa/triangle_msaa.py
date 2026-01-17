@@ -107,7 +107,7 @@ class TriangleMsaaDemo(Demo):
 
 
 def main():
-    TriangleMsaaDemo(DemoView(layers=[TriangleMsaaLayer()])).run()
+    TriangleMsaaDemo(DemoView(overlays=[TriangleMsaaLayer()])).run()
 
 
 if __name__ == "__main__":

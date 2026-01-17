@@ -96,7 +96,7 @@ class QuadShaderDemo(Demo):
 
 
 def main():
-    QuadShaderDemo(DemoView(layers=[QuadShaderLayer()])).run()
+    QuadShaderDemo(DemoView(overlays=[QuadShaderLayer()])).run()
 
 
 if __name__ == "__main__":

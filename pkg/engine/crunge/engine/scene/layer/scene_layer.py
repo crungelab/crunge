@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
 
-from . import Base, Renderer
+from ... import Base
 
-from .scene_node import SceneNode, T_Node
+from ..scene_node import SceneNode, T_Node
 
 if TYPE_CHECKING:
-    from .scene import Scene
+    from .. import Scene
 
 
 class SceneLayer(Base, Generic[T_Node]):
@@ -16,11 +16,11 @@ class SceneLayer(Base, Generic[T_Node]):
         self.root: "SceneNode[T_Node]" = None
 
     def __iter__(self):
-        """Make Layer iterable by returning iterator over nodes"""
+        """Make SceneLayer iterable by returning iterator over nodes"""
         return iter(self.nodes)
 
     def __len__(self):
-        """Return the number of nodes in the layer"""
+        """Return the number of nodes in the SceneLayer"""
         return len(self.nodes)
 
     @property

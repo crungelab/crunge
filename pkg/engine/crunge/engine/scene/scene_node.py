@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge.engine import Vu
 
-from .node import Node, T_Node
+from ..node import Node, T_Node
 
 T_Layer = TypeVar("T_Layer")
 

@@ -17,4 +17,4 @@ from .window import Window
 from .app import App
 from .scheduler import Scheduler
 from .view import View
-from .overlay import Overlay
+from .view.overlay import Overlay

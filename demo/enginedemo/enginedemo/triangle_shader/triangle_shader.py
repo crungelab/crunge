@@ -97,7 +97,7 @@ class TriangleShaderDemo(Demo):
     pass
 
 def main():
-    TriangleShaderDemo(DemoView(layers=[TriangleShaderLayer()])).run()
+    TriangleShaderDemo(DemoView(overlays=[TriangleShaderLayer()])).run()
 
 
 if __name__ == "__main__":

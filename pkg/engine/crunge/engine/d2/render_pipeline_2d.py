@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ..render_pipeline import RenderPipeline
+from ..renderer.render_pipeline import RenderPipeline
 
 from ..binding import SceneBindGroupLayout
 

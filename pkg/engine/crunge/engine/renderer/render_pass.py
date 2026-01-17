@@ -7,11 +7,11 @@ from loguru import logger
 
 from crunge import wgpu
 
-from .base import Base
-from .viewport import Viewport
+from ..base import Base
+from ..viewport import Viewport
 
 if TYPE_CHECKING:
-    from .renderer import Renderer
+    from . import Renderer
 
 T = TypeVar("T", bound="Renderer")
 

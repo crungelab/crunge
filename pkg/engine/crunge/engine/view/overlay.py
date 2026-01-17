@@ -5,10 +5,10 @@ from loguru import logger
 from crunge import yoga
 
 if TYPE_CHECKING:
-    from .view import View
+    from . import View
 
-from .widget import Widget
-from .vu import Vu
+from ..widget import Widget
+from ..vu import Vu
 
 
 class Overlay(Widget):
@@ -25,13 +25,13 @@ class Overlay(Widget):
         super().__init__(style)
 
         # This also works
-        '''
+        """
         self.layout.set_position_type(yoga.PositionType.ABSOLUTE)
         self.layout.set_width_percent(100)
         self.layout.set_height_percent(100)
         self.layout.set_position(yoga.Edge.LEFT, 0)
         self.layout.set_position(yoga.Edge.TOP, 0)
-        '''
+        """
 
         self.name = name
         self.priority = priority
@@ -41,11 +41,6 @@ class Overlay(Widget):
     def set_view(self, view: "View"):
         self.view = view
         return self
-
-    def _create(self):
-        super()._create()
-        # logger.debug("Layer.create")
-        # self.size = self.view.size
 
     @property
     def window(self):

@@ -8,7 +8,7 @@ from loguru import logger
 import glm
 
 from ..math import Bounds2
-from ..scene_node import SceneNode
+from ..scene.scene_node import SceneNode
 
 
 class Node2D(SceneNode["Node2D", "Scene2D"]):

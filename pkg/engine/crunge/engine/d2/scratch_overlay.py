@@ -5,7 +5,7 @@ import glm
 from crunge import skia
 
 from ..renderer import Renderer
-from ..overlay import Overlay
+from ..view.overlay import Overlay
 
 from .. import colors
 from ..color import rgba_tuple_to_argb_int
