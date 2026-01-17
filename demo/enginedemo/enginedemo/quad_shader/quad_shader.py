@@ -3,7 +3,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge.engine import Viewport
 
-from ..demo import Demo, DemoView, DemoLayer
+from ..demo import Demo, DemoView, DemoOverlay
 
 shader_code = """
 @vertex
@@ -19,7 +19,7 @@ fn fs_main() -> @location(0) vec4<f32> {
 """
 
 
-class QuadShaderLayer(DemoLayer):
+class QuadShaderLayer(DemoOverlay):
     def _create(self):
         super()._create()
         shader_module = self.gfx.create_shader_module(shader_code)

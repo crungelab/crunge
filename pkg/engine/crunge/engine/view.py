@@ -12,14 +12,14 @@ from .overlay import Overlay
 
 
 class View(Widget):
-    def __init__(self, layers: list[Overlay] = []) -> None:
+    def __init__(self, overlays: list[Overlay] = []) -> None:
         style = yoga.StyleBuilder().size_percent(100, 100).build()
         super().__init__(style)
         self.window: "Window" = None
-        self.layers_by_name: Dict[str, Overlay] = {}
+        self.overlays_by_name: Dict[str, Overlay] = {}
 
-        for layer in layers:
-            self.add_layer(layer)
+        for overlay in overlays:
+            self.add_overlay(overlay)
 
     @property
     def layers(self) -> List[Overlay]:
@@ -30,12 +30,11 @@ class View(Widget):
         super()._create()
         if not self.window:
             raise ValueError("View.window is not set")
-        for layer in self.layers:
-            layer.config(view=self).create()
+        for overlay in self.layers:
+            overlay.config(view=self).create()
         self.create_device_objects()
         self.create_camera()
         self.create_renderer()
-        #super()._create()
 
     def create_device_objects(self):
         pass
@@ -46,17 +45,17 @@ class View(Widget):
     def create_renderer(self):
         pass
 
-    def add_layer(self, layer: Overlay) -> Overlay:
-        layer.view = self
-        self.layers_by_name[layer.name] = layer
-        self.attach(layer)
+    def add_overlay(self, overlay: Overlay) -> Overlay:
+        overlay.view = self
+        self.overlays_by_name[overlay.name] = overlay
+        self.attach(overlay)
         self.sort_children(key=lambda child: child.priority)
-        return layer
+        return overlay
 
-    def remove_layer(self, layer: Overlay):
-        layer.view = None
-        self.layers_by_name.pop(layer.name)
-        self.detach(layer)
+    def remove_overlay(self, overlay: Overlay):
+        overlay.view = None
+        self.overlays_by_name.pop(overlay.name)
+        self.detach(overlay)
 
-    def get_layer(self, name: str) -> Overlay:
-        return self.layers_by_name[name]
+    def get_overlay(self, name: str) -> Overlay:
+        return self.overlays_by_name[name]

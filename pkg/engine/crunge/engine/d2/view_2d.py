@@ -19,7 +19,7 @@ class View2D(ImGuiView):
     def _create(self):
         super()._create()
         self.scratch = ScratchOverlay()
-        self.add_layer(self.scratch)
+        self.add_overlay(self.scratch)
 
     def create_camera(self):
         self.camera = Camera2D(glm.vec2(self.width / 2, self.height / 2))

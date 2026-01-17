@@ -1,3 +1,3 @@
 from .demo import Demo
 from .demo_view import DemoView
-from .demo_layer import DemoLayer
+from .demo_overlay import DemoOverlay

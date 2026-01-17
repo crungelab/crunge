@@ -5,7 +5,7 @@ from crunge import wgpu
 from crunge.engine import RenderOptions, Viewport
 from crunge.engine.viewport import SurfaceViewport
 
-from ..demo import Demo, DemoView, DemoLayer
+from ..demo import Demo, DemoView, DemoOverlay
 
 shader_code = """
 @vertex
@@ -21,7 +21,7 @@ fn fs_main() -> @location(0) vec4<f32> {
 """
 
 
-class TriangleMsaaLayer(DemoLayer):
+class TriangleMsaaLayer(DemoOverlay):
     def _create(self):
         super()._create()
         self.shader_module = self.gfx.create_shader_module(shader_code)
