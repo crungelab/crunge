@@ -12,6 +12,9 @@ class SceneLayer(Base):
         self.name = name
         self.scene: Scene = None
 
+    def clear(self) -> None:
+        pass
+    
     def draw(self) -> None:
         self._draw()
 
