@@ -17,9 +17,9 @@ class Scene3D(Scene[Node3D]):
 
     @property
     def primary_layer(self) -> GraphLayer3D:
-        if not self.layers:
+        if not self.children:
             self.create_default_layer()
-        return self.layers[0]
+        return self.children[0]
 
     @property
     def bounds(self) -> Bounds3:

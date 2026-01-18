@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar, Generic, List, Callable, Any
+from typing import TYPE_CHECKING, TypeVar, Generic, Callable, Any
 
 from loguru import logger
 
@@ -31,10 +31,10 @@ class Node(Dispatcher, Generic[T_Node]):
     def __init__(self, vu: "Vu" = None, model=None) -> None:
         super().__init__()
         self._vu: "Vu" = None
-        self._model: "Model" = None
+        self._model: "Model" = None #TODO: should model be a template type?
         self.parent: "Node[T_Node]" = None
-        self.children: List["Node[T_Node]"] = []
-        self.listeners: List[NodeListener[T_Node]] = []
+        self.children: list["Node[T_Node]"] = []
+        self.listeners: list[NodeListener[T_Node]] = []
 
         self.vu = vu
         self.model = model

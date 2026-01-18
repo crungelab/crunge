@@ -13,9 +13,9 @@ class Scene2D(Scene[Node2D]):
 
     @property
     def primary_layer(self) -> GraphLayer2D:
-        if not self.layers:
+        if not self.children:
             self.create_default_layer()
-        return self.layers[0]
+        return self.children[0]
 
     '''
     @property

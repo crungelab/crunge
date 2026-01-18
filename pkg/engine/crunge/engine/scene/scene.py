@@ -14,9 +14,9 @@ class Scene(GroupLayer, Generic[T_Node]):
 
     @property
     def primary_layer(self) -> GraphLayer[T_Node]:
-        if not self.layers:
+        if not self.children:
             raise ValueError("No layers in the scene.")
-        return self.layers[0]
+        return self.children[0]
     
     def attach(self, node: T_Node):
         self.primary_layer.attach(node)
