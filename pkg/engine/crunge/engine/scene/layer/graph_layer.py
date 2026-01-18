@@ -12,8 +12,6 @@ class GraphLayer(SceneLayer, Generic[T_Node]):
 
     def __init__(self, name: str) -> None:
         super().__init__(name)
-        #self.name = name
-        #self.scene: Scene[T_Node] = None
         self.root: SceneNode[T_Node] = None
 
     def __iter__(self):

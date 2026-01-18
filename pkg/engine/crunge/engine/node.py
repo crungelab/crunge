@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 from .dispatcher import Dispatcher
 
-T_Node = TypeVar("T_Node")
+T_Node = TypeVar("T_Node", bound="Node")
 
 
 class NodeListener(Generic[T_Node]):
@@ -30,7 +30,6 @@ class NodeListener(Generic[T_Node]):
 class Node(Dispatcher, Generic[T_Node]):
     def __init__(self, vu: "Vu" = None, model=None) -> None:
         super().__init__()
-        # self.vu: T_Vu = vu
         self._vu: "Vu" = None
         self._model: "Model" = None
         self.parent: "Node[T_Node]" = None

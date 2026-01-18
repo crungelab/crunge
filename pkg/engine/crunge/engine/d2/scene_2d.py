@@ -16,7 +16,13 @@ class Scene2D(Scene[Node2D]):
         if not self.layers:
             self.create_default_layer()
         return self.layers[0]
-    
+
+    '''
+    @property
+    def bounds(self) -> Bounds2:
+        return self.primary_layer.bounds
+    '''
+
     def create_default_layer(self) -> None:
         """Create and return the default primary layer for the scene."""
         layer = GraphLayer2D('primary')

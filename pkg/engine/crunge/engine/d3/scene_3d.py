@@ -16,15 +16,14 @@ class Scene3D(Scene[Node3D]):
         self.lighting = Lighting3D()
 
     @property
-    def bounds(self) -> Bounds3:
-        return self.primary_layer.bounds
-
-    @property
     def primary_layer(self) -> GraphLayer3D:
         if not self.layers:
-            # raise ValueError("No layers in the scene.")
             self.create_default_layer()
         return self.layers[0]
+
+    @property
+    def bounds(self) -> Bounds3:
+        return self.primary_layer.bounds
 
     @property
     def ambient_light(self):

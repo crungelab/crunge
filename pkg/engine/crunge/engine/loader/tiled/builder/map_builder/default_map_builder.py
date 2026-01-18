@@ -1,3 +1,5 @@
+from loguru import logger
+
 from .....math import Bounds2
 
 from ..tile_layer_builder import TileLayerBuilder, DefaultTileLayerBuilder
@@ -36,4 +38,6 @@ class DefaultMapBuilder(MapBuilder):
 
     def build(self):
         super().build()
-        self.context.scene.bounds = Bounds2(0, 0, self.context.size.x, self.context.size.y)
+        bounds = Bounds2(0, 0, self.context.size.x, self.context.size.y)
+        logger.debug(f"Setting scene bounds to: {bounds}")
+        self.context.scene.bounds = bounds
