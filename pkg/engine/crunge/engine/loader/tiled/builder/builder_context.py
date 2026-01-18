@@ -2,13 +2,13 @@ import glm
 from crunge import tmx
 
 from crunge.engine.d2.scene_2d import Scene2D
-from crunge.engine.d2.scene_layer_2d import SceneLayer2D
+from crunge.engine.d2.graph_layer_2d import GraphLayer2D
 from crunge.engine.d2.sprite import Sprite
 
 class BuilderContext:
     def __init__(self, scene: Scene2D):
         self.scene = scene
-        self.layer: SceneLayer2D = None
+        self.layer: GraphLayer2D = None
 
         self._map: tmx.Map = None
         self.size = glm.ivec2()

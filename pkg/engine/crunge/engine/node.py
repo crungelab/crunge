@@ -10,6 +10,7 @@ from .dispatcher import Dispatcher
 
 T_Node = TypeVar("T_Node")
 
+
 class NodeListener(Generic[T_Node]):
     def on_node_attached(self, node: "Node[T_Node]") -> None:
         pass
@@ -23,10 +24,11 @@ class NodeListener(Generic[T_Node]):
     def on_node_model_change(self, node: "Node[T_Node]") -> None:
         pass
 
+
 class Node(Dispatcher, Generic[T_Node]):
-    def __init__(self, vu: "Vu" = None, model = None) -> None:
+    def __init__(self, vu: "Vu" = None, model=None) -> None:
         super().__init__()
-        #self.vu: T_Vu = vu
+        # self.vu: T_Vu = vu
         self._vu: "Vu" = None
         self._model: "Model" = None
         self.parent: "Node[T_Node]" = None
@@ -37,18 +39,10 @@ class Node(Dispatcher, Generic[T_Node]):
         self.model = model
         self.visible = True
 
-
-    '''
-    def _create(self):
-        super()._create()
-        self.vu = self._vu
-        self.model = self._model
-    '''
-
     @property
     def vu(self) -> "Vu":
         return self._vu
-    
+
     @vu.setter
     def vu(self, value: "Vu"):
         self._vu = value
@@ -60,7 +54,7 @@ class Node(Dispatcher, Generic[T_Node]):
     @property
     def model(self) -> "Model":
         return self._model
-    
+
     @model.setter
     def model(self, value: "Model"):
         self._model = value
@@ -111,15 +105,15 @@ class Node(Dispatcher, Generic[T_Node]):
         return child
 
     def on_attached(self):
-        #pass
+        # pass
         self.enable()
 
     def detach(self, child: "Node[T_Node]"):
         child.on_detached()
         child.parent = None
-        #if child in self.children:
+        # if child in self.children:
         self.children.remove(child)
-        #child.on_detached()
+        # child.on_detached()
 
     def on_detached(self):
         pass
@@ -132,8 +126,9 @@ class Node(Dispatcher, Generic[T_Node]):
         for child in children:
             self.detach(child)
 
-
-    def sort_children(self, key: Callable[["Node[T_Node]"], Any], reverse: bool = False) -> None:
+    def sort_children(
+        self, key: Callable[["Node[T_Node]"], Any], reverse: bool = False
+    ) -> None:
         """
         Sorts the children list based on a key function.
 
@@ -142,14 +137,14 @@ class Node(Dispatcher, Generic[T_Node]):
         """
         self.children.sort(key=key, reverse=reverse)
 
-    '''
+    """
     def _draw(self):
         logger.debug("Node.draw")
         if self.vu is not None:
             self.vu.draw(renderer)
         for child in self.children:
             child.draw(renderer)
-    '''
+    """
 
     def draw(self):
         if not self.visible:
@@ -171,4 +166,3 @@ class Node(Dispatcher, Generic[T_Node]):
             self.vu.update(delta_time)
         for child in self.children:
             child.update(delta_time)
-

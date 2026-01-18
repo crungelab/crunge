@@ -4,7 +4,7 @@ import glm
 from ..math import Bounds2
 from ..scene import Scene
 from .node_2d import Node2D
-from .scene_layer_2d import SceneLayer2D
+from .graph_layer_2d import GraphLayer2D
 
 class Scene2D(Scene[Node2D]):
     def __init__(self) -> None:
@@ -12,7 +12,7 @@ class Scene2D(Scene[Node2D]):
         self.bounds = Bounds2()
 
     @property
-    def primary_layer(self) -> SceneLayer2D:
+    def primary_layer(self) -> GraphLayer2D:
         if not self.layers:
             #raise ValueError("No layers in the scene.")
             self.create_default_layer()
@@ -20,7 +20,7 @@ class Scene2D(Scene[Node2D]):
     
     def create_default_layer(self) -> None:
         """Create and return the default primary layer for the scene."""
-        layer = SceneLayer2D('primary')
+        layer = GraphLayer2D('primary')
         self.add_layer(layer)
 
     '''

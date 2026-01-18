@@ -5,7 +5,7 @@ from ..math import Bounds3
 from ..scene import Scene
 
 from .node_3d import Node3D
-from .scene_layer_3d import SceneLayer3D
+from .graph_layer_3d import GraphLayer3D
 from .lighting_3d import Lighting3D
 from .light_3d import OmniLight3D
 
@@ -20,7 +20,7 @@ class Scene3D(Scene[Node3D]):
         return self.primary_layer.bounds
 
     @property
-    def primary_layer(self) -> SceneLayer3D:
+    def primary_layer(self) -> GraphLayer3D:
         if not self.layers:
             #raise ValueError("No layers in the scene.")
             self.create_default_layer()
@@ -28,7 +28,7 @@ class Scene3D(Scene[Node3D]):
     
     def create_default_layer(self) -> None:
         """Create and return the default primary layer for the scene."""
-        layer = SceneLayer3D('primary')
+        layer = GraphLayer3D('primary')
         self.add_layer(layer)
         position=glm.vec3(2.0, 2.0, 2.0)
         layer.attach(OmniLight3D(position=position, color=glm.vec3(1.0, 1.0, 1.0), energy=1.0))

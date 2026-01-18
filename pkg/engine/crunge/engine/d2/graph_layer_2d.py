@@ -1,12 +1,11 @@
 from loguru import logger
-import glm
 
 from ..math import Bounds2
 
-from ..scene.layer.scene_layer import SceneLayer
+from ..scene.layer.graph_layer import GraphLayer
 from .node_2d import Node2D
 
-class SceneLayer2D(SceneLayer[Node2D]):
+class GraphLayer2D(GraphLayer[Node2D]):
     def __init__(self, name: str) -> None:
         super().__init__(name)
         self.bounds = Bounds2()
@@ -14,8 +13,8 @@ class SceneLayer2D(SceneLayer[Node2D]):
         self.root.layer = self
 
     def __str__(self):
-        #return f"SceneLayer2D(name={self.name}, bounds={self.bounds})"
-        return f"SceneLayer2D(name={self.name})"
+        #return f"GraphLayer2D(name={self.name}, bounds={self.bounds})"
+        return f"GraphLayer2D(name={self.name})"
     
     def __repr__(self):
         return str(self)
@@ -27,7 +26,6 @@ class SceneLayer2D(SceneLayer[Node2D]):
             has_swapped = False
             for i in range(len(nodes) - 1):
                 if nodes[i].z > nodes[i+1].z:
-                    #self.swap(i, i+1)
                     nodes[i], nodes[i+1] = nodes[i+1], nodes[i]
                     has_swapped = True
 

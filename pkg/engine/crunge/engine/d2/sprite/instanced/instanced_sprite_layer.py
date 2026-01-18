@@ -1,13 +1,13 @@
 from loguru import logger
 
 from ... import Node2D
-from ...scene_layer_2d import SceneLayer2D
+from ...graph_layer_2d import GraphLayer2D
 
 from .instanced_sprite_vu_group import InstancedSpriteVuGroup
 from ..dynamic.dynamic_sprite_group import DynamicSpriteGroup
 
 
-class InstancedSpriteLayer(SceneLayer2D):
+class InstancedSpriteLayer(GraphLayer2D):
     def __init__(
         self,
         name: str = "SpriteInstanceLayer",
