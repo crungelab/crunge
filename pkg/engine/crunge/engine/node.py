@@ -12,11 +12,13 @@ T_Node = TypeVar("T_Node")
 
 
 class NodeListener(Generic[T_Node]):
+    '''
     def on_node_attached(self, node: "Node[T_Node]") -> None:
         pass
 
     def on_node_detached(self, node: "Node[T_Node]") -> None:
         pass
+    '''
 
     def on_node_transform_change(self, node: "Node[T_Node]") -> None:
         pass
@@ -77,7 +79,7 @@ class Node(Dispatcher, Generic[T_Node]):
     def destroy(self):
         logger.debug(f"Destroying node: {self}")
         if self.parent:
-            self.parent.detach(self)
+            self.parent.remove_child(self)
         if self.vu:
             self.vu.destroy()
         for child in self.children:
@@ -98,33 +100,31 @@ class Node(Dispatcher, Generic[T_Node]):
         for child in self.children:
             child.disable()
 
-    def attach(self, child: "Node[T_Node]"):
+    def add_child(self, child: "Node[T_Node]"):
         child.parent = self
         self.children.append(child)
-        child.on_attached()
+        child.on_added()
         return child
 
-    def on_attached(self):
-        # pass
+    def on_added(self):
         self.enable()
 
-    def detach(self, child: "Node[T_Node]"):
-        child.on_detached()
+    def remove_child(self, child: "Node[T_Node]"):
+        child.on_removed()
         child.parent = None
         # if child in self.children:
         self.children.remove(child)
-        # child.on_detached()
 
-    def on_detached(self):
+    def on_removed(self):
         pass
 
     def add_children(self, children: list["Node[T_Node]"]):
         for child in children:
-            self.attach(child)
+            self.add_child(child)
 
     def remove_children(self, children: list["Node[T_Node]"]):
         for child in children:
-            self.detach(child)
+            self.remove_child(child)
 
     def sort_children(
         self, key: Callable[["Node[T_Node]"], Any], reverse: bool = False

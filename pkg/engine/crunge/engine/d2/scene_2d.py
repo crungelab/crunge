@@ -14,7 +14,6 @@ class Scene2D(Scene[Node2D]):
     @property
     def primary_layer(self) -> GraphLayer2D:
         if not self.layers:
-            #raise ValueError("No layers in the scene.")
             self.create_default_layer()
         return self.layers[0]
     

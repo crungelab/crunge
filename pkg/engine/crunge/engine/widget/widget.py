@@ -188,18 +188,18 @@ class Widget(Node["Widget"]):
                 return part
         return None
 
-    def on_attached(self):
+    def on_added(self):
         #logger.debug(f"Widget.on_attached: {self}")
         #logger.debug(f"Parent: {self.parent}")
         #logger.debug(f"Widget layout: {self.layout}")
         #logger.debug(f"Parent layout: {self.parent.layout}")
         self.parent.layout.add_child(self.layout)
-        super().on_attached()  # Call the parent method to ensure proper attachment behavior
+        super().on_added()  # Call the parent method to ensure proper attachment behavior
 
-    def on_detached(self):
+    def on_removed(self):
         if self.parent is not None:
             self.parent.layout.remove_child(self.layout)
-        super().on_detached()
+        super().on_removed()
 
     def hit_test(self, x: float, y: float) -> bool:
         position = self.global_position

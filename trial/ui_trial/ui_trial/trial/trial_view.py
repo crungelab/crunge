@@ -3,16 +3,16 @@ from loguru import logger
 from crunge.engine.imgui import ImGuiView
 #from crunge.engine.view import View
 
-from .trial_layer import TrialLayer
+from .trial_overlay import TrialOverlay
 
 
 class TrialView(ImGuiView):
 #class TrialView(View):
-    def __init__(self, layers=[]):
-        super().__init__(layers=layers)
+    def __init__(self, overlays=[]):
+        super().__init__(overlays=overlays)
         
     def _create(self):
         super()._create()
-        widget_layer = TrialLayer()
-        self.add_layer(widget_layer)
-        self.ui = widget_layer
+        widget_overlay = TrialOverlay()
+        self.add_overlay(widget_overlay)
+        self.ui = widget_overlay

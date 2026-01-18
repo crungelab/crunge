@@ -38,7 +38,7 @@ class GraphLayer(SceneLayer, Generic[T_Node]):
         self.root.update(dt)
 
     def attach(self, node: T_Node) -> None:
-        self.root.attach(node)
+        self.root.add_child(node)
 
     def detach(self, node: T_Node) -> None:
-        self.root.detach(node)
+        self.root.remove_child(node)

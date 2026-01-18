@@ -46,7 +46,7 @@ class Meteor(DynamicEntity2D):
         fragment = cls(position).create()
         fragment.body.velocity = velocity
         fragment.body.angular_velocity = random.uniform(*Meteor.angular_velocity_range)
-        self.parent.attach(fragment)
+        self.parent.add_child(fragment)
 
 class MeteorGreyBig1(Meteor):
     def __init__(self, position: glm.vec2) -> None:

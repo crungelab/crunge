@@ -55,10 +55,10 @@ class Light3D(Node3D):
         self._range = range
         self.gpu_update_model()
 
-    def on_attached(self):
+    def on_added(self):
         self.scene.lighting.add_light(self)
 
-    def on_detached(self):
+    def on_removed(self):
         self.scene.lighting.remove_light(self)
 
     def gpu_update_model(self):

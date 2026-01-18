@@ -26,14 +26,14 @@ class ButtonsTrial(Trial):
             style=button_style,
             on_click=lambda: logger.info("Button 1 clicked!"),
         )
-        panel.attach(button1)
+        panel.add_child(button1)
 
         button2 = Button(
             "Button 2",
             style=button_style,
             on_click=lambda: logger.info("Button 2 clicked!"),
         )
-        panel.attach(button2)
+        panel.add_child(button2)
 
         ui = self.view.ui
 
@@ -42,7 +42,7 @@ class ButtonsTrial(Trial):
         ui.layout.set_justify_content(yoga.Justify.CENTER)
         ui.layout.set_align_items(yoga.Align.CENTER)
 
-        ui.attach(panel)
+        ui.add_child(panel)
 
 
 def main():

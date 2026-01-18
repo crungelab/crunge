@@ -10,7 +10,7 @@ from ..trial import Trial
 class ButtonTrial(Trial):
     def reset(self):
         super().reset()
-        self.view.ui.attach(
+        self.view.ui.add_child(
             Button(
                 "Hello, World!",
                 style=StyleBuilder().size(200, 50).build(),

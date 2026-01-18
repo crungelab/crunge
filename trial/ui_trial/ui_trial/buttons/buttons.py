@@ -22,16 +22,16 @@ class ButtonsTrial(Trial):
             style=button_style,
             on_click=lambda: logger.info("Button 1 clicked!"),
         )
-        panel.attach(button1)
+        panel.add_child(button1)
 
         button2 = Button(
             "Button 2",
             style=button_style,
             on_click=lambda: logger.info("Button 2 clicked!"),
         )
-        panel.attach(button2)
+        panel.add_child(button2)
 
-        self.view.ui.attach(panel)
+        self.view.ui.add_child(panel)
 
 
 def main():

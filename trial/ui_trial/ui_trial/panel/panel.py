@@ -13,7 +13,7 @@ class PanelTrial(Trial):
         super().reset()
         panel = Panel(style=StyleBuilder().size(400, 300).build())
 
-        self.view.ui.attach(panel)
+        self.view.ui.add_child(panel)
 
 
 def main():

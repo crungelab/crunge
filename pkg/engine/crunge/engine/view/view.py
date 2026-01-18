@@ -48,14 +48,14 @@ class View(Widget):
     def add_overlay(self, overlay: Overlay) -> Overlay:
         overlay.view = self
         self.overlays_by_name[overlay.name] = overlay
-        self.attach(overlay)
+        self.add_child(overlay)
         self.sort_children(key=lambda child: child.priority)
         return overlay
 
     def remove_overlay(self, overlay: Overlay):
         overlay.view = None
         self.overlays_by_name.pop(overlay.name)
-        self.detach(overlay)
+        self.remove_child(overlay)
 
     def get_overlay(self, name: str) -> Overlay:
         return self.overlays_by_name[name]

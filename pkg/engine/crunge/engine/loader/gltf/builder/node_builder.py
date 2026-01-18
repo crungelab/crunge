@@ -43,7 +43,7 @@ class NodeBuilder(GltfBuilder):
     def build_children(self):
         for tf_child in self.tf_node.children:
             child = self.build_child(self.tf_model.nodes[tf_child])
-            self.node.attach(child)
+            self.node.add_child(child)
 
     def build_child(self, child: gltf.Node) -> Node3D:
         from .poly_node_builder import PolyNodeBuilder

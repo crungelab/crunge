@@ -10,7 +10,7 @@ from ..trial import Trial
 class LabelTrial(Trial):
     def reset(self):
         super().reset()
-        self.view.ui.attach(Label("Hello, World!"))
+        self.view.ui.add_child(Label("Hello, World!"))
 
 def main():
     LabelTrial().run()

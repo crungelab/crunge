@@ -71,9 +71,9 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         self._transform = value
         self.on_transform()
 
-    def on_attached(self):
+    def on_added(self):
         self.parent.update_global_bounds()
-        super().on_attached()
+        super().on_added()
 
     def on_transform(self):
         self.update_bounds()
@@ -86,7 +86,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
     def gpu_update_model(self):
         pass
 
-    def on_attached(self):
+    def on_added(self):
         self.update_transform()
         self.update_bounds()
         self.parent.update_bounds()

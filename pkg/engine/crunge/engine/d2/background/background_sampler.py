@@ -8,9 +8,7 @@ class DefaultBackgroundSampler(Sampler):
 
         sampler_desc = wgpu.SamplerDescriptor(
             min_filter=wgpu.FilterMode.LINEAR,
-            #min_filter=wgpu.FilterMode.NEAREST,
             mag_filter=wgpu.FilterMode.LINEAR,
-            #mag_filter=wgpu.FilterMode.NEAREST,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
             address_mode_u=wgpu.AddressMode.CLAMP_TO_EDGE,
             address_mode_v=wgpu.AddressMode.CLAMP_TO_EDGE,
@@ -29,9 +27,7 @@ class RepeatingBackgroundSampler(Sampler):
 
         sampler_desc = wgpu.SamplerDescriptor(
             min_filter=wgpu.FilterMode.LINEAR,
-            #min_filter=wgpu.FilterMode.NEAREST,
             mag_filter=wgpu.FilterMode.LINEAR,
-            #mag_filter=wgpu.FilterMode.NEAREST,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
             address_mode_u=wgpu.AddressMode.REPEAT,
             address_mode_v=wgpu.AddressMode.REPEAT,

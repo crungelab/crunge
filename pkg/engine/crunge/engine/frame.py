@@ -22,12 +22,12 @@ class Frame(Widget):
     def view(self, view: View):
         if self._view is not None and self._view != view:
             self._view.disable()
-            self.detach(self._view)
+            self.remove_child(self._view)
 
         view.window = self
         self._view = view
         self.children.clear()
-        self.attach(view)
+        self.add_child(view)
         view.enable()
 
     def _create(self):

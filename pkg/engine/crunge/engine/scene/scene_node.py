@@ -17,7 +17,7 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
     def scene(self):
         return self.layer.scene
 
-    def attach(self, child: "SceneNode[T_Node, T_Layer]"):
+    def add_child(self, child: "SceneNode[T_Node, T_Layer]"):
         #logger.debug(f"Attaching child: {child} to parent: {self} with layer: {self.layer}")
         child.layer = self.layer
-        return super().attach(child)
+        return super().add_child(child)
