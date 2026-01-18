@@ -4,7 +4,7 @@ from loguru import logger
 import glm
 import pymunk
 
-from crunge.engine.d2.vu_2d import Vu2D
+from crunge.engine.d2 import Vu2D
 
 from ..physics.constants import DEFAULT_MASS, GRAVITY
 from ..physics import globe
@@ -28,7 +28,7 @@ class PhysicsEntity2D(Entity2D):
         geom=geom.HullGeom(),
     ):
         super().__init__(position, rotation, scale, vu, model, brain)
-        self.body = None
+        self.body: pymunk.Body | None = None
         self.shapes = []
         self._physics = physics
         self.geom = geom
@@ -152,9 +152,9 @@ class PhysicsGroup2D(PhysicsEntity2D):
         super().__init__(position, physics=physics, geom=geom)
         self.id_counter += 1
         self.id = self.id_counter
-        self.nodes = []
+        self.nodes: list[PhysicsEntity2D] = []
 
-    def add_node(self, node):
+    def add_node(self, node: PhysicsEntity2D):
         node.group = self
         self.nodes.append(node)
         return node
@@ -165,7 +165,7 @@ class PhysicsGroup2D(PhysicsEntity2D):
             node.gid = self.id
             self.layer.attach(node)
 
-    def update(self, delta_time):
+    def update(self, delta_time: float):
         points = [node.position for node in self.nodes]
         if points:
             centroid = glm.vec2(

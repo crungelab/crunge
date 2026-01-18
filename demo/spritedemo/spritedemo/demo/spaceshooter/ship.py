@@ -1,7 +1,9 @@
 import math
 
 from loguru import logger
+
 import glm
+import pymunk
 
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.d2.node_2d import Node2D
@@ -15,7 +17,7 @@ from .thruster import Thruster
 from .laser import Laser
 
 class Thruster(Node2D):
-    def __init__(self, body, position: glm.vec2, force: glm.vec2, angular_velocity: float = 0) -> None:
+    def __init__(self, body: pymunk.Body, position: glm.vec2, force: glm.vec2, angular_velocity: float = 0) -> None:
         super().__init__(position)
         self.body = body
         self.active = False
@@ -49,7 +51,7 @@ class Ship(DynamicEntity2D):
         self.left_thruster: Thruster = None
         self.right_thruster: Thruster = None
 
-    def add_shape(self, shape):
+    def add_shape(self, shape: pymunk.Shape):
         shape.collision_type = CollisionType.SHIP
         super().add_shape(shape)
 

@@ -1,3 +1,4 @@
+from typing import Type
 import random
 
 from loguru import logger
@@ -42,7 +43,7 @@ class Meteor(DynamicEntity2D):
         self.body.angular_velocity = angular_velocity
         #self.body.mass = 1
 
-    def create_fragment(self, cls, position, velocity):
+    def create_fragment(self, cls: Type["Meteor"], position: glm.vec2, velocity: glm.vec2):
         fragment = cls(position).create()
         fragment.body.velocity = velocity
         fragment.body.angular_velocity = random.uniform(*Meteor.angular_velocity_range)
