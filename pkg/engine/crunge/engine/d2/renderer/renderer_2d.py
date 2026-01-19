@@ -1,6 +1,6 @@
-from ..renderer import Renderer
+from ...renderer import Renderer
 
-from .camera_2d import Camera2D
+from ..camera_2d import Camera2D
 
 from .render_pass_2d import RenderPass2D
 

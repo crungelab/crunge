@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
+from typing import TYPE_CHECKING
 
 from loguru import logger
 
@@ -16,13 +16,13 @@ class View(Widget):
         style = yoga.StyleBuilder().size_percent(100, 100).build()
         super().__init__(style)
         self.window: "Window" = None
-        self.overlays_by_name: Dict[str, Overlay] = {}
+        self.overlays_by_name: dict[str, Overlay] = {}
 
         for overlay in overlays:
             self.add_overlay(overlay)
 
     @property
-    def layers(self) -> List[Overlay]:
+    def overlays(self) -> list[Overlay]:
         return self.children
 
     def _create(self):
@@ -30,7 +30,7 @@ class View(Widget):
         super()._create()
         if not self.window:
             raise ValueError("View.window is not set")
-        for overlay in self.layers:
+        for overlay in self.overlays:
             overlay.config(view=self).create()
         self.create_device_objects()
         self.create_camera()

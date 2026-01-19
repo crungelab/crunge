@@ -5,7 +5,7 @@ from crunge.core import klass
 from ...loader.shader_loader import ShaderLoader
 
 from ..program_2d import Program2D
-from ..render_pipeline_2d import RenderPipeline2D
+from ..renderer.render_pipeline_2d import RenderPipeline2D
 
 
 @klass.singleton

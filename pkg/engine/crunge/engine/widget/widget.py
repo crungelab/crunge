@@ -1,5 +1,3 @@
-from typing import Any, Callable
-
 from loguru import logger
 import glm
 
@@ -25,10 +23,10 @@ class Widget(Node["Widget"]):
         self.layout.set_style(style)
         self.layout.set_dirtied_func(self.mark_layout_dirty)
 
-    def intro(self):
+    def intro(self) -> None:
         pass
 
-    def mark_layout_dirty(self):
+    def mark_layout_dirty(self) -> None:
         logger.debug(f"Widget.mark_layout_dirty: {self}")
         self.layout_dirty = True
 
@@ -45,7 +43,7 @@ class Widget(Node["Widget"]):
             child.apply_layout()
 
     '''
-    def apply_layout(self):
+    def apply_layout(self) -> None:
         #logger.debug(f"Widget.apply_layout: {self}")
         if not self.layout.has_new_layout():
             return
@@ -56,7 +54,7 @@ class Widget(Node["Widget"]):
         for child in self.children:
             child.apply_layout()
 
-    def on_layout(self):
+    def on_layout(self) -> None:
         #logger.debug(f"Widget.on_layout: {self}")
         self._set_size(glm.ivec2(
             self.layout.get_computed_width(), self.layout.get_computed_height()
@@ -70,7 +68,7 @@ class Widget(Node["Widget"]):
         return self.layout.get_style()
     
     @style.setter
-    def style(self, value: yoga.Style):
+    def style(self, value: yoga.Style) -> None:
         if not isinstance(value, yoga.Style):
             raise TypeError(f"Expected yoga.Style, got {type(value)}")
         self.layout.set_style(value)
@@ -110,29 +108,29 @@ class Widget(Node["Widget"]):
         return changed
 
     @size.setter
-    def size(self, value: glm.ivec2):
+    def size(self, value: glm.ivec2) -> None:
         self.layout.set_width(value.x)
         self.layout.set_height(value.y)
         self._set_size(value)
 
-    def on_size(self):
+    def on_size(self) -> None:
         pass
         #self.layout.mark_dirty()
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self.size.x
 
     @width.setter
-    def width(self, value):
+    def width(self, value: int) -> None:
         self.size.x = value
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self.size.y
 
     @height.setter
-    def height(self, value):
+    def height(self, value: int) -> None:
         self.size.y = value
 
     @property
@@ -140,7 +138,7 @@ class Widget(Node["Widget"]):
         return self._controller
 
     @controller.setter
-    def controller(self, controller: Controller):
+    def controller(self, controller: Controller) -> None:
         if controller == self._controller:
             return
         if self._controller:
@@ -148,17 +146,17 @@ class Widget(Node["Widget"]):
         self._controller = controller
         controller.enable()
 
-    def _enable(self):
+    def _enable(self) -> None:
         super()._enable()
         if self.controller is not None:
             self.controller.enable()
 
-    def _disable(self):
+    def _disable(self) -> None:
         super()._disable()
         if self.controller is not None:
             self.controller.disable()
 
-    def dispatch(self, event):
+    def dispatch(self, event) -> bool:
         # logger.debug(f"Widget.dispatch: {self}, {self.children}, {event}")
         for child in self.children[::-1]:
             if child.dispatch(event):
@@ -167,28 +165,28 @@ class Widget(Node["Widget"]):
             self.controller.dispatch(event)
         return super().dispatch(event)
     
-    def update(self, delta_time: float):
+    def update(self, delta_time: float) -> None:
         # logger.debug("Widget.update")
         if self.controller is not None:
             self.controller.update(delta_time)
         for child in self.children:
             child.update(delta_time)
 
-    def add_part(self, part: Part):
+    def add_part(self, part: Part) -> None:
         self.parts.append(part)
         part.widget = self
 
-    def remove_part(self, part: Part):
+    def remove_part(self, part: Part) -> None:
         self.parts.remove(part)
         part.widget = None
 
-    def get_part(self, part_type: type[Part]):
+    def get_part(self, part_type: type[Part]) -> Part | None:
         for part in self.parts:
             if isinstance(part, part_type):
                 return part
         return None
 
-    def on_added(self):
+    def on_added(self) -> None:
         #logger.debug(f"Widget.on_attached: {self}")
         #logger.debug(f"Parent: {self.parent}")
         #logger.debug(f"Widget layout: {self.layout}")
@@ -196,7 +194,7 @@ class Widget(Node["Widget"]):
         self.parent.layout.add_child(self.layout)
         super().on_added()  # Call the parent method to ensure proper attachment behavior
 
-    def on_removed(self):
+    def on_removed(self) -> None:
         if self.parent is not None:
             self.parent.layout.remove_child(self.layout)
         super().on_removed()

@@ -41,18 +41,17 @@ class Renderer(Base):
         self.camera_3d = camera_3d
         self.lighting_3d = lighting_3d
 
-        #self.render_passes: List[RenderPass] = []
         self.render_passes: List[RenderPass] = [DefaultRenderPass(viewport)]
-        self.render_pass: RenderPass = None
+        self.current_render_pass: RenderPass = None
         self.render_pass_queue: List[RenderPass] = []
         self.first_pass = True
         self.encoder: wgpu.CommandEncoder = None
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
-        if not self.render_pass:
+        if not self.current_render_pass:
             raise RuntimeError("No render pass has been started.")
-        return self.render_pass.pass_enc
+        return self.current_render_pass.pass_enc
 
     @property
     def canvas(self) -> skia.Canvas:
@@ -117,13 +116,13 @@ class Renderer(Base):
     def begin(self):
         self.first_pass = True
         self.render_pass_queue = self.render_passes.copy()
-        self.render_pass = self.dequeue_render_pass()
+        self.current_render_pass = self.dequeue_render_pass()
         self.encoder = self.device.create_command_encoder()
 
         self.begin_pass()
 
     def begin_pass(self):
-        self.render_pass.begin(self.encoder)
+        self.current_render_pass.begin(self.encoder)
         if self.camera_2d is not None:
             self.camera_2d.bind(self.pass_enc)
         elif self.camera_3d is not None:
@@ -136,12 +135,12 @@ class Renderer(Base):
     def end(self):
         self.end_pass()
         while (render_pass := self.dequeue_render_pass()) is not None:
-            self.render_pass = render_pass
+            self.current_render_pass = render_pass
             self.begin_pass()
             self.end_pass()
 
     def end_pass(self):
-        self.render_pass.end(self.encoder)
+        self.current_render_pass.end(self.encoder)
 
     @contextlib.contextmanager
     def canvas_target(self):

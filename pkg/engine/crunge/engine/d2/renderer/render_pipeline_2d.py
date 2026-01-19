@@ -4,11 +4,11 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ..renderer.render_pipeline import RenderPipeline
+from ...renderer.render_pipeline import RenderPipeline
 
-from ..binding import SceneBindGroupLayout
+from ...binding import SceneBindGroupLayout
 
-from .binding_2d import (
+from ..binding_2d import (
     MaterialBindGroupLayout,
     ModelBindGroupLayout,
     NodeBindGroupLayout,

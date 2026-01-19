@@ -6,13 +6,13 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ..viewport import Viewport
-from ..renderer.render_pass import RenderPass
+from ...viewport import Viewport
+from ...renderer.render_pass import RenderPass
 
 if TYPE_CHECKING:
-    from .renderer_2d import Renderer2D
+    from .renderer_3d import Renderer3D
 
-class RenderPass2D(RenderPass["Renderer2D"]):
+class RenderPass3D(RenderPass["Renderer3D"]):
     def __init__(self, viewport: Viewport, first: bool = False) -> None:
         super().__init__(viewport=viewport, first=first)
 

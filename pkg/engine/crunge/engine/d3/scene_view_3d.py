@@ -1,10 +1,11 @@
 from loguru import logger
 
-from .scene_2d import Scene2D
-from .view_2d import View2D
+from .scene_3d import Scene3D
+from .view_3d import View3D
 
-class SceneView2D(View2D):
-    def __init__(self, scene: Scene2D) -> None:
+
+class SceneView3D(View3D):
+    def __init__(self, scene: Scene3D) -> None:
         super().__init__()
         self.scene = scene
 
@@ -14,7 +15,3 @@ class SceneView2D(View2D):
 
         with self.renderer.use():
             super()._draw()
-
-    def update(self, dt: float) -> None:
-        self.scene.update(dt)
-        super().update(dt)

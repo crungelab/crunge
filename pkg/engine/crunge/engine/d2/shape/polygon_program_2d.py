@@ -10,7 +10,7 @@ from crunge.engine.d2.program_2d import Program2D
 from ...loader.shader_loader import ShaderLoader
 from ...binding import BindGroupLayout
 
-from ..render_pipeline_2d import RenderPipeline2D
+from ..renderer.render_pipeline_2d import RenderPipeline2D
 
 
 class PolygonRenderPipeline2D(RenderPipeline2D):

@@ -1,6 +1,6 @@
 from loguru import logger
 
-from crunge.engine.d2.renderer_2d import Renderer2D
+from crunge.engine.d2.renderer import Renderer2D
 from crunge.engine.d2.scene_view_2d import SceneView2D
 from crunge.engine.d2.camera_2d import Camera2D
 

@@ -13,7 +13,7 @@ from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 
 if TYPE_CHECKING:
-    from .renderer_3d import Renderer3D
+    from .renderer.renderer_3d import Renderer3D
 from .node_3d import Node3D
 from .vu_3d import Vu3D
 from .uniforms_3d import (
