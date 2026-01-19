@@ -19,27 +19,27 @@ class OffscreenCanvasPage(Page):
         self.color_1 = colors.BLUE
         self.color_2 = colors.YELLOW
 
-        self.viewport_size = glm.ivec2(512, 256)
-        self.viewport = OffscreenViewport(self.viewport_size)
+        self.ov_size = glm.ivec2(512, 256)
+        self.ov = OffscreenViewport(self.ov_size)
         self.texture = Texture2D(
-            self.viewport.color_texture,
-            self.viewport_size
+            self.ov.color_texture,
+            self.ov_size
         )
         ResourceManager().texture_kit.add(self.texture)
 
     def _draw(self):
         imgui.begin(self.title)
-        size = self.viewport.width, self.viewport.height
+        size = self.ov.width, self.ov.height
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
 
-        with self.viewport.frame():
+        with self.ov.frame():
             self.draw_radial_gradient()
 
         super()._draw()
 
     def draw_radial_gradient(self):
-        canvas = self.viewport.canvas
+        canvas = self.ov.canvas
 
         gradient_paint = skia.Paint()
 
@@ -56,7 +56,7 @@ class OffscreenCanvasPage(Page):
         gradient_paint.set_shader(shader)
         canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
 
-        self.viewport.submit_canvas()
+        self.ov.submit_canvas()
 
 def install(app: App):
     app.add_channel(PageChannel(OffscreenCanvasPage, "offscreen_canvas", "Offscreen Canvas"))

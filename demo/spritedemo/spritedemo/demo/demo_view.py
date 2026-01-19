@@ -9,6 +9,3 @@ class DemoView(SceneView2D):
 
     def create_camera(self):
         self.camera = Camera2D()
-
-    def create_renderer(self):
-        self.renderer = Renderer2D(self.window.viewport, camera=self.camera)

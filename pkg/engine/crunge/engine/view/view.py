@@ -7,6 +7,7 @@ from crunge import yoga
 if TYPE_CHECKING:
     from ..window import Window
 
+from ..viewport import Viewport
 from ..widget import Widget
 from .overlay import Overlay
 
@@ -20,6 +21,10 @@ class View(Widget):
 
         for overlay in overlays:
             self.add_overlay(overlay)
+
+    @property
+    def viewport(self) -> Viewport:
+        return self.window.viewport
 
     @property
     def overlays(self) -> list[Overlay]:

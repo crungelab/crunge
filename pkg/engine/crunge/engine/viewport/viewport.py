@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any, Optional
+from typing import Optional
 from ctypes import sizeof
 
 import contextlib
@@ -31,7 +31,7 @@ class Viewport(Base):
     ):
         self._size = size
         self.render_options = render_options
-        self.listeners: List[ViewportListener] = []
+        self.listeners: list[ViewportListener] = []
 
         self.color_texture: wgpu.Texture = None
         self.color_texture_view: wgpu.TextureView = None

@@ -16,13 +16,13 @@ class View2D(ImGuiView):
         self.scratch: ScratchOverlay = None
         self.camera: Camera2D = None
 
-    def _create(self):
+    def _create(self) -> None:
         super()._create()
         self.scratch = ScratchOverlay()
         self.add_overlay(self.scratch)
 
-    def create_camera(self):
+    def create_camera(self) -> None:
         self.camera = Camera2D(glm.vec2(self.width / 2, self.height / 2))
 
-    def create_renderer(self):
+    def create_renderer(self) -> None:
         self.renderer = Renderer2D(self.window.viewport, camera=self.camera)
