@@ -1,16 +1,16 @@
 from ...viewport import Viewport
-from ...renderer import SceneRenderer
+
 
 from ..camera_3d import Camera3D
 from ..lighting_3d import Lighting3D
 
+from .renderer_3d import Renderer3D
 from ..scene_3d import Scene3D
 
-from .render_pass_3d import RenderPass3D
 from .phase import GroupPhase3D, OpaquePhase3D, TransmissivePhase3D
 
 
-class SceneRenderer3D(SceneRenderer["SceneRenderer3D", Scene3D]):
+class SceneRenderer3D(Renderer3D):
     def __init__(
         self,
         scene: Scene3D,
@@ -18,10 +18,8 @@ class SceneRenderer3D(SceneRenderer["SceneRenderer3D", Scene3D]):
         camera: Camera3D = None,
         lighting: Lighting3D = None,
     ) -> None:
-        super().__init__(scene, viewport, camera_3d=camera, lighting_3d=lighting)
-
-    def create_render_pass(self):
-        return RenderPass3D(self.viewport, first=True)
+        super().__init__(viewport, camera=camera, lighting=lighting)
+        self.scene = scene
 
     def create_phases(self) -> None:
         phases = [

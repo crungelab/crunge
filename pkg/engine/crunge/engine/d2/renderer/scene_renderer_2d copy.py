@@ -1,20 +1,19 @@
 from ...viewport import Viewport
-from ...renderer import SceneRenderer
 
 from ..camera_2d import Camera2D
+
+from .renderer_2d import Renderer2D
 from ..scene_2d import Scene2D
 
 from .phase import GroupPhase2D, OpaquePhase2D
-from .render_pass_2d import RenderPass2D
 
-class SceneRenderer2D(SceneRenderer["SceneRenderer2D", Scene2D]):
+
+class SceneRenderer2D(Renderer2D):
     def __init__(
         self, scene: Scene2D, viewport: Viewport, camera: Camera2D = None
     ) -> None:
-        super().__init__(scene, viewport, camera_2d=camera)
-
-    def create_render_pass(self):
-        return RenderPass2D(self.viewport, first=True)
+        super().__init__(viewport, camera=camera)
+        self.scene = scene
 
     def create_phases(self) -> None:
         phases = [

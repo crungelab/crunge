@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from ..d3.lighting_3d import Lighting3D
 
 from .render_pass import RenderPass, DefaultRenderPass
-#from .phase import RenderPhase
+from .phase import RenderPhase
 
 renderer: ContextVar[Optional["Renderer"]] = ContextVar("renderer", default=None)
 
@@ -46,7 +46,7 @@ class Renderer(Base):
         self.current_render_pass: RenderPass = None
         self.encoder: wgpu.CommandEncoder = None
         #self.phases: list[RenderPhase] = []
-        #self.root_phase: RenderPhase
+        self.root_phase: RenderPhase
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
@@ -126,15 +126,13 @@ class Renderer(Base):
     def end_pass(self):
         self.current_render_pass.end(self.encoder)
 
-    """
     def create_phases(self) -> None:
         pass
 
     def render(self) -> None:
         self.create_phases()
         self.root_phase.render()
-    """
-    
+
     """
     def render(self) -> None:
         self.create_phases()
