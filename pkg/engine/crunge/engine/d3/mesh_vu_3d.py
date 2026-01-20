@@ -109,13 +109,10 @@ class MeshVu3D(Vu3D):
         renderer = Renderer.get_current()
 
         if self.deferred:
-            renderer.camera_3d.defer_draw(self, self.draw_deferred)
-            return
+            renderer.camera_3d.defer_draw(self, self.do_draw)
+        else:
+            self.do_draw()
 
-        self.do_draw()
-
-    def draw_deferred(self):
-        self.do_draw()
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(3, self.model_bind_group)

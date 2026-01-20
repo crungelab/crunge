@@ -1,4 +1,3 @@
-from typing import Callable, List, TYPE_CHECKING
 from ctypes import sizeof
 
 from loguru import logger
@@ -12,24 +11,14 @@ from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 
-if TYPE_CHECKING:
-    from .renderer.renderer_3d import Renderer3D
+from .renderer.phase.phase_item_3d import Transmissive3D, DrawCallback3D
+
 from .node_3d import Node3D
 from .vu_3d import Vu3D
 from .uniforms_3d import (
     CameraUniform,
 )
 from .program_3d import Program3D
-
-
-DrawCallback = Callable[["Renderer3D"], None]
-
-
-class DeferredDraw:
-    def __init__(self, vu: Vu3D, callback: DrawCallback):
-        self.vu = vu
-        self.node = vu.node
-        self.callback = callback
 
 
 @klass.singleton
@@ -60,7 +49,7 @@ class Camera3D(Node3D, ViewportListener):
         self._viewport: Viewport = None
         self.viewport_size = glm.vec2(0, 0)
 
-        self.deferred_draws: List[DeferredDraw] = []
+        self.deferred_draws: list[Transmissive3D] = []
 
         self.create_buffers()
         self.bind_group: SceneBindGroup = None
@@ -178,8 +167,8 @@ class Camera3D(Node3D, ViewportListener):
         #pass_enc.set_bind_group(0, self.bind_group)
         self.bind_group.bind(pass_enc)
 
-    def defer_draw(self, vu: Vu3D, callback: DrawCallback):
-        self.deferred_draws.append(DeferredDraw(vu, callback))
+    def defer_draw(self, vu: Vu3D, callback: "DrawCallback3D"):
+        self.deferred_draws.append(Transmissive3D(vu, callback))
 
     def depth_of(self, node: Node3D) -> float:
         return glm.distance(self.position, node.position)

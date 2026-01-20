@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from ....renderer.phase import RenderPhase
+from ....renderer.phase.render_phase import RenderPhase
 
 if TYPE_CHECKING:
     from .. import SceneRenderer2D

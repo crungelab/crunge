@@ -42,9 +42,7 @@ class Renderer(Base):
         self.camera_3d = camera_3d
         self.lighting_3d = lighting_3d
 
-        #self.render_passes: List[RenderPass] = [DefaultRenderPass(viewport)]
         self.current_render_pass: RenderPass = None
-        #self.render_pass_queue: List[RenderPass] = []
         self.encoder: wgpu.CommandEncoder = None
         self.phases: list[RenderPhase] = []
 
@@ -79,12 +77,9 @@ class Renderer(Base):
         prev_renderer = self.get_current()
         self.make_current()
 
-        if render_pass is not None:
-            self.current_render_pass = render_pass
-        else:
-            self.current_render_pass = self.create_render_pass()
-
-        self.begin_pass()
+        self.encoder = self.device.create_command_encoder()
+        
+        self.begin_pass(render_pass)
 
         yield self.current_render_pass
 
@@ -93,23 +88,11 @@ class Renderer(Base):
         self.viewport.snap(self.encoder)
 
         command_buffer = self.encoder.finish()
+
         self.queue.submit([command_buffer])
 
         if prev_renderer is not None:
             prev_renderer.make_current()
-
-    '''
-    def __enter__(self):
-        self.make_current()
-        self.begin()
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.first_pass = False
-        self.end()
-        command_buffer = self.encoder.finish()
-        self.queue.submit([command_buffer])
-    '''
     
     def make_current(self):
         """Make the renderer current for the current context."""
@@ -120,31 +103,12 @@ class Renderer(Base):
         """Get the current renderer."""
         return renderer.get()
     
-    '''
-    def queue_render_pass(self, render_pass: RenderPass):
-        """Queue a render pass to be executed later."""
-        self.render_pass_queue.append(render_pass)
+    def begin_pass(self, render_pass: RenderPass = None):
+        if render_pass is not None:
+            self.current_render_pass = render_pass
+        else:
+            self.current_render_pass = self.create_render_pass()
 
-    def dequeue_render_pass(self) -> Optional[RenderPass]:
-        """Dequeue a render pass from the queue."""
-        if self.render_pass_queue:
-            return self.render_pass_queue.pop(0)
-        return None
-    '''
-
-    '''
-    def begin(self):
-        #self.render_pass_queue = self.render_passes.copy()
-        #self.current_render_pass = self.dequeue_render_pass()
-        self.current_render_pass = self.create_render_pass()
-        self.encoder = self.device.create_command_encoder()
-
-        self.begin_pass()
-    '''
-
-    def begin_pass(self):
-        #self.current_render_pass = self.create_render_pass()
-        self.encoder = self.device.create_command_encoder()
         self.current_render_pass.begin(self.encoder)
 
         if self.camera_2d is not None:
@@ -154,16 +118,6 @@ class Renderer(Base):
 
         if self.lighting_3d is not None:
             self.lighting_3d.bind(self.pass_enc)
-
-
-    '''
-    def end(self):
-        self.end_pass()
-        while (render_pass := self.dequeue_render_pass()) is not None:
-            self.current_render_pass = render_pass
-            self.begin_pass()
-            self.end_pass()
-    '''
 
     def end_pass(self):
         self.current_render_pass.end(self.encoder)
