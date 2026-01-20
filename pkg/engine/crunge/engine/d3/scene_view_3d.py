@@ -17,10 +17,6 @@ class SceneView3D(View3D):
         self.renderer = SceneRenderer3D(self.scene, viewport=self.window.viewport, camera=self.camera, lighting=self.scene.lighting)
 
     def _draw(self):
-        '''
-        with self.renderer.render_pass():
-            self.scene.draw()
-        '''
         self.renderer.render()
 
         with self.renderer.use():

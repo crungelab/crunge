@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, Generator
 from typing import Optional
 
 import contextlib
@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from ..d3.lighting_3d import Lighting3D
 
 from .render_pass import RenderPass, DefaultRenderPass
+from .phase import RenderPhase
 
 renderer: ContextVar[Optional["Renderer"]] = ContextVar("renderer", default=None)
 
@@ -45,6 +46,7 @@ class Renderer(Base):
         self.current_render_pass: RenderPass = None
         #self.render_pass_queue: List[RenderPass] = []
         self.encoder: wgpu.CommandEncoder = None
+        self.phases: list[RenderPhase] = []
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
@@ -55,6 +57,11 @@ class Renderer(Base):
     @property
     def canvas(self) -> skia.Canvas:
         return self.viewport.canvas
+
+    @contextlib.contextmanager
+    def canvas_target(self):
+        yield self.viewport.canvas
+        self.viewport.submit_canvas()
 
     def create_render_pass(self):
         return DefaultRenderPass(self.viewport)
@@ -68,7 +75,7 @@ class Renderer(Base):
             prev_renderer.make_current()
 
     @contextlib.contextmanager
-    def render_pass(self, render_pass: RenderPass = None):
+    def render_pass(self, render_pass: RenderPass = None) -> Generator[RenderPass, None, None]:
         prev_renderer = self.get_current()
         self.make_current()
 
@@ -79,9 +86,11 @@ class Renderer(Base):
 
         self.begin_pass()
 
-        yield self
+        yield self.current_render_pass
 
         self.end_pass()
+
+        self.viewport.snap(self.encoder)
 
         command_buffer = self.encoder.finish()
         self.queue.submit([command_buffer])
@@ -159,7 +168,10 @@ class Renderer(Base):
     def end_pass(self):
         self.current_render_pass.end(self.encoder)
 
-    @contextlib.contextmanager
-    def canvas_target(self):
-        yield self.viewport.canvas
-        self.viewport.submit_canvas()
+    def create_phases(self) -> None:
+        pass
+
+    def render(self) -> None:
+        self.create_phases()
+        for phase in self.phases:
+            phase.render()
