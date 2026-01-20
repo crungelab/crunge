@@ -178,13 +178,13 @@ class Camera3D(Node3D, ViewportListener):
         #pass_enc.set_bind_group(0, self.bind_group)
         self.bind_group.bind(pass_enc)
 
-    def defer_draw(self, node: Node3D, callback: DrawCallback):
-        self.deferred_draws.append(DeferredDraw(node, callback))
+    def defer_draw(self, vu: Vu3D, callback: DrawCallback):
+        self.deferred_draws.append(DeferredDraw(vu, callback))
 
     def depth_of(self, node: Node3D) -> float:
         return glm.distance(self.position, node.position)
 
-    def flush_deferred(self, renderer: "Renderer3D"):
+    def flush_deferred(self):
         # sort by depth
         self.deferred_draws.sort(
             key=lambda d: self.depth_of(d.node),
