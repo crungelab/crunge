@@ -60,6 +60,7 @@ class Window(Frame):
         self.channels: Dict[str, Channel] = {}
 
         self.update_time: float = 0.0
+        self.render_time: float = 0.0
         self.frame_time: float = 0.0
 
     @property

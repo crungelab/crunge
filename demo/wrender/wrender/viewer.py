@@ -1,6 +1,4 @@
-import time
-import os, sys
-import math
+import os
 from pathlib import Path
 import tkinter
 import tkinter.filedialog
@@ -13,7 +11,7 @@ from crunge import imgui
 from crunge import engine
 
 from crunge.engine.viewport import SurfaceViewport
-from crunge.engine import Renderer, Scheduler
+from crunge.engine import Scheduler
 from crunge.engine.render_options import RenderOptions
 
 from crunge.engine.loader.gltf import GltfLoader
@@ -22,6 +20,9 @@ from crunge.engine.d3.scene_3d import Scene3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
 from crunge.engine.d3.scene_view_3d import SceneView3D
 from crunge.engine.d3.director_3d import Director3D
+
+from .ui.scene_tree_dock import SceneTreeDock
+
 
 models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
@@ -37,8 +38,10 @@ class Viewer(engine.App):
             use_depth_stencil=True, use_msaa=True, use_snapshot=True
         )
 
-        self.lighting_panel_visible = True
-        self.stats_panel_visible = True
+        self.stats_dock_visible = True
+        self.scene_tree_dock = SceneTreeDock()
+        self.scene_tree_dock_visible = True
+        self.lighting_dock_visible = True
 
     @property
     def camera(self):
@@ -88,8 +91,9 @@ class Viewer(engine.App):
 
     def _draw(self):
         self.draw_main_menu()
-        self.draw_lighting_window()
-        self.draw_stats_panel()
+        self.draw_stats_dock()
+        self.draw_scene_tree_dock()
+        self.draw_lighting_dock()
 
         super()._draw()
 
@@ -116,22 +120,65 @@ class Viewer(engine.App):
 
             # View
             if imgui.begin_menu("View", True):
-                clicked_lighting, selected_lighting = imgui.menu_item(
-                    "Lighting", "Ctrl+L", False, True
-                )
-                if clicked_lighting:
-                    self.lighting_panel_visible = not self.lighting_panel_visible
                 clicked_stats, selected_stats = imgui.menu_item(
                     "Stats", "Ctrl+S", False, True
                 )
                 if clicked_stats:
-                    self.stats_panel_visible = not self.stats_panel_visible
+                    self.stats_dock_visible = not self.stats_dock_visible
+                clicked_scene, selected_scene = imgui.menu_item(
+                    "Scene", "Ctrl+E", False, True
+                )
+                if clicked_scene:
+                    self.scene_tree_dock_visible = not self.scene_tree_dock_visible
+                clicked_lighting, selected_lighting = imgui.menu_item(
+                    "Lighting", "Ctrl+L", False, True
+                )
+                if clicked_lighting:
+                    self.lighting_dock_visible = not self.lighting_dock_visible
                 imgui.end_menu()
 
             imgui.end_main_menu_bar()
 
-    def draw_lighting_window(self):
-        if not self.lighting_panel_visible:
+    def draw_stats_dock(self):
+        # Display timings
+        if not self.stats_dock_visible:
+            return
+        imgui.begin("Stats")
+        imgui.text(f"Update time: {self.update_time:.4f}")
+        imgui.text(f"Render time: {self.render_time:.4f}")
+        imgui.text(f"Frame time: {self.frame_time:.4f}")
+        imgui.text(f"FPS: {self.fps:.0f}")
+        imgui.end()
+
+    def draw_scene_tree_dock(self):
+        if not self.scene_tree_dock_visible:
+            return
+        self.scene_tree_dock.draw(self.scene)
+
+    """
+    def draw_scene_tree_dock(self):
+        if not self.scene_tree_dock_visible:
+            return
+        imgui.begin("Scene")
+        # imgui.text(f"Scene: {self.scene.name}")
+        self.draw_layer_node(self.scene)
+        imgui.end()
+
+    def draw_layer_node(self, layer):
+        if imgui.tree_node(layer.name):
+            for child in layer.children:
+                self.draw_layer_node(child)
+            imgui.tree_pop()
+
+    def draw_graph_layer_node(self, node):
+        if imgui.tree_node(node.name):
+            for child in node.children:
+                self.draw_graph_layer_node(child)
+            imgui.tree_pop()
+    """
+
+    def draw_lighting_dock(self):
+        if not self.lighting_dock_visible:
             return
 
         imgui.begin("Lighting")
@@ -180,13 +227,6 @@ class Viewer(engine.App):
         if changed:
             light.range = range
 
-        imgui.end()
-
-    def draw_stats_panel(self):
-        # Display timings
-        imgui.begin("Stats")
-        imgui.text(f"Update time: {self.update_time:.4f}")
-        imgui.text(f"Frame time: {self.frame_time:.4f}")
         imgui.end()
 
     def on_key(self, event: sdl.KeyboardEvent):

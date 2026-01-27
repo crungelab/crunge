@@ -68,15 +68,22 @@ class App(Window):
             # Compute frame delta
             now = time.perf_counter()
             frame_time = now - last_time
+            self.frame_time = frame_time
+            self.fps = 1.0 / frame_time if frame_time > 0 else 0.0
 
             # Game update & render
             update_start_time = timeit.default_timer()
             self.update(frame_time)
             self.update_time = timeit.default_timer() - update_start_time
 
+            render_start_time = timeit.default_timer()
+            self.frame()
+            self.render_time = timeit.default_timer() - render_start_time
+            '''
             frame_start_time = timeit.default_timer()
             self.frame()
             self.frame_time = timeit.default_timer() - frame_start_time
+            '''
 
             # Calculate how much time is left to maintain 60 FPS
             elapsed = time.perf_counter() - frame_start
