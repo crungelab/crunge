@@ -353,6 +353,29 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("height_in_items") = -1
     , py::return_value_policy::automatic_reference);
 
+    // 1) No close button: returns just expanded
+    _imgui.def(
+        "collapsing_header",
+        py::overload_cast<const char*, ImGuiTreeNodeFlags>(&ImGui::CollapsingHeader),
+        py::arg("label"),
+        py::arg("flags") = 0
+    );
+
+    // 2) With close button: Python passes bool, we return (expanded, p_open)
+    _imgui.def(
+        "collapsing_header",
+        [](const char* label, bool p_open, ImGuiTreeNodeFlags flags)
+        {
+            bool open = p_open; // local storage to back the bool*
+            bool expanded = ImGui::CollapsingHeader(label, &open, flags);
+            return py::make_tuple(expanded, open);
+        },
+        py::arg("label"),
+        py::arg("p_open"),
+        py::arg("flags") = 0
+    );
+
+    /*
     _imgui.def("collapsing_header", [](const char * label, bool * p_open, ImGuiTreeNodeFlags flags)
     {
         auto ret = ImGui::CollapsingHeader(label, p_open, flags);
@@ -362,6 +385,7 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
     , py::arg("p_open")
     , py::arg("flags") = 0
     , py::return_value_policy::automatic_reference);
+    */
 
     _imgui.def("plot_lines", [](const char* label, std::vector<float> values, int values_offset, const char* overlay_text, float scale_min, float scale_max, ImVec2 graph_size)
     {

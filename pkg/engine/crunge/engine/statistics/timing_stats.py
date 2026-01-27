@@ -47,8 +47,8 @@ class TimingStats(StatGroup):
 
     def channels(self) -> dict[str, StatChannel]:
         return {
-            "update": self.update_s,
-            "render": self.render_s,
-            "frame": self.frame_s,
+            "update_s": self.update_s,
+            "render_s": self.render_s,
+            "frame_s": self.frame_s,
             "fps": self.fps,
         }

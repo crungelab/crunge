@@ -43,6 +43,8 @@ class Viewer(engine.App):
         self.scene_tree_dock_visible = True
         self.lighting_dock_visible = True
 
+        #self._stats_group_open = {}  # name -> bool
+
     @property
     def camera(self):
         return self.view.camera
@@ -164,11 +166,34 @@ class Viewer(engine.App):
         imgui.begin("Stats")
 
         for group in self.stats.groups:
+            # per-group open state (for the little close button on the header, if you want it)
+            #open_flag = self._stats_group_open.get(group.name, True)
+
+            # If your wrapper requires p_open, keep it per-group like this.
             if not imgui.collapsing_header(
                 group.name,
                 flags=imgui.TreeNodeFlags.DEFAULT_OPEN,
             ):
                 continue
+
+            """
+            expanded = imgui.collapsing_header(
+                group.name,
+                flags=imgui.TreeNodeFlags.DEFAULT_OPEN,
+            )
+            """
+
+            """
+            expanded, open_flag = imgui.collapsing_header(
+                group.name,
+                p_open=open_flag,
+                flags=imgui.TreeNodeFlags.DEFAULT_OPEN,
+            )
+            self._stats_group_open[group.name] = open_flag
+
+            if not expanded:
+                continue
+            """
 
             channels = group.channels()
             if not channels:
