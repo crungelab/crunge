@@ -43,6 +43,8 @@ class Viewer(engine.App):
         self.scene_tree_dock_visible = True
         self.lighting_dock_visible = True
 
+        self._stats_group_open = {}  # name -> bool
+
     @property
     def camera(self):
         return self.view.camera
@@ -139,6 +141,105 @@ class Viewer(engine.App):
 
             imgui.end_main_menu_bar()
 
+    def _format_stat(self, key: str, ch) -> str:
+        # ch is StatChannel
+        if key.endswith("_s"):
+            # seconds -> ms
+            return f"{ch.ema * 1000.0:,.3f} ms"
+        if key == "fps":
+            return f"{ch.ema:,.1f}"
+        # generic numeric
+        return f"{ch.ema:,.3f}"
+
+    def _format_stat_last(self, key: str, ch) -> str:
+        if key.endswith("_s"):
+            return f"{ch.last * 1000.0:,.3f} ms"
+        if key == "fps":
+            return f"{ch.last:,.1f}"
+        return f"{ch.last:,.3f}"
+
+    def draw_stats_dock(self):
+        if not self.stats_dock_visible:
+            return
+
+        # If you want the window closable, pass p_open for the window here instead.
+        imgui.begin("Stats")
+
+        for group in self.stats.groups:
+            # per-group open state (for the little close button on the header, if you want it)
+            open_flag = self._stats_group_open.get(group.name, True)
+
+            # If your wrapper requires p_open, keep it per-group like this.
+            expanded, open_flag = imgui.collapsing_header(
+                group.name,
+                p_open=open_flag,
+                flags=imgui.TreeNodeFlags.DEFAULT_OPEN,
+            )
+            self._stats_group_open[group.name] = open_flag
+
+            if not expanded:
+                continue
+
+            channels = group.channels()
+            if not channels:
+                imgui.text_disabled("(no channels)")
+                continue
+
+            table_id = f"##stats_table_{group.name}"
+
+            # Flags you likely want in a stats table
+            flags = (
+                imgui.TableFlags.BORDERS_INNER_V
+                | imgui.TableFlags.ROW_BG
+                | imgui.TableFlags.SIZING_STRETCH_PROP
+            )
+
+            if imgui.begin_table(table_id, 3, flags=flags):
+                imgui.table_setup_column("Metric", imgui.TableColumnFlags.WIDTH_STRETCH)
+                imgui.table_setup_column("Avg", imgui.TableColumnFlags.WIDTH_FIXED)
+                imgui.table_setup_column("Last", imgui.TableColumnFlags.WIDTH_FIXED)
+                imgui.table_headers_row()
+
+                # Optional: stable order
+                for key in sorted(channels.keys()):
+                    ch = channels[key]
+
+                    imgui.table_next_row()
+
+                    imgui.table_set_column_index(0)
+                    imgui.text_unformatted(key)
+
+                    imgui.table_set_column_index(1)
+                    imgui.text_unformatted(self._format_stat(key, ch))
+
+                    imgui.table_set_column_index(2)
+                    imgui.text_unformatted(self._format_stat_last(key, ch))
+
+                imgui.end_table()
+
+        imgui.end()
+
+    """
+    def draw_stats_dock(self):
+        # Display timings
+        if not self.stats_dock_visible:
+            return
+        imgui.begin("Stats")
+
+        p_open = True
+        for group in self.stats.groups:
+            expanded, p_open = imgui.collapsing_header(
+                group.name, p_open=p_open, flags=imgui.TreeNodeFlags.DEFAULT_OPEN
+            )
+            if expanded:
+                for key, ch in group.channels().items():
+                    #imgui.text(f"{key}: {ch.ema:.3f} (last {ch.last:.3f})")
+                    imgui.text(f"{key}: {ch.ema:.3f}")
+
+        imgui.end()
+    """
+
+    """
     def draw_stats_dock(self):
         # Display timings
         if not self.stats_dock_visible:
@@ -149,33 +250,12 @@ class Viewer(engine.App):
         imgui.text(f"Frame time: {self.frame_time:.4f}")
         imgui.text(f"FPS: {self.fps:.0f}")
         imgui.end()
+    """
 
     def draw_scene_tree_dock(self):
         if not self.scene_tree_dock_visible:
             return
         self.scene_tree_dock.draw(self.scene)
-
-    """
-    def draw_scene_tree_dock(self):
-        if not self.scene_tree_dock_visible:
-            return
-        imgui.begin("Scene")
-        # imgui.text(f"Scene: {self.scene.name}")
-        self.draw_layer_node(self.scene)
-        imgui.end()
-
-    def draw_layer_node(self, layer):
-        if imgui.tree_node(layer.name):
-            for child in layer.children:
-                self.draw_layer_node(child)
-            imgui.tree_pop()
-
-    def draw_graph_layer_node(self, node):
-        if imgui.tree_node(node.name):
-            for child in node.children:
-                self.draw_graph_layer_node(child)
-            imgui.tree_pop()
-    """
 
     def draw_lighting_dock(self):
         if not self.lighting_dock_visible:

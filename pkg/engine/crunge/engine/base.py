@@ -14,7 +14,7 @@ class Base:
             setattr(self, key, value)
         return self
 
-    #def create(self) -> Self:
+    #def create(self) -> Self: #TODO: need Python 3.11+
     def create(self):
         if self.created:
             return

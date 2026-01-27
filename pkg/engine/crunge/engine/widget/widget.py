@@ -30,19 +30,6 @@ class Widget(Node["Widget"]):
         logger.debug(f"Widget.mark_layout_dirty: {self}")
         self.layout_dirty = True
 
-    '''
-    def apply_layout(self):
-        #logger.debug(f"Widget.apply_layout: {self}")
-        if not self.layout_dirty:
-            return
-
-        self.on_layout()
-        self.layout_dirty = False
-
-        for child in self.children:
-            child.apply_layout()
-
-    '''
     def apply_layout(self) -> None:
         #logger.debug(f"Widget.apply_layout: {self}")
         if not self.layout.has_new_layout():

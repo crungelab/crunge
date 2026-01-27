@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar, Generic, Callable, Any
+from typing import TYPE_CHECKING, TypeVar, Generic, Callable
 
 from loguru import logger
 
@@ -12,14 +12,6 @@ T_Node = TypeVar("T_Node", bound="Node")
 
 
 class NodeListener(Generic[T_Node]):
-    '''
-    def on_node_attached(self, node: "Node[T_Node]") -> None:
-        pass
-
-    def on_node_detached(self, node: "Node[T_Node]") -> None:
-        pass
-    '''
-
     def on_node_transform_change(self, node: "Node[T_Node]") -> None:
         pass
 
@@ -126,7 +118,7 @@ class Node(Dispatcher, Generic[T_Node]):
             self.remove_child(child)
 
     def sort_children(
-        self, key: Callable[["Node[T_Node]"], Any], reverse: bool = False
+        self, key: Callable[["Node[T_Node]"], object], reverse: bool = False
     ) -> None:
         """
         Sorts the children list based on a key function.
