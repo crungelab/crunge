@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
-from ....renderer.phase.group_phase import GroupPhase
+from ....renderer.phase.render_plan import RenderPlan
 
 if TYPE_CHECKING:
     from ..scene_renderer_2d import SceneRenderer2D
 
     
-class GroupPhase2D(GroupPhase["SceneRenderer2D"]):
+class RenderPlan2D(RenderPlan["SceneRenderer2D"]):
     pass

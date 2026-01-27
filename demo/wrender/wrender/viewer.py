@@ -37,6 +37,9 @@ class Viewer(engine.App):
             use_depth_stencil=True, use_msaa=True, use_snapshot=True
         )
 
+        self.lighting_panel_visible = True
+        self.stats_panel_visible = True
+
     @property
     def camera(self):
         return self.view.camera
@@ -84,9 +87,54 @@ class Viewer(engine.App):
         return self
 
     def _draw(self):
-        self.draw_mainmenu()
+        self.draw_main_menu()
+        self.draw_lighting_window()
+        self.draw_stats_panel()
 
-        imgui.begin("Scene Properties")
+        super()._draw()
+
+    def draw_main_menu(self):
+        if imgui.begin_main_menu_bar():
+            # File
+            if imgui.begin_menu("File", True):
+                clicked_open, selected_open = imgui.menu_item(
+                    "Open", "Ctrl+O", False, True
+                )
+
+                if clicked_open:
+                    self.open()
+
+                imgui.separator()
+
+                clicked_exit, selected_exit = imgui.menu_item(
+                    "Exit", "Ctrl+Q", False, True
+                )
+                if clicked_exit:
+                    self.quit()
+
+                imgui.end_menu()
+
+            # View
+            if imgui.begin_menu("View", True):
+                clicked_lighting, selected_lighting = imgui.menu_item(
+                    "Lighting", "Ctrl+L", False, True
+                )
+                if clicked_lighting:
+                    self.lighting_panel_visible = not self.lighting_panel_visible
+                clicked_stats, selected_stats = imgui.menu_item(
+                    "Stats", "Ctrl+S", False, True
+                )
+                if clicked_stats:
+                    self.stats_panel_visible = not self.stats_panel_visible
+                imgui.end_menu()
+
+            imgui.end_main_menu_bar()
+
+    def draw_lighting_window(self):
+        if not self.lighting_panel_visible:
+            return
+
+        imgui.begin("Lighting")
 
         light = self.scene.lighting.lights[0]
 
@@ -134,34 +182,12 @@ class Viewer(engine.App):
 
         imgui.end()
 
-        super()._draw()
-
-    def draw_mainmenu(self):
-        if imgui.begin_main_menu_bar():
-            # File
-            if imgui.begin_menu("File", True):
-                clicked_open, selected_open = imgui.menu_item(
-                    "Open", "Ctrl+O", False, True
-                )
-
-                if clicked_open:
-                    self.open()
-
-                imgui.separator()
-
-                clicked_exit, selected_exit = imgui.menu_item(
-                    "Exit", "Ctrl+Q", False, True
-                )
-                if clicked_exit:
-                    self.quit()
-
-                imgui.end_menu()
-
-            # View
-            if imgui.begin_menu("View", True):
-                imgui.end_menu()
-
-            imgui.end_main_menu_bar()
+    def draw_stats_panel(self):
+        # Display timings
+        imgui.begin("Stats")
+        imgui.text(f"Update time: {self.update_time:.4f}")
+        imgui.text(f"Frame time: {self.frame_time:.4f}")
+        imgui.end()
 
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.key

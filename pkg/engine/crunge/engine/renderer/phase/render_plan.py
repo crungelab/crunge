@@ -4,7 +4,7 @@ from typing import Generic
 from .render_phase import RenderPhase, T_Renderer
 
 
-class GroupPhase(Generic[T_Renderer], RenderPhase[T_Renderer]):
+class RenderPlan(Generic[T_Renderer], RenderPhase[T_Renderer]):
     def __init__(self, renderer: T_Renderer, children: list[RenderPhase[T_Renderer]] = None) -> None:
         super().__init__(renderer)
         self.renderer = renderer

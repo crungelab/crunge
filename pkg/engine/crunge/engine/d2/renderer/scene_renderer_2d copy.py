@@ -5,7 +5,7 @@ from ..camera_2d import Camera2D
 from .renderer_2d import Renderer2D
 from ..scene_2d import Scene2D
 
-from .phase import GroupPhase2D, OpaquePhase2D
+from .phase import RenderPlan2D, OpaquePhase2D
 
 
 class SceneRenderer2D(Renderer2D):
@@ -20,7 +20,7 @@ class SceneRenderer2D(Renderer2D):
             OpaquePhase2D(self),
         ]
 
-        self.root_phase = GroupPhase2D(self, phases)
+        self.root_phase = RenderPlan2D(self, phases)
         phases = [
             OpaquePhase2D(self),
         ]

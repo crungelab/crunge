@@ -29,6 +29,19 @@ class SceneRenderer(Generic[T_Renderer, T_Scene], Renderer):
     def create_phases(self) -> None:
         pass
 
+    def ensure_phases(self) -> None:
+        if self.root_phase is None:
+            self.create_phases()
+
+    def render(self) -> None:
+        #self.create_phases()
+        self.ensure_phases()
+        with self.frame():
+            self.root_phase.render()
+        self.root_phase.clear()
+
+    '''
     def render(self) -> None:
         self.create_phases()
         self.root_phase.render()
+    '''
