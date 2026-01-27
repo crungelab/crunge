@@ -17,14 +17,14 @@ from crunge.demo import Page, PageChannel
 class OffscreenSpritePage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
-        self.ov_size = glm.ivec2(256, 256)
+        target_viewport_size = glm.ivec2(256, 256)
         render_options = RenderOptions(use_depth_stencil=True)
-        self.ov = OffscreenViewport(self.ov_size, render_options=render_options)
-        self.texture = Texture2D(self.ov.color_texture, self.ov_size)
+        self.target_viewport = OffscreenViewport(target_viewport_size, render_options=render_options)
+        self.texture = Texture2D(self.target_viewport.color_texture, target_viewport_size)
         ResourceManager().texture_kit.add(self.texture)
 
         self.camera = Camera2D()
-        self.renderer = Renderer2D(self.ov, camera=self.camera)
+        self.renderer = Renderer2D(self.target_viewport, camera=self.camera)
 
         sprite = self.sprite = SpriteLoader().load(":resources:/robocute.png")
         self.sprite_vu = SpriteVu(sprite).enable()
@@ -38,13 +38,14 @@ class OffscreenSpritePage(Page):
 
     def _draw(self):
         imgui.begin(self.title)
-        size = self.ov.width, self.ov.height
+        size = self.target_viewport.width, self.target_viewport.height
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
 
-        with self.ov.frame():
-            with self.renderer.render_pass():
-                self.draw_sprite()
+        with self.target_viewport.frame():
+            with self.renderer.frame():
+                with self.renderer.render_pass():
+                    self.draw_sprite()
 
         super()._draw()
 

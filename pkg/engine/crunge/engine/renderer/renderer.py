@@ -75,13 +75,32 @@ class Renderer(Base):
             prev_renderer.make_current()
 
     @contextlib.contextmanager
+    def frame(self):
+        with self.use():
+            self.encoder = self.device.create_command_encoder()
+            yield self
+            command_buffer = self.encoder.finish()
+            self.queue.submit([command_buffer])
+
+    @contextlib.contextmanager
+    def render_pass(
+        self, render_pass: RenderPass = None
+    ) -> Generator[RenderPass, None, None]:
+        with self.use():
+            self.begin_pass(render_pass)
+            yield self.current_render_pass
+            self.end_pass()
+            #self.viewport.snap(self.encoder)
+
+    '''
+    @contextlib.contextmanager
     def render_pass(
         self, render_pass: RenderPass = None
     ) -> Generator[RenderPass, None, None]:
         prev_renderer = self.get_current()
         self.make_current()
 
-        self.encoder = self.device.create_command_encoder()
+        #self.encoder = self.device.create_command_encoder()
 
         self.begin_pass(render_pass)
 
@@ -91,12 +110,13 @@ class Renderer(Base):
 
         self.viewport.snap(self.encoder)
 
-        command_buffer = self.encoder.finish()
+        #command_buffer = self.encoder.finish()
 
-        self.queue.submit([command_buffer])
+        #self.queue.submit([command_buffer])
 
         if prev_renderer is not None:
             prev_renderer.make_current()
+    '''
 
     def make_current(self):
         """Make the renderer current for the current context."""

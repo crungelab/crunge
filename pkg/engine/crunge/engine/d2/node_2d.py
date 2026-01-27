@@ -30,9 +30,14 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._velocity = glm.vec2(0.0)
         self.angular_velocity = 0.0  # radians per second
 
+    '''
     def _create(self):
         super()._create()
         self.update_matrix()
+    '''
+    def _post_create(self):
+        self.update_matrix()
+        super()._post_create()
 
     @property
     def velocity(self):
@@ -187,3 +192,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         half_width = self.size.x / 2
         half_height = self.size.y / 2
         return Bounds2(-half_width, -half_height, half_width, half_height)
+
+    def intersects(self, other: "Node2D"):
+        return self.bounds.intersects(other.bounds)
