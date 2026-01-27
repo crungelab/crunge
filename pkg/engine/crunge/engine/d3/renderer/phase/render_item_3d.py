@@ -5,7 +5,7 @@ from ...node_3d import Node3D
 from ...vu_3d import Vu3D
 
 if TYPE_CHECKING:
-    from ...renderer.renderer_3d import Renderer3D
+    from ..renderer_3d import Renderer3D
 
 DrawCallback3D = Callable[["Renderer3D"], None]
 

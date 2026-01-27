@@ -7,7 +7,7 @@ from .render_phase import RenderPhase, T_Renderer
 T_PhaseItem = TypeVar("T_PhaseItem")
 
 
-class ItemPhase(Generic[T_Renderer, T_PhaseItem], RenderPhase[T_Renderer]):
+class BucketPhase(Generic[T_Renderer, T_PhaseItem], RenderPhase[T_Renderer]):
     def __init__(self, renderer: T_Renderer) -> None:
         super().__init__(renderer)
         self.items: list[T_PhaseItem] = []

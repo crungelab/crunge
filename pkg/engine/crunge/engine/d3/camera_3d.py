@@ -11,7 +11,7 @@ from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 
-from .renderer.phase.phase_item_3d import Transmissive3D, DrawCallback3D
+from .renderer.phase.render_item_3d import Transmissive3D, DrawCallback3D
 
 from .node_3d import Node3D
 from .vu_3d import Vu3D
