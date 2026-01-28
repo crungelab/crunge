@@ -209,39 +209,6 @@ class Viewer(engine.App):
 
         imgui.end()
 
-    """
-    def draw_stats_dock(self):
-        # Display timings
-        if not self.stats_dock_visible:
-            return
-        imgui.begin("Stats")
-
-        p_open = True
-        for group in self.stats.groups:
-            expanded, p_open = imgui.collapsing_header(
-                group.name, p_open=p_open, flags=imgui.TreeNodeFlags.DEFAULT_OPEN
-            )
-            if expanded:
-                for key, ch in group.channels().items():
-                    #imgui.text(f"{key}: {ch.ema:.3f} (last {ch.last:.3f})")
-                    imgui.text(f"{key}: {ch.ema:.3f}")
-
-        imgui.end()
-    """
-
-    """
-    def draw_stats_dock(self):
-        # Display timings
-        if not self.stats_dock_visible:
-            return
-        imgui.begin("Stats")
-        imgui.text(f"Update time: {self.update_time:.4f}")
-        imgui.text(f"Render time: {self.render_time:.4f}")
-        imgui.text(f"Frame time: {self.frame_time:.4f}")
-        imgui.text(f"FPS: {self.fps:.0f}")
-        imgui.end()
-    """
-
     def draw_scene_tree_dock(self):
         if not self.scene_tree_dock_visible:
             return

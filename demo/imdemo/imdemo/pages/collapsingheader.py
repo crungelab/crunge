@@ -5,12 +5,22 @@ from crunge.demo import Page, PageChannel
 
 class CollapsingHeader(Page):
     def reset(self):
-        self.visible = True
+        pass
 
     def _draw(self):
         imgui.begin("Example: collapsing header")
-        expanded, self.visible = imgui.collapsing_header("Expand me!", self.visible)
+        if imgui.collapsing_header("Expand me!"):
+            imgui.text("Now you see me!")
+        imgui.end()
+        super()._draw()
 
+class CollapsingHeaderClosable(Page):
+    def reset(self):
+        self.h_visible = True
+
+    def _draw(self):
+        imgui.begin("Example: collapsing header")
+        expanded, self.h_visible = imgui.collapsing_header("Expand me!", self.h_visible)
         if expanded:
             imgui.text("Now you see me!")
         imgui.end()
@@ -18,3 +28,4 @@ class CollapsingHeader(Page):
 
 def install(app: App):
     app.add_channel(PageChannel(CollapsingHeader, "collapsingheader", "Collapsing Header"))
+    app.add_channel(PageChannel(CollapsingHeaderClosable, "collapsingheaderclosable", "Collapsing Header Closable"))
