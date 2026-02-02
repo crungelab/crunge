@@ -1,5 +1,8 @@
-import os, sys
+from typing import Optional
+import sys
 from pathlib import Path
+import contextlib
+from contextvars import ContextVar
 
 from loguru import logger
 import glm
@@ -17,15 +20,7 @@ from .scancode_map import scancode_map
 from .board import Clipboard, Dropboard
 
 
-def compute_framebuffer_scale(window_size, frame_buffer_size):
-    win_width, win_height = window_size
-    fb_width, fb_height = frame_buffer_size
-
-    if win_width != 0 and win_width != 0:
-        return fb_width / win_width, fb_height / win_height
-
-    return 1.0, 1.0
-
+imgui_overlay: ContextVar[Optional["ImGuiOverlay"]] = ContextVar("imgui_overlay", default=None)
 
 class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
     context = None
@@ -62,6 +57,24 @@ class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
         self.window.viewport.remove_listener(self)
         self.window.remove_listener(self)
     
+    def make_current(self):
+        """Make the renderer current for the current context."""
+        imgui_overlay.set(self)
+
+    @classmethod
+    def get_current(cls) -> Optional["ImGuiOverlay"]:
+        """Get the current renderer."""
+        return imgui_overlay.get()
+
+    @contextlib.contextmanager
+    def use(self):
+        prev_renderer = self.get_current()
+        self.make_current()
+        yield self
+        if prev_renderer is not None:
+            prev_renderer.make_current()
+
+
     def on_viewport_size(self, size: glm.ivec2):
         logger.debug(f"ImGuiLayer.on_size: {size}")
         self._set_pixel_ratio()
@@ -77,14 +90,37 @@ class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
         self._set_pixel_ratio()
     '''
 
+    def compute_framebuffer_scale(self,window_size, frame_buffer_size):
+        win_width, win_height = window_size
+        fb_width, fb_height = frame_buffer_size
+
+        if win_width != 0 and win_width != 0:
+            return fb_width / win_width, fb_height / win_height
+
+        return 1.0, 1.0
+
     def _set_pixel_ratio(self):
         window_size = self.window.get_window_size()
         self.io.display_size = window_size
 
         framebuffer_size = self.window.get_framebuffer_size()
-        pixel_ratio = compute_framebuffer_scale(window_size, framebuffer_size)
+        pixel_ratio = self.compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 
+    def _draw(self):
+        if self.default_font:
+            imgui.push_font(self.default_font, 16.0)
+
+        with self.use():
+            super()._draw()
+
+        if self.default_font:
+            imgui.pop_font()
+
+        self.vu.render()
+        imgui.end_frame()
+
+    """
     def _draw(self):
         if self.default_font:
             imgui.push_font(self.default_font, 16.0)
@@ -96,6 +132,7 @@ class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
 
         self.vu.render()
         imgui.end_frame()
+    """
 
     def on_text_input(self, event: sdl.TextInputEvent):
         # logger.debug(f"text: {event.text}")

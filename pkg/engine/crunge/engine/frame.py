@@ -28,7 +28,7 @@ class Frame(Widget):
         self._view = view
         self.children.clear()
         self.add_child(view)
-        view.enable()
+        #view.enable() #should already be enabled by Node.on_added
 
     def _create(self):
         super()._create()

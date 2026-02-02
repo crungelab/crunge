@@ -66,6 +66,15 @@ class Renderer(Base):
     def create_render_pass(self):
         return DefaultRenderPass(self.viewport)
 
+    def make_current(self):
+        """Make the renderer current for the current context."""
+        renderer.set(self)
+
+    @classmethod
+    def get_current(cls) -> Optional["Renderer"]:
+        """Get the current renderer."""
+        return renderer.get()
+
     @contextlib.contextmanager
     def use(self):
         prev_renderer = self.get_current()
@@ -117,15 +126,6 @@ class Renderer(Base):
         if prev_renderer is not None:
             prev_renderer.make_current()
     '''
-
-    def make_current(self):
-        """Make the renderer current for the current context."""
-        renderer.set(self)
-
-    @classmethod
-    def get_current(cls) -> Optional["Renderer"]:
-        """Get the current renderer."""
-        return renderer.get()
 
     def begin_pass(self, render_pass: RenderPass = None):
         if render_pass is not None:
