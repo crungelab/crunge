@@ -4,7 +4,6 @@ import glm
 from crunge import wgpu
 from crunge import skia
 from crunge.engine import Renderer, App
-from crunge.engine.d2.renderer_2d import Renderer2D
 from crunge.demo import PageChannel
 
 from ..page import Page
@@ -85,10 +84,11 @@ class MixedPage(Page):
     def _draw(self):
         renderer = Renderer.get_current()
 
-        with renderer.render():
-            pass_enc = renderer.pass_enc
-            pass_enc.set_pipeline(self.pipeline)
-            pass_enc.draw(3)
+        with renderer.frame():
+            with renderer.render_pass():
+                pass_enc = renderer.pass_enc
+                pass_enc.set_pipeline(self.pipeline)
+                pass_enc.draw(3)
 
         # Skia rendering
 

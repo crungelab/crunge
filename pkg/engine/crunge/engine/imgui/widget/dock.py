@@ -4,7 +4,7 @@ from crunge import imgui
 
 from .widget import Widget
 
-class Window(Widget):
+class Dock(Widget):
     _parent: None
     def __init__(self, title, children: list[Widget]=None, on_close:Callable=None, flags:int=0):
         if children is None:
