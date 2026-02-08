@@ -158,8 +158,6 @@ class Node(Dispatcher, Generic[T_Node]):
             child.render()
 
     def _render(self):
-        #self._draw()
-        #self.draw()
         if self.vu is not None:
             self.vu.render()
 
