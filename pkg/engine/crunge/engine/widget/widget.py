@@ -192,3 +192,11 @@ class Widget(Node["Widget"]):
         if position.x <= x <= position.x + size.x and position.y <= y <= position.y + size.y:
             return True
         return False
+    
+    """
+    def _draw(self):
+        super()._draw()
+        for child in self.children:
+            # child.draw()
+            self.draw_child(child)
+    """

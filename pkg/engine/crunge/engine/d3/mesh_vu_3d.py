@@ -94,6 +94,7 @@ class MeshVu3D(Vu3D):
 
         self.device.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
 
+    """
     def do_draw(self):
         renderer = Renderer.get_current()
 
@@ -113,6 +114,26 @@ class MeshVu3D(Vu3D):
         else:
             self.do_draw()
 
+    """
+
+    def _draw(self):
+        renderer = Renderer.get_current()
+
+        pass_enc = renderer.pass_enc
+        self.bind(pass_enc)
+
+        for primitive in self.mesh.primitives:
+            primitive.draw()
+
+        super()._draw()
+
+    def _render(self):
+        renderer = Renderer.get_current()
+
+        if self.deferred:
+            renderer.camera_3d.defer_draw(self, self._draw)
+        else:
+            self._draw()
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(3, self.model_bind_group)

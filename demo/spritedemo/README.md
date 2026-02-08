@@ -2,6 +2,7 @@
 python -m spritedemo.demo.sprite
 python -m spritedemo.demo.sprite_atlas
 python -m spritedemo.demo.sprite_array
+python -m spritedemo.demo.sprite_animation
 python -m spritedemo.demo.instancing
 python -m spritedemo.demo.spaceshooter
 python -m spritedemo.demo.tiled

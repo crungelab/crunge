@@ -19,7 +19,7 @@ class DefaultTileLayerBuilder(TileLayerBuilder):
 
     def build(self, layer: tmx.TileLayer, layer_id: int):
         size = self.context.size
-        #scene_layer = SceneLayer2D(name=layer.name)
+        #scene_layer = GraphLayer2D(name=layer.name)
         sprite_group = DynamicSpriteGroup(1024).enable()
         scene_layer = InstancedSpriteLayer(name=layer.name, count=1024, sprite_group=sprite_group)
         scene_layer.bounds = Bounds2(0, 0, size.x, size.y)

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List, Callable, Any
+from typing import TYPE_CHECKING, TypeVar, Generic
 
 from .base import Base
 from .node import Node, NodeListener
@@ -24,6 +24,12 @@ class Vu(Base, NodeListener, Generic[T_Node]):
 
     def _draw(self):
         pass
+
+    def render(self):
+        self._render()
+
+    def _render(self):
+        self._draw()
 
     def update(self, delta_time: float):
         pass
