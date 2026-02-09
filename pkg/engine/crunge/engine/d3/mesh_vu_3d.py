@@ -1,5 +1,3 @@
-from typing import List
-
 from ctypes import sizeof
 
 from loguru import logger
@@ -9,16 +7,16 @@ from crunge.core import klass
 from crunge import wgpu
 
 from ..renderer import Renderer
-from ..uniforms import cast_vec3, cast_matrix4
+from ..uniforms import cast_matrix4
+
+from .renderer.task.transmissive_phase_3d import TransmissivePhase3D, Transmissive3D
 
 from .program_3d import Program3D
-from .node_3d import Node3D
 from .vu_3d import Vu3D
 from .uniforms_3d import (
     ModelUniform,
 )
 from .mesh_3d import Mesh3D
-from .primitive_3d import Primitive3D
 
 
 @klass.singleton
@@ -57,12 +55,12 @@ class MeshVu3D(Vu3D):
         super().on_transform()
         self.gpu_update_model()
 
-    '''
+    """
     def update_bounds(self):
         if self.mesh:
             self.bounds = self.mesh.bounds.to_global(self.transform)
         return super().update_bounds()
-    '''
+    """
 
     def build_bindgroup(self):
         logger.debug("Creating bind group")
@@ -131,9 +129,21 @@ class MeshVu3D(Vu3D):
         renderer = Renderer.get_current()
 
         if self.deferred:
+            # renderer.camera_3d.defer_draw(self, self._draw)
+            phase: TransmissivePhase3D = self.renderer.plan.get_phase(TransmissivePhase3D)
+            phase.add(Transmissive3D(self, self._draw))
+        else:
+            self._draw()
+
+    """
+    def _render(self):
+        renderer = Renderer.get_current()
+
+        if self.deferred:
             renderer.camera_3d.defer_draw(self, self._draw)
         else:
             self._draw()
+    """
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         pass_enc.set_bind_group(3, self.model_bind_group)

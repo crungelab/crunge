@@ -7,7 +7,26 @@ class TransmissivePhase3D(BucketPhase3D[Transmissive3D]):
     def render(self) -> None:
         self.renderer.viewport.snap(self.renderer.encoder)
         with self.renderer.render_pass(RenderPass3D(self.renderer.viewport)):
+            self.render_items()
+
+    def render_items(self):
+        camera = self.renderer.camera_3d
+        # sort by depth
+        self.items.sort(
+            key=lambda d: camera.depth_of(d.node),
+            reverse=True,
+        )
+        for d in self.items:
+            #logger.debug(f"TransmissivePhase3D: drawing item for {d.node}")
+            d.callback()
+        #self.items.clear()
+
+    """
+    def render(self) -> None:
+        self.renderer.viewport.snap(self.renderer.encoder)
+        with self.renderer.render_pass(RenderPass3D(self.renderer.viewport)):
             self.renderer.camera_3d.flush_deferred()
+    """
 
     """
     def render(self) -> None:

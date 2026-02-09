@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 T_Renderer = TypeVar("T_Renderer", bound="Renderer")
 
 
-class RenderPhase(Generic[T_Renderer], Base):
+class RenderTask(Generic[T_Renderer], Base):
     def __init__(self, renderer: T_Renderer) -> None:
         super().__init__()
         self.renderer = renderer

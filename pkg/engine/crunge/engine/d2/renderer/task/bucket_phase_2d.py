@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING, Generic
-from ....renderer.phase.bucket_phase import BucketPhase, T_PhaseItem
+from ....renderer.task.bucket_phase import BucketPhase, T_PhaseItem
 
 if TYPE_CHECKING:
     from .. import SceneRenderer2D

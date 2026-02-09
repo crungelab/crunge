@@ -7,7 +7,7 @@ from ..lighting_3d import Lighting3D
 from ..scene_3d import Scene3D
 
 from .render_pass_3d import RenderPass3D
-from .phase import RenderPlan3D, OpaquePhase3D, TransmissivePhase3D
+from .task import RenderPlan3D, OpaquePhase3D, TransmissivePhase3D
 
 
 class SceneRenderer3D(SceneRenderer["SceneRenderer3D", Scene3D]):
@@ -28,7 +28,7 @@ class SceneRenderer3D(SceneRenderer["SceneRenderer3D", Scene3D]):
             OpaquePhase3D(self),
             TransmissivePhase3D(self)
         ]
-        self.root_phase = RenderPlan3D(self, phases)
+        self.plan = RenderPlan3D(self, phases)
 
     """
     def create_phases(self) -> None:

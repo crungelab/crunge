@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from ..d3.lighting_3d import Lighting3D
 
 from .render_pass import RenderPass, DefaultRenderPass
-from .phase import RenderPhase
+from .task import RenderPhase
 
 renderer: ContextVar[Optional["Renderer"]] = ContextVar("renderer", default=None)
 

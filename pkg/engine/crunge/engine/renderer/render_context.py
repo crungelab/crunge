@@ -1,7 +1,7 @@
 
 from typing import Generic, TypeVar
 
-from .phase import RenderPhase, RenderPlan
+from .task import RenderPhase, RenderPlan
 
 T_Renderer = TypeVar("T_Renderer")
 

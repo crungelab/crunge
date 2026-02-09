@@ -11,7 +11,7 @@ from ..viewport import Viewport, ViewportListener
 from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 
-from .renderer.phase.render_item_3d import Transmissive3D, DrawCallback3D
+from .renderer.task.render_item_3d import Transmissive3D, DrawCallback3D
 
 from .node_3d import Node3D
 from .vu_3d import Vu3D
@@ -167,11 +167,12 @@ class Camera3D(Node3D, ViewportListener):
         #pass_enc.set_bind_group(0, self.bind_group)
         self.bind_group.bind(pass_enc)
 
-    def defer_draw(self, vu: Vu3D, callback: "DrawCallback3D"):
-        self.deferred_draws.append(Transmissive3D(vu, callback))
-
     def depth_of(self, node: Node3D) -> float:
         return glm.distance(self.position, node.position)
+
+    """
+    def defer_draw(self, vu: Vu3D, callback: "DrawCallback3D"):
+        self.deferred_draws.append(Transmissive3D(vu, callback))
 
     def flush_deferred(self):
         # sort by depth
@@ -183,3 +184,4 @@ class Camera3D(Node3D, ViewportListener):
             #logger.debug(f"Camera3D: flushing deferred draw for {d.node}")
             d.callback()
         self.deferred_draws.clear()
+    """

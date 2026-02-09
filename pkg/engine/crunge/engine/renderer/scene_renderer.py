@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 from .renderer import Renderer
-from .phase import RenderPhase
+from .task import RenderPlan
 from ..viewport import Viewport
 
 if TYPE_CHECKING:
@@ -24,21 +24,21 @@ class SceneRenderer(Generic[T_Renderer, T_Scene], Renderer):
     ) -> None:
         super().__init__(viewport, camera_2d=camera_2d, camera_3d=camera_3d, lighting_3d=lighting_3d)
         self.scene = scene
-        self.root_phase: RenderPhase[T_Renderer] = None
+        self.plan: RenderPlan[T_Renderer] = None
 
     def create_phases(self) -> None:
         pass
 
     def ensure_phases(self) -> None:
-        if self.root_phase is None:
+        if self.plan is None:
             self.create_phases()
 
     def render(self) -> None:
         #self.create_phases()
         self.ensure_phases()
         with self.frame():
-            self.root_phase.render()
-        self.root_phase.clear()
+            self.plan.render()
+        self.plan.clear()
 
     '''
     def render(self) -> None:
