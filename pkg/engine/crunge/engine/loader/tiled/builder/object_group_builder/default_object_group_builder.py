@@ -1,7 +1,11 @@
-import glm
+from loguru import logger
+
 from crunge import tmx
 
 from crunge.engine.d2.graph_layer_2d import GraphLayer2D
+
+from crunge.engine.scene.layer.filter.filter_layer import FilterLayer
+from crunge.engine.scene.layer.filter.kawase_blur.kawase_blur_vu import KawaseBlurVu
 
 from ..builder_context import BuilderContext
 from ..object_builder import ObjectBuilder, DefaultObjectBuilder
@@ -21,6 +25,11 @@ class DefaultObjectGroupBuilder(ObjectGroupBuilder):
         )
 
     def build(self, layer: tmx.ObjectGroup, layer_id: int):
-        self.context.layer = GraphLayer2D(name=layer.name)
+        kind = layer.get_class()
+        logger.debug(f"Building layer of kind: {kind}")
+        if kind == "KawaseBlurLayer":
+            self.context.layer = FilterLayer(name=layer.name, vu=KawaseBlurVu())
+        else:
+            self.context.layer = GraphLayer2D(name=layer.name)
         super().build(layer, layer_id)
         self.context.scene.add_layer(self.context.layer)

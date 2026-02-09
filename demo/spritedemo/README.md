@@ -8,6 +8,7 @@ python -m spritedemo.demo.spaceshooter
 python -m spritedemo.demo.tiled
 python -m spritedemo.demo.tiled_physics
 python -m spritedemo.demo.sticker_knight
+python -m spritedemo.demo.filter_kawase_blur
 ```
 
 ```bash

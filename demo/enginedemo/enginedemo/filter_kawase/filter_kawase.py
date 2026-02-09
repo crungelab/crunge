@@ -194,14 +194,13 @@ class BlurFilterDemo(Demo):
         )
 
     def _current_offscreen_size(self) -> tuple[int, int]:
-        # You may have another way to read viewport size; adapt as needed.
         vp = Viewport.get_current()
-        # If you can’t query width/height from the viewport, hardcode for now.
-        # But a real blur layer should be tied to the current swapchain extent.
-        w = getattr(vp, "width", 1024)
-        h = getattr(vp, "height", 768)
-        w = max(1, w // self.downsample)
-        h = max(1, h // self.downsample)
+        w = vp.width
+        h = vp.height
+        logger.debug(f"Viewport size: {w}x{h}")
+
+        #w = max(1, w // self.downsample)
+        #h = max(1, h // self.downsample)
         return w, h
 
     def create_offscreen_targets(self):
@@ -443,8 +442,8 @@ class BlurFilterDemo(Demo):
 
     def _blur_ping_pong(self, encoder: wgpu.CommandEncoder):
         # Ping-pong between A and B for N iterations.
-        tex_w = self.off_tex_a.width  if hasattr(self.off_tex_a, "width")  else self._current_offscreen_size()[0]
-        tex_h = self.off_tex_a.height if hasattr(self.off_tex_a, "height") else self._current_offscreen_size()[1]
+        tex_w =  self.off_tex_a.get_width()
+        tex_h =  self.off_tex_a.get_height()
 
         # Map "radius" to offsets. This is intentionally simple; tune later.
         # If radius_px=6 and iterations=3 => offsets ~ [2,4,6]

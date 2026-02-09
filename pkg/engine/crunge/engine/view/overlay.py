@@ -38,9 +38,11 @@ class Overlay(Widget):
         self.view: "View" = None
         self.vu = vu
 
+    """ #dead code
     def set_view(self, view: "View"):
         self.view = view
         return self
+    """
 
     @property
     def window(self):

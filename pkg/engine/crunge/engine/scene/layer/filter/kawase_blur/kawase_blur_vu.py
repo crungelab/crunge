@@ -10,12 +10,10 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge.engine import Viewport
 
-from ..demo import Demo
+from .....renderer import Renderer
 
-# --- Geometry (scene content for the capture pass) --------------------------------
+from ..filter_vu import FilterVu
 
-index_data = np.array([0, 1, 2], dtype=np.uint32)
-from .data import vertex_data  # pos: vec4, color: vec4
 
 # --- WGSL: scene draw, kawase blur, composite (fullscreen triangle) ----------------
 
@@ -176,7 +174,7 @@ class CompositeParamsCPU:
 
 # --- Demo ------------------------------------------------------------------------
 
-class KawaseFilterDemo(Demo):
+class KawaseBlurVu(FilterVu):
     vertex_buffer: wgpu.Buffer = None
     index_buffer: wgpu.Buffer = None
 
@@ -212,21 +210,13 @@ class KawaseFilterDemo(Demo):
 
     color_format = wgpu.TextureFormat.BGRA8_UNORM
 
-    def create_device_objects(self):
-        self.create_buffers()
+    def _create(self):
+        super()._create()
         self.create_offscreen_targets()   # depends on viewport size
         self.create_pipelines_and_bindings()
 
     # If your framework has a resize hook, call create_offscreen_targets() there.
     # Otherwise, we can lazily detect size changes in _draw() and rebuild.
-
-    def create_buffers(self):
-        self.vertex_buffer = utils.create_buffer_from_ndarray(
-            self.device, "VERTEX", vertex_data, wgpu.BufferUsage.VERTEX
-        )
-        self.index_buffer = utils.create_buffer_from_ndarray(
-            self.device, "INDEX", index_data, wgpu.BufferUsage.INDEX
-        )
 
     def _current_offscreen_size(self) -> tuple[int, int]:
         vp = Viewport.get_current()
@@ -478,10 +468,6 @@ class KawaseFilterDemo(Demo):
         tex_w = self.off_tex_a.get_width()
         tex_h = self.off_tex_a.get_height()
 
-        # Map "radius" to offsets. This is intentionally simple; tune later.
-        # If radius_px=6 and iterations=3 => offsets ~ [2,4,6]
-        step = (self.radius_px / max(1, self.iterations))
-
         def blur_pass(src_is_a: bool, dst_view: wgpu.TextureView, offset_px: float, label: str):
             self._write_blur_uniforms(tex_w, tex_h, offset_px)
 
@@ -498,16 +484,6 @@ class KawaseFilterDemo(Demo):
             rp.set_bind_group(0, self.bg_from_a if src_is_a else self.bg_from_b)
             rp.draw(3, 1, 0, 0)  # fullscreen triangle
             rp.end()
-
-        """
-        for i in range(self.iterations):
-            offset = step * float(i + 1)
-
-            # A -> B
-            blur_pass(True, self.off_view_b, offset, f"Blur Pass {i} A->B")
-            # B -> A
-            blur_pass(False, self.off_view_a, offset, f"Blur Pass {i} B->A")
-        """
 
         offset = 1.0
         for i in range(self.iterations):
@@ -539,19 +515,12 @@ class KawaseFilterDemo(Demo):
         # If you can detect viewport resize, rebuild offscreen + bind groups here.
         # Minimal prototype: assume fixed size.
 
-        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+        #encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+        encoder: wgpu.CommandEncoder = Renderer.get_current().encoder
 
         self._draw_scene_to_offscreen(encoder)
         self._blur_ping_pong(encoder)
         self._composite_to_viewport(encoder)
 
-        self.queue.submit([encoder.finish()])
+        #self.queue.submit([encoder.finish()])
         super()._draw()
-
-
-def main():
-    KawaseFilterDemo().run()
-
-
-if __name__ == "__main__":
-    main()

@@ -94,8 +94,9 @@ class Window(Frame):
         self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         logger.debug(f"Window.size: {self.size}")
         self.create_window()
-        self.create_device_objects()
         self.create_viewport()
+        self.create_device_objects()
+        #self.create_viewport()
         self.create_renderer()
         super()._create()
 
@@ -128,6 +129,7 @@ class Window(Frame):
 
     def create_viewport(self):
         self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
+        self.viewport.make_current()
 
     def pre_frame(self):
         for listener in self.listeners:

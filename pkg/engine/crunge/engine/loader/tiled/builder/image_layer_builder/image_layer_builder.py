@@ -1,6 +1,5 @@
 from loguru import logger
 
-import glm
 from crunge import tmx
 
 from ..tiled_builder import TiledBuilder
