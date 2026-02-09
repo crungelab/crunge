@@ -445,23 +445,16 @@ class KawaseBlurVu(FilterVu):
         params = CompositeParamsCPU(alpha=float(self.alpha))
         self.queue.write_buffer(self.comp_ubo, 0, params.to_bytes())
 
-    def _draw_scene_to_offscreen(self, encoder: wgpu.CommandEncoder):
-        # Render the demo triangle into offscreen A
-        color_attachments = [
-            wgpu.RenderPassColorAttachment(
-                view=self.off_view_a,
-                load_op=wgpu.LoadOp.CLEAR,
-                store_op=wgpu.StoreOp.STORE,
-                clear_value=wgpu.Color(0, 0, 0, 0),
-            )
-        ]
-        rp_desc = wgpu.RenderPassDescriptor(label="Capture Scene Pass", color_attachments=color_attachments)
-        pass_enc = encoder.begin_render_pass(rp_desc)
-        pass_enc.set_pipeline(self.scene_pipeline)
-        pass_enc.set_vertex_buffer(0, self.vertex_buffer)
-        pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
-        pass_enc.draw_indexed(3)
-        pass_enc.end()
+    def _copy_from_viewport(self, encoder: wgpu.CommandEncoder):
+        # Create a command encoder to copy the color texture to the snapshot texture
+        #encoder = self.device.create_command_encoder()
+        source=wgpu.TexelCopyTextureInfo(texture=self.viewport.color_texture)
+        destination=wgpu.TexelCopyTextureInfo(texture=self.off_tex_a)
+        encoder.copy_texture_to_texture(
+            source=source,
+            destination=destination,
+            copy_size=wgpu.Extent3D(self.viewport.width, self.viewport.height, 1),
+        )
 
     def _blur_ping_pong(self, encoder: wgpu.CommandEncoder):
         # Ping-pong between A and B for N iterations.
@@ -518,7 +511,7 @@ class KawaseBlurVu(FilterVu):
         #encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         encoder: wgpu.CommandEncoder = Renderer.get_current().encoder
 
-        self._draw_scene_to_offscreen(encoder)
+        self._copy_from_viewport(encoder)
         self._blur_ping_pong(encoder)
         self._composite_to_viewport(encoder)
 

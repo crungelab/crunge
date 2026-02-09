@@ -34,7 +34,6 @@ class SceneRenderer(Generic[T_Renderer, T_Scene], Renderer):
             self.create_phases()
 
     def render(self) -> None:
-        #self.create_phases()
         self.ensure_phases()
         with self.frame():
             self.plan.render()
