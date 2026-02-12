@@ -19,23 +19,10 @@ class SceneRenderer2D(SceneRenderer["SceneRenderer2D", Scene2D]):
     def create_render_pass(self):
         return RenderPass2D(self.viewport, first=True)
 
-    def create_phases(self) -> None:
+    def create_plan(self) -> None:
         phases = [
             OpaquePhase2D(self),
             FilterPhase(self),
         ]
 
         self.plan = RenderPlan2D(self, phases)
-
-    """
-    def create_phases(self) -> None:
-        self.phases = [
-            OpaquePhase2D(self),
-        ]
-    """
-
-    """
-    def render(self):
-        with self.render_pass():
-            self.scene.draw()
-    """

@@ -26,21 +26,15 @@ class SceneRenderer(Generic[T_Renderer, T_Scene], Renderer):
         self.scene = scene
         self.plan: RenderPlan[T_Renderer] = None
 
-    def create_phases(self) -> None:
+    def create_plan(self) -> None:
         pass
 
-    def ensure_phases(self) -> None:
+    def ensure_plan(self) -> None:
         if self.plan is None:
-            self.create_phases()
+            self.create_plan()
 
     def render(self) -> None:
-        self.ensure_phases()
+        self.ensure_plan()
         with self.frame():
             self.plan.render()
         self.plan.clear()
-
-    '''
-    def render(self) -> None:
-        self.create_phases()
-        self.root_phase.render()
-    '''

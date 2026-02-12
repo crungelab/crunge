@@ -23,7 +23,7 @@ class SceneRenderer3D(SceneRenderer["SceneRenderer3D", Scene3D]):
     def create_render_pass(self):
         return RenderPass3D(self.viewport, first=True)
 
-    def create_phases(self) -> None:
+    def create_plan(self) -> None:
         phases = [
             OpaquePhase3D(self),
             TransmissivePhase3D(self)
