@@ -31,6 +31,5 @@ class RenderPlan(Generic[T_Renderer], RenderTask[T_Renderer]):
             child.clear()
 
     def render(self) -> None:
-        # Execution policy belongs here: fixed order, conditional, etc.
         for child in self.children:
             child.render()

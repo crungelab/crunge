@@ -29,17 +29,3 @@ class SceneRenderer3D(SceneRenderer["SceneRenderer3D", Scene3D]):
             TransmissivePhase3D(self)
         ]
         self.plan = RenderPlan3D(self, phases)
-
-    """
-    def create_phases(self) -> None:
-        self.phases = [
-            OpaquePhase3D(self),
-            TransmissivePhase3D(self)
-        ]
-    """
-
-    """
-    def render(self):
-        with self.render_pass():
-            self.scene.draw()
-    """

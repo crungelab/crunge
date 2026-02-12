@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     from ..d3.lighting_3d import Lighting3D
 
 from .render_pass import RenderPass, DefaultRenderPass
-#from .phase import RenderPhase
 
 renderer: ContextVar[Optional["Renderer"]] = ContextVar("renderer", default=None)
 
@@ -45,8 +44,6 @@ class Renderer(Base):
 
         self.current_render_pass: RenderPass = None
         self.encoder: wgpu.CommandEncoder = None
-        #self.phases: list[RenderPhase] = []
-        #self.root_phase: RenderPhase
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
@@ -99,33 +96,6 @@ class Renderer(Base):
             self.begin_pass(render_pass)
             yield self.current_render_pass
             self.end_pass()
-            #self.viewport.snap(self.encoder)
-
-    '''
-    @contextlib.contextmanager
-    def render_pass(
-        self, render_pass: RenderPass = None
-    ) -> Generator[RenderPass, None, None]:
-        prev_renderer = self.get_current()
-        self.make_current()
-
-        #self.encoder = self.device.create_command_encoder()
-
-        self.begin_pass(render_pass)
-
-        yield self.current_render_pass
-
-        self.end_pass()
-
-        self.viewport.snap(self.encoder)
-
-        #command_buffer = self.encoder.finish()
-
-        #self.queue.submit([command_buffer])
-
-        if prev_renderer is not None:
-            prev_renderer.make_current()
-    '''
 
     def begin_pass(self, render_pass: RenderPass = None):
         if render_pass is not None:
@@ -145,19 +115,3 @@ class Renderer(Base):
 
     def end_pass(self):
         self.current_render_pass.end(self.encoder)
-
-    """
-    def create_phases(self) -> None:
-        pass
-
-    def render(self) -> None:
-        self.create_phases()
-        self.root_phase.render()
-    """
-    
-    """
-    def render(self) -> None:
-        self.create_phases()
-        for phase in self.phases:
-            phase.render()
-    """

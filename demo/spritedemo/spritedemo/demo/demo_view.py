@@ -5,7 +5,5 @@ from crunge.engine.d2.scene_view_2d import SceneView2D
 from crunge.engine.d2.camera_2d import Camera2D
 
 class DemoView(SceneView2D):
-    renderer: Renderer2D = None
-
     def create_camera(self):
         self.camera = Camera2D()
