@@ -7,7 +7,6 @@ from crunge.engine.d2.graph_layer_2d import GraphLayer2D
 from crunge.engine.d2.sprite.instanced import InstancedSpriteLayer
 from crunge.engine.d2.sprite.dynamic import DynamicSpriteGroup
 
-from ..builder_context import BuilderContext
 from ..tile_builder import TileBuilder, DefaultTileBuilder
 
 from .tile_layer_builder import TileLayerBuilder

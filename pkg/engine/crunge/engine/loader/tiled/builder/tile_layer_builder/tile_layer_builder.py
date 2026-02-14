@@ -4,7 +4,6 @@ import glm
 from crunge import tmx
 
 from ..tiled_builder import TiledBuilder
-from ..builder_context import BuilderContext
 from ..tile_builder import TileBuilder
 
 class TileLayerBuilder(TiledBuilder):

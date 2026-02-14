@@ -7,7 +7,6 @@ from crunge.engine.d2.graph_layer_2d import GraphLayer2D
 from crunge.engine.scene.layer.filter.filter_layer import FilterLayer
 from crunge.engine.scene.layer.filter.kawase_blur.kawase_blur_vu import KawaseBlurVu
 
-from ..builder_context import BuilderContext
 from ..object_builder import ObjectBuilder, DefaultObjectBuilder
 
 from .object_group_builder import ObjectGroupBuilder

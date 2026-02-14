@@ -4,7 +4,6 @@ from loguru import logger
 from crunge import tmx
 
 from ..tiled_builder import TiledBuilder
-from ..builder_context import BuilderContext
 from ..tile_layer_builder import TileLayerBuilder
 from ..object_group_builder import ObjectGroupBuilder
 from ..image_layer_builder import ImageLayerBuilder

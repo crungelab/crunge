@@ -2,7 +2,6 @@ from crunge import tmx
 
 from ..object_builder import ObjectBuilder
 from ..tiled_builder import TiledBuilder
-from ..builder_context import BuilderContext
 from ..object_builder import ObjectBuilder
 
 class ObjectGroupBuilder(TiledBuilder):

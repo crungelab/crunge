@@ -9,8 +9,6 @@ from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
 
-from ..builder_context import BuilderContext
-
 from .tile_builder import TileBuilder
 
 
