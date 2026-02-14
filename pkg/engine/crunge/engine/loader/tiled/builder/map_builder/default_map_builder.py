@@ -13,33 +13,31 @@ from .map_builder import MapBuilder
 class DefaultMapBuilder(MapBuilder):
     def __init__(
         self,
-        context,
         tile_layer_builder: TileLayerBuilder = None,
         object_group_builder: ObjectGroupBuilder = None,
         image_layer_builder: ImageLayerBuilder = None,
-        group_layer_builder: LayerGroupBuilder = None,
+        layer_group_builder: LayerGroupBuilder = None,
     ):
         super().__init__(
-            context,
             (
                 tile_layer_builder
                 if tile_layer_builder is not None
-                else DefaultTileLayerBuilder(context)
+                else DefaultTileLayerBuilder()
             ),
             (
                 object_group_builder
                 if object_group_builder is not None
-                else DefaultObjectGroupBuilder(context)
+                else DefaultObjectGroupBuilder()
             ),
             (
                 image_layer_builder
                 if image_layer_builder is not None
-                else ImageLayerBuilder(context)
+                else ImageLayerBuilder()
             ),
             (
-                group_layer_builder
-                if group_layer_builder is not None
-                else LayerGroupBuilder(context)
+                layer_group_builder
+                if layer_group_builder is not None
+                else LayerGroupBuilder()
             ),
         )
 

@@ -14,13 +14,12 @@ from .object_group_builder import ObjectGroupBuilder
 
 
 class DefaultObjectGroupBuilder(ObjectGroupBuilder):
-    def __init__(self, context: BuilderContext, object_builder: ObjectBuilder = None):
+    def __init__(self, object_builder: ObjectBuilder = None):
         super().__init__(
-            context,
             (
                 object_builder
                 if object_builder is not None
-                else DefaultObjectBuilder(context)
+                else DefaultObjectBuilder()
             ),
         )
 

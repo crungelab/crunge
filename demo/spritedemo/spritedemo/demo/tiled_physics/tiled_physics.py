@@ -52,8 +52,8 @@ class TiledPhysicsDemo(PhysicsDemo):
         def create_node_cb(position, sprite, properties):
             return Tile(position, sprite)
 
-        tile_layer_builder = DefaultTileLayerBuilder(context, tile_builder=DefaultTileBuilder(context, create_node_cb=create_node_cb))
-        map_builder = DefaultMapBuilder(context, tile_layer_builder=tile_layer_builder)
+        tile_layer_builder = DefaultTileLayerBuilder(tile_builder=DefaultTileBuilder(create_node_cb=create_node_cb))
+        map_builder = DefaultMapBuilder(tile_layer_builder=tile_layer_builder)
         map_loader = TiledMapLoader(context, map_builder=map_builder)
 
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")

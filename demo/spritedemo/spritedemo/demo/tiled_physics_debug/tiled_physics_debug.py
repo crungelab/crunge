@@ -5,7 +5,7 @@ from crunge import sdl
 from crunge import imgui
 
 from crunge.engine.d2.physics import DynamicPhysicsEngine
-from crunge.engine.d2.physics.space_debug_layer import SpaceDebugLayer
+from crunge.engine.d2.physics.space_debug_overlay import SpaceDebugOverlay
 
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.tiled.builder import BuilderContext
@@ -22,8 +22,8 @@ from .tile import Tile
 class TiledPhysicsDebugDemo(Demo):
     def create_view(self):
         super().create_view()
-        self.debug_layer = SpaceDebugLayer()
-        self.view.add_layer(self.debug_layer)
+        self.debug_layer = SpaceDebugOverlay()
+        self.view.add_overlay(self.debug_layer)
         self.camera.zoom = 2.0
 
     def reset(self):
@@ -60,8 +60,8 @@ class TiledPhysicsDebugDemo(Demo):
         def create_node_cb(position, sprite, properties):
             return Tile(position, sprite)
 
-        tile_layer_builder = DefaultTileLayerBuilder(context, tile_builder=DefaultTileBuilder(context, create_node_cb=create_node_cb))
-        map_builder = DefaultMapBuilder(context, tile_layer_builder=tile_layer_builder)
+        tile_layer_builder = DefaultTileLayerBuilder(tile_builder=DefaultTileBuilder(create_node_cb=create_node_cb))
+        map_builder = DefaultMapBuilder(tile_layer_builder=tile_layer_builder)
         map_loader = TiledMapLoader(context, map_builder=map_builder)
 
         tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")

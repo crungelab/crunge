@@ -15,8 +15,8 @@ from .object_builder import ObjectBuilder
 
 
 class DefaultObjectBuilder(ObjectBuilder):
-    def __init__(self, context: BuilderContext, create_node_cb=None):
-        super().__init__(context)
+    def __init__(self, create_node_cb=None):
+        super().__init__()
         self.create_node_cb = create_node_cb
 
     def build(self, obj: tmx.Object):

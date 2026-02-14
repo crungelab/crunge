@@ -14,8 +14,8 @@ from .tile_layer_builder import TileLayerBuilder
 
 
 class DefaultTileLayerBuilder(TileLayerBuilder):
-    def __init__(self, context: BuilderContext, tile_builder: TileBuilder = None):
-        super().__init__(context, tile_builder if tile_builder is not None else DefaultTileBuilder(context))
+    def __init__(self, tile_builder: TileBuilder = None):
+        super().__init__(tile_builder if tile_builder is not None else DefaultTileBuilder())
 
     def build(self, layer: tmx.TileLayer, layer_id: int):
         size = self.context.size

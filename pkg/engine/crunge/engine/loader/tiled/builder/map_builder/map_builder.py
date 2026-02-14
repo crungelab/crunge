@@ -14,13 +14,12 @@ from ..layer_group_builder import LayerGroupBuilder
 class MapBuilder(TiledBuilder):
     def __init__(
         self,
-        context: BuilderContext,
         tile_layer_builder: TileLayerBuilder,
         object_group_builder: ObjectGroupBuilder,
         image_layer_builder: ImageLayerBuilder,
         layer_group_builder: LayerGroupBuilder,
     ):
-        super().__init__(context)
+        super().__init__()
         self.tile_layer_builder = tile_layer_builder
         self.tile_layer_builders: Dict[str, TileLayerBuilder] = {}
 

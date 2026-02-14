@@ -15,8 +15,8 @@ from .tile_builder import TileBuilder
 
 
 class DefaultTileBuilder(TileBuilder):
-    def __init__(self, context: BuilderContext, create_node_cb=None):
-        super().__init__(context)
+    def __init__(self, create_node_cb=None):
+        super().__init__()
         self.create_node_cb = create_node_cb
 
     @property

@@ -1,9 +1,15 @@
+from typing import Optional
+import contextlib
+from contextvars import ContextVar
+
 import glm
 from crunge import tmx
 
 from crunge.engine.d2.scene_2d import Scene2D
 from crunge.engine.d2.graph_layer_2d import GraphLayer2D
 from crunge.engine.d2.sprite import Sprite
+
+builder_context: ContextVar[Optional["BuilderContext"]] = ContextVar("builder_context", default=None)
 
 class BuilderContext:
     def __init__(self, scene: Scene2D):
@@ -15,6 +21,13 @@ class BuilderContext:
         self.opacity: float = 1.0
 
         self.sprites: list[Sprite] = []
+
+    def make_current(self):
+        builder_context.set(self)
+
+    @classmethod
+    def get_current(cls) -> Optional["BuilderContext"]:
+        return builder_context.get()
 
     @property
     def map(self):

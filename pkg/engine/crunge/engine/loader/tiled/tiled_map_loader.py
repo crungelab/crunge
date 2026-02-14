@@ -32,5 +32,6 @@ class TiledMapLoader(Loader):
         
         sprite_count = map.max_gid + 1
         self.context.init_sprites(sprite_count)
+        self.context.make_current()
 
         self.map_builder.build()

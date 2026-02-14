@@ -8,8 +8,8 @@ from ..builder_context import BuilderContext
 from ..tile_builder import TileBuilder
 
 class TileLayerBuilder(TiledBuilder):
-    def __init__(self, context: BuilderContext, tile_builder: TileBuilder):
-        super().__init__(context)
+    def __init__(self, tile_builder: TileBuilder):
+        super().__init__()
         self.tile_builder = tile_builder
 
     def build(self, layer: tmx.TileLayer, layer_id: int):

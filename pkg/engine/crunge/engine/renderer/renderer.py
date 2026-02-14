@@ -64,12 +64,10 @@ class Renderer(Base):
         return DefaultRenderPass(self.viewport)
 
     def make_current(self):
-        """Make the renderer current for the current context."""
         renderer.set(self)
 
     @classmethod
     def get_current(cls) -> Optional["Renderer"]:
-        """Get the current renderer."""
         return renderer.get()
 
     @contextlib.contextmanager
