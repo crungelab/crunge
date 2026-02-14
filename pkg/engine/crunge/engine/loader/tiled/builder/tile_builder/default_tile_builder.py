@@ -19,7 +19,7 @@ class DefaultTileBuilder(TileBuilder):
 
     @property
     def layer(self) -> SpriteLayer:
-        return self.context.layer
+        return self.context.current_graph_layer
     
     def build(self, position: glm.vec2, tile: tmx.TilesetTile, tile_gid: int, properties: dict):
         properties["type"] = tile.class_name  # TODO:?

@@ -87,7 +87,7 @@ class DefaultObjectBuilder(ObjectBuilder):
 
         # Attach the node to the appropriate layer
         if node is not None:
-            self.context.layer.attach(node)
+            self.context.current_graph_layer.attach(node)
 
     def create_node(
         self,

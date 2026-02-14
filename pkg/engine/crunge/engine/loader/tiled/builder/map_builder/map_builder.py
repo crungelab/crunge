@@ -56,44 +56,45 @@ class MapBuilder(TiledBuilder):
         self.layer_group_builders.update(builders)
 
     def build(self):
-        # for layer_id, layer in enumerate(self.map.visible_layers):
-        for layer_id, layer in enumerate(self.map.layers):
+        self.context.map_builder = self
+        # for layer in self.map.visible_layers:
+        for layer in self.map.layers:
             logger.debug(f"MapBuilder.build: {layer}")
             # logger.debug(f": {layer.properties}")
-            self.build_layer(layer, layer_id)
+            self.build_layer(layer)
 
-    def build_layer(self, layer: tmx.Layer, layer_id: int):
-        if isinstance(layer, tmx.TileLayer):
-            self.build_tile_layer(layer, layer_id)
-        elif isinstance(layer, tmx.ObjectGroup):
-            self.build_object_group(layer, layer_id)
-        elif isinstance(layer, tmx.ImageLayer):
-            self.build_image_layer(layer, layer_id)
-        elif isinstance(layer, tmx.LayerGroup):
-            self.build_layer_group(layer, layer_id)
+    def build_layer(self, tmx_layer: tmx.Layer):
+        if isinstance(tmx_layer, tmx.TileLayer):
+            self.build_tile_layer(tmx_layer)
+        elif isinstance(tmx_layer, tmx.ObjectGroup):
+            self.build_object_group(tmx_layer)
+        elif isinstance(tmx_layer, tmx.ImageLayer):
+            self.build_image_layer(tmx_layer)
+        elif isinstance(tmx_layer, tmx.LayerGroup):
+            self.build_layer_group(tmx_layer)
         else:
-            raise ValueError(f"Unsupported element type: {type(layer)}")
+            raise ValueError(f"Unsupported element type: {type(tmx_layer)}")
 
-    def build_tile_layer(self, layer: tmx.TileLayer, layer_id: int):
-        if layer.name in self.tile_layer_builders:
-            self.tile_layer_builders[layer.name].build(layer, layer_id)
+    def build_tile_layer(self, tmx_layer: tmx.TileLayer):
+        if tmx_layer.name in self.tile_layer_builders:
+            self.tile_layer_builders[tmx_layer.name].build(tmx_layer)
         else:
-            self.tile_layer_builder.build(layer, layer_id)
+            self.tile_layer_builder.build(tmx_layer)
 
-    def build_object_group(self, group: tmx.ObjectGroup, layer_id: int):
-        if group.name in self.object_group_builders:
-            self.object_group_builders[group.name].build(group, layer_id)
+    def build_object_group(self, tmx_layer: tmx.ObjectGroup):
+        if tmx_layer.name in self.object_group_builders:
+            self.object_group_builders[tmx_layer.name].build(tmx_layer)
         else:
-            self.object_group_builder.build(group, layer_id)
+            self.object_group_builder.build(tmx_layer)
 
-    def build_image_layer(self, layer: tmx.ImageLayer, layer_id: int):
-        if layer.name in self.image_layer_builders:
-            self.image_layer_builders[layer.name].build(layer, layer_id)
+    def build_image_layer(self, tmx_layer: tmx.ImageLayer):
+        if tmx_layer.name in self.image_layer_builders:
+            self.image_layer_builders[tmx_layer.name].build(tmx_layer)
         else:
-            self.image_layer_builder.build(layer, layer_id)
+            self.image_layer_builder.build(tmx_layer)
 
-    def build_layer_group(self, layer: tmx.LayerGroup, layer_id: int):
-        if layer.name in self.layer_group_builders:
-            self.layer_group_builders[layer.name].build(layer, layer_id)
+    def build_layer_group(self, tmx_layer: tmx.LayerGroup):
+        if tmx_layer.name in self.layer_group_builders:
+            self.layer_group_builders[tmx_layer.name].build(tmx_layer)
         else:
-            self.layer_group_builder.build(layer, layer_id)
+            self.layer_group_builder.build(tmx_layer)

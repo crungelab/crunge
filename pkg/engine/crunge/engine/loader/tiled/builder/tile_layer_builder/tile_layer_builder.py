@@ -11,7 +11,7 @@ class TileLayerBuilder(TiledBuilder):
         super().__init__()
         self.tile_builder = tile_builder
 
-    def build(self, layer: tmx.TileLayer, layer_id: int):
+    def build(self, tmx_layer: tmx.TileLayer):
         map = self.map
         map_size = map.tile_count
         tile_size = map.tile_size
@@ -19,7 +19,7 @@ class TileLayerBuilder(TiledBuilder):
         tile_height = tile_size.y
         half_tile_width = tile_width / 2
         half_tile_height = tile_height / 2
-        tiles = layer.tiles
+        tiles = tmx_layer.tiles
 
         for j in range(map_size.y):
             for i in range(map_size.x):

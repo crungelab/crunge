@@ -9,7 +9,7 @@ class ObjectGroupBuilder(TiledBuilder):
         super().__init__()
         self.object_builder = object_builder
 
-    def build(self, layer: tmx.ObjectGroup, layer_id: int):
+    def build(self, layer: tmx.ObjectGroup):
         self.context.opacity = layer.opacity
         for obj in layer.get_objects():
             self.object_builder.build(obj)

@@ -1,9 +1,8 @@
 from loguru import logger
-import glm
 from crunge import tmx
 
 from crunge.engine.math import Bounds2
-from crunge.engine.d2.graph_layer_2d import GraphLayer2D
+#from crunge.engine.d2.graph_layer_2d import GraphLayer2D
 from crunge.engine.d2.sprite.instanced import InstancedSpriteLayer
 from crunge.engine.d2.sprite.dynamic import DynamicSpriteGroup
 
@@ -16,12 +15,13 @@ class DefaultTileLayerBuilder(TileLayerBuilder):
     def __init__(self, tile_builder: TileBuilder = None):
         super().__init__(tile_builder if tile_builder is not None else DefaultTileBuilder())
 
-    def build(self, layer: tmx.TileLayer, layer_id: int):
+    def build(self, tmx_layer: tmx.TileLayer):
         size = self.context.size
-        #scene_layer = GraphLayer2D(name=layer.name)
+        #layer = GraphLayer2D(name=tmx_layer.name)
         sprite_group = DynamicSpriteGroup(1024).enable()
-        scene_layer = InstancedSpriteLayer(name=layer.name, count=1024, sprite_group=sprite_group)
-        scene_layer.bounds = Bounds2(0, 0, size.x, size.y)
-        self.context.layer = scene_layer
-        super().build(layer, layer_id)
-        self.context.scene.add_layer(self.context.layer)
+        layer = InstancedSpriteLayer(name=tmx_layer.name, count=1024, sprite_group=sprite_group)
+        layer.bounds = Bounds2(0, 0, size.x, size.y)
+        self.context.push_layer(layer)
+        super().build(tmx_layer)
+        self.context.pop_layer()
+        self.context.current_layer_group.add_layer(layer)
