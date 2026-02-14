@@ -3,6 +3,7 @@ target: 'src/tmx_layer_group_py_auto.cpp'
 
 excludes:
   - 'method@tmx::LayerGroup::parse'
+  - 'method@tmx::LayerGroup::getLayers'
 
 specs:
   'class@tmx::LayerGroup':

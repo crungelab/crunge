@@ -26,6 +26,7 @@ set(SOURCES
     src/tmx_object_py.cpp
     src/tmx_object_py_auto.cpp
     src/tmx_image_layer_py_auto.cpp
+    src/tmx_layer_group_py.cpp
     src/tmx_layer_group_py_auto.cpp
     src/tmx_map_py_auto.cpp
     src/tmx_map_py.cpp

@@ -49,6 +49,10 @@ void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
         , py::arg("w")
         , py::arg("h")
         )
+        .def(py::init<tmx::Vector2<float>, tmx::Vector2<float>>()
+        , py::arg("position")
+        , py::arg("size")
+        )
         .def_readwrite("left", &tmx::Rectangle<float>::left)
         .def_readwrite("top", &tmx::Rectangle<float>::top)
         .def_readwrite("width", &tmx::Rectangle<float>::width)
@@ -65,6 +69,10 @@ void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
         , py::arg("w")
         , py::arg("h")
         )
+        .def(py::init<tmx::Vector2<int>, tmx::Vector2<int>>()
+        , py::arg("position")
+        , py::arg("size")
+        )
         .def_readwrite("left", &tmx::Rectangle<int>::left)
         .def_readwrite("top", &tmx::Rectangle<int>::top)
         .def_readwrite("width", &tmx::Rectangle<int>::width)
@@ -74,7 +82,7 @@ void init_tmx_types_py_auto(py::module &_tmx, Registry &registry) {
     py::class_<tmx::Colour> _Colour(_tmx, "Colour");
     registry.on(_tmx, "Colour", _Colour);
         _Colour
-        .def(py::init<unsigned char, unsigned char, unsigned char, unsigned char>()
+        .def(py::init<uint8_t, uint8_t, uint8_t, uint8_t>()
         , py::arg("red") = 0
         , py::arg("green") = 0
         , py::arg("blue") = 0

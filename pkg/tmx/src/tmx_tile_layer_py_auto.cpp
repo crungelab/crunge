@@ -40,7 +40,7 @@ void init_tmx_tile_layer_py_auto(py::module &_tmx, Registry &registry) {
             .export_values()
         ;
         _TileLayer
-        .def(py::init<unsigned long>()
+        .def(py::init<std::size_t>()
         , py::arg("arg")
         )
         .def("get_type", &tmx::TileLayer::getType

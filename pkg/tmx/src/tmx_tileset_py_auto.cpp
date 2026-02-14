@@ -19,7 +19,7 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
     py::class_<tmx::Tileset> _Tileset(_tmx, "Tileset");
     registry.on(_tmx, "Tileset", _Tileset);
         _Tileset
-        .def(py::init<const std::basic_string<char> &>()
+        .def(py::init<const std::string &>()
         , py::arg("working_dir") = ""
         )
         ;

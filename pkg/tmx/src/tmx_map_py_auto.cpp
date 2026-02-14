@@ -20,7 +20,7 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
         _Version
         .def_readwrite("upper", &tmx::Version::upper)
         .def_readwrite("lower", &tmx::Version::lower)
-        .def(py::init<unsigned short, unsigned short>()
+        .def(py::init<uint16_t, uint16_t>()
         , py::arg("maj") = 0
         , py::arg("min") = 0
         )
