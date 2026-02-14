@@ -5,10 +5,13 @@
     ],
     "fileStates": {
         "blur.tmx": {
+            "expandedGroupLayers": [
+                5
+            ],
             "scale": 0.28029947916666664,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1762.400706090027,
+                "x": 1542.9925210201145,
                 "y": 1277.2053700004647
             }
         },

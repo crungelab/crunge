@@ -1,0 +1,9 @@
+source: '../../depot/tmxlite/tmxlite/include/tmxlite/LayerGroup.hpp'
+target: 'src/tmx_layer_group_py_auto.cpp'
+
+excludes:
+  - 'method@tmx::LayerGroup::parse'
+
+specs:
+  'class@tmx::LayerGroup':
+    extends: ['tmx::Layer']

@@ -1,6 +1,6 @@
 from .scene_layer import SceneLayer
 
-class GroupLayer(SceneLayer):
+class LayerGroup(SceneLayer):
     pass
 
 """

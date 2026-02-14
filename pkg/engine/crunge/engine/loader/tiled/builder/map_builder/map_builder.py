@@ -8,42 +8,62 @@ from ..builder_context import BuilderContext
 from ..tile_layer_builder import TileLayerBuilder
 from ..object_group_builder import ObjectGroupBuilder
 from ..image_layer_builder import ImageLayerBuilder
+from ..layer_group_builder import LayerGroupBuilder
+
 
 class MapBuilder(TiledBuilder):
-    def __init__(self, context: BuilderContext, tile_layer_builder: TileLayerBuilder, object_group_builder: ObjectGroupBuilder, image_layer_builder: ImageLayerBuilder):
+    def __init__(
+        self,
+        context: BuilderContext,
+        tile_layer_builder: TileLayerBuilder,
+        object_group_builder: ObjectGroupBuilder,
+        image_layer_builder: ImageLayerBuilder,
+        layer_group_builder: LayerGroupBuilder,
+    ):
         super().__init__(context)
         self.tile_layer_builder = tile_layer_builder
-        self.object_group_builder = object_group_builder
-        self.image_layer_builder = image_layer_builder
         self.tile_layer_builders: Dict[str, TileLayerBuilder] = {}
+
+        self.object_group_builder = object_group_builder
         self.object_group_builders: Dict[str, ObjectGroupBuilder] = {}
+
+        self.image_layer_builder = image_layer_builder
         self.image_layer_builders: Dict[str, ImageLayerBuilder] = {}
+
+        self.layer_group_builder = layer_group_builder
+        self.layer_group_builders: Dict[str, LayerGroupBuilder] = {}
 
     def add_tile_layer_builder(self, name: str, builder: TileLayerBuilder):
         self.tile_layer_builders[name] = builder
 
-    def add_object_group_builder(self, name: str, builder: ObjectGroupBuilder):
-        self.object_group_builders[name] = builder
-
-    def add_image_layer_builder(self, name: str, builder: ImageLayerBuilder):
-        self.image_layer_builders[name] = builder
-
     def add_tile_layer_builders(self, builders: Dict[str, TileLayerBuilder]):
         self.tile_layer_builders.update(builders)
+
+    def add_object_group_builder(self, name: str, builder: ObjectGroupBuilder):
+        self.object_group_builders[name] = builder
 
     def add_object_group_builders(self, builders: Dict[str, ObjectGroupBuilder]):
         self.object_group_builders.update(builders)
 
+    def add_image_layer_builder(self, name: str, builder: ImageLayerBuilder):
+        self.image_layer_builders[name] = builder
+
     def add_image_layer_builders(self, builders: Dict[str, ImageLayerBuilder]):
         self.image_layer_builders.update(builders)
 
+    def add_layer_group_builder(self, name: str, builder: LayerGroupBuilder):
+        self.layer_group_builders[name] = builder
+
+    def add_layer_group_builders(self, builders: Dict[str, LayerGroupBuilder]):
+        self.layer_group_builders.update(builders)
+
     def build(self):
-        #for layer_id, layer in enumerate(self.map.visible_layers):
+        # for layer_id, layer in enumerate(self.map.visible_layers):
         for layer_id, layer in enumerate(self.map.layers):
             logger.debug(f"MapBuilder.build: {layer}")
-            #logger.debug(f": {layer.properties}")
+            # logger.debug(f": {layer.properties}")
             self.build_layer(layer, layer_id)
-    
+
     def build_layer(self, layer: tmx.Layer, layer_id: int):
         if isinstance(layer, tmx.TileLayer):
             self.build_tile_layer(layer, layer_id)
@@ -51,6 +71,8 @@ class MapBuilder(TiledBuilder):
             self.build_object_group(layer, layer_id)
         elif isinstance(layer, tmx.ImageLayer):
             self.build_image_layer(layer, layer_id)
+        elif isinstance(layer, tmx.LayerGroup):
+            self.build_layer_group(layer, layer_id)
         else:
             raise ValueError(f"Unsupported element type: {type(layer)}")
 
@@ -71,3 +93,9 @@ class MapBuilder(TiledBuilder):
             self.image_layer_builders[layer.name].build(layer, layer_id)
         else:
             self.image_layer_builder.build(layer, layer_id)
+
+    def build_layer_group(self, layer: tmx.LayerGroup, layer_id: int):
+        if layer.name in self.layer_group_builders:
+            self.layer_group_builders[layer.name].build(layer, layer_id)
+        else:
+            self.layer_group_builder.build(layer, layer_id)

@@ -59,7 +59,7 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
         _Map
         .def(py::init<>())
         .def("load", &tmx::Map::load
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("load_from_string", &tmx::Map::loadFromString
             , py::arg("data")

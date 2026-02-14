@@ -23,7 +23,7 @@ class Node(Dispatcher, Generic[T_Node]):
     def __init__(self, vu: "Vu" = None, model=None) -> None:
         super().__init__()
         self._vu: "Vu" = None
-        self._model: "Model" = None #TODO: should model be a template type?
+        self._model: "Model" = None  # TODO: should model be a template type?
         self.parent: "Node[T_Node]" = None
         self.children: list["Node[T_Node]"] = []
         self.listeners: list[NodeListener[T_Node]] = []
@@ -161,6 +161,8 @@ class Node(Dispatcher, Generic[T_Node]):
         if self.vu is not None:
             self.vu.render()
 
+    def root_render(self):
+        self.render()
 
     def update(self, delta_time: float):
         if self.vu is not None:
