@@ -8,7 +8,7 @@ from ..math import Bounds3
 from ..vu import Vu
 
 if TYPE_CHECKING:
-    from .renderer.scene_renderer_3d import SceneRenderer3D
+    from .renderer.renderer_3d import Renderer3D
 
 from .node_3d import Node3D
 
@@ -19,7 +19,7 @@ class Vu3D(Vu[Node3D]):
         self.bounds = Bounds3()
 
     @property
-    def renderer(self) -> "SceneRenderer3D":
+    def renderer(self) -> "Renderer3D":
         return Renderer.get_current()
 
     @property

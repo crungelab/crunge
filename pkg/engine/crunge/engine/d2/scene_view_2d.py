@@ -2,20 +2,20 @@ from loguru import logger
 
 from .scene_2d import Scene2D
 from .view_2d import View2D
-from .renderer import SceneRenderer2D
+from .renderer import Renderer2D
 
 class SceneView2D(View2D):
-    renderer: SceneRenderer2D
+    renderer: Renderer2D
 
     def __init__(self, scene: Scene2D) -> None:
         super().__init__()
         self.scene = scene
 
     def create_renderer(self) -> None:
-        self.renderer = SceneRenderer2D(self.scene, viewport=self.viewport, camera=self.camera)
+        self.renderer = Renderer2D(viewport=self.viewport, camera=self.camera)
     
     def _draw(self):
-        self.renderer.render()
+        self.renderer.render(self.scene)
 
         with self.renderer.use():
             super()._draw()

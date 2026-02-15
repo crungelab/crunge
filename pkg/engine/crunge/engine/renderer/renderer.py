@@ -8,6 +8,7 @@ from loguru import logger
 
 from crunge import wgpu
 from crunge import skia
+from crunge.engine.node import Node
 
 from ..base import Base
 from ..viewport import Viewport
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
     from ..d2.camera_2d import Camera2D
     from ..d3.camera_3d import Camera3D
     from ..d3.lighting_3d import Lighting3D
+    from .task import RenderPlan
 
 from .render_pass import RenderPass, DefaultRenderPass
 
@@ -44,6 +46,8 @@ class Renderer(Base):
 
         self.current_render_pass: RenderPass = None
         self.encoder: wgpu.CommandEncoder = None
+
+        self.plan: "RenderPlan" = None
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
@@ -113,3 +117,18 @@ class Renderer(Base):
 
     def end_pass(self):
         self.current_render_pass.end(self.encoder)
+
+    def create_plan(self) -> None:
+        pass
+
+    def ensure_plan(self) -> None:
+        if self.plan is None:
+            self.create_plan()
+
+    def render(self, node: Node = None) -> None:
+        self.ensure_plan()
+        with self.frame():
+            with self.render_pass():
+                node.render()
+            self.plan.render()
+        self.plan.clear()

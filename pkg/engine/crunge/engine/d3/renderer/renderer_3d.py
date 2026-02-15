@@ -1,10 +1,13 @@
 from ...viewport import Viewport
 from ...renderer import Renderer
+from ...renderer.task import RenderPlan
 
 from ..camera_3d import Camera3D
 from ..lighting_3d import Lighting3D
 
 from .render_pass_3d import RenderPass3D
+
+from .task import OpaquePhase3D, TransmissivePhase3D
 
 
 class Renderer3D(Renderer):
@@ -15,3 +18,10 @@ class Renderer3D(Renderer):
 
     def create_render_pass(self):
         return RenderPass3D(self.viewport, first=True)
+    
+    def create_plan(self) -> None:
+        phases = [
+            OpaquePhase3D(),
+            TransmissivePhase3D()
+        ]
+        self.plan = RenderPlan(phases)

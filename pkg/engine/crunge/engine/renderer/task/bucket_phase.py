@@ -2,14 +2,14 @@ from typing import Generic, TypeVar
 
 from loguru import logger
 
-from .render_phase import RenderPhase, T_Renderer
+from .render_phase import RenderPhase
 
 T_PhaseItem = TypeVar("T_PhaseItem")
 
 
-class BucketPhase(Generic[T_Renderer, T_PhaseItem], RenderPhase[T_Renderer]):
-    def __init__(self, renderer: T_Renderer) -> None:
-        super().__init__(renderer)
+class BucketPhase(Generic[T_PhaseItem], RenderPhase):
+    def __init__(self) -> None:
+        super().__init__()
         self.items: list[T_PhaseItem] = []
 
     def clear(self) -> None:

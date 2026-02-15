@@ -1,9 +1,8 @@
 from .bucket_phase import BucketPhase
 from ..render_pass import RenderPass
 from .render_item import FilterItem
-from ..renderer import Renderer
 
-class FilterPhase(BucketPhase[Renderer, FilterItem]):
+class FilterPhase(BucketPhase[FilterItem]):
     def render(self) -> None:
         #self.renderer.viewport.snap(self.renderer.encoder)
         #with self.renderer.frame():
