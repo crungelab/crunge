@@ -13,3 +13,7 @@ DrawCallback = Callable[["Renderer"], None]
 class FilterItem:
     vu: Vu
     callback: DrawCallback
+
+@dataclass(slots=True)
+class CompositeItem:
+    callback: DrawCallback

@@ -28,7 +28,7 @@ class WRender(Viewer):
         #scene_path = models_root / "RobotCopernicus" / "scene.gltf"
 
         #model = "ABeautifulGame"
-        model = "AlphaBlendModeTest"
+        #model = "AlphaBlendModeTest"
         #model = "TransmissionTest"
         #model = "AttenuationTest" # TODO: Needs extensions: KHR_materials_transmission and KHR_materials_volume
         #model = "Avocado"
@@ -41,7 +41,7 @@ class WRender(Viewer):
         #model = "CesiumMilkTruck"
         #model = "Cube"
         #model = "Corset"
-        #model = "DamagedHelmet"
+        model = "DamagedHelmet"
         #model = "Duck"
         #model = "EnvironmentTest"
         #model = "FlightHelmet"

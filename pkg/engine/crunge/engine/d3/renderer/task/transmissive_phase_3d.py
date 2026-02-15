@@ -5,12 +5,12 @@ from .render_item_3d import Transmissive3D
 
 class TransmissivePhase3D(BucketPhase3D[Transmissive3D]):
     def render(self) -> None:
-        self.renderer.viewport.snap(self.renderer.encoder)
-        with self.renderer.render_pass(RenderPass3D(self.renderer.viewport)):
+        self.current_renderer.viewport.snap(self.current_renderer.encoder)
+        with self.current_renderer.render_pass(RenderPass3D(self.current_renderer.viewport)):
             self.render_items()
 
     def render_items(self):
-        camera = self.renderer.camera_3d
+        camera = self.current_renderer.camera_3d
         # sort by depth
         self.items.sort(
             key=lambda d: camera.depth_of(d.node),

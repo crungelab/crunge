@@ -129,7 +129,7 @@ fn fs_kawase(in: VSQuadOut) -> @location(0) vec4f {
 }
 
 // -----------------------------------------------------------------------------
-// Composite (just replaces viewport with blurred content, no blending)
+// Composite (expects premultiplied input + premultiplied blend state)
 
 struct CompositeParams {
   alpha: f32,
@@ -139,8 +139,7 @@ struct CompositeParams {
 
 @fragment
 fn fs_composite(in: VSQuadOut) -> @location(0) vec4f {
-  // Simply output the blurred texture (already premultiplied)
-  let c0 = textureSample(src_tex, src_samp, in.uv);
+  let c0 = textureSample(src_tex, src_samp, in.uv); // premultiplied blur output
   let a = cu.alpha;
   return vec4f(c0.rgb * a, c0.a * a);
 }
@@ -205,9 +204,8 @@ class KawaseBlurVu(FilterVu):
 
     # Tunables
     downsample: int = 2
-    iterations: int = 5  # Increased from 3 for smoother blur
-    base_offset: float = 0.5  # Starting offset
-    offset_increment: float = 0.5  # How much to increment each iteration (was 1.0)
+    iterations: int = 3
+    radius_px: float = 6.0
     alpha: float = 1.0
 
     color_format = wgpu.TextureFormat.BGRA8_UNORM
@@ -224,9 +222,8 @@ class KawaseBlurVu(FilterVu):
         vp = Viewport.get_current()
         w = vp.width
         h = vp.height
-        # Note: Uncomment below if you want downsampling (improves performance)
-        # w = max(1, w // self.downsample)
-        # h = max(1, h // self.downsample)
+        #w = max(1, w // self.downsample)
+        #h = max(1, h // self.downsample)
         return w, h
 
     def create_offscreen_targets(self):
@@ -387,15 +384,25 @@ class KawaseBlurVu(FilterVu):
             )
         )
 
-        # --- Composite pipeline (fullscreen triangle, REPLACES viewport content) -----
-        # NO BLENDING - just replace the content
+        # --- Composite pipeline (fullscreen triangle + blend onto swapchain) -----
+        # Premultiplied "over" blend:
+        blend = wgpu.BlendState(
+            color=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.ONE,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+            alpha=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.ONE,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+        )
+
         comp_fragment = wgpu.FragmentState(
             module=shader,
             entry_point="fs_composite",
-            targets=[wgpu.ColorTargetState(
-                format=self.color_format,
-                blend=None,  # No blending - just replace!
-            )],
+            targets=[wgpu.ColorTargetState(format=self.color_format, blend=blend)],
         )
         comp_vertex = wgpu.VertexState(module=shader, entry_point="vs_fullscreen", buffers=[])
         self.composite_pipeline = self.device.create_render_pipeline(
@@ -450,7 +457,6 @@ class KawaseBlurVu(FilterVu):
 
     def _blur_ping_pong(self, encoder: wgpu.CommandEncoder):
         # Ping-pong between A and B for N iterations.
-        # Use smaller, more gradual offset increments for smoother blur
         tex_w = self.off_tex_a.get_width()
         tex_h = self.off_tex_a.get_height()
 
@@ -471,13 +477,11 @@ class KawaseBlurVu(FilterVu):
             rp.draw(3, 1, 0, 0)  # fullscreen triangle
             rp.end()
 
-        # Use smaller increments for smoother blur progression
-        offset = self.base_offset
-        
+        offset = 1.0
         for i in range(self.iterations):
             blur_pass(True, self.off_view_b, offset, f"Blur Pass {i} A->B")
             blur_pass(False, self.off_view_a, offset, f"Blur Pass {i} B->A")
-            offset += self.offset_increment
+            offset += 1.0
 
     def _composite_to_viewport(self, encoder: wgpu.CommandEncoder):
         viewport = Viewport.get_current()
@@ -487,7 +491,8 @@ class KawaseBlurVu(FilterVu):
         ca = [
             wgpu.RenderPassColorAttachment(
                 view=viewport.color_texture_view,
-                load_op=wgpu.LoadOp.LOAD,  # Load existing content
+                load_op=wgpu.LoadOp.CLEAR,
+                #load_op=wgpu.LoadOp.LOAD,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
             )
@@ -500,6 +505,9 @@ class KawaseBlurVu(FilterVu):
         rp.end()
 
     def _draw(self):
+        # If you can detect viewport resize, rebuild offscreen + bind groups here.
+        # Minimal prototype: assume fixed size.
+
         encoder: wgpu.CommandEncoder = Renderer.get_current().encoder
 
         self._copy_from_viewport(encoder)

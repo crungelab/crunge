@@ -2,6 +2,7 @@ from ...viewport import Viewport
 from ...renderer import Renderer
 from ...renderer.task import RenderPlan
 from ...renderer.task.filter_phase import FilterPhase
+from ...renderer.task.composite_phase import CompositePhase
 
 from ..camera_2d import Camera2D
 
@@ -19,6 +20,6 @@ class Renderer2D(Renderer):
         phases = [
             OpaquePhase2D(),
             FilterPhase(),
+            CompositePhase(),
         ]
-
         self.plan = RenderPlan(phases)

@@ -24,6 +24,7 @@ class RenderPass2D(RenderPass["Renderer2D"]):
                     resolve_target=self.viewport.color_texture_view,
                     #load_op=wgpu.LoadOp.CLEAR,
                     load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
+                    #load_op=wgpu.LoadOp.LOAD,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
                 )
@@ -34,6 +35,7 @@ class RenderPass2D(RenderPass["Renderer2D"]):
                     view=self.viewport.color_texture_view,
                     #load_op=wgpu.LoadOp.CLEAR,
                     load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
+                    #load_op=wgpu.LoadOp.LOAD,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),
                 )

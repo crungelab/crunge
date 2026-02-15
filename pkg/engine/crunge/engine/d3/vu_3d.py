@@ -19,7 +19,7 @@ class Vu3D(Vu[Node3D]):
         self.bounds = Bounds3()
 
     @property
-    def renderer(self) -> "Renderer3D":
+    def current_renderer(self) -> "Renderer3D":
         return Renderer.get_current()
 
     @property

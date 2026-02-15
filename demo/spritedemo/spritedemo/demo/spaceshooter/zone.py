@@ -4,7 +4,7 @@ from loguru import logger
 import glm
 
 from crunge.engine import Base
-from crunge.engine.d2.scene_2d import Scene2D
+from crunge.engine.d2.scene import Scene2D
 
 from .meteor import Meteor, MeteorGreyBig1
 

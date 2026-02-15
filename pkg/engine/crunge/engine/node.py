@@ -154,12 +154,25 @@ class Node(Dispatcher, Generic[T_Node]):
         if not self.visible:
             return
         self._render()
+
+    def _render(self):
+        if self.vu is not None:
+            self.vu.render()
+        for child in self.children:
+            child.render()
+
+    """
+    def render(self):
+        if not self.visible:
+            return
+        self._render()
         for child in self.children:
             child.render()
 
     def _render(self):
         if self.vu is not None:
             self.vu.render()
+    """
 
     def root_render(self):
         self.render()

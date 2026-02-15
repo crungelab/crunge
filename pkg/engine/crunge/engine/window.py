@@ -96,7 +96,6 @@ class Window(Frame):
         self.create_window()
         self.create_viewport()
         self.create_device_objects()
-        #self.create_viewport()
         self.create_renderer()
         super()._create()
 

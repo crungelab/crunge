@@ -10,7 +10,7 @@ class RenderTask(Base):
         super().__init__()
 
     @property
-    def renderer(self) -> Renderer:
+    def current_renderer(self) -> Renderer:
         return Renderer.get_current()
 
     def clear(self) -> None:

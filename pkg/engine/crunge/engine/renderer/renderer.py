@@ -127,8 +127,19 @@ class Renderer(Base):
 
     def render(self, node: Node = None) -> None:
         self.ensure_plan()
+        with self.render_pass():
+            #node.render()
+            node.root_render()
+        self.plan.render()
+        self.plan.clear()
+
+    """
+    def render(self, node: Node = None) -> None:
+        self.ensure_plan()
         with self.frame():
             with self.render_pass():
-                node.render()
+                #node.render()
+                node.root_render()
             self.plan.render()
         self.plan.clear()
+    """

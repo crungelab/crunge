@@ -14,11 +14,11 @@ class Vu(Base, NodeListener, Generic[T_Node]):
         self._node: T_Node = None
 
     @property
-    def viewport(self) -> Viewport:
+    def current_viewport(self) -> Viewport:
         return Viewport.get_current()
 
     @property
-    def renderer(self) -> Renderer:
+    def current_renderer(self) -> Renderer:
         return Renderer.get_current()
     
     @property

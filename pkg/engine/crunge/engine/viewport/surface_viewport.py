@@ -65,7 +65,7 @@ class SurfaceViewport(Viewport):
             width=size.x,
             height=size.y,
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            #usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
+            #usage=wgpu.TextureUsage.RENDER_ATTACHMENT
             #usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING, #Needed for Skia
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING | wgpu.TextureUsage.COPY_SRC,
             present_mode=wgpu.PresentMode.FIFO,

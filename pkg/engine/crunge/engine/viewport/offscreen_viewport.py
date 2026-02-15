@@ -32,7 +32,8 @@ class OffscreenViewport(Viewport):
             self.size.x,
             self.size.y,
             wgpu.TextureFormat.BGRA8_UNORM,
-            wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING,
+            #wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING | wgpu.TextureUsage.COPY_SRC
         )
         self.color_texture_view = self.color_texture.create_view()
 

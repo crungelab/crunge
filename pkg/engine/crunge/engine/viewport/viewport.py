@@ -112,6 +112,14 @@ class Viewport(Base):
         return viewport.get()
 
     @contextlib.contextmanager
+    def use(self):
+        prev_viewport = self.get_current()
+        self.make_current()
+        yield self
+        if prev_viewport is not None:
+            prev_viewport.make_current()
+
+    @contextlib.contextmanager
     def frame(self):
         prev_viewport = self.get_current()
         self.make_current()
