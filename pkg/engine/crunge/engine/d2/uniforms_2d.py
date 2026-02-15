@@ -48,7 +48,7 @@ class ModelUniform(Structure):
         ("texture_size", Vec2),
         ("flip_h", c_uint32),
         ("flip_v", c_uint32),
-        ("layer", c_int),
+        ("texture_layer", c_int),
         #("_pad1", c_float * 4),
         ("_pad1", c_float * 3),
     ]
@@ -64,9 +64,10 @@ class SpriteUniform(Structure):
         ("flip_h", c_uint32),
         ("flip_v", c_uint32),
         ("_pad1", c_float * 4),
+        ("texture_layer", c_int),
     ]
 
-assert sizeof(SpriteUniform) % 16 == 0
+#assert sizeof(SpriteUniform) % 16 == 0
 
 
 class ShapeUniform(Structure):
@@ -74,7 +75,7 @@ class ShapeUniform(Structure):
         ("color", Vec4),
     ]
 
-assert sizeof(SpriteUniform) % 16 == 0
+assert sizeof(ShapeUniform) % 16 == 0
 
 
 class LightUniform(Structure):

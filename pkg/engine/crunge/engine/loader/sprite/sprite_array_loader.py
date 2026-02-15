@@ -46,7 +46,7 @@ class SpriteArrayLoader(TextureLoader[SpriteArray]):
         for i, image in enumerate(images):
             sprite = self.sprite_builder.build(atlas.texture, Rect2i(0, 0, image.size.x, image.size.y))
             sprite.set_name(image.name)
-            sprite.layer = i
+            sprite.texture_layer = i
             atlas.add(sprite)
 
         return atlas

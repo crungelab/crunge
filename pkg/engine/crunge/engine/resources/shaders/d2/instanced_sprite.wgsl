@@ -6,7 +6,7 @@
 
 struct VertexOutput {
   @builtin(position) vertex_pos : vec4<f32>,
-  @location(0) @interpolate(flat) layer: i32,
+  @location(0) @interpolate(flat) texture_layer: i32,
   @location(1) uv: vec2<f32>,
   @location(2) color: vec4<f32>,
 }
@@ -32,11 +32,11 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) ins
         model.flipV != 0u
     );
 
-    return VertexOutput(vert_pos, model.layer, uv, model.color);
+    return VertexOutput(vert_pos, model.texture_layer, uv, model.color);
 }
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    let color = textureSample(myTexture, mySampler, in.uv, in.layer);
+    let color = textureSample(myTexture, mySampler, in.uv, in.texture_layer);
     return color * in.color;
 }
