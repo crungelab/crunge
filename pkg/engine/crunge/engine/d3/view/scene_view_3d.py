@@ -1,8 +1,8 @@
 from loguru import logger
 
-from .renderer.renderer_3d import Renderer3D
+from ..renderer.renderer_3d import Renderer3D
 
-from .scene_3d import Scene3D
+from ..scene.scene_3d import Scene3D
 from .view_3d import View3D
 
 

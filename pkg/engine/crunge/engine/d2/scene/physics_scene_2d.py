@@ -1,5 +1,5 @@
 from .scene_2d import Scene2D
-from .physics import PhysicsEngine2D
+from ..physics import PhysicsEngine2D
 
 
 class PhysicsScene2D(Scene2D):

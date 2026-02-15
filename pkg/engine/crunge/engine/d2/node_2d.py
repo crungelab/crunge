@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
 
 if TYPE_CHECKING:
-    from .scene_2d import Scene2D
+    from .scene.scene_2d import Scene2D
     from .vu_2d import Vu2D
 
 from loguru import logger

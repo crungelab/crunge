@@ -2,7 +2,7 @@ from loguru import logger
 
 from crunge import tmx
 
-from crunge.engine.d2.graph_layer_2d import GraphLayer2D
+from crunge.engine.d2.scene.layer.graph_layer_2d import GraphLayer2D
 
 from crunge.engine.scene.layer.scene_layer import SceneLayer
 from crunge.engine.scene.layer.filter.filter_layer import FilterLayer

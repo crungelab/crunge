@@ -1,8 +1,8 @@
 from loguru import logger
 
-from .scene_2d import Scene2D
+from ..scene.scene_2d import Scene2D
 from .view_2d import View2D
-from .renderer import Renderer2D
+from ..renderer import Renderer2D
 
 class SceneView2D(View2D):
     renderer: Renderer2D

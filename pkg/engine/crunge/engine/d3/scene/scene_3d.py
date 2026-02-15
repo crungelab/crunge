@@ -1,13 +1,13 @@
 from loguru import logger
 import glm
 
-from ..math import Bounds3
-from ..scene import Scene
+from ...math import Bounds3
+from ...scene import Scene
 
-from .node_3d import Node3D
-from .graph_layer_3d import GraphLayer3D
-from .lighting_3d import Lighting3D
-from .light_3d import OmniLight3D
+from ..node_3d import Node3D
+from .layer.graph_layer_3d import GraphLayer3D
+from ..lighting_3d import Lighting3D
+from ..light_3d import OmniLight3D
 
 
 class Scene3D(Scene[Node3D]):

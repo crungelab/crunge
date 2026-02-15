@@ -9,7 +9,7 @@ from crunge import imgui
 from crunge import engine
 
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.d2.scene_2d import Scene2D
+from crunge.engine.d2.scene import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
 
 from .demo_view import DemoView

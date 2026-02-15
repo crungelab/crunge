@@ -8,8 +8,7 @@ if TYPE_CHECKING:
     from ..window import Window
 
 from ..viewport import Viewport
-from ..widget import Widget
-from .overlay import Overlay
+from ..widget import Widget, Overlay
 
 
 class View(Widget):

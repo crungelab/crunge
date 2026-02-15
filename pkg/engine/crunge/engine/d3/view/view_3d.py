@@ -2,9 +2,8 @@ from loguru import logger
 
 from crunge.engine.imgui import ImGuiView
 
-from .renderer.renderer_3d import Renderer3D
-from .scene_3d import Scene3D
-from .camera_3d import Camera3D
+from ..renderer.renderer_3d import Renderer3D
+from ..camera_3d import Camera3D
 
 
 class View3D(ImGuiView):

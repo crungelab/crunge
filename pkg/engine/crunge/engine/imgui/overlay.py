@@ -12,7 +12,7 @@ from crunge import imgui
 from crunge.imgui import Key
 
 from ..viewport import ViewportListener
-from ..view.overlay import Overlay
+from ..widget import Overlay
 from ..window import WindowListener
 
 from .vu import ImGuiVu

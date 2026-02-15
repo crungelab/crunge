@@ -3,7 +3,7 @@ from jinja2 import Environment
 
 from crunge import gltf
 
-from crunge.engine.d3.scene_3d import Scene3D
+from crunge.engine.d3.scene.scene_3d import Scene3D
 
 from crunge.engine.d3.mesh_3d import Mesh3D
 from crunge.engine.resource import Image, Texture, Sampler, Material

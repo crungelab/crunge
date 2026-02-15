@@ -1,9 +1,9 @@
 from loguru import logger
 
-from ..math import Bounds2
+from ....math import Bounds2
 
-from ..scene.layer.graph_layer import GraphLayer
-from .node_2d import Node2D
+from ....scene.layer.graph_layer import GraphLayer
+from ...node_2d import Node2D
 
 class GraphLayer2D(GraphLayer[Node2D]):
     def __init__(self, name: str) -> None:

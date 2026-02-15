@@ -1,7 +1,7 @@
 from loguru import logger
 
 from ... import Node2D
-from ...graph_layer_2d import GraphLayer2D
+from ...scene.layer.graph_layer_2d import GraphLayer2D
 
 from .instanced_sprite_vu_group import InstancedSpriteVuGroup
 from ..dynamic.dynamic_sprite_group import DynamicSpriteGroup

@@ -1,5 +1,5 @@
 from .. import Node2D
-from ..graph_layer_2d import GraphLayer2D
+from ..scene.layer.graph_layer_2d import GraphLayer2D
 
 from .sprite_vu_group import SpriteVuGroup
 from .sprite_group import SpriteGroup

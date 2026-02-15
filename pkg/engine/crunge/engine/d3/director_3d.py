@@ -3,7 +3,7 @@ import math
 from loguru import logger
 import glm
 
-from .scene_3d import Scene3D
+from .scene.scene_3d import Scene3D
 from .camera_3d import Camera3D
 from .light_3d import Light3D
 

@@ -11,16 +11,16 @@ from crunge import sdl
 from crunge import engine
 from crunge import imgui
 
-from crunge.engine import RenderOptions, Renderer, Scheduler
+from crunge.engine import RenderOptions, Scheduler
 from crunge.engine.viewport import SurfaceViewport
 
 from crunge.engine.loader.gltf import GltfLoader
 
-from crunge.engine.d3.scene_3d import Scene3D
+from crunge.engine.d3.scene import Scene3D
 from crunge.engine.d3.camera_3d import Camera3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
 
-from crunge.engine.d3.scene_view_3d import SceneView3D
+from crunge.engine.d3.view import SceneView3D
 from crunge.engine.d3.director_3d import Director3D
 
 #models_root = Path(__file__).parent.parent.parent.parent / "resources" / "models"
@@ -35,7 +35,7 @@ class Viewer(engine.App):
         self.delta_time = 0
 
     @property
-    def camera(self):
+    def camera(self) -> Camera3D:
         return self.view.camera
 
     def create_viewport(self):

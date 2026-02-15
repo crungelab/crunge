@@ -5,9 +5,9 @@ from loguru import logger
 from crunge import yoga
 
 if TYPE_CHECKING:
-    from . import View
+    from ..view import View
 
-from ..widget import Widget
+from . import Widget
 from ..vu import Vu
 
 

@@ -4,11 +4,11 @@ import glm
 
 from crunge import skia
 
-from ..renderer import Renderer
-from ..view.overlay import Overlay
+from ...renderer import Renderer
+from ...widget import Overlay
 
-from .. import colors
-from ..color import rgba_tuple_to_argb_int
+from ... import colors
+from ...color import rgba_tuple_to_argb_int
 
 
 class ScratchOverlay(Overlay):

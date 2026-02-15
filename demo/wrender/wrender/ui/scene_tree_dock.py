@@ -1,6 +1,6 @@
 from crunge import imgui
 
-from crunge.engine.d3.graph_layer_3d import GraphLayer3D
+from crunge.engine.d3.scene.layer import GraphLayer3D
 
 
 class SceneTreeDock:

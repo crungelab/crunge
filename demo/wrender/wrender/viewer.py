@@ -16,9 +16,9 @@ from crunge.engine.render_options import RenderOptions
 
 from crunge.engine.loader.gltf import GltfLoader
 
-from crunge.engine.d3.scene_3d import Scene3D
+from crunge.engine.d3.scene import Scene3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
-from crunge.engine.d3.scene_view_3d import SceneView3D
+from crunge.engine.d3.view import SceneView3D
 from crunge.engine.d3.director_3d import Director3D
 
 from .ui.scene_tree_dock import SceneTreeDock

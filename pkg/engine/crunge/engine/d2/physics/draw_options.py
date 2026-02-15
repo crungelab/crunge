@@ -4,7 +4,7 @@ import pymunk
 from pymunk.space_debug_draw_options import SpaceDebugColor
 
 from ... import colors
-from crunge.engine.d2.scratch_overlay import ScratchOverlay
+from crunge.engine.d2.overlay.scratch_overlay import ScratchOverlay
 
 class DrawOptions(pymunk.SpaceDebugDrawOptions):
     def __init__(self, scratch: ScratchOverlay):

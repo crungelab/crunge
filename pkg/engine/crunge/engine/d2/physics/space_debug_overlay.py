@@ -8,7 +8,7 @@ from ... import colors
 from ...color import rgba_tuple_to_argb_int
 
 from ...renderer import Renderer
-from ...view.overlay import Overlay
+from ...widget import Overlay
 
 from . import globe
 

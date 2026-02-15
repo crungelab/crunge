@@ -7,8 +7,8 @@ from crunge import tmx
 
 from crunge.engine.scene.layer.scene_layer import SceneLayer
 from crunge.engine.scene.layer.layer_group import LayerGroup
-from crunge.engine.d2.scene_2d import Scene2D
-from crunge.engine.d2.graph_layer_2d import GraphLayer2D
+from crunge.engine.d2.scene.scene_2d import Scene2D
+from crunge.engine.d2.scene.layer.graph_layer_2d import GraphLayer2D
 from crunge.engine.d2.sprite import Sprite
 
 if TYPE_CHECKING:

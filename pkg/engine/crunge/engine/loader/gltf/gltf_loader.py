@@ -12,7 +12,7 @@ from jinja2 import (
 
 from crunge import gltf
 
-from ...d3.scene_3d import Scene3D
+from ...d3.scene.scene_3d import Scene3D
 
 from ..loader import Loader
 
