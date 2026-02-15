@@ -4,6 +4,35 @@
         "."
     ],
     "fileStates": {
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/butterflies.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/characters.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/items.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1218,
+                "y": 732
+            }
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/mossy-tileset.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/obstacles.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/stickers.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/tiles.tsx": {
+            "scaleInDock": 1
+        },
         "blur.tmx": {
             "expandedGroupLayers": [
                 5
@@ -35,6 +64,7 @@
     ],
     "project": "blur.tiled-project",
     "recentFiles": [
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx",
         "blur.tmx",
         "test.tmx"
     ]
