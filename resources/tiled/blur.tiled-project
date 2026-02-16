@@ -13,6 +13,20 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
+            "id": 3,
+            "members": [
+            ],
+            "name": "CompositeLayer",
+            "type": "class",
+            "useAs": [
+                "property",
+                "layer",
+                "project"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "drawFill": true,
             "id": 2,
             "members": [
             ],
@@ -27,14 +41,20 @@
         {
             "color": "#ffa0a0a4",
             "drawFill": true,
-            "id": 3,
+            "id": 4,
             "members": [
             ],
-            "name": "CompositeLayer",
+            "name": "CompoundLayer",
             "type": "class",
             "useAs": [
                 "property",
+                "map",
                 "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset",
                 "project"
             ]
         }

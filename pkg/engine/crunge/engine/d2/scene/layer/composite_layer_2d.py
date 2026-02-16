@@ -18,7 +18,7 @@ class CompositeLayer2D(CompositeLayer):
             current_viewport.render_options,
         )
         self.camera = Camera2D()
-        self.renderer = Renderer2D(self.viewport, camera=self.camera)
+        self.renderer = Renderer2D(self.viewport, camera=self.camera, clear=False)
 
     def _render(self):
         current_viewport = Viewport.get_current()
@@ -27,11 +27,12 @@ class CompositeLayer2D(CompositeLayer):
         self.camera.position = current_renderer.camera_2d.position
         self.camera.zoom = current_renderer.camera_2d.zoom
 
-        with self.viewport.frame():
-            with self.renderer.frame():
-                self.renderer.render(self)
-
         def do_composite():
+
+            with self.viewport.frame():
+                with self.renderer.frame():
+                    self.renderer.render(self)
+
             self.compositor.composite(
                 current_renderer.encoder,
                 src_view=self.viewport.color_texture_view,

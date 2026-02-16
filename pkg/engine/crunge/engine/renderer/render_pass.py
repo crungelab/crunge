@@ -16,10 +16,10 @@ if TYPE_CHECKING:
 T = TypeVar("T", bound="Renderer")
 
 class RenderPass(Generic[T], Base):
-    def __init__(self, viewport: Viewport, first: bool = False) -> None:
+    def __init__(self, viewport: Viewport, clear: bool = False) -> None:
         super().__init__()
         self.viewport = viewport
-        self.first = first
+        self.clear = clear
         self.pass_enc: wgpu.RenderPassEncoder = None
 
     def begin(self, encoder: wgpu.CommandEncoder):
@@ -31,7 +31,7 @@ class RenderPass(Generic[T], Base):
 
 class DefaultRenderPass(RenderPass["Renderer"]):
     def __init__(self, viewport: Viewport) -> None:
-        super().__init__(viewport, first=True)
+        super().__init__(viewport, clear=True)
 
     def begin(self, encoder: wgpu.CommandEncoder):
         if self.viewport.render_options.use_msaa:

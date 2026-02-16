@@ -12,12 +12,13 @@ from .task import OpaquePhase3D, TransmissivePhase3D
 
 class Renderer3D(Renderer):
     def __init__(
-        self, viewport: Viewport, camera: Camera3D = None, lighting: Lighting3D = None
+        self, viewport: Viewport, camera: Camera3D = None, lighting: Lighting3D = None, clear: bool = True
     ) -> None:
-        super().__init__(viewport, camera_3d=camera, lighting_3d=lighting)
+        super().__init__(viewport, camera_3d=camera, lighting_3d=lighting, clear=clear)
 
     def create_render_pass(self):
-        return RenderPass3D(self.viewport, first=True)
+        clear = self.first_pass and self.clear
+        return RenderPass3D(self.viewport, clear=clear)
     
     def create_plan(self) -> None:
         phases = [

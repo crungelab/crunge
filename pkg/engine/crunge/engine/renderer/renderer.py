@@ -31,6 +31,7 @@ class Renderer(Base):
         camera_2d: "Camera2D" = None,
         camera_3d: "Camera3D" = None,
         lighting_3d: "Lighting3D" = None,
+        clear: bool = True
     ) -> None:
         super().__init__()
         self.viewport = viewport
@@ -46,8 +47,11 @@ class Renderer(Base):
 
         self.current_render_pass: RenderPass = None
         self.encoder: wgpu.CommandEncoder = None
+        self.owns_encoder: bool = True
 
         self.plan: "RenderPlan" = None
+        self.first_pass: bool = True
+        self.clear: bool = clear
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
@@ -83,12 +87,32 @@ class Renderer(Base):
             prev_renderer.make_current()
 
     @contextlib.contextmanager
+    def frame(self, encoder: wgpu.CommandEncoder = None):
+        if encoder is not None:
+            self.encoder = encoder
+            self.owns_encoder = False
+        else:
+            self.encoder = self.device.create_command_encoder()
+        with self.use():
+            self.first_pass = True
+            #self.encoder = self.device.create_command_encoder()
+            yield self
+            if self.owns_encoder:
+                command_buffer = self.encoder.finish()
+                self.queue.submit([command_buffer])
+            #self.first_pass = False
+
+    """
+    @contextlib.contextmanager
     def frame(self):
         with self.use():
+            self.first_pass = True
             self.encoder = self.device.create_command_encoder()
             yield self
             command_buffer = self.encoder.finish()
             self.queue.submit([command_buffer])
+            #self.first_pass = False
+    """
 
     @contextlib.contextmanager
     def render_pass(
@@ -117,6 +141,7 @@ class Renderer(Base):
 
     def end_pass(self):
         self.current_render_pass.end(self.encoder)
+        self.first_pass = False
 
     def create_plan(self) -> None:
         pass

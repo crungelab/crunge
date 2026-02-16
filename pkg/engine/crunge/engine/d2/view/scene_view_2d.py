@@ -4,6 +4,7 @@ from ..scene.scene_2d import Scene2D
 from .view_2d import View2D
 from ..renderer import Renderer2D
 
+
 class SceneView2D(View2D):
     renderer: Renderer2D
 
@@ -13,6 +14,7 @@ class SceneView2D(View2D):
 
     def create_renderer(self) -> None:
         self.renderer = Renderer2D(viewport=self.viewport, camera=self.camera)
+        #self.renderer = Renderer2D(viewport=self.viewport, camera=self.camera, clear=False)
 
     def _draw(self):
         with self.renderer.frame():

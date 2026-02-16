@@ -12,37 +12,40 @@ from ...renderer.render_pass import RenderPass
 if TYPE_CHECKING:
     from .renderer_3d import Renderer3D
 
+
 class RenderPass3D(RenderPass["Renderer3D"]):
-    def __init__(self, viewport: Viewport, first: bool = False) -> None:
-        super().__init__(viewport=viewport, first=first)
+    def __init__(self, viewport: Viewport, clear: bool = False) -> None:
+        super().__init__(viewport=viewport, clear=clear)
 
     def begin(self, encoder: wgpu.CommandEncoder):
+        load_op = wgpu.LoadOp.CLEAR if self.clear else wgpu.LoadOp.LOAD
+        clear_value=wgpu.Color(0, 0, 0, 1)
         if self.viewport.render_options.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.msaa_texture_view,
                     resolve_target=self.viewport.color_texture_view,
-                    #load_op=wgpu.LoadOp.CLEAR,
-                    load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
+                    load_op=load_op,
                     store_op=wgpu.StoreOp.STORE,
-                    clear_value=wgpu.Color(0, 0, 0, 1),
+                    clear_value=clear_value,
                 )
             ]
         else:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.color_texture_view,
-                    #load_op=wgpu.LoadOp.CLEAR,
-                    load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
+                    # load_op=wgpu.LoadOp.CLEAR,
+                    load_op=load_op,
                     store_op=wgpu.StoreOp.STORE,
-                    clear_value=wgpu.Color(0, 0, 0, 1),
+                    clear_value=clear_value,
                 )
             ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
             view=self.viewport.depth_stencil_texture_view,
-            #depth_load_op=wgpu.LoadOp.CLEAR,
-            depth_load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
+            # depth_load_op=wgpu.LoadOp.CLEAR,
+            #depth_load_op=wgpu.LoadOp.CLEAR if self.clear else wgpu.LoadOp.LOAD,
+            depth_load_op=load_op,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,
         )
@@ -53,6 +56,4 @@ class RenderPass3D(RenderPass["Renderer3D"]):
             depth_stencil_attachment=depth_stencil_attachment,
         )
 
-        self.pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(
-            renderpass
-        )
+        self.pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)

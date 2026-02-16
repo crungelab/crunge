@@ -3,6 +3,7 @@ from loguru import logger
 from crunge import tmx
 from crunge.engine.scene.layer.layer_group import LayerGroup
 from crunge.engine.d2.scene.layer.composite_layer_2d import CompositeLayer2D
+from crunge.engine.d2.scene.layer.compound_layer_2d import CompoundLayer2D
 
 from ..tiled_builder import TiledBuilder
 
@@ -13,6 +14,8 @@ class LayerGroupBuilder(TiledBuilder):
         layer: LayerGroup = None
         if kind == "CompositeLayer":
             layer = CompositeLayer2D(name=tmx_layer.name)
+        elif kind == "CompoundLayer":
+            layer = CompoundLayer2D(name=tmx_layer.name)
         else:
             layer = LayerGroup(name=tmx_layer.name)
         self.context.current_layer_group.add_layer(layer)
