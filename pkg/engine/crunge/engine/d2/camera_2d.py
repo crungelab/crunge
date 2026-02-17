@@ -1,3 +1,4 @@
+import contextlib
 from ctypes import sizeof
 
 import glm
@@ -11,6 +12,7 @@ from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport, ViewportListener
 from ..binding import SceneBindGroup
+from .renderer import Renderer2D
 
 from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
@@ -28,7 +30,9 @@ class Camera2D(Node2D, ViewportListener):
         self,
         position=glm.vec2(0.0, 0.0),
         zoom=1.0,
-        leader: "Camera2D" = None
+        leader: "Camera2D" = None,
+        parallax_factor=glm.vec2(1.0, 1.0),
+        parallax_origin=glm.vec2(0.0, 0.0),
     ):
         super().__init__(position)
 
@@ -40,7 +44,8 @@ class Camera2D(Node2D, ViewportListener):
             leader.add_follower(self)
 
         self.followers: list["Camera2D"] = []
-
+        self.parallax_factor = parallax_factor
+        self.parallax_origin = parallax_origin
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
 
@@ -56,11 +61,21 @@ class Camera2D(Node2D, ViewportListener):
         # self.create_bind_group()
         self.bind_group: SceneBindGroup = None
 
-        #super().__init__(position)
+        # super().__init__(position)
 
     def _create(self):
         super()._create()
         self.create_bind_group()
+
+    @contextlib.contextmanager
+    def use(self):
+        current_renderer = Renderer2D.get_current()
+        prev_camera = current_renderer.camera_2d
+        current_renderer.camera_2d = self
+        self.bind(current_renderer.pass_enc)
+        yield self
+        current_renderer.camera_2d = prev_camera
+        prev_camera.bind(current_renderer.pass_enc)
 
     def on_position(self):
         for follower in self.followers:
@@ -116,8 +131,14 @@ class Camera2D(Node2D, ViewportListener):
     def remove_follower(self, follower: "Camera2D"):
         self.followers.remove(follower)
 
+    """
     def on_leader_position(self, position: glm.vec2):
         self.position = position
+    """
+
+    def on_leader_position(self, position: glm.vec2):
+        #self.position = position * self.parallax_factor
+        self.position = self.parallax_origin + (position - self.parallax_origin) * self.parallax_factor
 
     def on_leader_zoom(self, zoom: float):
         logger.debug(f"Camera2D: on_leader_zoom: {zoom}")

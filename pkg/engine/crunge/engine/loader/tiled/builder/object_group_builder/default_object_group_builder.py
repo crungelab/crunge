@@ -34,4 +34,5 @@ class DefaultObjectGroupBuilder(ObjectGroupBuilder):
         self.context.push_layer(layer)
         super().build(tmx_layer)
         self.context.pop_layer()
+        layer = self.maybe_wrap(tmx_layer, layer)
         self.context.current_layer_group.add_layer(layer)

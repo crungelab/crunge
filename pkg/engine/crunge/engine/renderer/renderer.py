@@ -86,6 +86,17 @@ class Renderer(Base):
         if prev_renderer is not None:
             prev_renderer.make_current()
 
+    """
+    @contextlib.contextmanager
+    def use_camera_2d(self, camera: Camera2D):
+        prev_camera = self.camera_2d
+        self.camera_2d = camera
+        camera.bind(self.pass_enc)
+        yield self
+        self.camera_2d = prev_camera
+        prev_camera.bind(self.pass_enc)
+    """
+    
     @contextlib.contextmanager
     def frame(self, encoder: wgpu.CommandEncoder = None):
         if encoder is not None:
