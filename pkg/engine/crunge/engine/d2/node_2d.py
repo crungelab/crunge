@@ -53,10 +53,16 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @position.setter
     def position(self, value: glm.vec2):
+        """
         if value == self._position:
             return
+        """
         self._position = value
         self.update_matrix()
+        self.on_position()
+
+    def on_position(self):
+        pass
 
     @property
     def x(self):
@@ -66,7 +72,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def x(self, value: float):
         self._position.x = value
         self.update_matrix()
-
+        self.on_position()
     @property
     def y(self):
         return self._position.y
@@ -75,6 +81,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def y(self, value: float):
         self._position.y = value
         self.update_matrix()
+        self.on_position()
 
     @property
     def depth(self):

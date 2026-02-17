@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from glm import ivec2
 
 from crunge.engine.scene.layer.composite_layer import CompositeLayer
@@ -10,54 +8,35 @@ from crunge.engine.compositor import Compositor
 from crunge.engine.renderer.task.composite_phase import CompositeItem, CompositePhase
 
 
-@dataclass
-class CompositeLayer2DMemo:
-    viewport: OffscreenViewport
-    camera: Camera2D
-    renderer: Renderer2D
-
-
 class CompositeLayer2D(CompositeLayer):
     def __init__(self, name: str):
         super().__init__(name)
         self.compositor = Compositor()
-        self._memo: CompositeLayer2DMemo = None
-
-    @property
-    def memo(self):
         current_viewport = Viewport.get_current()
-        current_renderer = Renderer2D.get_current()
-        if self._memo is None:
-            viewport = OffscreenViewport(
-                ivec2(current_viewport.width, current_viewport.height),
-                current_viewport.render_options,
-            )
-
-            camera=Camera2D(leader=current_renderer.camera_2d)
-            renderer=Renderer2D(viewport, camera=camera, clear=False)
-
-            self._memo = CompositeLayer2DMemo(
-                viewport=viewport,
-                camera=camera,
-                renderer=renderer
-            )
-        return self._memo
+        self.viewport = OffscreenViewport(
+            ivec2(current_viewport.width, current_viewport.height),
+            current_viewport.render_options,
+        )
+        self.camera = Camera2D()
+        self.renderer = Renderer2D(self.viewport, camera=self.camera, clear=False)
 
     def _render(self):
         current_viewport = Viewport.get_current()
         current_renderer = Renderer2D.get_current()
 
+        self.camera.position = current_renderer.camera_2d.position
+        self.camera.zoom = current_renderer.camera_2d.zoom
+
         def do_composite():
-            memo = self.memo
-            with memo.viewport.frame():
-                with memo.renderer.frame(encoder=current_renderer.encoder):
-                    memo.renderer.render(self)
+
+            with self.viewport.frame():
+                with self.renderer.frame(encoder=current_renderer.encoder):
+                    self.renderer.render(self)
 
             self.compositor.composite(
                 current_renderer.encoder,
-                src_view=memo.viewport.color_texture_view,
+                src_view=self.viewport.color_texture_view,
                 dst_view=current_viewport.color_texture_view,
-                is_premultiplied=True
             )
 
         phase: CompositePhase = current_renderer.plan.get_phase(CompositePhase)

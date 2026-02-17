@@ -28,8 +28,19 @@ class Camera2D(Node2D, ViewportListener):
         self,
         position=glm.vec2(0.0, 0.0),
         zoom=1.0,
+        leader: "Camera2D" = None
     ):
+        super().__init__(position)
+
         self._zoom = zoom
+
+        self.leader = leader
+        if leader is not None:
+            self._zoom = leader.zoom
+            leader.add_follower(self)
+
+        self.followers: list["Camera2D"] = []
+
         self.uniform_buffer: wgpu.Buffer = None
         self.uniform_buffer_size: int = 0
 
@@ -42,14 +53,18 @@ class Camera2D(Node2D, ViewportListener):
         self.viewport_size = glm.vec2(0, 0)
 
         self.create_buffers()
-        #self.create_bind_group()
+        # self.create_bind_group()
         self.bind_group: SceneBindGroup = None
 
-        super().__init__(position)
+        #super().__init__(position)
 
     def _create(self):
         super()._create()
         self.create_bind_group()
+
+    def on_position(self):
+        for follower in self.followers:
+            follower.on_leader_position(self.position)
 
     @property
     def viewport(self):
@@ -70,6 +85,11 @@ class Camera2D(Node2D, ViewportListener):
     def zoom(self, value: float):
         self._zoom = value
         self.update_matrix()
+        self.on_zoom()
+
+    def on_zoom(self):
+        for follower in self.followers:
+            follower.on_leader_zoom(self.zoom)
 
     def create_buffers(self):
         # Uniform Buffers
@@ -90,13 +110,19 @@ class Camera2D(Node2D, ViewportListener):
             self.viewport.snapshot_sampler,
         )
 
-    '''
-    def create_bind_group(self):
-        self.bind_group = CameraBindGroup(
-            self.uniform_buffer,
-            self.uniform_buffer_size,
-        )
-    '''
+    def add_follower(self, follower: "Camera2D"):
+        self.followers.append(follower)
+
+    def remove_follower(self, follower: "Camera2D"):
+        self.followers.remove(follower)
+
+    def on_leader_position(self, position: glm.vec2):
+        self.position = position
+
+    def on_leader_zoom(self, zoom: float):
+        logger.debug(f"Camera2D: on_leader_zoom: {zoom}")
+        self.zoom = zoom
+
     def on_viewport_size(self, size: glm.ivec2):
         self.viewport_size = glm.vec2(size.x, size.y)
         logger.debug(f"Camera2D: on_viewport_size: {size}")
@@ -129,7 +155,6 @@ class Camera2D(Node2D, ViewportListener):
         camera_uniform = CameraUniform()
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
-        #camera_uniform.viewport = cast_vec2(self.viewport_size)
         camera_uniform.position = cast_vec3(
             glm.vec3(self.position.x, self.position.y, 0)
         )

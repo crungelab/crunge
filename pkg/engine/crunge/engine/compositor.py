@@ -154,7 +154,7 @@ class Compositor(Base):
             blend = wgpu.BlendState(
                 color=wgpu.BlendComponent(
                     operation=wgpu.BlendOperation.ADD,
-                    src_factor=wgpu.BlendFactor.SRC_ALPHA,
+                    src_factor=wgpu.BlendFactor.ONE,
                     dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
                 ),
                 alpha=wgpu.BlendComponent(

@@ -11,7 +11,7 @@ from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 from ..demo import Demo
 
 
-class TiledTestDemo(Demo):
+class CompoundKawaseBlurDemo(Demo):
     def reset(self):
         super().reset()
         self.create_map()
@@ -45,7 +45,7 @@ class TiledTestDemo(Demo):
 
 
 def main():
-    TiledTestDemo().run()
+    CompoundKawaseBlurDemo().run()
 
 
 if __name__ == "__main__":

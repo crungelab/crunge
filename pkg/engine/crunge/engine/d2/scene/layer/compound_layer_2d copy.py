@@ -19,6 +19,9 @@ class CompoundLayer2D(CompoundLayer):
     def __init__(self, name: str):
         super().__init__(name)
         self._memo: CompoundLayer2DMemo = None
+        # self.camera = Camera2D()
+        #current_viewport = Viewport.get_current()
+        #self.renderer = Renderer2D(current_viewport, camera=self.camera, clear=False)
 
     @property
     def memo(self):
@@ -36,6 +39,9 @@ class CompoundLayer2D(CompoundLayer):
 
     def _render(self):
         current_renderer = Renderer2D.get_current()
+
+        # self.camera.position = current_renderer.camera_2d.position
+        # self.camera.zoom = current_renderer.camera_2d.zoom
 
         def do_render():
             renderer = self.memo.renderer
