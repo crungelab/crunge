@@ -16,12 +16,20 @@ class BallsDemo(PhysicsDemo):
         self.last_mouse = glm.vec2()
         self.create_floor()
 
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+        x, y = event.x, event.y
+        self.last_mouse = glm.vec2(x, y)
+
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        super().on_mouse_button(event)  # right-click drag handled here
-        if event.button == 1 and event.down:
-            world = self.camera.unproject(glm.vec2(event.x, event.y))
-            logger.debug(f"Creating box at {world}")
-            self.create_ball(world)
+        super().on_mouse_button(event)
+        button = event.button
+        down = event.down
+        if button == 1 and down:
+            mouse_vec = glm.vec2(event.x, event.y)
+            world_vec = self.camera.unproject(mouse_vec)
+            x, y = world_vec.x, world_vec.y
+            logger.debug(f"Creating ball at {x}, {y}")
+            self.create_ball(world_vec)
 
     def create_ball(self, position):
         self.scene.attach(Ball(position))

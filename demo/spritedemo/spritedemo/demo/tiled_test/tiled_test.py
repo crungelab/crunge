@@ -8,10 +8,10 @@ from crunge.engine.loader.tiled.builder import BuilderContext
 from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 
-from ..demo import Demo
+from ..tiled_demo import TiledDemo
 
 
-class TiledTestDemo(Demo):
+class TiledTestDemo(TiledDemo):
     def reset(self):
         super().reset()
         self.create_map()

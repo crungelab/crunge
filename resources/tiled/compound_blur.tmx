@@ -3,11 +3,11 @@
  <tileset firstgid="1" source="tiles.tsx"/>
  <tileset firstgid="157" source="stickers.tsx"/>
  <group id="5" name="Blur Group" class="CompoundLayer">
-  <objectgroup id="4" name="Blur Layer" class="KawaseBlurLayer"/>
   <objectgroup id="2" name="Object Layer 1">
    <object id="1" gid="168" x="80.7137" y="2381.87" width="128" height="192" rotation="45"/>
    <object id="2" gid="168" x="-21.3333" y="2433.33" width="128" height="192"/>
   </objectgroup>
+  <objectgroup id="4" name="Blur Layer" class="KawaseBlurLayer"/>
  </group>
  <objectgroup id="8" name="Blocks">
   <object id="3" gid="2" x="363.478" y="2223.04" width="128" height="128"/>

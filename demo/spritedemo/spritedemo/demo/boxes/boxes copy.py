@@ -13,25 +13,24 @@ from .floor import Floor
 class BoxesDemo(PhysicsDemo):
     def reset(self):
         super().reset()
+        self.last_mouse = glm.vec2()
         self.create_floor()
 
-    # ------------------------------------------------------------------
-    # Input — extend base drag behaviour with box creation
-    # ------------------------------------------------------------------
-
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
-        super().on_mouse_motion(event)
+        x, y = event.x, event.y
+        self.last_mouse = glm.vec2(x, y)
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        super().on_mouse_button(event)  # right-click drag handled here
-        if event.button == 1 and event.down:
-            world = self.camera.unproject(glm.vec2(event.x, event.y))
-            logger.debug(f"Creating box at {world}")
-            self.create_box(world)
+        super().on_mouse_button(event)
+        button = event.button
+        down = event.down
+        if button == 1 and down:
+            mouse_vec = glm.vec2(event.x, event.y)
+            world_vec = self.camera.unproject(mouse_vec)
+            x, y = world_vec.x, world_vec.y
 
-    # ------------------------------------------------------------------
-    # Scene helpers
-    # ------------------------------------------------------------------
+            logger.debug(f"Creating box at {x}, {y}")
+            self.create_box(world_vec)
 
     def create_box(self, position):
         self.scene.attach(Box(position))
@@ -44,14 +43,9 @@ class BoxesDemo(PhysicsDemo):
         floor.create()
         self.scene.attach(floor)
 
-    # ------------------------------------------------------------------
-    # UI & update
-    # ------------------------------------------------------------------
-
     def _draw(self):
         imgui.begin("Boxes Demo")
-        imgui.text("Click empty space to create boxes")
-        imgui.text("Click & drag boxes to move them")
+        imgui.text("Click to create boxes")
 
         self.draw_stats()
         self.draw_physics_options()

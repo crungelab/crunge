@@ -500,15 +500,10 @@ class KawaseBlurVu(FilterVu):
         rp.end()
 
     def _draw(self):
-        current_renderer = Renderer.get_current()
-        encoder: wgpu.CommandEncoder = current_renderer.encoder
-
-        current_renderer.end_pass()
+        encoder: wgpu.CommandEncoder = Renderer.get_current().encoder
 
         self._copy_from_viewport(encoder)
         self._blur_ping_pong(encoder)
         self._composite_to_viewport(encoder)
 
         super()._draw()
-
-        current_renderer.begin_pass()

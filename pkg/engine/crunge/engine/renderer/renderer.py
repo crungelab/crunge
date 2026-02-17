@@ -85,17 +85,6 @@ class Renderer(Base):
         yield self
         if prev_renderer is not None:
             prev_renderer.make_current()
-
-    """
-    @contextlib.contextmanager
-    def use_camera_2d(self, camera: Camera2D):
-        prev_camera = self.camera_2d
-        self.camera_2d = camera
-        camera.bind(self.pass_enc)
-        yield self
-        self.camera_2d = prev_camera
-        prev_camera.bind(self.pass_enc)
-    """
     
     @contextlib.contextmanager
     def frame(self, encoder: wgpu.CommandEncoder = None):
@@ -103,14 +92,18 @@ class Renderer(Base):
             self.encoder = encoder
             self.owns_encoder = False
         else:
-            self.encoder = self.device.create_command_encoder()
+            #self.encoder = self.device.create_command_encoder()
+            self.begin_encoder()
         with self.use():
             self.first_pass = True
             #self.encoder = self.device.create_command_encoder()
             yield self
+            """
             if self.owns_encoder:
                 command_buffer = self.encoder.finish()
                 self.queue.submit([command_buffer])
+            """
+            self.end_encoder()
             #self.first_pass = False
 
     """
@@ -133,6 +126,14 @@ class Renderer(Base):
             self.begin_pass(render_pass)
             yield self.current_render_pass
             self.end_pass()
+
+    def begin_encoder(self):
+        self.encoder = self.device.create_command_encoder()
+
+    def end_encoder(self):
+        if self.owns_encoder:
+            command_buffer = self.encoder.finish()
+            self.queue.submit([command_buffer])
 
     def begin_pass(self, render_pass: RenderPass = None):
         if render_pass is not None:

@@ -8,7 +8,7 @@ from crunge.engine import Controller
 CAMERA_MOVEMENT_SPEED = 500.0
 LERP_SPEED = 10.0  # Higher = snappier, Lower = smoother/floatier
 
-class DemoController(Controller):
+class ScrollingDemoController(Controller):
     def __init__(self, camera: Camera2D):
         super().__init__()
         self.camera = camera

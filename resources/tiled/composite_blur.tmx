@@ -4,11 +4,11 @@
  <tileset firstgid="157" source="stickers.tsx"/>
  <tileset firstgid="219" source="../sticker-knight/map/objs.tsx"/>
  <group id="5" name="Blur Group" class="CompositeLayer">
-  <objectgroup id="4" name="Blur Layer" class="KawaseBlurLayer"/>
   <objectgroup id="2" name="Object Layer 1">
    <object id="1" gid="168" x="80.7137" y="2381.87" width="128" height="192" rotation="45"/>
    <object id="2" gid="168" x="-21.3333" y="2433.33" width="128" height="192"/>
   </objectgroup>
+  <objectgroup id="4" name="Blur Layer" class="KawaseBlurLayer"/>
  </group>
  <objectgroup id="8" name="Object Layer 3">
   <object id="3" gid="219" x="318.28" y="2556.51" width="160" height="192"/>

@@ -17,7 +17,7 @@
             "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 6402,
+                "x": 6404,
                 "y": 672
             }
         },
@@ -31,43 +31,44 @@
             "scaleInDock": 1
         },
         "/home/kurt/Dev/cave-mage/cave_mage/resources/tiles.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1
         },
         "blur.tmx": {
             "expandedGroupLayers": [
-                5,
                 7,
-                6
+                6,
+                5
             ],
-            "scale": 0.28029947916666664,
-            "selectedLayer": 2,
+            "scale": 0.33,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 2060.296371997956,
-                "y": 1275.4215636177823
+                "x": 730.3030303030304,
+                "y": 1442.4242424242423
             }
         },
         "composite_blur.tmx": {
             "expandedGroupLayers": [
-                5,
-                7
+                7,
+                5
             ],
             "scale": 0.18430989583333332,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1915.2525609325328,
-                "y": 1283.1649593783113
+                "x": 1915.252560932533,
+                "y": 1280.4521370540442
             }
         },
         "compound_blur.tmx": {
             "expandedGroupLayers": [
-                5,
-                7
+                7,
+                5
             ],
             "scale": 0.18480468749999998,
-            "selectedLayer": 4,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 1915.535827520609,
-                "y": 1285.1405622489963
+                "x": 1915.5358275206095,
+                "y": 1287.8461213274152
             }
         },
         "stickers.tsx": {

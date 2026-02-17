@@ -9,31 +9,44 @@ from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.d2.physics import DynamicPhysicsEngine
 from crunge.engine.d2.physics.draw_options import DrawOptions
 
-from ..physics_demo import PhysicsDemo
+from ..demo import Demo
 
 from .thing import Thing
 from .floor import Floor
 
 
-class ThingsDemo(PhysicsDemo):
+class ThingsDemo(Demo):
     def reset(self):
         super().reset()
+        self.debug_draw_enabled = False
+        self.draw_options = DrawOptions(self.view.scratch)
+
         self.last_mouse = glm.vec2()
+        self.physics_engine = DynamicPhysicsEngine()
+        self.physics_engine.create()
         self.create_floor()
 
-        atlas = self.atlas = XmlSpriteAtlasLoader(
-            sprite_builder=CollidableSpriteBuilder()
-        ).load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
+        atlas = self.atlas = XmlSpriteAtlasLoader(sprite_builder=CollidableSpriteBuilder()).load(
+            ":resources:/platformer/Spritesheets/spritesheet_tiles.xml"
+        )
         logger.debug(f"atlas: {atlas}")
 
         self.sprite = atlas.get("bomb.png")
 
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+        x, y = event.x, event.y
+        self.last_mouse = glm.vec2(x, y)
+
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        super().on_mouse_button(event)  # right-click drag handled here
-        if event.button == 1 and event.down:
-            world = self.camera.unproject(glm.vec2(event.x, event.y))
-            logger.debug(f"Creating box at {world}")
-            self.create_thing(world)
+        super().on_mouse_button(event)
+        button = event.button
+        down = event.down
+        if button == 1 and down:
+            mouse_vec = glm.vec2(event.x, event.y)
+            world_vec = self.camera.unproject(mouse_vec)
+            x, y = world_vec.x, world_vec.y
+            logger.debug(f"Creating thing at {x}, {y}")
+            self.create_thing(world_vec)
 
     def create_thing(self, position):
         thing = Thing(position, self.sprite)
@@ -54,9 +67,7 @@ class ThingsDemo(PhysicsDemo):
 
         self.draw_stats()
 
-        _, self.debug_draw_enabled = imgui.checkbox(
-            "Debug Draw", self.debug_draw_enabled
-        )
+        _, self.debug_draw_enabled = imgui.checkbox("Debug Draw", self.debug_draw_enabled)
 
         if imgui.button("Reset"):
             self.reset()
