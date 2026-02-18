@@ -23,28 +23,21 @@ class DrawOptions(pymunk.SpaceDebugDrawOptions):
         self.shape_kinematic_color = colors.YELLOW
 
     def draw_circle(self, pos, angle, radius, outline_color, fill_color):
-        #pass
         #logger.debug(f"pos: {pos}, angle: {angle}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
         #self.scratch.draw_circle(pos, radius, outline_color, fill_color)
         self.scratch.draw_circle(pos, radius, color=outline_color)
 
     def draw_segment(self, a, b, color):
-        self.scratch.draw_line(a, b, color)
+        self.scratch.draw_segment(a, b, color)
 
     def draw_fat_segment(self, a, b, radius, outline_color, fill_color):
         #pass
-        logger.debug(f"a: {a}, b: {b}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
+        #logger.debug(f"a: {a}, b: {b}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
+        self.scratch.draw_fat_segment(a, b, radius, color=outline_color)
 
     def draw_polygon(self, verts, radius, outline_color, fill_color):
-        #pass
         #logger.debug(f"verts: {verts}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
-        #self.scratch.draw_polygon(verts, outline_color, fill_color)
-        '''
-        for i in range(len(verts) - 1):
-            self.draw_segment(verts[i], verts[i + 1], outline_color)
-        '''
         self.scratch.draw_polygon(verts, outline_color)
-        #self.scratch.draw_line(verts[-1], verts[0], outline_color)
 
     def draw_dot(self, size, pos, color):
         #pass

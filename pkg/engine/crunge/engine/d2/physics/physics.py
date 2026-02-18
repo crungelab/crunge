@@ -1,8 +1,18 @@
+from enum import Enum
+
 import glm
 
 from ...base import Base
 
 from .constants import *
+
+
+class MotionState(Enum):
+    GROUNDED = 0
+    JUMPING = 1
+    CLIMBING = 2
+    FALLING = 3
+    MOUNTED = 4
 
 
 class Physics(Base):

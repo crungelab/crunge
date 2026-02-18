@@ -30,12 +30,22 @@ class ScratchOverlay(Overlay):
     def add_call(self, call):
         self.draw_calls.append(call)
 
-    def draw_line(self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE):
+    def draw_segment(self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE):
         # logger.debug(f"DemoView.draw_line({begin}, {end}, {color})")
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
             paint.set_color(rgba_tuple_to_argb_int(color))
             canvas.draw_line(begin[0], begin[1], end[0], end[1], paint)
+
+        self.add_call(draw)
+
+    def draw_fat_segment(self, a: glm.vec2, b: glm.vec2, radius: float, color=colors.WHITE):
+        def draw(canvas: skia.Canvas):
+            paint = skia.Paint()
+            paint.set_color(rgba_tuple_to_argb_int(color))
+            paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
+            paint.set_stroke_width(radius * 2)
+            canvas.draw_line(a[0], a[1], b[0], b[1], paint)
 
         self.add_call(draw)
 

@@ -1,5 +1,4 @@
 import math
-from enum import Enum
 
 from loguru import logger
 import glm
@@ -7,13 +6,8 @@ import pymunk
 
 from .constants import *
 from . import Physics, PhysicsEngine2D
-
-class KinematicState(Enum):
-    GROUNDED = 0
-    JUMPING = 1
-    CLIMBING = 2
-    FALLING = 3
-    MOUNTED = 4
+from .collision import CollisionHandler
+from .physics import MotionState
 
 
 class KinematicPhysics(Physics):
@@ -30,26 +24,10 @@ class KinematicPhysics(Physics):
         return body
 
 
-class CollisionHandler:
-    def __init__(self, space: pymunk.Space, collision_type_a: int, collision_type_b: int):
-        space.on_collision(
-            collision_type_a, collision_type_b, begin=self.begin, pre_solve=self.pre_solve,
-            post_solve=self.post_solve, separate=self.separate
-        )
-
-    def begin(self, arbiter, space, data):
-        return True
-
-    def pre_solve(self, arbiter, space, data):
-        pass
-
-    def post_solve(self, arbiter, space, data):
-        pass
-
+class KinematicCollisionHandler(CollisionHandler):
     def separate(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
-        #kshape.body.node.grounded = False
-        kshape.body.node.kinematic_state = KinematicState.FALLING
+        kshape.body.node.motion_state = MotionState.FALLING
 
 
 class KinematicStaticHandler(CollisionHandler):
@@ -59,13 +37,13 @@ class KinematicStaticHandler(CollisionHandler):
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
-        kbody.node.kinematic_state = KinematicState.GROUNDED
-        
+        kbody.node.motion_state = MotionState.GROUNDED
+
         velocity = kbody.velocity
-        
+
         if velocity[1] < 0:
             velocity = pymunk.Vec2d(velocity[0], 0)
-            
+
         kbody.velocity = velocity
 
         n = -arbiter.contact_point_set.normal
@@ -74,15 +52,14 @@ class KinematicStaticHandler(CollisionHandler):
         return True
 
 
-class KinematicKinematicHandler(CollisionHandler):
+class KinematicKinematicHandler(KinematicCollisionHandler):
     def __init__(self, space: pymunk.Space):
         super().__init__(space, PT_KINEMATIC, PT_KINEMATIC)
 
     def pre_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
-        #kbody.node.grounded = True
-        kbody.node.kinematic_state = KinematicState.GROUNDED
+        kbody.node.motion_state = MotionState.GROUNDED
         velocity = kbody.velocity
         if velocity[1] < 0:
             velocity = pymunk.Vec2d(velocity[0], 0)
@@ -94,16 +71,16 @@ class KinematicKinematicHandler(CollisionHandler):
         return True
 
 
-class KinematicDynamicHandler(CollisionHandler):
+class KinematicDynamicHandler(KinematicCollisionHandler):
     def __init__(self, space: pymunk.Space):
         super().__init__(space, PT_KINEMATIC, PT_DYNAMIC)
 
-    #def pre_solve(self, arbiter, space, data):
+    # def pre_solve(self, arbiter, space, data):
     def post_solve(self, arbiter, space, data):
         kshape = arbiter.shapes[0]
         kbody = kshape.body
         knode = kbody.node
-        knode.kinematic_state = KinematicState.GROUNDED
+        knode.motion_state = MotionState.GROUNDED
 
         velocity = kbody.velocity
 
@@ -136,5 +113,5 @@ class KinematicPhysicsEngine(PhysicsEngine2D):
     def _create(self):
         super()._create()
         self.kinematic_static_handler = KinematicStaticHandler(self.space)
-        self.kinematic_static_handler = KinematicKinematicHandler(self.space)
+        self.kinematic_kinematic_handler = KinematicKinematicHandler(self.space)
         self.kinematic_dynamic_handler = KinematicDynamicHandler(self.space)

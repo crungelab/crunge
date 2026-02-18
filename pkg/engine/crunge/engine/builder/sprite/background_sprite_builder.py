@@ -3,7 +3,6 @@ import glm
 
 from ... import colors
 from ...math import Rect2i
-from ...resource.sampler import Sampler
 from ...resource.texture import ImageTexture
 from ...d2.sprite import Sprite
 from ...d2.sprite.sprite_sampler import RepeatingSpriteSampler

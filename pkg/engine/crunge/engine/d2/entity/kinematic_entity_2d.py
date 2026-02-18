@@ -5,7 +5,7 @@ from ..physics.constants import DEFAULT_MASS, GRAVITY
 
 from .. import physics
 from ..physics import geom
-from ..physics.kinematic import KinematicState
+from ..physics.physics import MotionState
 from .physics_entity_2d import PhysicsEntity2D
 
 
@@ -22,27 +22,6 @@ class KinematicEntity2D(PhysicsEntity2D):
         geom=geom.HullGeom(),
     ):
         super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
-        self.kinematic_state = KinematicState.GROUNDED
-
-    @property
-    def grounded(self):
-        return self.kinematic_state == KinematicState.GROUNDED
-
-    @property
-    def jumping(self):
-        return self.kinematic_state == KinematicState.JUMPING
-
-    @property
-    def climbing(self):
-        return self.kinematic_state == KinematicState.CLIMBING
-
-    @property
-    def falling(self):
-        return self.kinematic_state == KinematicState.FALLING
-
-    @property
-    def mounted(self):
-        return self.kinematic_state == KinematicState.MOUNTED
 
     def update(self, delta_time=1 / 60):
         super().update(delta_time)

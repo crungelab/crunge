@@ -7,6 +7,7 @@ import pymunk
 from crunge.engine.d2 import Vu2D
 
 from ..physics.constants import DEFAULT_MASS, GRAVITY
+from ..physics.physics import MotionState
 from ..physics import globe
 
 from .entity_2d import Entity2D
@@ -33,11 +34,32 @@ class PhysicsEntity2D(Entity2D):
         self._physics = physics
         self.geom = geom
         self.mass = DEFAULT_MASS
+        self.motion_state = MotionState.GROUNDED
+
+    @property
+    def grounded(self):
+        return self.motion_state == MotionState.GROUNDED
+
+    @property
+    def jumping(self):
+        return self.motion_state == MotionState.JUMPING
+
+    @property
+    def climbing(self):
+        return self.motion_state == MotionState.CLIMBING
+
+    @property
+    def falling(self):
+        return self.motion_state == MotionState.FALLING
+
+    @property
+    def mounted(self):
+        return self.motion_state == MotionState.MOUNTED
 
     @property
     def velocity(self):
         return self.body.velocity
-    
+
     @velocity.setter
     def velocity(self, value: glm.vec2):
         self.body.velocity = value
@@ -67,31 +89,6 @@ class PhysicsEntity2D(Entity2D):
         self.remove_shapes()
         super().destroy()
 
-    '''
-    def update(self, delta_time: float):
-        if not self.body:
-            super().update(delta_time)
-            return
-
-        body_position = glm.vec2(self.body.position.x, self.body.position.y)
-        rotated_offset = glm.rotate(self.physics.position, self.body.angle)
-        #self.position = body_position - rotated_offset
-        position = body_position - rotated_offset
-        position_changed = position != self.position
-        if position_changed:
-            self.position = position
-
-        angle = math.degrees(self.body.angle)
-        angle_changed = angle != self.angle
-        if angle_changed:
-            self.angle = angle
-
-        # logger.debug(f"position: {self.position}")
-        # logger.debug(f"angle: {self.angle}")
-
-        super().update(delta_time)
-
-    '''
     def update(self, delta_time: float):
         if self.body:
             body_position = glm.vec2(self.body.position.x, self.body.position.y)

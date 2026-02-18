@@ -1,5 +1,5 @@
 {
-    "activeFile": "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx",
+    "activeFile": "compound_blur.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -21,6 +21,12 @@
                 "y": 672
             }
         },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/mossy-background-decoration.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/mossy-decorations-and-hazards.tsx": {
+            "scaleInDock": 1
+        },
         "/home/kurt/Dev/cave-mage/cave_mage/resources/mossy-tileset.tsx": {
             "scaleInDock": 1
         },
@@ -32,6 +38,9 @@
         },
         "/home/kurt/Dev/cave-mage/cave_mage/resources/tiles.tsx": {
             "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/crunge/resources/sticker-knight/map/objs.tsx": {
             "scaleInDock": 1
         },
         "blur.tmx": {
@@ -87,14 +96,17 @@
         }
     },
     "openFiles": [
-        "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx"
+        "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx",
+        "blur.tmx",
+        "compound_blur.tmx",
+        "composite_blur.tmx"
     ],
     "project": "blur.tiled-project",
     "recentFiles": [
         "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx",
-        "compound_blur.tmx",
-        "composite_blur.tmx",
         "blur.tmx",
+        "composite_blur.tmx",
+        "compound_blur.tmx",
         "test.tmx"
     ]
 }
