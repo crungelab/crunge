@@ -5,7 +5,6 @@ from ..physics.constants import DEFAULT_MASS, GRAVITY
 
 from .. import physics
 from ..physics import geom
-from ..physics.physics import MotionState
 from .physics_entity_2d import PhysicsEntity2D
 
 

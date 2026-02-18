@@ -6,14 +6,15 @@ import pymunk
 
 from crunge.engine.d2 import Vu2D
 
-from ..physics.constants import DEFAULT_MASS, GRAVITY
-from ..physics.physics import MotionState
+from ...math import Rect2
+
 from ..physics import globe
+from ..physics.constants import DEFAULT_MASS, GRAVITY
+from ..physics import StaticPhysics, DynamicPhysics, GroupPhysics
+from ..physics.physics import MotionState
+from ..physics.geom import HullGeom, GroupGeom
 
 from .entity_2d import Entity2D
-
-from .. import physics
-from ..physics import geom
 
 
 class PhysicsEntity2D(Entity2D):
@@ -25,12 +26,12 @@ class PhysicsEntity2D(Entity2D):
         vu: Vu2D = None,
         model=None,
         brain=None,
-        physics=physics.StaticPhysics(),
-        geom=geom.HullGeom(),
+        physics=StaticPhysics(),
+        geom=HullGeom(),
     ):
         super().__init__(position, rotation, scale, vu, model, brain)
         self.body: pymunk.Body | None = None
-        self.shapes = []
+        self.shapes: list[pymunk.Shape] = []
         self._physics = physics
         self.geom = geom
         self.mass = DEFAULT_MASS
@@ -102,8 +103,8 @@ class PhysicsEntity2D(Entity2D):
     def create_body(self):
         return self.physics.create_body(self)
 
-    def create_shapes(self):
-        return self.geom.create_shapes(self)
+    def create_shapes(self, clip: Rect2 = None):
+        return self.geom.create_shapes(self, clip=clip)
 
     def add_shapes(self):
         for shape in self.shapes:
@@ -144,7 +145,7 @@ class PhysicsGroup2D(PhysicsEntity2D):
     id_counter = 1
 
     def __init__(
-        self, position=glm.vec2(), physics=physics.GroupPhysics(), geom=geom.GroupGeom()
+        self, position=glm.vec2(), physics=GroupPhysics(), geom=GroupGeom()
     ):
         super().__init__(position, physics=physics, geom=geom)
         self.id_counter += 1
@@ -184,8 +185,8 @@ class StaticEntity2D(PhysicsEntity2D):
         vu=None,
         model=None,
         brain=None,
-        physics=physics.StaticPhysics(),
-        geom=geom.HullGeom(),
+        physics=StaticPhysics(),
+        geom=HullGeom(),
     ):
         super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
 
@@ -199,7 +200,7 @@ class DynamicEntity2D(PhysicsEntity2D):
         vu=None,
         model=None,
         brain=None,
-        physics=physics.DynamicPhysics(),
-        geom=geom.HullGeom(),
+        physics=DynamicPhysics(),
+        geom=HullGeom(),
     ):
         super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
