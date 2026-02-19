@@ -105,3 +105,11 @@ set(TMXLITE_STATIC_LIB TRUE)
 add_subdirectory(depot/tmxlite/tmxlite)
 add_subdirectory(pkg/tmx)
 
+#
+# Box2D
+#
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+add_subdirectory(depot/box2d)
+set_target_properties(box2d PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+add_subdirectory(pkg/box2d)

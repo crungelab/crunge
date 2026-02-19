@@ -1,0 +1,17 @@
+module: box2d
+
+flags: [
+  #'-x', 'c++',
+  #'-std=c++17',
+  '-I../../depot/box2d/include/box2d',
+  '-B2_API=',
+]
+
+prefixes: [b2]
+
+unit_files:
+  - path: box2d.unit.yaml
+  - path: types.unit.yaml
+  - path: math_functions.unit.yaml
+  - path: id.unit.yaml
+  - path: collision.unit.yaml

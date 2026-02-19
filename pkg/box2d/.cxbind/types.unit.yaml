@@ -1,0 +1,16 @@
+source: '../../depot/box2d/include/box2d/types.h'
+target: 'src/types_py_auto.cpp'
+
+excludes:
+  # Wrapped
+
+  # Internal / Ignored
+
+  # TODO: callbacks are always a problem
+  
+  - 'struct@b2DebugDraw'
+
+  - 'field@b2WorldDef::enqueueTask'
+  - 'field@b2WorldDef::frictionCallback'
+  - 'field@b2WorldDef::restitutionCallback'
+  - 'field@b2WorldDef::finishTask'

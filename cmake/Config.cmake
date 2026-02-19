@@ -30,6 +30,10 @@ set(NANORT_ROOT ${CRUNGE_ROOT}/depot/nanort)
 
 set(TMX_ROOT ${CRUNGE_ROOT}/depot/tmxlite)
 
+set(BOX2D_ROOT ${CRUNGE_ROOT}/depot/box2d)
+
+
+
 set(CRUNGE_COMPILE_DEFS 
     NOMINMAX=1
 )

@@ -1,0 +1,8 @@
+source: '../../depot/box2d/include/box2d/collision.h'
+target: 'src/collision_py_auto.cpp'
+
+excludes:
+  # Wrapped
+
+  # Internal / Ignored
+  - 'struct@b2DynamicTree'
