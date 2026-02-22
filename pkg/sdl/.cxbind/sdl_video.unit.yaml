@@ -4,13 +4,13 @@ target: 'src/sdl_video_py_auto.cpp'
 specs:
   'function@SDL_GetWindowSize':
     omit_ret: true
-    arguments:
+    args:
       w: { default: 0}
       h: { default: 0}
 
   'function@SDL_GetWindowSizeInPixels':
     omit_ret: true
-    arguments:
+    args:
       w: { default: 0}
       h: { default: 0}
 

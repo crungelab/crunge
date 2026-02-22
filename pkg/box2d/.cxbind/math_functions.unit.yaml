@@ -2,4 +2,8 @@ source: '../../depot/box2d/include/box2d/math_functions.h'
 target: 'src/math_functions_py_auto.cpp'
 
 specs:
-  'struct@b2Vec2': {gen_args_init: true}
+  #'struct@b2Vec2': {gen_args_init: true}
+  'struct@b2Vec2':
+    methods:
+      __init__:
+        gen_args: true

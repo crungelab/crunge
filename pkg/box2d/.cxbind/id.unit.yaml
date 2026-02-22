@@ -1,2 +1,6 @@
 source: '../../depot/box2d/include/box2d/id.h'
 target: 'src/id_py_auto.cpp'
+
+specs:
+  'struct@b2WorldId':
+    pyname: World

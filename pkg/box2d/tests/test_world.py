@@ -1,10 +1,10 @@
 from crunge import box2d
 
-world_def = box2d.default_world_def()
+world_def = box2d.WorldDef(gravity = box2d.Vec2(0.0, -10.0))
 
 print(world_def)
+print(world_def.gravity)
 
-#worldDef.gravity = (b2Vec2){0.0f, -10.0f};
-world_def.gravity = box2d.Vec2(0.0, -10.0)
+world = box2d.create_world(world_def)
 
-world_id = box2d.create_world(world_def)
+print(world)

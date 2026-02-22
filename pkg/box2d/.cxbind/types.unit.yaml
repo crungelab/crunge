@@ -14,3 +14,16 @@ excludes:
   - 'field@b2WorldDef::frictionCallback'
   - 'field@b2WorldDef::restitutionCallback'
   - 'field@b2WorldDef::finishTask'
+
+#b2DefaultWorldDef
+
+specs:
+  'struct@b2WorldDef':
+    methods:
+      __init__:
+        gen_kwargs: true
+        use: b2DefaultWorldDef
+
+      __repr__:
+        auto: true
+

@@ -29,7 +29,7 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
             obj.x = x;
             obj.y = y;
             return obj;
-        }), py::return_value_policy::automatic_reference);
+        }))
     ;
 
     py::class_<b2CosSin> _CosSin(_box2d, "CosSin");

@@ -18,9 +18,9 @@
 namespace py = pybind11;
 
 void init_id_py_auto(py::module &_box2d, Registry &registry) {
-    py::class_<b2WorldId> _WorldId(_box2d, "WorldId");
-    registry.on(_box2d, "WorldId", _WorldId);
-        _WorldId
+    py::class_<b2WorldId> _World(_box2d, "World");
+    registry.on(_box2d, "World", _World);
+        _World
         .def_readwrite("index1", &b2WorldId::index1)
         .def_readwrite("generation", &b2WorldId::generation)
     ;

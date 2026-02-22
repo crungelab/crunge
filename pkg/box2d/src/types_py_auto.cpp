@@ -1,7 +1,9 @@
+#include <limits>
+#include <sstream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
 
 //#include <iostream>
 
@@ -47,6 +49,114 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("user_task_context", &b2WorldDef::userTaskContext)
         .def_readwrite("user_data", &b2WorldDef::userData)
         .def_readwrite("internal_value", &b2WorldDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2WorldDef obj = b2DefaultWorldDef();
+            if (kwargs.contains("gravity"))
+            {
+                auto value = kwargs["gravity"].cast<struct b2Vec2>();
+                obj.gravity = value;
+            }
+            if (kwargs.contains("restitution_threshold"))
+            {
+                auto value = kwargs["restitution_threshold"].cast<float>();
+                obj.restitutionThreshold = value;
+            }
+            if (kwargs.contains("hit_event_threshold"))
+            {
+                auto value = kwargs["hit_event_threshold"].cast<float>();
+                obj.hitEventThreshold = value;
+            }
+            if (kwargs.contains("contact_hertz"))
+            {
+                auto value = kwargs["contact_hertz"].cast<float>();
+                obj.contactHertz = value;
+            }
+            if (kwargs.contains("contact_damping_ratio"))
+            {
+                auto value = kwargs["contact_damping_ratio"].cast<float>();
+                obj.contactDampingRatio = value;
+            }
+            if (kwargs.contains("contact_speed"))
+            {
+                auto value = kwargs["contact_speed"].cast<float>();
+                obj.contactSpeed = value;
+            }
+            if (kwargs.contains("maximum_linear_speed"))
+            {
+                auto value = kwargs["maximum_linear_speed"].cast<float>();
+                obj.maximumLinearSpeed = value;
+            }
+            if (kwargs.contains("enable_sleep"))
+            {
+                auto value = kwargs["enable_sleep"].cast<_Bool>();
+                obj.enableSleep = value;
+            }
+            if (kwargs.contains("enable_continuous"))
+            {
+                auto value = kwargs["enable_continuous"].cast<_Bool>();
+                obj.enableContinuous = value;
+            }
+            if (kwargs.contains("enable_contact_softening"))
+            {
+                auto value = kwargs["enable_contact_softening"].cast<_Bool>();
+                obj.enableContactSoftening = value;
+            }
+            if (kwargs.contains("worker_count"))
+            {
+                auto value = kwargs["worker_count"].cast<int>();
+                obj.workerCount = value;
+            }
+            if (kwargs.contains("user_task_context"))
+            {
+                auto value = kwargs["user_task_context"].cast<void *>();
+                obj.userTaskContext = value;
+            }
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.userData = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2WorldDef &self) {
+            std::stringstream ss;
+            ss << "b2WorldDef(";
+            ss << "gravity=" << py::repr(py::cast(self.gravity)).cast<std::string>();
+            ss << ", ";
+            ss << "restitutionThreshold=" << py::repr(py::cast(self.restitutionThreshold)).cast<std::string>();
+            ss << ", ";
+            ss << "hitEventThreshold=" << py::repr(py::cast(self.hitEventThreshold)).cast<std::string>();
+            ss << ", ";
+            ss << "contactHertz=" << py::repr(py::cast(self.contactHertz)).cast<std::string>();
+            ss << ", ";
+            ss << "contactDampingRatio=" << py::repr(py::cast(self.contactDampingRatio)).cast<std::string>();
+            ss << ", ";
+            ss << "contactSpeed=" << py::repr(py::cast(self.contactSpeed)).cast<std::string>();
+            ss << ", ";
+            ss << "maximumLinearSpeed=" << py::repr(py::cast(self.maximumLinearSpeed)).cast<std::string>();
+            ss << ", ";
+            ss << "enableSleep=" << py::repr(py::cast(self.enableSleep)).cast<std::string>();
+            ss << ", ";
+            ss << "enableContinuous=" << py::repr(py::cast(self.enableContinuous)).cast<std::string>();
+            ss << ", ";
+            ss << "enableContactSoftening=" << py::repr(py::cast(self.enableContactSoftening)).cast<std::string>();
+            ss << ", ";
+            ss << "workerCount=" << py::repr(py::cast(self.workerCount)).cast<std::string>();
+            ss << ", ";
+            ss << "userTaskContext=" << py::repr(py::cast(self.userTaskContext)).cast<std::string>();
+            ss << ", ";
+            ss << "userData=" << py::repr(py::cast(self.userData)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d
