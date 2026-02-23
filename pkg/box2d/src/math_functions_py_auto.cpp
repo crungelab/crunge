@@ -1,17 +1,16 @@
+#include <limits>
+//#include <iostream>
+#include <sstream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
 
-//#include <iostream>
 
 #include <cxbind/cxbind.h>
 
-//#include <crunge/tmx/crunge-tmx.h>
-//#include <crunge/tmx/conversions.h>
-
-//#include <tmxlite/Map.hpp>
-//#include <tmxlite/ImageLayer.hpp>
+//#include <crunge/box2d/crunge-box2d.h>
+//#include <crunge/box2d/conversions.h>
 
 #include <box2d/math_functions.h>
 
@@ -30,6 +29,15 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
             obj.y = y;
             return obj;
         }))
+        .def("__repr__", [](const b2Vec2 &self) {
+            std::stringstream ss;
+            ss << "Vec2(";
+            ss << "x=" << py::repr(py::cast(self.x)).cast<std::string>();
+            ss << ", ";
+            ss << "y=" << py::repr(py::cast(self.y)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     py::class_<b2CosSin> _CosSin(_box2d, "CosSin");

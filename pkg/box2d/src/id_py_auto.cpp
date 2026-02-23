@@ -1,19 +1,18 @@
+#include <limits>
+//#include <iostream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
 
-//#include <iostream>
 
 #include <cxbind/cxbind.h>
 
-//#include <crunge/tmx/crunge-tmx.h>
-//#include <crunge/tmx/conversions.h>
-
-//#include <tmxlite/Map.hpp>
-//#include <tmxlite/ImageLayer.hpp>
+//#include <crunge/box2d/crunge-box2d.h>
+//#include <crunge/box2d/conversions.h>
 
 #include <box2d/id.h>
+#include <box2d/box2d.h>
 
 namespace py = pybind11;
 
@@ -23,6 +22,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         _World
         .def_readwrite("index1", &b2WorldId::index1)
         .def_readwrite("generation", &b2WorldId::generation)
+        .def("create_body", &b2CreateBody)
     ;
 
     py::class_<b2BodyId> _BodyId(_box2d, "BodyId");

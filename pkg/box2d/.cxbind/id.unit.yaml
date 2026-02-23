@@ -4,3 +4,7 @@ target: 'src/id_py_auto.cpp'
 specs:
   'struct@b2WorldId':
     pyname: World
+    extra:
+      methods:
+        create_body:
+          use: b2CreateBody

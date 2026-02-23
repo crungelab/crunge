@@ -1,19 +1,16 @@
 #include <limits>
+//#include <iostream>
 #include <sstream>
 
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 
-//#include <iostream>
 
 #include <cxbind/cxbind.h>
 
-//#include <crunge/tmx/crunge-tmx.h>
-//#include <crunge/tmx/conversions.h>
-
-//#include <tmxlite/Map.hpp>
-//#include <tmxlite/ImageLayer.hpp>
+//#include <crunge/box2d/crunge-box2d.h>
+//#include <crunge/box2d/conversions.h>
 
 #include <box2d/types.h>
 
@@ -126,7 +123,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         }))
         .def("__repr__", [](const b2WorldDef &self) {
             std::stringstream ss;
-            ss << "b2WorldDef(";
+            ss << "WorldDef(";
             ss << "gravity=" << py::repr(py::cast(self.gravity)).cast<std::string>();
             ss << ", ";
             ss << "restitutionThreshold=" << py::repr(py::cast(self.restitutionThreshold)).cast<std::string>();
@@ -203,6 +200,144 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("is_enabled", &b2BodyDef::isEnabled)
         .def_readwrite("allow_fast_rotation", &b2BodyDef::allowFastRotation)
         .def_readwrite("internal_value", &b2BodyDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2BodyDef obj = b2DefaultBodyDef();
+            if (kwargs.contains("type"))
+            {
+                auto value = kwargs["type"].cast<enum b2BodyType>();
+                obj.type = value;
+            }
+            if (kwargs.contains("position"))
+            {
+                auto value = kwargs["position"].cast<struct b2Vec2>();
+                obj.position = value;
+            }
+            if (kwargs.contains("rotation"))
+            {
+                auto value = kwargs["rotation"].cast<struct b2Rot>();
+                obj.rotation = value;
+            }
+            if (kwargs.contains("linear_velocity"))
+            {
+                auto value = kwargs["linear_velocity"].cast<struct b2Vec2>();
+                obj.linearVelocity = value;
+            }
+            if (kwargs.contains("angular_velocity"))
+            {
+                auto value = kwargs["angular_velocity"].cast<float>();
+                obj.angularVelocity = value;
+            }
+            if (kwargs.contains("linear_damping"))
+            {
+                auto value = kwargs["linear_damping"].cast<float>();
+                obj.linearDamping = value;
+            }
+            if (kwargs.contains("angular_damping"))
+            {
+                auto value = kwargs["angular_damping"].cast<float>();
+                obj.angularDamping = value;
+            }
+            if (kwargs.contains("gravity_scale"))
+            {
+                auto value = kwargs["gravity_scale"].cast<float>();
+                obj.gravityScale = value;
+            }
+            if (kwargs.contains("sleep_threshold"))
+            {
+                auto value = kwargs["sleep_threshold"].cast<float>();
+                obj.sleepThreshold = value;
+            }
+            if (kwargs.contains("name"))
+            {
+                auto _value = kwargs["name"].cast<std::string>();
+                char* value = (char*)malloc(_value.size());
+                strcpy(value, _value.c_str());
+                obj.name = value;
+            }
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.userData = value;
+            }
+            if (kwargs.contains("motion_locks"))
+            {
+                auto value = kwargs["motion_locks"].cast<struct b2MotionLocks>();
+                obj.motionLocks = value;
+            }
+            if (kwargs.contains("enable_sleep"))
+            {
+                auto value = kwargs["enable_sleep"].cast<_Bool>();
+                obj.enableSleep = value;
+            }
+            if (kwargs.contains("is_awake"))
+            {
+                auto value = kwargs["is_awake"].cast<_Bool>();
+                obj.isAwake = value;
+            }
+            if (kwargs.contains("is_bullet"))
+            {
+                auto value = kwargs["is_bullet"].cast<_Bool>();
+                obj.isBullet = value;
+            }
+            if (kwargs.contains("is_enabled"))
+            {
+                auto value = kwargs["is_enabled"].cast<_Bool>();
+                obj.isEnabled = value;
+            }
+            if (kwargs.contains("allow_fast_rotation"))
+            {
+                auto value = kwargs["allow_fast_rotation"].cast<_Bool>();
+                obj.allowFastRotation = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2BodyDef &self) {
+            std::stringstream ss;
+            ss << "BodyDef(";
+            ss << "type=" << py::repr(py::cast(self.type)).cast<std::string>();
+            ss << ", ";
+            ss << "position=" << py::repr(py::cast(self.position)).cast<std::string>();
+            ss << ", ";
+            ss << "rotation=" << py::repr(py::cast(self.rotation)).cast<std::string>();
+            ss << ", ";
+            ss << "linearVelocity=" << py::repr(py::cast(self.linearVelocity)).cast<std::string>();
+            ss << ", ";
+            ss << "angularVelocity=" << py::repr(py::cast(self.angularVelocity)).cast<std::string>();
+            ss << ", ";
+            ss << "linearDamping=" << py::repr(py::cast(self.linearDamping)).cast<std::string>();
+            ss << ", ";
+            ss << "angularDamping=" << py::repr(py::cast(self.angularDamping)).cast<std::string>();
+            ss << ", ";
+            ss << "gravityScale=" << py::repr(py::cast(self.gravityScale)).cast<std::string>();
+            ss << ", ";
+            ss << "sleepThreshold=" << py::repr(py::cast(self.sleepThreshold)).cast<std::string>();
+            ss << ", ";
+            ss << "name=" << py::repr(py::cast(self.name)).cast<std::string>();
+            ss << ", ";
+            ss << "userData=" << py::repr(py::cast(self.userData)).cast<std::string>();
+            ss << ", ";
+            ss << "motionLocks=" << py::repr(py::cast(self.motionLocks)).cast<std::string>();
+            ss << ", ";
+            ss << "enableSleep=" << py::repr(py::cast(self.enableSleep)).cast<std::string>();
+            ss << ", ";
+            ss << "isAwake=" << py::repr(py::cast(self.isAwake)).cast<std::string>();
+            ss << ", ";
+            ss << "isBullet=" << py::repr(py::cast(self.isBullet)).cast<std::string>();
+            ss << ", ";
+            ss << "isEnabled=" << py::repr(py::cast(self.isEnabled)).cast<std::string>();
+            ss << ", ";
+            ss << "allowFastRotation=" << py::repr(py::cast(self.allowFastRotation)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d
@@ -276,6 +411,107 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("invoke_contact_creation", &b2ShapeDef::invokeContactCreation)
         .def_readwrite("update_body_mass", &b2ShapeDef::updateBodyMass)
         .def_readwrite("internal_value", &b2ShapeDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2ShapeDef obj = b2DefaultShapeDef();
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.userData = value;
+            }
+            if (kwargs.contains("material"))
+            {
+                auto value = kwargs["material"].cast<struct b2SurfaceMaterial>();
+                obj.material = value;
+            }
+            if (kwargs.contains("density"))
+            {
+                auto value = kwargs["density"].cast<float>();
+                obj.density = value;
+            }
+            if (kwargs.contains("filter"))
+            {
+                auto value = kwargs["filter"].cast<struct b2Filter>();
+                obj.filter = value;
+            }
+            if (kwargs.contains("enable_custom_filtering"))
+            {
+                auto value = kwargs["enable_custom_filtering"].cast<_Bool>();
+                obj.enableCustomFiltering = value;
+            }
+            if (kwargs.contains("is_sensor"))
+            {
+                auto value = kwargs["is_sensor"].cast<_Bool>();
+                obj.isSensor = value;
+            }
+            if (kwargs.contains("enable_sensor_events"))
+            {
+                auto value = kwargs["enable_sensor_events"].cast<_Bool>();
+                obj.enableSensorEvents = value;
+            }
+            if (kwargs.contains("enable_contact_events"))
+            {
+                auto value = kwargs["enable_contact_events"].cast<_Bool>();
+                obj.enableContactEvents = value;
+            }
+            if (kwargs.contains("enable_hit_events"))
+            {
+                auto value = kwargs["enable_hit_events"].cast<_Bool>();
+                obj.enableHitEvents = value;
+            }
+            if (kwargs.contains("enable_pre_solve_events"))
+            {
+                auto value = kwargs["enable_pre_solve_events"].cast<_Bool>();
+                obj.enablePreSolveEvents = value;
+            }
+            if (kwargs.contains("invoke_contact_creation"))
+            {
+                auto value = kwargs["invoke_contact_creation"].cast<_Bool>();
+                obj.invokeContactCreation = value;
+            }
+            if (kwargs.contains("update_body_mass"))
+            {
+                auto value = kwargs["update_body_mass"].cast<_Bool>();
+                obj.updateBodyMass = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2ShapeDef &self) {
+            std::stringstream ss;
+            ss << "ShapeDef(";
+            ss << "userData=" << py::repr(py::cast(self.userData)).cast<std::string>();
+            ss << ", ";
+            ss << "material=" << py::repr(py::cast(self.material)).cast<std::string>();
+            ss << ", ";
+            ss << "density=" << py::repr(py::cast(self.density)).cast<std::string>();
+            ss << ", ";
+            ss << "filter=" << py::repr(py::cast(self.filter)).cast<std::string>();
+            ss << ", ";
+            ss << "enableCustomFiltering=" << py::repr(py::cast(self.enableCustomFiltering)).cast<std::string>();
+            ss << ", ";
+            ss << "isSensor=" << py::repr(py::cast(self.isSensor)).cast<std::string>();
+            ss << ", ";
+            ss << "enableSensorEvents=" << py::repr(py::cast(self.enableSensorEvents)).cast<std::string>();
+            ss << ", ";
+            ss << "enableContactEvents=" << py::repr(py::cast(self.enableContactEvents)).cast<std::string>();
+            ss << ", ";
+            ss << "enableHitEvents=" << py::repr(py::cast(self.enableHitEvents)).cast<std::string>();
+            ss << ", ";
+            ss << "enablePreSolveEvents=" << py::repr(py::cast(self.enablePreSolveEvents)).cast<std::string>();
+            ss << ", ";
+            ss << "invokeContactCreation=" << py::repr(py::cast(self.invokeContactCreation)).cast<std::string>();
+            ss << ", ";
+            ss << "updateBodyMass=" << py::repr(py::cast(self.updateBodyMass)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d

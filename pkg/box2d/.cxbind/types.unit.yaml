@@ -19,11 +19,32 @@ excludes:
 
 specs:
   'struct@b2WorldDef':
-    methods:
-      __init__:
-        gen_kwargs: true
-        use: b2DefaultWorldDef
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: b2DefaultWorldDef
 
-      __repr__:
-        auto: true
+        __repr__:
+          auto: true
+
+  'struct@b2BodyDef':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: b2DefaultBodyDef
+
+        __repr__:
+          auto: true
+
+  'struct@b2ShapeDef':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: b2DefaultShapeDef
+
+        __repr__:
+          auto: true
 

@@ -1,17 +1,15 @@
+#include <limits>
+//#include <iostream>
+#include <sstream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
-
-//#include <iostream>
 
 #include <cxbind/cxbind.h>
 
-//#include <crunge/tmx/crunge-tmx.h>
-//#include <crunge/tmx/conversions.h>
-
-//#include <tmxlite/Map.hpp>
-//#include <tmxlite/ImageLayer.hpp>
+//#include <crunge/box2d/crunge-box2d.h>
+//#include <crunge/box2d/conversions.h>
 
 #include <box2d/collision.h>
 
@@ -84,6 +82,21 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("centroid", &b2Polygon::centroid)
         .def_readwrite("radius", &b2Polygon::radius)
         .def_readwrite("count", &b2Polygon::count)
+        .def("__repr__", [](const b2Polygon &self) {
+            std::stringstream ss;
+            ss << "Polygon(";
+            ss << "vertices=" << py::repr(py::cast(self.vertices)).cast<std::string>();
+            ss << ", ";
+            ss << "normals=" << py::repr(py::cast(self.normals)).cast<std::string>();
+            ss << ", ";
+            ss << "centroid=" << py::repr(py::cast(self.centroid)).cast<std::string>();
+            ss << ", ";
+            ss << "radius=" << py::repr(py::cast(self.radius)).cast<std::string>();
+            ss << ", ";
+            ss << "count=" << py::repr(py::cast(self.count)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     py::class_<b2Segment> _Segment(_box2d, "Segment");

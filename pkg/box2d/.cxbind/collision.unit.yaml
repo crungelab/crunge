@@ -6,3 +6,10 @@ excludes:
 
   # Internal / Ignored
   - 'struct@b2DynamicTree'
+
+specs:
+  'struct@b2Polygon':
+    extra:
+      methods:
+        __repr__:
+          auto: true
