@@ -388,6 +388,58 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("tangent_speed", &b2SurfaceMaterial::tangentSpeed)
         .def_readwrite("user_material_id", &b2SurfaceMaterial::userMaterialId)
         .def_readwrite("custom_color", &b2SurfaceMaterial::customColor)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2SurfaceMaterial obj = b2DefaultSurfaceMaterial();
+            if (kwargs.contains("friction"))
+            {
+                auto value = kwargs["friction"].cast<float>();
+                obj.friction = value;
+            }
+            if (kwargs.contains("restitution"))
+            {
+                auto value = kwargs["restitution"].cast<float>();
+                obj.restitution = value;
+            }
+            if (kwargs.contains("rolling_resistance"))
+            {
+                auto value = kwargs["rolling_resistance"].cast<float>();
+                obj.rollingResistance = value;
+            }
+            if (kwargs.contains("tangent_speed"))
+            {
+                auto value = kwargs["tangent_speed"].cast<float>();
+                obj.tangentSpeed = value;
+            }
+            if (kwargs.contains("user_material_id"))
+            {
+                auto value = kwargs["user_material_id"].cast<unsigned long>();
+                obj.userMaterialId = value;
+            }
+            if (kwargs.contains("custom_color"))
+            {
+                auto value = kwargs["custom_color"].cast<unsigned int>();
+                obj.customColor = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2SurfaceMaterial &self) {
+            std::stringstream ss;
+            ss << "SurfaceMaterial(";
+            ss << "friction=" << py::repr(py::cast(self.friction)).cast<std::string>();
+            ss << ", ";
+            ss << "restitution=" << py::repr(py::cast(self.restitution)).cast<std::string>();
+            ss << ", ";
+            ss << "rollingResistance=" << py::repr(py::cast(self.rollingResistance)).cast<std::string>();
+            ss << ", ";
+            ss << "tangentSpeed=" << py::repr(py::cast(self.tangentSpeed)).cast<std::string>();
+            ss << ", ";
+            ss << "userMaterialId=" << py::repr(py::cast(self.userMaterialId)).cast<std::string>();
+            ss << ", ";
+            ss << "customColor=" << py::repr(py::cast(self.customColor)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d

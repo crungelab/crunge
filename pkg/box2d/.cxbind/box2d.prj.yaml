@@ -10,6 +10,7 @@ flags: [
 prefixes: [b2]
 
 unit_files:
+  - path: box2d_internal.unit.yaml
   - path: box2d.unit.yaml
   - path: types.unit.yaml
   - path: math_functions.unit.yaml

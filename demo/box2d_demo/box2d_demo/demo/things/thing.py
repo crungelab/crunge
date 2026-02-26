@@ -1,0 +1,11 @@
+import glm
+
+from crunge.engine.d2.sprite import Sprite, SpriteVu
+from box2d_demo.entity import DynamicEntity2D
+
+
+class Thing(DynamicEntity2D):
+    def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
+        vu = SpriteVu(sprite).create()
+        scale = glm.vec2(.25, .25)
+        super().__init__(position, scale=scale, vu=vu, model=sprite)

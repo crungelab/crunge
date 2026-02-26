@@ -2,7 +2,6 @@ source: '../../depot/box2d/include/box2d/math_functions.h'
 target: 'src/math_functions_py_auto.cpp'
 
 specs:
-  #'struct@b2Vec2': {gen_args_init: true}
   'struct@b2Vec2':
     extra:
       methods:
@@ -10,3 +9,9 @@ specs:
           gen_args: true
         __repr__:
           auto: true
+
+  'struct@b2Rot': {}
+
+transforms:
+  - name: mogrify
+    target: struct@b2Rot

@@ -6,5 +6,38 @@ specs:
     pyname: World
     extra:
       methods:
-        create_body:
-          use: b2CreateBody
+        __init__:
+          use: b2CreateWorld
+
+  'struct@b2BodyId':
+    pyname: Body
+    extra:
+      properties:
+        user_data:
+          setter: "Body_SetUserData"
+          getter: "Body_GetUserData"
+        position:
+          getter: "b2Body_GetPosition"
+        rotation:
+          getter: "b2Body_GetRotation"
+
+  'struct@b2ShapeId':
+    pyname: Shape
+    extra:
+      properties:
+        friction:
+          setter: "b2Shape_SetFriction"
+          getter: "b2Shape_GetFriction"        
+        restitution:
+          setter: "b2Shape_SetRestitution"
+          getter: "b2Shape_GetRestitution"        
+
+transforms:
+  - name: mogrify
+    target: struct@b2WorldId
+
+  - name: mogrify
+    target: struct@b2BodyId
+
+  - name: mogrify
+    target: struct@b2ShapeId

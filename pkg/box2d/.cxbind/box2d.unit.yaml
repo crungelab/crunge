@@ -1,2 +1,10 @@
 source: '../../depot/box2d/include/box2d/box2d.h'
 target: 'src/box2d_py_auto.cpp'
+
+excludes:
+  # Wrapped
+  - 'function@b2Body_SetUserData'
+  - 'function@b2Body_GetUserData'
+  - 'function@b2DestroyBody'
+
+  # Internal / Ignored

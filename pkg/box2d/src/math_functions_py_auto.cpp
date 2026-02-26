@@ -52,6 +52,21 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
         _Rot
         .def_readwrite("c", &b2Rot::c)
         .def_readwrite("s", &b2Rot::s)
+        .def("is_valid_rotation", &b2IsValidRotation)
+        .def("normalize", &b2NormalizeRot)
+        .def("integrate_rotation", &b2IntegrateRotation)
+        .def("is_normalized", &b2IsNormalizedRot)
+        .def("invert", &b2InvertRot)
+        .def("n_lerp", &b2NLerp)
+        .def("compute_angular_velocity", &b2ComputeAngularVelocity)
+        .def("get_angle", &b2Rot_GetAngle)
+        .def("get_x_axis", &b2Rot_GetXAxis)
+        .def("get_y_axis", &b2Rot_GetYAxis)
+        .def("mul", &b2MulRot)
+        .def("inv_mul", &b2InvMulRot)
+        .def("relative_angle", &b2RelativeAngle)
+        .def("rotate_vector", &b2RotateVector)
+        .def("inv_rotate_vector", &b2InvRotateVector)
     ;
 
     py::class_<b2Transform> _Transform(_box2d, "Transform");

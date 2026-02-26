@@ -203,9 +203,6 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("world_id")
         , py::arg("def")
         , py::return_value_policy::automatic_reference)
-    .def("destroy_body", &b2DestroyBody
-        , py::arg("body_id")
-        , py::return_value_policy::automatic_reference)
     .def("body_is_valid", &b2Body_IsValid
         , py::arg("id")
         , py::return_value_policy::automatic_reference)
@@ -221,13 +218,6 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("name")
         , py::return_value_policy::automatic_reference)
     .def("body_get_name", &b2Body_GetName
-        , py::arg("body_id")
-        , py::return_value_policy::automatic_reference)
-    .def("body_set_user_data", &b2Body_SetUserData
-        , py::arg("body_id")
-        , py::arg("user_data")
-        , py::return_value_policy::automatic_reference)
-    .def("body_get_user_data", &b2Body_GetUserData
         , py::arg("body_id")
         , py::return_value_policy::automatic_reference)
     .def("body_get_position", &b2Body_GetPosition
