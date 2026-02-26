@@ -13,3 +13,13 @@ specs:
       methods:
         __repr__:
           auto: true
+
+  'struct@b2Circle':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          #use: b2DefaultWorldDef
+
+        __repr__:
+          auto: true

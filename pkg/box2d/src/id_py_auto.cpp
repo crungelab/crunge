@@ -156,6 +156,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def_property("user_data", &Body_GetUserData, &Body_SetUserData)
         .def_property_readonly("position", &b2Body_GetPosition)
         .def_property_readonly("rotation", &b2Body_GetRotation)
+        .def_property_readonly("angle", &Body_GetAngle)
     ;
 
     py::class_<b2ShapeId> _Shape(_box2d, "Shape");

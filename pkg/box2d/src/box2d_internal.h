@@ -28,3 +28,11 @@ py::object Body_GetUserData(b2BodyId bodyId)
 
     return holder->obj;
 }
+
+float Body_GetAngle(b2BodyId bodyId)
+{
+    //return b2Body_GetAngle(bodyId);
+    auto rotation = b2Body_GetRotation(bodyId);
+    auto angle = b2Rot_GetAngle(rotation);
+    return angle;
+}

@@ -19,7 +19,8 @@ physics_world: ContextVar[Optional["PhysicsWorld2D"]] = ContextVar("physics_worl
 
 class PhysicsWorld2D(box2d.World):
     def __init__(self, gravity=GRAVITY, iterations=35):
-        world_def = box2d.WorldDef(gravity = box2d.Vec2(0.0, -10.0))
+        #world_def = box2d.WorldDef(gravity = box2d.Vec2(0.0, -10.0))
+        world_def = box2d.WorldDef(gravity = box2d.Vec2(gravity[0], gravity[1]))
         super().__init__(world_def)
         logger.debug("PhysicsWorld2D.__init__")
         globe.physics_engine = self
@@ -50,16 +51,17 @@ class PhysicsWorld2D(box2d.World):
         if prev_engine is not None:
             prev_engine.make_current()
 
+    """
     @contextlib.contextmanager
     def update(self, delta_time=1 / 60.0):
         with self.use():
             self.world.step(delta_time)
             yield self
     """
+
     def update(self, delta_time=1 / 60.0):
         # logger.debug('PhysicsEngine.update')
-        self.world.step(delta_time)
-    """
+        self.step(delta_time, 4)
 
     """
     def debug_draw(self, draw_options: DrawOptions):

@@ -12,12 +12,15 @@ from .scrolling_demo import ScrollingDemo
 
 
 class PhysicsDemo(ScrollingDemo):
+    """
     def __init__(self):
         super().__init__()
         self.create_physics_engine()
+    """
 
     def create_physics_engine(self):
         self.world = DynamicPhysicsEngine()
+        self.world.make_current()
 
     def reset(self):
         super().reset()
@@ -35,9 +38,11 @@ class PhysicsDemo(ScrollingDemo):
         self._mouse_joint = None
         self._dragged_shape = None
 
+    """
     def run(self):
         with self.world.use():
             super().run()
+    """
 
     # ------------------------------------------------------------------
     # Drag helpers

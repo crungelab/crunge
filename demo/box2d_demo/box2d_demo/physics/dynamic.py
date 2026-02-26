@@ -14,6 +14,18 @@ class DynamicPhysics(Physics):
         super().__init__(PT_DYNAMIC, position)
 
     def create_body(self, node):
+        position = node.position + self.position
+        body_position = box2d.Vec2(position.x, position.y)
+        body_angle = math.radians(node.angle)
+
+        body_def = box2d.BodyDef(type=box2d.BodyType.DYNAMIC_BODY, position=body_position, angle=body_angle)
+        body = self.world.create_body(body_def)
+        body.user_data = node
+
+        return body
+
+    """
+    def create_body(self, node):
         mass = node.mass
         #logger.debug(f"mass: {mass}")
         #moment = box2d.moment_for_box(mass, (self.width, self.height))
@@ -27,6 +39,7 @@ class DynamicPhysics(Physics):
         body.position = box2d.Vec2d(position.x, position.y)
         body.angle = math.radians(node.angle)
         return body
+    """
 
 class DynamicPhysicsEngine(PhysicsWorld2D):
     def __init__(self, gravity=GRAVITY, iterations=35):

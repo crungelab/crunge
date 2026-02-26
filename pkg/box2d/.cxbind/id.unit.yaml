@@ -20,6 +20,8 @@ specs:
           getter: "b2Body_GetPosition"
         rotation:
           getter: "b2Body_GetRotation"
+        angle:
+          getter: "Body_GetAngle"
 
   'struct@b2ShapeId':
     pyname: Shape

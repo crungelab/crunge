@@ -64,6 +64,30 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         _Circle
         .def_readwrite("center", &b2Circle::center)
         .def_readwrite("radius", &b2Circle::radius)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2Circle obj{};
+            if (kwargs.contains("center"))
+            {
+                auto value = kwargs["center"].cast<struct b2Vec2>();
+                obj.center = value;
+            }
+            if (kwargs.contains("radius"))
+            {
+                auto value = kwargs["radius"].cast<float>();
+                obj.radius = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2Circle &self) {
+            std::stringstream ss;
+            ss << "Circle(";
+            ss << "center=" << py::repr(py::cast(self.center)).cast<std::string>();
+            ss << ", ";
+            ss << "radius=" << py::repr(py::cast(self.radius)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     py::class_<b2Capsule> _Capsule(_box2d, "Capsule");
