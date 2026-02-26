@@ -15,5 +15,5 @@ class StaticPhysics(Physics):
         body.node = node
         position = node.position + self.position
         body.position = pymunk.Vec2d(position.x, position.y)
-        body.angle = math.radians(node.angle)
+        body.angle = node.angle
         return body

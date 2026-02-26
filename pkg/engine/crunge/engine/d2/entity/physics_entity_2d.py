@@ -95,7 +95,7 @@ class PhysicsEntity2D(Entity2D):
             body_position = glm.vec2(self.body.position.x, self.body.position.y)
             rotated_offset = glm.rotate(self.physics.position, self.body.angle)
             self.position = body_position - rotated_offset
-            self.angle = math.degrees(self.body.angle)
+            self.angle = self.body.angle
             # logger.debug(f"position: {self.position}")
             # logger.debug(f"angle: {self.angle}")
         super().update(delta_time)

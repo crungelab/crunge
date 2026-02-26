@@ -15,7 +15,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
         position=glm.vec2(),
-        rotation=0.0,
+        angle=0.0,
         scale=glm.vec2(1.0),
         vu: "Vu2D" = None,
         model: Any = None,
@@ -23,18 +23,19 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         super().__init__(vu, model)
         self._position = position
         self._depth = 0.0
-        self._rotation = rotation  # radians
+        self._angle = angle  # radians
         self._scale = scale
         self._matrix = glm.mat4(1.0)
         self.bounds = Bounds2()
         self._velocity = glm.vec2(0.0)
         self.angular_velocity = 0.0  # radians per second
 
-    '''
+    """
     def _create(self):
         super()._create()
         self.update_matrix()
-    '''
+    """
+
     def _post_create(self):
         self.update_matrix()
         super()._post_create()
@@ -73,6 +74,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._position.x = value
         self.update_matrix()
         self.on_position()
+
     @property
     def y(self):
         return self._position.y
@@ -93,16 +95,17 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self.update_matrix()
 
     @property
-    def rotation(self):
-        return self._rotation
+    def angle(self):
+        return self._angle
 
-    @rotation.setter
-    def rotation(self, value: float):
-        if value == self._rotation:
+    @angle.setter
+    def angle(self, value: float):
+        if value == self._angle:
             return
-        self._rotation = value
+        self._angle = value
         self.update_matrix()
 
+    """
     @property
     def angle(self):
         return glm.degrees(self._rotation)
@@ -110,14 +113,14 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @angle.setter
     def angle(self, value: float):
         self.rotation = glm.radians(value)
+    """
 
-    '''
-    @angle.setter
-    def angle(self, value: float):
-        self._rotation = glm.radians(value)
-        # logger.debug(f"class: {self.__class__}, angle: {value}, rotation: {self._rotation}")
-        self.update_matrix()
-    '''
+    @property
+    def forward(self) -> glm.vec2:
+        world = self._matrix
+        return glm.normalize(
+            glm.vec2(world * glm.vec4(0, 1, 0, 0))
+        )
 
     @property
     def size(self) -> glm.vec2:
@@ -188,7 +191,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
         matrix = glm.mat4(1.0)  # Identity matrix
         matrix = glm.translate(matrix, glm.vec3(x, y, z))
-        matrix = glm.rotate(matrix, self._rotation, glm.vec3(0, 0, 1))
+        matrix = glm.rotate(matrix, self._angle, glm.vec3(0, 0, 1))
         matrix = glm.scale(
             matrix,
             glm.vec3(self._scale.x, self._scale.y, 1),

@@ -78,8 +78,9 @@ class Ship(DynamicEntity2D):
         missile_speed = 1000  # Adjust missile speed as needed
 
         # Calculate the missile's spawn position
-        rotation = self._rotation + math.pi / 2
-        direction = glm.vec2(math.cos(rotation), math.sin(rotation))
+        #spawn_angle = self.angle + math.pi / 2
+        #direction = glm.vec2(math.cos(spawn_angle), math.sin(spawn_angle))
+        direction = self.forward
         position = self.position + direction * spawn_distance
 
         #laser = Laser(position, self.angle, missile_speed).create()

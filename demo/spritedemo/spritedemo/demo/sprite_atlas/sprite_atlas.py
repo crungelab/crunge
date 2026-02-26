@@ -49,6 +49,7 @@ class SpriteAtlasDemo(Demo):
         changed, self.angle = imgui.drag_float(
             "Angle",
             self.angle,
+            0.1
         )
         self.node.angle = self.angle
 

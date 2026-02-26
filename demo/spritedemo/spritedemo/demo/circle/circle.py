@@ -40,6 +40,7 @@ class CircleDemo(Demo):
         changed, self.angle = imgui.drag_float(
             "Angle",
             self.angle,
+            0.1
         )
         if changed:
             self.node.angle = self.angle

@@ -25,7 +25,7 @@ class DynamicPhysics(Physics):
         position = node.position + self.position
         #logger.debug(f"position: {position}")
         body.position = pymunk.Vec2d(position.x, position.y)
-        body.angle = math.radians(node.angle)
+        body.angle = node.angle
         return body
 
 class DynamicPhysicsEngine(PhysicsEngine2D):

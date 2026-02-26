@@ -67,6 +67,7 @@ class InstancingDemo(Demo):
         changed, self.angle = imgui.drag_float(
             "Angle",
             self.angle,
+            0.1
         )
         if changed:
             for node in self.nodes:

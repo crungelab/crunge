@@ -18,7 +18,6 @@ class BackgroundDemo(Demo):
     def reset(self):
         super().reset()
         
-        self.angle = 0
         self.scale = 1.0
         self.color = colors.WHITE
 
@@ -35,21 +34,6 @@ class BackgroundDemo(Demo):
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
 
         imgui.begin("Background")
-
-        '''
-        # Rotation
-        changed, self.angle = imgui.drag_float(
-            "Angle",
-            self.angle,
-        )
-        if changed:
-            self.node.angle = self.angle
-
-        # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
-        if changed:
-            self.node.scale = glm.vec2(self.scale, self.scale)
-        '''
 
         # Tint
         changed, color = imgui.color_edit4("Tint", self.color)

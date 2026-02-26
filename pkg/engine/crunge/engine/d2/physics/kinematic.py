@@ -20,7 +20,7 @@ class KinematicPhysics(Physics):
         body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
         body.node = node
         body.position = pymunk.Vec2d(position.x, position.y)
-        body.angle = math.radians(node.angle)
+        body.angle = node.angle
         return body
 
 

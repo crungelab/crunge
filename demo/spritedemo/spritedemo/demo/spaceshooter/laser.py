@@ -47,6 +47,7 @@ class Laser(DynamicEntity2D):
         if self.ttl <= 0:
             self.destroy()
         #self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
-        rotation = self._rotation + math.pi / 2
-        direction = glm.vec2(math.cos(rotation), math.sin(rotation))
+        #angle_facing = self.angle + math.pi / 2
+        #direction = glm.vec2(math.cos(angle_facing), math.sin(angle_facing))
+        direction = self.forward
         self.body.velocity = tuple(direction * self.speed)
