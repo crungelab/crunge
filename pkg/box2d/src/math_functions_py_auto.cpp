@@ -74,6 +74,22 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
         _Transform
         .def_readwrite("p", &b2Transform::p)
         .def_readwrite("q", &b2Transform::q)
+        .def(py::init([](struct b2Vec2 p, struct b2Rot q)
+        {
+            b2Transform obj{};
+            obj.p = p;
+            obj.q = q;
+            return obj;
+        }))
+        .def("__repr__", [](const b2Transform &self) {
+            std::stringstream ss;
+            ss << "Transform(";
+            ss << "p=" << py::repr(py::cast(self.p)).cast<std::string>();
+            ss << ", ";
+            ss << "q=" << py::repr(py::cast(self.q)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     py::class_<b2Mat22> _Mat22(_box2d, "Mat22");

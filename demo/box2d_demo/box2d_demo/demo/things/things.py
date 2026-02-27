@@ -74,7 +74,7 @@ class ThingsDemo(PhysicsDemo):
         imgui.end()
 
         if self.debug_draw_enabled:
-            self.world.debug_draw(self.draw_options)
+            self.world.debug_draw(self.debug_draw)
 
         super()._draw()
 

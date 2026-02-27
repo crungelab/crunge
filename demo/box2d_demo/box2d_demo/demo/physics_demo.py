@@ -5,10 +5,12 @@ from crunge import sdl
 from crunge import imgui
 from crunge import box2d
 
-#from box2d_demo.physics.draw_options import DrawOptions
+from box2d_demo.physics.debug_draw import DebugDraw
 from box2d_demo.physics import DynamicPhysicsEngine
 
 from .scrolling_demo import ScrollingDemo
+from ..physics.world_debug_overlay import WorldDebugOverlay
+
 
 
 class PhysicsDemo(ScrollingDemo):
@@ -18,6 +20,11 @@ class PhysicsDemo(ScrollingDemo):
         self.create_physics_engine()
     """
 
+    def create_view(self):
+        super().create_view()
+        self.debug_overlay = WorldDebugOverlay()
+        self.view.add_overlay(self.debug_overlay)
+
     def create_physics_engine(self):
         self.world = DynamicPhysicsEngine()
         self.world.make_current()
@@ -26,7 +33,7 @@ class PhysicsDemo(ScrollingDemo):
         super().reset()
 
         self.debug_draw_enabled = False
-        #self.draw_options = DrawOptions(self.view.scratch)
+        self.debug_draw = DebugDraw()
 
         self.create_physics_engine()
 
@@ -114,12 +121,15 @@ class PhysicsDemo(ScrollingDemo):
     # Draw & UI
     # ------------------------------------------------------------------
 
+    """
     def _draw(self):
         if self.debug_draw_enabled:
-            self.world.debug_draw(self.draw_options)
+            self.world.draw(self.debug_draw)
         super()._draw()
+    """
 
     def draw_physics_options(self):
         _, self.debug_draw_enabled = imgui.checkbox(
             "Debug Draw", self.debug_draw_enabled
         )
+        self.debug_overlay.visible = self.debug_draw_enabled

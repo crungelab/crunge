@@ -16,7 +16,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self,
         position=glm.vec2(),
         angle=0.0,
-        scale=glm.vec2(1.0),
+        scale=glm.vec2(1.0, 1.0),
         vu: "Vu2D" = None,
         model: Any = None,
     ) -> None:

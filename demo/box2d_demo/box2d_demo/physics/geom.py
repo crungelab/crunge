@@ -51,7 +51,8 @@ class BoxGeom(Geom):
         logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
         shapes = []
         size = node.size
-        shape_box = box2d.make_box(size.x, size.y)
+        half_size = size * 0.5
+        shape_box = box2d.make_box(half_size.x, half_size.y)
         shape_def = box2d.ShapeDef()
 
         #shape = box2d.Poly.create_box(node.body, tuple(size))
@@ -179,6 +180,45 @@ class HullGeom(PolyGeom):
     def create_shapes(
         self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
     ):
+        #transform = transform if transform is not None else node.geom_transform
+        body = node.body
+        shapes = []
+
+        if node.model.points is None:
+            # logger.debug(f"model: {node.model}: no points")
+            # return shapes
+            raise ValueError(f"model: {node.model}: no points")
+
+        points = node.model.points.tolist()
+        clipped_points = []
+        if clip:
+            for point in points:
+                if clip.contains_point(glm.vec2(point[0], point[1])):
+                    clipped_points.append(point)
+        else:
+            clipped_points = points
+        # logger.debug(f"points: {points}")
+
+        """
+        b2Hull hull = b2ComputeHull( vertices, 6 );
+        b2Polygon chassis = b2MakePolygon( &hull, 0.15f * scale );
+        """
+        shape_hull = box2d.compute_hull(clipped_points, SLOP)
+        #points = to_convex_hull(clipped_points, SLOP)
+
+        #shape = box2d.Poly(body, points, transform)
+        shape_def = box2d.ShapeDef()
+        shape = node.body.create_polygon_shape(shape_def, shape_hull)
+
+        #shape.friction = 10
+        #shape.elasticity = 0.2
+        #shape.collision_type = node.physics.kind
+        shapes.append(shape)
+        return shapes
+    """
+    def create_shapes(
+        self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
+    ):
         transform = transform if transform is not None else node.geom_transform
         body = node.body
         shapes = []
@@ -207,3 +247,4 @@ class HullGeom(PolyGeom):
         shape.collision_type = node.physics.kind
         shapes.append(shape)
         return shapes
+    """

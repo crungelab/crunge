@@ -31,10 +31,6 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("time_step")
         , py::arg("sub_step_count")
         , py::return_value_policy::automatic_reference)
-    .def("world_draw", &b2World_Draw
-        , py::arg("world_id")
-        , py::arg("draw")
-        , py::return_value_policy::automatic_reference)
     .def("world_get_body_events", &b2World_GetBodyEvents
         , py::arg("world_id")
         , py::return_value_policy::automatic_reference)

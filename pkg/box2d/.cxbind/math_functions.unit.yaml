@@ -12,6 +12,15 @@ specs:
 
   'struct@b2Rot': {}
 
+  'struct@b2Transform':
+    extra:
+      methods:
+        __init__:
+          gen_args: true
+        __repr__:
+          auto: true
+
+
 transforms:
   - name: mogrify
     target: struct@b2Rot

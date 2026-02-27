@@ -10,6 +10,8 @@ void init_math_functions_py_auto(py::module &, Registry& registry);
 void init_id_py_auto(py::module &, Registry& registry);
 void init_collision_py_auto(py::module &, Registry& registry);
 
+void init_debug_draw_py(py::module &_box2d, Registry &registry);
+
 
 PYBIND11_MODULE(_box2d, m) {
     Registry r;
@@ -18,4 +20,5 @@ PYBIND11_MODULE(_box2d, m) {
     init_math_functions_py_auto(m, r);
     init_id_py_auto(m, r);
     init_collision_py_auto(m, r);
+    init_debug_draw_py(m, r);
 }

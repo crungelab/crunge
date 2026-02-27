@@ -8,6 +8,8 @@ specs:
       methods:
         __init__:
           use: b2CreateWorld
+        draw:
+          use: World_Draw
 
   'struct@b2BodyId':
     pyname: Body

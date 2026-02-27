@@ -137,7 +137,8 @@ class PhysicsEntity2D(Entity2D):
         position = -self.physics.position
         tx = position.x
         ty = position.y
-        t = box2d.Transform(a=a, d=d, tx=tx, ty=ty)
+        #t = box2d.Transform(a=a, d=d, tx=tx, ty=ty)
+        t = box2d.Transform(box2d.Vec2(tx, ty), box2d.Rot(angle=0))
         # logger.debug(f"t: {t}")
         return t
 

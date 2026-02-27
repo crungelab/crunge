@@ -20,6 +20,7 @@ set(SOURCES
     src/math_functions_py_auto.cpp
     src/id_py_auto.cpp
     src/collision_py_auto.cpp
+    src/debug_draw_py.cpp
 )
 
 pybind11_add_module(${THIS} MODULE src/box2d_py_module.cpp)

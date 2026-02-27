@@ -3,6 +3,7 @@ target: 'src/box2d_py_auto.cpp'
 
 excludes:
   # Wrapped
+  - 'function@b2World_Draw'
   - 'function@b2Body_SetUserData'
   - 'function@b2Body_GetUserData'
   - 'function@b2DestroyBody'
