@@ -23,3 +23,10 @@ specs:
 
         __repr__:
           auto: true
+
+  'function@b2ComputeHull':
+    args:
+      points:
+        facade:
+          kind: vector
+          length_arg: count

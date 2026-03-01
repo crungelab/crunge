@@ -3,9 +3,10 @@ from typing import TYPE_CHECKING
 from loguru import logger
 
 import glm
-#from crunge import box2d
-#from box2d.vec2d import Vec2d
-#from box2d.autogeometry import convex_decomposition, to_convex_hull
+
+# from crunge import box2d
+# from box2d.vec2d import Vec2d
+# from box2d.autogeometry import convex_decomposition, to_convex_hull
 
 from crunge import box2d
 from crunge.engine.math import Rect2
@@ -18,7 +19,12 @@ class Geom:
     def __init__(self):
         pass
 
-    def create_shapes(self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None):
+    def create_shapes(
+        self,
+        node: "PhysicsEntity2D",
+        transform: box2d.Transform = None,
+        clip: Rect2 = None,
+    ):
         pass
 
     def get_moment(self, node: "PhysicsEntity2D") -> float:
@@ -27,26 +33,15 @@ class Geom:
         return box2d.moment_for_box(node.mass, tuple(size))
 
 
-"""
-ground_box = box2d.make_box(50.0, 10.0)
-print("Ground Box:")
-print(ground_box)
-
-ground_shape_def = box2d.ShapeDef()
-print("Ground Shape Def:")
-print(ground_shape_def)
-
-ground_shape = ground_body.create_polygon_shape(ground_shape_def, ground_box)
-print("Ground Shape:")
-print(ground_shape)
-"""
-
 class BoxGeom(Geom):
     def __init__(self):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: box2d.Transform = None,
+        clip: Rect2 = None,
     ):
         logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
         shapes = []
@@ -55,7 +50,7 @@ class BoxGeom(Geom):
         shape_box = box2d.make_box(half_size.x, half_size.y)
         shape_def = box2d.ShapeDef()
 
-        #shape = box2d.Poly.create_box(node.body, tuple(size))
+        # shape = box2d.Poly.create_box(node.body, tuple(size))
         shape = node.body.create_polygon_shape(shape_def, shape_box)
 
         shape.friction = 10
@@ -76,7 +71,10 @@ class BallGeom(Geom):
         return box2d.moment_for_circle(node.mass, 0, radius)
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: box2d.Transform = None,
+        clip: Rect2 = None,
     ):
         logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
         shapes = []
@@ -85,7 +83,7 @@ class BallGeom(Geom):
         circle = box2d.Circle(center=box2d.Vec2(0, 0), radius=radius)
         shape_def = box2d.ShapeDef()
 
-        #shape = box2d.Poly.create_box(node.body, tuple(size))
+        # shape = box2d.Poly.create_box(node.body, tuple(size))
         shape = node.body.create_circle_shape(shape_def, circle)
 
         shape.friction = 10
@@ -109,12 +107,16 @@ class BallGeom(Geom):
         return shapes
     """
 
+
 class GroupGeom(Geom):
     def __init__(self):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: box2d.Transform = None,
+        clip: Rect2 = None,
     ):
         return []
 
@@ -149,7 +151,10 @@ class DecomposedGeom(PolyGeom):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: box2d.Transform = None,
+        clip: Rect2 = None,
     ):
         transform = transform if transform is not None else node.geom_transform
 
@@ -178,9 +183,12 @@ class HullGeom(PolyGeom):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: box2d.Transform = None,
+        clip: Rect2 = None,
     ):
-        #transform = transform if transform is not None else node.geom_transform
+        # transform = transform if transform is not None else node.geom_transform
         body = node.body
         shapes = []
 
@@ -203,18 +211,22 @@ class HullGeom(PolyGeom):
         b2Hull hull = b2ComputeHull( vertices, 6 );
         b2Polygon chassis = b2MakePolygon( &hull, 0.15f * scale );
         """
-        shape_hull = box2d.compute_hull(clipped_points, SLOP)
-        #points = to_convex_hull(clipped_points, SLOP)
+        hull_points = []
+        for point in clipped_points:
+            hull_points.append(box2d.Vec2(point[0], point[1]))
 
-        #shape = box2d.Poly(body, points, transform)
+        shape_hull = box2d.compute_hull(hull_points)
+        polygon = box2d.make_polygon(shape_hull, SLOP)
+
         shape_def = box2d.ShapeDef()
-        shape = node.body.create_polygon_shape(shape_def, shape_hull)
+        shape = node.body.create_polygon_shape(shape_def, polygon)
 
-        #shape.friction = 10
-        #shape.elasticity = 0.2
-        #shape.collision_type = node.physics.kind
+        # shape.friction = 10
+        # shape.elasticity = 0.2
+        # shape.collision_type = node.physics.kind
         shapes.append(shape)
         return shapes
+
     """
     def create_shapes(
         self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None

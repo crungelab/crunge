@@ -32,7 +32,6 @@ class SpaceShooter(Demo):
 
     def create_physics_engine(self):
         self.physics_engine = engine = DynamicPhysicsEngine(gravity=(0, 0))
-        engine.create()
 
         def laser_laser_collision(arbiter, space, data):
             return False

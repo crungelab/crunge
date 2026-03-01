@@ -6,8 +6,6 @@ from crunge import imgui
 
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
-from box2d_demo.physics import DynamicPhysicsEngine
-from box2d_demo.physics.draw_options import DrawOptions
 
 from ..physics_demo import PhysicsDemo
 
@@ -53,10 +51,7 @@ class ThingsDemo(PhysicsDemo):
         imgui.text("Click to create shapes")
 
         self.draw_stats()
-
-        _, self.debug_draw_enabled = imgui.checkbox(
-            "Debug Draw", self.debug_draw_enabled
-        )
+        self.draw_physics_options()
 
         if imgui.button("Reset"):
             self.reset()
@@ -72,9 +67,6 @@ class ThingsDemo(PhysicsDemo):
             imgui.end_list_box()
 
         imgui.end()
-
-        if self.debug_draw_enabled:
-            self.world.debug_draw(self.debug_draw)
 
         super()._draw()
 

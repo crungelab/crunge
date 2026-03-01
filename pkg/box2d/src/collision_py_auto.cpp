@@ -270,10 +270,16 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
     ;
 
     _box2d
-    .def("compute_hull", &b2ComputeHull
+    .def("compute_hull", [](std::vector<struct b2Vec2> points)
+        {
+            const b2Vec2 * _points = (const b2Vec2 *)points.data();
+            auto count = points.size();
+            
+            auto ret = b2ComputeHull(_points, count);
+            return ret;
+        }
         , py::arg("points")
-        , py::arg("count")
-        , py::return_value_policy::automatic_reference)
+    )
     .def("validate_hull", &b2ValidateHull
         , py::arg("hull")
         , py::return_value_policy::automatic_reference)
