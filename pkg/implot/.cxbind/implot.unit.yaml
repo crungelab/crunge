@@ -9,6 +9,12 @@ specs:
   'struct@ImPlotContext':
     wrapper: 'py::capsule'
 
+  # TODO: function_template support in cxbind needs more work.  Especially overloads
+  # 'function_template@ImPlot::PlotLine':
+  #   specializations:
+  #     - pyname: plot_line
+  #       args: [float]
+
 excludes:
   - 'function@ImPlot::PixelsToPlot'
   - 'function@ImPlot::SetNextPlotTicksX'

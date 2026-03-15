@@ -1,2 +1,5 @@
+-e ../../../cxbind
+-e ../../../cxbind/plugins/clang
+
 -e ../core
 -e ../wgpu

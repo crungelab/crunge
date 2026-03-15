@@ -1,11 +1,13 @@
+#include <stdbool.h>
+#include <limits>
+#include <iostream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_video.h>
-#include <iostream>
 
 #include <cxbind/cxbind.h>
 

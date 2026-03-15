@@ -53,7 +53,7 @@ void init_skia_size_py_auto(py::module &_skia, Registry &registry) {
         _Size
         .def_readwrite("f_width", &SkSize::fWidth)
         .def_readwrite("f_height", &SkSize::fHeight)
-        .def_static("make", py::overload_cast<float, float>(&SkSize::Make)
+        .def_static("make", py::overload_cast<SkScalar, SkScalar>(&SkSize::Make)
             , py::arg("w")
             , py::arg("h")
             , py::return_value_policy::automatic_reference)

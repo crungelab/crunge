@@ -82,9 +82,6 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("at")
         , py::arg("cs")
         )
-        .def(py::init<const SkColorInfo &>()
-        , py::arg("")
-        )
         .def("color_space", &SkColorInfo::colorSpace
             , py::return_value_policy::automatic_reference)
         .def("ref_color_space", &SkColorInfo::refColorSpace

@@ -131,7 +131,9 @@ class Node(Dispatcher, Generic[T_Node]):
     def draw(self):
         if not self.visible:
             return
+        self._begin()
         self._draw()
+        self._end()
 
     """
     def _draw(self):
@@ -139,6 +141,9 @@ class Node(Dispatcher, Generic[T_Node]):
             self.vu.draw()
 
     """
+
+    def _begin(self):
+        pass
 
     def _draw(self):
         if self.vu is not None:
@@ -146,6 +151,9 @@ class Node(Dispatcher, Generic[T_Node]):
         for child in self.children:
             # child.draw()
             self.draw_child(child)
+
+    def _end(self):
+        pass
 
     def draw_child(self, child: "Node[T_Node]"):
         child.draw()
@@ -160,19 +168,6 @@ class Node(Dispatcher, Generic[T_Node]):
             self.vu.render()
         for child in self.children:
             child.render()
-
-    """
-    def render(self):
-        if not self.visible:
-            return
-        self._render()
-        for child in self.children:
-            child.render()
-
-    def _render(self):
-        if self.vu is not None:
-            self.vu.render()
-    """
 
     def root_render(self):
         self.render()

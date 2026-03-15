@@ -2,7 +2,11 @@ source: '../../depot/skia/include/gpu/graphite/GraphiteTypes.h'
 target: 'src/skia_graphite_types_py_auto.cpp'
 
 specs:
-  'struct@skgpu::graphite::InsertRecordingInfo': {gen_init: true}
+  'struct@skgpu::graphite::InsertRecordingInfo':
+    extra:
+      methods:
+        __init__: {}
+
 
 excludes:
   # Wrapped

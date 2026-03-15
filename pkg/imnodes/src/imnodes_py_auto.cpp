@@ -178,14 +178,14 @@ void init_generated(py::module &_imnodes, Registry &registry) {
             ImNodes::EditorContextFree(arg);
             return ;
         }
-        , py::arg("")
+        , py::arg("arg")
         , py::return_value_policy::automatic_reference)
     .def("editor_context_set", [](const py::capsule& arg)
         {
             ImNodes::EditorContextSet(arg);
             return ;
         }
-        , py::arg("")
+        , py::arg("arg")
         , py::return_value_policy::automatic_reference)
     .def("editor_context_get_panning", &ImNodes::EditorContextGetPanning
         , py::return_value_policy::automatic_reference)
@@ -218,11 +218,11 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("pop_color_style", &ImNodes::PopColorStyle
         , py::return_value_policy::automatic_reference)
-    .def("push_style_var", py::overload_cast<int, float>(&ImNodes::PushStyleVar)
+    .def("push_style_var", py::overload_cast<ImNodesStyleVar, float>(&ImNodes::PushStyleVar)
         , py::arg("style_item")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
-    .def("push_style_var", py::overload_cast<int, const ImVec2 &>(&ImNodes::PushStyleVar)
+    .def("push_style_var", py::overload_cast<ImNodesStyleVar, const ImVec2 &>(&ImNodes::PushStyleVar)
         , py::arg("style_item")
         , py::arg("value")
         , py::return_value_policy::automatic_reference)
@@ -410,14 +410,14 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         }
         , py::arg("link_id")
         , py::return_value_policy::automatic_reference)
-    .def("save_current_editor_state_to_ini_string", [](unsigned long * data_size)
+    .def("save_current_editor_state_to_ini_string", [](size_t * data_size)
         {
             auto ret = ImNodes::SaveCurrentEditorStateToIniString(data_size);
             return std::make_tuple(ret, data_size);
         }
         , py::arg("data_size") = nullptr
         , py::return_value_policy::automatic_reference)
-    .def("save_editor_state_to_ini_string", [](const py::capsule& editor, unsigned long * data_size)
+    .def("save_editor_state_to_ini_string", [](const py::capsule& editor, size_t * data_size)
         {
             auto ret = ImNodes::SaveEditorStateToIniString(editor, data_size);
             return std::make_tuple(ret, data_size);
@@ -429,7 +429,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         , py::arg("data")
         , py::arg("data_size")
         , py::return_value_policy::automatic_reference)
-    .def("load_editor_state_from_ini_string", [](const py::capsule& editor, const char * data, unsigned long data_size)
+    .def("load_editor_state_from_ini_string", [](const py::capsule& editor, const char * data, size_t data_size)
         {
             ImNodes::LoadEditorStateFromIniString(editor, data, data_size);
             return ;

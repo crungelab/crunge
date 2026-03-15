@@ -74,27 +74,27 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "Path", _Path);
         _Path
         .def_static("make", &SkPath::Make
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("point_count")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("verb_count")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("conic_weight_count")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("is_volatile") = false
             , py::return_value_policy::automatic_reference)
         .def_static("rect", &SkPath::Rect
-            , py::arg("")
-            , py::arg("") = SkPathDirection::kCW
+            , py::arg("arg")
+            , py::arg("arg") = SkPathDirection::kCW
             , py::arg("start_index") = 0
             , py::return_value_policy::automatic_reference)
         .def_static("oval", py::overload_cast<const SkRect &, SkPathDirection>(&SkPath::Oval)
-            , py::arg("")
-            , py::arg("") = SkPathDirection::kCW
+            , py::arg("arg")
+            , py::arg("arg") = SkPathDirection::kCW
             , py::return_value_policy::automatic_reference)
         .def_static("oval", py::overload_cast<const SkRect &, SkPathDirection, unsigned int>(&SkPath::Oval)
-            , py::arg("")
-            , py::arg("")
+            , py::arg("arg")
+            , py::arg("arg")
             , py::arg("start_index")
             , py::return_value_policy::automatic_reference)
         .def_static("circle", &SkPath::Circle
@@ -104,15 +104,15 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("dir") = SkPathDirection::kCW
             , py::return_value_policy::automatic_reference)
         .def_static("r_rect", py::overload_cast<const SkRRect &, SkPathDirection>(&SkPath::RRect)
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("dir") = SkPathDirection::kCW
             , py::return_value_policy::automatic_reference)
         .def_static("r_rect", py::overload_cast<const SkRRect &, SkPathDirection, unsigned int>(&SkPath::RRect)
-            , py::arg("")
-            , py::arg("")
+            , py::arg("arg")
+            , py::arg("arg")
             , py::arg("start_index")
             , py::return_value_policy::automatic_reference)
-        .def_static("r_rect", py::overload_cast<const SkRect &, float, float, SkPathDirection>(&SkPath::RRect)
+        .def_static("r_rect", py::overload_cast<const SkRect &, SkScalar, SkScalar, SkPathDirection>(&SkPath::RRect)
             , py::arg("bounds")
             , py::arg("rx")
             , py::arg("ry")
@@ -122,7 +122,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("pts")
             , py::arg("count")
             , py::arg("is_closed")
-            , py::arg("") = SkPathFillType::kWinding
+            , py::arg("arg") = SkPathFillType::kWinding
             , py::arg("is_volatile") = false
             , py::return_value_policy::automatic_reference)
         .def_static("polygon", py::overload_cast<const std::initializer_list<SkPoint> &, bool, SkPathFillType, bool>(&SkPath::Polygon)
@@ -136,9 +136,6 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("b")
             , py::return_value_policy::automatic_reference)
         .def(py::init<>())
-        .def(py::init<const SkPath &>()
-        , py::arg("path")
-        )
         .def("snapshot", &SkPath::snapshot
             , py::return_value_policy::automatic_reference)
         .def("detach", &SkPath::detach
@@ -249,7 +246,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("extra_verb_count") = 0
             , py::arg("extra_conic_count") = 0
             , py::return_value_policy::automatic_reference)
-        .def("move_to", py::overload_cast<float, float>(&SkPath::moveTo)
+        .def("move_to", py::overload_cast<SkScalar, SkScalar>(&SkPath::moveTo)
             , py::arg("x")
             , py::arg("y")
             , py::return_value_policy::reference)
@@ -260,7 +257,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("dx")
             , py::arg("dy")
             , py::return_value_policy::reference)
-        .def("line_to", py::overload_cast<float, float>(&SkPath::lineTo)
+        .def("line_to", py::overload_cast<SkScalar, SkScalar>(&SkPath::lineTo)
             , py::arg("x")
             , py::arg("y")
             , py::return_value_policy::reference)
@@ -271,7 +268,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("dx")
             , py::arg("dy")
             , py::return_value_policy::reference)
-        .def("quad_to", py::overload_cast<float, float, float, float>(&SkPath::quadTo)
+        .def("quad_to", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar>(&SkPath::quadTo)
             , py::arg("x1")
             , py::arg("y1")
             , py::arg("x2")
@@ -287,14 +284,14 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("dx2")
             , py::arg("dy2")
             , py::return_value_policy::reference)
-        .def("conic_to", py::overload_cast<float, float, float, float, float>(&SkPath::conicTo)
+        .def("conic_to", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkScalar>(&SkPath::conicTo)
             , py::arg("x1")
             , py::arg("y1")
             , py::arg("x2")
             , py::arg("y2")
             , py::arg("w")
             , py::return_value_policy::reference)
-        .def("conic_to", py::overload_cast<const SkPoint &, const SkPoint &, float>(&SkPath::conicTo)
+        .def("conic_to", py::overload_cast<const SkPoint &, const SkPoint &, SkScalar>(&SkPath::conicTo)
             , py::arg("p1")
             , py::arg("p2")
             , py::arg("w")
@@ -306,7 +303,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("dy2")
             , py::arg("w")
             , py::return_value_policy::reference)
-        .def("cubic_to", py::overload_cast<float, float, float, float, float, float>(&SkPath::cubicTo)
+        .def("cubic_to", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkScalar, SkScalar>(&SkPath::cubicTo)
             , py::arg("x1")
             , py::arg("y1")
             , py::arg("x2")
@@ -327,20 +324,20 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("dx3")
             , py::arg("dy3")
             , py::return_value_policy::reference)
-        .def("arc_to", py::overload_cast<const SkRect &, float, float, bool>(&SkPath::arcTo)
+        .def("arc_to", py::overload_cast<const SkRect &, SkScalar, SkScalar, bool>(&SkPath::arcTo)
             , py::arg("oval")
             , py::arg("start_angle")
             , py::arg("sweep_angle")
             , py::arg("force_move_to")
             , py::return_value_policy::reference)
-        .def("arc_to", py::overload_cast<float, float, float, float, float>(&SkPath::arcTo)
+        .def("arc_to", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkScalar>(&SkPath::arcTo)
             , py::arg("x1")
             , py::arg("y1")
             , py::arg("x2")
             , py::arg("y2")
             , py::arg("radius")
             , py::return_value_policy::reference)
-        .def("arc_to", py::overload_cast<const SkPoint, const SkPoint, float>(&SkPath::arcTo)
+        .def("arc_to", py::overload_cast<const SkPoint, const SkPoint, SkScalar>(&SkPath::arcTo)
             , py::arg("p1")
             , py::arg("p2")
             , py::arg("radius")
@@ -353,7 +350,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             .export_values()
         ;
         _Path
-        .def("arc_to", py::overload_cast<float, float, float, SkPath::ArcSize, SkPathDirection, float, float>(&SkPath::arcTo)
+        .def("arc_to", py::overload_cast<SkScalar, SkScalar, SkScalar, SkPath::ArcSize, SkPathDirection, SkScalar, SkScalar>(&SkPath::arcTo)
             , py::arg("rx")
             , py::arg("ry")
             , py::arg("x_axis_rotate")
@@ -362,7 +359,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("x")
             , py::arg("y")
             , py::return_value_policy::reference)
-        .def("arc_to", py::overload_cast<const SkPoint, float, SkPath::ArcSize, SkPathDirection, const SkPoint>(&SkPath::arcTo)
+        .def("arc_to", py::overload_cast<const SkPoint, SkScalar, SkPath::ArcSize, SkPathDirection, const SkPoint>(&SkPath::arcTo)
             , py::arg("r")
             , py::arg("x_axis_rotate")
             , py::arg("large_arc")
@@ -406,7 +403,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("rect")
             , py::arg("dir") = SkPathDirection::kCW
             , py::return_value_policy::reference)
-        .def("add_rect", py::overload_cast<float, float, float, float, SkPathDirection>(&SkPath::addRect)
+        .def("add_rect", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkPathDirection>(&SkPath::addRect)
             , py::arg("left")
             , py::arg("top")
             , py::arg("right")
@@ -433,13 +430,13 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("start_angle")
             , py::arg("sweep_angle")
             , py::return_value_policy::reference)
-        .def("add_round_rect", py::overload_cast<const SkRect &, float, float, SkPathDirection>(&SkPath::addRoundRect)
+        .def("add_round_rect", py::overload_cast<const SkRect &, SkScalar, SkScalar, SkPathDirection>(&SkPath::addRoundRect)
             , py::arg("rect")
             , py::arg("rx")
             , py::arg("ry")
             , py::arg("dir") = SkPathDirection::kCW
             , py::return_value_policy::reference)
-        .def("add_round_rect", py::overload_cast<const SkRect &, const float[], SkPathDirection>(&SkPath::addRoundRect)
+        .def("add_round_rect", py::overload_cast<const SkRect &, const SkScalar[], SkPathDirection>(&SkPath::addRoundRect)
             , py::arg("rect")
             , py::arg("radii")
             , py::arg("dir") = SkPathDirection::kCW
@@ -470,7 +467,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
             .export_values()
         ;
         _Path
-        .def("add_path", py::overload_cast<const SkPath &, float, float, SkPath::AddPathMode>(&SkPath::addPath)
+        .def("add_path", py::overload_cast<const SkPath &, SkScalar, SkScalar, SkPath::AddPathMode>(&SkPath::addPath)
             , py::arg("src")
             , py::arg("dx")
             , py::arg("dy")
@@ -488,12 +485,12 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         .def("reverse_add_path", &SkPath::reverseAddPath
             , py::arg("src")
             , py::return_value_policy::reference)
-        .def("offset", py::overload_cast<float, float, SkPath *>(&SkPath::offset, py::const_)
+        .def("offset", py::overload_cast<SkScalar, SkScalar, SkPath *>(&SkPath::offset, py::const_)
             , py::arg("dx")
             , py::arg("dy")
             , py::arg("dst")
             , py::return_value_policy::automatic_reference)
-        .def("offset", py::overload_cast<float, float>(&SkPath::offset)
+        .def("offset", py::overload_cast<SkScalar, SkScalar>(&SkPath::offset)
             , py::arg("dx")
             , py::arg("dy")
             , py::return_value_policy::reference)
@@ -517,7 +514,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         .def("get_last_pt", &SkPath::getLastPt
             , py::arg("last_pt")
             , py::return_value_policy::automatic_reference)
-        .def("set_last_pt", py::overload_cast<float, float>(&SkPath::setLastPt)
+        .def("set_last_pt", py::overload_cast<SkScalar, SkScalar>(&SkPath::setLastPt)
             , py::arg("x")
             , py::arg("y")
             , py::return_value_policy::automatic_reference)

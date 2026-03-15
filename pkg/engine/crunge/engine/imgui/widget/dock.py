@@ -15,9 +15,19 @@ class Dock(Widget):
         self.closable = True if on_close is not None else False
         self.flags = flags
 
+    def _begin(self):
+        collapsed, opened = imgui.begin(self.title, self.closable, flags=self.flags)
+        if not opened and self.closable:
+            self.on_close()
+
+    def _end(self):
+        imgui.end()
+
+    """
     def _draw(self):
         collapsed, opened = imgui.begin(self.title, self.closable, flags=self.flags)
         super()._draw()
         imgui.end()
         if not opened and self.closable:
             self.on_close()
+    """

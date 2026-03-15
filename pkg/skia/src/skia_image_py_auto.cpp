@@ -121,7 +121,7 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
         .def("make_shader", py::overload_cast<SkTileMode, SkTileMode, const SkSamplingOptions &, const SkMatrix *>(&SkImage::makeShader, py::const_)
             , py::arg("tmx")
             , py::arg("tmy")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("local_matrix") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("make_shader", py::overload_cast<SkTileMode, SkTileMode, const SkSamplingOptions &, const SkMatrix &>(&SkImage::makeShader, py::const_)
@@ -141,7 +141,7 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
         .def("make_raw_shader", py::overload_cast<SkTileMode, SkTileMode, const SkSamplingOptions &, const SkMatrix *>(&SkImage::makeRawShader, py::const_)
             , py::arg("tmx")
             , py::arg("tmy")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("local_matrix") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("make_raw_shader", py::overload_cast<SkTileMode, SkTileMode, const SkSamplingOptions &, const SkMatrix &>(&SkImage::makeRawShader, py::const_)
@@ -173,7 +173,7 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             .export_values()
         ;
         _Image
-        .def("read_pixels", py::overload_cast<const SkImageInfo &, void *, unsigned long, int, int, SkImage::CachingHint>(&SkImage::readPixels, py::const_)
+        .def("read_pixels", py::overload_cast<const SkImageInfo &, void *, size_t, int, int, SkImage::CachingHint>(&SkImage::readPixels, py::const_)
             , py::arg("dst_info")
             , py::arg("dst_pixels")
             , py::arg("dst_row_bytes")
@@ -245,13 +245,13 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("scale_pixels", &SkImage::scalePixels
             , py::arg("dst")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("caching_hint") = SkImage::CachingHint::kAllow_CachingHint
             , py::return_value_policy::automatic_reference)
         .def("make_scaled", py::overload_cast<skgpu::graphite::Recorder *, const SkImageInfo &, const SkSamplingOptions &>(&SkImage::makeScaled, py::const_)
-            , py::arg("")
-            , py::arg("")
-            , py::arg("")
+            , py::arg("arg")
+            , py::arg("arg")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("make_scaled", py::overload_cast<const SkImageInfo &, const SkSamplingOptions &>(&SkImage::makeScaled, py::const_)
             , py::arg("info")
@@ -269,9 +269,9 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
 
         _Image
         .def("make_subset", py::overload_cast<skgpu::graphite::Recorder *, const SkIRect &, SkImage::RequiredProperties>(&SkImage::makeSubset, py::const_)
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("subset")
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("has_mipmaps", &SkImage::hasMipmaps
             , py::return_value_policy::automatic_reference)
@@ -296,15 +296,15 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
         .def("is_lazy_generated", &SkImage::isLazyGenerated
             , py::return_value_policy::automatic_reference)
         .def("make_color_space", py::overload_cast<skgpu::graphite::Recorder *, sk_sp<SkColorSpace>, SkImage::RequiredProperties>(&SkImage::makeColorSpace, py::const_)
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("target_color_space")
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("make_color_type_and_color_space", py::overload_cast<skgpu::graphite::Recorder *, SkColorType, sk_sp<SkColorSpace>, SkImage::RequiredProperties>(&SkImage::makeColorTypeAndColorSpace, py::const_)
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("target_color_type")
             , py::arg("target_color_space")
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("reinterpret_color_space", &SkImage::reinterpretColorSpace
             , py::arg("new_color_space")

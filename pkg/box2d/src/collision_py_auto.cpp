@@ -279,7 +279,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
             return ret;
         }
         , py::arg("points")
-    )
+        , py::return_value_policy::automatic_reference)
     .def("validate_hull", &b2ValidateHull
         , py::arg("hull")
         , py::return_value_policy::automatic_reference)

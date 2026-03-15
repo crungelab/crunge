@@ -484,7 +484,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("end_plot", &ImPlot::EndPlot
         , py::return_value_policy::automatic_reference)
-    .def("begin_subplots", [](const char * title_id, int rows, int cols, const ImVec2 & size, int flags, float * row_ratios, float * col_ratios)
+    .def("begin_subplots", [](const char * title_id, int rows, int cols, const ImVec2 & size, ImPlotSubplotFlags flags, float * row_ratios, float * col_ratios)
         {
             auto ret = ImPlot::BeginSubplots(title_id, rows, cols, size, flags, row_ratios, col_ratios);
             return std::make_tuple(ret, row_ratios, col_ratios);
@@ -510,7 +510,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("v_max")
         , py::arg("cond") = ImPlotCond_::ImPlotCond_Once
         , py::return_value_policy::automatic_reference)
-    .def("setup_axis_links", [](int axis, double * link_min, double * link_max)
+    .def("setup_axis_links", [](ImAxis axis, double * link_min, double * link_max)
         {
             ImPlot::SetupAxisLinks(axis, link_min, link_max);
             return std::make_tuple(link_min, link_max);
@@ -519,20 +519,20 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("link_min")
         , py::arg("link_max")
         , py::return_value_policy::automatic_reference)
-    .def("setup_axis_format", py::overload_cast<int, const char *>(&ImPlot::SetupAxisFormat)
+    .def("setup_axis_format", py::overload_cast<ImAxis, const char *>(&ImPlot::SetupAxisFormat)
         , py::arg("axis")
         , py::arg("fmt")
         , py::return_value_policy::automatic_reference)
-    .def("setup_axis_format", py::overload_cast<int, int (*)(double, char *, int, void *), void *>(&ImPlot::SetupAxisFormat)
+    .def("setup_axis_format", py::overload_cast<ImAxis, ImPlotFormatter, void *>(&ImPlot::SetupAxisFormat)
         , py::arg("axis")
         , py::arg("formatter")
         , py::arg("data") = nullptr
         , py::return_value_policy::automatic_reference)
-    .def("setup_axis_scale", py::overload_cast<int, int>(&ImPlot::SetupAxisScale)
+    .def("setup_axis_scale", py::overload_cast<ImAxis, ImPlotScale>(&ImPlot::SetupAxisScale)
         , py::arg("axis")
         , py::arg("scale")
         , py::return_value_policy::automatic_reference)
-    .def("setup_axis_scale", py::overload_cast<int, double (*)(double, void *), double (*)(double, void *), void *>(&ImPlot::SetupAxisScale)
+    .def("setup_axis_scale", py::overload_cast<ImAxis, ImPlotTransform, ImPlotTransform, void *>(&ImPlot::SetupAxisScale)
         , py::arg("axis")
         , py::arg("forward")
         , py::arg("inverse")
@@ -577,7 +577,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("v_max")
         , py::arg("cond") = ImPlotCond_::ImPlotCond_Once
         , py::return_value_policy::automatic_reference)
-    .def("set_next_axis_links", [](int axis, double * link_min, double * link_max)
+    .def("set_next_axis_links", [](ImAxis axis, double * link_min, double * link_max)
         {
             ImPlot::SetNextAxisLinks(axis, link_min, link_max);
             return std::make_tuple(link_min, link_max);
@@ -664,7 +664,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("label_id")
         , py::arg("flags") = 0
         , py::return_value_policy::automatic_reference)
-    .def("drag_point", [](int id, double * x, double * y, const ImVec4 & col, float size, int flags, bool * out_clicked, bool * out_hovered, bool * held)
+    .def("drag_point", [](int id, double * x, double * y, const ImVec4 & col, float size, ImPlotDragToolFlags flags, bool * out_clicked, bool * out_hovered, bool * held)
         {
             auto ret = ImPlot::DragPoint(id, x, y, col, size, flags, out_clicked, out_hovered, held);
             return std::make_tuple(ret, x, y, out_clicked, out_hovered, held);
@@ -679,7 +679,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("out_hovered") = nullptr
         , py::arg("held") = nullptr
         , py::return_value_policy::automatic_reference)
-    .def("drag_line_x", [](int id, double * x, const ImVec4 & col, float thickness, int flags, bool * out_clicked, bool * out_hovered, bool * held)
+    .def("drag_line_x", [](int id, double * x, const ImVec4 & col, float thickness, ImPlotDragToolFlags flags, bool * out_clicked, bool * out_hovered, bool * held)
         {
             auto ret = ImPlot::DragLineX(id, x, col, thickness, flags, out_clicked, out_hovered, held);
             return std::make_tuple(ret, x, out_clicked, out_hovered, held);
@@ -693,7 +693,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("out_hovered") = nullptr
         , py::arg("held") = nullptr
         , py::return_value_policy::automatic_reference)
-    .def("drag_line_y", [](int id, double * y, const ImVec4 & col, float thickness, int flags, bool * out_clicked, bool * out_hovered, bool * held)
+    .def("drag_line_y", [](int id, double * y, const ImVec4 & col, float thickness, ImPlotDragToolFlags flags, bool * out_clicked, bool * out_hovered, bool * held)
         {
             auto ret = ImPlot::DragLineY(id, y, col, thickness, flags, out_clicked, out_hovered, held);
             return std::make_tuple(ret, y, out_clicked, out_hovered, held);
@@ -707,7 +707,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("out_hovered") = nullptr
         , py::arg("held") = nullptr
         , py::return_value_policy::automatic_reference)
-    .def("drag_rect", [](int id, double * x1, double * y1, double * x2, double * y2, const ImVec4 & col, int flags, bool * out_clicked, bool * out_hovered, bool * held)
+    .def("drag_rect", [](int id, double * x1, double * y1, double * x2, double * y2, const ImVec4 & col, ImPlotDragToolFlags flags, bool * out_clicked, bool * out_hovered, bool * held)
         {
             auto ret = ImPlot::DragRect(id, x1, y1, x2, y2, col, flags, out_clicked, out_hovered, held);
             return std::make_tuple(ret, x1, y1, x2, y2, out_clicked, out_hovered, held);
@@ -778,12 +778,12 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("x_axis")
         , py::arg("y_axis")
         , py::return_value_policy::automatic_reference)
-    .def("plot_to_pixels", py::overload_cast<const ImPlotPoint &, int, int>(&ImPlot::PlotToPixels)
+    .def("plot_to_pixels", py::overload_cast<const ImPlotPoint &, ImAxis, ImAxis>(&ImPlot::PlotToPixels)
         , py::arg("plt")
         , py::arg("x_axis") = IMPLOT_AUTO
         , py::arg("y_axis") = IMPLOT_AUTO
         , py::return_value_policy::automatic_reference)
-    .def("plot_to_pixels", py::overload_cast<double, double, int, int>(&ImPlot::PlotToPixels)
+    .def("plot_to_pixels", py::overload_cast<double, double, ImAxis, ImAxis>(&ImPlot::PlotToPixels)
         , py::arg("x")
         , py::arg("y")
         , py::arg("x_axis") = IMPLOT_AUTO
@@ -871,26 +871,26 @@ void init_generated(py::module &_implot, Registry &registry) {
     .def("style_colors_light", &ImPlot::StyleColorsLight
         , py::arg("dst") = nullptr
         , py::return_value_policy::automatic_reference)
-    .def("push_style_color", py::overload_cast<int, unsigned int>(&ImPlot::PushStyleColor)
+    .def("push_style_color", py::overload_cast<ImPlotCol, ImU32>(&ImPlot::PushStyleColor)
         , py::arg("idx")
         , py::arg("col")
         , py::return_value_policy::automatic_reference)
-    .def("push_style_color", py::overload_cast<int, const ImVec4 &>(&ImPlot::PushStyleColor)
+    .def("push_style_color", py::overload_cast<ImPlotCol, const ImVec4 &>(&ImPlot::PushStyleColor)
         , py::arg("idx")
         , py::arg("col")
         , py::return_value_policy::automatic_reference)
     .def("pop_style_color", &ImPlot::PopStyleColor
         , py::arg("count") = 1
         , py::return_value_policy::automatic_reference)
-    .def("push_style_var", py::overload_cast<int, float>(&ImPlot::PushStyleVar)
+    .def("push_style_var", py::overload_cast<ImPlotStyleVar, float>(&ImPlot::PushStyleVar)
         , py::arg("idx")
         , py::arg("val")
         , py::return_value_policy::automatic_reference)
-    .def("push_style_var", py::overload_cast<int, int>(&ImPlot::PushStyleVar)
+    .def("push_style_var", py::overload_cast<ImPlotStyleVar, int>(&ImPlot::PushStyleVar)
         , py::arg("idx")
         , py::arg("val")
         , py::return_value_policy::automatic_reference)
-    .def("push_style_var", py::overload_cast<int, const ImVec2 &>(&ImPlot::PushStyleVar)
+    .def("push_style_var", py::overload_cast<ImPlotStyleVar, const ImVec2 &>(&ImPlot::PushStyleVar)
         , py::arg("idx")
         , py::arg("val")
         , py::return_value_policy::automatic_reference)
@@ -931,7 +931,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("size")
         , py::arg("qual") = true
         , py::return_value_policy::automatic_reference)
-    .def("add_colormap", py::overload_cast<const char *, const unsigned int *, int, bool>(&ImPlot::AddColormap)
+    .def("add_colormap", py::overload_cast<const char *, const ImU32 *, int, bool>(&ImPlot::AddColormap)
         , py::arg("name")
         , py::arg("cols")
         , py::arg("size")
@@ -945,7 +945,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     .def("get_colormap_index", &ImPlot::GetColormapIndex
         , py::arg("name")
         , py::return_value_policy::automatic_reference)
-    .def("push_colormap", py::overload_cast<int>(&ImPlot::PushColormap)
+    .def("push_colormap", py::overload_cast<ImPlotColormap>(&ImPlot::PushColormap)
         , py::arg("cmap")
         , py::return_value_policy::automatic_reference)
     .def("push_colormap", py::overload_cast<const char *>(&ImPlot::PushColormap)
@@ -976,7 +976,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("flags") = 0
         , py::arg("cmap") = IMPLOT_AUTO
         , py::return_value_policy::automatic_reference)
-    .def("colormap_slider", [](const char * label, float * t, ImVec4 * out, const char * format, int cmap)
+    .def("colormap_slider", [](const char * label, float * t, ImVec4 * out, const char * format, ImPlotColormap cmap)
         {
             auto ret = ImPlot::ColormapSlider(label, t, out, format, cmap);
             return std::make_tuple(ret, t);
@@ -1006,7 +1006,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     .def("item_icon", py::overload_cast<const ImVec4 &>(&ImPlot::ItemIcon)
         , py::arg("col")
         , py::return_value_policy::automatic_reference)
-    .def("item_icon", py::overload_cast<unsigned int>(&ImPlot::ItemIcon)
+    .def("item_icon", py::overload_cast<ImU32>(&ImPlot::ItemIcon)
         , py::arg("col")
         , py::return_value_policy::automatic_reference)
     .def("colormap_icon", &ImPlot::ColormapIcon

@@ -28,7 +28,7 @@ void init_skia_image_filter_py_auto(py::module &_skia, Registry &registry) {
         .def("filter_bounds", &SkImageFilter::filterBounds
             , py::arg("src")
             , py::arg("ctm")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("input_rect") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("count_inputs", &SkImageFilter::countInputs

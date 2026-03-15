@@ -1,10 +1,12 @@
+#include <stdbool.h>
+#include <limits>
+#include <iostream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
 
 #include <SDL3/SDL.h>
-#include <iostream>
 
 #include <cxbind/cxbind.h>
 #include <crunge/sdl/conversions.h>
@@ -30,6 +32,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("DISPLAY_DESKTOP_MODE_CHANGED", SDL_EventType::SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED)
         .value("DISPLAY_CURRENT_MODE_CHANGED", SDL_EventType::SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED)
         .value("DISPLAY_CONTENT_SCALE_CHANGED", SDL_EventType::SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED)
+        .value("DISPLAY_USABLE_BOUNDS_CHANGED", SDL_EventType::SDL_EVENT_DISPLAY_USABLE_BOUNDS_CHANGED)
         .value("DISPLAY_FIRST", SDL_EventType::SDL_EVENT_DISPLAY_FIRST)
         .value("DISPLAY_LAST", SDL_EventType::SDL_EVENT_DISPLAY_LAST)
         .value("WINDOW_SHOWN", SDL_EventType::SDL_EVENT_WINDOW_SHOWN)
@@ -67,6 +70,8 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("KEYBOARD_ADDED", SDL_EventType::SDL_EVENT_KEYBOARD_ADDED)
         .value("KEYBOARD_REMOVED", SDL_EventType::SDL_EVENT_KEYBOARD_REMOVED)
         .value("TEXT_EDITING_CANDIDATES", SDL_EventType::SDL_EVENT_TEXT_EDITING_CANDIDATES)
+        .value("SCREEN_KEYBOARD_SHOWN", SDL_EventType::SDL_EVENT_SCREEN_KEYBOARD_SHOWN)
+        .value("SCREEN_KEYBOARD_HIDDEN", SDL_EventType::SDL_EVENT_SCREEN_KEYBOARD_HIDDEN)
         .value("MOUSE_MOTION", SDL_EventType::SDL_EVENT_MOUSE_MOTION)
         .value("MOUSE_BUTTON_DOWN", SDL_EventType::SDL_EVENT_MOUSE_BUTTON_DOWN)
         .value("MOUSE_BUTTON_UP", SDL_EventType::SDL_EVENT_MOUSE_BUTTON_UP)
@@ -98,6 +103,9 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("FINGER_UP", SDL_EventType::SDL_EVENT_FINGER_UP)
         .value("FINGER_MOTION", SDL_EventType::SDL_EVENT_FINGER_MOTION)
         .value("FINGER_CANCELED", SDL_EventType::SDL_EVENT_FINGER_CANCELED)
+        .value("PINCH_BEGIN", SDL_EventType::SDL_EVENT_PINCH_BEGIN)
+        .value("PINCH_UPDATE", SDL_EventType::SDL_EVENT_PINCH_UPDATE)
+        .value("PINCH_END", SDL_EventType::SDL_EVENT_PINCH_END)
         .value("CLIPBOARD_UPDATE", SDL_EventType::SDL_EVENT_CLIPBOARD_UPDATE)
         .value("DROP_FILE", SDL_EventType::SDL_EVENT_DROP_FILE)
         .value("DROP_TEXT", SDL_EventType::SDL_EVENT_DROP_TEXT)
@@ -472,6 +480,16 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("dy", &SDL_TouchFingerEvent::dy)
         .def_readwrite("pressure", &SDL_TouchFingerEvent::pressure)
         .def_readwrite("window_id", &SDL_TouchFingerEvent::windowID)
+    ;
+
+    py::class_<SDL_PinchFingerEvent> _PinchFingerEvent(_sdl, "PinchFingerEvent");
+    registry.on(_sdl, "PinchFingerEvent", _PinchFingerEvent);
+        _PinchFingerEvent
+        .def_readwrite("type", &SDL_PinchFingerEvent::type)
+        .def_readwrite("reserved", &SDL_PinchFingerEvent::reserved)
+        .def_readwrite("timestamp", &SDL_PinchFingerEvent::timestamp)
+        .def_readwrite("scale", &SDL_PinchFingerEvent::scale)
+        .def_readwrite("window_id", &SDL_PinchFingerEvent::windowID)
     ;
 
     py::class_<SDL_PenProximityEvent> _PenProximityEvent(_sdl, "PenProximityEvent");

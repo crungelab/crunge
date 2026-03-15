@@ -59,7 +59,7 @@ void init_skia_point_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("x")
             , py::arg("y")
             , py::return_value_policy::automatic_reference)
-        .def("iset", py::overload_cast<int, int>(&SkPoint::iset)
+        .def("iset", py::overload_cast<int32_t, int32_t>(&SkPoint::iset)
             , py::arg("x")
             , py::arg("y")
             , py::return_value_policy::automatic_reference)

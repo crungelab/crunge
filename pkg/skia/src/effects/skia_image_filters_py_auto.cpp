@@ -39,7 +39,7 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("crop")
             )
             .def(py::init<std::nullptr_t>()
-            , py::arg("")
+            , py::arg("arg")
             )
             .def(py::init<const SkIRect *>()
             , py::arg("optional_crop")
@@ -72,14 +72,14 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("foreground") = nullptr
             , py::arg("crop_rect") = SkImageFilters::CropRect{}
             , py::return_value_policy::automatic_reference)
-        .def_static("blur", py::overload_cast<float, float, SkTileMode, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::Blur)
+        .def_static("blur", py::overload_cast<SkScalar, SkScalar, SkTileMode, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::Blur)
             , py::arg("sigma_x")
             , py::arg("sigma_y")
             , py::arg("tile_mode")
             , py::arg("input") = nullptr
             , py::arg("crop_rect") = SkImageFilters::CropRect{}
             , py::return_value_policy::automatic_reference)
-        .def_static("blur", py::overload_cast<float, float, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::Blur)
+        .def_static("blur", py::overload_cast<SkScalar, SkScalar, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::Blur)
             , py::arg("sigma_x")
             , py::arg("sigma_y")
             , py::arg("input") = nullptr
@@ -111,7 +111,7 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("color")
             , py::arg("crop_rect") = SkImageFilters::CropRect{}
             , py::return_value_policy::automatic_reference)
-        .def_static("drop_shadow", py::overload_cast<float, float, float, float, SkRGBA4f<kUnpremul_SkAlphaType>, sk_sp<SkColorSpace>, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadow)
+        .def_static("drop_shadow", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkColor4f, sk_sp<SkColorSpace>, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadow)
             , py::arg("dx")
             , py::arg("dy")
             , py::arg("sigma_x")
@@ -121,7 +121,7 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("input") = nullptr
             , py::arg("crop_rect") = SkImageFilters::CropRect{}
             , py::return_value_policy::automatic_reference)
-        .def_static("drop_shadow", py::overload_cast<float, float, float, float, unsigned int, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadow)
+        .def_static("drop_shadow", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkColor, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadow)
             , py::arg("dx")
             , py::arg("dy")
             , py::arg("sigma_x")
@@ -130,17 +130,17 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("input") = nullptr
             , py::arg("crop_rect") = SkImageFilters::CropRect{}
             , py::return_value_policy::automatic_reference)
-        .def_static("drop_shadow_only", py::overload_cast<float, float, float, float, SkRGBA4f<kUnpremul_SkAlphaType>, sk_sp<SkColorSpace>, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadowOnly)
+        .def_static("drop_shadow_only", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkColor4f, sk_sp<SkColorSpace>, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadowOnly)
             , py::arg("dx")
             , py::arg("dy")
             , py::arg("sigma_x")
             , py::arg("sigma_y")
             , py::arg("color")
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("input") = nullptr
             , py::arg("crop_rect") = SkImageFilters::CropRect{}
             , py::return_value_policy::automatic_reference)
-        .def_static("drop_shadow_only", py::overload_cast<float, float, float, float, unsigned int, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadowOnly)
+        .def_static("drop_shadow_only", py::overload_cast<SkScalar, SkScalar, SkScalar, SkScalar, SkColor, sk_sp<SkImageFilter>, const SkImageFilters::CropRect &>(&SkImageFilters::DropShadowOnly)
             , py::arg("dx")
             , py::arg("dy")
             , py::arg("sigma_x")
@@ -208,24 +208,24 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
         .def_static("picture", py::overload_cast<sk_sp<SkPicture>>(&SkImageFilters::Picture)
             , py::arg("pic")
             , py::return_value_policy::automatic_reference)
-        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, std::basic_string_view<char>, sk_sp<SkImageFilter>>(&SkImageFilters::RuntimeShader)
+        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, std::string_view, sk_sp<SkImageFilter>>(&SkImageFilters::RuntimeShader)
             , py::arg("builder")
             , py::arg("child_shader_name")
             , py::arg("input") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, float, std::basic_string_view<char>, sk_sp<SkImageFilter>>(&SkImageFilters::RuntimeShader)
+        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, SkScalar, std::string_view, sk_sp<SkImageFilter>>(&SkImageFilters::RuntimeShader)
             , py::arg("builder")
             , py::arg("sample_radius")
             , py::arg("child_shader_name")
             , py::arg("input") = nullptr
             , py::return_value_policy::automatic_reference)
-        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, std::basic_string_view<char>[], const sk_sp<SkImageFilter>[], int>(&SkImageFilters::RuntimeShader)
+        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, std::string_view[], const sk_sp<SkImageFilter>[], int>(&SkImageFilters::RuntimeShader)
             , py::arg("builder")
             , py::arg("child_shader_names")
             , py::arg("inputs")
             , py::arg("input_count")
             , py::return_value_policy::automatic_reference)
-        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, float, std::basic_string_view<char>[], const sk_sp<SkImageFilter>[], int>(&SkImageFilters::RuntimeShader)
+        .def_static("runtime_shader", py::overload_cast<const SkRuntimeEffectBuilder &, SkScalar, std::string_view[], const sk_sp<SkImageFilter>[], int>(&SkImageFilters::RuntimeShader)
             , py::arg("builder")
             , py::arg("max_sample_radius")
             , py::arg("child_shader_names")

@@ -107,6 +107,7 @@ class HullGeom(PolyGeom):
 
     def create_shapes(self, node: "PhysicsEntity2D", transform=None, clip: "Rect2" = None):
         body = node.body
+        scale = node.scale
         shapes = []
 
         if node.model.points is None:
@@ -114,6 +115,22 @@ class HullGeom(PolyGeom):
 
         raw = node.model.points.tolist()
 
+        sx = scale.x
+        sy = scale.y
+
+        # 1) Clip
+        clipped = []
+
+        if clip:
+            for p in raw:
+                x = float(p[0]) * sx
+                y = float(p[1]) * sy
+                if clip.contains_point(glm.vec2(x, y)):
+                    clipped.append((x, y))
+        else:
+            clipped = [(float(p[0]) * sx, float(p[1]) * sy) for p in raw]
+
+        """
         # 1) Clip
         clipped = []
         if clip:
@@ -124,6 +141,7 @@ class HullGeom(PolyGeom):
                     clipped.append((x, y))
         else:
             clipped = [(float(p[0]), float(p[1])) for p in raw]
+        """
 
         # 2) Sanitize
         clipped = [(x, y) for (x, y) in clipped if _is_finite_xy(x, y)]

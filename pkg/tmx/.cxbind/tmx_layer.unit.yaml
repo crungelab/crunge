@@ -7,9 +7,10 @@ excludes:
 
 specs:
   'class@tmx::Layer':
-    properties:
-      - name: "name"
-        getter: "getName"
+    extra:
+      properties:
+        - name: "name"
+          getter: "tmx::Layer::getName"
 
-      - name: "opacity"
-        getter: "getOpacity"
+        - name: "opacity"
+          getter: "tmx::Layer::getOpacity"

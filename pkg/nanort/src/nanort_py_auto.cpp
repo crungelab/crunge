@@ -95,7 +95,7 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
     py::class_<nanort::TriangleSAHPred<double>> _TriangleSAHPred(_nanort, "TriangleSAHPred");
     registry.on(_nanort, "TriangleSAHPred", _TriangleSAHPred);
         _TriangleSAHPred
-        .def(py::init<const double *, const unsigned int *, unsigned long>()
+        .def(py::init<const double *, const unsigned int *, size_t>()
         , py::arg("vertices")
         , py::arg("faces")
         , py::arg("vertex_stride_bytes")
@@ -109,7 +109,7 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
     py::class_<nanort::TriangleMesh<double>> _TriangleMesh(_nanort, "TriangleMesh");
     registry.on(_nanort, "TriangleMesh", _TriangleMesh);
         _TriangleMesh
-        .def(py::init<const double *, const unsigned int *, const unsigned long>()
+        .def(py::init<const double *, const unsigned int *, const size_t>()
         , py::arg("vertices")
         , py::arg("faces")
         , py::arg("vertex_stride_bytes")

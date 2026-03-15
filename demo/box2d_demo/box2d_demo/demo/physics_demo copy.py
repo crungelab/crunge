@@ -30,11 +30,11 @@ class PhysicsDemo(ScrollingDemo):
 
         self.create_physics_engine()
 
-        # Mouse drag state — kinematic body follows mouse position
+        # Mouse drag state
         body_def = box2d.BodyDef(type=box2d.BodyType.KINEMATIC_BODY)
         self._mouse_body = self.world.create_body(body_def)
         self._mouse_joint = None
-        self._dragged_body = None
+        self._dragged_shape = None
 
     # ------------------------------------------------------------------
     # Drag helpers
@@ -44,71 +44,43 @@ class PhysicsDemo(ScrollingDemo):
         return self.camera.unproject(glm.vec2(x, y))
 
     def _box2d_pos(self, world):
-        return box2d.Vec2(world.x, world.y)
+        return (world.x, world.y)
 
     def _begin_drag(self, x: float, y: float):
         world = self._screen_to_world(x, y)
-        target = self._box2d_pos(world)
+        pm_pos = self._box2d_pos(world)
 
-        """
-        b2Circle circle = {b2Vec2_zero, 0.2f};
-        b2ShapeProxy proxy = b2MakeProxy(&circle.center, 1, circle.radius);
-        b2World_OverlapShape(myWorldId, &proxy, grenadeFilter, MyOverlapCallback, &myGame);
-        """
-        def overlap_callback(hit):
-            return True
-
-        circle = box2d.Circle(center=target, radius=0.2)
-        proxy = box2d.make_proxy(circle.center, 1, circle.radius)
-        self.world.overlap_shape(proxy, box2d.default_query_filter(), overlap_callback, True)
-        '''
         hit = self.world.point_query_nearest(
-            target, max_distance=0.001, shape_filter=box2d.ShapeFilter()
+            pm_pos, max_distance=5, shape_filter=box2d.ShapeFilter()
         )
-        '''
         if hit is None or hit.shape is None:
             return False
 
         body = hit.shape.body
-        if body.get_type() != box2d.BodyType.DYNAMIC_BODY:
+        if body.body_type != box2d.BodyType.DYNAMIC_BODY:
             return False
 
-        self._dragged_body = body
-        body.set_awake(True)
+        self._dragged_shape = hit.shape
+        self._mouse_body.position = pm_pos
 
-        # Place the mouse body exactly at the click point
-        self._mouse_body.set_transform(target, 0.0)
+        self._mouse_joint = box2d.PivotJoint(self._mouse_body, body, pm_pos)
+        self._mouse_joint.max_force = 50_000
+        self._mouse_joint.error_bias = pow(1.0 - 0.15, 60)
+        self.world.world.add(self._mouse_joint)
 
-        # DistanceJoint with soft constraints acts like the old MouseJoint
-        joint_def = box2d.DistanceJointDef()
-        joint_def.body_a = self._mouse_body
-        joint_def.body_b = body
-        joint_def.local_anchor_a = (0.0, 0.0)
-        # Anchor on the body at the exact click point in local coords
-        joint_def.local_anchor_b = body.get_local_point(target)
-        joint_def.length = 0.0
-        joint_def.min_length = 0.0
-        joint_def.max_length = 0.0
-        # Soft constraint — tune these to taste
-        joint_def.hertz = 5.0
-        joint_def.damping_ratio = 0.7
-
-        self._mouse_joint = self.world.create_joint(joint_def)
-
-        logger.debug(f"Drag started on {hit.shape} at {target}")
+        logger.debug(f"Drag started on {hit.shape} at {pm_pos}")
         return True
 
     def _update_drag(self, x: float, y: float):
         if self._mouse_joint is not None:
             world = self._screen_to_world(x, y)
-            # Move the kinematic mouse body; the joint pulls the dynamic body along
-            self._mouse_body.set_transform(self._box2d_pos(world), 0.0)
+            self._mouse_body.position = self._box2d_pos(world)
 
     def _end_drag(self):
         if self._mouse_joint is not None:
-            self.world.destroy_joint(self._mouse_joint)
+            self.world.world.remove(self._mouse_joint)
             self._mouse_joint = None
-            self._dragged_body = None
+            self._dragged_shape = None
             logger.debug("Drag ended")
 
     @property

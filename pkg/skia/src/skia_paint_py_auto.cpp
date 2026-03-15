@@ -27,12 +27,9 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "Paint", _Paint);
         _Paint
         .def(py::init<>())
-        .def(py::init<const SkRGBA4f<kUnpremul_SkAlphaType> &, SkColorSpace *>()
+        .def(py::init<const SkColor4f &, SkColorSpace *>()
         , py::arg("color")
         , py::arg("color_space") = nullptr
-        )
-        .def(py::init<const SkPaint &>()
-        , py::arg("paint")
         )
         .def("reset", &SkPaint::reset
             , py::return_value_policy::automatic_reference)
@@ -61,16 +58,16 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("style")
             , py::return_value_policy::automatic_reference)
         .def("set_stroke", &SkPaint::setStroke
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("get_color", &SkPaint::getColor
             , py::return_value_policy::automatic_reference)
         .def("get_color4f", &SkPaint::getColor4f
             , py::return_value_policy::automatic_reference)
-        .def("set_color", py::overload_cast<unsigned int>(&SkPaint::setColor)
+        .def("set_color", py::overload_cast<SkColor>(&SkPaint::setColor)
             , py::arg("color")
             , py::return_value_policy::automatic_reference)
-        .def("set_color", py::overload_cast<const SkRGBA4f<kUnpremul_SkAlphaType> &, SkColorSpace *>(&SkPaint::setColor)
+        .def("set_color", py::overload_cast<const SkColor4f &, SkColorSpace *>(&SkPaint::setColor)
             , py::arg("color")
             , py::arg("color_space") = nullptr
             , py::return_value_policy::automatic_reference)

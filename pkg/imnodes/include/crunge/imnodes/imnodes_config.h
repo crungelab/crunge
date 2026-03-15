@@ -17,8 +17,5 @@ public:
 
 namespace py = pybind11;
 
-//#define ImNodesMiniMapNodeHoveringCallback py::wrapper
-//#define ImNodesMiniMapNodeHoveringCallback std::function<void(int, void*)>
-
 #define ImNodesMiniMapNodeHoveringCallback std::function<void(int, py::wrapper)>
 #define ImNodesMiniMapNodeHoveringCallbackUserData py::wrapper

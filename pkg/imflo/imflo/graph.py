@@ -4,6 +4,7 @@ from crunge import imgui, imnodes
 
 from imflo.wire import Wire
 
+
 class Graph:
     def __init__(self):
         self.nodes = []
@@ -18,7 +19,6 @@ class Graph:
             node.reset()
 
     def add_node(self, node):
-        node.graph = self
         self.nodes.append(node)
         self.node_map[node.id] = node
         return node
@@ -56,7 +56,7 @@ class Graph:
             node.update(delta_time)
 
     def draw(self):
-        imgui.begin('Node Editor')
+        imgui.begin("Node Editor")
 
         imnodes.begin_node_editor()
 
@@ -65,27 +65,28 @@ class Graph:
         for wire in self.wires:
             wire.draw()
 
-        def cb (node, data):
+        def cb(node, data):
             print(node, data)
-            #pass
+            # pass
 
         cb_data = True
-        #imnodes.mini_map(.1, imnodes.MINI_MAP_LOCATION_TOP_LEFT, cb, cb_data)
-        imnodes.mini_map(.1, imnodes.MiniMapLocation.TOP_LEFT, cb, cb_data)
-        #imnodes.mini_map()
+        # imnodes.mini_map(.1, imnodes.MINI_MAP_LOCATION_TOP_LEFT, cb, cb_data)
+        #imnodes.mini_map(0.1, imnodes.MiniMapLocation.TOP_LEFT, cb, cb_data)
+        imnodes.mini_map(0.1, imnodes.MiniMapLocation.TOP_RIGHT, cb, cb_data)
+        # imnodes.mini_map()
         imnodes.end_node_editor()
 
-        if (result := imnodes.is_link_created(0,0))[0]:
+        if (result := imnodes.is_link_created(0, 0))[0]:
             logger.debug(result)
             output = self.pin_map[result[1]]
             input = self.pin_map[result[2]]
-            logger.debug('output:  {output}')
-            logger.debug('input:  {input}')
+            logger.debug(f"output:  {output}")
+            logger.debug(f"input:  {input}")
             self.connect(output, input)
 
         if (result := imnodes.is_link_destroyed(0))[0]:
             wire = self.wire_map[result[1]]
-            logger.debug('destroyed: ', wire)
+            logger.debug(f"destroyed: {wire}")
             self.disconnect(wire)
 
         imgui.end()

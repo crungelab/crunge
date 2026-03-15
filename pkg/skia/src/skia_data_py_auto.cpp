@@ -74,7 +74,7 @@ void init_skia_data_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("fd")
             , py::return_value_policy::automatic_reference)
         .def_static("make_from_stream", &SkData::MakeFromStream
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("size")
             , py::return_value_policy::automatic_reference)
         .def_static("make_subset", &SkData::MakeSubset

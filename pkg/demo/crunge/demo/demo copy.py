@@ -44,19 +44,11 @@ class Demo(engine.App):
         install(self)
 
     def use_all(self, exclude: list[str] = []):
-        import importlib.util
-
-        pages_package = f"{self.package_name}.pages"
-        spec = importlib.util.find_spec(pages_package)
-        if spec is None:
-            raise ImportError(f"Cannot find package: {pages_package}")
-
-        # Resolve the actual filesystem path of the pages package
-        parent = Path(spec.submodule_search_locations[0])
-
+        parent_folder = Path(self.package_name.replace(".", "/"), "pages")
         exclude = exclude + ["__pycache__", "__init__"]
         excluded = set(exclude)
 
+        parent = Path(parent_folder)
         names = sorted([p.stem for p in parent.iterdir() if p.stem not in excluded])
         for name in names:
             self.use(name)

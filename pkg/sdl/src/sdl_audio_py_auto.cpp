@@ -1,12 +1,14 @@
+#include <stdbool.h>
+#include <limits>
+#include <iostream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_audio.h>
 #include <SDL3/SDL_iostream.h>
-#include <iostream>
 
 #include <cxbind/cxbind.h>
 
@@ -49,34 +51,34 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("get_audio_playback_devices", [](int * count)
         {
-            auto ret = SDL_GetAudioPlaybackDevices(count);
-            return std::make_tuple(ret, count);
+            SDL_GetAudioPlaybackDevices(count);
+            return std::make_tuple(count);
         }
         , py::arg("count")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_recording_devices", [](int * count)
         {
-            auto ret = SDL_GetAudioRecordingDevices(count);
-            return std::make_tuple(ret, count);
+            SDL_GetAudioRecordingDevices(count);
+            return std::make_tuple(count);
         }
         , py::arg("count")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_device_name", &SDL_GetAudioDeviceName
         , py::arg("devid")
         , py::return_value_policy::automatic_reference)
-    .def("get_audio_device_format", [](unsigned int devid, SDL_AudioSpec * spec, int * sample_frames)
+    .def("get_audio_device_format", [](SDL_AudioDeviceID devid, SDL_AudioSpec * spec, int * sample_frames)
         {
-            auto ret = SDL_GetAudioDeviceFormat(devid, spec, sample_frames);
-            return std::make_tuple(ret, sample_frames);
+            SDL_GetAudioDeviceFormat(devid, spec, sample_frames);
+            return std::make_tuple(sample_frames);
         }
         , py::arg("devid")
         , py::arg("spec")
         , py::arg("sample_frames")
         , py::return_value_policy::automatic_reference)
-    .def("get_audio_device_channel_map", [](unsigned int devid, int * count)
+    .def("get_audio_device_channel_map", [](SDL_AudioDeviceID devid, int * count)
         {
-            auto ret = SDL_GetAudioDeviceChannelMap(devid, count);
-            return std::make_tuple(ret, count);
+            SDL_GetAudioDeviceChannelMap(devid, count);
+            return std::make_tuple(count);
         }
         , py::arg("devid")
         , py::arg("count")
@@ -110,64 +112,50 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
     .def("close_audio_device", &SDL_CloseAudioDevice
         , py::arg("devid")
         , py::return_value_policy::automatic_reference)
-    .def("bind_audio_streams", [](unsigned int devid, const py::capsule& streams, int num_streams)
-        {
-            auto ret = SDL_BindAudioStreams(devid, streams, num_streams);
-            return ret;
-        }
+    .def("bind_audio_streams", &SDL_BindAudioStreams
         , py::arg("devid")
         , py::arg("streams")
         , py::arg("num_streams")
         , py::return_value_policy::automatic_reference)
-    .def("bind_audio_stream", [](unsigned int devid, const py::capsule& stream)
+    .def("bind_audio_stream", [](SDL_AudioDeviceID devid, const py::capsule& stream)
         {
-            auto ret = SDL_BindAudioStream(devid, stream);
-            return ret;
+            return SDL_BindAudioStream(devid, stream.get());
         }
         , py::arg("devid")
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
-    .def("unbind_audio_streams", [](const py::capsule& streams, int num_streams)
-        {
-            SDL_UnbindAudioStreams(streams, num_streams);
-            return ;
-        }
+    .def("unbind_audio_streams", &SDL_UnbindAudioStreams
         , py::arg("streams")
         , py::arg("num_streams")
         , py::return_value_policy::automatic_reference)
     .def("unbind_audio_stream", [](const py::capsule& stream)
         {
-            SDL_UnbindAudioStream(stream);
-            return ;
+            return SDL_UnbindAudioStream(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_device", [](const py::capsule& stream)
         {
-            auto ret = SDL_GetAudioStreamDevice(stream);
-            return ret;
+            return SDL_GetAudioStreamDevice(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("create_audio_stream", [](const SDL_AudioSpec * src_spec, const SDL_AudioSpec * dst_spec)
         {
-            auto ret = py::capsule(SDL_CreateAudioStream(src_spec, dst_spec), "SDL_AudioStream");
-            return ret;
+            return py::capsule(SDL_CreateAudioStream(src_spec, dst_spec));
         }
         , py::arg("src_spec")
         , py::arg("dst_spec")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_properties", [](const py::capsule& stream)
         {
-            auto ret = SDL_GetAudioStreamProperties(stream);
-            return ret;
+            return SDL_GetAudioStreamProperties(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_format", [](const py::capsule& stream, SDL_AudioSpec * src_spec, SDL_AudioSpec * dst_spec)
         {
-            auto ret = SDL_GetAudioStreamFormat(stream, src_spec, dst_spec);
-            return ret;
+            return SDL_GetAudioStreamFormat(stream.get(), src_spec, dst_spec);
         }
         , py::arg("stream")
         , py::arg("src_spec")
@@ -175,8 +163,7 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("set_audio_stream_format", [](const py::capsule& stream, const SDL_AudioSpec * src_spec, const SDL_AudioSpec * dst_spec)
         {
-            auto ret = SDL_SetAudioStreamFormat(stream, src_spec, dst_spec);
-            return ret;
+            return SDL_SetAudioStreamFormat(stream.get(), src_spec, dst_spec);
         }
         , py::arg("stream")
         , py::arg("src_spec")
@@ -184,54 +171,49 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_frequency_ratio", [](const py::capsule& stream)
         {
-            auto ret = SDL_GetAudioStreamFrequencyRatio(stream);
-            return ret;
+            return SDL_GetAudioStreamFrequencyRatio(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("set_audio_stream_frequency_ratio", [](const py::capsule& stream, float ratio)
         {
-            auto ret = SDL_SetAudioStreamFrequencyRatio(stream, ratio);
-            return ret;
+            return SDL_SetAudioStreamFrequencyRatio(stream.get(), ratio);
         }
         , py::arg("stream")
         , py::arg("ratio")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_gain", [](const py::capsule& stream)
         {
-            auto ret = SDL_GetAudioStreamGain(stream);
-            return ret;
+            return SDL_GetAudioStreamGain(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("set_audio_stream_gain", [](const py::capsule& stream, float gain)
         {
-            auto ret = SDL_SetAudioStreamGain(stream, gain);
-            return ret;
+            return SDL_SetAudioStreamGain(stream.get(), gain);
         }
         , py::arg("stream")
         , py::arg("gain")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_input_channel_map", [](const py::capsule& stream, int * count)
         {
-            auto ret = SDL_GetAudioStreamInputChannelMap(stream, count);
-            return std::make_tuple(ret, count);
+            SDL_GetAudioStreamInputChannelMap(stream.get(), count);
+            return std::make_tuple(count);
         }
         , py::arg("stream")
         , py::arg("count")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_output_channel_map", [](const py::capsule& stream, int * count)
         {
-            auto ret = SDL_GetAudioStreamOutputChannelMap(stream, count);
-            return std::make_tuple(ret, count);
+            SDL_GetAudioStreamOutputChannelMap(stream.get(), count);
+            return std::make_tuple(count);
         }
         , py::arg("stream")
         , py::arg("count")
         , py::return_value_policy::automatic_reference)
     .def("set_audio_stream_input_channel_map", [](const py::capsule& stream, const int * chmap, int count)
         {
-            auto ret = SDL_SetAudioStreamInputChannelMap(stream, chmap, count);
-            return ret;
+            return SDL_SetAudioStreamInputChannelMap(stream.get(), chmap, count);
         }
         , py::arg("stream")
         , py::arg("chmap")
@@ -239,8 +221,7 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("set_audio_stream_output_channel_map", [](const py::capsule& stream, const int * chmap, int count)
         {
-            auto ret = SDL_SetAudioStreamOutputChannelMap(stream, chmap, count);
-            return ret;
+            return SDL_SetAudioStreamOutputChannelMap(stream.get(), chmap, count);
         }
         , py::arg("stream")
         , py::arg("chmap")
@@ -248,8 +229,7 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("put_audio_stream_data", [](const py::capsule& stream, const void * buf, int len)
         {
-            auto ret = SDL_PutAudioStreamData(stream, buf, len);
-            return ret;
+            return SDL_PutAudioStreamData(stream.get(), buf, len);
         }
         , py::arg("stream")
         , py::arg("buf")
@@ -257,8 +237,7 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("put_audio_stream_planar_data", [](const py::capsule& stream, const void *const * channel_buffers, int num_channels, int num_samples)
         {
-            auto ret = SDL_PutAudioStreamPlanarData(stream, channel_buffers, num_channels, num_samples);
-            return ret;
+            return SDL_PutAudioStreamPlanarData(stream.get(), channel_buffers, num_channels, num_samples);
         }
         , py::arg("stream")
         , py::arg("channel_buffers")
@@ -267,8 +246,7 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_data", [](const py::capsule& stream, void * buf, int len)
         {
-            auto ret = SDL_GetAudioStreamData(stream, buf, len);
-            return ret;
+            return SDL_GetAudioStreamData(stream.get(), buf, len);
         }
         , py::arg("stream")
         , py::arg("buf")
@@ -276,78 +254,67 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_available", [](const py::capsule& stream)
         {
-            auto ret = SDL_GetAudioStreamAvailable(stream);
-            return ret;
+            return SDL_GetAudioStreamAvailable(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("get_audio_stream_queued", [](const py::capsule& stream)
         {
-            auto ret = SDL_GetAudioStreamQueued(stream);
-            return ret;
+            return SDL_GetAudioStreamQueued(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("flush_audio_stream", [](const py::capsule& stream)
         {
-            auto ret = SDL_FlushAudioStream(stream);
-            return ret;
+            return SDL_FlushAudioStream(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("clear_audio_stream", [](const py::capsule& stream)
         {
-            auto ret = SDL_ClearAudioStream(stream);
-            return ret;
+            return SDL_ClearAudioStream(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("pause_audio_stream_device", [](const py::capsule& stream)
         {
-            auto ret = SDL_PauseAudioStreamDevice(stream);
-            return ret;
+            return SDL_PauseAudioStreamDevice(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("resume_audio_stream_device", [](const py::capsule& stream)
         {
-            auto ret = SDL_ResumeAudioStreamDevice(stream);
-            return ret;
+            return SDL_ResumeAudioStreamDevice(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("audio_stream_device_paused", [](const py::capsule& stream)
         {
-            auto ret = SDL_AudioStreamDevicePaused(stream);
-            return ret;
+            return SDL_AudioStreamDevicePaused(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("lock_audio_stream", [](const py::capsule& stream)
         {
-            auto ret = SDL_LockAudioStream(stream);
-            return ret;
+            return SDL_LockAudioStream(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("unlock_audio_stream", [](const py::capsule& stream)
         {
-            auto ret = SDL_UnlockAudioStream(stream);
-            return ret;
+            return SDL_UnlockAudioStream(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
     .def("destroy_audio_stream", [](const py::capsule& stream)
         {
-            SDL_DestroyAudioStream(stream);
-            return ;
+            return SDL_DestroyAudioStream(stream.get());
         }
         , py::arg("stream")
         , py::return_value_policy::automatic_reference)
-    .def("open_audio_device_stream", [](unsigned int devid, const SDL_AudioSpec * spec, void (*)(void *, SDL_AudioStream *, int, int) callback, void * userdata)
+    .def("open_audio_device_stream", [](SDL_AudioDeviceID devid, const SDL_AudioSpec * spec, SDL_AudioStreamCallback callback, void * userdata)
         {
-            auto ret = py::capsule(SDL_OpenAudioDeviceStream(devid, spec, callback, userdata), "SDL_AudioStream");
-            return ret;
+            return py::capsule(SDL_OpenAudioDeviceStream(devid, spec, callback, userdata));
         }
         , py::arg("devid")
         , py::arg("spec")
@@ -359,10 +326,10 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("callback")
         , py::arg("userdata")
         , py::return_value_policy::automatic_reference)
-    .def("load_wav_io", [](SDL_IOStream * src, bool closeio, SDL_AudioSpec * spec, unsigned char ** audio_buf, unsigned int * audio_len)
+    .def("load_wav_io", [](SDL_IOStream * src, _Bool closeio, SDL_AudioSpec * spec, Uint8 ** audio_buf, Uint32 * audio_len)
         {
-            auto ret = SDL_LoadWAV_IO(src, closeio, spec, audio_buf, audio_len);
-            return std::make_tuple(ret, audio_len);
+            SDL_LoadWAV_IO(src, closeio, spec, audio_buf, audio_len);
+            return std::make_tuple(audio_len);
         }
         , py::arg("src")
         , py::arg("closeio")
@@ -370,10 +337,10 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("audio_buf")
         , py::arg("audio_len")
         , py::return_value_policy::automatic_reference)
-    .def("load_wav", [](const char * path, SDL_AudioSpec * spec, unsigned char ** audio_buf, unsigned int * audio_len)
+    .def("load_wav", [](const char * path, SDL_AudioSpec * spec, Uint8 ** audio_buf, Uint32 * audio_len)
         {
-            auto ret = SDL_LoadWAV(path, spec, audio_buf, audio_len);
-            return std::make_tuple(ret, audio_len);
+            SDL_LoadWAV(path, spec, audio_buf, audio_len);
+            return std::make_tuple(audio_len);
         }
         , py::arg("path")
         , py::arg("spec")
@@ -387,10 +354,10 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("len")
         , py::arg("volume")
         , py::return_value_policy::automatic_reference)
-    .def("convert_audio_samples", [](const SDL_AudioSpec * src_spec, const unsigned char * src_data, int src_len, const SDL_AudioSpec * dst_spec, unsigned char ** dst_data, int * dst_len)
+    .def("convert_audio_samples", [](const SDL_AudioSpec * src_spec, const Uint8 * src_data, int src_len, const SDL_AudioSpec * dst_spec, Uint8 ** dst_data, int * dst_len)
         {
-            auto ret = SDL_ConvertAudioSamples(src_spec, src_data, src_len, dst_spec, dst_data, dst_len);
-            return std::make_tuple(ret, dst_len);
+            SDL_ConvertAudioSamples(src_spec, src_data, src_len, dst_spec, dst_data, dst_len);
+            return std::make_tuple(dst_len);
         }
         , py::arg("src_spec")
         , py::arg("src_data")

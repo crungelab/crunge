@@ -6,9 +6,10 @@ excludes:
 
 specs:
   'class@tmx::Object':
-    properties:
-      - name: "name"
-        getter: "getName"
+    extra:
+      properties:
+        - name: "name"
+          getter: "tmx::Object::getName"
 
-      - name: "rotation"
-        getter: "getRotation"
+        - name: "rotation"
+          getter: "tmx::Object::getRotation"

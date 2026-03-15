@@ -25,9 +25,6 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "RecorderOptions", _RecorderOptions);
         _RecorderOptions
         .def(py::init<>())
-        .def(py::init<const skgpu::graphite::RecorderOptions &>()
-        , py::arg("")
-        )
         .def_readwrite("f_image_provider", &skgpu::graphite::RecorderOptions::fImageProvider)
         .def_readwrite("f_gpu_budget_in_bytes", &skgpu::graphite::RecorderOptions::fGpuBudgetInBytes)
         .def_readwrite("f_require_ordered_recordings", &skgpu::graphite::RecorderOptions::fRequireOrderedRecordings)
@@ -48,31 +45,31 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("create_backend_texture", &skgpu::graphite::Recorder::createBackendTexture
             , py::arg("dimensions")
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("update_backend_texture", &skgpu::graphite::Recorder::updateBackendTexture
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("src_data")
             , py::arg("num_levels")
-            , py::arg("") = nullptr
-            , py::arg("") = nullptr
+            , py::arg("arg") = nullptr
+            , py::arg("arg") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("update_compressed_backend_texture", &skgpu::graphite::Recorder::updateCompressedBackendTexture
-            , py::arg("")
+            , py::arg("arg")
             , py::arg("data")
             , py::arg("data_size")
-            , py::arg("") = nullptr
-            , py::arg("") = nullptr
+            , py::arg("arg") = nullptr
+            , py::arg("arg") = nullptr
             , py::return_value_policy::automatic_reference)
         .def("delete_backend_texture", &skgpu::graphite::Recorder::deleteBackendTexture
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("add_finish_info", &skgpu::graphite::Recorder::addFinishInfo
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("make_deferred_canvas", &skgpu::graphite::Recorder::makeDeferredCanvas
-            , py::arg("")
-            , py::arg("")
+            , py::arg("arg")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("free_gpu_resources", &skgpu::graphite::Recorder::freeGpuResources
             , py::return_value_policy::automatic_reference)

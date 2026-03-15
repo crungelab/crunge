@@ -7,9 +7,10 @@ excludes:
 
 specs:
   'class@tmx::Tileset':
-    properties:
-      - name: "name"
-        getter: "getName"
+    extra:
+      properties:
+        - name: "name"
+          getter: "tmx::Tileset::getName"
 
-      - name: "tiles"
-        getter: "getTiles"
+        - name: "tiles"
+          getter: "tmx::Tileset::getTiles"

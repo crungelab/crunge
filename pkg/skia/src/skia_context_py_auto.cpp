@@ -72,19 +72,19 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
         .def("backend", &skgpu::graphite::Context::backend
             , py::return_value_policy::automatic_reference)
         .def("make_recorder", &skgpu::graphite::Context::makeRecorder
-            , py::arg("") = skgpu::graphite::RecorderOptions{}
+            , py::arg("arg") = skgpu::graphite::RecorderOptions{}
             , py::return_value_policy::automatic_reference)
         .def("make_precompile_context", &skgpu::graphite::Context::makePrecompileContext
             , py::return_value_policy::automatic_reference)
         .def("insert_recording", &skgpu::graphite::Context::insertRecording
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("submit", &skgpu::graphite::Context::submit
-            , py::arg("") = skgpu::graphite::SyncToCpu::kNo
+            , py::arg("arg") = skgpu::graphite::SyncToCpu::kNo
             , py::return_value_policy::automatic_reference)
         .def("has_unfinished_gpu_work", &skgpu::graphite::Context::hasUnfinishedGpuWork
             , py::return_value_policy::automatic_reference)
-        .def("async_rescale_and_read_pixels", py::overload_cast<const SkImage *, const SkImageInfo &, const SkIRect &, SkImage::RescaleGamma, SkImage::RescaleMode, void (void *, std::unique_ptr<const SkImage::AsyncReadResult>), void *>(&skgpu::graphite::Context::asyncRescaleAndReadPixels)
+        .def("async_rescale_and_read_pixels", py::overload_cast<const SkImage *, const SkImageInfo &, const SkIRect &, SkImage::RescaleGamma, SkImage::RescaleMode, SkImage::ReadPixelsCallback, SkImage::ReadPixelsContext>(&skgpu::graphite::Context::asyncRescaleAndReadPixels)
             , py::arg("src")
             , py::arg("dst_image_info")
             , py::arg("src_rect")
@@ -93,7 +93,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("callback")
             , py::arg("context")
             , py::return_value_policy::automatic_reference)
-        .def("async_rescale_and_read_pixels", py::overload_cast<const SkSurface *, const SkImageInfo &, const SkIRect &, SkImage::RescaleGamma, SkImage::RescaleMode, void (void *, std::unique_ptr<const SkImage::AsyncReadResult>), void *>(&skgpu::graphite::Context::asyncRescaleAndReadPixels)
+        .def("async_rescale_and_read_pixels", py::overload_cast<const SkSurface *, const SkImageInfo &, const SkIRect &, SkImage::RescaleGamma, SkImage::RescaleMode, SkImage::ReadPixelsCallback, SkImage::ReadPixelsContext>(&skgpu::graphite::Context::asyncRescaleAndReadPixels)
             , py::arg("src")
             , py::arg("dst_image_info")
             , py::arg("src_rect")
@@ -102,7 +102,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("callback")
             , py::arg("context")
             , py::return_value_policy::automatic_reference)
-        .def("async_rescale_and_read_pixels_yuv420", py::overload_cast<const SkImage *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, void (void *, std::unique_ptr<const SkImage::AsyncReadResult>), void *>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUV420)
+        .def("async_rescale_and_read_pixels_yuv420", py::overload_cast<const SkImage *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, SkImage::ReadPixelsCallback, SkImage::ReadPixelsContext>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUV420)
             , py::arg("src")
             , py::arg("yuv_color_space")
             , py::arg("dst_color_space")
@@ -113,7 +113,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("callback")
             , py::arg("context")
             , py::return_value_policy::automatic_reference)
-        .def("async_rescale_and_read_pixels_yuv420", py::overload_cast<const SkSurface *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, void (void *, std::unique_ptr<const SkImage::AsyncReadResult>), void *>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUV420)
+        .def("async_rescale_and_read_pixels_yuv420", py::overload_cast<const SkSurface *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, SkImage::ReadPixelsCallback, SkImage::ReadPixelsContext>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUV420)
             , py::arg("src")
             , py::arg("yuv_color_space")
             , py::arg("dst_color_space")
@@ -124,7 +124,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("callback")
             , py::arg("context")
             , py::return_value_policy::automatic_reference)
-        .def("async_rescale_and_read_pixels_yuva420", py::overload_cast<const SkImage *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, void (void *, std::unique_ptr<const SkImage::AsyncReadResult>), void *>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUVA420)
+        .def("async_rescale_and_read_pixels_yuva420", py::overload_cast<const SkImage *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, SkImage::ReadPixelsCallback, SkImage::ReadPixelsContext>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUVA420)
             , py::arg("src")
             , py::arg("yuv_color_space")
             , py::arg("dst_color_space")
@@ -135,7 +135,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("callback")
             , py::arg("context")
             , py::return_value_policy::automatic_reference)
-        .def("async_rescale_and_read_pixels_yuva420", py::overload_cast<const SkSurface *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, void (void *, std::unique_ptr<const SkImage::AsyncReadResult>), void *>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUVA420)
+        .def("async_rescale_and_read_pixels_yuva420", py::overload_cast<const SkSurface *, SkYUVColorSpace, sk_sp<SkColorSpace>, const SkIRect &, const SkISize &, SkImage::RescaleGamma, SkImage::RescaleMode, SkImage::ReadPixelsCallback, SkImage::ReadPixelsContext>(&skgpu::graphite::Context::asyncRescaleAndReadPixelsYUVA420)
             , py::arg("src")
             , py::arg("yuv_color_space")
             , py::arg("dst_color_space")
@@ -149,7 +149,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
         .def("check_async_work_completion", &skgpu::graphite::Context::checkAsyncWorkCompletion
             , py::return_value_policy::automatic_reference)
         .def("delete_backend_texture", &skgpu::graphite::Context::deleteBackendTexture
-            , py::arg("")
+            , py::arg("arg")
             , py::return_value_policy::automatic_reference)
         .def("free_gpu_resources", &skgpu::graphite::Context::freeGpuResources
             , py::return_value_policy::automatic_reference)

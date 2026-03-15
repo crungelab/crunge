@@ -1,3 +1,5 @@
+from loguru import logger
+
 from crunge.nanort import BVHBuildOptions, BVHAccel
 
 '''
@@ -13,9 +15,10 @@ from crunge.nanort import BVHBuildOptions, BVHAccel
 
 def test_accel():
     opts = BVHBuildOptions()
-
-    accel = BVHAccel()
-
+    logger.debug(opts)
     
+    accel = BVHAccel()
+    logger.debug(accel)
+
 if __name__ == '__main__':
     test_accel()

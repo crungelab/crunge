@@ -1,10 +1,12 @@
+#include <stdbool.h>
+#include <limits>
+#include <iostream>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
 
 #include <SDL3/SDL.h>
-#include <iostream>
 
 #include <cxbind/cxbind.h>
 #include <crunge/sdl/conversions.h>
@@ -18,8 +20,8 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("get_keyboards", [](int * count)
         {
-            auto ret = SDL_GetKeyboards(count);
-            return std::make_tuple(ret, count);
+            SDL_GetKeyboards(count);
+            return std::make_tuple(count);
         }
         , py::arg("count")
         , py::return_value_policy::automatic_reference)
@@ -28,14 +30,13 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("get_keyboard_focus", []()
         {
-            auto ret = SDLWindowWrapper(SDL_GetKeyboardFocus());
-            return ret;
+            return SDLWindowWrapper(SDL_GetKeyboardFocus());
         }
         , py::return_value_policy::automatic_reference)
     .def("get_keyboard_state", [](int * numkeys)
         {
-            auto ret = SDL_GetKeyboardState(numkeys);
-            return std::make_tuple(ret, numkeys);
+            SDL_GetKeyboardState(numkeys);
+            return std::make_tuple(numkeys);
         }
         , py::arg("numkeys")
         , py::return_value_policy::automatic_reference)
@@ -51,10 +52,10 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("modstate")
         , py::arg("key_event")
         , py::return_value_policy::automatic_reference)
-    .def("get_scancode_from_key", [](unsigned int key, unsigned short * modstate)
+    .def("get_scancode_from_key", [](SDL_Keycode key, SDL_Keymod * modstate)
         {
-            auto ret = SDL_GetScancodeFromKey(key, modstate);
-            return std::make_tuple(ret, modstate);
+            SDL_GetScancodeFromKey(key, modstate);
+            return std::make_tuple(modstate);
         }
         , py::arg("key")
         , py::arg("modstate")
@@ -77,8 +78,7 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("start_text_input", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_StartTextInput(window);
-            return ret;
+            return SDL_StartTextInput(window.get());
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
@@ -104,39 +104,34 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         .export_values()
     ;
     _sdl
-    .def("start_text_input_with_properties", [](const SDLWindowWrapper& window, unsigned int props)
+    .def("start_text_input_with_properties", [](const SDLWindowWrapper& window, SDL_PropertiesID props)
         {
-            auto ret = SDL_StartTextInputWithProperties(window, props);
-            return ret;
+            return SDL_StartTextInputWithProperties(window.get(), props);
         }
         , py::arg("window")
         , py::arg("props")
         , py::return_value_policy::automatic_reference)
     .def("text_input_active", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_TextInputActive(window);
-            return ret;
+            return SDL_TextInputActive(window.get());
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
     .def("stop_text_input", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_StopTextInput(window);
-            return ret;
+            return SDL_StopTextInput(window.get());
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
     .def("clear_composition", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_ClearComposition(window);
-            return ret;
+            return SDL_ClearComposition(window.get());
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)
     .def("set_text_input_area", [](const SDLWindowWrapper& window, const SDL_Rect * rect, int cursor)
         {
-            auto ret = SDL_SetTextInputArea(window, rect, cursor);
-            return ret;
+            return SDL_SetTextInputArea(window.get(), rect, cursor);
         }
         , py::arg("window")
         , py::arg("rect")
@@ -144,8 +139,8 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("get_text_input_area", [](const SDLWindowWrapper& window, SDL_Rect * rect, int * cursor)
         {
-            auto ret = SDL_GetTextInputArea(window, rect, cursor);
-            return std::make_tuple(ret, cursor);
+            SDL_GetTextInputArea(window.get(), rect, cursor);
+            return std::make_tuple(cursor);
         }
         , py::arg("window")
         , py::arg("rect")
@@ -155,8 +150,7 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("screen_keyboard_shown", [](const SDLWindowWrapper& window)
         {
-            auto ret = SDL_ScreenKeyboardShown(window);
-            return ret;
+            return SDL_ScreenKeyboardShown(window.get());
         }
         , py::arg("window")
         , py::return_value_policy::automatic_reference)

@@ -28,7 +28,7 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::return_value_policy::reference)
         .def("unique_id", &SkTextBlob::uniqueID
             , py::return_value_policy::automatic_reference)
-        .def("get_intercepts", [](SkTextBlob& self, std::array<float, 2>& bounds, float intervals[], const SkPaint * paint)
+        .def("get_intercepts", [](SkTextBlob& self, std::array<SkScalar, 2>& bounds, SkScalar intervals[], const SkPaint * paint)
             {
                 auto ret = self.getIntercepts(&bounds[0], intervals, paint);
                 return std::make_tuple(ret, bounds);
@@ -70,7 +70,7 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
             , py::return_value_policy::automatic_reference)
-        .def("serialize", py::overload_cast<const SkSerialProcs &, void *, unsigned long>(&SkTextBlob::serialize, py::const_)
+        .def("serialize", py::overload_cast<const SkSerialProcs &, void *, size_t>(&SkTextBlob::serialize, py::const_)
             , py::arg("procs")
             , py::arg("memory")
             , py::arg("memory_size")
@@ -97,10 +97,10 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
 
             _TextBlobIter
             .def(py::init<const SkTextBlob &>()
-            , py::arg("")
+            , py::arg("arg")
             )
             .def("next", &SkTextBlob::Iter::next
-                , py::arg("")
+                , py::arg("arg")
                 , py::return_value_policy::automatic_reference)
             ;
 
@@ -115,7 +115,7 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
 
             _TextBlobIter
             .def("experimental_next", &SkTextBlob::Iter::experimentalNext
-                , py::arg("")
+                , py::arg("arg")
                 , py::return_value_policy::automatic_reference)
         ;
 

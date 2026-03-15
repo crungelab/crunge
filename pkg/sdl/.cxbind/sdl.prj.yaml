@@ -1,8 +1,9 @@
 module: sdl
 
 flags: [
-  '-x', 'c++',
-  '-std=c++17',
+  #'-x', 'c++',
+  #'-std=c++17',
+  '-x', 'c',
   '-I../../depot/sdl/include',
 ]
 
