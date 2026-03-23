@@ -158,7 +158,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_world_def", &b2DefaultWorldDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::enum_<b2BodyType>(_box2d, "BodyType", py::arithmetic())
@@ -342,7 +342,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_body_def", &b2DefaultBodyDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2Filter> _Filter(_box2d, "Filter");
@@ -355,7 +355,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_filter", &b2DefaultFilter
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2QueryFilter> _QueryFilter(_box2d, "QueryFilter");
@@ -367,7 +367,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_query_filter", &b2DefaultQueryFilter
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::enum_<b2ShapeType>(_box2d, "ShapeType", py::arithmetic())
@@ -444,7 +444,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_surface_material", &b2DefaultSurfaceMaterial
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2ShapeDef> _ShapeDef(_box2d, "ShapeDef");
@@ -568,7 +568,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_shape_def", &b2DefaultShapeDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2ChainDef> _ChainDef(_box2d, "ChainDef");
@@ -587,7 +587,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_chain_def", &b2DefaultChainDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2Profile> _Profile(_box2d, "Profile");
@@ -677,11 +677,119 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("max_motor_force", &b2DistanceJointDef::maxMotorForce)
         .def_readwrite("motor_speed", &b2DistanceJointDef::motorSpeed)
         .def_readwrite("internal_value", &b2DistanceJointDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2DistanceJointDef obj = b2DefaultDistanceJointDef();
+            if (kwargs.contains("base"))
+            {
+                auto value = kwargs["base"].cast<struct b2JointDef>();
+                obj.base = value;
+            }
+            if (kwargs.contains("length"))
+            {
+                auto value = kwargs["length"].cast<float>();
+                obj.length = value;
+            }
+            if (kwargs.contains("enable_spring"))
+            {
+                auto value = kwargs["enable_spring"].cast<_Bool>();
+                obj.enableSpring = value;
+            }
+            if (kwargs.contains("lower_spring_force"))
+            {
+                auto value = kwargs["lower_spring_force"].cast<float>();
+                obj.lowerSpringForce = value;
+            }
+            if (kwargs.contains("upper_spring_force"))
+            {
+                auto value = kwargs["upper_spring_force"].cast<float>();
+                obj.upperSpringForce = value;
+            }
+            if (kwargs.contains("hertz"))
+            {
+                auto value = kwargs["hertz"].cast<float>();
+                obj.hertz = value;
+            }
+            if (kwargs.contains("damping_ratio"))
+            {
+                auto value = kwargs["damping_ratio"].cast<float>();
+                obj.dampingRatio = value;
+            }
+            if (kwargs.contains("enable_limit"))
+            {
+                auto value = kwargs["enable_limit"].cast<_Bool>();
+                obj.enableLimit = value;
+            }
+            if (kwargs.contains("min_length"))
+            {
+                auto value = kwargs["min_length"].cast<float>();
+                obj.minLength = value;
+            }
+            if (kwargs.contains("max_length"))
+            {
+                auto value = kwargs["max_length"].cast<float>();
+                obj.maxLength = value;
+            }
+            if (kwargs.contains("enable_motor"))
+            {
+                auto value = kwargs["enable_motor"].cast<_Bool>();
+                obj.enableMotor = value;
+            }
+            if (kwargs.contains("max_motor_force"))
+            {
+                auto value = kwargs["max_motor_force"].cast<float>();
+                obj.maxMotorForce = value;
+            }
+            if (kwargs.contains("motor_speed"))
+            {
+                auto value = kwargs["motor_speed"].cast<float>();
+                obj.motorSpeed = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2DistanceJointDef &self) {
+            std::stringstream ss;
+            ss << "DistanceJointDef(";
+            ss << "base=" << py::repr(py::cast(self.base)).cast<std::string>();
+            ss << ", ";
+            ss << "length=" << py::repr(py::cast(self.length)).cast<std::string>();
+            ss << ", ";
+            ss << "enableSpring=" << py::repr(py::cast(self.enableSpring)).cast<std::string>();
+            ss << ", ";
+            ss << "lowerSpringForce=" << py::repr(py::cast(self.lowerSpringForce)).cast<std::string>();
+            ss << ", ";
+            ss << "upperSpringForce=" << py::repr(py::cast(self.upperSpringForce)).cast<std::string>();
+            ss << ", ";
+            ss << "hertz=" << py::repr(py::cast(self.hertz)).cast<std::string>();
+            ss << ", ";
+            ss << "dampingRatio=" << py::repr(py::cast(self.dampingRatio)).cast<std::string>();
+            ss << ", ";
+            ss << "enableLimit=" << py::repr(py::cast(self.enableLimit)).cast<std::string>();
+            ss << ", ";
+            ss << "minLength=" << py::repr(py::cast(self.minLength)).cast<std::string>();
+            ss << ", ";
+            ss << "maxLength=" << py::repr(py::cast(self.maxLength)).cast<std::string>();
+            ss << ", ";
+            ss << "enableMotor=" << py::repr(py::cast(self.enableMotor)).cast<std::string>();
+            ss << ", ";
+            ss << "maxMotorForce=" << py::repr(py::cast(self.maxMotorForce)).cast<std::string>();
+            ss << ", ";
+            ss << "motorSpeed=" << py::repr(py::cast(self.motorSpeed)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d
     .def("default_distance_joint_def", &b2DefaultDistanceJointDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2MotorJointDef> _MotorJointDef(_box2d, "MotorJointDef");
@@ -703,7 +811,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_motor_joint_def", &b2DefaultMotorJointDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2FilterJointDef> _FilterJointDef(_box2d, "FilterJointDef");
@@ -715,7 +823,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_filter_joint_def", &b2DefaultFilterJointDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2PrismaticJointDef> _PrismaticJointDef(_box2d, "PrismaticJointDef");
@@ -737,7 +845,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_prismatic_joint_def", &b2DefaultPrismaticJointDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2RevoluteJointDef> _RevoluteJointDef(_box2d, "RevoluteJointDef");
@@ -759,7 +867,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_revolute_joint_def", &b2DefaultRevoluteJointDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2WeldJointDef> _WeldJointDef(_box2d, "WeldJointDef");
@@ -775,7 +883,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_weld_joint_def", &b2DefaultWeldJointDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2WheelJointDef> _WheelJointDef(_box2d, "WheelJointDef");
@@ -796,7 +904,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_wheel_joint_def", &b2DefaultWheelJointDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2ExplosionDef> _ExplosionDef(_box2d, "ExplosionDef");
@@ -811,7 +919,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("default_explosion_def", &b2DefaultExplosionDef
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2SensorBeginTouchEvent> _SensorBeginTouchEvent(_box2d, "SensorBeginTouchEvent");
@@ -1064,7 +1172,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
     ;
     _box2d
     .def("default_debug_draw", &b2DefaultDebugDraw
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
 

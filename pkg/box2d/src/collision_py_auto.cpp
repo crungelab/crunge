@@ -142,124 +142,124 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
     _box2d
     .def("is_valid_ray", &b2IsValidRay
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_polygon", &b2MakePolygon
         , py::arg("hull")
         , py::arg("radius")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_offset_polygon", &b2MakeOffsetPolygon
         , py::arg("hull")
         , py::arg("position")
         , py::arg("rotation")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_offset_rounded_polygon", &b2MakeOffsetRoundedPolygon
         , py::arg("hull")
         , py::arg("position")
         , py::arg("rotation")
         , py::arg("radius")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_square", &b2MakeSquare
         , py::arg("half_width")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_box", &b2MakeBox
         , py::arg("half_width")
         , py::arg("half_height")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_rounded_box", &b2MakeRoundedBox
         , py::arg("half_width")
         , py::arg("half_height")
         , py::arg("radius")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_offset_box", &b2MakeOffsetBox
         , py::arg("half_width")
         , py::arg("half_height")
         , py::arg("center")
         , py::arg("rotation")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_offset_rounded_box", &b2MakeOffsetRoundedBox
         , py::arg("half_width")
         , py::arg("half_height")
         , py::arg("center")
         , py::arg("rotation")
         , py::arg("radius")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("transform_polygon", &b2TransformPolygon
         , py::arg("transform")
         , py::arg("polygon")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("compute_circle_mass", &b2ComputeCircleMass
         , py::arg("shape")
         , py::arg("density")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("compute_capsule_mass", &b2ComputeCapsuleMass
         , py::arg("shape")
         , py::arg("density")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("compute_polygon_mass", &b2ComputePolygonMass
         , py::arg("shape")
         , py::arg("density")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("compute_circle_aabb", &b2ComputeCircleAABB
         , py::arg("shape")
         , py::arg("transform")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("compute_capsule_aabb", &b2ComputeCapsuleAABB
         , py::arg("shape")
         , py::arg("transform")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("compute_polygon_aabb", &b2ComputePolygonAABB
         , py::arg("shape")
         , py::arg("transform")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("compute_segment_aabb", &b2ComputeSegmentAABB
         , py::arg("shape")
         , py::arg("transform")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("point_in_circle", &b2PointInCircle
         , py::arg("shape")
         , py::arg("point")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("point_in_capsule", &b2PointInCapsule
         , py::arg("shape")
         , py::arg("point")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("point_in_polygon", &b2PointInPolygon
         , py::arg("shape")
         , py::arg("point")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("ray_cast_circle", &b2RayCastCircle
         , py::arg("shape")
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("ray_cast_capsule", &b2RayCastCapsule
         , py::arg("shape")
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("ray_cast_segment", &b2RayCastSegment
         , py::arg("shape")
         , py::arg("input")
         , py::arg("one_sided")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("ray_cast_polygon", &b2RayCastPolygon
         , py::arg("shape")
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("shape_cast_circle", &b2ShapeCastCircle
         , py::arg("shape")
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("shape_cast_capsule", &b2ShapeCastCapsule
         , py::arg("shape")
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("shape_cast_segment", &b2ShapeCastSegment
         , py::arg("shape")
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("shape_cast_polygon", &b2ShapeCastPolygon
         , py::arg("shape")
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2Hull> _Hull(_box2d, "Hull");
@@ -275,14 +275,13 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
             const b2Vec2 * _points = (const b2Vec2 *)points.data();
             auto count = points.size();
             
-            auto ret = b2ComputeHull(_points, count);
-            return ret;
+            return b2ComputeHull(_points, count);
         }
         , py::arg("points")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("validate_hull", &b2ValidateHull
         , py::arg("hull")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2SegmentDistanceResult> _SegmentDistanceResult(_box2d, "SegmentDistanceResult");
@@ -301,7 +300,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("q1")
         , py::arg("p2")
         , py::arg("q2")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2SimplexCache> _SimplexCache(_box2d, "SimplexCache");
@@ -359,7 +358,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("cache")
         , py::arg("simplexes")
         , py::arg("simplex_capacity")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2ShapeCastPairInput> _ShapeCastPairInput(_box2d, "ShapeCastPairInput");
@@ -377,19 +376,19 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
     _box2d
     .def("shape_cast", &b2ShapeCast
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_proxy", &b2MakeProxy
         , py::arg("points")
         , py::arg("count")
         , py::arg("radius")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("make_offset_proxy", &b2MakeOffsetProxy
         , py::arg("points")
         , py::arg("count")
         , py::arg("radius")
         , py::arg("position")
         , py::arg("rotation")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2Sweep> _Sweep(_box2d, "Sweep");
@@ -406,7 +405,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
     .def("get_sweep_transform", &b2GetSweepTransform
         , py::arg("sweep")
         , py::arg("time")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2TOIInput> _TOIInput(_box2d, "TOIInput");
@@ -439,7 +438,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
     _box2d
     .def("time_of_impact", &b2TimeOfImpact
         , py::arg("input")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2ManifoldPoint> _ManifoldPoint(_box2d, "ManifoldPoint");
@@ -472,75 +471,75 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("xf_a")
         , py::arg("circle_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_capsule_and_circle", &b2CollideCapsuleAndCircle
         , py::arg("capsule_a")
         , py::arg("xf_a")
         , py::arg("circle_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_segment_and_circle", &b2CollideSegmentAndCircle
         , py::arg("segment_a")
         , py::arg("xf_a")
         , py::arg("circle_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_polygon_and_circle", &b2CollidePolygonAndCircle
         , py::arg("polygon_a")
         , py::arg("xf_a")
         , py::arg("circle_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_capsules", &b2CollideCapsules
         , py::arg("capsule_a")
         , py::arg("xf_a")
         , py::arg("capsule_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_segment_and_capsule", &b2CollideSegmentAndCapsule
         , py::arg("segment_a")
         , py::arg("xf_a")
         , py::arg("capsule_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_polygon_and_capsule", &b2CollidePolygonAndCapsule
         , py::arg("polygon_a")
         , py::arg("xf_a")
         , py::arg("capsule_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_polygons", &b2CollidePolygons
         , py::arg("polygon_a")
         , py::arg("xf_a")
         , py::arg("polygon_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_segment_and_polygon", &b2CollideSegmentAndPolygon
         , py::arg("segment_a")
         , py::arg("xf_a")
         , py::arg("polygon_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_chain_segment_and_circle", &b2CollideChainSegmentAndCircle
         , py::arg("segment_a")
         , py::arg("xf_a")
         , py::arg("circle_b")
         , py::arg("xf_b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_chain_segment_and_capsule", &b2CollideChainSegmentAndCapsule
         , py::arg("segment_a")
         , py::arg("xf_a")
         , py::arg("capsule_b")
         , py::arg("xf_b")
         , py::arg("cache")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("collide_chain_segment_and_polygon", &b2CollideChainSegmentAndPolygon
         , py::arg("segment_a")
         , py::arg("xf_a")
         , py::arg("polygon_b")
         , py::arg("xf_b")
         , py::arg("cache")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2TreeStats> _TreeStats(_box2d, "TreeStats");
@@ -552,99 +551,99 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("dynamic_tree_create", &b2DynamicTree_Create
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_destroy", &b2DynamicTree_Destroy
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_create_proxy", &b2DynamicTree_CreateProxy
         , py::arg("tree")
         , py::arg("aabb")
         , py::arg("category_bits")
         , py::arg("user_data")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_destroy_proxy", &b2DynamicTree_DestroyProxy
         , py::arg("tree")
         , py::arg("proxy_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_move_proxy", &b2DynamicTree_MoveProxy
         , py::arg("tree")
         , py::arg("proxy_id")
         , py::arg("aabb")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_enlarge_proxy", &b2DynamicTree_EnlargeProxy
         , py::arg("tree")
         , py::arg("proxy_id")
         , py::arg("aabb")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_set_category_bits", &b2DynamicTree_SetCategoryBits
         , py::arg("tree")
         , py::arg("proxy_id")
         , py::arg("category_bits")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_category_bits", &b2DynamicTree_GetCategoryBits
         , py::arg("tree")
         , py::arg("proxy_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_query", &b2DynamicTree_Query
         , py::arg("tree")
         , py::arg("aabb")
         , py::arg("mask_bits")
         , py::arg("callback")
         , py::arg("context")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_query_all", &b2DynamicTree_QueryAll
         , py::arg("tree")
         , py::arg("aabb")
         , py::arg("callback")
         , py::arg("context")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_ray_cast", &b2DynamicTree_RayCast
         , py::arg("tree")
         , py::arg("input")
         , py::arg("mask_bits")
         , py::arg("callback")
         , py::arg("context")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_shape_cast", &b2DynamicTree_ShapeCast
         , py::arg("tree")
         , py::arg("input")
         , py::arg("mask_bits")
         , py::arg("callback")
         , py::arg("context")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_height", &b2DynamicTree_GetHeight
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_area_ratio", &b2DynamicTree_GetAreaRatio
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_root_bounds", &b2DynamicTree_GetRootBounds
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_proxy_count", &b2DynamicTree_GetProxyCount
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_rebuild", &b2DynamicTree_Rebuild
         , py::arg("tree")
         , py::arg("full_build")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_byte_count", &b2DynamicTree_GetByteCount
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_user_data", &b2DynamicTree_GetUserData
         , py::arg("tree")
         , py::arg("proxy_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_get_aabb", &b2DynamicTree_GetAABB
         , py::arg("tree")
         , py::arg("proxy_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_validate", &b2DynamicTree_Validate
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("dynamic_tree_validate_no_enlarged", &b2DynamicTree_ValidateNoEnlarged
         , py::arg("tree")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<b2PlaneResult> _PlaneResult(_box2d, "PlaneResult");
@@ -676,12 +675,12 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("target_delta")
         , py::arg("planes")
         , py::arg("count")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("clip_vector", &b2ClipVector
         , py::arg("vector")
         , py::arg("planes")
         , py::arg("count")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
 

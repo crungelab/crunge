@@ -19,14 +19,14 @@ specs:
       methods:
         __init__:
           gen_kwargs: true
-          #use: b2DefaultWorldDef
+          #use: function@b2DefaultWorldDef
 
         __repr__:
           auto: true
 
   'function@b2ComputeHull':
-    args:
+    params:
       points:
         facade:
           kind: vector
-          length_arg: count
+          length_param: count

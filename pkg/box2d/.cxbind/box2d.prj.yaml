@@ -16,3 +16,13 @@ unit_files:
   - path: math_functions.unit.yaml
   - path: id.unit.yaml
   - path: collision.unit.yaml
+
+#b2OverlapResultFcn
+
+specs:
+  'function_prototype@b2OverlapResultFcn':
+    facade:
+      kind: callback
+      context_param: context
+
+  #'function@b2World_OverlapShape': {}

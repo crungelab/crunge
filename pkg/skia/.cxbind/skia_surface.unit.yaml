@@ -16,3 +16,7 @@ excludes:
   - 'method@SkSurface::replaceBackendTexture'
 
   # Overloads
+
+specs:
+  'class@SkCanvas':
+    ownership: borrowed

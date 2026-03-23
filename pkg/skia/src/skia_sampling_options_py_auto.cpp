@@ -34,9 +34,9 @@ void init_skia_sampling_options_py_auto(py::module &_skia, Registry &registry) {
         .def_readwrite("b", &SkCubicResampler::B)
         .def_readwrite("c", &SkCubicResampler::C)
         .def_static("mitchell", &SkCubicResampler::Mitchell
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("catmull_rom", &SkCubicResampler::CatmullRom
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
     py::class_<SkSamplingOptions> _SamplingOptions(_skia, "SamplingOptions");
@@ -60,9 +60,9 @@ void init_skia_sampling_options_py_auto(py::module &_skia, Registry &registry) {
         )
         .def_static("aniso", &SkSamplingOptions::Aniso
             , py::arg("max_aniso")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_aniso", &SkSamplingOptions::isAniso
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
 

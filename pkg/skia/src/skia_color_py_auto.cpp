@@ -19,22 +19,22 @@ void init_skia_color_py_auto(py::module &_skia, Registry &registry) {
     .def("rgb_to_hsv", [](U8CPU red, U8CPU green, U8CPU blue, std::array<SkScalar, 3>& hsv)
         {
             SkRGBToHSV(red, green, blue, &hsv[0]);
-            return hsv;
+            return std::make_tuple(hsv);
         }
         , py::arg("red")
         , py::arg("green")
         , py::arg("blue")
         , py::arg("hsv")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("pre_multiply_argb", &SkPreMultiplyARGB
         , py::arg("a")
         , py::arg("r")
         , py::arg("g")
         , py::arg("b")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("pre_multiply_color", &SkPreMultiplyColor
         , py::arg("c")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::enum_<SkColorChannel>(_skia, "ColorChannel", py::arithmetic())

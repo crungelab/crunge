@@ -27,25 +27,25 @@ void init_tmx_layer_py_auto(py::module &_tmx, Registry &registry) {
         ;
         _Layer
         .def("get_type", &tmx::Layer::getType
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_class", &tmx::Layer::getClass
-            , py::return_value_policy::reference)
+            )
         .def("get_name", &tmx::Layer::getName
-            , py::return_value_policy::reference)
+            )
         .def("get_opacity", &tmx::Layer::getOpacity
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_visible", &tmx::Layer::getVisible
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_offset", &tmx::Layer::getOffset
-            , py::return_value_policy::reference)
+            )
         .def("get_parallax_factor", &tmx::Layer::getParallaxFactor
-            , py::return_value_policy::reference)
+            )
         .def("get_tint_colour", &tmx::Layer::getTintColour
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_size", &tmx::Layer::getSize
-            , py::return_value_policy::reference)
+            )
         .def("get_properties", &tmx::Layer::getProperties
-            , py::return_value_policy::reference)
+            )
         .def_property_readonly("name", &tmx::Layer::getName)
         .def_property_readonly("opacity", &tmx::Layer::getOpacity)
     ;

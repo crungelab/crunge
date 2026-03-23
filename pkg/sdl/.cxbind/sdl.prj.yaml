@@ -23,5 +23,5 @@ specs:
   'struct@SDL_Window':
     wrapper: 'SDLWindowWrapper'
   'struct@SDL_AudioStream':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 

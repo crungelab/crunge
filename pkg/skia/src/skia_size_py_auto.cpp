@@ -23,29 +23,29 @@ void init_skia_size_py_auto(py::module &_skia, Registry &registry) {
         .def_static("make", &SkISize::Make
             , py::arg("w")
             , py::arg("h")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_empty", &SkISize::MakeEmpty
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set", &SkISize::set
             , py::arg("w")
             , py::arg("h")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_zero", &SkISize::isZero
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_empty", &SkISize::isEmpty
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_empty", &SkISize::setEmpty
-            , py::return_value_policy::automatic_reference)
+            )
         .def("width", &SkISize::width
-            , py::return_value_policy::automatic_reference)
+            )
         .def("height", &SkISize::height
-            , py::return_value_policy::automatic_reference)
+            )
         .def("area", &SkISize::area
-            , py::return_value_policy::automatic_reference)
+            )
         .def("equals", &SkISize::equals
             , py::arg("w")
             , py::arg("h")
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
     py::class_<SkSize> _Size(_skia, "Size");
@@ -56,36 +56,36 @@ void init_skia_size_py_auto(py::module &_skia, Registry &registry) {
         .def_static("make", py::overload_cast<SkScalar, SkScalar>(&SkSize::Make)
             , py::arg("w")
             , py::arg("h")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make", py::overload_cast<const SkISize &>(&SkSize::Make)
             , py::arg("src")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_empty", &SkSize::MakeEmpty
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set", &SkSize::set
             , py::arg("w")
             , py::arg("h")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_zero", &SkSize::isZero
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_empty", &SkSize::isEmpty
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_empty", &SkSize::setEmpty
-            , py::return_value_policy::automatic_reference)
+            )
         .def("width", &SkSize::width
-            , py::return_value_policy::automatic_reference)
+            )
         .def("height", &SkSize::height
-            , py::return_value_policy::automatic_reference)
+            )
         .def("equals", &SkSize::equals
             , py::arg("w")
             , py::arg("h")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("to_round", &SkSize::toRound
-            , py::return_value_policy::automatic_reference)
+            )
         .def("to_ceil", &SkSize::toCeil
-            , py::return_value_policy::automatic_reference)
+            )
         .def("to_floor", &SkSize::toFloor
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
 

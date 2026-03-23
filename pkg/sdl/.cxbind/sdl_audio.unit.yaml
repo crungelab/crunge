@@ -11,3 +11,11 @@ excludes:
   - 'function@SDL_SetAudioStreamGetCallback'
   - 'function@SDL_SetAudioStreamPutCallback'
 
+  # Pointer to pointer problem
+  - 'function@SDL_ConvertAudioSamples'
+  - 'function@SDL_BindAudioStreams'
+  - 'function@SDL_UnbindAudioStreams'
+  - 'function@SDL_LoadWAV_IO'
+  - 'function@SDL_PutAudioStreamPlanarData'
+  - 'function@SDL_LoadWAV'
+

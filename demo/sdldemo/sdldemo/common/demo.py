@@ -13,19 +13,18 @@ class Demo:
     kWidth = 1024
     kHeight = 768
 
-    device: wgpu.Device = None
-    queue: wgpu.Queue = None
-    pipeline: wgpu.RenderPipeline = None
-
-    surface: wgpu.Surface = None
-
-    depth_stencil_view: wgpu.TextureView = None
-
     def __init__(self):
         super().__init__()
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
         self.window = None
+
+        self.pipeline: wgpu.RenderPipeline = None
+
+        self.surface: wgpu.Surface = None
+        self.surface_configured = False
+
+        self.depth_stencil_view: wgpu.TextureView = None
 
         self.wgpu_context = wgpu.Context()
 
@@ -61,6 +60,9 @@ class Demo:
         if not size.x or not size.y:
             return
 
+        if self.surface is not None and self.surface_configured:
+            self.surface.unconfigure()
+
         logger.debug("Creating surface configuration")
         config = wgpu.SurfaceConfiguration(
             device=self.device,
@@ -74,6 +76,7 @@ class Demo:
         )
         logger.debug(config)
         self.surface.configure(config)
+        self.surface_configured = True
         logger.debug(f"Surface configured to size: {size}")
 
     def resize(self, size: glm.ivec2):

@@ -134,332 +134,321 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .export_values()
     ;
     _imnodes
-    .def("set_im_gui_context", [](const py::capsule& ctx)
+    .def("set_im_gui_context", [](py::capsule ctx)
         {
-            ImNodes::SetImGuiContext(ctx);
-            return ;
+            return ImNodes::SetImGuiContext(static_cast<ImGuiContext *>(ctx.get_pointer()));
         }
         , py::arg("ctx")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("create_context", []()
         {
-            auto ret = py::capsule(ImNodes::CreateContext(), "ImNodesContext");
-            return ret;
+            return py::capsule(ImNodes::CreateContext(), "ImNodesContext");
         }
-        , py::return_value_policy::automatic_reference)
-    .def("destroy_context", [](const py::capsule& ctx)
+        )
+    .def("destroy_context", [](py::capsule ctx)
         {
-            ImNodes::DestroyContext(ctx);
-            return ;
+            return ImNodes::DestroyContext(static_cast<ImNodesContext *>(ctx.get_pointer()));
         }
         , py::arg("ctx") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_current_context", []()
         {
-            auto ret = py::capsule(ImNodes::GetCurrentContext(), "ImNodesContext");
-            return ret;
+            return py::capsule(ImNodes::GetCurrentContext(), "ImNodesContext");
         }
-        , py::return_value_policy::automatic_reference)
-    .def("set_current_context", [](const py::capsule& ctx)
+        )
+    .def("set_current_context", [](py::capsule ctx)
         {
-            ImNodes::SetCurrentContext(ctx);
-            return ;
+            return ImNodes::SetCurrentContext(static_cast<ImNodesContext *>(ctx.get_pointer()));
         }
         , py::arg("ctx")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("editor_context_create", []()
         {
-            auto ret = py::capsule(ImNodes::EditorContextCreate(), "ImNodesEditorContext");
-            return ret;
+            return py::capsule(ImNodes::EditorContextCreate(), "ImNodesEditorContext");
         }
-        , py::return_value_policy::automatic_reference)
-    .def("editor_context_free", [](const py::capsule& arg)
+        )
+    .def("editor_context_free", [](py::capsule arg)
         {
-            ImNodes::EditorContextFree(arg);
-            return ;
+            return ImNodes::EditorContextFree(static_cast<ImNodesEditorContext *>(arg.get_pointer()));
         }
         , py::arg("arg")
-        , py::return_value_policy::automatic_reference)
-    .def("editor_context_set", [](const py::capsule& arg)
+        )
+    .def("editor_context_set", [](py::capsule arg)
         {
-            ImNodes::EditorContextSet(arg);
-            return ;
+            return ImNodes::EditorContextSet(static_cast<ImNodesEditorContext *>(arg.get_pointer()));
         }
         , py::arg("arg")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("editor_context_get_panning", &ImNodes::EditorContextGetPanning
-        , py::return_value_policy::automatic_reference)
+        )
     .def("editor_context_reset_panning", &ImNodes::EditorContextResetPanning
         , py::arg("pos")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("editor_context_move_to_node", &ImNodes::EditorContextMoveToNode
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_io", &ImNodes::GetIO
         , py::return_value_policy::reference)
     .def("get_style", &ImNodes::GetStyle
         , py::return_value_policy::reference)
     .def("style_colors_dark", &ImNodes::StyleColorsDark
         , py::arg("dest") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("style_colors_classic", &ImNodes::StyleColorsClassic
         , py::arg("dest") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("style_colors_light", &ImNodes::StyleColorsLight
         , py::arg("dest") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("begin_node_editor", &ImNodes::BeginNodeEditor
-        , py::return_value_policy::automatic_reference)
+        )
     .def("end_node_editor", &ImNodes::EndNodeEditor
-        , py::return_value_policy::automatic_reference)
+        )
     .def("push_color_style", &ImNodes::PushColorStyle
         , py::arg("item")
         , py::arg("color")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("pop_color_style", &ImNodes::PopColorStyle
-        , py::return_value_policy::automatic_reference)
+        )
     .def("push_style_var", py::overload_cast<ImNodesStyleVar, float>(&ImNodes::PushStyleVar)
         , py::arg("style_item")
         , py::arg("value")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("push_style_var", py::overload_cast<ImNodesStyleVar, const ImVec2 &>(&ImNodes::PushStyleVar)
         , py::arg("style_item")
         , py::arg("value")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("pop_style_var", &ImNodes::PopStyleVar
         , py::arg("count") = 1
-        , py::return_value_policy::automatic_reference)
+        )
     .def("begin_node", &ImNodes::BeginNode
         , py::arg("id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("end_node", &ImNodes::EndNode
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_node_dimensions", &ImNodes::GetNodeDimensions
         , py::arg("id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("begin_node_title_bar", &ImNodes::BeginNodeTitleBar
-        , py::return_value_policy::automatic_reference)
+        )
     .def("end_node_title_bar", &ImNodes::EndNodeTitleBar
-        , py::return_value_policy::automatic_reference)
+        )
     .def("begin_input_attribute", &ImNodes::BeginInputAttribute
         , py::arg("id")
         , py::arg("shape") = ImNodesPinShape_::ImNodesPinShape_CircleFilled
-        , py::return_value_policy::automatic_reference)
+        )
     .def("end_input_attribute", &ImNodes::EndInputAttribute
-        , py::return_value_policy::automatic_reference)
+        )
     .def("begin_output_attribute", &ImNodes::BeginOutputAttribute
         , py::arg("id")
         , py::arg("shape") = ImNodesPinShape_::ImNodesPinShape_CircleFilled
-        , py::return_value_policy::automatic_reference)
+        )
     .def("end_output_attribute", &ImNodes::EndOutputAttribute
-        , py::return_value_policy::automatic_reference)
+        )
     .def("begin_static_attribute", &ImNodes::BeginStaticAttribute
         , py::arg("id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("end_static_attribute", &ImNodes::EndStaticAttribute
-        , py::return_value_policy::automatic_reference)
+        )
     .def("push_attribute_flag", &ImNodes::PushAttributeFlag
         , py::arg("flag")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("pop_attribute_flag", &ImNodes::PopAttributeFlag
-        , py::return_value_policy::automatic_reference)
+        )
     .def("link", &ImNodes::Link
         , py::arg("id")
         , py::arg("start_attribute_id")
         , py::arg("end_attribute_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_node_draggable", &ImNodes::SetNodeDraggable
         , py::arg("node_id")
         , py::arg("draggable")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_node_screen_space_pos", &ImNodes::SetNodeScreenSpacePos
         , py::arg("node_id")
         , py::arg("screen_space_pos")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_node_editor_space_pos", &ImNodes::SetNodeEditorSpacePos
         , py::arg("node_id")
         , py::arg("editor_space_pos")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_node_grid_space_pos", &ImNodes::SetNodeGridSpacePos
         , py::arg("node_id")
         , py::arg("grid_pos")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_node_screen_space_pos", &ImNodes::GetNodeScreenSpacePos
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_node_editor_space_pos", &ImNodes::GetNodeEditorSpacePos
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_node_grid_space_pos", &ImNodes::GetNodeGridSpacePos
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("snap_node_to_grid", &ImNodes::SnapNodeToGrid
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_editor_hovered", &ImNodes::IsEditorHovered
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_node_hovered", [](int * node_id)
         {
-            auto ret = ImNodes::IsNodeHovered(node_id);
-            return std::make_tuple(ret, node_id);
+            auto _ret = ImNodes::IsNodeHovered(node_id);
+            return std::make_tuple(_ret, node_id);
         }
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_link_hovered", [](int * link_id)
         {
-            auto ret = ImNodes::IsLinkHovered(link_id);
-            return std::make_tuple(ret, link_id);
+            auto _ret = ImNodes::IsLinkHovered(link_id);
+            return std::make_tuple(_ret, link_id);
         }
         , py::arg("link_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_pin_hovered", [](int * attribute_id)
         {
-            auto ret = ImNodes::IsPinHovered(attribute_id);
-            return std::make_tuple(ret, attribute_id);
+            auto _ret = ImNodes::IsPinHovered(attribute_id);
+            return std::make_tuple(_ret, attribute_id);
         }
         , py::arg("attribute_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("num_selected_nodes", &ImNodes::NumSelectedNodes
-        , py::return_value_policy::automatic_reference)
+        )
     .def("num_selected_links", &ImNodes::NumSelectedLinks
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_selected_nodes", [](int * node_ids)
         {
             ImNodes::GetSelectedNodes(node_ids);
-            return node_ids;
+            return std::make_tuple(node_ids);
         }
         , py::arg("node_ids")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_selected_links", [](int * link_ids)
         {
             ImNodes::GetSelectedLinks(link_ids);
-            return link_ids;
+            return std::make_tuple(link_ids);
         }
         , py::arg("link_ids")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("clear_node_selection", py::overload_cast<>(&ImNodes::ClearNodeSelection)
-        , py::return_value_policy::automatic_reference)
+        )
     .def("clear_link_selection", py::overload_cast<>(&ImNodes::ClearLinkSelection)
-        , py::return_value_policy::automatic_reference)
+        )
     .def("select_node", &ImNodes::SelectNode
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("clear_node_selection", py::overload_cast<int>(&ImNodes::ClearNodeSelection)
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_node_selected", &ImNodes::IsNodeSelected
         , py::arg("node_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("select_link", &ImNodes::SelectLink
         , py::arg("link_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("clear_link_selection", py::overload_cast<int>(&ImNodes::ClearLinkSelection)
         , py::arg("link_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_link_selected", &ImNodes::IsLinkSelected
         , py::arg("link_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_attribute_active", &ImNodes::IsAttributeActive
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_any_attribute_active", [](int * attribute_id)
         {
-            auto ret = ImNodes::IsAnyAttributeActive(attribute_id);
-            return std::make_tuple(ret, attribute_id);
+            auto _ret = ImNodes::IsAnyAttributeActive(attribute_id);
+            return std::make_tuple(_ret, attribute_id);
         }
         , py::arg("attribute_id") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_link_started", [](int * started_at_attribute_id)
         {
-            auto ret = ImNodes::IsLinkStarted(started_at_attribute_id);
-            return std::make_tuple(ret, started_at_attribute_id);
+            auto _ret = ImNodes::IsLinkStarted(started_at_attribute_id);
+            return std::make_tuple(_ret, started_at_attribute_id);
         }
         , py::arg("started_at_attribute_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_link_dropped", [](int * started_at_attribute_id, bool including_detached_links)
         {
-            auto ret = ImNodes::IsLinkDropped(started_at_attribute_id, including_detached_links);
-            return std::make_tuple(ret, started_at_attribute_id);
+            auto _ret = ImNodes::IsLinkDropped(started_at_attribute_id, including_detached_links);
+            return std::make_tuple(_ret, started_at_attribute_id);
         }
         , py::arg("started_at_attribute_id") = nullptr
         , py::arg("including_detached_links") = true
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_link_created", [](int * started_at_attribute_id, int * ended_at_attribute_id, bool * created_from_snap)
         {
-            auto ret = ImNodes::IsLinkCreated(started_at_attribute_id, ended_at_attribute_id, created_from_snap);
-            return std::make_tuple(ret, started_at_attribute_id, ended_at_attribute_id, created_from_snap);
+            auto _ret = ImNodes::IsLinkCreated(started_at_attribute_id, ended_at_attribute_id, created_from_snap);
+            return std::make_tuple(_ret, started_at_attribute_id, ended_at_attribute_id, created_from_snap);
         }
         , py::arg("started_at_attribute_id")
         , py::arg("ended_at_attribute_id")
         , py::arg("created_from_snap") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_link_created", [](int * started_at_node_id, int * started_at_attribute_id, int * ended_at_node_id, int * ended_at_attribute_id, bool * created_from_snap)
         {
-            auto ret = ImNodes::IsLinkCreated(started_at_node_id, started_at_attribute_id, ended_at_node_id, ended_at_attribute_id, created_from_snap);
-            return std::make_tuple(ret, started_at_node_id, started_at_attribute_id, ended_at_node_id, ended_at_attribute_id, created_from_snap);
+            auto _ret = ImNodes::IsLinkCreated(started_at_node_id, started_at_attribute_id, ended_at_node_id, ended_at_attribute_id, created_from_snap);
+            return std::make_tuple(_ret, started_at_node_id, started_at_attribute_id, ended_at_node_id, ended_at_attribute_id, created_from_snap);
         }
         , py::arg("started_at_node_id")
         , py::arg("started_at_attribute_id")
         , py::arg("ended_at_node_id")
         , py::arg("ended_at_attribute_id")
         , py::arg("created_from_snap") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_link_destroyed", [](int * link_id)
         {
-            auto ret = ImNodes::IsLinkDestroyed(link_id);
-            return std::make_tuple(ret, link_id);
+            auto _ret = ImNodes::IsLinkDestroyed(link_id);
+            return std::make_tuple(_ret, link_id);
         }
         , py::arg("link_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("save_current_editor_state_to_ini_string", [](size_t * data_size)
         {
-            auto ret = ImNodes::SaveCurrentEditorStateToIniString(data_size);
-            return std::make_tuple(ret, data_size);
+            auto _ret = ImNodes::SaveCurrentEditorStateToIniString(data_size);
+            return std::make_tuple(_ret, data_size);
         }
         , py::arg("data_size") = nullptr
-        , py::return_value_policy::automatic_reference)
-    .def("save_editor_state_to_ini_string", [](const py::capsule& editor, size_t * data_size)
+        )
+    .def("save_editor_state_to_ini_string", [](py::capsule editor, size_t * data_size)
         {
-            auto ret = ImNodes::SaveEditorStateToIniString(editor, data_size);
-            return std::make_tuple(ret, data_size);
+            auto _ret = ImNodes::SaveEditorStateToIniString(static_cast<const ImNodesEditorContext *>(editor.get_pointer()), data_size);
+            return std::make_tuple(_ret, data_size);
         }
         , py::arg("editor")
         , py::arg("data_size") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("load_current_editor_state_from_ini_string", &ImNodes::LoadCurrentEditorStateFromIniString
         , py::arg("data")
         , py::arg("data_size")
-        , py::return_value_policy::automatic_reference)
-    .def("load_editor_state_from_ini_string", [](const py::capsule& editor, const char * data, size_t data_size)
+        )
+    .def("load_editor_state_from_ini_string", [](py::capsule editor, const char * data, size_t data_size)
         {
-            ImNodes::LoadEditorStateFromIniString(editor, data, data_size);
-            return ;
+            return ImNodes::LoadEditorStateFromIniString(static_cast<ImNodesEditorContext *>(editor.get_pointer()), data, data_size);
         }
         , py::arg("editor")
         , py::arg("data")
         , py::arg("data_size")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("save_current_editor_state_to_ini_file", &ImNodes::SaveCurrentEditorStateToIniFile
         , py::arg("file_name")
-        , py::return_value_policy::automatic_reference)
-    .def("save_editor_state_to_ini_file", [](const py::capsule& editor, const char * file_name)
+        )
+    .def("save_editor_state_to_ini_file", [](py::capsule editor, const char * file_name)
         {
-            ImNodes::SaveEditorStateToIniFile(editor, file_name);
-            return ;
+            return ImNodes::SaveEditorStateToIniFile(static_cast<const ImNodesEditorContext *>(editor.get_pointer()), file_name);
         }
         , py::arg("editor")
         , py::arg("file_name")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("load_current_editor_state_from_ini_file", &ImNodes::LoadCurrentEditorStateFromIniFile
         , py::arg("file_name")
-        , py::return_value_policy::automatic_reference)
-    .def("load_editor_state_from_ini_file", [](const py::capsule& editor, const char * file_name)
+        )
+    .def("load_editor_state_from_ini_file", [](py::capsule editor, const char * file_name)
         {
-            ImNodes::LoadEditorStateFromIniFile(editor, file_name);
-            return ;
+            return ImNodes::LoadEditorStateFromIniFile(static_cast<ImNodesEditorContext *>(editor.get_pointer()), file_name);
         }
         , py::arg("editor")
         , py::arg("file_name")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
 

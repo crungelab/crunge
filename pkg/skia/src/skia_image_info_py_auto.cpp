@@ -19,15 +19,19 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
     _skia
     .def("color_type_bytes_per_pixel", &SkColorTypeBytesPerPixel
         , py::arg("ct")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("color_type_is_always_opaque", &SkColorTypeIsAlwaysOpaque
         , py::arg("ct")
-        , py::return_value_policy::automatic_reference)
-    .def("color_type_validate_alpha_type", &SkColorTypeValidateAlphaType
+        )
+    .def("color_type_validate_alpha_type", [](SkColorType colorType, SkAlphaType alphaType, SkAlphaType * canonical)
+        {
+            auto _ret = SkColorTypeValidateAlphaType(colorType, alphaType, canonical);
+            return std::make_tuple(_ret, canonical);
+        }
         , py::arg("color_type")
         , py::arg("alpha_type")
         , py::arg("canonical") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::enum_<SkYUVColorSpace>(_skia, "YUVColorSpace", py::arithmetic())
@@ -70,7 +74,7 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
     _skia
     .def("yuv_color_space_is_limited_range", &SkYUVColorSpaceIsLimitedRange
         , py::arg("cs")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<SkColorInfo> _ColorInfo(_skia, "ColorInfo");
@@ -83,30 +87,30 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("cs")
         )
         .def("color_space", &SkColorInfo::colorSpace
-            , py::return_value_policy::automatic_reference)
+            )
         .def("ref_color_space", &SkColorInfo::refColorSpace
-            , py::return_value_policy::automatic_reference)
+            )
         .def("color_type", &SkColorInfo::colorType
-            , py::return_value_policy::automatic_reference)
+            )
         .def("alpha_type", &SkColorInfo::alphaType
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_opaque", &SkColorInfo::isOpaque
-            , py::return_value_policy::automatic_reference)
+            )
         .def("gamma_close_to_srgb", &SkColorInfo::gammaCloseToSRGB
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_alpha_type", &SkColorInfo::makeAlphaType
             , py::arg("new_alpha_type")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_color_type", &SkColorInfo::makeColorType
             , py::arg("new_color_type")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_color_space", &SkColorInfo::makeColorSpace
             , py::arg("cs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("bytes_per_pixel", &SkColorInfo::bytesPerPixel
-            , py::return_value_policy::automatic_reference)
+            )
         .def("shift_per_pixel", &SkColorInfo::shiftPerPixel
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
     py::class_<SkImageInfo> _ImageInfo(_skia, "ImageInfo");
@@ -118,142 +122,142 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("height")
             , py::arg("ct")
             , py::arg("at")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make", py::overload_cast<int, int, SkColorType, SkAlphaType, sk_sp<SkColorSpace>>(&SkImageInfo::Make)
             , py::arg("width")
             , py::arg("height")
             , py::arg("ct")
             , py::arg("at")
             , py::arg("cs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make", py::overload_cast<SkISize, SkColorType, SkAlphaType>(&SkImageInfo::Make)
             , py::arg("dimensions")
             , py::arg("ct")
             , py::arg("at")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make", py::overload_cast<SkISize, SkColorType, SkAlphaType, sk_sp<SkColorSpace>>(&SkImageInfo::Make)
             , py::arg("dimensions")
             , py::arg("ct")
             , py::arg("at")
             , py::arg("cs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make", py::overload_cast<SkISize, const SkColorInfo &>(&SkImageInfo::Make)
             , py::arg("dimensions")
             , py::arg("color_info")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_n32", py::overload_cast<int, int, SkAlphaType>(&SkImageInfo::MakeN32)
             , py::arg("width")
             , py::arg("height")
             , py::arg("at")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_n32", py::overload_cast<int, int, SkAlphaType, sk_sp<SkColorSpace>>(&SkImageInfo::MakeN32)
             , py::arg("width")
             , py::arg("height")
             , py::arg("at")
             , py::arg("cs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_s32", &SkImageInfo::MakeS32
             , py::arg("width")
             , py::arg("height")
             , py::arg("at")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_n32_premul", py::overload_cast<int, int>(&SkImageInfo::MakeN32Premul)
             , py::arg("width")
             , py::arg("height")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_n32_premul", py::overload_cast<int, int, sk_sp<SkColorSpace>>(&SkImageInfo::MakeN32Premul)
             , py::arg("width")
             , py::arg("height")
             , py::arg("cs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_n32_premul", py::overload_cast<SkISize>(&SkImageInfo::MakeN32Premul)
             , py::arg("dimensions")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_n32_premul", py::overload_cast<SkISize, sk_sp<SkColorSpace>>(&SkImageInfo::MakeN32Premul)
             , py::arg("dimensions")
             , py::arg("cs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_a8", py::overload_cast<int, int>(&SkImageInfo::MakeA8)
             , py::arg("width")
             , py::arg("height")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_a8", py::overload_cast<SkISize>(&SkImageInfo::MakeA8)
             , py::arg("dimensions")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_unknown", py::overload_cast<int, int>(&SkImageInfo::MakeUnknown)
             , py::arg("width")
             , py::arg("height")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_unknown", py::overload_cast<>(&SkImageInfo::MakeUnknown)
-            , py::return_value_policy::automatic_reference)
+            )
         .def("width", &SkImageInfo::width
-            , py::return_value_policy::automatic_reference)
+            )
         .def("height", &SkImageInfo::height
-            , py::return_value_policy::automatic_reference)
+            )
         .def("color_type", &SkImageInfo::colorType
-            , py::return_value_policy::automatic_reference)
+            )
         .def("alpha_type", &SkImageInfo::alphaType
-            , py::return_value_policy::automatic_reference)
+            )
         .def("color_space", &SkImageInfo::colorSpace
-            , py::return_value_policy::automatic_reference)
+            )
         .def("ref_color_space", &SkImageInfo::refColorSpace
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_empty", &SkImageInfo::isEmpty
-            , py::return_value_policy::automatic_reference)
+            )
         .def("color_info", &SkImageInfo::colorInfo
-            , py::return_value_policy::reference)
+            )
         .def("is_opaque", &SkImageInfo::isOpaque
-            , py::return_value_policy::automatic_reference)
+            )
         .def("dimensions", &SkImageInfo::dimensions
-            , py::return_value_policy::automatic_reference)
+            )
         .def("bounds", &SkImageInfo::bounds
-            , py::return_value_policy::automatic_reference)
+            )
         .def("gamma_close_to_srgb", &SkImageInfo::gammaCloseToSRGB
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_wh", &SkImageInfo::makeWH
             , py::arg("new_width")
             , py::arg("new_height")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_dimensions", &SkImageInfo::makeDimensions
             , py::arg("new_size")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_alpha_type", &SkImageInfo::makeAlphaType
             , py::arg("new_alpha_type")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_color_type", &SkImageInfo::makeColorType
             , py::arg("new_color_type")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_color_space", &SkImageInfo::makeColorSpace
             , py::arg("cs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("bytes_per_pixel", &SkImageInfo::bytesPerPixel
-            , py::return_value_policy::automatic_reference)
+            )
         .def("shift_per_pixel", &SkImageInfo::shiftPerPixel
-            , py::return_value_policy::automatic_reference)
+            )
         .def("min_row_bytes64", &SkImageInfo::minRowBytes64
-            , py::return_value_policy::automatic_reference)
+            )
         .def("min_row_bytes", &SkImageInfo::minRowBytes
-            , py::return_value_policy::automatic_reference)
+            )
         .def("compute_offset", &SkImageInfo::computeOffset
             , py::arg("x")
             , py::arg("y")
             , py::arg("row_bytes")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("compute_byte_size", &SkImageInfo::computeByteSize
             , py::arg("row_bytes")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("compute_min_byte_size", &SkImageInfo::computeMinByteSize
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("byte_size_overflowed", &SkImageInfo::ByteSizeOverflowed
             , py::arg("byte_size")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("valid_row_bytes", &SkImageInfo::validRowBytes
             , py::arg("row_bytes")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("reset", &SkImageInfo::reset
-            , py::return_value_policy::automatic_reference)
+            )
         .def("validate", &SkImageInfo::validate
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
 

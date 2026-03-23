@@ -41,14 +41,14 @@ void init_tmx_tile_layer_py_auto(py::module &_tmx, Registry &registry) {
         ;
         _TileLayer
         .def(py::init<std::size_t>()
-        , py::arg("arg")
+        , py::arg("arg0")
         )
         .def("get_type", &tmx::TileLayer::getType
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_tiles", &tmx::TileLayer::getTiles
-            , py::return_value_policy::reference)
+            )
         .def("get_chunks", &tmx::TileLayer::getChunks
-            , py::return_value_policy::reference)
+            )
         .def_property_readonly("tiles", &tmx::TileLayer::getTiles)
     ;
 

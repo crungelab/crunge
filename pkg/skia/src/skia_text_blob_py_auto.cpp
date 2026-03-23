@@ -25,64 +25,68 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "TextBlob", _TextBlob);
         _TextBlob
         .def("bounds", &SkTextBlob::bounds
-            , py::return_value_policy::reference)
+            )
         .def("unique_id", &SkTextBlob::uniqueID
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_intercepts", [](SkTextBlob& self, std::array<SkScalar, 2>& bounds, SkScalar intervals[], const SkPaint * paint)
             {
-                auto ret = self.getIntercepts(&bounds[0], intervals, paint);
-                return std::make_tuple(ret, bounds);
+                auto _ret = self.getIntercepts(&bounds[0], intervals, paint);
+                return std::make_tuple(_ret, bounds, intervals);
             }
             , py::arg("bounds")
             , py::arg("intervals")
             , py::arg("paint") = nullptr
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_from_text", &SkTextBlob::MakeFromText
             , py::arg("text")
             , py::arg("byte_length")
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_from_string", &SkTextBlob::MakeFromString
             , py::arg("string")
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
-            , py::return_value_policy::automatic_reference)
-        .def_static("make_from_pos_text_h", &SkTextBlob::MakeFromPosTextH
+            )
+        .def_static("make_from_pos_text_h", [](const void * text, size_t byteLength, const SkScalar xpos[], SkScalar constY, const SkFont & font, SkTextEncoding encoding)
+            {
+                auto _ret = SkTextBlob::MakeFromPosTextH(text, byteLength, xpos, constY, font, encoding);
+                return std::make_tuple(_ret, xpos);
+            }
             , py::arg("text")
             , py::arg("byte_length")
             , py::arg("xpos")
             , py::arg("const_y")
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_from_pos_text", &SkTextBlob::MakeFromPosText
             , py::arg("text")
             , py::arg("byte_length")
             , py::arg("pos")
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("make_from_rs_xform", &SkTextBlob::MakeFromRSXform
             , py::arg("text")
             , py::arg("byte_length")
             , py::arg("xform")
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
-            , py::return_value_policy::automatic_reference)
+            )
         .def("serialize", py::overload_cast<const SkSerialProcs &, void *, size_t>(&SkTextBlob::serialize, py::const_)
             , py::arg("procs")
             , py::arg("memory")
             , py::arg("memory_size")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("serialize", py::overload_cast<const SkSerialProcs &>(&SkTextBlob::serialize, py::const_)
             , py::arg("procs")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("deserialize", &SkTextBlob::Deserialize
             , py::arg("data")
             , py::arg("size")
             , py::arg("procs")
-            , py::return_value_policy::automatic_reference)
+            )
         ;
 
         py::class_<SkTextBlob::Iter> _TextBlobIter(_skia, "TextBlobIter");
@@ -97,11 +101,11 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
 
             _TextBlobIter
             .def(py::init<const SkTextBlob &>()
-            , py::arg("arg")
+            , py::arg("arg0")
             )
             .def("next", &SkTextBlob::Iter::next
-                , py::arg("arg")
-                , py::return_value_policy::automatic_reference)
+                , py::arg("arg0")
+                )
             ;
 
             py::class_<SkTextBlob::Iter::ExperimentalRun> _TextBlobIterExperimentalRun(_skia, "TextBlobIterExperimentalRun");
@@ -115,8 +119,8 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
 
             _TextBlobIter
             .def("experimental_next", &SkTextBlob::Iter::experimentalNext
-                , py::arg("arg")
-                , py::return_value_policy::automatic_reference)
+                , py::arg("arg0")
+                )
         ;
 
     py::class_<SkTextBlobBuilder> _TextBlobBuilder(_skia, "TextBlobBuilder");
@@ -124,7 +128,7 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
         _TextBlobBuilder
         .def(py::init<>())
         .def("make", &SkTextBlobBuilder::make
-            , py::return_value_policy::automatic_reference)
+            )
         ;
 
         py::class_<SkTextBlobBuilder::RunBuffer> _TextBlobBuilderRunBuffer(_skia, "TextBlobBuilderRunBuffer");
@@ -138,9 +142,9 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             )
             .def_readwrite("clusters", &SkTextBlobBuilder::RunBuffer::clusters)
             .def("points", &SkTextBlobBuilder::RunBuffer::points
-                , py::return_value_policy::automatic_reference)
+                )
             .def("xforms", &SkTextBlobBuilder::RunBuffer::xforms
-                , py::return_value_policy::automatic_reference)
+                )
         ;
 
         _TextBlobBuilder
@@ -150,22 +154,22 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("x")
             , py::arg("y")
             , py::arg("bounds") = nullptr
-            , py::return_value_policy::reference)
+            )
         .def("alloc_run_pos_h", &SkTextBlobBuilder::allocRunPosH
             , py::arg("font")
             , py::arg("count")
             , py::arg("y")
             , py::arg("bounds") = nullptr
-            , py::return_value_policy::reference)
+            )
         .def("alloc_run_pos", &SkTextBlobBuilder::allocRunPos
             , py::arg("font")
             , py::arg("count")
             , py::arg("bounds") = nullptr
-            , py::return_value_policy::reference)
+            )
         .def("alloc_run_rs_xform", &SkTextBlobBuilder::allocRunRSXform
             , py::arg("font")
             , py::arg("count")
-            , py::return_value_policy::reference)
+            )
         .def("alloc_run_text", &SkTextBlobBuilder::allocRunText
             , py::arg("font")
             , py::arg("count")
@@ -173,26 +177,26 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("y")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            , py::return_value_policy::reference)
+            )
         .def("alloc_run_text_pos_h", &SkTextBlobBuilder::allocRunTextPosH
             , py::arg("font")
             , py::arg("count")
             , py::arg("y")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            , py::return_value_policy::reference)
+            )
         .def("alloc_run_text_pos", &SkTextBlobBuilder::allocRunTextPos
             , py::arg("font")
             , py::arg("count")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            , py::return_value_policy::reference)
+            )
         .def("alloc_run_text_rs_xform", &SkTextBlobBuilder::allocRunTextRSXform
             , py::arg("font")
             , py::arg("count")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            , py::return_value_policy::reference)
+            )
     ;
 
 

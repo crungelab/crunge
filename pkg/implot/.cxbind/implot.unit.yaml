@@ -4,10 +4,10 @@ target: 'src/implot_py_auto.cpp'
 specs:
   # TODO: include imgui_inc.yaml from imgui's .cxbind directory?
   'struct@ImGuiContext':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
   'struct@ImPlotContext':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
   # TODO: function_template support in cxbind needs more work.  Especially overloads
   # 'function_template@ImPlot::PlotLine':

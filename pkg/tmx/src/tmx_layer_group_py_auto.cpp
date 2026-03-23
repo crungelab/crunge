@@ -24,7 +24,7 @@ void init_tmx_layer_group_py_auto(py::module &_tmx, Registry &registry) {
         , py::arg("tile_count")
         )
         .def("get_type", &tmx::LayerGroup::getType
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
 

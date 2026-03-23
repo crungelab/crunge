@@ -32,57 +32,6 @@
 
 namespace py = pybind11;
 
-/*
-// -----------------------------------------------------------------------------
-// Replace these placeholders with your real Box2D includes/types.
-// -----------------------------------------------------------------------------
-struct b2Vec2 { float x, y; };
-struct b2Rot { float c, s; };
-struct b2Transform { b2Vec2 p; b2Rot q; };
-using b2HexColor = uint32_t;
-struct b2AABB { b2Vec2 lowerBound, upperBound; };
-
-// Example world id placeholder
-struct b2WorldId { uint32_t index; };
-
-// Your real function:
-//   B2_API void b2World_Draw(b2WorldId worldId, b2DebugDraw* draw);
-extern "C" void b2World_Draw(b2WorldId worldId, struct b2DebugDraw* draw);
-
-typedef struct b2DebugDraw
-{
-    void (*DrawPolygonFcn)(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context);
-    void (*DrawSolidPolygonFcn)(b2Transform transform, const b2Vec2* vertices, int vertexCount, float radius, b2HexColor color, void* context);
-    void (*DrawCircleFcn)(b2Vec2 center, float radius, b2HexColor color, void* context);
-    void (*DrawSolidCircleFcn)(b2Transform transform, float radius, b2HexColor color, void* context);
-    void (*DrawSolidCapsuleFcn)(b2Vec2 p1, b2Vec2 p2, float radius, b2HexColor color, void* context);
-    void (*DrawLineFcn)(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* context);
-    void (*DrawTransformFcn)(b2Transform transform, void* context);
-    void (*DrawPointFcn)(b2Vec2 p, float size, b2HexColor color, void* context);
-    void (*DrawStringFcn)(b2Vec2 p, const char* s, b2HexColor color, void* context);
-
-    b2AABB drawingBounds;
-    float forceScale;
-    float jointScale;
-
-    bool drawShapes;
-    bool drawJoints;
-    bool drawJointExtras;
-    bool drawBounds;
-    bool drawMass;
-    bool drawBodyNames;
-    bool drawContactPoints;
-    bool drawGraphColors;
-    bool drawContactFeatures;
-    bool drawContactNormals;
-    bool drawContactForces;
-    bool drawFrictionForces;
-    bool drawIslands;
-
-    void* context;
-} b2DebugDraw;
-*/
-
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
@@ -94,7 +43,6 @@ static inline py::tuple to_py(b2Vec2 v) {
 // Represent transform as (px, py, c, s) to match typical Box2D b2Rot storage.
 // Adjust if your bindings expose transform differently.
 static inline py::tuple to_py(b2Transform t) {
-    //return py::make_tuple(t.p.x, t.p.y, t.q.c, t.q.s);
     auto angle = b2Rot_GetAngle(t.q);
     return py::make_tuple(t.p.x, t.p.y, angle);
 }

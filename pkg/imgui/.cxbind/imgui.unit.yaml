@@ -12,13 +12,13 @@ defaults:
 
 specs:
   'struct@ImGuiContext':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
   'struct@ImFontLoader':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
   'struct@ImFontAtlasBuilder':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
 excludes:
   # Wrapped

@@ -20,6 +20,14 @@ specs:
         __repr__:
           auto: true
 
+  'struct@b2Rot':
+    extra:
+      methods:
+        __init__:
+          gen_args: true
+        __repr__:
+          auto: true
+
 
 transforms:
   - name: mogrify

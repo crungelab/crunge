@@ -73,9 +73,9 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
         _BVHAccel
         .def(py::init<>())
         .def("get_statistics", &nanort::BVHAccel<double>::GetStatistics
-            , py::return_value_policy::automatic_reference)
+            )
         .def("debug", &nanort::BVHAccel<double>::Debug
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_nodes", &nanort::BVHAccel<double>::GetNodes
             , py::return_value_policy::reference)
         .def("get_indices", &nanort::BVHAccel<double>::GetIndices
@@ -87,9 +87,9 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
             }
             , py::arg("bmin")
             , py::arg("bmax")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_valid", &nanort::BVHAccel<double>::IsValid
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
     py::class_<nanort::TriangleSAHPred<double>> _TriangleSAHPred(_nanort, "TriangleSAHPred");
@@ -103,7 +103,7 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
         .def("set", &nanort::TriangleSAHPred<double>::Set
             , py::arg("axis")
             , py::arg("pos")
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
     py::class_<nanort::TriangleMesh<double>> _TriangleMesh(_nanort, "TriangleMesh");
@@ -118,22 +118,22 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
             , py::arg("bmin")
             , py::arg("bmax")
             , py::arg("prim_index")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("bounding_box_and_center", &nanort::TriangleMesh<double>::BoundingBoxAndCenter
             , py::arg("bmin")
             , py::arg("bmax")
             , py::arg("center")
             , py::arg("prim_index")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_readwrite("vertices", &nanort::TriangleMesh<double>::vertices_)
         .def_readwrite("faces", &nanort::TriangleMesh<double>::faces_)
         .def_readonly("vertex_stride_bytes", &nanort::TriangleMesh<double>::vertex_stride_bytes_)
         .def("get_vertices", &nanort::TriangleMesh<double>::GetVertices
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_faces", &nanort::TriangleMesh<double>::GetFaces
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_vertex_stride_bytes", &nanort::TriangleMesh<double>::GetVertexStrideBytes
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
 

@@ -5,15 +5,15 @@ specs:
   'class_template@tmx::Vector2':
     specializations:
       - pyname: Vector2u
-        args: [unsigned]
+        template_args: [unsigned]
 
       - pyname: Vector2f
-        args: [float]
+        template_args: [float]
 
   'class_template@tmx::Rectangle':
     specializations:
       - pyname: FloatRect
-        args: [float]
+        template_args: [float]
 
       - pyname: IntRect
-        args: [int]
+        template_args: [int]

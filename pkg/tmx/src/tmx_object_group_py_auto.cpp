@@ -26,15 +26,15 @@ void init_tmx_object_group_py_auto(py::module &_tmx, Registry &registry) {
         _ObjectGroup
         .def(py::init<>())
         .def("get_type", &tmx::ObjectGroup::getType
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_colour", &tmx::ObjectGroup::getColour
-            , py::return_value_policy::reference)
+            )
         .def("get_draw_order", &tmx::ObjectGroup::getDrawOrder
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_properties", &tmx::ObjectGroup::getProperties
-            , py::return_value_policy::reference)
+            )
         .def("get_objects", &tmx::ObjectGroup::getObjects
-            , py::return_value_policy::reference)
+            )
     ;
 
 

@@ -18,3 +18,7 @@ excludes:
   - 'method@SkCanvas::MakeRasterDirectN32'
   
   # Overloads
+
+specs:
+  'class@SkCanvas':
+    ownership: borrowed

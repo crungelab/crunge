@@ -21,6 +21,7 @@ class SurfaceViewport(Viewport):
         super().__init__(size, render_options)
         self.window = window
         self.surface: wgpu.Surface = None
+        self.surface_configured = False
         self.create_surface()
 
     def on_size(self) -> None:
@@ -52,8 +53,17 @@ class SurfaceViewport(Viewport):
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
         self.configure_surface()
+        self.surface_configured = True
 
     def configure_surface(self) -> None:
+        self.instance.process_events()
+        
+        if self.surface is not None and self.surface_configured:
+            self.surface.unconfigure()
+
+        #self.device.tick()
+        #self.instance.process_events()
+
         logger.debug("Configuring surface")
         size = self.size
         if not size.x or not size.y:

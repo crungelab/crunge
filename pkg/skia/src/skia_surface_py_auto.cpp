@@ -28,39 +28,39 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
     .def("null", &SkSurfaces::Null
         , py::arg("width")
         , py::arg("height")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("raster", py::overload_cast<const SkImageInfo &, size_t, const SkSurfaceProps *>(&SkSurfaces::Raster)
         , py::arg("image_info")
         , py::arg("row_bytes")
         , py::arg("surface_props")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("wrap_pixels", py::overload_cast<const SkImageInfo &, void *, size_t, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
         , py::arg("image_info")
         , py::arg("pixels")
         , py::arg("row_bytes")
         , py::arg("surface_props") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     .def("wrap_pixels", py::overload_cast<const SkImageInfo &, void *, size_t, SkSurfaces::PixelsReleaseProc, void *, const SkSurfaceProps *>(&SkSurfaces::WrapPixels)
         , py::arg("image_info")
         , py::arg("pixels")
         , py::arg("row_bytes")
-        , py::arg("arg")
+        , py::arg("arg3")
         , py::arg("context")
         , py::arg("surface_props") = nullptr
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<SkSurface> _Surface(_skia, "Surface");
     registry.on(_skia, "Surface", _Surface);
         _Surface
         .def("width", &SkSurface::width
-            , py::return_value_policy::automatic_reference)
+            )
         .def("height", &SkSurface::height
-            , py::return_value_policy::automatic_reference)
+            )
         .def("image_info", &SkSurface::imageInfo
-            , py::return_value_policy::automatic_reference)
+            )
         .def("generation_id", &SkSurface::generationID
-            , py::return_value_policy::automatic_reference)
+            )
         ;
 
         py::enum_<SkSurface::ContentChangeMode>(_Surface, "ContentChangeMode", py::arithmetic())
@@ -71,9 +71,9 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
         _Surface
         .def("notify_content_will_change", &SkSurface::notifyContentWillChange
             , py::arg("mode")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("recorder", &SkSurface::recorder
-            , py::return_value_policy::automatic_reference)
+            )
         ;
 
         py::enum_<SkSurface::BackendHandleAccess>(_Surface, "BackendHandleAccess", py::arithmetic())
@@ -87,56 +87,56 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
         ;
         _Surface
         .def("get_canvas", &SkSurface::getCanvas
-            , py::return_value_policy::automatic_reference)
+            , py::return_value_policy::reference_internal)
         .def("capabilities", &SkSurface::capabilities
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_surface", py::overload_cast<const SkImageInfo &>(&SkSurface::makeSurface)
             , py::arg("image_info")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_surface", py::overload_cast<int, int>(&SkSurface::makeSurface)
             , py::arg("width")
             , py::arg("height")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_image_snapshot", py::overload_cast<>(&SkSurface::makeImageSnapshot)
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_image_snapshot", py::overload_cast<const SkIRect &>(&SkSurface::makeImageSnapshot)
             , py::arg("bounds")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_temporary_image", &SkSurface::makeTemporaryImage
-            , py::return_value_policy::automatic_reference)
+            )
         .def("draw", py::overload_cast<SkCanvas *, SkScalar, SkScalar, const SkSamplingOptions &, const SkPaint *>(&SkSurface::draw)
             , py::arg("canvas")
             , py::arg("x")
             , py::arg("y")
             , py::arg("sampling")
             , py::arg("paint")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("draw", py::overload_cast<SkCanvas *, SkScalar, SkScalar, const SkPaint *>(&SkSurface::draw)
             , py::arg("canvas")
             , py::arg("x")
             , py::arg("y")
             , py::arg("paint") = nullptr
-            , py::return_value_policy::automatic_reference)
+            )
         .def("peek_pixels", &SkSurface::peekPixels
             , py::arg("pixmap")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("read_pixels", py::overload_cast<const SkPixmap &, int, int>(&SkSurface::readPixels)
             , py::arg("dst")
             , py::arg("src_x")
             , py::arg("src_y")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("read_pixels", py::overload_cast<const SkImageInfo &, void *, size_t, int, int>(&SkSurface::readPixels)
             , py::arg("dst_info")
             , py::arg("dst_pixels")
             , py::arg("dst_row_bytes")
             , py::arg("src_x")
             , py::arg("src_y")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("read_pixels", py::overload_cast<const SkBitmap &, int, int>(&SkSurface::readPixels)
             , py::arg("dst")
             , py::arg("src_x")
             , py::arg("src_y")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("async_rescale_and_read_pixels", &SkSurface::asyncRescaleAndReadPixels
             , py::arg("info")
             , py::arg("src_rect")
@@ -144,7 +144,7 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("rescale_mode")
             , py::arg("callback")
             , py::arg("context")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("async_rescale_and_read_pixels_yuv420", &SkSurface::asyncRescaleAndReadPixelsYUV420
             , py::arg("yuv_color_space")
             , py::arg("dst_color_space")
@@ -154,7 +154,7 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("rescale_mode")
             , py::arg("callback")
             , py::arg("context")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("async_rescale_and_read_pixels_yuva420", &SkSurface::asyncRescaleAndReadPixelsYUVA420
             , py::arg("yuv_color_space")
             , py::arg("dst_color_space")
@@ -164,19 +164,19 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("rescale_mode")
             , py::arg("callback")
             , py::arg("context")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("write_pixels", py::overload_cast<const SkPixmap &, int, int>(&SkSurface::writePixels)
             , py::arg("src")
             , py::arg("dst_x")
             , py::arg("dst_y")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("write_pixels", py::overload_cast<const SkBitmap &, int, int>(&SkSurface::writePixels)
             , py::arg("src")
             , py::arg("dst_x")
             , py::arg("dst_y")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("props", &SkSurface::props
-            , py::return_value_policy::reference)
+            )
     ;
 
 

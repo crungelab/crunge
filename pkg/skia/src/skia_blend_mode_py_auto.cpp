@@ -64,14 +64,18 @@ void init_skia_blend_mode_py_auto(py::module &_skia, Registry &registry) {
         .export_values()
     ;
     _skia
-    .def("blend_mode_as_coeff", &SkBlendMode_AsCoeff
+    .def("blend_mode_as_coeff", [](SkBlendMode mode, SkBlendModeCoeff * src, SkBlendModeCoeff * dst)
+        {
+            auto _ret = SkBlendMode_AsCoeff(mode, src, dst);
+            return std::make_tuple(_ret, src, dst);
+        }
         , py::arg("mode")
         , py::arg("src")
         , py::arg("dst")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("blend_mode_name", &SkBlendMode_Name
         , py::arg("blend_mode")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
 

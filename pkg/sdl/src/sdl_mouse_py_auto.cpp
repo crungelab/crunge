@@ -54,78 +54,78 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
 
     _sdl
     .def("has_mouse", &SDL_HasMouse
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_mice", [](int * count)
         {
-            SDL_GetMice(count);
-            return std::make_tuple(count);
+            auto _ret = SDL_GetMice(count);
+            return std::make_tuple(_ret, count);
         }
         , py::arg("count")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_mouse_name_for_id", &SDL_GetMouseNameForID
         , py::arg("instance_id")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_mouse_focus", []()
         {
             return SDLWindowWrapper(SDL_GetMouseFocus());
         }
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_mouse_state", [](float * x, float * y)
         {
-            SDL_GetMouseState(x, y);
-            return std::make_tuple(x, y);
+            auto _ret = SDL_GetMouseState(x, y);
+            return std::make_tuple(_ret, x, y);
         }
         , py::arg("x")
         , py::arg("y")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_global_mouse_state", [](float * x, float * y)
         {
-            SDL_GetGlobalMouseState(x, y);
-            return std::make_tuple(x, y);
+            auto _ret = SDL_GetGlobalMouseState(x, y);
+            return std::make_tuple(_ret, x, y);
         }
         , py::arg("x")
         , py::arg("y")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_relative_mouse_state", [](float * x, float * y)
         {
-            SDL_GetRelativeMouseState(x, y);
-            return std::make_tuple(x, y);
+            auto _ret = SDL_GetRelativeMouseState(x, y);
+            return std::make_tuple(_ret, x, y);
         }
         , py::arg("x")
         , py::arg("y")
-        , py::return_value_policy::automatic_reference)
-    .def("warp_mouse_in_window", [](const SDLWindowWrapper& window, float x, float y)
+        )
+    .def("warp_mouse_in_window", [](SDLWindowWrapper window, float x, float y)
         {
-            return SDL_WarpMouseInWindow(window.get(), x, y);
+            return SDL_WarpMouseInWindow(static_cast<SDL_Window *>(window.get()), x, y);
         }
         , py::arg("window")
         , py::arg("x")
         , py::arg("y")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("warp_mouse_global", &SDL_WarpMouseGlobal
         , py::arg("x")
         , py::arg("y")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_relative_mouse_transform", &SDL_SetRelativeMouseTransform
         , py::arg("callback")
         , py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
-    .def("set_window_relative_mouse_mode", [](const SDLWindowWrapper& window, _Bool enabled)
+        )
+    .def("set_window_relative_mouse_mode", [](SDLWindowWrapper window, _Bool enabled)
         {
-            return SDL_SetWindowRelativeMouseMode(window.get(), enabled);
+            return SDL_SetWindowRelativeMouseMode(static_cast<SDL_Window *>(window.get()), enabled);
         }
         , py::arg("window")
         , py::arg("enabled")
-        , py::return_value_policy::automatic_reference)
-    .def("get_window_relative_mouse_mode", [](const SDLWindowWrapper& window)
+        )
+    .def("get_window_relative_mouse_mode", [](SDLWindowWrapper window)
         {
-            return SDL_GetWindowRelativeMouseMode(window.get());
+            return SDL_GetWindowRelativeMouseMode(static_cast<SDL_Window *>(window.get()));
         }
         , py::arg("window")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("capture_mouse", &SDL_CaptureMouse
         , py::arg("enabled")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("create_cursor", [](const Uint8 * data, const Uint8 * mask, int w, int h, int hot_x, int hot_y)
         {
             return SDLCursorWrapper(SDL_CreateCursor(data, mask, w, h, hot_x, hot_y));
@@ -136,7 +136,7 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("h")
         , py::arg("hot_x")
         , py::arg("hot_y")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("create_color_cursor", [](SDL_Surface * surface, int hot_x, int hot_y)
         {
             return SDLCursorWrapper(SDL_CreateColorCursor(surface, hot_x, hot_y));
@@ -144,7 +144,7 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("surface")
         , py::arg("hot_x")
         , py::arg("hot_y")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("create_animated_cursor", [](SDL_CursorFrameInfo * frames, int frame_count, int hot_x, int hot_y)
         {
             return SDLCursorWrapper(SDL_CreateAnimatedCursor(frames, frame_count, hot_x, hot_y));
@@ -153,41 +153,41 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("frame_count")
         , py::arg("hot_x")
         , py::arg("hot_y")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("create_system_cursor", [](SDL_SystemCursor id)
         {
             return SDLCursorWrapper(SDL_CreateSystemCursor(id));
         }
         , py::arg("id")
-        , py::return_value_policy::automatic_reference)
-    .def("set_cursor", [](const SDLCursorWrapper& cursor)
+        )
+    .def("set_cursor", [](SDLCursorWrapper cursor)
         {
-            return SDL_SetCursor(cursor.get());
+            return SDL_SetCursor(static_cast<SDL_Cursor *>(cursor.get()));
         }
         , py::arg("cursor")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_cursor", []()
         {
             return SDLCursorWrapper(SDL_GetCursor());
         }
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_default_cursor", []()
         {
             return SDLCursorWrapper(SDL_GetDefaultCursor());
         }
-        , py::return_value_policy::automatic_reference)
-    .def("destroy_cursor", [](const SDLCursorWrapper& cursor)
+        )
+    .def("destroy_cursor", [](SDLCursorWrapper cursor)
         {
-            return SDL_DestroyCursor(cursor.get());
+            return SDL_DestroyCursor(static_cast<SDL_Cursor *>(cursor.get()));
         }
         , py::arg("cursor")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("show_cursor", &SDL_ShowCursor
-        , py::return_value_policy::automatic_reference)
+        )
     .def("hide_cursor", &SDL_HideCursor
-        , py::return_value_policy::automatic_reference)
+        )
     .def("cursor_visible", &SDL_CursorVisible
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
 

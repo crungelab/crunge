@@ -2,14 +2,19 @@ source: '../../depot/box2d/include/box2d/id.h'
 target: 'src/id_py_auto.cpp'
 
 specs:
+  # 'function_prototype@b2OverlapResultFcn':
+  #   facade:
+  #     kind: callback
+  #     context_param: context
+
   'struct@b2WorldId':
     pyname: World
     extra:
       methods:
         __init__:
-          use: b2CreateWorld
+          use: function@b2CreateWorld
         draw:
-          use: World_Draw
+          use: function@World_Draw
 
   'struct@b2BodyId':
     pyname: Body
@@ -29,6 +34,8 @@ specs:
     pyname: Shape
     extra:
       properties:
+        body:
+          getter: b2Shape_GetBody
         friction:
           setter: "b2Shape_SetFriction"
           getter: "b2Shape_GetFriction"        

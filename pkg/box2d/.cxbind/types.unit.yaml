@@ -23,7 +23,7 @@ specs:
       methods:
         __init__:
           gen_kwargs: true
-          use: b2DefaultWorldDef
+          use: function@b2DefaultWorldDef
 
         __repr__:
           auto: true
@@ -33,7 +33,7 @@ specs:
       methods:
         __init__:
           gen_kwargs: true
-          use: b2DefaultBodyDef
+          use: function@b2DefaultBodyDef
 
         __repr__:
           auto: true
@@ -43,7 +43,7 @@ specs:
       methods:
         __init__:
           gen_kwargs: true
-          use: b2DefaultShapeDef
+          use: function@b2DefaultShapeDef
 
         __repr__:
           auto: true
@@ -53,7 +53,17 @@ specs:
       methods:
         __init__:
           gen_kwargs: true
-          use: b2DefaultSurfaceMaterial
+          use: function@b2DefaultSurfaceMaterial
+
+        __repr__:
+          auto: true
+
+  'struct@b2DistanceJointDef':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: function@b2DefaultDistanceJointDef
 
         __repr__:
           auto: true

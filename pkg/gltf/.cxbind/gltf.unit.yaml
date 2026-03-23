@@ -5,7 +5,7 @@ excludes:
   # Wrapped
   # These write to err and warn.  Not good
   - 'function@tinygltf::TinyGLTF::LoadASCIIFromFile'
-  #'class.tinygltf::Value': {exclude: true}
+
   - 'method@tinygltf::Value::Get' #TODO: pybind11 doesn't like the signatures?
   - 'method@tinygltf::Value::Type' #Returns char instead of enum
 

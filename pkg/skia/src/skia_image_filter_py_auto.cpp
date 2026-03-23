@@ -28,27 +28,27 @@ void init_skia_image_filter_py_auto(py::module &_skia, Registry &registry) {
         .def("filter_bounds", &SkImageFilter::filterBounds
             , py::arg("src")
             , py::arg("ctm")
-            , py::arg("arg")
+            , py::arg("arg2")
             , py::arg("input_rect") = nullptr
-            , py::return_value_policy::automatic_reference)
+            )
         .def("count_inputs", &SkImageFilter::countInputs
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_input", &SkImageFilter::getInput
             , py::arg("i")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("compute_fast_bounds", &SkImageFilter::computeFastBounds
             , py::arg("bounds")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("can_compute_fast_bounds", &SkImageFilter::canComputeFastBounds
-            , py::return_value_policy::automatic_reference)
+            )
         .def("make_with_local_matrix", &SkImageFilter::makeWithLocalMatrix
             , py::arg("matrix")
-            , py::return_value_policy::automatic_reference)
+            )
         .def_static("deserialize", &SkImageFilter::Deserialize
             , py::arg("data")
             , py::arg("size")
             , py::arg("procs") = nullptr
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
 

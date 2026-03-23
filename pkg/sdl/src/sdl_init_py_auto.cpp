@@ -23,37 +23,37 @@ void init_sdl_init_py_auto(py::module &_sdl, Registry &registry) {
     _sdl
     .def("init", &SDL_Init
         , py::arg("flags")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("init_sub_system", &SDL_InitSubSystem
         , py::arg("flags")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("quit_sub_system", &SDL_QuitSubSystem
         , py::arg("flags")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("was_init", &SDL_WasInit
         , py::arg("flags")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("quit", &SDL_Quit
-        , py::return_value_policy::automatic_reference)
+        )
     .def("is_main_thread", &SDL_IsMainThread
-        , py::return_value_policy::automatic_reference)
+        )
     .def("run_on_main_thread", &SDL_RunOnMainThread
         , py::arg("callback")
         , py::arg("userdata")
         , py::arg("wait_complete")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_app_metadata", &SDL_SetAppMetadata
         , py::arg("appname")
         , py::arg("appversion")
         , py::arg("appidentifier")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_app_metadata_property", &SDL_SetAppMetadataProperty
         , py::arg("name")
         , py::arg("value")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("get_app_metadata_property", &SDL_GetAppMetadataProperty
         , py::arg("name")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
 

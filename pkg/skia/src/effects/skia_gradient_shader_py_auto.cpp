@@ -62,7 +62,7 @@ void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
             .def_readwrite("f_hue_method", &SkGradientShader::Interpolation::fHueMethod)
             .def_static("from_flags", &SkGradientShader::Interpolation::FromFlags
                 , py::arg("flags")
-                , py::return_value_policy::automatic_reference)
+                )
         ;
 
 

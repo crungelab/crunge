@@ -33,18 +33,18 @@ void init_generated(py::module &_gltf, Registry &registry) {
     _gltf
     .def("is_data_uri", &tinygltf::IsDataURI
         , py::arg("in")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("decode_data_uri", [](std::vector<unsigned char> * out, std::string & mime_type, const std::string & in, size_t reqBytes, bool checkSize)
         {
-            auto ret = tinygltf::DecodeDataURI(out, mime_type, in, reqBytes, checkSize);
-            return std::make_tuple(ret, mime_type);
+            auto _ret = tinygltf::DecodeDataURI(out, mime_type, in, reqBytes, checkSize);
+            return std::make_tuple(_ret, mime_type);
         }
         , py::arg("out")
         , py::arg("mime_type")
         , py::arg("in")
         , py::arg("req_bytes")
         , py::arg("check_size")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<tinygltf::Value> _Value(_gltf, "Value");
@@ -77,34 +77,34 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("o")
         )
         .def("is_bool", &tinygltf::Value::IsBool
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_int", &tinygltf::Value::IsInt
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_number", &tinygltf::Value::IsNumber
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_real", &tinygltf::Value::IsReal
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_string", &tinygltf::Value::IsString
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_binary", &tinygltf::Value::IsBinary
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_array", &tinygltf::Value::IsArray
-            , py::return_value_policy::automatic_reference)
+            )
         .def("is_object", &tinygltf::Value::IsObject
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_number_as_double", &tinygltf::Value::GetNumberAsDouble
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_number_as_int", &tinygltf::Value::GetNumberAsInt
-            , py::return_value_policy::automatic_reference)
+            )
         .def("array_len", &tinygltf::Value::ArrayLen
-            , py::return_value_policy::automatic_reference)
+            )
         .def("has", &tinygltf::Value::Has
             , py::arg("key")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("keys", &tinygltf::Value::Keys
-            , py::return_value_policy::automatic_reference)
+            )
         .def("size", &tinygltf::Value::Size
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
     py::class_<tinygltf::Parameter> _Parameter(_gltf, "Parameter");
@@ -117,17 +117,17 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("json_double_value", &tinygltf::Parameter::json_double_value)
         .def_readwrite("number_value", &tinygltf::Parameter::number_value)
         .def("texture_index", &tinygltf::Parameter::TextureIndex
-            , py::return_value_policy::automatic_reference)
+            )
         .def("texture_tex_coord", &tinygltf::Parameter::TextureTexCoord
-            , py::return_value_policy::automatic_reference)
+            )
         .def("texture_scale", &tinygltf::Parameter::TextureScale
-            , py::return_value_policy::automatic_reference)
+            )
         .def("texture_strength", &tinygltf::Parameter::TextureStrength
-            , py::return_value_policy::automatic_reference)
+            )
         .def("factor", &tinygltf::Parameter::Factor
-            , py::return_value_policy::automatic_reference)
+            )
         .def("color_factor", &tinygltf::Parameter::ColorFactor
-            , py::return_value_policy::automatic_reference)
+            )
         .def(py::init<>())
     ;
 
@@ -364,7 +364,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def_readwrite("sparse", &tinygltf::Accessor::sparse)
         .def("byte_stride", &tinygltf::Accessor::ByteStride
             , py::arg("buffer_view_object")
-            , py::return_value_policy::automatic_reference)
+            )
         .def(py::init<>())
     ;
 
@@ -624,27 +624,27 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("in_uri")
         , py::arg("out_uri")
         , py::arg("user_data")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("file_exists", &tinygltf::FileExists
         , py::arg("abs_filename")
         , py::arg("arg")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("expand_file_path", &tinygltf::ExpandFilePath
         , py::arg("filepath")
         , py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("read_whole_file", &tinygltf::ReadWholeFile
         , py::arg("out")
         , py::arg("err")
         , py::arg("filepath")
         , py::arg("arg")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("write_whole_file", &tinygltf::WriteWholeFile
         , py::arg("err")
         , py::arg("filepath")
         , py::arg("contents")
         , py::arg("arg")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("load_image_data", &tinygltf::LoadImageData
         , py::arg("image")
         , py::arg("image_idx")
@@ -655,7 +655,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("bytes")
         , py::arg("size")
         , py::arg("arg")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("write_image_data", &tinygltf::WriteImageData
         , py::arg("basepath")
         , py::arg("filename")
@@ -665,7 +665,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("uri_cb")
         , py::arg("out_uri")
         , py::arg("arg")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::class_<tinygltf::TinyGLTF> _TinyGLTF(_gltf, "TinyGLTF");
@@ -678,7 +678,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("warn")
             , py::arg("filename")
             , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
-            , py::return_value_policy::automatic_reference)
+            )
         .def("load_ascii_from_string", &tinygltf::TinyGLTF::LoadASCIIFromString
             , py::arg("model")
             , py::arg("err")
@@ -687,14 +687,14 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("length")
             , py::arg("base_dir")
             , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
-            , py::return_value_policy::automatic_reference)
+            )
         .def("load_binary_from_file", &tinygltf::TinyGLTF::LoadBinaryFromFile
             , py::arg("model")
             , py::arg("err")
             , py::arg("warn")
             , py::arg("filename")
             , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
-            , py::return_value_policy::automatic_reference)
+            )
         .def("load_binary_from_memory", &tinygltf::TinyGLTF::LoadBinaryFromMemory
             , py::arg("model")
             , py::arg("err")
@@ -703,7 +703,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("length")
             , py::arg("base_dir") = ""
             , py::arg("check_sections") = tinygltf::SectionCheck::REQUIRE_VERSION
-            , py::return_value_policy::automatic_reference)
+            )
         .def("write_gltf_scene_to_file", &tinygltf::TinyGLTF::WriteGltfSceneToFile
             , py::arg("model")
             , py::arg("filename")
@@ -711,53 +711,53 @@ void init_generated(py::module &_gltf, Registry &registry) {
             , py::arg("embed_buffers")
             , py::arg("pretty_print")
             , py::arg("write_binary")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_parse_strictness", &tinygltf::TinyGLTF::SetParseStrictness
             , py::arg("strictness")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_image_loader", &tinygltf::TinyGLTF::SetImageLoader
             , py::arg("load_image_data")
             , py::arg("user_data")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("remove_image_loader", &tinygltf::TinyGLTF::RemoveImageLoader
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_image_writer", &tinygltf::TinyGLTF::SetImageWriter
             , py::arg("write_image_data")
             , py::arg("user_data")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_uri_callbacks", &tinygltf::TinyGLTF::SetURICallbacks
             , py::arg("callbacks")
             , py::arg("err") = nullptr
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_fs_callbacks", &tinygltf::TinyGLTF::SetFsCallbacks
             , py::arg("callbacks")
             , py::arg("err") = nullptr
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_serialize_default_values", &tinygltf::TinyGLTF::SetSerializeDefaultValues
             , py::arg("enabled")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_serialize_default_values", &tinygltf::TinyGLTF::GetSerializeDefaultValues
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_store_original_json_for_extras_and_extensions", &tinygltf::TinyGLTF::SetStoreOriginalJSONForExtrasAndExtensions
             , py::arg("enabled")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_store_original_json_for_extras_and_extensions", &tinygltf::TinyGLTF::GetStoreOriginalJSONForExtrasAndExtensions
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_preserve_image_channels", &tinygltf::TinyGLTF::SetPreserveImageChannels
             , py::arg("onoff")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_preserve_image_channels", &tinygltf::TinyGLTF::GetPreserveImageChannels
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_images_as_is", &tinygltf::TinyGLTF::SetImagesAsIs
             , py::arg("onoff")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_images_as_is", &tinygltf::TinyGLTF::GetImagesAsIs
-            , py::return_value_policy::automatic_reference)
+            )
         .def("set_max_external_file_size", &tinygltf::TinyGLTF::SetMaxExternalFileSize
             , py::arg("max_bytes")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_max_external_file_size", &tinygltf::TinyGLTF::GetMaxExternalFileSize
-            , py::return_value_policy::automatic_reference)
+            )
     ;
 
 

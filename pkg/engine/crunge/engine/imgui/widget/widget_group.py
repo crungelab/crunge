@@ -6,7 +6,7 @@ from . import Widget
 
 
 class WidgetGroup(Widget):
-    def __init__(self, children):
+    def __init__(self, children: list[Widget]):
         super().__init__(children)
         self.drag_index = -1
         self.dragging = None

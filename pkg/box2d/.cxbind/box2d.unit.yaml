@@ -9,3 +9,9 @@ excludes:
   - 'function@b2DestroyBody'
 
   # Internal / Ignored
+
+# specs:
+#   'function_prototype@b2OverlapResultFcn':
+#     facade:
+#       kind: callback
+#       context_param: context

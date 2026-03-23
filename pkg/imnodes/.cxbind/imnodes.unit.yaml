@@ -5,13 +5,13 @@ specs:
   # Wrapped
   # TODO: include imgui_inc.yaml from imgui's .cxbind directory?
   'struct@ImGuiContext':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
   'struct@ImNodesContext':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
   'struct@ImNodesEditorContext':
-    wrapper: 'py::capsule'
+    wrapper: 'pycapsule'
 
 excludes:
   - 'function@ImNodes::MiniMap'

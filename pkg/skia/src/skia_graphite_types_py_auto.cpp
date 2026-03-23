@@ -39,11 +39,11 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "InsertFinishInfo", _InsertFinishInfo);
         _InsertFinishInfo
         .def(py::init<>())
-        .def(py::init<skgpu::graphite::GpuFinishedContext, skgpu::graphite::GpuFinishedProc>()
+        .def(py::init<skgpu::graphite::GpuFinishedContext, void (*)(void *, skgpu::CallbackResult)>()
         , py::arg("context")
         , py::arg("proc")
         )
-        .def(py::init<skgpu::graphite::GpuFinishedContext, skgpu::graphite::GpuFinishedWithStatsProc>()
+        .def(py::init<skgpu::graphite::GpuFinishedContext, void (*)(void *, skgpu::CallbackResult, const skgpu::GpuStats &)>()
         , py::arg("context")
         , py::arg("proc")
         )

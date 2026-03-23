@@ -55,9 +55,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         }
         , py::arg("shared_font_atlas") = nullptr
         , py::return_value_policy::automatic_reference)
-    .def("destroy_context", [](const py::capsule& ctx)
+    .def("destroy_context", [](py::capsule ctx)
         {
-            return ImGui::DestroyContext(ctx.get_pointer());
+            return ImGui::DestroyContext(static_cast<ImGuiContext *>(ctx.get_pointer()));
         }
         , py::arg("ctx") = nullptr
         , py::return_value_policy::automatic_reference)
@@ -66,9 +66,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             return py::capsule(ImGui::GetCurrentContext(), "ImGuiContext");
         }
         , py::return_value_policy::automatic_reference)
-    .def("set_current_context", [](const py::capsule& ctx)
+    .def("set_current_context", [](py::capsule ctx)
         {
-            return ImGui::SetCurrentContext(ctx.get_pointer());
+            return ImGui::SetCurrentContext(static_cast<ImGuiContext *>(ctx.get_pointer()));
         }
         , py::arg("ctx")
         , py::return_value_policy::automatic_reference)
@@ -145,8 +145,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("begin", [](const char * name, bool * p_open, ImGuiWindowFlags flags)
         {
-            ImGui::Begin(name, p_open, flags);
-            return std::make_tuple(p_open);
+            auto _ret = ImGui::Begin(name, p_open, flags);
+            return std::make_tuple(_ret, p_open);
         }
         , py::arg("name")
         , py::arg("p_open") = nullptr
@@ -506,16 +506,16 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("checkbox", [](const char * label, bool * v)
         {
-            ImGui::Checkbox(label, v);
-            return std::make_tuple(v);
+            auto _ret = ImGui::Checkbox(label, v);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
         , py::return_value_policy::automatic_reference)
     .def("checkbox_flags", [](const char * label, int * flags, int flags_value)
         {
-            ImGui::CheckboxFlags(label, flags, flags_value);
-            return std::make_tuple(flags);
+            auto _ret = ImGui::CheckboxFlags(label, flags, flags_value);
+            return std::make_tuple(_ret, flags);
         }
         , py::arg("label")
         , py::arg("flags")
@@ -523,8 +523,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("checkbox_flags", [](const char * label, unsigned int * flags, unsigned int flags_value)
         {
-            ImGui::CheckboxFlags(label, flags, flags_value);
-            return std::make_tuple(flags);
+            auto _ret = ImGui::CheckboxFlags(label, flags, flags_value);
+            return std::make_tuple(_ret, flags);
         }
         , py::arg("label")
         , py::arg("flags")
@@ -536,8 +536,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("radio_button", [](const char * label, int * v, int v_button)
         {
-            ImGui::RadioButton(label, v, v_button);
-            return std::make_tuple(v);
+            auto _ret = ImGui::RadioButton(label, v, v_button);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -589,8 +589,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_float", [](const char * label, float * v, float v_speed, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragFloat(label, v, v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragFloat(label, v, v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -602,8 +602,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_float2", [](const char * label, std::array<float, 2>& v, float v_speed, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragFloat2(label, &v[0], v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragFloat2(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -615,8 +615,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_float3", [](const char * label, std::array<float, 3>& v, float v_speed, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragFloat3(label, &v[0], v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragFloat3(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -628,8 +628,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_float4", [](const char * label, std::array<float, 4>& v, float v_speed, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragFloat4(label, &v[0], v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragFloat4(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -641,8 +641,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_float_range2", [](const char * label, float * v_current_min, float * v_current_max, float v_speed, float v_min, float v_max, const char * format, const char * format_max, ImGuiSliderFlags flags)
         {
-            ImGui::DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
-            return std::make_tuple(v_current_min, v_current_max);
+            auto _ret = ImGui::DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
+            return std::make_tuple(_ret, v_current_min, v_current_max);
         }
         , py::arg("label")
         , py::arg("v_current_min")
@@ -656,8 +656,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_int", [](const char * label, int * v, float v_speed, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragInt(label, v, v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragInt(label, v, v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -669,8 +669,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_int2", [](const char * label, std::array<int, 2>& v, float v_speed, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragInt2(label, &v[0], v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragInt2(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -682,8 +682,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_int3", [](const char * label, std::array<int, 3>& v, float v_speed, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragInt3(label, &v[0], v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragInt3(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -695,8 +695,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_int4", [](const char * label, std::array<int, 4>& v, float v_speed, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::DragInt4(label, &v[0], v_speed, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::DragInt4(label, &v[0], v_speed, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -708,8 +708,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("drag_int_range2", [](const char * label, int * v_current_min, int * v_current_max, float v_speed, int v_min, int v_max, const char * format, const char * format_max, ImGuiSliderFlags flags)
         {
-            ImGui::DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
-            return std::make_tuple(v_current_min, v_current_max);
+            auto _ret = ImGui::DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags);
+            return std::make_tuple(_ret, v_current_min, v_current_max);
         }
         , py::arg("label")
         , py::arg("v_current_min")
@@ -744,8 +744,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_float", [](const char * label, float * v, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderFloat(label, v, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderFloat(label, v, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -756,8 +756,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_float2", [](const char * label, std::array<float, 2>& v, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderFloat2(label, &v[0], v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderFloat2(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -768,8 +768,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_float3", [](const char * label, std::array<float, 3>& v, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderFloat3(label, &v[0], v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderFloat3(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -780,8 +780,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_float4", [](const char * label, std::array<float, 4>& v, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderFloat4(label, &v[0], v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderFloat4(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -792,8 +792,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_angle", [](const char * label, float * v_rad, float v_degrees_min, float v_degrees_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags);
-            return std::make_tuple(v_rad);
+            auto _ret = ImGui::SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags);
+            return std::make_tuple(_ret, v_rad);
         }
         , py::arg("label")
         , py::arg("v_rad")
@@ -804,8 +804,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_int", [](const char * label, int * v, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderInt(label, v, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderInt(label, v, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -816,8 +816,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_int2", [](const char * label, std::array<int, 2>& v, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderInt2(label, &v[0], v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderInt2(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -828,8 +828,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_int3", [](const char * label, std::array<int, 3>& v, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderInt3(label, &v[0], v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderInt3(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -840,8 +840,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("slider_int4", [](const char * label, std::array<int, 4>& v, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::SliderInt4(label, &v[0], v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::SliderInt4(label, &v[0], v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -871,8 +871,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("v_slider_float", [](const char * label, const ImVec2 & size, float * v, float v_min, float v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::VSliderFloat(label, size, v, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::VSliderFloat(label, size, v, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("size")
@@ -884,8 +884,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("v_slider_int", [](const char * label, const ImVec2 & size, int * v, int v_min, int v_max, const char * format, ImGuiSliderFlags flags)
         {
-            ImGui::VSliderInt(label, size, v, v_min, v_max, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::VSliderInt(label, size, v, v_min, v_max, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("size")
@@ -905,7 +905,11 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::arg("format") = nullptr
         , py::arg("flags") = 0
         , py::return_value_policy::automatic_reference)
-    .def("input_text_with_hint", &ImGui::InputTextWithHint
+    .def("input_text_with_hint", [](const char * label, const char * hint, char * buf, size_t buf_size, ImGuiInputTextFlags flags, int (*callback)(ImGuiInputTextCallbackData *), void * user_data)
+        {
+            auto _ret = ImGui::InputTextWithHint(label, hint, buf, buf_size, flags, callback, user_data);
+            return std::make_tuple(_ret, buf);
+        }
         , py::arg("label")
         , py::arg("hint")
         , py::arg("buf")
@@ -916,8 +920,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_float", [](const char * label, float * v, float step, float step_fast, const char * format, ImGuiInputTextFlags flags)
         {
-            ImGui::InputFloat(label, v, step, step_fast, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputFloat(label, v, step, step_fast, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -928,8 +932,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_float2", [](const char * label, std::array<float, 2>& v, const char * format, ImGuiInputTextFlags flags)
         {
-            ImGui::InputFloat2(label, &v[0], format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputFloat2(label, &v[0], format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -938,8 +942,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_float3", [](const char * label, std::array<float, 3>& v, const char * format, ImGuiInputTextFlags flags)
         {
-            ImGui::InputFloat3(label, &v[0], format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputFloat3(label, &v[0], format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -948,8 +952,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_float4", [](const char * label, std::array<float, 4>& v, const char * format, ImGuiInputTextFlags flags)
         {
-            ImGui::InputFloat4(label, &v[0], format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputFloat4(label, &v[0], format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -958,8 +962,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_int", [](const char * label, int * v, int step, int step_fast, ImGuiInputTextFlags flags)
         {
-            ImGui::InputInt(label, v, step, step_fast, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputInt(label, v, step, step_fast, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -969,8 +973,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_int2", [](const char * label, std::array<int, 2>& v, ImGuiInputTextFlags flags)
         {
-            ImGui::InputInt2(label, &v[0], flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputInt2(label, &v[0], flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -978,8 +982,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_int3", [](const char * label, std::array<int, 3>& v, ImGuiInputTextFlags flags)
         {
-            ImGui::InputInt3(label, &v[0], flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputInt3(label, &v[0], flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -987,8 +991,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_int4", [](const char * label, std::array<int, 4>& v, ImGuiInputTextFlags flags)
         {
-            ImGui::InputInt4(label, &v[0], flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputInt4(label, &v[0], flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -996,8 +1000,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("input_double", [](const char * label, double * v, double step, double step_fast, const char * format, ImGuiInputTextFlags flags)
         {
-            ImGui::InputDouble(label, v, step, step_fast, format, flags);
-            return std::make_tuple(v);
+            auto _ret = ImGui::InputDouble(label, v, step, step_fast, format, flags);
+            return std::make_tuple(_ret, v);
         }
         , py::arg("label")
         , py::arg("v")
@@ -1027,8 +1031,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("color_edit3", [](const char * label, std::array<float, 3>& col, ImGuiColorEditFlags flags)
         {
-            ImGui::ColorEdit3(label, &col[0], flags);
-            return std::make_tuple(col);
+            auto _ret = ImGui::ColorEdit3(label, &col[0], flags);
+            return std::make_tuple(_ret, col);
         }
         , py::arg("label")
         , py::arg("col")
@@ -1036,8 +1040,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("color_edit4", [](const char * label, std::array<float, 4>& col, ImGuiColorEditFlags flags)
         {
-            ImGui::ColorEdit4(label, &col[0], flags);
-            return std::make_tuple(col);
+            auto _ret = ImGui::ColorEdit4(label, &col[0], flags);
+            return std::make_tuple(_ret, col);
         }
         , py::arg("label")
         , py::arg("col")
@@ -1045,8 +1049,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("color_picker3", [](const char * label, std::array<float, 3>& col, ImGuiColorEditFlags flags)
         {
-            ImGui::ColorPicker3(label, &col[0], flags);
-            return std::make_tuple(col);
+            auto _ret = ImGui::ColorPicker3(label, &col[0], flags);
+            return std::make_tuple(_ret, col);
         }
         , py::arg("label")
         , py::arg("col")
@@ -1054,8 +1058,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("color_picker4", [](const char * label, std::array<float, 4>& col, ImGuiColorEditFlags flags, const float * ref_col)
         {
-            ImGui::ColorPicker4(label, &col[0], flags, ref_col);
-            return std::make_tuple(col);
+            auto _ret = ImGui::ColorPicker4(label, &col[0], flags, ref_col);
+            return std::make_tuple(_ret, col);
         }
         , py::arg("label")
         , py::arg("col")
@@ -1198,8 +1202,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("begin_popup_modal", [](const char * name, bool * p_open, ImGuiWindowFlags flags)
         {
-            ImGui::BeginPopupModal(name, p_open, flags);
-            return std::make_tuple(p_open);
+            auto _ret = ImGui::BeginPopupModal(name, p_open, flags);
+            return std::make_tuple(_ret, p_open);
         }
         , py::arg("name")
         , py::arg("p_open") = nullptr
@@ -1327,8 +1331,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("begin_tab_item", [](const char * label, bool * p_open, ImGuiTabItemFlags flags)
         {
-            ImGui::BeginTabItem(label, p_open, flags);
-            return std::make_tuple(p_open);
+            auto _ret = ImGui::BeginTabItem(label, p_open, flags);
+            return std::make_tuple(_ret, p_open);
         }
         , py::arg("label")
         , py::arg("p_open") = nullptr
@@ -1627,8 +1631,8 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         , py::return_value_policy::automatic_reference)
     .def("save_ini_settings_to_memory", [](size_t * out_ini_size)
         {
-            ImGui::SaveIniSettingsToMemory(out_ini_size);
-            return std::make_tuple(out_ini_size);
+            auto _ret = ImGui::SaveIniSettingsToMemory(out_ini_size);
+            return std::make_tuple(_ret, out_ini_size);
         }
         , py::arg("out_ini_size") = nullptr
         , py::return_value_policy::automatic_reference)
@@ -3495,7 +3499,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("rasterizer_density", &ImFontConfig::RasterizerDensity)
         .def_readwrite("flags", &ImFontConfig::Flags)
         .def_readwrite("dst_font", &ImFontConfig::DstFont)
-        //render_wrapped_field
+        //render_pycapsule_field
         .def_property("font_loader",
             [](const ImFontConfig& self){ return py::capsule(self.FontLoader, "ImFontLoader"); },
             [](ImFontConfig& self, const py::capsule& value){ self.FontLoader = value; }
@@ -3609,9 +3613,9 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
             , py::return_value_policy::automatic_reference)
         .def("compact_cache", &ImFontAtlas::CompactCache
             , py::return_value_policy::automatic_reference)
-        .def("set_font_loader", [](ImFontAtlas& self, const py::capsule& font_loader)
+        .def("set_font_loader", [](ImFontAtlas& self, py::capsule font_loader)
             {
-                return self.SetFontLoader(font_loader.get_pointer());
+                return self.SetFontLoader(static_cast<const ImFontLoader *>(font_loader.get_pointer()));
             }
             , py::arg("font_loader")
             , py::return_value_policy::automatic_reference)
@@ -3657,12 +3661,12 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("tex_next_unique_id", &ImFontAtlas::TexNextUniqueID)
         .def_readwrite("font_next_unique_id", &ImFontAtlas::FontNextUniqueID)
         .def_readwrite("draw_list_shared_datas", &ImFontAtlas::DrawListSharedDatas)
-        //render_wrapped_field
+        //render_pycapsule_field
         .def_property("builder",
             [](const ImFontAtlas& self){ return py::capsule(self.Builder, "ImFontAtlasBuilder"); },
             [](ImFontAtlas& self, const py::capsule& value){ self.Builder = value; }
         )
-        //render_wrapped_field
+        //render_pycapsule_field
         .def_property("font_loader",
             [](const ImFontAtlas& self){ return py::capsule(self.FontLoader, "ImFontLoader"); },
             [](ImFontAtlas& self, const py::capsule& value){ self.FontLoader = value; }
@@ -3674,7 +3678,7 @@ void init_imgui_py_auto(py::module &_imgui, Registry &registry) {
         .def_readwrite("font_loader_data", &ImFontAtlas::FontLoaderData)
         .def_readwrite("font_loader_flags", &ImFontAtlas::FontLoaderFlags)
         .def_readwrite("ref_count", &ImFontAtlas::RefCount)
-        //render_wrapped_field
+        //render_pycapsule_field
         .def_property("owner_context",
             [](const ImFontAtlas& self){ return py::capsule(self.OwnerContext, "ImGuiContext"); },
             [](ImFontAtlas& self, const py::capsule& value){ self.OwnerContext = value; }

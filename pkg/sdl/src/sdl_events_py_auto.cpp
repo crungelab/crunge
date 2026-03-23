@@ -622,7 +622,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
 
     _sdl
     .def("pump_events", &SDL_PumpEvents
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
     py::enum_<SDL_EventAction>(_sdl, "EventAction", py::arithmetic())
@@ -638,62 +638,66 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("action")
         , py::arg("min_type")
         , py::arg("max_type")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("has_event", &SDL_HasEvent
         , py::arg("type")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("has_events", &SDL_HasEvents
         , py::arg("min_type")
         , py::arg("max_type")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("flush_event", &SDL_FlushEvent
         , py::arg("type")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("flush_events", &SDL_FlushEvents
         , py::arg("min_type")
         , py::arg("max_type")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("wait_event", &SDL_WaitEvent
         , py::arg("event")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("wait_event_timeout", &SDL_WaitEventTimeout
         , py::arg("event")
         , py::arg("timeout_ms")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("push_event", &SDL_PushEvent
         , py::arg("event")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_event_filter", &SDL_SetEventFilter
         , py::arg("filter")
         , py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("add_event_watch", &SDL_AddEventWatch
         , py::arg("filter")
         , py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("remove_event_watch", &SDL_RemoveEventWatch
         , py::arg("filter")
         , py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("filter_events", &SDL_FilterEvents
         , py::arg("filter")
         , py::arg("userdata")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("set_event_enabled", &SDL_SetEventEnabled
         , py::arg("type")
         , py::arg("enabled")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("event_enabled", &SDL_EventEnabled
         , py::arg("type")
-        , py::return_value_policy::automatic_reference)
+        )
     .def("register_events", &SDL_RegisterEvents
         , py::arg("numevents")
-        , py::return_value_policy::automatic_reference)
-    .def("get_event_description", &SDL_GetEventDescription
+        )
+    .def("get_event_description", [](const SDL_Event * event, char * buf, int buflen)
+        {
+            auto _ret = SDL_GetEventDescription(event, buf, buflen);
+            return std::make_tuple(_ret, buf);
+        }
         , py::arg("event")
         , py::arg("buf")
         , py::arg("buflen")
-        , py::return_value_policy::automatic_reference)
+        )
     ;
 
 

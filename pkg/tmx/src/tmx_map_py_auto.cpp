@@ -59,54 +59,54 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
         _Map
         .def(py::init<>())
         .def("load", &tmx::Map::load
-            , py::arg("arg")
-            , py::return_value_policy::automatic_reference)
+            , py::arg("arg0")
+            )
         .def("load_from_string", &tmx::Map::loadFromString
             , py::arg("data")
             , py::arg("working_dir")
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_version", &tmx::Map::getVersion
-            , py::return_value_policy::reference)
+            )
         .def("get_orientation", &tmx::Map::getOrientation
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_render_order", &tmx::Map::getRenderOrder
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_tile_count", &tmx::Map::getTileCount
-            , py::return_value_policy::reference)
+            )
         .def("get_tile_size", &tmx::Map::getTileSize
-            , py::return_value_policy::reference)
+            )
         .def("get_bounds", &tmx::Map::getBounds
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_hex_side_length", &tmx::Map::getHexSideLength
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_stagger_axis", &tmx::Map::getStaggerAxis
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_stagger_index", &tmx::Map::getStaggerIndex
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_background_colour", &tmx::Map::getBackgroundColour
-            , py::return_value_policy::reference)
+            )
         .def("get_tilesets", &tmx::Map::getTilesets
-            , py::return_value_policy::reference)
+            )
         .def("get_class", &tmx::Map::getClass
-            , py::return_value_policy::reference)
+            )
         .def("get_properties", &tmx::Map::getProperties
-            , py::return_value_policy::reference)
+            )
         .def("get_animated_tiles", &tmx::Map::getAnimatedTiles
-            , py::return_value_policy::reference)
+            )
         .def("get_working_directory", &tmx::Map::getWorkingDirectory
-            , py::return_value_policy::reference)
+            )
         .def("get_template_objects", py::overload_cast<>(&tmx::Map::getTemplateObjects)
-            , py::return_value_policy::reference)
+            )
         .def("get_template_objects", py::overload_cast<>(&tmx::Map::getTemplateObjects, py::const_)
-            , py::return_value_policy::reference)
+            )
         .def("get_template_tilesets", py::overload_cast<>(&tmx::Map::getTemplateTilesets)
-            , py::return_value_policy::reference)
+            )
         .def("get_template_tilesets", py::overload_cast<>(&tmx::Map::getTemplateTilesets, py::const_)
-            , py::return_value_policy::reference)
+            )
         .def("is_infinite", &tmx::Map::isInfinite
-            , py::return_value_policy::automatic_reference)
+            )
         .def("get_parallax_origin", &tmx::Map::getParallaxOrigin
-            , py::return_value_policy::automatic_reference)
+            )
         .def_property_readonly("tilesets", &tmx::Map::getTilesets)
         .def_property_readonly("tile_size", &tmx::Map::getTileSize)
         .def_property_readonly("tile_count", &tmx::Map::getTileCount)
