@@ -850,7 +850,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     .def("end_drag_drop_source", &ImPlot::EndDragDropSource
         )
     .def("get_style", &ImPlot::GetStyle
-        , py::return_value_policy::reference)
+        )
     .def("style_colors_auto", &ImPlot::StyleColorsAuto
         , py::arg("dst") = nullptr
         )
@@ -988,7 +988,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("plot_title_id") = nullptr
         )
     .def("get_input_map", &ImPlot::GetInputMap
-        , py::return_value_policy::reference)
+        )
     .def("map_input_default", &ImPlot::MapInputDefault
         , py::arg("dst") = nullptr
         )

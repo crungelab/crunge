@@ -13,7 +13,7 @@ specs:
   # 'function_template@ImPlot::PlotLine':
   #   specializations:
   #     - pyname: plot_line
-  #       args: [float]
+  #       template_args: [float]
 
 excludes:
   - 'function@ImPlot::PixelsToPlot'
