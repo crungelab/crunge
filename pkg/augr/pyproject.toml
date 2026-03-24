@@ -3,23 +3,21 @@ requires = ["cxbuild==0.2", "setuptools", "wheel"]
 build-backend = "cxbuild.backend"
 
 [tool.setuptools]
-packages = ["crunge", "crunge.rtaudio"]
+packages = ["crunge", "crunge.augr"]
 
 
 [project]
-name = "crunge-rtaudio"
+name = "crunge-augr"
 version = "0.1.0"
-description = 'Crunge RtAudio Extension'
+description = 'Crunge Audio Graph Extension'
 #readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 #license = { file = "LICENSE" }
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: Implementation :: CPython",
@@ -29,5 +27,5 @@ classifiers = [
 [tool.cxbuild.project]
 
 [tool.cxbuild.extension]
-name="crunge.rtaudio._rtaudio"
+name="crunge.augr._augr"
 

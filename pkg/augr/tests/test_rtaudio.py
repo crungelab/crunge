@@ -1,6 +1,6 @@
 from loguru import logger
 
-from crunge.rtaudio import RtAudio
+from crunge.augr import RtAudio
 
 
 def test_rtaudio():

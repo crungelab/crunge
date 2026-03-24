@@ -1,4 +1,4 @@
-from crunge.rtaudio import RtAudio
+from crunge.augr import RtAudio
 
 audio = RtAudio()
 

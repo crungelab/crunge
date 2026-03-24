@@ -1,4 +1,4 @@
-module: rtaudio
+module: augr
 
 flags: [
   '-x', 'c++',

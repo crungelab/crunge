@@ -119,4 +119,4 @@ add_subdirectory(pkg/box2d)
 #
 set(RTAUDIO_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(${RTAUDIO_ROOT})
-add_subdirectory(pkg/rtaudio)
+add_subdirectory(pkg/augr)

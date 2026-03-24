@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include <cxbind/cxbind.h>
-#include <crunge/rtaudio/conversions.h>
+#include <crunge/augr/conversions.h>
 
 #include "augr.h"
 
@@ -15,8 +15,8 @@ namespace py = pybind11;
 
 using namespace rt::audio;
 
-void init_augr_py_auto(py::module &_rtaudio, Registry &registry) {
-    py::enum_<AudioFormat>(_rtaudio, "AudioFormat", py::arithmetic())
+void init_augr_py_auto(py::module &_augr, Registry &registry) {
+    py::enum_<AudioFormat>(_augr, "AudioFormat", py::arithmetic())
         .value("SINT8", AudioFormat::SINT8)
         .value("SINT16", AudioFormat::SINT16)
         .value("SINT24", AudioFormat::SINT24)
@@ -25,7 +25,7 @@ void init_augr_py_auto(py::module &_rtaudio, Registry &registry) {
         .value("FLOAT64", AudioFormat::FLOAT64)
         .export_values()
     ;
-    py::enum_<AudioStreamFlags>(_rtaudio, "AudioStreamFlags", py::arithmetic())
+    py::enum_<AudioStreamFlags>(_augr, "AudioStreamFlags", py::arithmetic())
         .value("NONINTERLEAVED", AudioStreamFlags::NONINTERLEAVED)
         .value("MINIMIZE_LATENCY", AudioStreamFlags::MINIMIZE_LATENCY)
         .value("HOG_DEVICE", AudioStreamFlags::HOG_DEVICE)
@@ -34,13 +34,13 @@ void init_augr_py_auto(py::module &_rtaudio, Registry &registry) {
         .value("JACK_DONT_CONNECT", AudioStreamFlags::JACK_DONT_CONNECT)
         .export_values()
     ;
-    py::enum_<AudioStreamStatus>(_rtaudio, "AudioStreamStatus", py::arithmetic())
+    py::enum_<AudioStreamStatus>(_augr, "AudioStreamStatus", py::arithmetic())
         .value("INPUT_OVERFLOW", AudioStreamStatus::INPUT_OVERFLOW)
         .value("OUTPUT_UNDERFLOW", AudioStreamStatus::OUTPUT_UNDERFLOW)
         .export_values()
     ;
-    py::class_<AudioStream> _AudioStream(_rtaudio, "AudioStream");
-    registry.on(_rtaudio, "AudioStream", _AudioStream);
+    py::class_<AudioStream> _AudioStream(_augr, "AudioStream");
+    registry.on(_augr, "AudioStream", _AudioStream);
         _AudioStream
         .def(py::init<>())
         .def("open", &AudioStream::open

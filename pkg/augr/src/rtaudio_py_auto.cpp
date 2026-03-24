@@ -7,14 +7,14 @@
 #include <iostream>
 
 #include <cxbind/cxbind.h>
-#include <crunge/rtaudio/conversions.h>
+#include <crunge/augr/conversions.h>
 
 namespace py = pybind11;
 
 using namespace rt::audio;
 
-void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
-    py::enum_<rt::audio::RtAudioErrorType>(_rtaudio, "AudioErrorType", py::arithmetic())
+void init_rtaudio_py_auto(py::module &_augr, Registry &registry) {
+    py::enum_<rt::audio::RtAudioErrorType>(_augr, "AudioErrorType", py::arithmetic())
         .value("RTAUDIO_NO_ERROR", rt::audio::RtAudioErrorType::RTAUDIO_NO_ERROR)
         .value("RTAUDIO_WARNING", rt::audio::RtAudioErrorType::RTAUDIO_WARNING)
         .value("RTAUDIO_UNKNOWN_ERROR", rt::audio::RtAudioErrorType::RTAUDIO_UNKNOWN_ERROR)
@@ -29,8 +29,8 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
         .value("RTAUDIO_THREAD_ERROR", rt::audio::RtAudioErrorType::RTAUDIO_THREAD_ERROR)
         .export_values()
     ;
-    py::class_<rt::audio::RtAudio> _RtAudio(_rtaudio, "RtAudio");
-    registry.on(_rtaudio, "RtAudio", _RtAudio);
+    py::class_<rt::audio::RtAudio> _RtAudio(_augr, "RtAudio");
+    registry.on(_augr, "RtAudio", _RtAudio);
         py::enum_<rt::audio::RtAudio::Api>(_RtAudio, "Api", py::arithmetic())
             .value("UNSPECIFIED", rt::audio::RtAudio::Api::UNSPECIFIED)
             .value("MACOSX_CORE", rt::audio::RtAudio::Api::MACOSX_CORE)
@@ -45,8 +45,8 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
             .value("NUM_APIS", rt::audio::RtAudio::Api::NUM_APIS)
             .export_values()
         ;
-        py::class_<rt::audio::RtAudio::DeviceInfo> _RtAudioDeviceInfo(_rtaudio, "RtAudioDeviceInfo");
-        registry.on(_rtaudio, "RtAudioDeviceInfo", _RtAudioDeviceInfo);
+        py::class_<rt::audio::RtAudio::DeviceInfo> _RtAudioDeviceInfo(_augr, "RtAudioDeviceInfo");
+        registry.on(_augr, "RtAudioDeviceInfo", _RtAudioDeviceInfo);
             _RtAudioDeviceInfo
             .def_readwrite("id", &rt::audio::RtAudio::DeviceInfo::ID)
             .def_readwrite("name", &rt::audio::RtAudio::DeviceInfo::name)
@@ -88,8 +88,8 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
             })
         ;
 
-        py::class_<rt::audio::RtAudio::StreamParameters> _RtAudioStreamParameters(_rtaudio, "RtAudioStreamParameters");
-        registry.on(_rtaudio, "RtAudioStreamParameters", _RtAudioStreamParameters);
+        py::class_<rt::audio::RtAudio::StreamParameters> _RtAudioStreamParameters(_augr, "RtAudioStreamParameters");
+        registry.on(_augr, "RtAudioStreamParameters", _RtAudioStreamParameters);
             _RtAudioStreamParameters
             .def_readwrite("device_id", &rt::audio::RtAudio::StreamParameters::deviceId)
             .def_readwrite("n_channels", &rt::audio::RtAudio::StreamParameters::nChannels)
@@ -127,8 +127,8 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
             })
         ;
 
-        py::class_<rt::audio::RtAudio::StreamOptions> _RtAudioStreamOptions(_rtaudio, "RtAudioStreamOptions");
-        registry.on(_rtaudio, "RtAudioStreamOptions", _RtAudioStreamOptions);
+        py::class_<rt::audio::RtAudio::StreamOptions> _RtAudioStreamOptions(_augr, "RtAudioStreamOptions");
+        registry.on(_augr, "RtAudioStreamOptions", _RtAudioStreamOptions);
             _RtAudioStreamOptions
             .def_readwrite("flags", &rt::audio::RtAudio::StreamOptions::flags)
             .def_readwrite("number_of_buffers", &rt::audio::RtAudio::StreamOptions::numberOfBuffers)
@@ -260,8 +260,8 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
             )
     ;
 
-    py::class_<rt::audio::CallbackInfo> _CallbackInfo(_rtaudio, "CallbackInfo");
-    registry.on(_rtaudio, "CallbackInfo", _CallbackInfo);
+    py::class_<rt::audio::CallbackInfo> _CallbackInfo(_augr, "CallbackInfo");
+    registry.on(_augr, "CallbackInfo", _CallbackInfo);
         _CallbackInfo
         .def_readwrite("object", &rt::audio::CallbackInfo::object)
         .def_readwrite("thread", &rt::audio::CallbackInfo::thread)
@@ -274,8 +274,8 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
         .def_readwrite("device_disconnected", &rt::audio::CallbackInfo::deviceDisconnected)
     ;
 
-    py::class_<rt::audio::S24> _S24(_rtaudio, "S24");
-    registry.on(_rtaudio, "S24", _S24);
+    py::class_<rt::audio::S24> _S24(_augr, "S24");
+    registry.on(_augr, "S24", _S24);
         _S24
         .def(py::init<>())
         .def(py::init<const double &>()

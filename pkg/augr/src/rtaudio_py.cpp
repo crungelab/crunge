@@ -9,8 +9,8 @@
 
 #include <cxbind/cxbind.h>
 
-#include <crunge/rtaudio/crunge-rtaudio.h>
-#include <crunge/rtaudio/conversions.h>
+#include <crunge/augr/crunge-augr.h>
+#include <crunge/augr/conversions.h>
 
 #include <RtAudio.h>
 

@@ -35,7 +35,7 @@ projects = [
   "pkg/nanort",
   "pkg/tmx",
   "pkg/box2d",
-  "pkg/rtaudio",
+  "pkg/augr",
   ]
 plugins = ["cxbind"]
 

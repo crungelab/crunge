@@ -1,5 +1,5 @@
 import time
-from crunge.rtaudio import (
+from crunge.augr import (
     RtAudio,
     AudioFormat,
     RtAudioStreamParameters,

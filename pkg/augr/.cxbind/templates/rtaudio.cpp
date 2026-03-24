@@ -7,12 +7,12 @@
 #include <iostream>
 
 #include <cxbind/cxbind.h>
-#include <crunge/rtaudio/conversions.h>
+#include <crunge/augr/conversions.h>
 
 namespace py = pybind11;
 
 using namespace rt::audio;
 
-void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
+void init_rtaudio_py_auto(py::module &_augr, Registry &registry) {
 {{body}}
 }

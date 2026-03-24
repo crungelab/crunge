@@ -9,7 +9,7 @@ void init_rtaudio_py_auto(py::module &, Registry& registry);
 void init_augr_py_auto(py::module &, Registry& registry);
 
 
-PYBIND11_MODULE(_rtaudio, m) {
+PYBIND11_MODULE(_augr, m) {
     Registry r;
     init_rtaudio_py(m, r);
     init_rtaudio_py_auto(m, r);

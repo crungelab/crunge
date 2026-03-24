@@ -4,8 +4,8 @@ include(../../cmake/Pybind11.cmake)
 include(../../cmake/Core.cmake)
 include(../../cmake/RtAudio.cmake)
 
-set(THIS crunge-rtaudio)
-set(MODULE rtaudio)
+set(THIS crunge-augr)
+set(MODULE augr)
 
 project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
@@ -21,7 +21,7 @@ set(SOURCES
     src/augr_py_auto.cpp
 )
 
-pybind11_add_module(${THIS} MODULE src/rtaudio_py_module.cpp)
+pybind11_add_module(${THIS} MODULE src/augr_py_module.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
