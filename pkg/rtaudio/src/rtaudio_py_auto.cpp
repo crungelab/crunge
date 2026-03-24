@@ -14,7 +14,7 @@ namespace py = pybind11;
 using namespace rt::audio;
 
 void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
-    py::enum_<rt::audio::RtAudioErrorType>(_rtaudio, "RtAudioErrorType", py::arithmetic())
+    py::enum_<rt::audio::RtAudioErrorType>(_rtaudio, "AudioErrorType", py::arithmetic())
         .value("RTAUDIO_NO_ERROR", rt::audio::RtAudioErrorType::RTAUDIO_NO_ERROR)
         .value("RTAUDIO_WARNING", rt::audio::RtAudioErrorType::RTAUDIO_WARNING)
         .value("RTAUDIO_UNKNOWN_ERROR", rt::audio::RtAudioErrorType::RTAUDIO_UNKNOWN_ERROR)

@@ -4,16 +4,13 @@ from crunge.rtaudio import (
     AudioFormat,
     RtAudioStreamParameters,
     AudioStreamStatus,
-    RtAudioErrorType,
+    AudioErrorType,
     AudioStream,
 )
 
 last_values = [0.0, 0.0]
 
 def saw(output_buffer, input_buffer, n_frames, stream_time, status):
-    #print("callback called")
-    #print(f"dtype={output_buffer.dtype}, shape={output_buffer.shape}", flush=True)
-    #print(f"writeable={output_buffer.flags.writeable}", flush=True)
     if status:
         print("Stream underflow detected!")
     # output_buffer is a (256, 2) numpy array
@@ -53,7 +50,6 @@ stream = AudioStream(
     sample_rate=sample_rate,
     buffer_frames=buffer_frames,
     callback=saw,
-    #options=options,
 )
 
 print(stream)
@@ -62,7 +58,7 @@ err = stream.open()
 print("\n")
 print(f"buffer frames = {buffer_frames}")
 print(f"error code = {err}")
-if err != RtAudioErrorType.RTAUDIO_NO_ERROR:
+if err != AudioErrorType.RTAUDIO_NO_ERROR:
     print(f"Error opening stream: {dac.get_error_text()}")
     print(dac.get_error_text())
     exit(0)
@@ -72,7 +68,7 @@ print("Starting stream ...")
 #err = dac.start_stream()
 err = stream.start()
 
-if err != RtAudioErrorType.RTAUDIO_NO_ERROR:
+if err != AudioErrorType.RTAUDIO_NO_ERROR:
     print(dac.get_error_text())
     if dac.is_stream_open():
         dac.close_stream()

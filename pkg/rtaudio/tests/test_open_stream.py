@@ -2,7 +2,7 @@ from crunge.rtaudio import (
     RtAudio,
     RtAudioStreamParameters,
     RtAudioStreamOptions,
-    RtAudioErrorType,
+    AudioErrorType,
     AudioFormat,
     AudioStreamFlags,
     AudioStream,
@@ -43,6 +43,6 @@ print(stream)
 
 err = stream.open()
 
-if err != RtAudioErrorType.RTAUDIO_NO_ERROR:
+if err != AudioErrorType.RTAUDIO_NO_ERROR:
     print(dac.get_error_text())
     exit(0)

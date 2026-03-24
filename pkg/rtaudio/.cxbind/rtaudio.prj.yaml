@@ -8,6 +8,8 @@ flags: [
   '-I../../depot/rtaudio'
 ]
 
+prefixes: [Rt]
+
 unit_files:
   - path: rtaudio.unit.yaml
   - path: augr.unit.yaml

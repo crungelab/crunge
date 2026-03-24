@@ -6,6 +6,9 @@ excludes:
 
 specs:
 
+  class@rt::audio::RtAudio:
+    pyname: RtAudio
+
   struct@rt::audio::RtAudio::StreamParameters:
     extra:
       methods:
