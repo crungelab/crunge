@@ -1,0 +1,13 @@
+[tool.setuptools]
+packages = ["augr_trial"]
+
+[project]
+name = "augr_trial"
+version = "0.1.0"
+description = 'Crunge Audio Graph Trial'
+requires-python = ">=3.10"
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+
+dependencies = [
+    "soundfile ~=0.13.1"
+]

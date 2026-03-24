@@ -60,7 +60,7 @@ public:
                 RtAudioStreamStatus status);
 
     // Data members
-    RtAudio dac;
+    RtAudio audio;
     RtAudio::StreamParameters *outputParameters = nullptr;
     RtAudio::StreamParameters *inputParameters = nullptr;
     //RtAudioFormat format = RTAUDIO_SINT16;

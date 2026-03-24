@@ -58,7 +58,7 @@ void init_augr_py_auto(py::module &_augr, Registry &registry) {
             , py::arg("stream_time")
             , py::arg("status")
             )
-        .def_readwrite("dac", &AudioStream::dac)
+        .def_readwrite("audio", &AudioStream::audio)
         .def_readwrite("output_parameters", &AudioStream::outputParameters)
         .def_readwrite("input_parameters", &AudioStream::inputParameters)
         .def_readwrite("format", &AudioStream::format)
@@ -69,10 +69,10 @@ void init_augr_py_auto(py::module &_augr, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             AudioStream obj{};
-            if (kwargs.contains("dac"))
+            if (kwargs.contains("audio"))
             {
-                auto value = kwargs["dac"].cast<rt::audio::RtAudio>();
-                obj.dac = value;
+                auto value = kwargs["audio"].cast<rt::audio::RtAudio>();
+                obj.audio = value;
             }
             if (kwargs.contains("output_parameters"))
             {
@@ -114,7 +114,7 @@ void init_augr_py_auto(py::module &_augr, Registry &registry) {
         .def("__repr__", [](const AudioStream &self) {
             std::stringstream ss;
             ss << "AudioStream(";
-            ss << "dac=" << py::repr(py::cast(self.dac)).cast<std::string>();
+            ss << "audio=" << py::repr(py::cast(self.audio)).cast<std::string>();
             ss << ", ";
             ss << "outputParameters=" << py::repr(py::cast(self.outputParameters)).cast<std::string>();
             ss << ", ";

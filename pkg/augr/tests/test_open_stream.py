@@ -8,14 +8,14 @@ from crunge.augr import (
     AudioStream,
 )
 
-dac = RtAudio()
+audio = RtAudio()
 
-ids = dac.get_device_ids()
+ids = audio.get_device_ids()
 if len(ids) == 0:
     exit(0)
 
 output_parameters = RtAudioStreamParameters(
-    device_id=dac.get_default_output_device(), n_channels=2
+    device_id=audio.get_default_output_device(), n_channels=2
 )
 
 sample_rate = 44100
@@ -29,7 +29,7 @@ def my_callback(output_buffer, input_buffer, n_frames, stream_time, status):
     return 0
 
 stream = AudioStream(
-    dac=dac,
+    audio=audio,
     output_parameters=output_parameters,
     input_parameters=None,
     format=AudioFormat.FLOAT32,
@@ -44,5 +44,5 @@ print(stream)
 err = stream.open()
 
 if err != AudioErrorType.RTAUDIO_NO_ERROR:
-    print(dac.get_error_text())
+    print(audio.get_error_text())
     exit(0)

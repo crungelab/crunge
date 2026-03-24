@@ -23,23 +23,23 @@ AudioStream::AudioStream() {
 AudioStream::AudioStream() {}
 AudioStream::~AudioStream() {
     // Ensure the stream is closed when the object is destroyed
-    if (dac.isStreamOpen()) {
-        dac.closeStream();
+    if (audio.isStreamOpen()) {
+        audio.closeStream();
     }
 }
 
 RtAudioErrorType AudioStream::open() {
     // Open the audio stream with the specified parameters
-    return dac.openStream(outputParameters, inputParameters, static_cast<RtAudioFormat>(format), sampleRate,
+    return audio.openStream(outputParameters, inputParameters, static_cast<RtAudioFormat>(format), sampleRate,
                           &bufferFrames, &AudioStream::_callback, this,
                           options);
 }
 
-void AudioStream::close() { dac.closeStream(); }
+void AudioStream::close() { audio.closeStream(); }
 
-RtAudioErrorType AudioStream::start() { return dac.startStream(); }
+RtAudioErrorType AudioStream::start() { return audio.startStream(); }
 
-RtAudioErrorType AudioStream::stop() { return dac.stopStream(); }
+RtAudioErrorType AudioStream::stop() { return audio.stopStream(); }
 
 int AudioStream::_callback(void *outputBuffer, void *inputBuffer,
                            unsigned int nBufferFrames, double streamTime,
@@ -101,25 +101,22 @@ int AudioStream::process(void *outputBuffer, void *inputBuffer,
             buf, base);
     };
 
-    /*
-    auto make_array = [&](void *buf) -> py::object {
-        if (!buf)
-            return py::none();
-        return py::array(
-            py::dtype(dtype),
-            {(py::ssize_t)nBufferFrames, (py::ssize_t)nChannels},
-            {(py::ssize_t)(nChannels * elementSize), (py::ssize_t)elementSize},
-            buf,
-            py::cast(0) // <-- base object, prevents copy
-        );
-    };
-    */
-
     unsigned int outChannels = outputParameters ? outputParameters->nChannels : 0;
     unsigned int inChannels = inputParameters ? inputParameters->nChannels : 0;
 
     py::object out = make_array(outputBuffer, outChannels);
     py::object in  = make_array(inputBuffer, inChannels);
 
-    return callback(out, in, nBufferFrames, streamTime, status).cast<int>();
+    try {
+        return callback(out, in, nBufferFrames, streamTime, status).cast<int>();
+    } catch (py::error_already_set& e) {
+        e.restore();
+        PyErr_Print();
+        PyErr_Clear();
+        return 1; // signal error to RtAudio, will stop the stream
+    } catch (const std::exception& e) {
+        fprintf(stderr, "AudioStream callback error: %s\n", e.what());
+        return 1;
+    }
+    //return callback(out, in, nBufferFrames, streamTime, status).cast<int>();
 }
