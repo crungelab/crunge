@@ -3,8 +3,11 @@ module: rtaudio
 flags: [
   '-x', 'c++',
   '-std=c++17',
-  '-DRTAUDIO_DLL_PUBLIC='
+  '-DRTAUDIO_DLL_PUBLIC=',
+  '-I../../depot/pybind11/include',
+  '-I../../depot/rtaudio'
 ]
 
 unit_files:
   - path: rtaudio.unit.yaml
+  - path: augr.unit.yaml

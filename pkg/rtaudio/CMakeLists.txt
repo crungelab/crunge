@@ -15,8 +15,10 @@ set(HEADERS
 )
 
 set(SOURCES
-    src/rtaudio_py_auto.cpp
     src/rtaudio_py.cpp
+    src/rtaudio_py_auto.cpp
+    src/augr.cpp
+    src/augr_py_auto.cpp
 )
 
 pybind11_add_module(${THIS} MODULE src/rtaudio_py_module.cpp)

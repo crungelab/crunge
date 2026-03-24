@@ -11,9 +11,19 @@ specs:
       methods:
         __init__:
           gen_kwargs: true
+        __repr__:
+          auto: true
 
   struct@rt::audio::RtAudio::StreamOptions:
     extra:
       methods:
         __init__:
           gen_kwargs: true
+        __repr__:
+          auto: true
+
+  struct@rt::audio::RtAudio::DeviceInfo:
+    extra:
+      methods:
+        __repr__:
+          auto: true

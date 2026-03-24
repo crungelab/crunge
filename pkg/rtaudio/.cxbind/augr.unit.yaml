@@ -1,0 +1,12 @@
+source: 'src/augr.h'
+target: 'src/augr_py_auto.cpp'
+
+specs:
+
+  class@AudioStream:
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+        __repr__:
+          auto: true

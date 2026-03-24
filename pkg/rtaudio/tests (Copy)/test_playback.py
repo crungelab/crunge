@@ -5,24 +5,31 @@ from crunge.rtaudio import (
     RtAudioStreamParameters,
     RtAudioStreamStatus,
     RtAudioErrorType,
-    AudioStream,
 )
 
 last_values = [0.0, 0.0]
 
-def saw(output_buffer, input_buffer, n_frames, stream_time, status):
-    #print("callback called")
-    #print(f"dtype={output_buffer.dtype}, shape={output_buffer.shape}", flush=True)
-    #print(f"writeable={output_buffer.flags.writeable}", flush=True)
+"""
+typedef std::function<int(void* outputBuffer, void* inputBuffer,
+                          unsigned int nFrames,
+                          double streamTime,
+                          RtAudioStreamStatus status,
+                          void* userData)> RtAudioCallback;
+"""
+
+def saw(output_buffer, input_buffer, n_frames, stream_time, status, user_data):
+    print(type(output_buffer))
+    print(repr(output_buffer))
     if status:
         print("Stream underflow detected!")
-    # output_buffer is a (256, 2) numpy array
+
     for i in range(n_frames):
         for j in range(2):
-            output_buffer[i, j] = last_values[j]
+            output_buffer[i * 2 + j] = last_values[j]
             last_values[j] += 0.005 * (j + 1 + (j * 0.1))
             if last_values[j] >= 1.0:
                 last_values[j] -= 2.0
+
     return 0
 
 dac = RtAudio()
@@ -32,12 +39,8 @@ if len(ids) == 0:
     print("No audio devices found!")
     exit(0)
 
-output_device_id = dac.get_default_output_device()
-output_device_info = dac.get_device_info(output_device_id)
-print(f"Output device info: {output_device_info}")
-
-output_parameters = RtAudioStreamParameters(
-    device_id=output_device_id,
+parameters = RtAudioStreamParameters(
+    device_id=dac.get_default_output_device(),
     n_channels=2,
     first_channel=0,
 )
@@ -45,33 +48,26 @@ output_parameters = RtAudioStreamParameters(
 sample_rate = 44100
 buffer_frames = 256
 
-stream = AudioStream(
-    dac=dac,
-    output_parameters=output_parameters,
-    input_parameters=None,
-    format=RtAudioFormat.FLOAT64,
-    sample_rate=sample_rate,
-    buffer_frames=buffer_frames,
-    callback=saw,
-    #options=options,
+err, buffer_frames = dac.open_stream(
+    parameters,
+    None,
+    RtAudioFormat.FLOAT64,
+    sample_rate,
+    buffer_frames,
+    saw,
+    None,
+    None,
 )
 
-print(stream)
-
-err = stream.open()
-print("\n")
-print(f"buffer frames = {buffer_frames}")
+print(f"\nbuffer frames = {buffer_frames}")
 print(f"error code = {err}")
 if err != RtAudioErrorType.RTAUDIO_NO_ERROR:
-    print(f"Error opening stream: {dac.get_error_text()}")
     print(dac.get_error_text())
     exit(0)
 
 print("Starting stream ...")
 
-#err = dac.start_stream()
-err = stream.start()
-
+err = dac.start_stream()
 if err != RtAudioErrorType.RTAUDIO_NO_ERROR:
     print(dac.get_error_text())
     if dac.is_stream_open():

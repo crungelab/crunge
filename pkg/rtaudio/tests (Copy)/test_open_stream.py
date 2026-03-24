@@ -5,7 +5,6 @@ from crunge.rtaudio import (
     RtAudioStreamOptions,
     RtAudioStreamFlags,
     RtAudioErrorType,
-    AudioStream,
 )
 
 dac = RtAudio()
@@ -28,21 +27,17 @@ def my_callback(output_buffer, input_buffer, n_frames, stream_time, status):
     print("callback called")
     return 0
 
-stream = AudioStream(
-    dac=dac,
-    output_parameters=parameters,
-    input_parameters=None,
-    format=RtAudioFormat.FLOAT32,
-    sample_rate=sample_rate,
-    buffer_frames=buffer_frames,
-    callback=my_callback,
-    options=options,
+
+err, buffer_frames = dac.open_stream(
+    parameters,
+    None,
+    RtAudioFormat.FLOAT32,
+    sample_rate,
+    buffer_frames,
+    my_callback,
+    None,
+    options,
 )
-
-print(stream)
-
-err = stream.open()
-
 if err != RtAudioErrorType.RTAUDIO_NO_ERROR:
     print(dac.get_error_text())
     exit(0)

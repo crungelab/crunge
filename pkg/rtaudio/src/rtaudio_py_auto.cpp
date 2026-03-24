@@ -59,6 +59,33 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
             .def_readwrite("current_sample_rate", &rt::audio::RtAudio::DeviceInfo::currentSampleRate)
             .def_readwrite("preferred_sample_rate", &rt::audio::RtAudio::DeviceInfo::preferredSampleRate)
             .def_readwrite("native_formats", &rt::audio::RtAudio::DeviceInfo::nativeFormats)
+            .def("__repr__", [](const rt::audio::RtAudio::DeviceInfo &self) {
+                std::stringstream ss;
+                ss << "RtAudioDeviceInfo(";
+                ss << "ID=" << py::repr(py::cast(self.ID)).cast<std::string>();
+                ss << ", ";
+                ss << "name=" << py::repr(py::cast(self.name)).cast<std::string>();
+                ss << ", ";
+                ss << "outputChannels=" << py::repr(py::cast(self.outputChannels)).cast<std::string>();
+                ss << ", ";
+                ss << "inputChannels=" << py::repr(py::cast(self.inputChannels)).cast<std::string>();
+                ss << ", ";
+                ss << "duplexChannels=" << py::repr(py::cast(self.duplexChannels)).cast<std::string>();
+                ss << ", ";
+                ss << "isDefaultOutput=" << py::repr(py::cast(self.isDefaultOutput)).cast<std::string>();
+                ss << ", ";
+                ss << "isDefaultInput=" << py::repr(py::cast(self.isDefaultInput)).cast<std::string>();
+                ss << ", ";
+                ss << "sampleRates=" << py::repr(py::cast(self.sampleRates)).cast<std::string>();
+                ss << ", ";
+                ss << "currentSampleRate=" << py::repr(py::cast(self.currentSampleRate)).cast<std::string>();
+                ss << ", ";
+                ss << "preferredSampleRate=" << py::repr(py::cast(self.preferredSampleRate)).cast<std::string>();
+                ss << ", ";
+                ss << "nativeFormats=" << py::repr(py::cast(self.nativeFormats)).cast<std::string>();
+                ss << ")";
+                return ss.str();
+            })
         ;
 
         py::class_<rt::audio::RtAudio::StreamParameters> _RtAudioStreamParameters(_rtaudio, "RtAudioStreamParameters");
@@ -87,6 +114,17 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
                 }
                 return obj;
             }))
+            .def("__repr__", [](const rt::audio::RtAudio::StreamParameters &self) {
+                std::stringstream ss;
+                ss << "RtAudioStreamParameters(";
+                ss << "deviceId=" << py::repr(py::cast(self.deviceId)).cast<std::string>();
+                ss << ", ";
+                ss << "nChannels=" << py::repr(py::cast(self.nChannels)).cast<std::string>();
+                ss << ", ";
+                ss << "firstChannel=" << py::repr(py::cast(self.firstChannel)).cast<std::string>();
+                ss << ")";
+                return ss.str();
+            })
         ;
 
         py::class_<rt::audio::RtAudio::StreamOptions> _RtAudioStreamOptions(_rtaudio, "RtAudioStreamOptions");
@@ -121,6 +159,19 @@ void init_rtaudio_py_auto(py::module &_rtaudio, Registry &registry) {
                 }
                 return obj;
             }))
+            .def("__repr__", [](const rt::audio::RtAudio::StreamOptions &self) {
+                std::stringstream ss;
+                ss << "RtAudioStreamOptions(";
+                ss << "flags=" << py::repr(py::cast(self.flags)).cast<std::string>();
+                ss << ", ";
+                ss << "numberOfBuffers=" << py::repr(py::cast(self.numberOfBuffers)).cast<std::string>();
+                ss << ", ";
+                ss << "streamName=" << py::repr(py::cast(self.streamName)).cast<std::string>();
+                ss << ", ";
+                ss << "priority=" << py::repr(py::cast(self.priority)).cast<std::string>();
+                ss << ")";
+                return ss.str();
+            })
         ;
 
         _RtAudio
