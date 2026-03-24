@@ -1,5 +1,6 @@
-#include "augr.h"
 #include <pybind11/numpy.h>
+
+#include "augr.h"
 
 /*
 AudioStream::AudioStream() {
@@ -29,7 +30,7 @@ AudioStream::~AudioStream() {
 
 RtAudioErrorType AudioStream::open() {
     // Open the audio stream with the specified parameters
-    return dac.openStream(outputParameters, inputParameters, format, sampleRate,
+    return dac.openStream(outputParameters, inputParameters, static_cast<RtAudioFormat>(format), sampleRate,
                           &bufferFrames, &AudioStream::_callback, this,
                           options);
 }
@@ -61,24 +62,24 @@ int AudioStream::process(void *outputBuffer, void *inputBuffer,
     const char *dtype;
     size_t elementSize;
     switch (format) {
-    case RTAUDIO_SINT8:
+    case AudioFormat::SINT8:
         dtype = "int8";
         elementSize = 1;
         break;
-    case RTAUDIO_SINT16:
+    case AudioFormat::SINT16:
         dtype = "int16";
         elementSize = 2;
         break;
-    case RTAUDIO_SINT24: // fall through, no numpy sint24
-    case RTAUDIO_SINT32:
+    case AudioFormat::SINT24: // fall through, no numpy sint24
+    case AudioFormat::SINT32:
         dtype = "int32";
         elementSize = 4;
         break;
-    case RTAUDIO_FLOAT32:
+    case AudioFormat::FLOAT32:
         dtype = "float32";
         elementSize = 4;
         break;
-    case RTAUDIO_FLOAT64:
+    case AudioFormat::FLOAT64:
         dtype = "float64";
         elementSize = 8;
         break;

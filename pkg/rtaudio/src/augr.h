@@ -7,6 +7,29 @@ using namespace rt::audio;
 
 namespace py = pybind11;
 
+enum class AudioFormat : unsigned int {
+    SINT8   = RTAUDIO_SINT8,
+    SINT16  = RTAUDIO_SINT16,
+    SINT24  = RTAUDIO_SINT24,
+    SINT32  = RTAUDIO_SINT32,
+    FLOAT32 = RTAUDIO_FLOAT32,
+    FLOAT64 = RTAUDIO_FLOAT64
+};
+
+enum class AudioStreamFlags : unsigned int {
+    NONINTERLEAVED = RTAUDIO_NONINTERLEAVED,
+    MINIMIZE_LATENCY = RTAUDIO_MINIMIZE_LATENCY,
+    HOG_DEVICE = RTAUDIO_HOG_DEVICE,
+    SCHEDULE_REALTIME = RTAUDIO_SCHEDULE_REALTIME,
+    ALSA_USE_DEFAULT = RTAUDIO_ALSA_USE_DEFAULT,
+    JACK_DONT_CONNECT = RTAUDIO_JACK_DONT_CONNECT
+};
+
+enum class AudioStreamStatus : unsigned int {
+    INPUT_OVERFLOW = RTAUDIO_INPUT_OVERFLOW,
+    OUTPUT_UNDERFLOW = RTAUDIO_OUTPUT_UNDERFLOW
+};
+
 class AudioStream {
 public:
     /*
@@ -40,7 +63,8 @@ public:
     RtAudio dac;
     RtAudio::StreamParameters *outputParameters = nullptr;
     RtAudio::StreamParameters *inputParameters = nullptr;
-    RtAudioFormat format = RTAUDIO_SINT16;
+    //RtAudioFormat format = RTAUDIO_SINT16;
+    AudioFormat format = AudioFormat::SINT16;
     unsigned int sampleRate = 44100;
     unsigned int bufferFrames = 256;
     // RtAudioCallback callback;

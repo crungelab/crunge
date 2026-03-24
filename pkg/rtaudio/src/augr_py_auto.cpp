@@ -16,6 +16,29 @@ namespace py = pybind11;
 using namespace rt::audio;
 
 void init_augr_py_auto(py::module &_rtaudio, Registry &registry) {
+    py::enum_<AudioFormat>(_rtaudio, "AudioFormat", py::arithmetic())
+        .value("SINT8", AudioFormat::SINT8)
+        .value("SINT16", AudioFormat::SINT16)
+        .value("SINT24", AudioFormat::SINT24)
+        .value("SINT32", AudioFormat::SINT32)
+        .value("FLOAT32", AudioFormat::FLOAT32)
+        .value("FLOAT64", AudioFormat::FLOAT64)
+        .export_values()
+    ;
+    py::enum_<AudioStreamFlags>(_rtaudio, "AudioStreamFlags", py::arithmetic())
+        .value("NONINTERLEAVED", AudioStreamFlags::NONINTERLEAVED)
+        .value("MINIMIZE_LATENCY", AudioStreamFlags::MINIMIZE_LATENCY)
+        .value("HOG_DEVICE", AudioStreamFlags::HOG_DEVICE)
+        .value("SCHEDULE_REALTIME", AudioStreamFlags::SCHEDULE_REALTIME)
+        .value("ALSA_USE_DEFAULT", AudioStreamFlags::ALSA_USE_DEFAULT)
+        .value("JACK_DONT_CONNECT", AudioStreamFlags::JACK_DONT_CONNECT)
+        .export_values()
+    ;
+    py::enum_<AudioStreamStatus>(_rtaudio, "AudioStreamStatus", py::arithmetic())
+        .value("INPUT_OVERFLOW", AudioStreamStatus::INPUT_OVERFLOW)
+        .value("OUTPUT_UNDERFLOW", AudioStreamStatus::OUTPUT_UNDERFLOW)
+        .export_values()
+    ;
     py::class_<AudioStream> _AudioStream(_rtaudio, "AudioStream");
     registry.on(_rtaudio, "AudioStream", _AudioStream);
         _AudioStream
@@ -63,7 +86,7 @@ void init_augr_py_auto(py::module &_rtaudio, Registry &registry) {
             }
             if (kwargs.contains("format"))
             {
-                auto value = kwargs["format"].cast<unsigned long>();
+                auto value = kwargs["format"].cast<AudioFormat>();
                 obj.format = value;
             }
             if (kwargs.contains("sample_rate"))

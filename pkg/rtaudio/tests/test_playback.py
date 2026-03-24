@@ -1,9 +1,9 @@
 import time
 from crunge.rtaudio import (
     RtAudio,
-    RtAudioFormat,
+    AudioFormat,
     RtAudioStreamParameters,
-    RtAudioStreamStatus,
+    AudioStreamStatus,
     RtAudioErrorType,
     AudioStream,
 )
@@ -49,7 +49,7 @@ stream = AudioStream(
     dac=dac,
     output_parameters=output_parameters,
     input_parameters=None,
-    format=RtAudioFormat.FLOAT64,
+    format=AudioFormat.FLOAT64,
     sample_rate=sample_rate,
     buffer_frames=buffer_frames,
     callback=saw,

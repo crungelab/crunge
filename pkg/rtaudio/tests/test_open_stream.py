@@ -1,10 +1,10 @@
 from crunge.rtaudio import (
     RtAudio,
-    RtAudioFormat,
     RtAudioStreamParameters,
     RtAudioStreamOptions,
-    RtAudioStreamFlags,
     RtAudioErrorType,
+    AudioFormat,
+    AudioStreamFlags,
     AudioStream,
 )
 
@@ -14,14 +14,14 @@ ids = dac.get_device_ids()
 if len(ids) == 0:
     exit(0)
 
-parameters = RtAudioStreamParameters(
+output_parameters = RtAudioStreamParameters(
     device_id=dac.get_default_output_device(), n_channels=2
 )
 
 sample_rate = 44100
 buffer_frames = 256
 
-options = RtAudioStreamOptions(flags=RtAudioStreamFlags.NONINTERLEAVED)
+options = RtAudioStreamOptions(flags=AudioStreamFlags.NONINTERLEAVED)
 
 
 def my_callback(output_buffer, input_buffer, n_frames, stream_time, status):
@@ -30,9 +30,9 @@ def my_callback(output_buffer, input_buffer, n_frames, stream_time, status):
 
 stream = AudioStream(
     dac=dac,
-    output_parameters=parameters,
+    output_parameters=output_parameters,
     input_parameters=None,
-    format=RtAudioFormat.FLOAT32,
+    format=AudioFormat.FLOAT32,
     sample_rate=sample_rate,
     buffer_frames=buffer_frames,
     callback=my_callback,
