@@ -113,3 +113,10 @@ add_subdirectory(depot/box2d)
 set_target_properties(box2d PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pkg/box2d)
+
+#
+# RtAudio
+#
+set(RTAUDIO_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+add_subdirectory(${RTAUDIO_ROOT})
+add_subdirectory(pkg/rtaudio)

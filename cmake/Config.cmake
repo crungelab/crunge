@@ -8,29 +8,31 @@ include(CMakeDependentOption)
 set(CRUNGE_ROOT ${CMAKE_CURRENT_LIST_DIR}/..)
 set(DEPOT_ROOT ${CRUNGE_ROOT}/depot)
 
-set(PYBIND11_ROOT ${CRUNGE_ROOT}/depot/pybind11)
-set(IMGUI_ROOT ${CRUNGE_ROOT}/depot/imgui)
-set(IMPLOT_ROOT ${CRUNGE_ROOT}/depot/implot)
-set(IMNODES_ROOT ${CRUNGE_ROOT}/depot/imnodes)
+set(PYBIND11_ROOT ${DEPOT_ROOT}/pybind11)
+set(IMGUI_ROOT ${DEPOT_ROOT}/imgui)
+set(IMPLOT_ROOT ${DEPOT_ROOT}/implot)
+set(IMNODES_ROOT ${DEPOT_ROOT}/imnodes)
 
-#set(DAWN_ROOT ${CRUNGE_ROOT}/depot/dawn)
-set(SKIA_ROOT ${CRUNGE_ROOT}/depot/skia)
+#set(DAWN_ROOT ${DEPOT_ROOT}/dawn)
+set(SKIA_ROOT ${DEPOT_ROOT}/skia)
 set(DAWN_ROOT ${SKIA_ROOT}/third_party/externals/dawn)
 set(SKIA_LIB_DIR ${SKIA_ROOT}/out/debug)
 
-set(YOGA_ROOT ${CRUNGE_ROOT}/depot/yoga)
+set(YOGA_ROOT ${DEPOT_ROOT}/yoga)
 
-set(GLTF_ROOT ${CRUNGE_ROOT}/depot/tinygltf)
+set(GLTF_ROOT ${DEPOT_ROOT}/tinygltf)
 
-set(SDL_ROOT ${CRUNGE_ROOT}/depot/sdl)
+set(SDL_ROOT ${DEPOT_ROOT}/sdl)
 
-set(BVH_ROOT ${CRUNGE_ROOT}/depot/bvh)
+set(BVH_ROOT ${DEPOT_ROOT}/bvh)
 
-set(NANORT_ROOT ${CRUNGE_ROOT}/depot/nanort)
+set(NANORT_ROOT ${DEPOT_ROOT}/nanort)
 
-set(TMX_ROOT ${CRUNGE_ROOT}/depot/tmxlite)
+set(TMX_ROOT ${DEPOT_ROOT}/tmxlite)
 
-set(BOX2D_ROOT ${CRUNGE_ROOT}/depot/box2d)
+set(BOX2D_ROOT ${DEPOT_ROOT}/box2d)
+
+set(RTAUDIO_ROOT ${DEPOT_ROOT}/rtaudio)
 
 
 

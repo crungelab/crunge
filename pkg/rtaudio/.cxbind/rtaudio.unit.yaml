@@ -1,0 +1,19 @@
+source: '../../depot/rtaudio/RtAudio.h'
+target: 'src/rtaudio_py_auto.cpp'
+
+excludes:
+  - 'class@rt::audio::RtApi'
+
+specs:
+
+  struct@rt::audio::RtAudio::StreamParameters:
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+
+  struct@rt::audio::RtAudio::StreamOptions:
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true

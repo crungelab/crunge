@@ -10,8 +10,6 @@ class ImGui(GitSolution):
     path = "depot/imgui"
     url = "https://github.com/ocornut/imgui"
     branch = "docking"
-    # url = "https://github.com/crungelab/imgui"
-    # branch = "crunge"
 
 
 class ImPlot(GitSolution):
@@ -34,7 +32,7 @@ class Dawn(GitSolution):
 class TinyGltf(GitSolution):
     path = "depot/tinygltf"
     url = "https://github.com/syoyo/tinygltf"
-    #url = "https://github.com/crungelab/tinygltf"
+    # url = "https://github.com/crungelab/tinygltf"
     branch = "crunge"
 
 
@@ -56,6 +54,16 @@ class Nanort(GitSolution):
 class TmxLite(GitSolution):
     path = "depot/tmxlite"
     url = "https://github.com/fallahn/tmxlite"
+
+
+class Box2D(GitSolution):
+    path = "depot/box2d"
+    url = "https://github.com/erincatto/box2d"
+
+
+class RtAudio(GitSolution):
+    path = "depot/rtaudio"
+    url = "https://github.com/thestk/rtaudio"
 
 
 solutions = [

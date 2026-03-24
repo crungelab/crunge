@@ -68,20 +68,6 @@ py::object get_buffer_array(const tinygltf::Buffer& self, size_t byte_offset, si
     }
 }
 
-/*py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
-    auto data = self.image.data();
-    auto size = self.image.size();
-    // Create a memory view of the existing image data
-    return py::array_t<unsigned char>(py::memoryview::from_buffer(
-        data,                                              // Pointer to data
-        sizeof(unsigned char),                             // Size of each element
-        py::format_descriptor<unsigned char>::format().c_str(),    // Format descriptor for NumPy
-        //{size},                                            // Shape (1D)
-        {self.width, self.height}, // Shape (2D)
-        {sizeof(unsigned char)}                            // Strides
-    ));
-}*/
-
 py::array_t<unsigned char> get_image_array(const tinygltf::Image& self) {
     ssize_t height = self.height;
     ssize_t width = self.width;
@@ -143,11 +129,6 @@ void init_main(py::module &_gltf, Registry &registry) {
             }
             return py::cast(&result, py::return_value_policy::reference);
         }, py::arg("key"), py::arg("default") = py::none());
-        /*
-        _Value.def("get", [](const tinygltf::Value &self, const std::string &key) -> const tinygltf::Value& {
-            return self.Get(key);
-        }, py::arg("key"), py::return_value_policy::reference);
-        */
 
         _Value.def("type", [](const tinygltf::Value &self) -> const tinygltf::Type {
             return static_cast<tinygltf::Type>(self.Type());

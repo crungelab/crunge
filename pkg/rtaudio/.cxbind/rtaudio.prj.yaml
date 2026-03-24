@@ -1,0 +1,10 @@
+module: rtaudio
+
+flags: [
+  '-x', 'c++',
+  '-std=c++17',
+  '-DRTAUDIO_DLL_PUBLIC='
+]
+
+unit_files:
+  - path: rtaudio.unit.yaml
