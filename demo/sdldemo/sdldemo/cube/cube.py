@@ -219,6 +219,8 @@ class CubeDemo(Demo):
         )
 
         backbuffer: wgpu.TextureView = self.get_surface_view()
+        if backbuffer is None:
+            return
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
         self.surface.present()

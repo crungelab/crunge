@@ -21,6 +21,13 @@ void init_callbacks(py::module &_wgpu, Registry &registry)
 
     PYCLASS_END(_wgpu, crunge_wgpu::PyRequestAdapterCallbackInfo, RequestAdapterCallbackInfo)
 
+    PYCLASS_BEGIN(_wgpu, crunge_wgpu::PyQueueWorkDoneCallbackInfo, QueueWorkDoneCallbackInfo)
+    QueueWorkDoneCallbackInfo.def(py::init<pywgpu::CallbackMode, py::function>(),
+                               py::arg("mode"),
+                               py::arg("callback"));
+
+    PYCLASS_END(_wgpu, crunge_wgpu::PyQueueWorkDoneCallbackInfo, QueueWorkDoneCallbackInfo)
+
     PYCLASS_BEGIN(_wgpu, crunge_wgpu::PyDeviceLostCallbackInfo, DeviceLostCallbackInfo)
     DeviceLostCallbackInfo.def(py::init<pywgpu::CallbackMode, py::function>(),
                                py::arg("mode"),

@@ -67,8 +67,6 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 
 
 class TriangleIndexDemo(Demo):
-    depth_stencil_view: wgpu.TextureView = None
-
     vertex_buffer: wgpu.Buffer = None
     index_buffer: wgpu.Buffer = None
 

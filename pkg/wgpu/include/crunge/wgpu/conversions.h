@@ -90,6 +90,33 @@ template<>
     };
 
 template<>
+    struct type_caster<pywgpu::QueueWorkDoneCallbackInfo> {
+    public:
+        PYBIND11_TYPE_CASTER(pywgpu::QueueWorkDoneCallbackInfo, _("QueueWorkDoneCallbackInfo"));
+    
+        // Python -> C++
+        bool load(py::handle src, bool) {
+            crunge_wgpu::PyQueueWorkDoneCallbackInfo* info = src.cast<crunge_wgpu::PyQueueWorkDoneCallbackInfo*>();
+            if (info == nullptr) {
+                return false;
+            }
+            value = *info;
+            //std::cout << value.mode << std::endl;
+    
+            return true;
+        }
+    
+        // C++ -> Python (not usually needed, but provided for completeness)
+        static py::handle cast(const pywgpu::QueueWorkDoneCallbackInfo& src, py::return_value_policy, py::handle) {
+            py::object py_mode = py::cast(src.mode);
+            py::object py_callback = py::none(); // callbacks aren't typically convertible back to Python from native pointers
+    
+            py::object py_obj = py::module_::import("wgpu").attr("QueueWorkDoneCallbackInfo")(py_mode, py_callback);
+            return py_obj.release();
+        }
+    };
+
+template<>
     struct type_caster<pywgpu::DeviceLostCallbackInfo> {
     public:
         PYBIND11_TYPE_CASTER(pywgpu::DeviceLostCallbackInfo, _("DeviceLostCallbackInfo"));

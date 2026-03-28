@@ -109,13 +109,6 @@ class TriangleShaderDemo(Demo):
 
         self.queue.submit([command_buffer])
 
-    """
-    def frame(self):
-        backbuffer: wgpu.TextureView = self.swap_chain.get_current_texture_view()
-        self.render(backbuffer, self.depth_stencil_view)
-        self.swap_chain.present()
-    """
-
 
 def main():
     TriangleShaderDemo().run()

@@ -120,9 +120,9 @@ class Demo:
     def frame(self):
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
-        backbufferView: wgpu.TextureView = surface_texture.texture.create_view()
+        surface_view: wgpu.TextureView = surface_texture.texture.create_view()
 
-        renderer = Renderer(backbufferView, self.depth_stencil_view)
+        renderer = Renderer(surface_view, self.depth_stencil_view)
         self.render(renderer)
         self.surface.present()
 

@@ -48,6 +48,40 @@ struct PyRequestAdapterCallbackInfo {
     }
 };
 
+struct PyQueueWorkDoneCallbackInfo {
+    pywgpu::CallbackMode mode;
+    py::function py_callback;
+
+    PyQueueWorkDoneCallbackInfo(
+        pywgpu::CallbackMode mode,
+        py::function py_callback
+    ) : mode(mode), py_callback(py_callback) {}
+
+    /*PyQueueWorkDoneCallbackInfo(
+        pywgpu::CallbackMode mode,
+        py::function py_callback
+    ) : mode(mode), py_callback(py_callback) {}*/
+
+    operator WGPUQueueWorkDoneCallbackInfo() {
+        auto callback = [](WGPUQueueWorkDoneStatus status,
+                            void* userdata1,
+                            void* userdata2) {
+            auto self = reinterpret_cast<PyQueueWorkDoneCallbackInfo*>(userdata1);
+            py::gil_scoped_acquire gil;
+            //std::cout << "QueueWorkDoneCallbackInfo: " << message.data << std::endl;
+            self->py_callback(static_cast<pywgpu::QueueWorkDoneStatus>(status));
+        };
+
+        WGPUQueueWorkDoneCallbackInfo native_info = {};
+        native_info.mode = static_cast<WGPUCallbackMode>(mode);
+        native_info.callback = callback;
+        native_info.userdata1 = this;
+        native_info.userdata2 = nullptr;
+
+        return native_info;
+    }
+};
+    
 struct PyDeviceLostCallbackInfo {
     pywgpu::CallbackMode mode;
     py::function py_callback;

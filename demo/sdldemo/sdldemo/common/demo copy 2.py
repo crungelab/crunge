@@ -1,5 +1,4 @@
 import sys, time
-import gc
 from loguru import logger
 import glm
 
@@ -28,8 +27,8 @@ class Demo:
         self.depth_stencil_view: wgpu.TextureView = None
 
         self.wgpu_context = wgpu.Context()
+        self.pending_resize = False
         self.surface_lost = False
-        self.waiting_on_queue_work_done = False
 
     @property
     def instance(self) -> wgpu.Instance:
@@ -58,29 +57,7 @@ class Demo:
         pass
 
     def configure_surface(self, size: glm.ivec2):
-        gc.collect()  # Force garbage collection to clean up any pending work before resizing
         logger.debug("Configuring surface")
-
-        def on_work_done(
-            status: wgpu.QueueWorkDoneStatus
-        ):
-            logger.debug("on_work_done called")
-
-            if status != wgpu.QueueWorkDoneStatus.SUCCESS:
-                logger.debug(f"QueueWorkDoneStatus failed: {status}")
-            else:
-                logger.debug("QueueWorkDoneStatus succeeded")
-                self.waiting_on_queue_work_done = False
-
-        self.waiting_on_queue_work_done = True
-        self.queue.on_submitted_work_done_sync(self.instance, on_work_done)
-        logger.debug("Waiting for queue work done...")
-
-        while self.waiting_on_queue_work_done:
-            logger.debug("Waiting for queue work done... (tick device)")
-            #self.instance.process_events()
-            self.device.tick()  # Process device events to ensure the callback is called
-            time.sleep(0.01)
 
         if size.x <= 0 or size.y <= 0:
             return
@@ -98,12 +75,6 @@ class Demo:
         self.surface_configured = True
         logger.debug(f"Surface configured to size: {size}")
 
-    def pixel_resize(self, pixel_size: glm.ivec2):
-        logger.debug(f"Pixel Resize requested: {pixel_size}")
-        # actual drawable/backbuffer size changed
-        self.pixel_size = pixel_size
-        self.configure_surface(pixel_size)
-
     def resize(self, size: glm.ivec2):
         logger.debug(f"Resize requested: {size}")
         if size.x <= 0 or size.y <= 0:
@@ -111,12 +82,20 @@ class Demo:
         if self.size == size:
             return
         self.size = size
+        self.pending_resize = True
 
     def recreate_surface(self):
         logger.debug("Recreating surface")
         self.surface = None
         self.create_surface()
         self.surface_lost = False
+        self.pending_resize = False
+
+    def apply_pending_resize(self):
+        if not self.pending_resize:
+            return
+        self.configure_surface(self.size)
+        self.pending_resize = False
 
     def create_surface(self):
         logger.debug("Creating surface")
@@ -154,23 +133,12 @@ class Demo:
         pass
 
     def frame(self):
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        status = surface_texture.status
-        #logger.debug(f"Surface get current texture status: {status}")
-        if status != wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
-            logger.error(f"Failed to acquire surface texture: {status}")
-            return
-
-        surface_view = surface_texture.texture.create_view()
-        self.render(surface_view, self.depth_stencil_view)
-        self.surface.present()
-
-    """
-    def frame(self):
         if self.surface_lost:
             self.recreate_surface()
             return
+
+        if self.pending_resize:
+            self.apply_pending_resize()
 
         surface_view = self.get_surface_view()
         if surface_view is None:
@@ -178,7 +146,6 @@ class Demo:
 
         self.render(surface_view, self.depth_stencil_view)
         self.surface.present()
-    """
 
     def get_surface_view(self) -> wgpu.TextureView | None:
         if not self.surface_configured:
@@ -236,9 +203,6 @@ class Demo:
                 self.on_mouse_leave(event)
             case sdl.EventType.WINDOW_RESIZED:
                 self.resize(glm.ivec2(event.data1, event.data2))
-            case sdl.EventType.WINDOW_PIXEL_SIZE_CHANGED:
-                w, h = sdl.get_window_size_in_pixels(self.window)
-                self.pixel_resize(glm.ivec2(w, h))
             case _:
                 pass
 

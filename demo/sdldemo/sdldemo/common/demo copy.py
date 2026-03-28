@@ -1,5 +1,4 @@
 import sys, time
-import gc
 from loguru import logger
 import glm
 
@@ -28,8 +27,6 @@ class Demo:
         self.depth_stencil_view: wgpu.TextureView = None
 
         self.wgpu_context = wgpu.Context()
-        self.surface_lost = False
-        self.waiting_on_queue_work_done = False
 
     @property
     def instance(self) -> wgpu.Instance:
@@ -58,33 +55,15 @@ class Demo:
         pass
 
     def configure_surface(self, size: glm.ivec2):
-        gc.collect()  # Force garbage collection to clean up any pending work before resizing
         logger.debug("Configuring surface")
 
-        def on_work_done(
-            status: wgpu.QueueWorkDoneStatus
-        ):
-            logger.debug("on_work_done called")
-
-            if status != wgpu.QueueWorkDoneStatus.SUCCESS:
-                logger.debug(f"QueueWorkDoneStatus failed: {status}")
-            else:
-                logger.debug("QueueWorkDoneStatus succeeded")
-                self.waiting_on_queue_work_done = False
-
-        self.waiting_on_queue_work_done = True
-        self.queue.on_submitted_work_done_sync(self.instance, on_work_done)
-        logger.debug("Waiting for queue work done...")
-
-        while self.waiting_on_queue_work_done:
-            logger.debug("Waiting for queue work done... (tick device)")
-            #self.instance.process_events()
-            self.device.tick()  # Process device events to ensure the callback is called
-            time.sleep(0.01)
-
-        if size.x <= 0 or size.y <= 0:
+        if not size.x or not size.y:
             return
 
+        if self.surface is not None and self.surface_configured:
+            self.surface.unconfigure()
+
+        logger.debug("Creating surface configuration")
         config = wgpu.SurfaceConfiguration(
             device=self.device,
             width=size.x,
@@ -92,31 +71,23 @@ class Demo:
             format=wgpu.TextureFormat.BGRA8_UNORM,
             usage=wgpu.TextureUsage.RENDER_ATTACHMENT,
             present_mode=wgpu.PresentMode.FIFO,
+            # present_mode=wgpu.PresentMode.MAILBOX,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
+        logger.debug(config)
         self.surface.configure(config)
         self.surface_configured = True
         logger.debug(f"Surface configured to size: {size}")
 
-    def pixel_resize(self, pixel_size: glm.ivec2):
-        logger.debug(f"Pixel Resize requested: {pixel_size}")
-        # actual drawable/backbuffer size changed
-        self.pixel_size = pixel_size
-        self.configure_surface(pixel_size)
-
     def resize(self, size: glm.ivec2):
-        logger.debug(f"Resize requested: {size}")
-        if size.x <= 0 or size.y <= 0:
+        logger.debug(f"Resizing to {size}")
+        if not size.x or not size.y:
             return
         if self.size == size:
             return
         self.size = size
-
-    def recreate_surface(self):
-        logger.debug("Recreating surface")
-        self.surface = None
-        self.create_surface()
-        self.surface_lost = False
+        self.configure_surface(size)
+        logger.debug(f"Resized to {size}")
 
     def create_surface(self):
         logger.debug("Creating surface")
@@ -154,61 +125,23 @@ class Demo:
         pass
 
     def frame(self):
-        surface_texture = wgpu.SurfaceTexture()
-        self.surface.get_current_texture(surface_texture)
-        status = surface_texture.status
-        #logger.debug(f"Surface get current texture status: {status}")
-        if status != wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
-            logger.error(f"Failed to acquire surface texture: {status}")
-            return
-
-        surface_view = surface_texture.texture.create_view()
-        self.render(surface_view, self.depth_stencil_view)
-        self.surface.present()
-
-    """
-    def frame(self):
-        if self.surface_lost:
-            self.recreate_surface()
-            return
-
-        surface_view = self.get_surface_view()
+        surface_view: wgpu.TextureView = self.get_surface_view()
         if surface_view is None:
             return
-
         self.render(surface_view, self.depth_stencil_view)
         self.surface.present()
-    """
 
-    def get_surface_view(self) -> wgpu.TextureView | None:
-        if not self.surface_configured:
-            return None
-
+    def get_surface_view(self) -> wgpu.TextureView:
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         status = surface_texture.status
         logger.debug(f"Surface get current texture status: {status}")
-
-        if status == wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
-            return surface_texture.texture.create_view()
-
-        if status == wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_SUBOPTIMAL:
-            self.pending_resize = True
-            return surface_texture.texture.create_view()
-
-        if status == wgpu.SurfaceGetCurrentTextureStatus.OUTDATED:
-            self.pending_resize = True
+        if status != wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
+            logger.error(f"Failed to acquire surface texture: {status}")
             return None
 
-        if status == wgpu.SurfaceGetCurrentTextureStatus.LOST:
-            self.surface_lost = True
-            return None
-
-        if status == wgpu.SurfaceGetCurrentTextureStatus.TIMEOUT:
-            return None
-
-        logger.error(f"Failed to acquire surface texture: {status}")
-        return None
+        surface_view: wgpu.TextureView = surface_texture.texture.create_view()
+        return surface_view
 
     def dispatch(self, event):
         # logger.debug(event)
@@ -236,9 +169,6 @@ class Demo:
                 self.on_mouse_leave(event)
             case sdl.EventType.WINDOW_RESIZED:
                 self.resize(glm.ivec2(event.data1, event.data2))
-            case sdl.EventType.WINDOW_PIXEL_SIZE_CHANGED:
-                w, h = sdl.get_window_size_in_pixels(self.window)
-                self.pixel_resize(glm.ivec2(w, h))
             case _:
                 pass
 

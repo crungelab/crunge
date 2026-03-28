@@ -1,5 +1,4 @@
 import sys, time
-import gc
 from loguru import logger
 import glm
 
@@ -58,7 +57,6 @@ class Demo:
         pass
 
     def configure_surface(self, size: glm.ivec2):
-        gc.collect()  # Force garbage collection to clean up any pending work before resizing
         logger.debug("Configuring surface")
 
         def on_work_done(
@@ -74,12 +72,9 @@ class Demo:
 
         self.waiting_on_queue_work_done = True
         self.queue.on_submitted_work_done_sync(self.instance, on_work_done)
-        logger.debug("Waiting for queue work done...")
 
         while self.waiting_on_queue_work_done:
-            logger.debug("Waiting for queue work done... (tick device)")
-            #self.instance.process_events()
-            self.device.tick()  # Process device events to ensure the callback is called
+            self.instance.process_events()
             time.sleep(0.01)
 
         if size.x <= 0 or size.y <= 0:
@@ -157,7 +152,7 @@ class Demo:
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         status = surface_texture.status
-        #logger.debug(f"Surface get current texture status: {status}")
+        logger.debug(f"Surface get current texture status: {status}")
         if status != wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
             logger.error(f"Failed to acquire surface texture: {status}")
             return

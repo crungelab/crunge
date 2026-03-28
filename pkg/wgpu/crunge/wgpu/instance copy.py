@@ -1,4 +1,3 @@
-from typing import Callable
 import asyncio
 
 from loguru import logger
@@ -45,6 +44,7 @@ def _Instance_request_adapter_sync(
             adapter_holder = adapter
 
     callback_info = wgpu.RequestAdapterCallbackInfo(
+        # mode=wgpu.CallbackMode.ALLOW_PROCESS_EVENTS,
         mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
         callback=on_adapter_request,
     )
@@ -83,6 +83,7 @@ async def _Instance_request_adapter_async(
             py_future.set_result(adapter)
 
     callback_info = wgpu.RequestAdapterCallbackInfo(
+        # mode=wgpu.CallbackMode.ALLOW_PROCESS_EVENTS,
         mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
         callback=on_adapter_request,
     )
@@ -124,10 +125,8 @@ typedef enum WGPUQueueWorkDoneStatus {
 
 def _Queue_on_submitted_work_done_sync(
     self: wgpu.Queue,
-    instance: wgpu.Instance,
-    on_work_done: Callable[[wgpu.QueueWorkDoneStatus], None]
+    instance: wgpu.Instance
 ) -> None:
-    """
     # 3) Define the callback exactly like the C++ lambda did
     def on_work_done(
         status: wgpu.QueueWorkDoneStatus
@@ -138,8 +137,9 @@ def _Queue_on_submitted_work_done_sync(
             logger.debug(f"QueueWorkDoneStatus failed: {status}")
         else:
             logger.debug("QueueWorkDoneStatus succeeded")
-    """
+
     callback_info = wgpu.QueueWorkDoneCallbackInfo(
+        # mode=wgpu.CallbackMode.ALLOW_PROCESS_EVENTS,
         mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
         callback=on_work_done,
     )
@@ -175,6 +175,7 @@ async def _Queue_on_submitted_work_done_async(
             py_future.set_result(None)
 
     callback_info = wgpu.QueueWorkDoneCallbackInfo(
+        # mode=wgpu.CallbackMode.ALLOW_PROCESS_EVENTS,
         mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
         callback=on_work_done,
     )
