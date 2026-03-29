@@ -308,11 +308,7 @@ void init_sdl_audio_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("callback")
         , py::arg("userdata")
         )
-    .def("mix_audio", [](Uint8 * dst, const Uint8 * src, SDL_AudioFormat format, Uint32 len, float volume)
-        {
-            auto _ret = SDL_MixAudio(dst, src, format, len, volume);
-            return std::make_tuple(_ret, dst);
-        }
+    .def("mix_audio", &SDL_MixAudio
         , py::arg("dst")
         , py::arg("src")
         , py::arg("format")

@@ -689,11 +689,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
     .def("register_events", &SDL_RegisterEvents
         , py::arg("numevents")
         )
-    .def("get_event_description", [](const SDL_Event * event, char * buf, int buflen)
-        {
-            auto _ret = SDL_GetEventDescription(event, buf, buflen);
-            return std::make_tuple(_ret, buf);
-        }
+    .def("get_event_description", &SDL_GetEventDescription
         , py::arg("event")
         , py::arg("buf")
         , py::arg("buflen")

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 include(../../cmake/Pybind11.cmake)
 include(../../cmake/Core.cmake)
 include(../../cmake/Sdl.cmake)
+include(../../cmake/SdlMixer.cmake)
 
 set(THIS crunge-sdl)
 set(MODULE sdl)
@@ -17,13 +18,16 @@ set(HEADERS
 set(SOURCES
     src/sdl_init_py_auto.cpp
     src/sdl_video_py_auto.cpp
-    src/sdl_audio_py_auto.cpp #TODO: Fix audio bindings
     src/sdl_events_py_auto.cpp
     src/sdl_keyboard_py_auto.cpp
     src/sdl_mouse_py_auto.cpp
     src/sdl_scancode_py_auto.cpp
     src/sdl_properties_py_auto.cpp
     src/sdl_py.cpp
+
+    src/sdl_audio_py.cpp
+    src/sdl_audio_py_auto.cpp
+    src/mixer/sdl_mixer_py_auto.cpp
 )
 
 pybind11_add_module(${THIS} MODULE src/sdl_py_module.cpp)
@@ -33,7 +37,7 @@ configure_project(${THIS} ${MODULE})
 USES_PYBIND11(${THIS})
 USES_CORE(${THIS})
 USES_SDL(${THIS})
-
+USES_SDL_MIXER(${THIS})
 target_sources(${THIS} PRIVATE ${SOURCES} ${HEADERS})
 
 target_include_directories(${THIS}

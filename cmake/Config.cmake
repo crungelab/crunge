@@ -24,6 +24,8 @@ set(GLTF_ROOT ${DEPOT_ROOT}/tinygltf)
 
 set(SDL_ROOT ${DEPOT_ROOT}/sdl)
 
+set(SDL_MIXER_ROOT ${DEPOT_ROOT}/sdl_mixer)
+
 set(BVH_ROOT ${DEPOT_ROOT}/bvh)
 
 set(NANORT_ROOT ${DEPOT_ROOT}/nanort)

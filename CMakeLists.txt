@@ -43,16 +43,20 @@ set(SDL_STATIC ON CACHE BOOL "Build a static version of the library" FORCE)
 set(SDL_TEST OFF CACHE BOOL "Build the SDL3_test library" FORCE)
 
 set(SDL_RENDER OFF CACHE BOOL "Use render subsystem" FORCE)
-#set(SDL_AUDIO OFF CACHE BOOL "Use audio subsystem" FORCE)
-#set(SDL_HAPTIC OFF CACHE BOOL "Use haptic subsystem" FORCE)
-
-#set(SDL_X11 ${WG_WM_X11} CACHE BOOL "Enable X11 support" FORCE)
-#set(SDL_WAYLAND ${WG_WM_WAYLAND} CACHE BOOL "Enable Wayland support" FORCE)
 
 add_subdirectory(depot/sdl)
 set_target_properties(SDL3-static PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pkg/sdl)
+
+# SDL_mixer
+set(BUILD_TESTING OFF CACHE BOOL "Build tests" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Build samples" FORCE)
+set(BUILD_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
+set(BUILD_STATIC ON CACHE BOOL "Build a static version of the library" FORCE)
+
+add_subdirectory(depot/sdl_mixer)
+set_target_properties(SDL3_mixer-static PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 #
 # ImGui and friends

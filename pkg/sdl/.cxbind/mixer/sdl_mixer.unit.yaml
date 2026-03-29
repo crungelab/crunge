@@ -1,0 +1,29 @@
+source: '../../depot/sdl_mixer/include/SDL3_mixer/SDL_mixer.h'
+target: 'src/mixer/sdl_mixer_py_auto.cpp'
+template: 'mixer/sdl_mixer.cpp'
+
+prefixes: [MIX_]
+
+excludes:
+  # Ignored
+  - 'function@MIX_GetTrackTags' #TODO: returns char**
+
+specs:
+  'struct@SDL_IOStream': #TODO: include via yaml
+    wrapper: 'pycapsule'
+
+  'struct@MIX_Mixer':
+    wrapper: 'pycapsule'
+
+  'struct@MIX_Audio':
+    wrapper: 'pycapsule'
+
+  'struct@MIX_Track':
+    wrapper: 'pycapsule'
+
+  'struct@MIX_Group':
+    wrapper: 'pycapsule'
+
+  'struct@MIX_AudioDecoder':
+    wrapper: 'pycapsule'
+

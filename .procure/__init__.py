@@ -41,6 +41,11 @@ class SDL(GitSolution):
     url = "https://github.com/libsdl-org/SDL"
 
 
+class SDL_Mixer(GitSolution):
+    path = "depot/sdl_mixer"
+    url = "https://github.com/libsdl-org/SDL_mixer"
+
+
 class IconFontCppHeaders(GitSolution):
     path = "depot/iconfontheaders"
     url = "https://github.com/juliettef/IconFontCppHeaders"
@@ -74,4 +79,5 @@ solutions = [
     Dawn,
     TinyGltf,
     SDL,
+    SDL_Mixer,
 ]

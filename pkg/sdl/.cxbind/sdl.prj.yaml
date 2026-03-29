@@ -19,6 +19,8 @@ unit_files:
   - path: sdl_video.unit.yaml
   - path: sdl_audio.unit.yaml
 
+  - path: mixer/sdl_mixer.unit.yaml
+
 specs:
   'struct@SDL_Window':
     wrapper: 'SDLWindowWrapper'
