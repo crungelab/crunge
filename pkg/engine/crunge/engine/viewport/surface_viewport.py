@@ -26,6 +26,7 @@ class SurfaceViewport(Viewport):
 
     def on_size(self) -> None:
         super().on_size()
+        #self.device.queue.on_submitted_work_done_sync(self.instance, lambda status: print(f"GPU work done with status: {status}"))
         self.configure_surface()
 
     def create_surface(self) -> None:
@@ -53,16 +54,10 @@ class SurfaceViewport(Viewport):
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
         self.configure_surface()
-        self.surface_configured = True
 
     def configure_surface(self) -> None:
-        self.instance.process_events()
-        
         if self.surface is not None and self.surface_configured:
             self.surface.unconfigure()
-
-        #self.device.tick()
-        #self.instance.process_events()
 
         logger.debug("Configuring surface")
         size = self.size
@@ -84,10 +79,16 @@ class SurfaceViewport(Viewport):
         logger.debug(config)
         self.surface.configure(config)
         logger.debug(f"Surface configured to size: {size}")
+        self.surface_configured = True
 
     def begin_frame(self) -> None:
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
+        status = surface_texture.status
+        if status != wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
+            logger.debug(f"surface texture status: {surface_texture.status}")
+            exit()
+
         self.color_texture = surface_texture.texture
         self.color_texture_view = surface_texture.texture.create_view()
 

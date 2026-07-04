@@ -9,5 +9,6 @@ if len(ids) == 0:
 else:
     for device_id in ids:
         info = audio.get_device_info(device_id)
-        print(f"device name = {info.name}")
-        print(f": maximum output channels = {info.output_channels}")
+        #print(f"device name = {info.name}")
+        #print(f": maximum output channels = {info.output_channels}")
+        print(info)

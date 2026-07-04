@@ -112,10 +112,11 @@ class Window(Frame):
         size = self.size
         if not size.x or not size.y:
             return
-        # self.viewport.size = size
+
         self.viewport.size = glm.ivec2(self.get_framebuffer_size())
 
         logger.debug(f"Resized to {size}")
+        self.resize_pending = True
 
     def get_window_size(self):
         return sdl.get_window_size(self.window)
@@ -141,6 +142,10 @@ class Window(Frame):
                 listener.on_post_frame()
 
     def frame(self):
+        if self.resize_pending:
+            self.resize_pending = False
+            return
+
         self.pre_frame()
         with self.viewport.frame():
             with self.renderer.use():
