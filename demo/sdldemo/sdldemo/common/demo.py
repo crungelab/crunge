@@ -18,6 +18,7 @@ class Demo:
         super().__init__()
         self.name = self.__class__.__name__
         self.size = glm.ivec2(self.kWidth, self.kHeight)
+        self.pixel_size = glm.ivec2(self.kWidth, self.kHeight)
         self.window = None
 
         self.pipeline: wgpu.RenderPipeline = None
@@ -25,11 +26,15 @@ class Demo:
         self.surface: wgpu.Surface = None
         self.surface_configured = False
 
+        self.frame_texture: wgpu.Texture = None
+        self.frame_texture_view: wgpu.TextureView = None
+
         self.depth_stencil_view: wgpu.TextureView = None
 
         self.wgpu_context = wgpu.Context()
+
+        self.surface_resized = False
         self.surface_lost = False
-        self.waiting_on_queue_work_done = False
 
     @property
     def instance(self) -> wgpu.Instance:
@@ -58,29 +63,14 @@ class Demo:
         pass
 
     def configure_surface(self, size: glm.ivec2):
-        gc.collect()  # Force garbage collection to clean up any pending work before resizing
+        # gc.collect()  # Force garbage collection to clean up any pending work before resizing
         logger.debug("Configuring surface")
-
-        def on_work_done(
-            status: wgpu.QueueWorkDoneStatus
-        ):
-            logger.debug("on_work_done called")
-
-            if status != wgpu.QueueWorkDoneStatus.SUCCESS:
-                logger.debug(f"QueueWorkDoneStatus failed: {status}")
-            else:
-                logger.debug("QueueWorkDoneStatus succeeded")
-                self.waiting_on_queue_work_done = False
-
-        self.waiting_on_queue_work_done = True
-        self.queue.on_submitted_work_done_sync(self.instance, on_work_done)
-        logger.debug("Waiting for queue work done...")
-
-        while self.waiting_on_queue_work_done:
-            logger.debug("Waiting for queue work done... (tick device)")
-            #self.instance.process_events()
-            self.device.tick()  # Process device events to ensure the callback is called
-            time.sleep(0.01)
+        if self.surface is not None and self.surface_configured:
+            logger.debug("Unconfiguring surface")
+            self.surface.unconfigure()
+            self.surface_configured = False
+            self.frame_texture = None
+            self.frame_texture_view = None
 
         if size.x <= 0 or size.y <= 0:
             return
@@ -101,8 +91,17 @@ class Demo:
     def pixel_resize(self, pixel_size: glm.ivec2):
         logger.debug(f"Pixel Resize requested: {pixel_size}")
         # actual drawable/backbuffer size changed
+        if pixel_size.x <= 0 or pixel_size.y <= 0:
+            return
+        if self.pixel_size == pixel_size:
+            return
         self.pixel_size = pixel_size
-        self.configure_surface(pixel_size)
+        #self.configure_surface(pixel_size)
+        self.surface_resized = True
+
+    def on_surface_resize(self):
+        self.configure_surface(self.pixel_size)
+        self.surface_resized = False
 
     def resize(self, size: glm.ivec2):
         logger.debug(f"Resize requested: {size}")
@@ -111,6 +110,7 @@ class Demo:
         if self.size == size:
             return
         self.size = size
+        #self.surface_resized = True
 
     def recreate_surface(self):
         logger.debug("Recreating surface")
@@ -154,6 +154,32 @@ class Demo:
         pass
 
     def frame(self):
+        def on_work_done(status: wgpu.QueueWorkDoneStatus):
+            if status != wgpu.QueueWorkDoneStatus.SUCCESS:
+                logger.debug(f"QueueWorkDoneStatus failed: {status}")
+
+        if self.surface_resized:
+            self.on_surface_resize()
+            return
+
+        if self.surface_lost:
+            self.recreate_surface()
+            return
+
+        surface_view = self.get_surface_view()
+        if surface_view is None:
+            return
+
+        self.render(surface_view, self.depth_stencil_view)
+
+
+        self.queue.on_submitted_work_done_sync(self.instance, on_work_done)
+
+        self.surface.present()
+
+
+    """
+    def frame(self):
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         status = surface_texture.status
@@ -165,6 +191,18 @@ class Demo:
         surface_view = surface_texture.texture.create_view()
         self.render(surface_view, self.depth_stencil_view)
         self.surface.present()
+
+        def on_work_done(
+            status: wgpu.QueueWorkDoneStatus
+        ):
+            if status != wgpu.QueueWorkDoneStatus.SUCCESS:
+                logger.debug(f"QueueWorkDoneStatus failed: {status}")
+            else:
+                logger.debug("QueueWorkDoneStatus succeeded")
+                self.waiting_on_queue_work_done = False
+
+        self.queue.on_submitted_work_done_sync(self.instance, on_work_done)
+    """
 
     """
     def frame(self):
@@ -186,29 +224,38 @@ class Demo:
 
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
+        if self.frame_texture is None:
+            self.frame_texture = surface_texture.texture
+        self.surface_texture = surface_texture.texture
         status = surface_texture.status
-        logger.debug(f"Surface get current texture status: {status}")
+        view = None
+        if status != wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
+            logger.debug(f"Surface get current texture status: {status}")
 
-        if status == wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
-            return surface_texture.texture.create_view()
+        elif status == wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_OPTIMAL:
+            view = surface_texture.texture.create_view()
 
-        if status == wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_SUBOPTIMAL:
+        elif status == wgpu.SurfaceGetCurrentTextureStatus.SUCCESS_SUBOPTIMAL:
             self.pending_resize = True
-            return surface_texture.texture.create_view()
+            view = surface_texture.texture.create_view()
 
-        if status == wgpu.SurfaceGetCurrentTextureStatus.OUTDATED:
+        elif status == wgpu.SurfaceGetCurrentTextureStatus.OUTDATED:
             self.pending_resize = True
-            return None
+            view = None
 
-        if status == wgpu.SurfaceGetCurrentTextureStatus.LOST:
+        elif status == wgpu.SurfaceGetCurrentTextureStatus.LOST:
             self.surface_lost = True
-            return None
+            view = None
 
-        if status == wgpu.SurfaceGetCurrentTextureStatus.TIMEOUT:
-            return None
+        elif status == wgpu.SurfaceGetCurrentTextureStatus.TIMEOUT:
+            view = None
 
-        logger.error(f"Failed to acquire surface texture: {status}")
-        return None
+        else:
+            logger.error(f"Failed to acquire surface texture: {status}")
+
+        if self.frame_texture_view is None and view is not None:
+            self.frame_texture_view = view
+        return view
 
     def dispatch(self, event):
         # logger.debug(event)
@@ -287,6 +334,3 @@ class Demo:
             last_time = time.perf_counter()
 
             self.frame()
-
-            # TODO: Losing device on resize
-            #self.instance.process_events()

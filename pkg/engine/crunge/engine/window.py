@@ -118,6 +118,12 @@ class Window(Frame):
         logger.debug(f"Resized to {size}")
         self.resize_pending = True
 
+    '''
+    def on_resize(self):
+        self.viewport.size = glm.ivec2(self.get_framebuffer_size())
+        self.resize_pending = False
+    '''
+
     def get_window_size(self):
         return sdl.get_window_size(self.window)
 
@@ -145,12 +151,19 @@ class Window(Frame):
         if self.resize_pending:
             self.resize_pending = False
             return
-
+        '''
+        if self.resize_pending:
+            self.on_resize()
+        '''
+        
         self.pre_frame()
         with self.viewport.frame():
             with self.renderer.use():
                 self.draw()
         self.post_frame()
+        self.instance.process_events()
+
+
 
     '''
     def frame(self):
@@ -165,8 +178,8 @@ class Window(Frame):
         # logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
-                # self.size = glm.ivec2(event.data1, event.data2)
-                self.size = glm.ivec2(self.get_framebuffer_size())
+                self.size = glm.ivec2(event.data1, event.data2)
+                #self.size = glm.ivec2(self.get_framebuffer_size())
             case _:
                 # pass
                 return super().on_window(event)

@@ -175,7 +175,7 @@ class CubeDemo(Demo):
             wgpu.BufferUsage.UNIFORM,
         )
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=view,
@@ -218,13 +218,24 @@ class CubeDemo(Demo):
             transform
         )
 
+        super().frame()
+    '''
+    def frame(self):
+        transform = self.transform_matrix
+
+        self.device.queue.write_buffer(
+            self.uniformBuffer,
+            0,
+            transform
+        )
+
         backbuffer: wgpu.TextureView = self.get_surface_view()
         if backbuffer is None:
             return
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
         self.surface.present()
-
+    '''
 
 def main():
     CubeDemo().run()

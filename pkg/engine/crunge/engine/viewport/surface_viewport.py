@@ -1,3 +1,4 @@
+import gc
 import sys
 
 from loguru import logger
@@ -11,6 +12,7 @@ from crunge import sdl
 
 from ..render_options import RenderOptions
 
+
 class SurfaceViewport(Viewport):
     def __init__(
         self,
@@ -21,13 +23,12 @@ class SurfaceViewport(Viewport):
         super().__init__(size, render_options)
         self.window = window
         self.surface: wgpu.Surface = None
-        self.surface_configured = False
         self.create_surface()
 
     def on_size(self) -> None:
         super().on_size()
-        #self.device.queue.on_submitted_work_done_sync(self.instance, lambda status: print(f"GPU work done with status: {status}"))
         self.configure_surface()
+        self.resized = True
 
     def create_surface(self) -> None:
         logger.debug("Creating surface")
@@ -56,9 +57,7 @@ class SurfaceViewport(Viewport):
         self.configure_surface()
 
     def configure_surface(self) -> None:
-        if self.surface is not None and self.surface_configured:
-            self.surface.unconfigure()
-
+        self.gfx.wait_for_gpu()
         logger.debug("Configuring surface")
         size = self.size
         if not size.x or not size.y:
@@ -70,16 +69,17 @@ class SurfaceViewport(Viewport):
             width=size.x,
             height=size.y,
             format=wgpu.TextureFormat.BGRA8_UNORM,
-            #usage=wgpu.TextureUsage.RENDER_ATTACHMENT
-            #usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING, #Needed for Skia
-            usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING | wgpu.TextureUsage.COPY_SRC,
+            # usage=wgpu.TextureUsage.RENDER_ATTACHMENT
+            # usage=wgpu.TextureUsage.RENDER_ATTACHMENT | wgpu.TextureUsage.TEXTURE_BINDING, #Needed for Skia
+            usage=wgpu.TextureUsage.RENDER_ATTACHMENT
+            | wgpu.TextureUsage.TEXTURE_BINDING
+            | wgpu.TextureUsage.COPY_SRC,
             present_mode=wgpu.PresentMode.FIFO,
             alpha_mode=wgpu.CompositeAlphaMode.OPAQUE,
         )
         logger.debug(config)
         self.surface.configure(config)
         logger.debug(f"Surface configured to size: {size}")
-        self.surface_configured = True
 
     def begin_frame(self) -> None:
         surface_texture = wgpu.SurfaceTexture()
@@ -96,6 +96,19 @@ class SurfaceViewport(Viewport):
         self.skia_surface = skia.create_surface(self.color_texture, self.recorder)
         self.canvas = self.skia_surface.get_canvas()
 
-
     def end_frame(self) -> None:
+        if self.resized:
+            gc.collect()
+            self.resized = False
+        self.gfx.wait_for_gpu()
         self.surface.present()
+
+    '''
+    def end_frame(self) -> None:
+        if self.resized:
+            gc.collect()
+            self.gfx.wait_for_gpu()
+            self.resized = False
+        #self.gfx.wait_for_gpu()
+        self.surface.present()
+    '''

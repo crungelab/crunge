@@ -84,3 +84,30 @@ class Gfx:
         )
 
         return self.device.create_texture(descriptor)
+
+    def wait_for_gpu(self):
+        def callback(status: wgpu.QueueWorkDoneStatus):
+            if status != wgpu.QueueWorkDoneStatus.SUCCESS:
+                logger.error(f"GPU work failed with status: {status}")
+        callback_info = wgpu.QueueWorkDoneCallbackInfo(
+            mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
+            callback=callback,
+        )
+        future = self.queue._on_submitted_work_done(callback_info)
+        info = wgpu.FutureWaitInfo(future=future)
+        status = self.instance.wait_any([info], 0xFFFFFFFFFFFFFFFF)  # actually blocks until done
+        if status != wgpu.WaitStatus.SUCCESS:
+            logger.error(f"WaitForGpu failed with status {status}")
+
+"""
+void Gfx::WaitForGpu() {
+    wgpu::Future f = queue().OnSubmittedWorkDone(
+        wgpu::CallbackMode::WaitAnyOnly, [](wgpu::QueueWorkDoneStatus) {});
+    wgpu::FutureWaitInfo info{};
+    info.future = f;
+    auto status = instance_.WaitAny(1, &info, UINT64_MAX);   // actually blocks until done
+    if (status != wgpu::WaitStatus::Success) {
+        std::cerr << "WaitForGpu failed with status " << static_cast<uint32_t>(status) << "\n";
+    }
+}
+"""

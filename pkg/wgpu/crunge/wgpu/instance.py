@@ -127,18 +127,7 @@ def _Queue_on_submitted_work_done_sync(
     instance: wgpu.Instance,
     on_work_done: Callable[[wgpu.QueueWorkDoneStatus], None]
 ) -> None:
-    """
-    # 3) Define the callback exactly like the C++ lambda did
-    def on_work_done(
-        status: wgpu.QueueWorkDoneStatus
-    ):
-        logger.debug("on_work_done called")
 
-        if status != wgpu.QueueWorkDoneStatus.SUCCESS:
-            logger.debug(f"QueueWorkDoneStatus failed: {status}")
-        else:
-            logger.debug("QueueWorkDoneStatus succeeded")
-    """
     callback_info = wgpu.QueueWorkDoneCallbackInfo(
         mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
         callback=on_work_done,

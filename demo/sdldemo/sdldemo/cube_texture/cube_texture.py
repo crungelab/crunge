@@ -265,7 +265,7 @@ class CubeTextureDemo(Demo):
             wgpu.Extent3D(im_width, im_height, im_depth),
         )
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=view,
@@ -304,11 +304,18 @@ class CubeTextureDemo(Demo):
 
         self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
 
+        super().frame()
+    '''
+    def frame(self):
+        transform = self.transform_matrix
+
+        self.device.queue.write_buffer(self.uniformBuffer, 0, transform)
+
         backbufferView: wgpu.TextureView = self.get_surface_view()
         backbufferView.set_label("Back Buffer Texture View")
         self.render(backbufferView)
         self.surface.present()
-
+    '''
 
 def main():
     CubeTextureDemo().run()

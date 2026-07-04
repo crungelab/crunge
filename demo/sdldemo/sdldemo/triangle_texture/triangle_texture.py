@@ -211,7 +211,7 @@ class TriangleTextureDemo(Demo):
             wgpu.Extent3D(1024, 1024, 1),
         )
 
-    def render(self, view: wgpu.TextureView):
+    def render(self, view: wgpu.TextureView, depthStencilView: wgpu.TextureView = None):
         color_attachments = [
             wgpu.RenderPassColorAttachment(
                 view=view,
@@ -238,12 +238,13 @@ class TriangleTextureDemo(Demo):
 
         self.queue.submit([command_buffer])
 
+    '''
     def frame(self):
         backbuffer: wgpu.TextureView = self.get_surface_view()
         backbuffer.set_label("Back Buffer Texture View")
         self.render(backbuffer)
         self.surface.present()
-
+    '''
 
 def main():
     TriangleTextureDemo().run()

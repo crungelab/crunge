@@ -30,6 +30,7 @@ class Viewport(Base):
         render_options: RenderOptions = RenderOptions(),
     ):
         self._size = size
+        self.resized = False
         self.render_options = render_options
         self.listeners: list[ViewportListener] = []
 
@@ -51,9 +52,7 @@ class Viewport(Base):
         self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)
         recorder_options = skia.create_standard_recorder_options()
         self.recorder = self.skia_context.make_recorder(recorder_options)
-        self.skia_surface: skia.Surface = (
-            None  # segfaults if we don't hang on to a reference
-        )
+        self.skia_surface: skia.Surface = None
         self.canvas: skia.Canvas = None
 
         self.create_device_objects()
@@ -83,6 +82,7 @@ class Viewport(Base):
         self.update_gpu()
         for listener in self.listeners:
             listener.on_viewport_size(self._size)
+        self.resized = True
 
     @property
     def width(self) -> int:
