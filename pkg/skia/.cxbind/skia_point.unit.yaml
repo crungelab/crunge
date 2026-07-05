@@ -1,5 +1,5 @@
-#source: '../../depot/skia/include/core/SkPoint.h'
-source: '../../depot/skia/include/private/base/SkPoint_impl.h'
+source: '../../depot/skia/include/core/SkPoint.h'
+#source: '../../depot/skia/include/private/base/SkPoint_impl.h'
 target: 'src/skia_point_py_auto.cpp'
 
 excludes:

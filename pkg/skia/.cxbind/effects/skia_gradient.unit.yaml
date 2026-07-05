@@ -1,6 +1,6 @@
-source: '../../depot/skia/include/effects/SkGradientShader.h'
-target: 'src/effects/skia_gradient_shader_py_auto.cpp'
-template: 'effects/skia_gradient_shader.cpp'
+source: '../../depot/skia/include/effects/SkGradient.h'
+target: 'src/effects/skia_gradient_py_auto.cpp'
+template: 'effects/skia_gradient.cpp'
 
 excludes:
   # Wrapped

@@ -135,6 +135,8 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("make_sorted", &SkIRect::makeSorted
             )
+        .def("as_int32s", &SkIRect::asInt32s
+            )
     ;
 
     py::class_<SkRect> _Rect(_skia, "Rect");
@@ -172,6 +174,21 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("center", &SkRect::center
             )
+        .def("tl", &SkRect::TL
+            )
+        .def("tr", &SkRect::TR
+            )
+        .def("bl", &SkRect::BL
+            )
+        .def("br", &SkRect::BR
+            )
+        .def("to_quad", py::overload_cast<SkPathDirection>(&SkRect::toQuad, py::const_)
+            , py::arg("dir") = SkPathDirection::kCW
+            )
+        .def("copy_to_quad", &SkRect::copyToQuad
+            , py::arg("pts")
+            , py::arg("dir") = SkPathDirection::kCW
+            )
         .def("to_quad", [](SkRect& self, std::array<SkPoint, 4>& quad)
             {
                 return self.toQuad(&quad[0]);
@@ -189,17 +206,20 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("right")
             , py::arg("bottom")
             )
+        .def_static("bounds", &SkRect::Bounds
+            , py::arg("pts")
+            )
+        .def_static("bounds_or_empty", &SkRect::BoundsOrEmpty
+            , py::arg("pts")
+            )
         .def("set_bounds", &SkRect::setBounds
             , py::arg("pts")
-            , py::arg("count")
             )
         .def("set_bounds_check", &SkRect::setBoundsCheck
             , py::arg("pts")
-            , py::arg("count")
             )
         .def("set_bounds_no_check", &SkRect::setBoundsNoCheck
             , py::arg("pts")
-            , py::arg("count")
             )
         .def("set", py::overload_cast<const SkPoint &, const SkPoint &>(&SkRect::set)
             , py::arg("p0")

@@ -198,6 +198,30 @@ inline void fill(pywgpu::RequestAdapterOptions& obj, py::handle handle, BuildCtx
     }
 }
 
+inline void fill(pywgpu::RequestAdapterWebXROptions& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_xr_compatible = handle.attr("xr_compatible");
+    if (!py_xr_compatible.is_none())
+    {
+        auto value = handle.attr("xr_compatible").cast<Bool>();
+        obj.xrCompatible = value;
+    }
+}
+
+inline void fill(pywgpu::RequestAdapterWebGPUBackendOptions& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+}
+
 inline void fill(pywgpu::DeviceDescriptor& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -249,6 +273,21 @@ inline void fill(pywgpu::DeviceDescriptor& obj, py::handle handle, BuildCtx ctx)
     }
 }
 
+inline void fill(pywgpu::DawnConsumeAdapterDescriptor& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_consume_adapter = handle.attr("consume_adapter");
+    if (!py_consume_adapter.is_none())
+    {
+        auto value = handle.attr("consume_adapter").cast<Bool>();
+        obj.consumeAdapter = value;
+    }
+}
+
 inline void fill(pywgpu::DawnTogglesDescriptor& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -276,6 +315,33 @@ inline void fill(pywgpu::DawnCacheDeviceDescriptor& obj, py::handle handle, Buil
     {
         auto value = handle.attr("function_userdata").cast<void *>();
         obj.functionUserdata = value;
+    }
+    auto py_dawn_load_cache_data_callback_info = handle.attr("dawn_load_cache_data_callback_info");
+    if (!py_dawn_load_cache_data_callback_info.is_none())
+    {
+        auto value = handle.attr("dawn_load_cache_data_callback_info").cast<DawnLoadCacheDataCallbackInfo>();
+        obj.dawnLoadCacheDataCallbackInfo = value;
+    }
+    auto py_dawn_store_cache_data_callback_info = handle.attr("dawn_store_cache_data_callback_info");
+    if (!py_dawn_store_cache_data_callback_info.is_none())
+    {
+        auto value = handle.attr("dawn_store_cache_data_callback_info").cast<DawnStoreCacheDataCallbackInfo>();
+        obj.dawnStoreCacheDataCallbackInfo = value;
+    }
+}
+
+inline void fill(pywgpu::DawnDeviceAllocatorControl& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_allocator_heap_block_size = handle.attr("allocator_heap_block_size");
+    if (!py_allocator_heap_block_size.is_none())
+    {
+        auto value = handle.attr("allocator_heap_block_size").cast<size_t>();
+        obj.allocatorHeapBlockSize = value;
     }
 }
 
@@ -536,6 +602,21 @@ inline void fill(pywgpu::ExternalTextureBindingEntry& obj, py::handle handle, Bu
     }
 }
 
+inline void fill(pywgpu::TexelBufferBindingEntry& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_texel_buffer_view = handle.attr("texel_buffer_view");
+    if (!py_texel_buffer_view.is_none())
+    {
+        auto value = handle.attr("texel_buffer_view").cast<TexelBufferView>();
+        obj.texelBufferView = value;
+    }
+}
+
 inline void fill(pywgpu::ExternalTextureBindingLayout& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -572,6 +653,27 @@ inline void fill(pywgpu::StorageTextureBindingLayout& obj, py::handle handle, Bu
     }
 }
 
+inline void fill(pywgpu::TexelBufferBindingLayout& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_access = handle.attr("access");
+    if (!py_access.is_none())
+    {
+        auto value = handle.attr("access").cast<TexelBufferAccess>();
+        obj.access = value;
+    }
+    auto py_format = handle.attr("format");
+    if (!py_format.is_none())
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+}
+
 inline void fill(pywgpu::BindGroupLayoutEntry& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -590,6 +692,12 @@ inline void fill(pywgpu::BindGroupLayoutEntry& obj, py::handle handle, BuildCtx 
     {
         auto value = handle.attr("visibility").cast<ShaderStage>();
         obj.visibility = value;
+    }
+    auto py_binding_array_size = handle.attr("binding_array_size");
+    if (!py_binding_array_size.is_none())
+    {
+        auto value = handle.attr("binding_array_size").cast<uint32_t>();
+        obj.bindingArraySize = value;
     }
     auto py_buffer = handle.attr("buffer");
     if (!py_buffer.is_none())
@@ -1155,29 +1263,11 @@ inline void fill(pywgpu::Limits& obj, py::handle handle, BuildCtx ctx) {
         auto value = handle.attr("max_compute_workgroups_per_dimension").cast<uint32_t>();
         obj.maxComputeWorkgroupsPerDimension = value;
     }
-    auto py_max_storage_buffers_in_vertex_stage = handle.attr("max_storage_buffers_in_vertex_stage");
-    if (!py_max_storage_buffers_in_vertex_stage.is_none())
+    auto py_max_immediate_size = handle.attr("max_immediate_size");
+    if (!py_max_immediate_size.is_none())
     {
-        auto value = handle.attr("max_storage_buffers_in_vertex_stage").cast<uint32_t>();
-        obj.maxStorageBuffersInVertexStage = value;
-    }
-    auto py_max_storage_textures_in_vertex_stage = handle.attr("max_storage_textures_in_vertex_stage");
-    if (!py_max_storage_textures_in_vertex_stage.is_none())
-    {
-        auto value = handle.attr("max_storage_textures_in_vertex_stage").cast<uint32_t>();
-        obj.maxStorageTexturesInVertexStage = value;
-    }
-    auto py_max_storage_buffers_in_fragment_stage = handle.attr("max_storage_buffers_in_fragment_stage");
-    if (!py_max_storage_buffers_in_fragment_stage.is_none())
-    {
-        auto value = handle.attr("max_storage_buffers_in_fragment_stage").cast<uint32_t>();
-        obj.maxStorageBuffersInFragmentStage = value;
-    }
-    auto py_max_storage_textures_in_fragment_stage = handle.attr("max_storage_textures_in_fragment_stage");
-    if (!py_max_storage_textures_in_fragment_stage.is_none())
-    {
-        auto value = handle.attr("max_storage_textures_in_fragment_stage").cast<uint32_t>();
-        obj.maxStorageTexturesInFragmentStage = value;
+        auto value = handle.attr("max_immediate_size").cast<uint32_t>();
+        obj.maxImmediateSize = value;
     }
 }
 
@@ -1292,6 +1382,45 @@ inline void fill(pywgpu::ExternalTextureDescriptor& obj, py::handle handle, Buil
     }
 }
 
+inline void fill(pywgpu::ColorSpaceDawn& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_primaries = handle.attr("primaries");
+    if (!py_primaries.is_none())
+    {
+        auto value = handle.attr("primaries").cast<ColorSpacePrimariesDawn>();
+        obj.primaries = value;
+    }
+    auto py_transfer = handle.attr("transfer");
+    if (!py_transfer.is_none())
+    {
+        auto value = handle.attr("transfer").cast<ColorSpaceTransferDawn>();
+        obj.transfer = value;
+    }
+    auto py_y_cb_cr_range = handle.attr("y_cb_cr_range");
+    if (!py_y_cb_cr_range.is_none())
+    {
+        auto value = handle.attr("y_cb_cr_range").cast<ColorSpaceYCbCrRangeDawn>();
+        obj.yCbCrRange = value;
+    }
+    auto py_y_cb_cr_matrix = handle.attr("y_cb_cr_matrix");
+    if (!py_y_cb_cr_matrix.is_none())
+    {
+        auto value = handle.attr("y_cb_cr_matrix").cast<ColorSpaceYCbCrMatrixDawn>();
+        obj.yCbCrMatrix = value;
+    }
+    auto py_hdr_reference_white_luminance = handle.attr("hdr_reference_white_luminance");
+    if (!py_hdr_reference_white_luminance.is_none())
+    {
+        auto value = handle.attr("hdr_reference_white_luminance").cast<float>();
+        obj.hdrReferenceWhiteLuminance = value;
+    }
+}
+
 inline void fill(pywgpu::SharedBufferMemoryDescriptor& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -1304,6 +1433,27 @@ inline void fill(pywgpu::SharedBufferMemoryDescriptor& obj, py::handle handle, B
     {
         auto value = handle.attr("label").cast<StringView>();
         obj.label = value;
+    }
+}
+
+inline void fill(pywgpu::SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_handle = handle.attr("handle");
+    if (!py_handle.is_none())
+    {
+        auto value = handle.attr("handle").cast<void *>();
+        obj.handle = value;
+    }
+    auto py_size = handle.attr("size");
+    if (!py_size.is_none())
+    {
+        auto value = handle.attr("size").cast<uint64_t>();
+        obj.size = value;
     }
 }
 
@@ -1359,7 +1509,7 @@ inline void fill(pywgpu::SharedBufferMemoryBeginAccessDescriptor& obj, py::handl
         }
 
         obj.signaledValues = value;
-        obj.fenceCount = count;
+        obj.signaledValueCount = count;
     }
 }
 
@@ -1390,12 +1540,6 @@ inline void fill(pywgpu::SharedTextureMemoryAHardwareBufferDescriptor& obj, py::
     {
         auto value = handle.attr("handle").cast<void *>();
         obj.handle = value;
-    }
-    auto py_use_external_format = handle.attr("use_external_format");
-    if (!py_use_external_format.is_none())
-    {
-        auto value = handle.attr("use_external_format").cast<Bool>();
-        obj.useExternalFormat = value;
     }
 }
 
@@ -1599,7 +1743,7 @@ inline void fill(pywgpu::SharedTextureMemoryBeginAccessDescriptor& obj, py::hand
         }
 
         obj.signaledValues = value;
-        obj.fenceCount = count;
+        obj.signaledValueCount = count;
     }
 }
 
@@ -1636,6 +1780,21 @@ inline void fill(pywgpu::SharedTextureMemoryD3DSwapchainBeginState& obj, py::han
     {
         auto value = handle.attr("is_swapchain").cast<Bool>();
         obj.isSwapchain = value;
+    }
+}
+
+inline void fill(pywgpu::SharedTextureMemoryD3D11BeginState& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_requires_end_access_fence = handle.attr("requires_end_access_fence");
+    if (!py_requires_end_access_fence.is_none())
+    {
+        auto value = handle.attr("requires_end_access_fence").cast<Bool>();
+        obj.requiresEndAccessFence = value;
     }
 }
 
@@ -1771,6 +1930,15 @@ inline void fill(pywgpu::DawnFakeBufferOOMForTesting& obj, py::handle handle, Bu
     }
 }
 
+inline void fill(pywgpu::DawnFakeDeviceInitializeErrorForTesting& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+}
+
 inline void fill(pywgpu::ImageCopyExternalTexture& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -1798,27 +1966,6 @@ inline void fill(pywgpu::ImageCopyExternalTexture& obj, py::handle handle, Build
     }
 }
 
-inline void fill(pywgpu::InstanceCapabilities& obj, py::handle handle, BuildCtx ctx) {
-    auto py_next_in_chain = handle.attr("next_in_chain");
-    if (!py_next_in_chain.is_none())
-    {
-        auto value = Builder<ChainedStructOut>(ctx).build(handle.attr("next_in_chain"));
-        obj.nextInChain = value;
-    }
-    auto py_timed_wait_any_enable = handle.attr("timed_wait_any_enable");
-    if (!py_timed_wait_any_enable.is_none())
-    {
-        auto value = handle.attr("timed_wait_any_enable").cast<Bool>();
-        obj.timedWaitAnyEnable = value;
-    }
-    auto py_timed_wait_any_max_count = handle.attr("timed_wait_any_max_count");
-    if (!py_timed_wait_any_max_count.is_none())
-    {
-        auto value = handle.attr("timed_wait_any_max_count").cast<size_t>();
-        obj.timedWaitAnyMaxCount = value;
-    }
-}
-
 inline void fill(pywgpu::InstanceDescriptor& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -1826,10 +1973,24 @@ inline void fill(pywgpu::InstanceDescriptor& obj, py::handle handle, BuildCtx ct
         auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
-    auto py_capabilities = handle.attr("capabilities");
-    if (!py_capabilities.is_none())
+    auto py_required_features = handle.attr("required_features");
+    if (!py_required_features.is_none())
     {
-        Builder<InstanceCapabilities>(ctx).fill(obj.capabilities, handle.attr("capabilities"));
+        auto py_list = handle.attr("required_features").cast<py::sequence>();
+        uint32_t count = static_cast<uint32_t>(py_list.size());
+        auto* value = ctx.la.make_array<InstanceFeatureName>(count);
+        for (uint32_t i = 0; i < count; ++i) {
+            value[i] = py_list[i].cast<InstanceFeatureName>();
+        }
+
+        obj.requiredFeatures = value;
+        obj.requiredFeatureCount = count;
+    }
+    auto py_required_limits = handle.attr("required_limits");
+    if (!py_required_limits.is_none())
+    {
+        auto value = handle.attr("required_limits").cast<InstanceLimits const *>();
+        obj.requiredLimits = value;
     }
 }
 
@@ -1963,6 +2124,21 @@ inline void fill(pywgpu::PassTimestampWrites& obj, py::handle handle, BuildCtx c
     }
 }
 
+inline void fill(pywgpu::PipelineLayoutResourceTable& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_uses_resource_table = handle.attr("uses_resource_table");
+    if (!py_uses_resource_table.is_none())
+    {
+        auto value = handle.attr("uses_resource_table").cast<Bool>();
+        obj.usesResourceTable = value;
+    }
+}
+
 inline void fill(pywgpu::PipelineLayoutDescriptor& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -1989,11 +2165,11 @@ inline void fill(pywgpu::PipelineLayoutDescriptor& obj, py::handle handle, Build
         obj.bindGroupLayouts = value;
         obj.bindGroupLayoutCount = count;
     }
-    auto py_immediate_data_range_byte_size = handle.attr("immediate_data_range_byte_size");
-    if (!py_immediate_data_range_byte_size.is_none())
+    auto py_immediate_size = handle.attr("immediate_size");
+    if (!py_immediate_size.is_none())
     {
-        auto value = handle.attr("immediate_data_range_byte_size").cast<uint32_t>();
-        obj.immediateDataRangeByteSize = value;
+        auto value = handle.attr("immediate_size").cast<uint32_t>();
+        obj.immediateSize = value;
     }
 }
 
@@ -2234,21 +2410,6 @@ inline void fill(pywgpu::RenderPassColorAttachment& obj, py::handle handle, Buil
     }
 }
 
-inline void fill(pywgpu::DawnRenderPassColorAttachmentRenderToSingleSampled& obj, py::handle handle, BuildCtx ctx) {
-    auto py_next_in_chain = handle.attr("next_in_chain");
-    if (!py_next_in_chain.is_none())
-    {
-        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
-        obj.nextInChain = value;
-    }
-    auto py_implicit_sample_count = handle.attr("implicit_sample_count");
-    if (!py_implicit_sample_count.is_none())
-    {
-        auto value = handle.attr("implicit_sample_count").cast<uint32_t>();
-        obj.implicitSampleCount = value;
-    }
-}
-
 inline void fill(pywgpu::RenderPassDepthStencilAttachment& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -2358,6 +2519,21 @@ inline void fill(pywgpu::RenderPassDescriptor& obj, py::handle handle, BuildCtx 
     }
 }
 
+inline void fill(pywgpu::DawnRenderPassSampleCount& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_sample_count = handle.attr("sample_count");
+    if (!py_sample_count.is_none())
+    {
+        auto value = handle.attr("sample_count").cast<uint32_t>();
+        obj.sampleCount = value;
+    }
+}
+
 inline void fill(pywgpu::RenderPassMaxDrawCount& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -2373,24 +2549,57 @@ inline void fill(pywgpu::RenderPassMaxDrawCount& obj, py::handle handle, BuildCt
     }
 }
 
-inline void fill(pywgpu::RenderPassDescriptorExpandResolveRect& obj, py::handle handle, BuildCtx ctx) {
+inline void fill(pywgpu::RenderPassRenderAreaRect& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
         auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
         obj.nextInChain = value;
     }
-    auto py_x = handle.attr("x");
-    if (!py_x.is_none())
+    auto py_origin = handle.attr("origin");
+    if (!py_origin.is_none())
     {
-        auto value = handle.attr("x").cast<uint32_t>();
-        obj.x = value;
+        auto value = handle.attr("origin").cast<Origin2D>();
+        obj.origin = value;
     }
-    auto py_y = handle.attr("y");
-    if (!py_y.is_none())
+    auto py_size = handle.attr("size");
+    if (!py_size.is_none())
     {
-        auto value = handle.attr("y").cast<uint32_t>();
-        obj.y = value;
+        auto value = handle.attr("size").cast<Extent2D>();
+        obj.size = value;
+    }
+}
+
+inline void fill(pywgpu::RenderPassDescriptorResolveRect& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_colorOffsetX = handle.attr("colorOffsetX");
+    if (!py_colorOffsetX.is_none())
+    {
+        auto value = handle.attr("colorOffsetX").cast<uint32_t>();
+        obj.colorOffsetX = value;
+    }
+    auto py_colorOffsetY = handle.attr("colorOffsetY");
+    if (!py_colorOffsetY.is_none())
+    {
+        auto value = handle.attr("colorOffsetY").cast<uint32_t>();
+        obj.colorOffsetY = value;
+    }
+    auto py_resolveOffsetX = handle.attr("resolveOffsetX");
+    if (!py_resolveOffsetX.is_none())
+    {
+        auto value = handle.attr("resolveOffsetX").cast<uint32_t>();
+        obj.resolveOffsetX = value;
+    }
+    auto py_resolveOffsetY = handle.attr("resolveOffsetY");
+    if (!py_resolveOffsetY.is_none())
+    {
+        auto value = handle.attr("resolveOffsetY").cast<uint32_t>();
+        obj.resolveOffsetY = value;
     }
     auto py_width = handle.attr("width");
     if (!py_width.is_none())
@@ -2792,6 +3001,66 @@ inline void fill(pywgpu::RenderPipelineDescriptor& obj, py::handle handle, Build
     }
 }
 
+inline void fill(pywgpu::ResourceTableDescriptor& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_label = handle.attr("label");
+    if (!py_label.is_none())
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    auto py_size = handle.attr("size");
+    if (!py_size.is_none())
+    {
+        auto value = handle.attr("size").cast<uint32_t>();
+        obj.size = value;
+    }
+}
+
+inline void fill(pywgpu::BindingResource& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_buffer = handle.attr("buffer");
+    if (!py_buffer.is_none())
+    {
+        auto value = handle.attr("buffer").cast<Buffer>();
+        obj.buffer = value;
+    }
+    auto py_offset = handle.attr("offset");
+    if (!py_offset.is_none())
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    auto py_size = handle.attr("size");
+    if (!py_size.is_none())
+    {
+        auto value = handle.attr("size").cast<uint64_t>();
+        obj.size = value;
+    }
+    auto py_sampler = handle.attr("sampler");
+    if (!py_sampler.is_none())
+    {
+        auto value = handle.attr("sampler").cast<Sampler>();
+        obj.sampler = value;
+    }
+    auto py_texture_view = handle.attr("texture_view");
+    if (!py_texture_view.is_none())
+    {
+        auto value = handle.attr("texture_view").cast<TextureView>();
+        obj.textureView = value;
+    }
+}
+
 inline void fill(pywgpu::SamplerDescriptor& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -3138,6 +3407,27 @@ inline void fill(pywgpu::SurfaceDescriptorFromWindowsWinUISwapChainPanel& obj, p
     }
 }
 
+inline void fill(pywgpu::SurfaceColorManagement& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_color_space = handle.attr("color_space");
+    if (!py_color_space.is_none())
+    {
+        auto value = handle.attr("color_space").cast<PredefinedColorSpace>();
+        obj.colorSpace = value;
+    }
+    auto py_tone_mapping_mode = handle.attr("tone_mapping_mode");
+    if (!py_tone_mapping_mode.is_none())
+    {
+        auto value = handle.attr("tone_mapping_mode").cast<ToneMappingMode>();
+        obj.toneMappingMode = value;
+    }
+}
+
 inline void fill(pywgpu::TextureDescriptor& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
@@ -3202,7 +3492,7 @@ inline void fill(pywgpu::TextureDescriptor& obj, py::handle handle, BuildCtx ctx
     }
 }
 
-inline void fill(pywgpu::TextureBindingViewDimensionDescriptor& obj, py::handle handle, BuildCtx ctx) {
+inline void fill(pywgpu::TextureBindingViewDimension& obj, py::handle handle, BuildCtx ctx) {
     auto py_next_in_chain = handle.attr("next_in_chain");
     if (!py_next_in_chain.is_none())
     {
@@ -3277,6 +3567,54 @@ inline void fill(pywgpu::TextureViewDescriptor& obj, py::handle handle, BuildCtx
     {
         auto value = handle.attr("usage").cast<TextureUsage>();
         obj.usage = value;
+    }
+}
+
+inline void fill(pywgpu::TexelBufferViewDescriptor& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_label = handle.attr("label");
+    if (!py_label.is_none())
+    {
+        auto value = handle.attr("label").cast<StringView>();
+        obj.label = value;
+    }
+    auto py_format = handle.attr("format");
+    if (!py_format.is_none())
+    {
+        auto value = handle.attr("format").cast<TextureFormat>();
+        obj.format = value;
+    }
+    auto py_offset = handle.attr("offset");
+    if (!py_offset.is_none())
+    {
+        auto value = handle.attr("offset").cast<uint64_t>();
+        obj.offset = value;
+    }
+    auto py_size = handle.attr("size");
+    if (!py_size.is_none())
+    {
+        auto value = handle.attr("size").cast<uint64_t>();
+        obj.size = value;
+    }
+}
+
+inline void fill(pywgpu::TextureComponentSwizzleDescriptor& obj, py::handle handle, BuildCtx ctx) {
+    auto py_next_in_chain = handle.attr("next_in_chain");
+    if (!py_next_in_chain.is_none())
+    {
+        auto value = build_chained_struct(handle.attr("next_in_chain"), ctx);
+        obj.nextInChain = value;
+    }
+    auto py_swizzle = handle.attr("swizzle");
+    if (!py_swizzle.is_none())
+    {
+        auto value = handle.attr("swizzle").cast<TextureComponentSwizzle>();
+        obj.swizzle = value;
     }
 }
 
@@ -3476,6 +3814,12 @@ py::enum_<StorageTextureAccess>(m, "StorageTextureAccess", py::arithmetic())
     .value("READ_WRITE", StorageTextureAccess::ReadWrite)
 ;
 
+py::enum_<TexelBufferAccess>(m, "TexelBufferAccess", py::arithmetic())
+    .value("UNDEFINED", TexelBufferAccess::Undefined)
+    .value("READ_ONLY", TexelBufferAccess::ReadOnly)
+    .value("READ_WRITE", TexelBufferAccess::ReadWrite)
+;
+
 py::enum_<BlendFactor>(m, "BlendFactor", py::arithmetic())
     .value("UNDEFINED", BlendFactor::Undefined)
     .value("ZERO", BlendFactor::Zero)
@@ -3611,6 +3955,36 @@ py::enum_<ExternalTextureRotation>(m, "ExternalTextureRotation", py::arithmetic(
     .value("ROTATE270_DEGREES", ExternalTextureRotation::Rotate270Degrees)
 ;
 
+py::enum_<ColorSpacePrimariesDawn>(m, "ColorSpacePrimariesDawn", py::arithmetic())
+    .value("SRGB", ColorSpacePrimariesDawn::SRGB)
+    .value("REC709", ColorSpacePrimariesDawn::Rec709)
+    .value("REC601", ColorSpacePrimariesDawn::Rec601)
+    .value("REC2020", ColorSpacePrimariesDawn::Rec2020)
+    .value("DISPLAY_P3", ColorSpacePrimariesDawn::DisplayP3)
+;
+
+py::enum_<ColorSpaceTransferDawn>(m, "ColorSpaceTransferDawn", py::arithmetic())
+    .value("IDENTITY", ColorSpaceTransferDawn::Identity)
+    .value("SRGB", ColorSpaceTransferDawn::SRGB)
+    .value("DISPLAY_P3", ColorSpaceTransferDawn::DisplayP3)
+    .value("SMPTE_170M", ColorSpaceTransferDawn::SMPTE_170M)
+    .value("HLG", ColorSpaceTransferDawn::HLG)
+    .value("PQ", ColorSpaceTransferDawn::PQ)
+;
+
+py::enum_<ColorSpaceYCbCrRangeDawn>(m, "ColorSpaceYCbCrRangeDawn", py::arithmetic())
+    .value("IDENTITY", ColorSpaceYCbCrRangeDawn::Identity)
+    .value("NARROW", ColorSpaceYCbCrRangeDawn::Narrow)
+    .value("FULL", ColorSpaceYCbCrRangeDawn::Full)
+;
+
+py::enum_<ColorSpaceYCbCrMatrixDawn>(m, "ColorSpaceYCbCrMatrixDawn", py::arithmetic())
+    .value("IDENTITY", ColorSpaceYCbCrMatrixDawn::Identity)
+    .value("REC601", ColorSpaceYCbCrMatrixDawn::Rec601)
+    .value("REC709", ColorSpaceYCbCrMatrixDawn::Rec709)
+    .value("REC2020", ColorSpaceYCbCrMatrixDawn::Rec2020)
+;
+
 py::enum_<Status>(m, "Status", py::arithmetic())
     .value("SUCCESS", Status::Success)
     .value("ERROR", Status::Error)
@@ -3632,14 +4006,15 @@ py::enum_<FeatureLevel>(m, "FeatureLevel", py::arithmetic())
 ;
 
 py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
+    .value("CORE_FEATURES_AND_LIMITS", FeatureName::CoreFeaturesAndLimits)
     .value("DEPTH_CLIP_CONTROL", FeatureName::DepthClipControl)
     .value("DEPTH32_FLOAT_STENCIL8", FeatureName::Depth32FloatStencil8)
-    .value("TIMESTAMP_QUERY", FeatureName::TimestampQuery)
     .value("TEXTURE_COMPRESSION_BC", FeatureName::TextureCompressionBC)
     .value("TEXTURE_COMPRESSION_BC_SLICED3D", FeatureName::TextureCompressionBCSliced3D)
     .value("TEXTURE_COMPRESSION_ETC2", FeatureName::TextureCompressionETC2)
     .value("TEXTURE_COMPRESSION_ASTC", FeatureName::TextureCompressionASTC)
     .value("TEXTURE_COMPRESSION_ASTC_SLICED3D", FeatureName::TextureCompressionASTCSliced3D)
+    .value("TIMESTAMP_QUERY", FeatureName::TimestampQuery)
     .value("INDIRECT_FIRST_INSTANCE", FeatureName::IndirectFirstInstance)
     .value("SHADER_F16", FeatureName::ShaderF16)
     .value("RG11B10_UFLOAT_RENDERABLE", FeatureName::RG11B10UfloatRenderable)
@@ -3649,22 +4024,23 @@ py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
     .value("CLIP_DISTANCES", FeatureName::ClipDistances)
     .value("DUAL_SOURCE_BLENDING", FeatureName::DualSourceBlending)
     .value("SUBGROUPS", FeatureName::Subgroups)
-    .value("CORE_FEATURES_AND_LIMITS", FeatureName::CoreFeaturesAndLimits)
+    .value("TEXTURE_FORMATS_TIER1", FeatureName::TextureFormatsTier1)
+    .value("TEXTURE_FORMATS_TIER2", FeatureName::TextureFormatsTier2)
+    .value("PRIMITIVE_INDEX", FeatureName::PrimitiveIndex)
+    .value("TEXTURE_COMPONENT_SWIZZLE", FeatureName::TextureComponentSwizzle)
+    .value("SUBGROUP_SIZE_CONTROL", FeatureName::SubgroupSizeControl)
     .value("DAWN_INTERNAL_USAGES", FeatureName::DawnInternalUsages)
     .value("DAWN_MULTI_PLANAR_FORMATS", FeatureName::DawnMultiPlanarFormats)
     .value("DAWN_NATIVE", FeatureName::DawnNative)
     .value("CHROMIUM_EXPERIMENTAL_TIMESTAMP_QUERY_INSIDE_PASSES", FeatureName::ChromiumExperimentalTimestampQueryInsidePasses)
     .value("IMPLICIT_DEVICE_SYNCHRONIZATION", FeatureName::ImplicitDeviceSynchronization)
-    .value("CHROMIUM_EXPERIMENTAL_IMMEDIATE_DATA", FeatureName::ChromiumExperimentalImmediateData)
     .value("TRANSIENT_ATTACHMENTS", FeatureName::TransientAttachments)
     .value("MSAA_RENDER_TO_SINGLE_SAMPLED", FeatureName::MSAARenderToSingleSampled)
-    .value("SUBGROUPS_F16", FeatureName::SubgroupsF16)
     .value("D3D11_MULTITHREAD_PROTECTED", FeatureName::D3D11MultithreadProtected)
     .value("ANGLE_TEXTURE_SHARING", FeatureName::ANGLETextureSharing)
     .value("PIXEL_LOCAL_STORAGE_COHERENT", FeatureName::PixelLocalStorageCoherent)
     .value("PIXEL_LOCAL_STORAGE_NON_COHERENT", FeatureName::PixelLocalStorageNonCoherent)
     .value("UNORM16_TEXTURE_FORMATS", FeatureName::Unorm16TextureFormats)
-    .value("SNORM16_TEXTURE_FORMATS", FeatureName::Snorm16TextureFormats)
     .value("MULTI_PLANAR_FORMAT_EXTENDED_USAGES", FeatureName::MultiPlanarFormatExtendedUsages)
     .value("MULTI_PLANAR_FORMAT_P010", FeatureName::MultiPlanarFormatP010)
     .value("HOST_MAPPED_POINTER", FeatureName::HostMappedPointer)
@@ -3675,10 +4051,8 @@ py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
     .value("ADAPTER_PROPERTIES_MEMORY_HEAPS", FeatureName::AdapterPropertiesMemoryHeaps)
     .value("ADAPTER_PROPERTIES_D3D", FeatureName::AdapterPropertiesD3D)
     .value("ADAPTER_PROPERTIES_VK", FeatureName::AdapterPropertiesVk)
-    .value("R8_UNORM_STORAGE", FeatureName::R8UnormStorage)
     .value("DAWN_FORMAT_CAPABILITIES", FeatureName::DawnFormatCapabilities)
     .value("DAWN_DRM_FORMAT_CAPABILITIES", FeatureName::DawnDrmFormatCapabilities)
-    .value("NORM16_TEXTURE_FORMATS", FeatureName::Norm16TextureFormats)
     .value("MULTI_PLANAR_FORMAT_NV16", FeatureName::MultiPlanarFormatNv16)
     .value("MULTI_PLANAR_FORMAT_NV24", FeatureName::MultiPlanarFormatNv24)
     .value("MULTI_PLANAR_FORMAT_P210", FeatureName::MultiPlanarFormatP210)
@@ -3708,6 +4082,18 @@ py::enum_<FeatureName>(m, "FeatureName", py::arithmetic())
     .value("FLEXIBLE_TEXTURE_VIEWS", FeatureName::FlexibleTextureViews)
     .value("CHROMIUM_EXPERIMENTAL_SUBGROUP_MATRIX", FeatureName::ChromiumExperimentalSubgroupMatrix)
     .value("SHARED_FENCE_EGL_SYNC", FeatureName::SharedFenceEGLSync)
+    .value("DAWN_DEVICE_ALLOCATOR_CONTROL", FeatureName::DawnDeviceAllocatorControl)
+    .value("ADAPTER_PROPERTIES_WGPU", FeatureName::AdapterPropertiesWGPU)
+    .value("SHARED_BUFFER_MEMORY_D3D12_SHARED_MEMORY_FILE_MAPPING_HANDLE", FeatureName::SharedBufferMemoryD3D12SharedMemoryFileMappingHandle)
+    .value("SHARED_TEXTURE_MEMORY_D3D12_RESOURCE", FeatureName::SharedTextureMemoryD3D12Resource)
+    .value("CHROMIUM_EXPERIMENTAL_SAMPLING_RESOURCE_TABLE", FeatureName::ChromiumExperimentalSamplingResourceTable)
+    .value("ATOMIC_VEC2U_MIN_MAX", FeatureName::AtomicVec2uMinMax)
+    .value("UNORM16_FORMATS_FOR_EXTERNAL_TEXTURE", FeatureName::Unorm16FormatsForExternalTexture)
+    .value("OPAQUE_Y_CB_CR_ANDROID_FOR_EXTERNAL_TEXTURE", FeatureName::OpaqueYCbCrAndroidForExternalTexture)
+    .value("UNORM16_FILTERABLE", FeatureName::Unorm16Filterable)
+    .value("RENDER_PASS_RENDER_AREA", FeatureName::RenderPassRenderArea)
+    .value("ADAPTER_PROPERTIES_DRM", FeatureName::AdapterPropertiesDrm)
+    .value("TEXTURE_COMPRESSION_UNALIGNED", FeatureName::TextureCompressionUnaligned)
 ;
 
 py::enum_<FilterMode>(m, "FilterMode", py::arithmetic())
@@ -3738,6 +4124,12 @@ py::enum_<WaitStatus>(m, "WaitStatus", py::arithmetic())
     .value("SUCCESS", WaitStatus::Success)
     .value("TIMED_OUT", WaitStatus::TimedOut)
     .value("ERROR", WaitStatus::Error)
+;
+
+py::enum_<InstanceFeatureName>(m, "InstanceFeatureName", py::arithmetic())
+    .value("TIMED_WAIT_ANY", InstanceFeatureName::TimedWaitAny)
+    .value("SHADER_SOURCE_SPIRV", InstanceFeatureName::ShaderSourceSPIRV)
+    .value("MULTIPLE_DEVICES_PER_ADAPTER", InstanceFeatureName::MultipleDevicesPerAdapter)
 ;
 
 py::enum_<VertexStepMode>(m, "VertexStepMode", py::arithmetic())
@@ -3817,6 +4209,19 @@ py::enum_<StencilOperation>(m, "StencilOperation", py::arithmetic())
     .value("DECREMENT_WRAP", StencilOperation::DecrementWrap)
 ;
 
+py::enum_<PredefinedColorSpace>(m, "PredefinedColorSpace", py::arithmetic())
+    .value("SRGB", PredefinedColorSpace::SRGB)
+    .value("DISPLAY_P3", PredefinedColorSpace::DisplayP3)
+    .value("SRGB_LINEAR", PredefinedColorSpace::SRGBLinear)
+    .value("DISPLAY_P3_LINEAR", PredefinedColorSpace::DisplayP3Linear)
+    .value("REC2020_LINEAR", PredefinedColorSpace::Rec2020Linear)
+;
+
+py::enum_<ToneMappingMode>(m, "ToneMappingMode", py::arithmetic())
+    .value("STANDARD", ToneMappingMode::Standard)
+    .value("EXTENDED", ToneMappingMode::Extended)
+;
+
 py::enum_<SType>(m, "SType", py::arithmetic())
     .value("SHADER_SOURCE_SPIRV", SType::ShaderSourceSPIRV)
     .value("SHADER_SOURCE_WGSL", SType::ShaderSourceWGSL)
@@ -3829,12 +4234,13 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("SURFACE_SOURCE_XCB_WINDOW", SType::SurfaceSourceXCBWindow)
     .value("SURFACE_COLOR_MANAGEMENT", SType::SurfaceColorManagement)
     .value("REQUEST_ADAPTER_WEB_XR_OPTIONS", SType::RequestAdapterWebXROptions)
-    .value("ADAPTER_PROPERTIES_SUBGROUPS", SType::AdapterPropertiesSubgroups)
-    .value("TEXTURE_BINDING_VIEW_DIMENSION_DESCRIPTOR", SType::TextureBindingViewDimensionDescriptor)
+    .value("TEXTURE_COMPONENT_SWIZZLE_DESCRIPTOR", SType::TextureComponentSwizzleDescriptor)
+    .value("EXTERNAL_TEXTURE_BINDING_LAYOUT", SType::ExternalTextureBindingLayout)
+    .value("EXTERNAL_TEXTURE_BINDING_ENTRY", SType::ExternalTextureBindingEntry)
+    .value("COMPATIBILITY_MODE_LIMITS", SType::CompatibilityModeLimits)
+    .value("TEXTURE_BINDING_VIEW_DIMENSION", SType::TextureBindingViewDimension)
     .value("EMSCRIPTEN_SURFACE_SOURCE_CANVAS_HTML_SELECTOR", SType::EmscriptenSurfaceSourceCanvasHTMLSelector)
     .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_CORE_WINDOW", SType::SurfaceDescriptorFromWindowsCoreWindow)
-    .value("EXTERNAL_TEXTURE_BINDING_ENTRY", SType::ExternalTextureBindingEntry)
-    .value("EXTERNAL_TEXTURE_BINDING_LAYOUT", SType::ExternalTextureBindingLayout)
     .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_UWP_SWAP_CHAIN_PANEL", SType::SurfaceDescriptorFromWindowsUWPSwapChainPanel)
     .value("DAWN_TEXTURE_INTERNAL_USAGE_DESCRIPTOR", SType::DawnTextureInternalUsageDescriptor)
     .value("DAWN_ENCODER_INTERNAL_USAGE_DESCRIPTOR", SType::DawnEncoderInternalUsageDescriptor)
@@ -3847,7 +4253,7 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("REQUEST_ADAPTER_OPTIONS_LUID", SType::RequestAdapterOptionsLUID)
     .value("REQUEST_ADAPTER_OPTIONS_GET_GL_PROC", SType::RequestAdapterOptionsGetGLProc)
     .value("REQUEST_ADAPTER_OPTIONS_D3D11_DEVICE", SType::RequestAdapterOptionsD3D11Device)
-    .value("DAWN_RENDER_PASS_COLOR_ATTACHMENT_RENDER_TO_SINGLE_SAMPLED", SType::DawnRenderPassColorAttachmentRenderToSingleSampled)
+    .value("DAWN_RENDER_PASS_SAMPLE_COUNT", SType::DawnRenderPassSampleCount)
     .value("RENDER_PASS_PIXEL_LOCAL_STORAGE", SType::RenderPassPixelLocalStorage)
     .value("PIPELINE_LAYOUT_PIXEL_LOCAL_STORAGE", SType::PipelineLayoutPixelLocalStorage)
     .value("BUFFER_HOST_MAPPED_POINTER", SType::BufferHostMappedPointer)
@@ -3859,7 +4265,7 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("DAWN_DRM_FORMAT_CAPABILITIES", SType::DawnDrmFormatCapabilities)
     .value("SHADER_MODULE_COMPILATION_OPTIONS", SType::ShaderModuleCompilationOptions)
     .value("COLOR_TARGET_STATE_EXPAND_RESOLVE_TEXTURE_DAWN", SType::ColorTargetStateExpandResolveTextureDawn)
-    .value("RENDER_PASS_DESCRIPTOR_EXPAND_RESOLVE_RECT", SType::RenderPassDescriptorExpandResolveRect)
+    .value("RENDER_PASS_RENDER_AREA_RECT", SType::RenderPassRenderAreaRect)
     .value("SHARED_TEXTURE_MEMORY_VK_DEDICATED_ALLOCATION_DESCRIPTOR", SType::SharedTextureMemoryVkDedicatedAllocationDescriptor)
     .value("SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_DESCRIPTOR", SType::SharedTextureMemoryAHardwareBufferDescriptor)
     .value("SHARED_TEXTURE_MEMORY_DMA_BUF_DESCRIPTOR", SType::SharedTextureMemoryDmaBufDescriptor)
@@ -3889,7 +4295,6 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("Y_CB_CR_VK_DESCRIPTOR", SType::YCbCrVkDescriptor)
     .value("SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_PROPERTIES", SType::SharedTextureMemoryAHardwareBufferProperties)
     .value("A_HARDWARE_BUFFER_PROPERTIES", SType::AHardwareBufferProperties)
-    .value("DAWN_EXPERIMENTAL_IMMEDIATE_DATA_LIMITS", SType::DawnExperimentalImmediateDataLimits)
     .value("DAWN_TEXEL_COPY_BUFFER_ROW_ALIGNMENT_LIMITS", SType::DawnTexelCopyBufferRowAlignmentLimits)
     .value("ADAPTER_PROPERTIES_SUBGROUP_MATRIX_CONFIGS", SType::AdapterPropertiesSubgroupMatrixConfigs)
     .value("SHARED_FENCE_EGL_SYNC_DESCRIPTOR", SType::SharedFenceEGLSyncDescriptor)
@@ -3898,6 +4303,22 @@ py::enum_<SType>(m, "SType", py::arithmetic())
     .value("DAWN_COMPILATION_MESSAGE_UTF16", SType::DawnCompilationMessageUtf16)
     .value("DAWN_FAKE_BUFFER_OOM_FOR_TESTING", SType::DawnFakeBufferOOMForTesting)
     .value("SURFACE_DESCRIPTOR_FROM_WINDOWS_WIN_UI_SWAP_CHAIN_PANEL", SType::SurfaceDescriptorFromWindowsWinUISwapChainPanel)
+    .value("DAWN_DEVICE_ALLOCATOR_CONTROL", SType::DawnDeviceAllocatorControl)
+    .value("DAWN_HOST_MAPPED_POINTER_LIMITS", SType::DawnHostMappedPointerLimits)
+    .value("RENDER_PASS_DESCRIPTOR_RESOLVE_RECT", SType::RenderPassDescriptorResolveRect)
+    .value("REQUEST_ADAPTER_WEB_GPU_BACKEND_OPTIONS", SType::RequestAdapterWebGPUBackendOptions)
+    .value("DAWN_FAKE_DEVICE_INITIALIZE_ERROR_FOR_TESTING", SType::DawnFakeDeviceInitializeErrorForTesting)
+    .value("SHARED_TEXTURE_MEMORY_D3D11_BEGIN_STATE", SType::SharedTextureMemoryD3D11BeginState)
+    .value("DAWN_CONSUME_ADAPTER_DESCRIPTOR", SType::DawnConsumeAdapterDescriptor)
+    .value("TEXEL_BUFFER_BINDING_ENTRY", SType::TexelBufferBindingEntry)
+    .value("TEXEL_BUFFER_BINDING_LAYOUT", SType::TexelBufferBindingLayout)
+    .value("SHARED_TEXTURE_MEMORY_METAL_END_ACCESS_STATE", SType::SharedTextureMemoryMetalEndAccessState)
+    .value("ADAPTER_PROPERTIES_WGPU", SType::AdapterPropertiesWGPU)
+    .value("SHARED_BUFFER_MEMORY_D3D12_SHARED_MEMORY_FILE_MAPPING_HANDLE_DESCRIPTOR", SType::SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor)
+    .value("SHARED_TEXTURE_MEMORY_D3D12_RESOURCE_DESCRIPTOR", SType::SharedTextureMemoryD3D12ResourceDescriptor)
+    .value("REQUEST_ADAPTER_OPTIONS_ANGLE_VIRTUALIZATION_GROUP", SType::RequestAdapterOptionsAngleVirtualizationGroup)
+    .value("PIPELINE_LAYOUT_RESOURCE_TABLE", SType::PipelineLayoutResourceTable)
+    .value("ADAPTER_PROPERTIES_DRM", SType::AdapterPropertiesDrm)
 ;
 
 py::enum_<SurfaceGetCurrentTextureStatus>(m, "SurfaceGetCurrentTextureStatus", py::arithmetic())
@@ -3932,6 +4353,8 @@ py::enum_<TextureFormat>(m, "TextureFormat", py::arithmetic())
     .value("R8_SNORM", TextureFormat::R8Snorm)
     .value("R8_UINT", TextureFormat::R8Uint)
     .value("R8_SINT", TextureFormat::R8Sint)
+    .value("R16_UNORM", TextureFormat::R16Unorm)
+    .value("R16_SNORM", TextureFormat::R16Snorm)
     .value("R16_UINT", TextureFormat::R16Uint)
     .value("R16_SINT", TextureFormat::R16Sint)
     .value("R16_FLOAT", TextureFormat::R16Float)
@@ -3942,6 +4365,8 @@ py::enum_<TextureFormat>(m, "TextureFormat", py::arithmetic())
     .value("R32_FLOAT", TextureFormat::R32Float)
     .value("R32_UINT", TextureFormat::R32Uint)
     .value("R32_SINT", TextureFormat::R32Sint)
+    .value("RG16_UNORM", TextureFormat::RG16Unorm)
+    .value("RG16_SNORM", TextureFormat::RG16Snorm)
     .value("RG16_UINT", TextureFormat::RG16Uint)
     .value("RG16_SINT", TextureFormat::RG16Sint)
     .value("RG16_FLOAT", TextureFormat::RG16Float)
@@ -3959,6 +4384,8 @@ py::enum_<TextureFormat>(m, "TextureFormat", py::arithmetic())
     .value("RG32_FLOAT", TextureFormat::RG32Float)
     .value("RG32_UINT", TextureFormat::RG32Uint)
     .value("RG32_SINT", TextureFormat::RG32Sint)
+    .value("RGBA16_UNORM", TextureFormat::RGBA16Unorm)
+    .value("RGBA16_SNORM", TextureFormat::RGBA16Snorm)
     .value("RGBA16_UINT", TextureFormat::RGBA16Uint)
     .value("RGBA16_SINT", TextureFormat::RGBA16Sint)
     .value("RGBA16_FLOAT", TextureFormat::RGBA16Float)
@@ -4023,12 +4450,6 @@ py::enum_<TextureFormat>(m, "TextureFormat", py::arithmetic())
     .value("ASTC12X10_UNORM_SRGB", TextureFormat::ASTC12x10UnormSrgb)
     .value("ASTC12X12_UNORM", TextureFormat::ASTC12x12Unorm)
     .value("ASTC12X12_UNORM_SRGB", TextureFormat::ASTC12x12UnormSrgb)
-    .value("R16_UNORM", TextureFormat::R16Unorm)
-    .value("RG16_UNORM", TextureFormat::RG16Unorm)
-    .value("RGBA16_UNORM", TextureFormat::RGBA16Unorm)
-    .value("R16_SNORM", TextureFormat::R16Snorm)
-    .value("RG16_SNORM", TextureFormat::RG16Snorm)
-    .value("RGBA16_SNORM", TextureFormat::RGBA16Snorm)
     .value("R8BG8_BIPLANAR420_UNORM", TextureFormat::R8BG8Biplanar420Unorm)
     .value("R10X6BG10X6_BIPLANAR420_UNORM", TextureFormat::R10X6BG10X6Biplanar420Unorm)
     .value("R8BG8A8_TRIPLANAR420_UNORM", TextureFormat::R8BG8A8Triplanar420Unorm)
@@ -4036,7 +4457,7 @@ py::enum_<TextureFormat>(m, "TextureFormat", py::arithmetic())
     .value("R8BG8_BIPLANAR444_UNORM", TextureFormat::R8BG8Biplanar444Unorm)
     .value("R10X6BG10X6_BIPLANAR422_UNORM", TextureFormat::R10X6BG10X6Biplanar422Unorm)
     .value("R10X6BG10X6_BIPLANAR444_UNORM", TextureFormat::R10X6BG10X6Biplanar444Unorm)
-    .value("EXTERNAL", TextureFormat::External)
+    .value("OPAQUE_Y_CB_CR_ANDROID", TextureFormat::OpaqueYCbCrAndroid)
 ;
 
 py::enum_<TextureViewDimension>(m, "TextureViewDimension", py::arithmetic())
@@ -4047,6 +4468,16 @@ py::enum_<TextureViewDimension>(m, "TextureViewDimension", py::arithmetic())
     .value("CUBE", TextureViewDimension::Cube)
     .value("CUBE_ARRAY", TextureViewDimension::CubeArray)
     .value("E3D", TextureViewDimension::e3D)
+;
+
+py::enum_<ComponentSwizzle>(m, "ComponentSwizzle", py::arithmetic())
+    .value("UNDEFINED", ComponentSwizzle::Undefined)
+    .value("ZERO", ComponentSwizzle::Zero)
+    .value("ONE", ComponentSwizzle::One)
+    .value("R", ComponentSwizzle::R)
+    .value("G", ComponentSwizzle::G)
+    .value("B", ComponentSwizzle::B)
+    .value("A", ComponentSwizzle::A)
 ;
 
 py::enum_<VertexFormat>(m, "VertexFormat", py::arithmetic())
@@ -4098,12 +4529,24 @@ py::enum_<WGSLLanguageFeatureName>(m, "WGSLLanguageFeatureName", py::arithmetic(
     .value("PACKED4X8_INTEGER_DOT_PRODUCT", WGSLLanguageFeatureName::Packed4x8IntegerDotProduct)
     .value("UNRESTRICTED_POINTER_PARAMETERS", WGSLLanguageFeatureName::UnrestrictedPointerParameters)
     .value("POINTER_COMPOSITE_ACCESS", WGSLLanguageFeatureName::PointerCompositeAccess)
-    .value("SIZED_BINDING_ARRAY", WGSLLanguageFeatureName::SizedBindingArray)
+    .value("UNIFORM_BUFFER_STANDARD_LAYOUT", WGSLLanguageFeatureName::UniformBufferStandardLayout)
+    .value("SUBGROUP_ID", WGSLLanguageFeatureName::SubgroupId)
+    .value("TEXTURE_AND_SAMPLER_LET", WGSLLanguageFeatureName::TextureAndSamplerLet)
+    .value("SUBGROUP_UNIFORMITY", WGSLLanguageFeatureName::SubgroupUniformity)
+    .value("TEXTURE_FORMATS_TIER1", WGSLLanguageFeatureName::TextureFormatsTier1)
+    .value("LINEAR_INDEXING", WGSLLanguageFeatureName::LinearIndexing)
+    .value("IMMEDIATE_ADDRESS_SPACE", WGSLLanguageFeatureName::ImmediateAddressSpace)
     .value("CHROMIUM_TESTING_UNIMPLEMENTED", WGSLLanguageFeatureName::ChromiumTestingUnimplemented)
     .value("CHROMIUM_TESTING_UNSAFE_EXPERIMENTAL", WGSLLanguageFeatureName::ChromiumTestingUnsafeExperimental)
     .value("CHROMIUM_TESTING_EXPERIMENTAL", WGSLLanguageFeatureName::ChromiumTestingExperimental)
     .value("CHROMIUM_TESTING_SHIPPED_WITH_KILLSWITCH", WGSLLanguageFeatureName::ChromiumTestingShippedWithKillswitch)
     .value("CHROMIUM_TESTING_SHIPPED", WGSLLanguageFeatureName::ChromiumTestingShipped)
+    .value("SIZED_BINDING_ARRAY", WGSLLanguageFeatureName::SizedBindingArray)
+    .value("TEXEL_BUFFERS", WGSLLanguageFeatureName::TexelBuffers)
+    .value("CHROMIUM_PRINT", WGSLLanguageFeatureName::ChromiumPrint)
+    .value("FRAGMENT_DEPTH", WGSLLanguageFeatureName::FragmentDepth)
+    .value("BUFFER_VIEW", WGSLLanguageFeatureName::BufferView)
+    .value("SWIZZLE_ASSIGNMENT", WGSLLanguageFeatureName::SwizzleAssignment)
 ;
 
 py::enum_<SubgroupMatrixComponentType>(m, "SubgroupMatrixComponentType", py::arithmetic())
@@ -4111,6 +4554,8 @@ py::enum_<SubgroupMatrixComponentType>(m, "SubgroupMatrixComponentType", py::ari
     .value("F16", SubgroupMatrixComponentType::F16)
     .value("U32", SubgroupMatrixComponentType::U32)
     .value("I32", SubgroupMatrixComponentType::I32)
+    .value("U8", SubgroupMatrixComponentType::U8)
+    .value("I8", SubgroupMatrixComponentType::I8)
 ;
 
 py::enum_<BufferUsage>(m, "BufferUsage", py::arithmetic())
@@ -4125,6 +4570,7 @@ py::enum_<BufferUsage>(m, "BufferUsage", py::arithmetic())
     .value("STORAGE", BufferUsage::Storage)
     .value("INDIRECT", BufferUsage::Indirect)
     .value("QUERY_RESOLVE", BufferUsage::QueryResolve)
+    .value("TEXEL_BUFFER", BufferUsage::TexelBuffer)
     
     .def("__or__", [](pywgpu::BufferUsage& a, pywgpu::BufferUsage& b) {
         return (pywgpu::BufferUsage)(a | b);
@@ -4358,22 +4804,15 @@ _AHardwareBufferProperties
     }), py::return_value_policy::automatic_reference)
     ;
 
-py::class_<AdapterPropertiesSubgroups, ChainedStructOut> _AdapterPropertiesSubgroups(m, "AdapterPropertiesSubgroups");
-registry.on(m, "AdapterPropertiesSubgroups", _AdapterPropertiesSubgroups);
+py::class_<CompatibilityModeLimits, ChainedStructOut> _CompatibilityModeLimits(m, "CompatibilityModeLimits");
+registry.on(m, "CompatibilityModeLimits", _CompatibilityModeLimits);
 
-_AdapterPropertiesSubgroups
-    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesSubgroups::nextInChain)
-    .def_readonly("subgroup_min_size", &pywgpu::AdapterPropertiesSubgroups::subgroupMinSize)
-    .def_readonly("subgroup_max_size", &pywgpu::AdapterPropertiesSubgroups::subgroupMaxSize)
-    .def(py::init<>())
-    ;
-
-py::class_<DawnExperimentalImmediateDataLimits, ChainedStructOut> _DawnExperimentalImmediateDataLimits(m, "DawnExperimentalImmediateDataLimits");
-registry.on(m, "DawnExperimentalImmediateDataLimits", _DawnExperimentalImmediateDataLimits);
-
-_DawnExperimentalImmediateDataLimits
-    .def_readonly("next_in_chain", &pywgpu::DawnExperimentalImmediateDataLimits::nextInChain)
-    .def_readonly("max_immediate_data_range_byte_size", &pywgpu::DawnExperimentalImmediateDataLimits::maxImmediateDataRangeByteSize)
+_CompatibilityModeLimits
+    .def_readonly("next_in_chain", &pywgpu::CompatibilityModeLimits::nextInChain)
+    .def_readonly("max_storage_buffers_in_vertex_stage", &pywgpu::CompatibilityModeLimits::maxStorageBuffersInVertexStage)
+    .def_readonly("max_storage_textures_in_vertex_stage", &pywgpu::CompatibilityModeLimits::maxStorageTexturesInVertexStage)
+    .def_readonly("max_storage_buffers_in_fragment_stage", &pywgpu::CompatibilityModeLimits::maxStorageBuffersInFragmentStage)
+    .def_readonly("max_storage_textures_in_fragment_stage", &pywgpu::CompatibilityModeLimits::maxStorageTexturesInFragmentStage)
     .def(py::init<>())
     ;
 
@@ -4386,12 +4825,30 @@ _DawnTexelCopyBufferRowAlignmentLimits
     .def(py::init<>())
     ;
 
+py::class_<DawnHostMappedPointerLimits, ChainedStructOut> _DawnHostMappedPointerLimits(m, "DawnHostMappedPointerLimits");
+registry.on(m, "DawnHostMappedPointerLimits", _DawnHostMappedPointerLimits);
+
+_DawnHostMappedPointerLimits
+    .def_readonly("next_in_chain", &pywgpu::DawnHostMappedPointerLimits::nextInChain)
+    .def_readonly("host_mapped_pointer_alignment", &pywgpu::DawnHostMappedPointerLimits::hostMappedPointerAlignment)
+    .def(py::init<>())
+    ;
+
 py::class_<SupportedFeatures> _SupportedFeatures(m, "SupportedFeatures");
 registry.on(m, "SupportedFeatures", _SupportedFeatures);
 
 _SupportedFeatures
     .def_readonly("feature_count", &pywgpu::SupportedFeatures::featureCount)
     .def_readonly("features", &pywgpu::SupportedFeatures::features)
+    .def(py::init<>())
+    ;
+
+py::class_<SupportedInstanceFeatures> _SupportedInstanceFeatures(m, "SupportedInstanceFeatures");
+registry.on(m, "SupportedInstanceFeatures", _SupportedInstanceFeatures);
+
+_SupportedInstanceFeatures
+    .def_readonly("feature_count", &pywgpu::SupportedInstanceFeatures::featureCount)
+    .def_readonly("features", &pywgpu::SupportedInstanceFeatures::features)
     .def(py::init<>())
     ;
 
@@ -4528,6 +4985,7 @@ _SharedBufferMemoryEndAccessState
     .def_readonly("initialized", &pywgpu::SharedBufferMemoryEndAccessState::initialized)
     .def_readonly("fence_count", &pywgpu::SharedBufferMemoryEndAccessState::fenceCount)
     .def_readonly("fences", &pywgpu::SharedBufferMemoryEndAccessState::fences)
+    .def_readonly("signaled_value_count", &pywgpu::SharedBufferMemoryEndAccessState::signaledValueCount)
     .def_readonly("signaled_values", &pywgpu::SharedBufferMemoryEndAccessState::signaledValues)
     .def(py::init<>())
     ;
@@ -4586,7 +5044,17 @@ _SharedTextureMemoryEndAccessState
     .def_readonly("initialized", &pywgpu::SharedTextureMemoryEndAccessState::initialized)
     .def_readonly("fence_count", &pywgpu::SharedTextureMemoryEndAccessState::fenceCount)
     .def_readonly("fences", &pywgpu::SharedTextureMemoryEndAccessState::fences)
+    .def_readonly("signaled_value_count", &pywgpu::SharedTextureMemoryEndAccessState::signaledValueCount)
     .def_readonly("signaled_values", &pywgpu::SharedTextureMemoryEndAccessState::signaledValues)
+    .def(py::init<>())
+    ;
+
+py::class_<SharedTextureMemoryMetalEndAccessState, ChainedStructOut> _SharedTextureMemoryMetalEndAccessState(m, "SharedTextureMemoryMetalEndAccessState");
+registry.on(m, "SharedTextureMemoryMetalEndAccessState", _SharedTextureMemoryMetalEndAccessState);
+
+_SharedTextureMemoryMetalEndAccessState
+    .def_readonly("next_in_chain", &pywgpu::SharedTextureMemoryMetalEndAccessState::nextInChain)
+    .def_readonly("commands_scheduled_future", &pywgpu::SharedTextureMemoryMetalEndAccessState::commandsScheduledFuture)
     .def(py::init<>())
     ;
 
@@ -4933,6 +5401,15 @@ _FutureWaitInfo
     }), py::return_value_policy::automatic_reference)
     ;
 
+py::class_<InstanceLimits> _InstanceLimits(m, "InstanceLimits");
+registry.on(m, "InstanceLimits", _InstanceLimits);
+
+_InstanceLimits
+    .def_readonly("next_in_chain", &pywgpu::InstanceLimits::nextInChain)
+    .def_readonly("timed_wait_any_max_count", &pywgpu::InstanceLimits::timedWaitAnyMaxCount)
+    .def(py::init<>())
+    ;
+
 py::class_<Origin3D> _Origin3D(m, "Origin3D");
 registry.on(m, "Origin3D", _Origin3D);
 
@@ -5121,6 +5598,58 @@ _SurfaceTexture
     .def(py::init<>())
     ;
 
+py::class_<TextureComponentSwizzle> _TextureComponentSwizzle(m, "TextureComponentSwizzle");
+registry.on(m, "TextureComponentSwizzle", _TextureComponentSwizzle);
+
+_TextureComponentSwizzle
+    .def_readwrite("r", &pywgpu::TextureComponentSwizzle::r)
+    .def_readwrite("g", &pywgpu::TextureComponentSwizzle::g)
+    .def_readwrite("b", &pywgpu::TextureComponentSwizzle::b)
+    .def_readwrite("a", &pywgpu::TextureComponentSwizzle::a)
+    .def(py::init([](const py::kwargs& kwargs) {
+        pywgpu::TextureComponentSwizzle obj{};
+        static const std::set<std::string> allowed = {"r", "g", "b", "a"};
+        static const std::set<std::string> required = {};
+        
+        // Check for unknown keys
+        for (auto& item : kwargs) {
+            std::string key = py::cast<std::string>(item.first);
+            if (!allowed.count(key)) {
+                throw py::key_error("Unknown keyword argument: '" + key + "'");
+            }
+        }
+
+        // Check for required keys
+        for (const auto& key : required) {
+            if (!kwargs.contains(key.c_str())) {
+                throw py::key_error("Missing required keyword argument: '" + key + "'");
+            }
+        }
+        
+        if (kwargs.contains("r"))
+        {
+            auto value = kwargs["r"].cast<ComponentSwizzle>();
+            obj.r = value;
+        }
+        if (kwargs.contains("g"))
+        {
+            auto value = kwargs["g"].cast<ComponentSwizzle>();
+            obj.g = value;
+        }
+        if (kwargs.contains("b"))
+        {
+            auto value = kwargs["b"].cast<ComponentSwizzle>();
+            obj.b = value;
+        }
+        if (kwargs.contains("a"))
+        {
+            auto value = kwargs["a"].cast<ComponentSwizzle>();
+            obj.a = value;
+        }
+        return obj;
+    }), py::return_value_policy::automatic_reference)
+    ;
+
 py::class_<DawnAdapterPropertiesPowerPreference, ChainedStructOut> _DawnAdapterPropertiesPowerPreference(m, "DawnAdapterPropertiesPowerPreference");
 registry.on(m, "DawnAdapterPropertiesPowerPreference", _DawnAdapterPropertiesPowerPreference);
 
@@ -5198,6 +5727,29 @@ _AdapterPropertiesVk
     .def(py::init<>())
     ;
 
+py::class_<AdapterPropertiesDrm, ChainedStructOut> _AdapterPropertiesDrm(m, "AdapterPropertiesDrm");
+registry.on(m, "AdapterPropertiesDrm", _AdapterPropertiesDrm);
+
+_AdapterPropertiesDrm
+    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesDrm::nextInChain)
+    .def_readonly("has_primary", &pywgpu::AdapterPropertiesDrm::hasPrimary)
+    .def_readonly("has_render", &pywgpu::AdapterPropertiesDrm::hasRender)
+    .def_readonly("primary_major", &pywgpu::AdapterPropertiesDrm::primaryMajor)
+    .def_readonly("primary_minor", &pywgpu::AdapterPropertiesDrm::primaryMinor)
+    .def_readonly("render_major", &pywgpu::AdapterPropertiesDrm::renderMajor)
+    .def_readonly("render_minor", &pywgpu::AdapterPropertiesDrm::renderMinor)
+    .def(py::init<>())
+    ;
+
+py::class_<AdapterPropertiesWGPU, ChainedStructOut> _AdapterPropertiesWGPU(m, "AdapterPropertiesWGPU");
+registry.on(m, "AdapterPropertiesWGPU", _AdapterPropertiesWGPU);
+
+_AdapterPropertiesWGPU
+    .def_readonly("next_in_chain", &pywgpu::AdapterPropertiesWGPU::nextInChain)
+    .def_readonly("backend_type", &pywgpu::AdapterPropertiesWGPU::backendType)
+    .def(py::init<>())
+    ;
+
 py::class_<SubgroupMatrixConfig> _SubgroupMatrixConfig(m, "SubgroupMatrixConfig");
 registry.on(m, "SubgroupMatrixConfig", _SubgroupMatrixConfig);
 
@@ -5270,10 +5822,10 @@ py::class_<Adapter> _Adapter(m, "Adapter");
 registry.on(m, "Adapter", _Adapter);
 
 _Adapter
-.def("get_instance",&pywgpu::Adapter::GetInstance
+.def("get_instance", &pywgpu::Adapter::GetInstance
 )
 
-.def("get_limits",[](pywgpu::Adapter& self, py::handle limits) {
+.def("get_limits", [](pywgpu::Adapter& self, py::handle limits) {
     try {
         
         LinearAlloc la{};
@@ -5295,24 +5847,24 @@ _Adapter
 }
 , py::arg("limits"))
 
-.def("get_info",&pywgpu::Adapter::GetInfo
+.def("get_info", &pywgpu::Adapter::GetInfo
 , py::arg("info"))
 
-.def("has_feature",&pywgpu::Adapter::HasFeature
+.def("has_feature", &pywgpu::Adapter::HasFeature
 , py::arg("feature"))
 
-.def("get_features",&pywgpu::Adapter::GetFeatures
+.def("get_features", &pywgpu::Adapter::GetFeatures
 , py::arg("features"))
 
-.def("_request_device",[](pywgpu::Adapter& self, py::handle options, RequestDeviceCallbackInfo callbackInfo) {
+.def("_request_device", [](pywgpu::Adapter& self, py::handle descriptor, RequestDeviceCallbackInfo callbackInfo) {
     try {
         
         LinearAlloc la{};
         BuildCtx ctx{la};
         
-        pywgpu::DeviceDescriptor const* _options = Builder<DeviceDescriptor>(ctx).build(options);
+        pywgpu::DeviceDescriptor const* _descriptor = Builder<DeviceDescriptor>(ctx).build(descriptor);
         
-        return self.RequestDevice(_options, callbackInfo);
+        return self.RequestDevice(_descriptor, callbackInfo);
     
     } catch (const py::error_already_set& e) {
         // propagate Python-side exception with stack
@@ -5324,9 +5876,9 @@ _Adapter
     }
     
 }
-, py::arg("options"), py::arg("callback_info"))
+, py::arg("descriptor"), py::arg("callback_info"))
 
-.def("create_device",[](pywgpu::Adapter& self, py::handle descriptor) {
+.def("create_device", [](pywgpu::Adapter& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5348,7 +5900,7 @@ _Adapter
 }
 , py::arg("descriptor") = nullptr)
 
-.def("get_format_capabilities",&pywgpu::Adapter::GetFormatCapabilities
+.def("get_format_capabilities", &pywgpu::Adapter::GetFormatCapabilities
 , py::arg("format"), py::arg("capabilities"))
 
 ;
@@ -5357,7 +5909,7 @@ py::class_<BindGroup> _BindGroup(m, "BindGroup");
 registry.on(m, "BindGroup", _BindGroup);
 
 _BindGroup
-.def("set_label",&pywgpu::BindGroup::SetLabel
+.def("set_label", &pywgpu::BindGroup::SetLabel
 , py::arg("label"))
 
 ;
@@ -5366,7 +5918,7 @@ py::class_<BindGroupLayout> _BindGroupLayout(m, "BindGroupLayout");
 registry.on(m, "BindGroupLayout", _BindGroupLayout);
 
 _BindGroupLayout
-.def("set_label",&pywgpu::BindGroupLayout::SetLabel
+.def("set_label", &pywgpu::BindGroupLayout::SetLabel
 , py::arg("label"))
 
 ;
@@ -5375,16 +5927,16 @@ py::class_<Buffer> _Buffer(m, "Buffer");
 registry.on(m, "Buffer", _Buffer);
 
 _Buffer
-.def("_map_async",&pywgpu::Buffer::MapAsync
+.def("_map_async", &pywgpu::Buffer::MapAsync
 , py::arg("mode"), py::arg("offset"), py::arg("size"), py::arg("callback_info"))
 
-.def("get_mapped_range",&pywgpu::Buffer::GetMappedRange
+.def("get_mapped_range", &pywgpu::Buffer::GetMappedRange
 , py::arg("offset") = 0, py::arg("size") = kWholeMapSize)
 
-.def("get_const_mapped_range",&pywgpu::Buffer::GetConstMappedRange
+.def("get_const_mapped_range", &pywgpu::Buffer::GetConstMappedRange
 , py::arg("offset") = 0, py::arg("size") = kWholeMapSize)
 
-.def("write_mapped_range",[](pywgpu::Buffer& self, size_t offset, py::buffer data) {
+.def("write_mapped_range", [](pywgpu::Buffer& self, size_t offset, py::buffer data) {
     try {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
@@ -5404,7 +5956,7 @@ _Buffer
 }
 , py::arg("offset"), py::arg("data"))
 
-.def("read_mapped_range",[](pywgpu::Buffer& self, size_t offset, py::buffer data) {
+.def("read_mapped_range", [](pywgpu::Buffer& self, size_t offset, py::buffer data) {
     try {
         py::buffer_info dataInfo = data.request();
         void * _data = (void *)dataInfo.ptr;
@@ -5424,22 +5976,44 @@ _Buffer
 }
 , py::arg("offset"), py::arg("data"))
 
-.def("set_label",&pywgpu::Buffer::SetLabel
+.def("create_texel_view", [](pywgpu::Buffer& self, py::handle descriptor) {
+    try {
+        
+        LinearAlloc la{};
+        BuildCtx ctx{la};
+        
+        pywgpu::TexelBufferViewDescriptor const* _descriptor = Builder<TexelBufferViewDescriptor>(ctx).build(descriptor);
+        
+        return self.CreateTexelView(_descriptor);
+    
+    } catch (const py::error_already_set& e) {
+        // propagate Python-side exception with stack
+        throw;
+    } catch (const std::exception& e) {
+        fprintf(stderr, "C++ exception what(): '%s'\n", e.what());
+        PyErr_SetString(PyExc_RuntimeError, e.what());
+        throw py::error_already_set();
+    }
+    
+}
+, py::arg("descriptor"))
+
+.def("set_label", &pywgpu::Buffer::SetLabel
 , py::arg("label"))
 
-.def("get_usage",&pywgpu::Buffer::GetUsage
+.def("get_usage", &pywgpu::Buffer::GetUsage
 )
 
-.def("get_size",&pywgpu::Buffer::GetSize
+.def("get_size", &pywgpu::Buffer::GetSize
 )
 
-.def("get_map_state",&pywgpu::Buffer::GetMapState
+.def("get_map_state", &pywgpu::Buffer::GetMapState
 )
 
-.def("unmap",&pywgpu::Buffer::Unmap
+.def("unmap", &pywgpu::Buffer::Unmap
 )
 
-.def("destroy",&pywgpu::Buffer::Destroy
+.def("destroy", &pywgpu::Buffer::Destroy
 )
 
 ;
@@ -5448,7 +6022,7 @@ py::class_<CommandBuffer> _CommandBuffer(m, "CommandBuffer");
 registry.on(m, "CommandBuffer", _CommandBuffer);
 
 _CommandBuffer
-.def("set_label",&pywgpu::CommandBuffer::SetLabel
+.def("set_label", &pywgpu::CommandBuffer::SetLabel
 , py::arg("label"))
 
 ;
@@ -5457,7 +6031,7 @@ py::class_<CommandEncoder> _CommandEncoder(m, "CommandEncoder");
 registry.on(m, "CommandEncoder", _CommandEncoder);
 
 _CommandEncoder
-.def("finish",[](pywgpu::CommandEncoder& self, py::handle descriptor) {
+.def("finish", [](pywgpu::CommandEncoder& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5479,7 +6053,7 @@ _CommandEncoder
 }
 , py::arg("descriptor") = nullptr)
 
-.def("begin_compute_pass",[](pywgpu::CommandEncoder& self, py::handle descriptor) {
+.def("begin_compute_pass", [](pywgpu::CommandEncoder& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5501,7 +6075,7 @@ _CommandEncoder
 }
 , py::arg("descriptor") = nullptr)
 
-.def("begin_render_pass",[](pywgpu::CommandEncoder& self, py::handle descriptor) {
+.def("begin_render_pass", [](pywgpu::CommandEncoder& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5523,37 +6097,37 @@ _CommandEncoder
 }
 , py::arg("descriptor"))
 
-.def("copy_buffer_to_buffer",&pywgpu::CommandEncoder::CopyBufferToBuffer
+.def("copy_buffer_to_buffer", &pywgpu::CommandEncoder::CopyBufferToBuffer
 , py::arg("source"), py::arg("source_offset"), py::arg("destination"), py::arg("destination_offset"), py::arg("size"))
 
-.def("copy_buffer_to_texture",&pywgpu::CommandEncoder::CopyBufferToTexture
+.def("copy_buffer_to_texture", &pywgpu::CommandEncoder::CopyBufferToTexture
 , py::arg("source"), py::arg("destination"), py::arg("copy_size"))
 
-.def("copy_texture_to_buffer",&pywgpu::CommandEncoder::CopyTextureToBuffer
+.def("copy_texture_to_buffer", &pywgpu::CommandEncoder::CopyTextureToBuffer
 , py::arg("source"), py::arg("destination"), py::arg("copy_size"))
 
-.def("copy_texture_to_texture",&pywgpu::CommandEncoder::CopyTextureToTexture
+.def("copy_texture_to_texture", &pywgpu::CommandEncoder::CopyTextureToTexture
 , py::arg("source"), py::arg("destination"), py::arg("copy_size"))
 
-.def("clear_buffer",&pywgpu::CommandEncoder::ClearBuffer
+.def("clear_buffer", &pywgpu::CommandEncoder::ClearBuffer
 , py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = kWholeSize)
 
-.def("inject_validation_error",&pywgpu::CommandEncoder::InjectValidationError
+.def("inject_validation_error", &pywgpu::CommandEncoder::InjectValidationError
 , py::arg("message"))
 
-.def("insert_debug_marker",&pywgpu::CommandEncoder::InsertDebugMarker
+.def("insert_debug_marker", &pywgpu::CommandEncoder::InsertDebugMarker
 , py::arg("marker_label"))
 
-.def("pop_debug_group",&pywgpu::CommandEncoder::PopDebugGroup
+.def("pop_debug_group", &pywgpu::CommandEncoder::PopDebugGroup
 )
 
-.def("push_debug_group",&pywgpu::CommandEncoder::PushDebugGroup
+.def("push_debug_group", &pywgpu::CommandEncoder::PushDebugGroup
 , py::arg("group_label"))
 
-.def("resolve_query_set",&pywgpu::CommandEncoder::ResolveQuerySet
+.def("resolve_query_set", &pywgpu::CommandEncoder::ResolveQuerySet
 , py::arg("query_set"), py::arg("first_query"), py::arg("query_count"), py::arg("destination"), py::arg("destination_offset"))
 
-.def("write_buffer",[](pywgpu::CommandEncoder& self, Buffer buffer, uint64_t bufferOffset, py::buffer data) {
+.def("write_buffer", [](pywgpu::CommandEncoder& self, Buffer buffer, uint64_t bufferOffset, py::buffer data) {
     try {
         py::buffer_info dataInfo = data.request();
         uint8_t const* _data = (uint8_t const*)dataInfo.ptr;
@@ -5573,10 +6147,10 @@ _CommandEncoder
 }
 , py::arg("buffer"), py::arg("buffer_offset"), py::arg("data"))
 
-.def("write_timestamp",&pywgpu::CommandEncoder::WriteTimestamp
+.def("write_timestamp", &pywgpu::CommandEncoder::WriteTimestamp
 , py::arg("query_set"), py::arg("query_index"))
 
-.def("set_label",&pywgpu::CommandEncoder::SetLabel
+.def("set_label", &pywgpu::CommandEncoder::SetLabel
 , py::arg("label"))
 
 ;
@@ -5585,19 +6159,19 @@ py::class_<ComputePassEncoder> _ComputePassEncoder(m, "ComputePassEncoder");
 registry.on(m, "ComputePassEncoder", _ComputePassEncoder);
 
 _ComputePassEncoder
-.def("insert_debug_marker",&pywgpu::ComputePassEncoder::InsertDebugMarker
+.def("insert_debug_marker", &pywgpu::ComputePassEncoder::InsertDebugMarker
 , py::arg("marker_label"))
 
-.def("pop_debug_group",&pywgpu::ComputePassEncoder::PopDebugGroup
+.def("pop_debug_group", &pywgpu::ComputePassEncoder::PopDebugGroup
 )
 
-.def("push_debug_group",&pywgpu::ComputePassEncoder::PushDebugGroup
+.def("push_debug_group", &pywgpu::ComputePassEncoder::PushDebugGroup
 , py::arg("group_label"))
 
-.def("set_pipeline",&pywgpu::ComputePassEncoder::SetPipeline
+.def("set_pipeline", &pywgpu::ComputePassEncoder::SetPipeline
 , py::arg("pipeline"))
 
-.def("set_bind_group",[](pywgpu::ComputePassEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
+.def("set_bind_group", [](pywgpu::ComputePassEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
     try {
         py::buffer_info dynamicOffsetsInfo = dynamicOffsets.has_value() ? dynamicOffsets.value().request() : py::buffer_info();
         uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
@@ -5617,28 +6191,28 @@ _ComputePassEncoder
 }
 , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offsets") = nullptr)
 
-.def("write_timestamp",&pywgpu::ComputePassEncoder::WriteTimestamp
+.def("write_timestamp", &pywgpu::ComputePassEncoder::WriteTimestamp
 , py::arg("query_set"), py::arg("query_index"))
 
-.def("dispatch_workgroups",&pywgpu::ComputePassEncoder::DispatchWorkgroups
+.def("dispatch_workgroups", &pywgpu::ComputePassEncoder::DispatchWorkgroups
 , py::arg("workgroupCountX"), py::arg("workgroupCountY") = 1, py::arg("workgroupCountZ") = 1)
 
-.def("dispatch_workgroups_indirect",&pywgpu::ComputePassEncoder::DispatchWorkgroupsIndirect
+.def("dispatch_workgroups_indirect", &pywgpu::ComputePassEncoder::DispatchWorkgroupsIndirect
 , py::arg("indirect_buffer"), py::arg("indirect_offset"))
 
-.def("end",&pywgpu::ComputePassEncoder::End
+.def("end", &pywgpu::ComputePassEncoder::End
 )
 
-.def("set_label",&pywgpu::ComputePassEncoder::SetLabel
+.def("set_label", &pywgpu::ComputePassEncoder::SetLabel
 , py::arg("label"))
 
-.def("set_immediate_data",[](pywgpu::ComputePassEncoder& self, uint32_t offset, py::buffer data) {
+.def("set_immediates", [](pywgpu::ComputePassEncoder& self, uint32_t offset, py::buffer data) {
     try {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
         auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
-        return self.SetImmediateData(offset, _data, size);
+        return self.SetImmediates(offset, _data, size);
     
     } catch (const py::error_already_set& e) {
         // propagate Python-side exception with stack
@@ -5652,16 +6226,19 @@ _ComputePassEncoder
 }
 , py::arg("offset"), py::arg("data"))
 
+.def("set_resource_table", &pywgpu::ComputePassEncoder::SetResourceTable
+, py::arg("table"))
+
 ;
 
 py::class_<ComputePipeline> _ComputePipeline(m, "ComputePipeline");
 registry.on(m, "ComputePipeline", _ComputePipeline);
 
 _ComputePipeline
-.def("get_bind_group_layout",&pywgpu::ComputePipeline::GetBindGroupLayout
+.def("get_bind_group_layout", &pywgpu::ComputePipeline::GetBindGroupLayout
 , py::arg("group_index"))
 
-.def("set_label",&pywgpu::ComputePipeline::SetLabel
+.def("set_label", &pywgpu::ComputePipeline::SetLabel
 , py::arg("label"))
 
 ;
@@ -5670,7 +6247,7 @@ py::class_<Device> _Device(m, "Device");
 registry.on(m, "Device", _Device);
 
 _Device
-.def("create_bind_group",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_bind_group", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5692,7 +6269,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_bind_group_layout",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_bind_group_layout", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5714,7 +6291,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_buffer",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_buffer", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5736,7 +6313,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_error_buffer",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_error_buffer", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5758,7 +6335,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_command_encoder",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_command_encoder", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5780,7 +6357,7 @@ _Device
 }
 , py::arg("descriptor") = nullptr)
 
-.def("create_compute_pipeline",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_compute_pipeline", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5802,7 +6379,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("_create_compute_pipeline_async",[](pywgpu::Device& self, py::handle descriptor, CreateComputePipelineAsyncCallbackInfo callbackInfo) {
+.def("_create_compute_pipeline_async", [](pywgpu::Device& self, py::handle descriptor, CreateComputePipelineAsyncCallbackInfo callbackInfo) {
     try {
         
         LinearAlloc la{};
@@ -5824,7 +6401,7 @@ _Device
 }
 , py::arg("descriptor"), py::arg("callback_info"))
 
-.def("create_external_texture",[](pywgpu::Device& self, py::handle externalTextureDescriptor) {
+.def("create_external_texture", [](pywgpu::Device& self, py::handle externalTextureDescriptor) {
     try {
         
         LinearAlloc la{};
@@ -5846,10 +6423,10 @@ _Device
 }
 , py::arg("external_texture_descriptor"))
 
-.def("create_error_external_texture",&pywgpu::Device::CreateErrorExternalTexture
+.def("create_error_external_texture", &pywgpu::Device::CreateErrorExternalTexture
 )
 
-.def("create_pipeline_layout",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_pipeline_layout", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5871,7 +6448,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_query_set",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_query_set", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5893,7 +6470,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("_create_render_pipeline_async",[](pywgpu::Device& self, py::handle descriptor, CreateRenderPipelineAsyncCallbackInfo callbackInfo) {
+.def("_create_render_pipeline_async", [](pywgpu::Device& self, py::handle descriptor, CreateRenderPipelineAsyncCallbackInfo callbackInfo) {
     try {
         
         LinearAlloc la{};
@@ -5915,7 +6492,7 @@ _Device
 }
 , py::arg("descriptor"), py::arg("callback_info"))
 
-.def("create_render_bundle_encoder",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_render_bundle_encoder", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5937,7 +6514,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_render_pipeline",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_render_pipeline", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5959,7 +6536,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_sampler",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_sampler", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -5981,7 +6558,7 @@ _Device
 }
 , py::arg("descriptor") = nullptr)
 
-.def("create_shader_module",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_shader_module", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6003,7 +6580,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_error_shader_module",[](pywgpu::Device& self, py::handle descriptor, StringView errorMessage) {
+.def("create_error_shader_module", [](pywgpu::Device& self, py::handle descriptor, StringView errorMessage) {
     try {
         
         LinearAlloc la{};
@@ -6025,7 +6602,7 @@ _Device
 }
 , py::arg("descriptor"), py::arg("error_message"))
 
-.def("create_texture",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_texture", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6047,7 +6624,29 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("import_shared_buffer_memory",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_resource_table", [](pywgpu::Device& self, py::handle descriptor) {
+    try {
+        
+        LinearAlloc la{};
+        BuildCtx ctx{la};
+        
+        pywgpu::ResourceTableDescriptor const* _descriptor = Builder<ResourceTableDescriptor>(ctx).build(descriptor);
+        
+        return self.CreateResourceTable(_descriptor);
+    
+    } catch (const py::error_already_set& e) {
+        // propagate Python-side exception with stack
+        throw;
+    } catch (const std::exception& e) {
+        fprintf(stderr, "C++ exception what(): '%s'\n", e.what());
+        PyErr_SetString(PyExc_RuntimeError, e.what());
+        throw py::error_already_set();
+    }
+    
+}
+, py::arg("descriptor"))
+
+.def("import_shared_buffer_memory", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6069,7 +6668,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("import_shared_texture_memory",[](pywgpu::Device& self, py::handle descriptor) {
+.def("import_shared_texture_memory", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6091,7 +6690,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("import_shared_fence",[](pywgpu::Device& self, py::handle descriptor) {
+.def("import_shared_fence", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6113,7 +6712,7 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("create_error_texture",[](pywgpu::Device& self, py::handle descriptor) {
+.def("create_error_texture", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6135,13 +6734,13 @@ _Device
 }
 , py::arg("descriptor"))
 
-.def("destroy",&pywgpu::Device::Destroy
+.def("destroy", &pywgpu::Device::Destroy
 )
 
-.def("get_a_hardware_buffer_properties",&pywgpu::Device::GetAHardwareBufferProperties
+.def("get_a_hardware_buffer_properties", &pywgpu::Device::GetAHardwareBufferProperties
 , py::arg("handle"), py::arg("properties"))
 
-.def("get_limits",[](pywgpu::Device& self, py::handle limits) {
+.def("get_limits", [](pywgpu::Device& self, py::handle limits) {
     try {
         
         LinearAlloc la{};
@@ -6163,46 +6762,46 @@ _Device
 }
 , py::arg("limits"))
 
-.def("_get_lost_future",&pywgpu::Device::GetLostFuture
+.def("_get_lost_future", &pywgpu::Device::GetLostFuture
 )
 
-.def("has_feature",&pywgpu::Device::HasFeature
+.def("has_feature", &pywgpu::Device::HasFeature
 , py::arg("feature"))
 
-.def("get_features",&pywgpu::Device::GetFeatures
+.def("get_features", &pywgpu::Device::GetFeatures
 , py::arg("features"))
 
-.def("get_adapter_info",&pywgpu::Device::GetAdapterInfo
+.def("get_adapter_info", &pywgpu::Device::GetAdapterInfo
 , py::arg("adapter_info"))
 
-.def("get_adapter",&pywgpu::Device::GetAdapter
+.def("get_adapter", &pywgpu::Device::GetAdapter
 )
 
-.def("get_queue",&pywgpu::Device::GetQueue
+.def("get_queue", &pywgpu::Device::GetQueue
 )
 
-.def("inject_error",&pywgpu::Device::InjectError
+.def("inject_error", &pywgpu::Device::InjectError
 , py::arg("type"), py::arg("message"))
 
-.def("force_loss",&pywgpu::Device::ForceLoss
+.def("force_loss", &pywgpu::Device::ForceLoss
 , py::arg("type"), py::arg("message"))
 
-.def("tick",&pywgpu::Device::Tick
+.def("tick", &pywgpu::Device::Tick
 )
 
-.def("set_logging_callback",&pywgpu::Device::SetLoggingCallback
+.def("set_logging_callback", &pywgpu::Device::SetLoggingCallback
 , py::arg("callback_info"))
 
-.def("push_error_scope",&pywgpu::Device::PushErrorScope
+.def("push_error_scope", &pywgpu::Device::PushErrorScope
 , py::arg("filter"))
 
-.def("_pop_error_scope",&pywgpu::Device::PopErrorScope
+.def("_pop_error_scope", &pywgpu::Device::PopErrorScope
 , py::arg("callback_info"))
 
-.def("set_label",&pywgpu::Device::SetLabel
+.def("set_label", &pywgpu::Device::SetLabel
 , py::arg("label"))
 
-.def("validate_texture_descriptor",[](pywgpu::Device& self, py::handle descriptor) {
+.def("validate_texture_descriptor", [](pywgpu::Device& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6230,16 +6829,16 @@ py::class_<ExternalTexture> _ExternalTexture(m, "ExternalTexture");
 registry.on(m, "ExternalTexture", _ExternalTexture);
 
 _ExternalTexture
-.def("set_label",&pywgpu::ExternalTexture::SetLabel
+.def("set_label", &pywgpu::ExternalTexture::SetLabel
 , py::arg("label"))
 
-.def("destroy",&pywgpu::ExternalTexture::Destroy
+.def("destroy", &pywgpu::ExternalTexture::Destroy
 )
 
-.def("expire",&pywgpu::ExternalTexture::Expire
+.def("expire", &pywgpu::ExternalTexture::Expire
 )
 
-.def("refresh",&pywgpu::ExternalTexture::Refresh
+.def("refresh", &pywgpu::ExternalTexture::Refresh
 )
 
 ;
@@ -6248,13 +6847,13 @@ py::class_<SharedBufferMemory> _SharedBufferMemory(m, "SharedBufferMemory");
 registry.on(m, "SharedBufferMemory", _SharedBufferMemory);
 
 _SharedBufferMemory
-.def("set_label",&pywgpu::SharedBufferMemory::SetLabel
+.def("set_label", &pywgpu::SharedBufferMemory::SetLabel
 , py::arg("label"))
 
-.def("get_properties",&pywgpu::SharedBufferMemory::GetProperties
+.def("get_properties", &pywgpu::SharedBufferMemory::GetProperties
 , py::arg("properties"))
 
-.def("create_buffer",[](pywgpu::SharedBufferMemory& self, py::handle descriptor) {
+.def("create_buffer", [](pywgpu::SharedBufferMemory& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6276,7 +6875,7 @@ _SharedBufferMemory
 }
 , py::arg("descriptor") = nullptr)
 
-.def("begin_access",[](pywgpu::SharedBufferMemory& self, Buffer buffer, py::handle descriptor) {
+.def("begin_access", [](pywgpu::SharedBufferMemory& self, Buffer buffer, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6298,10 +6897,10 @@ _SharedBufferMemory
 }
 , py::arg("buffer"), py::arg("descriptor"))
 
-.def("end_access",&pywgpu::SharedBufferMemory::EndAccess
+.def("end_access", &pywgpu::SharedBufferMemory::EndAccess
 , py::arg("buffer"), py::arg("descriptor"))
 
-.def("is_device_lost",&pywgpu::SharedBufferMemory::IsDeviceLost
+.def("is_device_lost", &pywgpu::SharedBufferMemory::IsDeviceLost
 )
 
 ;
@@ -6310,13 +6909,13 @@ py::class_<SharedTextureMemory> _SharedTextureMemory(m, "SharedTextureMemory");
 registry.on(m, "SharedTextureMemory", _SharedTextureMemory);
 
 _SharedTextureMemory
-.def("set_label",&pywgpu::SharedTextureMemory::SetLabel
+.def("set_label", &pywgpu::SharedTextureMemory::SetLabel
 , py::arg("label"))
 
-.def("get_properties",&pywgpu::SharedTextureMemory::GetProperties
+.def("get_properties", &pywgpu::SharedTextureMemory::GetProperties
 , py::arg("properties"))
 
-.def("create_texture",[](pywgpu::SharedTextureMemory& self, py::handle descriptor) {
+.def("create_texture", [](pywgpu::SharedTextureMemory& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6338,7 +6937,7 @@ _SharedTextureMemory
 }
 , py::arg("descriptor") = nullptr)
 
-.def("begin_access",[](pywgpu::SharedTextureMemory& self, Texture texture, py::handle descriptor) {
+.def("begin_access", [](pywgpu::SharedTextureMemory& self, Texture texture, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6360,10 +6959,10 @@ _SharedTextureMemory
 }
 , py::arg("texture"), py::arg("descriptor"))
 
-.def("end_access",&pywgpu::SharedTextureMemory::EndAccess
+.def("end_access", &pywgpu::SharedTextureMemory::EndAccess
 , py::arg("texture"), py::arg("descriptor"))
 
-.def("is_device_lost",&pywgpu::SharedTextureMemory::IsDeviceLost
+.def("is_device_lost", &pywgpu::SharedTextureMemory::IsDeviceLost
 )
 
 ;
@@ -6372,7 +6971,10 @@ py::class_<SharedFence> _SharedFence(m, "SharedFence");
 registry.on(m, "SharedFence", _SharedFence);
 
 _SharedFence
-.def("export_info",&pywgpu::SharedFence::ExportInfo
+.def("set_label", &pywgpu::SharedFence::SetLabel
+, py::arg("label"))
+
+.def("export_info", &pywgpu::SharedFence::ExportInfo
 , py::arg("info"))
 
 ;
@@ -6381,7 +6983,7 @@ py::class_<Instance> _Instance(m, "Instance");
 registry.on(m, "Instance", _Instance);
 
 _Instance
-.def("create_surface",[](pywgpu::Instance& self, py::handle descriptor) {
+.def("create_surface", [](pywgpu::Instance& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6403,10 +7005,10 @@ _Instance
 }
 , py::arg("descriptor"))
 
-.def("process_events",&pywgpu::Instance::ProcessEvents
+.def("process_events", &pywgpu::Instance::ProcessEvents
 )
 
-.def("wait_any",[](pywgpu::Instance& self, std::vector<pywgpu::FutureWaitInfo> futures, uint64_t timeoutNS) {
+.def("wait_any", [](pywgpu::Instance& self, std::vector<pywgpu::FutureWaitInfo> futures, uint64_t timeoutNS) {
     try {
         pywgpu::FutureWaitInfo * _futures = (pywgpu::FutureWaitInfo *)futures.data();
         auto futureCount = futures.size();
@@ -6425,7 +7027,7 @@ _Instance
 }
 , py::arg("futures"), py::arg("timeout_NS"))
 
-.def("_request_adapter",[](pywgpu::Instance& self, py::handle options, RequestAdapterCallbackInfo callbackInfo) {
+.def("_request_adapter", [](pywgpu::Instance& self, py::handle options, RequestAdapterCallbackInfo callbackInfo) {
     try {
         
         LinearAlloc la{};
@@ -6447,10 +7049,10 @@ _Instance
 }
 , py::arg("options"), py::arg("callback_info"))
 
-.def("has_WGSL_language_feature",&pywgpu::Instance::HasWGSLLanguageFeature
+.def("has_WGSL_language_feature", &pywgpu::Instance::HasWGSLLanguageFeature
 , py::arg("feature"))
 
-.def("get_WGSL_language_features",&pywgpu::Instance::GetWGSLLanguageFeatures
+.def("get_WGSL_language_features", &pywgpu::Instance::GetWGSLLanguageFeatures
 , py::arg("features"))
 
 ;
@@ -6459,7 +7061,7 @@ py::class_<PipelineLayout> _PipelineLayout(m, "PipelineLayout");
 registry.on(m, "PipelineLayout", _PipelineLayout);
 
 _PipelineLayout
-.def("set_label",&pywgpu::PipelineLayout::SetLabel
+.def("set_label", &pywgpu::PipelineLayout::SetLabel
 , py::arg("label"))
 
 ;
@@ -6468,16 +7070,16 @@ py::class_<QuerySet> _QuerySet(m, "QuerySet");
 registry.on(m, "QuerySet", _QuerySet);
 
 _QuerySet
-.def("set_label",&pywgpu::QuerySet::SetLabel
+.def("set_label", &pywgpu::QuerySet::SetLabel
 , py::arg("label"))
 
-.def("get_type",&pywgpu::QuerySet::GetType
+.def("get_type", &pywgpu::QuerySet::GetType
 )
 
-.def("get_count",&pywgpu::QuerySet::GetCount
+.def("get_count", &pywgpu::QuerySet::GetCount
 )
 
-.def("destroy",&pywgpu::QuerySet::Destroy
+.def("destroy", &pywgpu::QuerySet::Destroy
 )
 
 ;
@@ -6486,7 +7088,7 @@ py::class_<Queue> _Queue(m, "Queue");
 registry.on(m, "Queue", _Queue);
 
 _Queue
-.def("submit",[](pywgpu::Queue& self, std::vector<pywgpu::CommandBuffer> commands) {
+.def("submit", [](pywgpu::Queue& self, std::vector<pywgpu::CommandBuffer> commands) {
     try {
         pywgpu::CommandBuffer const* _commands = (pywgpu::CommandBuffer const*)commands.data();
         auto commandCount = commands.size();
@@ -6505,10 +7107,10 @@ _Queue
 }
 , py::arg("commands"))
 
-.def("_on_submitted_work_done",&pywgpu::Queue::OnSubmittedWorkDone
+.def("_on_submitted_work_done", &pywgpu::Queue::OnSubmittedWorkDone
 , py::arg("callback_info"))
 
-.def("write_buffer",[](pywgpu::Queue& self, Buffer buffer, uint64_t bufferOffset, py::buffer data) {
+.def("write_buffer", [](pywgpu::Queue& self, Buffer buffer, uint64_t bufferOffset, py::buffer data) {
     try {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
@@ -6528,7 +7130,7 @@ _Queue
 }
 , py::arg("buffer"), py::arg("buffer_offset"), py::arg("data"))
 
-.def("write_texture",[](pywgpu::Queue& self, TexelCopyTextureInfo const * destination, py::buffer data, TexelCopyBufferLayout const * dataLayout, Extent3D const * writeSize) {
+.def("write_texture", [](pywgpu::Queue& self, TexelCopyTextureInfo const * destination, py::buffer data, TexelCopyBufferLayout const * dataLayout, Extent3D const * writeSize) {
     try {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
@@ -6548,7 +7150,7 @@ _Queue
 }
 , py::arg("destination"), py::arg("data"), py::arg("data_layout"), py::arg("write_size"))
 
-.def("copy_texture_for_browser",[](pywgpu::Queue& self, TexelCopyTextureInfo const * source, TexelCopyTextureInfo const * destination, Extent3D const * copySize, py::handle options) {
+.def("copy_texture_for_browser", [](pywgpu::Queue& self, TexelCopyTextureInfo const * source, TexelCopyTextureInfo const * destination, Extent3D const * copySize, py::handle options) {
     try {
         
         LinearAlloc la{};
@@ -6570,7 +7172,7 @@ _Queue
 }
 , py::arg("source"), py::arg("destination"), py::arg("copy_size"), py::arg("options"))
 
-.def("copy_external_texture_for_browser",[](pywgpu::Queue& self, py::handle source, TexelCopyTextureInfo const * destination, Extent3D const * copySize, py::handle options) {
+.def("copy_external_texture_for_browser", [](pywgpu::Queue& self, py::handle source, TexelCopyTextureInfo const * destination, Extent3D const * copySize, py::handle options) {
     try {
         
         LinearAlloc la{};
@@ -6594,7 +7196,7 @@ _Queue
 }
 , py::arg("source"), py::arg("destination"), py::arg("copy_size"), py::arg("options"))
 
-.def("set_label",&pywgpu::Queue::SetLabel
+.def("set_label", &pywgpu::Queue::SetLabel
 , py::arg("label"))
 
 ;
@@ -6603,7 +7205,7 @@ py::class_<RenderBundle> _RenderBundle(m, "RenderBundle");
 registry.on(m, "RenderBundle", _RenderBundle);
 
 _RenderBundle
-.def("set_label",&pywgpu::RenderBundle::SetLabel
+.def("set_label", &pywgpu::RenderBundle::SetLabel
 , py::arg("label"))
 
 ;
@@ -6612,10 +7214,10 @@ py::class_<RenderBundleEncoder> _RenderBundleEncoder(m, "RenderBundleEncoder");
 registry.on(m, "RenderBundleEncoder", _RenderBundleEncoder);
 
 _RenderBundleEncoder
-.def("set_pipeline",&pywgpu::RenderBundleEncoder::SetPipeline
+.def("set_pipeline", &pywgpu::RenderBundleEncoder::SetPipeline
 , py::arg("pipeline"))
 
-.def("set_bind_group",[](pywgpu::RenderBundleEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
+.def("set_bind_group", [](pywgpu::RenderBundleEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
     try {
         py::buffer_info dynamicOffsetsInfo = dynamicOffsets.has_value() ? dynamicOffsets.value().request() : py::buffer_info();
         uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
@@ -6635,34 +7237,34 @@ _RenderBundleEncoder
 }
 , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offsets") = nullptr)
 
-.def("draw",&pywgpu::RenderBundleEncoder::Draw
+.def("draw", &pywgpu::RenderBundleEncoder::Draw
 , py::arg("vertex_count"), py::arg("instance_count") = 1, py::arg("first_vertex") = 0, py::arg("first_instance") = 0)
 
-.def("draw_indexed",&pywgpu::RenderBundleEncoder::DrawIndexed
+.def("draw_indexed", &pywgpu::RenderBundleEncoder::DrawIndexed
 , py::arg("index_count"), py::arg("instance_count") = 1, py::arg("first_index") = 0, py::arg("base_vertex") = 0, py::arg("first_instance") = 0)
 
-.def("draw_indirect",&pywgpu::RenderBundleEncoder::DrawIndirect
+.def("draw_indirect", &pywgpu::RenderBundleEncoder::DrawIndirect
 , py::arg("indirect_buffer"), py::arg("indirect_offset"))
 
-.def("draw_indexed_indirect",&pywgpu::RenderBundleEncoder::DrawIndexedIndirect
+.def("draw_indexed_indirect", &pywgpu::RenderBundleEncoder::DrawIndexedIndirect
 , py::arg("indirect_buffer"), py::arg("indirect_offset"))
 
-.def("insert_debug_marker",&pywgpu::RenderBundleEncoder::InsertDebugMarker
+.def("insert_debug_marker", &pywgpu::RenderBundleEncoder::InsertDebugMarker
 , py::arg("marker_label"))
 
-.def("pop_debug_group",&pywgpu::RenderBundleEncoder::PopDebugGroup
+.def("pop_debug_group", &pywgpu::RenderBundleEncoder::PopDebugGroup
 )
 
-.def("push_debug_group",&pywgpu::RenderBundleEncoder::PushDebugGroup
+.def("push_debug_group", &pywgpu::RenderBundleEncoder::PushDebugGroup
 , py::arg("group_label"))
 
-.def("set_vertex_buffer",&pywgpu::RenderBundleEncoder::SetVertexBuffer
+.def("set_vertex_buffer", &pywgpu::RenderBundleEncoder::SetVertexBuffer
 , py::arg("slot"), py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = kWholeSize)
 
-.def("set_index_buffer",&pywgpu::RenderBundleEncoder::SetIndexBuffer
+.def("set_index_buffer", &pywgpu::RenderBundleEncoder::SetIndexBuffer
 , py::arg("buffer"), py::arg("format"), py::arg("offset") = 0, py::arg("size") = kWholeSize)
 
-.def("finish",[](pywgpu::RenderBundleEncoder& self, py::handle descriptor) {
+.def("finish", [](pywgpu::RenderBundleEncoder& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6684,16 +7286,16 @@ _RenderBundleEncoder
 }
 , py::arg("descriptor") = nullptr)
 
-.def("set_label",&pywgpu::RenderBundleEncoder::SetLabel
+.def("set_label", &pywgpu::RenderBundleEncoder::SetLabel
 , py::arg("label"))
 
-.def("set_immediate_data",[](pywgpu::RenderBundleEncoder& self, uint32_t offset, py::buffer data) {
+.def("set_immediates", [](pywgpu::RenderBundleEncoder& self, uint32_t offset, py::buffer data) {
     try {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
         auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
-        return self.SetImmediateData(offset, _data, size);
+        return self.SetImmediates(offset, _data, size);
     
     } catch (const py::error_already_set& e) {
         // propagate Python-side exception with stack
@@ -6707,16 +7309,19 @@ _RenderBundleEncoder
 }
 , py::arg("offset"), py::arg("data"))
 
+.def("set_resource_table", &pywgpu::RenderBundleEncoder::SetResourceTable
+, py::arg("table"))
+
 ;
 
 py::class_<RenderPassEncoder> _RenderPassEncoder(m, "RenderPassEncoder");
 registry.on(m, "RenderPassEncoder", _RenderPassEncoder);
 
 _RenderPassEncoder
-.def("set_pipeline",&pywgpu::RenderPassEncoder::SetPipeline
+.def("set_pipeline", &pywgpu::RenderPassEncoder::SetPipeline
 , py::arg("pipeline"))
 
-.def("set_bind_group",[](pywgpu::RenderPassEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
+.def("set_bind_group", [](pywgpu::RenderPassEncoder& self, uint32_t groupIndex, BindGroup group, std::optional<py::buffer> dynamicOffsets) {
     try {
         py::buffer_info dynamicOffsetsInfo = dynamicOffsets.has_value() ? dynamicOffsets.value().request() : py::buffer_info();
         uint32_t const* _dynamicOffsets = (uint32_t const*)dynamicOffsetsInfo.ptr;
@@ -6736,25 +7341,25 @@ _RenderPassEncoder
 }
 , py::arg("group_index"), py::arg("group"), py::arg("dynamic_offsets") = nullptr)
 
-.def("draw",&pywgpu::RenderPassEncoder::Draw
+.def("draw", &pywgpu::RenderPassEncoder::Draw
 , py::arg("vertex_count"), py::arg("instance_count") = 1, py::arg("first_vertex") = 0, py::arg("first_instance") = 0)
 
-.def("draw_indexed",&pywgpu::RenderPassEncoder::DrawIndexed
+.def("draw_indexed", &pywgpu::RenderPassEncoder::DrawIndexed
 , py::arg("index_count"), py::arg("instance_count") = 1, py::arg("first_index") = 0, py::arg("base_vertex") = 0, py::arg("first_instance") = 0)
 
-.def("draw_indirect",&pywgpu::RenderPassEncoder::DrawIndirect
+.def("draw_indirect", &pywgpu::RenderPassEncoder::DrawIndirect
 , py::arg("indirect_buffer"), py::arg("indirect_offset"))
 
-.def("draw_indexed_indirect",&pywgpu::RenderPassEncoder::DrawIndexedIndirect
+.def("draw_indexed_indirect", &pywgpu::RenderPassEncoder::DrawIndexedIndirect
 , py::arg("indirect_buffer"), py::arg("indirect_offset"))
 
-.def("multi_draw_indirect",&pywgpu::RenderPassEncoder::MultiDrawIndirect
+.def("multi_draw_indirect", &pywgpu::RenderPassEncoder::MultiDrawIndirect
 , py::arg("indirect_buffer"), py::arg("indirect_offset"), py::arg("max_draw_count"), py::arg("draw_count_buffer"), py::arg("draw_count_buffer_offset") = 0)
 
-.def("multi_draw_indexed_indirect",&pywgpu::RenderPassEncoder::MultiDrawIndexedIndirect
+.def("multi_draw_indexed_indirect", &pywgpu::RenderPassEncoder::MultiDrawIndexedIndirect
 , py::arg("indirect_buffer"), py::arg("indirect_offset"), py::arg("max_draw_count"), py::arg("draw_count_buffer"), py::arg("draw_count_buffer_offset") = 0)
 
-.def("execute_bundles",[](pywgpu::RenderPassEncoder& self, std::vector<pywgpu::RenderBundle> bundles) {
+.def("execute_bundles", [](pywgpu::RenderPassEncoder& self, std::vector<pywgpu::RenderBundle> bundles) {
     try {
         pywgpu::RenderBundle const* _bundles = (pywgpu::RenderBundle const*)bundles.data();
         auto bundleCount = bundles.size();
@@ -6773,58 +7378,58 @@ _RenderPassEncoder
 }
 , py::arg("bundles"))
 
-.def("insert_debug_marker",&pywgpu::RenderPassEncoder::InsertDebugMarker
+.def("insert_debug_marker", &pywgpu::RenderPassEncoder::InsertDebugMarker
 , py::arg("marker_label"))
 
-.def("pop_debug_group",&pywgpu::RenderPassEncoder::PopDebugGroup
+.def("pop_debug_group", &pywgpu::RenderPassEncoder::PopDebugGroup
 )
 
-.def("push_debug_group",&pywgpu::RenderPassEncoder::PushDebugGroup
+.def("push_debug_group", &pywgpu::RenderPassEncoder::PushDebugGroup
 , py::arg("group_label"))
 
-.def("set_stencil_reference",&pywgpu::RenderPassEncoder::SetStencilReference
+.def("set_stencil_reference", &pywgpu::RenderPassEncoder::SetStencilReference
 , py::arg("reference"))
 
-.def("set_blend_constant",&pywgpu::RenderPassEncoder::SetBlendConstant
+.def("set_blend_constant", &pywgpu::RenderPassEncoder::SetBlendConstant
 , py::arg("color"))
 
-.def("set_viewport",&pywgpu::RenderPassEncoder::SetViewport
+.def("set_viewport", &pywgpu::RenderPassEncoder::SetViewport
 , py::arg("x"), py::arg("y"), py::arg("width"), py::arg("height"), py::arg("min_depth"), py::arg("max_depth"))
 
-.def("set_scissor_rect",&pywgpu::RenderPassEncoder::SetScissorRect
+.def("set_scissor_rect", &pywgpu::RenderPassEncoder::SetScissorRect
 , py::arg("x"), py::arg("y"), py::arg("width"), py::arg("height"))
 
-.def("set_vertex_buffer",&pywgpu::RenderPassEncoder::SetVertexBuffer
+.def("set_vertex_buffer", &pywgpu::RenderPassEncoder::SetVertexBuffer
 , py::arg("slot"), py::arg("buffer"), py::arg("offset") = 0, py::arg("size") = kWholeSize)
 
-.def("set_index_buffer",&pywgpu::RenderPassEncoder::SetIndexBuffer
+.def("set_index_buffer", &pywgpu::RenderPassEncoder::SetIndexBuffer
 , py::arg("buffer"), py::arg("format"), py::arg("offset") = 0, py::arg("size") = kWholeSize)
 
-.def("begin_occlusion_query",&pywgpu::RenderPassEncoder::BeginOcclusionQuery
+.def("begin_occlusion_query", &pywgpu::RenderPassEncoder::BeginOcclusionQuery
 , py::arg("query_index"))
 
-.def("end_occlusion_query",&pywgpu::RenderPassEncoder::EndOcclusionQuery
+.def("end_occlusion_query", &pywgpu::RenderPassEncoder::EndOcclusionQuery
 )
 
-.def("write_timestamp",&pywgpu::RenderPassEncoder::WriteTimestamp
+.def("write_timestamp", &pywgpu::RenderPassEncoder::WriteTimestamp
 , py::arg("query_set"), py::arg("query_index"))
 
-.def("pixel_local_storage_barrier",&pywgpu::RenderPassEncoder::PixelLocalStorageBarrier
+.def("pixel_local_storage_barrier", &pywgpu::RenderPassEncoder::PixelLocalStorageBarrier
 )
 
-.def("end",&pywgpu::RenderPassEncoder::End
+.def("end", &pywgpu::RenderPassEncoder::End
 )
 
-.def("set_label",&pywgpu::RenderPassEncoder::SetLabel
+.def("set_label", &pywgpu::RenderPassEncoder::SetLabel
 , py::arg("label"))
 
-.def("set_immediate_data",[](pywgpu::RenderPassEncoder& self, uint32_t offset, py::buffer data) {
+.def("set_immediates", [](pywgpu::RenderPassEncoder& self, uint32_t offset, py::buffer data) {
     try {
         py::buffer_info dataInfo = data.request();
         void const* _data = (void const*)dataInfo.ptr;
         auto size = ((dataInfo.size * dataInfo.itemsize) + 3) & ~size_t(3);
         
-        return self.SetImmediateData(offset, _data, size);
+        return self.SetImmediates(offset, _data, size);
     
     } catch (const py::error_already_set& e) {
         // propagate Python-side exception with stack
@@ -6838,17 +7443,82 @@ _RenderPassEncoder
 }
 , py::arg("offset"), py::arg("data"))
 
+.def("set_resource_table", &pywgpu::RenderPassEncoder::SetResourceTable
+, py::arg("table"))
+
 ;
 
 py::class_<RenderPipeline> _RenderPipeline(m, "RenderPipeline");
 registry.on(m, "RenderPipeline", _RenderPipeline);
 
 _RenderPipeline
-.def("get_bind_group_layout",&pywgpu::RenderPipeline::GetBindGroupLayout
+.def("get_bind_group_layout", &pywgpu::RenderPipeline::GetBindGroupLayout
 , py::arg("group_index"))
 
-.def("set_label",&pywgpu::RenderPipeline::SetLabel
+.def("set_label", &pywgpu::RenderPipeline::SetLabel
 , py::arg("label"))
+
+;
+
+py::class_<ResourceTable> _ResourceTable(m, "ResourceTable");
+registry.on(m, "ResourceTable", _ResourceTable);
+
+_ResourceTable
+.def("set_label", &pywgpu::ResourceTable::SetLabel
+, py::arg("label"))
+
+.def("get_size", &pywgpu::ResourceTable::GetSize
+)
+
+.def("destroy", &pywgpu::ResourceTable::Destroy
+)
+
+.def("update", [](pywgpu::ResourceTable& self, uint32_t slot, py::handle resource) {
+    try {
+        
+        LinearAlloc la{};
+        BuildCtx ctx{la};
+        
+        pywgpu::BindingResource const* _resource = Builder<BindingResource>(ctx).build(resource);
+        
+        return self.Update(slot, _resource);
+    
+    } catch (const py::error_already_set& e) {
+        // propagate Python-side exception with stack
+        throw;
+    } catch (const std::exception& e) {
+        fprintf(stderr, "C++ exception what(): '%s'\n", e.what());
+        PyErr_SetString(PyExc_RuntimeError, e.what());
+        throw py::error_already_set();
+    }
+    
+}
+, py::arg("slot"), py::arg("resource"))
+
+.def("insert_binding", [](pywgpu::ResourceTable& self, py::handle resource) {
+    try {
+        
+        LinearAlloc la{};
+        BuildCtx ctx{la};
+        
+        pywgpu::BindingResource const* _resource = Builder<BindingResource>(ctx).build(resource);
+        
+        return self.InsertBinding(_resource);
+    
+    } catch (const py::error_already_set& e) {
+        // propagate Python-side exception with stack
+        throw;
+    } catch (const std::exception& e) {
+        fprintf(stderr, "C++ exception what(): '%s'\n", e.what());
+        PyErr_SetString(PyExc_RuntimeError, e.what());
+        throw py::error_already_set();
+    }
+    
+}
+, py::arg("resource"))
+
+.def("remove_binding", &pywgpu::ResourceTable::RemoveBinding
+, py::arg("slot"))
 
 ;
 
@@ -6856,7 +7526,7 @@ py::class_<Sampler> _Sampler(m, "Sampler");
 registry.on(m, "Sampler", _Sampler);
 
 _Sampler
-.def("set_label",&pywgpu::Sampler::SetLabel
+.def("set_label", &pywgpu::Sampler::SetLabel
 , py::arg("label"))
 
 ;
@@ -6865,10 +7535,10 @@ py::class_<ShaderModule> _ShaderModule(m, "ShaderModule");
 registry.on(m, "ShaderModule", _ShaderModule);
 
 _ShaderModule
-.def("_get_compilation_info",&pywgpu::ShaderModule::GetCompilationInfo
+.def("_get_compilation_info", &pywgpu::ShaderModule::GetCompilationInfo
 , py::arg("callback_info"))
 
-.def("set_label",&pywgpu::ShaderModule::SetLabel
+.def("set_label", &pywgpu::ShaderModule::SetLabel
 , py::arg("label"))
 
 ;
@@ -6877,7 +7547,7 @@ py::class_<Surface> _Surface(m, "Surface");
 registry.on(m, "Surface", _Surface);
 
 _Surface
-.def("configure",[](pywgpu::Surface& self, py::handle config) {
+.def("configure", [](pywgpu::Surface& self, py::handle config) {
     try {
         
         LinearAlloc la{};
@@ -6899,19 +7569,19 @@ _Surface
 }
 , py::arg("config"))
 
-.def("get_capabilities",&pywgpu::Surface::GetCapabilities
+.def("get_capabilities", &pywgpu::Surface::GetCapabilities
 , py::arg("adapter"), py::arg("capabilities"))
 
-.def("get_current_texture",&pywgpu::Surface::GetCurrentTexture
+.def("get_current_texture", &pywgpu::Surface::GetCurrentTexture
 , py::arg("surface_texture"))
 
-.def("present",&pywgpu::Surface::Present
+.def("present", &pywgpu::Surface::Present
 )
 
-.def("unconfigure",&pywgpu::Surface::Unconfigure
+.def("unconfigure", &pywgpu::Surface::Unconfigure
 )
 
-.def("set_label",&pywgpu::Surface::SetLabel
+.def("set_label", &pywgpu::Surface::SetLabel
 , py::arg("label"))
 
 ;
@@ -6920,7 +7590,7 @@ py::class_<Texture> _Texture(m, "Texture");
 registry.on(m, "Texture", _Texture);
 
 _Texture
-.def("create_view",[](pywgpu::Texture& self, py::handle descriptor) {
+.def("create_view", [](pywgpu::Texture& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6942,7 +7612,7 @@ _Texture
 }
 , py::arg("descriptor") = nullptr)
 
-.def("create_error_view",[](pywgpu::Texture& self, py::handle descriptor) {
+.def("create_error_view", [](pywgpu::Texture& self, py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -6964,35 +7634,47 @@ _Texture
 }
 , py::arg("descriptor") = nullptr)
 
-.def("set_label",&pywgpu::Texture::SetLabel
+.def("set_label", &pywgpu::Texture::SetLabel
 , py::arg("label"))
 
-.def("get_width",&pywgpu::Texture::GetWidth
+.def("get_width", &pywgpu::Texture::GetWidth
 )
 
-.def("get_height",&pywgpu::Texture::GetHeight
+.def("get_height", &pywgpu::Texture::GetHeight
 )
 
-.def("get_depth_or_array_layers",&pywgpu::Texture::GetDepthOrArrayLayers
+.def("get_depth_or_array_layers", &pywgpu::Texture::GetDepthOrArrayLayers
 )
 
-.def("get_mip_level_count",&pywgpu::Texture::GetMipLevelCount
+.def("get_mip_level_count", &pywgpu::Texture::GetMipLevelCount
 )
 
-.def("get_sample_count",&pywgpu::Texture::GetSampleCount
+.def("get_sample_count", &pywgpu::Texture::GetSampleCount
 )
 
-.def("get_dimension",&pywgpu::Texture::GetDimension
+.def("get_dimension", &pywgpu::Texture::GetDimension
 )
 
-.def("get_format",&pywgpu::Texture::GetFormat
+.def("get_format", &pywgpu::Texture::GetFormat
 )
 
-.def("get_usage",&pywgpu::Texture::GetUsage
+.def("get_usage", &pywgpu::Texture::GetUsage
 )
 
-.def("destroy",&pywgpu::Texture::Destroy
+.def("get_texture_binding_view_dimension", &pywgpu::Texture::GetTextureBindingViewDimension
 )
+
+.def("destroy", &pywgpu::Texture::Destroy
+)
+
+.def("pin", &pywgpu::Texture::Pin
+, py::arg("usage"))
+
+.def("unpin", &pywgpu::Texture::Unpin
+)
+
+.def("set_ownership_for_memory_dump", &pywgpu::Texture::SetOwnershipForMemoryDump
+, py::arg("owner_guid") = 0)
 
 ;
 
@@ -7000,12 +7682,21 @@ py::class_<TextureView> _TextureView(m, "TextureView");
 registry.on(m, "TextureView", _TextureView);
 
 _TextureView
-.def("set_label",&pywgpu::TextureView::SetLabel
+.def("set_label", &pywgpu::TextureView::SetLabel
 , py::arg("label"))
 
 ;
 
-m.def("create_instance",[](py::handle descriptor) {
+py::class_<TexelBufferView> _TexelBufferView(m, "TexelBufferView");
+registry.on(m, "TexelBufferView", _TexelBufferView);
+
+_TexelBufferView
+.def("set_label", &pywgpu::TexelBufferView::SetLabel
+, py::arg("label"))
+
+;
+
+m.def("create_instance", [](py::handle descriptor) {
     try {
         
         LinearAlloc la{};
@@ -7029,27 +7720,18 @@ m.def("create_instance",[](py::handle descriptor) {
 
 ;
 
-m.def("get_instance_capabilities",[](py::handle capabilities) {
-    try {
-        
-        LinearAlloc la{};
-        BuildCtx ctx{la};
-        
-        pywgpu::InstanceCapabilities * _capabilities = Builder<InstanceCapabilities>(ctx).build(capabilities);
-        
-        return GetInstanceCapabilities(_capabilities);
-    
-    } catch (const py::error_already_set& e) {
-        // propagate Python-side exception with stack
-        throw;
-    } catch (const std::exception& e) {
-        fprintf(stderr, "C++ exception what(): '%s'\n", e.what());
-        PyErr_SetString(PyExc_RuntimeError, e.what());
-        throw py::error_already_set();
-    }
-    
-}
-, py::arg("capabilities"))
+m.def("get_instance_features", &pywgpu::GetInstanceFeatures
+, py::arg("features"))
+
+;
+
+m.def("has_instance_feature", &pywgpu::HasInstanceFeature
+, py::arg("feature"))
+
+;
+
+m.def("get_instance_limits", &pywgpu::GetInstanceLimits
+, py::arg("limits"))
 
 ;
 
@@ -7060,22 +7742,36 @@ ChainedStruct* build_chained_struct(py::handle h, BuildCtx ctx) {
     if (h.is_none()) return nullptr;
     auto s_type = py::cast<SType>(h.attr("s_type"));
     switch (s_type) {
+        case SType::RequestAdapterWebXROptions:
+            return Builder<RequestAdapterWebXROptions>(ctx).build(h);
+        case SType::RequestAdapterWebGPUBackendOptions:
+            return Builder<RequestAdapterWebGPUBackendOptions>(ctx).build(h);
+        case SType::DawnConsumeAdapterDescriptor:
+            return Builder<DawnConsumeAdapterDescriptor>(ctx).build(h);
         case SType::DawnTogglesDescriptor:
             return Builder<DawnTogglesDescriptor>(ctx).build(h);
         case SType::DawnCacheDeviceDescriptor:
             return Builder<DawnCacheDeviceDescriptor>(ctx).build(h);
+        case SType::DawnDeviceAllocatorControl:
+            return Builder<DawnDeviceAllocatorControl>(ctx).build(h);
         case SType::DawnWGSLBlocklist:
             return Builder<DawnWGSLBlocklist>(ctx).build(h);
         case SType::StaticSamplerBindingLayout:
             return Builder<StaticSamplerBindingLayout>(ctx).build(h);
         case SType::ExternalTextureBindingEntry:
             return Builder<ExternalTextureBindingEntry>(ctx).build(h);
+        case SType::TexelBufferBindingEntry:
+            return Builder<TexelBufferBindingEntry>(ctx).build(h);
         case SType::ExternalTextureBindingLayout:
             return Builder<ExternalTextureBindingLayout>(ctx).build(h);
+        case SType::TexelBufferBindingLayout:
+            return Builder<TexelBufferBindingLayout>(ctx).build(h);
         case SType::BufferHostMappedPointer:
             return Builder<BufferHostMappedPointer>(ctx).build(h);
         case SType::DawnCompilationMessageUtf16:
             return Builder<DawnCompilationMessageUtf16>(ctx).build(h);
+        case SType::SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor:
+            return Builder<SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor>(ctx).build(h);
         case SType::SharedTextureMemoryVkDedicatedAllocationDescriptor:
             return Builder<SharedTextureMemoryVkDedicatedAllocationDescriptor>(ctx).build(h);
         case SType::SharedTextureMemoryAHardwareBufferDescriptor:
@@ -7096,6 +7792,8 @@ ChainedStruct* build_chained_struct(py::handle h, BuildCtx ctx) {
             return Builder<SharedTextureMemoryVkImageLayoutBeginState>(ctx).build(h);
         case SType::SharedTextureMemoryD3DSwapchainBeginState:
             return Builder<SharedTextureMemoryD3DSwapchainBeginState>(ctx).build(h);
+        case SType::SharedTextureMemoryD3D11BeginState:
+            return Builder<SharedTextureMemoryD3D11BeginState>(ctx).build(h);
         case SType::SharedFenceVkSemaphoreOpaqueFDDescriptor:
             return Builder<SharedFenceVkSemaphoreOpaqueFDDescriptor>(ctx).build(h);
         case SType::SharedFenceSyncFDDescriptor:
@@ -7110,18 +7808,24 @@ ChainedStruct* build_chained_struct(py::handle h, BuildCtx ctx) {
             return Builder<SharedFenceEGLSyncDescriptor>(ctx).build(h);
         case SType::DawnFakeBufferOOMForTesting:
             return Builder<DawnFakeBufferOOMForTesting>(ctx).build(h);
+        case SType::DawnFakeDeviceInitializeErrorForTesting:
+            return Builder<DawnFakeDeviceInitializeErrorForTesting>(ctx).build(h);
         case SType::DawnWireWGSLControl:
             return Builder<DawnWireWGSLControl>(ctx).build(h);
         case SType::DawnInjectedInvalidSType:
             return Builder<DawnInjectedInvalidSType>(ctx).build(h);
+        case SType::PipelineLayoutResourceTable:
+            return Builder<PipelineLayoutResourceTable>(ctx).build(h);
         case SType::PipelineLayoutPixelLocalStorage:
             return Builder<PipelineLayoutPixelLocalStorage>(ctx).build(h);
-        case SType::DawnRenderPassColorAttachmentRenderToSingleSampled:
-            return Builder<DawnRenderPassColorAttachmentRenderToSingleSampled>(ctx).build(h);
+        case SType::DawnRenderPassSampleCount:
+            return Builder<DawnRenderPassSampleCount>(ctx).build(h);
         case SType::RenderPassMaxDrawCount:
             return Builder<RenderPassMaxDrawCount>(ctx).build(h);
-        case SType::RenderPassDescriptorExpandResolveRect:
-            return Builder<RenderPassDescriptorExpandResolveRect>(ctx).build(h);
+        case SType::RenderPassRenderAreaRect:
+            return Builder<RenderPassRenderAreaRect>(ctx).build(h);
+        case SType::RenderPassDescriptorResolveRect:
+            return Builder<RenderPassDescriptorResolveRect>(ctx).build(h);
         case SType::RenderPassPixelLocalStorage:
             return Builder<RenderPassPixelLocalStorage>(ctx).build(h);
         case SType::ColorTargetStateExpandResolveTextureDawn:
@@ -7154,8 +7858,12 @@ ChainedStruct* build_chained_struct(py::handle h, BuildCtx ctx) {
             return Builder<SurfaceDescriptorFromWindowsUWPSwapChainPanel>(ctx).build(h);
         case SType::SurfaceDescriptorFromWindowsWinUISwapChainPanel:
             return Builder<SurfaceDescriptorFromWindowsWinUISwapChainPanel>(ctx).build(h);
-        case SType::TextureBindingViewDimensionDescriptor:
-            return Builder<TextureBindingViewDimensionDescriptor>(ctx).build(h);
+        case SType::SurfaceColorManagement:
+            return Builder<SurfaceColorManagement>(ctx).build(h);
+        case SType::TextureBindingViewDimension:
+            return Builder<TextureBindingViewDimension>(ctx).build(h);
+        case SType::TextureComponentSwizzleDescriptor:
+            return Builder<TextureComponentSwizzleDescriptor>(ctx).build(h);
         case SType::YCbCrVkDescriptor:
             return Builder<YCbCrVkDescriptor>(ctx).build(h);
         case SType::DawnTextureInternalUsageDescriptor:

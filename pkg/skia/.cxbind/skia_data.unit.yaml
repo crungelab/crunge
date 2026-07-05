@@ -4,3 +4,9 @@ target: 'src/skia_data_py_auto.cpp'
 specs:
   'class@SkData':
     holder: sk_sp
+
+excludes:
+  # Wrapped
+
+  # Internal / Ignored
+  - 'method@SkData::shareSubset' #TODO: They forgot to define the const version

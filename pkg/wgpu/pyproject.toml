@@ -10,7 +10,7 @@ name = "crunge-wgpu"
 version = "0.1.0"
 description = 'Crunge WebGPU Extension'
 #readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 #license = { file = "LICENSE" }
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
@@ -30,3 +30,5 @@ classifiers = [
 [tool.cxbuild.extension]
 name="crunge.wgpu._wgpu"
 
+[tool.hatch.envs.default]
+python = "3.10"

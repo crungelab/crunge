@@ -64,12 +64,13 @@ struct PyQueueWorkDoneCallbackInfo {
 
     operator WGPUQueueWorkDoneCallbackInfo() {
         auto callback = [](WGPUQueueWorkDoneStatus status,
+                            WGPUStringView message,
                             void* userdata1,
                             void* userdata2) {
             auto self = reinterpret_cast<PyQueueWorkDoneCallbackInfo*>(userdata1);
             py::gil_scoped_acquire gil;
             //std::cout << "QueueWorkDoneCallbackInfo: " << message.data << std::endl;
-            self->py_callback(static_cast<pywgpu::QueueWorkDoneStatus>(status));
+            self->py_callback(static_cast<pywgpu::QueueWorkDoneStatus>(status), static_cast<pywgpu::StringView>(message));
         };
 
         WGPUQueueWorkDoneCallbackInfo native_info = {};

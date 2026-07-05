@@ -17,11 +17,6 @@
 namespace py = pybind11;
 
 void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
-    py::enum_<SkApplyPerspectiveClip>(_skia, "ApplyPerspectiveClip", py::arithmetic())
-        .value("K_NO", SkApplyPerspectiveClip::kNo)
-        .value("K_YES", SkApplyPerspectiveClip::kYes)
-        .export_values()
-    ;
     py::class_<SkMatrix> _Matrix(_skia, "Matrix");
     registry.on(_skia, "Matrix", _Matrix);
         _Matrix
@@ -39,6 +34,12 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             )
         .def_static("translate", py::overload_cast<SkIVector>(&SkMatrix::Translate)
             , py::arg("t")
+            )
+        .def_static("scale_translate", &SkMatrix::ScaleTranslate
+            , py::arg("sx")
+            , py::arg("sy")
+            , py::arg("tx")
+            , py::arg("ty")
             )
         .def_static("rotate_deg", py::overload_cast<SkScalar>(&SkMatrix::RotateDeg)
             , py::arg("deg")
@@ -308,6 +309,16 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
         .def("post_concat", &SkMatrix::postConcat
             , py::arg("other")
             )
+        .def_static("rect2_rect", &SkMatrix::Rect2Rect
+            , py::arg("src")
+            , py::arg("dst")
+            , py::arg("arg2") = SkMatrix::ScaleToFit::kFill_ScaleToFit
+            )
+        .def_static("rect_to_rect_or_identity", &SkMatrix::RectToRectOrIdentity
+            , py::arg("src")
+            , py::arg("dst")
+            , py::arg("stf") = SkMatrix::ScaleToFit::kFill_ScaleToFit
+            )
         .def("set_rect_to_rect", &SkMatrix::setRectToRect
             , py::arg("src")
             , py::arg("dst")
@@ -318,12 +329,17 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("dst")
             , py::arg("stf")
             )
+        .def_static("poly_to_poly", &SkMatrix::PolyToPoly
+            , py::arg("src")
+            , py::arg("dst")
+            )
         .def("set_poly_to_poly", &SkMatrix::setPolyToPoly
             , py::arg("src")
             , py::arg("dst")
-            , py::arg("count")
             )
-        .def("invert", &SkMatrix::invert
+        .def("invert", py::overload_cast<>(&SkMatrix::invert, py::const_)
+            )
+        .def("invert", py::overload_cast<SkMatrix *>(&SkMatrix::invert, py::const_)
             , py::arg("inverse")
             )
         .def_static("set_affine_identity", [](std::array<SkScalar, 6>& affine)
@@ -349,69 +365,58 @@ void init_skia_matrix_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("normalize_perspective", &SkMatrix::normalizePerspective
             )
-        .def("map_points", py::overload_cast<SkPoint[], const SkPoint[], int>(&SkMatrix::mapPoints, py::const_)
+        .def("map_points", py::overload_cast<SkSpan<SkPoint>, SkSpan<const SkPoint>>(&SkMatrix::mapPoints, py::const_)
             , py::arg("dst")
             , py::arg("src")
-            , py::arg("count")
             )
-        .def("map_points", py::overload_cast<SkPoint[], int>(&SkMatrix::mapPoints, py::const_)
+        .def("map_points", py::overload_cast<SkSpan<SkPoint>>(&SkMatrix::mapPoints, py::const_)
             , py::arg("pts")
-            , py::arg("count")
             )
-        .def("map_homogeneous_points", py::overload_cast<SkPoint3[], const SkPoint3[], int>(&SkMatrix::mapHomogeneousPoints, py::const_)
+        .def("map_homogeneous_points", &SkMatrix::mapHomogeneousPoints
             , py::arg("dst")
             , py::arg("src")
-            , py::arg("count")
             )
-        .def("map_homogeneous_points", py::overload_cast<SkPoint3[], const SkPoint[], int>(&SkMatrix::mapHomogeneousPoints, py::const_)
+        .def("map_homogeneous_point", &SkMatrix::mapHomogeneousPoint
+            , py::arg("src")
+            )
+        .def("map_points_to_homogeneous", &SkMatrix::mapPointsToHomogeneous
             , py::arg("dst")
             , py::arg("src")
-            , py::arg("count")
+            )
+        .def("map_point_to_homogeneous", &SkMatrix::mapPointToHomogeneous
+            , py::arg("src")
             )
         .def("map_point", &SkMatrix::mapPoint
-            , py::arg("pt")
+            , py::arg("p")
             )
-        .def("map_xy", py::overload_cast<SkScalar, SkScalar, SkPoint *>(&SkMatrix::mapXY, py::const_)
-            , py::arg("x")
-            , py::arg("y")
-            , py::arg("result")
-            )
-        .def("map_xy", py::overload_cast<SkScalar, SkScalar>(&SkMatrix::mapXY, py::const_)
-            , py::arg("x")
-            , py::arg("y")
+        .def("map_point_affine", &SkMatrix::mapPointAffine
+            , py::arg("p")
             )
         .def("map_origin", &SkMatrix::mapOrigin
             )
-        .def("map_vectors", py::overload_cast<SkVector[], const SkVector[], int>(&SkMatrix::mapVectors, py::const_)
+        .def("map_vectors", py::overload_cast<SkSpan<SkVector>, SkSpan<const SkVector>>(&SkMatrix::mapVectors, py::const_)
             , py::arg("dst")
             , py::arg("src")
-            , py::arg("count")
             )
-        .def("map_vectors", py::overload_cast<SkVector[], int>(&SkMatrix::mapVectors, py::const_)
+        .def("map_vectors", py::overload_cast<SkSpan<SkVector>>(&SkMatrix::mapVectors, py::const_)
             , py::arg("vecs")
-            , py::arg("count")
             )
-        .def("map_vector", py::overload_cast<SkScalar, SkScalar, SkVector *>(&SkMatrix::mapVector, py::const_)
-            , py::arg("dx")
-            , py::arg("dy")
-            , py::arg("result")
+        .def("map_vector", py::overload_cast<SkVector>(&SkMatrix::mapVector, py::const_)
+            , py::arg("vec")
             )
         .def("map_vector", py::overload_cast<SkScalar, SkScalar>(&SkMatrix::mapVector, py::const_)
             , py::arg("dx")
             , py::arg("dy")
             )
-        .def("map_rect", py::overload_cast<SkRect *, const SkRect &, SkApplyPerspectiveClip>(&SkMatrix::mapRect, py::const_)
+        .def("map_rect", py::overload_cast<SkRect *, const SkRect &>(&SkMatrix::mapRect, py::const_)
             , py::arg("dst")
             , py::arg("src")
-            , py::arg("pc") = SkApplyPerspectiveClip::kYes
             )
-        .def("map_rect", py::overload_cast<SkRect *, SkApplyPerspectiveClip>(&SkMatrix::mapRect, py::const_)
+        .def("map_rect", py::overload_cast<SkRect *>(&SkMatrix::mapRect, py::const_)
             , py::arg("rect")
-            , py::arg("pc") = SkApplyPerspectiveClip::kYes
             )
-        .def("map_rect", py::overload_cast<const SkRect &, SkApplyPerspectiveClip>(&SkMatrix::mapRect, py::const_)
+        .def("map_rect", py::overload_cast<const SkRect &>(&SkMatrix::mapRect, py::const_)
             , py::arg("src")
-            , py::arg("pc") = SkApplyPerspectiveClip::kYes
             )
         .def("map_rect_to_quad", [](SkMatrix& self, std::array<SkPoint, 4>& dst, const SkRect & rect)
             {

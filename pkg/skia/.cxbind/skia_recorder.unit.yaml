@@ -5,4 +5,5 @@ excludes:
   # Wrapped
   # Internal / Ignored
   - 'method@skgpu::graphite::Recorder::priv'
+  - 'field@skgpu::graphite::RecorderOptions::fRecorderOptionsPriv'
   # Overloads

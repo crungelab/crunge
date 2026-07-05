@@ -48,11 +48,7 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
             )
-        .def_static("make_from_pos_text_h", [](const void * text, size_t byteLength, const SkScalar xpos[], SkScalar constY, const SkFont & font, SkTextEncoding encoding)
-            {
-                auto _ret = SkTextBlob::MakeFromPosTextH(text, byteLength, xpos, constY, font, encoding);
-                return std::make_tuple(_ret, xpos);
-            }
+        .def_static("make_from_pos_text_h", &SkTextBlob::MakeFromPosTextH
             , py::arg("text")
             , py::arg("byte_length")
             , py::arg("xpos")
@@ -73,6 +69,22 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("xform")
             , py::arg("font")
             , py::arg("encoding") = SkTextEncoding::kUTF8
+            )
+        .def_static("make_from_pos_h_glyphs", &SkTextBlob::MakeFromPosHGlyphs
+            , py::arg("glyphs")
+            , py::arg("xpos")
+            , py::arg("const_y")
+            , py::arg("font")
+            )
+        .def_static("make_from_pos_glyphs", &SkTextBlob::MakeFromPosGlyphs
+            , py::arg("glyphs")
+            , py::arg("pos")
+            , py::arg("font")
+            )
+        .def_static("make_from_rs_xform_glyphs", &SkTextBlob::MakeFromRSXformGlyphs
+            , py::arg("glyphs")
+            , py::arg("xform")
+            , py::arg("font")
             )
         .def("serialize", py::overload_cast<const SkSerialProcs &, void *, size_t>(&SkTextBlob::serialize, py::const_)
             , py::arg("procs")

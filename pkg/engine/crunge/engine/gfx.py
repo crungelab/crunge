@@ -86,9 +86,9 @@ class Gfx:
         return self.device.create_texture(descriptor)
 
     def wait_for_gpu(self):
-        def callback(status: wgpu.QueueWorkDoneStatus):
+        def callback(status: wgpu.QueueWorkDoneStatus, message: str):
             if status != wgpu.QueueWorkDoneStatus.SUCCESS:
-                logger.error(f"GPU work failed with status: {status}")
+                logger.error(f"GPU work failed with status: {status}, message: {message}")
         callback_info = wgpu.QueueWorkDoneCallbackInfo(
             mode=wgpu.CallbackMode.WAIT_ANY_ONLY,
             callback=callback,

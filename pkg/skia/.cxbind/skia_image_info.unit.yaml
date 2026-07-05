@@ -1,2 +1,8 @@
 source: '../../depot/skia/include/core/SkImageInfo.h'
 target: 'src/skia_image_info_py_auto.cpp'
+
+excludes:
+  # Wrapped
+
+  # Internal / Ignored
+  - 'method@SkImageInfo::Make@SkImageInfo (SkISize, SkColorInfo &&)'

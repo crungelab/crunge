@@ -68,6 +68,12 @@ class StorageTextureAccess(IntEnum):
     READ_WRITE: int
 
 
+class TexelBufferAccess(IntEnum):
+    UNDEFINED: int
+    READ_ONLY: int
+    READ_WRITE: int
+
+
 class BlendFactor(IntEnum):
     UNDEFINED: int
     ZERO: int
@@ -203,6 +209,36 @@ class ExternalTextureRotation(IntEnum):
     ROTATE270_DEGREES: int
 
 
+class ColorSpacePrimariesDawn(IntEnum):
+    SRGB: int
+    REC709: int
+    REC601: int
+    REC2020: int
+    DISPLAY_P3: int
+
+
+class ColorSpaceTransferDawn(IntEnum):
+    IDENTITY: int
+    SRGB: int
+    DISPLAY_P3: int
+    SMPTE_170M: int
+    HLG: int
+    PQ: int
+
+
+class ColorSpaceYCbCrRangeDawn(IntEnum):
+    IDENTITY: int
+    NARROW: int
+    FULL: int
+
+
+class ColorSpaceYCbCrMatrixDawn(IntEnum):
+    IDENTITY: int
+    REC601: int
+    REC709: int
+    REC2020: int
+
+
 class Status(IntEnum):
     SUCCESS: int
     ERROR: int
@@ -224,14 +260,15 @@ class FeatureLevel(IntEnum):
 
 
 class FeatureName(IntEnum):
+    CORE_FEATURES_AND_LIMITS: int
     DEPTH_CLIP_CONTROL: int
     DEPTH32_FLOAT_STENCIL8: int
-    TIMESTAMP_QUERY: int
     TEXTURE_COMPRESSION_BC: int
     TEXTURE_COMPRESSION_BC_SLICED3D: int
     TEXTURE_COMPRESSION_ETC2: int
     TEXTURE_COMPRESSION_ASTC: int
     TEXTURE_COMPRESSION_ASTC_SLICED3D: int
+    TIMESTAMP_QUERY: int
     INDIRECT_FIRST_INSTANCE: int
     SHADER_F16: int
     RG11B10_UFLOAT_RENDERABLE: int
@@ -241,22 +278,23 @@ class FeatureName(IntEnum):
     CLIP_DISTANCES: int
     DUAL_SOURCE_BLENDING: int
     SUBGROUPS: int
-    CORE_FEATURES_AND_LIMITS: int
+    TEXTURE_FORMATS_TIER1: int
+    TEXTURE_FORMATS_TIER2: int
+    PRIMITIVE_INDEX: int
+    TEXTURE_COMPONENT_SWIZZLE: int
+    SUBGROUP_SIZE_CONTROL: int
     DAWN_INTERNAL_USAGES: int
     DAWN_MULTI_PLANAR_FORMATS: int
     DAWN_NATIVE: int
     CHROMIUM_EXPERIMENTAL_TIMESTAMP_QUERY_INSIDE_PASSES: int
     IMPLICIT_DEVICE_SYNCHRONIZATION: int
-    CHROMIUM_EXPERIMENTAL_IMMEDIATE_DATA: int
     TRANSIENT_ATTACHMENTS: int
     MSAA_RENDER_TO_SINGLE_SAMPLED: int
-    SUBGROUPS_F16: int
     D3D11_MULTITHREAD_PROTECTED: int
     ANGLE_TEXTURE_SHARING: int
     PIXEL_LOCAL_STORAGE_COHERENT: int
     PIXEL_LOCAL_STORAGE_NON_COHERENT: int
     UNORM16_TEXTURE_FORMATS: int
-    SNORM16_TEXTURE_FORMATS: int
     MULTI_PLANAR_FORMAT_EXTENDED_USAGES: int
     MULTI_PLANAR_FORMAT_P010: int
     HOST_MAPPED_POINTER: int
@@ -267,10 +305,8 @@ class FeatureName(IntEnum):
     ADAPTER_PROPERTIES_MEMORY_HEAPS: int
     ADAPTER_PROPERTIES_D3D: int
     ADAPTER_PROPERTIES_VK: int
-    R8_UNORM_STORAGE: int
     DAWN_FORMAT_CAPABILITIES: int
     DAWN_DRM_FORMAT_CAPABILITIES: int
-    NORM16_TEXTURE_FORMATS: int
     MULTI_PLANAR_FORMAT_NV16: int
     MULTI_PLANAR_FORMAT_NV24: int
     MULTI_PLANAR_FORMAT_P210: int
@@ -300,6 +336,18 @@ class FeatureName(IntEnum):
     FLEXIBLE_TEXTURE_VIEWS: int
     CHROMIUM_EXPERIMENTAL_SUBGROUP_MATRIX: int
     SHARED_FENCE_EGL_SYNC: int
+    DAWN_DEVICE_ALLOCATOR_CONTROL: int
+    ADAPTER_PROPERTIES_WGPU: int
+    SHARED_BUFFER_MEMORY_D3D12_SHARED_MEMORY_FILE_MAPPING_HANDLE: int
+    SHARED_TEXTURE_MEMORY_D3D12_RESOURCE: int
+    CHROMIUM_EXPERIMENTAL_SAMPLING_RESOURCE_TABLE: int
+    ATOMIC_VEC2U_MIN_MAX: int
+    UNORM16_FORMATS_FOR_EXTERNAL_TEXTURE: int
+    OPAQUE_Y_CB_CR_ANDROID_FOR_EXTERNAL_TEXTURE: int
+    UNORM16_FILTERABLE: int
+    RENDER_PASS_RENDER_AREA: int
+    ADAPTER_PROPERTIES_DRM: int
+    TEXTURE_COMPRESSION_UNALIGNED: int
 
 
 class FilterMode(IntEnum):
@@ -330,6 +378,12 @@ class WaitStatus(IntEnum):
     SUCCESS: int
     TIMED_OUT: int
     ERROR: int
+
+
+class InstanceFeatureName(IntEnum):
+    TIMED_WAIT_ANY: int
+    SHADER_SOURCE_SPIRV: int
+    MULTIPLE_DEVICES_PER_ADAPTER: int
 
 
 class VertexStepMode(IntEnum):
@@ -409,6 +463,19 @@ class StencilOperation(IntEnum):
     DECREMENT_WRAP: int
 
 
+class PredefinedColorSpace(IntEnum):
+    SRGB: int
+    DISPLAY_P3: int
+    SRGB_LINEAR: int
+    DISPLAY_P3_LINEAR: int
+    REC2020_LINEAR: int
+
+
+class ToneMappingMode(IntEnum):
+    STANDARD: int
+    EXTENDED: int
+
+
 class SType(IntEnum):
     SHADER_SOURCE_SPIRV: int
     SHADER_SOURCE_WGSL: int
@@ -421,12 +488,13 @@ class SType(IntEnum):
     SURFACE_SOURCE_XCB_WINDOW: int
     SURFACE_COLOR_MANAGEMENT: int
     REQUEST_ADAPTER_WEB_XR_OPTIONS: int
-    ADAPTER_PROPERTIES_SUBGROUPS: int
-    TEXTURE_BINDING_VIEW_DIMENSION_DESCRIPTOR: int
+    TEXTURE_COMPONENT_SWIZZLE_DESCRIPTOR: int
+    EXTERNAL_TEXTURE_BINDING_LAYOUT: int
+    EXTERNAL_TEXTURE_BINDING_ENTRY: int
+    COMPATIBILITY_MODE_LIMITS: int
+    TEXTURE_BINDING_VIEW_DIMENSION: int
     EMSCRIPTEN_SURFACE_SOURCE_CANVAS_HTML_SELECTOR: int
     SURFACE_DESCRIPTOR_FROM_WINDOWS_CORE_WINDOW: int
-    EXTERNAL_TEXTURE_BINDING_ENTRY: int
-    EXTERNAL_TEXTURE_BINDING_LAYOUT: int
     SURFACE_DESCRIPTOR_FROM_WINDOWS_UWP_SWAP_CHAIN_PANEL: int
     DAWN_TEXTURE_INTERNAL_USAGE_DESCRIPTOR: int
     DAWN_ENCODER_INTERNAL_USAGE_DESCRIPTOR: int
@@ -439,7 +507,7 @@ class SType(IntEnum):
     REQUEST_ADAPTER_OPTIONS_LUID: int
     REQUEST_ADAPTER_OPTIONS_GET_GL_PROC: int
     REQUEST_ADAPTER_OPTIONS_D3D11_DEVICE: int
-    DAWN_RENDER_PASS_COLOR_ATTACHMENT_RENDER_TO_SINGLE_SAMPLED: int
+    DAWN_RENDER_PASS_SAMPLE_COUNT: int
     RENDER_PASS_PIXEL_LOCAL_STORAGE: int
     PIPELINE_LAYOUT_PIXEL_LOCAL_STORAGE: int
     BUFFER_HOST_MAPPED_POINTER: int
@@ -451,7 +519,7 @@ class SType(IntEnum):
     DAWN_DRM_FORMAT_CAPABILITIES: int
     SHADER_MODULE_COMPILATION_OPTIONS: int
     COLOR_TARGET_STATE_EXPAND_RESOLVE_TEXTURE_DAWN: int
-    RENDER_PASS_DESCRIPTOR_EXPAND_RESOLVE_RECT: int
+    RENDER_PASS_RENDER_AREA_RECT: int
     SHARED_TEXTURE_MEMORY_VK_DEDICATED_ALLOCATION_DESCRIPTOR: int
     SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_DESCRIPTOR: int
     SHARED_TEXTURE_MEMORY_DMA_BUF_DESCRIPTOR: int
@@ -481,7 +549,6 @@ class SType(IntEnum):
     Y_CB_CR_VK_DESCRIPTOR: int
     SHARED_TEXTURE_MEMORY_A_HARDWARE_BUFFER_PROPERTIES: int
     A_HARDWARE_BUFFER_PROPERTIES: int
-    DAWN_EXPERIMENTAL_IMMEDIATE_DATA_LIMITS: int
     DAWN_TEXEL_COPY_BUFFER_ROW_ALIGNMENT_LIMITS: int
     ADAPTER_PROPERTIES_SUBGROUP_MATRIX_CONFIGS: int
     SHARED_FENCE_EGL_SYNC_DESCRIPTOR: int
@@ -490,6 +557,22 @@ class SType(IntEnum):
     DAWN_COMPILATION_MESSAGE_UTF16: int
     DAWN_FAKE_BUFFER_OOM_FOR_TESTING: int
     SURFACE_DESCRIPTOR_FROM_WINDOWS_WIN_UI_SWAP_CHAIN_PANEL: int
+    DAWN_DEVICE_ALLOCATOR_CONTROL: int
+    DAWN_HOST_MAPPED_POINTER_LIMITS: int
+    RENDER_PASS_DESCRIPTOR_RESOLVE_RECT: int
+    REQUEST_ADAPTER_WEB_GPU_BACKEND_OPTIONS: int
+    DAWN_FAKE_DEVICE_INITIALIZE_ERROR_FOR_TESTING: int
+    SHARED_TEXTURE_MEMORY_D3D11_BEGIN_STATE: int
+    DAWN_CONSUME_ADAPTER_DESCRIPTOR: int
+    TEXEL_BUFFER_BINDING_ENTRY: int
+    TEXEL_BUFFER_BINDING_LAYOUT: int
+    SHARED_TEXTURE_MEMORY_METAL_END_ACCESS_STATE: int
+    ADAPTER_PROPERTIES_WGPU: int
+    SHARED_BUFFER_MEMORY_D3D12_SHARED_MEMORY_FILE_MAPPING_HANDLE_DESCRIPTOR: int
+    SHARED_TEXTURE_MEMORY_D3D12_RESOURCE_DESCRIPTOR: int
+    REQUEST_ADAPTER_OPTIONS_ANGLE_VIRTUALIZATION_GROUP: int
+    PIPELINE_LAYOUT_RESOURCE_TABLE: int
+    ADAPTER_PROPERTIES_DRM: int
 
 
 class SurfaceGetCurrentTextureStatus(IntEnum):
@@ -524,6 +607,8 @@ class TextureFormat(IntEnum):
     R8_SNORM: int
     R8_UINT: int
     R8_SINT: int
+    R16_UNORM: int
+    R16_SNORM: int
     R16_UINT: int
     R16_SINT: int
     R16_FLOAT: int
@@ -534,6 +619,8 @@ class TextureFormat(IntEnum):
     R32_FLOAT: int
     R32_UINT: int
     R32_SINT: int
+    RG16_UNORM: int
+    RG16_SNORM: int
     RG16_UINT: int
     RG16_SINT: int
     RG16_FLOAT: int
@@ -551,6 +638,8 @@ class TextureFormat(IntEnum):
     RG32_FLOAT: int
     RG32_UINT: int
     RG32_SINT: int
+    RGBA16_UNORM: int
+    RGBA16_SNORM: int
     RGBA16_UINT: int
     RGBA16_SINT: int
     RGBA16_FLOAT: int
@@ -615,12 +704,6 @@ class TextureFormat(IntEnum):
     ASTC12X10_UNORM_SRGB: int
     ASTC12X12_UNORM: int
     ASTC12X12_UNORM_SRGB: int
-    R16_UNORM: int
-    RG16_UNORM: int
-    RGBA16_UNORM: int
-    R16_SNORM: int
-    RG16_SNORM: int
-    RGBA16_SNORM: int
     R8BG8_BIPLANAR420_UNORM: int
     R10X6BG10X6_BIPLANAR420_UNORM: int
     R8BG8A8_TRIPLANAR420_UNORM: int
@@ -628,7 +711,7 @@ class TextureFormat(IntEnum):
     R8BG8_BIPLANAR444_UNORM: int
     R10X6BG10X6_BIPLANAR422_UNORM: int
     R10X6BG10X6_BIPLANAR444_UNORM: int
-    EXTERNAL: int
+    OPAQUE_Y_CB_CR_ANDROID: int
 
 
 class TextureViewDimension(IntEnum):
@@ -639,6 +722,16 @@ class TextureViewDimension(IntEnum):
     CUBE: int
     CUBE_ARRAY: int
     E3D: int
+
+
+class ComponentSwizzle(IntEnum):
+    UNDEFINED: int
+    ZERO: int
+    ONE: int
+    R: int
+    G: int
+    B: int
+    A: int
 
 
 class VertexFormat(IntEnum):
@@ -690,12 +783,24 @@ class WGSLLanguageFeatureName(IntEnum):
     PACKED4X8_INTEGER_DOT_PRODUCT: int
     UNRESTRICTED_POINTER_PARAMETERS: int
     POINTER_COMPOSITE_ACCESS: int
-    SIZED_BINDING_ARRAY: int
+    UNIFORM_BUFFER_STANDARD_LAYOUT: int
+    SUBGROUP_ID: int
+    TEXTURE_AND_SAMPLER_LET: int
+    SUBGROUP_UNIFORMITY: int
+    TEXTURE_FORMATS_TIER1: int
+    LINEAR_INDEXING: int
+    IMMEDIATE_ADDRESS_SPACE: int
     CHROMIUM_TESTING_UNIMPLEMENTED: int
     CHROMIUM_TESTING_UNSAFE_EXPERIMENTAL: int
     CHROMIUM_TESTING_EXPERIMENTAL: int
     CHROMIUM_TESTING_SHIPPED_WITH_KILLSWITCH: int
     CHROMIUM_TESTING_SHIPPED: int
+    SIZED_BINDING_ARRAY: int
+    TEXEL_BUFFERS: int
+    CHROMIUM_PRINT: int
+    FRAGMENT_DEPTH: int
+    BUFFER_VIEW: int
+    SWIZZLE_ASSIGNMENT: int
 
 
 class SubgroupMatrixComponentType(IntEnum):
@@ -703,6 +808,8 @@ class SubgroupMatrixComponentType(IntEnum):
     F16: int
     U32: int
     I32: int
+    U8: int
+    I8: int
 
 
 class AdapterInfo:
@@ -728,22 +835,28 @@ class SurfaceCapabilities:
     alpha_mode_count: Any  # type: size_t 
     alpha_modes: Any  # type: CompositeAlphaMode const * 
 
-class AdapterPropertiesSubgroups:
+class CompatibilityModeLimits:
     next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
-    subgroup_min_size: Any  # type: uint32_t 
-    subgroup_max_size: Any  # type: uint32_t 
-
-class DawnExperimentalImmediateDataLimits:
-    next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
-    max_immediate_data_range_byte_size: Any  # type: uint32_t 
+    max_storage_buffers_in_vertex_stage: Any  # type: uint32_t 
+    max_storage_textures_in_vertex_stage: Any  # type: uint32_t 
+    max_storage_buffers_in_fragment_stage: Any  # type: uint32_t 
+    max_storage_textures_in_fragment_stage: Any  # type: uint32_t 
 
 class DawnTexelCopyBufferRowAlignmentLimits:
     next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
     min_texel_copy_buffer_row_alignment: Any  # type: uint32_t 
 
+class DawnHostMappedPointerLimits:
+    next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
+    host_mapped_pointer_alignment: Any  # type: uint32_t 
+
 class SupportedFeatures:
     feature_count: Any  # type: size_t 
     features: Any  # type: FeatureName const * 
+
+class SupportedInstanceFeatures:
+    feature_count: Any  # type: size_t 
+    features: Any  # type: InstanceFeatureName const * 
 
 class SupportedWGSLLanguageFeatures:
     feature_count: Any  # type: size_t 
@@ -769,6 +882,7 @@ class SharedBufferMemoryEndAccessState:
     initialized: Any  # type: Bool 
     fence_count: Any  # type: size_t 
     fences: Any  # type: SharedFence const * 
+    signaled_value_count: Any  # type: size_t 
     signaled_values: Any  # type: uint64_t const * 
 
 class SharedTextureMemoryEndAccessState:
@@ -776,7 +890,12 @@ class SharedTextureMemoryEndAccessState:
     initialized: Any  # type: Bool 
     fence_count: Any  # type: size_t 
     fences: Any  # type: SharedFence const * 
+    signaled_value_count: Any  # type: size_t 
     signaled_values: Any  # type: uint64_t const * 
+
+class SharedTextureMemoryMetalEndAccessState:
+    next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
+    commands_scheduled_future: Any  # type: Future 
 
 class SharedTextureMemoryVkImageLayoutEndState:
     next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
@@ -819,6 +938,10 @@ class DawnDrmFormatCapabilities:
     properties_count: Any  # type: size_t 
     properties: Any  # type: DawnDrmFormatProperties const * 
 
+class InstanceLimits:
+    next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
+    timed_wait_any_max_count: Any  # type: size_t 
+
 class SurfaceTexture:
     next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
     texture: Any  # type: Texture 
@@ -840,6 +963,19 @@ class AdapterPropertiesD3D:
 class AdapterPropertiesVk:
     next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
     driver_version: Any  # type: uint32_t 
+
+class AdapterPropertiesDrm:
+    next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
+    has_primary: Any  # type: Bool 
+    has_render: Any  # type: Bool 
+    primary_major: Any  # type: uint64_t 
+    primary_minor: Any  # type: uint64_t 
+    render_major: Any  # type: uint64_t 
+    render_minor: Any  # type: uint64_t 
+
+class AdapterPropertiesWGPU:
+    next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 
+    backend_type: Any  # type: BackendType 
 
 class AdapterPropertiesSubgroupMatrixConfigs:
     next_in_chain: Optional[Any] = None  # type: ChainedStructOut * 

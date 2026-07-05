@@ -9,12 +9,19 @@
 #include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
-#include <include/effects/SkGradientShader.h>
+#include <include/effects/SkGradient.h>
 #include <include/core/SkMatrix.h>
 
 namespace py = pybind11;
 
-void init_skia_gradient_shader_py(py::module &_skia, Registry &registry) {
+void init_skia_gradient_py(py::module &_skia, Registry &registry) {
+    PYEXTEND_BEGIN(SkGradient::Interpolation, GradientInterpolation)
+    _GradientInterpolation
+    .def(py::init<>());
+    PYEXTEND_END
+
+
+    /*
     PYEXTEND_BEGIN(SkGradientShader, GradientShader)
     _GradientShader
     .def_static("make_linear",[](
@@ -53,15 +60,10 @@ void init_skia_gradient_shader_py(py::module &_skia, Registry &registry) {
             const SkMatrix* localMatrix) {
             if (colors.size() < 2)
                 throw std::runtime_error("length of colors must be 2 or more.");
-            /*
-            auto ret = SkGradientShader::MakeRadial(
-                center, radius, &colors[0], &pos[0],
-                colors.size(), mode, flags, localMatrix);
-            return ret.release();
-            */
-           return SkGradientShader::MakeRadial(
-                center, radius, &colors[0], &pos[0],
-                colors.size(), mode, flags, localMatrix);
+
+            return SkGradientShader::MakeRadial(
+            center, radius, &colors[0], &pos[0],
+            colors.size(), mode, flags, localMatrix);
         },
         py::arg("center"), py::arg("radius"), py::arg("colors"),
         py::arg("pos") = std::vector<SkScalar>(),
@@ -77,14 +79,8 @@ void init_skia_gradient_shader_py(py::module &_skia, Registry &registry) {
             const SkMatrix* localMatrix) {
             if (colors.size() < 2)
                 throw std::runtime_error("length of colors must be 2 or more.");
-            /*
-            auto ret = SkGradientShader::MakeTwoPointConical(
-                start, startRadius, end, endRadius,
-                &colors[0], &pos[0], colors.size(),
-                mode, flags, localMatrix);
-            return ret.release();
-            */
-            return SkGradientShader::MakeTwoPointConical(
+
+                return SkGradientShader::MakeTwoPointConical(
                 start, startRadius, end, endRadius,
                 &colors[0], &pos[0], colors.size(),
                 mode, flags, localMatrix);
@@ -106,17 +102,11 @@ void init_skia_gradient_shader_py(py::module &_skia, Registry &registry) {
             const SkMatrix* localMatrix) {
             if (colors.size() < 2)
                 throw std::runtime_error("length of colors must be 2 or more.");
-            /*
-            auto ret = SkGradientShader::MakeSweep(
-                cx, cy, &colors[0], &pos[0],
-                colors.size(), mode, startAngle,
-                endAngle, flags, localMatrix);
-            return ret.release();
-            */
+
             return SkGradientShader::MakeSweep(
-                cx, cy, &colors[0], &pos[0],
-                colors.size(), mode, startAngle,
-                endAngle, flags, localMatrix);
+            cx, cy, &colors[0], &pos[0],
+            colors.size(), mode, startAngle,
+            endAngle, flags, localMatrix);
         },
         py::arg("cx"), py::arg("cy"), py::arg("colors"),
         py::arg("pos") = std::vector<SkScalar>(),
@@ -127,4 +117,5 @@ void init_skia_gradient_shader_py(py::module &_skia, Registry &registry) {
         py::arg("localMatrix") = nullptr)
     ;
     PYEXTEND_END
+    */
 }

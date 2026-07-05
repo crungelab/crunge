@@ -248,10 +248,16 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("arg1")
             , py::arg("caching_hint") = SkImage::CachingHint::kAllow_CachingHint
             )
-        .def("make_scaled", py::overload_cast<skgpu::graphite::Recorder *, const SkImageInfo &, const SkSamplingOptions &>(&SkImage::makeScaled, py::const_)
+        .def("make_scaled", py::overload_cast<SkRecorder *, const SkImageInfo &, const SkSamplingOptions &>(&SkImage::makeScaled, py::const_)
             , py::arg("arg0")
             , py::arg("arg1")
             , py::arg("arg2")
+            )
+        .def("make_scaled", py::overload_cast<SkRecorder *, const SkImageInfo &, const SkSamplingOptions &, const SkSurfaceProps &>(&SkImage::makeScaled, py::const_)
+            , py::arg("arg0")
+            , py::arg("arg1")
+            , py::arg("arg2")
+            , py::arg("arg3")
             )
         .def("make_scaled", py::overload_cast<const SkImageInfo &, const SkSamplingOptions &>(&SkImage::makeScaled, py::const_)
             , py::arg("info")
@@ -268,7 +274,7 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
         ;
 
         _Image
-        .def("make_subset", py::overload_cast<skgpu::graphite::Recorder *, const SkIRect &, SkImage::RequiredProperties>(&SkImage::makeSubset, py::const_)
+        .def("make_subset", &SkImage::makeSubset
             , py::arg("arg0")
             , py::arg("subset")
             , py::arg("arg2")
@@ -295,12 +301,12 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("is_lazy_generated", &SkImage::isLazyGenerated
             )
-        .def("make_color_space", py::overload_cast<skgpu::graphite::Recorder *, sk_sp<SkColorSpace>, SkImage::RequiredProperties>(&SkImage::makeColorSpace, py::const_)
+        .def("make_color_space", &SkImage::makeColorSpace
             , py::arg("arg0")
             , py::arg("target_color_space")
             , py::arg("arg2")
             )
-        .def("make_color_type_and_color_space", py::overload_cast<skgpu::graphite::Recorder *, SkColorType, sk_sp<SkColorSpace>, SkImage::RequiredProperties>(&SkImage::makeColorTypeAndColorSpace, py::const_)
+        .def("make_color_type_and_color_space", &SkImage::makeColorTypeAndColorSpace
             , py::arg("arg0")
             , py::arg("target_color_type")
             , py::arg("target_color_space")

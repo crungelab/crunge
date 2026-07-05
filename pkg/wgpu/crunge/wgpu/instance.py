@@ -11,8 +11,10 @@ wgpu.Instance._pending_futures = []
 def _Instance__new__(cls, *args, **kwargs):
     if not hasattr(cls, '_instance'):
         # Create the instance capabilities
-        capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable=True)
-        instance_descriptor = wgpu.InstanceDescriptor(capabilities=capabilities)
+        #capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable=True)
+        #instance_descriptor = wgpu.InstanceDescriptor(capabilities=capabilities)
+
+        instance_descriptor = wgpu.InstanceDescriptor(required_features=[wgpu.InstanceFeatureName.TIMED_WAIT_ANY])
 
         # Create the actual instance
         instance = wgpu.create_instance(instance_descriptor)

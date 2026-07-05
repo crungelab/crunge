@@ -7,14 +7,17 @@ function(USES_DAWN THIS)
 
     target_include_directories(${THIS} PRIVATE
         ${DAWN_ROOT}/include
-        ${SKIA_LIB_DIR}/gen/third_party/externals/dawn/include
+        ${SKIA_LIB_DIR}/cmake_dawn/gen/include
         ${CRUNGE_ROOT}/pkg/wgpu/include # Override dawn/webgpu_cpp.h
     )
 
     target_link_libraries(${THIS} PRIVATE
-        ${SKIA_LIB_DIR}/libdawn_native.so
-        ${SKIA_LIB_DIR}/libdawn_proc.so
-        ${SKIA_LIB_DIR}/libwebgpu_dawn.so
+        #${SKIA_LIB_DIR}/libdawn_native.so
+        #${SKIA_LIB_DIR}/libdawn_platform.so
+        #${SKIA_LIB_DIR}/libdawn_proc.so
+        #${SKIA_LIB_DIR}/libwebgpu_dawn.so
+        ${SKIA_LIB_DIR}/libdawn_combined.a
+        
     )    
 
     #target_include_directories(${THIS} PRIVATE

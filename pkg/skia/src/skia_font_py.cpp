@@ -18,6 +18,7 @@
 
 #ifdef __linux__
 #include "include/ports/SkFontMgr_fontconfig.h"
+#include "include/ports/SkFontScanner_FreeType.h"
 #endif
 
 #ifdef _WIN32
@@ -36,7 +37,7 @@ namespace {
     #if defined(__APPLE__)
       return SkFontMgr_New_CoreText(nullptr);
     #elif defined(__linux__)
-      return SkFontMgr_New_FontConfig(nullptr);
+      return SkFontMgr_New_FontConfig(nullptr, SkFontScanner_Make_FreeType());
     #elif defined(_WIN32)
       return SkFontMgr_New_DirectWrite();
     #else

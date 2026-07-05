@@ -1,2 +1,12 @@
 source: '../../depot/skia/include/gpu/graphite/Context.h'
 target: 'src/skia_context_py_auto.cpp'
+
+excludes:
+  # Wrapped
+
+  # Internal / Ignored
+  # .def("start_capture", &skgpu::graphite::Context::startCapture)
+  # .def("end_capture", &skgpu::graphite::Context::endCapture
+
+  - 'method@skgpu::graphite::Context::startCapture'
+  - 'method@skgpu::graphite::Context::endCapture'

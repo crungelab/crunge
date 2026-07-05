@@ -21,8 +21,8 @@
 #include "include/gpu/graphite/Recording.h"
 #include "include/gpu/graphite/Surface.h"
 #include "include/gpu/graphite/TextureInfo.h"
-#include "include/private/base/SkOnce.h"
-#include "src/base/SkRectMemcpy.h"
+#include "include/private/SkOnce.h"
+#include "src/core/SkRectMemcpy.h"
 #include "src/core/SkAutoPixmapStorage.h"
 #include "src/core/SkColorFilterPriv.h"
 #include "src/core/SkConvertPixels.h"
@@ -42,7 +42,7 @@
 #include "src/gpu/graphite/Image_Base_Graphite.h"
 #include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/KeyContext.h"
-#include "src/gpu/graphite/Log.h"
+//#include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/QueueManager.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/RecordingPriv.h"
@@ -70,6 +70,8 @@ namespace py = pybind11;
 
 using namespace skgpu::graphite;
 
+bool gGraphiteAvoidDepth = false;
+
 Context* CreateContext(pywgpu::Instance& _instance, pywgpu::Device& _device) {
     skgpu::graphite::DawnBackendContext backendContext;
     backendContext.fInstance = wgpu::Instance(_instance.Get());
@@ -79,23 +81,38 @@ Context* CreateContext(pywgpu::Instance& _instance, pywgpu::Device& _device) {
 
     //fDisplayParams = std::make_unique<skwindow::DisplayParams>();
     skwindow::GraphiteDisplayParamsBuilder paramsBuilder;
+    //paramsBuilder.createProtectedNativeBackend(false);
+
+    /*
     auto fDisplayParams = paramsBuilder
         .colorType(kRGBA_8888_SkColorType)
         .msaaSampleCount(4)
         .disableVsync(true)
         .createProtectedNativeBackend(false)
         .build();
+    */
+    paramsBuilder
+        .colorType(kRGBA_8888_SkColorType)
+        .msaaSampleCount(4)
+        .disableVsync(true)
+        .createProtectedNativeBackend(false);;
+
+    auto fDisplayParams = paramsBuilder.detach();
 
     SkASSERT(fDisplayParams->graphiteTestOptions());
-    skwindow::GraphiteTestOptions opts = *fDisplayParams->graphiteTestOptions();
+    skiatest::graphite::TestOptions opts = *fDisplayParams->graphiteTestOptions();
 
     // Needed to make synchronous readPixels work:
-    opts.fPriv.fStoreContextRefInRecorder = true;
+    opts.fOptionsPriv.fStoreContextRefInRecorder = true;
+    /*
     fDisplayParams =
         skwindow::GraphiteDisplayParamsBuilder(fDisplayParams.get()).graphiteTestOptions(opts).build();
+    */
+    fDisplayParams =
+        skwindow::GraphiteDisplayParamsBuilder(fDisplayParams.get()).graphiteTestOptions(opts).detach();
 
     auto fGraphiteContext = skgpu::graphite::ContextFactory::MakeDawn(backendContext,
-    opts.fTestOptions.fContextOptions);
+    opts.fContextOptions);
     /*
     if (!fGraphiteContext) {
         SkASSERT(false);

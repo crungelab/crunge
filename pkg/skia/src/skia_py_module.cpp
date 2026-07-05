@@ -45,8 +45,8 @@ void init_skia_image_filter_py_auto(py::module &, Registry &registry);
 void init_skia_point_py(py::module &, Registry &registry);
 void init_skia_point_py_auto(py::module &, Registry &registry);
 
-void init_skia_gradient_shader_py(py::module &, Registry &registry);
-void init_skia_gradient_shader_py_auto(py::module &, Registry &registry);
+void init_skia_gradient_py(py::module &, Registry &registry);
+void init_skia_gradient_py_auto(py::module &, Registry &registry);
 
 void init_skia_perlin_noise_shader_py(py::module &, Registry &registry);
 
@@ -72,6 +72,8 @@ PYBIND11_MODULE(_skia, m)
     init_skia_shader_py(m, r);
     init_skia_graphite_types_py_auto(m, r);
     init_skia_clip_op_py_auto(m, r);
+
+    init_skia_path_py_auto(m, r); // Need this before rect, since it is used in some of the default arguments
 
     init_skia_rect_py(m, r);
     init_skia_rect_py_auto(m, r);
@@ -111,8 +113,8 @@ PYBIND11_MODULE(_skia, m)
 
     init_skia_image_filter_py_auto(m, r);
 
-    init_skia_gradient_shader_py(m, r);
-    init_skia_gradient_shader_py_auto(m, r);
+    init_skia_gradient_py(m, r);
+    init_skia_gradient_py_auto(m, r);
 
     init_skia_perlin_noise_shader_py(m, r);
 
@@ -130,5 +132,5 @@ PYBIND11_MODULE(_skia, m)
 
     init_skia_standard_recorder_options_py(m, r);
 
-    init_skia_path_py_auto(m, r);
+    //init_skia_path_py_auto(m, r);
 }

@@ -39,5 +39,5 @@ unit_files:
   - path: skia_image.unit.yaml
   - path: skia_path.unit.yaml
 
-  - path: effects/skia_gradient_shader.unit.yaml
+  - path: effects/skia_gradient.unit.yaml
   - path: effects/skia_image_filters.unit.yaml

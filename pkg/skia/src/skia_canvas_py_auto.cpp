@@ -80,6 +80,8 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("recorder", &SkCanvas::recorder
             )
+        .def("base_recorder", &SkCanvas::baseRecorder
+            )
         .def("get_surface", &SkCanvas::getSurface
             )
         .def("access_top_layer_pixels", [](SkCanvas& self, SkImageInfo * info, size_t * rowBytes, SkIPoint * origin)
@@ -335,8 +337,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
         _Canvas
         .def("draw_points", &SkCanvas::drawPoints
             , py::arg("mode")
-            , py::arg("count")
-            , py::arg("pts")
+            , py::arg("arg1")
             , py::arg("paint")
             )
         .def("draw_point", py::overload_cast<SkScalar, SkScalar, const SkPaint &>(&SkCanvas::drawPoint)
@@ -581,39 +582,23 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("font")
             , py::arg("paint")
             )
-        .def("draw_glyphs", [](SkCanvas& self, int count, const SkGlyphID glyphs[], const SkPoint positions[], const uint32_t clusters[], int textByteCount, const char utf8text[], SkPoint origin, const SkFont & font, const SkPaint & paint)
-            {
-                self.drawGlyphs(count, glyphs, positions, clusters, textByteCount, utf8text, origin, font, paint);
-                return std::make_tuple(glyphs, clusters);
-            }
-            , py::arg("count")
+        .def("draw_glyphs", py::overload_cast<SkSpan<const SkGlyphID>, SkSpan<const SkPoint>, SkSpan<const uint32_t>, SkSpan<const char>, SkPoint, const SkFont &, const SkPaint &>(&SkCanvas::drawGlyphs)
             , py::arg("glyphs")
             , py::arg("positions")
             , py::arg("clusters")
-            , py::arg("text_byte_count")
             , py::arg("utf8text")
             , py::arg("origin")
             , py::arg("font")
             , py::arg("paint")
             )
-        .def("draw_glyphs", [](SkCanvas& self, int count, const SkGlyphID glyphs[], const SkPoint positions[], SkPoint origin, const SkFont & font, const SkPaint & paint)
-            {
-                self.drawGlyphs(count, glyphs, positions, origin, font, paint);
-                return std::make_tuple(glyphs);
-            }
-            , py::arg("count")
+        .def("draw_glyphs", py::overload_cast<SkSpan<const SkGlyphID>, SkSpan<const SkPoint>, SkPoint, const SkFont &, const SkPaint &>(&SkCanvas::drawGlyphs)
             , py::arg("glyphs")
             , py::arg("positions")
             , py::arg("origin")
             , py::arg("font")
             , py::arg("paint")
             )
-        .def("draw_glyphs", [](SkCanvas& self, int count, const SkGlyphID glyphs[], const SkRSXform xforms[], SkPoint origin, const SkFont & font, const SkPaint & paint)
-            {
-                self.drawGlyphs(count, glyphs, xforms, origin, font, paint);
-                return std::make_tuple(glyphs);
-            }
-            , py::arg("count")
+        .def("draw_glyphs_rs_xform", &SkCanvas::drawGlyphsRSXform
             , py::arg("glyphs")
             , py::arg("xforms")
             , py::arg("origin")
@@ -663,16 +648,11 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("blender")
             , py::arg("paint")
             )
-        .def("draw_atlas", [](SkCanvas& self, const SkImage * atlas, const SkRSXform xform[], const SkRect tex[], const SkColor colors[], int count, SkBlendMode mode, const SkSamplingOptions & sampling, const SkRect * cullRect, const SkPaint * paint)
-            {
-                self.drawAtlas(atlas, xform, tex, colors, count, mode, sampling, cullRect, paint);
-                return std::make_tuple(colors);
-            }
+        .def("draw_atlas", &SkCanvas::drawAtlas
             , py::arg("atlas")
             , py::arg("xform")
             , py::arg("tex")
             , py::arg("colors")
-            , py::arg("count")
             , py::arg("mode")
             , py::arg("sampling")
             , py::arg("cull_rect")

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.30...4.30 FATAL_ERROR)
 
 include(../../cmake/Pybind11.cmake)
 include(../../cmake/Core.cmake)
@@ -60,8 +60,8 @@ set(SOURCES
     src/skia_data_py_auto.cpp
     src/skia_sampling_options_py_auto.cpp
 
-    src/effects/skia_gradient_shader_py.cpp
-    src/effects/skia_gradient_shader_py_auto.cpp
+    src/effects/skia_gradient_py.cpp
+    src/effects/skia_gradient_py_auto.cpp
     src/effects/skia_perlin_noise_shader_py.cpp
     src/effects/skia_image_filters_py_auto.cpp
 

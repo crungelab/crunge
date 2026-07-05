@@ -35,6 +35,10 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
         _Recorder
         .def("backend", &skgpu::graphite::Recorder::backend
             )
+        .def("type", &skgpu::graphite::Recorder::type
+            )
+        .def("cpu_recorder", &skgpu::graphite::Recorder::cpuRecorder
+            )
         .def("snap", &skgpu::graphite::Recorder::snap
             )
         .def("client_image_provider", py::overload_cast<>(&skgpu::graphite::Recorder::clientImageProvider)
@@ -75,6 +79,7 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("perform_deferred_cleanup", &skgpu::graphite::Recorder::performDeferredCleanup
             , py::arg("ms_not_used")
+            , py::arg("micros_max_purging_dur") = std::nullopt
             )
         .def("current_budgeted_bytes", &skgpu::graphite::Recorder::currentBudgetedBytes
             )

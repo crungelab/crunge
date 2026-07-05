@@ -24,3 +24,10 @@ bin/gn gen out/debug --args='is_debug=true is_official_build=false is_component_
 
 ninja -C out/debug skia
 ```
+
+## Copy to crunge/core
+libdawn_native.so
+libdawn_platform.so
+libdawn_proc.so
+libskia.so
+libwebgpu_dawn.so

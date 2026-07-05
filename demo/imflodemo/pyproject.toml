@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "imflodemo"
 version = "0.1.0"
 description = 'Crunge ImFlo Demo'
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [

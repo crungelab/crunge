@@ -10,6 +10,7 @@
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkFont.h>
+#include <include/core/SkStrikeRef.h>
 
 #include <include/core/SkPaint.h>
 #include <include/core/SkFontMetrics.h>

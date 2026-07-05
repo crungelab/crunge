@@ -5,7 +5,6 @@ from crunge import skia
 
 from ..common import Demo, Renderer
 
-
 modes = [
     skia.BlendMode.K_CLEAR,
     skia.BlendMode.K_SRC,
@@ -38,48 +37,54 @@ modes = [
     skia.BlendMode.K_LUMINOSITY,
 ]
 
+
 def draw_utf8_string(canvas, text, x, y, font, paint):
     blob = skia.TextBlob.make_from_string(text, font)
     canvas.draw_text_blob(blob, x, y, paint)
-    #canvas.draw_text_blob(skia.TextBlob(text, font), x, y, paint)
+    # canvas.draw_text_blob(skia.TextBlob(text, font), x, y, paint)
+
 
 class BlendModeDemo(Demo):
     def render(self, renderer: Renderer):
         with self.canvas_target() as canvas:
             rect = skia.Rect(0.0, 0.0, 64.0, 64.0)
-            #font = skia.Font(None, 24)
+            # font = skia.Font(None, 24)
             font = skia.Font()
             font.set_size(24)
-            #stroke = skia.Paint(Style=skia.Paint.Style.K_STROKE_STYLE)
+            # stroke = skia.Paint(Style=skia.Paint.Style.K_STROKE_STYLE)
             stroke = skia.Paint()
             stroke.set_style(skia.Paint.Style.K_STROKE_STYLE)
-            '''
-            src = skia.Paint(
-                Shader=skia.GradientShader.make_linear(
-                    [skia.Point(0.0, 0.0), skia.Point(64.0, 0.0)],
-                    [skia.colors.MAGENTA & 0x00FFFFFF, skia.colors.MAGENTA]
-                )
-            )
-            '''
+
             src = skia.Paint()
+            src_colors = skia.GradientColors(
+                [
+                    skia.Color4f.from_color(skia.colors.MAGENTA & 0x00FFFFFF),
+                    skia.Color4f.from_color(skia.colors.MAGENTA),
+                ],
+                skia.TileMode.K_CLAMP,  # confirm exact enum member name
+            )
+
             src.set_shader(
-                skia.GradientShader.make_linear(
+                skia.linear_gradient(
                     [skia.Point(0.0, 0.0), skia.Point(64.0, 0.0)],
-                    [skia.colors.MAGENTA & 0x00FFFFFF, skia.colors.MAGENTA]
+                    skia.Gradient(
+                        src_colors,
+                        skia.GradientInterpolation(),
+                    ),
                 )
             )
-            '''
-            dst = skia.Paint(
-                Shader=skia.GradientShader.make_linear(
-                    [skia.Point(0.0, 0.0), skia.Point(0.0, 64.0)],
-                    [skia.colors.CYAN & 0x00FFFFFF, skia.colors.CYAN])
-            )
-            '''
+
             dst = skia.Paint()
             dst.set_shader(
-                skia.GradientShader.make_linear(
+                skia.linear_gradient(
                     [skia.Point(0.0, 0.0), skia.Point(0.0, 64.0)],
-                    [skia.colors.CYAN & 0x00FFFFFF, skia.colors.CYAN])
+                    skia.Gradient(
+                        skia.GradientColors(
+                            [skia.colors.CYAN & 0x00FFFFFF, skia.colors.CYAN]
+                        ),
+                        skia.GradientInterpolation(),
+                    ),
+                )
             )
             canvas.clear(skia.colors.WHITE)
             N = len(modes)
@@ -93,27 +98,14 @@ class BlendModeDemo(Demo):
                     canvas.clip_rect(skia.Rect(0.0, 0.0, 64.0, 64.0))
                     canvas.draw_color(skia.colors.LTGRAY)
                     save_layer_rec = skia.CanvasSaveLayerRec()
-                    #canvas.save_layer()
+                    # canvas.save_layer()
                     canvas.save_layer(save_layer_rec)
                     canvas.clear(skia.colors.TRANSPARENT)
                     canvas.draw_paint(dst)
                     src.set_blend_mode(modes[i])
                     canvas.draw_paint(src)
                     canvas.draw_rect(rect, stroke)
-    '''
-    def render(self, renderer: Renderer):
-        with self.canvas_target() as canvas:
-            # canvas.clear(0xFF00FF00)  # Clear with a color
 
-            paint = skia.Paint()
-            paint.set_color(0xFFFF00FF)
-            # font = skia.Font(None, 36)
-            font = skia.Font()
-            font.set_size(36)
-            # font.set_typeface(skia.Typeface('Arial'))
-            # font.set_typeface(None)
-            canvas.draw_string("Hello Skia!", 10, 32, font, paint)
-    '''
 
 def main():
     BlendModeDemo().run()

@@ -1,2 +1,5 @@
+-e ../../../cxbind
+-e ../../../cxbind/plugins/dawn
+
 -e ../core
 

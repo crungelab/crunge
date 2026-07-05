@@ -5,7 +5,7 @@ packages = ["wgpudemo"]
 name = "wgpudemo"
 version = "0.1.0"
 description = 'Crunge WebGPU Demo'
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [

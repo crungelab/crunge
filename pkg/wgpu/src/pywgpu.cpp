@@ -10,6 +10,42 @@ RequestAdapterOptions::operator const WGPURequestAdapterOptions&() const noexcep
     return *reinterpret_cast<const WGPURequestAdapterOptions*>(this);
 }
 
+// RequestAdapterWebXROptions implementation
+
+RequestAdapterWebXROptions::operator const WGPURequestAdapterWebXROptions&() const noexcept {
+    return *reinterpret_cast<const WGPURequestAdapterWebXROptions*>(this);
+}
+
+RequestAdapterWebXROptions::RequestAdapterWebXROptions()
+: ChainedStruct { nullptr, SType::RequestAdapterWebXROptions } {}
+
+struct RequestAdapterWebXROptions::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    Bool xrCompatible;
+};
+
+RequestAdapterWebXROptions::RequestAdapterWebXROptions(RequestAdapterWebXROptions::Init&& init)
+: ChainedStruct { init.nextInChain, SType::RequestAdapterWebXROptions }
+    ,xrCompatible(std::move(init.xrCompatible))
+    {}
+    
+// RequestAdapterWebGPUBackendOptions implementation
+
+RequestAdapterWebGPUBackendOptions::operator const WGPURequestAdapterWebGPUBackendOptions&() const noexcept {
+    return *reinterpret_cast<const WGPURequestAdapterWebGPUBackendOptions*>(this);
+}
+
+RequestAdapterWebGPUBackendOptions::RequestAdapterWebGPUBackendOptions()
+: ChainedStruct { nullptr, SType::RequestAdapterWebGPUBackendOptions } {}
+
+struct RequestAdapterWebGPUBackendOptions::Init {
+    ChainedStruct const * nextInChain = nullptr;
+};
+
+RequestAdapterWebGPUBackendOptions::RequestAdapterWebGPUBackendOptions(RequestAdapterWebGPUBackendOptions::Init&& init)
+: ChainedStruct { init.nextInChain, SType::RequestAdapterWebGPUBackendOptions }
+    {}
+    
 // AdapterInfo implementation
 
 AdapterInfo::operator const WGPUAdapterInfo&() const noexcept {
@@ -64,6 +100,25 @@ DeviceDescriptor::operator const WGPUDeviceDescriptor&() const noexcept {
     return *reinterpret_cast<const WGPUDeviceDescriptor*>(this);
 }
 
+// DawnConsumeAdapterDescriptor implementation
+
+DawnConsumeAdapterDescriptor::operator const WGPUDawnConsumeAdapterDescriptor&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnConsumeAdapterDescriptor*>(this);
+}
+
+DawnConsumeAdapterDescriptor::DawnConsumeAdapterDescriptor()
+: ChainedStruct { nullptr, SType::DawnConsumeAdapterDescriptor } {}
+
+struct DawnConsumeAdapterDescriptor::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    Bool consumeAdapter = false;
+};
+
+DawnConsumeAdapterDescriptor::DawnConsumeAdapterDescriptor(DawnConsumeAdapterDescriptor::Init&& init)
+: ChainedStruct { init.nextInChain, SType::DawnConsumeAdapterDescriptor }
+    ,consumeAdapter(std::move(init.consumeAdapter))
+    {}
+    
 // DawnTogglesDescriptor implementation
 
 DawnTogglesDescriptor::operator const WGPUDawnTogglesDescriptor&() const noexcept {
@@ -104,6 +159,8 @@ struct DawnCacheDeviceDescriptor::Init {
     DawnLoadCacheDataFunction loadDataFunction = nullptr;
     DawnStoreCacheDataFunction storeDataFunction = nullptr;
     void * functionUserdata = nullptr;
+    DawnLoadCacheDataCallbackInfo dawnLoadCacheDataCallbackInfo;
+    DawnStoreCacheDataCallbackInfo dawnStoreCacheDataCallbackInfo;
 };
 
 DawnCacheDeviceDescriptor::DawnCacheDeviceDescriptor(DawnCacheDeviceDescriptor::Init&& init)
@@ -112,6 +169,27 @@ DawnCacheDeviceDescriptor::DawnCacheDeviceDescriptor(DawnCacheDeviceDescriptor::
     ,loadDataFunction(std::move(init.loadDataFunction))
     ,storeDataFunction(std::move(init.storeDataFunction))
     ,functionUserdata(std::move(init.functionUserdata))
+    ,dawnLoadCacheDataCallbackInfo(std::move(init.dawnLoadCacheDataCallbackInfo))
+    ,dawnStoreCacheDataCallbackInfo(std::move(init.dawnStoreCacheDataCallbackInfo))
+    {}
+    
+// DawnDeviceAllocatorControl implementation
+
+DawnDeviceAllocatorControl::operator const WGPUDawnDeviceAllocatorControl&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnDeviceAllocatorControl*>(this);
+}
+
+DawnDeviceAllocatorControl::DawnDeviceAllocatorControl()
+: ChainedStruct { nullptr, SType::DawnDeviceAllocatorControl } {}
+
+struct DawnDeviceAllocatorControl::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    size_t allocatorHeapBlockSize = 0;
+};
+
+DawnDeviceAllocatorControl::DawnDeviceAllocatorControl(DawnDeviceAllocatorControl::Init&& init)
+: ChainedStruct { init.nextInChain, SType::DawnDeviceAllocatorControl }
+    ,allocatorHeapBlockSize(std::move(init.allocatorHeapBlockSize))
     {}
     
 // DawnWGSLBlocklist implementation
@@ -253,6 +331,25 @@ ExternalTextureBindingEntry::ExternalTextureBindingEntry(ExternalTextureBindingE
     ,externalTexture(std::move(init.externalTexture))
     {}
     
+// TexelBufferBindingEntry implementation
+
+TexelBufferBindingEntry::operator const WGPUTexelBufferBindingEntry&() const noexcept {
+    return *reinterpret_cast<const WGPUTexelBufferBindingEntry*>(this);
+}
+
+TexelBufferBindingEntry::TexelBufferBindingEntry()
+: ChainedStruct { nullptr, SType::TexelBufferBindingEntry } {}
+
+struct TexelBufferBindingEntry::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    TexelBufferView texelBufferView;
+};
+
+TexelBufferBindingEntry::TexelBufferBindingEntry(TexelBufferBindingEntry::Init&& init)
+: ChainedStruct { init.nextInChain, SType::TexelBufferBindingEntry }
+    ,texelBufferView(std::move(init.texelBufferView))
+    {}
+    
 // ExternalTextureBindingLayout implementation
 
 ExternalTextureBindingLayout::operator const WGPUExternalTextureBindingLayout&() const noexcept {
@@ -276,6 +373,27 @@ StorageTextureBindingLayout::operator const WGPUStorageTextureBindingLayout&() c
     return *reinterpret_cast<const WGPUStorageTextureBindingLayout*>(this);
 }
 
+// TexelBufferBindingLayout implementation
+
+TexelBufferBindingLayout::operator const WGPUTexelBufferBindingLayout&() const noexcept {
+    return *reinterpret_cast<const WGPUTexelBufferBindingLayout*>(this);
+}
+
+TexelBufferBindingLayout::TexelBufferBindingLayout()
+: ChainedStruct { nullptr, SType::TexelBufferBindingLayout } {}
+
+struct TexelBufferBindingLayout::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    TexelBufferAccess access = TexelBufferAccess::ReadWrite;
+    TextureFormat format;
+};
+
+TexelBufferBindingLayout::TexelBufferBindingLayout(TexelBufferBindingLayout::Init&& init)
+: ChainedStruct { init.nextInChain, SType::TexelBufferBindingLayout }
+    ,access(std::move(init.access))
+    ,format(std::move(init.format))
+    {}
+    
 // BindGroupLayoutEntry implementation
 
 BindGroupLayoutEntry::operator const WGPUBindGroupLayoutEntry&() const noexcept {
@@ -418,89 +536,56 @@ Limits::operator const WGPULimits&() const noexcept {
     return *reinterpret_cast<const WGPULimits*>(this);
 }
 
-// AdapterPropertiesSubgroups implementation
+// CompatibilityModeLimits implementation
 
-AdapterPropertiesSubgroups::operator const WGPUAdapterPropertiesSubgroups&() const noexcept {
-    return *reinterpret_cast<const WGPUAdapterPropertiesSubgroups*>(this);
+CompatibilityModeLimits::operator const WGPUCompatibilityModeLimits&() const noexcept {
+    return *reinterpret_cast<const WGPUCompatibilityModeLimits*>(this);
 }
 
-AdapterPropertiesSubgroups::AdapterPropertiesSubgroups()
-: ChainedStructOut { nullptr, SType::AdapterPropertiesSubgroups } {}
+CompatibilityModeLimits::CompatibilityModeLimits()
+: ChainedStructOut { nullptr, SType::CompatibilityModeLimits } {}
 
-struct AdapterPropertiesSubgroups::Init {
+struct CompatibilityModeLimits::Init {
     ChainedStructOut * const nextInChain = nullptr;
-    uint32_t const subgroupMinSize = kLimitU32Undefined;
-    uint32_t const subgroupMaxSize = kLimitU32Undefined;
+    uint32_t const maxStorageBuffersInVertexStage = kLimitU32Undefined;
+    uint32_t const maxStorageTexturesInVertexStage = kLimitU32Undefined;
+    uint32_t const maxStorageBuffersInFragmentStage = kLimitU32Undefined;
+    uint32_t const maxStorageTexturesInFragmentStage = kLimitU32Undefined;
 };
 
-AdapterPropertiesSubgroups::AdapterPropertiesSubgroups(AdapterPropertiesSubgroups::Init&& init)
-: ChainedStructOut { init.nextInChain, SType::AdapterPropertiesSubgroups }
-    ,subgroupMinSize(std::move(init.subgroupMinSize))
-    ,subgroupMaxSize(std::move(init.subgroupMaxSize))
+CompatibilityModeLimits::CompatibilityModeLimits(CompatibilityModeLimits::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::CompatibilityModeLimits }
+    ,maxStorageBuffersInVertexStage(std::move(init.maxStorageBuffersInVertexStage))
+    ,maxStorageTexturesInVertexStage(std::move(init.maxStorageTexturesInVertexStage))
+    ,maxStorageBuffersInFragmentStage(std::move(init.maxStorageBuffersInFragmentStage))
+    ,maxStorageTexturesInFragmentStage(std::move(init.maxStorageTexturesInFragmentStage))
     {}
     
-AdapterPropertiesSubgroups::~AdapterPropertiesSubgroups() {
+CompatibilityModeLimits::~CompatibilityModeLimits() {
     FreeMembers();
 }
 
-void AdapterPropertiesSubgroups::FreeMembers() {
+void CompatibilityModeLimits::FreeMembers() {
     // Free members here
 }
 
-AdapterPropertiesSubgroups::AdapterPropertiesSubgroups(AdapterPropertiesSubgroups&& rhs) :
-    subgroupMinSize(rhs.subgroupMinSize),
-    subgroupMaxSize(rhs.subgroupMaxSize)
+CompatibilityModeLimits::CompatibilityModeLimits(CompatibilityModeLimits&& rhs) :
+    maxStorageBuffersInVertexStage(rhs.maxStorageBuffersInVertexStage),
+    maxStorageTexturesInVertexStage(rhs.maxStorageTexturesInVertexStage),
+    maxStorageBuffersInFragmentStage(rhs.maxStorageBuffersInFragmentStage),
+    maxStorageTexturesInFragmentStage(rhs.maxStorageTexturesInFragmentStage)
 {}
 
-AdapterPropertiesSubgroups& AdapterPropertiesSubgroups::operator=(AdapterPropertiesSubgroups&& rhs) {
+CompatibilityModeLimits& CompatibilityModeLimits::operator=(CompatibilityModeLimits&& rhs) {
     if (&rhs == this) {
         return *this;
     }
     FreeMembers();
 
-    ::pywgpu::detail::AsNonConstReference(this->subgroupMinSize) = std::move(rhs.subgroupMinSize);
-    ::pywgpu::detail::AsNonConstReference(this->subgroupMaxSize) = std::move(rhs.subgroupMaxSize);
-
-    return *this;
-}
-// DawnExperimentalImmediateDataLimits implementation
-
-DawnExperimentalImmediateDataLimits::operator const WGPUDawnExperimentalImmediateDataLimits&() const noexcept {
-    return *reinterpret_cast<const WGPUDawnExperimentalImmediateDataLimits*>(this);
-}
-
-DawnExperimentalImmediateDataLimits::DawnExperimentalImmediateDataLimits()
-: ChainedStructOut { nullptr, SType::DawnExperimentalImmediateDataLimits } {}
-
-struct DawnExperimentalImmediateDataLimits::Init {
-    ChainedStructOut * const nextInChain = nullptr;
-    uint32_t const maxImmediateDataRangeByteSize = kLimitU32Undefined;
-};
-
-DawnExperimentalImmediateDataLimits::DawnExperimentalImmediateDataLimits(DawnExperimentalImmediateDataLimits::Init&& init)
-: ChainedStructOut { init.nextInChain, SType::DawnExperimentalImmediateDataLimits }
-    ,maxImmediateDataRangeByteSize(std::move(init.maxImmediateDataRangeByteSize))
-    {}
-    
-DawnExperimentalImmediateDataLimits::~DawnExperimentalImmediateDataLimits() {
-    FreeMembers();
-}
-
-void DawnExperimentalImmediateDataLimits::FreeMembers() {
-    // Free members here
-}
-
-DawnExperimentalImmediateDataLimits::DawnExperimentalImmediateDataLimits(DawnExperimentalImmediateDataLimits&& rhs) :
-    maxImmediateDataRangeByteSize(rhs.maxImmediateDataRangeByteSize)
-{}
-
-DawnExperimentalImmediateDataLimits& DawnExperimentalImmediateDataLimits::operator=(DawnExperimentalImmediateDataLimits&& rhs) {
-    if (&rhs == this) {
-        return *this;
-    }
-    FreeMembers();
-
-    ::pywgpu::detail::AsNonConstReference(this->maxImmediateDataRangeByteSize) = std::move(rhs.maxImmediateDataRangeByteSize);
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageBuffersInVertexStage) = std::move(rhs.maxStorageBuffersInVertexStage);
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageTexturesInVertexStage) = std::move(rhs.maxStorageTexturesInVertexStage);
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageBuffersInFragmentStage) = std::move(rhs.maxStorageBuffersInFragmentStage);
+    ::pywgpu::detail::AsNonConstReference(this->maxStorageTexturesInFragmentStage) = std::move(rhs.maxStorageTexturesInFragmentStage);
 
     return *this;
 }
@@ -545,6 +630,47 @@ DawnTexelCopyBufferRowAlignmentLimits& DawnTexelCopyBufferRowAlignmentLimits::op
 
     return *this;
 }
+// DawnHostMappedPointerLimits implementation
+
+DawnHostMappedPointerLimits::operator const WGPUDawnHostMappedPointerLimits&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnHostMappedPointerLimits*>(this);
+}
+
+DawnHostMappedPointerLimits::DawnHostMappedPointerLimits()
+: ChainedStructOut { nullptr, SType::DawnHostMappedPointerLimits } {}
+
+struct DawnHostMappedPointerLimits::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    uint32_t const hostMappedPointerAlignment = kLimitU32Undefined;
+};
+
+DawnHostMappedPointerLimits::DawnHostMappedPointerLimits(DawnHostMappedPointerLimits::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::DawnHostMappedPointerLimits }
+    ,hostMappedPointerAlignment(std::move(init.hostMappedPointerAlignment))
+    {}
+    
+DawnHostMappedPointerLimits::~DawnHostMappedPointerLimits() {
+    FreeMembers();
+}
+
+void DawnHostMappedPointerLimits::FreeMembers() {
+    // Free members here
+}
+
+DawnHostMappedPointerLimits::DawnHostMappedPointerLimits(DawnHostMappedPointerLimits&& rhs) :
+    hostMappedPointerAlignment(rhs.hostMappedPointerAlignment)
+{}
+
+DawnHostMappedPointerLimits& DawnHostMappedPointerLimits::operator=(DawnHostMappedPointerLimits&& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    FreeMembers();
+
+    ::pywgpu::detail::AsNonConstReference(this->hostMappedPointerAlignment) = std::move(rhs.hostMappedPointerAlignment);
+
+    return *this;
+}
 // SupportedFeatures implementation
 
 SupportedFeatures::operator const WGPUSupportedFeatures&() const noexcept {
@@ -565,6 +691,36 @@ SupportedFeatures::SupportedFeatures(SupportedFeatures&& rhs) :
 {}
 
 SupportedFeatures& SupportedFeatures::operator=(SupportedFeatures&& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    FreeMembers();
+
+    ::pywgpu::detail::AsNonConstReference(this->featureCount) = std::move(rhs.featureCount);
+    ::pywgpu::detail::AsNonConstReference(this->features) = std::move(rhs.features);
+
+    return *this;
+}
+// SupportedInstanceFeatures implementation
+
+SupportedInstanceFeatures::operator const WGPUSupportedInstanceFeatures&() const noexcept {
+    return *reinterpret_cast<const WGPUSupportedInstanceFeatures*>(this);
+}
+
+SupportedInstanceFeatures::~SupportedInstanceFeatures() {
+    FreeMembers();
+}
+
+void SupportedInstanceFeatures::FreeMembers() {
+    // Free members here
+}
+
+SupportedInstanceFeatures::SupportedInstanceFeatures(SupportedInstanceFeatures&& rhs) :
+    featureCount(rhs.featureCount),
+    features(rhs.features)
+{}
+
+SupportedInstanceFeatures& SupportedInstanceFeatures::operator=(SupportedInstanceFeatures&& rhs) {
     if (&rhs == this) {
         return *this;
     }
@@ -623,6 +779,12 @@ ExternalTextureDescriptor::operator const WGPUExternalTextureDescriptor&() const
     return *reinterpret_cast<const WGPUExternalTextureDescriptor*>(this);
 }
 
+// ColorSpaceDawn implementation
+
+ColorSpaceDawn::operator const WGPUColorSpaceDawn&() const noexcept {
+    return *reinterpret_cast<const WGPUColorSpaceDawn*>(this);
+}
+
 // SharedBufferMemoryProperties implementation
 
 SharedBufferMemoryProperties::operator const WGPUSharedBufferMemoryProperties&() const noexcept {
@@ -661,6 +823,27 @@ SharedBufferMemoryDescriptor::operator const WGPUSharedBufferMemoryDescriptor&()
     return *reinterpret_cast<const WGPUSharedBufferMemoryDescriptor*>(this);
 }
 
+// SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor implementation
+
+SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor::operator const WGPUSharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor&() const noexcept {
+    return *reinterpret_cast<const WGPUSharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor*>(this);
+}
+
+SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor::SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor()
+: ChainedStruct { nullptr, SType::SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor } {}
+
+struct SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    void * handle;
+    uint64_t size;
+};
+
+SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor::SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor(SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SharedBufferMemoryD3D12SharedMemoryFileMappingHandleDescriptor }
+    ,handle(std::move(init.handle))
+    ,size(std::move(init.size))
+    {}
+    
 // SharedTextureMemoryProperties implementation
 
 SharedTextureMemoryProperties::operator const WGPUSharedTextureMemoryProperties&() const noexcept {
@@ -767,6 +950,7 @@ SharedBufferMemoryEndAccessState::SharedBufferMemoryEndAccessState(SharedBufferM
     initialized(rhs.initialized),
     fenceCount(rhs.fenceCount),
     fences(rhs.fences),
+    signaledValueCount(rhs.signaledValueCount),
     signaledValues(rhs.signaledValues)
 {}
 
@@ -780,6 +964,7 @@ SharedBufferMemoryEndAccessState& SharedBufferMemoryEndAccessState::operator=(Sh
     ::pywgpu::detail::AsNonConstReference(this->initialized) = std::move(rhs.initialized);
     ::pywgpu::detail::AsNonConstReference(this->fenceCount) = std::move(rhs.fenceCount);
     ::pywgpu::detail::AsNonConstReference(this->fences) = std::move(rhs.fences);
+    ::pywgpu::detail::AsNonConstReference(this->signaledValueCount) = std::move(rhs.signaledValueCount);
     ::pywgpu::detail::AsNonConstReference(this->signaledValues) = std::move(rhs.signaledValues);
 
     return *this;
@@ -815,13 +1000,11 @@ SharedTextureMemoryAHardwareBufferDescriptor::SharedTextureMemoryAHardwareBuffer
 struct SharedTextureMemoryAHardwareBufferDescriptor::Init {
     ChainedStruct const * nextInChain = nullptr;
     void * handle;
-    Bool useExternalFormat;
 };
 
 SharedTextureMemoryAHardwareBufferDescriptor::SharedTextureMemoryAHardwareBufferDescriptor(SharedTextureMemoryAHardwareBufferDescriptor::Init&& init)
 : ChainedStruct { init.nextInChain, SType::SharedTextureMemoryAHardwareBufferDescriptor }
     ,handle(std::move(init.handle))
-    ,useExternalFormat(std::move(init.useExternalFormat))
     {}
     
 // SharedTextureMemoryDmaBufPlane implementation
@@ -991,6 +1174,7 @@ SharedTextureMemoryEndAccessState::SharedTextureMemoryEndAccessState(SharedTextu
     initialized(rhs.initialized),
     fenceCount(rhs.fenceCount),
     fences(rhs.fences),
+    signaledValueCount(rhs.signaledValueCount),
     signaledValues(rhs.signaledValues)
 {}
 
@@ -1004,7 +1188,49 @@ SharedTextureMemoryEndAccessState& SharedTextureMemoryEndAccessState::operator=(
     ::pywgpu::detail::AsNonConstReference(this->initialized) = std::move(rhs.initialized);
     ::pywgpu::detail::AsNonConstReference(this->fenceCount) = std::move(rhs.fenceCount);
     ::pywgpu::detail::AsNonConstReference(this->fences) = std::move(rhs.fences);
+    ::pywgpu::detail::AsNonConstReference(this->signaledValueCount) = std::move(rhs.signaledValueCount);
     ::pywgpu::detail::AsNonConstReference(this->signaledValues) = std::move(rhs.signaledValues);
+
+    return *this;
+}
+// SharedTextureMemoryMetalEndAccessState implementation
+
+SharedTextureMemoryMetalEndAccessState::operator const WGPUSharedTextureMemoryMetalEndAccessState&() const noexcept {
+    return *reinterpret_cast<const WGPUSharedTextureMemoryMetalEndAccessState*>(this);
+}
+
+SharedTextureMemoryMetalEndAccessState::SharedTextureMemoryMetalEndAccessState()
+: ChainedStructOut { nullptr, SType::SharedTextureMemoryMetalEndAccessState } {}
+
+struct SharedTextureMemoryMetalEndAccessState::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    Future const commandsScheduledFuture = {};
+};
+
+SharedTextureMemoryMetalEndAccessState::SharedTextureMemoryMetalEndAccessState(SharedTextureMemoryMetalEndAccessState::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::SharedTextureMemoryMetalEndAccessState }
+    ,commandsScheduledFuture(std::move(init.commandsScheduledFuture))
+    {}
+    
+SharedTextureMemoryMetalEndAccessState::~SharedTextureMemoryMetalEndAccessState() {
+    FreeMembers();
+}
+
+void SharedTextureMemoryMetalEndAccessState::FreeMembers() {
+    // Free members here
+}
+
+SharedTextureMemoryMetalEndAccessState::SharedTextureMemoryMetalEndAccessState(SharedTextureMemoryMetalEndAccessState&& rhs) :
+    commandsScheduledFuture(rhs.commandsScheduledFuture)
+{}
+
+SharedTextureMemoryMetalEndAccessState& SharedTextureMemoryMetalEndAccessState::operator=(SharedTextureMemoryMetalEndAccessState&& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    FreeMembers();
+
+    ::pywgpu::detail::AsNonConstReference(this->commandsScheduledFuture) = std::move(rhs.commandsScheduledFuture);
 
     return *this;
 }
@@ -1091,6 +1317,25 @@ struct SharedTextureMemoryD3DSwapchainBeginState::Init {
 SharedTextureMemoryD3DSwapchainBeginState::SharedTextureMemoryD3DSwapchainBeginState(SharedTextureMemoryD3DSwapchainBeginState::Init&& init)
 : ChainedStruct { init.nextInChain, SType::SharedTextureMemoryD3DSwapchainBeginState }
     ,isSwapchain(std::move(init.isSwapchain))
+    {}
+    
+// SharedTextureMemoryD3D11BeginState implementation
+
+SharedTextureMemoryD3D11BeginState::operator const WGPUSharedTextureMemoryD3D11BeginState&() const noexcept {
+    return *reinterpret_cast<const WGPUSharedTextureMemoryD3D11BeginState*>(this);
+}
+
+SharedTextureMemoryD3D11BeginState::SharedTextureMemoryD3D11BeginState()
+: ChainedStruct { nullptr, SType::SharedTextureMemoryD3D11BeginState } {}
+
+struct SharedTextureMemoryD3D11BeginState::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    Bool requiresEndAccessFence = true;
+};
+
+SharedTextureMemoryD3D11BeginState::SharedTextureMemoryD3D11BeginState(SharedTextureMemoryD3D11BeginState::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SharedTextureMemoryD3D11BeginState }
+    ,requiresEndAccessFence(std::move(init.requiresEndAccessFence))
     {}
     
 // SharedFenceDescriptor implementation
@@ -1234,6 +1479,23 @@ DawnFakeBufferOOMForTesting::DawnFakeBufferOOMForTesting(DawnFakeBufferOOMForTes
     ,fakeOOMAtWireClientMap(std::move(init.fakeOOMAtWireClientMap))
     ,fakeOOMAtNativeMap(std::move(init.fakeOOMAtNativeMap))
     ,fakeOOMAtDevice(std::move(init.fakeOOMAtDevice))
+    {}
+    
+// DawnFakeDeviceInitializeErrorForTesting implementation
+
+DawnFakeDeviceInitializeErrorForTesting::operator const WGPUDawnFakeDeviceInitializeErrorForTesting&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnFakeDeviceInitializeErrorForTesting*>(this);
+}
+
+DawnFakeDeviceInitializeErrorForTesting::DawnFakeDeviceInitializeErrorForTesting()
+: ChainedStruct { nullptr, SType::DawnFakeDeviceInitializeErrorForTesting } {}
+
+struct DawnFakeDeviceInitializeErrorForTesting::Init {
+    ChainedStruct const * nextInChain = nullptr;
+};
+
+DawnFakeDeviceInitializeErrorForTesting::DawnFakeDeviceInitializeErrorForTesting(DawnFakeDeviceInitializeErrorForTesting::Init&& init)
+: ChainedStruct { init.nextInChain, SType::DawnFakeDeviceInitializeErrorForTesting }
     {}
     
 // SharedFenceExportInfo implementation
@@ -1627,12 +1889,36 @@ FutureWaitInfo::operator const WGPUFutureWaitInfo&() const noexcept {
     return *reinterpret_cast<const WGPUFutureWaitInfo*>(this);
 }
 
-// InstanceCapabilities implementation
+// InstanceLimits implementation
 
-InstanceCapabilities::operator const WGPUInstanceCapabilities&() const noexcept {
-    return *reinterpret_cast<const WGPUInstanceCapabilities*>(this);
+InstanceLimits::operator const WGPUInstanceLimits&() const noexcept {
+    return *reinterpret_cast<const WGPUInstanceLimits*>(this);
 }
 
+InstanceLimits::~InstanceLimits() {
+    FreeMembers();
+}
+
+void InstanceLimits::FreeMembers() {
+    // Free members here
+}
+
+InstanceLimits::InstanceLimits(InstanceLimits&& rhs) :
+    nextInChain(rhs.nextInChain),
+    timedWaitAnyMaxCount(rhs.timedWaitAnyMaxCount)
+{}
+
+InstanceLimits& InstanceLimits::operator=(InstanceLimits&& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    FreeMembers();
+
+    ::pywgpu::detail::AsNonConstReference(this->nextInChain) = std::move(rhs.nextInChain);
+    ::pywgpu::detail::AsNonConstReference(this->timedWaitAnyMaxCount) = std::move(rhs.timedWaitAnyMaxCount);
+
+    return *this;
+}
 // InstanceDescriptor implementation
 
 InstanceDescriptor::operator const WGPUInstanceDescriptor&() const noexcept {
@@ -1711,6 +1997,25 @@ PassTimestampWrites::operator const WGPUPassTimestampWrites&() const noexcept {
     return *reinterpret_cast<const WGPUPassTimestampWrites*>(this);
 }
 
+// PipelineLayoutResourceTable implementation
+
+PipelineLayoutResourceTable::operator const WGPUPipelineLayoutResourceTable&() const noexcept {
+    return *reinterpret_cast<const WGPUPipelineLayoutResourceTable*>(this);
+}
+
+PipelineLayoutResourceTable::PipelineLayoutResourceTable()
+: ChainedStruct { nullptr, SType::PipelineLayoutResourceTable } {}
+
+struct PipelineLayoutResourceTable::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    Bool usesResourceTable = false;
+};
+
+PipelineLayoutResourceTable::PipelineLayoutResourceTable(PipelineLayoutResourceTable::Init&& init)
+: ChainedStruct { init.nextInChain, SType::PipelineLayoutResourceTable }
+    ,usesResourceTable(std::move(init.usesResourceTable))
+    {}
+    
 // PipelineLayoutDescriptor implementation
 
 PipelineLayoutDescriptor::operator const WGPUPipelineLayoutDescriptor&() const noexcept {
@@ -1782,25 +2087,6 @@ RenderPassColorAttachment::operator const WGPURenderPassColorAttachment&() const
     return *reinterpret_cast<const WGPURenderPassColorAttachment*>(this);
 }
 
-// DawnRenderPassColorAttachmentRenderToSingleSampled implementation
-
-DawnRenderPassColorAttachmentRenderToSingleSampled::operator const WGPUDawnRenderPassColorAttachmentRenderToSingleSampled&() const noexcept {
-    return *reinterpret_cast<const WGPUDawnRenderPassColorAttachmentRenderToSingleSampled*>(this);
-}
-
-DawnRenderPassColorAttachmentRenderToSingleSampled::DawnRenderPassColorAttachmentRenderToSingleSampled()
-: ChainedStruct { nullptr, SType::DawnRenderPassColorAttachmentRenderToSingleSampled } {}
-
-struct DawnRenderPassColorAttachmentRenderToSingleSampled::Init {
-    ChainedStruct const * nextInChain = nullptr;
-    uint32_t implicitSampleCount = 1;
-};
-
-DawnRenderPassColorAttachmentRenderToSingleSampled::DawnRenderPassColorAttachmentRenderToSingleSampled(DawnRenderPassColorAttachmentRenderToSingleSampled::Init&& init)
-: ChainedStruct { init.nextInChain, SType::DawnRenderPassColorAttachmentRenderToSingleSampled }
-    ,implicitSampleCount(std::move(init.implicitSampleCount))
-    {}
-    
 // RenderPassDepthStencilAttachment implementation
 
 RenderPassDepthStencilAttachment::operator const WGPURenderPassDepthStencilAttachment&() const noexcept {
@@ -1813,6 +2099,25 @@ RenderPassDescriptor::operator const WGPURenderPassDescriptor&() const noexcept 
     return *reinterpret_cast<const WGPURenderPassDescriptor*>(this);
 }
 
+// DawnRenderPassSampleCount implementation
+
+DawnRenderPassSampleCount::operator const WGPUDawnRenderPassSampleCount&() const noexcept {
+    return *reinterpret_cast<const WGPUDawnRenderPassSampleCount*>(this);
+}
+
+DawnRenderPassSampleCount::DawnRenderPassSampleCount()
+: ChainedStruct { nullptr, SType::DawnRenderPassSampleCount } {}
+
+struct DawnRenderPassSampleCount::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    uint32_t sampleCount = 1;
+};
+
+DawnRenderPassSampleCount::DawnRenderPassSampleCount(DawnRenderPassSampleCount::Init&& init)
+: ChainedStruct { init.nextInChain, SType::DawnRenderPassSampleCount }
+    ,sampleCount(std::move(init.sampleCount))
+    {}
+    
 // RenderPassMaxDrawCount implementation
 
 RenderPassMaxDrawCount::operator const WGPURenderPassMaxDrawCount&() const noexcept {
@@ -1832,27 +2137,52 @@ RenderPassMaxDrawCount::RenderPassMaxDrawCount(RenderPassMaxDrawCount::Init&& in
     ,maxDrawCount(std::move(init.maxDrawCount))
     {}
     
-// RenderPassDescriptorExpandResolveRect implementation
+// RenderPassRenderAreaRect implementation
 
-RenderPassDescriptorExpandResolveRect::operator const WGPURenderPassDescriptorExpandResolveRect&() const noexcept {
-    return *reinterpret_cast<const WGPURenderPassDescriptorExpandResolveRect*>(this);
+RenderPassRenderAreaRect::operator const WGPURenderPassRenderAreaRect&() const noexcept {
+    return *reinterpret_cast<const WGPURenderPassRenderAreaRect*>(this);
 }
 
-RenderPassDescriptorExpandResolveRect::RenderPassDescriptorExpandResolveRect()
-: ChainedStruct { nullptr, SType::RenderPassDescriptorExpandResolveRect } {}
+RenderPassRenderAreaRect::RenderPassRenderAreaRect()
+: ChainedStruct { nullptr, SType::RenderPassRenderAreaRect } {}
 
-struct RenderPassDescriptorExpandResolveRect::Init {
+struct RenderPassRenderAreaRect::Init {
     ChainedStruct const * nextInChain = nullptr;
-    uint32_t x;
-    uint32_t y;
+    Origin2D origin = {};
+    Extent2D size = {};
+};
+
+RenderPassRenderAreaRect::RenderPassRenderAreaRect(RenderPassRenderAreaRect::Init&& init)
+: ChainedStruct { init.nextInChain, SType::RenderPassRenderAreaRect }
+    ,origin(std::move(init.origin))
+    ,size(std::move(init.size))
+    {}
+    
+// RenderPassDescriptorResolveRect implementation
+
+RenderPassDescriptorResolveRect::operator const WGPURenderPassDescriptorResolveRect&() const noexcept {
+    return *reinterpret_cast<const WGPURenderPassDescriptorResolveRect*>(this);
+}
+
+RenderPassDescriptorResolveRect::RenderPassDescriptorResolveRect()
+: ChainedStruct { nullptr, SType::RenderPassDescriptorResolveRect } {}
+
+struct RenderPassDescriptorResolveRect::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    uint32_t colorOffsetX;
+    uint32_t colorOffsetY;
+    uint32_t resolveOffsetX;
+    uint32_t resolveOffsetY;
     uint32_t width;
     uint32_t height;
 };
 
-RenderPassDescriptorExpandResolveRect::RenderPassDescriptorExpandResolveRect(RenderPassDescriptorExpandResolveRect::Init&& init)
-: ChainedStruct { init.nextInChain, SType::RenderPassDescriptorExpandResolveRect }
-    ,x(std::move(init.x))
-    ,y(std::move(init.y))
+RenderPassDescriptorResolveRect::RenderPassDescriptorResolveRect(RenderPassDescriptorResolveRect::Init&& init)
+: ChainedStruct { init.nextInChain, SType::RenderPassDescriptorResolveRect }
+    ,colorOffsetX(std::move(init.colorOffsetX))
+    ,colorOffsetY(std::move(init.colorOffsetY))
+    ,resolveOffsetX(std::move(init.resolveOffsetX))
+    ,resolveOffsetY(std::move(init.resolveOffsetY))
     ,width(std::move(init.width))
     ,height(std::move(init.height))
     {}
@@ -1951,6 +2281,18 @@ BlendState::operator const WGPUBlendState&() const noexcept {
 
 RenderPipelineDescriptor::operator const WGPURenderPipelineDescriptor&() const noexcept {
     return *reinterpret_cast<const WGPURenderPipelineDescriptor*>(this);
+}
+
+// ResourceTableDescriptor implementation
+
+ResourceTableDescriptor::operator const WGPUResourceTableDescriptor&() const noexcept {
+    return *reinterpret_cast<const WGPUResourceTableDescriptor*>(this);
+}
+
+// BindingResource implementation
+
+BindingResource::operator const WGPUBindingResource&() const noexcept {
+    return *reinterpret_cast<const WGPUBindingResource*>(this);
 }
 
 // SamplerDescriptor implementation
@@ -2253,6 +2595,27 @@ SurfaceDescriptorFromWindowsWinUISwapChainPanel::SurfaceDescriptorFromWindowsWin
     ,swapChainPanel(std::move(init.swapChainPanel))
     {}
     
+// SurfaceColorManagement implementation
+
+SurfaceColorManagement::operator const WGPUSurfaceColorManagement&() const noexcept {
+    return *reinterpret_cast<const WGPUSurfaceColorManagement*>(this);
+}
+
+SurfaceColorManagement::SurfaceColorManagement()
+: ChainedStruct { nullptr, SType::SurfaceColorManagement } {}
+
+struct SurfaceColorManagement::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    PredefinedColorSpace colorSpace;
+    ToneMappingMode toneMappingMode;
+};
+
+SurfaceColorManagement::SurfaceColorManagement(SurfaceColorManagement::Init&& init)
+: ChainedStruct { init.nextInChain, SType::SurfaceColorManagement }
+    ,colorSpace(std::move(init.colorSpace))
+    ,toneMappingMode(std::move(init.toneMappingMode))
+    {}
+    
 // SurfaceTexture implementation
 
 SurfaceTexture::operator const WGPUSurfaceTexture&() const noexcept {
@@ -2291,22 +2654,22 @@ TextureDescriptor::operator const WGPUTextureDescriptor&() const noexcept {
     return *reinterpret_cast<const WGPUTextureDescriptor*>(this);
 }
 
-// TextureBindingViewDimensionDescriptor implementation
+// TextureBindingViewDimension implementation
 
-TextureBindingViewDimensionDescriptor::operator const WGPUTextureBindingViewDimensionDescriptor&() const noexcept {
-    return *reinterpret_cast<const WGPUTextureBindingViewDimensionDescriptor*>(this);
+TextureBindingViewDimension::operator const WGPUTextureBindingViewDimension&() const noexcept {
+    return *reinterpret_cast<const WGPUTextureBindingViewDimension*>(this);
 }
 
-TextureBindingViewDimensionDescriptor::TextureBindingViewDimensionDescriptor()
-: ChainedStruct { nullptr, SType::TextureBindingViewDimensionDescriptor } {}
+TextureBindingViewDimension::TextureBindingViewDimension()
+: ChainedStruct { nullptr, SType::TextureBindingViewDimension } {}
 
-struct TextureBindingViewDimensionDescriptor::Init {
+struct TextureBindingViewDimension::Init {
     ChainedStruct const * nextInChain = nullptr;
     TextureViewDimension textureBindingViewDimension;
 };
 
-TextureBindingViewDimensionDescriptor::TextureBindingViewDimensionDescriptor(TextureBindingViewDimensionDescriptor::Init&& init)
-: ChainedStruct { init.nextInChain, SType::TextureBindingViewDimensionDescriptor }
+TextureBindingViewDimension::TextureBindingViewDimension(TextureBindingViewDimension::Init&& init)
+: ChainedStruct { init.nextInChain, SType::TextureBindingViewDimension }
     ,textureBindingViewDimension(std::move(init.textureBindingViewDimension))
     {}
     
@@ -2314,6 +2677,37 @@ TextureBindingViewDimensionDescriptor::TextureBindingViewDimensionDescriptor(Tex
 
 TextureViewDescriptor::operator const WGPUTextureViewDescriptor&() const noexcept {
     return *reinterpret_cast<const WGPUTextureViewDescriptor*>(this);
+}
+
+// TexelBufferViewDescriptor implementation
+
+TexelBufferViewDescriptor::operator const WGPUTexelBufferViewDescriptor&() const noexcept {
+    return *reinterpret_cast<const WGPUTexelBufferViewDescriptor*>(this);
+}
+
+// TextureComponentSwizzleDescriptor implementation
+
+TextureComponentSwizzleDescriptor::operator const WGPUTextureComponentSwizzleDescriptor&() const noexcept {
+    return *reinterpret_cast<const WGPUTextureComponentSwizzleDescriptor*>(this);
+}
+
+TextureComponentSwizzleDescriptor::TextureComponentSwizzleDescriptor()
+: ChainedStruct { nullptr, SType::TextureComponentSwizzleDescriptor } {}
+
+struct TextureComponentSwizzleDescriptor::Init {
+    ChainedStruct const * nextInChain = nullptr;
+    TextureComponentSwizzle swizzle = {};
+};
+
+TextureComponentSwizzleDescriptor::TextureComponentSwizzleDescriptor(TextureComponentSwizzleDescriptor::Init&& init)
+: ChainedStruct { init.nextInChain, SType::TextureComponentSwizzleDescriptor }
+    ,swizzle(std::move(init.swizzle))
+    {}
+    
+// TextureComponentSwizzle implementation
+
+TextureComponentSwizzle::operator const WGPUTextureComponentSwizzle&() const noexcept {
+    return *reinterpret_cast<const WGPUTextureComponentSwizzle*>(this);
 }
 
 // YCbCrVkDescriptor implementation
@@ -2569,6 +2963,108 @@ AdapterPropertiesVk& AdapterPropertiesVk::operator=(AdapterPropertiesVk&& rhs) {
 
     return *this;
 }
+// AdapterPropertiesDrm implementation
+
+AdapterPropertiesDrm::operator const WGPUAdapterPropertiesDrm&() const noexcept {
+    return *reinterpret_cast<const WGPUAdapterPropertiesDrm*>(this);
+}
+
+AdapterPropertiesDrm::AdapterPropertiesDrm()
+: ChainedStructOut { nullptr, SType::AdapterPropertiesDrm } {}
+
+struct AdapterPropertiesDrm::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    Bool const hasPrimary = false;
+    Bool const hasRender = false;
+    uint64_t const primaryMajor = 0;
+    uint64_t const primaryMinor = 0;
+    uint64_t const renderMajor = 0;
+    uint64_t const renderMinor = 0;
+};
+
+AdapterPropertiesDrm::AdapterPropertiesDrm(AdapterPropertiesDrm::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::AdapterPropertiesDrm }
+    ,hasPrimary(std::move(init.hasPrimary))
+    ,hasRender(std::move(init.hasRender))
+    ,primaryMajor(std::move(init.primaryMajor))
+    ,primaryMinor(std::move(init.primaryMinor))
+    ,renderMajor(std::move(init.renderMajor))
+    ,renderMinor(std::move(init.renderMinor))
+    {}
+    
+AdapterPropertiesDrm::~AdapterPropertiesDrm() {
+    FreeMembers();
+}
+
+void AdapterPropertiesDrm::FreeMembers() {
+    // Free members here
+}
+
+AdapterPropertiesDrm::AdapterPropertiesDrm(AdapterPropertiesDrm&& rhs) :
+    hasPrimary(rhs.hasPrimary),
+    hasRender(rhs.hasRender),
+    primaryMajor(rhs.primaryMajor),
+    primaryMinor(rhs.primaryMinor),
+    renderMajor(rhs.renderMajor),
+    renderMinor(rhs.renderMinor)
+{}
+
+AdapterPropertiesDrm& AdapterPropertiesDrm::operator=(AdapterPropertiesDrm&& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    FreeMembers();
+
+    ::pywgpu::detail::AsNonConstReference(this->hasPrimary) = std::move(rhs.hasPrimary);
+    ::pywgpu::detail::AsNonConstReference(this->hasRender) = std::move(rhs.hasRender);
+    ::pywgpu::detail::AsNonConstReference(this->primaryMajor) = std::move(rhs.primaryMajor);
+    ::pywgpu::detail::AsNonConstReference(this->primaryMinor) = std::move(rhs.primaryMinor);
+    ::pywgpu::detail::AsNonConstReference(this->renderMajor) = std::move(rhs.renderMajor);
+    ::pywgpu::detail::AsNonConstReference(this->renderMinor) = std::move(rhs.renderMinor);
+
+    return *this;
+}
+// AdapterPropertiesWGPU implementation
+
+AdapterPropertiesWGPU::operator const WGPUAdapterPropertiesWGPU&() const noexcept {
+    return *reinterpret_cast<const WGPUAdapterPropertiesWGPU*>(this);
+}
+
+AdapterPropertiesWGPU::AdapterPropertiesWGPU()
+: ChainedStructOut { nullptr, SType::AdapterPropertiesWGPU } {}
+
+struct AdapterPropertiesWGPU::Init {
+    ChainedStructOut * const nextInChain = nullptr;
+    BackendType const backendType = {};
+};
+
+AdapterPropertiesWGPU::AdapterPropertiesWGPU(AdapterPropertiesWGPU::Init&& init)
+: ChainedStructOut { init.nextInChain, SType::AdapterPropertiesWGPU }
+    ,backendType(std::move(init.backendType))
+    {}
+    
+AdapterPropertiesWGPU::~AdapterPropertiesWGPU() {
+    FreeMembers();
+}
+
+void AdapterPropertiesWGPU::FreeMembers() {
+    // Free members here
+}
+
+AdapterPropertiesWGPU::AdapterPropertiesWGPU(AdapterPropertiesWGPU&& rhs) :
+    backendType(rhs.backendType)
+{}
+
+AdapterPropertiesWGPU& AdapterPropertiesWGPU::operator=(AdapterPropertiesWGPU&& rhs) {
+    if (&rhs == this) {
+        return *this;
+    }
+    FreeMembers();
+
+    ::pywgpu::detail::AsNonConstReference(this->backendType) = std::move(rhs.backendType);
+
+    return *this;
+}
 // DawnBufferDescriptorErrorInfoFromWireClient implementation
 
 DawnBufferDescriptorErrorInfoFromWireClient::operator const WGPUDawnBufferDescriptorErrorInfoFromWireClient&() const noexcept {
@@ -2665,8 +3161,8 @@ void Adapter::GetFeatures (SupportedFeatures * features) const {
     wgpuAdapterGetFeatures(Get(), reinterpret_cast<WGPUSupportedFeatures *>(features));
 }
 
-Future Adapter::RequestDevice (DeviceDescriptor const * options, RequestDeviceCallbackInfo callbackInfo) const {
-    auto result = wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const *>(options), *reinterpret_cast<WGPURequestDeviceCallbackInfo const*>(&callbackInfo));
+Future Adapter::RequestDevice (DeviceDescriptor const * descriptor, RequestDeviceCallbackInfo callbackInfo) const {
+    auto result = wgpuAdapterRequestDevice(Get(), reinterpret_cast<WGPUDeviceDescriptor const *>(descriptor), *reinterpret_cast<WGPURequestDeviceCallbackInfo const*>(&callbackInfo));
     return Future{result.id};
 }
 
@@ -2753,6 +3249,11 @@ Status Buffer::WriteMappedRange (size_t offset, void const * data, size_t size) 
 Status Buffer::ReadMappedRange (size_t offset, void * data, size_t size) const {
     auto result = wgpuBufferReadMappedRange(Get(), offset, data, size);
     return static_cast<Status>(result);
+}
+
+TexelBufferView Buffer::CreateTexelView (TexelBufferViewDescriptor const * descriptor) const {
+    auto result = wgpuBufferCreateTexelView(Get(), reinterpret_cast<WGPUTexelBufferViewDescriptor const *>(descriptor));
+    return TexelBufferView::Acquire(result);
 }
 
 void Buffer::SetLabel (StringView label) const {
@@ -2935,8 +3436,12 @@ void ComputePassEncoder::SetLabel (StringView label) const {
     wgpuComputePassEncoderSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
 }
 
-void ComputePassEncoder::SetImmediateData (uint32_t offset, void const * data, size_t size) const {
-    wgpuComputePassEncoderSetImmediateData(Get(), offset, data, size);
+void ComputePassEncoder::SetImmediates (uint32_t offset, void const * data, size_t size) const {
+    wgpuComputePassEncoderSetImmediates(Get(), offset, data, size);
+}
+
+void ComputePassEncoder::SetResourceTable (ResourceTable table) const {
+    wgpuComputePassEncoderSetResourceTable(Get(), *reinterpret_cast<WGPUResourceTable const*>(&table));
 }
 
 void ComputePassEncoder::WGPUAddRef(WGPUComputePassEncoder handle) {
@@ -3064,6 +3569,11 @@ ShaderModule Device::CreateErrorShaderModule (ShaderModuleDescriptor const * des
 Texture Device::CreateTexture (TextureDescriptor const * descriptor) const {
     auto result = wgpuDeviceCreateTexture(Get(), reinterpret_cast<WGPUTextureDescriptor const *>(descriptor));
     return Texture::Acquire(result);
+}
+
+ResourceTable Device::CreateResourceTable (ResourceTableDescriptor const * descriptor) const {
+    auto result = wgpuDeviceCreateResourceTable(Get(), reinterpret_cast<WGPUResourceTableDescriptor const *>(descriptor));
+    return ResourceTable::Acquire(result);
 }
 
 SharedBufferMemory Device::ImportSharedBufferMemory (SharedBufferMemoryDescriptor const * descriptor) const {
@@ -3292,6 +3802,10 @@ void SharedTextureMemory::WGPURelease(WGPUSharedTextureMemory handle) {
 
 // SharedFence implementation
 
+void SharedFence::SetLabel (StringView label) const {
+    wgpuSharedFenceSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
+}
+
 void SharedFence::ExportInfo (SharedFenceExportInfo * info) const {
     wgpuSharedFenceExportInfo(Get(), reinterpret_cast<WGPUSharedFenceExportInfo *>(info));
 }
@@ -3334,9 +3848,8 @@ Bool Instance::HasWGSLLanguageFeature (WGSLLanguageFeatureName feature) const {
     return result;
 }
 
-Status Instance::GetWGSLLanguageFeatures (SupportedWGSLLanguageFeatures * features) const {
-    auto result = wgpuInstanceGetWGSLLanguageFeatures(Get(), reinterpret_cast<WGPUSupportedWGSLLanguageFeatures *>(features));
-    return static_cast<Status>(result);
+void Instance::GetWGSLLanguageFeatures (SupportedWGSLLanguageFeatures * features) const {
+    wgpuInstanceGetWGSLLanguageFeatures(Get(), reinterpret_cast<WGPUSupportedWGSLLanguageFeatures *>(features));
 }
 
 void Instance::WGPUAddRef(WGPUInstance handle) {
@@ -3517,8 +4030,12 @@ void RenderBundleEncoder::SetLabel (StringView label) const {
     wgpuRenderBundleEncoderSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
 }
 
-void RenderBundleEncoder::SetImmediateData (uint32_t offset, void const * data, size_t size) const {
-    wgpuRenderBundleEncoderSetImmediateData(Get(), offset, data, size);
+void RenderBundleEncoder::SetImmediates (uint32_t offset, void const * data, size_t size) const {
+    wgpuRenderBundleEncoderSetImmediates(Get(), offset, data, size);
+}
+
+void RenderBundleEncoder::SetResourceTable (ResourceTable table) const {
+    wgpuRenderBundleEncoderSetResourceTable(Get(), *reinterpret_cast<WGPUResourceTable const*>(&table));
 }
 
 void RenderBundleEncoder::WGPUAddRef(WGPURenderBundleEncoder handle) {
@@ -3631,8 +4148,12 @@ void RenderPassEncoder::SetLabel (StringView label) const {
     wgpuRenderPassEncoderSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
 }
 
-void RenderPassEncoder::SetImmediateData (uint32_t offset, void const * data, size_t size) const {
-    wgpuRenderPassEncoderSetImmediateData(Get(), offset, data, size);
+void RenderPassEncoder::SetImmediates (uint32_t offset, void const * data, size_t size) const {
+    wgpuRenderPassEncoderSetImmediates(Get(), offset, data, size);
+}
+
+void RenderPassEncoder::SetResourceTable (ResourceTable table) const {
+    wgpuRenderPassEncoderSetResourceTable(Get(), *reinterpret_cast<WGPUResourceTable const*>(&table));
 }
 
 void RenderPassEncoder::WGPUAddRef(WGPURenderPassEncoder handle) {
@@ -3667,6 +4188,48 @@ void RenderPipeline::WGPUAddRef(WGPURenderPipeline handle) {
 void RenderPipeline::WGPURelease(WGPURenderPipeline handle) {
     if (handle != nullptr) {
         wgpuRenderPipelineRelease(handle);
+    }
+}
+
+// ResourceTable implementation
+
+void ResourceTable::SetLabel (StringView label) const {
+    wgpuResourceTableSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
+}
+
+uint32_t ResourceTable::GetSize () const {
+    auto result = wgpuResourceTableGetSize(Get());
+    return result;
+}
+
+void ResourceTable::Destroy () const {
+    wgpuResourceTableDestroy(Get());
+}
+
+Status ResourceTable::Update (uint32_t slot, BindingResource const * resource) const {
+    auto result = wgpuResourceTableUpdate(Get(), slot, reinterpret_cast<WGPUBindingResource const *>(resource));
+    return static_cast<Status>(result);
+}
+
+uint32_t ResourceTable::InsertBinding (BindingResource const * resource) const {
+    auto result = wgpuResourceTableInsertBinding(Get(), reinterpret_cast<WGPUBindingResource const *>(resource));
+    return result;
+}
+
+Status ResourceTable::RemoveBinding (uint32_t slot) const {
+    auto result = wgpuResourceTableRemoveBinding(Get(), slot);
+    return static_cast<Status>(result);
+}
+
+void ResourceTable::WGPUAddRef(WGPUResourceTable handle) {
+    if (handle != nullptr) {
+        wgpuResourceTableAddRef(handle);
+    }
+}
+
+void ResourceTable::WGPURelease(WGPUResourceTable handle) {
+    if (handle != nullptr) {
+        wgpuResourceTableRelease(handle);
     }
 }
 
@@ -3726,8 +4289,9 @@ void Surface::GetCurrentTexture (SurfaceTexture * surfaceTexture) const {
     wgpuSurfaceGetCurrentTexture(Get(), reinterpret_cast<WGPUSurfaceTexture *>(surfaceTexture));
 }
 
-void Surface::Present () const {
-    wgpuSurfacePresent(Get());
+Status Surface::Present () const {
+    auto result = wgpuSurfacePresent(Get());
+    return static_cast<Status>(result);
 }
 
 void Surface::Unconfigure () const {
@@ -3806,8 +4370,25 @@ TextureUsage Texture::GetUsage () const {
     return static_cast<TextureUsage>(result);
 }
 
+TextureViewDimension Texture::GetTextureBindingViewDimension () const {
+    auto result = wgpuTextureGetTextureBindingViewDimension(Get());
+    return static_cast<TextureViewDimension>(result);
+}
+
 void Texture::Destroy () const {
     wgpuTextureDestroy(Get());
+}
+
+void Texture::Pin (TextureUsage usage) const {
+    wgpuTexturePin(Get(), *reinterpret_cast<WGPUTextureUsage const*>(&usage));
+}
+
+void Texture::Unpin () const {
+    wgpuTextureUnpin(Get());
+}
+
+void Texture::SetOwnershipForMemoryDump (uint64_t ownerGuid) const {
+    wgpuTextureSetOwnershipForMemoryDump(Get(), ownerGuid);
 }
 
 void Texture::WGPUAddRef(WGPUTexture handle) {
@@ -3840,13 +4421,40 @@ void TextureView::WGPURelease(WGPUTextureView handle) {
     }
 }
 
+// TexelBufferView implementation
+
+void TexelBufferView::SetLabel (StringView label) const {
+    wgpuTexelBufferViewSetLabel(Get(), *reinterpret_cast<WGPUStringView const*>(&label));
+}
+
+void TexelBufferView::WGPUAddRef(WGPUTexelBufferView handle) {
+    if (handle != nullptr) {
+        wgpuTexelBufferViewAddRef(handle);
+    }
+}
+
+void TexelBufferView::WGPURelease(WGPUTexelBufferView handle) {
+    if (handle != nullptr) {
+        wgpuTexelBufferViewRelease(handle);
+    }
+}
+
 Instance CreateInstance (InstanceDescriptor const * descriptor) {
     auto result = wgpuCreateInstance(reinterpret_cast<WGPUInstanceDescriptor const *>(descriptor));
     return Instance::Acquire(result);
 }
 
-Status GetInstanceCapabilities (InstanceCapabilities * capabilities) {
-    auto result = wgpuGetInstanceCapabilities(reinterpret_cast<WGPUInstanceCapabilities *>(capabilities));
+void GetInstanceFeatures (SupportedInstanceFeatures * features) {
+    wgpuGetInstanceFeatures(reinterpret_cast<WGPUSupportedInstanceFeatures *>(features));
+}
+
+Bool HasInstanceFeature (InstanceFeatureName feature) {
+    auto result = wgpuHasInstanceFeature(static_cast<WGPUInstanceFeatureName>(feature));
+    return result;
+}
+
+Status GetInstanceLimits (InstanceLimits * limits) {
+    auto result = wgpuGetInstanceLimits(reinterpret_cast<WGPUInstanceLimits *>(limits));
     return static_cast<Status>(result);
 }
 

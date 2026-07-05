@@ -19,23 +19,29 @@ void init_skia_data_py_auto(py::module &_skia, Registry &registry) {
     py::class_<SkData,sk_sp<SkData>> _Data(_skia, "Data");
     registry.on(_skia, "Data", _Data);
         _Data
-        .def("size", &SkData::size
+        .def("equals", &SkData::equals
+            , py::arg("other")
             )
-        .def("is_empty", &SkData::isEmpty
+        .def("size", &SkData::size
             )
         .def("data", &SkData::data
             )
+        .def("empty", &SkData::empty
+            )
         .def("bytes", &SkData::bytes
             )
+        .def("byte_span", &SkData::byteSpan
+            )
         .def("writable_data", &SkData::writable_data
+            )
+        .def("copy_subset", &SkData::copySubset
+            , py::arg("offset")
+            , py::arg("length")
             )
         .def("copy_range", &SkData::copyRange
             , py::arg("offset")
             , py::arg("length")
             , py::arg("buffer")
-            )
-        .def("equals", &SkData::equals
-            , py::arg("other")
             )
         .def_static("make_with_copy", &SkData::MakeWithCopy
             , py::arg("data")
@@ -83,6 +89,8 @@ void init_skia_data_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("length")
             )
         .def_static("make_empty", &SkData::MakeEmpty
+            )
+        .def("is_empty", &SkData::isEmpty
             )
     ;
 

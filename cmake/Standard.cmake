@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.30...4.30 FATAL_ERROR)
 
 include_guard()
 

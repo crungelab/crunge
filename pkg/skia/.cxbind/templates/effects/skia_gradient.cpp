@@ -9,12 +9,12 @@
 #include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
 
-#include <include/effects/SkGradientShader.h>
+#include <include/effects/SkGradient.h>
 #include <include/core/SkMatrix.h>
 
 
 namespace py = pybind11;
 
-void init_skia_gradient_shader_py_auto(py::module &_skia, Registry &registry) {
+void init_skia_gradient_py_auto(py::module &_skia, Registry &registry) {
 {{body}}
 }

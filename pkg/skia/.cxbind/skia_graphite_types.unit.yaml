@@ -19,4 +19,6 @@ excludes:
   - 'field@skgpu::graphite::InsertFinishInfo::fFinishedProc'
   - 'field@skgpu::graphite::InsertFinishInfo::fFinishedWithStatsProc'
 
+  - 'field@skgpu::graphite::SubmitInfo::fFinishedProc'
+
   # Overloads

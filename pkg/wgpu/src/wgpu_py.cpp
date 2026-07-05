@@ -9,8 +9,6 @@
 #include <pybind11/iostream.h>
 #include <pybind11/numpy.h>
 
-//#include <dawn/webgpu_cpp.h>
-// #include <wgpu.h>
 #include <dawn/native/DawnNative.h>
 #include <dawn/dawn_proc.h>
 
@@ -19,9 +17,6 @@
 #include <crunge/wgpu/pywgpu.h>
 #include <crunge/wgpu/crunge-wgpu.h>
 #include <crunge/wgpu/conversions.h>
-
-
-//using namespace crunge_wgpu;
 
 namespace py = pybind11;
 
@@ -47,7 +42,8 @@ PYBIND11_MAKE_OPAQUE(std::vector<pywgpu::RenderPassColorAttachment>)
 
 void init_wgpu_py(py::module &_wgpu, Registry &registry)
 {
-    _wgpu.def("create_proc_table", &CreateProcTable);
+    CreateProcTable();
+    //_wgpu.def("create_proc_table", &CreateProcTable);
 
     py::bind_vector<std::vector<pywgpu::BindGroupLayout>>(_wgpu, "BindGroupLayouts", "BindGroupLayout Vector");
     py::bind_vector<std::vector<pywgpu::BindGroupLayoutEntry>>(_wgpu, "BindGroupLayoutEntries", "BindGroupLayoutEntry Vector");

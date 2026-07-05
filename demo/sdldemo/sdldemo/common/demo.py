@@ -154,9 +154,9 @@ class Demo:
         pass
 
     def frame(self):
-        def on_work_done(status: wgpu.QueueWorkDoneStatus):
+        def on_work_done(status: wgpu.QueueWorkDoneStatus, message: str):
             if status != wgpu.QueueWorkDoneStatus.SUCCESS:
-                logger.debug(f"QueueWorkDoneStatus failed: {status}")
+                logger.debug(f"QueueWorkDoneStatus failed: {status}, message: {message}")
 
         if self.surface_resized:
             self.on_surface_resize()

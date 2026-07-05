@@ -74,6 +74,8 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("recorder", &SkSurface::recorder
             )
+        .def("base_recorder", &SkSurface::baseRecorder
+            )
         ;
 
         py::enum_<SkSurface::BackendHandleAccess>(_Surface, "BackendHandleAccess", py::arithmetic())

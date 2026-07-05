@@ -10,6 +10,7 @@
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkFont.h>
+#include <include/core/SkStrikeRef.h>
 
 #include <include/core/SkPaint.h>
 #include <include/core/SkFontMetrics.h>
@@ -93,28 +94,18 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
         .def("set_skew_x", &SkFont::setSkewX
             , py::arg("skew_x")
             )
-        .def("text_to_glyphs", [](SkFont& self, const void * text, size_t byteLength, SkTextEncoding encoding, SkGlyphID glyphs[], int maxGlyphCount)
-            {
-                auto _ret = self.textToGlyphs(text, byteLength, encoding, glyphs, maxGlyphCount);
-                return std::make_tuple(_ret, glyphs);
-            }
+        .def("text_to_glyphs", &SkFont::textToGlyphs
             , py::arg("text")
             , py::arg("byte_length")
             , py::arg("encoding")
             , py::arg("glyphs")
-            , py::arg("max_glyph_count")
             )
         .def("unichar_to_glyph", &SkFont::unicharToGlyph
             , py::arg("uni")
             )
-        .def("unichars_to_glyphs", [](SkFont& self, const SkUnichar uni[], int count, SkGlyphID glyphs[])
-            {
-                self.unicharsToGlyphs(uni, count, glyphs);
-                return std::make_tuple(uni, glyphs);
-            }
-            , py::arg("uni")
-            , py::arg("count")
-            , py::arg("glyphs")
+        .def("unichars_to_glyphs", &SkFont::unicharsToGlyphs
+            , py::arg("src")
+            , py::arg("dst")
             )
         .def("count_text", &SkFont::countText
             , py::arg("text")
@@ -134,99 +125,52 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("bounds")
             , py::arg("paint")
             )
-        .def("get_widths", [](SkFont& self, const SkGlyphID glyphs[], int count, SkScalar widths[], SkRect bounds[])
-            {
-                self.getWidths(glyphs, count, widths, bounds);
-                return std::make_tuple(glyphs, widths);
-            }
-            , py::arg("glyphs")
-            , py::arg("count")
-            , py::arg("widths")
-            , py::arg("bounds")
+        .def("make_strike_ref", &SkFont::makeStrikeRef
             )
-        .def("get_widths", [](SkFont& self, const SkGlyphID glyphs[], int count, SkScalar widths[], std::nullptr_t arg3)
-            {
-                self.getWidths(glyphs, count, widths, arg3);
-                return std::make_tuple(glyphs, widths);
-            }
+        .def("get_widths_bounds", &SkFont::getWidthsBounds
             , py::arg("glyphs")
-            , py::arg("count")
-            , py::arg("widths")
-            , py::arg("arg3")
-            )
-        .def("get_widths", [](SkFont& self, const SkGlyphID glyphs[], int count, SkScalar widths[])
-            {
-                self.getWidths(glyphs, count, widths);
-                return std::make_tuple(glyphs, widths);
-            }
-            , py::arg("glyphs")
-            , py::arg("count")
-            , py::arg("widths")
-            )
-        .def("get_widths_bounds", [](SkFont& self, const SkGlyphID glyphs[], int count, SkScalar widths[], SkRect bounds[], const SkPaint * paint)
-            {
-                self.getWidthsBounds(glyphs, count, widths, bounds, paint);
-                return std::make_tuple(glyphs, widths);
-            }
-            , py::arg("glyphs")
-            , py::arg("count")
             , py::arg("widths")
             , py::arg("bounds")
             , py::arg("paint")
             )
-        .def("get_bounds", [](SkFont& self, const SkGlyphID glyphs[], int count, SkRect bounds[], const SkPaint * paint)
-            {
-                self.getBounds(glyphs, count, bounds, paint);
-                return std::make_tuple(glyphs);
-            }
+        .def("get_widths", &SkFont::getWidths
             , py::arg("glyphs")
-            , py::arg("count")
+            , py::arg("widths")
+            )
+        .def("get_width", &SkFont::getWidth
+            , py::arg("glyph")
+            )
+        .def("get_bounds", py::overload_cast<SkSpan<const SkGlyphID>, SkSpan<SkRect>, const SkPaint *>(&SkFont::getBounds, py::const_)
+            , py::arg("glyphs")
             , py::arg("bounds")
             , py::arg("paint")
             )
-        .def("get_pos", [](SkFont& self, const SkGlyphID glyphs[], int count, SkPoint pos[], SkPoint origin)
-            {
-                self.getPos(glyphs, count, pos, origin);
-                return std::make_tuple(glyphs);
-            }
+        .def("get_bounds", py::overload_cast<SkGlyphID, const SkPaint *>(&SkFont::getBounds, py::const_)
+            , py::arg("glyph")
+            , py::arg("paint")
+            )
+        .def("get_pos", &SkFont::getPos
             , py::arg("glyphs")
-            , py::arg("count")
             , py::arg("pos")
             , py::arg("origin") = SkPoint{0,0}
             )
-        .def("get_x_pos", [](SkFont& self, const SkGlyphID glyphs[], int count, SkScalar xpos[], SkScalar origin)
-            {
-                self.getXPos(glyphs, count, xpos, origin);
-                return std::make_tuple(glyphs, xpos);
-            }
+        .def("get_x_pos", &SkFont::getXPos
             , py::arg("glyphs")
-            , py::arg("count")
             , py::arg("xpos")
             , py::arg("origin") = 0
             )
-        .def("get_intercepts", [](SkFont& self, const SkGlyphID glyphs[], int count, const SkPoint pos[], SkScalar top, SkScalar bottom, const SkPaint * arg5)
-            {
-                auto _ret = self.getIntercepts(glyphs, count, pos, top, bottom, arg5);
-                return std::make_tuple(_ret, glyphs);
-            }
+        .def("get_intercepts", &SkFont::getIntercepts
             , py::arg("glyphs")
-            , py::arg("count")
             , py::arg("pos")
             , py::arg("top")
             , py::arg("bottom")
-            , py::arg("arg5") = nullptr
+            , py::arg("arg4") = nullptr
             )
         .def("get_path", &SkFont::getPath
             , py::arg("glyph_id")
-            , py::arg("path")
             )
-        .def("get_paths", [](SkFont& self, const SkGlyphID glyphIDs[], int count, void (*glyphPathProc)(const SkPath *, const SkMatrix &, void *), void * ctx)
-            {
-                self.getPaths(glyphIDs, count, glyphPathProc, ctx);
-                return std::make_tuple(glyphIDs);
-            }
+        .def("get_paths", &SkFont::getPaths
             , py::arg("glyph_i_ds")
-            , py::arg("count")
             , py::arg("glyph_path_proc") = nullptr
             , py::arg("ctx")
             )

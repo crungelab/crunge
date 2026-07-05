@@ -21,8 +21,8 @@
 #include "include/gpu/graphite/Recording.h"
 #include "include/gpu/graphite/Surface.h"
 #include "include/gpu/graphite/TextureInfo.h"
-#include "include/private/base/SkOnce.h"
-#include "src/base/SkRectMemcpy.h"
+#include "include/private/SkOnce.h"
+#include "src/core/SkRectMemcpy.h"
 #include "src/core/SkAutoPixmapStorage.h"
 #include "src/core/SkColorFilterPriv.h"
 #include "src/core/SkConvertPixels.h"
@@ -42,7 +42,7 @@
 #include "src/gpu/graphite/Image_Base_Graphite.h"
 #include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/KeyContext.h"
-#include "src/gpu/graphite/Log.h"
+//#include "src/gpu/graphite/Log.h"
 #include "src/gpu/graphite/QueueManager.h"
 #include "src/gpu/graphite/RecorderPriv.h"
 #include "src/gpu/graphite/RecordingPriv.h"
@@ -74,15 +74,19 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
         .def("make_recorder", &skgpu::graphite::Context::makeRecorder
             , py::arg("arg0") = skgpu::graphite::RecorderOptions{}
             )
+        .def("make_cpu_recorder", &skgpu::graphite::Context::makeCPURecorder
+            )
         .def("make_precompile_context", &skgpu::graphite::Context::makePrecompileContext
             )
         .def("insert_recording", &skgpu::graphite::Context::insertRecording
             , py::arg("arg0")
             )
         .def("submit", &skgpu::graphite::Context::submit
-            , py::arg("arg0") = skgpu::graphite::SyncToCpu::kNo
+            , py::arg("submit_info") = SubmitInfo{}
             )
         .def("has_unfinished_gpu_work", &skgpu::graphite::Context::hasUnfinishedGpuWork
+            )
+        .def("has_pending_gpu_work", &skgpu::graphite::Context::hasPendingGPUWork
             )
         .def("async_rescale_and_read_pixels", py::overload_cast<const SkImage *, const SkImageInfo &, const SkIRect &, SkImage::RescaleGamma, SkImage::RescaleMode, SkImage::ReadPixelsCallback, SkImage::ReadPixelsContext>(&skgpu::graphite::Context::asyncRescaleAndReadPixels)
             , py::arg("src")
@@ -155,6 +159,7 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("perform_deferred_cleanup", &skgpu::graphite::Context::performDeferredCleanup
             , py::arg("ms_not_used")
+            , py::arg("micros_max_purging_dur") = std::nullopt
             )
         .def("current_budgeted_bytes", &skgpu::graphite::Context::currentBudgetedBytes
             )
@@ -175,6 +180,9 @@ void init_skia_context_py_auto(py::module &_skia, Registry &registry) {
         .def("supports_protected_content", &skgpu::graphite::Context::supportsProtectedContent
             )
         .def("supported_gpu_stats", &skgpu::graphite::Context::supportedGpuStats
+            )
+        .def("sync_pipeline_data", &skgpu::graphite::Context::syncPipelineData
+            , py::arg("max_size") = SIZE_MAX
             )
         .def("priv", py::overload_cast<>(&skgpu::graphite::Context::priv)
             )
