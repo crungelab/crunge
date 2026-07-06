@@ -246,7 +246,8 @@ class Viewport(Base):
             insert_info = skia.InsertRecordingInfo()
             insert_info.f_recording = recording
             self.skia_context.insert_recording(insert_info)
-            self.skia_context.submit(skia.SyncToCpu.K_NO)
+            #self.skia_context.submit(skia.SyncToCpu.K_NO)
+            self.skia_context.submit(skia.SubmitInfo())
 
     def create_buffers(self):
         # Uniform Buffers

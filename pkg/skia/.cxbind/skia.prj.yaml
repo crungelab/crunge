@@ -38,6 +38,7 @@ unit_files:
   - path: skia_data.unit.yaml
   - path: skia_image.unit.yaml
   - path: skia_path.unit.yaml
+  - path: skia_path_builder.unit.yaml
 
   - path: effects/skia_gradient.unit.yaml
   - path: effects/skia_image_filters.unit.yaml

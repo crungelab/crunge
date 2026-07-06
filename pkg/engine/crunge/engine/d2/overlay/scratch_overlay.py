@@ -51,6 +51,28 @@ class ScratchOverlay(Overlay):
 
     def draw_polygon(self, points: list[glm.vec2], outline_color=colors.WHITE):
         def draw(canvas: skia.Canvas):
+            if not points:
+                return
+
+            builder = skia.PathBuilder()
+            builder.move_to(*points[0])
+            for pt in points[1:]:
+                builder.line_to(*pt)
+            builder.close()
+            path = builder.detach()
+
+            outline_paint = skia.Paint()
+            outline_paint.set_color(rgba_tuple_to_argb_int(outline_color))
+            outline_paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
+            outline_paint.set_stroke_width(1.0)
+
+            canvas.draw_path(path, outline_paint)
+
+        self.add_call(draw)
+
+    '''
+    def draw_polygon(self, points: list[glm.vec2], outline_color=colors.WHITE):
+        def draw(canvas: skia.Canvas):
             path = skia.Path()
             if not points:
                 return
@@ -67,6 +89,7 @@ class ScratchOverlay(Overlay):
             canvas.draw_path(path, outline_paint)
 
         self.add_call(draw)
+    '''
 
     def draw_dot(self, size: float, position: glm.vec2, color=colors.WHITE):
         def draw(canvas: skia.Canvas):

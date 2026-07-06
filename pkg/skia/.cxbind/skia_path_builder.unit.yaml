@@ -1,0 +1,11 @@
+sources:
+  - ../../depot/skia/include/core/SkPathBuilder.h
+
+target: 'src/skia_path_builder_py_auto.cpp'
+
+#sk_sp<SkPathData> snapshotData() const;
+#sk_sp<SkPathData> detachData();
+
+excludes:
+  - 'method@SkPathBuilder::snapshotData'
+  - 'method@SkPathBuilder::detachData'

@@ -68,6 +68,7 @@ set(SOURCES
     src/standard_recorder_options_py.cpp
 
     src/skia_path_py_auto.cpp
+    src/skia_path_builder_py_auto.cpp
 )
 
 target_sources(${THIS} PRIVATE ${SOURCES})
