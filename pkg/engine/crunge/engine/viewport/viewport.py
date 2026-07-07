@@ -228,7 +228,6 @@ class Viewport(Base):
             self.create_snapshot()
 
         # Create a command encoder to copy the color texture to the snapshot texture
-        #encoder = self.device.create_command_encoder()
         source=wgpu.TexelCopyTextureInfo(texture=self.color_texture)
         destination=wgpu.TexelCopyTextureInfo(texture=self.snapshot_texture)
         encoder.copy_texture_to_texture(
@@ -236,10 +235,16 @@ class Viewport(Base):
             destination=destination,
             copy_size=wgpu.Extent3D(self.width, self.height, 1),
         )
-        
-        # Submit the commands
-        #self.device.queue.submit([encoder.finish()])
 
+    def submit_canvas(self):
+        recording = self.recorder.snap()
+        if self.skia_context.has_pending_gpu_work():
+            insert_info = skia.InsertRecordingInfo()
+            insert_info.f_recording = recording
+            self.skia_context.insert_recording(insert_info)
+            self.skia_context.submit(skia.SubmitInfo())
+
+    '''
     def submit_canvas(self):
         recording = self.recorder.snap()
         if recording:
@@ -248,6 +253,7 @@ class Viewport(Base):
             self.skia_context.insert_recording(insert_info)
             #self.skia_context.submit(skia.SyncToCpu.K_NO)
             self.skia_context.submit(skia.SubmitInfo())
+    '''
 
     def create_buffers(self):
         # Uniform Buffers

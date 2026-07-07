@@ -25,6 +25,7 @@ unit_files:
   - path: skia_recording.unit.yaml
   - path: skia_paint.unit.yaml
   - path: skia_color.unit.yaml
+  - path: skia_color_space.unit.yaml
   - path: skia_alpha_type.unit.yaml
   - path: skia_color_type.unit.yaml
   - path: skia_font_types.unit.yaml

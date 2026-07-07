@@ -11,6 +11,19 @@ class SweepGradientDemo(Demo):
         with self.canvas_target() as canvas:
             gradient_paint = skia.Paint()
 
+            shader = skia.create_sweep_gradient(
+                skia.Point(128.0, 128.0),
+                [
+                    skia.Color4f.from_color(skia.colors.CYAN),
+                    skia.Color4f.from_color(skia.colors.MAGENTA),
+                    skia.Color4f.from_color(skia.colors.YELLOW),
+                    skia.Color4f.from_color(skia.colors.CYAN),
+                ],
+                [],  # even positions
+                skia.TileMode.K_CLAMP,
+                None,
+            )
+            '''
             shader = skia.GradientShader.make_sweep(
                 128.0,
                 128.0,
@@ -21,6 +34,7 @@ class SweepGradientDemo(Demo):
                     skia.colors.CYAN,
                 ],
             )
+            '''
             # logger.debug(f"shader: {shader}")
 
             gradient_paint.set_shader(shader)

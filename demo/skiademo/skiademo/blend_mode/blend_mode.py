@@ -56,36 +56,34 @@ class BlendModeDemo(Demo):
             stroke.set_style(skia.Paint.Style.K_STROKE_STYLE)
 
             src = skia.Paint()
-            src_colors = skia.GradientColors(
-                [
-                    skia.Color4f.from_color(skia.colors.MAGENTA & 0x00FFFFFF),
-                    skia.Color4f.from_color(skia.colors.MAGENTA),
-                ],
-                skia.TileMode.K_CLAMP,  # confirm exact enum member name
-            )
 
             src.set_shader(
-                skia.linear_gradient(
-                    [skia.Point(0.0, 0.0), skia.Point(64.0, 0.0)],
-                    skia.Gradient(
-                        src_colors,
-                        skia.GradientInterpolation(),
-                    ),
+                skia.create_linear_gradient(
+                    skia.Point(0.0, 0.0), skia.Point(64.0, 0.0),
+                    [
+                        skia.Color4f.from_color(skia.colors.MAGENTA & 0x00FFFFFF),
+                        skia.Color4f.from_color(skia.colors.MAGENTA),
+                    ],
+                    [],  # even positions
+                    skia.TileMode.K_CLAMP,
+                    None,
                 )
             )
 
             dst = skia.Paint()
             dst.set_shader(
-                skia.linear_gradient(
-                    [skia.Point(0.0, 0.0), skia.Point(0.0, 64.0)],
-                    skia.Gradient(
-                        skia.GradientColors(
-                            [skia.colors.CYAN & 0x00FFFFFF, skia.colors.CYAN]
-                        ),
-                        skia.GradientInterpolation(),
-                    ),
+                skia.create_linear_gradient(
+                    skia.Point(0.0, 0.0), skia.Point(64.0, 0.0),
+                    [
+                        skia.Color4f.from_color(skia.colors.CYAN & 0x00FFFFFF),
+                        skia.Color4f.from_color(skia.colors.CYAN),
+                    ],
+                    [],  # even positions
+                    skia.TileMode.K_CLAMP,
+                    None,
                 )
             )
+
             canvas.clear(skia.colors.WHITE)
             N = len(modes)
             K = (N - 1) // 3 + 1
@@ -98,7 +96,6 @@ class BlendModeDemo(Demo):
                     canvas.clip_rect(skia.Rect(0.0, 0.0, 64.0, 64.0))
                     canvas.draw_color(skia.colors.LTGRAY)
                     save_layer_rec = skia.CanvasSaveLayerRec()
-                    # canvas.save_layer()
                     canvas.save_layer(save_layer_rec)
                     canvas.clear(skia.colors.TRANSPARENT)
                     canvas.draw_paint(dst)

@@ -11,21 +11,16 @@ class LinearGradientDemo(Demo):
         with self.canvas_target() as canvas:
             gradient_paint = skia.Paint()
 
-            src_colors = skia.GradientColors(
+            shader = skia.create_linear_gradient(
+                skia.Point(0.0, 0.0), skia.Point(256.0, 256.0),
                 [
-                    skia.Color4f.from_color(skia.colors.MAGENTA & 0x00FFFFFF),
-                    skia.Color4f.from_color(skia.colors.MAGENTA),
+                    skia.Color4f.from_color(0xFF0000FF),  # Blue in #ARGB
+                    skia.Color4f.from_color(0xFFFFFF00),  # Yellow in #
                 ],
-                skia.TileMode.K_CLAMP,  # confirm exact enum member name
+                [],  # even positions
+                skia.TileMode.K_CLAMP,
+                None,
             )
-
-            shader = skia.linear_gradient(
-                    [skia.Point(0.0, 0.0), skia.Point(64.0, 0.0)],
-                    skia.Gradient(
-                        src_colors,
-                        skia.GradientInterpolation(),
-                    ),
-                )
 
             '''
             shader = skia.GradientShader.make_linear(

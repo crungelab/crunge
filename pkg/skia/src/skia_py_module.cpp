@@ -31,6 +31,7 @@ void init_skia_paint_py_auto(py::module &, Registry &registry);
 
 void init_skia_color_py(py::module &, Registry &registry);
 void init_skia_color_py_auto(py::module &, Registry &registry);
+void init_skia_color_space_py_auto(py::module &, Registry &registry);
 
 void init_skia_alpha_type_py_auto(py::module &, Registry &registry);
 void init_skia_color_type_py_auto(py::module &, Registry &registry);
@@ -104,6 +105,7 @@ PYBIND11_MODULE(_skia, m)
 
     init_skia_color_py(m, r);
     init_skia_color_py_auto(m, r);
+    init_skia_color_space_py_auto(m, r);
 
     init_skia_alpha_type_py_auto(m, r);
     init_skia_color_type_py_auto(m, r);
@@ -115,8 +117,8 @@ PYBIND11_MODULE(_skia, m)
 
     init_skia_image_filter_py_auto(m, r);
 
+    init_skia_gradient_py_auto(m, r); // needs to come before the non-auto version since it defines some of the types used in the default arguments
     init_skia_gradient_py(m, r);
-    init_skia_gradient_py_auto(m, r);
 
     init_skia_perlin_noise_shader_py(m, r);
 

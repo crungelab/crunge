@@ -42,6 +42,7 @@ set(SOURCES
     src/skia_paint_py_auto.cpp
     src/skia_color_py.cpp
     src/skia_color_py_auto.cpp
+    src/skia_color_space_py_auto.cpp
 
     src/skia_alpha_type_py_auto.cpp
     src/skia_color_type_py_auto.cpp
