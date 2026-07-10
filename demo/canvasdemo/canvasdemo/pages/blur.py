@@ -18,7 +18,6 @@ class BlurPage(Page):
         canvas = Renderer.get_current().canvas
         canvas.draw_color(skia.colors.WHITE)
 
-        #filter = skia.ImageFilters.drop_shadow(3, 3, 5, 5, skia.colors.BLACK)
         filter = skia.ImageFilters.blur(5, 5)
         filter_paint = skia.Paint()
         filter_paint.set_image_filter(filter)

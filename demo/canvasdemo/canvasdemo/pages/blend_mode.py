@@ -54,18 +54,36 @@ class BlendModePage(Page):
         stroke.set_style(skia.Paint.Style.K_STROKE_STYLE)
 
         src = skia.Paint()
+
         src.set_shader(
-            skia.GradientShader.make_linear(
-                [skia.Point(0.0, 0.0), skia.Point(64.0, 0.0)],
-                [skia.colors.MAGENTA & 0x00FFFFFF, skia.colors.MAGENTA]
+            skia.Shader.create_linear_gradient(
+                skia.Point(0.0, 0.0),
+                skia.Point(64.0, 0.0),
+                [
+                    skia.colors4f.MAGENTA.with_alpha(0.0),
+                    skia.colors4f.MAGENTA,
+                ],
+                [],  # even positions
+                skia.TileMode.K_CLAMP,
+                None,
             )
         )
+
         dst = skia.Paint()
         dst.set_shader(
-            skia.GradientShader.make_linear(
-                [skia.Point(0.0, 0.0), skia.Point(0.0, 64.0)],
-                [skia.colors.CYAN & 0x00FFFFFF, skia.colors.CYAN])
+            skia.Shader.create_linear_gradient(
+                skia.Point(0.0, 0.0),
+                skia.Point(64.0, 0.0),
+                [
+                    skia.colors4f.CYAN.with_alpha(0.0),
+                    skia.colors4f.CYAN,
+                ],
+                [],  # even positions
+                skia.TileMode.K_CLAMP,
+                None,
+            )
         )
+
         canvas.clear(skia.colors.WHITE)
         N = len(modes)
         K = (N - 1) // 3 + 1

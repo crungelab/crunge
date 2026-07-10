@@ -64,13 +64,18 @@ void init_skia_standard_recorder_options_py(py::module &, Registry &registry);
 
 void init_skia_path_py_auto(py::module &, Registry &registry);
 void init_skia_path_builder_py_auto(py::module &, Registry &registry);
+
 // NOTE: initialization/binding order does matter!
-// This popped up using default arguments that use structure constructors
 
 PYBIND11_MODULE(_skia, m)
 {
     Registry r;
     init_main(m, r);
+
+    init_skia_tile_mode_py_auto(m, r);
+    init_skia_gradient_py_auto(m, r); // needs to come before the non-auto version since it defines some of the types used in the default arguments
+    init_skia_gradient_py(m, r);
+
     init_skia_shader_py(m, r);
     init_skia_graphite_types_py_auto(m, r);
     init_skia_clip_op_py_auto(m, r);
@@ -84,7 +89,6 @@ PYBIND11_MODULE(_skia, m)
     init_skia_size_py_auto(m, r);
 
     init_skia_blend_mode_py_auto(m, r);
-    init_skia_tile_mode_py_auto(m, r);
 
     init_skia_recorder_py_auto(m, r);
     init_skia_recording_py_auto(m, r);
@@ -117,9 +121,6 @@ PYBIND11_MODULE(_skia, m)
 
     init_skia_image_filter_py_auto(m, r);
 
-    init_skia_gradient_py_auto(m, r); // needs to come before the non-auto version since it defines some of the types used in the default arguments
-    init_skia_gradient_py(m, r);
-
     init_skia_perlin_noise_shader_py(m, r);
 
     init_skia_image_filters_py_auto(m, r);
@@ -135,6 +136,4 @@ PYBIND11_MODULE(_skia, m)
     init_skia_image_py_auto(m, r);
 
     init_skia_standard_recorder_options_py(m, r);
-
-    //init_skia_path_py_auto(m, r);
 }

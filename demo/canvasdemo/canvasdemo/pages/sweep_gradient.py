@@ -13,14 +13,13 @@ class SweepGradientPage(Page):
         
         gradient_paint = skia.Paint()
 
-        shader = skia.GradientShader.make_sweep(
-            128.0,
-            128.0,
+        shader = skia.Shader.create_sweep_gradient(
+            skia.Point(128.0, 128.0),
             [
-                skia.colors.CYAN,
-                skia.colors.MAGENTA,
-                skia.colors.YELLOW,
-                skia.colors.CYAN,
+                skia.colors4f.CYAN,
+                skia.colors4f.MAGENTA,
+                skia.colors4f.YELLOW,
+                skia.colors4f.CYAN,
             ],
         )
         # logger.debug(f"shader: {shader}")

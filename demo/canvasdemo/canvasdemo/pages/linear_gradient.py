@@ -28,15 +28,13 @@ class LinearGradientPage(Page):
         gradient_paint = skia.Paint()
         # logger.debug(f"gradient_paint: {gradient_paint}")
 
-        shader = skia.GradientShader.make_linear(
-            [skia.Point(0, 0), skia.Point(256.0, 256.0)],
-            # [0xFF0000FF, 0xFFFFFF00],  # Blue, Yellow in #ARGB
+        shader = skia.Shader.create_linear_gradient(
+            skia.Point(0, 0),
+            skia.Point(256.0, 256.0),
             [
-                rgba_tuple_to_argb_int(self.color_1),
-                rgba_tuple_to_argb_int(self.color_2),
+                skia.Color4f(*self.color_1),
+                skia.Color4f(*self.color_2),
             ],
-            # [0, 1],
-            # skia.TileMode.K_CLAMP,
         )
 
         gradient_paint.set_shader(shader)

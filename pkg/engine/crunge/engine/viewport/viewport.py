@@ -92,15 +92,6 @@ class Viewport(Base):
     def height(self) -> int:
         return self._size.y
 
-    '''
-    def __enter__(self):
-        self.begin_frame()
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.end_frame()
-    '''
-
     def make_current(self):
         """Make the renderer current for the current context."""
         global viewport
@@ -238,7 +229,8 @@ class Viewport(Base):
 
     def submit_canvas(self):
         recording = self.recorder.snap()
-        if self.skia_context.has_pending_gpu_work():
+        if recording:
+        #if self.skia_context.has_pending_gpu_work():
             insert_info = skia.InsertRecordingInfo()
             insert_info.f_recording = recording
             self.skia_context.insert_recording(insert_info)
@@ -251,7 +243,6 @@ class Viewport(Base):
             insert_info = skia.InsertRecordingInfo()
             insert_info.f_recording = recording
             self.skia_context.insert_recording(insert_info)
-            #self.skia_context.submit(skia.SyncToCpu.K_NO)
             self.skia_context.submit(skia.SubmitInfo())
     '''
 

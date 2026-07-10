@@ -58,11 +58,12 @@ class BlendModeDemo(Demo):
             src = skia.Paint()
 
             src.set_shader(
-                skia.create_linear_gradient(
-                    skia.Point(0.0, 0.0), skia.Point(64.0, 0.0),
+                skia.Shader.create_linear_gradient(
+                    skia.Point(0.0, 0.0),
+                    skia.Point(64.0, 0.0),
                     [
-                        skia.Color4f.from_color(skia.colors.MAGENTA & 0x00FFFFFF),
-                        skia.Color4f.from_color(skia.colors.MAGENTA),
+                        skia.colors4f.MAGENTA.with_alpha(0.0),
+                        skia.colors4f.MAGENTA,
                     ],
                     [],  # even positions
                     skia.TileMode.K_CLAMP,
@@ -72,11 +73,12 @@ class BlendModeDemo(Demo):
 
             dst = skia.Paint()
             dst.set_shader(
-                skia.create_linear_gradient(
-                    skia.Point(0.0, 0.0), skia.Point(64.0, 0.0),
+                skia.Shader.create_linear_gradient(
+                    skia.Point(0.0, 0.0),
+                    skia.Point(64.0, 0.0),
                     [
-                        skia.Color4f.from_color(skia.colors.CYAN & 0x00FFFFFF),
-                        skia.Color4f.from_color(skia.colors.CYAN),
+                        skia.colors4f.CYAN.with_alpha(0.0),
+                        skia.colors4f.CYAN,
                     ],
                     [],  # even positions
                     skia.TileMode.K_CLAMP,

@@ -17,6 +17,9 @@ void init_skia_color_py(py::module &_skia, Registry &registry) {
     py::class_<SkColor4f>(_skia, "Color4f")
     .def(py::init<float, float, float, float>())
     .def_static("from_color", &SkColor4f::FromColor, py::arg("color"))
+    .def("with_alpha", [](const SkColor4f &c, float a) {
+        return SkColor4f{c.fR, c.fG, c.fB, a};
+    }, py::arg("alpha"))
     .def_readwrite("r", &SkColor4f::fR)
     .def_readwrite("g", &SkColor4f::fG)
     .def_readwrite("b", &SkColor4f::fB)

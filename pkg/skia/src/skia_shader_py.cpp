@@ -1,98 +1,141 @@
 #include <iostream>
 #include <limits>
 
-#include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
+#include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <cxbind/cxbind.h>
-#include <crunge/skia/crunge-skia.h>
 #include <crunge/skia/conversions.h>
+#include <crunge/skia/crunge-skia.h>
+#include <cxbind/cxbind.h>
 
-#include <include/core/SkShader.h>
-#include <include/core/SkImage.h>
 #include <include/core/SkColorFilter.h>
+#include <include/core/SkImage.h>
 #include <include/core/SkMatrix.h>
+#include <include/core/SkShader.h>
+#include <include/effects/SkGradient.h>
 
 namespace py = pybind11;
 
+sk_sp<SkShader> CreateLinearGradient(SkPoint p0, SkPoint p1,
+                                     std::vector<SkColor4f> colors,
+                                     std::vector<SkScalar> pos, SkTileMode mode,
+                                     sk_sp<SkColorSpace> cs,
+                                     SkGradient::Interpolation interp,
+                                     const SkMatrix *lm = nullptr) {
+    SkPoint pts[2] = {p0, p1};
+    SkGradient::Colors gcolors(
+        SkSpan<const SkColor4f>(colors.data(), colors.size()),
+        SkSpan<const SkScalar>(pos.data(), pos.size()), mode, std::move(cs));
+    SkGradient grad(gcolors, interp);
+    return SkShaders::LinearGradient(pts, grad, lm);
+}
+
+sk_sp<SkShader> CreateRadialGradient(SkPoint center, float radius,
+                                     std::vector<SkColor4f> colors,
+                                     std::vector<SkScalar> pos, SkTileMode mode,
+                                     sk_sp<SkColorSpace> cs,
+                                     SkGradient::Interpolation interp,
+                                     const SkMatrix *lm = nullptr) {
+    SkGradient::Colors gcolors(
+        SkSpan<const SkColor4f>(colors.data(), colors.size()),
+        SkSpan<const SkScalar>(pos.data(), pos.size()), mode, std::move(cs));
+    SkGradient grad(gcolors, interp);
+    return SkShaders::RadialGradient(center, radius, grad, lm);
+}
+
+sk_sp<SkShader> CreateTwoPointConicalGradient(
+    SkPoint start, float startRadius, SkPoint end, float endRadius,
+    std::vector<SkColor4f> colors, std::vector<SkScalar> pos, SkTileMode mode,
+    sk_sp<SkColorSpace> cs, SkGradient::Interpolation interp,
+    const SkMatrix *lm = nullptr) {
+    SkGradient::Colors gcolors(
+        SkSpan<const SkColor4f>(colors.data(), colors.size()),
+        SkSpan<const SkScalar>(pos.data(), pos.size()), mode, std::move(cs));
+    SkGradient grad(gcolors, interp);
+    return SkShaders::TwoPointConicalGradient(start, startRadius, end,
+                                              endRadius, grad, lm);
+}
+
+sk_sp<SkShader>
+CreateSweepGradient(SkPoint center, std::vector<SkColor4f> colors,
+                    std::vector<SkScalar> pos, SkTileMode mode,
+                    sk_sp<SkColorSpace> cs, SkGradient::Interpolation interp,
+                    float startAngle = 0.0f, float endAngle = 360.0f,
+                    const SkMatrix *lm = nullptr) {
+    SkGradient::Colors gcolors(
+        SkSpan<const SkColor4f>(colors.data(), colors.size()),
+        SkSpan<const SkScalar>(pos.data(), pos.size()), mode, std::move(cs));
+    SkGradient grad(gcolors, interp);
+    return SkShaders::SweepGradient(center, startAngle, endAngle, grad, lm);
+}
+
 void init_skia_shader_py(py::module &_skia, Registry &registry) {
-    //py::class_<SkMatrix> Matrix(_skia, "Matrix");
-    //py::class_<SkShader, sk_sp<SkShader>, SkFlattenable> shader(
-        py::class_<SkShader, sk_sp<SkShader>> shader(
-        _skia, "Shader", R"docstring(
-        Shaders specify the source color(s) for what is being drawn.
-    
-        If a paint has no shader, then the paint's color is used. If the paint has a
-        shader, then the shader's color(s) are use instead, but they are modulated
-        by the paint's alpha. This makes it easy to create a shader once (e.g.
-        bitmap tiling or gradient) and then change its transparency w/o having to
-        modify the original shader... only the paint's alpha needs to be modified.
-    
-        .. rubric:: Subclasses
-    
-        .. autosummary::
-            :nosignatures:
-    
-            ~skia.Shaders
-            ~skia.GradientShader
-            ~skia.PerlinNoiseShader
-        )docstring");
-    
-    shader
-        .def("isOpaque", &SkShader::isOpaque,
-            R"docstring(
-            Returns true if the shader is guaranteed to produce only opaque colors,
-            subject to the :py:class:`Paint` using the shader to apply an opaque
-            alpha value.
-    
-            Subclasses should override this to allow some optimizations.
-            )docstring")
-        .def("isAImage",
-            [] (const SkShader& shader, SkMatrix* localMatrix,
-                std::vector<SkTileMode>& xy) {
+    py::class_<SkShader, sk_sp<SkShader>> _Shader(_skia, "Shader");
+
+    _Shader.def("is_opaque", &SkShader::isOpaque)
+        .def(
+            "is_a_image",
+            [](const SkShader &shader, SkMatrix *localMatrix,
+               std::vector<SkTileMode> &xy) {
                 if (xy.size() != 2)
                     throw std::runtime_error("xy must have two elements.");
                 return sk_sp<SkImage>(shader.isAImage(localMatrix, &xy[0]));
             },
-            R"docstring(
-            Iff this shader is backed by a single :py:class:`Image`, return its ptr
-            (the caller must ref this if they want to keep it longer than the
-            lifetime of the shader).
-    
-            If not, return nullptr.
-            )docstring",
             py::arg("localMatrix"), py::arg("xy") = nullptr)
-        .def("isAImage", py::overload_cast<>(&SkShader::isAImage, py::const_))
-    /*
-        .def("asAGradient", &SkShader::asAGradient, py::arg("info"))
-    */
-        .def("makeWithLocalMatrix", &SkShader::makeWithLocalMatrix,
-            R"docstring(
-            Return a shader that will apply the specified localMatrix to this
-            shader.
-    
-            The specified matrix will be applied before any matrix associated with
-            this shader.
-            )docstring",
-            py::arg("matrix"))
-        .def("makeWithColorFilter", &SkShader::makeWithColorFilter,
-            R"docstring(
-            Create a new shader that produces the same colors as invoking this
-            shader and then applying the colorfilter.
-            )docstring",
-            py::arg("colorFilter"))
-    /*
-        .def_static("Deserialize",
-            [] (py::buffer b) {
-                auto info = b.request();
-                auto shader = SkShader::Deserialize(
-                    SkFlattenable::Type::kSkShaderBase_Type, info.ptr,
-                    info.shape[0] * info.strides[0]);
-                return sk_sp<SkShader>(
-                    reinterpret_cast<SkShader*>(shader.release()));
-            },
-            py::arg("data"))
-    */
-        ;    
+        .def("is_a_image", py::overload_cast<>(&SkShader::isAImage, py::const_))
+        /*
+            .def("as_a_gradient", &SkShader::asAGradient, py::arg("info"))
+        */
+        .def("make_with_local_matrix", &SkShader::makeWithLocalMatrix,
+             py::arg("matrix"))
+        .def("make_with_color_filter", &SkShader::makeWithColorFilter,
+             py::arg("colorFilter"))
+
+        .def_static("create_linear_gradient", &CreateLinearGradient,
+                    py::arg("p0"), py::arg("p1"), py::arg("colors"),
+                    py::arg("pos") = std::vector<SkScalar>(),
+                    py::arg("mode") = SkTileMode::kClamp,
+                    py::arg("cs") = nullptr,
+                    py::arg("interpolation") = SkGradient::Interpolation{},
+                    py::arg("local_matrix") = nullptr)
+
+        .def_static("create_radial_gradient", &CreateRadialGradient,
+                    py::arg("center"), py::arg("radius"), py::arg("colors"),
+                    py::arg("pos") = std::vector<SkScalar>(),
+                    py::arg("mode") = SkTileMode::kClamp,
+                    py::arg("cs") = nullptr,
+                    py::arg("interpolation") = SkGradient::Interpolation{},
+                    py::arg("local_matrix") = nullptr)
+
+        .def_static(
+            "create_two_point_conical_gradient", &CreateTwoPointConicalGradient,
+            py::arg("start"), py::arg("start_radius"), py::arg("end"),
+            py::arg("end_radius"), py::arg("colors"),
+            py::arg("pos") = std::vector<SkScalar>(),
+            py::arg("mode") = SkTileMode::kClamp, py::arg("cs") = nullptr,
+            py::arg("interpolation") = SkGradient::Interpolation{},
+            py::arg("local_matrix") = nullptr)
+
+        .def_static(
+            "create_sweep_gradient", &CreateSweepGradient, py::arg("center"),
+            py::arg("colors"), py::arg("pos") = std::vector<SkScalar>(),
+            py::arg("mode") = SkTileMode::kClamp, py::arg("cs") = nullptr,
+            py::arg("interpolation") = SkGradient::Interpolation{},
+            py::arg("start_angle") = 0.0f, py::arg("end_angle") = 360.0f,
+            py::arg("local_matrix") = nullptr)
+
+        /*
+            .def_static("deserialize",
+                [] (py::buffer b) {
+                    auto info = b.request();
+                    auto shader = SkShader::Deserialize(
+                        SkFlattenable::Type::kSkShaderBase_Type, info.ptr,
+                        info.shape[0] * info.strides[0]);
+                    return sk_sp<SkShader>(
+                        reinterpret_cast<SkShader*>(shader.release()));
+                },
+                py::arg("data"))
+        */
+        ;
 }
