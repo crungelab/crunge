@@ -59,11 +59,12 @@ class DebugDraw(box2d.DebugDrawBase):
         if not vertices:
             return
 
-        path = skia.Path()
-        path.move_to(*vertices[0])
+        builder = skia.PathBuilder()
+        builder.move_to(*vertices[0])
         for pt in vertices[1:]:
-            path.line_to(*pt)
-        path.close()
+            builder.line_to(*pt)
+        builder.close()
+        path = builder.detach()
 
         outline_paint = skia.Paint()
         outline_paint.set_color(hex_to_argb_int(color))
@@ -105,11 +106,12 @@ class DebugDraw(box2d.DebugDrawBase):
         # Optional: visualize "radius" as stroke width
         # (This is NOT physically accurate; just helps you see rounded polygons.)
         if radius > 0 and vertices:
-            path = skia.Path()
-            path.move_to(*vertices[0])
+            builder = skia.PathBuilder()
+            builder.move_to(*vertices[0])
             for pt in vertices[1:]:
-                path.line_to(*pt)
-            path.close()
+                builder.line_to(*pt)
+            builder.close()
+            path = builder.detach()
 
             paint = skia.Paint()
             paint.set_color(hex_to_argb_int(color))

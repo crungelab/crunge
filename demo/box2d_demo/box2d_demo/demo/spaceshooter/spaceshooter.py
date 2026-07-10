@@ -56,15 +56,15 @@ class SpaceShooter(Demo):
             self.scene.attach(explosion)
             return False
 
-        engine.world.on_collision(
+        engine.on_collision(
             CollisionType.LASER, CollisionType.LASER, begin=laser_laser_collision
         )
 
-        engine.world.on_collision(
+        engine.on_collision(
             CollisionType.LASER, CollisionType.METEOR, begin=laser_asteroid_collision
         )
 
-        engine.world.on_collision(
+        engine.on_collision(
             CollisionType.SHIP, CollisionType.METEOR, begin=ship_asteroid_collision
         )
 
