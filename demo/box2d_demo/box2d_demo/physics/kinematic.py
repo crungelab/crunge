@@ -20,7 +20,7 @@ class KinematicPhysics(Physics):
         body = box2d.Body(body_type=box2d.Body.KINEMATIC)
         body.node = node
         body.position = box2d.Vec2d(position.x, position.y)
-        body.angle = math.radians(node.angle)
+        body.rotation = box2d.make_rot(node.angle)
         return body
 
 """

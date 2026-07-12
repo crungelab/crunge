@@ -2,6 +2,8 @@ from loguru import logger
 
 import glm
 
+from crunge import box2d as b2
+
 from crunge.engine.d2.node_2d import Node2D
 
 class Thruster(Node2D):
@@ -21,5 +23,13 @@ class Thruster(Node2D):
     def update(self, dt):
         super().update(dt)
         if self.active:
-            self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
-            self.body.angular_velocity = self.angular_velocity
+            body = self.body
+            world_force = body.get_world_vector(b2.Vec2(*self.force))
+            world_point = body.get_world_point(b2.Vec2(*self.position))
+            body.apply_force(world_force, world_point, True)
+            #force = b2.Vec2(*self.force * 10)
+            #body.apply_force_to_center(force, True)
+            body.set_angular_velocity(self.angular_velocity)
+
+            #logger.debug(f"body mass: {body.get_mass()}")
+            #logger.debug(f"body type: {body.get_type()}")

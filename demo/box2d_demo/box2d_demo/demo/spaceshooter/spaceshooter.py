@@ -20,9 +20,8 @@ class SpaceShooter(PhysicsDemo):
         super().reset()
         self.camera_target = glm.vec2(0, 0)
 
-        #self.create_physics_engine()
-
         self.create_ship(glm.vec2(0, 0))
+
         zone = Zone(
             self.scene, glm.vec2(0, 0), glm.vec2(self.width * 2, self.height * 2)
         ).create()
@@ -34,21 +33,59 @@ class SpaceShooter(PhysicsDemo):
         self.world = DynamicPhysicsEngine(gravity=glm.vec2(0, 0))
         self.world.make_current()
 
-    '''
-    def create_physics_engine(self):
-        world_def = b2.default_world_def()
-        world_def.gravity = b2.Vec2(0, 0)
-        self.world = b2.create_world(world_def)
-    '''
+    def handle_collisions(self):
+        events = self.world.get_contact_events()
+        destroyed = (
+            set()
+        )  # guard against double-destroy if a node shows up in >1 event this step
+
+        '''
+        if events.begin_count > 0:
+            logger.debug(f"Begin count: {events.begin_count}")
+            exit()
+        '''
+
+        for event in events.get_begin_events():
+            shape_a = event.shape_id_a
+            shape_b = event.shape_id_b
+
+            node_a = shape_a.user_data
+            node_b = shape_b.user_data
+
+            types = {shape_a.user_material, shape_b.user_material}
+
+            logger.debug(f"Collision between {node_a} and {node_b}, types: {types}")
+
+            if (
+                node_a is None
+                or node_b is None
+                or node_a in destroyed
+                or node_b in destroyed
+            ):
+                continue
+
+            if types == {CollisionType.LASER}:
+                continue  # laser/laser: no-op, same as before
+
+            if types == {CollisionType.LASER, CollisionType.METEOR}:
+                laser = (
+                    node_a if shape_a.user_material == CollisionType.LASER else node_b
+                )
+                asteroid = (
+                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
+                )
+                self._destroy_pair(laser, asteroid, destroyed)
+
+            elif types == {CollisionType.SHIP, CollisionType.METEOR}:
+                ship = node_a if shape_a.user_material == CollisionType.SHIP else node_b
+                asteroid = (
+                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
+                )
+                self._destroy_pair(
+                    ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
+                )
 
     '''
-		for ( int i = 0; i < contactEvents.beginCount; ++i )
-		{
-			b2ContactBeginTouchEvent event = contactEvents.beginEvents[i];
-			b2BodyId bodyIdA = b2Shape_GetBody( event.shapeIdA );
-			b2BodyId bodyIdB = b2Shape_GetBody( event.shapeIdB );
-    '''
-
     def handle_collisions(self):
         # v3 has no begin/separate callbacks - events are polled after the step.
         events = b2.world_get_contact_events(self.world)
@@ -93,6 +130,7 @@ class SpaceShooter(PhysicsDemo):
                 self._destroy_pair(
                     ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
                 )
+    '''
 
     def _destroy_pair(self, actor_node, asteroid_node, destroyed, color=None):
         position = asteroid_node.position
@@ -124,12 +162,11 @@ class SpaceShooter(PhysicsDemo):
         super()._draw()
 
     def update(self, delta_time: float):
-        b2.world_step(self.world, 1 / 60, 4)  # 4 = sub-step count, v3-specific
+        self.world.update(delta_time)
         self.handle_collisions()
 
         base_lerp_factor = 5.0
         speed_factor = 0.001
-        #ship_speed = glm.length(self.ship.body.linear_velocity)
         ship_speed = b2.length(self.ship.body.linear_velocity)
         threshold_distance = 400.0
 

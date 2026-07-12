@@ -16,6 +16,7 @@ set(HEADERS
 
 set(SOURCES
     src/box2d_py_auto.cpp
+    src/types_py.cpp
     src/types_py_auto.cpp
     src/math_functions_py_auto.cpp
     src/id_py_auto.cpp

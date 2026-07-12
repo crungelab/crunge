@@ -1,4 +1,4 @@
-from .geom import Geom, BoxGeom, BallGeom, HullGeom, DecomposedGeom
+from .geom import Geom, BoxGeom, BallGeom, HullGeom
 #from .physics import Physics, PhysicsMeta, GroupPhysics
 from .physics import Physics, GroupPhysics
 from .world import PhysicsWorld2D
@@ -11,9 +11,6 @@ DEBUG_COLLISION = False
 
 # Default friction used for sprites, unless otherwise specified
 DEFAULT_FRICTION = 0.2
-
-# Default mass used for sprites
-DEFAULT_MASS = 1
 
 GRAVITY = (0.0, -981.0)
 

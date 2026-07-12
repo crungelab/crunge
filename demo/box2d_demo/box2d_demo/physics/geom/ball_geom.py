@@ -40,23 +40,8 @@ class BallGeom(Geom):
         # shape = box2d.Poly.create_box(node.body, tuple(size))
         shape = node.body.create_circle_shape(shape_def, circle)
 
+        shape.user_data = node
         shape.friction = 10
         shape.restitution = 0.2
         shapes.append(shape)
         return shapes
-
-    """
-    def create_shapes(
-        self, node: "PhysicsEntity2D", transform: box2d.Transform = None, clip: Rect2 = None
-    ):
-        shapes = []
-        # size = node.size
-        # radius = size.x / 2
-        radius = node.model.collision_rect.width / 2 * node.scale.x
-        # radius = node.radius
-        shape = box2d.Circle(node.body, radius)
-        # shape.elasticity = 0.95
-        shape.friction = 0.9
-        shapes.append(shape)
-        return shapes
-    """

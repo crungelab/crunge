@@ -32,6 +32,7 @@ class BoxGeom(Geom):
 
         shape = node.body.create_polygon_shape(shape_def, shape_box)
 
+        shape.user_data = node
         shape.friction = 10
         shape.restitution = 0.2
         shapes.append(shape)

@@ -28,42 +28,34 @@ class Laser(DynamicEntity2D):
 
         self.ttl = 1.0
 
-    '''
-    def _create(self):
-        super()._create()
-        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
-        logger.debug(f"atlas: {atlas}")
-        
-        sprite = atlas.get("laserBlue01.png")
-
-        self.vu = SpriteVu(sprite)
-    '''
-
     def add_shape(self, shape):
         #shape.collision_type = CollisionType.LASER
         shape.user_material = CollisionType.LASER
+        shape.enable_contact_events(True)
         super().add_shape(shape)
 
+    '''
+    def update(self, dt):
+        super().update(dt)
+
+        self.ttl = self.ttl - dt
+        if self.ttl <= 0:
+            self.destroy()
+
+        body = self.body
+        force = self.speed * self.forward
+        world_force = body.get_world_vector(b2.Vec2(*force))
+        world_point = body.get_world_point(b2.Vec2(*self.position))
+        body.apply_force(world_force, world_point, True)
+    '''
+
     def update(self, dt):
         super().update(dt)
         self.ttl = self.ttl - dt
         if self.ttl <= 0:
             self.destroy()
-        #self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
-        #angle_facing = self.angle + math.pi / 2
-        #direction = glm.vec2(math.cos(angle_facing), math.sin(angle_facing))
         direction = self.forward
         #self.body.linear_velocity = tuple(direction * self.speed)
-        self.body.linear_velocity = b2.Vec2(*direction * self.speed)
-
-    '''
-    def update(self, dt):
-        super().update(dt)
-        self.ttl = self.ttl - dt
-        if self.ttl <= 0:
-            self.destroy()
-        #self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
-        rotation = self._rotation + math.pi / 2
-        direction = glm.vec2(math.cos(rotation), math.sin(rotation))
-        self.body.velocity = tuple(direction * self.speed)
-    '''
+        #self.body.linear_velocity = b2.Vec2(*direction * self.speed)
+        velocity = direction * self.speed
+        self.body.linear_velocity = b2.Vec2(*velocity)

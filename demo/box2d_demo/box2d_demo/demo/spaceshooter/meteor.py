@@ -34,6 +34,7 @@ class Meteor(DynamicEntity2D):
     def add_shape(self, shape):
         #shape.collision_type = CollisionType.METEOR
         shape.user_material = CollisionType.METEOR
+        shape.enable_contact_events(True)
         super().add_shape(shape)
 
     def _create(self):
@@ -46,9 +47,9 @@ class Meteor(DynamicEntity2D):
         self.body.angular_velocity = angular_velocity
         #self.body.mass = 1
 
-    def create_fragment(self, cls: Type["Meteor"], position: glm.vec2, velocity: glm.vec2):
+    def create_fragment(self, cls: Type["Meteor"], position: glm.vec2, velocity: box2d.Vec2):
         fragment = cls(position).create()
-        fragment.body.velocity = velocity
+        fragment.body.linear_velocity = velocity
         fragment.body.angular_velocity = random.uniform(*Meteor.angular_velocity_range)
         self.parent.add_child(fragment)
 
@@ -56,48 +57,48 @@ class MeteorGreyBig1(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big1.png")
     def destroy(self):
-        self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
-        self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
+        self.create_fragment(MeteorGreyMed1, self.position, self.body.linear_velocity)
+        self.create_fragment(MeteorGreyMed2, self.position, self.body.linear_velocity)
         super().destroy()
 
 class MeteorGreyBig2(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big2.png")
     def destroy(self):
-        self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
-        self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
+        self.create_fragment(MeteorGreyMed1, self.position, self.body.linear_velocity)
+        self.create_fragment(MeteorGreyMed2, self.position, self.body.linear_velocity)
         super().destroy()
 
 class MeteorGreyBig3(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big3.png")
     def destroy(self):
-        self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
-        self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
+        self.create_fragment(MeteorGreyMed1, self.position, self.body.linear_velocity)
+        self.create_fragment(MeteorGreyMed2, self.position, self.body.linear_velocity)
         super().destroy()
 
 class MeteorGreyBig4(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big4.png")
     def destroy(self):
-        self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
-        self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
+        self.create_fragment(MeteorGreyMed1, self.position, self.body.linear_velocity)
+        self.create_fragment(MeteorGreyMed2, self.position, self.body.linear_velocity)
         super().destroy()
 
 class MeteorGreyMed1(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_med1.png")
     def destroy(self):
-        self.create_fragment(MeteorGreySmall1, self.position, self.body.velocity)
-        self.create_fragment(MeteorGreySmall2, self.position, self.body.velocity)
+        self.create_fragment(MeteorGreySmall1, self.position, self.body.linear_velocity)
+        self.create_fragment(MeteorGreySmall2, self.position, self.body.linear_velocity)
         super().destroy()
 
 class MeteorGreyMed2(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_med2.png")
     def destroy(self):
-        self.create_fragment(MeteorGreySmall1, self.position, self.body.velocity)
-        self.create_fragment(MeteorGreySmall2, self.position, self.body.velocity)
+        self.create_fragment(MeteorGreySmall1, self.position, self.body.linear_velocity)
+        self.create_fragment(MeteorGreySmall2, self.position, self.body.linear_velocity)
         super().destroy()
 
 class MeteorGreySmall1(Meteor):

@@ -176,6 +176,7 @@ class HullGeom(PolyGeom):
 
         shape_def = box2d.ShapeDef()
         shape = body.create_polygon_shape(shape_def, polygon)
+        shape.user_data = node
 
         shapes.append(shape)
         return shapes

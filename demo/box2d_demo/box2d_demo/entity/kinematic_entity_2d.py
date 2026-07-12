@@ -1,7 +1,7 @@
 from loguru import logger
 import glm
 
-from ..physics.constants import DEFAULT_MASS, GRAVITY
+from ..physics.constants import GRAVITY
 
 from .. import physics
 from ..physics import geom

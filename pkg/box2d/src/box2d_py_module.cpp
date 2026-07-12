@@ -5,6 +5,7 @@
 namespace py = pybind11;
 
 void init_box2d_py_auto(py::module &, Registry& registry);
+void init_types_py(py::module &, Registry& registry);
 void init_types_py_auto(py::module &, Registry& registry);
 void init_math_functions_py_auto(py::module &, Registry& registry);
 void init_id_py_auto(py::module &, Registry& registry);
@@ -17,8 +18,8 @@ PYBIND11_MODULE(_box2d, m) {
     Registry r;
     init_math_functions_py_auto(m, r);
     init_box2d_py_auto(m, r);
+    init_types_py(m, r);
     init_types_py_auto(m, r);
-    //init_math_functions_py_auto(m, r);
     init_id_py_auto(m, r);
     init_collision_py_auto(m, r);
     init_debug_draw_py(m, r);

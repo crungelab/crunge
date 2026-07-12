@@ -17,9 +17,9 @@ class DynamicPhysics(Physics):
         logger.debug(f"Creating body for node: {node}")
         position = node.position + self.position
         body_position = box2d.Vec2(position.x, position.y)
-        body_angle = math.radians(node.angle)
+        rotation = box2d.make_rot(node.angle)
 
-        body_def = box2d.BodyDef(type=box2d.BodyType.DYNAMIC_BODY, position=body_position, angle=body_angle)
+        body_def = box2d.BodyDef(type=box2d.BodyType.DYNAMIC_BODY, position=body_position, rotation=rotation)
         body = self.world.create_body(body_def)
         body.user_data = node
 
