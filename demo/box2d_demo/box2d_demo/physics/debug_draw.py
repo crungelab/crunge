@@ -6,7 +6,7 @@ import glm
 from crunge import box2d
 from crunge import skia
 
-from crunge.engine import colors
+from crunge.engine import Renderer, colors
 from crunge.engine.color import rgba_tuple_to_argb_int
 
 
@@ -31,7 +31,7 @@ def transform_pos(transform: tuple[float, float, float, float]) -> tuple[float, 
 class DebugDraw(box2d.DebugDrawBase):
     def __init__(self):
         super().__init__()  # IMPORTANT: sets up C++ context + cache
-        self.canvas: skia.SkiaCanvas = None
+        #self.canvas: skia.SkiaCanvas = None
 
         # Use the new C++ exposed properties/flags if you bound them
         # (from the full file: draw_shapes/draw_joints/force_scale/joint_scale)
@@ -42,6 +42,11 @@ class DebugDraw(box2d.DebugDrawBase):
 
         # Your engine palette (RGBA tuples)
         self.shape_outline_color = colors.PURPLE
+
+    @property
+    def canvas(self) -> skia.Canvas:
+        renderer = Renderer.get_current()
+        return renderer.canvas
 
     # ------------- Box2D -> Skia primitive callbacks -------------
 

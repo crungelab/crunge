@@ -15,32 +15,25 @@ class WorldDebugOverlay(Overlay):
         self.visible = False
         self.debug_draw = DebugDraw()
 
-        self.canvas: skia.SkiaCanvas = None
-
     def _draw(self):
         world = PhysicsWorld2D.get_current()
 
         renderer = Renderer.get_current()
 
-        canvas = renderer.canvas
-        self.canvas = canvas
-        self.debug_draw.canvas = canvas
+        with renderer.canvas_target() as canvas:
+            canvas.save()
 
-        canvas.save()
+            canvas.translate(renderer.viewport.width // 2, renderer.viewport.height // 2)
+            scale = 1 / renderer.camera_2d.zoom
+            canvas.scale(scale, -scale)  # Invert Y-axis for Skia
+            camera_x, camera_y = (
+                renderer.camera_2d.position.x,
+                renderer.camera_2d.position.y,
+            )
+            canvas.translate(-camera_x, -camera_y)  # pan to camera
 
-        canvas.translate(renderer.viewport.width // 2, renderer.viewport.height // 2)
-        scale = 1 / renderer.camera_2d.zoom
-        canvas.scale(scale, -scale)  # Invert Y-axis for Skia
-        camera_x, camera_y = (
-            renderer.camera_2d.position.x,
-            renderer.camera_2d.position.y,
-        )
-        canvas.translate(-camera_x, -camera_y)  # pan to camera
+            world.draw(self.debug_draw)
 
-        world.draw(self.debug_draw)
-
-        canvas.restore()
-
-        self.canvas = None
+            canvas.restore()
 
         super()._draw()

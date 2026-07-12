@@ -1,3 +1,4 @@
+from crunge.engine.renderer.renderer import Renderer
 from loguru import logger
 
 import pymunk
@@ -10,10 +11,8 @@ from ...color import rgba_tuple_to_argb_int
 
 
 class DebugDrawOptions(pymunk.SpaceDebugDrawOptions):
-    def __init__(self, canvas: skia.SkiaCanvas):
+    def __init__(self):
         super().__init__()
-        self.canvas = canvas
-
         self.flags = pymunk.SpaceDebugDrawOptions.DRAW_SHAPES
         #self.shape_outline_color = SpaceDebugColor(255, 0, 255, 255)
         self.shape_outline_color = colors.PURPLE
@@ -24,6 +23,11 @@ class DebugDrawOptions(pymunk.SpaceDebugDrawOptions):
         self.constraint_line_color = SpaceDebugColor(0, 0, 0, 255)
         self.collision_point_outline_color = SpaceDebugColor(0, 0, 0, 255)
         self.data = None
+
+    @property
+    def canvas(self) -> skia.Canvas:
+        renderer = Renderer.get_current()
+        return renderer.canvas
 
     def draw_circle(self, pos, angle, radius, outline_color, fill_color):
         #pass

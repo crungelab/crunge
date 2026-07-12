@@ -93,8 +93,8 @@ class SurfaceViewport(Viewport):
         self.color_texture_view = surface_texture.texture.create_view()
 
         # Skia
-        self.skia_surface = skia.create_surface(self.color_texture, self.recorder)
-        self.canvas = self.skia_surface.get_canvas()
+        #self.skia_surface = skia.create_surface(self.color_texture, self.recorder)
+        #self.canvas = self.skia_surface.get_canvas()
 
     def end_frame(self) -> None:
         if self.resized:
@@ -102,13 +102,5 @@ class SurfaceViewport(Viewport):
             self.resized = False
         self.gfx.wait_for_gpu()
         self.surface.present()
-
-    '''
-    def end_frame(self) -> None:
-        if self.resized:
-            gc.collect()
-            self.gfx.wait_for_gpu()
-            self.resized = False
-        #self.gfx.wait_for_gpu()
-        self.surface.present()
-    '''
+        
+        self._canvas = None

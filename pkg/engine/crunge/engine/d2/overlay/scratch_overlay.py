@@ -134,8 +134,10 @@ class ScratchOverlay(Overlay):
 
 
     def _draw(self):
+        if len(self.draw_calls) == 0:
+            return
+
         renderer = Renderer.get_current()
-        
         with renderer.canvas_target() as canvas:
             canvas.save()
 

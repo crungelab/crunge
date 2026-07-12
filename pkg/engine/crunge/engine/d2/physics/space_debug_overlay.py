@@ -18,11 +18,6 @@ class SpaceDebugOverlay(Overlay, SpaceDebugDrawOptions):
         super().__init__("space_debug", 700)
         SpaceDebugDrawOptions.__init__(self)
         self.visible = False
-
-        self.canvas: skia.SkiaCanvas = None
-
-        # self.flags = SpaceDebugDrawOptions.DRAW_SHAPES
-
         self.shape_outline_color = colors.PURPLE
         self.constraint_color = colors.BLACK
         self.collision_point_color = colors.BLACK
@@ -30,6 +25,11 @@ class SpaceDebugOverlay(Overlay, SpaceDebugDrawOptions):
         self.body_line_color = colors.BLACK
         self.constraint_line_color = colors.BLACK
         self.collision_point_outline_color = colors.BLACK
+
+    @property
+    def canvas(self) -> skia.Canvas:
+        renderer = Renderer.get_current()
+        return renderer.canvas
 
     def draw_circle(self, pos, angle, radius, outline_color, fill_color):
         # logger.debug(f"pos: {pos}, angle: {angle}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
@@ -51,13 +51,15 @@ class SpaceDebugOverlay(Overlay, SpaceDebugDrawOptions):
 
     def draw_polygon(self, verts, radius, outline_color, fill_color):
         # logger.debug(f"verts: {verts}, radius: {radius}, outline_color: {outline_color}, fill_color: {fill_color}")
-        path = skia.Path()
         if not verts:
             return
-        path.move_to(*verts[0])
+
+        builder = skia.PathBuilder()
+        builder.move_to(*verts[0])
         for pt in verts[1:]:
-            path.line_to(*pt)
-        path.close()
+            builder.line_to(*pt)
+        builder.close()
+        path = builder.detach()
 
         outline_paint = skia.Paint()
         outline_paint.set_color(rgba_tuple_to_argb_int(outline_color))
@@ -67,7 +69,11 @@ class SpaceDebugOverlay(Overlay, SpaceDebugDrawOptions):
         self.canvas.draw_path(path, outline_paint)
 
     def draw_dot(self, size, pos, color):
-        logger.debug(f"size: {size}, pos: {pos}, color: {color}")
+        #logger.debug(f"size: {size}, pos: {pos}, color: {color}")
+        paint = skia.Paint()
+        paint.set_color(rgba_tuple_to_argb_int(color))
+        self.canvas.draw_circle(skia.Point(pos.x, pos.y), size, paint)
+
 
     def draw_shape(self, shape: pymunk.Shape) -> None:
         logger.debug(f"shape: {shape}")
@@ -83,24 +89,20 @@ class SpaceDebugOverlay(Overlay, SpaceDebugDrawOptions):
 
         renderer = Renderer.get_current()
 
-        canvas = renderer.canvas
-        self.canvas = canvas
+        with renderer.canvas_target() as canvas:
+            canvas.save()
 
-        canvas.save()
+            canvas.translate(renderer.viewport.width // 2, renderer.viewport.height // 2)
+            scale = 1 / renderer.camera_2d.zoom
+            canvas.scale(scale, -scale)  # Invert Y-axis for Skia
+            camera_x, camera_y = (
+                renderer.camera_2d.position.x,
+                renderer.camera_2d.position.y,
+            )
+            canvas.translate(-camera_x, -camera_y)  # pan to camera
 
-        canvas.translate(renderer.viewport.width // 2, renderer.viewport.height // 2)
-        scale = 1 / renderer.camera_2d.zoom
-        canvas.scale(scale, -scale)  # Invert Y-axis for Skia
-        camera_x, camera_y = (
-            renderer.camera_2d.position.x,
-            renderer.camera_2d.position.y,
-        )
-        canvas.translate(-camera_x, -camera_y)  # pan to camera
+            space.debug_draw(self)
 
-        space.debug_draw(self)
-
-        canvas.restore()
-
-        self.canvas = None
+            canvas.restore()
 
         super()._draw()

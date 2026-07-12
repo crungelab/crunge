@@ -53,7 +53,8 @@ class Viewport(Base):
         recorder_options = skia.create_standard_recorder_options()
         self.recorder = self.skia_context.make_recorder(recorder_options)
         self.skia_surface: skia.Surface = None
-        self.canvas: skia.Canvas = None
+        #self.canvas: skia.Canvas = None
+        self._canvas: skia.Canvas = None
 
         self.create_device_objects()
         self.create_buffers()
@@ -91,6 +92,13 @@ class Viewport(Base):
     @property
     def height(self) -> int:
         return self._size.y
+
+    @property
+    def canvas(self) -> skia.Canvas:
+        if self._canvas is None:
+            self.skia_surface = skia.create_surface(self.color_texture, self.recorder)
+            self._canvas = self.skia_surface.get_canvas()
+        return self._canvas
 
     def make_current(self):
         """Make the renderer current for the current context."""

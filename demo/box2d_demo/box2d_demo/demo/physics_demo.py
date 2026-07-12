@@ -26,7 +26,7 @@ class PhysicsDemo(ScrollingDemo):
         super().reset()
 
         self.debug_draw_enabled = False
-        self.debug_draw = DebugDraw()
+        #self.debug_draw = DebugDraw()
 
         self.create_physics_engine()
 
