@@ -5,6 +5,8 @@ from loguru import logger
 
 import glm
 
+from crunge import box2d
+
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
@@ -30,14 +32,15 @@ class Meteor(DynamicEntity2D):
         return meteor
 
     def add_shape(self, shape):
-        shape.collision_type = CollisionType.METEOR
+        #shape.collision_type = CollisionType.METEOR
+        shape.user_material = CollisionType.METEOR
         super().add_shape(shape)
 
     def _create(self):
         super()._create()
-        linear_velocity = (random.uniform(*self.linear_velocity_range[0]), 
+        linear_velocity = box2d.Vec2(random.uniform(*self.linear_velocity_range[0]), 
                            random.uniform(*self.linear_velocity_range[1]))
-        self.body.velocity = linear_velocity
+        self.body.linear_velocity = linear_velocity
 
         angular_velocity = random.uniform(*self.angular_velocity_range)
         self.body.angular_velocity = angular_velocity

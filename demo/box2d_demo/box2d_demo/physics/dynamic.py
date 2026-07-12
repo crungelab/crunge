@@ -14,6 +14,7 @@ class DynamicPhysics(Physics):
         super().__init__(PT_DYNAMIC, position)
 
     def create_body(self, node):
+        logger.debug(f"Creating body for node: {node}")
         position = node.position + self.position
         body_position = box2d.Vec2(position.x, position.y)
         body_angle = math.radians(node.angle)

@@ -3,10 +3,11 @@ import glm
 
 from crunge import sdl
 from crunge import imgui
+from crunge import box2d as b2
 
 from box2d_demo.physics import DynamicPhysicsEngine
 
-from ..demo import Demo
+from ..physics_demo import PhysicsDemo
 
 from .ship import Ship
 from .zone import Zone
@@ -14,13 +15,12 @@ from .explosion import Explosion
 
 from .collision_type import CollisionType
 
-
-class SpaceShooter(Demo):
+class SpaceShooter(PhysicsDemo):
     def reset(self):
         super().reset()
         self.camera_target = glm.vec2(0, 0)
 
-        self.create_physics_engine()
+        #self.create_physics_engine()
 
         self.create_ship(glm.vec2(0, 0))
         zone = Zone(
@@ -31,42 +31,77 @@ class SpaceShooter(Demo):
         pass
 
     def create_physics_engine(self):
-        self.physics_engine = engine = DynamicPhysicsEngine(gravity=(0, 0))
+        self.world = DynamicPhysicsEngine(gravity=glm.vec2(0, 0))
+        self.world.make_current()
 
-        def laser_laser_collision(arbiter, space, data):
-            return False
+    '''
+    def create_physics_engine(self):
+        world_def = b2.default_world_def()
+        world_def.gravity = b2.Vec2(0, 0)
+        self.world = b2.create_world(world_def)
+    '''
 
-        def laser_asteroid_collision(arbiter, space, data):
-            laser_shape, asteroid_shape = arbiter.shapes
-            laser_node = laser_shape.body.node
-            asteroid_node = asteroid_shape.body.node
-            laser_node.destroy()
-            asteroid_node.destroy()
-            explosion = Explosion(asteroid_node.position)
-            self.scene.attach(explosion)
-            return False
+    '''
+		for ( int i = 0; i < contactEvents.beginCount; ++i )
+		{
+			b2ContactBeginTouchEvent event = contactEvents.beginEvents[i];
+			b2BodyId bodyIdA = b2Shape_GetBody( event.shapeIdA );
+			b2BodyId bodyIdB = b2Shape_GetBody( event.shapeIdB );
+    '''
 
-        def ship_asteroid_collision(arbiter, space, data):
-            ship_shape, asteroid_shape = arbiter.shapes
-            ship_node = ship_shape.body.node
-            asteroid_node = asteroid_shape.body.node
-            ship_node.destroy()
-            asteroid_node.destroy()
-            explosion = Explosion(asteroid_node.position, glm.vec4(1.0, 0.0, 0.0, 1.0))
-            self.scene.attach(explosion)
-            return False
+    def handle_collisions(self):
+        # v3 has no begin/separate callbacks - events are polled after the step.
+        events = b2.world_get_contact_events(self.world)
+        #logger.debug(f"Collision events: {events}")
+        destroyed = (
+            set()
+        )  # guard against double-destroy if a node shows up in >1 event this step
 
-        engine.on_collision(
-            CollisionType.LASER, CollisionType.LASER, begin=laser_laser_collision
-        )
+        #for event in events.begin_events:
+        for i in range(events.begin_count):
+            event = events.begin_events[i]
+            node_a = b2.shape_get_user_data(event.shape_id_a)
+            node_b = b2.shape_get_user_data(event.shape_id_b)
 
-        engine.on_collision(
-            CollisionType.LASER, CollisionType.METEOR, begin=laser_asteroid_collision
-        )
+            if (
+                node_a is None
+                or node_b is None
+                or node_a in destroyed
+                or node_b in destroyed
+            ):
+                continue
 
-        engine.on_collision(
-            CollisionType.SHIP, CollisionType.METEOR, begin=ship_asteroid_collision
-        )
+            types = {node_a.collision_type, node_b.collision_type}
+
+            if types == {CollisionType.LASER}:
+                continue  # laser/laser: no-op, same as before
+
+            if types == {CollisionType.LASER, CollisionType.METEOR}:
+                laser = (
+                    node_a if node_a.collision_type == CollisionType.LASER else node_b
+                )
+                asteroid = (
+                    node_a if node_a.collision_type == CollisionType.METEOR else node_b
+                )
+                self._destroy_pair(laser, asteroid, destroyed)
+
+            elif types == {CollisionType.SHIP, CollisionType.METEOR}:
+                ship = node_a if node_a.collision_type == CollisionType.SHIP else node_b
+                asteroid = (
+                    node_a if node_a.collision_type == CollisionType.METEOR else node_b
+                )
+                self._destroy_pair(
+                    ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
+                )
+
+    def _destroy_pair(self, actor_node, asteroid_node, destroyed, color=None):
+        position = asteroid_node.position
+        actor_node.destroy()
+        asteroid_node.destroy()
+        destroyed.add(actor_node)
+        destroyed.add(asteroid_node)
+        explosion = Explosion(position, color) if color else Explosion(position)
+        self.scene.attach(explosion)
 
     def create_view(self):
         super().create_view()
@@ -81,40 +116,27 @@ class SpaceShooter(Demo):
     def _draw(self):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
-
         imgui.begin("Ship")
-
         self.draw_stats()
-        
         if imgui.button("Reset"):
             self.reset()
-
         imgui.end()
-
         super()._draw()
 
     def update(self, delta_time: float):
-        self.physics_engine.update(1 / 60)
+        b2.world_step(self.world, 1 / 60, 4)  # 4 = sub-step count, v3-specific
+        self.handle_collisions()
 
-        base_lerp_factor = 5.0  # Base speed of camera movement
-        # speed_factor = 0.01      # Factor to scale with ship's speed
-        speed_factor = 0.001  # Factor to scale with ship's speed
-
-        # Get the ship's speed
-        ship_speed = glm.length(self.ship.body.velocity)
-
-        # threshold_distance = 200.0
+        base_lerp_factor = 5.0
+        speed_factor = 0.001
+        #ship_speed = glm.length(self.ship.body.linear_velocity)
+        ship_speed = b2.length(self.ship.body.linear_velocity)
         threshold_distance = 400.0
 
-        # Calculate the target position based on the ship's position and the dead zone
         self.camera_target = self.calculate_target_position(
             self.camera.position, self.ship.position, threshold_distance
         )
-
-        # Adjust lerp_factor based on the ship's speed
         lerp_factor = base_lerp_factor + ship_speed * speed_factor
-
-        # Update the camera position towards the target
         self.camera.position = self.update_camera(
             self.camera.position, self.camera_target, lerp_factor, delta_time
         )

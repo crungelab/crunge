@@ -9,8 +9,8 @@
 #include <cxbind/cxbind.h>
 #include <cxbind/callback.h>
 
-//#include <crunge/box2d/crunge-box2d.h>
-//#include <crunge/box2d/conversions.h>
+#include <crunge/box2d/crunge-box2d.h>
+#include <crunge/box2d/conversions.h>
 
 #include <box2d/box2d.h>
 
@@ -499,13 +499,6 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("shape_id")
         )
     .def("shape_is_sensor", &b2Shape_IsSensor
-        , py::arg("shape_id")
-        )
-    .def("shape_set_user_data", &b2Shape_SetUserData
-        , py::arg("shape_id")
-        , py::arg("user_data")
-        )
-    .def("shape_get_user_data", &b2Shape_GetUserData
         , py::arg("shape_id")
         )
     .def("shape_set_density", &b2Shape_SetDensity

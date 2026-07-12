@@ -9,8 +9,8 @@
 #include <cxbind/cxbind.h>
 #include <cxbind/callback.h>
 
-//#include <crunge/box2d/crunge-box2d.h>
-//#include <crunge/box2d/conversions.h>
+#include <crunge/box2d/crunge-box2d.h>
+#include <crunge/box2d/conversions.h>
 
 #include <box2d/id.h>
 #include <box2d/box2d.h>
@@ -27,7 +27,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("generation", &b2WorldId::generation)
         .def(py::init(&b2CreateWorld))
         .def("draw", &World_Draw
-            , py::arg("arg")
+            , py::arg("arg1")
             )
         .def("destroy", &b2DestroyWorld
             )
@@ -415,6 +415,8 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def_property_readonly("position", &b2Body_GetPosition)
         .def_property_readonly("rotation", &b2Body_GetRotation)
         .def_property_readonly("angle", &Body_GetAngle)
+        .def_property("linear_velocity", &b2Body_GetLinearVelocity, &b2Body_SetLinearVelocity)
+        .def_property("angular_velocity", &b2Body_GetAngularVelocity, &b2Body_SetAngularVelocity)
     ;
 
     py::class_<b2ShapeId> _Shape(_box2d, "Shape");
@@ -435,11 +437,6 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def("get_world", &b2Shape_GetWorld
             )
         .def("is_sensor", &b2Shape_IsSensor
-            )
-        .def("set_user_data", &b2Shape_SetUserData
-            , py::arg("user_data")
-            )
-        .def("get_user_data", &b2Shape_GetUserData
             )
         .def("set_density", &b2Shape_SetDensity
             , py::arg("density")
@@ -547,9 +544,11 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("lift")
             , py::arg("wake")
             )
+        .def_property("user_data", &Shape_GetUserData, &Shape_SetUserData)
         .def_property_readonly("body", &b2Shape_GetBody)
         .def_property("friction", &b2Shape_GetFriction, &b2Shape_SetFriction)
         .def_property("restitution", &b2Shape_GetRestitution, &b2Shape_SetRestitution)
+        .def_property("user_material", &b2Shape_GetUserMaterial, &b2Shape_SetUserMaterial)
     ;
 
     py::class_<b2ChainId> _ChainId(_box2d, "ChainId");

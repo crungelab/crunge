@@ -5,7 +5,6 @@ world_def = box2d.WorldDef(gravity = box2d.Vec2(0.0, -10.0))
 print("World Def:")
 print(world_def)
 
-#world = box2d.create_world(world_def)
 world = box2d.World(world_def)
 
 ground_body_def = box2d.BodyDef(position = box2d.Vec2(0.0, -10.0))
@@ -51,21 +50,9 @@ dynamic_shape = dynamic_body.create_polygon_shape(dynamic_shape_def, dynamic_box
 print("Dynamic Shape:")
 print(dynamic_shape)
 
-#float timeStep = 1.0f / 60.0f;
 time_step = 1.0 / 60.0
 
-#int subStepCount = 4;
 sub_step_count = 4
-
-"""
-for (int i = 0; i < 90; ++i)
-{
-    b2World_Step(worldId, timeStep, subStepCount);
-    b2Vec2 position = b2Body_GetPosition(bodyId);
-    b2Rot rotation = b2Body_GetRotation(bodyId);
-    printf("%4.2f %4.2f %4.2f\n", position.x, position.y, b2Rot_GetAngle(rotation));
-}
-"""
 
 for i in range(90):
     world.step(time_step, sub_step_count)
@@ -75,15 +62,3 @@ for i in range(90):
     print(f"{position.x:.2f} {position.y:.2f} {angle:.2f}")
 
 world.destroy()
-
-"""
-for i in range(90):
-    box2d.world_step(world, time_step, sub_step_count)
-    position = box2d.body_get_position(dynamic_body)
-    rotation = box2d.body_get_rotation(dynamic_body)
-    angle = box2d.rot_get_angle(rotation)
-    print(f"{position.x:.2f} {position.y:.2f} {angle:.2f}")
-
-#b2DestroyWorld(worldId);
-box2d.destroy_world(world)
-"""

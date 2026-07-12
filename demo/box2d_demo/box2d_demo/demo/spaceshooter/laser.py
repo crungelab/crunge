@@ -3,6 +3,8 @@ import math
 from loguru import logger
 import glm
 
+from crunge import box2d as b2
+
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
@@ -38,9 +40,23 @@ class Laser(DynamicEntity2D):
     '''
 
     def add_shape(self, shape):
-        shape.collision_type = CollisionType.LASER
+        #shape.collision_type = CollisionType.LASER
+        shape.user_material = CollisionType.LASER
         super().add_shape(shape)
 
+    def update(self, dt):
+        super().update(dt)
+        self.ttl = self.ttl - dt
+        if self.ttl <= 0:
+            self.destroy()
+        #self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
+        #angle_facing = self.angle + math.pi / 2
+        #direction = glm.vec2(math.cos(angle_facing), math.sin(angle_facing))
+        direction = self.forward
+        #self.body.linear_velocity = tuple(direction * self.speed)
+        self.body.linear_velocity = b2.Vec2(*direction * self.speed)
+
+    '''
     def update(self, dt):
         super().update(dt)
         self.ttl = self.ttl - dt
@@ -50,3 +66,4 @@ class Laser(DynamicEntity2D):
         rotation = self._rotation + math.pi / 2
         direction = glm.vec2(math.cos(rotation), math.sin(rotation))
         self.body.velocity = tuple(direction * self.speed)
+    '''

@@ -29,11 +29,20 @@ specs:
           getter: "b2Body_GetRotation"
         angle:
           getter: "Body_GetAngle"
+        linear_velocity:
+          setter: "b2Body_SetLinearVelocity"
+          getter: "b2Body_GetLinearVelocity"
+        angular_velocity:
+          setter: "b2Body_SetAngularVelocity"
+          getter: "b2Body_GetAngularVelocity"
 
   'struct@b2ShapeId':
     pyname: Shape
     extra:
       properties:
+        user_data:
+          setter: "Shape_SetUserData"
+          getter: "Shape_GetUserData"
         body:
           getter: b2Shape_GetBody
         friction:
@@ -41,7 +50,11 @@ specs:
           getter: "b2Shape_GetFriction"        
         restitution:
           setter: "b2Shape_SetRestitution"
-          getter: "b2Shape_GetRestitution"        
+          getter: "b2Shape_GetRestitution"
+        user_material:
+          setter: "b2Shape_SetUserMaterial"
+          getter: "b2Shape_GetUserMaterial"
+
 
 transforms:
   - name: mogrify

@@ -46,13 +46,6 @@ class BallsDemo(PhysicsDemo):
         imgui.end()
         super()._draw()
 
-    """
-    def update(self, delta_time: float):
-        with self.physics_engine.update(1 / 60):
-            self.scene.update(delta_time)
-            super().update(delta_time)
-    """
-
     def update(self, delta_time: float):
         self.world.update(1 / 60)
         self.scene.update(delta_time)

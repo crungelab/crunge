@@ -8,7 +8,8 @@ from crunge.engine.d2 import Vu2D
 
 from crunge.engine.math import Rect2
 
-from ..physics import globe
+#from ..physics import globe
+#from ..physics.world import PhysicsWorld
 from ..physics.constants import DEFAULT_MASS, GRAVITY
 from ..physics import StaticPhysics, DynamicPhysics, GroupPhysics
 from ..physics.physics import MotionState
@@ -119,7 +120,8 @@ class PhysicsEntity2D(Entity2D):
 
     def remove_shapes(self):
         for shape in self.shapes:
-            globe.physics_engine.space.remove(self.body, shape)
+            #globe.physics_engine.space.remove(self.body, shape)
+            shape.destroy(False)
 
     def get_tx_point(self, offset: glm.vec2):
         body_pos = self.body.position

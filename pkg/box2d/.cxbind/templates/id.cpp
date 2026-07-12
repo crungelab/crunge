@@ -9,8 +9,8 @@
 #include <cxbind/cxbind.h>
 #include <cxbind/callback.h>
 
-//#include <crunge/box2d/crunge-box2d.h>
-//#include <crunge/box2d/conversions.h>
+#include <crunge/box2d/crunge-box2d.h>
+#include <crunge/box2d/conversions.h>
 
 #include <box2d/id.h>
 #include <box2d/box2d.h>

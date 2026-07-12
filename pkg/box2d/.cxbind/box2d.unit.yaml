@@ -8,6 +8,9 @@ excludes:
   - 'function@b2Body_GetUserData'
   - 'function@b2DestroyBody'
 
+  - 'function@b2Shape_SetUserData'
+  - 'function@b2Shape_GetUserData'
+
   # Internal / Ignored
 
 # specs:

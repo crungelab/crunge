@@ -230,21 +230,10 @@ class Viewport(Base):
     def submit_canvas(self):
         recording = self.recorder.snap()
         if recording:
-        #if self.skia_context.has_pending_gpu_work():
             insert_info = skia.InsertRecordingInfo()
             insert_info.f_recording = recording
             self.skia_context.insert_recording(insert_info)
             self.skia_context.submit(skia.SubmitInfo())
-
-    '''
-    def submit_canvas(self):
-        recording = self.recorder.snap()
-        if recording:
-            insert_info = skia.InsertRecordingInfo()
-            insert_info.f_recording = recording
-            self.skia_context.insert_recording(insert_info)
-            self.skia_context.submit(skia.SubmitInfo())
-    '''
 
     def create_buffers(self):
         # Uniform Buffers

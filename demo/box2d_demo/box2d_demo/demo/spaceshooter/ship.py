@@ -3,7 +3,7 @@ import math
 from loguru import logger
 
 import glm
-from crunge import box2d
+from crunge import box2d as b2
 
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.d2.node_2d import Node2D
@@ -17,7 +17,7 @@ from .thruster import Thruster
 from .laser import Laser
 
 class Thruster(Node2D):
-    def __init__(self, body: box2d.Body, position: glm.vec2, force: glm.vec2, angular_velocity: float = 0) -> None:
+    def __init__(self, body: b2.Body, position: glm.vec2, force: glm.vec2, angular_velocity: float = 0) -> None:
         super().__init__(position)
         self.body = body
         self.active = False
@@ -33,8 +33,21 @@ class Thruster(Node2D):
     def update(self, dt):
         super().update(dt)
         if self.active:
+            body = self.body
+            #world_force = body.get_world_vector(b2.Vec2(*self.force))
+            #world_point = body.get_world_point(b2.Vec2(*self.position))
+            #body.apply_force(world_force, world_point, True)
+            force = b2.Vec2(*self.force * 10)
+            body.apply_force_to_center(force, True)
+            body.set_angular_velocity(self.angular_velocity)
+
+    '''
+    def update(self, dt):
+        super().update(dt)
+        if self.active:
             self.body.apply_force_at_local_point(tuple(self.force), tuple(self.position))
             self.body.angular_velocity = self.angular_velocity
+    '''
 
 
 class Ship(DynamicEntity2D):
@@ -51,8 +64,9 @@ class Ship(DynamicEntity2D):
         self.left_thruster: Thruster = None
         self.right_thruster: Thruster = None
 
-    def add_shape(self, shape: box2d.Shape):
-        shape.collision_type = CollisionType.SHIP
+    def add_shape(self, shape: b2.Shape):
+        #shape.collision_type = CollisionType.SHIP
+        shape.user_material = CollisionType.SHIP
         super().add_shape(shape)
 
     def _create(self):
@@ -78,10 +92,8 @@ class Ship(DynamicEntity2D):
         missile_speed = 1000  # Adjust missile speed as needed
 
         # Calculate the missile's spawn position
-        rotation = self._rotation + math.pi / 2
-        direction = glm.vec2(math.cos(rotation), math.sin(rotation))
+        direction = self.forward
         position = self.position + direction * spawn_distance
 
-        #laser = Laser(position, self.angle, missile_speed).create()
         laser = Laser(position, self.angle, missile_speed)
         self.layer.attach(laser)

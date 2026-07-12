@@ -1,17 +1,12 @@
 from loguru import logger
-from crunge import box2d
 
 from .debug_draw import DebugDraw
 
 from crunge import skia
 
-from crunge.engine import colors
-from crunge.engine.color import rgba_tuple_to_argb_int
-
 from crunge.engine.renderer import Renderer
 from crunge.engine.widget import Overlay
 
-from . import globe
 from .world import PhysicsWorld2D
 
 class WorldDebugOverlay(Overlay):
@@ -23,7 +18,6 @@ class WorldDebugOverlay(Overlay):
         self.canvas: skia.SkiaCanvas = None
 
     def _draw(self):
-        #space = globe.physics_engine.space
         world = PhysicsWorld2D.get_current()
 
         renderer = Renderer.get_current()

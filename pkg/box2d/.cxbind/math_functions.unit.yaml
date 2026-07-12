@@ -10,7 +10,7 @@ specs:
         __repr__:
           auto: true
 
-  'struct@b2Rot': {}
+  #'struct@b2Rot': {}
 
   'struct@b2Transform':
     extra:
@@ -32,3 +32,5 @@ specs:
 transforms:
   - name: mogrify
     target: struct@b2Rot
+  #- name: mogrify
+  #  target: struct@b2Vec2
