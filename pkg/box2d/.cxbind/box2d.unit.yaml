@@ -10,6 +10,7 @@ excludes:
 
   - 'function@b2Shape_SetUserData'
   - 'function@b2Shape_GetUserData'
+  - 'function@b2DestroyShape'
 
   # Internal / Ignored
 

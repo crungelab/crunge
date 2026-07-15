@@ -12,10 +12,11 @@ from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport, ViewportListener
 from ..binding import SceneBindGroup
-from .renderer import Renderer2D
 
+from .renderer import Renderer2D
 from .node_2d import Node2D
 from .uniforms_2d import CameraUniform
+from .settings_2d import Settings2D
 
 from .program_2d import Program2D
 
@@ -33,10 +34,12 @@ class Camera2D(Node2D, ViewportListener):
         leader: "Camera2D" = None,
         parallax_factor=glm.vec2(1.0, 1.0),
         parallax_origin=glm.vec2(0.0, 0.0),
+        ppu: float = None,
     ):
         super().__init__(position)
 
         self._zoom = zoom
+        self.ppu = ppu if ppu is not None else Settings2D().ppu
 
         self.leader = leader
         if leader is not None:
@@ -152,6 +155,26 @@ class Camera2D(Node2D, ViewportListener):
 
     def update_matrix(self):
         super().update_matrix()
+
+        # viewport in pixels -> view size in units
+        view_width = (self.viewport_size.x / self.ppu) * self.zoom
+        view_height = (self.viewport_size.y / self.ppu) * self.zoom
+
+        ortho_left = self.x - view_width / 2
+        ortho_right = self.x + view_width / 2
+        ortho_bottom = self.y - view_height / 2
+        ortho_top = self.y + view_height / 2
+
+        self.frustum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
+
+        self.projection_matrix = glm.ortho(
+            ortho_left, ortho_right, ortho_bottom, ortho_top, -1, 1
+        )
+        self.update_gpu()
+        
+    '''
+    def update_matrix(self):
+        super().update_matrix()
         viewport_size = self.viewport_size
         viewport_width = viewport_size.x
         viewport_height = viewport_size.y
@@ -171,6 +194,7 @@ class Camera2D(Node2D, ViewportListener):
         )
 
         self.update_gpu()
+    '''
 
     def update_gpu(self):
         camera_uniform = CameraUniform()

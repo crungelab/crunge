@@ -11,7 +11,7 @@ from .draw_options import DrawOptions
 
 
 class PhysicsEngine2D(PhysicsEngine):
-    def __init__(self, gravity=GRAVITY, iterations=35):
+    def __init__(self, gravity=GRAVITY, iterations=10):
         super().__init__()
         logger.debug("PhysicsEngine.__init__")
         globe.physics_engine = self
@@ -19,6 +19,7 @@ class PhysicsEngine2D(PhysicsEngine):
         self.space = pymunk.Space()
         self.space.gravity = gravity
         self.space.iterations = iterations
+        self.space.collision_slop = 0.01
 
         # Enable sleeping
         self.space.sleep_time_threshold = 0.5     # default is disabled

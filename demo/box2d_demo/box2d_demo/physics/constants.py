@@ -11,7 +11,7 @@ DEBUG_COLLISION = False
 # Default friction used for sprites, unless otherwise specified
 DEFAULT_FRICTION = 0.2
 
-GRAVITY = (0.0, -981.0)
+GRAVITY = (0.0, -9.8)
 
 # Physics Types
 

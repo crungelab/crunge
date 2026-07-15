@@ -131,6 +131,8 @@ class Widget(Node["Widget"]):
         if self._controller:
             self._controller.disable()
         self._controller = controller
+        if controller is None:
+            return
         controller.enable()
 
     def _enable(self) -> None:

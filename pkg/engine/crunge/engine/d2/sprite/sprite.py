@@ -13,6 +13,7 @@ from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
 from ..uniforms_2d import ModelUniform
 from ...buffer import UniformBuffer
 
+from ..settings_2d import Settings2D
 from ..binding_2d import MaterialBindGroup, ModelBindGroup
 from .sprite_sampler import DefaultSpriteSampler
 
@@ -48,6 +49,7 @@ class Sprite(Model):
         points=None,
         collision_rect: Rect2i = None,
         texture_layer: int = 0,
+        ppu: float = None,
     ) -> None:
         super().__init__()
         self._texture = texture
@@ -61,6 +63,7 @@ class Sprite(Model):
         self._color = color
         self.points = points
         self.collision_rect = collision_rect
+        self.ppu = ppu if ppu is not None else Settings2D().ppu
 
         self.memberships: List[SpriteMembership] = []
 
@@ -124,10 +127,25 @@ class Sprite(Model):
         self.update_gpu()
 
     @property
+    def size(self) -> glm.vec2:
+        size = glm.vec2(self.rect.width, self.rect.height) / self.ppu
+        return size
+
+    '''
+    @property
+    def size(self) -> glm.vec2:
+        if self.collision_rect is not None:
+            return self.collision_rect.size  / self.ppu
+        return self.rect.size  / self.ppu
+    '''
+
+    '''
+    @property
     def size(self):
         if self.collision_rect is not None:
             return self.collision_rect.size
         return self.rect.size
+    '''
 
     @property
     def width(self):

@@ -30,12 +30,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._velocity = glm.vec2(0.0)
         self.angular_velocity = 0.0  # radians per second
 
-    """
-    def _create(self):
-        super()._create()
-        self.update_matrix()
-    """
-
     def _post_create(self):
         self.update_matrix()
         super()._post_create()
@@ -54,10 +48,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @position.setter
     def position(self, value: glm.vec2):
-        """
-        if value == self._position:
-            return
-        """
         self._position = value
         self.update_matrix()
         self.on_position()
@@ -104,16 +94,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
             return
         self._angle = value
         self.update_matrix()
-
-    """
-    @property
-    def angle(self):
-        return glm.degrees(self._rotation)
-
-    @angle.setter
-    def angle(self, value: float):
-        self.rotation = glm.radians(value)
-    """
 
     @property
     def forward(self) -> glm.vec2:

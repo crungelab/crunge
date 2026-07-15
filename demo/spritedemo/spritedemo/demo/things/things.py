@@ -6,8 +6,8 @@ from crunge import imgui
 
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
-from crunge.engine.d2.physics import DynamicPhysicsEngine
-from crunge.engine.d2.physics.draw_options import DrawOptions
+
+from crunge.engine.d2.settings_2d import Settings2D
 
 from ..physics_demo import PhysicsDemo
 
@@ -41,22 +41,36 @@ class ThingsDemo(PhysicsDemo):
         self.scene.attach(thing)
 
     def create_floor(self):
+        ppu = Settings2D().ppu
+        width_units = self.width / ppu  # viewport width, converted to units
+        x = width_units / 2
+        y = 0
+        position = glm.vec2(x, y)
+        floor = Floor(position, glm.vec2(width_units, 2))  # 2 units thick, not 2 px
+        floor.create()
+        self.scene.attach(floor)
+
+    '''
+    def create_floor(self):
         x = self.width / 2
         y = -10
         position = glm.vec2(x, y)
         floor = Floor(position, glm.vec2(self.width, 20))
         floor.create()
         self.scene.attach(floor)
+    '''
 
     def _draw(self):
         imgui.begin("Shapes")
         imgui.text("Click to create shapes")
 
         self.draw_stats()
-
+        self.draw_physics_options()
+        '''
         _, self.debug_draw_enabled = imgui.checkbox(
             "Debug Draw", self.debug_draw_enabled
         )
+        '''
 
         if imgui.button("Reset"):
             self.reset()
@@ -73,8 +87,10 @@ class ThingsDemo(PhysicsDemo):
 
         imgui.end()
 
+        '''
         if self.debug_draw_enabled:
             self.physics_engine.debug_draw(self.draw_options)
+        '''
 
         super()._draw()
 

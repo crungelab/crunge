@@ -19,6 +19,7 @@ set(SOURCES
     src/types_py.cpp
     src/types_py_auto.cpp
     src/math_functions_py_auto.cpp
+    src/id_py.cpp
     src/id_py_auto.cpp
     src/collision_py_auto.cpp
     src/debug_draw_py.cpp

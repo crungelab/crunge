@@ -4,6 +4,8 @@ import glm
 from crunge import sdl
 from crunge import imgui
 
+from crunge.engine.d2.settings_2d import Settings2D
+
 from ..physics_demo import PhysicsDemo
 
 from .box import Box
@@ -37,12 +39,24 @@ class BoxesDemo(PhysicsDemo):
         self.scene.attach(Box(position))
 
     def create_floor(self):
+        ppu = Settings2D().ppu
+        width_units = self.width / ppu  # viewport width, converted to units
+        x = width_units / 2
+        y = 0
+        position = glm.vec2(x, y)
+        floor = Floor(position, glm.vec2(width_units, 2))  # 2 units thick, not 2 px
+        floor.create()
+        self.scene.attach(floor)
+
+    '''
+    def create_floor(self):
         x = self.width / 2
         y = -10
         position = glm.vec2(x, y)
         floor = Floor(position, glm.vec2(self.width, 20))
         floor.create()
         self.scene.attach(floor)
+    '''
 
     # ------------------------------------------------------------------
     # UI & update

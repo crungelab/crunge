@@ -4,6 +4,13 @@
 
 namespace py = pybind11;
 
+class PyHolder
+{
+public:
+    py::object obj;
+    explicit PyHolder(py::object o) : obj(std::move(o)) {}
+};
+
 static void World_Draw(b2WorldId worldId, PyDebugDrawBase& dbg)
 {
     // IMPORTANT: dbg must outlive this call (it does because Python owns dbg).
@@ -12,14 +19,7 @@ static void World_Draw(b2WorldId worldId, PyDebugDrawBase& dbg)
     b2World_Draw(worldId, dbg.ptr());
 }
 
-class PyHolder
-{
-public:
-    py::object obj;
-    explicit PyHolder(py::object o) : obj(std::move(o)) {}
-};
-
-void Body_SetUserData(b2BodyId bodyId, py::object userData)
+static void Body_SetUserData(b2BodyId bodyId, py::object userData)
 {
     // Clean up any previously stored PyHolder to avoid memory leaks
     auto* existing = static_cast<PyHolder*>(b2Body_GetUserData(bodyId));
@@ -28,7 +28,7 @@ void Body_SetUserData(b2BodyId bodyId, py::object userData)
     b2Body_SetUserData(bodyId, new PyHolder(std::move(userData)));
 }
 
-py::object Body_GetUserData(b2BodyId bodyId)
+static py::object Body_GetUserData(b2BodyId bodyId)
 {
     auto* holder = static_cast<PyHolder*>(b2Body_GetUserData(bodyId));
     if (holder == nullptr)
@@ -37,7 +37,7 @@ py::object Body_GetUserData(b2BodyId bodyId)
     return holder->obj;
 }
 
-float Body_GetAngle(b2BodyId bodyId)
+static float Body_GetAngle(b2BodyId bodyId)
 {
     //return b2Body_GetAngle(bodyId);
     auto rotation = b2Body_GetRotation(bodyId);
@@ -45,7 +45,7 @@ float Body_GetAngle(b2BodyId bodyId)
     return angle;
 }
 
-void Shape_SetUserData(b2ShapeId shapeId, py::object userData)
+static void Shape_SetUserData(b2ShapeId shapeId, py::object userData)
 {
     // Clean up any previously stored PyHolder to avoid memory leaks
     auto* existing = static_cast<PyHolder*>(b2Shape_GetUserData(shapeId));
@@ -54,7 +54,7 @@ void Shape_SetUserData(b2ShapeId shapeId, py::object userData)
     b2Shape_SetUserData(shapeId, new PyHolder(std::move(userData)));
 }
 
-py::object Shape_GetUserData(b2ShapeId shapeId)
+static py::object Shape_GetUserData(b2ShapeId shapeId)
 {
     auto* holder = static_cast<PyHolder*>(b2Shape_GetUserData(shapeId));
     if (holder == nullptr)

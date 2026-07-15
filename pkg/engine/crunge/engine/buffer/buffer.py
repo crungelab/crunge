@@ -50,7 +50,7 @@ class Buffer(Base):
         """
         raise NotImplementedError("Must be implemented by subclasses.")
 
-    def destroy(self):
+    def _destroy(self):
         """
         Clean up the GPU buffer.
         """

@@ -50,6 +50,34 @@ class BallGeom(Geom):
     def get_moment(self, node: "PhysicsEntity2D"):
         # size = node.size
         # radius = size.x / 2
+        #radius = node.model.collision_rect.width / node.model.ppu * node.scale.x / 2
+        radius = node.radius
+        return pymunk.moment_for_circle(node.mass, 0, radius)
+
+    def create_shapes(
+        self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
+    ):
+        shapes = []
+        # size = node.size
+        # radius = size.x / 2
+        #radius = node.model.collision_rect.width / node.model.ppu * node.scale.x / 2
+        radius = node.radius
+        logger.debug(f" node: {node}, size: {node.size}, model: {node.model}, collision_rect: {node.model.collision_rect}, ppu: {node.model.ppu}, scale: {node.scale}, radius: {radius}")
+
+        shape = pymunk.Circle(node.body, radius)
+        # shape.elasticity = 0.95
+        shape.friction = 0.9
+        shapes.append(shape)
+        return shapes
+
+'''
+class BallGeom(Geom):
+    def __init__(self):
+        super().__init__()
+
+    def get_moment(self, node: "PhysicsEntity2D"):
+        # size = node.size
+        # radius = size.x / 2
         radius = node.model.collision_rect.width / 2 * node.scale.x
         # radius = node.radius
         return pymunk.moment_for_circle(node.mass, 0, radius)
@@ -67,7 +95,7 @@ class BallGeom(Geom):
         shape.friction = 0.9
         shapes.append(shape)
         return shapes
-
+'''
 
 class GroupGeom(Geom):
     def __init__(self):
@@ -149,7 +177,8 @@ class HullGeom(PolyGeom):
             # return shapes
             raise ValueError(f"model: {node.model}: no points")
 
-        points = node.model.points.tolist()
+        #points = node.model.points.tolist()
+        points = node.model.points
         clipped_points = []
         if clip:
             for point in points:

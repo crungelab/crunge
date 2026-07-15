@@ -425,9 +425,6 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("index1", &b2ShapeId::index1)
         .def_readwrite("world0", &b2ShapeId::world0)
         .def_readwrite("generation", &b2ShapeId::generation)
-        .def("destroy", &b2DestroyShape
-            , py::arg("update_body_mass")
-            )
         .def("is_valid", &b2Shape_IsValid
             )
         .def("get_type", &b2Shape_GetType

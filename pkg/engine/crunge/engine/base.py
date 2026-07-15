@@ -8,6 +8,7 @@ class Base:
     def __init__(self) -> None:
         self.created = False
         self.enabled = False
+        self.destroyed = False
 
     def config(self, **kwargs):
         for key, value in kwargs.items():
@@ -33,11 +34,12 @@ class Base:
         pass
 
     def destroy(self) -> None:
-        if not self.created:
+        if self.destroyed:
             return
-        self.created = False
+        self._destroy()
+        self.destroyed = True
 
-    def _enable(self) -> None:
+    def _destroy(self) -> None:
         pass
 
     def enable(self):
@@ -49,7 +51,7 @@ class Base:
         self.enabled = True
         return self
 
-    def _disable(self) -> None:
+    def _enable(self) -> None:
         pass
 
     def disable(self):
@@ -57,6 +59,9 @@ class Base:
             return
         self._disable()
         self.enabled = False
+
+    def _disable(self) -> None:
+        pass
 
     @property
     def gfx(self):

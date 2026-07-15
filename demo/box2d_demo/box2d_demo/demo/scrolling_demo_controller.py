@@ -5,7 +5,8 @@ from crunge import sdl
 from crunge.engine.d2.camera_2d import Camera2D
 from crunge.engine import Controller
     
-CAMERA_MOVEMENT_SPEED = 500.0
+#CAMERA_MOVEMENT_SPEED = 500.0
+CAMERA_MOVEMENT_SPEED = 5.0
 LERP_SPEED = 10.0  # Higher = snappier, Lower = smoother/floatier
 
 class ScrollingDemoController(Controller):

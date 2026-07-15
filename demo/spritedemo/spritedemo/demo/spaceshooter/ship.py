@@ -37,15 +37,15 @@ class Ship(DynamicEntity2D):
 
     def _create(self):
         super()._create()
-        self.front_thruster = Thruster(self.body, glm.vec2(0, self.size.y / 2), glm.vec2(0, -100))
+        self.front_thruster = Thruster(self.body, glm.vec2(0, self.size.y / 2), glm.vec2(0, -1))
         self.add_child(self.front_thruster)
 
-        self.rear_thruster = Thruster(self.body, glm.vec2(0, -self.size.y / 2), glm.vec2(0, 100))
+        self.rear_thruster = Thruster(self.body, glm.vec2(0, -self.size.y / 2), glm.vec2(0, 1))
         self.add_child(self.rear_thruster)
 
-        self.left_thruster = Thruster(self.body, glm.vec2(-self.size.x / 2, 0), glm.vec2(-100, 0), 5)
+        self.left_thruster = Thruster(self.body, glm.vec2(-self.size.x / 2, 0), glm.vec2(-1, 0), 5)
         self.add_child(self.left_thruster)
-        self.right_thruster = Thruster(self.body, glm.vec2(self.size.x / 2, 0), glm.vec2(100, 0), -5)
+        self.right_thruster = Thruster(self.body, glm.vec2(self.size.x / 2, 0), glm.vec2(1, 0), -5)
         self.add_child(self.right_thruster)
 
     def update(self, delta_time: float):
@@ -54,8 +54,8 @@ class Ship(DynamicEntity2D):
             self.body.angular_velocity = 0
 
     def fire(self):
-        spawn_distance = 100  # Adjust based on your game's scale
-        missile_speed = 1000  # Adjust missile speed as needed
+        spawn_distance = 1  # Adjust based on your game's scale
+        missile_speed = 10  # Adjust missile speed as needed
 
         # Calculate the missile's spawn position
         #spawn_angle = self.angle + math.pi / 2

@@ -482,10 +482,6 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("def")
         , py::arg("polygon")
         )
-    .def("destroy_shape", &b2DestroyShape
-        , py::arg("shape_id")
-        , py::arg("update_body_mass")
-        )
     .def("shape_is_valid", &b2Shape_IsValid
         , py::arg("id")
         )

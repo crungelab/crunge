@@ -48,10 +48,10 @@ class Vu2D(Vu[Node2D]):
         self.create_buffers()
         self.create_bind_groups()
 
-    def destroy(self):
+    def _destroy(self):
         if self.group is not None:
             self.group.remove(self)
-        super().destroy()
+        super()._destroy()
 
     def create_buffers(self):
         self.node_buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")

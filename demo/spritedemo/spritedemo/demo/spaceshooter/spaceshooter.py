@@ -5,6 +5,7 @@ from crunge import sdl
 from crunge import imgui
 
 from crunge.engine.d2.physics import DynamicPhysicsEngine
+from crunge.engine.d2.settings_2d import Settings2D
 
 from ..demo import Demo
 
@@ -23,8 +24,13 @@ class SpaceShooter(Demo):
         self.create_physics_engine()
 
         self.create_ship(glm.vec2(0, 0))
+
+        ppu = Settings2D().ppu
+        width_units = self.width / ppu  # viewport width, converted to units
+        height_units = self.height / ppu  # viewport height, converted to units
+
         zone = Zone(
-            self.scene, glm.vec2(0, 0), glm.vec2(self.width * 2, self.height * 2)
+            self.scene, glm.vec2(0, 0), glm.vec2(width_units * 2, height_units * 2)
         ).create()
 
     def center_camera(self):

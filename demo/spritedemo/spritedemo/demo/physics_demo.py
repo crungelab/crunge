@@ -7,6 +7,7 @@ from crunge import imgui
 
 from crunge.engine.d2.physics.draw_options import DrawOptions
 from crunge.engine.d2.physics import DynamicPhysicsEngine
+from crunge.engine.d2.physics.space_debug_overlay import SpaceDebugOverlay
 
 from .scrolling_demo import ScrollingDemo
 
@@ -15,8 +16,8 @@ class PhysicsDemo(ScrollingDemo):
     def reset(self):
         super().reset()
 
-        self.debug_draw_enabled = False
-        self.draw_options = DrawOptions(self.view.scratch)
+        #self.debug_draw_enabled = False
+        #self.draw_options = DrawOptions(self.view.scratch)
 
         self.physics_engine = DynamicPhysicsEngine().create()
 
@@ -25,6 +26,11 @@ class PhysicsDemo(ScrollingDemo):
         self.physics_engine.space.add(self._mouse_body)
         self._mouse_joint = None
         self._dragged_shape = None
+
+    def create_view(self):
+        super().create_view()
+        self.debug_layer = SpaceDebugOverlay()
+        self.view.add_overlay(self.debug_layer)
 
     # ------------------------------------------------------------------
     # Drag helpers
@@ -95,13 +101,23 @@ class PhysicsDemo(ScrollingDemo):
     # ------------------------------------------------------------------
     # Draw & UI
     # ------------------------------------------------------------------
+    def draw_physics_options(self):
+        _, self.debug_layer.visible = imgui.checkbox(
+            "Debug Draw", self.debug_layer.visible
+        )
+
+    '''
+    def draw_physics_options(self):
+        _, self.debug_draw_enabled = imgui.checkbox(
+            "Debug Draw", self.debug_draw_enabled
+        )
 
     def _draw(self):
         if self.debug_draw_enabled:
             self.physics_engine.debug_draw(self.draw_options)
         super()._draw()
-
     def draw_physics_options(self):
         _, self.debug_draw_enabled = imgui.checkbox(
             "Debug Draw", self.debug_draw_enabled
         )
+    '''

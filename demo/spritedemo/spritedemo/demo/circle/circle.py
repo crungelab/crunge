@@ -18,8 +18,9 @@ class CircleDemo(Demo):
         self.color = colors.WHITE
 
         shape = self.shape = Circle2D(
-            glm.vec2(0, 0), radius=100.0, segments=32, color=self.color
+            glm.vec2(0, 0), radius=1.0, segments=32, color=self.color
         )
+
         self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
 

@@ -39,7 +39,7 @@ class Ship(DynamicEntity2D):
 
     def _create(self):
         super()._create()
-        force = 1000000
+        force = 1
         self.front_thruster = Thruster(self.body, glm.vec2(0, self.size.y / 2), glm.vec2(0, -force))
         self.add_child(self.front_thruster)
 
@@ -57,8 +57,8 @@ class Ship(DynamicEntity2D):
             self.body.angular_velocity = 0
 
     def fire(self):
-        spawn_distance = 100  # Adjust based on your game's scale
-        missile_speed = 100000  # Adjust missile speed as needed
+        spawn_distance = 1  # Adjust based on your game's scale
+        missile_speed = 10  # Adjust missile speed as needed
 
         # Calculate the missile's spawn position
         direction = self.forward

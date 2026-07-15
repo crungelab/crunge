@@ -86,9 +86,9 @@ class PhysicsEntity2D(Entity2D):
         self.shapes = self.create_shapes()
         self.add_shapes()
 
-    def destroy(self):
+    def _destroy(self):
         self.remove_shapes()
-        super().destroy()
+        super()._destroy()
 
     def update(self, delta_time: float):
         if self.body:

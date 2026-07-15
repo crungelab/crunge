@@ -67,7 +67,7 @@ class Node(Dispatcher, Generic[T_Node]):
             child.clear()
         self.children.clear()
 
-    def destroy(self):
+    def _destroy(self):
         logger.debug(f"Destroying node: {self}")
         if self.parent:
             self.parent.remove_child(self)
@@ -76,6 +76,7 @@ class Node(Dispatcher, Generic[T_Node]):
         for child in self.children:
             child.destroy()
         self.clear()
+        super()._destroy()
 
     def _enable(self) -> None:
         super()._enable()

@@ -14,7 +14,8 @@ from crunge.engine.d2.physics.geom import BallGeom
 from .collision_type import CollisionType
 
 class Meteor(DynamicEntity2D):
-    linear_velocity_range=((-100, 100), (-100, 100))
+    #linear_velocity_range=((-100, 100), (-100, 100))
+    linear_velocity_range=((-1, 1), (-1, 1))
     angular_velocity_range=(-2, 2)
 
     def __init__(self, position: glm.vec2, name: str) -> None:
@@ -52,50 +53,50 @@ class Meteor(DynamicEntity2D):
 class MeteorGreyBig1(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big1.png")
-    def destroy(self):
+    def _destroy(self):
         self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
         self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
-        super().destroy()
+        super()._destroy()
 
 class MeteorGreyBig2(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big2.png")
-    def destroy(self):
+    def _destroy(self):
         self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
         self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
-        super().destroy()
+        super()._destroy()
 
 class MeteorGreyBig3(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big3.png")
-    def destroy(self):
+    def _destroy(self):
         self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
         self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
-        super().destroy()
+        super()._destroy()
 
 class MeteorGreyBig4(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_big4.png")
-    def destroy(self):
+    def _destroy(self):
         self.create_fragment(MeteorGreyMed1, self.position, self.body.velocity)
         self.create_fragment(MeteorGreyMed2, self.position, self.body.velocity)
-        super().destroy()
+        super()._destroy()
 
 class MeteorGreyMed1(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_med1.png")
-    def destroy(self):
+    def _destroy(self):
         self.create_fragment(MeteorGreySmall1, self.position, self.body.velocity)
         self.create_fragment(MeteorGreySmall2, self.position, self.body.velocity)
-        super().destroy()
+        super()._destroy()
 
 class MeteorGreyMed2(Meteor):
     def __init__(self, position: glm.vec2) -> None:
         super().__init__(position, "meteorGrey_med2.png")
-    def destroy(self):
+    def _destroy(self):
         self.create_fragment(MeteorGreySmall1, self.position, self.body.velocity)
         self.create_fragment(MeteorGreySmall2, self.position, self.body.velocity)
-        super().destroy()
+        super()._destroy()
 
 class MeteorGreySmall1(Meteor):
     def __init__(self, position: glm.vec2) -> None:

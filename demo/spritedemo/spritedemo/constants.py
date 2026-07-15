@@ -20,7 +20,8 @@ DEFAULT_FRICTION = 0.2
 # Default mass used for sprites
 DEFAULT_MASS = 1
 
-GRAVITY = (0.0, -981.0)
+#GRAVITY = (0.0, -980.0)
+GRAVITY = (0.0, -9.8)
 
 # Physics Types
 

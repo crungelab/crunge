@@ -8,8 +8,11 @@ from crunge.engine.d2.scene import Scene2D
 
 from .meteor import Meteor, MeteorGreyBig1
 
+#SAFE_RADIUS = 400.0
+SAFE_RADIUS = 4.0
+
 class Zone(Base):
-    def __init__(self, scene: Scene2D, position: glm.vec2, size: glm.vec2, safe_radius: float = 400.0):
+    def __init__(self, scene: Scene2D, position: glm.vec2, size: glm.vec2, safe_radius: float = SAFE_RADIUS):
         super().__init__()
         self.scene = scene
         self.position = position

@@ -113,7 +113,8 @@ class HullGeom(PolyGeom):
         if node.model.points is None:
             raise ValueError(f"model: {node.model}: no points")
 
-        raw = node.model.points.tolist()
+        #raw = node.model.points.tolist()
+        raw = node.model.points
 
         sx = scale.x
         sy = scale.y

@@ -1,4 +1,6 @@
 ```bash
+python -m spritedemo.demo.boxes
+python -m spritedemo.demo.balls
 python -m spritedemo.demo.sprite
 python -m spritedemo.demo.sprite_atlas
 python -m spritedemo.demo.sprite_array

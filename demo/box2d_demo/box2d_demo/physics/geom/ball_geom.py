@@ -32,8 +32,10 @@ class BallGeom(Geom):
     ):
         logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
         shapes = []
-        size = node.size
-        radius = node.model.collision_rect.width / 2 * node.scale.x
+        #size = node.size
+        #radius = node.model.collision_rect.width / 2 * node.scale.x
+        # radius = node.model.collision_rect.width / node.model.ppu * node.scale.x / 2
+        radius = node.radius
         circle = box2d.Circle(center=box2d.Vec2(0, 0), radius=radius)
         shape_def = box2d.ShapeDef()
 

@@ -7,20 +7,10 @@ from crunge import box2d
 from crunge import skia
 
 from crunge.engine import Renderer, colors
-from crunge.engine.color import rgba_tuple_to_argb_int
 
 
 def hex_to_argb_int(rgb: int, a: int = 255) -> int:
     return (a << 24) | (rgb & 0xFFFFFF)
-
-
-"""
-def hex_to_argb_int(rgb: int, a: int = 255) -> int:
-    r = (rgb >> 16) & 0xFF
-    g = (rgb >> 8) & 0xFF
-    b = (rgb >> 0) & 0xFF
-    return (a << 24) | (r << 16) | (g << 8) | b
-"""
 
 
 def transform_pos(transform: tuple[float, float, float, float]) -> tuple[float, float]:
@@ -31,7 +21,7 @@ def transform_pos(transform: tuple[float, float, float, float]) -> tuple[float, 
 class DebugDraw(box2d.DebugDrawBase):
     def __init__(self):
         super().__init__()  # IMPORTANT: sets up C++ context + cache
-        #self.canvas: skia.SkiaCanvas = None
+        # self.canvas: skia.SkiaCanvas = None
 
         # Use the new C++ exposed properties/flags if you bound them
         # (from the full file: draw_shapes/draw_joints/force_scale/joint_scale)
@@ -51,8 +41,8 @@ class DebugDraw(box2d.DebugDrawBase):
     # ------------- Box2D -> Skia primitive callbacks -------------
 
     def draw_line(self, p1, p2, color: int):
-        (x1, y1) = p1
-        (x2, y2) = p2
+        x1, y1 = p1
+        x2, y2 = p2
         paint = skia.Paint()
         paint.set_color(hex_to_argb_int(color))
         paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
@@ -77,21 +67,6 @@ class DebugDraw(box2d.DebugDrawBase):
         outline_paint.set_stroke_width(1.0)
 
         self.canvas.draw_path(path, outline_paint)
-
-        """
-        // 1. Save the current state (identity matrix)
-        canvas->save(); 
-
-            // 2. Move and rotate the drawing surface
-            canvas->translate(50, 50);
-            canvas->rotate(30);
-
-            // 3. Draw the path at "local" coordinates (0,0)
-            canvas->drawPath(path, paint); 
-
-        // 4. Restore to the state before the translate/rotate
-        canvas->restore();
-        """
 
     def draw_solid_polygon(
         self, transform: box2d.Transform, vertices, radius: float, color: int
@@ -126,32 +101,8 @@ class DebugDraw(box2d.DebugDrawBase):
 
         self.canvas.restore()
 
-    """
-    def draw_solid_polygon(self, transform, vertices, radius: float, color: int):
-        # If you want, you can apply transform (px,py,c,s) to vertices here.
-        # Box2D often provides local verts + transform; if your verts are already world-space, skip it.
-        # For now, we just draw outline in world-space as given.
-        self.draw_polygon(vertices, color)
-
-        # Optional: visualize "radius" as stroke width
-        # (This is NOT physically accurate; just helps you see rounded polygons.)
-        if radius > 0 and vertices:
-            path = skia.Path()
-            path.move_to(*vertices[0])
-            for pt in vertices[1:]:
-                path.line_to(*pt)
-            path.close()
-
-            paint = skia.Paint()
-            #paint.set_color(rgba_tuple_to_argb_int(hex_to_rgba_tuple(color, 128)))
-            paint.set_color(rgba_tuple_to_argb_int(colors.PURPLE))
-            paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-            paint.set_stroke_width(max(1.0, radius * 2.0))
-            self.canvas.draw_path(path, paint)
-    """
-
     def draw_circle(self, center, radius: float, color: int):
-        (x, y) = center
+        x, y = center
         paint = skia.Paint()
         paint.set_color(hex_to_argb_int(color))
         paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
@@ -160,7 +111,7 @@ class DebugDraw(box2d.DebugDrawBase):
 
     def draw_solid_circle(self, transform, radius: float, color: int):
         # C++ passes only transform + radius + color; center is transform.p
-        (x, y) = transform_pos(transform)
+        x, y = transform_pos(transform)
 
         fill = skia.Paint()
         fill.set_color(hex_to_argb_int(color))
@@ -187,8 +138,8 @@ class DebugDraw(box2d.DebugDrawBase):
     def draw_solid_capsule(self, p1, p2, radius: float, color: int):
         # A capsule is basically a fat segment + circles at endpoints.
         # Render as: thick line + endpoint circles.
-        (x1, y1) = p1
-        (x2, y2) = p2
+        x1, y1 = p1
+        x2, y2 = p2
 
         paint = skia.Paint()
         paint.set_color(hex_to_argb_int(color))
@@ -204,7 +155,7 @@ class DebugDraw(box2d.DebugDrawBase):
         self.draw_circle(p2, radius, color)
 
     def draw_point(self, p, size: float, color: int):
-        (x, y) = p
+        x, y = p
         paint = skia.Paint()
         paint.set_color(hex_to_argb_int(color))
         paint.set_style(skia.Paint.Style.K_FILL_STYLE)
@@ -214,7 +165,7 @@ class DebugDraw(box2d.DebugDrawBase):
     def draw_transform(self, transform):
         # Visualize transform axes at position, scaled by some constant.
         # transform: (px, py, c, s) where (c,s) is x-axis direction.
-        (x, y) = transform_pos(transform)
+        x, y = transform_pos(transform)
         _, _, c, s = transform
 
         axis_len = 20.0
@@ -225,7 +176,7 @@ class DebugDraw(box2d.DebugDrawBase):
     def draw_string(self, p, s: str, color: int):
         # If your skia binding has text APIs, draw it. Otherwise log.
         # Many Skia wrappers need a Font object. If you have that, wire it in here.
-        (x, y) = p
+        x, y = p
         try:
             paint = skia.Paint()
             paint.set_color(hex_to_argb_int(color))

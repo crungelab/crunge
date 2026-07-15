@@ -6,6 +6,7 @@ from crunge import imgui
 from crunge import box2d as b2
 
 from box2d_demo.physics import DynamicPhysicsEngine
+from crunge.engine.d2.settings_2d import Settings2D
 
 from ..physics_demo import PhysicsDemo
 
@@ -15,15 +16,23 @@ from .explosion import Explosion
 
 from .collision_type import CollisionType
 
+
 class SpaceShooter(PhysicsDemo):
     def reset(self):
         super().reset()
+        self.controller = None
         self.camera_target = glm.vec2(0, 0)
+
+        self.create_physics_engine()
 
         self.create_ship(glm.vec2(0, 0))
 
+        ppu = Settings2D().ppu
+        width_units = self.width / ppu  # viewport width, converted to units
+        height_units = self.height / ppu  # viewport height, converted to units
+
         zone = Zone(
-            self.scene, glm.vec2(0, 0), glm.vec2(self.width * 2, self.height * 2)
+            self.scene, glm.vec2(0, 0), glm.vec2(width_units * 2, height_units * 2)
         ).create()
 
     def center_camera(self):
@@ -38,12 +47,6 @@ class SpaceShooter(PhysicsDemo):
         destroyed = (
             set()
         )  # guard against double-destroy if a node shows up in >1 event this step
-
-        '''
-        if events.begin_count > 0:
-            logger.debug(f"Begin count: {events.begin_count}")
-            exit()
-        '''
 
         for event in events.get_begin_events():
             shape_a = event.shape_id_a
@@ -85,54 +88,8 @@ class SpaceShooter(PhysicsDemo):
                     ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
                 )
 
-    '''
-    def handle_collisions(self):
-        # v3 has no begin/separate callbacks - events are polled after the step.
-        events = b2.world_get_contact_events(self.world)
-        #logger.debug(f"Collision events: {events}")
-        destroyed = (
-            set()
-        )  # guard against double-destroy if a node shows up in >1 event this step
-
-        #for event in events.begin_events:
-        for i in range(events.begin_count):
-            event = events.begin_events[i]
-            node_a = b2.shape_get_user_data(event.shape_id_a)
-            node_b = b2.shape_get_user_data(event.shape_id_b)
-
-            if (
-                node_a is None
-                or node_b is None
-                or node_a in destroyed
-                or node_b in destroyed
-            ):
-                continue
-
-            types = {node_a.collision_type, node_b.collision_type}
-
-            if types == {CollisionType.LASER}:
-                continue  # laser/laser: no-op, same as before
-
-            if types == {CollisionType.LASER, CollisionType.METEOR}:
-                laser = (
-                    node_a if node_a.collision_type == CollisionType.LASER else node_b
-                )
-                asteroid = (
-                    node_a if node_a.collision_type == CollisionType.METEOR else node_b
-                )
-                self._destroy_pair(laser, asteroid, destroyed)
-
-            elif types == {CollisionType.SHIP, CollisionType.METEOR}:
-                ship = node_a if node_a.collision_type == CollisionType.SHIP else node_b
-                asteroid = (
-                    node_a if node_a.collision_type == CollisionType.METEOR else node_b
-                )
-                self._destroy_pair(
-                    ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
-                )
-    '''
-
     def _destroy_pair(self, actor_node, asteroid_node, destroyed, color=None):
+        logger.debug(f"Destroying {actor_node} and {asteroid_node}")
         position = asteroid_node.position
         actor_node.destroy()
         asteroid_node.destroy()
