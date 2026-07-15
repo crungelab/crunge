@@ -42,6 +42,76 @@ class SpaceShooter(PhysicsDemo):
         self.world = DynamicPhysicsEngine(gravity=glm.vec2(0, 0))
         self.world.make_current()
 
+    
+    def handle_collisions(self):
+        events = self.world.get_contact_events()
+        destroyed = (
+            set()
+        )  # guard against double-destroy if a node shows up in >1 event this step
+
+        for event in events.get_begin_events():
+            shape_a = event.shape_id_a
+            shape_b = event.shape_id_b
+
+            # A shape destroyed earlier in this same batch is a dead handle —
+            # touching user_data/user_material on it is what trips the
+            # "shape->generation == shapeId.generation" assertion.
+            if not shape_a.is_valid() or not shape_b.is_valid():
+                continue
+
+            node_a = shape_a.user_data
+            node_b = shape_b.user_data
+
+            types = {shape_a.user_material, shape_b.user_material}
+
+            logger.debug(f"Collision between {node_a} and {node_b}, types: {types}")
+
+            if (
+                node_a is None
+                or node_b is None
+                or node_a in destroyed
+                or node_b in destroyed
+            ):
+                continue
+
+            if types == {CollisionType.LASER}:
+                continue  # laser/laser: no-op, same as before
+
+            if types == {CollisionType.LASER, CollisionType.METEOR}:
+                laser = (
+                    node_a if shape_a.user_material == CollisionType.LASER else node_b
+                )
+                asteroid = (
+                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
+                )
+                self._destroy_pair(laser, asteroid, destroyed)
+
+            elif types == {CollisionType.SHIP, CollisionType.METEOR}:
+                ship = node_a if shape_a.user_material == CollisionType.SHIP else node_b
+                asteroid = (
+                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
+                )
+                self._destroy_pair(
+                    ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
+                )
+
+    def _destroy_pair(self, actor_node, asteroid_node, destroyed, color=None):
+        # Belt-and-suspenders: even with the shape validity check above,
+        # a node could still get queued twice via two different shape pairs
+        # in the same batch. Idempotent destroy() is the real backstop.
+        if actor_node in destroyed or asteroid_node in destroyed:
+            return
+
+        logger.debug(f"Destroying {actor_node} and {asteroid_node}")
+        position = asteroid_node.position
+        actor_node.destroy()
+        asteroid_node.destroy()
+        destroyed.add(actor_node)
+        destroyed.add(asteroid_node)
+        explosion = Explosion(position, color) if color else Explosion(position)
+        self.scene.attach(explosion)
+
+    '''
     def handle_collisions(self):
         events = self.world.get_contact_events()
         destroyed = (
@@ -97,6 +167,7 @@ class SpaceShooter(PhysicsDemo):
         destroyed.add(asteroid_node)
         explosion = Explosion(position, color) if color else Explosion(position)
         self.scene.attach(explosion)
+    '''
 
     def create_view(self):
         super().create_view()
@@ -122,10 +193,15 @@ class SpaceShooter(PhysicsDemo):
         self.world.update(delta_time)
         self.handle_collisions()
 
+        if self.ship.destroyed:
+            #self.reset()
+            super().update(delta_time)
+            return
+
         base_lerp_factor = 5.0
         speed_factor = 0.001
         ship_speed = b2.length(self.ship.body.linear_velocity)
-        threshold_distance = 400.0
+        threshold_distance = 4.0
 
         self.camera_target = self.calculate_target_position(
             self.camera.position, self.ship.position, threshold_distance
