@@ -15,7 +15,7 @@
         },
         "/home/kurt/Dev/badwing/badwing/resources/level1.tmx": {
             "scale": 0.33,
-            "selectedLayer": 5,
+            "selectedLayer": 3,
             "viewCenter": {
                 "x": 954.5454545454544,
                 "y": 1078.7878787878788
@@ -72,8 +72,8 @@
         "blur.tmx": {
             "expandedGroupLayers": [
                 5,
-                7,
-                6
+                6,
+                7
             ],
             "scale": 0.33,
             "selectedLayer": 1,
@@ -96,8 +96,8 @@
             "scale": 0.18430989583333332,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1915.252560932533,
-                "y": 1280.4521370540442
+                "x": 1915.2525609325328,
+                "y": 1283.1649593783113
             }
         },
         "compound_blur.tmx": {
@@ -122,8 +122,8 @@
             "scale": 0.5,
             "selectedLayer": 5,
             "viewCenter": {
-                "x": 1358,
-                "y": 1086
+                "x": 6400,
+                "y": 639
             }
         },
         "obstacles.tsx": {

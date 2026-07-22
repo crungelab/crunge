@@ -65,7 +65,7 @@ class DefaultObjectBuilder(ObjectBuilder):
         logger.debug(f"position: {position}")
 
         # Calculate scale
-        scale = glm.vec2(width / atlas_size.x, height / atlas_size.y) / self.ppu
+        scale = glm.vec2(width / atlas_size.x, height / atlas_size.y)
         sampler = DefaultSpriteSampler()
 
         # Build the sprite
