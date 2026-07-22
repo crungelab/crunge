@@ -58,11 +58,12 @@ class PhysicsEntity2D(Entity2D):
 
     @property
     def velocity(self):
-        return self.body.velocity
+        lv = self.body.linear_velocity
+        return glm.vec2(lv.x, lv.y)
 
     @velocity.setter
     def velocity(self, value: glm.vec2):
-        self.body.velocity = value
+        self.body.linear_velocity = box2d.Vec2(value.x, value.y)
 
     @property
     def physics(self):
@@ -107,6 +108,7 @@ class PhysicsEntity2D(Entity2D):
 
     def create_shapes(self, clip: Rect2 = None):
         self.shapes = self.geom.create_shapes(self, clip=clip)
+        logger.debug(f"Created shapes: {self.shapes}")
 
     def add_shapes(self):
         for shape in self.shapes:

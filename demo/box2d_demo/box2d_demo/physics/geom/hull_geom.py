@@ -131,19 +131,6 @@ class HullGeom(PolyGeom):
         else:
             clipped = [(float(p[0]) * sx, float(p[1]) * sy) for p in raw]
 
-        """
-        # 1) Clip
-        clipped = []
-        if clip:
-            for p in raw:
-                x = float(p[0])
-                y = float(p[1])
-                if clip.contains_point(glm.vec2(x, y)):
-                    clipped.append((x, y))
-        else:
-            clipped = [(float(p[0]), float(p[1])) for p in raw]
-        """
-
         # 2) Sanitize
         clipped = [(x, y) for (x, y) in clipped if _is_finite_xy(x, y)]
         clipped = _dedupe(clipped, eps=1e-5)

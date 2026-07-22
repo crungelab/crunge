@@ -1,9 +1,35 @@
 {
-    "activeFile": "compound_blur.tmx",
+    "activeFile": "/home/kurt/Dev/badwing/badwing/resources/level1.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
+        "/home/kurt/Dev/badwing/badwing/resources/butterflies.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/badwing/badwing/resources/characters.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/badwing/badwing/resources/items.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/badwing/badwing/resources/level1.tmx": {
+            "scale": 0.33,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 954.5454545454544,
+                "y": 1078.7878787878788
+            }
+        },
+        "/home/kurt/Dev/badwing/badwing/resources/obstacles.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/badwing/badwing/resources/stickers.tsx": {
+            "scaleInDock": 1
+        },
+        "/home/kurt/Dev/badwing/badwing/resources/tiles.tsx": {
+            "scaleInDock": 1
+        },
         "/home/kurt/Dev/cave-mage/cave_mage/resources/butterflies.tsx": {
             "scaleInDock": 1
         },
@@ -17,8 +43,8 @@
             "scale": 0.25,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 6404,
-                "y": 672
+                "x": 6398,
+                "y": 666
             }
         },
         "/home/kurt/Dev/cave-mage/cave_mage/resources/mossy-background-decoration.tsx": {
@@ -45,21 +71,27 @@
         },
         "blur.tmx": {
             "expandedGroupLayers": [
+                5,
                 7,
-                6,
-                5
+                6
             ],
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 730.3030303030304,
-                "y": 1442.4242424242423
+                "x": 1918.181818181818,
+                "y": 1277.272727272727
             }
+        },
+        "butterflies.tsx": {
+            "scaleInDock": 1
+        },
+        "characters.tsx": {
+            "scaleInDock": 1
         },
         "composite_blur.tmx": {
             "expandedGroupLayers": [
-                7,
-                5
+                5,
+                7
             ],
             "scale": 0.18430989583333332,
             "selectedLayer": 1,
@@ -70,15 +102,32 @@
         },
         "compound_blur.tmx": {
             "expandedGroupLayers": [
-                7,
-                5
+                5,
+                7
             ],
             "scale": 0.18480468749999998,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 1915.5358275206095,
-                "y": 1287.8461213274152
+                "x": 1915.535827520609,
+                "y": 1285.1405622489963
             }
+        },
+        "items.tsx": {
+            "scaleInDock": 1
+        },
+        "level1.tmx": {
+            "expandedObjectLayers": [
+                10
+            ],
+            "scale": 0.5,
+            "selectedLayer": 5,
+            "viewCenter": {
+                "x": 1358,
+                "y": 1086
+            }
+        },
+        "obstacles.tsx": {
+            "scaleInDock": 1
         },
         "stickers.tsx": {
             "scaleInDock": 1
@@ -99,14 +148,18 @@
         "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx",
         "blur.tmx",
         "compound_blur.tmx",
-        "composite_blur.tmx"
+        "composite_blur.tmx",
+        "/home/kurt/Dev/badwing/badwing/resources/level1.tmx",
+        "level1.tmx"
     ],
     "project": "blur.tiled-project",
     "recentFiles": [
         "/home/kurt/Dev/cave-mage/cave_mage/resources/level1.tmx",
         "blur.tmx",
-        "composite_blur.tmx",
         "compound_blur.tmx",
+        "composite_blur.tmx",
+        "level1.tmx",
+        "/home/kurt/Dev/badwing/badwing/resources/level1.tmx",
         "test.tmx"
     ]
 }

@@ -32,4 +32,6 @@ class TileLayerBuilder(TiledBuilder):
                 y = (j - 1) * tile_height + half_tile_height
                 y = self.context.size.y - y
 
-                self.tile_builder.build(glm.vec2(x, y), tile, tile_gid, properties)
+                position = glm.vec2(x, y) / self.ppu
+
+                self.tile_builder.build(position, tile, tile_gid, properties)

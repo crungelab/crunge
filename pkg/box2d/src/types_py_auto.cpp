@@ -174,6 +174,25 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("linear_x", &b2MotionLocks::linearX)
         .def_readwrite("linear_y", &b2MotionLocks::linearY)
         .def_readwrite("angular_z", &b2MotionLocks::angularZ)
+        .def(py::init([](_Bool linearX, _Bool linearY, _Bool angularZ)
+        {
+            b2MotionLocks obj{};
+            obj.linearX = linearX;
+            obj.linearY = linearY;
+            obj.angularZ = angularZ;
+            return obj;
+        }))
+        .def("__repr__", [](const b2MotionLocks &self) {
+            std::stringstream ss;
+            ss << "MotionLocks(";
+            ss << "linearX=" << py::repr(py::cast(self.linearX)).cast<std::string>();
+            ss << ", ";
+            ss << "linearY=" << py::repr(py::cast(self.linearY)).cast<std::string>();
+            ss << ", ";
+            ss << "angularZ=" << py::repr(py::cast(self.angularZ)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     py::class_<b2BodyDef> _BodyDef(_box2d, "BodyDef");
@@ -351,6 +370,37 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("category_bits", &b2Filter::categoryBits)
         .def_readwrite("mask_bits", &b2Filter::maskBits)
         .def_readwrite("group_index", &b2Filter::groupIndex)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2Filter obj = b2DefaultFilter();
+            if (kwargs.contains("category_bits"))
+            {
+                auto value = kwargs["category_bits"].cast<unsigned long>();
+                obj.categoryBits = value;
+            }
+            if (kwargs.contains("mask_bits"))
+            {
+                auto value = kwargs["mask_bits"].cast<unsigned long>();
+                obj.maskBits = value;
+            }
+            if (kwargs.contains("group_index"))
+            {
+                auto value = kwargs["group_index"].cast<int>();
+                obj.groupIndex = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2Filter &self) {
+            std::stringstream ss;
+            ss << "Filter(";
+            ss << "categoryBits=" << py::repr(py::cast(self.categoryBits)).cast<std::string>();
+            ss << ", ";
+            ss << "maskBits=" << py::repr(py::cast(self.maskBits)).cast<std::string>();
+            ss << ", ";
+            ss << "groupIndex=" << py::repr(py::cast(self.groupIndex)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d
@@ -863,6 +913,100 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("max_motor_torque", &b2RevoluteJointDef::maxMotorTorque)
         .def_readwrite("motor_speed", &b2RevoluteJointDef::motorSpeed)
         .def_readwrite("internal_value", &b2RevoluteJointDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2RevoluteJointDef obj = b2DefaultRevoluteJointDef();
+            if (kwargs.contains("base"))
+            {
+                auto value = kwargs["base"].cast<struct b2JointDef>();
+                obj.base = value;
+            }
+            if (kwargs.contains("target_angle"))
+            {
+                auto value = kwargs["target_angle"].cast<float>();
+                obj.targetAngle = value;
+            }
+            if (kwargs.contains("enable_spring"))
+            {
+                auto value = kwargs["enable_spring"].cast<_Bool>();
+                obj.enableSpring = value;
+            }
+            if (kwargs.contains("hertz"))
+            {
+                auto value = kwargs["hertz"].cast<float>();
+                obj.hertz = value;
+            }
+            if (kwargs.contains("damping_ratio"))
+            {
+                auto value = kwargs["damping_ratio"].cast<float>();
+                obj.dampingRatio = value;
+            }
+            if (kwargs.contains("enable_limit"))
+            {
+                auto value = kwargs["enable_limit"].cast<_Bool>();
+                obj.enableLimit = value;
+            }
+            if (kwargs.contains("lower_angle"))
+            {
+                auto value = kwargs["lower_angle"].cast<float>();
+                obj.lowerAngle = value;
+            }
+            if (kwargs.contains("upper_angle"))
+            {
+                auto value = kwargs["upper_angle"].cast<float>();
+                obj.upperAngle = value;
+            }
+            if (kwargs.contains("enable_motor"))
+            {
+                auto value = kwargs["enable_motor"].cast<_Bool>();
+                obj.enableMotor = value;
+            }
+            if (kwargs.contains("max_motor_torque"))
+            {
+                auto value = kwargs["max_motor_torque"].cast<float>();
+                obj.maxMotorTorque = value;
+            }
+            if (kwargs.contains("motor_speed"))
+            {
+                auto value = kwargs["motor_speed"].cast<float>();
+                obj.motorSpeed = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2RevoluteJointDef &self) {
+            std::stringstream ss;
+            ss << "RevoluteJointDef(";
+            ss << "base=" << py::repr(py::cast(self.base)).cast<std::string>();
+            ss << ", ";
+            ss << "targetAngle=" << py::repr(py::cast(self.targetAngle)).cast<std::string>();
+            ss << ", ";
+            ss << "enableSpring=" << py::repr(py::cast(self.enableSpring)).cast<std::string>();
+            ss << ", ";
+            ss << "hertz=" << py::repr(py::cast(self.hertz)).cast<std::string>();
+            ss << ", ";
+            ss << "dampingRatio=" << py::repr(py::cast(self.dampingRatio)).cast<std::string>();
+            ss << ", ";
+            ss << "enableLimit=" << py::repr(py::cast(self.enableLimit)).cast<std::string>();
+            ss << ", ";
+            ss << "lowerAngle=" << py::repr(py::cast(self.lowerAngle)).cast<std::string>();
+            ss << ", ";
+            ss << "upperAngle=" << py::repr(py::cast(self.upperAngle)).cast<std::string>();
+            ss << ", ";
+            ss << "enableMotor=" << py::repr(py::cast(self.enableMotor)).cast<std::string>();
+            ss << ", ";
+            ss << "maxMotorTorque=" << py::repr(py::cast(self.maxMotorTorque)).cast<std::string>();
+            ss << ", ";
+            ss << "motorSpeed=" << py::repr(py::cast(self.motorSpeed)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d

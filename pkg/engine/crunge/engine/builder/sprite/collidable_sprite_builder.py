@@ -84,17 +84,14 @@ class CollidableSpriteBuilder(SpriteBuilder):
 
         # --- 9) Collision rect from contour (in region coordinates) ---
         bx, by, bw, bh = cv2.boundingRect(contour.astype(np.int32))
-        #collision_rect = Rect2i(bx, by, bw, bh)
         collision_rect = Rect2i(x + bx, y + by, bw, bh)
+        logger.debug(f"collision_rect: {collision_rect}")
 
         # --- 10) Recenter & flip Y to your sprite's coordinate convention ---
         points = contour.reshape(-1, 2).astype(np.float32)
-        '''
-        points[:, 0] -= width / 2.0
-        points[:, 1] -= height / 2.0
-        '''
-        points[:, 0] -= (bx + bw / 2.0)
-        points[:, 1] -= (by + bh / 2.0)
+
+        points[:, 0] -= (bx + bw / 2.0) # recenter X
+        points[:, 1] -= (by + bh / 2.0) # recenter Y
 
         points[:, 1] = -points[:, 1]  # flip Y
 

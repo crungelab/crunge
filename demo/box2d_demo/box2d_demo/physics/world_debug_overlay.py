@@ -25,7 +25,7 @@ def transform_pos(transform: tuple[float, float, float, float]) -> tuple[float, 
 class WorldDebugOverlay(Overlay, box2d.DebugDrawBase):
     def __init__(self):
         super().__init__("world_debug", 700)
-        box2d.DebugDrawBase.__init__(self)  # IMPORTANT: sets up C++ context + cache
+        box2d.DebugDrawBase.__init__(self)
 
         self.visible = False
 

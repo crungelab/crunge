@@ -9,7 +9,7 @@ from loguru import logger
 
 from crunge import box2d
 
-#from . import globe
+from . import globe
 
 from .constants import GRAVITY
 
@@ -20,7 +20,7 @@ class PhysicsWorld2D(box2d.World):
         world_def = box2d.WorldDef(gravity = box2d.Vec2(gravity[0], gravity[1]))
         super().__init__(world_def)
         logger.debug("PhysicsWorld2D.__init__")
-        #globe.physics_engine = self
+        globe.physics_engine = self
         self.gravity = gravity
 
     def make_current(self):

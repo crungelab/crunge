@@ -2,9 +2,9 @@ from .geom import Geom, BoxGeom, BallGeom, HullGeom
 #from .physics import Physics, PhysicsMeta, GroupPhysics
 from .physics import Physics, GroupPhysics
 from .world import PhysicsWorld2D
-from .static import StaticPhysics
-from .kinematic import KinematicPhysics, KinematicPhysicsEngine
-from .dynamic import DynamicPhysics, DynamicPhysicsEngine
+from .static_physics import StaticPhysics
+from .kinematic_physics import KinematicPhysics, KinematicPhysicsEngine
+from .dynamic_physics import DynamicPhysics, DynamicPhysicsEngine
 
 # Debug
 DEBUG_COLLISION = False

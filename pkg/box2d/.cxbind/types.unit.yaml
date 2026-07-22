@@ -67,3 +67,32 @@ specs:
 
         __repr__:
           auto: true
+
+  'struct@b2RevoluteJointDef':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: function@b2DefaultRevoluteJointDef
+
+        __repr__:
+          auto: true
+
+  'struct@b2Filter':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: function@b2DefaultFilter
+
+        __repr__:
+          auto: true
+
+  'struct@b2MotionLocks':
+    extra:
+      methods:
+        __init__:
+          gen_args: true
+
+        __repr__:
+          auto: true

@@ -47,7 +47,7 @@ class Sprite(Model):
         sampler: Sampler = None,
         color=colors.WHITE,
         points=None,
-        collision_rect: Rect2i = None,
+        #collision_rect: Rect2i = None,
         texture_layer: int = 0,
         ppu: float = None,
     ) -> None:
@@ -62,7 +62,7 @@ class Sprite(Model):
         self.texture_layer = texture_layer
         self._color = color
         self.points = points
-        self.collision_rect = collision_rect
+        #self.collision_rect = collision_rect
         self.ppu = ppu if ppu is not None else Settings2D().ppu
 
         self.memberships: List[SpriteMembership] = []

@@ -1,7 +1,9 @@
+from typing import Optional
+
 from loguru import logger
 
 from ...math import Bounds2
-from ...scene import Scene
+from ...scene import Scene, current_scene
 
 from ..node_2d import Node2D
 from .layer.graph_layer_2d import GraphLayer2D
@@ -16,6 +18,10 @@ class Scene2D(Scene[Node2D]):
         if not self.children:
             self.create_default_layer()
         return self.children[0]
+
+    @classmethod
+    def get_current(cls) -> Optional["Scene2D"]:
+        return current_scene.get()
 
     '''
     @property

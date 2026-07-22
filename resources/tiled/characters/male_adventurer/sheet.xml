@@ -1,4 +1,4 @@
-<TextureAtlas imagePath="sheet.png">
+<TextureAtlas imagePath="character_maleAdventurer_sheet.png">
 	<SubTexture name="idle" x="0" y="0" width="96" height="128"/>
 	<SubTexture name="jump" x="96" y="0" width="96" height="128"/>
 	<SubTexture name="fall" x="192" y="0" width="96" height="128"/>

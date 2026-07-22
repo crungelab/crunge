@@ -46,6 +46,7 @@ class Demo(engine.App):
     def create_scene(self):
         logger.debug("Creating scene")
         self.scene = Scene2D().create()
+        self.scene.make_current()
 
     def create_view(self):
         logger.debug("Creating view")

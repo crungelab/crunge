@@ -1,6 +1,8 @@
 from loguru import logger
 import glm
 
+from crunge import box2d
+
 from ..physics.constants import GRAVITY
 
 from .. import physics
@@ -25,4 +27,4 @@ class KinematicEntity2D(PhysicsEntity2D):
     def update(self, delta_time=1 / 60):
         super().update(delta_time)
         if not self.climbing and not self.mounted and not self.jumping:
-            self.body.velocity += (0, GRAVITY[1] * delta_time)
+            self.body.linear_velocity += box2d.Vec2(0, GRAVITY[1] * delta_time)

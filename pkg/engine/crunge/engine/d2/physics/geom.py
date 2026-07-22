@@ -48,9 +48,6 @@ class BallGeom(Geom):
         super().__init__()
 
     def get_moment(self, node: "PhysicsEntity2D"):
-        # size = node.size
-        # radius = size.x / 2
-        #radius = node.model.collision_rect.width / node.model.ppu * node.scale.x / 2
         radius = node.radius
         return pymunk.moment_for_circle(node.mass, 0, radius)
 
@@ -58,11 +55,8 @@ class BallGeom(Geom):
         self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
     ):
         shapes = []
-        # size = node.size
-        # radius = size.x / 2
-        #radius = node.model.collision_rect.width / node.model.ppu * node.scale.x / 2
         radius = node.radius
-        logger.debug(f" node: {node}, size: {node.size}, model: {node.model}, collision_rect: {node.model.collision_rect}, ppu: {node.model.ppu}, scale: {node.scale}, radius: {radius}")
+        logger.debug(f" node: {node}, size: {node.size}, model: {node.model}, ppu: {node.model.ppu}, scale: {node.scale}, radius: {radius}")
 
         shape = pymunk.Circle(node.body, radius)
         # shape.elasticity = 0.95

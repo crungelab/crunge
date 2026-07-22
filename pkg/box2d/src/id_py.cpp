@@ -20,13 +20,13 @@ namespace py = pybind11;
 
 void DestroyBody(b2BodyId bodyId) {
     auto* userData = static_cast<PyHolder*>(b2Body_GetUserData(bodyId));
-    //delete userData;
+    delete userData;
     b2DestroyBody(bodyId);
 }
 
 void DestroyShape(b2ShapeId shapeId, bool updateBodyMass) {
     auto* userData = static_cast<PyHolder*>(b2Shape_GetUserData(shapeId));
-    //delete userData;
+    delete userData;
     b2DestroyShape(shapeId, updateBodyMass);
 }
 

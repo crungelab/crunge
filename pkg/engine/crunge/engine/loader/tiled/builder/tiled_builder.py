@@ -4,12 +4,13 @@ from crunge import tmx
 
 from crunge.engine.scene.layer.scene_layer import SceneLayer
 from crunge.engine.d2.scene.layer.parallax_layer_2d import ParallaxLayer2D
+from crunge.engine.d2.settings_2d import Settings2D
 
 from .builder_context import BuilderContext
 
 class TiledBuilder:
-    def __init__(self):
-        pass
+    def __init__(self, ppu: float = None):
+        self.ppu = ppu if ppu is not None else Settings2D().ppu
 
     @property
     def context(self):

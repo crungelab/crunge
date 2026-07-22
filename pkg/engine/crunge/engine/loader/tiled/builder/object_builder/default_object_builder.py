@@ -44,13 +44,13 @@ class DefaultObjectBuilder(ObjectBuilder):
         size = glm.vec2(width, height)
 
         # Calculate half dimensions for centering
-        center = size / 2.0
+        center = size / 2.0 / self.ppu
 
         logger.debug(f"center: {center}")
 
         x = aabb.left
         y = self.context.size.y - aabb.top
-        lower_left = glm.vec2(x, y)
+        lower_left = glm.vec2(x, y) / self.ppu
         logger.debug(f"lower_left: {lower_left}")
 
         # Handle rotation in radians
@@ -61,11 +61,11 @@ class DefaultObjectBuilder(ObjectBuilder):
         logger.debug(f"rotated_offset: {rotated_offset}")
 
         position = lower_left + rotated_offset
-        position.y = position.y + self.context.map.tile_size.y
+        position.y = position.y + self.context.map.tile_size.y / self.ppu
         logger.debug(f"position: {position}")
 
         # Calculate scale
-        scale = glm.vec2(width / atlas_size.x, height / atlas_size.y)
+        scale = glm.vec2(width / atlas_size.x, height / atlas_size.y) / self.ppu
         sampler = DefaultSpriteSampler()
 
         # Build the sprite

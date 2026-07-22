@@ -15,6 +15,19 @@ class KinematicPhysics(Physics):
         super().__init__(PT_KINEMATIC, position)
 
     def create_body(self, node):
+        logger.debug(f"Creating body for node: {node}")
+        position = node.position + self.position
+        body_position = box2d.Vec2(position.x, position.y)
+        rotation = box2d.make_rot(node.angle)
+
+        body_def = box2d.BodyDef(type=box2d.BodyType.KINEMATIC_BODY, position=body_position, rotation=rotation)
+        body = self.world.create_body(body_def)
+        body.user_data = node
+
+        return body
+
+    '''
+    def create_body(self, node):
         logger.debug(f"KinematicPhysics.create_body: {node}")
         position = node.position + self.position
         body = box2d.Body(body_type=box2d.Body.KINEMATIC)
@@ -22,6 +35,7 @@ class KinematicPhysics(Physics):
         body.position = box2d.Vec2d(position.x, position.y)
         body.rotation = box2d.make_rot(node.angle)
         return body
+    '''
 
 """
 class KinematicCollisionHandler(CollisionHandler):
