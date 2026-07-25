@@ -9,6 +9,7 @@ from crunge import imgui
 from crunge import engine
 
 from crunge.engine.resource.resource_manager import ResourceManager
+#from crunge.engine.d2.settings_2d import Settings2D
 from crunge.engine.d2.scene import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
 
@@ -33,6 +34,10 @@ class Demo(engine.App):
             images=self.resource_root / "images",
         )
 
+    @property
+    def ppu(self) -> float:
+        return self.camera.ppu
+    
     @property
     def camera(self) -> Camera2D:
         return self.view.camera

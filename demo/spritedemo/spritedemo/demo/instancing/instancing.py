@@ -42,7 +42,7 @@ class InstancingDemo(Demo):
 
         # Set grid size and spacing
         grid_size = 10
-        spacing = 64  # Adjust spacing between sprites as needed
+        spacing = 64 / self.ppu  # Adjust spacing between sprites as needed
 
         for row in range(grid_size):
             for col in range(grid_size):
@@ -50,8 +50,8 @@ class InstancingDemo(Demo):
                 node = Node2D(scale=glm.vec2(self.scale, self.scale), vu=vu)
 
                 # Calculate position based on grid and spacing
-                x = col * spacing - (grid_size * spacing) / 2 + self.width / 2
-                y = row * spacing - (grid_size * spacing) / 2 + self.height / 2
+                x = col * spacing - (grid_size * spacing) / 2 + self.width / 2 / self.ppu
+                y = row * spacing - (grid_size * spacing) / 2 + self.height / 2 / self.ppu
 
                 node.position = glm.vec2(x, y)
                 self.nodes.append(node)

@@ -78,6 +78,9 @@ docs/_build/
 imgui.ini
 NodeEditor.json
 
+# Tiled
+*.tiled-session
+
 # environment
 .envrc
 .env

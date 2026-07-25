@@ -36,8 +36,8 @@ class SpriteArrayDemo(Demo):
 
         self.sprite_vu = vu = SpriteVu()
         node = self.node = Node2D(vu=vu, model=sprite)
-        x = self.width / 2
-        y = self.height / 2
+        x = self.width / 2 / self.ppu
+        y = self.height / 2 / self.ppu
         node.position = glm.vec2(x, y)
 
         self.scene.attach(self.node)
