@@ -128,6 +128,29 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         return self.size.x / 2
 
     @property
+    def collision_size(self) -> glm.vec2:
+        if self.model is not None:
+            size = glm.vec2(self.model.collision_size.x, self.model.collision_size.y) * self.scale
+        else:
+            size = self.size
+
+        # logger.debug(f"class: {self.__class__}, size: {size}")
+
+        return size
+
+    @property
+    def collision_width(self):
+        return self.collision_size.x
+
+    @property
+    def collision_height(self):
+        return self.collision_size.y
+
+    @property
+    def collision_radius(self):
+        return self.collision_size.x / 2
+
+    @property
     def scale(self):
         return self._scale
 

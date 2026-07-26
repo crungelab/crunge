@@ -47,7 +47,8 @@ class Sprite(Model):
         sampler: Sampler = None,
         color=colors.WHITE,
         points=None,
-        #collision_rect: Rect2i = None,
+        collision_rect: Rect2i = None,
+        #origin_offset: glm.vec2 = glm.vec2(0, 0),
         texture_layer: int = 0,
         ppu: float = None,
     ) -> None:
@@ -62,7 +63,8 @@ class Sprite(Model):
         self.texture_layer = texture_layer
         self._color = color
         self.points = points
-        #self.collision_rect = collision_rect
+        self.collision_rect = collision_rect
+        #self.origin_offset = origin_offset
         self.ppu = ppu if ppu is not None else Settings2D().ppu
 
         self.memberships: List[SpriteMembership] = []
@@ -128,8 +130,30 @@ class Sprite(Model):
 
     @property
     def size(self) -> glm.vec2:
+        return glm.vec2(self.rect.size) / self.ppu
+
+    @property
+    def collision_size(self) -> glm.vec2:
+        rect = self.collision_rect if self.collision_rect is not None else self.rect
+        return glm.vec2(rect.size) / self.ppu
+
+    '''
+    @property
+    def size(self) -> glm.vec2:
+        size = glm.ivec2(0.0)
+        if self.collision_rect is not None:
+            size = self.collision_rect.size
+        else:
+            size = self.rect.size
+        return glm.vec2(size.x, size.y) / self.ppu
+    '''
+
+    '''
+    @property
+    def size(self) -> glm.vec2:
         size = glm.vec2(self.rect.width, self.rect.height) / self.ppu
         return size
+    '''
 
     '''
     @property

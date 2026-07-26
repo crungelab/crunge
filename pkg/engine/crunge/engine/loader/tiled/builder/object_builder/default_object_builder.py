@@ -18,6 +18,7 @@ class DefaultObjectBuilder(ObjectBuilder):
         super().__init__()
         self.create_node_cb = create_node_cb
 
+    '''
     def build(self, obj: tmx.Object):
         map = self.map
         properties = obj.properties
@@ -153,7 +154,6 @@ class DefaultObjectBuilder(ObjectBuilder):
         # Attach the node to the appropriate layer
         if node is not None:
             self.context.current_graph_layer.attach(node)
-    '''
 
     def create_node(
         self,

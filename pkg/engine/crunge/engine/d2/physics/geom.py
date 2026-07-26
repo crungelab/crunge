@@ -17,7 +17,12 @@ class Geom:
     def __init__(self):
         pass
 
-    def create_shapes(self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None):
+    def create_shapes(
+        self,
+        node: "PhysicsEntity2D",
+        transform: pymunk.Transform = None,
+        clip: Rect2 = None,
+    ):
         pass
 
     def get_moment(self, node: "PhysicsEntity2D") -> float:
@@ -31,11 +36,14 @@ class BoxGeom(Geom):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: pymunk.Transform = None,
+        clip: Rect2 = None,
     ):
         logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
         shapes = []
-        size = node.size
+        size = node.collision_size
         shape = pymunk.Poly.create_box(node.body, tuple(size))
         shape.friction = 10
         shape.elasticity = 0.2
@@ -48,15 +56,20 @@ class BallGeom(Geom):
         super().__init__()
 
     def get_moment(self, node: "PhysicsEntity2D"):
-        radius = node.radius
+        radius = node.collision_radius
         return pymunk.moment_for_circle(node.mass, 0, radius)
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: pymunk.Transform = None,
+        clip: Rect2 = None,
     ):
         shapes = []
-        radius = node.radius
-        logger.debug(f" node: {node}, size: {node.size}, model: {node.model}, ppu: {node.model.ppu}, scale: {node.scale}, radius: {radius}")
+        radius = node.collision_radius
+        logger.debug(
+            f" node: {node}, size: {node.size}, model: {node.model}, ppu: {node.model.ppu}, scale: {node.scale}, radius: {radius}"
+        )
 
         shape = pymunk.Circle(node.body, radius)
         # shape.elasticity = 0.95
@@ -64,39 +77,16 @@ class BallGeom(Geom):
         shapes.append(shape)
         return shapes
 
-'''
-class BallGeom(Geom):
-    def __init__(self):
-        super().__init__()
-
-    def get_moment(self, node: "PhysicsEntity2D"):
-        # size = node.size
-        # radius = size.x / 2
-        radius = node.model.collision_rect.width / 2 * node.scale.x
-        # radius = node.radius
-        return pymunk.moment_for_circle(node.mass, 0, radius)
-
-    def create_shapes(
-        self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
-    ):
-        shapes = []
-        # size = node.size
-        # radius = size.x / 2
-        radius = node.model.collision_rect.width / 2 * node.scale.x
-        # radius = node.radius
-        shape = pymunk.Circle(node.body, radius)
-        # shape.elasticity = 0.95
-        shape.friction = 0.9
-        shapes.append(shape)
-        return shapes
-'''
 
 class GroupGeom(Geom):
     def __init__(self):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: pymunk.Transform = None,
+        clip: Rect2 = None,
     ):
         return []
 
@@ -109,7 +99,7 @@ class PolyGeom(Geom):
         super().__init__()
 
     def get_moment(self, node: "PhysicsEntity2D"):
-        size = node.size
+        size = node.collision_size
         return pymunk.moment_for_box(node.mass, tuple(size))
         # return pymunk.moment_for_poly(node.mass, node.model.points.tolist())
 
@@ -131,7 +121,10 @@ class DecomposedGeom(PolyGeom):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: pymunk.Transform = None,
+        clip: Rect2 = None,
     ):
         transform = transform if transform is not None else node.geom_transform
 
@@ -160,7 +153,10 @@ class HullGeom(PolyGeom):
         super().__init__()
 
     def create_shapes(
-        self, node: "PhysicsEntity2D", transform: pymunk.Transform = None, clip: Rect2 = None
+        self,
+        node: "PhysicsEntity2D",
+        transform: pymunk.Transform = None,
+        clip: Rect2 = None,
     ):
         transform = transform if transform is not None else node.geom_transform
         body = node.body
@@ -171,7 +167,7 @@ class HullGeom(PolyGeom):
             # return shapes
             raise ValueError(f"model: {node.model}: no points")
 
-        #points = node.model.points.tolist()
+        # points = node.model.points.tolist()
         points = node.model.points
         clipped_points = []
         if clip:
@@ -181,7 +177,7 @@ class HullGeom(PolyGeom):
         else:
             clipped_points = points
         # logger.debug(f"points: {points}")
-        #points = to_convex_hull(points, SLOP)
+        # points = to_convex_hull(points, SLOP)
         points = to_convex_hull(clipped_points, SLOP)
 
         shape = pymunk.Poly(body, points, transform)

@@ -21,6 +21,7 @@ class DefaultTileBuilder(TileBuilder):
     def layer(self) -> SpriteLayer:
         return self.context.current_graph_layer
 
+    '''
     def build(self, position: glm.vec2, tile: tmx.TilesetTile, tile_gid: int, properties: dict):
         properties["type"] = tile.class_name
         path = tile.image_path
@@ -58,8 +59,8 @@ class DefaultTileBuilder(TileBuilder):
 
         if node is not None:
             self.layer.attach(node)
-
     '''
+
     def build(self, position: glm.vec2, tile: tmx.TilesetTile, tile_gid: int, properties: dict):
         properties["type"] = tile.class_name  # TODO:?
         #logger.debug(f"process_tile: {position}, {image}, {properties}")
@@ -89,7 +90,6 @@ class DefaultTileBuilder(TileBuilder):
 
         if node is not None:
             self.layer.attach(node)
-    '''
 
     def create_node(self, position: glm.vec2, sprite: Sprite, properties: dict):
         node = Node2D(position, vu=SpriteVu(), model=sprite)
