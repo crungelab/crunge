@@ -17,13 +17,6 @@ class BallGeom(Geom):
     def __init__(self):
         super().__init__()
 
-    def get_moment(self, node: "PhysicsEntity2D"):
-        # size = node.size
-        # radius = size.x / 2
-        radius = node.model.collision_rect.width / 2 * node.scale.x
-        # radius = node.radius
-        return box2d.moment_for_circle(node.mass, 0, radius)
-
     def create_shapes(
         self,
         node: "PhysicsEntity2D",
@@ -32,14 +25,10 @@ class BallGeom(Geom):
     ):
         logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
         shapes = []
-        #size = node.size
-        #radius = node.model.collision_rect.width / 2 * node.scale.x
-        # radius = node.model.collision_rect.width / node.model.ppu * node.scale.x / 2
-        radius = node.radius
+        radius = node.collision_radius
         circle = box2d.Circle(center=box2d.Vec2(0, 0), radius=radius)
         shape_def = box2d.ShapeDef()
 
-        # shape = box2d.Poly.create_box(node.body, tuple(size))
         shape = node.body.create_circle_shape(shape_def, circle)
 
         shape.user_data = node

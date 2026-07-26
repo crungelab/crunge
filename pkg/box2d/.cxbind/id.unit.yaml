@@ -24,11 +24,15 @@ specs:
           setter: "Body_SetUserData"
           getter: "Body_GetUserData"
         position:
+          setter: "Body_SetPosition"
           getter: "b2Body_GetPosition"
         rotation:
           getter: "b2Body_GetRotation"
         angle:
           getter: "Body_GetAngle"
+        transform:
+          setter: "b2Body_SetTransform"
+          getter: "b2Body_GetTransform"
         linear_velocity:
           setter: "b2Body_SetLinearVelocity"
           getter: "b2Body_GetLinearVelocity"

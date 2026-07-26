@@ -15,7 +15,7 @@
 #include <box2d/id.h>
 #include <box2d/box2d.h>
 
-#include "box2d_internal.h"
+#include "id_internal.h"
 
 namespace py = pybind11;
 
@@ -412,9 +412,10 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("def")
             )
         .def_property("user_data", &Body_GetUserData, &Body_SetUserData)
-        .def_property_readonly("position", &b2Body_GetPosition)
+        .def_property("position", &b2Body_GetPosition, &Body_SetPosition)
         .def_property_readonly("rotation", &b2Body_GetRotation)
         .def_property_readonly("angle", &Body_GetAngle)
+        .def_property("transform", &b2Body_GetTransform, &b2Body_SetTransform)
         .def_property("linear_velocity", &b2Body_GetLinearVelocity, &b2Body_SetLinearVelocity)
         .def_property("angular_velocity", &b2Body_GetAngularVelocity, &b2Body_SetAngularVelocity)
     ;

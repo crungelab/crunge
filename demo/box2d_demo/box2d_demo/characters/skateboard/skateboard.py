@@ -123,7 +123,7 @@ class Skateboard(PhysicsGroup2D):
         mountee.on_mount(self.chassis, point)
         logger.debug(f"mountee body: {mountee.body}")
 
-        world_id = physics_globe.physics_engine.world_id  # ASSUMPTION
+        world = physics_globe.physics_engine  # ASSUMPTION
 
         # pymunk used two PinJoints sharing the same anchor on both bodies as
         # a "weld" trick (fixes relative position AND rotation between the
@@ -133,17 +133,17 @@ class Skateboard(PhysicsGroup2D):
         weld_def = box2d.WeldJointDef(  # ASSUMPTION: field names below
             body_id_a=mountee.body.id,
             body_id_b=self.chassis.body.id,
-            local_anchor_a=anchor,
-            local_anchor_b=anchor,
+            local_frame_a=anchor,
+            local_frame_b=anchor,
         )
-        weld_joint = box2d.create_weld_joint(world_id, weld_def)  # ASSUMPTION
+        weld_joint = box2d.create_weld_joint(world, weld_def)  # ASSUMPTION
         self.mountee_joints = [weld_joint]
 
     def dismount(self):
         logger.debug("dismounting")
         if self.mountee is None:
             return
-        world_id = physics_globe.physics_engine.world_id  # ASSUMPTION
+        world = physics_globe.physics_engine
         for joint_id in self.mountee_joints:
             box2d.destroy_joint(joint_id)  # ASSUMPTION
         self.mountee_joints = []
@@ -154,7 +154,7 @@ class Skateboard(PhysicsGroup2D):
     def _create(self):
         super()._create()
 
-        world_id = physics_globe.physics_engine  # ASSUMPTION
+        world = physics_globe.physics_engine
 
         # Each wheel gets a single revolute joint pinned at the wheel's
         # center, anchored on the chassis at the wheel's actual chassis-local
@@ -169,30 +169,31 @@ class Skateboard(PhysicsGroup2D):
         )
         wheel_anchor = box2d.Vec2(0, 0)  # ASSUMPTION
 
-        front_joint_def = box2d.RevoluteJointDef(  # ASSUMPTION: field names
-            body_id_a=self.front_wheel.body,
-            body_id_b=self.chassis.body,
-            local_anchor_a=wheel_anchor,
-            local_anchor_b=front_anchor_on_chassis,
+        front_joint_def = box2d.RevoluteJointDef(
             enable_motor=True,
-            motor_speed=-self.speed,
+            motor_speed=self.speed,
             max_motor_torque=MAX_MOTOR_TORQUE,
         )
+        front_joint_def.base.body_id_a = self.front_wheel.body
+        front_joint_def.base.body_id_b = self.chassis.body
+        front_joint_def.base.local_frame_a.p = wheel_anchor
+        front_joint_def.base.local_frame_b.p = front_anchor_on_chassis
+
         back_joint_def = box2d.RevoluteJointDef(  # ASSUMPTION
-            body_id_a=self.back_wheel.body,
-            body_id_b=self.chassis.body,
-            local_anchor_a=wheel_anchor,
-            local_anchor_b=back_anchor_on_chassis,
             enable_motor=True,
-            motor_speed=-self.speed,
+            motor_speed=self.speed,
             max_motor_torque=MAX_MOTOR_TORQUE,
         )
+        back_joint_def.base.body_id_a = self.back_wheel.body
+        back_joint_def.base.body_id_b = self.chassis.body
+        back_joint_def.base.local_frame_a.p = wheel_anchor
+        back_joint_def.base.local_frame_b.p = back_anchor_on_chassis
 
         self.front_joint = box2d.create_revolute_joint(  # ASSUMPTION
-            world_id, front_joint_def
+            world, front_joint_def
         )
         self.back_joint = box2d.create_revolute_joint(  # ASSUMPTION
-            world_id, back_joint_def
+            world, back_joint_def
         )
 
         # Kept as aliases so accelerate/decelerate/coast below read the same
@@ -207,11 +208,9 @@ class Skateboard(PhysicsGroup2D):
         box2d.revolute_joint_enable_motor(self.front_joint, True)  # ASSUMPTION
         box2d.revolute_joint_enable_motor(self.back_joint, True)  # ASSUMPTION
         box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
-            self.front_joint, -self.speed
+            self.front_joint, self.speed
         )
-        box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
-            self.back_joint, -self.speed
-        )
+        box2d.revolute_joint_set_motor_speed(self.back_joint, self.speed)  # ASSUMPTION
         self.motors_attached = True
 
     def detach_motors(self):
@@ -230,10 +229,10 @@ class Skateboard(PhysicsGroup2D):
             self.attach_motors()
         else:
             box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
-                self.front_joint, -self.speed
+                self.front_joint, self.speed
             )
             box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
-                self.back_joint, -self.speed
+                self.back_joint, self.speed
             )
 
     def decelerate(self, rate=SPEED_DELTA):
@@ -245,10 +244,10 @@ class Skateboard(PhysicsGroup2D):
             self.attach_motors()
         else:
             box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
-                self.front_joint, -self.speed
+                self.front_joint, self.speed
             )
             box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
-                self.back_joint, -self.speed
+                self.back_joint, self.speed
             )
 
     def coast(self):
@@ -256,22 +255,24 @@ class Skateboard(PhysicsGroup2D):
         self.speed = 0
 
     @debounce(1)
-    def ollie(self, impulse=(0, 400), point=(0, 0)):
+    def ollie(self, impulse=(0, 1), point=(0, 0)):
         logger.debug("ollie")
         # Box2D v3's ApplyLinearImpulse takes a *world* point, not a local
         # one, so the local anchor point needs converting first.
         chassis_world_point = box2d.body_get_world_point(  # ASSUMPTION
-            self.chassis.body.id, box2d.Vec2(*point)
-        )
-        mountee_world_point = box2d.body_get_world_point(  # ASSUMPTION
-            self.mountee.body.id, box2d.Vec2(*point)
+            self.chassis.body, box2d.Vec2(*point)
         )
         box2d.body_apply_linear_impulse(  # ASSUMPTION
-            self.chassis.body.id, box2d.Vec2(*impulse), chassis_world_point, True
+            self.chassis.body, box2d.Vec2(*impulse), chassis_world_point, True
         )
-        box2d.body_apply_linear_impulse(  # ASSUMPTION
-            self.mountee.body.id, box2d.Vec2(*impulse), mountee_world_point, True
-        )
+
+        if self.mountee:
+            mountee_world_point = box2d.body_get_world_point(  # ASSUMPTION
+                self.mountee.body, box2d.Vec2(*point)
+            )
+            box2d.body_apply_linear_impulse(  # ASSUMPTION
+                self.mountee.body, box2d.Vec2(*impulse), mountee_world_point, True
+            )
 
     def update(self, delta_time=1 / 60):
         super().update(delta_time)

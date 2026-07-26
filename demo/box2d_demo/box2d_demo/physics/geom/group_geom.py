@@ -23,6 +23,3 @@ class GroupGeom(Geom):
         clip: Rect2 = None,
     ):
         return []
-
-    def get_moment(self, node: "PhysicsEntity2D"):
-        return box2d.moment_for_box(node.mass, (node.width, node.height))

@@ -15,7 +15,7 @@
 #include <box2d/id.h>
 #include <box2d/box2d.h>
 
-#include "box2d_internal.h"
+#include "id_internal.h"
 
 namespace py = pybind11;
 

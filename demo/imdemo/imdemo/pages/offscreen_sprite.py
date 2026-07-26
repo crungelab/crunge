@@ -30,7 +30,7 @@ class OffscreenSpritePage(Page):
         self.sprite_vu = SpriteVu(sprite).enable()
         self.sprite_vu.update_transform(
             position=glm.vec3(0, 0, 0),
-            size=sprite.rect.size,
+            size=sprite.size,
             rotation=0.0,
             scale=glm.vec3(1, 1, 1),
             depth=0.0

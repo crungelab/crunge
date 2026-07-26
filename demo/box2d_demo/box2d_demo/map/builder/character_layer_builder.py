@@ -31,7 +31,7 @@ class CharacterLayerBuilder(tiled_builder.DefaultObjectGroupBuilder):
 
 kinds = {
     "PlayerCharacter": Avatar,
-    #"Skateboard": Skateboard,
+    "Skateboard": Skateboard,
     "Robot": Robot,
     # "hero": PlayerCharacter,
     #'blob': Blob,

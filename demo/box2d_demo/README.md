@@ -5,6 +5,7 @@ python -m box2d_demo.demo.spaceshooter
 python -m box2d_demo.demo.things
 python -m box2d_demo.demo.tiled_physics
 python -m box2d_demo.demo.platformer
+python -m box2d_demo.demo.skateboard
 ```
 
 ```bash

@@ -1,0 +1,3 @@
+source: './src/id_internal.h'
+
+internal: true

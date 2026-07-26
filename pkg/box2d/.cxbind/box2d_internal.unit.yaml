@@ -1,3 +1,0 @@
-source: './src/box2d_internal.h'
-
-internal: true

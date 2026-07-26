@@ -26,11 +26,3 @@ class Geom:
         clip: Rect2 = None,
     ):
         pass
-
-    def get_moment(self, node: "PhysicsEntity2D") -> float:
-        size = node.size
-        logger.debug(f"size: {size}")
-        return box2d.moment_for_box(node.mass, tuple(size))
-
-
-

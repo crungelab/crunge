@@ -38,34 +38,6 @@ class DynamicCharacter(DynamicEntity2D):
         logger.debug(f"clip: {clip}")
         return super().create_shapes(clip=clip)
 
-    '''
-    def create_shapes(self, clip: Rect2 = None):
-        x = 0
-        y = self.height / 4
-        #y = -(self.y + self.height / 4)
-        width = self.width
-        height = self.height
-        clip = Rect2(x, y, width, height)
-        logger.debug(f"clip: {clip}")
-        return super().create_shapes(clip=clip)
-        #return super().create_shapes()
-    '''
-
-    '''
-    def create_shapes(self, clip: Rect2 = None):
-        #clip = Rect2(self.x, self.y + self.height / 2, self.width, self.height / 2)
-        model = self.model
-        rect = model.rect
-        x = rect.x - rect.width / 2
-        y = -(rect.y + rect.height / 4)
-        #y = rect.y - rect.height / 2
-        width = rect.width
-        height = rect.height / 2
-        clip = Rect2(x, y, width, height)
-        logger.debug(f"clip: {clip}")
-        return super().create_shapes(clip=clip)
-    '''
-
     def lock_rotation(self):
         self.body.set_motion_locks(b2.MotionLocks(False, False, True))
 
@@ -74,7 +46,8 @@ class DynamicCharacter(DynamicEntity2D):
         #self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2 + 4))
         self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2 + 0.125))
         logger.debug(f"mounting at {self.position}")
-        self.body.position = tuple(self.position)
+        #self.body.position = tuple(self.position)
+        self.body.position = b2.Vec2(*self.position)
         self.angle = node.angle
         # logger.debug('on_mount')
         logger.debug(f"shapes: {self.shapes}")

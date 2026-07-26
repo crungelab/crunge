@@ -1,8 +1,6 @@
 module: box2d
 
 flags: [
-  #'-x', 'c++',
-  #'-std=c++17',
   '-I../../depot/box2d/include/box2d',
   '-B2_API=',
 ]
@@ -10,19 +8,15 @@ flags: [
 prefixes: [b2]
 
 unit_files:
-  - path: box2d_internal.unit.yaml
   - path: box2d.unit.yaml
   - path: types.unit.yaml
   - path: math_functions.unit.yaml
+  - path: id_internal.unit.yaml
   - path: id.unit.yaml
   - path: collision.unit.yaml
-
-#b2OverlapResultFcn
 
 specs:
   'function_prototype@b2OverlapResultFcn':
     facade:
       kind: callback
       context_param: context
-
-  #'function@b2World_OverlapShape': {}

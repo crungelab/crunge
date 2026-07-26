@@ -14,6 +14,7 @@
 
 #include <box2d/types.h>
 
+
 namespace py = pybind11;
 
 void init_types_py_auto(py::module &_box2d, Registry &registry) {

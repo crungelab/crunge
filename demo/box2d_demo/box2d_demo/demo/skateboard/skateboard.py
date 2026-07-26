@@ -19,7 +19,7 @@ class BoxesDemo(PhysicsDemo):
     def reset(self):
         super().reset()
         self.create_floor()
-        self.create_avatar(glm.vec2(0, 3))
+        self.create_avatar(glm.vec2(3, 3))
 
     # ------------------------------------------------------------------
     # Input — extend base drag behaviour with box creation
