@@ -115,11 +115,28 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
         _Transform
         .def_readwrite("p", &b2Transform::p)
         .def_readwrite("q", &b2Transform::q)
-        .def(py::init([](struct b2Vec2 p, struct b2Rot q)
+        .def(py::init([](const py::kwargs& kwargs)
         {
-            b2Transform obj{};
-            obj.p = p;
-            obj.q = q;
+            b2Transform obj = b2Transform_identity;
+            static const std::unordered_set<std::string> allowed_keys = {"p", "q"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("p"))
+            {
+                auto value = kwargs["p"].cast<struct b2Vec2>();
+                obj.p = value;
+            }
+            if (kwargs.contains("q"))
+            {
+                auto value = kwargs["q"].cast<struct b2Rot>();
+                obj.q = value;
+            }
             return obj;
         }))
         .def("__repr__", [](const b2Transform &self) {

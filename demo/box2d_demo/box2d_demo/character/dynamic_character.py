@@ -41,24 +41,31 @@ class DynamicCharacter(DynamicEntity2D):
     def lock_rotation(self):
         self.body.set_motion_locks(b2.MotionLocks(False, False, True))
 
+    def unlock_rotation(self):
+        self.body.set_motion_locks(b2.MotionLocks(False, False, False))
+
     def on_mount(self, node: PhysicsEntity2D, point: glm.vec2):
         self.motion_state = MotionState.MOUNTED
+        self.unlock_rotation()
         #self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2 + 4))
-        self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2 + 0.125))
+        #self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2 + 0.125))
         logger.debug(f"mounting at {self.position}")
         #self.body.position = tuple(self.position)
-        self.body.position = b2.Vec2(*self.position)
-        self.angle = node.angle
+        #self.body.position = b2.Vec2(*self.position)
+        #self.angle = node.angle
         # logger.debug('on_mount')
         logger.debug(f"shapes: {self.shapes}")
 
     def on_dismount(self, node: PhysicsEntity2D, point: glm.vec2):
         self.motion_state = MotionState.FALLING
+        self.lock_rotation()
         self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2))
         self.angle = 0
-        self.body.velocity = (0, 0)
-        self.body.angle = 0
-        self.body.angular_velocity = 0 # Stop any residual spin
+        self.body.linear_velocity = b2.Vec2(0, 0)
+        #self.body.transform = b2.Transform(p=b2.Vec2(*self.position))
+        self.body.set_transform(b2.Vec2(*self.position), b2.make_rot(0))
+        #self.body.angle = 0
+        #self.body.angular_velocity = 0 # Stop any residual spin
         self.lock_rotation() # Re-lock rotation
         globe.screen.pop_avatar()
 

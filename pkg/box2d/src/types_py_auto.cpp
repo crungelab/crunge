@@ -50,6 +50,15 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2WorldDef obj = b2DefaultWorldDef();
+            static const std::unordered_set<std::string> allowed_keys = {"gravity", "restitution_threshold", "hit_event_threshold", "contact_hertz", "contact_damping_ratio", "contact_speed", "maximum_linear_speed", "enable_sleep", "enable_continuous", "enable_contact_softening", "worker_count", "user_task_context", "user_data", "internal_value"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
             if (kwargs.contains("gravity"))
             {
                 auto value = kwargs["gravity"].cast<struct b2Vec2>();
@@ -223,6 +232,15 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2BodyDef obj = b2DefaultBodyDef();
+            static const std::unordered_set<std::string> allowed_keys = {"type", "position", "rotation", "linear_velocity", "angular_velocity", "linear_damping", "angular_damping", "gravity_scale", "sleep_threshold", "name", "user_data", "motion_locks", "enable_sleep", "is_awake", "is_bullet", "is_enabled", "allow_fast_rotation", "internal_value"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
             if (kwargs.contains("type"))
             {
                 auto value = kwargs["type"].cast<enum b2BodyType>();
@@ -374,6 +392,15 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2Filter obj = b2DefaultFilter();
+            static const std::unordered_set<std::string> allowed_keys = {"category_bits", "mask_bits", "group_index"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
             if (kwargs.contains("category_bits"))
             {
                 auto value = kwargs["category_bits"].cast<unsigned long>();
@@ -442,6 +469,15 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2SurfaceMaterial obj = b2DefaultSurfaceMaterial();
+            static const std::unordered_set<std::string> allowed_keys = {"friction", "restitution", "rolling_resistance", "tangent_speed", "user_material_id", "custom_color"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
             if (kwargs.contains("friction"))
             {
                 auto value = kwargs["friction"].cast<float>();
@@ -517,6 +553,15 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2ShapeDef obj = b2DefaultShapeDef();
+            static const std::unordered_set<std::string> allowed_keys = {"user_data", "material", "density", "filter", "enable_custom_filtering", "is_sensor", "enable_sensor_events", "enable_contact_events", "enable_hit_events", "enable_pre_solve_events", "invoke_contact_creation", "update_body_mass", "internal_value"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
             if (kwargs.contains("user_data"))
             {
                 auto value = kwargs["user_data"].cast<void *>();
@@ -714,7 +759,50 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
     py::class_<b2DistanceJointDef> _DistanceJointDef(_box2d, "DistanceJointDef");
     registry.on(_box2d, "DistanceJointDef", _DistanceJointDef);
         _DistanceJointDef
-        .def_readwrite("base", &b2DistanceJointDef::base)
+        .def_property("user_data",
+            [](const b2DistanceJointDef& self){ return self.base.userData; },
+            [](b2DistanceJointDef& self, void * value){ self.base.userData = value; }
+        )
+        .def_property("body_id_a",
+            [](const b2DistanceJointDef& self){ return self.base.bodyIdA; },
+            [](b2DistanceJointDef& self, struct b2BodyId value){ self.base.bodyIdA = value; }
+        )
+        .def_property("body_id_b",
+            [](const b2DistanceJointDef& self){ return self.base.bodyIdB; },
+            [](b2DistanceJointDef& self, struct b2BodyId value){ self.base.bodyIdB = value; }
+        )
+        .def_property("local_frame_a",
+            [](const b2DistanceJointDef& self){ return self.base.localFrameA; },
+            [](b2DistanceJointDef& self, struct b2Transform value){ self.base.localFrameA = value; }
+        )
+        .def_property("local_frame_b",
+            [](const b2DistanceJointDef& self){ return self.base.localFrameB; },
+            [](b2DistanceJointDef& self, struct b2Transform value){ self.base.localFrameB = value; }
+        )
+        .def_property("force_threshold",
+            [](const b2DistanceJointDef& self){ return self.base.forceThreshold; },
+            [](b2DistanceJointDef& self, float value){ self.base.forceThreshold = value; }
+        )
+        .def_property("torque_threshold",
+            [](const b2DistanceJointDef& self){ return self.base.torqueThreshold; },
+            [](b2DistanceJointDef& self, float value){ self.base.torqueThreshold = value; }
+        )
+        .def_property("constraint_hertz",
+            [](const b2DistanceJointDef& self){ return self.base.constraintHertz; },
+            [](b2DistanceJointDef& self, float value){ self.base.constraintHertz = value; }
+        )
+        .def_property("constraint_damping_ratio",
+            [](const b2DistanceJointDef& self){ return self.base.constraintDampingRatio; },
+            [](b2DistanceJointDef& self, float value){ self.base.constraintDampingRatio = value; }
+        )
+        .def_property("draw_scale",
+            [](const b2DistanceJointDef& self){ return self.base.drawScale; },
+            [](b2DistanceJointDef& self, float value){ self.base.drawScale = value; }
+        )
+        .def_property("collide_connected",
+            [](const b2DistanceJointDef& self){ return self.base.collideConnected; },
+            [](b2DistanceJointDef& self, _Bool value){ self.base.collideConnected = value; }
+        )
         .def_readwrite("length", &b2DistanceJointDef::length)
         .def_readwrite("enable_spring", &b2DistanceJointDef::enableSpring)
         .def_readwrite("lower_spring_force", &b2DistanceJointDef::lowerSpringForce)
@@ -731,10 +819,69 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2DistanceJointDef obj = b2DefaultDistanceJointDef();
-            if (kwargs.contains("base"))
+            static const std::unordered_set<std::string> allowed_keys = {"user_data", "body_id_a", "body_id_b", "local_frame_a", "local_frame_b", "force_threshold", "torque_threshold", "constraint_hertz", "constraint_damping_ratio", "draw_scale", "collide_connected", "length", "enable_spring", "lower_spring_force", "upper_spring_force", "hertz", "damping_ratio", "enable_limit", "min_length", "max_length", "enable_motor", "max_motor_force", "motor_speed", "internal_value"};
+            for (auto item : kwargs)
             {
-                auto value = kwargs["base"].cast<struct b2JointDef>();
-                obj.base = value;
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.base.userData = value;
+            }
+            if (kwargs.contains("body_id_a"))
+            {
+                auto value = kwargs["body_id_a"].cast<struct b2BodyId>();
+                obj.base.bodyIdA = value;
+            }
+            if (kwargs.contains("body_id_b"))
+            {
+                auto value = kwargs["body_id_b"].cast<struct b2BodyId>();
+                obj.base.bodyIdB = value;
+            }
+            if (kwargs.contains("local_frame_a"))
+            {
+                auto value = kwargs["local_frame_a"].cast<struct b2Transform>();
+                obj.base.localFrameA = value;
+            }
+            if (kwargs.contains("local_frame_b"))
+            {
+                auto value = kwargs["local_frame_b"].cast<struct b2Transform>();
+                obj.base.localFrameB = value;
+            }
+            if (kwargs.contains("force_threshold"))
+            {
+                auto value = kwargs["force_threshold"].cast<float>();
+                obj.base.forceThreshold = value;
+            }
+            if (kwargs.contains("torque_threshold"))
+            {
+                auto value = kwargs["torque_threshold"].cast<float>();
+                obj.base.torqueThreshold = value;
+            }
+            if (kwargs.contains("constraint_hertz"))
+            {
+                auto value = kwargs["constraint_hertz"].cast<float>();
+                obj.base.constraintHertz = value;
+            }
+            if (kwargs.contains("constraint_damping_ratio"))
+            {
+                auto value = kwargs["constraint_damping_ratio"].cast<float>();
+                obj.base.constraintDampingRatio = value;
+            }
+            if (kwargs.contains("draw_scale"))
+            {
+                auto value = kwargs["draw_scale"].cast<float>();
+                obj.base.drawScale = value;
+            }
+            if (kwargs.contains("collide_connected"))
+            {
+                auto value = kwargs["collide_connected"].cast<_Bool>();
+                obj.base.collideConnected = value;
             }
             if (kwargs.contains("length"))
             {
@@ -902,7 +1049,50 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
     py::class_<b2RevoluteJointDef> _RevoluteJointDef(_box2d, "RevoluteJointDef");
     registry.on(_box2d, "RevoluteJointDef", _RevoluteJointDef);
         _RevoluteJointDef
-        .def_readwrite("base", &b2RevoluteJointDef::base)
+        .def_property("user_data",
+            [](const b2RevoluteJointDef& self){ return self.base.userData; },
+            [](b2RevoluteJointDef& self, void * value){ self.base.userData = value; }
+        )
+        .def_property("body_id_a",
+            [](const b2RevoluteJointDef& self){ return self.base.bodyIdA; },
+            [](b2RevoluteJointDef& self, struct b2BodyId value){ self.base.bodyIdA = value; }
+        )
+        .def_property("body_id_b",
+            [](const b2RevoluteJointDef& self){ return self.base.bodyIdB; },
+            [](b2RevoluteJointDef& self, struct b2BodyId value){ self.base.bodyIdB = value; }
+        )
+        .def_property("local_frame_a",
+            [](const b2RevoluteJointDef& self){ return self.base.localFrameA; },
+            [](b2RevoluteJointDef& self, struct b2Transform value){ self.base.localFrameA = value; }
+        )
+        .def_property("local_frame_b",
+            [](const b2RevoluteJointDef& self){ return self.base.localFrameB; },
+            [](b2RevoluteJointDef& self, struct b2Transform value){ self.base.localFrameB = value; }
+        )
+        .def_property("force_threshold",
+            [](const b2RevoluteJointDef& self){ return self.base.forceThreshold; },
+            [](b2RevoluteJointDef& self, float value){ self.base.forceThreshold = value; }
+        )
+        .def_property("torque_threshold",
+            [](const b2RevoluteJointDef& self){ return self.base.torqueThreshold; },
+            [](b2RevoluteJointDef& self, float value){ self.base.torqueThreshold = value; }
+        )
+        .def_property("constraint_hertz",
+            [](const b2RevoluteJointDef& self){ return self.base.constraintHertz; },
+            [](b2RevoluteJointDef& self, float value){ self.base.constraintHertz = value; }
+        )
+        .def_property("constraint_damping_ratio",
+            [](const b2RevoluteJointDef& self){ return self.base.constraintDampingRatio; },
+            [](b2RevoluteJointDef& self, float value){ self.base.constraintDampingRatio = value; }
+        )
+        .def_property("draw_scale",
+            [](const b2RevoluteJointDef& self){ return self.base.drawScale; },
+            [](b2RevoluteJointDef& self, float value){ self.base.drawScale = value; }
+        )
+        .def_property("collide_connected",
+            [](const b2RevoluteJointDef& self){ return self.base.collideConnected; },
+            [](b2RevoluteJointDef& self, _Bool value){ self.base.collideConnected = value; }
+        )
         .def_readwrite("target_angle", &b2RevoluteJointDef::targetAngle)
         .def_readwrite("enable_spring", &b2RevoluteJointDef::enableSpring)
         .def_readwrite("hertz", &b2RevoluteJointDef::hertz)
@@ -917,10 +1107,69 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2RevoluteJointDef obj = b2DefaultRevoluteJointDef();
-            if (kwargs.contains("base"))
+            static const std::unordered_set<std::string> allowed_keys = {"user_data", "body_id_a", "body_id_b", "local_frame_a", "local_frame_b", "force_threshold", "torque_threshold", "constraint_hertz", "constraint_damping_ratio", "draw_scale", "collide_connected", "target_angle", "enable_spring", "hertz", "damping_ratio", "enable_limit", "lower_angle", "upper_angle", "enable_motor", "max_motor_torque", "motor_speed", "internal_value"};
+            for (auto item : kwargs)
             {
-                auto value = kwargs["base"].cast<struct b2JointDef>();
-                obj.base = value;
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.base.userData = value;
+            }
+            if (kwargs.contains("body_id_a"))
+            {
+                auto value = kwargs["body_id_a"].cast<struct b2BodyId>();
+                obj.base.bodyIdA = value;
+            }
+            if (kwargs.contains("body_id_b"))
+            {
+                auto value = kwargs["body_id_b"].cast<struct b2BodyId>();
+                obj.base.bodyIdB = value;
+            }
+            if (kwargs.contains("local_frame_a"))
+            {
+                auto value = kwargs["local_frame_a"].cast<struct b2Transform>();
+                obj.base.localFrameA = value;
+            }
+            if (kwargs.contains("local_frame_b"))
+            {
+                auto value = kwargs["local_frame_b"].cast<struct b2Transform>();
+                obj.base.localFrameB = value;
+            }
+            if (kwargs.contains("force_threshold"))
+            {
+                auto value = kwargs["force_threshold"].cast<float>();
+                obj.base.forceThreshold = value;
+            }
+            if (kwargs.contains("torque_threshold"))
+            {
+                auto value = kwargs["torque_threshold"].cast<float>();
+                obj.base.torqueThreshold = value;
+            }
+            if (kwargs.contains("constraint_hertz"))
+            {
+                auto value = kwargs["constraint_hertz"].cast<float>();
+                obj.base.constraintHertz = value;
+            }
+            if (kwargs.contains("constraint_damping_ratio"))
+            {
+                auto value = kwargs["constraint_damping_ratio"].cast<float>();
+                obj.base.constraintDampingRatio = value;
+            }
+            if (kwargs.contains("draw_scale"))
+            {
+                auto value = kwargs["draw_scale"].cast<float>();
+                obj.base.drawScale = value;
+            }
+            if (kwargs.contains("collide_connected"))
+            {
+                auto value = kwargs["collide_connected"].cast<_Bool>();
+                obj.base.collideConnected = value;
             }
             if (kwargs.contains("target_angle"))
             {
@@ -1018,12 +1267,166 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
     py::class_<b2WeldJointDef> _WeldJointDef(_box2d, "WeldJointDef");
     registry.on(_box2d, "WeldJointDef", _WeldJointDef);
         _WeldJointDef
-        .def_readwrite("base", &b2WeldJointDef::base)
+        .def_property("user_data",
+            [](const b2WeldJointDef& self){ return self.base.userData; },
+            [](b2WeldJointDef& self, void * value){ self.base.userData = value; }
+        )
+        .def_property("body_id_a",
+            [](const b2WeldJointDef& self){ return self.base.bodyIdA; },
+            [](b2WeldJointDef& self, struct b2BodyId value){ self.base.bodyIdA = value; }
+        )
+        .def_property("body_id_b",
+            [](const b2WeldJointDef& self){ return self.base.bodyIdB; },
+            [](b2WeldJointDef& self, struct b2BodyId value){ self.base.bodyIdB = value; }
+        )
+        .def_property("local_frame_a",
+            [](const b2WeldJointDef& self){ return self.base.localFrameA; },
+            [](b2WeldJointDef& self, struct b2Transform value){ self.base.localFrameA = value; }
+        )
+        .def_property("local_frame_b",
+            [](const b2WeldJointDef& self){ return self.base.localFrameB; },
+            [](b2WeldJointDef& self, struct b2Transform value){ self.base.localFrameB = value; }
+        )
+        .def_property("force_threshold",
+            [](const b2WeldJointDef& self){ return self.base.forceThreshold; },
+            [](b2WeldJointDef& self, float value){ self.base.forceThreshold = value; }
+        )
+        .def_property("torque_threshold",
+            [](const b2WeldJointDef& self){ return self.base.torqueThreshold; },
+            [](b2WeldJointDef& self, float value){ self.base.torqueThreshold = value; }
+        )
+        .def_property("constraint_hertz",
+            [](const b2WeldJointDef& self){ return self.base.constraintHertz; },
+            [](b2WeldJointDef& self, float value){ self.base.constraintHertz = value; }
+        )
+        .def_property("constraint_damping_ratio",
+            [](const b2WeldJointDef& self){ return self.base.constraintDampingRatio; },
+            [](b2WeldJointDef& self, float value){ self.base.constraintDampingRatio = value; }
+        )
+        .def_property("draw_scale",
+            [](const b2WeldJointDef& self){ return self.base.drawScale; },
+            [](b2WeldJointDef& self, float value){ self.base.drawScale = value; }
+        )
+        .def_property("collide_connected",
+            [](const b2WeldJointDef& self){ return self.base.collideConnected; },
+            [](b2WeldJointDef& self, _Bool value){ self.base.collideConnected = value; }
+        )
         .def_readwrite("linear_hertz", &b2WeldJointDef::linearHertz)
         .def_readwrite("angular_hertz", &b2WeldJointDef::angularHertz)
         .def_readwrite("linear_damping_ratio", &b2WeldJointDef::linearDampingRatio)
         .def_readwrite("angular_damping_ratio", &b2WeldJointDef::angularDampingRatio)
         .def_readwrite("internal_value", &b2WeldJointDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2WeldJointDef obj = b2DefaultWeldJointDef();
+            static const std::unordered_set<std::string> allowed_keys = {"user_data", "body_id_a", "body_id_b", "local_frame_a", "local_frame_b", "force_threshold", "torque_threshold", "constraint_hertz", "constraint_damping_ratio", "draw_scale", "collide_connected", "linear_hertz", "angular_hertz", "linear_damping_ratio", "angular_damping_ratio", "internal_value"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.base.userData = value;
+            }
+            if (kwargs.contains("body_id_a"))
+            {
+                auto value = kwargs["body_id_a"].cast<struct b2BodyId>();
+                obj.base.bodyIdA = value;
+            }
+            if (kwargs.contains("body_id_b"))
+            {
+                auto value = kwargs["body_id_b"].cast<struct b2BodyId>();
+                obj.base.bodyIdB = value;
+            }
+            if (kwargs.contains("local_frame_a"))
+            {
+                auto value = kwargs["local_frame_a"].cast<struct b2Transform>();
+                obj.base.localFrameA = value;
+            }
+            if (kwargs.contains("local_frame_b"))
+            {
+                auto value = kwargs["local_frame_b"].cast<struct b2Transform>();
+                obj.base.localFrameB = value;
+            }
+            if (kwargs.contains("force_threshold"))
+            {
+                auto value = kwargs["force_threshold"].cast<float>();
+                obj.base.forceThreshold = value;
+            }
+            if (kwargs.contains("torque_threshold"))
+            {
+                auto value = kwargs["torque_threshold"].cast<float>();
+                obj.base.torqueThreshold = value;
+            }
+            if (kwargs.contains("constraint_hertz"))
+            {
+                auto value = kwargs["constraint_hertz"].cast<float>();
+                obj.base.constraintHertz = value;
+            }
+            if (kwargs.contains("constraint_damping_ratio"))
+            {
+                auto value = kwargs["constraint_damping_ratio"].cast<float>();
+                obj.base.constraintDampingRatio = value;
+            }
+            if (kwargs.contains("draw_scale"))
+            {
+                auto value = kwargs["draw_scale"].cast<float>();
+                obj.base.drawScale = value;
+            }
+            if (kwargs.contains("collide_connected"))
+            {
+                auto value = kwargs["collide_connected"].cast<_Bool>();
+                obj.base.collideConnected = value;
+            }
+            if (kwargs.contains("linear_hertz"))
+            {
+                auto value = kwargs["linear_hertz"].cast<float>();
+                obj.linearHertz = value;
+            }
+            if (kwargs.contains("angular_hertz"))
+            {
+                auto value = kwargs["angular_hertz"].cast<float>();
+                obj.angularHertz = value;
+            }
+            if (kwargs.contains("linear_damping_ratio"))
+            {
+                auto value = kwargs["linear_damping_ratio"].cast<float>();
+                obj.linearDampingRatio = value;
+            }
+            if (kwargs.contains("angular_damping_ratio"))
+            {
+                auto value = kwargs["angular_damping_ratio"].cast<float>();
+                obj.angularDampingRatio = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2WeldJointDef &self) {
+            std::stringstream ss;
+            ss << "WeldJointDef(";
+            ss << "base=" << py::repr(py::cast(self.base)).cast<std::string>();
+            ss << ", ";
+            ss << "linearHertz=" << py::repr(py::cast(self.linearHertz)).cast<std::string>();
+            ss << ", ";
+            ss << "angularHertz=" << py::repr(py::cast(self.angularHertz)).cast<std::string>();
+            ss << ", ";
+            ss << "linearDampingRatio=" << py::repr(py::cast(self.linearDampingRatio)).cast<std::string>();
+            ss << ", ";
+            ss << "angularDampingRatio=" << py::repr(py::cast(self.angularDampingRatio)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d
@@ -1034,7 +1437,50 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
     py::class_<b2WheelJointDef> _WheelJointDef(_box2d, "WheelJointDef");
     registry.on(_box2d, "WheelJointDef", _WheelJointDef);
         _WheelJointDef
-        .def_readwrite("base", &b2WheelJointDef::base)
+        .def_property("user_data",
+            [](const b2WheelJointDef& self){ return self.base.userData; },
+            [](b2WheelJointDef& self, void * value){ self.base.userData = value; }
+        )
+        .def_property("body_id_a",
+            [](const b2WheelJointDef& self){ return self.base.bodyIdA; },
+            [](b2WheelJointDef& self, struct b2BodyId value){ self.base.bodyIdA = value; }
+        )
+        .def_property("body_id_b",
+            [](const b2WheelJointDef& self){ return self.base.bodyIdB; },
+            [](b2WheelJointDef& self, struct b2BodyId value){ self.base.bodyIdB = value; }
+        )
+        .def_property("local_frame_a",
+            [](const b2WheelJointDef& self){ return self.base.localFrameA; },
+            [](b2WheelJointDef& self, struct b2Transform value){ self.base.localFrameA = value; }
+        )
+        .def_property("local_frame_b",
+            [](const b2WheelJointDef& self){ return self.base.localFrameB; },
+            [](b2WheelJointDef& self, struct b2Transform value){ self.base.localFrameB = value; }
+        )
+        .def_property("force_threshold",
+            [](const b2WheelJointDef& self){ return self.base.forceThreshold; },
+            [](b2WheelJointDef& self, float value){ self.base.forceThreshold = value; }
+        )
+        .def_property("torque_threshold",
+            [](const b2WheelJointDef& self){ return self.base.torqueThreshold; },
+            [](b2WheelJointDef& self, float value){ self.base.torqueThreshold = value; }
+        )
+        .def_property("constraint_hertz",
+            [](const b2WheelJointDef& self){ return self.base.constraintHertz; },
+            [](b2WheelJointDef& self, float value){ self.base.constraintHertz = value; }
+        )
+        .def_property("constraint_damping_ratio",
+            [](const b2WheelJointDef& self){ return self.base.constraintDampingRatio; },
+            [](b2WheelJointDef& self, float value){ self.base.constraintDampingRatio = value; }
+        )
+        .def_property("draw_scale",
+            [](const b2WheelJointDef& self){ return self.base.drawScale; },
+            [](b2WheelJointDef& self, float value){ self.base.drawScale = value; }
+        )
+        .def_property("collide_connected",
+            [](const b2WheelJointDef& self){ return self.base.collideConnected; },
+            [](b2WheelJointDef& self, _Bool value){ self.base.collideConnected = value; }
+        )
         .def_readwrite("enable_spring", &b2WheelJointDef::enableSpring)
         .def_readwrite("hertz", &b2WheelJointDef::hertz)
         .def_readwrite("damping_ratio", &b2WheelJointDef::dampingRatio)
@@ -1045,6 +1491,152 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("max_motor_torque", &b2WheelJointDef::maxMotorTorque)
         .def_readwrite("motor_speed", &b2WheelJointDef::motorSpeed)
         .def_readwrite("internal_value", &b2WheelJointDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2WheelJointDef obj = b2DefaultWheelJointDef();
+            static const std::unordered_set<std::string> allowed_keys = {"user_data", "body_id_a", "body_id_b", "local_frame_a", "local_frame_b", "force_threshold", "torque_threshold", "constraint_hertz", "constraint_damping_ratio", "draw_scale", "collide_connected", "enable_spring", "hertz", "damping_ratio", "enable_limit", "lower_translation", "upper_translation", "enable_motor", "max_motor_torque", "motor_speed", "internal_value"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.base.userData = value;
+            }
+            if (kwargs.contains("body_id_a"))
+            {
+                auto value = kwargs["body_id_a"].cast<struct b2BodyId>();
+                obj.base.bodyIdA = value;
+            }
+            if (kwargs.contains("body_id_b"))
+            {
+                auto value = kwargs["body_id_b"].cast<struct b2BodyId>();
+                obj.base.bodyIdB = value;
+            }
+            if (kwargs.contains("local_frame_a"))
+            {
+                auto value = kwargs["local_frame_a"].cast<struct b2Transform>();
+                obj.base.localFrameA = value;
+            }
+            if (kwargs.contains("local_frame_b"))
+            {
+                auto value = kwargs["local_frame_b"].cast<struct b2Transform>();
+                obj.base.localFrameB = value;
+            }
+            if (kwargs.contains("force_threshold"))
+            {
+                auto value = kwargs["force_threshold"].cast<float>();
+                obj.base.forceThreshold = value;
+            }
+            if (kwargs.contains("torque_threshold"))
+            {
+                auto value = kwargs["torque_threshold"].cast<float>();
+                obj.base.torqueThreshold = value;
+            }
+            if (kwargs.contains("constraint_hertz"))
+            {
+                auto value = kwargs["constraint_hertz"].cast<float>();
+                obj.base.constraintHertz = value;
+            }
+            if (kwargs.contains("constraint_damping_ratio"))
+            {
+                auto value = kwargs["constraint_damping_ratio"].cast<float>();
+                obj.base.constraintDampingRatio = value;
+            }
+            if (kwargs.contains("draw_scale"))
+            {
+                auto value = kwargs["draw_scale"].cast<float>();
+                obj.base.drawScale = value;
+            }
+            if (kwargs.contains("collide_connected"))
+            {
+                auto value = kwargs["collide_connected"].cast<_Bool>();
+                obj.base.collideConnected = value;
+            }
+            if (kwargs.contains("enable_spring"))
+            {
+                auto value = kwargs["enable_spring"].cast<_Bool>();
+                obj.enableSpring = value;
+            }
+            if (kwargs.contains("hertz"))
+            {
+                auto value = kwargs["hertz"].cast<float>();
+                obj.hertz = value;
+            }
+            if (kwargs.contains("damping_ratio"))
+            {
+                auto value = kwargs["damping_ratio"].cast<float>();
+                obj.dampingRatio = value;
+            }
+            if (kwargs.contains("enable_limit"))
+            {
+                auto value = kwargs["enable_limit"].cast<_Bool>();
+                obj.enableLimit = value;
+            }
+            if (kwargs.contains("lower_translation"))
+            {
+                auto value = kwargs["lower_translation"].cast<float>();
+                obj.lowerTranslation = value;
+            }
+            if (kwargs.contains("upper_translation"))
+            {
+                auto value = kwargs["upper_translation"].cast<float>();
+                obj.upperTranslation = value;
+            }
+            if (kwargs.contains("enable_motor"))
+            {
+                auto value = kwargs["enable_motor"].cast<_Bool>();
+                obj.enableMotor = value;
+            }
+            if (kwargs.contains("max_motor_torque"))
+            {
+                auto value = kwargs["max_motor_torque"].cast<float>();
+                obj.maxMotorTorque = value;
+            }
+            if (kwargs.contains("motor_speed"))
+            {
+                auto value = kwargs["motor_speed"].cast<float>();
+                obj.motorSpeed = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2WheelJointDef &self) {
+            std::stringstream ss;
+            ss << "WheelJointDef(";
+            ss << "base=" << py::repr(py::cast(self.base)).cast<std::string>();
+            ss << ", ";
+            ss << "enableSpring=" << py::repr(py::cast(self.enableSpring)).cast<std::string>();
+            ss << ", ";
+            ss << "hertz=" << py::repr(py::cast(self.hertz)).cast<std::string>();
+            ss << ", ";
+            ss << "dampingRatio=" << py::repr(py::cast(self.dampingRatio)).cast<std::string>();
+            ss << ", ";
+            ss << "enableLimit=" << py::repr(py::cast(self.enableLimit)).cast<std::string>();
+            ss << ", ";
+            ss << "lowerTranslation=" << py::repr(py::cast(self.lowerTranslation)).cast<std::string>();
+            ss << ", ";
+            ss << "upperTranslation=" << py::repr(py::cast(self.upperTranslation)).cast<std::string>();
+            ss << ", ";
+            ss << "enableMotor=" << py::repr(py::cast(self.enableMotor)).cast<std::string>();
+            ss << ", ";
+            ss << "maxMotorTorque=" << py::repr(py::cast(self.maxMotorTorque)).cast<std::string>();
+            ss << ", ";
+            ss << "motorSpeed=" << py::repr(py::cast(self.motorSpeed)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d

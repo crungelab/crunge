@@ -67,6 +67,15 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2Circle obj{};
+            static const std::unordered_set<std::string> allowed_keys = {"center", "radius"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
             if (kwargs.contains("center"))
             {
                 auto value = kwargs["center"].cast<struct b2Vec2>();

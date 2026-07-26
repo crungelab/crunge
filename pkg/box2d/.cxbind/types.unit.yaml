@@ -68,6 +68,9 @@ specs:
         __repr__:
           auto: true
 
+  'field@b2DistanceJointDef::base':
+    flatten: true
+
   'struct@b2RevoluteJointDef':
     extra:
       methods:
@@ -77,6 +80,35 @@ specs:
 
         __repr__:
           auto: true
+
+  'field@b2RevoluteJointDef::base':
+    flatten: true
+
+  'struct@b2WeldJointDef':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: function@b2DefaultWeldJointDef
+
+        __repr__:
+          auto: true
+
+  'field@b2WeldJointDef::base':
+    flatten: true
+
+  'struct@b2WheelJointDef':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: function@b2DefaultWheelJointDef
+
+        __repr__:
+          auto: true
+
+  'field@b2WheelJointDef::base':
+    flatten: true
 
   'struct@b2Filter':
     extra:

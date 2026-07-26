@@ -9,8 +9,11 @@ from crunge import imgui
 from crunge import engine
 
 from crunge.engine.resource.resource_manager import ResourceManager
+from crunge.engine.scheduler import Scheduler
 from crunge.engine.d2.scene import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
+
+from .. import globe
 
 from .demo_view import DemoView
 
@@ -23,6 +26,9 @@ class Demo(engine.App):
             title=self.__class__.__name__,
             resizable=True,
         )
+        globe.screen = self
+        self.controller_stack = []
+        self.avatar_stack = []
 
         self.resource_root = (
             Path(__file__).parent.parent.parent.parent.parent / "resources"
@@ -36,6 +42,41 @@ class Demo(engine.App):
     @property
     def camera(self) -> Camera2D:
         return self.view.camera
+
+    @property
+    def avatar(self):
+        return self.avatar_stack[-1]
+
+    def push_controller(self, controller):
+        def callback(delta_time):
+            self.controller = controller
+            self.controller_stack.append(controller)
+
+        Scheduler().schedule_once(callback, 0)
+
+    def pop_controller(self):
+        def callback(delta_time):
+            controller = self.controller_stack.pop()
+            logger.debug(f"Popping controller: {controller}")
+            self.controller = self.controller_stack[-1] if self.controller_stack else None
+            #self.controller_stack[-1].reset()
+
+        Scheduler().schedule_once(callback, 0)
+
+    def push_avatar(self, avatar):
+        if avatar is None:
+            raise ValueError("Avatar cannot be None")
+        self.avatar_stack.append(avatar)
+        globe.avatar = avatar
+        if avatar is not None:
+            self.push_controller(avatar.control())
+
+    def pop_avatar(self):
+        self.avatar_stack.pop()
+        avatar = self.avatar
+        globe.avatar = avatar
+        self.pop_controller()
+        return avatar
 
     def reset(self):
         super().reset()

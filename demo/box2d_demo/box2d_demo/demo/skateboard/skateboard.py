@@ -15,7 +15,7 @@ from .floor import Floor
 from ...characters import Skateboard
 
 
-class BoxesDemo(PhysicsDemo):
+class SkateboardDemo(PhysicsDemo):
     def reset(self):
         super().reset()
         self.create_floor()
@@ -48,12 +48,13 @@ class BoxesDemo(PhysicsDemo):
         x = width_units / 2
         y = 0
         position = glm.vec2(x, y)
-        floor = Floor(position, glm.vec2(width_units, 2))  # 2 units thick, not 2 px
+        floor = Floor(position, glm.vec2(width_units * 5, 2))  # 2 units thick, not 2 px
         floor.create()
         self.scene.attach(floor)
 
     def create_avatar(self, position):
-        self.avatar = Skateboard(position)
+        #self.avatar = Skateboard(position)
+        self.push_avatar(Skateboard(position))
         self.scene.attach(self.avatar)
         self.controller = self.avatar.control() if self.avatar else None
         '''
@@ -68,7 +69,7 @@ class BoxesDemo(PhysicsDemo):
     # ------------------------------------------------------------------
 
     def _draw(self):
-        imgui.begin("Boxes Demo")
+        imgui.begin("Skateboard Demo")
         imgui.text("Click empty space to create boxes")
         imgui.text("Click & drag boxes to move them")
 
@@ -88,7 +89,7 @@ class BoxesDemo(PhysicsDemo):
 
 
 def main():
-    BoxesDemo().run()
+    SkateboardDemo().run()
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ from crunge import imgui
 from crunge.engine.resource.resource_manager import ResourceManager
 
 from ...map.map_loader import MapLoader
-from ...characters import Avatar
+from ...characters import Avatar, Skateboard
 from ..physics_demo import PhysicsDemo
 
 from .ball import Ball
@@ -42,14 +42,13 @@ class PlatformerDemo(PhysicsDemo):
 
         self.character_layer = self.scene.get_layer("pc")
 
-        self.avatar = None
         for node in self.character_layer.root.children:
             logger.debug(f"Checking node: {node}")
             if isinstance(node, Avatar):
-                self.avatar = node
+            #if isinstance(node, Skateboard):
+                avatar = node
                 break
-
-        self.controller = self.avatar.control() if self.avatar else None
+        self.push_avatar(avatar)
 
 
     '''

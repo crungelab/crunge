@@ -10,13 +10,12 @@ specs:
         __repr__:
           auto: true
 
-  #'struct@b2Rot': {}
-
   'struct@b2Transform':
+    identity: b2Transform_identity
     extra:
       methods:
         __init__:
-          gen_args: true
+          gen_kwargs: true
         __repr__:
           auto: true
 

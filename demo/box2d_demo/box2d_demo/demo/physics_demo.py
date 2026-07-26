@@ -85,6 +85,22 @@ class PhysicsDemo(ScrollingDemo):
         logger.debug(f"Mouse body: {self._mouse_body}, index: {self._mouse_body.index1}")
 
         joint_def = box2d.DistanceJointDef(
+            body_id_a = self._mouse_body,
+            body_id_b = body,
+            #local_frame_a.p = self._mouse_body.get_local_point(target)
+            #local_frame_b.p = body.get_local_point(target)
+
+            length=0.25,
+            enable_spring=True,
+            hertz=2.5,
+            damping_ratio=0.5,
+        )
+
+        joint_def.local_frame_a.p = self._mouse_body.get_local_point(target)
+        joint_def.local_frame_b.p = body.get_local_point(target)
+
+        '''
+        joint_def = box2d.DistanceJointDef(
             length=0.25,
             enable_spring=True,
             hertz=2.5,
@@ -95,6 +111,7 @@ class PhysicsDemo(ScrollingDemo):
 
         joint_def.base.local_frame_a.p = self._mouse_body.get_local_point(target)
         joint_def.base.local_frame_b.p = body.get_local_point(target)
+        '''
 
         self._mouse_joint = self.world.create_distance_joint(joint_def)
 
