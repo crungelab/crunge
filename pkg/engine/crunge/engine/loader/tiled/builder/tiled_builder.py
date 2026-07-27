@@ -19,7 +19,11 @@ class TiledBuilder:
     @property
     def map(self):
         return self.context.map
-    
+
+    @property
+    def current_layer(self) -> SceneLayer:
+        return self.context.current_layer
+
     def maybe_wrap(self, tmx_layer: tmx.Layer, layer: SceneLayer):
         tmx_parallax_factor = tmx_layer.get_parallax_factor()
         parallax_factor = glm.vec2(tmx_parallax_factor.x, tmx_parallax_factor.y)

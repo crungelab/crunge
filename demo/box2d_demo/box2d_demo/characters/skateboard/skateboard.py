@@ -45,14 +45,15 @@ CHASSIS_MASS = 2
 X_PAD = 0.3
 Y_PAD = 0.25
 
-#SPEED_DELTA = 1.0
-SPEED_DELTA = 0.5
+SPEED_DELTA = 1.0
+#SPEED_DELTA = 0.5
 MAX_SPEED = 100.0
 
 # Box2D v3's revolute joint has a built-in motor, so there's no separate
 # "max_force" concept for the joint itself - this becomes max_motor_torque.
 #MAX_MOTOR_TORQUE = 2000.0
-MAX_MOTOR_TORQUE = 20.0
+#MAX_MOTOR_TORQUE = 20.0
+MAX_MOTOR_TORQUE = 100.0
 
 sprite_loader = SpriteLoader(sprite_builder=CollidableSpriteBuilder())
 

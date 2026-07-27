@@ -65,8 +65,16 @@ class Base:
 
     @property
     def gfx(self):
+        if globals.gfx is None:
+            return Gfx()
+        return globals.gfx
+
+    '''
+    @property
+    def gfx(self):
         #return globals.gfx
         return Gfx()
+    '''
 
     @property
     def instance(self):

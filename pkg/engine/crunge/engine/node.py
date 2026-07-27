@@ -104,7 +104,6 @@ class Node(Dispatcher, Generic[T_Node]):
     def remove_child(self, child: "Node[T_Node]"):
         child.on_removed()
         child.parent = None
-        # if child in self.children:
         self.children.remove(child)
 
     def on_removed(self):

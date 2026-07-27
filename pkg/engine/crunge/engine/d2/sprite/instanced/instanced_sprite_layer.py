@@ -28,6 +28,8 @@ class InstancedSpriteLayer(GraphLayer2D):
         self.vu_group.draw()
 
     def attach(self, node: Node2D) -> None:
+        if node.vu is None:
+            return
         self.vu_group.append(node.vu)
         super().attach(node)
 

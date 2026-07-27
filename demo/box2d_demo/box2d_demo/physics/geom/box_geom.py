@@ -23,7 +23,7 @@ class BoxGeom(Geom):
         transform: box2d.Transform = None,
         clip: Rect2 = None,
     ):
-        logger.debug(f"body: {node.body} width: {node.width}, height: {node.height}")
+        logger.debug(f"BoxGeom node_class={node.__class__.__name__} body={node.body} width={node.width}, height={node.height}")
         shapes = []
         size = node.size
         half_size = size * 0.5
