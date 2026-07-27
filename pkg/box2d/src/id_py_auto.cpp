@@ -412,6 +412,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("def")
             )
         .def_property("user_data", &Body_GetUserData, &Body_SetUserData)
+        .def_property("mass_data", &b2Body_GetMassData, &b2Body_SetMassData)
         .def_property("position", &b2Body_GetPosition, &Body_SetPosition)
         .def_property_readonly("rotation", &b2Body_GetRotation)
         .def_property_readonly("angle", &Body_GetAngle)

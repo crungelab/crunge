@@ -16,7 +16,8 @@ from .. import globe
 
 from ..character.controller import DynamicCharacterController
 
-PLAYER_MASS = 70
+#PLAYER_MASS = 70
+PLAYER_MASS = 20
 
 
 class DynamicCharacter(DynamicEntity2D):
@@ -54,7 +55,17 @@ class DynamicCharacter(DynamicEntity2D):
         #self.body.position = b2.Vec2(*self.position)
         #self.angle = node.angle
         # logger.debug('on_mount')
-        logger.debug(f"shapes: {self.shapes}")
+        #logger.debug(f"shapes: {self.shapes}")
+        '''
+        mass_data = self.body.mass_data
+        logger.debug(f"mass data: {mass_data}")
+        logger.debug(f"mass: {mass_data.mass}")
+        logger.debug(f"center of mass: {mass_data.center}")
+        logger.debug(f"inertia: {mass_data.rotational_inertia}")
+        com = mass_data.center
+        mass_data.center = b2.Vec2(com.x, com.y - 1)
+        self.body.mass_data = mass_data
+        '''
 
     def on_dismount(self, node: PhysicsEntity2D, point: glm.vec2):
         self.motion_state = MotionState.FALLING

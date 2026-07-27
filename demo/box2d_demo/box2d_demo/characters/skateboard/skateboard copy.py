@@ -15,27 +15,9 @@ from ...util import debounce
 
 from .skateboard_controller import SkateboardController
 
-# ---------------------------------------------------------------------------
-# ASSUMPTIONS ABOUT THE crunge.box2d SURFACE
-#
-# I don't have the exact signatures for your generated joint bindings in
-# front of me, so this file is written against the naming convention your
-# other box2d code already uses (e.g. `b2.shape_enable_contact_events(...)`,
-# `WorldDef`, `Vec2`) extrapolated to joints. Everything that's a guess is
-# marked with a "# ASSUMPTION" comment below - a quick find/replace should
-# get it lined up with whatever cxbind actually produced. The main things to
-# check:
-#   - physics_globe.physics_engine.world_id  (was `.space` under pymunk)
-#   - box2d.RevoluteJointDef / box2d.WeldJointDef field names
-#   - box2d.create_revolute_joint / create_weld_joint / destroy_joint
-#   - box2d.revolute_joint_enable_motor / _set_motor_speed
-#   - box2d.body_get_world_point / body_apply_linear_impulse
-#   - self.chassis.body.id  (assumed the entity's `.body` wrapper exposes
-#     the raw b2BodyId as `.id`)
-# ---------------------------------------------------------------------------
-
 WHEEL_RADIUS = 0.25
-WHEEL_MASS = 10.15
+#WHEEL_MASS = 10.15
+WHEEL_MASS = 2
 
 CHASSIS_WIDTH = 0.5
 CHASSIS_HEIGHT = 0.1
@@ -45,14 +27,15 @@ CHASSIS_MASS = 2
 X_PAD = 0.3
 Y_PAD = 0.25
 
-#SPEED_DELTA = 1.0
-SPEED_DELTA = 0.5
+SPEED_DELTA = 1.0
+#SPEED_DELTA = 0.5
 MAX_SPEED = 100.0
 
 # Box2D v3's revolute joint has a built-in motor, so there's no separate
 # "max_force" concept for the joint itself - this becomes max_motor_torque.
 #MAX_MOTOR_TORQUE = 2000.0
-MAX_MOTOR_TORQUE = 20.0
+#MAX_MOTOR_TORQUE = 20.0
+MAX_MOTOR_TORQUE = 100.0
 
 sprite_loader = SpriteLoader(sprite_builder=CollidableSpriteBuilder())
 
@@ -170,6 +153,7 @@ class Skateboard(PhysicsGroup2D):
         self.mountee.on_dismount(self.chassis, point)
         self.mountee = None
 
+    '''
     def _create(self):
         super()._create()
 
@@ -188,7 +172,7 @@ class Skateboard(PhysicsGroup2D):
         )
         wheel_anchor = box2d.Vec2(0, 0)  # ASSUMPTION
 
-        front_joint_def = box2d.WheelJointDef(
+        front_joint_def = box2d.RevoluteJointDef(
             body_id_a = self.chassis.body,
             body_id_b = self.front_wheel.body,
             local_frame_a = box2d.Transform(p=front_anchor_on_chassis),
@@ -199,7 +183,7 @@ class Skateboard(PhysicsGroup2D):
             max_motor_torque=MAX_MOTOR_TORQUE,
         )
 
-        back_joint_def = box2d.WheelJointDef(
+        back_joint_def = box2d.RevoluteJointDef(
             body_id_a = self.chassis.body,
             body_id_b = self.back_wheel.body,
             local_frame_a = box2d.Transform(p=back_anchor_on_chassis),
@@ -210,10 +194,10 @@ class Skateboard(PhysicsGroup2D):
             max_motor_torque=MAX_MOTOR_TORQUE,
         )
 
-        self.front_joint = box2d.create_wheel_joint(  # ASSUMPTION
+        self.front_joint = box2d.create_revolute_joint(  # ASSUMPTION
             world, front_joint_def
         )
-        self.back_joint = box2d.create_wheel_joint(  # ASSUMPTION
+        self.back_joint = box2d.create_revolute_joint(  # ASSUMPTION
             world, back_joint_def
         )
 
@@ -276,24 +260,23 @@ class Skateboard(PhysicsGroup2D):
         # object anymore - the "motor" now lives on the joint itself.
         self.front_motor = self.front_joint
         self.back_motor = self.motor = self.back_joint
-    '''
 
     def attach_motors(self):
         if self.motors_attached:
             return
-        box2d.wheel_joint_enable_motor(self.front_joint, True)  # ASSUMPTION
-        box2d.wheel_joint_enable_motor(self.back_joint, True)  # ASSUMPTION
-        box2d.wheel_joint_set_motor_speed(  # ASSUMPTION
+        box2d.revolute_joint_enable_motor(self.front_joint, True)  # ASSUMPTION
+        box2d.revolute_joint_enable_motor(self.back_joint, True)  # ASSUMPTION
+        box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
             self.front_joint, self.speed
         )
-        box2d.wheel_joint_set_motor_speed(self.back_joint, self.speed)  # ASSUMPTION
+        box2d.revolute_joint_set_motor_speed(self.back_joint, self.speed)  # ASSUMPTION
         self.motors_attached = True
 
     def detach_motors(self):
         if not self.motors_attached:
             return
-        box2d.wheel_joint_enable_motor(self.front_joint, False)  # ASSUMPTION
-        box2d.wheel_joint_enable_motor(self.back_joint, False)  # ASSUMPTION
+        box2d.revolute_joint_enable_motor(self.front_joint, False)  # ASSUMPTION
+        box2d.revolute_joint_enable_motor(self.back_joint, False)  # ASSUMPTION
         self.motors_attached = False
 
     def accelerate(self, rate=SPEED_DELTA):
@@ -304,10 +287,10 @@ class Skateboard(PhysicsGroup2D):
         if not self.motors_attached:
             self.attach_motors()
         else:
-            box2d.wheel_joint_set_motor_speed(  # ASSUMPTION
+            box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
                 self.front_joint, self.speed
             )
-            box2d.wheel_joint_set_motor_speed(  # ASSUMPTION
+            box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
                 self.back_joint, self.speed
             )
 
@@ -319,10 +302,10 @@ class Skateboard(PhysicsGroup2D):
         if not self.motors_attached:
             self.attach_motors()
         else:
-            box2d.wheel_joint_set_motor_speed(  # ASSUMPTION
+            box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
                 self.front_joint, self.speed
             )
-            box2d.wheel_joint_set_motor_speed(  # ASSUMPTION
+            box2d.revolute_joint_set_motor_speed(  # ASSUMPTION
                 self.back_joint, self.speed
             )
 

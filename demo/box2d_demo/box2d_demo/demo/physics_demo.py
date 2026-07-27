@@ -5,7 +5,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge import box2d
 
-from box2d_demo.physics import DynamicPhysicsEngine
+from box2d_demo.physics import PhysicsWorld2D
 
 from .scrolling_demo import ScrollingDemo
 from ..physics.world_debug_overlay import WorldDebugOverlay
@@ -18,14 +18,13 @@ class PhysicsDemo(ScrollingDemo):
         self.view.add_overlay(self.debug_overlay)
 
     def create_physics_engine(self):
-        self.world = DynamicPhysicsEngine()
+        self.world = PhysicsWorld2D()
         self.world.make_current()
 
     def reset(self):
         super().reset()
 
         self.debug_draw_enabled = False
-        #self.debug_draw = DebugDraw()
 
         self.create_physics_engine()
 
@@ -68,11 +67,7 @@ class PhysicsDemo(ScrollingDemo):
         circle = box2d.Circle(center=target, radius=0.2)
         proxy = box2d.make_proxy(circle.center, 1, circle.radius)
         self.world.overlap_shape(proxy, box2d.default_query_filter(), overlap_callback)
-        '''
-        hit = self.world.point_query_nearest(
-            target, max_distance=0.001, shape_filter=box2d.ShapeFilter()
-        )
-        '''
+
         if hit is None:
             return False
 

@@ -6,7 +6,7 @@ import glm
 from crunge import box2d
 
 from .constants import PT_DYNAMIC, GRAVITY
-from . import Physics, PhysicsWorld2D
+from . import Physics
 
 
 class DynamicPhysics(Physics):
@@ -24,7 +24,3 @@ class DynamicPhysics(Physics):
         body.user_data = node
 
         return body
-
-class DynamicPhysicsEngine(PhysicsWorld2D):
-    def __init__(self, gravity=GRAVITY, iterations=35):
-        super().__init__(gravity=gravity, iterations=iterations)

@@ -23,6 +23,9 @@ specs:
         user_data:
           setter: "Body_SetUserData"
           getter: "Body_GetUserData"
+        mass_data:
+          setter: "b2Body_SetMassData"
+          getter: "b2Body_GetMassData"
         position:
           setter: "Body_SetPosition"
           getter: "b2Body_GetPosition"

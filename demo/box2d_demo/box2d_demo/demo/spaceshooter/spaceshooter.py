@@ -5,7 +5,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge import box2d as b2
 
-from box2d_demo.physics import DynamicPhysicsEngine
+from box2d_demo.physics import PhysicsWorld2D
 from crunge.engine.d2.settings_2d import Settings2D
 
 from ..physics_demo import PhysicsDemo
@@ -39,7 +39,7 @@ class SpaceShooter(PhysicsDemo):
         pass
 
     def create_physics_engine(self):
-        self.world = DynamicPhysicsEngine(gravity=glm.vec2(0, 0))
+        self.world = PhysicsWorld2D(gravity=glm.vec2(0, 0))
         self.world.make_current()
 
     

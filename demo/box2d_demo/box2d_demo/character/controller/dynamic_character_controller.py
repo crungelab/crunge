@@ -85,11 +85,8 @@ class DynamicCharacterController(CharacterController):
         self.avatar = avatar
 
         scene = Scene2D.get_current()
-        #self.character_layer = globe.scene.character_layer
         self.character_layer = scene.get_layer("pc")
-        #self.ground_layer = globe.scene.ground_layer
         self.ground_layer = scene.get_layer("ground")
-        #self.ladder_layer = globe.scene.ladder_layer
         self.ladder_layer = scene.get_layer("ladder")
 
         self._setup_feet_shape()
@@ -213,14 +210,6 @@ class DynamicCharacterController(CharacterController):
         self._foot_handler.clear()
 
     def _apply_ground_movement(self):
-        """
-        Box2D v3 has no per-shape surface_velocity like Chipmunk's conveyor
-        belt. Closest equivalent is b2Shape_SetTangentSpeed on the *ground*
-        shape being stood on (its friction "conveyor" runs along the
-        contact tangent), not on the foot itself. If you need true
-        Chipmunk-style surface_velocity-on-the-feet behavior, the usual
-        substitute is to directly drive body horizontal velocity instead:
-        """
         target_vx = 0
         if self.left_pressed:
             target_vx = -MAX_SPEED
