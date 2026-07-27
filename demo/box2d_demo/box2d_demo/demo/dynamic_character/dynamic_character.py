@@ -4,22 +4,20 @@ import glm
 from crunge import sdl
 from crunge import imgui
 
-from crunge.engine.scheduler import Scheduler
 from crunge.engine.d2.settings_2d import Settings2D
 
 from ..physics_demo import PhysicsDemo
 
-from .box import Box
 from .floor import Floor
 
 from ...characters import Avatar
 
 
-class BoxesDemo(PhysicsDemo):
+class DynamicCharacterDemo(PhysicsDemo):
     def reset(self):
         super().reset()
         self.create_floor()
-        self.create_avatar(glm.vec2(0, 3))
+        self.create_avatar()
 
     # ------------------------------------------------------------------
     # Input — extend base drag behaviour with box creation
@@ -39,9 +37,6 @@ class BoxesDemo(PhysicsDemo):
     # Scene helpers
     # ------------------------------------------------------------------
 
-    def create_box(self, position):
-        self.scene.attach(Box(position))
-
     def create_floor(self):
         ppu = Settings2D().ppu
         width_units = self.width / ppu  # viewport width, converted to units
@@ -52,23 +47,23 @@ class BoxesDemo(PhysicsDemo):
         floor.create()
         self.scene.attach(floor)
 
-    def create_avatar(self, position):
-        self.avatar = Avatar(position)
-        self.scene.attach(self.avatar)
-        self.controller = self.avatar.control() if self.avatar else None
-        '''
-        def callback(delta_time):
-            self.controller = self.avatar.control() if self.avatar else None
+    def create_avatar(self):
+        ppu = Settings2D().ppu
+        width_units = self.width / ppu  # viewport width, converted to units
+        x = width_units / 2
+        y = 1.5
+        position = glm.vec2(x, y)
 
-        Scheduler().schedule_once(callback, 0)
-        '''
+        avatar = Avatar(position)
+        self.scene.attach(avatar)
+        self.push_avatar(avatar)
 
     # ------------------------------------------------------------------
     # UI & update
     # ------------------------------------------------------------------
 
     def _draw(self):
-        imgui.begin("Boxes Demo")
+        imgui.begin("Dynamic Character Demo")
         imgui.text("Click empty space to create boxes")
         imgui.text("Click & drag boxes to move them")
 
@@ -81,14 +76,9 @@ class BoxesDemo(PhysicsDemo):
         imgui.end()
         super()._draw()
 
-    def update(self, delta_time: float):
-        self.world.update(1 / 60)
-        self.scene.update(delta_time)
-        super().update(delta_time)
-
 
 def main():
-    BoxesDemo().run()
+    DynamicCharacterDemo().run()
 
 
 if __name__ == "__main__":

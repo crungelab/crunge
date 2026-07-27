@@ -35,6 +35,10 @@ class PhysicsDemo(ScrollingDemo):
         self._mouse_joint = None
         self._dragged_body = None
 
+    def update(self, delta_time: float):
+        self.world.update(1 / 60)
+        super().update(delta_time)
+
     # ------------------------------------------------------------------
     # Drag helpers
     # ------------------------------------------------------------------

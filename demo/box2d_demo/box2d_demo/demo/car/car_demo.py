@@ -4,6 +4,7 @@ import glm
 from crunge import sdl
 from crunge import imgui
 
+from crunge.engine.scheduler import Scheduler
 from crunge.engine.d2.settings_2d import Settings2D
 
 from ..physics_demo import PhysicsDemo
@@ -13,11 +14,11 @@ from .floor import Floor
 from ...characters import Skateboard
 
 
-class SkateboardDemo(PhysicsDemo):
+class CarDemo(PhysicsDemo):
     def reset(self):
         super().reset()
         self.create_floor()
-        self.create_avatar()
+        self.create_avatar(glm.vec2(3, 3))
 
     # ------------------------------------------------------------------
     # Input — extend base drag behaviour with box creation
@@ -37,6 +38,9 @@ class SkateboardDemo(PhysicsDemo):
     # Scene helpers
     # ------------------------------------------------------------------
 
+    def create_box(self, position):
+        self.scene.attach(Box(position))
+
     def create_floor(self):
         ppu = Settings2D().ppu
         width_units = self.width / ppu  # viewport width, converted to units
@@ -47,16 +51,9 @@ class SkateboardDemo(PhysicsDemo):
         floor.create()
         self.scene.attach(floor)
 
-    def create_avatar(self):
-        ppu = Settings2D().ppu
-        width_units = self.width / ppu  # viewport width, converted to units
-        x = width_units / 2
-        y = 1.5
-        position = glm.vec2(x, y)
-
-        avatar = Skateboard(position)
-        self.push_avatar(avatar)
-        self.scene.attach(avatar)
+    def create_avatar(self, position):
+        self.push_avatar(Skateboard(position))
+        self.scene.attach(self.avatar)
 
     # ------------------------------------------------------------------
     # UI & update
@@ -78,7 +75,7 @@ class SkateboardDemo(PhysicsDemo):
 
 
 def main():
-    SkateboardDemo().run()
+    CarDemo().run()
 
 
 if __name__ == "__main__":

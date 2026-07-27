@@ -82,12 +82,6 @@ class PlatformerDemo(PhysicsDemo):
 
         super()._draw()
 
-    '''
-    def update(self, delta_time: float):
-        self.world.update(1 / 60)
-        super().update(delta_time)
-    '''
-
     def recenter_camera(self):
         if self.avatar is None:
             return
@@ -96,7 +90,6 @@ class PlatformerDemo(PhysicsDemo):
         
     def update(self, delta_time: float):
         self.update_camera(delta_time)
-        self.world.update(1 / 60)
         super().update(delta_time)
 
     def update_camera(self, delta_time: float = 1/60):

@@ -10,9 +10,6 @@ from ...map.map_loader import MapLoader
 from ...characters import Avatar
 from ..physics_demo import PhysicsDemo
 
-from .ball import Ball
-
-
 class PlatformerDemo(PhysicsDemo):
     def create_view(self):
         super().create_view()
@@ -30,10 +27,6 @@ class PlatformerDemo(PhysicsDemo):
             logger.debug(f"Creating box at {world}")
             self.create_ball(world)
 
-    def create_ball(self, position):
-        ball = Ball(position)
-        self.scene.attach(ball)
-
     def create_map(self):
         map_loader = MapLoader(self.scene)
 
@@ -42,32 +35,12 @@ class PlatformerDemo(PhysicsDemo):
 
         self.character_layer = self.scene.get_layer("pc")
 
-        self.avatar = None
         for node in self.character_layer.root.children:
             logger.debug(f"Checking node: {node}")
             if isinstance(node, Avatar):
-                self.avatar = node
+                self.push_avatar(node)
                 break
 
-        self.controller = self.avatar.control() if self.avatar else None
-
-
-    '''
-    def create_map(self):
-        context = BuilderContext(self.scene)
-
-        def create_node_cb(position, sprite, properties):
-            return Tile(position, sprite)
-
-        tile_layer_builder = DefaultTileLayerBuilder(
-            tile_builder=DefaultTileBuilder(create_node_cb=create_node_cb)
-        )
-        map_builder = DefaultMapBuilder(tile_layer_builder=tile_layer_builder)
-        map_loader = TiledMapLoader(context, map_builder=map_builder)
-
-        tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
-        map_loader.load(tmx_path)
-    '''
 
     def _draw(self):
         imgui.begin("Platformer Demo")
@@ -83,12 +56,6 @@ class PlatformerDemo(PhysicsDemo):
 
         super()._draw()
 
-    '''
-    def update(self, delta_time: float):
-        self.world.update(1 / 60)
-        super().update(delta_time)
-    '''
-
     def recenter_camera(self):
         if self.avatar is None:
             return
@@ -97,7 +64,6 @@ class PlatformerDemo(PhysicsDemo):
         
     def update(self, delta_time: float):
         self.update_camera(delta_time)
-        self.world.update(1 / 60)
         super().update(delta_time)
 
     def update_camera(self, delta_time: float = 1/60):

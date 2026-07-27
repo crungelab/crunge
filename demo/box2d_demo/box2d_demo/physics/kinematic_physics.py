@@ -26,17 +26,6 @@ class KinematicPhysics(Physics):
 
         return body
 
-    '''
-    def create_body(self, node):
-        logger.debug(f"KinematicPhysics.create_body: {node}")
-        position = node.position + self.position
-        body = box2d.Body(body_type=box2d.Body.KINEMATIC)
-        body.node = node
-        body.position = box2d.Vec2d(position.x, position.y)
-        body.rotation = box2d.make_rot(node.angle)
-        return body
-    '''
-
 """
 class KinematicCollisionHandler(CollisionHandler):
     def separate(self, arbiter, space, data):

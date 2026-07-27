@@ -25,23 +25,6 @@ class DynamicPhysics(Physics):
 
         return body
 
-    """
-    def create_body(self, node):
-        mass = node.mass
-        #logger.debug(f"mass: {mass}")
-        #moment = box2d.moment_for_box(mass, (self.width, self.height))
-        moment = node.geom.get_moment(node)
-        #logger.debug(f"moment: {moment}")
-        body = box2d.Body(mass, moment)
-        body.node = node
-
-        position = node.position + self.position
-        #logger.debug(f"position: {position}")
-        body.position = box2d.Vec2d(position.x, position.y)
-        body.angle = math.radians(node.angle)
-        return body
-    """
-
 class DynamicPhysicsEngine(PhysicsWorld2D):
     def __init__(self, gravity=GRAVITY, iterations=35):
         super().__init__(gravity=gravity, iterations=iterations)

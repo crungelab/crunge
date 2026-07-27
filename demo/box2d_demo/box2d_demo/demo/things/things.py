@@ -70,10 +70,6 @@ class ThingsDemo(PhysicsDemo):
 
         super()._draw()
 
-    def update(self, delta_time: float):
-        self.world.update(1 / 60)
-        super().update(delta_time)
-
 
 def main():
     ThingsDemo().run()

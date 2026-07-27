@@ -1,2 +1,2 @@
-from . import balls
-balls.main()
+from . import balls_demo
+balls_demo.main()

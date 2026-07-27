@@ -38,15 +38,6 @@ class BallsDemo(PhysicsDemo):
         floor.create()
         self.scene.attach(floor)
 
-    '''
-    def create_floor(self):
-        x = self.width / 2
-        y = -10
-        position = glm.vec2(x, y)
-        floor = Floor(position, glm.vec2(self.width, 20))
-        self.scene.attach(floor)
-    '''
-
     def _draw(self):
         imgui.begin("Balls Demo")
         imgui.text("Click to create balls")
@@ -60,10 +51,6 @@ class BallsDemo(PhysicsDemo):
         imgui.end()
         super()._draw()
 
-    def update(self, delta_time: float):
-        self.world.update(1 / 60)
-        self.scene.update(delta_time)
-        super().update(delta_time)
 
 def main():
     BallsDemo().run()

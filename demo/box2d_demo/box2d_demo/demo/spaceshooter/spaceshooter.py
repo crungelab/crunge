@@ -190,12 +190,11 @@ class SpaceShooter(PhysicsDemo):
         super()._draw()
 
     def update(self, delta_time: float):
-        self.world.update(delta_time)
+        super().update(delta_time)
+
         self.handle_collisions()
 
         if self.ship.destroyed:
-            #self.reset()
-            super().update(delta_time)
             return
 
         base_lerp_factor = 5.0
@@ -210,7 +209,6 @@ class SpaceShooter(PhysicsDemo):
         self.camera.position = self.update_camera(
             self.camera.position, self.camera_target, lerp_factor, delta_time
         )
-        super().update(delta_time)
 
     def calculate_target_position(
         self, camera_position, ship_position, threshold_distance
