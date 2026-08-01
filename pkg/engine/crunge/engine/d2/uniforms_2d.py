@@ -46,11 +46,12 @@ class ModelUniform(Structure):
         ("color", Vec4),
         ("rect", Vec4),
         ("texture_size", Vec2),
-        ("flip_h", c_uint32),
-        ("flip_v", c_uint32),
+        #("flip_h", c_uint32),
+        #("flip_v", c_uint32),
+        ("flip_flags", c_uint32),
         ("texture_layer", c_int),
         #("_pad1", c_float * 4),
-        ("_pad1", c_float * 3),
+        #("_pad1", c_float * 3),
     ]
 
 #assert sizeof(ModelUniform) % 16 == 0

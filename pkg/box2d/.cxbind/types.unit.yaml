@@ -48,6 +48,16 @@ specs:
         __repr__:
           auto: true
 
+  'struct@b2ChainDef':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          use: function@b2DefaultChainDef
+
+        __repr__:
+          auto: true
+
   'struct@b2SurfaceMaterial':
     extra:
       methods:

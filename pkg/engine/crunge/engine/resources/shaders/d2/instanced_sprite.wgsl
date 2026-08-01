@@ -28,8 +28,7 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) ins
         vertexIndex,
         model.spriteRect,
         model.textureSize,
-        model.flipH != 0u,
-        model.flipV != 0u
+        model.flipFlags
     );
 
     return VertexOutput(vert_pos, model.texture_layer, uv, model.color);

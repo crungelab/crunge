@@ -5,6 +5,7 @@ from crunge import tmx
 from crunge.engine.scene.layer.scene_layer import SceneLayer
 from crunge.engine.d2.scene.layer.parallax_layer_2d import ParallaxLayer2D
 from crunge.engine.d2.settings_2d import Settings2D
+from crunge.engine.d2.sprite import SpriteFlipFlags
 
 from .builder_context import BuilderContext
 
@@ -23,6 +24,16 @@ class TiledBuilder:
     @property
     def current_layer(self) -> SceneLayer:
         return self.context.current_layer
+
+    def translate_flip_flags(self, flip_flags: int) -> SpriteFlipFlags:
+        result = SpriteFlipFlags.NONE
+        if flip_flags & tmx.TileLayer.FlipFlag.HORIZONTAL:
+            result |= SpriteFlipFlags.HORIZONTAL
+        if flip_flags & tmx.TileLayer.FlipFlag.VERTICAL:
+            result |= SpriteFlipFlags.VERTICAL
+        if flip_flags & tmx.TileLayer.FlipFlag.DIAGONAL:
+            result |= SpriteFlipFlags.DIAGONAL
+        return result
 
     def maybe_wrap(self, tmx_layer: tmx.Layer, layer: SceneLayer):
         tmx_parallax_factor = tmx_layer.get_parallax_factor()

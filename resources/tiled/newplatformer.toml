@@ -1,0 +1,10 @@
+name = 'newplatformer'
+type = 'orthogonal'
+
+firstgid = 1
+source = '/home/kurt/Assets/Kenney Game Assets All-in-1 3.6.0/2D assets/New Platformer Pack/Sprites/Tiles/Double'
+tilewidth = 128
+tileheight = 128
+spacing = 0
+margin = 0
+columns = 12

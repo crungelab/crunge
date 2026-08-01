@@ -27,7 +27,8 @@ class BuilderContext:
         self.size = glm.ivec2()
         self.opacity: float = 1.0
 
-        self.sprites: list[Sprite] = []
+        #self.sprites: list[Sprite] = []
+        self.sprites: dict[tuple[int, int], Sprite] = {}
 
         self.push_layer(scene)
 
@@ -75,7 +76,8 @@ class BuilderContext:
         self.size = glm.ivec2(mw * tw, mh * th)
 
     def init_sprites(self, count: int):
-        self.sprites = [None] * count
+        #self.sprites = [None] * count
+        pass
 
     def push_layer(self, layer: SceneLayer):
         self.layer_stack.append(layer)

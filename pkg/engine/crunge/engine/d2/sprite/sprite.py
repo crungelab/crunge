@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, List
+from enum import IntFlag
 
 from loguru import logger
 import glm
@@ -21,6 +22,12 @@ if TYPE_CHECKING:
     from .sprite_group import SpriteGroup
 
 
+class SpriteFlipFlags(IntFlag):
+    NONE = 0
+    HORIZONTAL = 1
+    VERTICAL = 2
+    DIAGONAL = 4   # transpose — applied before H/V
+
 class SpriteMembership(ModelMembership):
     def __init__(
         self,
@@ -38,6 +45,30 @@ class SpriteMembership(ModelMembership):
         if self.bind_group is not None:
             self.bind_group.bind(pass_enc)
 
+def flip_points(points, size: glm.vec2, flip: SpriteFlipFlags):
+    # ASSUMPTION: points are centered on the sprite origin, Y-up, same units
+    # as `size`. See notes below if either differs.
+    w, h = size.x, size.y
+    ax, ay = w / h, h / w
+
+    out = []
+    for p in points:
+        x, y = p
+        if flip & SpriteFlipFlags.DIAGONAL:
+            x, y = -y * ax, -x * ay
+        if flip & SpriteFlipFlags.HORIZONTAL:
+            x = -x
+        if flip & SpriteFlipFlags.VERTICAL:
+            y = -y
+        out.append((x, y))
+
+    # Each flag is a reflection (negative determinant), so an odd number of
+    # them reverses polygon winding. H|V (180 rotation) and D|H (90 CW) are
+    # even and preserve it; H, V, D alone and H|V|D do not.
+    if bin(int(flip)).count("1") % 2 == 1:
+        out.reverse()
+
+    return out
 
 class Sprite(Model):
     def __init__(
@@ -48,7 +79,7 @@ class Sprite(Model):
         color=colors.WHITE,
         points=None,
         collision_rect: Rect2i = None,
-        #origin_offset: glm.vec2 = glm.vec2(0, 0),
+        flip_flags: SpriteFlipFlags = SpriteFlipFlags.NONE,
         texture_layer: int = 0,
         ppu: float = None,
     ) -> None:
@@ -56,15 +87,15 @@ class Sprite(Model):
         self._texture = texture
         if rect is None:
             rect = Rect2i(0, 0, texture.width, texture.height)
-        self.flip_h = False
-        self.flip_v = False
+        #self.flip_h = False
+        #self.flip_v = False
+        self.flip_flags = flip_flags
 
         self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
         self.texture_layer = texture_layer
         self._color = color
         self.points = points
         self.collision_rect = collision_rect
-        #self.origin_offset = origin_offset
         self.ppu = ppu if ppu is not None else Settings2D().ppu
 
         self.memberships: List[SpriteMembership] = []
@@ -75,6 +106,18 @@ class Sprite(Model):
 
         self._rect: Rect2i = None
         self.rect = rect
+
+    @property
+    def flip_h(self) -> bool:
+        return bool(self.flip_flags & SpriteFlipFlags.HORIZONTAL)
+
+    @property
+    def flip_v(self) -> bool:
+        return bool(self.flip_flags & SpriteFlipFlags.VERTICAL)
+
+    @property
+    def flip_d(self) -> bool:
+        return bool(self.flip_flags & SpriteFlipFlags.DIAGONAL)
 
     def __str__(self):
         return f"Sprite(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, rect={self.rect})"
@@ -137,40 +180,6 @@ class Sprite(Model):
         rect = self.collision_rect if self.collision_rect is not None else self.rect
         return glm.vec2(rect.size) / self.ppu
 
-    '''
-    @property
-    def size(self) -> glm.vec2:
-        size = glm.ivec2(0.0)
-        if self.collision_rect is not None:
-            size = self.collision_rect.size
-        else:
-            size = self.rect.size
-        return glm.vec2(size.x, size.y) / self.ppu
-    '''
-
-    '''
-    @property
-    def size(self) -> glm.vec2:
-        size = glm.vec2(self.rect.width, self.rect.height) / self.ppu
-        return size
-    '''
-
-    '''
-    @property
-    def size(self) -> glm.vec2:
-        if self.collision_rect is not None:
-            return self.collision_rect.size  / self.ppu
-        return self.rect.size  / self.ppu
-    '''
-
-    '''
-    @property
-    def size(self):
-        if self.collision_rect is not None:
-            return self.collision_rect.size
-        return self.rect.size
-    '''
-
     @property
     def width(self):
         return self.size.x
@@ -197,6 +206,16 @@ class Sprite(Model):
             self.points,
         )
 
+    def mirror(self, flip_flags: SpriteFlipFlags):
+        return self.clone().flip(flip_flags)
+
+    def flip(self, flip_flags: SpriteFlipFlags):
+        self.flip_flags = flip_flags
+        self.points = flip_points(self.points, self.size, flip_flags)
+        self.update_gpu()
+        return self
+
+    '''
     def mirror(self, horizontal: bool = False, vertical: bool = False):
         return self.clone().flip(horizontal, vertical)
 
@@ -205,6 +224,7 @@ class Sprite(Model):
         self.flip_v = vertical
         self.update_gpu()
         return self
+    '''
 
     def create_bind_groups(self):
         self.material_bind_group = MaterialBindGroup(
@@ -224,8 +244,9 @@ class Sprite(Model):
         uniform.rect = cast_vec4(glm.vec4(rect.x, rect.y, rect.width, rect.height))
         uniform.texture_size = cast_vec2(self.texture.size)
 
-        uniform.flip_h = 1 if self.flip_h else 0
-        uniform.flip_v = 1 if self.flip_v else 0
+        #uniform.flip_h = 1 if self.flip_h else 0
+        #uniform.flip_v = 1 if self.flip_v else 0
+        uniform.flip_flags = self.flip_flags
 
         uniform.texture_layer = self.texture_layer
 

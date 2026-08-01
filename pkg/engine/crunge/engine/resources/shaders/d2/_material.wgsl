@@ -2,8 +2,7 @@ struct Material {
     color : vec4<f32>,
     spriteRect : vec4<f32>, // x, y, width, height
     textureSize : vec2<f32>,
-    flipH : u32, // 1 = true, 0 = false
-    flipV : u32, // 1 = true, 0 = false
+    flipFlags : u32, // Bitwise combination of FLIP_H, FLIP_V, FLIP_D
 }
 
 //@group({{BindGroupIndex.MATERIAL}}) @binding({{MaterialBindIndex.MATERIAL_UNIFORM}}) var<uniform> material : Material;

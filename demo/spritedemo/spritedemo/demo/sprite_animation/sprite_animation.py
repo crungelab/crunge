@@ -4,7 +4,7 @@ import glm
 from crunge import imgui
 
 from ..demo import Demo
-from crunge.engine.d2.sprite import Sprite, SpriteVu, SpriteAnimation, SpriteAnimationFrame, SpriteAnimator
+from crunge.engine.d2.sprite import SpriteFlipFlags, SpriteVu, SpriteAnimation, SpriteAnimationFrame, SpriteAnimator
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
@@ -52,7 +52,7 @@ class SpriteAnimationDemo(Demo):
 
         animator.add_animation(walk_right)
 
-        walk_left = walk_right.mirror("walkLeft", horizontal=True)
+        walk_left = walk_right.mirror("walkLeft", SpriteFlipFlags.HORIZONTAL)
 
         animator.add_animation(walk_left)
 
@@ -67,7 +67,7 @@ class SpriteAnimationDemo(Demo):
 
         animator.add_animation(run_right)
 
-        run_left = run_right.mirror("runLeft", horizontal=True)
+        run_left = run_right.mirror("runLeft", SpriteFlipFlags.HORIZONTAL)
 
         animator.add_animation(run_left)
 

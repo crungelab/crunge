@@ -18,16 +18,20 @@ class DefaultTileLayerBuilder(TileLayerBuilder):
 
     def build(self, tmx_layer: tmx.TileLayer):
         size = self.context.size
-        #layer = GraphLayer2D(name=tmx_layer.name)
         sprite_group = DynamicSpriteGroup(1024).enable()
         self.layer = InstancedSpriteLayer(name=tmx_layer.name, count=1024, sprite_group=sprite_group)
         self.layer.bounds = Bounds2(0, 0, size.x, size.y)
         self.context.push_layer(self.layer)
         super().build(tmx_layer)
         self.build_runs(tmx_layer)
+        self.build_terrain(tmx_layer)
         self.context.pop_layer()
         self.context.current_layer_group.add_layer(self.layer)
 
     def build_runs(self, tmx_layer: tmx.TileLayer):
         # Placeholder for run-building logic, if needed.
+        pass
+
+    def build_terrain(self, tmx_layer: tmx.TileLayer):
+        # Placeholder for terrain-building logic, if needed.
         pass

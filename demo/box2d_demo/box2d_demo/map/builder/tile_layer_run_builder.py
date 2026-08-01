@@ -6,16 +6,15 @@ from crunge import tmx
 import crunge.engine.loader.tiled.builder as tiled_builder
 from crunge.engine.loader.tiled.builder import DefaultTileBuilder
 
-from ...objects.tile import Tile, BoxTile, GhostTile, RunColliderTile
+from ...objects.tile import Tile, GhostTile, RunColliderTile
 
-class TileLayerBuilder(tiled_builder.DefaultTileLayerBuilder):
+class TileLayerRunBuilder(tiled_builder.DefaultTileLayerBuilder):
 
-    RUN_TILE_TYPE = "dirtCenter"
+    RUN_TILE_TYPE = "terrain_stone_block_right"
 
     def __init__(self):
         def create_node_cb(position, sprite, properties: dict):
-            if properties.get("type") == "dirtCenter":
-                #return BoxTile(position, sprite)
+            if properties.get("type") == self.RUN_TILE_TYPE:
                 return GhostTile(position, sprite)
             return Tile(position, sprite)
 

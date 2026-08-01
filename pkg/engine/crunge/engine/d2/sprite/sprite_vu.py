@@ -98,46 +98,6 @@ class SpriteVu(Vu2D):
         self.bind(pass_enc)
         pass_enc.draw(4)
 
-    '''
-    def on_node_transform_change(self, node: Node2D) -> None:
-        matrix = glm.mat4(1.0)  # Identity matrix
-        matrix = glm.scale(
-            matrix,
-            glm.vec3(self.size.x , self.size.y, 1),
-        )
-
-        self.transform = node.transform * matrix
-        #logger.debug(f"Vu2D: {self.transform}")
-        self.bounds = node.bounds
-    '''
-
-    '''
-    def on_node_transform_change(self, node: Node2D) -> None:
-        position = node.position
-        #size = self.size
-        size = node.size
-        rotation = node.angle
-        scale = node.scale
-        depth = node.depth
-        offset = self.sprite.origin_offset if self.sprite is not None else glm.vec2(0)
-        rotated_offset = glm.rotate(glm.vec2(offset.x * scale.x, offset.y * scale.y), rotation)
-
-        x = position.x + rotated_offset.x
-        y = position.y + rotated_offset.y
-        z = depth
-
-        model = glm.mat4(1.0)  # Identity matrix
-        model = glm.translate(model, glm.vec3(x, y, z))
-        model = glm.rotate(model, rotation, glm.vec3(0, 0, 1))
-        model = glm.scale(
-            model,
-            glm.vec3(size.x * scale.x, size.y * scale.y, 1),
-        )
-        self.transform = model
-
-        self.bounds = node.bounds
-    '''
-
     def update_transform(self, position: glm.vec3, size: glm.vec2, rotation=0.0, scale=glm.vec3(1,1,1), depth=0.0):
         x = position.x
         y = position.y

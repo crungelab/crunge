@@ -42,4 +42,6 @@ class PhysicsWorld2D(box2d.World):
     def update(self, delta_time=1 / 60.0):
         # logger.debug('PhysicsEngine.update')
         #self.step(delta_time, 4)
-        self.step(delta_time, 8)
+        #self.step(delta_time, 8)
+        #self.step(delta_time, 16)
+        self.step(delta_time, 32)

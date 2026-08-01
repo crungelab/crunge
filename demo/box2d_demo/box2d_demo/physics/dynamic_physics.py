@@ -19,7 +19,12 @@ class DynamicPhysics(Physics):
         body_position = box2d.Vec2(position.x, position.y)
         rotation = box2d.make_rot(node.angle)
 
-        body_def = box2d.BodyDef(type=box2d.BodyType.DYNAMIC_BODY, position=body_position, rotation=rotation)
+        body_def = box2d.BodyDef(
+            type=box2d.BodyType.DYNAMIC_BODY,
+            position=body_position,
+            rotation=rotation,
+            #is_bullet=True,
+        )
         body = self.world.create_body(body_def)
         body.user_data = node
 

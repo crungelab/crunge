@@ -30,9 +30,21 @@ void DestroyShape(b2ShapeId shapeId, bool updateBodyMass) {
     b2DestroyShape(shapeId, updateBodyMass);
 }
 
+b2ChainId CreateChainFromPoints(
+    b2BodyId body,
+    const b2ChainDef& base_def,   // everything except points/count
+    const std::vector<b2Vec2>& points)
+{
+    b2ChainDef def = base_def;
+    def.points = points.data();
+    def.count = static_cast<int32_t>(points.size());
+    return b2CreateChain(body, &def);
+}
+
 void init_id_py(py::module &_box2d, Registry &registry) {
     PYEXTEND_BEGIN(b2BodyId, Body)
     _Body.def("destroy", &DestroyBody)
+         .def("create_chain_from_points", &CreateChainFromPoints, py::arg("base_def"), py::arg("points"))
     ;
     PYEXTEND_END
 

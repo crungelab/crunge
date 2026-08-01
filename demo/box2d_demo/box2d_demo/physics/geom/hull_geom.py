@@ -1,7 +1,8 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Tuple
+
+import math
 
 from loguru import logger
-
 import glm
 
 from crunge import box2d
@@ -14,8 +15,6 @@ from .poly_geom import PolyGeom
 
 SLOP = 0.01
 
-import math
-from typing import List, Tuple
 
 MAX_POLY_VERTS = 8  # Box2D default: B2_MAX_POLYGON_VERTICES
 

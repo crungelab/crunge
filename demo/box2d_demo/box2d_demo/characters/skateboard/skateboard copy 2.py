@@ -38,11 +38,11 @@ MAX_SPEED = 16000.0
 # "max_force" concept for the joint itself - this becomes max_motor_torque.
 # MAX_MOTOR_TORQUE = 4000.0
 # MAX_MOTOR_TORQUE = 16000.0
-#MAX_MOTOR_TORQUE = 16000.0
+MAX_MOTOR_TORQUE = 16000.0
 # MAX_MOTOR_TORQUE = 20.0
 # MAX_MOTOR_TORQUE = 100.0
 # MAX_MOTOR_TORQUE = 500.0
-MAX_MOTOR_TORQUE = 1000.0
+# MAX_MOTOR_TORQUE = 1000.0
 
 sprite_loader = SpriteLoader(sprite_builder=CollidableSpriteBuilder())
 
@@ -59,8 +59,7 @@ class Wheel(DynamicEntity2D):
 
     def add_shape(self, shape):
         # shape.set_density(WHEEL_MASS / (4/3 * 3.14159 * WHEEL_RADIUS**3), True)
-        #shape.set_density(0.01, True)
-        shape.set_density(0.1, True)
+        shape.set_density(0.01, True)
         pass
 
     @classmethod
@@ -80,8 +79,7 @@ class Chassis(DynamicEntity2D):
 
     def add_shape(self, shape):
         # shape.set_density(CHASSIS_MASS / (CHASSIS_WIDTH * CHASSIS_HEIGHT), True)
-        #shape.set_density(0.5, True)
-        shape.set_density(2, True)
+        shape.set_density(0.5, True)
 
     @classmethod
     def produce(self, position=glm.vec2()):
@@ -188,9 +186,7 @@ class Skateboard(PhysicsGroup2D):
             enable_motor=True,
             motor_speed=self.speed,
             max_motor_torque=MAX_MOTOR_TORQUE,
-            #enable_spring=True,
-            #damping_ratio=10.0,
-            #hertz=1.0,
+            #damping_ratio=1.0,
         )
 
         back_joint_def = box2d.RevoluteJointDef(
@@ -201,9 +197,7 @@ class Skateboard(PhysicsGroup2D):
             enable_motor=True,
             motor_speed=self.speed,
             max_motor_torque=MAX_MOTOR_TORQUE,
-            #enable_spring=True,
-            #damping_ratio=10.0,
-            #hertz=1.0,
+            #damping_ratio=1.0,
         )
 
         self.front_joint = box2d.create_revolute_joint(  # ASSUMPTION
@@ -235,7 +229,6 @@ class Skateboard(PhysicsGroup2D):
         box2d.revolute_joint_enable_motor(self.back_joint, False)
         self.motors_attached = False
 
-    """
     def accelerate(self, rate=SPEED_DELTA):
         speed = self.speed + rate
         if speed > MAX_SPEED:
@@ -288,6 +281,7 @@ class Skateboard(PhysicsGroup2D):
             box2d.revolute_joint_set_motor_speed(
                 self.back_joint, self.speed
             )
+    """
 
     def coast(self):
         self.detach_motors()

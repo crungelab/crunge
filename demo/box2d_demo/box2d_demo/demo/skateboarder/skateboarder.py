@@ -37,7 +37,7 @@ class PlatformerDemo(PhysicsDemo):
     def create_map(self):
         map_loader = MapLoader(self.scene)
 
-        tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
+        tmx_path = ResourceManager().resolve_path(":resources:/tiled/skateboarder.tmx")
         map_loader.load(tmx_path)
 
         self.character_layer = self.scene.get_layer("pc")
@@ -50,23 +50,6 @@ class PlatformerDemo(PhysicsDemo):
                 break
         self.push_avatar(avatar)
 
-
-    '''
-    def create_map(self):
-        context = BuilderContext(self.scene)
-
-        def create_node_cb(position, sprite, properties):
-            return Tile(position, sprite)
-
-        tile_layer_builder = DefaultTileLayerBuilder(
-            tile_builder=DefaultTileBuilder(create_node_cb=create_node_cb)
-        )
-        map_builder = DefaultMapBuilder(tile_layer_builder=tile_layer_builder)
-        map_loader = TiledMapLoader(context, map_builder=map_builder)
-
-        tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
-        map_loader.load(tmx_path)
-    '''
 
     def _draw(self):
         imgui.begin("Platformer Demo")

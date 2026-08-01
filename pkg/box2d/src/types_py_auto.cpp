@@ -679,6 +679,88 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("is_loop", &b2ChainDef::isLoop)
         .def_readwrite("enable_sensor_events", &b2ChainDef::enableSensorEvents)
         .def_readwrite("internal_value", &b2ChainDef::internalValue)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2ChainDef obj = b2DefaultChainDef();
+            static const std::unordered_set<std::string> allowed_keys = {"user_data", "points", "count", "materials", "material_count", "filter", "is_loop", "enable_sensor_events", "internal_value"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("user_data"))
+            {
+                auto value = kwargs["user_data"].cast<void *>();
+                obj.userData = value;
+            }
+            if (kwargs.contains("points"))
+            {
+                auto value = kwargs["points"].cast<const struct b2Vec2 *>();
+                obj.points = value;
+            }
+            if (kwargs.contains("count"))
+            {
+                auto value = kwargs["count"].cast<int>();
+                obj.count = value;
+            }
+            if (kwargs.contains("materials"))
+            {
+                auto value = kwargs["materials"].cast<const struct b2SurfaceMaterial *>();
+                obj.materials = value;
+            }
+            if (kwargs.contains("material_count"))
+            {
+                auto value = kwargs["material_count"].cast<int>();
+                obj.materialCount = value;
+            }
+            if (kwargs.contains("filter"))
+            {
+                auto value = kwargs["filter"].cast<struct b2Filter>();
+                obj.filter = value;
+            }
+            if (kwargs.contains("is_loop"))
+            {
+                auto value = kwargs["is_loop"].cast<_Bool>();
+                obj.isLoop = value;
+            }
+            if (kwargs.contains("enable_sensor_events"))
+            {
+                auto value = kwargs["enable_sensor_events"].cast<_Bool>();
+                obj.enableSensorEvents = value;
+            }
+            if (kwargs.contains("internal_value"))
+            {
+                auto value = kwargs["internal_value"].cast<int>();
+                obj.internalValue = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2ChainDef &self) {
+            std::stringstream ss;
+            ss << "ChainDef(";
+            ss << "userData=" << py::repr(py::cast(self.userData)).cast<std::string>();
+            ss << ", ";
+            ss << "points=" << py::repr(py::cast(self.points)).cast<std::string>();
+            ss << ", ";
+            ss << "count=" << py::repr(py::cast(self.count)).cast<std::string>();
+            ss << ", ";
+            ss << "materials=" << py::repr(py::cast(self.materials)).cast<std::string>();
+            ss << ", ";
+            ss << "materialCount=" << py::repr(py::cast(self.materialCount)).cast<std::string>();
+            ss << ", ";
+            ss << "filter=" << py::repr(py::cast(self.filter)).cast<std::string>();
+            ss << ", ";
+            ss << "isLoop=" << py::repr(py::cast(self.isLoop)).cast<std::string>();
+            ss << ", ";
+            ss << "enableSensorEvents=" << py::repr(py::cast(self.enableSensorEvents)).cast<std::string>();
+            ss << ", ";
+            ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     _box2d
