@@ -59,7 +59,6 @@ class DynamicCharacter(DynamicEntity2D):
         # logger.debug('on_mount')
         #logger.debug(f"shapes: {self.shapes}")
 
-        '''
         self.mass_data = self.body.mass_data
         mass_data = self.body.mass_data
 
@@ -68,7 +67,6 @@ class DynamicCharacter(DynamicEntity2D):
         com = mass_data.center
         mass_data.center = b2.Vec2(com.x, com.y - 1)
         self.body.mass_data = mass_data
-        '''
 
     def on_dismount(self, node: PhysicsEntity2D, point: glm.vec2):
         logger.debug(f"dismounting from {node}")
@@ -77,10 +75,8 @@ class DynamicCharacter(DynamicEntity2D):
         self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2))
         self.angle = 0
 
-        '''
         logger.debug(f"mass data: mass={self.mass_data.mass}, center={self.mass_data.center}, inertia={self.mass_data.rotational_inertia}")
         self.body.mass_data = self.mass_data
-        '''
 
         logger.debug(f"applied mass data: mass={self.body.mass_data.mass}, center={self.body.mass_data.center}, inertia={self.body.mass_data.rotational_inertia}")
         self.body.linear_velocity = b2.Vec2(0, 0)

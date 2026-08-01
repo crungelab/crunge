@@ -45,7 +45,10 @@ class Demo(engine.App):
 
     @property
     def avatar(self):
-        return self.avatar_stack[-1]
+        if len(self.avatar_stack) > 0:
+            return self.avatar_stack[-1]
+        else:
+            return None
 
     def push_controller(self, controller):
         def callback(delta_time):
@@ -59,7 +62,6 @@ class Demo(engine.App):
             controller = self.controller_stack.pop()
             logger.debug(f"Popping controller: {controller}")
             self.controller = self.controller_stack[-1] if self.controller_stack else None
-            #self.controller_stack[-1].reset()
 
         Scheduler().schedule_once(callback, 0)
 

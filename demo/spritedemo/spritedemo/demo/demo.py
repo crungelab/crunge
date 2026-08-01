@@ -9,7 +9,6 @@ from crunge import imgui
 from crunge import engine
 
 from crunge.engine.resource.resource_manager import ResourceManager
-#from crunge.engine.d2.settings_2d import Settings2D
 from crunge.engine.d2.scene import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
 
@@ -63,16 +62,6 @@ class Demo(engine.App):
             view_height_units = self.viewport.height / ppu
             self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
             logger.debug(f"Camera centered at {self.camera.position}")
-
-    '''
-    def center_camera(self):
-        if self.camera:
-            self.camera.position = (
-                glm.vec2(self.viewport.width / 2, self.viewport.height / 2)
-                * self.camera.zoom
-            )
-            logger.debug(f"Camera centered at {self.camera.position}")
-    '''
 
     def on_size(self):
         super().on_size()

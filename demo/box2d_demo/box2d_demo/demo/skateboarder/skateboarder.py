@@ -65,7 +65,7 @@ class PlatformerDemo(PhysicsDemo):
 
         super()._draw()
 
-    def recenter_camera(self):
+    def center_camera(self):
         if self.avatar is None:
             return
         self.camera.position = self.avatar.position
