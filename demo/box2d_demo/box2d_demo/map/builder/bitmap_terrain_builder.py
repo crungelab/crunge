@@ -14,7 +14,7 @@ from crunge.engine.d2.sprite import Sprite
 from ...objects.tile import Tile, GhostTile, TerrainColliderTile
 
 
-class TerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
+class BitmapTerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
     """Builds terrain collision by compositing the collision hulls of every
     participating tile into one occupancy mask, tracing that mask once, and
     emitting chain shapes from the resulting contours.

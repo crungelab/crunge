@@ -26,7 +26,8 @@ class SpriteFlipFlags(IntFlag):
     NONE = 0
     HORIZONTAL = 1
     VERTICAL = 2
-    DIAGONAL = 4   # transpose — applied before H/V
+    DIAGONAL = 4  # transpose — applied before H/V
+
 
 class SpriteMembership(ModelMembership):
     def __init__(
@@ -44,6 +45,7 @@ class SpriteMembership(ModelMembership):
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         if self.bind_group is not None:
             self.bind_group.bind(pass_enc)
+
 
 def flip_points(points, size: glm.vec2, flip: SpriteFlipFlags):
     # ASSUMPTION: points are centered on the sprite origin, Y-up, same units
@@ -70,6 +72,7 @@ def flip_points(points, size: glm.vec2, flip: SpriteFlipFlags):
 
     return out
 
+
 class Sprite(Model):
     def __init__(
         self,
@@ -87,8 +90,6 @@ class Sprite(Model):
         self._texture = texture
         if rect is None:
             rect = Rect2i(0, 0, texture.width, texture.height)
-        #self.flip_h = False
-        #self.flip_v = False
         self.flip_flags = flip_flags
 
         self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
@@ -215,17 +216,6 @@ class Sprite(Model):
         self.update_gpu()
         return self
 
-    '''
-    def mirror(self, horizontal: bool = False, vertical: bool = False):
-        return self.clone().flip(horizontal, vertical)
-
-    def flip(self, horizontal: bool = False, vertical: bool = False):
-        self.flip_h = horizontal
-        self.flip_v = vertical
-        self.update_gpu()
-        return self
-    '''
-
     def create_bind_groups(self):
         self.material_bind_group = MaterialBindGroup(
             self.texture.view,
@@ -244,8 +234,6 @@ class Sprite(Model):
         uniform.rect = cast_vec4(glm.vec4(rect.x, rect.y, rect.width, rect.height))
         uniform.texture_size = cast_vec2(self.texture.size)
 
-        #uniform.flip_h = 1 if self.flip_h else 0
-        #uniform.flip_v = 1 if self.flip_v else 0
         uniform.flip_flags = self.flip_flags
 
         uniform.texture_layer = self.texture_layer

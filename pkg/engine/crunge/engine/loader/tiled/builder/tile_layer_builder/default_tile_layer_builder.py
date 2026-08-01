@@ -2,7 +2,6 @@ from loguru import logger
 from crunge import tmx
 
 from crunge.engine.math import Bounds2
-#from crunge.engine.d2.graph_layer_2d import GraphLayer2D
 from crunge.engine.d2.sprite.instanced import InstancedSpriteLayer
 from crunge.engine.d2.sprite.dynamic import DynamicSpriteGroup
 
