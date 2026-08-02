@@ -3,8 +3,8 @@ import glm
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 
-from box2d_demo.entity import DynamicEntity2D
-from box2d_demo.physics.geom import BoxGeom
+from crunge.engine.d2.entity import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BoxGeom
 
 
 class Box(DynamicEntity2D):

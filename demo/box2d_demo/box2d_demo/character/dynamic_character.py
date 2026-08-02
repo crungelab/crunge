@@ -5,9 +5,9 @@ from crunge import box2d as b2
 
 from crunge.engine.math import Rect2
 
-from ..entity import PhysicsEntity2D, DynamicEntity2D
-from ..physics import HullGeom
-from ..physics.physics import MotionState
+from crunge.engine.d2.entity import PhysicsEntity2D, DynamicEntity2D
+from crunge.engine.d2.physics import HullGeom
+from crunge.engine.d2.physics import MotionState
 
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 

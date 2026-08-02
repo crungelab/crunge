@@ -8,8 +8,7 @@ from crunge.engine.d2.settings_2d import Settings2D
 
 from ..physics_demo import PhysicsDemo
 
-from .floor import Floor
-
+from ...objects.floor import Floor
 from ...characters import Avatar
 
 
@@ -18,20 +17,6 @@ class DynamicCharacterDemo(PhysicsDemo):
         super().reset()
         self.create_floor()
         self.create_avatar()
-
-    # ------------------------------------------------------------------
-    # Input — extend base drag behaviour with box creation
-    # ------------------------------------------------------------------
-
-    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
-        super().on_mouse_motion(event)
-
-    def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        super().on_mouse_button(event)  # right-click drag handled here
-        if event.button == 1 and event.down:
-            world = self.camera.unproject(glm.vec2(event.x, event.y))
-            logger.debug(f"Creating box at {world}")
-            self.create_box(world)
 
     # ------------------------------------------------------------------
     # Scene helpers

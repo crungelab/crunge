@@ -9,9 +9,9 @@ from crunge import box2d as b2
 
 from crunge.engine.d2.scene.scene_2d import Scene2D
 
-from ...physics.physics import MotionState
-from ...physics import globe as physics_globe
-from ...physics.constants import PT_DYNAMIC, PT_KINEMATIC, PT_STATIC
+from crunge.engine.d2.physics import MotionState
+from crunge.engine.d2.physics import globe as physics_globe
+from crunge.engine.d2.physics.constants import PT_DYNAMIC, PT_KINEMATIC, PT_STATIC
 
 from ... import globe, characters
 from ...constants import *

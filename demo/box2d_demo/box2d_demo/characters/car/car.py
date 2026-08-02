@@ -7,9 +7,9 @@ from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 
 from crunge.engine.d2.sprite import SpriteVu
-from ...entity import PhysicsGroup2D, Entity2D, DynamicEntity2D
-from ...physics import BoxGeom, BallGeom
-from ...physics import globe as physics_globe
+from crunge.engine.d2.entity import PhysicsGroup2D, Entity2D, DynamicEntity2D
+from crunge.engine.d2.physics import BoxGeom, BallGeom
+from crunge.engine.d2.physics import globe as physics_globe
 
 from ...util import debounce
 

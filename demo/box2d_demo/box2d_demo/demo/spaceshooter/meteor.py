@@ -10,13 +10,12 @@ from crunge import box2d
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from box2d_demo.entity import DynamicEntity2D
-from box2d_demo.physics.geom import BallGeom
+from crunge.engine.d2.entity import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BallGeom
 
 from .collision_type import CollisionType
 
 class Meteor(DynamicEntity2D):
-    #linear_velocity_range=((-100, 100), (-100, 100))
     linear_velocity_range=((-1, 1), (-1, 1))
     angular_velocity_range=(-2, 2)
 
@@ -33,7 +32,6 @@ class Meteor(DynamicEntity2D):
         return meteor
 
     def add_shape(self, shape):
-        #shape.collision_type = CollisionType.METEOR
         shape.user_material = CollisionType.METEOR
         shape.enable_contact_events(True)
         super().add_shape(shape)

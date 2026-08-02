@@ -2,10 +2,10 @@ from enum import Enum
 
 import glm
 
-from ...base import Base
+from crunge.engine.base import Base
 
 from .constants import *
-
+from .world import PhysicsWorld2D
 
 class MotionState(Enum):
     GROUNDED = 0
@@ -20,6 +20,9 @@ class Physics(Base):
         self.kind = kind
         self.position = position
 
+    @property
+    def world(self) -> PhysicsWorld2D:
+        return PhysicsWorld2D.get_current()
 
 class GroupPhysics(Physics):
     def __init__(self, kind=PT_GROUP):

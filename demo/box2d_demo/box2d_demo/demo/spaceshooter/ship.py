@@ -6,11 +6,10 @@ import glm
 from crunge import box2d as b2
 
 from crunge.engine.d2.sprite import SpriteVu
-from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from box2d_demo.entity import DynamicEntity2D
-from box2d_demo.physics.geom import BallGeom
+from crunge.engine.d2.entity import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BallGeom
 
 from .collision_type import CollisionType
 from .thruster import Thruster
@@ -32,7 +31,6 @@ class Ship(DynamicEntity2D):
         self.right_thruster: Thruster = None
 
     def add_shape(self, shape: b2.Shape):
-        #shape.collision_type = CollisionType.SHIP
         shape.user_material = CollisionType.SHIP
         shape.enable_contact_events(True)
         super().add_shape(shape)

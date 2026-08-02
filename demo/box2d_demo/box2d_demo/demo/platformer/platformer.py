@@ -20,13 +20,6 @@ class PlatformerDemo(PhysicsDemo):
         self.last_mouse = glm.vec2()
         self.create_map()
 
-    def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        super().on_mouse_button(event)  # right-click drag handled here
-        if event.button == 1 and event.down:
-            world = self.camera.unproject(glm.vec2(event.x, event.y))
-            logger.debug(f"Creating box at {world}")
-            self.create_ball(world)
-
     def create_map(self):
         map_loader = MapLoader(self.scene)
 

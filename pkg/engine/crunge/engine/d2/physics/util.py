@@ -1,12 +1,12 @@
-import pymunk
+from crunge import box2d
 
 def check_grounding(body):
     """ See if the player is on the ground. Used to see if we can jump. """
     grounding = {
-        'normal': pymunk.Vec2d.zero(),
-        'penetration': pymunk.Vec2d.zero(),
-        'impulse': pymunk.Vec2d.zero(),
-        'position': pymunk.Vec2d.zero(),
+        'normal': box2d.Vec2d.zero(),
+        'penetration': box2d.Vec2d.zero(),
+        'impulse': box2d.Vec2d.zero(),
+        'position': box2d.Vec2d.zero(),
         'body': None
     }
 

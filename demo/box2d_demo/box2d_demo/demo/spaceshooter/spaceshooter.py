@@ -5,7 +5,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge import box2d as b2
 
-from box2d_demo.physics import PhysicsWorld2D
+from crunge.engine.d2.physics import PhysicsWorld2D
 from crunge.engine.d2.settings_2d import Settings2D
 
 from ..physics_demo import PhysicsDemo

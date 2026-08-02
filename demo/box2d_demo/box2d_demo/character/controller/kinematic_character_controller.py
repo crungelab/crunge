@@ -2,8 +2,8 @@ from loguru import logger
 import glm
 
 from crunge import sdl
-from ...physics.physics import MotionState
-from ...physics import globe as physics_globe
+from crunge.engine.d2.physics import MotionState
+from crunge.engine.d2.physics import globe as physics_globe
 from crunge.engine.d2.node_2d import Node2D
 from ... import globe
 from ...constants import *

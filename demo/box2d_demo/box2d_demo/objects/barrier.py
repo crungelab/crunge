@@ -5,7 +5,7 @@ from crunge.engine.d2.entity import StaticEntity2D
 from crunge.engine.d2.physics.geom import BoxGeom
 from crunge.engine.d2.scene.layer import GraphLayer2D
 
-from badwing.constants import *
+from ..constants import *
 
 BARRIER_WIDTH = 100
 BARRIER_HEIGHT = 1000

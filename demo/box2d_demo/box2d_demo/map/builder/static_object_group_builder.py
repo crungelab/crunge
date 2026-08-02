@@ -2,7 +2,7 @@ from loguru import logger
 
 import crunge.engine.loader.tiled.builder as tiled_builder
 from crunge.engine.loader.tiled.builder import DefaultObjectBuilder
-from ...entity import StaticEntity2D
+from crunge.engine.d2.entity import StaticEntity2D
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 
 class StaticObjectGroupBuilder(tiled_builder.DefaultObjectGroupBuilder):

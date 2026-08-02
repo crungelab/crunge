@@ -1,13 +1,13 @@
 from loguru import logger
 import glm
 
-from ..entity import PhysicsEntity2D, KinematicEntity2D
-from ..physics import (
+from crunge.engine.d2.entity import PhysicsEntity2D, KinematicEntity2D
+from crunge.engine.d2.physics import (
     KinematicPhysics,
     DynamicPhysics,
     HullGeom,
 )
-from ..physics.physics import MotionState
+from crunge.engine.d2.physics import MotionState
 
 from crunge.engine.d2.sprite import SpriteVu
 

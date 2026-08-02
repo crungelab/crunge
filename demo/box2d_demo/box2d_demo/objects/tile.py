@@ -1,10 +1,10 @@
 import glm
 
-from box2d_demo.physics.geom import BoxGeom, ChainGeom
+from crunge.engine.d2.physics.geom import BoxGeom, ChainGeom
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2 import Node2D
 
-from box2d_demo.entity import StaticEntity2D
+from crunge.engine.d2.entity import StaticEntity2D
 
 
 class Tile(StaticEntity2D):

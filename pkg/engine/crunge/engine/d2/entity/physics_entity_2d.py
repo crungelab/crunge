@@ -2,14 +2,14 @@ import math
 
 from loguru import logger
 import glm
-import pymunk
+from crunge import box2d
 
 from crunge.engine.d2 import Vu2D
 
-from ...math import Rect2
+from crunge.engine.math import Rect2
 
-from ..physics import globe
-from ..physics.constants import DEFAULT_MASS, GRAVITY
+#from ..physics import globe
+#from ..physics.world import PhysicsWorld
 from ..physics import StaticPhysics, DynamicPhysics, GroupPhysics
 from ..physics.physics import MotionState
 from ..physics.geom import HullGeom, GroupGeom
@@ -30,11 +30,10 @@ class PhysicsEntity2D(Entity2D):
         geom=HullGeom(),
     ):
         super().__init__(position, rotation, scale, vu, model, brain)
-        self.body: pymunk.Body | None = None
-        self.shapes: list[pymunk.Shape] = []
+        self.body: box2d.Body | None = None
+        self.shapes: list[box2d.Shape] = []
         self._physics = physics
         self.geom = geom
-        self.mass = DEFAULT_MASS
         self.motion_state = MotionState.GROUNDED
 
     @property
@@ -59,11 +58,12 @@ class PhysicsEntity2D(Entity2D):
 
     @property
     def velocity(self):
-        return self.body.velocity
+        lv = self.body.linear_velocity
+        return glm.vec2(lv.x, lv.y)
 
     @velocity.setter
     def velocity(self, value: glm.vec2):
-        self.body.velocity = value
+        self.body.linear_velocity = box2d.Vec2(value.x, value.y)
 
     @property
     def physics(self):
@@ -73,21 +73,24 @@ class PhysicsEntity2D(Entity2D):
     def physics(self, physics):
         if self._physics:
             self._physics = physics
-            self.remove_shapes()
-            self.body = self.create_body()
-            self.shapes = self.create_shapes()
+            #self.remove_shapes()
+            self.create_body()
+            self.create_shapes()
             self.add_shapes()
         else:
             self._physics = physics
 
     def _create(self):
         super()._create()
-        self.body = self.create_body()
-        self.shapes = self.create_shapes()
+        self.create_body()
+        self.create_shapes()
         self.add_shapes()
 
     def _destroy(self):
-        self.remove_shapes()
+        #self.remove_shapes()
+        logger.debug(f"Destroying body: {self.body}")
+        if self.body.is_valid():
+            self.body.destroy()
         super()._destroy()
 
     def update(self, delta_time: float):
@@ -101,24 +104,22 @@ class PhysicsEntity2D(Entity2D):
         super().update(delta_time)
 
     def create_body(self):
-        return self.physics.create_body(self)
+        self.body = self.physics.create_body(self)
 
     def create_shapes(self, clip: Rect2 = None):
-        return self.geom.create_shapes(self, clip=clip)
+        self.shapes = self.geom.create_shapes(self, clip=clip)
+        logger.debug(f"Created shapes: {self.shapes}")
 
     def add_shapes(self):
         for shape in self.shapes:
             self.add_shape(shape)
 
     def add_shape(self, shape):
-        # logger.debug(f"shape: {shape}")
-        # shape.collision_type = self.physics.kind
-        # logger.debug(f"shape.collision_type: {shape.collision_type}")
-        globe.physics_engine.space.add(self.body, shape)
+        pass
 
     def remove_shapes(self):
         for shape in self.shapes:
-            globe.physics_engine.space.remove(self.body, shape)
+            shape.destroy(False)
 
     def get_tx_point(self, offset: glm.vec2):
         body_pos = self.body.position
@@ -136,7 +137,7 @@ class PhysicsEntity2D(Entity2D):
         position = -self.physics.position
         tx = position.x
         ty = position.y
-        t = pymunk.Transform(a=a, d=d, tx=tx, ty=ty)
+        t = box2d.Transform(box2d.Vec2(tx, ty), box2d.make_rot(0))
         # logger.debug(f"t: {t}")
         return t
 

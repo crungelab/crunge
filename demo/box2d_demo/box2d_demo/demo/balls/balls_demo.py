@@ -9,7 +9,7 @@ from crunge.engine.d2.settings_2d import Settings2D
 from ..physics_demo import PhysicsDemo
 
 from .ball import Ball
-from .floor import Floor
+from ...objects.floor import Floor
 
 
 class BallsDemo(PhysicsDemo):

@@ -1,7 +1,7 @@
 import glm
 
 from crunge.engine.d2.sprite import Sprite, SpriteVu
-from box2d_demo.entity import DynamicEntity2D
+from crunge.engine.d2.entity import DynamicEntity2D
 
 
 class Thing(DynamicEntity2D):

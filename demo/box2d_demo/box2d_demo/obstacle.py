@@ -1,5 +1,5 @@
-from .entity import DynamicEntity2D
-from .physics.geom import BoxGeom, BallGeom, HullGeom
+from crunge.engine.d2.entity import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BoxGeom, BallGeom, HullGeom
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 
 from . import globe

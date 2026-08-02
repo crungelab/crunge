@@ -8,13 +8,13 @@ from crunge import box2d as b2
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from box2d_demo.entity import DynamicEntity2D
-from box2d_demo.physics.geom import BoxGeom
+from crunge.engine.d2.entity import DynamicEntity2D
+from crunge.engine.d2.physics.geom import BoxGeom
 
 from .collision_type import CollisionType
 
 class Laser(DynamicEntity2D):
-    def __init__(self, position: glm.vec2, angle: float, speed: glm.vec2) -> None:
+    def __init__(self, position: glm.vec2, angle: float, speed: float) -> None:
         super().__init__(position, geom=BoxGeom())
         self.angle = angle
         self.speed = speed
