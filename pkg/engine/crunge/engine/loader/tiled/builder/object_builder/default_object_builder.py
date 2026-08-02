@@ -61,7 +61,7 @@ class DefaultObjectBuilder(ObjectBuilder):
         logger.debug(f"rotated_offset: {rotated_offset}")
 
         position = lower_left + rotated_offset
-        position.y = position.y + self.context.map.tile_size.y / self.ppu
+        position.y = position.y + (self.context.map.tile_size.y / self.ppu)
         logger.debug(f"position: {position}")
 
         # Calculate scale
