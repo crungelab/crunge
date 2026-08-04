@@ -20,9 +20,9 @@ class PolygonDemo(Demo):
         shape = self.shape = Polygon2D(
             [
                 glm.vec2(0, 0),
-                glm.vec2(100, 0),
-                glm.vec2(100, 100),
-                glm.vec2(0, 100),
+                glm.vec2(1, 0),
+                glm.vec2(1, 1),
+                glm.vec2(0, 1),
             ],
         )
         self.node = Node2D(vu=shape)

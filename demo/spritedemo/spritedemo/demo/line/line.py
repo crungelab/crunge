@@ -8,16 +8,17 @@ from crunge.engine import colors
 from crunge.engine.d2.shape.line_2d import Line2D
 from crunge.engine.d2.node_2d import Node2D
 
+INITIAL_SCALE = 1.0
 
 class LineDemo(Demo):
     def reset(self):
         super().reset()
 
         self.angle = 0
-        self.scale = 1.0
+        self.scale = INITIAL_SCALE
         self.color = colors.WHITE
 
-        shape = self.shape = Line2D(glm.vec2(0, 0), glm.vec2(100, 100))
+        shape = self.shape = Line2D(glm.vec2(0, 0), glm.vec2(1, 1))
         self.node = Node2D(vu=shape)
         self.scene.attach(self.node)
 

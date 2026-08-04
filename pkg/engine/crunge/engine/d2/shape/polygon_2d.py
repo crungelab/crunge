@@ -12,10 +12,7 @@ from ...uniforms import cast_tuple4f
 from ... import colors
 
 from ..vu_2d import Vu2D
-from ..uniforms_2d import (
-    ModelUniform,
-    ShapeUniform,
-)
+from ..uniforms_2d import ModelUniform
 from ..binding_2d import ModelBindGroup
 
 from .polygon_program_2d import PolygonProgram2D
@@ -46,12 +43,6 @@ class Polygon2D(Vu2D):
     def _create(self):
         self.create_vertices()
         super()._create()
-        '''
-        self.create_vertices()
-        self.create_buffers()
-        self.create_bind_groups()
-        self.on_transform()
-        '''
 
     @property
     def size(self) -> glm.vec2:
@@ -112,7 +103,6 @@ class Polygon2D(Vu2D):
     def update_gpu(self):
         super().update_gpu()
         model_uniform = ModelUniform()
-        #model_uniform.transform.data = cast_matrix4(self.transform)
         model_uniform.color = cast_tuple4f(self.color)
 
         self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
@@ -127,6 +117,4 @@ class Polygon2D(Vu2D):
         pass_enc = renderer.pass_enc
         self.bind(pass_enc)
         pass_enc.set_pipeline(self.program.render_pipeline.get())
-        #self.model_bind_group.bind(pass_enc)
-        #pass_enc.set_vertex_buffer(0, self.vertex_buffer)
         pass_enc.draw(len(self.vertices), 1, 0, 0)  # Dynamic vertex count
