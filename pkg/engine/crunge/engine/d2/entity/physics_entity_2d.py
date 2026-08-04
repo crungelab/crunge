@@ -106,22 +106,22 @@ class PhysicsEntity2D(Entity2D):
     def create_body(self):
         self.body = self.physics.create_body(self)
 
-    def create_shapes(self, clip: Rect2 = None):
+    def create_shapes(self, clip: Rect2 = None) -> None:
         self.shapes = self.geom.create_shapes(self, clip=clip)
         logger.debug(f"Created shapes: {self.shapes}")
 
-    def add_shapes(self):
+    def add_shapes(self) -> None:
         for shape in self.shapes:
             self.add_shape(shape)
 
-    def add_shape(self, shape):
+    def add_shape(self, shape) -> None:
         pass
 
-    def remove_shapes(self):
+    def remove_shapes(self) -> None:
         for shape in self.shapes:
             shape.destroy(False)
 
-    def get_tx_point(self, offset: glm.vec2):
+    def get_tx_point(self, offset: glm.vec2) -> glm.vec2:
         body_pos = self.body.position
         angle = self.body.angle
         tx = glm.mat4()

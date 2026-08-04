@@ -43,6 +43,9 @@ class DefaultMapBuilder(MapBuilder):
 
     def build(self):
         super().build()
-        bounds = Bounds2(0, 0, self.context.size.x, self.context.size.y)
+        width = self.context.size.x / self.ppu
+        height = self.context.size.y / self.ppu
+        bounds = Bounds2(0, 0, width, height)
+        #bounds = Bounds2(0, 0, self.context.size.x, self.context.size.y)
         logger.debug(f"Setting scene bounds to: {bounds}")
         self.context.scene.bounds = bounds

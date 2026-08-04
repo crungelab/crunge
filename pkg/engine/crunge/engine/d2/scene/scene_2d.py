@@ -8,6 +8,7 @@ from ...scene import Scene, current_scene
 from ..node_2d import Node2D
 from .layer.graph_layer_2d import GraphLayer2D
 
+
 class Scene2D(Scene[Node2D]):
     def __init__(self) -> None:
         super().__init__("Scene2D")
@@ -23,13 +24,7 @@ class Scene2D(Scene[Node2D]):
     def get_current(cls) -> Optional["Scene2D"]:
         return current_scene.get()
 
-    '''
-    @property
-    def bounds(self) -> Bounds2:
-        return self.primary_layer.bounds
-    '''
-
     def create_default_layer(self) -> None:
         """Create and return the default primary layer for the scene."""
-        layer = GraphLayer2D('primary')
+        layer = GraphLayer2D("primary")
         self.add_layer(layer)

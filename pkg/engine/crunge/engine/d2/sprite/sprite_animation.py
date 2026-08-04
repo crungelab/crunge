@@ -1,7 +1,6 @@
 from .sprite import Sprite, SpriteFlipFlags
 
-
-DEFAULT_DURATION = 1/12
+DEFAULT_DURATION = 1 / 12
 
 
 class SpriteAnimationFrame:
@@ -23,16 +22,10 @@ class SpriteAnimation:
     def mirror(self, name: str, flip_flags: SpriteFlipFlags):
         other = SpriteAnimation(name)
         for frame in self.frames:
-            other.add_frame(SpriteAnimationFrame(frame.sprite.mirror(flip_flags), frame.duration))
+            other.add_frame(
+                SpriteAnimationFrame(frame.sprite.mirror(flip_flags), frame.duration)
+            )
         return other
-
-    '''
-    def mirror(self, name: str, horizontal: bool = False, vertical: bool = False):
-        other = SpriteAnimation(name)
-        for frame in self.frames:
-            other.add_frame(SpriteAnimationFrame(frame.sprite.mirror(horizontal, vertical), frame.duration))
-        return other
-    '''
 
     def add_frame(self, frame):
         self.frames.append(frame)
