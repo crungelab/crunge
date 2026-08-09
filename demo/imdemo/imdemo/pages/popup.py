@@ -66,4 +66,5 @@ def install(app: App):
     app.add_channel(PageChannel(Popup, "popup", "Popup"))
     app.add_channel(PageChannel(PopupContextView, "popupcontextview", "Popup Context View"))
     app.add_channel(PageChannel(PopupContextWindow, "popupcontextwindow", "Popup Context Window"))
+    app.add_channel(PageChannel(PopupModal, "popupmodal", "Popup Modal"))
 

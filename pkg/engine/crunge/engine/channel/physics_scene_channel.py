@@ -14,8 +14,9 @@ class PhysicsSceneChannel(SceneChannel):
         physics_engine_factory: Factory[PhysicsEngine],
         name: str,
         title: str = None,
+        next_channel: str = None,
     ) -> None:
-        super().__init__(view_factory, scene_factory, name, title)
+        super().__init__(view_factory, scene_factory, name, title, next_channel)
         self.physics_engine_factory = physics_engine_factory
 
     def produce_physics_engine(self, *args, **kwargs) -> PhysicsEngine:

@@ -78,6 +78,10 @@ class Window(Frame):
             raise ValueError(f"Channel already exists for name: {channel.name}")
         self.channels[channel.name] = channel
 
+    def add_channels(self, channels: list[Channel]):
+        for channel in channels:
+            self.add_channel(channel)
+
     def show_channel(self, name: str):
         # logger.debug(f"show {name}")
         def callback(delta_time: float):

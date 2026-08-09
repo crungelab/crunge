@@ -12,8 +12,9 @@ class SceneChannel(Channel):
         scene_factory: Factory[Scene],
         name: str,
         title: str = None,
+        next_channel: str = None,
     ) -> None:
-        super().__init__(view_factory, name, title)
+        super().__init__(view_factory, name, title, next_channel)
         self.scene_factory = scene_factory
 
     def produce_scene(self, *args, **kwargs) -> Scene:
