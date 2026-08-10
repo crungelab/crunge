@@ -1,9 +1,8 @@
-# smoke_test.py
-
 from crunge.engine.loader.spine.spine_converter import load_skeleton_data
 from crunge.engine.d2.skeleton import Skeleton, AnimationState
 
 TEST_FILE = "/home/kurt/Dev/crunge/depot/spineboy-4.3/export/spineboy-pro.json"
+
 
 def test_spine_skeleton():
     skel_data = load_skeleton_data(TEST_FILE)

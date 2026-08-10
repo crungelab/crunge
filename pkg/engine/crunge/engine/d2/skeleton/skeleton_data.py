@@ -33,21 +33,3 @@ class SkeletonData:
     def from_spine_json(cls, path):
         # TODO: parse, ASSUMPTION on exact Spine 4.x schema until we check a real export
         ...
-
-
-# skeleton_vu.py — render bridge, Skia-backed
-'''
-class SkeletonVu(Node2D):
-    def __init__(self, skeleton: Skeleton):
-        super().__init__()
-        self.skeleton = skeleton
-
-    def render(self, canvas):
-        for slot in self.skeleton.slots:
-            att = slot.attachment
-            if att is None:
-                continue
-            world = slot.bone.world  # mat3, already composed with attachment offset later
-            # draw quad for RegionAttachment via canvas.drawImageRect w/ world as local-to-world xform
-            ...
-'''

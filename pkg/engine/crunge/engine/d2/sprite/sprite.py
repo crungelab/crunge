@@ -7,7 +7,7 @@ import glm
 from crunge import wgpu
 
 from ...math import Rect2i
-from ...resource import ImageTexture, Model, ModelMembership, Sampler
+from ...resource import SpriteTexture, Model, ModelMembership, Sampler
 from ... import colors
 
 from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
@@ -74,7 +74,7 @@ def flip_points(points, size: glm.vec2, flip: SpriteFlipFlags):
 class Sprite(Model):
     def __init__(
         self,
-        texture: ImageTexture,
+        texture: SpriteTexture,
         rect: Rect2i = None,
         sampler: Sampler = None,
         color=colors.WHITE,
@@ -153,7 +153,7 @@ class Sprite(Model):
         return self._texture
 
     @texture.setter
-    def texture(self, value: ImageTexture):
+    def texture(self, value: SpriteTexture):
         old_texture = self._texture
         self._texture = value
         if old_texture is not None and old_texture.texture != value.texture:

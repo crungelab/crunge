@@ -2,7 +2,7 @@ from loguru import logger
 import glm
 
 from crunge import imgui
-from crunge.engine.d2.sprite import Sprite, SpriteVu
+from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.sprite.sprite_array_loader import SpriteArrayLoader
 from crunge.engine.resource.resource_manager import ResourceManager

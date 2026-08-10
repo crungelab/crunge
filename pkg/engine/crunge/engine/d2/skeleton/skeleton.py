@@ -2,9 +2,10 @@
 
 import glm
 
+from .skeleton_data import BoneData, SlotData, RegionAttachment, SkeletonData
 
 class Bone:
-    def __init__(self, data: "BoneData", parent: "Bone | None"):
+    def __init__(self, data: BoneData, parent: "Bone | None"):
         self.data = data
         self.parent = parent
 
@@ -43,10 +44,10 @@ class Bone:
 
 
 class Slot:
-    def __init__(self, data: "SlotData", bone: Bone):
+    def __init__(self, data: SlotData, bone: Bone):
         self.data = data
         self.bone = bone
-        self.attachment: "RegionAttachment | None" = None
+        self.attachment: RegionAttachment | None = None
         self.color = glm.vec4(1.0)
 
     def set_to_setup_pose(self):
@@ -56,7 +57,7 @@ class Slot:
 
 
 class Skeleton:
-    def __init__(self, skeleton_data: "SkeletonData", skin_name: str = "default"):
+    def __init__(self, skeleton_data: SkeletonData, skin_name: str = "default"):
         self.data = skeleton_data
         self.current_skin_name = skin_name
 

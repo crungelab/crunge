@@ -1,61 +1,84 @@
-# atlas_loader.py
+# spine_sprite_atlas_loader.py
 
-import os
+from pathlib import Path
+
 from loguru import logger
 
-from crunge.engine.d2.sprite import Sprite
-
 from ...math import Rect2i
-from ...resource import ImageTexture
+from ...resource.resource_manager import ResourceManager
+from ...resource.sprite.sprite_atlas import SpriteAtlas
 
-from .spine_atlas import AtlasFile, AtlasPage, parse_atlas
+from ...builder.sprite import SpriteBuilder, DefaultSpriteBuilder, SpriteAtlasBuilder
 
+from ..texture.texture_loader import TextureLoader
 
-class SkeletonAtlas:
-    """Loaded atlas: page textures + a name -> Sprite lookup for building
-    RegionAttachment.gpu_sprite at skin-resolve time."""
-
-    def __init__(self):
-        self.page_textures: dict[str, ImageTexture] = {}  # image_path -> texture
-        self.sprites: dict[str, Sprite] = {}               # region name -> Sprite
-
-    def get_sprite(self, name: str, index: int = -1) -> Sprite | None:
-        key = name if index < 0 else f"{name}\0{index}"  # ASSUMPTION: separator scheme for indexed frames, untested
-        return self.sprites.get(key)
+from .spine_atlas_file import AtlasFile, AtlasRegion, parse_atlas
+from .spine_atlas import SpineAtlas
 
 
-def load_atlas(atlas_path: str) -> SkeletonAtlas:
-    atlas_file = parse_atlas(atlas_path)
-    base_dir = os.path.dirname(atlas_path)
-    result = SkeletonAtlas()
+class SpineAtlasLoader(TextureLoader[SpineAtlas]):
+    def __init__(
+        self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()
+    ) -> None:
+        super().__init__()
+        self.sprite_builder = sprite_builder
 
-    for page in atlas_file.pages:
-        image_path = os.path.join(base_dir, page.image_path)
-        texture = ImageTexture(image_path)  # ASSUMPTION: constructor signature — confirm against actual ImageTexture
-        result.page_textures[page.image_path] = texture
+    def load(self, path: Path, name: str = None) -> SpineAtlas:
+        path = ResourceManager().resolve_path(path)
+        if not name:
+            name = str(path)
+        if atlas := self.kit.get_by_path(path):
+            return atlas
 
-        for region in page.regions:
-            if region.rotate is not False:
-                # Rotated packing needs UV remapping the current Sprite/rect
-                # model doesn't support (Sprite.rect is a plain axis-aligned
-                # Rect2i consumed straight into the vertex shader's rect
-                # uniform). Skipping rather than silently rendering wrong.
-                logger.warning(f"Atlas region '{region.name}' is rotated in the page — not yet supported, skipping")
-                continue
+        logger.debug(f"Loading Spine atlas: {name}")
 
-            rect = Rect2i(region.x, region.y, region.width, region.height)
-            sprite = Sprite(texture, rect=rect)
+        if not path.exists():
+            raise Exception(f"Atlas file not found: {path}")
 
-            # TODO: offset_x/offset_y (whitespace-stripped edges) aren't applied
-            # here. If any region actually had whitespace stripped during
-            # packing, its RegionAttachment will be positioned slightly off —
-            # per the docs' Whitespace-stripping section, the draw position
-            # needs adjusting by (offset_x, offset_y) relative to original_width/
-            # original_height. Deferring until we hit a real exported atlas
-            # that actually strips whitespace (Spine's default packer may or
-            # may not, depending on export settings).
+        atlas_file = parse_atlas(str(path))
+        result = SpineAtlas(path)
 
-            key = region.name if region.index < 0 else f"{region.name}\0{region.index}"
-            result.sprites[key] = sprite
+        for page in atlas_file.pages:
+            image_path = path.parent / Path(page.image_path)
+            if not image_path.exists():
+                raise Exception(f"Atlas page image not found: {image_path}")
 
-    return result
+            logger.debug(f"Atlas page image: {image_path}")
+            image = self.image_loader.load(image_path)
+
+            # One SpriteAtlas per page, same construction as XmlSpriteAtlasLoader.
+            # Named/pathed by the page image so kit caching + lookup-by-path
+            # still works per-page, distinct from the overall SpineSkeletonAtlas
+            # which isn't itself kit-cached (it's a lightweight aggregate, not
+            # a single loaded resource).
+            page_atlas = SpriteAtlasBuilder().build(image)
+            page_atlas.set_name(f"{name}#{page.image_path}").set_path(image_path)
+            self.kit.add(page_atlas)
+
+            for region in page.regions:
+                if region.rotate is not False:
+                    # Same limitation as before: current Sprite/rect model is
+                    # axis-aligned only. Rotated-in-page regions need UV
+                    # remapping SpriteBuilder doesn't do — skip rather than
+                    # render wrong, and say so loudly.
+                    logger.warning(
+                        f"Atlas region '{region.name}' is rotated in page "
+                        f"'{page.image_path}' — not yet supported, skipping"
+                    )
+                    continue
+
+                rect = Rect2i(region.x, region.y, region.width, region.height)
+                sprite = self.sprite_builder.build(page_atlas.texture, rect).set_name(region.name)
+                page_atlas.add(sprite)
+
+                result.register_sprite(region, sprite)
+
+                # TODO: region.offset_x/offset_y (whitespace stripped from the
+                # packed image) aren't applied to sprite/attachment positioning
+                # yet — see the Whitespace-stripping section of Spine's atlas
+                # format docs. Only matters if the export actually stripped
+                # whitespace; unverified against a real DarkAssassin export.
+
+            result.add_page(page_atlas)
+
+        return result

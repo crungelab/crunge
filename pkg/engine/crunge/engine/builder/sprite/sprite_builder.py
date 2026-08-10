@@ -7,7 +7,7 @@ from ... import colors
 from ...math import Rect2i
 from ...resource.resource_manager import ResourceManager
 from ...resource.material import MaterialKit
-from ...resource.texture import ImageTexture
+from ...resource.texture import SpriteTexture
 from ...resource.sampler import Sampler
 from ...d2.sprite import Sprite
 
@@ -20,5 +20,5 @@ class SpriteBuilder(ResourceBuilder[Sprite]):
         super().__init__(kit)
         self.ppu = ppu if ppu is not None else Settings2D().ppu
 
-    def build(self, texture: ImageTexture, rect: Rect2i = None, sampler:Sampler = None, color=colors.WHITE) -> Sprite:
+    def build(self, texture: SpriteTexture, rect: Rect2i = None, sampler:Sampler = None, color=colors.WHITE) -> Sprite:
         raise NotImplementedError

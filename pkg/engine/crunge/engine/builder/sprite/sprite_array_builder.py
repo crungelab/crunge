@@ -1,11 +1,9 @@
 from typing import List
 
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture import ImageTexture, TextureKit
 from ...resource.image import Image
 
 from ...resource.sprite.sprite_array import SpriteArray
-from ...resource.texture.image_texture import ImageTexture
 from ..texture.image_texture_array_builder import ImageTextureArrayBuilder
 from .sprite_set_builder import SpriteSetBuilder
 

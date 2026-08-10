@@ -1,17 +1,16 @@
 from typing import TypeVar, Generic, Dict, List
 
 from ...resource.resource_manager import ResourceManager
-from ...resource.texture import ImageTexture
+from ...resource.texture import SpriteTexture
 
 from ...resource.sprite.sprite_set import SpriteSet
 from ...resource.sprite.sprite_set_kit import SpriteSetKit
 
-from ...resource.texture.image_texture import ImageTexture
 
 from ..resource_builder import ResourceBuilder
 from ..texture.image_texture_builder import ImageTextureBuilder
 
-T_Resource = TypeVar("T_Resource", bound=SpriteSet[ImageTexture])
+T_Resource = TypeVar("T_Resource", bound=SpriteSet[SpriteTexture])
 
 
 class SpriteSetBuilder(ResourceBuilder[T_Resource], Generic[T_Resource]):
