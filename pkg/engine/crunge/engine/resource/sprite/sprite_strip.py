@@ -2,6 +2,7 @@ from ..texture import SpriteTexture
 from ...d2.sprite import Sprite
 from .sprite_set import SpriteSet
 
+
 class SpriteStrip(SpriteSet):
     def __init__(self, texture: SpriteTexture) -> None:
         super().__init__(texture)

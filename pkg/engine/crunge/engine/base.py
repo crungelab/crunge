@@ -1,8 +1,9 @@
-#from typing import Self
-#from typing_extensions import Self
+# from typing import Self
+# from typing_extensions import Self
 
 from . import globals
 from .gfx import Gfx
+
 
 class Base:
     def __init__(self) -> None:
@@ -15,7 +16,7 @@ class Base:
             setattr(self, key, value)
         return self
 
-    #def create(self) -> Self: #TODO: need Python 3.11+
+    # def create(self) -> Self: #TODO: need Python 3.11+
     def create(self):
         if self.created:
             return
@@ -69,13 +70,6 @@ class Base:
             return Gfx()
         return globals.gfx
 
-    '''
-    @property
-    def gfx(self):
-        #return globals.gfx
-        return Gfx()
-    '''
-
     @property
     def instance(self):
         if globals.instance is None:
@@ -93,7 +87,7 @@ class Base:
         if globals.queue is None:
             return Gfx().queue
         return globals.queue
-    
+
     @property
     def wnd(self):
         return globals.current_window

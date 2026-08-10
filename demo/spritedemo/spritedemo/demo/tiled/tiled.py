@@ -10,7 +10,7 @@ from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 
 from ..tiled_demo import TiledDemo
 
-    
+
 class TiledLoaderDemo(TiledDemo):
     def reset(self):
         super().reset()

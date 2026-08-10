@@ -3,6 +3,7 @@ from ...d2.sprite import Sprite
 from .sprite_strip import SpriteStrip
 from .sprite_set import SpriteSet
 
+
 class SpriteGrid(SpriteSet):
     def __init__(self, texture: SpriteTexture) -> None:
         super().__init__(texture)

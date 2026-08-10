@@ -26,16 +26,10 @@ class Texture(Resource):
         self._view: wgpu.TextureView = None
 
     def __str__(self):
-        #return f"Texture(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, size={self.size})"
         return f"{self.__class__.__name__}(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, size={self.size})"
 
     def __repr__(self):
         return str(self)
-
-    """
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.texture}, {self.x}, {self.y}, {self.width}, {self.height}, {self.coords})"
-    """
 
     @property
     def size(self) -> glm.ivec3:

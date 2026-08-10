@@ -37,7 +37,6 @@ class SpriteGridLoader(SpriteSetLoader[SpriteGrid]):
         if not path.exists():
             raise Exception(f"Image file not found: {path}")
 
-        # details = self.load_wgpu_texture([path])
         texture = SpriteTextureLoader().load(path)
 
         atlas = SpriteGrid(texture).set_name(name).set_path(path)
@@ -61,56 +60,3 @@ class SpriteGridLoader(SpriteSetLoader[SpriteGrid]):
             atlas.add(strip)
 
         return atlas
-
-    """
-    def load(
-        self,
-        path: Path,
-        frame_size: glm.ivec2,
-        row_count: int,
-        col_count: int,
-        name: str = None,
-    ) -> SpriteStrip:
-        logger.debug(f"Finding SpriteGrid: {name}")
-        path = ResourceManager().resolve_path(path)
-        if not name:
-            name = str(path)
-        if atlas := self.kit.get_by_path(path):
-            return atlas
-
-        logger.debug(f"Loading SpriteGrid: {name}")
-
-        if not path.exists():
-            raise Exception(f"Image file not found: {path}")
-
-        details = self.load_wgpu_texture([path])
-
-        atlas = (
-            SpriteGrid(details.texture, glm.ivec2(details.width, details.height))
-            .set_name(name)
-            .set_path(path)
-        )
-
-        self.kit.add(atlas)
-
-        # Iterate over each SubTexture element
-        for i in range(row_count):
-            strip = (
-                SpriteStrip(details.texture, glm.ivec2(details.width, details.height))
-                .set_name(name)
-                .set_path(path)
-            )
-            for j in range(col_count):
-                x = j * frame_size.x
-                y = i * frame_size.y
-                w = frame_size.x
-                h = frame_size.y
-
-                rect = Rect2i(int(x), int(y), int(w), int(h))
-                #logger.debug(f"Frame {i}: {rect}")
-                sprite = Sprite(atlas, rect).set_name(name)
-                strip.add(sprite)
-            atlas.add(strip)
-
-        return atlas
-    """

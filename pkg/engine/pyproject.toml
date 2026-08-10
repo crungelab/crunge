@@ -32,6 +32,7 @@ classifiers = [
 ]
 dependencies = [
   "loguru ~=0.7.2",
+  "pydantic ~=2.13.4",
   "numpy ~=1.26.3",
   "PyGLM ~=2.7.1",
   "imageio ~=2.34.0",

@@ -19,7 +19,7 @@ class SpriteAtlasLoader(TextureLoader[SpriteAtlas]):
         self, path: Path, rectangles: list[Rect2i], name: str = None
     ) -> SpriteAtlas:
         path = ResourceManager().resolve_path(path)
-        # if atlas := self.kit.get_by_path(path):
+
         if atlas := self.kit.get_by_name(name):
             return atlas
         if atlas := self.kit.get_by_path(path):

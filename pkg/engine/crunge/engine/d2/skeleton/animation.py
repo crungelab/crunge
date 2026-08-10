@@ -1,0 +1,166 @@
+# animation.py — timelines + playback
+
+# animation.py (additions) — TranslateTimeline, ScaleTimeline, AttachmentTimeline
+# Interpolation is linear-only for now; curve field is stored on each keyframe
+# tuple and threaded through but ignored until bezier sampling lands (build
+# order step 5).
+
+from bisect import bisect_right
+
+from .skeleton import Skeleton, Bone, Slot
+
+
+def _bracket(keyframes, time):
+    """Return (prev_kf, next_kf, t) where t in [0,1] is the lerp fraction
+    between prev and next at `time`. keyframes is a list of tuples whose
+    first element is always `time`. Clamps at both ends."""
+    if len(keyframes) == 1:
+        return keyframes[0], keyframes[0], 0.0
+
+    times = [kf[0] for kf in keyframes]
+    i = bisect_right(times, time)
+
+    if i == 0:
+        return keyframes[0], keyframes[0], 0.0
+    if i >= len(keyframes):
+        return keyframes[-1], keyframes[-1], 0.0
+
+    prev_kf, next_kf = keyframes[i - 1], keyframes[i]
+    span = next_kf[0] - prev_kf[0]
+    t = 0.0 if span <= 0.0 else (time - prev_kf[0]) / span
+
+    # curve is stored as the last element of prev_kf ("linear"/"stepped"/bezier tuple)
+    if prev_kf[-1] == "stepped":
+        t = 0.0
+
+    return prev_kf, next_kf, t
+
+
+class TranslateTimeline:
+    def __init__(self, bone_index, keyframes):
+        self.bone_index = bone_index
+        self.keyframes = keyframes  # list of (time, x, y, curve)
+
+    def apply(self, skeleton, time, weight):
+        x, y = self._sample(time)
+        bone = skeleton.bones[self.bone_index]
+        d = bone.data
+        bone.x = d.x + (x - d.x) * weight if weight != 1.0 else x
+        bone.y = d.y + (y - d.y) * weight if weight != 1.0 else y
+        # NOTE: mirrors RotateTimeline's setup-pose-relative blend; revisit
+        # once AnimationState supports proper additive/replace mix modes.
+
+    def _sample(self, time):
+        prev_kf, next_kf, t = _bracket(self.keyframes, time)
+        _, px, py, _ = prev_kf
+        _, nx, ny, _ = next_kf
+        return px + (nx - px) * t, py + (ny - py) * t
+
+
+class ScaleTimeline:
+    def __init__(self, bone_index, keyframes):
+        self.bone_index = bone_index
+        self.keyframes = keyframes  # list of (time, x, y, curve)
+
+    def apply(self, skeleton, time, weight):
+        sx, sy = self._sample(time)
+        bone = skeleton.bones[self.bone_index]
+        d = bone.data
+        bone.scale_x = d.scale_x + (sx - d.scale_x) * weight if weight != 1.0 else sx
+        bone.scale_y = d.scale_y + (sy - d.scale_y) * weight if weight != 1.0 else sy
+
+    def _sample(self, time):
+        prev_kf, next_kf, t = _bracket(self.keyframes, time)
+        _, psx, psy, _ = prev_kf
+        _, nsx, nsy, _ = next_kf
+        return psx + (nsx - psx) * t, psy + (nsy - psy) * t
+
+
+class AttachmentTimeline:
+    """Discrete, not interpolated — a slot's attachment just switches at
+    each keyframe's time. `name=None` means no attachment."""
+
+    def __init__(self, slot_index, keyframes):
+        self.slot_index = slot_index
+        self.keyframes = keyframes  # list of (time, attachment_name)
+
+    def apply(self, skeleton, time, weight):
+        # weight is irrelevant for a discrete timeline; kept in the signature
+        # only so AnimationState.apply can call all timeline types uniformly.
+        name = self._sample(time)
+        slot = skeleton.slots[self.slot_index]
+        skin = skeleton.data.skins.get(
+            skeleton.current_skin_name, {}
+        )  # ASSUMPTION: Skeleton exposes current_skin_name
+        slot.attachment = skin.get(name) if name else None
+
+    def _sample(self, time):
+        active = None
+        for kf_time, kf_name in self.keyframes:
+            if kf_time > time:
+                break
+            active = kf_name
+        return active
+
+
+class RotateTimeline:
+    def __init__(self, bone_index, keyframes):
+        self.bone_index = bone_index
+        self.keyframes = keyframes  # list of (time, angle, curve)
+
+    def apply(self, skeleton, time, weight):
+        angle = self._sample(time)
+        bone = skeleton.bones[self.bone_index]
+        d = bone.data
+        bone.rotation = (
+            d.rotation + (angle - d.rotation) * weight if weight != 1.0 else angle
+        )
+
+    def _sample(self, time):
+        prev_kf, next_kf, t = _bracket(self.keyframes, time)
+        _, pa, _ = prev_kf
+        _, na, _ = next_kf
+        # Shortest-path angle interpolation — a keyframe pair like 170 -> -170
+        # is a 20 degree turn, not 340. Without this, fast rotations snap
+        # the wrong way around at the wrap boundary.
+        diff = (na - pa + 180.0) % 360.0 - 180.0
+        return pa + diff * t
+
+
+class Animation:
+    def __init__(self, name, duration, timelines):
+        self.name = name
+        self.duration = duration
+        self.timelines: list[RotateTimeline] = (
+            timelines  # + Translate/Scale/Deform/Attachment later
+        )
+
+
+class TrackEntry:
+    def __init__(self, animation: "Animation", loop=True):
+        self.animation = animation
+        self.time = 0.0
+        self.loop = loop
+
+
+class AnimationState:
+    def __init__(self, skeleton: "Skeleton"):
+        self.skeleton = skeleton
+        self.current: TrackEntry | None = None
+
+    def set_animation(self, animation: "Animation", loop=True):
+        self.current = TrackEntry(animation, loop)
+
+    def update(self, delta):
+        if not self.current:
+            return
+        self.current.time += delta
+        if self.current.loop and self.current.animation.duration > 0:
+            self.current.time %= self.current.animation.duration
+
+    def apply(self):
+        self.skeleton.set_to_setup_pose()
+        if self.current:
+            for tl in self.current.animation.timelines:
+                tl.apply(self.skeleton, self.current.time, weight=1.0)
+        self.skeleton.update_world_transforms()
