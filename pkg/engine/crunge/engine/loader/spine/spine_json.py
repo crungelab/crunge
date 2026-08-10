@@ -10,6 +10,7 @@ class SpineBaseModel(BaseModel):
     # Spine's JSON is camelCase; keep our attrs snake_case internally later,
     # but at the loader boundary just consume camelCase directly via alias.
     model_config = ConfigDict(populate_by_name=True, extra="allow")
+    #model_config = ConfigDict(populate_by_name=True, extra="forbid")
 
 
 # ---------- skeleton metadata ----------
@@ -86,8 +87,7 @@ class SkinJSON(SpineBaseModel):
 
 class RotateKeyframe(SpineBaseModel):
     time: float = 0.0
-    #angle: float = 0.0
-    angle: float = Field(0.0, alias="value")  # JSON key is "value", not "angle" — my mistake, not a version difference
+    value: float = 0.0
     curve: float | str | list[float] | None = None   # None=linear, "stepped", or [cx1,cy1,cx2,cy2]
 
 

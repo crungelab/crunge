@@ -102,7 +102,7 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
             if bone_tl.rotate:
                 timelines.append(RotateTimeline(
                     bone_index=bone_index,
-                    keyframes=[(kf.time, kf.angle, _parse_curve(kf.curve)) for kf in bone_tl.rotate],
+                    keyframes=[(kf.time, kf.value, _parse_curve(kf.curve)) for kf in bone_tl.rotate],
                 ))
             if bone_tl.translate:
                 timelines.append(TranslateTimeline(

@@ -1,5 +1,10 @@
 # skeleton_data.py — immutable, loaded once from Spine JSON
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .animation import Animation
+
+
 class BoneData:
     def __init__(self, name, parent_index, x, y, rotation, scale_x=1.0, scale_y=1.0, length=0.0):
         self.name = name

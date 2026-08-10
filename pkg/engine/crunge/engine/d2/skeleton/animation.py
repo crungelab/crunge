@@ -41,6 +41,15 @@ class TranslateTimeline:
         self.bone_index = bone_index
         self.keyframes = keyframes  # list of (time, x, y, curve)
 
+    def apply(self, skeleton: Skeleton, time, weight):
+        x, y = self._sample(time)
+        bone = skeleton.bones[self.bone_index]
+        d = bone.data
+        target_x, target_y = d.x + x, d.y + y
+        bone.x = bone.x + (target_x - bone.x) * weight if weight != 1.0 else target_x
+        bone.y = bone.y + (target_y - bone.y) * weight if weight != 1.0 else target_y
+
+    '''
     def apply(self, skeleton, time, weight):
         x, y = self._sample(time)
         bone = skeleton.bones[self.bone_index]
@@ -49,6 +58,7 @@ class TranslateTimeline:
         bone.y = d.y + (y - d.y) * weight if weight != 1.0 else y
         # NOTE: mirrors RotateTimeline's setup-pose-relative blend; revisit
         # once AnimationState supports proper additive/replace mix modes.
+    '''
 
     def _sample(self, time):
         prev_kf, next_kf, t = _bracket(self.keyframes, time)
@@ -62,7 +72,7 @@ class ScaleTimeline:
         self.bone_index = bone_index
         self.keyframes = keyframes  # list of (time, x, y, curve)
 
-    def apply(self, skeleton, time, weight):
+    def apply(self, skeleton: Skeleton, time, weight):
         sx, sy = self._sample(time)
         bone = skeleton.bones[self.bone_index]
         d = bone.data
@@ -84,7 +94,7 @@ class AttachmentTimeline:
         self.slot_index = slot_index
         self.keyframes = keyframes  # list of (time, attachment_name)
 
-    def apply(self, skeleton, time, weight):
+    def apply(self, skeleton: Skeleton, time, weight):
         # weight is irrelevant for a discrete timeline; kept in the signature
         # only so AnimationState.apply can call all timeline types uniformly.
         name = self._sample(time)
@@ -108,13 +118,12 @@ class RotateTimeline:
         self.bone_index = bone_index
         self.keyframes = keyframes  # list of (time, angle, curve)
 
-    def apply(self, skeleton, time, weight):
+    def apply(self, skeleton: Skeleton, time, weight):
         angle = self._sample(time)
         bone = skeleton.bones[self.bone_index]
         d = bone.data
-        bone.rotation = (
-            d.rotation + (angle - d.rotation) * weight if weight != 1.0 else angle
-        )
+        target = d.rotation + angle          # keyframe value is a delta from setup, always
+        bone.rotation = bone.rotation + (target - bone.rotation) * weight if weight != 1.0 else target
 
     def _sample(self, time):
         prev_kf, next_kf, t = _bracket(self.keyframes, time)
