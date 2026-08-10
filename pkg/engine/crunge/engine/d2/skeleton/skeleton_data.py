@@ -28,8 +28,3 @@ class SkeletonData:
         self.slots: list[SlotData] = []
         self.skins: dict[str, dict[str, RegionAttachment]] = {}  # skin_name -> {slot_name: attachment}
         self.animations: dict[str, "Animation"] = {}
-
-    @classmethod
-    def from_spine_json(cls, path):
-        # TODO: parse, ASSUMPTION on exact Spine 4.x schema until we check a real export
-        ...

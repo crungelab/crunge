@@ -86,7 +86,8 @@ class SkinJSON(SpineBaseModel):
 
 class RotateKeyframe(SpineBaseModel):
     time: float = 0.0
-    angle: float = 0.0
+    #angle: float = 0.0
+    angle: float = Field(0.0, alias="value")  # JSON key is "value", not "angle" — my mistake, not a version difference
     curve: float | str | list[float] | None = None   # None=linear, "stepped", or [cx1,cy1,cx2,cy2]
 
 

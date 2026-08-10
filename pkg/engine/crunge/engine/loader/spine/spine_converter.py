@@ -1,7 +1,10 @@
 # spine_converter.py — SpineSkeletonFile -> SkeletonData
 
 from __future__ import annotations
+
+from loguru import logger
 import glm
+
 from crunge.engine.d2.settings_2d import Settings2D   # ASSUMPTION: import path, confirm against actual module layout
 
 from .spine_json import (
@@ -49,6 +52,7 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
     # --- bones: Spine guarantees parent-before-child ordering already ---
     bone_index_by_name: dict[str, int] = {}
     for i, b in enumerate(spine_file.bones):
+        #logger.debug(f"bone: {b}")
         bone_index_by_name[b.name] = i
         parent_index = bone_index_by_name[b.parent] if b.parent else -1
         result.bones.append(BoneData(
