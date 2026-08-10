@@ -65,30 +65,15 @@ class BitmapTerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
         return tile is not None and tile.class_name in self.TERRAIN_TILE_TYPES
 
     def get_sprite(self, tile_gid: int, flip_flags: int):
-        """Fetch the sprite variant for this gid/flip combination.
-
-        # ASSUMPTION: the (tile_gid, flip_flags) sprite cache on the base
-        # builder. The variant matters because the collision points already
-        # have the H/V/D transform baked in at build time - fetching the
-        # unflipped variant would give hulls that disagree with the visuals.
-        """
+        """Fetch the sprite variant for this gid/flip combination."""
         return self.context.sprites.get((tile_gid, flip_flags))
 
     def get_hulls(self, sprite: Sprite) -> list[list[tuple[float, float]]]:
-        """Tile-local collision polygons in TEXELS, CCW.
-
-        # ASSUMPTION: property name. Returns either a single polygon or a
-        # list of them; _normalize_hulls tolerates both.
-        """
+        """Tile-local collision polygons in TEXELS, CCW."""
         return self._normalize_hulls(sprite.points)
 
     def get_flip_flags(self, tmx_tile) -> int:
-        """Dense engine-side flip flags for a tmx layer cell.
-
-        # ASSUMPTION: attribute name, and that the tmx->dense translation
-        # helper lives on the builder. tmxlite uses non-dense bit values
-        # (H=0x8, V=0x4, D=0x2); engine internals use H=1, V=2, D=4.
-        """
+        """Dense engine-side flip flags for a tmx layer cell."""
         return self.translate_flip_flags(tmx_tile.flip_flags)
 
     # ------------------------------------------------------------------
@@ -178,16 +163,20 @@ class BitmapTerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
 
                 polys = [
                     np.array(
-                        [(int(round(ox + half_w + hx * ppu)),
-                        int(round(oy + half_h - hy * ppu)))
-                        for hx, hy in hull],
+                        [
+                            (
+                                int(round(ox + half_w + hx * ppu)),
+                                int(round(oy + half_h - hy * ppu)),
+                            )
+                            for hx, hy in hull
+                        ],
                         dtype=np.int32,
                     )
                     for hull in hulls
                     if len(hull) >= 3
                 ]
 
-                '''
+                """
                 polys = [
                     np.array(
                         [(int(round(ox + hx)), int(round(oy + hy))) for hx, hy in hull],
@@ -196,7 +185,7 @@ class BitmapTerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
                     for hull in hulls
                     if len(hull) >= 3
                 ]
-                '''
+                """
 
                 if polys:
                     cv2.fillPoly(mask, polys, 255)
@@ -259,7 +248,7 @@ class BitmapTerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
         tile off vertically, this method is the only place to fix it.
         """
         tile_height = self.map.tile_size.y
-        x = px 
+        x = px
         y = self.context.size.y - (py - tile_height)
         return (x / self.ppu, y / self.ppu)
 
@@ -323,13 +312,7 @@ class BitmapTerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
     # ------------------------------------------------------------------
 
     def _emit_collider(self, paths: list[tuple[list, bool]]):
-        """One static body carrying every terrain chain.
-
-        # ASSUMPTION: TerrainColliderTile(paths) signature - guessing it takes
-        # the path list and creates one b2Chain per entry with is_loop=True.
-        # Note b2ChainDef.points is the deferred cxbind pointer-plus-count
-        # field; that wrapper needs to land before this will run.
-        """
+        """One static body carrying every terrain chain."""
         for path, is_hole in paths:
             collider = TerrainColliderTile(path)
 
@@ -339,25 +322,3 @@ class BitmapTerrainBuilder(tiled_builder.DefaultTileLayerBuilder):
             self.layer.attach(collider)
 
         logger.debug(f"TerrainBuilder: emitted collider with {len(paths)} chains")
-
-    '''
-    def _emit_collider(self, paths: list[tuple[list, bool]]):
-        """One static body carrying every terrain chain.
-
-        # ASSUMPTION: TerrainColliderTile(paths) signature - guessing it takes
-        # the path list and creates one b2Chain per entry with is_loop=True.
-        # Note b2ChainDef.points is the deferred cxbind pointer-plus-count
-        # field; that wrapper needs to land before this will run.
-        """
-        collider = TerrainColliderTile(
-            #[glm.vec2(x, y) for path, _ in paths for x, y in path][:0] or paths
-
-        )
-
-        # Mirrors the RunColliderTile path: manual create() because this node
-        # never went through create_node_cb.
-        collider.create()  # TODO: still unclear why create() is manual here
-        self.layer.attach(collider)
-
-        logger.debug(f"TerrainBuilder: emitted collider with {len(paths)} chains")
-    '''

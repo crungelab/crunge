@@ -123,7 +123,7 @@ class Skateboard(PhysicsGroup2D):
         if self.mountee is None:
             return
         for joint_id in self.mountee_joints:
-            box2d.destroy_joint(joint_id, False)  # ASSUMPTION
+            box2d.destroy_joint(joint_id, False)
         self.mountee_joints = []
         point = glm.vec2(0, CHASSIS_HEIGHT / 2)
         self.mountee.on_dismount(self.chassis, point)
@@ -158,12 +158,8 @@ class Skateboard(PhysicsGroup2D):
             enable_motor=False,
         )
 
-        self.front_joint = box2d.create_revolute_joint(
-            world, front_joint_def
-        )  # ASSUMPTION
-        self.back_joint = box2d.create_revolute_joint(
-            world, back_joint_def
-        )  # ASSUMPTION
+        self.front_joint = box2d.create_revolute_joint(world, front_joint_def)
+        self.back_joint = box2d.create_revolute_joint(world, back_joint_def)
 
     def accelerate(self, rate=SPEED_DELTA):
         self.speed = min(self.speed + rate, MAX_SPEED)
@@ -178,18 +174,14 @@ class Skateboard(PhysicsGroup2D):
     def ollie(self, impulse=(0, 2.0), point=(0, 0)):
         logger.debug("ollie")
         chassis_body = self.chassis.body
-        chassis_world_point = chassis_body.get_world_point(
-            box2d.Vec2(*point)
-        )  # ASSUMPTION
+        chassis_world_point = chassis_body.get_world_point(box2d.Vec2(*point))
         chassis_body.apply_linear_impulse(
             box2d.Vec2(*impulse), chassis_world_point, True
         )
 
         if self.mountee:
             mountee_body = self.mountee.body
-            mountee_world_point = mountee_body.get_world_point(
-                box2d.Vec2(*point)
-            )  # ASSUMPTION
+            mountee_world_point = mountee_body.get_world_point(box2d.Vec2(*point))
             mountee_body.apply_linear_impulse(
                 box2d.Vec2(*impulse), mountee_world_point, True
             )
@@ -200,7 +192,7 @@ class Skateboard(PhysicsGroup2D):
 
     def _apply_propulsion(self):
         body = self.chassis.body
-        angle = body.angle  # ASSUMPTION property name
+        angle = body.angle
         forward = glm.vec2(glm.cos(angle), glm.sin(angle))
 
         impulse_scale = self.speed

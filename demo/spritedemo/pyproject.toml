@@ -10,7 +10,6 @@ authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
     "loguru ==0.7.2",
-    "pymunk ==7.0.0",
     "scipy ==1.14.0",
     "PyTMX ==3.32",
 ]

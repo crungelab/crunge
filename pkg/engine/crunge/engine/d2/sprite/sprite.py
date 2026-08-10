@@ -48,8 +48,6 @@ class SpriteMembership(ModelMembership):
 
 
 def flip_points(points, size: glm.vec2, flip: SpriteFlipFlags):
-    # ASSUMPTION: points are centered on the sprite origin, Y-up, same units
-    # as `size`. See notes below if either differs.
     w, h = size.x, size.y
     ax, ay = w / h, h / w
 

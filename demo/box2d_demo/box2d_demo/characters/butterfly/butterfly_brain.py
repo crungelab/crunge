@@ -175,8 +175,6 @@ class ButterflyBrain(Brain):
             delta_y = w_max_y - max_y
             need_turn = True
 
-        # TODO:use pymunk
-
         if not need_turn:
             ground_layer = badwing.globe.scene.ground_layer
             if ground_layer:

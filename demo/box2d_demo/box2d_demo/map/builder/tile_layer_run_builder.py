@@ -91,17 +91,8 @@ class TileLayerRunBuilder(tiled_builder.DefaultTileLayerBuilder):
         position = glm.vec2(center_x, y) / self.ppu
         size = glm.vec2(width, tile_height) / self.ppu
 
-        # ASSUMPTION: BoxTile's constructor - guessing (position, size) to
-        # mirror Chassis's (position, scale) pattern. If BoxTile expects
-        # separate width/height args, or a half-extent instead of full
-        # size, adjust here.
         box_tile = RunColliderTile(position, size)
         box_tile.create() # TODO: Why am I having to manually call create() here?
         logger.debug(f"Emitted run collider: start_i={start_i}, end_i={end_i}, j={j}, position={position}, size={size}")
 
-        # ASSUMPTION: how a manually-built node (one that didn't come out of
-        # create_node_cb) gets registered with whatever container the base
-        # DefaultTileLayerBuilder populates. Guessing `self.layer.add_node`
-        # since this class is building a *layer* - could also be
-        # `self.add_node` directly, or something on `self.context`.
         self.layer.attach(box_tile)

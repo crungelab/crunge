@@ -112,8 +112,7 @@ class DynamicCharacterController(CharacterController):
                                      # the *ground layer* would be a sensor
         shape_def.enable_contact_events = True  # required on BOTH shapes
 
-        # pymunk group semantics: shapes sharing a non-zero group never
-        # collide with each other. Box2D's negative groupIndex gives the
+        # Box2D's negative groupIndex gives the
         # same "never collide within group" behavior.
         group = -((id(body) & 0x7FFF) or 1)
         shape_def.filter = b2.Filter()

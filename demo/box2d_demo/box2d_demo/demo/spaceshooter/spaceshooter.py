@@ -42,7 +42,6 @@ class SpaceShooter(PhysicsDemo):
         self.world = PhysicsWorld2D(gravity=glm.vec2(0, 0))
         self.world.make_current()
 
-    
     def handle_collisions(self):
         events = self.world.get_contact_events()
         destroyed = (
@@ -110,64 +109,6 @@ class SpaceShooter(PhysicsDemo):
         destroyed.add(asteroid_node)
         explosion = Explosion(position, color) if color else Explosion(position)
         self.scene.attach(explosion)
-
-    '''
-    def handle_collisions(self):
-        events = self.world.get_contact_events()
-        destroyed = (
-            set()
-        )  # guard against double-destroy if a node shows up in >1 event this step
-
-        for event in events.get_begin_events():
-            shape_a = event.shape_id_a
-            shape_b = event.shape_id_b
-
-            node_a = shape_a.user_data
-            node_b = shape_b.user_data
-
-            types = {shape_a.user_material, shape_b.user_material}
-
-            logger.debug(f"Collision between {node_a} and {node_b}, types: {types}")
-
-            if (
-                node_a is None
-                or node_b is None
-                or node_a in destroyed
-                or node_b in destroyed
-            ):
-                continue
-
-            if types == {CollisionType.LASER}:
-                continue  # laser/laser: no-op, same as before
-
-            if types == {CollisionType.LASER, CollisionType.METEOR}:
-                laser = (
-                    node_a if shape_a.user_material == CollisionType.LASER else node_b
-                )
-                asteroid = (
-                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
-                )
-                self._destroy_pair(laser, asteroid, destroyed)
-
-            elif types == {CollisionType.SHIP, CollisionType.METEOR}:
-                ship = node_a if shape_a.user_material == CollisionType.SHIP else node_b
-                asteroid = (
-                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
-                )
-                self._destroy_pair(
-                    ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
-                )
-
-    def _destroy_pair(self, actor_node, asteroid_node, destroyed, color=None):
-        logger.debug(f"Destroying {actor_node} and {asteroid_node}")
-        position = asteroid_node.position
-        actor_node.destroy()
-        asteroid_node.destroy()
-        destroyed.add(actor_node)
-        destroyed.add(asteroid_node)
-        explosion = Explosion(position, color) if color else Explosion(position)
-        self.scene.attach(explosion)
-    '''
 
     def create_view(self):
         super().create_view()
