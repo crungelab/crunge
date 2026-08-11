@@ -49,6 +49,11 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
 
     result = SkeletonData()
 
+    result.bounds_x = spine_file.skeleton.x / ppu
+    result.bounds_y = spine_file.skeleton.y / ppu
+    result.bounds_width = spine_file.skeleton.width / ppu
+    result.bounds_height = spine_file.skeleton.height / ppu
+
     # --- bones: Spine guarantees parent-before-child ordering already ---
     bone_index_by_name: dict[str, int] = {}
     for i, b in enumerate(spine_file.bones):
@@ -78,6 +83,18 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
 
     # --- skins: skin_name -> {slot_name: {attachment_name: attachment}} ---
     for skin in spine_file.skins:
+        skin_out: dict[str, dict[str, RegionAttachment]] = {}  # slot_name -> attachment_name -> attachment
+        for slot_name, attachments in skin.attachments.items():
+            skin_out[slot_name] = {}
+            for att_name, att_data in attachments.items():
+                att_type = att_data.get("type", "region")
+                if att_type != "region":
+                    continue
+                skin_out[slot_name][att_name] = _region_attachment(att_name, att_data, ppu)
+        result.skins[skin.name] = skin_out
+
+    '''
+    for skin in spine_file.skins:
         skin_out: dict[str, RegionAttachment] = {}
         for slot_name, attachments in skin.attachments.items():
             for att_name, att_data in attachments.items():
@@ -91,6 +108,7 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                 # Skin container; deferring until we actually need it.
                 skin_out[slot_name] = _region_attachment(att_name, att_data, ppu)
         result.skins[skin.name] = skin_out
+    '''
 
     # --- animations ---
     for anim_name, anim in spine_file.animations.items():

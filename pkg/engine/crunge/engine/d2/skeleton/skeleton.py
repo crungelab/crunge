@@ -76,6 +76,23 @@ class Skeleton:
         self.current_skin_name = name
         skin = self.data.skins[name]
         for slot in self.slots:
+            slot_attachments = skin.get(slot.data.name, {})
+            slot.attachment = slot_attachments.get(slot.data.attachment_name) if slot.data.attachment_name else None
+
+    def set_to_setup_pose(self):
+        for bone in self.bones:
+            bone.set_to_setup_pose()
+        skin = self.data.skins[self.current_skin_name]
+        for slot in self.slots:
+            slot_attachments = skin.get(slot.data.name, {})
+            slot.attachment = slot_attachments.get(slot.data.attachment_name) if slot.data.attachment_name else None
+            slot.color = glm.vec4(1.0)
+
+    '''
+    def set_skin(self, name):
+        self.current_skin_name = name
+        skin = self.data.skins[name]
+        for slot in self.slots:
             slot.attachment = skin.get(slot.data.name)
 
     def set_to_setup_pose(self):
@@ -85,6 +102,7 @@ class Skeleton:
         for slot in self.slots:
             slot.attachment = skin.get(slot.data.name) if slot.data.attachment_name else None
             slot.color = glm.vec4(1.0)
+    '''
 
     def update_world_transforms(self):
         for bone in self.bones:  # parent-first order guaranteed by BoneData ordering

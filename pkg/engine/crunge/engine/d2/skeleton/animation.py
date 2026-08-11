@@ -95,6 +95,14 @@ class AttachmentTimeline:
         self.keyframes = keyframes  # list of (time, attachment_name)
 
     def apply(self, skeleton: Skeleton, time, weight):
+        name = self._sample(time)
+        slot = skeleton.slots[self.slot_index]
+        skin = skeleton.data.skins.get(skeleton.current_skin_name, {})
+        slot_attachments = skin.get(slot.data.name, {})
+        slot.attachment = slot_attachments.get(name) if name else None
+
+    '''
+    def apply(self, skeleton: Skeleton, time, weight):
         # weight is irrelevant for a discrete timeline; kept in the signature
         # only so AnimationState.apply can call all timeline types uniformly.
         name = self._sample(time)
@@ -103,6 +111,7 @@ class AttachmentTimeline:
             skeleton.current_skin_name, {}
         )  # ASSUMPTION: Skeleton exposes current_skin_name
         slot.attachment = skin.get(name) if name else None
+    '''
 
     def _sample(self, time):
         active = None

@@ -9,13 +9,27 @@ from ..sprite.sprite_vu import SpriteVu
 
 from .skeleton import Skeleton
 
+
 def _mat3_to_mat4(m3: glm.mat3) -> glm.mat4:
     return glm.mat4(
-        m3[0][0], m3[0][1], 0.0, 0.0,
-        m3[1][0], m3[1][1], 0.0, 0.0,
-        0.0,      0.0,      1.0, 0.0,
-        m3[2][0], m3[2][1], 0.0, 1.0,
+        m3[0][0],
+        m3[0][1],
+        0.0,
+        0.0,
+        m3[1][0],
+        m3[1][1],
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        m3[2][0],
+        m3[2][1],
+        0.0,
+        1.0,
     )
+
 
 def _attachment_local_mat4(att) -> glm.mat4:
     """RegionAttachment's own offset/rotation/scale relative to its bone,
@@ -25,17 +39,32 @@ def _attachment_local_mat4(att) -> glm.mat4:
     m = glm.mat4(1.0)
     m = glm.translate(m, glm.vec3(att.x, att.y, 0.0))
     m = glm.rotate(m, glm.radians(att.rotation), glm.vec3(0, 0, 1))
-    m = glm.scale(m, glm.vec3(
-        att.width * att.scale_x,
-        att.height * att.scale_y,
-        1.0,
-    ))
+    m = glm.scale(
+        m,
+        glm.vec3(
+            att.width * att.scale_x,
+            att.height * att.scale_y,
+            1.0,
+        ),
+    )
     return m
+
+
+def _centering_offset_mat4(skeleton_data) -> glm.mat4:
+    """Shift skeleton-space origin so the artist's bounding box is centered
+    on the node, rather than rendering at whatever arbitrary point the rig's
+    root bone happens to sit (feet, hips, etc. depending on the asset)."""
+    cx = skeleton_data.bounds_x + skeleton_data.bounds_width / 2.0
+    cy = skeleton_data.bounds_y + skeleton_data.bounds_height / 2.0
+    return glm.translate(glm.mat4(1.0), glm.vec3(-cx, -cy, 0.0))
+
 
 class SkeletonVu(Vu2D):
     def __init__(self, skeleton: Skeleton = None) -> None:
         super().__init__()
         self.skeleton = skeleton
+        self._centering = _centering_offset_mat4(skeleton.data) if skeleton else glm.mat4(1.0)
+
         self.anim_state = None
         self.manual_draw = True
 
@@ -69,7 +98,8 @@ class SkeletonVu(Vu2D):
                     )
 
             self._slot_vus.append(slot_vu)
-    '''
+
+    """
     def _build_slot_vus(self):
         self._slot_vus = []
         self._last_attachment = [None] * len(self.skeleton.slots)
@@ -86,7 +116,7 @@ class SkeletonVu(Vu2D):
             # previous draft: transform assignment would have silently no-op'd.
             slot_vu.enable()
             self._slot_vus.append(slot_vu)
-    '''
+    """
 
     def on_node_transform_change(self, node: Node2D) -> None:
         self.transform = node.transform
@@ -96,13 +126,14 @@ class SkeletonVu(Vu2D):
     def size(self) -> glm.vec2:
         return glm.vec2(1.0)  # unused — on_node_transform_change is overridden above
 
-    '''
+    """
     def update(self, delta_time: float):
         self.update_pose()
-    '''
-    
+    """
+
     def update_pose(self):
-        root = self.transform
+        #root = self.transform
+        root = self.transform * self._centering
 
         for i, slot in enumerate(self.skeleton.slots):
             if slot.attachment is None or slot.attachment.gpu_sprite is None:

@@ -30,9 +30,11 @@ class SpriteDemo(Demo):
 
         self.anim_state = AnimationState(skeleton)
         first_anim_name = next(iter(skeleton.data.animations))
-        # self.anim_state.set_animation(skeleton.data.animations[first_anim_name])
-        self.anim_state.set_animation(skeleton.data.animations["walk"])
+        self.current_animation = skeleton.data.animations[first_anim_name]
+        self.anim_state.set_animation(self.current_animation)
+        # self.anim_state.set_animation(skeleton.data.animations["walk"])
 
+        """
         head_slot = next(s for s in skeleton.slots if s.data.name == "head")
         print("attachment:", head_slot.attachment)
         print(
@@ -79,7 +81,7 @@ class SpriteDemo(Demo):
             b = next(bn for bn in skeleton.bones if bn.data.name == name)
             print(name, "bone.data.rotation (setup pose, static):", b.data.rotation)
         # exit()
-
+        """
         self.skeleton = skeleton
         self.skeleton_vu = SkeletonVu(skeleton)
         self.node = Node2D(vu=self.skeleton_vu)
@@ -104,6 +106,19 @@ class SpriteDemo(Demo):
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 
+        if imgui.begin_list_box("Animations"):
+
+            for name, animation in self.skeleton.data.animations.items():
+                opened, selected = imgui.selectable(
+                    name, animation == self.current_animation
+                )
+                if opened:
+                    logger.debug(f"Selected: {name}")
+                    self.current_animation = self.skeleton.data.animations[name]
+                    self.anim_state.set_animation(self.current_animation)
+
+            imgui.end_list_box()
+
         if imgui.button("Reset"):
             self.reset()
 
@@ -116,6 +131,7 @@ class SpriteDemo(Demo):
         self.anim_state.apply()  # this now does set_to_setup_pose + timelines + update_world_transforms
         self.skeleton_vu.update_pose()  # pushes the freshly-computed bone.world into each slot_vu.transform
         return super().update(delta_time)
+
 
 def main():
     SpriteDemo().run()

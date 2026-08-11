@@ -36,6 +36,20 @@ class SpineAtlas:
         return self._sprites.get(key)
 
     def resolve(self, skeleton_data: "SkeletonData") -> None:
+        for skin_attachments in skeleton_data.skins.values():
+            for slot_name, attachments_by_name in skin_attachments.items():
+                for att_name, attachment in attachments_by_name.items():
+                    sprite = self.get_sprite(attachment.path)
+                    if sprite is None:
+                        logger.warning(
+                            f"No atlas region found for attachment path '{attachment.path}' "
+                            f"(slot '{slot_name}', attachment '{att_name}')"
+                        )
+                        continue
+                    attachment.gpu_sprite = sprite
+
+    '''
+    def resolve(self, skeleton_data: "SkeletonData") -> None:
         """Wire this atlas's sprites into every RegionAttachment across all
         skins in skeleton_data. Called once after both are loaded."""
         for skin_attachments in skeleton_data.skins.values():
@@ -47,3 +61,4 @@ class SpineAtlas:
                     )
                     continue
                 attachment.gpu_sprite = sprite
+    '''
