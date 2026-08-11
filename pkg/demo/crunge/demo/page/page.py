@@ -10,14 +10,19 @@ class Page(ImGuiView):
         super().__init__()
         self.name = name
         self.title = title
-        self.fullwidth = True
-        self.fullheight = True
+        #self.fullwidth = True
+        #self.fullheight = True
 
     @classmethod
     def produce(cls, app: App, name: str, title: str):
         page = cls(name, title).config(window=app).create()
         return page
 
+    def reset(self):
+        io = imgui.get_io()
+        io.config_flags |= imgui.ConfigFlags.DOCKING_ENABLE
+
+    '''
     def _draw(self):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
@@ -99,3 +104,4 @@ class Page(ImGuiView):
                 "Style Editor", "Cmd+S", self.window.show_style_editor, True
             )
             imgui.end_menu()
+    '''

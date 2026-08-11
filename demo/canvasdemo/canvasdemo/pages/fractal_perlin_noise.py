@@ -25,7 +25,7 @@ class FractalPerlinNoisePage(Page):
         self.seed = 0.0
 
     def _draw(self):
-        imgui.begin("Fractal Perlin Noise")
+        imgui.begin("Properties")
         changed, self.base_frequency_x = imgui.drag_float(
             "Base Frequency X",
             self.base_frequency_x,
@@ -51,7 +51,6 @@ class FractalPerlinNoisePage(Page):
         canvas = Renderer.get_current().canvas
         gradient_paint = skia.Paint()
 
-        # shader = skia.PerlinNoiseShader.make_fractal_noise(0.05, 0.05, 4, 0.0)
         shader = skia.PerlinNoiseShader.make_fractal_noise(
             self.base_frequency_x,
             self.base_frequency_y,

@@ -1,0 +1,62 @@
+from crunge import demo
+
+from pathlib import Path
+import timeit
+
+from loguru import logger
+import glm
+
+from crunge import sdl
+from crunge import imgui
+
+from crunge.engine.resource.resource_manager import ResourceManager
+from crunge.engine.d2.scene import Scene2D
+from crunge.engine.d2.camera_2d import Camera2D
+
+from crunge.engine.d2.view import SceneView2D
+from crunge.engine.d2.camera_2d import Camera2D
+
+
+class Page(SceneView2D):
+    def __init__(self, scene: Scene2D):
+        super().__init__(scene)
+
+        self.resource_root = (
+            Path(__file__).parent.parent.parent.parent.parent / "resources"
+        )
+
+        ResourceManager().add_path_variables(
+            resources=self.resource_root,
+            images=self.resource_root / "images",
+        )
+
+    @property
+    def ppu(self) -> float:
+        return self.camera.ppu
+
+    def reset(self):
+        super().reset()
+        self.center_camera()
+
+    def center_camera(self):
+        if self.camera:
+            ppu = self.camera.ppu
+            view_width_units = self.viewport.width / ppu
+            view_height_units = self.viewport.height / ppu
+            self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
+            logger.debug(f"Camera centered at {self.camera.position}")
+
+    def on_size(self):
+        super().on_size()
+        self.center_camera()
+
+    def on_key(self, event: sdl.KeyboardEvent):
+        key = event.key
+        down = event.down
+        if key == sdl.SDLK_ESCAPE and down:
+            self.quit()
+
+    def draw_stats(self):
+        # Display timings
+        imgui.text(f"Update time: {self.update_time:.4f}")
+        imgui.text(f"Frame time: {self.frame_time:.4f}")

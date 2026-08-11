@@ -17,7 +17,7 @@ class RadialGradientPage(Page):
         self.color_2 = colors.YELLOW
 
     def _draw(self):
-        imgui.begin("Radial Gradient")
+        imgui.begin("Properties")
         changed, self.color_1 = imgui.color_edit4("Color 1", self.color_1)
         changed, self.color_2 = imgui.color_edit4("Color 2", self.color_2)
         if imgui.button("Reset"):

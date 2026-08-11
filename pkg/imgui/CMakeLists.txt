@@ -22,6 +22,8 @@ set(IMGUI_HEADERS
 set(IMGUI_SRC
     src/imgui_py_auto.cpp
     src/imgui_py.cpp
+    src/imgui_internal_py.cpp
+
     ${IMGUI_ROOT}/imgui_demo.cpp
     ${IMGUI_ROOT}/imgui_draw.cpp
     ${IMGUI_ROOT}/imgui_tables.cpp

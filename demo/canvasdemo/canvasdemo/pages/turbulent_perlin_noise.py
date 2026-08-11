@@ -16,7 +16,7 @@ class TurbulentPerlinNoisePage(Page):
         self.seed = 0.0
 
     def _draw(self):
-        imgui.begin("Turbulent Perlin Noise")
+        imgui.begin("Properties")
         changed, self.base_frequency_x = imgui.drag_float(
             "Base Frequency X",
             self.base_frequency_x,
@@ -43,7 +43,6 @@ class TurbulentPerlinNoisePage(Page):
 
         gradient_paint = skia.Paint()
 
-        # shader = skia.PerlinNoiseShader.make_turbulence(0.05, 0.05, 4, 0.0)
         shader = skia.PerlinNoiseShader.make_turbulence(
             self.base_frequency_x,
             self.base_frequency_y,

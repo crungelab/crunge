@@ -1,14 +1,12 @@
 from crunge import imgui
-
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.demo import Page, PageChannel
+
 
 class Index(Page):
     def _draw(self):
         imgui.begin("Properties")
-
-        imgui.text("Welcome to the Canvas Demo!")
-        
+        imgui.text("Welcome to the Spine Demo!")
         imgui.end()
         super()._draw()
 

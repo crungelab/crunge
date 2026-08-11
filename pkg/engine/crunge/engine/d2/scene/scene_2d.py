@@ -10,8 +10,8 @@ from .layer.graph_layer_2d import GraphLayer2D
 
 
 class Scene2D(Scene[Node2D]):
-    def __init__(self) -> None:
-        super().__init__("Scene2D")
+    def __init__(self, name: str="Scene2D") -> None:
+        super().__init__(name)
         self.bounds = Bounds2()
 
     @property
