@@ -85,7 +85,7 @@ def install(app: App):
     app.add_channel(SpineEssChannel(AnimationPage, "hero", "Hero"))
     app.add_channel(SpineEssChannel(AnimationPage, "powerup", "Powerup"))
     app.add_channel(SpineEssChannel(AnimationPage, "speedy", "Speedy"))
-    app.add_channel(SpineEssChannel(AnimationPage, "spinosaurus", "Spinosaurus"))
+    #app.add_channel(SpineEssChannel(AnimationPage, "spinosaurus", "Spinosaurus"))
     app.add_channel(SpineEssChannel(AnimationPage, "windmill", "Windmill"))
 
     #app.add_channel(SpineProChannel(AnimationPage, "owl", "Owl"))

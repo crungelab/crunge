@@ -15,7 +15,78 @@ from ..texture.texture_loader import TextureLoader
 from .spine_atlas_file import AtlasFile, AtlasRegion, parse_atlas
 from .spine_atlas import SpineAtlas
 
+from ...d2.sprite.sprite import SpriteFlipFlags
 
+
+_ROTATE_FLAGS = {
+    0:   SpriteFlipFlags.NONE,
+    90:  SpriteFlipFlags.DIAGONAL | SpriteFlipFlags.HORIZONTAL,
+    180: SpriteFlipFlags.HORIZONTAL | SpriteFlipFlags.VERTICAL,
+    270: SpriteFlipFlags.DIAGONAL | SpriteFlipFlags.VERTICAL,
+}
+
+
+class SpineAtlasLoader(TextureLoader[SpineAtlas]):
+    def __init__(
+        self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()
+    ) -> None:
+        super().__init__()
+        self.sprite_builder = sprite_builder
+
+    def load(self, path: Path, name: str = None) -> SpineAtlas:
+        path = ResourceManager().resolve_path(path)
+        if not name:
+            name = str(path)
+        if atlas := self.kit.get_by_path(path):
+            return atlas
+
+        logger.debug(f"Loading Spine atlas: {name}")
+
+        if not path.exists():
+            raise Exception(f"Atlas file not found: {path}")
+
+        atlas_file = parse_atlas(str(path))
+        result = SpineAtlas(path)
+
+        for page in atlas_file.pages:
+            image_path = path.parent / Path(page.image_path)
+            if not image_path.exists():
+                raise Exception(f"Atlas page image not found: {image_path}")
+
+            logger.debug(f"Atlas page image: {image_path}")
+            image = self.image_loader.load(image_path)
+
+            # One SpriteAtlas per page, same construction as XmlSpriteAtlasLoader.
+            # Named/pathed by the page image so kit caching + lookup-by-path
+            # still works per-page, distinct from the overall SpineSkeletonAtlas
+            # which isn't itself kit-cached (it's a lightweight aggregate, not
+            # a single loaded resource).
+            page_atlas = SpriteAtlasBuilder().build(image)
+            page_atlas.set_name(f"{name}#{page.image_path}").set_path(image_path)
+            self.kit.add(page_atlas)
+
+            for region in page.regions:
+                rect = Rect2i(region.x, region.y, region.width, region.height)
+                sprite = self.sprite_builder.build(page_atlas.texture, rect).set_name(region.name)
+
+                if region.rotate:
+                    flags = _ROTATE_FLAGS.get(region.rotate)
+                    if flags is None:
+                        logger.warning(
+                            f"Atlas region '{region.name}' has non-90°-multiple rotation "
+                            f"({region.rotate}) — free rotation not supported, skipping"
+                        )
+                        continue
+                    sprite.flip_flags = flags
+
+                page_atlas.add(sprite)
+                result.register_sprite(region, sprite)
+
+            result.add_page(page_atlas)
+
+        return result
+
+'''
 class SpineAtlasLoader(TextureLoader[SpineAtlas]):
     def __init__(
         self, sprite_builder: SpriteBuilder = DefaultSpriteBuilder()
@@ -82,3 +153,4 @@ class SpineAtlasLoader(TextureLoader[SpineAtlas]):
             result.add_page(page_atlas)
 
         return result
+'''

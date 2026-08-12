@@ -16,7 +16,8 @@ class AtlasRegion:
     # rotate: False, True (90° CCW), or a degree value 0-360 per spec.
     # Only False/no-rotation is handled downstream right now — see TODO
     # in atlas_loader.py. Stored as-is here so nothing is silently lost.
-    rotate: bool | float = False
+    #rotate: bool | float = False
+    rotate: int = 0  # degrees, multiple of 90
     offset_x: int = 0        # whitespace stripped from left edge
     offset_y: int = 0        # whitespace stripped from bottom edge
     original_width: int = 0  # pre-strip size; equals width/height if no stripping
