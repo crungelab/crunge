@@ -1,6 +1,6 @@
 import random
 
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.loader.texture.image_texture_loader import ImageTextureLoader
 

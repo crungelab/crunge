@@ -33,7 +33,7 @@ class TinyGltf(GitSolution):
     path = "depot/tinygltf"
     url = "https://github.com/syoyo/tinygltf"
     # url = "https://github.com/crungelab/tinygltf"
-    branch = "crunge"
+    # branch = "crunge"
 
 
 class SDL(GitSolution):
@@ -69,6 +69,11 @@ class Box2D(GitSolution):
 class RtAudio(GitSolution):
     path = "depot/rtaudio"
     url = "https://github.com/thestk/rtaudio"
+
+
+class SpineRuntimes(GitSolution):
+    path = "depot/spine-runtimes"
+    url = "https://github.com/EsotericSoftware/spine-runtimes"
 
 
 solutions = [

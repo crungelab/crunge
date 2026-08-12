@@ -2,7 +2,7 @@ from loguru import logger
 
 from crunge import sdl
 from crunge import imgui
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.engine.imgui.key_map import key_map
 from crunge.demo import Page, PageChannel
 

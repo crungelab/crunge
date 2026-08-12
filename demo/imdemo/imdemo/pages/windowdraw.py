@@ -1,6 +1,6 @@
 from crunge import imgui
 from crunge.imgui import rel
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.demo import Page, PageChannel
 
 

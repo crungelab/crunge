@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 
 from crunge import imgui
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.demo import Page, PageChannel
 
 

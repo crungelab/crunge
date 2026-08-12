@@ -93,23 +93,6 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                 skin_out[slot_name][att_name] = _region_attachment(att_name, att_data, ppu)
         result.skins[skin.name] = skin_out
 
-    '''
-    for skin in spine_file.skins:
-        skin_out: dict[str, RegionAttachment] = {}
-        for slot_name, attachments in skin.attachments.items():
-            for att_name, att_data in attachments.items():
-                att_type = att_data.get("type", "region")
-                if att_type != "region":
-                    # TODO: mesh/linkedmesh dispatch once skinning lands
-                    continue
-                # Keyed by slot_name only for now — assumes one active
-                # attachment per slot per skin, which matches SlotData.attachment_name.
-                # Multi-attachment-per-slot (costume swapping) needs a richer
-                # Skin container; deferring until we actually need it.
-                skin_out[slot_name] = _region_attachment(att_name, att_data, ppu)
-        result.skins[skin.name] = skin_out
-    '''
-
     # --- animations ---
     for anim_name, anim in spine_file.animations.items():
         timelines = []

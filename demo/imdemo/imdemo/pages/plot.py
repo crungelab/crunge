@@ -3,7 +3,7 @@ from random import random
 from math import sin
 
 from crunge import imgui
-from crunge.engine import Renderer, App
+from crunge.engine import App
 from crunge.demo import Page, PageChannel
 
 

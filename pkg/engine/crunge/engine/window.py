@@ -93,6 +93,13 @@ class Window(Frame):
 
         Scheduler().schedule_once(callback, 0)
 
+    def reshow_channel(self):
+        if self.channel is not None:
+            self.show_channel(self.channel.name)
+
+    def show_next_channel(self):
+        self.show_channel(self.channel.next_channel)
+
     def _create(self):
         logger.debug("Window.create")
         self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)

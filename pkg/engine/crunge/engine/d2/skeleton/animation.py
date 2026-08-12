@@ -49,17 +49,6 @@ class TranslateTimeline:
         bone.x = bone.x + (target_x - bone.x) * weight if weight != 1.0 else target_x
         bone.y = bone.y + (target_y - bone.y) * weight if weight != 1.0 else target_y
 
-    '''
-    def apply(self, skeleton, time, weight):
-        x, y = self._sample(time)
-        bone = skeleton.bones[self.bone_index]
-        d = bone.data
-        bone.x = d.x + (x - d.x) * weight if weight != 1.0 else x
-        bone.y = d.y + (y - d.y) * weight if weight != 1.0 else y
-        # NOTE: mirrors RotateTimeline's setup-pose-relative blend; revisit
-        # once AnimationState supports proper additive/replace mix modes.
-    '''
-
     def _sample(self, time):
         prev_kf, next_kf, t = _bracket(self.keyframes, time)
         _, px, py, _ = prev_kf
@@ -100,18 +89,6 @@ class AttachmentTimeline:
         skin = skeleton.data.skins.get(skeleton.current_skin_name, {})
         slot_attachments = skin.get(slot.data.name, {})
         slot.attachment = slot_attachments.get(name) if name else None
-
-    '''
-    def apply(self, skeleton: Skeleton, time, weight):
-        # weight is irrelevant for a discrete timeline; kept in the signature
-        # only so AnimationState.apply can call all timeline types uniformly.
-        name = self._sample(time)
-        slot = skeleton.slots[self.slot_index]
-        skin = skeleton.data.skins.get(
-            skeleton.current_skin_name, {}
-        )  # ASSUMPTION: Skeleton exposes current_skin_name
-        slot.attachment = skin.get(name) if name else None
-    '''
 
     def _sample(self, time):
         active = None

@@ -99,25 +99,6 @@ class SkeletonVu(Vu2D):
 
             self._slot_vus.append(slot_vu)
 
-    """
-    def _build_slot_vus(self):
-        self._slot_vus = []
-        self._last_attachment = [None] * len(self.skeleton.slots)
-
-        for _ in self.skeleton.slots:
-            slot_vu = SpriteVu()
-            # These children never get a Node2D of their own (they're driven
-            # directly by bone.world in update_pose(), not the Node listener
-            # mechanism) so .node is never set. But they still need the
-            # normal Base lifecycle — .enable() both creates (allocates
-            # program/buffers/bind_groups via Vu2D._create) and sets
-            # enabled=True, which Vu2D.on_transform() requires before it will
-            # call update_gpu() at all. Skipping this was the bug in the
-            # previous draft: transform assignment would have silently no-op'd.
-            slot_vu.enable()
-            self._slot_vus.append(slot_vu)
-    """
-
     def on_node_transform_change(self, node: Node2D) -> None:
         self.transform = node.transform
         self.bounds = node.bounds  # TODO: union of slot bounds, not the raw node bounds

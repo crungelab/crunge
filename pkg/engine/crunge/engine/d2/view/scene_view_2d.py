@@ -14,7 +14,6 @@ class SceneView2D(View2D):
 
     def create_renderer(self) -> None:
         self.renderer = Renderer2D(viewport=self.viewport, camera=self.camera)
-        #self.renderer = Renderer2D(viewport=self.viewport, camera=self.camera, clear=False)
 
     def _draw(self):
         with self.renderer.frame():
@@ -22,14 +21,6 @@ class SceneView2D(View2D):
 
         with self.renderer.use():
             super()._draw()
-
-    """
-    def _draw(self):
-        self.renderer.render(self.scene)
-
-        with self.renderer.use():
-            super()._draw()
-    """
 
     def update(self, dt: float) -> None:
         self.scene.update(dt)

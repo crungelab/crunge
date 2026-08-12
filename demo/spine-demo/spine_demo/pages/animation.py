@@ -11,15 +11,12 @@ from crunge.engine.d2.skeleton.skeleton_vu import SkeletonVu
 
 from crunge.engine import App
 
-from ...channel import SpineDemoChannel, SpineEssChannel
-from ...page import Page
+from ..channel import SpineEssChannel, SpineProChannel
 
-# TEST_FILE = "/home/kurt/Dev/crunge/depot/spineboy-4.3/export/spineboy-pro.json"
-# TEST_FILE = "/home/kurt/Dev/crunge/depot/spineboy-4.3/export/spineboy-ess.json"
-TEST_FILE = ":spines:/spineboy/export/spineboy-ess.json"
+from ..page import Page
 
 
-class SpineboyPage(Page):
+class AnimationPage(Page):
     def reset(self):
         super().reset()
 
@@ -27,7 +24,10 @@ class SpineboyPage(Page):
         self.scale = 1.0
 
         loader = SpineSkeletonLoader()
-        skeleton = loader.load(TEST_FILE, "spineboy.atlas")
+        name = self.name
+        version = self.version
+        path = f":spines:/{name}/export/{name}-{version}.json"
+        skeleton = loader.load(path, f"{name}.atlas")
 
         self.anim_state = AnimationState(skeleton)
         first_anim_name = next(iter(skeleton.data.animations))
@@ -77,10 +77,22 @@ class SpineboyPage(Page):
         self.skeleton_vu.update_pose()  # pushes the freshly-computed bone.world into each slot_vu.transform
         return super().update(delta_time)
 
+
 def install(app: App):
-    app.add_channel(SpineEssChannel(SpineboyPage, "spineboy", "Spineboy"))
+    app.add_channel(SpineEssChannel(AnimationPage, "alien", "Alien"))
+    app.add_channel(SpineEssChannel(AnimationPage, "dragon", "Dragon"))
+    app.add_channel(SpineEssChannel(AnimationPage, "goblins", "Goblins"))
+    app.add_channel(SpineEssChannel(AnimationPage, "hero", "Hero"))
+    app.add_channel(SpineEssChannel(AnimationPage, "powerup", "Powerup"))
+    app.add_channel(SpineEssChannel(AnimationPage, "speedy", "Speedy"))
+    app.add_channel(SpineEssChannel(AnimationPage, "spinosaurus", "Spinosaurus"))
+    app.add_channel(SpineEssChannel(AnimationPage, "windmill", "Windmill"))
+
+    #app.add_channel(SpineProChannel(AnimationPage, "owl", "Owl"))
 
 '''
 def install(app: App):
-    app.add_channel(SpineDemoChannel(SpineboyPage, "spineboy", "Spineboy"))
+    app.add_channel(SpineDemoChannel(AnimationPage, "hero", "Hero"))
+    #app.add_channel(SpineDemoChannel(AnimationPage, "owl", "Owl"))
+    app.add_channel(SpineDemoChannel(AnimationPage, "alien", "Alien"))
 '''

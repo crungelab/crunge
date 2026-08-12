@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from ...resource.resource_manager import ResourceManager
 from crunge.engine.loader.spine.spine_converter import load_skeleton_data
 from crunge.engine.loader.spine.spine_atlas_loader import SpineAtlasLoader
 from crunge.engine.d2.skeleton.skeleton import Skeleton
@@ -7,7 +8,8 @@ from crunge.engine.d2.skeleton.skeleton import Skeleton
 
 class SpineSkeletonLoader:
     def load(self, path: Path, atlas_path: Path):
-        path = Path(path)
+        #path = Path(path)
+        path = ResourceManager().resolve_path(path)
         atlas_path = Path(atlas_path)
         if not atlas_path.is_absolute():
             atlas_path = path.parent / atlas_path

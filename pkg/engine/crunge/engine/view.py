@@ -5,10 +5,10 @@ from loguru import logger
 from crunge import yoga
 
 if TYPE_CHECKING:
-    from ..window import Window
+    from .window import Window
 
-from ..viewport import Viewport
-from ..widget import Widget, Overlay
+from .viewport import Viewport
+from .widget import Widget, Overlay
 
 
 class View(Widget):

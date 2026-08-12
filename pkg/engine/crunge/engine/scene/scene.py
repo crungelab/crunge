@@ -13,7 +13,6 @@ current_scene: ContextVar[Optional["Scene"]] = ContextVar("current_scene", defau
 class Scene(LayerGroup, Generic[T_Node]):
     def __init__(self, name: str) -> None:
         super().__init__(name)
-        #self.primary_layer: "SceneLayer[T_Node]" = None
 
     @property
     def primary_layer(self) -> GraphLayer[T_Node]:
