@@ -122,6 +122,46 @@ class RotateTimeline:
         return pa + diff * t
 
 
+class SequenceTimeline:
+    def __init__(self, slot_index, attachment, keyframes):
+        self.slot_index = slot_index
+        self.attachment = attachment
+        self.keyframes = keyframes
+
+    def apply(self, skeleton, time, weight):
+        kf = self._active_keyframe(time)
+        if kf is None:
+            return
+
+        index = kf.index
+        if kf.delay > 0:
+            index += int((time - kf.time) / kf.delay)
+
+        count = self.attachment.sequence.count
+        mode = kf.mode
+        # ASSUMPTION: mode semantics inferred from names, not verified against
+        # Spine's runtime. The dragon only uses "loop" and the default hold.
+        if mode == "loop":
+            index %= count
+        elif mode == "pingpong":
+            period = count * 2 - 2
+            index %= period
+            if index >= count:
+                index = period - index
+        else:
+            index = min(index, count - 1)
+
+        skeleton.slots[self.slot_index].sequence_index = index
+
+    def _active_keyframe(self, time):
+        active = None
+        for kf in self.keyframes:
+            if kf.time > time:
+                break
+            active = kf
+        return active
+
+
 class Animation:
     def __init__(self, name, duration, timelines):
         self.name = name

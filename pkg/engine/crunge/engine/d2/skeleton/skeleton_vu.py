@@ -75,6 +75,30 @@ class SkeletonVu(Vu2D):
             self._build_slot_vus()
 
     def _build_slot_vus(self):
+            self._slot_vus = []
+            self._last_sprite = [None] * len(self.skeleton.slots)
+
+            for i, slot in enumerate(self.skeleton.slots):
+                slot_vu = SpriteVu()
+                slot_vu.enable()
+
+                att = slot.attachment
+                if att is not None:
+                    sprite = att.sequence_sprites[slot.sequence_index] if att.sequence_sprites else att.gpu_sprite
+                    if sprite is not None:
+                        slot_vu.sprite = sprite
+                        self._last_sprite[i] = sprite
+                    else:
+                        logger.warning(
+                            f"Slot '{slot.data.name}' has attachment "
+                            f"'{att.path}' with no resolved sprite — "
+                            f"atlas.resolve() may not have found a matching region"
+                        )
+
+                self._slot_vus.append(slot_vu)
+
+    '''
+    def _build_slot_vus(self):
         self._slot_vus = []
         self._last_attachment = [None] * len(self.skeleton.slots)
 
@@ -98,6 +122,7 @@ class SkeletonVu(Vu2D):
                     )
 
             self._slot_vus.append(slot_vu)
+    '''
 
     def on_node_transform_change(self, node: Node2D) -> None:
         self.transform = node.transform
@@ -112,6 +137,40 @@ class SkeletonVu(Vu2D):
         self.update_pose()
     """
 
+    def update_pose(self):
+            root = self.transform * self._centering
+
+            for i, slot in enumerate(self.skeleton.slots):
+                att = slot.attachment
+                if att is None:
+                    continue
+
+                # Sequence attachments carry a list of per-frame sprites; the
+                # active frame is chosen by SequenceTimeline writing into
+                # slot.sequence_index. Non-sequence attachments just use the
+                # single resolved gpu_sprite.
+                if att.sequence_sprites:
+                    sprite = att.sequence_sprites[slot.sequence_index]
+                else:
+                    sprite = att.gpu_sprite
+
+                if sprite is None:
+                    continue
+
+                slot_vu = self._slot_vus[i]
+
+                # Compare the resolved sprite, not the attachment: a sequence
+                # keeps one attachment object while swapping frames every few
+                # ticks, so an attachment-identity check would never fire.
+                if sprite is not self._last_sprite[i]:
+                    slot_vu.sprite = sprite
+                    self._last_sprite[i] = sprite
+
+                bone_world4 = _mat3_to_mat4(slot.bone.world)
+                attachment_local4 = _attachment_local_mat4(att)
+                slot_vu.transform = root * bone_world4 * attachment_local4
+
+    '''
     def update_pose(self):
         #root = self.transform
         root = self.transform * self._centering
@@ -129,8 +188,16 @@ class SkeletonVu(Vu2D):
             bone_world4 = _mat3_to_mat4(slot.bone.world)
             attachment_local4 = _attachment_local_mat4(slot.attachment)
             slot_vu.transform = root * bone_world4 * attachment_local4
+    '''
 
+    def _draw(self):
+            for i, slot in enumerate(self.skeleton.slots):
+                if self._last_sprite[i] is not None:
+                    self._slot_vus[i].draw()
+
+    '''
     def _draw(self):
         for i, slot in enumerate(self.skeleton.slots):
             if slot.attachment is not None and slot.attachment.gpu_sprite is not None:
                 self._slot_vus[i].draw()
+    '''

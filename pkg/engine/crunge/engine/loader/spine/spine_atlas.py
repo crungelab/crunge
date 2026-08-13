@@ -69,6 +69,32 @@ class SpineAtlas:
     def add_page(self, page_atlas: SpriteAtlas):
         self.pages.append(page_atlas)
 
+    def resolve(self, skeleton_data) -> None:
+        for skin_attachments in skeleton_data.skins.values():
+            for slot_name, attachments_by_name in skin_attachments.items():
+                for att_name, attachment in attachments_by_name.items():
+                    seq = attachment.sequence
+                    if seq is not None and seq.count > 0:
+                        attachment.sequence_sprites = []
+                        for i in range(seq.count):
+                            frame_name = f"{attachment.path}{str(seq.start + i).zfill(seq.digits)}"
+                            sprite = self._sprites.get(frame_name)
+                            if sprite is None:
+                                logger.warning(f"Sequence frame '{frame_name}' not found in atlas")
+                            attachment.sequence_sprites.append(sprite)
+                        attachment.gpu_sprite = attachment.sequence_sprites[seq.setupIndex]
+                        continue
+
+                    sprite = self.get_sprite(attachment.path)
+                    if sprite is None:
+                        logger.warning(
+                            f"No atlas region found for attachment path '{attachment.path}' "
+                            f"(slot '{slot_name}', attachment '{att_name}')"
+                        )
+                        continue
+                    attachment.gpu_sprite = sprite
+
+    '''
     def resolve(self, skeleton_data: "SkeletonData") -> None:
         for skin_attachments in skeleton_data.skins.values():
             for slot_name, attachments_by_name in skin_attachments.items():
@@ -81,97 +107,4 @@ class SpineAtlas:
                         )
                         continue
                     attachment.gpu_sprite = sprite
-
-
-'''
-class SpineAtlas:
-    """Spine .atlas files can span multiple page images, unlike the XML
-    format's single imagePath. SpriteAtlas (per your reference) appears to
-    wrap exactly one texture, so each page becomes its own SpriteAtlas —
-    this wrapper just aggregates the name -> Sprite lookup across all of
-    them, since a skeleton's attachments reference regions by name only,
-    with no notion of which page they came from."""
-
-    def __init__(self, path: Path):
-        self.path = path
-        self.pages: list[SpriteAtlas] = []
-        self._sprites: dict[str, "Sprite"] = {}          # exact "name" or "name\0index"
-        self._indexed: dict[str, dict[int, "Sprite"]] = {}  # name -> {index: sprite}
-
-    def register_sprite(self, region: AtlasRegion, sprite) -> None:
-        if region.index < 0:
-            self._sprites[region.name] = sprite
-        else:
-            self._indexed.setdefault(region.name, {})[region.index] = sprite
-
-    def get_sprite(self, name: str, index: int = -1):
-        if index >= 0:
-            return self._indexed.get(name, {}).get(index)
-
-        sprite = self._sprites.get(name)
-        if sprite is not None:
-            return sprite
-
-        # Indexed regions (image sequences) asked for by bare name: fall back
-        # to the lowest index, which is the frame an attachment refers to when
-        # it names a sequence without selecting a frame.
-        frames = self._indexed.get(name)
-        if frames:
-            return frames[min(frames)]
-        return None
-
-    def add_page(self, page_atlas: SpriteAtlas):
-        self.pages.append(page_atlas)
-
-    def resolve(self, skeleton_data: "SkeletonData") -> None:
-        for skin_attachments in skeleton_data.skins.values():
-            for slot_name, attachments_by_name in skin_attachments.items():
-                for att_name, attachment in attachments_by_name.items():
-                    sprite = self.get_sprite(attachment.path)
-                    if sprite is None:
-                        logger.warning(
-                            f"No atlas region found for attachment path '{attachment.path}' "
-                            f"(slot '{slot_name}', attachment '{att_name}')"
-                        )
-                        continue
-                    attachment.gpu_sprite = sprite
-'''
-
-'''
-class SpineAtlas:
-    """Spine .atlas files can span multiple page images, unlike the XML
-    format's single imagePath. SpriteAtlas (per your reference) appears to
-    wrap exactly one texture, so each page becomes its own SpriteAtlas —
-    this wrapper just aggregates the name -> Sprite lookup across all of
-    them, since a skeleton's attachments reference regions by name only,
-    with no notion of which page they came from."""
-
-    def __init__(self, path: Path):
-        self.path = path
-        self.pages: list[SpriteAtlas] = []
-        self._sprites: dict[str, Sprite] = {}  # "name" or "name\0index" -> Sprite
-
-    def add_page(self, page_atlas: SpriteAtlas):
-        self.pages.append(page_atlas)
-
-    def register_sprite(self, region: AtlasRegion, sprite: Sprite) -> None:
-        key = region.name if region.index < 0 else f"{region.name}\0{region.index}"
-        self._sprites[key] = sprite
-
-    def get_sprite(self, name: str, index: int = -1):
-        key = name if index < 0 else f"{name}\0{index}"
-        return self._sprites.get(key)
-
-    def resolve(self, skeleton_data: "SkeletonData") -> None:
-        for skin_attachments in skeleton_data.skins.values():
-            for slot_name, attachments_by_name in skin_attachments.items():
-                for att_name, attachment in attachments_by_name.items():
-                    sprite = self.get_sprite(attachment.path)
-                    if sprite is None:
-                        logger.warning(
-                            f"No atlas region found for attachment path '{attachment.path}' "
-                            f"(slot '{slot_name}', attachment '{att_name}')"
-                        )
-                        continue
-                    attachment.gpu_sprite = sprite
-'''
+    '''

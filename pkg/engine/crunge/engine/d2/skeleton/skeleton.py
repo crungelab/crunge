@@ -49,6 +49,7 @@ class Slot:
         self.bone = bone
         self.attachment: RegionAttachment | None = None
         self.color = glm.vec4(1.0)
+        self.sequence_index = 0
 
     def set_to_setup_pose(self):
         skin = self.bone_owner_skeleton_skin  # ASSUMPTION placeholder, see note below
@@ -87,6 +88,12 @@ class Skeleton:
             slot_attachments = skin.get(slot.data.name, {})
             slot.attachment = slot_attachments.get(slot.data.attachment_name) if slot.data.attachment_name else None
             slot.color = glm.vec4(1.0)
+            slot.sequence_index = (
+                slot.attachment.sequence.setupIndex
+                if slot.attachment is not None and slot.attachment.sequence is not None
+                else 0
+            )
+
 
     def update_world_transforms(self):
         for bone in self.bones:  # parent-first order guaranteed by BoneData ordering

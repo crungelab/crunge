@@ -19,11 +19,27 @@ class BoneData:
 
 
 class RegionAttachment:
+    def __init__(
+        self, path, x, y, rotation, scale_x, scale_y, width, height, sequence=None
+    ):
+        self.path = path
+        self.x, self.y, self.rotation = x, y, rotation
+        self.scale_x, self.scale_y = scale_x, scale_y
+        self.width, self.height = width, height  # in units, post-PPU
+
+        self.sequence = sequence  # SequenceJSON | None
+        self.gpu_sprite = None  # non-sequence case
+        self.sequence_sprites: list = []  # frame-indexed, empty if not a sequence
+
+
+"""
+class RegionAttachment:
     def __init__(self, path, x, y, rotation, scale_x, scale_y, width, height):
         self.path = path
         self.x, self.y, self.rotation = x, y, rotation
         self.scale_x, self.scale_y = scale_x, scale_y
         self.width, self.height = width, height  # in units, post-PPU
+"""
 
 
 class SlotData:
