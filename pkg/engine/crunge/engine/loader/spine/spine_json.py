@@ -9,8 +9,8 @@ from pydantic import BaseModel, Field, ConfigDict
 class SpineBaseModel(BaseModel):
     # Spine's JSON is camelCase; keep our attrs snake_case internally later,
     # but at the loader boundary just consume camelCase directly via alias.
-    model_config = ConfigDict(populate_by_name=True, extra="allow")
-    # model_config = ConfigDict(populate_by_name=True, extra="forbid")
+    # model_config = ConfigDict(populate_by_name=True, extra="allow")
+    model_config = ConfigDict(populate_by_name=True, extra="forbid")
 
 
 # ---------- skeleton metadata ----------
@@ -42,6 +42,15 @@ class BoneJSON(SpineBaseModel):
     scaleY: float = 1.0
     shearX: float = 0.0
     shearY: float = 0.0
+
+    inherit: Literal[  # TODO
+        "normal",
+        "onlyTranslation",
+        "noRotationOrReflection",
+        "noScale",
+        "noScaleOrReflection",
+    ] = "normal"
+
     color: str | None = None  # nonessential, ignore for now
 
 
@@ -75,9 +84,12 @@ class SequenceKeyframe(SpineBaseModel):
 
 # ---------- attachments (region only for now; mesh/etc pass through) ----------
 
+# spine_json.py — add to RegionAttachmentJSON
+
 
 class RegionAttachmentJSON(SpineBaseModel):
     type: Literal["region"] = "region"
+    name: str | None = None
     path: str | None = None
     x: float = 0.0
     y: float = 0.0
@@ -105,6 +117,20 @@ class SkinJSON(SpineBaseModel):
     transform: list[str] = Field(default_factory=list)
     path: list[str] = Field(default_factory=list)
     attachments: SkinAttachments = Field(default_factory=dict)
+
+
+# ---------- draw order ----------
+# spine_json.py
+
+
+class DrawOrderOffsetJSON(SpineBaseModel):
+    slot: str
+    offset: int = 0
+
+
+class DrawOrderKeyframe(SpineBaseModel):
+    time: float = 0.0
+    offsets: list[DrawOrderOffsetJSON] = Field(default_factory=list)
 
 
 # ---------- animation keyframes ----------
@@ -149,7 +175,7 @@ class BoneTimelinesJSON(SpineBaseModel):
 class SlotTimelinesJSON(SpineBaseModel):
     attachment: list[AttachmentKeyframe] = Field(default_factory=list)
     rgba: list[dict] = Field(default_factory=list)  # color timeline, TODO
-    #sequence: list[SequenceKeyframe] = Field(default_factory=list)
+    # sequence: list[SequenceKeyframe] = Field(default_factory=list)
 
 
 class AttachmentTimelinesJSON(SpineBaseModel):
@@ -162,6 +188,7 @@ class AttachmentTimelinesJSON(SpineBaseModel):
 
 # spine_json.py — AnimationJSON, corrected nesting
 
+
 class AnimationJSON(SpineBaseModel):
     bones: dict[str, BoneTimelinesJSON] = Field(default_factory=dict)
     slots: dict[str, SlotTimelinesJSON] = Field(default_factory=dict)
@@ -172,7 +199,9 @@ class AnimationJSON(SpineBaseModel):
     ik: dict[str, list[dict]] = Field(default_factory=dict)
     deform: dict = Field(default_factory=dict)
     events: list[dict] = Field(default_factory=list)
-    draworder: list[dict] = Field(default_factory=list)
+    # draworder: list[dict] = Field(default_factory=list)
+    draw_order: list[DrawOrderKeyframe] = Field(default_factory=list, alias="drawOrder")
+
 
 """
 class AnimationJSON(SpineBaseModel):

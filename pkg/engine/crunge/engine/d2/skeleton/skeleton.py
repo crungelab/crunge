@@ -1,8 +1,10 @@
 # skeleton.py — revised Bone / Skeleton with mutable pose fields
 
+from loguru import logger
 import glm
 
 from .skeleton_data import BoneData, SlotData, RegionAttachment, SkeletonData
+
 
 class Bone:
     def __init__(self, data: BoneData, parent: "Bone | None"):
@@ -37,9 +39,15 @@ class Bone:
         s = glm.sin(glm.radians(self.rotation))
         # translate * rotate * scale, column-major glm convention
         self.local = glm.mat3(
-            c * self.scale_x,  s * self.scale_x,  0.0,
-            -s * self.scale_y, c * self.scale_y,  0.0,
-            self.x,            self.y,            1.0,
+            c * self.scale_x,
+            s * self.scale_x,
+            0.0,
+            -s * self.scale_y,
+            c * self.scale_y,
+            0.0,
+            self.x,
+            self.y,
+            1.0,
         )
 
 
@@ -53,7 +61,9 @@ class Slot:
 
     def set_to_setup_pose(self):
         skin = self.bone_owner_skeleton_skin  # ASSUMPTION placeholder, see note below
-        self.attachment = skin.get(self.data.attachment_name) if self.data.attachment_name else None
+        self.attachment = (
+            skin.get(self.data.attachment_name) if self.data.attachment_name else None
+        )
         self.color = glm.vec4(1.0)
 
 
@@ -73,11 +83,45 @@ class Skeleton:
 
         self.set_skin(skin_name)
 
+    def _resolve_attachment(self, slot):
+        """Skin-specific attachment wins; fall back to the default skin,
+        which holds attachments shared across all skins (goblins keeps the
+        shield and spear there while body parts live in goblin/goblingirl)."""
+        if not slot.data.attachment_name:
+            return None
+        skin = self.data.skins.get(self.current_skin_name, {})
+        attachment = skin.get(slot.data.name, {}).get(slot.data.attachment_name)
+        if attachment is None and self.current_skin_name != "default":
+            default_skin = self.data.skins.get("default", {})
+            attachment = default_skin.get(slot.data.name, {}).get(
+                slot.data.attachment_name
+            )
+        return attachment
+
     def set_skin(self, name):
         self.current_skin_name = name
-        skin = self.data.skins[name]
         for slot in self.slots:
-            slot_attachments = skin.get(slot.data.name, {})
+            slot.attachment = self._resolve_attachment(slot)
+
+    def set_to_setup_pose(self):
+        for bone in self.bones:
+            bone.set_to_setup_pose()
+        for slot in self.slots:
+            slot.attachment = self._resolve_attachment(slot)
+            slot.color = glm.vec4(1.0)
+            slot.sequence_index = (
+                slot.attachment.sequence.setupIndex
+                if slot.attachment is not None and slot.attachment.sequence is not None
+                else 0
+            )
+
+    """
+    def set_skin(self, name):
+        self.current_skin_name = name
+        logger.debug(name)
+        self.skin = self.data.skins[name]
+        for slot in self.slots:
+            slot_attachments = self.skin.get(slot.data.name, {})
             slot.attachment = slot_attachments.get(slot.data.attachment_name) if slot.data.attachment_name else None
 
     def set_to_setup_pose(self):
@@ -86,16 +130,22 @@ class Skeleton:
         skin = self.data.skins[self.current_skin_name]
         for slot in self.slots:
             slot_attachments = skin.get(slot.data.name, {})
-            slot.attachment = slot_attachments.get(slot.data.attachment_name) if slot.data.attachment_name else None
+            slot.attachment = (
+                slot_attachments.get(slot.data.attachment_name)
+                if slot.data.attachment_name
+                else None
+            )
             slot.color = glm.vec4(1.0)
             slot.sequence_index = (
                 slot.attachment.sequence.setupIndex
                 if slot.attachment is not None and slot.attachment.sequence is not None
                 else 0
             )
-
+    """
 
     def update_world_transforms(self):
         for bone in self.bones:  # parent-first order guaranteed by BoneData ordering
             bone.compose_local()
-            bone.world = bone.local if bone.parent is None else bone.parent.world * bone.local
+            bone.world = (
+                bone.local if bone.parent is None else bone.parent.world * bone.local
+            )

@@ -38,6 +38,19 @@ class AnimationPage(Page):
         self.node = Node2D(vu=self.skeleton_vu)
         self.scene.attach(self.node)
 
+        eye_slot = next(s for s in skeleton.slots if s.data.name == "eye")
+        print("attachment:", eye_slot.attachment)
+        print("gpu_sprite:", eye_slot.attachment.gpu_sprite if eye_slot.attachment else None)
+        print("eye bone world:", eye_slot.bone.world)
+        print("eye attachment size:", eye_slot.attachment.width, eye_slot.attachment.height)
+
+        eye_index = next(i for i, s in enumerate(skeleton.slots) if s.data.name == "eye")
+        print("eye slot index:", eye_index)
+        for i, s in enumerate(skeleton.slots):
+            if s.attachment is not None:
+                print(i, s.data.name)
+
+
     def _draw(self):
         imgui.begin("Properties")
 
@@ -61,6 +74,17 @@ class AnimationPage(Page):
                     logger.debug(f"Selected: {name}")
                     self.current_animation = self.skeleton.data.animations[name]
                     self.anim_state.set_animation(self.current_animation)
+
+            imgui.end_list_box()
+
+        if imgui.begin_list_box("Skins"):
+            for name, skin in self.skeleton.data.skins.items():
+                opened, selected = imgui.selectable(
+                    name, name == self.skeleton.current_skin_name
+                )
+                if opened:
+                    logger.debug(f"Selected skin: {name}")
+                    self.skeleton.set_skin(name)
 
             imgui.end_list_box()
 

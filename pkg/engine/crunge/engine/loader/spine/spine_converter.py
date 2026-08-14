@@ -43,10 +43,14 @@ def _parse_curve(curve) -> str | tuple[float, float, float, float]:
     return tuple(curve)  # bezier control points
 
 
+# spine_converter.py
+
 def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
     att = RegionAttachmentJSON.model_validate(data)
     return RegionAttachment(
-        path=att.path or name,
+        # path wins; then the attachment's own name field; then the dict key.
+        # goblins uses the middle case: key "eyes-closed", name "goblin/eyes-closed".
+        path=att.path or att.name or name,
         x=att.x / ppu,
         y=att.y / ppu,
         rotation=att.rotation,
@@ -56,7 +60,6 @@ def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
         height=att.height / ppu,
         sequence=att.sequence,
     )
-
 
 """
 def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
@@ -70,6 +73,7 @@ def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
         scale_y=att.scaleY,
         width=att.width / ppu,
         height=att.height / ppu,
+        sequence=att.sequence,
     )
 """
 

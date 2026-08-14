@@ -63,7 +63,9 @@ class SkeletonVu(Vu2D):
     def __init__(self, skeleton: Skeleton = None) -> None:
         super().__init__()
         self.skeleton = skeleton
-        self._centering = _centering_offset_mat4(skeleton.data) if skeleton else glm.mat4(1.0)
+        self._centering = (
+            _centering_offset_mat4(skeleton.data) if skeleton else glm.mat4(1.0)
+        )
 
         self.anim_state = None
         self.manual_draw = True
@@ -75,29 +77,33 @@ class SkeletonVu(Vu2D):
             self._build_slot_vus()
 
     def _build_slot_vus(self):
-            self._slot_vus = []
-            self._last_sprite = [None] * len(self.skeleton.slots)
+        self._slot_vus = []
+        self._last_sprite = [None] * len(self.skeleton.slots)
 
-            for i, slot in enumerate(self.skeleton.slots):
-                slot_vu = SpriteVu()
-                slot_vu.enable()
+        for i, slot in enumerate(self.skeleton.slots):
+            slot_vu = SpriteVu()
+            slot_vu.enable()
 
-                att = slot.attachment
-                if att is not None:
-                    sprite = att.sequence_sprites[slot.sequence_index] if att.sequence_sprites else att.gpu_sprite
-                    if sprite is not None:
-                        slot_vu.sprite = sprite
-                        self._last_sprite[i] = sprite
-                    else:
-                        logger.warning(
-                            f"Slot '{slot.data.name}' has attachment "
-                            f"'{att.path}' with no resolved sprite — "
-                            f"atlas.resolve() may not have found a matching region"
-                        )
+            att = slot.attachment
+            if att is not None:
+                sprite = (
+                    att.sequence_sprites[slot.sequence_index]
+                    if att.sequence_sprites
+                    else att.gpu_sprite
+                )
+                if sprite is not None:
+                    slot_vu.sprite = sprite
+                    self._last_sprite[i] = sprite
+                else:
+                    logger.warning(
+                        f"Slot '{slot.data.name}' has attachment "
+                        f"'{att.path}' with no resolved sprite — "
+                        f"atlas.resolve() may not have found a matching region"
+                    )
 
-                self._slot_vus.append(slot_vu)
+            self._slot_vus.append(slot_vu)
 
-    '''
+    """
     def _build_slot_vus(self):
         self._slot_vus = []
         self._last_attachment = [None] * len(self.skeleton.slots)
@@ -122,7 +128,7 @@ class SkeletonVu(Vu2D):
                     )
 
             self._slot_vus.append(slot_vu)
-    '''
+    """
 
     def on_node_transform_change(self, node: Node2D) -> None:
         self.transform = node.transform
@@ -137,6 +143,38 @@ class SkeletonVu(Vu2D):
         self.update_pose()
     """
 
+    def update_pose(self):
+            root = self.transform * self._centering
+
+            for i, slot in enumerate(self.skeleton.slots):
+                att = slot.attachment
+                if att is None:
+                    # Clear tracking so _draw() stops drawing the previous sprite —
+                    # otherwise a blink leaves the eyelid hanging at its last transform.
+                    self._last_sprite[i] = None
+                    continue
+
+                if att.sequence_sprites:
+                    sprite = att.sequence_sprites[slot.sequence_index]
+                else:
+                    sprite = att.gpu_sprite
+
+                if sprite is None:
+                    self._last_sprite[i] = None
+                    continue
+
+                slot_vu = self._slot_vus[i]
+
+                if sprite is not self._last_sprite[i]:
+                    slot_vu.sprite = sprite
+                    self._last_sprite[i] = sprite
+
+                bone_world4 = _mat3_to_mat4(slot.bone.world)
+                attachment_local4 = _attachment_local_mat4(att)
+                slot_vu.transform = root * bone_world4 * attachment_local4
+
+
+    """
     def update_pose(self):
             root = self.transform * self._centering
 
@@ -169,8 +207,9 @@ class SkeletonVu(Vu2D):
                 bone_world4 = _mat3_to_mat4(slot.bone.world)
                 attachment_local4 = _attachment_local_mat4(att)
                 slot_vu.transform = root * bone_world4 * attachment_local4
+    """
 
-    '''
+    """
     def update_pose(self):
         #root = self.transform
         root = self.transform * self._centering
@@ -188,16 +227,16 @@ class SkeletonVu(Vu2D):
             bone_world4 = _mat3_to_mat4(slot.bone.world)
             attachment_local4 = _attachment_local_mat4(slot.attachment)
             slot_vu.transform = root * bone_world4 * attachment_local4
-    '''
+    """
 
     def _draw(self):
-            for i, slot in enumerate(self.skeleton.slots):
-                if self._last_sprite[i] is not None:
-                    self._slot_vus[i].draw()
+        for i, slot in enumerate(self.skeleton.slots):
+            if self._last_sprite[i] is not None:
+                self._slot_vus[i].draw()
 
-    '''
+    """
     def _draw(self):
         for i, slot in enumerate(self.skeleton.slots):
             if slot.attachment is not None and slot.attachment.gpu_sprite is not None:
                 self._slot_vus[i].draw()
-    '''
+    """
