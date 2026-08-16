@@ -9,6 +9,10 @@ from bisect import bisect_right
 
 from .skeleton import Skeleton, Bone, Slot
 
+_NO_CHANGE = (
+    object()
+)  # sentinel distinct from a real "name=None" keyframe (explicit hide)
+
 
 def _bracket(keyframes, time):
     """Return (prev_kf, next_kf, t) where t in [0,1] is the lerp fraction
@@ -75,6 +79,37 @@ class ScaleTimeline:
         return psx + (nsx - psx) * t, psy + (nsy - psy) * t
 
 
+# animation.py — AttachmentTimeline
+
+
+class AttachmentTimeline:
+    def __init__(self, slot_index, keyframes):
+        self.slot_index = slot_index
+        self.keyframes = keyframes
+
+    def apply(self, skeleton, time, weight):
+        name = self._sample(time)
+        if name is _NO_CHANGE:
+            return  # before the first keyframe — leave the setup-pose attachment alone
+
+        slot = skeleton.slots[self.slot_index]
+        skin = skeleton.data.skins.get(skeleton.current_skin_name, {})
+        default_skin = skeleton.data.skins.get("default", {})
+        slot_attachments = skin.get(slot.data.name, {}) or default_skin.get(
+            slot.data.name, {}
+        )
+        slot.attachment = slot_attachments.get(name) if name else None
+
+    def _sample(self, time):
+        active = _NO_CHANGE
+        for kf_time, kf_name in self.keyframes:
+            if kf_time > time:
+                break
+            active = kf_name
+        return active
+
+
+'''
 class AttachmentTimeline:
     """Discrete, not interpolated — a slot's attachment just switches at
     each keyframe's time. `name=None` means no attachment."""
@@ -97,6 +132,7 @@ class AttachmentTimeline:
                 break
             active = kf_name
         return active
+'''
 
 
 class RotateTimeline:
@@ -108,8 +144,12 @@ class RotateTimeline:
         angle = self._sample(time)
         bone = skeleton.bones[self.bone_index]
         d = bone.data
-        target = d.rotation + angle          # keyframe value is a delta from setup, always
-        bone.rotation = bone.rotation + (target - bone.rotation) * weight if weight != 1.0 else target
+        target = d.rotation + angle  # keyframe value is a delta from setup, always
+        bone.rotation = (
+            bone.rotation + (target - bone.rotation) * weight
+            if weight != 1.0
+            else target
+        )
 
     def _sample(self, time):
         prev_kf, next_kf, t = _bracket(self.keyframes, time)
@@ -159,6 +199,50 @@ class SequenceTimeline:
             if kf.time > time:
                 break
             active = kf
+        return active
+
+
+# animation.py — new timeline
+
+
+class DrawOrderTimeline:
+    def __init__(self, keyframes: list[tuple[float, list[tuple[str, int]]]]):
+        self.keyframes = keyframes  # (time, [(slot_name, offset), ...])
+
+    def apply(self, skeleton, time, weight):
+        offsets = self._sample(time)
+        if offsets is _NO_CHANGE:
+            skeleton.draw_order = None  # None means "use setup order", set below
+            return
+
+        setup_order = list(range(len(skeleton.slots)))  # setup pose = data order
+        if not offsets:
+            skeleton.draw_order = setup_order
+            return
+
+        slot_index_by_name = {s.data.name: i for i, s in enumerate(skeleton.slots)}
+        # Standard Spine algorithm: place offset slots at their target
+        # positions first, then fill remaining slots into the gaps in order.
+        order = [None] * len(setup_order)
+        placed = set()
+        for slot_name, offset in offsets:
+            i = slot_index_by_name[slot_name]
+            order[i + offset] = i
+            placed.add(i)
+
+        remaining = (i for i in setup_order if i not in placed)
+        for pos in range(len(order)):
+            if order[pos] is None:
+                order[pos] = next(remaining)
+
+        skeleton.draw_order = order
+
+    def _sample(self, time):
+        active = _NO_CHANGE
+        for kf_time, offsets in self.keyframes:
+            if kf_time > time:
+                break
+            active = offsets
         return active
 
 

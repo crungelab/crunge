@@ -25,7 +25,6 @@ class Buffer(Base):
         # Create the WebGPU buffer
         #logger.debug(f"Creating buffer: {label}")
         size = divround_up(size, 4)
-        #TODO: fix Dawny/CxBind's issue with c strings
 
         desc = wgpu.BufferDescriptor(
             label=label,

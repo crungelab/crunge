@@ -186,9 +186,6 @@ class AttachmentTimelinesJSON(SpineBaseModel):
     deform: list[dict] = Field(default_factory=list)  # TODO
 
 
-# spine_json.py — AnimationJSON, corrected nesting
-
-
 class AnimationJSON(SpineBaseModel):
     bones: dict[str, BoneTimelinesJSON] = Field(default_factory=dict)
     slots: dict[str, SlotTimelinesJSON] = Field(default_factory=dict)
@@ -199,19 +196,8 @@ class AnimationJSON(SpineBaseModel):
     ik: dict[str, list[dict]] = Field(default_factory=dict)
     deform: dict = Field(default_factory=dict)
     events: list[dict] = Field(default_factory=list)
-    # draworder: list[dict] = Field(default_factory=list)
     draw_order: list[DrawOrderKeyframe] = Field(default_factory=list, alias="drawOrder")
 
-
-"""
-class AnimationJSON(SpineBaseModel):
-    bones: dict[str, BoneTimelinesJSON] = Field(default_factory=dict)
-    slots: dict[str, SlotTimelinesJSON] = Field(default_factory=dict)
-    ik: dict[str, list[dict]] = Field(default_factory=dict)  # TODO
-    deform: dict = Field(default_factory=dict)  # TODO
-    events: list[dict] = Field(default_factory=list)  # TODO
-    draworder: list[dict] = Field(default_factory=list)  # TODO
-"""
 
 # ---------- top-level file ----------
 

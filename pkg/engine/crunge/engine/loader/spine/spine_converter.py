@@ -25,6 +25,7 @@ from crunge.engine.d2.skeleton.skeleton_data import (
 )
 from crunge.engine.d2.skeleton.animation import (
     Animation,
+    DrawOrderTimeline,
     RotateTimeline,
     TranslateTimeline,
     ScaleTimeline,
@@ -219,6 +220,43 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                         )
                     )
 
+        if anim.draw_order:
+            timelines.append(
+                DrawOrderTimeline(
+                    keyframes=[
+                        (kf.time, [(o.slot, o.offset) for o in kf.offsets])
+                        for kf in anim.draw_order
+                    ]
+                )
+            )
+
+        duration = max(
+                    (
+                        kf.time
+                        for tl_group in [anim.bones.values(), anim.slots.values()]
+                        for tl in tl_group
+                        for kfs in (
+                            getattr(tl, "rotate", []),
+                            getattr(tl, "translate", []),
+                            getattr(tl, "scale", []),
+                            getattr(tl, "attachment", []),
+                        )
+                        for kf in kfs
+                    ),
+                    default=max(
+                        [
+                            kf.time
+                            for slots_in_skin in anim.attachments.values()
+                            for attachments in slots_in_skin.values()
+                            for att_tl in attachments.values()
+                            for kf in att_tl.sequence
+                        ]
+                        + [kf.time for kf in anim.draw_order],
+                        default=0.0,
+                    ),
+                )
+
+        '''
         duration = max(
             (
                 kf.time
@@ -246,6 +284,7 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                 default=0.0,
             ),
         )
+        '''
 
         result.animations[anim_name] = Animation(anim_name, duration, timelines)
 

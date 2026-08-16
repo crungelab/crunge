@@ -32,15 +32,12 @@ class RegionAttachment:
         self.sequence_sprites: list = []  # frame-indexed, empty if not a sequence
 
 
-"""
-class RegionAttachment:
-    def __init__(self, path, x, y, rotation, scale_x, scale_y, width, height):
-        self.path = path
-        self.x, self.y, self.rotation = x, y, rotation
-        self.scale_x, self.scale_y = scale_x, scale_y
-        self.width, self.height = width, height  # in units, post-PPU
-"""
-
+    def __repr__(self):
+        return (
+            f"RegionAttachment(path={self.path!r}, x={self.x}, y={self.y}, "
+            f"rotation={self.rotation}, scale_x={self.scale_x}, scale_y={self.scale_y}, "
+            f"width={self.width}, height={self.height}, sequence={self.sequence!r})"
+        )
 
 class SlotData:
     def __init__(self, name, bone_index, attachment_name=None):

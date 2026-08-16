@@ -13,16 +13,14 @@ class AtlasRegion:
     y: int = 0
     width: int = 0
     height: int = 0
-    # rotate: False, True (90° CCW), or a degree value 0-360 per spec.
-    # Only False/no-rotation is handled downstream right now — see TODO
-    # in atlas_loader.py. Stored as-is here so nothing is silently lost.
-    #rotate: bool | float = False
     rotate: int = 0  # degrees, multiple of 90
-    offset_x: int = 0        # whitespace stripped from left edge
-    offset_y: int = 0        # whitespace stripped from bottom edge
+    offset_x: int = 0  # whitespace stripped from left edge
+    offset_y: int = 0  # whitespace stripped from bottom edge
     original_width: int = 0  # pre-strip size; equals width/height if no stripping
     original_height: int = 0
-    extra: dict[str, str] = field(default_factory=dict)  # name/value pairs Spine doesn't define
+    extra: dict[str, str] = field(
+        default_factory=dict
+    )  # name/value pairs Spine doesn't define
 
 
 @dataclass
@@ -77,7 +75,11 @@ def parse_atlas(path: str) -> AtlasFile:
         page = AtlasPage(image_path=lines[i].strip())
         i += 1
 
-        while i < n and ":" in lines[i] and lines[i].split(":", 1)[0].strip() in _PAGE_KEYS:
+        while (
+            i < n
+            and ":" in lines[i]
+            and lines[i].split(":", 1)[0].strip() in _PAGE_KEYS
+        ):
             key, value = (part.strip() for part in lines[i].split(":", 1))
             if key == "size":
                 page.width, page.height = _parse_csv_ints(value)
@@ -101,17 +103,25 @@ def parse_atlas(path: str) -> AtlasFile:
                 if key == "index":
                     region.index = int(value)
                 elif key == "bounds":
-                    region.x, region.y, region.width, region.height = _parse_csv_ints(value)
+                    region.x, region.y, region.width, region.height = _parse_csv_ints(
+                        value
+                    )
                 elif key == "offsets":
                     ox, oy, ow, oh = _parse_csv_ints(value)
                     region.offset_x, region.offset_y = ox, oy
                     region.original_width, region.original_height = ow, oh
                 elif key == "rotate":
-                    region.rotate = value.lower() == "true" if value.lower() in ("true", "false") else float(value)
+                    region.rotate = (
+                        value.lower() == "true"
+                        if value.lower() in ("true", "false")
+                        else float(value)
+                    )
                 elif key in ("split", "pad"):
                     pass  # ninepatch data — unused, not needed for skeletal attachments
                 else:
-                    region.extra[key] = value  # e.g. Spine's frame-animation "origin" data
+                    region.extra[key] = (
+                        value  # e.g. Spine's frame-animation "origin" data
+                    )
                 i += 1
 
             if region.original_width == 0:

@@ -71,6 +71,7 @@ class Skeleton:
     def __init__(self, skeleton_data: SkeletonData, skin_name: str = "default"):
         self.data = skeleton_data
         self.current_skin_name = skin_name
+        self.draw_order: list[int] | None = None  # None = data order
 
         self.bones: list[Bone] = []
         for bd in skeleton_data.bones:
@@ -114,6 +115,7 @@ class Skeleton:
                 if slot.attachment is not None and slot.attachment.sequence is not None
                 else 0
             )
+        self.draw_order = None
 
     """
     def set_skin(self, name):

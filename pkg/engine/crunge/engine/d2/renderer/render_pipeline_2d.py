@@ -55,8 +55,6 @@ class RenderPipeline2D(RenderPipeline):
         )
 
     def create_fragment_state(self):
-        # Had to hold on to blend_state because of garbage collection issues
-        # TODO: Why isn't color_targets having the same issue?
         self.blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
                 operation=wgpu.BlendOperation.ADD,

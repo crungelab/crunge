@@ -230,9 +230,17 @@ class SkeletonVu(Vu2D):
     """
 
     def _draw(self):
+        order = self.skeleton.draw_order or range(len(self.skeleton.slots))
+        for i in order:
+            if self._last_sprite[i] is not None:
+                self._slot_vus[i].draw()
+
+    """
+    def _draw(self):
         for i, slot in enumerate(self.skeleton.slots):
             if self._last_sprite[i] is not None:
                 self._slot_vus[i].draw()
+    """
 
     """
     def _draw(self):
