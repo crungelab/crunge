@@ -135,33 +135,33 @@ class DrawOrderKeyframe(SpineBaseModel):
 
 # ---------- animation keyframes ----------
 
+class CurveFieldsMixin(SpineBaseModel):
+    curve: float | str | list[float] | None = None
 
-class RotateKeyframe(SpineBaseModel):
+class RotateKeyframe(CurveFieldsMixin):
     time: float = 0.0
     value: float = 0.0
-    curve: float | str | list[float] | None = (
-        None  # None=linear, "stepped", or [cx1,cy1,cx2,cy2]
-    )
 
 
-class TranslateKeyframe(SpineBaseModel):
+class TranslateKeyframe(CurveFieldsMixin):
     time: float = 0.0
     x: float = 0.0
     y: float = 0.0
-    curve: float | str | list[float] | None = None
 
 
-class ScaleKeyframe(SpineBaseModel):
+class ScaleKeyframe(CurveFieldsMixin):
     time: float = 0.0
     x: float = 1.0
     y: float = 1.0
-    curve: float | str | list[float] | None = None
 
 
 class AttachmentKeyframe(SpineBaseModel):
     time: float = 0.0
     name: str | None = None  # None = no attachment at this keyframe
 
+class ColorKeyframe(CurveFieldsMixin):
+    time: float = 0.0
+    color: str = "ffffffff"
 
 class BoneTimelinesJSON(SpineBaseModel):
     rotate: list[RotateKeyframe] = Field(default_factory=list)
@@ -174,8 +174,8 @@ class BoneTimelinesJSON(SpineBaseModel):
 
 class SlotTimelinesJSON(SpineBaseModel):
     attachment: list[AttachmentKeyframe] = Field(default_factory=list)
-    rgba: list[dict] = Field(default_factory=list)  # color timeline, TODO
-    # sequence: list[SequenceKeyframe] = Field(default_factory=list)
+    #rgba: list[dict] = Field(default_factory=list)  # color timeline, TODO
+    rgba: list[ColorKeyframe] = Field(default_factory=list)  # color timeline
 
 
 class AttachmentTimelinesJSON(SpineBaseModel):

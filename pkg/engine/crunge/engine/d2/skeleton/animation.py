@@ -14,6 +14,10 @@ _NO_CHANGE = (
 )  # sentinel distinct from a real "name=None" keyframe (explicit hide)
 
 
+def _before_start(keyframes, time) -> bool:
+    return time < keyframes[0][0]
+
+
 def _bracket(keyframes, time):
     """Return (prev_kf, next_kf, t) where t in [0,1] is the lerp fraction
     between prev and next at `time`. keyframes is a list of tuples whose
@@ -40,12 +44,45 @@ def _bracket(keyframes, time):
     return prev_kf, next_kf, t
 
 
+class RotateTimeline:
+    def __init__(self, bone_index, keyframes):
+        self.bone_index = bone_index
+        self.keyframes = keyframes  # list of (time, angle, curve)
+
+    def apply(self, skeleton: Skeleton, time, weight):
+        if _before_start(self.keyframes, time):
+            return  # setup pose, already applied by set_to_setup_pose()
+
+        angle = self._sample(time)
+        bone = skeleton.bones[self.bone_index]
+        d = bone.data
+        target = d.rotation + angle  # keyframe value is a delta from setup, always
+        bone.rotation = (
+            bone.rotation + (target - bone.rotation) * weight
+            if weight != 1.0
+            else target
+        )
+
+    def _sample(self, time):
+        prev_kf, next_kf, t = _bracket(self.keyframes, time)
+        _, pa, _ = prev_kf
+        _, na, _ = next_kf
+        # Shortest-path angle interpolation — a keyframe pair like 170 -> -170
+        # is a 20 degree turn, not 340. Without this, fast rotations snap
+        # the wrong way around at the wrap boundary.
+        diff = (na - pa + 180.0) % 360.0 - 180.0
+        return pa + diff * t
+
+
 class TranslateTimeline:
     def __init__(self, bone_index, keyframes):
         self.bone_index = bone_index
         self.keyframes = keyframes  # list of (time, x, y, curve)
 
     def apply(self, skeleton: Skeleton, time, weight):
+        if _before_start(self.keyframes, time):
+            return
+
         x, y = self._sample(time)
         bone = skeleton.bones[self.bone_index]
         d = bone.data
@@ -66,6 +103,9 @@ class ScaleTimeline:
         self.keyframes = keyframes  # list of (time, x, y, curve)
 
     def apply(self, skeleton: Skeleton, time, weight):
+        if _before_start(self.keyframes, time):
+            return
+
         sx, sy = self._sample(time)
         bone = skeleton.bones[self.bone_index]
         d = bone.data
@@ -79,7 +119,24 @@ class ScaleTimeline:
         return psx + (nsx - psx) * t, psy + (nsy - psy) * t
 
 
-# animation.py — AttachmentTimeline
+class RGBATimeline:
+    def __init__(self, slot_index, keyframes):
+        self.slot_index = slot_index
+        self.keyframes = keyframes  # (time, glm.vec4, curve)
+
+    def apply(self, skeleton, time, weight):
+        if _before_start(self.keyframes, time):
+            return
+
+        color = self._sample(time)
+        slot = skeleton.slots[self.slot_index]
+        slot.color = (
+            slot.color + (color - slot.color) * weight if weight != 1.0 else color
+        )
+
+    def _sample(self, time):
+        prev_kf, next_kf, t = _bracket(self.keyframes, time)
+        return prev_kf[1] + (next_kf[1] - prev_kf[1]) * t
 
 
 class AttachmentTimeline:
@@ -135,33 +192,6 @@ class AttachmentTimeline:
 '''
 
 
-class RotateTimeline:
-    def __init__(self, bone_index, keyframes):
-        self.bone_index = bone_index
-        self.keyframes = keyframes  # list of (time, angle, curve)
-
-    def apply(self, skeleton: Skeleton, time, weight):
-        angle = self._sample(time)
-        bone = skeleton.bones[self.bone_index]
-        d = bone.data
-        target = d.rotation + angle  # keyframe value is a delta from setup, always
-        bone.rotation = (
-            bone.rotation + (target - bone.rotation) * weight
-            if weight != 1.0
-            else target
-        )
-
-    def _sample(self, time):
-        prev_kf, next_kf, t = _bracket(self.keyframes, time)
-        _, pa, _ = prev_kf
-        _, na, _ = next_kf
-        # Shortest-path angle interpolation — a keyframe pair like 170 -> -170
-        # is a 20 degree turn, not 340. Without this, fast rotations snap
-        # the wrong way around at the wrap boundary.
-        diff = (na - pa + 180.0) % 360.0 - 180.0
-        return pa + diff * t
-
-
 class SequenceTimeline:
     def __init__(self, slot_index, attachment, keyframes):
         self.slot_index = slot_index
@@ -200,9 +230,6 @@ class SequenceTimeline:
                 break
             active = kf
         return active
-
-
-# animation.py — new timeline
 
 
 class DrawOrderTimeline:

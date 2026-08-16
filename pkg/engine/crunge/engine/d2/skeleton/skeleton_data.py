@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .animation import Animation
 
+import glm
+
 
 class BoneData:
     def __init__(
@@ -31,7 +33,6 @@ class RegionAttachment:
         self.gpu_sprite = None  # non-sequence case
         self.sequence_sprites: list = []  # frame-indexed, empty if not a sequence
 
-
     def __repr__(self):
         return (
             f"RegionAttachment(path={self.path!r}, x={self.x}, y={self.y}, "
@@ -39,12 +40,23 @@ class RegionAttachment:
             f"width={self.width}, height={self.height}, sequence={self.sequence!r})"
         )
 
+
+# skeleton_data.py
 class SlotData:
-    def __init__(self, name, bone_index, attachment_name=None):
+    def __init__(self, name, bone_index, attachment_name=None, color=None):
         self.name = name
         self.bone_index = bone_index
         self.attachment_name = attachment_name
+        self.color = color if color is not None else glm.vec4(1.0)
 
+"""
+class SlotData:
+    def __init__(self, name, bone_index, attachment_name=None, color=glm.vec4(1.0)):
+        self.name = name
+        self.bone_index = bone_index
+        self.attachment_name = attachment_name
+        self.color = color
+"""
 
 class SkeletonData:
     def __init__(self):

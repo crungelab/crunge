@@ -169,6 +169,7 @@ class SkeletonVu(Vu2D):
                     slot_vu.sprite = sprite
                     self._last_sprite[i] = sprite
 
+                slot_vu._color = slot.color  # bypass setter; transform assignment below triggers the single upload
                 bone_world4 = _mat3_to_mat4(slot.bone.world)
                 attachment_local4 = _attachment_local_mat4(att)
                 slot_vu.transform = root * bone_world4 * attachment_local4

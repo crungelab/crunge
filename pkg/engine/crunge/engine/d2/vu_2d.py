@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from crunge.engine import colors
 from loguru import logger
 import glm
 
@@ -24,6 +25,7 @@ class Vu2D(Vu[Node2D]):
     def __init__(self) -> None:
         super().__init__()
         self._transform = glm.mat4(1.0)
+        self._color = glm.vec4(1.0, 1.0, 1.0, 1.0)
         self.bounds = Bounds2()
 
         self.node_bind_group: NodeBindGroup = None
@@ -100,6 +102,16 @@ class Vu2D(Vu[Node2D]):
             self.update_gpu()
 
     @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+        if self.enabled:
+            self.update_gpu()
+
+    @property
     def size(self) -> glm.vec2:
         raise NotImplementedError
 
@@ -117,8 +129,11 @@ class Vu2D(Vu[Node2D]):
         self.bounds = node.bounds
 
     def update_gpu(self):
+        #logger.debug(f"Vu2D: update_gpu: transform={self.transform}, color={self.color}")
+
         uniform = NodeUniform()
         uniform.transform.data = cast_matrix4(self.transform)
+        uniform.color = cast_vec4(self.color)
 
         self.node_buffer[self.node_buffer_index] = uniform
 

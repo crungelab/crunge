@@ -38,6 +38,7 @@ class CameraUniform(Structure):
 class NodeUniform(Structure):
     _fields_ = [
         ("transform", Mat4),
+        ("color", Vec4),
         ("model_index", c_uint32),
         ("_pad1", c_float * 3),
     ]

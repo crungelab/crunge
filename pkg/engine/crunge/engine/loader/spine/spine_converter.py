@@ -25,12 +25,13 @@ from crunge.engine.d2.skeleton.skeleton_data import (
 )
 from crunge.engine.d2.skeleton.animation import (
     Animation,
-    DrawOrderTimeline,
     RotateTimeline,
     TranslateTimeline,
     ScaleTimeline,
     AttachmentTimeline,
     SequenceTimeline,
+    DrawOrderTimeline,
+    RGBATimeline,
 )
 
 
@@ -78,6 +79,13 @@ def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
     )
 """
 
+# spine_converter.py — shared hex parser, used for both setup color and keyframes
+def _parse_color(hex_str: str) -> glm.vec4:
+    h = hex_str.lstrip("#")
+    r, g, b = (int(h[i:i+2], 16) / 255.0 for i in (0, 2, 4))
+    a = int(h[6:8], 16) / 255.0 if len(h) >= 8 else 1.0
+    return glm.vec4(r, g, b, a)
+
 
 def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> SkeletonData:
     if ppu is None:
@@ -117,6 +125,7 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                 name=s.name,
                 bone_index=bone_index_by_name[s.bone],
                 attachment_name=s.attachment,
+                color=_parse_color(s.color),
             )
         )
 
@@ -181,6 +190,13 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                         keyframes=[(kf.time, kf.name) for kf in slot_tl.attachment],
                     )
                 )
+            if slot_tl.rgba:
+                #logger.debug(f"Processing RGBA timeline for slot '{slot_name}'")
+                timelines.append(RGBATimeline(
+                    slot_index=slot_index,
+                    keyframes=[(kf.time, _parse_color(kf.color), _parse_curve(kf)) for kf in slot_tl.rgba],
+                ))
+
 
         # --- sequence timelines: skin_name -> slot_name -> attachment_name ---
         for skin_name, slots_in_skin in anim.attachments.items():

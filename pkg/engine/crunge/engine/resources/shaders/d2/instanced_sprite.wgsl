@@ -31,7 +31,8 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32, @builtin(instance_index) ins
         model.flipFlags
     );
 
-    return VertexOutput(vert_pos, model.texture_layer, uv, model.color);
+    let color = model.color * node.color;
+    return VertexOutput(vert_pos, model.texture_layer, uv, color);
 }
 
 @fragment

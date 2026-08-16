@@ -1,5 +1,6 @@
 struct Node {
     transform : mat4x4<f32>,
+    color: vec4<f32>,
     model_index : u32, // Index of the model in the models array
 }
 

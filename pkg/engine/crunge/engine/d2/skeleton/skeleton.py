@@ -56,7 +56,8 @@ class Slot:
         self.data = data
         self.bone = bone
         self.attachment: RegionAttachment | None = None
-        self.color = glm.vec4(1.0)
+        #self.color = glm.vec4(1.0)
+        self.color = self.data.color
         self.sequence_index = 0
 
     def set_to_setup_pose(self):
@@ -64,7 +65,9 @@ class Slot:
         self.attachment = (
             skin.get(self.data.attachment_name) if self.data.attachment_name else None
         )
-        self.color = glm.vec4(1.0)
+        #self.color = glm.vec4(1.0)
+        self.color = self.data.color
+
 
 
 class Skeleton:
@@ -109,7 +112,7 @@ class Skeleton:
             bone.set_to_setup_pose()
         for slot in self.slots:
             slot.attachment = self._resolve_attachment(slot)
-            slot.color = glm.vec4(1.0)
+            slot.color = slot.data.color
             slot.sequence_index = (
                 slot.attachment.sequence.setupIndex
                 if slot.attachment is not None and slot.attachment.sequence is not None

@@ -32,8 +32,8 @@ fn vs_main(@builtin(vertex_index) idx: u32) -> VertexOutput {
         model.textureSize,
         model.flipFlags
     );
-
-    return VertexOutput(vert_pos, model.texture_layer, uv, model.color);
+    let color = model.color * node.color;
+    return VertexOutput(vert_pos, model.texture_layer, uv, color);
 }
 
 @fragment

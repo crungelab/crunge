@@ -44,7 +44,7 @@ class Vec4(Structure):
         ("y", c_float),
         ("z", c_float),
         ("w", c_float),
-    ]  # Padding to ensure 16-byte alignment
+    ]
 
 
 assert sizeof(Vec4) % 16 == 0
