@@ -18,6 +18,8 @@ from ...page import Page
 # TEST_FILE = "/home/kurt/Dev/crunge/depot/spineboy-4.3/export/spineboy-ess.json"
 TEST_FILE = ":spines:/spineboy/export/spineboy-ess.json"
 
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
 
 class SpineboyPage(Page):
     def reset(self):
@@ -42,12 +44,12 @@ class SpineboyPage(Page):
         imgui.begin("Properties")
 
         # Rotation
-        changed, self.angle = imgui.drag_float("Angle", self.angle, 0.1)
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         if changed:
             self.node.angle = self.angle
 
         # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 

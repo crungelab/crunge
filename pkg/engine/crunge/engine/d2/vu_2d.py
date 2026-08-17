@@ -133,7 +133,8 @@ class Vu2D(Vu[Node2D]):
 
         uniform = NodeUniform()
         uniform.transform.data = cast_matrix4(self.transform)
-        uniform.color = cast_vec4(self.color)
+        #uniform.color = cast_vec4(self.color)
+        uniform.color = cast_tuple4f(self.color)
 
         self.node_buffer[self.node_buffer_index] = uniform
 

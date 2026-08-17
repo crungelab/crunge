@@ -9,6 +9,9 @@ from crunge.engine.d2.shape.line_2d import Line2D
 from crunge.engine.d2.node_2d import Node2D
 
 INITIAL_SCALE = 1.0
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
+
 
 class LineDemo(Demo):
     def reset(self):
@@ -41,16 +44,12 @@ class LineDemo(Demo):
             self.node.position = glm.vec2(position)
 
         # Rotation
-        changed, self.angle = imgui.drag_float(
-            "Angle",
-            self.angle,
-            0.1
-        )
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         if changed:
             self.node.angle = self.angle
 
         # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 

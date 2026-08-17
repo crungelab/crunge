@@ -8,6 +8,9 @@ from crunge.engine import colors
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.d2.shape.polygon_2d import Polygon2D
 
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
+
 
 class PolygonDemo(Demo):
     def reset(self):
@@ -42,16 +45,12 @@ class PolygonDemo(Demo):
         imgui.begin("Polygon")
 
         # Rotation
-        changed, self.angle = imgui.drag_float(
-            "Angle",
-            self.angle,
-            0.1
-        )
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         if changed:
             self.node.angle = self.angle
 
         # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 

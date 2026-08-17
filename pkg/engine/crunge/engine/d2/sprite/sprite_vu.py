@@ -6,7 +6,7 @@ import glm
 from crunge import wgpu
 
 from ...math import Bounds2
-from ...uniforms import cast_matrix4, cast_vec4
+from ...uniforms import cast_matrix4, cast_vec4, cast_tuple4f
 from ...renderer import Renderer
 
 from ..node_2d import Node2D
@@ -72,7 +72,8 @@ class SpriteVu(Vu2D):
     def update_gpu(self):
         uniform = NodeUniform()
         uniform.transform.data = cast_matrix4(self.transform)
-        uniform.color = cast_vec4(self.color)
+        #uniform.color = cast_vec4(self.color)
+        uniform.color = cast_tuple4f(self.color)
 
         if self.sprite_membership is not None:
             uniform.model_index = self.sprite_membership.index

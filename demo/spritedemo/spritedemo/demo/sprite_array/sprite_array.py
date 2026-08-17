@@ -9,6 +9,9 @@ from crunge.engine.resource.resource_manager import ResourceManager
 
 from ..demo import Demo
 
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
+
 
 class SpriteArrayDemo(Demo):
     def __init__(self):
@@ -49,15 +52,11 @@ class SpriteArrayDemo(Demo):
         imgui.begin("Object")
 
         # Rotation
-        changed, self.angle = imgui.drag_float(
-            "Angle",
-            self.angle,
-            0.1
-        )
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         self.node.angle = self.angle
 
         # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         self.node.scale = glm.vec2(self.scale, self.scale)
 
         if imgui.button("Reset"):

@@ -15,6 +15,9 @@ from ..channel import SpineEssChannel, SpineProChannel
 
 from ..page import Page
 
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
+
 
 def _mat3_translation(m: glm.mat3) -> glm.vec2:
     # translation lives in column 2 per compose_local's constructor layout
@@ -48,11 +51,11 @@ class AnimationPage(Page):
     def _draw(self):
         imgui.begin("Properties")
 
-        changed, self.angle = imgui.drag_float("Angle", self.angle, 0.1)
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         if changed:
             self.node.angle = self.angle
 
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 

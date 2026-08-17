@@ -8,7 +8,8 @@ from ...renderer import Renderer
 from ...widget import Overlay
 
 from ... import colors
-from ...color import rgba_tuple_to_argb_int
+#from ...color import rgba_tuple_to_argb_int
+from ...color import Color
 
 
 class ScratchOverlay(Overlay):
@@ -34,7 +35,8 @@ class ScratchOverlay(Overlay):
         # logger.debug(f"DemoView.draw_line({begin}, {end}, {color})")
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            paint.set_color(rgba_tuple_to_argb_int(color))
+            #paint.set_color(rgba_tuple_to_argb_int(color))
+            paint.set_color(color.to_argb_int())
             canvas.draw_line(begin[0], begin[1], end[0], end[1], paint)
 
         self.add_call(draw)
@@ -42,7 +44,8 @@ class ScratchOverlay(Overlay):
     def draw_fat_segment(self, a: glm.vec2, b: glm.vec2, radius: float, color=colors.WHITE):
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            paint.set_color(rgba_tuple_to_argb_int(color))
+            #paint.set_color(rgba_tuple_to_argb_int(color))
+            paint.set_color(color.to_argb_int())
             paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             paint.set_stroke_width(radius * 2)
             canvas.draw_line(a[0], a[1], b[0], b[1], paint)
@@ -62,7 +65,8 @@ class ScratchOverlay(Overlay):
             path = builder.detach()
 
             outline_paint = skia.Paint()
-            outline_paint.set_color(rgba_tuple_to_argb_int(outline_color))
+            #outline_paint.set_color(rgba_tuple_to_argb_int(outline_color))
+            outline_paint.set_color(outline_color.to_argb_int())
             outline_paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             outline_paint.set_stroke_width(1.0)
 
@@ -94,7 +98,8 @@ class ScratchOverlay(Overlay):
     def draw_dot(self, size: float, position: glm.vec2, color=colors.WHITE):
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            paint.set_color(rgba_tuple_to_argb_int(color))
+            #paint.set_color(rgba_tuple_to_argb_int(color))
+            paint.set_color(color.to_argb_int())
             canvas.draw_circle(skia.Point(position.x, position.y), size, paint)
 
         self.add_call(draw)
@@ -105,7 +110,8 @@ class ScratchOverlay(Overlay):
         def draw(canvas: skia.Canvas):
             # logger.debug(f"draw_circle({center}, {radius}, {segments}, {color})")
             paint = skia.Paint()
-            paint.set_color(rgba_tuple_to_argb_int(color))
+            #paint.set_color(rgba_tuple_to_argb_int(color))
+            paint.set_color(color.to_argb_int())
             paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             paint.set_stroke_width(2)  # Set the outline thickness as needed
             canvas.draw_circle(skia.Point(center.x, center.y), radius, paint)
@@ -117,7 +123,8 @@ class ScratchOverlay(Overlay):
     ):
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            paint.set_color(rgba_tuple_to_argb_int(color))
+            #paint.set_color(rgba_tuple_to_argb_int(color))
+            paint.set_color(color.to_argb_int())
 
             font = self.create_font(font_size)
 

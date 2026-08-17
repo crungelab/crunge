@@ -5,9 +5,12 @@ from crunge import imgui
 
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoader
+from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 
 from ..demo import Demo
+
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
 
 
 class SpritesDemo(Demo):
@@ -22,19 +25,17 @@ class SpritesDemo(Demo):
         self.color = 1, 1, 1
 
         # Ship1
-        texture = SpriteTextureLoader().load(":images:/playerShip1_orange.png")
-        sprite = Sprite(texture)
+        sprite = SpriteLoader().load(":images:/playerShip1_orange.png")
 
         node = self.node = Node2D(vu=SpriteVu(), model=sprite)
 
         self.scene.attach(self.node)
 
         # Ship2
-        texture = SpriteTextureLoader().load(":images:/playerShip1_blue.png")
-        sprite = Sprite(texture)
-        x = 128
-        y = 128
-        
+        sprite = SpriteLoader().load(":images:/playerShip1_blue.png")
+        x = 1.0
+        y = 1.0
+
         position = glm.vec2(x, y)
         node = Node2D(position, vu=SpriteVu(), model=sprite)
 
@@ -42,7 +43,7 @@ class SpritesDemo(Demo):
 
     def center_camera(self):
         pass
-    
+
     def _draw(self):
         imgui.set_next_window_pos((self.width - 256 - 16, 32), imgui.Cond.ONCE)
         imgui.set_next_window_size((256, 256), imgui.Cond.ONCE)
@@ -50,16 +51,12 @@ class SpritesDemo(Demo):
         imgui.begin("Ship")
 
         # Rotation
-        changed, self.angle = imgui.drag_float(
-            "Angle",
-            self.angle,
-            0.1
-        )
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         if changed:
             self.node.angle = self.angle
 
         # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 

@@ -4,12 +4,21 @@ import glm
 from crunge import imgui
 
 from ..demo import Demo
-from crunge.engine.d2.sprite import SpriteFlipFlags, SpriteVu, SpriteAnimation, SpriteAnimationFrame, SpriteAnimator
+from crunge.engine.d2.sprite import (
+    SpriteFlipFlags,
+    SpriteVu,
+    SpriteAnimation,
+    SpriteAnimationFrame,
+    SpriteAnimator,
+)
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
 
-class SpriteAnimationDemo(Demo):        
+
+class SpriteAnimationDemo(Demo):
     def reset(self):
         super().reset()
 
@@ -44,7 +53,7 @@ class SpriteAnimationDemo(Demo):
     def create_walk_animations(self):
         atlas = self.atlas
         animator = self.animator
-        
+
         walk_right = SpriteAnimation("walkRight")
         for i in range(0, 8):
             frame = SpriteAnimationFrame(atlas.get(f"walk{i}"))
@@ -72,7 +81,7 @@ class SpriteAnimationDemo(Demo):
         animator.add_animation(run_left)
 
     def update(self, delta_time):
-        #logger.debug(f"Update: {delta_time}")
+        # logger.debug(f"Update: {delta_time}")
         self.animator.update(delta_time)
         return super().update(delta_time)
 
@@ -86,23 +95,21 @@ class SpriteAnimationDemo(Demo):
             self.reset()
 
         # Rotation
-        changed, self.angle = imgui.drag_float(
-            "Angle",
-            self.angle,
-            0.1
-        )
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         if changed:
             self.node.angle = self.angle
 
         # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         if changed:
             self.node.scale = glm.vec2(self.scale, self.scale)
 
         if imgui.begin_list_box("Animations"):
 
             for name, animation in self.animator.animations.items():
-                opened, selected = imgui.selectable(name, animation == self.animator.current_animation)
+                opened, selected = imgui.selectable(
+                    name, animation == self.animator.current_animation
+                )
                 if opened:
                     logger.debug(f"Selected: {name}")
                     self.animator.play(name)
@@ -112,6 +119,7 @@ class SpriteAnimationDemo(Demo):
         imgui.end()
 
         super()._draw()
+
 
 def main():
     SpriteAnimationDemo().run()

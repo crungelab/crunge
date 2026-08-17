@@ -15,6 +15,8 @@ from crunge.engine.loader.texture.sprite_texture_loader import SpriteTextureLoad
 from crunge.engine import colors
 
 INITIAL_SCALE = 0.5
+ANGLE_STEP = glm.radians(1)
+SCALE_STEP = 0.01
 
 
 class InstancingDemo(Demo):
@@ -50,8 +52,16 @@ class InstancingDemo(Demo):
                 node = Node2D(scale=glm.vec2(self.scale, self.scale), vu=vu)
 
                 # Calculate position based on grid and spacing
-                x = col * spacing - (grid_size * spacing) / 2 + self.width / 2 / self.ppu
-                y = row * spacing - (grid_size * spacing) / 2 + self.height / 2 / self.ppu
+                x = (
+                    col * spacing
+                    - (grid_size * spacing) / 2
+                    + self.width / 2 / self.ppu
+                )
+                y = (
+                    row * spacing
+                    - (grid_size * spacing) / 2
+                    + self.height / 2 / self.ppu
+                )
 
                 node.position = glm.vec2(x, y)
                 self.nodes.append(node)
@@ -64,17 +74,13 @@ class InstancingDemo(Demo):
         imgui.begin("Instancing")
 
         # Rotation
-        changed, self.angle = imgui.drag_float(
-            "Angle",
-            self.angle,
-            0.1
-        )
+        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
         if changed:
             for node in self.nodes:
                 node.angle = self.angle
 
         # Scale
-        changed, self.scale = imgui.drag_float("Scale", self.scale, 0.1)
+        changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)
         if changed:
             for node in self.nodes:
                 node.scale = glm.vec2(self.scale, self.scale)
