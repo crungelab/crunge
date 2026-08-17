@@ -17,6 +17,7 @@ from ..page import Page
 
 ANGLE_STEP = glm.radians(1)
 SCALE_STEP = 0.01
+EVENT_LOG_MAX = 200
 
 
 def _mat3_translation(m: glm.mat3) -> glm.vec2:
@@ -32,6 +33,8 @@ class AnimationPage(Page):
         self.scale = 1.0
         self.selected_slot_index = None
         self.paused = False
+        self.event_log: list[tuple[float, str, int, float, str]] = []
+        self.event_log_autoscroll = True
 
         loader = SpineSkeletonLoader()
         name = self.name
@@ -44,9 +47,17 @@ class AnimationPage(Page):
         self.current_animation = skeleton.data.animations[first_anim_name]
         self.anim_state.set_animation(self.current_animation)
         self.skeleton = skeleton
+        self.skeleton.event_listeners.append(self._on_spine_event)
+
         self.skeleton_vu = SkeletonVu(skeleton)
         self.node = Node2D(vu=self.skeleton_vu)
         self.scene.attach(self.node)
+
+    def _on_spine_event(self, name, int_value, float_value, string_value):
+        entry_time = self.anim_state.current.time if self.anim_state.current else 0.0
+        self.event_log.append((entry_time, name, int_value, float_value, string_value))
+        if len(self.event_log) > EVENT_LOG_MAX:
+            self.event_log.pop(0)
 
     def _draw(self):
         imgui.begin("Properties")
@@ -134,7 +145,34 @@ class AnimationPage(Page):
         if self.selected_slot_index is not None:
             self._draw_slot_details(self.selected_slot_index)
 
+        imgui.separator()
+        self._draw_event_log()
+
         imgui.end()
+
+    def _draw_event_log(self):
+        imgui.text(f"Event log ({len(self.event_log)})")
+        imgui.same_line()
+        if imgui.button("Clear"):
+            self.event_log.clear()
+        imgui.same_line()
+        _, self.event_log_autoscroll = imgui.checkbox("Autoscroll", self.event_log_autoscroll)
+
+        if imgui.begin_list_box("##event_log", (-1, 160)):
+            for t, name, i, f, s in self.event_log:
+                line = f"[{t:6.3f}] {name}"
+                if i:
+                    line += f"  int={i}"
+                if f:
+                    line += f"  float={f:.3f}"
+                if s:
+                    line += f"  string='{s}'"
+                imgui.text(line)
+
+            if self.event_log_autoscroll and self.event_log:
+                imgui.set_scroll_here_y(1.0)  # ASSUMPTION: binding name, unverified
+
+            imgui.end_list_box()
 
     def _draw_slot_details(self, slot_index: int):
         slot = self.skeleton.slots[slot_index]
@@ -209,4 +247,5 @@ def install(app: App):
     app.add_channel(SpineEssChannel(AnimationPage, "hero", "Hero"))
     app.add_channel(SpineEssChannel(AnimationPage, "powerup", "Powerup"))
     app.add_channel(SpineEssChannel(AnimationPage, "speedy", "Speedy"))
+    app.add_channel(SpineEssChannel(AnimationPage, "spineboy", "Spineboy"))
     app.add_channel(SpineEssChannel(AnimationPage, "windmill", "Windmill"))

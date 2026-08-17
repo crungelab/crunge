@@ -16,10 +16,11 @@ from ..binding_2d import (
 
 
 class RenderPipeline2D(RenderPipeline):
-    def __init__(self, vertex_shader_module=None, fragment_shader_module=None):
+    def __init__(self, vertex_shader_module: wgpu.ShaderModule = None, fragment_shader_module: wgpu.ShaderModule = None, blend_state: wgpu.BlendState = None):
         super().__init__()
         self.vertex_shader_module = vertex_shader_module
         self.fragment_shader_module = fragment_shader_module
+        self.blend_state = blend_state
 
     @property
     def scene_bind_group_layout(self):
@@ -48,6 +49,35 @@ class RenderPipeline2D(RenderPipeline):
 
         return bind_group_layouts
 
+    def _create(self):
+        vertex_state = self.create_vertex_state()
+        fragment_state = self.create_fragment_state()
+        primitive_state = self.create_primitive_state()
+
+        depth_stencil_state = wgpu.DepthStencilState(
+            format=wgpu.TextureFormat.DEPTH24_PLUS,
+            # depth_write_enabled=True,
+            depth_write_enabled=False,
+            # depth_compare = wgpu.CompareFunction.LESS,
+            depth_compare=wgpu.CompareFunction.ALWAYS,
+        )
+
+        pl_desc = wgpu.PipelineLayoutDescriptor(
+            label="Render Pipeline 2D Layout",
+            bind_group_layouts=self.bind_group_layouts,
+        )
+
+        descriptor = wgpu.RenderPipelineDescriptor(
+            label="Render Pipeline 2D",
+            layout=self.device.create_pipeline_layout(pl_desc),
+            vertex=vertex_state,
+            primitive=primitive_state,
+            fragment=fragment_state,
+            depth_stencil=depth_stencil_state,
+        )
+
+        self.pipeline = self.device.create_render_pipeline(descriptor)
+
     def create_vertex_state(self):
         return wgpu.VertexState(
             module=self.vertex_shader_module,
@@ -55,6 +85,10 @@ class RenderPipeline2D(RenderPipeline):
         )
 
     def create_fragment_state(self):
+        if self.blend_state is None:
+            self.create_blend_state()
+
+        '''
         self.blend_state = wgpu.BlendState(
             alpha=wgpu.BlendComponent(
                 operation=wgpu.BlendOperation.ADD,
@@ -67,6 +101,7 @@ class RenderPipeline2D(RenderPipeline):
                 dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
             ),
         )
+        '''
 
         color_targets = [
             wgpu.ColorTargetState(
@@ -83,34 +118,19 @@ class RenderPipeline2D(RenderPipeline):
         )
         return fragment_state
 
+    def create_blend_state(self):
+        self.blend_state = wgpu.BlendState(
+            alpha=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.ONE,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+            color=wgpu.BlendComponent(
+                operation=wgpu.BlendOperation.ADD,
+                src_factor=wgpu.BlendFactor.SRC_ALPHA,
+                dst_factor=wgpu.BlendFactor.ONE_MINUS_SRC_ALPHA,
+            ),
+        )
+
     def create_primitive_state(self):
         return wgpu.PrimitiveState(topology=wgpu.PrimitiveTopology.TRIANGLE_STRIP)
-
-    def _create(self):
-        vertex_state = self.create_vertex_state()
-        fragment_state = self.create_fragment_state()
-        primitive_state = self.create_primitive_state()
-
-        depth_stencil_state = wgpu.DepthStencilState(
-            format=wgpu.TextureFormat.DEPTH24_PLUS,
-            # depth_write_enabled=True,
-            depth_write_enabled=False,
-            # depth_compare = wgpu.CompareFunction.LESS,
-            depth_compare = wgpu.CompareFunction.ALWAYS
-        )
-
-        pl_desc = wgpu.PipelineLayoutDescriptor(
-            label="Render Pipeline 2D Layout",
-            bind_group_layouts=self.bind_group_layouts
-        )
-
-        descriptor = wgpu.RenderPipelineDescriptor(
-            label="Render Pipeline 2D",
-            layout=self.device.create_pipeline_layout(pl_desc),
-            vertex=vertex_state,
-            primitive=primitive_state,
-            fragment=fragment_state,
-            depth_stencil=depth_stencil_state,
-        )
-
-        self.pipeline = self.device.create_render_pipeline(descriptor)

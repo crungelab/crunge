@@ -41,13 +41,16 @@ class RegionAttachment:
         )
 
 
-# skeleton_data.py
 class SlotData:
-    def __init__(self, name, bone_index, attachment_name=None, color=None):
+    def __init__(
+        self, name, bone_index, attachment_name=None, color=None, blend_mode="normal"
+    ):
         self.name = name
         self.bone_index = bone_index
         self.attachment_name = attachment_name
         self.color = color if color is not None else glm.vec4(1.0)
+        self.blend_mode = blend_mode
+
 
 """
 class SlotData:
@@ -57,6 +60,15 @@ class SlotData:
         self.attachment_name = attachment_name
         self.color = color
 """
+
+
+class EventData:
+    def __init__(self, name, int_value=0, float_value=0.0, string_value=""):
+        self.name = name
+        self.int_value = int_value
+        self.float_value = float_value
+        self.string_value = string_value
+
 
 class SkeletonData:
     def __init__(self):
@@ -71,3 +83,5 @@ class SkeletonData:
         self.bounds_y = 0.0
         self.bounds_width = 0.0
         self.bounds_height = 0.0
+
+        self.events: dict[str, EventData] = {}

@@ -18,6 +18,7 @@ from .spine_json import (
     AnimationJSON,
 )
 from crunge.engine.d2.skeleton.skeleton_data import (
+    EventData,
     SkeletonData,
     BoneData,
     SlotData,
@@ -32,6 +33,7 @@ from crunge.engine.d2.skeleton.animation import (
     SequenceTimeline,
     DrawOrderTimeline,
     RGBATimeline,
+    EventTimeline,
 )
 
 
@@ -46,6 +48,7 @@ def _parse_curve(curve) -> str | tuple[float, float, float, float]:
 
 
 # spine_converter.py
+
 
 def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
     att = RegionAttachmentJSON.model_validate(data)
@@ -63,6 +66,7 @@ def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
         sequence=att.sequence,
     )
 
+
 """
 def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
     att = RegionAttachmentJSON.model_validate(data)
@@ -79,10 +83,11 @@ def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
     )
 """
 
+
 # spine_converter.py — shared hex parser, used for both setup color and keyframes
 def _parse_color(hex_str: str) -> glm.vec4:
     h = hex_str.lstrip("#")
-    r, g, b = (int(h[i:i+2], 16) / 255.0 for i in (0, 2, 4))
+    r, g, b = (int(h[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
     a = int(h[6:8], 16) / 255.0 if len(h) >= 8 else 1.0
     return glm.vec4(r, g, b, a)
 
@@ -126,6 +131,7 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                 bone_index=bone_index_by_name[s.bone],
                 attachment_name=s.attachment,
                 color=_parse_color(s.color),
+                blend_mode=s.blend,
             )
         )
 
@@ -191,12 +197,16 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                     )
                 )
             if slot_tl.rgba:
-                #logger.debug(f"Processing RGBA timeline for slot '{slot_name}'")
-                timelines.append(RGBATimeline(
-                    slot_index=slot_index,
-                    keyframes=[(kf.time, _parse_color(kf.color), _parse_curve(kf)) for kf in slot_tl.rgba],
-                ))
-
+                # logger.debug(f"Processing RGBA timeline for slot '{slot_name}'")
+                timelines.append(
+                    RGBATimeline(
+                        slot_index=slot_index,
+                        keyframes=[
+                            (kf.time, _parse_color(kf.color), _parse_curve(kf))
+                            for kf in slot_tl.rgba
+                        ],
+                    )
+                )
 
         # --- sequence timelines: skin_name -> slot_name -> attachment_name ---
         for skin_name, slots_in_skin in anim.attachments.items():
@@ -236,6 +246,22 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                         )
                     )
 
+        for name, data in spine_file.events.items():
+            result.events[name] = EventData(name, data.int_value, data.float_value, data.string)
+
+        if anim.events:
+            resolved = []
+            for kf in anim.events:
+                default = result.events.get(kf.name)
+                resolved.append((
+                    kf.time,
+                    kf.name,
+                    kf.int_value if kf.int_value is not None else (default.int_value if default else 0),
+                    kf.float_value if kf.float_value is not None else (default.float_value if default else 0.0),
+                    kf.string if kf.string is not None else (default.string_value if default else ""),
+                ))
+            timelines.append(EventTimeline(keyframes=resolved))
+
         if anim.draw_order:
             timelines.append(
                 DrawOrderTimeline(
@@ -247,33 +273,6 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
             )
 
         duration = max(
-                    (
-                        kf.time
-                        for tl_group in [anim.bones.values(), anim.slots.values()]
-                        for tl in tl_group
-                        for kfs in (
-                            getattr(tl, "rotate", []),
-                            getattr(tl, "translate", []),
-                            getattr(tl, "scale", []),
-                            getattr(tl, "attachment", []),
-                        )
-                        for kf in kfs
-                    ),
-                    default=max(
-                        [
-                            kf.time
-                            for slots_in_skin in anim.attachments.values()
-                            for attachments in slots_in_skin.values()
-                            for att_tl in attachments.values()
-                            for kf in att_tl.sequence
-                        ]
-                        + [kf.time for kf in anim.draw_order],
-                        default=0.0,
-                    ),
-                )
-
-        '''
-        duration = max(
             (
                 kf.time
                 for tl_group in [anim.bones.values(), anim.slots.values()]
@@ -286,154 +285,21 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                 )
                 for kf in kfs
             ),
-            # Sequence keyframes live under anim.attachments, which the
-            # comprehension above doesn't reach — fold them in as the
-            # default so a sequence-only animation still gets a duration.
             default=max(
-                (
+                [
                     kf.time
                     for slots_in_skin in anim.attachments.values()
                     for attachments in slots_in_skin.values()
                     for att_tl in attachments.values()
                     for kf in att_tl.sequence
-                ),
+                ]
+                + [kf.time for kf in anim.draw_order],
                 default=0.0,
             ),
         )
-        '''
-
         result.animations[anim_name] = Animation(anim_name, duration, timelines)
 
     return result
-
-
-"""
-def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> SkeletonData:
-    if ppu is None:
-        ppu = Settings2D().ppu
-
-    result = SkeletonData()
-
-    result.bounds_x = spine_file.skeleton.x / ppu
-    result.bounds_y = spine_file.skeleton.y / ppu
-    result.bounds_width = spine_file.skeleton.width / ppu
-    result.bounds_height = spine_file.skeleton.height / ppu
-
-    # --- bones: Spine guarantees parent-before-child ordering already ---
-    bone_index_by_name: dict[str, int] = {}
-    for i, b in enumerate(spine_file.bones):
-        # logger.debug(f"bone: {b}")
-        bone_index_by_name[b.name] = i
-        parent_index = bone_index_by_name[b.parent] if b.parent else -1
-        result.bones.append(
-            BoneData(
-                name=b.name,
-                parent_index=parent_index,
-                x=b.x / ppu,
-                y=b.y / ppu,
-                rotation=b.rotation,
-                scale_x=b.scaleX,
-                scale_y=b.scaleY,
-                length=b.length / ppu,
-            )
-        )
-
-    # --- slots ---
-    slot_index_by_name: dict[str, int] = {}
-    for i, s in enumerate(spine_file.slots):
-        slot_index_by_name[s.name] = i
-        result.slots.append(
-            SlotData(
-                name=s.name,
-                bone_index=bone_index_by_name[s.bone],
-                attachment_name=s.attachment,
-            )
-        )
-
-    # --- skins: skin_name -> {slot_name: {attachment_name: attachment}} ---
-    for skin in spine_file.skins:
-        skin_out: dict[str, dict[str, RegionAttachment]] = (
-            {}
-        )  # slot_name -> attachment_name -> attachment
-        for slot_name, attachments in skin.attachments.items():
-            skin_out[slot_name] = {}
-            for att_name, att_data in attachments.items():
-                att_type = att_data.get("type", "region")
-                if att_type != "region":
-                    continue
-                skin_out[slot_name][att_name] = _region_attachment(
-                    att_name, att_data, ppu
-                )
-        result.skins[skin.name] = skin_out
-
-    # --- animations ---
-    for anim_name, anim in spine_file.animations.items():
-        timelines = []
-
-        for bone_name, bone_tl in anim.bones.items():
-            bone_index = bone_index_by_name[bone_name]
-
-            if bone_tl.rotate:
-                timelines.append(
-                    RotateTimeline(
-                        bone_index=bone_index,
-                        keyframes=[
-                            (kf.time, kf.value, _parse_curve(kf.curve))
-                            for kf in bone_tl.rotate
-                        ],
-                    )
-                )
-            if bone_tl.translate:
-                timelines.append(
-                    TranslateTimeline(
-                        bone_index=bone_index,
-                        keyframes=[
-                            (kf.time, kf.x / ppu, kf.y / ppu, _parse_curve(kf.curve))
-                            for kf in bone_tl.translate
-                        ],
-                    )
-                )
-            if bone_tl.scale:
-                timelines.append(
-                    ScaleTimeline(
-                        bone_index=bone_index,
-                        keyframes=[
-                            (kf.time, kf.x, kf.y, _parse_curve(kf.curve))
-                            for kf in bone_tl.scale
-                        ],
-                    )
-                )
-
-        for slot_name, slot_tl in anim.slots.items():
-            slot_index = slot_index_by_name[slot_name]
-            if slot_tl.attachment:
-                timelines.append(
-                    AttachmentTimeline(
-                        slot_index=slot_index,
-                        keyframes=[(kf.time, kf.name) for kf in slot_tl.attachment],
-                    )
-                )
-
-        duration = max(
-            (
-                kf.time
-                for tl_group in [anim.bones.values(), anim.slots.values()]
-                for tl in tl_group
-                for kfs in (
-                    getattr(tl, "rotate", []),
-                    getattr(tl, "translate", []),
-                    getattr(tl, "scale", []),
-                    getattr(tl, "attachment", []),
-                )
-                for kf in kfs
-            ),
-            default=0.0,
-        )
-
-        result.animations[anim_name] = Animation(anim_name, duration, timelines)
-
-    return result
-"""
 
 
 def load_skeleton_data(path: str, ppu: float | None = None) -> SkeletonData:

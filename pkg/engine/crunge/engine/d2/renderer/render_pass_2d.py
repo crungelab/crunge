@@ -21,6 +21,7 @@ class RenderPass2D(RenderPass["Renderer2D"]):
         # load_op = wgpu.LoadOp.LOAD
         load_op = wgpu.LoadOp.CLEAR if self.clear else wgpu.LoadOp.LOAD
         clear_value = wgpu.Color(0, 0, 0, 1)
+        #clear_value = wgpu.Color(0.1, 0.1, 0.1, 1)
 
         if self.viewport.render_options.use_msaa:
             color_attachments = [

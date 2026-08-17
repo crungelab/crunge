@@ -80,7 +80,8 @@ class SpineboyPage(Page):
         return super().update(delta_time)
 
 def install(app: App):
-    app.add_channel(SpineEssChannel(SpineboyPage, "spineboy", "Spineboy"))
+    pass
+    #app.add_channel(SpineEssChannel(SpineboyPage, "spineboy", "Spineboy"))
 
 '''
 def install(app: App):

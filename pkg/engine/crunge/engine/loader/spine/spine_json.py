@@ -135,8 +135,10 @@ class DrawOrderKeyframe(SpineBaseModel):
 
 # ---------- animation keyframes ----------
 
+
 class CurveFieldsMixin(SpineBaseModel):
     curve: float | str | list[float] | None = None
+
 
 class RotateKeyframe(CurveFieldsMixin):
     time: float = 0.0
@@ -159,9 +161,11 @@ class AttachmentKeyframe(SpineBaseModel):
     time: float = 0.0
     name: str | None = None  # None = no attachment at this keyframe
 
+
 class ColorKeyframe(CurveFieldsMixin):
     time: float = 0.0
     color: str = "ffffffff"
+
 
 class BoneTimelinesJSON(SpineBaseModel):
     rotate: list[RotateKeyframe] = Field(default_factory=list)
@@ -174,7 +178,7 @@ class BoneTimelinesJSON(SpineBaseModel):
 
 class SlotTimelinesJSON(SpineBaseModel):
     attachment: list[AttachmentKeyframe] = Field(default_factory=list)
-    #rgba: list[dict] = Field(default_factory=list)  # color timeline, TODO
+    # rgba: list[dict] = Field(default_factory=list)  # color timeline, TODO
     rgba: list[ColorKeyframe] = Field(default_factory=list)  # color timeline
 
 
@@ -186,6 +190,25 @@ class AttachmentTimelinesJSON(SpineBaseModel):
     deform: list[dict] = Field(default_factory=list)  # TODO
 
 
+class EventDataJSON(SpineBaseModel):
+    int_value: int = Field(default=0, alias="int")
+    float_value: float = Field(default=0.0, alias="float")
+    string: str = ""
+    audio: str | None = None
+    volume: float = 1.0
+    balance: float = 0.0
+
+
+class AnimationEventKeyframe(SpineBaseModel):
+    time: float = 0.0
+    name: str
+    int_value: int | None = Field(default=None, alias="int")
+    float_value: float | None = Field(default=None, alias="float")
+    string: str | None = None
+    volume: float = 1.0
+    balance: float = 0.0
+
+
 class AnimationJSON(SpineBaseModel):
     bones: dict[str, BoneTimelinesJSON] = Field(default_factory=dict)
     slots: dict[str, SlotTimelinesJSON] = Field(default_factory=dict)
@@ -195,7 +218,7 @@ class AnimationJSON(SpineBaseModel):
     )
     ik: dict[str, list[dict]] = Field(default_factory=dict)
     deform: dict = Field(default_factory=dict)
-    events: list[dict] = Field(default_factory=list)
+    events: list[AnimationEventKeyframe] = Field(default_factory=list)
     draw_order: list[DrawOrderKeyframe] = Field(default_factory=list, alias="drawOrder")
 
 
@@ -210,7 +233,7 @@ class SpineSkeletonFile(SpineBaseModel):
     transform: list[dict] = Field(default_factory=list)  # TODO
     path: list[dict] = Field(default_factory=list)  # TODO
     skins: list[SkinJSON] = Field(default_factory=list)
-    events: dict[str, dict] = Field(default_factory=dict)  # TODO
+    events: dict[str, EventDataJSON] = Field(default_factory=dict)
     animations: dict[str, AnimationJSON] = Field(default_factory=dict)
 
     @classmethod

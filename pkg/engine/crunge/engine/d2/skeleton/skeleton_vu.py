@@ -6,6 +6,7 @@ import glm
 from ..node_2d import Node2D
 from ..vu_2d import Vu2D
 from ..sprite.sprite_vu import SpriteVu
+from ..sprite.sprite_program import AdditiveSpriteProgram
 
 from .skeleton import Skeleton
 
@@ -82,7 +83,18 @@ class SkeletonVu(Vu2D):
 
         for i, slot in enumerate(self.skeleton.slots):
             slot_vu = SpriteVu()
+
+            if slot.data.blend_mode == "additive":
+                logger.debug(f"Slot '{slot.data.name}' using additive blend mode")
+                slot_vu.program = AdditiveSpriteProgram()
+
             slot_vu.enable()
+
+            '''
+            if slot.data.blend_mode == "additive":
+                logger.debug(f"Slot '{slot.data.name}' using additive blend mode")
+                slot_vu.program = AdditiveSpriteProgram()
+            '''
 
             att = slot.attachment
             if att is not None:
@@ -103,33 +115,6 @@ class SkeletonVu(Vu2D):
 
             self._slot_vus.append(slot_vu)
 
-    """
-    def _build_slot_vus(self):
-        self._slot_vus = []
-        self._last_attachment = [None] * len(self.skeleton.slots)
-
-        for i, slot in enumerate(self.skeleton.slots):
-            slot_vu = SpriteVu()
-            slot_vu.enable()
-
-            # Skeleton.__init__ already ran set_skin(), so slot.attachment may
-            # already be populated from the setup pose by the time SkeletonVu
-            # is constructed. Seed it here instead of waiting for the first
-            # update_pose() dirty-check, which only fires on *changes*.
-            if slot.attachment is not None:
-                if slot.attachment.gpu_sprite is not None:
-                    slot_vu.sprite = slot.attachment.gpu_sprite
-                    self._last_attachment[i] = slot.attachment
-                else:
-                    logger.warning(
-                        f"Slot '{slot.data.name}' has attachment "
-                        f"'{slot.attachment.path}' with no resolved gpu_sprite — "
-                        f"atlas.resolve() may not have found a matching region"
-                    )
-
-            self._slot_vus.append(slot_vu)
-    """
-
     def on_node_transform_change(self, node: Node2D) -> None:
         self.transform = node.transform
         self.bounds = node.bounds  # TODO: union of slot bounds, not the raw node bounds
@@ -144,108 +129,40 @@ class SkeletonVu(Vu2D):
     """
 
     def update_pose(self):
-            root = self.transform * self._centering
-
-            for i, slot in enumerate(self.skeleton.slots):
-                att = slot.attachment
-                if att is None:
-                    # Clear tracking so _draw() stops drawing the previous sprite —
-                    # otherwise a blink leaves the eyelid hanging at its last transform.
-                    self._last_sprite[i] = None
-                    continue
-
-                if att.sequence_sprites:
-                    sprite = att.sequence_sprites[slot.sequence_index]
-                else:
-                    sprite = att.gpu_sprite
-
-                if sprite is None:
-                    self._last_sprite[i] = None
-                    continue
-
-                slot_vu = self._slot_vus[i]
-
-                if sprite is not self._last_sprite[i]:
-                    slot_vu.sprite = sprite
-                    self._last_sprite[i] = sprite
-
-                slot_vu._color = slot.color  # bypass setter; transform assignment below triggers the single upload
-                bone_world4 = _mat3_to_mat4(slot.bone.world)
-                attachment_local4 = _attachment_local_mat4(att)
-                slot_vu.transform = root * bone_world4 * attachment_local4
-
-
-    """
-    def update_pose(self):
-            root = self.transform * self._centering
-
-            for i, slot in enumerate(self.skeleton.slots):
-                att = slot.attachment
-                if att is None:
-                    continue
-
-                # Sequence attachments carry a list of per-frame sprites; the
-                # active frame is chosen by SequenceTimeline writing into
-                # slot.sequence_index. Non-sequence attachments just use the
-                # single resolved gpu_sprite.
-                if att.sequence_sprites:
-                    sprite = att.sequence_sprites[slot.sequence_index]
-                else:
-                    sprite = att.gpu_sprite
-
-                if sprite is None:
-                    continue
-
-                slot_vu = self._slot_vus[i]
-
-                # Compare the resolved sprite, not the attachment: a sequence
-                # keeps one attachment object while swapping frames every few
-                # ticks, so an attachment-identity check would never fire.
-                if sprite is not self._last_sprite[i]:
-                    slot_vu.sprite = sprite
-                    self._last_sprite[i] = sprite
-
-                bone_world4 = _mat3_to_mat4(slot.bone.world)
-                attachment_local4 = _attachment_local_mat4(att)
-                slot_vu.transform = root * bone_world4 * attachment_local4
-    """
-
-    """
-    def update_pose(self):
-        #root = self.transform
         root = self.transform * self._centering
 
         for i, slot in enumerate(self.skeleton.slots):
-            if slot.attachment is None or slot.attachment.gpu_sprite is None:
+            att = slot.attachment
+            if att is None:
+                # Clear tracking so _draw() stops drawing the previous sprite —
+                # otherwise a blink leaves the eyelid hanging at its last transform.
+                self._last_sprite[i] = None
+                continue
+
+            if att.sequence_sprites:
+                sprite = att.sequence_sprites[slot.sequence_index]
+            else:
+                sprite = att.gpu_sprite
+
+            if sprite is None:
+                self._last_sprite[i] = None
                 continue
 
             slot_vu = self._slot_vus[i]
 
-            if slot.attachment is not self._last_attachment[i]:
-                slot_vu.sprite = slot.attachment.gpu_sprite
-                self._last_attachment[i] = slot.attachment
+            if sprite is not self._last_sprite[i]:
+                slot_vu.sprite = sprite
+                self._last_sprite[i] = sprite
 
+            slot_vu._color = (
+                slot.color
+            )  # bypass setter; transform assignment below triggers the single upload
             bone_world4 = _mat3_to_mat4(slot.bone.world)
-            attachment_local4 = _attachment_local_mat4(slot.attachment)
+            attachment_local4 = _attachment_local_mat4(att)
             slot_vu.transform = root * bone_world4 * attachment_local4
-    """
 
     def _draw(self):
         order = self.skeleton.draw_order or range(len(self.skeleton.slots))
         for i in order:
             if self._last_sprite[i] is not None:
                 self._slot_vus[i].draw()
-
-    """
-    def _draw(self):
-        for i, slot in enumerate(self.skeleton.slots):
-            if self._last_sprite[i] is not None:
-                self._slot_vus[i].draw()
-    """
-
-    """
-    def _draw(self):
-        for i, slot in enumerate(self.skeleton.slots):
-            if slot.attachment is not None and slot.attachment.gpu_sprite is not None:
-                self._slot_vus[i].draw()
-    """

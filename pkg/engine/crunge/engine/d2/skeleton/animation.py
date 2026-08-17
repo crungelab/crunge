@@ -273,6 +273,31 @@ class DrawOrderTimeline:
         return active
 
 
+class EventTimeline:
+    def __init__(self, keyframes):
+        self.keyframes = keyframes  # (time, name, int_value, float_value, string_value)
+
+    def fire(self, skeleton, prev_time, time, looped: bool):
+        """Fire every event whose time falls in (prev_time, time]. Not part
+        of the uniform apply() interface — events don't mutate pose, they're
+        edge-triggered against elapsed time rather than sampled at a point,
+        so AnimationState calls this separately, once, with real prev/current
+        times rather than looping it through timeline.apply() like the rest."""
+        if looped:
+            # Crossed the loop boundary: fire the tail of the old pass,
+            # then the head of the new one.
+            for kf in self.keyframes:
+                if kf[0] > prev_time:
+                    skeleton.fire_event(*kf[1:])
+            for kf in self.keyframes:
+                if kf[0] <= time:
+                    skeleton.fire_event(*kf[1:])
+        else:
+            for kf in self.keyframes:
+                if prev_time < kf[0] <= time:
+                    skeleton.fire_event(*kf[1:])
+
+
 class Animation:
     def __init__(self, name, duration, timelines):
         self.name = name
@@ -282,6 +307,47 @@ class Animation:
         )
 
 
+class TrackEntry:
+    def __init__(self, animation, loop=True):
+        self.animation = animation
+        self.time = 0.0
+        self.prev_time = 0.0
+        self.loop = loop
+
+
+class AnimationState:
+    def __init__(self, skeleton: "Skeleton"):
+        self.skeleton = skeleton
+        self.current: TrackEntry | None = None
+
+    def set_animation(self, animation: "Animation", loop=True):
+        self.current = TrackEntry(animation, loop)
+
+
+    def update(self, delta):
+        if not self.current:
+            return
+        entry = self.current
+        entry.prev_time = entry.time
+        entry.time += delta
+        looped = False
+        if entry.loop and entry.animation.duration > 0 and entry.time >= entry.animation.duration:
+            entry.time %= entry.animation.duration
+            looped = True
+        entry.looped_this_frame = looped  # consumed by apply() below
+
+    def apply(self):
+        self.skeleton.set_to_setup_pose()
+        if self.current:
+            entry = self.current
+            for tl in entry.animation.timelines:
+                if isinstance(tl, EventTimeline):
+                    tl.fire(self.skeleton, entry.prev_time, entry.time, entry.looped_this_frame)
+                else:
+                    tl.apply(self.skeleton, entry.time, weight=1.0)
+        self.skeleton.update_world_transforms()
+
+"""
 class TrackEntry:
     def __init__(self, animation: "Animation", loop=True):
         self.animation = animation
@@ -310,3 +376,4 @@ class AnimationState:
             for tl in self.current.animation.timelines:
                 tl.apply(self.skeleton, self.current.time, weight=1.0)
         self.skeleton.update_world_transforms()
+"""

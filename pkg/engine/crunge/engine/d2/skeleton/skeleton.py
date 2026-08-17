@@ -75,6 +75,7 @@ class Skeleton:
         self.data = skeleton_data
         self.current_skin_name = skin_name
         self.draw_order: list[int] | None = None  # None = data order
+        self.event_listeners: list = []  # Callable[[str, int, float, str], None]
 
         self.bones: list[Bone] = []
         for bd in skeleton_data.bones:
@@ -86,6 +87,10 @@ class Skeleton:
         ]
 
         self.set_skin(skin_name)
+
+    def fire_event(self, name, int_value, float_value, string_value):
+        for listener in self.event_listeners:
+            listener(name, int_value, float_value, string_value)
 
     def _resolve_attachment(self, slot):
         """Skin-specific attachment wins; fall back to the default skin,
