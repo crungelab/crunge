@@ -3,12 +3,10 @@ import glm
 from crunge import imgui
 from crunge import skia
 
-from crunge.engine import App
+from crunge.engine import App, colors
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.viewport.offscreen_viewport import OffscreenViewport
 from crunge.engine.resource.texture import Texture2D
-from crunge.engine.color import rgba_tuple_to_argb_int
-from crunge.engine import colors
 
 from crunge.demo import Page, PageChannel
 
@@ -22,8 +20,7 @@ class OffscreenCanvasPage(Page):
         target_viewport_size = glm.ivec2(512, 256)
         self.target_viewport = OffscreenViewport(target_viewport_size)
         self.texture = Texture2D(
-            self.target_viewport.color_texture,
-            target_viewport_size
+            self.target_viewport.color_texture, target_viewport_size
         )
         ResourceManager().texture_kit.add(self.texture)
 
@@ -46,7 +43,7 @@ class OffscreenCanvasPage(Page):
         shader = skia.Shader.create_radial_gradient(
             skia.Point(128.0, 128.0),
             180.0,
-            [skia.Color4f(*self.color_1), skia.Color4f(*self.color_2)]
+            [skia.Color4f(*self.color_1), skia.Color4f(*self.color_2)],
         )
 
         gradient_paint.set_shader(shader)
@@ -54,5 +51,8 @@ class OffscreenCanvasPage(Page):
 
         self.target_viewport.submit_canvas()
 
+
 def install(app: App):
-    app.add_channel(PageChannel(OffscreenCanvasPage, "offscreen_canvas", "Offscreen Canvas"))
+    app.add_channel(
+        PageChannel(OffscreenCanvasPage, "offscreen_canvas", "Offscreen Canvas")
+    )

@@ -3,7 +3,7 @@ import numpy as np
 import glm
 
 from ... import colors
-from ...color import Color
+from ...colors import Color
 
 from .polygon_2d import Polygon2D
 

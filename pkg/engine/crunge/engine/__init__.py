@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .color import Color
+from .colors import Color
 from .base import Base
 from .dispatcher import Dispatcher
 from .controller import Controller

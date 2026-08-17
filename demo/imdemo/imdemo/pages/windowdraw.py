@@ -13,7 +13,6 @@ class WindowDraw(Page):
         for i in range(0, imgui.Col.COUNT):
             name = imgui.get_style_color_name(i)
             color = imgui.get_color_u32(imgui.get_style_color_vec4(i))
-            #color = imgui.get_color_u32(i)
             p1 = rel(0, i * 16)
             p2 = (p1[0] + sz, p1[1] + sz)
             draw_list.add_rect_filled(p1, p2, color)

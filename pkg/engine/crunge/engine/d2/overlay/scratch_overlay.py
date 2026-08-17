@@ -9,7 +9,7 @@ from ...widget import Overlay
 
 from ... import colors
 #from ...color import rgba_tuple_to_argb_int
-from ...color import Color
+from ...colors import Color
 
 
 class ScratchOverlay(Overlay):

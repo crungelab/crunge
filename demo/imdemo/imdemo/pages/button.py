@@ -1,5 +1,5 @@
 from crunge import imgui
-from crunge.engine import App
+from crunge.engine import App, colors
 from crunge.demo import Page, PageChannel
 
 
@@ -18,34 +18,31 @@ class Button(Page):
         imgui.end()
         super()._draw()
 
-RED = (1, 0, 0, 1)
-GREEN = (0, 1, 0, 1)
-BLUE = (0, 0, 1, 1)
-MAGENTA = (1, 0, 1, 1)
 
 class ColorButton(Page):
     def reset(self):
-        self.color = (0,0,0,0)
-        self.color_name = ''
+        self.color = colors.BLACK
+        self.color_name = ""
 
     def _draw(self):
         imgui.begin("Example: color button")
-        if imgui.color_button("Button 1", RED, 0, (10, 10)):
-            self.color = RED
-            self.color_name = 'Red'
-        if imgui.color_button("Button 2", GREEN, 0, (10, 10)):
-            self.color = GREEN
-            self.color_name = 'Green'
-        if imgui.color_button("Wide Button", BLUE, 0, (20, 10)):
-            self.color = BLUE
-            self.color_name = 'Blue'
-        if imgui.color_button("Tall Button", MAGENTA, 0, (10, 20)):
-            self.color = MAGENTA
-            self.color_name = 'Magenta'
-        #gui.text(f"You chose {self.color}")
+        if imgui.color_button("Button 1", colors.RED, 0, (10, 10)):
+            self.color = colors.RED
+            self.color_name = "Red"
+        if imgui.color_button("Button 2", colors.GREEN, 0, (10, 10)):
+            self.color = colors.GREEN
+            self.color_name = "Green"
+        if imgui.color_button("Wide Button", colors.BLUE, 0, (20, 10)):
+            self.color = colors.BLUE
+            self.color_name = "Blue"
+        if imgui.color_button("Tall Button", colors.MAGENTA, 0, (10, 20)):
+            self.color = colors.MAGENTA
+            self.color_name = "Magenta"
+
         imgui.text_colored(self.color, f"You chose {self.color_name}")
         imgui.end()
         super()._draw()
+
 
 class RadioButtonPage(Page):
     def reset(self):
@@ -59,6 +56,7 @@ class RadioButtonPage(Page):
 
         imgui.end()
         super()._draw()
+
 
 def install(app: App):
     app.add_channel(PageChannel(Button, "button", "Buttons"))

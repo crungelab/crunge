@@ -1,7 +1,7 @@
 import math
 import random
 
-from ...color import Color
+from ...colors import Color
 from ...uniforms import cast_tuple4f
 from ..uniforms_2d import Vec2
 
