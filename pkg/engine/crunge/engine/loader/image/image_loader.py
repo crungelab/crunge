@@ -13,7 +13,8 @@ class ImageLoader(Loader):
 
     def load(self, path: Path) -> Image:
         #logger.debug(f"Loading image: {path}")
-        data = iio.imread(path, pilmode='RGBA')
+        #data = iio.imread(path, pilmode='RGBA')
+        data = iio.imread(path, mode='RGBA')
         image = Image(data).set_name(path.name).set_path(path)
         return image
 

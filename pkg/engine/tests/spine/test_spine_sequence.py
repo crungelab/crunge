@@ -1,10 +1,13 @@
 from crunge.engine.loader.spine.spine_json import SpineSkeletonFile
 
-TEST_FILE = "/home/kurt/Dev/crunge/depot/spine-runtimes/examples/dragon/export/dragon-ess.json"
+from . import resolve_spine_path
+
+#TEST_FILE = "/home/kurt/Dev/crunge/depot/spine-runtimes/examples/dragon/export/dragon-ess.json"
 
 
 def test_spine_sequence():
-    raw = SpineSkeletonFile.load(TEST_FILE)
+    path = resolve_spine_path("dragon", ext="json")
+    raw = SpineSkeletonFile.load(path)
     anim = raw.animations["flying"]          # real animation name
     tl = anim.slots.get("left-wing")
     print("slot timelines object:", tl)

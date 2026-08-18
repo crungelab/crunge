@@ -1,9 +1,10 @@
 from crunge.engine.loader.spine.spine_atlas_loader import SpineAtlasLoader
 
-TEST_FILE = "/home/kurt/Dev/crunge/depot/spineboy-4.3/export/spineboy.atlas"
+from . import resolve_spine_path
 
 
 def test_spine_atlas_loader():
     loader = SpineAtlasLoader()
-    atlas = loader.load(TEST_FILE)
+    path = resolve_spine_path("spineboy", version="", ext="atlas")
+    atlas = loader.load(path)
     print(atlas)

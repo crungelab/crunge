@@ -1,11 +1,12 @@
 from crunge.engine.loader.spine.spine_converter import load_skeleton_data
 from crunge.engine.d2.skeleton import Skeleton, AnimationState
 
-TEST_FILE = "/home/kurt/Dev/crunge/depot/spineboy-4.3/export/spineboy-pro.json"
-
+#TEST_FILE = "/home/kurt/Dev/crunge/depot/spineboy-4.3/export/spineboy-pro.json"
+from . import resolve_spine_path
 
 def test_spine_skeleton():
-    skel_data = load_skeleton_data(TEST_FILE)
+    path = resolve_spine_path("spineboy", ext="json")
+    skel_data = load_skeleton_data(path)
     skeleton = Skeleton(skel_data)
     anim_state = AnimationState(skeleton)
 
