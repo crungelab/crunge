@@ -22,7 +22,7 @@ class SpriteDemo(Demo):
         self.scale = 1.0
         self.color = colors.WHITE
 
-        sprite = self.sprite = SpriteLoader().load(":images:/playerShip1_orange.png")
+        sprite = self.sprite = SpriteLoader().load("${images}/playerShip1_orange.png")
 
         self.node = Node2D(vu=SpriteVu(), model=sprite)
         self.scene.attach(self.node)

@@ -24,7 +24,7 @@ class PlatformerDemo(PhysicsDemo):
     def create_map(self):
         map_loader = MapLoader(self.scene)
 
-        tmx_path = ResourceManager().resolve_path(":resources:/tiled/skateboarder.tmx")
+        tmx_path = ResourceManager().resolve_path("${resources}/tiled/skateboarder.tmx")
         map_loader.load(tmx_path)
 
         self.character_layer = self.scene.get_layer("pc")

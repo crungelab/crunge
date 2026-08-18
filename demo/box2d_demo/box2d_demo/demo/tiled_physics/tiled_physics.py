@@ -52,7 +52,7 @@ class TiledPhysicsDemo(PhysicsDemo):
         map_builder = DefaultMapBuilder(tile_layer_builder=tile_layer_builder)
         map_loader = TiledMapLoader(context, map_builder=map_builder)
 
-        tmx_path = ResourceManager().resolve_path(":resources:/tiled/level1.tmx")
+        tmx_path = ResourceManager().resolve_path("${resources}/tiled/level1.tmx")
         map_loader.load(tmx_path)
 
     def _draw(self):

@@ -18,7 +18,7 @@ from .laser import Laser
 
 class Ship(DynamicEntity2D):
     def __init__(self, position: glm.vec2) -> None:
-        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        atlas = XmlSpriteAtlasLoader().load("${resources}/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
         sprite = atlas.get("playerShip1_orange.png")

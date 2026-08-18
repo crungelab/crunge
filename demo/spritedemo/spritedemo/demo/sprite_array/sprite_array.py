@@ -26,7 +26,7 @@ class SpriteArrayDemo(Demo):
         self.color_enabled = True
         self.color = 1, 1, 1
 
-        folder = ResourceManager().resolve_path(":resources:/tiled/items/")
+        folder = ResourceManager().resolve_path("${resources}/tiled/items/")
         logger.debug(f"folder: {folder}")
 
         paths = list(folder.glob("*.png"))

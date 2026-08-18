@@ -25,7 +25,7 @@ class TiledTestDemo(TiledDemo):
 
     def create_map(self):
         context = BuilderContext(scene=self.scene)
-        tmx_path = ResourceManager().resolve_path(":resources:/tiled/composite_blur.tmx")
+        tmx_path = ResourceManager().resolve_path("${resources}/tiled/composite_blur.tmx")
         map_loader = TiledMapLoader(context, map_builder=DefaultMapBuilder())
         map_loader.load(tmx_path)
 

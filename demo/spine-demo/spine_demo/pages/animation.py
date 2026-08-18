@@ -39,7 +39,7 @@ class AnimationPage(Page):
         loader = SpineSkeletonLoader()
         name = self.name
         version = self.version
-        path = f":spines:/{name}/export/{name}-{version}.json"
+        path = f"${{spines}}/{name}/export/{name}-{version}.json"
         skeleton = loader.load(path, f"{name}.atlas")
 
         self.anim_state = AnimationState(skeleton)

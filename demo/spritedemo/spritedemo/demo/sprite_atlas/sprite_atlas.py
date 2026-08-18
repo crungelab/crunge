@@ -27,7 +27,7 @@ class SpriteAtlasDemo(Demo):
         self.color = 1, 1, 1
 
         atlas = self.atlas = XmlSpriteAtlasLoader().load(
-            ":resources:/platformer/Spritesheets/spritesheet_tiles.xml"
+            "${resources}/platformer/Spritesheets/spritesheet_tiles.xml"
         )
         logger.debug(f"atlas: {atlas}")
 

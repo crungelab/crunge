@@ -27,7 +27,7 @@ class OffscreenNodePage(Page):
         self.camera = Camera2D()
         self.renderer = Renderer2D(self.target_viewport, camera=self.camera)
 
-        sprite = self.sprite = SpriteLoader().load(":resources:/robocute.png")
+        sprite = self.sprite = SpriteLoader().load("${resources}/robocute.png")
         self.sprite_vu = SpriteVu(sprite)
         self.node = Node2D(vu=self.sprite_vu).enable()
 

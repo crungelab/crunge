@@ -22,7 +22,7 @@ class ThingsDemo(PhysicsDemo):
 
         atlas = self.atlas = XmlSpriteAtlasLoader(
             sprite_builder=CollidableSpriteBuilder()
-        ).load(":resources:/platformer/Spritesheets/spritesheet_tiles.xml")
+        ).load("${resources}/platformer/Spritesheets/spritesheet_tiles.xml")
         logger.debug(f"atlas: {atlas}")
 
         self.sprite = atlas.get("bomb.png")

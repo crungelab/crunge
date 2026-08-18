@@ -10,7 +10,6 @@ from crunge.engine.d2.background import BackgroundVu
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.builder.sprite.background_sprite_builder import BackgroundSpriteBuilder
-from crunge.engine.color import Color
 from crunge.engine import colors
 
 
@@ -21,7 +20,7 @@ class BackgroundDemo(Demo):
         self.scale = 1.0
         self.color = colors.WHITE
 
-        sprite = self.sprite = SpriteLoader(sprite_builder=BackgroundSpriteBuilder()).load(":images:/backgroundColorGrass.png")
+        sprite = self.sprite = SpriteLoader(sprite_builder=BackgroundSpriteBuilder()).load("${images}/backgroundColorGrass.png")
         self.node = Node2D(vu=BackgroundVu(), model=sprite)
         self.scene.attach(self.node)
 

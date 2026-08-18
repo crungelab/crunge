@@ -25,14 +25,14 @@ class SpritesDemo(Demo):
         self.color = 1, 1, 1
 
         # Ship1
-        sprite = SpriteLoader().load(":images:/playerShip1_orange.png")
+        sprite = SpriteLoader().load("${images}/playerShip1_orange.png")
 
         node = self.node = Node2D(vu=SpriteVu(), model=sprite)
 
         self.scene.attach(self.node)
 
         # Ship2
-        sprite = SpriteLoader().load(":images:/playerShip1_blue.png")
+        sprite = SpriteLoader().load("${images}/playerShip1_blue.png")
         x = 1.0
         y = 1.0
 

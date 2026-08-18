@@ -15,10 +15,10 @@ class Avatar(DynamicCharacter):
 #class Avatar(RobustCharacter):
     def __init__(self, position=glm.vec2()):
         model = SpriteLoader(sprite_builder=CollidableSpriteBuilder()).load(
-            ":resources:/tiled/characters/maleAdventurer_idle.png"
+            "${resources}/tiled/characters/maleAdventurer_idle.png"
         )
         atlas = XmlSpriteAtlasLoader(sprite_builder=CollidableSpriteBuilder()).load(
-            ":resources:/tiled/characters/male_adventurer/sheet.xml"
+            "${resources}/tiled/characters/male_adventurer/sheet.xml"
         )
         brain = AvatarBrain(atlas)
         super().__init__(position, vu=SpriteVu(), model=model, brain=brain)

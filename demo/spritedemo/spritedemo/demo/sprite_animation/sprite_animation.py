@@ -26,7 +26,7 @@ class SpriteAnimationDemo(Demo):
         self.scale = 1.0
 
         atlas = self.atlas = XmlSpriteAtlasLoader().load(
-            ":resources:/tiled/characters/robot/sheet.xml"
+            "${resources}/tiled/characters/robot/sheet.xml"
         )
         logger.debug(f"atlas: {atlas}")
 

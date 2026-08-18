@@ -41,7 +41,7 @@ sprite_loader = SpriteLoader(sprite_builder=CollidableSpriteBuilder())
 
 class Wheel(DynamicEntity2D):
     def __init__(self, position=glm.vec2()):
-        sprite = sprite_loader.load(":resources:/tiled/items/coinGold.png")
+        sprite = sprite_loader.load("${resources}/tiled/items/coinGold.png")
         scale = glm.vec2(0.5, 0.5)
         super().__init__(
             position, scale=scale, vu=SpriteVu(), model=sprite, geom=BallGeom()
@@ -59,7 +59,7 @@ class Wheel(DynamicEntity2D):
 
 class Chassis(DynamicEntity2D):
     def __init__(self, position=glm.vec2()):
-        sprite = sprite_loader.load(":resources:/tiled/objects/boxCrate.png")
+        sprite = sprite_loader.load("${resources}/tiled/objects/boxCrate.png")
 
         scale = glm.vec2(1.5, 0.1)
         super().__init__(

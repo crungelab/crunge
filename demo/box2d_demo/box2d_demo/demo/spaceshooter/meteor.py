@@ -20,7 +20,7 @@ class Meteor(DynamicEntity2D):
     angular_velocity_range=(-2, 2)
 
     def __init__(self, position: glm.vec2, name: str) -> None:
-        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        atlas = XmlSpriteAtlasLoader().load("${resources}/spaceshooter/sheet.xml")
         #logger.debug(f"atlas: {atlas}")
         
         sprite = atlas.get(name)

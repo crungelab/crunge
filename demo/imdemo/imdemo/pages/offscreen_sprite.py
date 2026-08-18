@@ -26,7 +26,7 @@ class OffscreenSpritePage(Page):
         self.camera = Camera2D()
         self.renderer = Renderer2D(self.target_viewport, camera=self.camera)
 
-        sprite = self.sprite = SpriteLoader().load(":resources:/robocute.png")
+        sprite = self.sprite = SpriteLoader().load("${resources}/robocute.png")
         self.sprite_vu = SpriteVu(sprite).enable()
         self.sprite_vu.update_transform(
             position=glm.vec3(0, 0, 0),

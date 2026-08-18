@@ -19,7 +19,7 @@ class Laser(DynamicEntity2D):
         self.angle = angle
         self.speed = speed
 
-        atlas = XmlSpriteAtlasLoader().load(":resources:/spaceshooter/sheet.xml")
+        atlas = XmlSpriteAtlasLoader().load("${resources}/spaceshooter/sheet.xml")
         logger.debug(f"atlas: {atlas}")
         
         sprite = atlas.get("laserBlue01.png")

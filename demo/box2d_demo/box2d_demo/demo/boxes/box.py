@@ -9,6 +9,6 @@ from crunge.engine.d2.physics.geom import BoxGeom
 
 class Box(DynamicEntity2D):
     def __init__(self, position: glm.vec2) -> None:
-        sprite = SpriteLoader().load(":images:/boxCrate.png")
+        sprite = SpriteLoader().load("${images}/boxCrate.png")
         scale = glm.vec2(.25, .25)
         super().__init__(position, scale=scale, vu=SpriteVu(), model=sprite, geom=BoxGeom())

@@ -11,7 +11,7 @@ from crunge.demo import Page, PageChannel
 class ImageBgPage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
-        image_path = ResourceManager().resolve_path(":resources:/robocute.png")
+        image_path = ResourceManager().resolve_path("${resources}/robocute.png")
         self.texture = ImageTextureLoader().load(image_path)
 
     def _draw(self):
