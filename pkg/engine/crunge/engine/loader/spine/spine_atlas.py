@@ -15,6 +15,7 @@ from .spine_atlas_file import AtlasRegion
 
 _SEQUENCE_SUFFIX = re.compile(r"^(?P<base>.+?)(?P<num>\d+)$")
 
+
 class SpineAtlas:
     """Spine .atlas files can span multiple page images, unlike the XML
     format's single imagePath. SpriteAtlas (per your reference) appears to
@@ -28,7 +29,9 @@ class SpineAtlas:
         self.pages: list[SpriteAtlas] = []
         self._sprites: dict[str, "Sprite"] = {}
         self._indexed: dict[str, dict[int, "Sprite"]] = {}
-        self._sequences: dict[str, dict[int, "Sprite"]] = {}  # base name -> {frame: sprite}
+        self._sequences: dict[str, dict[int, "Sprite"]] = (
+            {}
+        )  # base name -> {frame: sprite}
 
     def register_sprite(self, region: AtlasRegion, sprite) -> None:
         if region.index < 0:
@@ -80,9 +83,13 @@ class SpineAtlas:
                             frame_name = f"{attachment.path}{str(seq.start + i).zfill(seq.digits)}"
                             sprite = self._sprites.get(frame_name)
                             if sprite is None:
-                                logger.warning(f"Sequence frame '{frame_name}' not found in atlas")
+                                logger.warning(
+                                    f"Sequence frame '{frame_name}' not found in atlas"
+                                )
                             attachment.sequence_sprites.append(sprite)
-                        attachment.gpu_sprite = attachment.sequence_sprites[seq.setupIndex]
+                        attachment.gpu_sprite = attachment.sequence_sprites[
+                            seq.setupIndex
+                        ]
                         continue
 
                     sprite = self.get_sprite(attachment.path)
@@ -93,18 +100,3 @@ class SpineAtlas:
                         )
                         continue
                     attachment.gpu_sprite = sprite
-
-    '''
-    def resolve(self, skeleton_data: "SkeletonData") -> None:
-        for skin_attachments in skeleton_data.skins.values():
-            for slot_name, attachments_by_name in skin_attachments.items():
-                for att_name, attachment in attachments_by_name.items():
-                    sprite = self.get_sprite(attachment.path)
-                    if sprite is None:
-                        logger.warning(
-                            f"No atlas region found for attachment path '{attachment.path}' "
-                            f"(slot '{slot_name}', attachment '{att_name}')"
-                        )
-                        continue
-                    attachment.gpu_sprite = sprite
-    '''

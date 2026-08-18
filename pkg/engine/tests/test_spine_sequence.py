@@ -1,4 +1,3 @@
-from crunge.engine.loader.spine.spine_skeleton_loader import SpineSkeletonLoader
 from crunge.engine.loader.spine.spine_json import SpineSkeletonFile
 
 TEST_FILE = "/home/kurt/Dev/crunge/depot/spine-runtimes/examples/dragon/export/dragon-ess.json"

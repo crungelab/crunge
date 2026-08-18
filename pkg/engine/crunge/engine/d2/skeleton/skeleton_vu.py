@@ -90,12 +90,6 @@ class SkeletonVu(Vu2D):
 
             slot_vu.enable()
 
-            '''
-            if slot.data.blend_mode == "additive":
-                logger.debug(f"Slot '{slot.data.name}' using additive blend mode")
-                slot_vu.program = AdditiveSpriteProgram()
-            '''
-
             att = slot.attachment
             if att is not None:
                 sprite = (

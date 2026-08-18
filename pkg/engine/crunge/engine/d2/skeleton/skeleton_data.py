@@ -52,16 +52,6 @@ class SlotData:
         self.blend_mode = blend_mode
 
 
-"""
-class SlotData:
-    def __init__(self, name, bone_index, attachment_name=None, color=glm.vec4(1.0)):
-        self.name = name
-        self.bone_index = bone_index
-        self.attachment_name = attachment_name
-        self.color = color
-"""
-
-
 class EventData:
     def __init__(self, name, int_value=0, float_value=0.0, string_value=""):
         self.name = name

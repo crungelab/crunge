@@ -7,8 +7,6 @@ from pydantic import BaseModel, Field, ConfigDict
 
 
 class SpineBaseModel(BaseModel):
-    # Spine's JSON is camelCase; keep our attrs snake_case internally later,
-    # but at the loader boundary just consume camelCase directly via alias.
     # model_config = ConfigDict(populate_by_name=True, extra="allow")
     model_config = ConfigDict(populate_by_name=True, extra="forbid")
 
@@ -84,8 +82,6 @@ class SequenceKeyframe(SpineBaseModel):
 
 # ---------- attachments (region only for now; mesh/etc pass through) ----------
 
-# spine_json.py — add to RegionAttachmentJSON
-
 
 class RegionAttachmentJSON(SpineBaseModel):
     type: Literal["region"] = "region"
@@ -120,7 +116,6 @@ class SkinJSON(SpineBaseModel):
 
 
 # ---------- draw order ----------
-# spine_json.py
 
 
 class DrawOrderOffsetJSON(SpineBaseModel):
@@ -178,7 +173,6 @@ class BoneTimelinesJSON(SpineBaseModel):
 
 class SlotTimelinesJSON(SpineBaseModel):
     attachment: list[AttachmentKeyframe] = Field(default_factory=list)
-    # rgba: list[dict] = Field(default_factory=list)  # color timeline, TODO
     rgba: list[ColorKeyframe] = Field(default_factory=list)  # color timeline
 
 

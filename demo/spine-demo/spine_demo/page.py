@@ -11,10 +11,7 @@ from crunge import imgui
 
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.d2.scene import Scene2D
-from crunge.engine.d2.camera_2d import Camera2D
-
 from crunge.engine.d2.view import SceneView2D
-from crunge.engine.d2.camera_2d import Camera2D
 
 
 class Page(SceneView2D):
@@ -32,28 +29,27 @@ class Page(SceneView2D):
         ResourceManager().add_path_variables(
             resources=self.resource_root,
             images=self.resource_root / "images",
-            spines=self.spine_root / "examples"
+            spines=self.spine_root / "examples",
         )
 
     @property
     def ppu(self) -> float:
         return self.camera.ppu
 
-    
     def reset(self):
         super().reset()
         self.center_camera()
 
     def center_camera(self):
         pass
-        '''
+        """
         if self.camera:
             ppu = self.camera.ppu
             view_width_units = self.viewport.width / ppu
             view_height_units = self.viewport.height / ppu
             self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
             logger.debug(f"Camera centered at {self.camera.position}")
-        '''
+        """
 
     def on_size(self):
         super().on_size()

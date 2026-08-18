@@ -323,7 +323,6 @@ class AnimationState:
     def set_animation(self, animation: "Animation", loop=True):
         self.current = TrackEntry(animation, loop)
 
-
     def update(self, delta):
         if not self.current:
             return
@@ -331,7 +330,11 @@ class AnimationState:
         entry.prev_time = entry.time
         entry.time += delta
         looped = False
-        if entry.loop and entry.animation.duration > 0 and entry.time >= entry.animation.duration:
+        if (
+            entry.loop
+            and entry.animation.duration > 0
+            and entry.time >= entry.animation.duration
+        ):
             entry.time %= entry.animation.duration
             looped = True
         entry.looped_this_frame = looped  # consumed by apply() below
@@ -342,38 +345,12 @@ class AnimationState:
             entry = self.current
             for tl in entry.animation.timelines:
                 if isinstance(tl, EventTimeline):
-                    tl.fire(self.skeleton, entry.prev_time, entry.time, entry.looped_this_frame)
+                    tl.fire(
+                        self.skeleton,
+                        entry.prev_time,
+                        entry.time,
+                        entry.looped_this_frame,
+                    )
                 else:
                     tl.apply(self.skeleton, entry.time, weight=1.0)
         self.skeleton.update_world_transforms()
-
-"""
-class TrackEntry:
-    def __init__(self, animation: "Animation", loop=True):
-        self.animation = animation
-        self.time = 0.0
-        self.loop = loop
-
-
-class AnimationState:
-    def __init__(self, skeleton: "Skeleton"):
-        self.skeleton = skeleton
-        self.current: TrackEntry | None = None
-
-    def set_animation(self, animation: "Animation", loop=True):
-        self.current = TrackEntry(animation, loop)
-
-    def update(self, delta):
-        if not self.current:
-            return
-        self.current.time += delta
-        if self.current.loop and self.current.animation.duration > 0:
-            self.current.time %= self.current.animation.duration
-
-    def apply(self):
-        self.skeleton.set_to_setup_pose()
-        if self.current:
-            for tl in self.current.animation.timelines:
-                tl.apply(self.skeleton, self.current.time, weight=1.0)
-        self.skeleton.update_world_transforms()
-"""

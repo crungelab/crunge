@@ -7,7 +7,7 @@ import glm
 
 from crunge.engine.d2.settings_2d import (
     Settings2D,
-)  # ASSUMPTION: import path, confirm against actual module layout
+)
 
 from .spine_json import (
     SpineSkeletonFile,
@@ -47,9 +47,6 @@ def _parse_curve(curve) -> str | tuple[float, float, float, float]:
     return tuple(curve)  # bezier control points
 
 
-# spine_converter.py
-
-
 def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
     att = RegionAttachmentJSON.model_validate(data)
     return RegionAttachment(
@@ -67,24 +64,7 @@ def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
     )
 
 
-"""
-def _region_attachment(name: str, data: dict, ppu: float) -> RegionAttachment:
-    att = RegionAttachmentJSON.model_validate(data)
-    return RegionAttachment(
-        path=att.path or name,
-        x=att.x / ppu,
-        y=att.y / ppu,
-        rotation=att.rotation,
-        scale_x=att.scaleX,
-        scale_y=att.scaleY,
-        width=att.width / ppu,
-        height=att.height / ppu,
-        sequence=att.sequence,
-    )
-"""
-
-
-# spine_converter.py — shared hex parser, used for both setup color and keyframes
+# shared hex parser, used for both setup color and keyframes
 def _parse_color(hex_str: str) -> glm.vec4:
     h = hex_str.lstrip("#")
     r, g, b = (int(h[i : i + 2], 16) / 255.0 for i in (0, 2, 4))
@@ -247,19 +227,35 @@ def convert(spine_file: SpineSkeletonFile, ppu: float | None = None) -> Skeleton
                     )
 
         for name, data in spine_file.events.items():
-            result.events[name] = EventData(name, data.int_value, data.float_value, data.string)
+            result.events[name] = EventData(
+                name, data.int_value, data.float_value, data.string
+            )
 
         if anim.events:
             resolved = []
             for kf in anim.events:
                 default = result.events.get(kf.name)
-                resolved.append((
-                    kf.time,
-                    kf.name,
-                    kf.int_value if kf.int_value is not None else (default.int_value if default else 0),
-                    kf.float_value if kf.float_value is not None else (default.float_value if default else 0.0),
-                    kf.string if kf.string is not None else (default.string_value if default else ""),
-                ))
+                resolved.append(
+                    (
+                        kf.time,
+                        kf.name,
+                        (
+                            kf.int_value
+                            if kf.int_value is not None
+                            else (default.int_value if default else 0)
+                        ),
+                        (
+                            kf.float_value
+                            if kf.float_value is not None
+                            else (default.float_value if default else 0.0)
+                        ),
+                        (
+                            kf.string
+                            if kf.string is not None
+                            else (default.string_value if default else "")
+                        ),
+                    )
+                )
             timelines.append(EventTimeline(keyframes=resolved))
 
         if anim.draw_order:
