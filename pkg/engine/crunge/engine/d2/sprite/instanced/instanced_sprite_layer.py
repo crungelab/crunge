@@ -24,9 +24,6 @@ class InstancedSpriteLayer(GraphLayer2D):
     def _draw(self) -> None:
         self.vu_group.draw()
 
-    def _render(self) -> None:
-        self.vu_group.draw()
-
     def attach(self, node: Node2D) -> None:
         if node.vu is None:
             return

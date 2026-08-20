@@ -4,7 +4,6 @@ import glm
 from crunge import yoga
 
 from ..node import Node
-from ..part import Part
 from ..controller import Controller
 
 
@@ -13,7 +12,6 @@ class Widget(Node["Widget"]):
         super().__init__()
         self._size = glm.ivec2(0, 0)
         self._controller: Controller = None
-        self.parts: list[Part] = []
         self.priority = 0
         self.hovered = False
         # Layout
@@ -161,20 +159,6 @@ class Widget(Node["Widget"]):
         for child in self.children:
             child.update(delta_time)
 
-    def add_part(self, part: Part) -> None:
-        self.parts.append(part)
-        part.widget = self
-
-    def remove_part(self, part: Part) -> None:
-        self.parts.remove(part)
-        part.widget = None
-
-    def get_part(self, part_type: type[Part]) -> Part | None:
-        for part in self.parts:
-            if isinstance(part, part_type):
-                return part
-        return None
-
     def on_added(self) -> None:
         #logger.debug(f"Widget.on_attached: {self}")
         #logger.debug(f"Parent: {self.parent}")
@@ -194,11 +178,3 @@ class Widget(Node["Widget"]):
         if position.x <= x <= position.x + size.x and position.y <= y <= position.y + size.y:
             return True
         return False
-    
-    """
-    def _draw(self):
-        super()._draw()
-        for child in self.children:
-            # child.draw()
-            self.draw_child(child)
-    """

@@ -103,7 +103,7 @@ class MeshVu3D(Vu3D):
 
         super()._draw()
 
-    def _render(self):
+    def draw(self):
         if self.deferred:
             phase: TransmissivePhase3D = self.current_renderer.plan.get_phase(
                 TransmissivePhase3D

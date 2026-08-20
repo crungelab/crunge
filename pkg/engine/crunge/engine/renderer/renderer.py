@@ -166,7 +166,7 @@ class Renderer(Base):
         self.ensure_plan()
         with self.render_pass():
             #node.render()
-            node.root_render()
+            node.root_draw()
         self.plan.render()
         self.plan.clear()
 

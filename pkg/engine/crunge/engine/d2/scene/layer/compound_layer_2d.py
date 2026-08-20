@@ -34,7 +34,7 @@ class CompoundLayer2D(CompoundLayer):
             )
         return self._memo
 
-    def _render(self):
+    def _draw(self):
         current_renderer = Renderer2D.get_current()
 
         def do_render():
@@ -45,6 +45,6 @@ class CompoundLayer2D(CompoundLayer):
         phase: CompositePhase = current_renderer.plan.get_phase(CompositePhase)
         phase.add(CompositeItem(do_render))
 
-    def root_render(self):
+    def root_draw(self):
         for child in self.children:
-            child.render()
+            child.draw()

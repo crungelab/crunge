@@ -23,6 +23,14 @@ class Dock(Widget):
     def _end(self):
         imgui.end()
 
+    def draw(self):
+        if not self.visible:
+            return
+        self._begin()
+        #self._draw()
+        super().draw()
+        self._end()
+
     """
     def _draw(self):
         collapsed, opened = imgui.begin(self.title, self.closable, flags=self.flags)

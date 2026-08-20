@@ -107,6 +107,20 @@ class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
         pixel_ratio = self.compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 
+    def draw(self):
+        if self.default_font:
+            imgui.push_font(self.default_font, 16.0)
+
+        with self.use():
+            super().draw()
+
+        if self.default_font:
+            imgui.pop_font()
+
+        self.vu.render()
+        imgui.end_frame()
+
+    """
     def _draw(self):
         if self.default_font:
             imgui.push_font(self.default_font, 16.0)
@@ -119,6 +133,7 @@ class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
 
         self.vu.render()
         imgui.end_frame()
+    """
 
     """
     def _draw(self):

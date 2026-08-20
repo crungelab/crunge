@@ -36,11 +36,5 @@ class Vu(Base, NodeListener, Generic[T_Node]):
     def _draw(self):
         pass
 
-    def render(self):
-        self._render()
-
-    def _render(self):
-        self._draw()
-
     def update(self, delta_time: float):
         pass

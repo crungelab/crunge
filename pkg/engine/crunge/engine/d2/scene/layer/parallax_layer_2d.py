@@ -35,6 +35,6 @@ class ParallaxLayer2D(LayerGroup):
             self._memo = ParallaxLayer2DMemo(camera=camera)
         return self._memo
     
-    def _render(self):
+    def _draw(self):
         with self.memo.camera.use():
-            super()._render()
+            super()._draw()

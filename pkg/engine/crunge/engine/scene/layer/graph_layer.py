@@ -32,9 +32,6 @@ class GraphLayer(SceneLayer, Generic[T_Node]):
     def _draw(self) -> None:
         self.root.draw()
 
-    def _render(self) -> None:
-        self.root.render()
-
     def update(self, dt: float) -> None:
         self.root.update(dt)
 
