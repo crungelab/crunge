@@ -40,7 +40,9 @@ class ScrollingDemoController(Controller):
         if glm.length(self.velocity) < 0.5:
             self.velocity = glm.vec2(0, 0)
 
-        self.camera.position += self.velocity * delta_time
+        #self.camera.position += self.velocity * delta_time
+        if self.velocity != glm.vec2(0, 0):
+            self.camera.position += self.velocity * delta_time
 
         #logger.debug(f"Camera velocity: {self.velocity}, position: {self.camera.position}")
 

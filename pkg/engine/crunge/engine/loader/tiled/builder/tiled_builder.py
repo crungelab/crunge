@@ -40,7 +40,7 @@ class TiledBuilder:
         parallax_factor = glm.vec2(tmx_parallax_factor.x, tmx_parallax_factor.y)
 
         tmx_parallax_origin = self.map.get_parallax_origin()
-        parallax_origin = glm.vec2(tmx_parallax_origin.x, tmx_parallax_origin.y)
+        parallax_origin = glm.vec2(tmx_parallax_origin.x, tmx_parallax_origin.y) / self.ppu
 
         if parallax_factor.x != 1.0 or parallax_factor.y != 1.0:
             group = ParallaxLayer2D(layer.name, parallax_factor=parallax_factor, parallax_origin=parallax_origin)
