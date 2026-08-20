@@ -27,7 +27,6 @@ class Dock(Widget):
         if not self.visible:
             return
         self._begin()
-        #self._draw()
         super().draw()
         self._end()
 

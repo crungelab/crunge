@@ -8,7 +8,6 @@ from .base import Base
 T_Vu = TypeVar("T_Vu", bound=Vu)
 
 
-#class VuGroup(Vu, Generic[T_Vu]):
 class VuGroup(Base, Generic[T_Vu]):
     def __init__(self):
         super().__init__()
@@ -26,7 +25,7 @@ class VuGroup(Base, Generic[T_Vu]):
 
     def remove(self, vu: T_Vu) -> None:
         logger.debug(f"Removing {vu} from {self}")
-        #vu.group = None
+        # vu.group = None
         self.visuals.remove(vu)
 
     def clear(self) -> None:
