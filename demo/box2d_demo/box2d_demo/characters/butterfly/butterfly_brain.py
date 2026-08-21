@@ -62,7 +62,7 @@ class ButterflyBrain(Brain):
     def _create(self):
         super()._create()
         self.sprite = self.idle_sprite_pair[self.character_face_direction]
-        self.node.angle = glm.radians(-45)
+        self.node.rotation = glm.radians(-45)
 
     def update(self, delta_time):
         super().update(delta_time)
@@ -224,13 +224,13 @@ class ButterflyBrain(Brain):
     @debounce(0.1)
     def face_left(self):
         self.character_face_direction = LEFT_FACING
-        self.node.angle = glm.radians(45)
+        self.node.rotation = glm.radians(45)
 
 
     @debounce(0.1)
     def face_right(self):
         self.character_face_direction = RIGHT_FACING
-        self.node.angle = glm.radians(-45)
+        self.node.rotation = glm.radians(-45)
 
 
 steering = [

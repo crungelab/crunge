@@ -100,7 +100,7 @@ class SurfaceViewport(Viewport):
         if self.resized:
             gc.collect()
             self.resized = False
-        self.gfx.wait_for_gpu()
+
         self.surface.present()
         
         self._canvas = None

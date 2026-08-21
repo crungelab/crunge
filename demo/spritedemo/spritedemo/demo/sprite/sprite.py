@@ -18,7 +18,7 @@ class SpriteDemo(Demo):
     def reset(self):
         super().reset()
 
-        self.angle = 0
+        self.rotation = 0
         self.scale = 1.0
         self.color = colors.WHITE
 
@@ -41,9 +41,9 @@ class SpriteDemo(Demo):
         imgui.begin("Ship")
 
         # Rotation
-        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
+        changed, self.rotation = imgui.drag_float("Rotation", self.rotation, ANGLE_STEP)
         if changed:
-            self.node.angle = self.angle
+            self.node.rotation = self.rotation
 
         # Scale
         changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)

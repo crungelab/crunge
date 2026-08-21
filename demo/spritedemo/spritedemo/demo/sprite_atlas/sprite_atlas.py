@@ -20,7 +20,7 @@ class SpriteAtlasDemo(Demo):
     def reset(self):
         super().reset()
 
-        self.angle = 0
+        self.rotation = 0
         self.scale = 1.0
         self.alpha = 255
         self.color_enabled = True
@@ -48,8 +48,8 @@ class SpriteAtlasDemo(Demo):
         imgui.begin("Object")
 
         # Rotation
-        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
-        self.node.angle = self.angle
+        changed, self.rotation = imgui.drag_float("Rotation", self.rotation, ANGLE_STEP)
+        self.node.rotation = self.rotation
 
         # Scale
         changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)

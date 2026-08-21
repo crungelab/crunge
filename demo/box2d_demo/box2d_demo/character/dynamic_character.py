@@ -50,14 +50,7 @@ class DynamicCharacter(DynamicEntity2D):
         logger.debug(f"mounting: node={node}, point={point}")
         self.motion_state = MotionState.MOUNTED
         self.unlock_rotation()
-        #self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2 + 4))
-        #self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2 + 0.125))
         logger.debug(f"mounting at {self.position}")
-        #self.body.position = tuple(self.position)
-        #self.body.position = b2.Vec2(*self.position)
-        #self.angle = node.angle
-        # logger.debug('on_mount')
-        #logger.debug(f"shapes: {self.shapes}")
 
         self.mass_data = self.body.mass_data
         mass_data = self.body.mass_data
@@ -73,7 +66,7 @@ class DynamicCharacter(DynamicEntity2D):
         self.motion_state = MotionState.FALLING
         self.lock_rotation()
         self.position = node.get_tx_point(glm.vec2(point.x, point.y + self.height / 2))
-        self.angle = 0
+        self.rotation = 0
 
         logger.debug(f"mass data: mass={self.mass_data.mass}, center={self.mass_data.center}, inertia={self.mass_data.rotational_inertia}")
         self.body.mass_data = self.mass_data

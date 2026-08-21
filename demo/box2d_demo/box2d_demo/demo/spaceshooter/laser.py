@@ -14,9 +14,9 @@ from crunge.engine.d2.physics.geom import BoxGeom
 from .collision_type import CollisionType
 
 class Laser(DynamicEntity2D):
-    def __init__(self, position: glm.vec2, angle: float, speed: float) -> None:
+    def __init__(self, position: glm.vec2, rotation: float, speed: float) -> None:
         super().__init__(position, geom=BoxGeom())
-        self.angle = angle
+        self.rotation = rotation
         self.speed = speed
 
         atlas = XmlSpriteAtlasLoader().load("${resources}/spaceshooter/sheet.xml")

@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
+import math
 
 if TYPE_CHECKING:
     from .scene.scene_2d import Scene2D
@@ -15,7 +16,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
         position=glm.vec2(),
-        angle=0.0,
+        rotation=0.0,
         scale=glm.vec2(1.0, 1.0),
         vu: "Vu2D" = None,
         model: Any = None,
@@ -23,35 +24,73 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         super().__init__(vu, model)
         self._position = position
         self._depth = 0.0
-        self._angle = angle  # radians
+        self._rotation = rotation  # radians
         self._scale = scale
-        self._matrix = glm.mat4(1.0)
-        self.bounds = Bounds2()
-        #self._velocity = glm.vec2(0.0)
-        #self.angular_velocity = 0.0  # radians per second
+
+        # Local transform: rebuilt from position/rotation/scale/depth.
+        self._local_transform = glm.mat4(1.0)
+        self._local_dirty = False
+
+        # Global (world) transform: local transform chained through ancestors.
+        self._global_transform = glm.mat4(1.0)
+        self._global_dirty = False
+
+        # World-space bounds, derived from local bounds + global transform.
+        self._bounds = Bounds2()
+        self._bounds_dirty = False
 
     def _post_create(self):
-        self.update_matrix()
+        # Force one real dirty->clean cycle so on_transform/listeners fire
+        # once at baseline; subsequent lazy reads/writes behave normally.
+        self._mark_local_dirty()
         super()._post_create()
 
-    """
-    @property
-    def velocity(self):
-        return self._velocity
+    # ------------------------------------------------------------------
+    # Dirty propagation
+    # ------------------------------------------------------------------
 
-    @velocity.setter
-    def velocity(self, value: glm.vec2):
-        self._velocity = value
-    """
-    
+    def _mark_local_dirty(self):
+        self._local_dirty = True
+        self._mark_global_dirty()
+
+    def _mark_global_dirty(self):
+        # Coalescing guard: if we're already dirty, our descendants and
+        # listeners have already been informed - stop the cascade here.
+        if self._global_dirty:
+            return
+        self._global_dirty = True
+        self._bounds_dirty = True
+
+        # ASSUMPTION: SceneNode exposes an iterable `children` of Node2D.
+        for child in self.children:
+            child._mark_global_dirty()
+
+        self.on_transform()
+        for listener in self.listeners:
+            listener.on_node_transform_change(self)
+
+    def on_transform(self):
+        """Overridable hook fired once per dirty batch (not per-setter).
+        IMPORTANT: this override (or a subclass's) must read
+        self.global_transform/self.bounds at some point, even just
+        `_ = self.global_transform`, or the dirty flag never clears and
+        future changes get silently coalesced away by _mark_global_dirty."""
+        pass
+
+    # ------------------------------------------------------------------
+    # Properties
+    # ------------------------------------------------------------------
+
     @property
     def position(self):
         return self._position
 
     @position.setter
     def position(self, value: glm.vec2):
+        if value == self._position:
+            return
         self._position = value
-        self.update_matrix()
+        self._mark_local_dirty()
         self.on_position()
 
     def on_position(self):
@@ -63,8 +102,10 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @x.setter
     def x(self, value: float):
+        if value == self._position.x:
+            return
         self._position.x = value
-        self.update_matrix()
+        self._mark_local_dirty()
         self.on_position()
 
     @property
@@ -73,8 +114,10 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @y.setter
     def y(self, value: float):
+        if value == self._position.y:
+            return
         self._position.y = value
-        self.update_matrix()
+        self._mark_local_dirty()
         self.on_position()
 
     @property
@@ -83,23 +126,36 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @depth.setter
     def depth(self, value: float):
+        if value == self._depth:
+            return
         self._depth = value
-        self.update_matrix()
+        self._mark_local_dirty()
 
     @property
-    def angle(self):
-        return self._angle
+    def rotation(self):
+        return self._rotation
 
-    @angle.setter
-    def angle(self, value: float):
-        if value == self._angle:
+    @rotation.setter
+    def rotation(self, value: float):
+        if value == self._rotation:
             return
-        self._angle = value
-        self.update_matrix()
+        self._rotation = value
+        self._mark_local_dirty()
+
+    @property
+    def scale(self):
+        return self._scale
+
+    @scale.setter
+    def scale(self, value: glm.vec2):
+        if value == self._scale:
+            return
+        self._scale = value
+        self._mark_local_dirty()
 
     @property
     def forward(self) -> glm.vec2:
-        world = self._matrix
+        world = self.global_transform
         return glm.normalize(
             glm.vec2(world * glm.vec4(0, 1, 0, 0))
         )
@@ -112,9 +168,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
             size = self.vu.size * self.scale
         else:
             size = glm.vec2(1.0) * self.scale
-
-        # logger.debug(f"class: {self.__class__}, size: {size}")
-
         return size
 
     @property
@@ -135,9 +188,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
             size = glm.vec2(self.model.collision_size.x, self.model.collision_size.y) * self.scale
         else:
             size = self.size
-
-        # logger.debug(f"class: {self.__class__}, size: {size}")
-
         return size
 
     @property
@@ -152,56 +202,119 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def collision_radius(self):
         return self.collision_size.x / 2
 
-    @property
-    def scale(self):
-        return self._scale
-
-    @scale.setter
-    def scale(self, value: float):
-        self._scale = value
-        self.update_matrix()
-
-    @property
-    def matrix(self):
-        return self._matrix
-
-    @matrix.setter
-    def matrix(self, value):
-        self._matrix = value
-        self.on_transform()
+    # ------------------------------------------------------------------
+    # Local transform (was `matrix`)
+    # ------------------------------------------------------------------
 
     @property
     def transform(self) -> glm.mat4:
-        transform = self.matrix
-        if self.parent is not None:
-            transform = self.parent.transform * transform
-        return transform
+        """Local transform (position/rotation/scale/depth only, no ancestors)."""
+        if self._local_dirty:
+            self._update_local_transform()
+        return self._local_transform
 
-    def on_transform(self):
-        local_bounds = self.get_local_bounds()
-        # logger.debug(f"class: {self.__class__}, local_bounds: {local_bounds}")
-        self.bounds = local_bounds.to_global(self.transform)
-        # logger.debug(f"class: {self.__class__}, bounds: {self.bounds}")
-        if not self.bounds.is_valid():
-            logger.warning(f"Invalid bounds for {self}: {self.bounds}")
+    @transform.setter
+    def transform(self, value: glm.mat4):
+        # Direct override (e.g. from an external solver). Local is now
+        # authoritative/clean, but global + bounds still need rebuilding.
+        self._local_transform = value
+        self._local_dirty = False
+        self._mark_global_dirty()
 
-        for listener in self.listeners:
-            listener.on_node_transform_change(self)
-
-    def update_matrix(self):
+    def _update_local_transform(self):
         x = self._position.x
         y = self._position.y
-        # logger.debug(f"class: {self.__class__}, x: {x}, y: {y}")
         z = self._depth
 
-        matrix = glm.mat4(1.0)  # Identity matrix
+        matrix = glm.mat4(1.0)
         matrix = glm.translate(matrix, glm.vec3(x, y, z))
-        matrix = glm.rotate(matrix, self._angle, glm.vec3(0, 0, 1))
+        matrix = glm.rotate(matrix, self._rotation, glm.vec3(0, 0, 1))
         matrix = glm.scale(
             matrix,
             glm.vec3(self._scale.x, self._scale.y, 1),
         )
-        self.matrix = matrix
+        self._local_transform = matrix
+        self._local_dirty = False
+
+    # ------------------------------------------------------------------
+    # Global (world) transform (was `transform`)
+    # ------------------------------------------------------------------
+
+    @property
+    def global_transform(self) -> glm.mat4:
+        """World transform: this node's local transform chained through ancestors."""
+        if self._global_dirty:
+            self._update_global_transform()
+        return self._global_transform
+
+    def _update_global_transform(self):
+        if self.parent is not None:
+            self._global_transform = self.parent.global_transform * self.transform
+        else:
+            self._global_transform = self.transform
+        self._global_dirty = False
+
+    # ------------------------------------------------------------------
+    # Global decomposed properties (new, Godot-style)
+    # ------------------------------------------------------------------
+
+    @property
+    def global_position(self) -> glm.vec2:
+        m = self.global_transform
+        return glm.vec2(m[3].x, m[3].y)
+
+    @global_position.setter
+    def global_position(self, value: glm.vec2):
+        if self.parent is not None:
+            parent_inv = glm.inverse(self.parent.global_transform)
+            local = parent_inv * glm.vec4(value.x, value.y, self._depth, 1.0)
+            self.position = glm.vec2(local.x, local.y)
+        else:
+            self.position = value
+
+    @property
+    def global_rotation(self) -> float:
+        m = self.global_transform
+        return math.atan2(m[0].y, m[0].x)
+
+    @global_rotation.setter
+    def global_rotation(self, value: float):
+        if self.parent is not None:
+            self.rotation = value - self.parent.global_rotation
+        else:
+            self.rotation = value
+
+    @property
+    def global_scale(self) -> glm.vec2:
+        m = self.global_transform
+        sx = glm.length(glm.vec2(m[0].x, m[0].y))
+        sy = glm.length(glm.vec2(m[1].x, m[1].y))
+        return glm.vec2(sx, sy)
+
+    @global_scale.setter
+    def global_scale(self, value: glm.vec2):
+        if self.parent is not None:
+            parent_scale = self.parent.global_scale
+            self.scale = glm.vec2(value.x / parent_scale.x, value.y / parent_scale.y)
+        else:
+            self.scale = value
+
+    # ------------------------------------------------------------------
+    # Bounds
+    # ------------------------------------------------------------------
+
+    @property
+    def bounds(self) -> Bounds2:
+        if self._bounds_dirty:
+            self._update_bounds()
+        return self._bounds
+
+    def _update_bounds(self):
+        local_bounds = self.get_local_bounds()
+        self._bounds = local_bounds.to_global(self.global_transform)
+        if not self._bounds.is_valid():
+            logger.warning(f"Invalid bounds for {self}: {self._bounds}")
+        self._bounds_dirty = False
 
     def get_local_bounds(self) -> Bounds2:
         half_width = self.size.x / 2

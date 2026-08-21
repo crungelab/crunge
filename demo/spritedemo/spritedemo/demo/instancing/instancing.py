@@ -39,7 +39,7 @@ class InstancingDemo(Demo):
         self.nodes.clear()
         self.color = colors.WHITE
         self.sprite.color = self.color
-        self.angle = 0
+        self.rotation = 0
         self.scale = INITIAL_SCALE
 
         # Set grid size and spacing
@@ -74,10 +74,10 @@ class InstancingDemo(Demo):
         imgui.begin("Instancing")
 
         # Rotation
-        changed, self.angle = imgui.drag_float("Angle", self.angle, ANGLE_STEP)
+        changed, self.rotation = imgui.drag_float("Rotation", self.rotation, ANGLE_STEP)
         if changed:
             for node in self.nodes:
-                node.angle = self.angle
+                node.rotation = self.rotation
 
         # Scale
         changed, self.scale = imgui.drag_float("Scale", self.scale, SCALE_STEP)

@@ -39,15 +39,9 @@ class Camera2D(Node2D, ViewportListener):
         super().__init__(position)
 
         self._zoom = zoom
-        #self.ppu = ppu if ppu is not None else Settings2D().ppu
         self.ppu = ppu if ppu is not None else (leader.ppu if leader is not None else Settings2D().ppu)
 
         self.leader = leader
-        """
-        if leader is not None:
-            self._zoom = leader.zoom
-            leader.add_follower(self)
-        """
 
         self.followers: list["Camera2D"] = []
         self.parallax_factor = parallax_factor
@@ -64,7 +58,6 @@ class Camera2D(Node2D, ViewportListener):
         self.viewport_size = glm.vec2(0, 0)
 
         self.create_buffers()
-        # self.create_bind_group()
         self.bind_group: SceneBindGroup = None
 
         if leader is not None:
@@ -107,8 +100,10 @@ class Camera2D(Node2D, ViewportListener):
 
     @zoom.setter
     def zoom(self, value: float):
+        if value == self._zoom:
+            return
         self._zoom = value
-        self.update_matrix()
+        self._update_camera_matrices()
         self.on_zoom()
 
     def on_zoom(self):
@@ -116,7 +111,6 @@ class Camera2D(Node2D, ViewportListener):
             follower.on_leader_zoom(self.zoom)
 
     def create_buffers(self):
-        # Uniform Buffers
         self.uniform_buffer_size = sizeof(CameraUniform)
         self.uniform_buffer = self.gfx.create_buffer(
             "Camera Uniform Buffer",
@@ -140,15 +134,7 @@ class Camera2D(Node2D, ViewportListener):
     def remove_follower(self, follower: "Camera2D"):
         self.followers.remove(follower)
 
-    """
     def on_leader_position(self, position: glm.vec2):
-        self.position = position
-    """
-
-    def on_leader_position(self, position: glm.vec2):
-        #logger.debug(f"Camera2D: on_leader_position: {position}")
-        #logger.debug(f"parallax_factor: {self.parallax_factor} parallax_origin: {self.parallax_origin}")
-        #self.position = position * self.parallax_factor
         self.position = self.parallax_origin + (position - self.parallax_origin) * self.parallax_factor
 
     def on_leader_zoom(self, zoom: float):
@@ -158,13 +144,19 @@ class Camera2D(Node2D, ViewportListener):
     def on_viewport_size(self, size: glm.ivec2):
         self.viewport_size = glm.vec2(size.x, size.y)
         logger.debug(f"Camera2D: on_viewport_size: {size}")
-        self.update_matrix()
+        self._update_camera_matrices()
         self.create_bind_group()
 
-    def update_matrix(self):
-        super().update_matrix()
+    def on_transform(self):
+        # Touch global_transform so Node2D's lazy cache clears
+        # _global_dirty - otherwise this hook (which reads raw x/y, not
+        # .global_transform) never closes the dirty window and subsequent
+        # position changes get silently swallowed by the coalescing guard.
+        _ = self.global_transform
+        self._update_camera_matrices()
+        super().on_transform()
 
-        # viewport in pixels -> view size in units
+    def _update_camera_matrices(self):
         view_width = (self.viewport_size.x / self.ppu) * self.zoom
         view_height = (self.viewport_size.y / self.ppu) * self.zoom
 
@@ -179,30 +171,6 @@ class Camera2D(Node2D, ViewportListener):
             ortho_left, ortho_right, ortho_bottom, ortho_top, -1, 1
         )
         self.update_gpu()
-        
-    '''
-    def update_matrix(self):
-        super().update_matrix()
-        viewport_size = self.viewport_size
-        viewport_width = viewport_size.x
-        viewport_height = viewport_size.y
-
-        ortho_left = self.x - (viewport_width * self.zoom) / 2
-        ortho_right = self.x + (viewport_width * self.zoom) / 2
-        ortho_bottom = self.y - (viewport_height * self.zoom) / 2
-        ortho_top = self.y + (viewport_height * self.zoom) / 2
-
-        self.frustum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
-
-        ortho_near = -1  # Near clipping plane
-        ortho_far = 1  # Far clipping plane
-
-        self.projection_matrix = glm.ortho(
-            ortho_left, ortho_right, ortho_bottom, ortho_top, ortho_near, ortho_far
-        )
-
-        self.update_gpu()
-    '''
 
     def update_gpu(self):
         camera_uniform = CameraUniform()
@@ -220,7 +188,6 @@ class Camera2D(Node2D, ViewportListener):
     def unproject(self, mouse_vec: glm.vec2):
         mx = mouse_vec.x
         my = mouse_vec.y
-        # Get viewport dimensions
         viewport = self.viewport
         viewportWidth = viewport.width
         viewPortHeight = viewport.height
@@ -229,16 +196,13 @@ class Camera2D(Node2D, ViewportListener):
         glOrthoWidth = frustum.width
         glOrthoHeight = frustum.height
 
-        # Convert mouse coordinates to NDC
         x_ndc = (2.0 * mx / viewportWidth) - 1.0
         y_ndc = (2.0 * my / viewPortHeight) - 1.0
-        y_ndc = -y_ndc  # Flip Y for WebGPU's coordinate system
+        y_ndc = -y_ndc
 
-        # Convert NDC to world coordinates using the adjusted projection size
         x_world = x_ndc * (glOrthoWidth / 2.0)
         y_world = y_ndc * (glOrthoHeight / 2.0)
 
-        # Adjust for camera position
         x_world += self.x
         y_world += self.y
         return glm.vec2(x_world, y_world)
