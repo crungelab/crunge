@@ -22,14 +22,6 @@ class Brain(Base):
     @position.setter
     def position(self, val):
         self.node.position = val
-
-    @property
-    def velocity(self):
-        return self.node.velocity
     
-    @velocity.setter
-    def velocity(self, val):
-        self.node.velocity = val
-
     def update(self, delta_time: float):
         pass

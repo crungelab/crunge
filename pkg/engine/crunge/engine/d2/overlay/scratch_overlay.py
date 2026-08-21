@@ -8,8 +8,6 @@ from ...renderer import Renderer
 from ...widget import Overlay
 
 from ... import colors
-#from ...color import rgba_tuple_to_argb_int
-from ...colors import Color
 
 
 class ScratchOverlay(Overlay):
@@ -20,6 +18,8 @@ class ScratchOverlay(Overlay):
 
     # TODO: Consider using a font manager or similar to handle fonts more efficiently
     def create_font(self, font_size: int) -> skia.Font:
+        # font_size is a true pixel size — draw_text() cancels out the
+        # world-unit -> pixel scale before drawing, so no ppu scaling here.
         if font_size in self.font_cache:
             return self.font_cache[font_size]
 
@@ -32,19 +32,18 @@ class ScratchOverlay(Overlay):
         self.draw_calls.append(call)
 
     def draw_segment(self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE):
-        # logger.debug(f"DemoView.draw_line({begin}, {end}, {color})")
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            #paint.set_color(rgba_tuple_to_argb_int(color))
             paint.set_color(color.to_argb_int())
             canvas.draw_line(begin[0], begin[1], end[0], end[1], paint)
 
         self.add_call(draw)
 
-    def draw_fat_segment(self, a: glm.vec2, b: glm.vec2, radius: float, color=colors.WHITE):
+    def draw_fat_segment(
+        self, a: glm.vec2, b: glm.vec2, radius: float, color=colors.WHITE
+    ):
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            #paint.set_color(rgba_tuple_to_argb_int(color))
             paint.set_color(color.to_argb_int())
             paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             paint.set_stroke_width(radius * 2)
@@ -65,7 +64,6 @@ class ScratchOverlay(Overlay):
             path = builder.detach()
 
             outline_paint = skia.Paint()
-            #outline_paint.set_color(rgba_tuple_to_argb_int(outline_color))
             outline_paint.set_color(outline_color.to_argb_int())
             outline_paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             outline_paint.set_stroke_width(1.0)
@@ -74,31 +72,9 @@ class ScratchOverlay(Overlay):
 
         self.add_call(draw)
 
-    '''
-    def draw_polygon(self, points: list[glm.vec2], outline_color=colors.WHITE):
-        def draw(canvas: skia.Canvas):
-            path = skia.Path()
-            if not points:
-                return
-            path.move_to(*points[0])
-            for pt in points[1:]:
-                path.line_to(*pt)
-            path.close()
-
-            outline_paint = skia.Paint()
-            outline_paint.set_color(rgba_tuple_to_argb_int(outline_color))
-            outline_paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-            outline_paint.set_stroke_width(1.0)
-
-            canvas.draw_path(path, outline_paint)
-
-        self.add_call(draw)
-    '''
-
     def draw_dot(self, size: float, position: glm.vec2, color=colors.WHITE):
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            #paint.set_color(rgba_tuple_to_argb_int(color))
             paint.set_color(color.to_argb_int())
             canvas.draw_circle(skia.Point(position.x, position.y), size, paint)
 
@@ -108,9 +84,7 @@ class ScratchOverlay(Overlay):
         self, center: glm.vec2, radius: float, segments: int = 32, color=colors.WHITE
     ):
         def draw(canvas: skia.Canvas):
-            # logger.debug(f"draw_circle({center}, {radius}, {segments}, {color})")
             paint = skia.Paint()
-            #paint.set_color(rgba_tuple_to_argb_int(color))
             paint.set_color(color.to_argb_int())
             paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
             paint.set_stroke_width(2)  # Set the outline thickness as needed
@@ -123,22 +97,28 @@ class ScratchOverlay(Overlay):
     ):
         def draw(canvas: skia.Canvas):
             paint = skia.Paint()
-            #paint.set_color(rgba_tuple_to_argb_int(color))
             paint.set_color(color.to_argb_int())
 
             font = self.create_font(font_size)
 
-            # Save current canvas state
+            # At this point the canvas transform is:
+            #   translate(viewport center) * scale(scale, -scale) * translate(-camera)
+            # where scale = camera.ppu / camera.zoom, so draw calls can work
+            # directly in world units. Text is the exception: we want a
+            # constant pixel-sized font regardless of ppu/zoom, so cancel the
+            # outer scale out locally and manually project `position`
+            # (world units) into that unscaled local space.
+            renderer = Renderer.get_current()
+            scale = renderer.camera_2d.ppu / renderer.camera_2d.zoom
+
             canvas.save()
-            # Flip Y back for text (since global is -scale)
-            canvas.scale(1, -1)
-            # Because the origin is now upside down, position.y must be negated *relative to origin*
-            canvas.draw_string(text, position.x, -position.y, font, paint)
-            # Restore canvas state
+            canvas.scale(1.0 / scale, -1.0 / scale)
+            canvas.draw_string(
+                text, position.x * scale, -position.y * scale, font, paint
+            )
             canvas.restore()
 
         self.add_call(draw)
-
 
     def _draw(self):
         if len(self.draw_calls) == 0:
@@ -151,8 +131,8 @@ class ScratchOverlay(Overlay):
             canvas.translate(
                 renderer.viewport.width // 2, renderer.viewport.height // 2
             )
-            scale = 1 / renderer.camera_2d.zoom
-            canvas.scale(scale, -scale)  # Invert Y-axis for Skia
+            scale = renderer.camera_2d.ppu / renderer.camera_2d.zoom
+            canvas.scale(scale, -scale)  # world units -> pixels, invert Y for Skia
             camera_x, camera_y = (
                 renderer.camera_2d.position.x,
                 renderer.camera_2d.position.y,
