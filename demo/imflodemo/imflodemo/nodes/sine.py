@@ -11,8 +11,9 @@ from imflo.pin import Output
 sampling_rate = 44100
 freq = 440
 samples = 44100
-#x = np.arange(samples)
-#y = 100*np.sin(2 * np.pi * freq * x / sampling_rate)
+# x = np.arange(samples)
+# y = 100*np.sin(2 * np.pi * freq * x / sampling_rate)
+
 
 class SineNode(Node):
     def __init__(self, graph, name):
@@ -20,7 +21,7 @@ class SineNode(Node):
         self._freq = 88
         self.clock = 0
         self.subject = Subject()
-        self.output = Output(self, 'output', self.subject)
+        self.output = Output(self, "output", self.subject)
 
     @property
     def freq(self):
@@ -35,17 +36,14 @@ class SineNode(Node):
         x = self.clock
         y = np.sin(self.freq * x)
         self.output.write(y)
-    
+
     def begin(self):
         super().begin()
         width = 20
         height = 100
 
         changed, freq = imgui.v_slider_int(
-            "freq",
-            (width, height), self.freq,
-            v_min=0, v_max=100,
-            format="%d"
+            "freq", (width, height), self.freq, v_min=0, v_max=100, format="%d"
         )
         if changed:
             self.freq = freq

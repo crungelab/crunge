@@ -46,7 +46,7 @@ class Demo:
         return self.wgpu_context.queue
 
     @contextlib.contextmanager
-    def canvas_target(self, target: wgpu.Texture = None):
+    def canvas_target(self, target: wgpu.Texture = None) :
         if target is None:
             surface_texture = wgpu.SurfaceTexture()
             self.surface.get_current_texture(surface_texture)
@@ -59,7 +59,7 @@ class Demo:
             insert_info = skia.InsertRecordingInfo()
             insert_info.f_recording = recording
             self.skia_context.insert_recording(insert_info)
-            self.skia_context.submit(skia.SyncToCpu.K_NO)
+            self.skia_context.submit(skia.SubmitInfo())
 
     def create_window(self):
         glfw.init()

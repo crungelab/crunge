@@ -1,4 +1,3 @@
-import gc
 import timeit
 import time
 
@@ -13,15 +12,6 @@ from .service import Service
 from .statistics import Statistics
 
 sdl.init(sdl.InitFlags.INIT_VIDEO)
-
-# Minimum idle slack (seconds) required before we'll spend time on a
-# manual gen-0 collection. Tune against measured gc.collect(0) cost.
-GC_MIN_SLACK_S = 0.001
-
-# How many frames to wait between manual gen-0 collections when there's
-# slack available. Keeps collection cheap and infrequent rather than
-# scanning every frame.
-GC_INTERVAL_FRAMES = 30
 
 
 class App(Window):
@@ -38,13 +28,6 @@ class App(Window):
         self.stats = Statistics()
         self.services: list[Service] = []
         self.add_service(Scheduler())
-
-        # Disable the automatic cyclic GC. We'll trigger gen-0 collections
-        # ourselves during frames that have spare time, instead of letting
-        # the collector fire at unpredictable (and possibly expensive)
-        # moments mid-frame.
-        gc.disable()
-        self._gc_frame_counter = 0
 
     def add_service(self, service: Service):
         self.services.append(service)
@@ -63,12 +46,6 @@ class App(Window):
         last_frame_start = time.perf_counter()
 
         sdl.start_text_input(self.window)
-
-        # Let init-time allocations (services, resource manager, scene
-        # scaffolding, etc.) settle, then freeze them out of future
-        # collections so the collector only ever scans per-frame churn.
-        gc.collect()
-        gc.freeze()
 
         while self.running:
             frame_start = time.perf_counter()
@@ -100,20 +77,6 @@ class App(Window):
             work_end = time.perf_counter()
             work_s = work_end - frame_start
             sleep_s = target_dt - work_s
-
-            # Spend a slice of any spare time on a manual gen-0 GC pass
-            # instead of sleeping through all of it. Only bother when
-            # there's comfortably enough slack, and don't do it every
-            # frame -- gen-0 collection is cheap but not free.
-            gc_s = 0.0
-            self._gc_frame_counter += 1
-            if sleep_s > GC_MIN_SLACK_S and self._gc_frame_counter >= GC_INTERVAL_FRAMES:
-                self._gc_frame_counter = 0
-                t0 = time.perf_counter()
-                gc.collect(generation=0)
-                gc_s = time.perf_counter() - t0
-                sleep_s -= gc_s
-
             if sleep_s > 0.0:
                 time.sleep(sleep_s)
 
@@ -125,7 +88,6 @@ class App(Window):
             self.fps = 1.0 / frame_s if frame_s > 0 else 0.0
             self.update_time = update_s
             self.render_time = render_s
-            self.gc_time = gc_s
 
             # Stats
             self.stats.timing.push_frame(update_s, render_s, frame_s)

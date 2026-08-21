@@ -7,7 +7,7 @@ class Index(Page):
     def _draw(self):
         imgui.begin("Index")
 
-        imgui.text("Welcome to the Layout Demo!")
+        imgui.text("Welcome to the UI Demo!")
         
         imgui.end()
         super()._draw()

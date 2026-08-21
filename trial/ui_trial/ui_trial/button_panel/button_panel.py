@@ -10,7 +10,7 @@ from crunge.engine.widget.button import Button
 from ..trial import Trial
 
 
-class ButtonsTrial(Trial):
+class ButtonPanelTrial(Trial):
     def reset(self):
         super().reset()
 
@@ -46,7 +46,7 @@ class ButtonsTrial(Trial):
 
 
 def main():
-    ButtonsTrial().run()
+    ButtonPanelTrial().run()
 
 
 if __name__ == "__main__":

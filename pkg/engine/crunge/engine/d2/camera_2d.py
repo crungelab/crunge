@@ -141,7 +141,7 @@ class Camera2D(Node2D, ViewportListener):
     """
 
     def on_leader_position(self, position: glm.vec2):
-        logger.debug(f"Camera2D: on_leader_position: {position}")
+        #logger.debug(f"Camera2D: on_leader_position: {position}")
         #logger.debug(f"parallax_factor: {self.parallax_factor} parallax_origin: {self.parallax_origin}")
         #self.position = position * self.parallax_factor
         self.position = self.parallax_origin + (position - self.parallax_origin) * self.parallax_factor

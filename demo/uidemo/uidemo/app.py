@@ -8,6 +8,6 @@ resource_root = Path(__file__).parent.parent / 'resources'
 
 class UiDemo(demo.Demo):
     def __init__(self):
-        super().__init__("Layout Demo", __package__, resource_root)
+        super().__init__("UI Demo", __package__, resource_root)
         self.menubar_location = MenubarLocation.NAVBAR
 
