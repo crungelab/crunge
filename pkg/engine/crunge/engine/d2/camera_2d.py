@@ -43,9 +43,11 @@ class Camera2D(Node2D, ViewportListener):
         self.ppu = ppu if ppu is not None else (leader.ppu if leader is not None else Settings2D().ppu)
 
         self.leader = leader
+        """
         if leader is not None:
             self._zoom = leader.zoom
             leader.add_follower(self)
+        """
 
         self.followers: list["Camera2D"] = []
         self.parallax_factor = parallax_factor
@@ -65,7 +67,10 @@ class Camera2D(Node2D, ViewportListener):
         # self.create_bind_group()
         self.bind_group: SceneBindGroup = None
 
-        # super().__init__(position)
+        if leader is not None:
+            self._zoom = leader.zoom
+            leader.add_follower(self)
+            self.on_leader_position(leader.position)
 
     def _create(self):
         super()._create()
