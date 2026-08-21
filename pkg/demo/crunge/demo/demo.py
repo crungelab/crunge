@@ -72,7 +72,7 @@ class Demo(engine.App):
         self.draw_main_dockspace()
 
         if self.show_metrics:
-            self.show_metrics = imgui.show_metrics_window(True)[0]
+            self.show_metrics = imgui.show_metrics_window(True)
 
         if self.show_style_editor:
             self.show_style_editor = imgui.begin("Style Editor", True)[1]

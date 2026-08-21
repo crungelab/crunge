@@ -101,6 +101,7 @@ class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
 
     def _set_pixel_ratio(self):
         window_size = self.window.get_window_size()
+        logger.debug(f"ImGuiLayer._set_pixel_ratio: window_size: {window_size}")
         self.io.display_size = window_size
 
         framebuffer_size = self.window.get_framebuffer_size()
