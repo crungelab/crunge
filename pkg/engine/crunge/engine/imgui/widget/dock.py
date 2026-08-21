@@ -4,9 +4,18 @@ from crunge import imgui
 
 from .widget import Widget
 
+
 class Dock(Widget):
     _parent: None
-    def __init__(self, title, children: list[Widget]=None, on_close:Callable=None, flags:int=0):
+
+    def __init__(
+        self,
+        title,
+        children: list[Widget] = None,
+        on_close: Callable = None,
+        flags: int = 0,
+        native: bool = False,
+    ):
         if children is None:
             children = []
         super().__init__(children=children)
@@ -14,39 +23,29 @@ class Dock(Widget):
         self.on_close = on_close
         self.closable = True if on_close is not None else False
         self.flags = flags
+        self.native = native
 
-    def _draw(self):
-        collapsed, opened = imgui.begin(self.title, self.closable, flags=self.flags)
-        if not opened and self.closable:
-            self.on_close()
-
-    def draw_children(self):
-        super().draw_children()
-        imgui.end()
-
-
-    """
     def _begin(self):
         collapsed, opened = imgui.begin(self.title, self.closable, flags=self.flags)
         if not opened and self.closable:
             self.on_close()
 
     def _end(self):
-        imgui.end()
+        if not self.native:
+            imgui.end()
 
+    def _draw(self):
+        self._begin()
+
+    def draw_children(self):
+        super().draw_children()
+        self._end()
+
+    """
     def draw(self):
         if not self.visible:
             return
         self._begin()
         super().draw()
         self._end()
-    """
-
-    """
-    def _draw(self):
-        collapsed, opened = imgui.begin(self.title, self.closable, flags=self.flags)
-        super()._draw()
-        imgui.end()
-        if not opened and self.closable:
-            self.on_close()
     """
