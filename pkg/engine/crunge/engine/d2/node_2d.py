@@ -29,53 +29,12 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
         # Local transform: rebuilt from position/rotation/scale/depth.
         self._local_transform = glm.mat4(1.0)
-        self._local_dirty = False
 
         # Global (world) transform: local transform chained through ancestors.
         self._global_transform = glm.mat4(1.0)
-        self._global_dirty = False
 
         # World-space bounds, derived from local bounds + global transform.
         self._bounds = Bounds2()
-        self._bounds_dirty = False
-
-    def _post_create(self):
-        # Force one real dirty->clean cycle so on_transform/listeners fire
-        # once at baseline; subsequent lazy reads/writes behave normally.
-        self._mark_local_dirty()
-        super()._post_create()
-
-    # ------------------------------------------------------------------
-    # Dirty propagation
-    # ------------------------------------------------------------------
-
-    def _mark_local_dirty(self):
-        self._local_dirty = True
-        self._mark_global_dirty()
-
-    def _mark_global_dirty(self):
-        # Coalescing guard: if we're already dirty, our descendants and
-        # listeners have already been informed - stop the cascade here.
-        if self._global_dirty:
-            return
-        self._global_dirty = True
-        self._bounds_dirty = True
-
-        # ASSUMPTION: SceneNode exposes an iterable `children` of Node2D.
-        for child in self.children:
-            child._mark_global_dirty()
-
-        self.on_transform()
-        for listener in self.listeners:
-            listener.on_node_transform_change(self)
-
-    def on_transform(self):
-        """Overridable hook fired once per dirty batch (not per-setter).
-        IMPORTANT: this override (or a subclass's) must read
-        self.global_transform/self.bounds at some point, even just
-        `_ = self.global_transform`, or the dirty flag never clears and
-        future changes get silently coalesced away by _mark_global_dirty."""
-        pass
 
     # ------------------------------------------------------------------
     # Properties
@@ -156,9 +115,7 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @property
     def forward(self) -> glm.vec2:
         world = self.global_transform
-        return glm.normalize(
-            glm.vec2(world * glm.vec4(0, 1, 0, 0))
-        )
+        return glm.normalize(glm.vec2(world * glm.vec4(0, 1, 0, 0)))
 
     @property
     def size(self) -> glm.vec2:
@@ -185,7 +142,10 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     @property
     def collision_size(self) -> glm.vec2:
         if self.model is not None:
-            size = glm.vec2(self.model.collision_size.x, self.model.collision_size.y) * self.scale
+            size = (
+                glm.vec2(self.model.collision_size.x, self.model.collision_size.y)
+                * self.scale
+            )
         else:
             size = self.size
         return size

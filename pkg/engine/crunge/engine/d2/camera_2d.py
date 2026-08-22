@@ -148,11 +148,6 @@ class Camera2D(Node2D, ViewportListener):
         self.create_bind_group()
 
     def on_transform(self):
-        # Touch global_transform so Node2D's lazy cache clears
-        # _global_dirty - otherwise this hook (which reads raw x/y, not
-        # .global_transform) never closes the dirty window and subsequent
-        # position changes get silently swallowed by the coalescing guard.
-        _ = self.global_transform
         self._update_camera_matrices()
         super().on_transform()
 
@@ -176,8 +171,9 @@ class Camera2D(Node2D, ViewportListener):
         camera_uniform = CameraUniform()
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
+        position = self.global_position
         camera_uniform.position = cast_vec3(
-            glm.vec3(self.position.x, self.position.y, 0)
+            glm.vec3(position.x, position.y, 0)
         )
 
         self.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)

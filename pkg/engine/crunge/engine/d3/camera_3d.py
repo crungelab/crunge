@@ -1,10 +1,10 @@
+# camera_3d.py
 from ctypes import sizeof
 
 from loguru import logger
 import glm
 
 from crunge.core import klass
-
 from crunge import wgpu
 
 from ..viewport import Viewport, ViewportListener
@@ -12,9 +12,7 @@ from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 
 from .node_3d import Node3D
-from .uniforms_3d import (
-    CameraUniform,
-)
+from .uniforms_3d import CameraUniform
 from .program_3d import Program3D
 
 
@@ -59,8 +57,11 @@ class Camera3D(Node3D, ViewportListener):
 
     @near.setter
     def near(self, value):
+        if value == self._near:
+            return
         self._near = value
-        self.update_matrix()
+        self._update_projection()
+        self.update_gpu()
 
     @property
     def far(self):
@@ -68,8 +69,11 @@ class Camera3D(Node3D, ViewportListener):
 
     @far.setter
     def far(self, value):
+        if value == self._far:
+            return
         self._far = value
-        self.update_matrix()
+        self._update_projection()
+        self.update_gpu()
 
     @property
     def viewport(self):
@@ -85,15 +89,15 @@ class Camera3D(Node3D, ViewportListener):
     def on_viewport_size(self, size: glm.ivec2):
         self.viewport_size = glm.vec2(size.x, size.y)
         logger.debug(f"Camera3D: on_viewport_size: {size}")
-        self.update_matrix()
-        self.create_bind_group() # create a new bind group with the updated viewport
+        self._update_projection()
+        self.update_gpu()
+        self.create_bind_group()
 
     @property
     def transform_matrix(self):
         return self.projection_matrix * self.view_matrix
 
     def create_buffers(self):
-        # Uniform Buffers
         self.uniform_buffer_size = sizeof(CameraUniform)
         self.uniform_buffer = self.gfx.create_buffer(
             "Camera Uniform Buffer",
@@ -111,56 +115,39 @@ class Camera3D(Node3D, ViewportListener):
             self.viewport.snapshot_sampler,
         )
 
-    '''
-    def create_bind_group(self):
-        camera_bindgroup_entries = [
-            wgpu.BindGroupEntry(
-                binding=0,
-                buffer=self.uniform_buffer,
-                size=self.uniform_buffer_size,
-            ),
-        ]
-
-        camera_bind_group_desc = wgpu.BindGroupDescriptor(
-            label="Camera Bind Group",
-            layout=CameraProgram3D().camera_bind_group_layout,
-            entries=camera_bindgroup_entries,
-        )
-
-        self.bind_group = self.device.create_bind_group(camera_bind_group_desc)
-    '''
-
     def look_at(self, target: glm.vec3):
-        self.view_matrix = glm.lookAt(self.position, target, self.up)
+        self.view_matrix = glm.lookAt(self.global_position, target, self.up)
+        self.update_gpu()
 
     def update_camera_vectors(self):
-        # Update front, right, and up vectors using the orientation quaternion
-        self.front = self.orientation * glm.vec3(0.0, 0.0, -1.0)
-        self.right = self.orientation * glm.vec3(1.0, 0.0, 0.0)
-        self.up = self.orientation * glm.vec3(0.0, 1.0, 0.0)
+        orientation = self.global_orientation
+        self.front = orientation * glm.vec3(0.0, 0.0, -1.0)
+        self.right = orientation * glm.vec3(1.0, 0.0, 0.0)
+        self.up = orientation * glm.vec3(0.0, 1.0, 0.0)
 
-    def update_matrix(self):
-        super().update_matrix()
+    def on_transform(self):
         self.update_camera_vectors()
+        self.update_gpu()
+        super().on_transform()
+
+    def _update_projection(self):
         size = self.viewport_size
+        if size.y == 0:
+            return
         aspect = float(size.x) / float(size.y)
         fovy = glm.radians(60.0)
         self.projection_matrix = glm.perspective(fovy, aspect, self.near, self.far)
-
-        self.update_gpu()
 
     def update_gpu(self):
         camera_uniform = CameraUniform()
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
-        camera_uniform.position = cast_vec3(self.position)
-        # logger.debug(f"camera_uniform.position: {camera_uniform.position.x}, {camera_uniform.position.y}, {camera_uniform.position.z}")
+        camera_uniform.position = cast_vec3(self.global_position)
 
         self.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        #pass_enc.set_bind_group(0, self.bind_group)
         self.bind_group.bind(pass_enc)
 
     def depth_of(self, node: Node3D) -> float:
-        return glm.distance(self.position, node.position)
+        return glm.distance(self.global_position, node.global_position)

@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, List, Any
+# node_3d.py
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .scene.scene_3d import Scene3D
@@ -16,15 +17,30 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         self, position=glm.vec3(), vu: "Vu3D" = None, model: Any = None
     ) -> None:
         super().__init__(vu, model)
-        self.bounds = Bounds3()
         self._position = position
         self._orientation = glm.quat(1.0, 0.0, 0.0, 0.0)
         self._scale = glm.vec3(1.0)
-        self._matrix = glm.mat4(1.0)
-        self._transform = glm.mat4(1.0)
 
-    def _create(self):
-        self.update_matrix()
+        # Local transform: rebuilt from position/orientation/scale.
+        self._local_transform = glm.mat4(1.0)
+
+        # Global (world) transform: local transform chained through ancestors.
+        self._global_transform = glm.mat4(1.0)
+
+        # NOTE: local bounds mapped into world space only - does NOT merge
+        # child bounds the way the old update_bounds() did. See chat note.
+        self._bounds = Bounds3()
+
+    def on_transform(self):
+        self.gpu_update_model()
+
+    # TODO: DEPRECATED: this should be handled by the Vu class
+    def gpu_update_model(self):
+        pass
+
+    # ------------------------------------------------------------------
+    # Properties
+    # ------------------------------------------------------------------
 
     @property
     def position(self) -> glm.vec3:
@@ -32,8 +48,14 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
 
     @position.setter
     def position(self, value: glm.vec3):
+        if value == self._position:
+            return
         self._position = value
-        self.update_matrix()
+        self._mark_local_dirty()
+        self.on_position()
+
+    def on_position(self):
+        pass
 
     @property
     def orientation(self) -> glm.quat:
@@ -41,8 +63,10 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
 
     @orientation.setter
     def orientation(self, value: glm.quat):
+        if value == self._orientation:
+            return
         self._orientation = value
-        self.update_matrix()
+        self._mark_local_dirty()
 
     @property
     def scale(self) -> glm.vec3:
@@ -50,66 +74,143 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
 
     @scale.setter
     def scale(self, value: glm.vec3):
+        if value == self._scale:
+            return
         self._scale = value
-        self.update_matrix()
+        self._mark_local_dirty()
 
-    @property
-    def matrix(self) -> glm.mat4:
-        return self._matrix
-
-    @matrix.setter
-    def matrix(self, value: glm.mat4):
-        self._matrix = value
-        self.update_transform()
+    # ------------------------------------------------------------------
+    # Local transform (was `matrix`)
+    # ------------------------------------------------------------------
 
     @property
     def transform(self) -> glm.mat4:
-        return self._transform
+        """Local transform (position/orientation/scale only, no ancestors)."""
+        if self._local_dirty:
+            self._update_local_transform()
+        return self._local_transform
 
     @transform.setter
     def transform(self, value: glm.mat4):
-        self._transform = value
-        self.on_transform()
+        self._local_transform = value
+        self._local_dirty = False
+        self._mark_global_dirty()
 
-    def on_added(self):
-        self.parent.update_global_bounds()
-        super().on_added()
-
-    def on_transform(self):
-        self.update_bounds()
-        self.gpu_update_model()
-
-        for listener in self.listeners:
-            listener.on_node_transform_change(self)
-
-    #TODO: DEPRECATED: this should be handled by the Vu class
-    def gpu_update_model(self):
-        pass
-
-    def on_added(self):
-        self.update_transform()
-        self.update_bounds()
-        self.parent.update_bounds()
-
-    def update_matrix(self):
+    def _update_local_transform(self):
         matrix = glm.mat4(1.0)
-        matrix = glm.translate(matrix, glm.vec3(*self.position))
-        matrix = matrix * glm.mat4_cast(self.orientation)
-        matrix = glm.scale(matrix, glm.vec3(*self.scale))
-        self.matrix = matrix
+        matrix = glm.translate(matrix, self._position)
+        matrix = matrix * glm.mat4_cast(self._orientation)
+        matrix = glm.scale(matrix, self._scale)
+        self._local_transform = matrix
+        self._local_dirty = False
 
-    def update_transform(self):
-        transform = self.matrix
-        if self.parent:
-            transform = self.parent.transform * transform
-        self.transform = transform
+    # ------------------------------------------------------------------
+    # Global (world) transform (was `transform`)
+    # ------------------------------------------------------------------
+
+    @property
+    def global_transform(self) -> glm.mat4:
+        if self._global_dirty:
+            self._update_global_transform()
+        return self._global_transform
+
+    def _update_global_transform(self):
+        if self.parent is not None:
+            self._global_transform = self.parent.global_transform * self.transform
+        else:
+            self._global_transform = self.transform
+        self._global_dirty = False
+
+    # ------------------------------------------------------------------
+    # Global decomposed properties (new, Godot-style)
+    # ------------------------------------------------------------------
+
+    @property
+    def global_position(self) -> glm.vec3:
+        m = self.global_transform
+        return glm.vec3(m[3].x, m[3].y, m[3].z)
+
+    @global_position.setter
+    def global_position(self, value: glm.vec3):
+        if self.parent is not None:
+            parent_inv = glm.inverse(self.parent.global_transform)
+            local = parent_inv * glm.vec4(value.x, value.y, value.z, 1.0)
+            self.position = glm.vec3(local.x, local.y, local.z)
+        else:
+            self.position = value
+
+    @property
+    def global_orientation(self) -> glm.quat:
+        m = glm.mat3(self.global_transform)
+        m[0] = glm.normalize(m[0])
+        m[1] = glm.normalize(m[1])
+        m[2] = glm.normalize(m[2])
+        return glm.quat_cast(m)
+
+    """
+    @property
+    def global_orientation(self) -> glm.quat:
+        m = self.global_transform
+        return glm.quat_cast(glm.mat3(m))
+    """
+
+    @global_orientation.setter
+    def global_orientation(self, value: glm.quat):
+        if self.parent is not None:
+            self.orientation = glm.inverse(self.parent.global_orientation) * value
+        else:
+            self.orientation = value
+
+    @property
+    def global_scale(self) -> glm.vec3:
+        m = self.global_transform
+        return glm.vec3(
+            glm.length(glm.vec3(m[0])),
+            glm.length(glm.vec3(m[1])),
+            glm.length(glm.vec3(m[2])),
+        )
+
+    @global_scale.setter
+    def global_scale(self, value: glm.vec3):
+        if self.parent is not None:
+            p = self.parent.global_scale
+            self.scale = glm.vec3(value.x / p.x, value.y / p.y, value.z / p.z)
+        else:
+            self.scale = value
+
+    # ------------------------------------------------------------------
+    # Bounds
+    # ------------------------------------------------------------------
+
+    @property
+    def bounds(self) -> Bounds3:
+        if self._bounds_dirty:
+            self._update_bounds()
+        return self._bounds
+
+    def _update_bounds(self):
+        if self.model is not None:
+            self._bounds = self.model.bounds.to_global(self.global_transform)
+        else:
+            self._bounds = Bounds3()
+        self._bounds_dirty = False
+
+    def get_subtree_bounds(self) -> Bounds3:
+        """Union of this node's own bounds with every descendant's bounds,
+        computed fresh on each call by walking the subtree. NOT cached/dirty-
+        tracked like `.bounds` - this is for occasional use (framing a camera,
+        computing scene extents), not per-frame queries. Nodes without a model
+        contribute nothing but still recurse into their children."""
+        bounds = Bounds3()
+        if self.model is not None:
+            bounds.merge(self.bounds)
         for child in self.children:
-            child.update_transform()
+            child_bounds = child.get_subtree_bounds()
+            if child_bounds.is_valid():
+                bounds.merge(child_bounds)
+        return bounds
 
-    def update_bounds(self):
-        if self.model:
-            self.bounds = self.model.bounds.to_global(self.transform)
-
-        for child in self.children:
-            self.bounds.merge(child.bounds)
-        # logger.debug(f"{self.__class__.__name__} bounds: {self.bounds}")
+    def get_max_extent(self) -> float:
+        """Convenience: largest dimension of this subtree's combined bounds."""
+        size = self.get_subtree_bounds().size
+        return max(size.x, size.y, size.z)

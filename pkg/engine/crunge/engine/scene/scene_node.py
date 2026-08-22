@@ -11,13 +11,53 @@ T_Layer = TypeVar("T_Layer", bound=SceneLayer)
 
 
 class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
+    children: "list[SceneNode[T_Node, T_Layer]]"
+
     def __init__(self, vu: Vu = None, model=None) -> None:
         super().__init__(vu, model)
         self.layer: T_Layer = None
 
+        self._local_dirty = False
+        self._global_dirty = False
+        self._bounds_dirty = False
+
+        self._transform_notify_pending = False
+
     @property
     def scene(self):
         return self.layer.scene
+
+    def _create(self):
+        super()._create()
+        self._mark_local_dirty()
+
+    # ------------------------------------------------------------------
+    # Dirty propagation
+    # ------------------------------------------------------------------
+
+    def _mark_local_dirty(self):
+        self._local_dirty = True
+        self._mark_global_dirty()
+
+    def _mark_global_dirty(self):
+        if self._transform_notify_pending:
+            return
+        self._transform_notify_pending = True
+        self._global_dirty = True
+        self._bounds_dirty = True
+
+        for child in self.children:
+            child._mark_global_dirty()
+
+        try:
+            self.on_transform()
+            for listener in self.listeners:
+                listener.on_node_transform_change(self)
+        finally:
+            self._transform_notify_pending = False
+
+    def on_transform(self):
+        pass
 
     def add_child(self, child: "SceneNode[T_Node, T_Layer]"):
         # logger.debug(f"Attaching child: {child} to parent: {self} with layer: {self.layer}")

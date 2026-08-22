@@ -57,15 +57,17 @@ class Light3D(Node3D):
 
     def on_added(self):
         self.scene.lighting.add_light(self)
+        super().on_added()
 
     def on_removed(self):
         self.scene.lighting.remove_light(self)
+        super().on_removed()
 
     def gpu_update_model(self):
         super().gpu_update_model()
         light_uniform = LightUniform()
 
-        light_uniform.position = cast_vec3(self.position)
+        light_uniform.position = cast_vec3(self.global_position)
         light_uniform.color = cast_vec3(self.color)
 
         light_uniform.energy = self.energy
