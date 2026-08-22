@@ -90,8 +90,25 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
             self._update_local_transform()
         return self._local_transform
 
+    """
     @transform.setter
     def transform(self, value: glm.mat4):
+        self._local_transform = value
+        self._local_dirty = False
+        self._mark_global_dirty()
+    """
+    @transform.setter
+    def transform(self, value: glm.mat4):
+        self._position = glm.vec3(value[3])
+        m = glm.mat3(value)
+        scale = glm.vec3(glm.length(m[0]), glm.length(m[1]), glm.length(m[2]))
+        self._scale = scale
+        # Normalize out scale before extracting rotation - quat_cast needs
+        # an orthonormal basis (same issue as global_orientation).
+        if scale.x != 0: m[0] /= scale.x
+        if scale.y != 0: m[1] /= scale.y
+        if scale.z != 0: m[2] /= scale.z
+        self._orientation = glm.quat_cast(m)
         self._local_transform = value
         self._local_dirty = False
         self._mark_global_dirty()
