@@ -7,8 +7,10 @@ from loguru import logger
 from crunge import skia
 from crunge import box2d
 
-from crunge.engine import Renderer, colors
-from crunge.engine.widget import Overlay
+from crunge.engine import colors
+
+from crunge.engine.d2.overlay.debug_overlay import DebugOverlay
+
 
 from .world import PhysicsWorld2D
 
@@ -22,7 +24,7 @@ def transform_pos(transform: tuple[float, float, float, float]) -> tuple[float, 
     return (transform[0], transform[1])
 
 
-class WorldDebugOverlay(Overlay, box2d.DebugDrawBase):
+class WorldDebugOverlay(DebugOverlay, box2d.DebugDrawBase):
     def __init__(self):
         super().__init__("world_debug", 700)
         box2d.DebugDrawBase.__init__(self)
@@ -38,20 +40,6 @@ class WorldDebugOverlay(Overlay, box2d.DebugDrawBase):
 
         # Your engine palette (RGBA tuples)
         self.shape_outline_color = colors.PURPLE
-
-        self.ppu = 64.0  # pixels per unit
-        self.outline_width_px = 1.0  # desired constant on-screen thickness
-
-    @property
-    def canvas(self) -> skia.Canvas:
-        renderer = Renderer.get_current()
-        return renderer.canvas
-
-    def _scaled_stroke_width(self) -> float:
-        renderer = Renderer.get_current()
-        #scale = renderer.camera_2d.ppu / renderer.camera_2d.zoom
-        scale = self.ppu / renderer.camera_2d.zoom
-        return self.outline_width_px / scale
 
     # ------------- Box2D -> Skia primitive callbacks -------------
 
@@ -174,8 +162,8 @@ class WorldDebugOverlay(Overlay, box2d.DebugDrawBase):
         paint = skia.Paint()
         paint.set_color(hex_to_argb_int(color))
         paint.set_style(skia.Paint.Style.K_FILL_STYLE)
-        #r = max(1.0, size * 0.5)
-        #r = max(self._scaled_stroke_width(), size * 0.5)
+        # r = max(1.0, size * 0.5)
+        # r = max(self._scaled_stroke_width(), size * 0.5)
         r = size / self.ppu
         self.canvas.draw_circle(skia.Point(x, y), r, paint)
 
@@ -203,28 +191,6 @@ class WorldDebugOverlay(Overlay, box2d.DebugDrawBase):
         except Exception:
             logger.debug(f"DebugDraw text @({x},{y}): {s}")
 
-    def _draw(self):
+    def draw_items(self):
         world = PhysicsWorld2D.get_current()
-
-        renderer = Renderer.get_current()
-
-        with renderer.canvas_target() as canvas:
-            canvas.save()
-
-            canvas.translate(
-                renderer.viewport.width // 2, renderer.viewport.height // 2
-            )
-            scale = renderer.camera_2d.ppu / renderer.camera_2d.zoom
-            # scale = 1 / renderer.camera_2d.zoom
-            canvas.scale(scale, -scale)  # Invert Y-axis for Skia
-            camera_x, camera_y = (
-                renderer.camera_2d.position.x,
-                renderer.camera_2d.position.y,
-            )
-            canvas.translate(-camera_x, -camera_y)  # pan to camera
-
-            world.draw(self)
-
-            canvas.restore()
-
-        super()._draw()
+        world.draw(self)

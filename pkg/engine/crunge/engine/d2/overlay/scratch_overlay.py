@@ -5,12 +5,12 @@ import glm
 from crunge import skia
 
 from ...renderer import Renderer
-from ...widget import Overlay
 
 from ... import colors
 
+from .debug_overlay import DebugOverlay
 
-class ScratchOverlay(Overlay):
+class ScratchOverlay(DebugOverlay):
     def __init__(self):
         super().__init__("ScratchOverlay", priority=900)
         self.draw_calls = []
@@ -87,7 +87,7 @@ class ScratchOverlay(Overlay):
             paint = skia.Paint()
             paint.set_color(color.to_argb_int())
             paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-            paint.set_stroke_width(2)  # Set the outline thickness as needed
+            paint.set_stroke_width(self._scaled_stroke_width())  # Set the outline thickness as needed
             canvas.draw_circle(skia.Point(center.x, center.y), radius, paint)
 
         self.add_call(draw)
@@ -123,26 +123,11 @@ class ScratchOverlay(Overlay):
     def _draw(self):
         if len(self.draw_calls) == 0:
             return
-
-        renderer = Renderer.get_current()
-        with renderer.canvas_target() as canvas:
-            canvas.save()
-
-            canvas.translate(
-                renderer.viewport.width // 2, renderer.viewport.height // 2
-            )
-            scale = renderer.camera_2d.ppu / renderer.camera_2d.zoom
-            canvas.scale(scale, -scale)  # world units -> pixels, invert Y for Skia
-            camera_x, camera_y = (
-                renderer.camera_2d.position.x,
-                renderer.camera_2d.position.y,
-            )
-            canvas.translate(-camera_x, -camera_y)  # pan to camera
-
-            for call in self.draw_calls:
-                call(canvas)
-
-            canvas.restore()
+        
+        super()._draw()
 
         self.draw_calls.clear()
-        super()._draw()
+
+    def draw_items(self):
+        for call in self.draw_calls:
+            call(self.canvas)

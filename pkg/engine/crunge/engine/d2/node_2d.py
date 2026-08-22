@@ -15,17 +15,19 @@ from ..scene.scene_node import SceneNode
 class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
-        position=glm.vec2(),
+        #position=glm.vec2(),
+        position: glm.vec2 = None,
         rotation=0.0,
-        scale=glm.vec2(1.0, 1.0),
+        #scale=glm.vec2(1.0, 1.0),
+        scale: glm.vec2 = None,
         vu: "Vu2D" = None,
         model: Any = None,
     ) -> None:
         super().__init__(vu, model)
-        self._position = position
+        self._position = position if position is not None else glm.vec2()
         self._depth = 0.0
         self._rotation = rotation  # radians
-        self._scale = scale
+        self._scale = scale if scale is not None else glm.vec2(1.0, 1.0)
 
         # Local transform: rebuilt from position/rotation/scale/depth.
         self._local_transform = glm.mat4(1.0)
@@ -46,8 +48,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @position.setter
     def position(self, value: glm.vec2):
-        if value == self._position:
-            return
         self._position = value
         self._mark_local_dirty()
         self.on_position()

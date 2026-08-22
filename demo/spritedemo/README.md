@@ -9,7 +9,6 @@ python -m spritedemo.demo.sticker_knight
 python -m spritedemo.demo.filter_kawase_blur
 python -m spritedemo.demo.composite_kawase_blur
 python -m spritedemo.demo.compound_kawase_blur
-python -m spritedemo.demo.skeleton
 
 ```
 
