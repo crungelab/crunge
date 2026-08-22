@@ -51,8 +51,7 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
 
         try:
             self.on_transform()
-            for listener in self.listeners:
-                listener.on_node_transform_change(self)
+            self.transform_changed.emit(self)
         finally:
             self._transform_notify_pending = False
 

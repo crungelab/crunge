@@ -7,7 +7,7 @@ import glm
 from crunge.core import klass
 from crunge import wgpu
 
-from ..viewport import Viewport, ViewportListener
+from ..viewport import Viewport
 from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 
@@ -21,7 +21,7 @@ class CameraProgram3D(Program3D):
     pass
 
 
-class Camera3D(Node3D, ViewportListener):
+class Camera3D(Node3D):
     def __init__(
         self,
         position=glm.vec3(0.0, 0.0, 4.0),
@@ -84,7 +84,7 @@ class Camera3D(Node3D, ViewportListener):
         self._viewport = viewport
         if viewport is not None:
             self.on_viewport_size(viewport.size)
-            viewport.add_listener(self)
+            viewport.size_changed.connect(self.on_viewport_size)
 
     def on_viewport_size(self, size: glm.ivec2):
         self.viewport_size = glm.vec2(size.x, size.y)

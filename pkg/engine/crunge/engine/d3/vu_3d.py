@@ -41,5 +41,4 @@ class Vu3D(Vu[Node3D]):
 
     def on_node_transform_change(self, node: Node3D) -> None:
         logger.debug(f"Vu3D.on_node_transform_change: {node}")
-        # self.transform = node.transform
         self.transform = node.global_transform

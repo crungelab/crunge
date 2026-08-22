@@ -1,14 +1,15 @@
 from typing import TYPE_CHECKING, TypeVar, Generic
 
 from .base import Base
-from .node import Node, NodeListener
+from .node import Node
 
 from .viewport import Viewport
 from .renderer import Renderer
 
 T_Node = TypeVar("T_Node", bound=Node)
 
-class Vu(Base, NodeListener, Generic[T_Node]):
+
+class Vu(Base, Generic[T_Node]):
     def __init__(self) -> None:
         super().__init__()
         self._node: T_Node = None
@@ -20,7 +21,7 @@ class Vu(Base, NodeListener, Generic[T_Node]):
     @property
     def current_renderer(self) -> Renderer:
         return Renderer.get_current()
-    
+
     @property
     def node(self) -> T_Node:
         return self._node
@@ -28,23 +29,9 @@ class Vu(Base, NodeListener, Generic[T_Node]):
     @node.setter
     def node(self, value: T_Node):
         self._node = value
-        value.add_listener(self)
-    
-    """
-    @node.setter
-    def node(self, value: T_Node):
-        self._node = value
-        value.add_listener(self)
-        # Don't rely on catching the node's next transform/model change -
-        # construction order isn't guaranteed relative to the node's own
-        # initial dirty pass, so a Vu attached after that pass has already
-        # fired would otherwise be stuck with stale constructor defaults
-        # (e.g. an identity transform) until something moves again.
-        self.on_node_transform_change(value)
-        if value.model is not None:
-            self.on_node_model_change(value)
-    """
-            
+        value.transform_changed.connect(self.on_node_transform_change)
+        value.model_changed.connect(self.on_node_model_change)
+
     def draw(self):
         self._draw()
 
@@ -52,4 +39,10 @@ class Vu(Base, NodeListener, Generic[T_Node]):
         pass
 
     def update(self, delta_time: float):
+        pass
+
+    def on_node_transform_change(self, node: T_Node) -> None:
+        pass
+
+    def on_node_model_change(self, node: T_Node) -> None:
         pass

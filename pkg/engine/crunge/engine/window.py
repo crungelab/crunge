@@ -8,8 +8,8 @@ from crunge import sdl
 from crunge import yoga
 
 from . import globals
+from .signal import Signal, Pulse
 from .scheduler import Scheduler
-from .node import NodeListener
 from .frame import Frame
 from .viewport import SurfaceViewport
 from .renderer import Renderer
@@ -18,20 +18,6 @@ from .channel import Channel
 
 DEFAULT_WIDTH = 1280
 DEFAULT_HEIGHT = 720
-
-
-class WindowListener(NodeListener):
-    def on_window_size(self, size: glm.ivec2):
-        pass
-
-    def on_pre_frame(self):
-        pass
-
-    def on_post_frame(self):
-        pass
-
-    def on_channel(self, channel: Channel):
-        pass
 
 
 class Window(Frame):
@@ -47,7 +33,6 @@ class Window(Frame):
         super().__init__(style, view=view)
         globals.set_current_window(self)
         self.name = title
-        self.listeners: List[WindowListener] = []
 
         self.window: sdl.Window = None
         # self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True, use_snapshot=True)
@@ -63,6 +48,11 @@ class Window(Frame):
         self.render_time: float = 0.0
         self.frame_time: float = 0.0
 
+        self.window_size: Signal[glm.ivec2] = Signal()
+        self.pre_frame: Pulse = Pulse()
+        self.post_frame: Pulse = Pulse()
+        self.channel_changed: Signal[Channel] = Signal()
+
     @property
     def channel(self) -> Channel:
         return self._channel
@@ -72,6 +62,7 @@ class Window(Frame):
         self._channel = channel
         view = channel()
         self.view = view
+        self.channel_changed.emit(channel)
 
     def add_channel(self, channel: Channel):
         if channel.name in self.channels:
@@ -129,11 +120,11 @@ class Window(Frame):
         logger.debug(f"Resized to {size}")
         self.resize_pending = True
 
-    '''
+    """
     def on_resize(self):
         self.viewport.size = glm.ivec2(self.get_framebuffer_size())
         self.resize_pending = False
-    '''
+    """
 
     def get_window_size(self):
         return sdl.get_window_size(self.window)
@@ -148,49 +139,37 @@ class Window(Frame):
         self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
         self.viewport.make_current()
 
-    def pre_frame(self):
-        for listener in self.listeners:
-            if isinstance(listener, WindowListener):
-                listener.on_pre_frame()
-
-    def post_frame(self):
-        for listener in self.listeners:
-            if isinstance(listener, WindowListener):
-                listener.on_post_frame()
-
     def frame(self):
         if self.resize_pending:
             self.resize_pending = False
             return
-        '''
+        """
         if self.resize_pending:
             self.on_resize()
-        '''
-        
-        self.pre_frame()
+        """
+
+        self.pre_frame.emit()
         with self.viewport.frame():
             with self.renderer.use():
                 self.draw()
-        self.post_frame()
+        self.post_frame.emit()
         self.instance.process_events()
 
-
-
-    '''
+    """
     def frame(self):
         self.pre_frame()
         with self.viewport:
             self.renderer.make_current()
             self.draw()
         self.post_frame()
-    '''
+    """
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
                 self.size = glm.ivec2(event.data1, event.data2)
-                #self.size = glm.ivec2(self.get_framebuffer_size())
+                # self.size = glm.ivec2(self.get_framebuffer_size())
             case _:
                 # pass
                 return super().on_window(event)

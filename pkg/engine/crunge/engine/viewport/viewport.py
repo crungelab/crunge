@@ -11,16 +11,13 @@ from crunge import wgpu
 from crunge import skia
 
 from ..base import Base
+from ..signal import Signal
 from ..uniforms import ViewportUniform, cast_vec2
 
 from ..render_options import RenderOptions
 from ..blitter import Blitter
 
 viewport: ContextVar[Optional["Viewport"]] = ContextVar("viewport", default=None)
-
-class ViewportListener:
-    def on_viewport_size(self, viewport: "Viewport") -> None:
-        pass
 
 
 class Viewport(Base):
@@ -32,7 +29,7 @@ class Viewport(Base):
         self._size = size
         self.resized = False
         self.render_options = render_options
-        self.listeners: list[ViewportListener] = []
+        self.size_changed: Signal[glm.ivec2] = Signal()
 
         self.color_texture: wgpu.Texture = None
         self.color_texture_view: wgpu.TextureView = None
@@ -53,19 +50,11 @@ class Viewport(Base):
         recorder_options = skia.create_standard_recorder_options()
         self.recorder = self.skia_context.make_recorder(recorder_options)
         self.skia_surface: skia.Surface = None
-        #self.canvas: skia.Canvas = None
         self._canvas: skia.Canvas = None
 
         self.create_device_objects()
         self.create_buffers()
         self.update_gpu()
-
-    def add_listener(self, listener: ViewportListener) -> None:
-        if listener not in self.listeners:
-            self.listeners.append(listener)
-
-    def remove_listener(self, listener: ViewportListener) -> None:
-        self.listeners.remove(listener)
 
     @property
     def size(self) -> glm.ivec2:
@@ -81,8 +70,7 @@ class Viewport(Base):
     def on_size(self) -> None:
         self.create_device_objects()
         self.update_gpu()
-        for listener in self.listeners:
-            listener.on_viewport_size(self._size)
+        self.size_changed.emit(self.size)
         self.resized = True
 
     @property

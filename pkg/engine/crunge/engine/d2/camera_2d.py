@@ -8,9 +8,10 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
+from ..signal import Signal
 from ..math import Bounds2
 from ..uniforms import cast_matrix4, cast_vec3
-from ..viewport import Viewport, ViewportListener
+from ..viewport import Viewport
 from ..binding import SceneBindGroup
 
 from .renderer import Renderer2D
@@ -26,7 +27,7 @@ class CameraProgram2D(Program2D):
     pass
 
 
-class Camera2D(Node2D, ViewportListener):
+class Camera2D(Node2D):
     def __init__(
         self,
         position=glm.vec2(0.0, 0.0),
@@ -39,11 +40,18 @@ class Camera2D(Node2D, ViewportListener):
         super().__init__(position)
 
         self._zoom = zoom
-        self.ppu = ppu if ppu is not None else (leader.ppu if leader is not None else Settings2D().ppu)
+        self.ppu = (
+            ppu
+            if ppu is not None
+            else (leader.ppu if leader is not None else Settings2D().ppu)
+        )
 
-        self.leader = leader
+        #self.leader = leader
+        self._leader: "Camera2D" = None
 
-        self.followers: list["Camera2D"] = []
+        self.position_changed: Signal[glm.vec2] = Signal()
+        self.zoom_changed: Signal[float] = Signal()
+
         self.parallax_factor = parallax_factor
         self.parallax_origin = parallax_origin
         self.uniform_buffer: wgpu.Buffer = None
@@ -60,11 +68,16 @@ class Camera2D(Node2D, ViewportListener):
         self.create_buffers()
         self.bind_group: SceneBindGroup = None
 
+        self.leader = leader
+        """
         if leader is not None:
             self._zoom = leader.zoom
-            leader.add_follower(self)
+            leader.position_changed.connect(self.on_leader_position)
+            leader.zoom_changed.connect(self.on_leader_zoom)
             self.on_leader_position(leader.position)
-
+            self.on_leader_zoom(leader.zoom)
+        """
+        
     def _create(self):
         super()._create()
         self.create_bind_group()
@@ -79,10 +92,6 @@ class Camera2D(Node2D, ViewportListener):
         current_renderer.camera_2d = prev_camera
         prev_camera.bind(current_renderer.pass_enc)
 
-    def on_position(self):
-        for follower in self.followers:
-            follower.on_leader_position(self.position)
-
     @property
     def viewport(self):
         return self._viewport
@@ -92,7 +101,7 @@ class Camera2D(Node2D, ViewportListener):
         self._viewport = viewport
         if viewport is not None:
             self.on_viewport_size(viewport.size)
-            viewport.add_listener(self)
+            viewport.size_changed.connect(self.on_viewport_size)
 
     @property
     def zoom(self):
@@ -104,11 +113,26 @@ class Camera2D(Node2D, ViewportListener):
             return
         self._zoom = value
         self._update_camera_matrices()
-        self.on_zoom()
+        self.zoom_changed.emit(value)
 
-    def on_zoom(self):
-        for follower in self.followers:
-            follower.on_leader_zoom(self.zoom)
+    @property
+    def leader(self):
+        return self._leader
+
+    @leader.setter
+    def leader(self, value: "Camera2D"):
+        if value == self._leader:
+            return
+        if self._leader is not None:
+            self._leader.position_changed.disconnect(self.on_leader_position)
+            self._leader.zoom_changed.disconnect(self.on_leader_zoom)
+        self._leader = value
+        if value is not None:
+            self._zoom = value.zoom
+            value.position_changed.connect(self.on_leader_position)
+            value.zoom_changed.connect(self.on_leader_zoom)
+            self.on_leader_position(value.position)
+            self.on_leader_zoom(value.zoom)
 
     def create_buffers(self):
         self.uniform_buffer_size = sizeof(CameraUniform)
@@ -128,14 +152,11 @@ class Camera2D(Node2D, ViewportListener):
             self.viewport.snapshot_sampler,
         )
 
-    def add_follower(self, follower: "Camera2D"):
-        self.followers.append(follower)
-
-    def remove_follower(self, follower: "Camera2D"):
-        self.followers.remove(follower)
-
     def on_leader_position(self, position: glm.vec2):
-        self.position = self.parallax_origin + (position - self.parallax_origin) * self.parallax_factor
+        self.position = (
+            self.parallax_origin
+            + (position - self.parallax_origin) * self.parallax_factor
+        )
 
     def on_leader_zoom(self, zoom: float):
         logger.debug(f"Camera2D: on_leader_zoom: {zoom}")
@@ -149,6 +170,7 @@ class Camera2D(Node2D, ViewportListener):
 
     def on_transform(self):
         self._update_camera_matrices()
+        self.position_changed.emit(self.position)
         super().on_transform()
 
     def _update_camera_matrices(self):
@@ -172,9 +194,7 @@ class Camera2D(Node2D, ViewportListener):
         camera_uniform.projection.data = cast_matrix4(self.projection_matrix)
         camera_uniform.view.data = cast_matrix4(self.view_matrix)
         position = self.global_position
-        camera_uniform.position = cast_vec3(
-            glm.vec3(position.x, position.y, 0)
-        )
+        camera_uniform.position = cast_vec3(glm.vec3(position.x, position.y, 0))
 
         self.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)
 

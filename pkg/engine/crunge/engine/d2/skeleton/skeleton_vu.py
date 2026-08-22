@@ -34,9 +34,7 @@ def _mat3_to_mat4(m3: glm.mat3) -> glm.mat4:
 
 def _attachment_local_mat4(att) -> glm.mat4:
     """RegionAttachment's own offset/rotation/scale relative to its bone,
-    plus sizing the unit quad to the attachment's actual width/height.
-    Mirrors Vu2D.on_node_transform_change's scale-by-size step, which
-    update_pose() was skipping entirely."""
+    plus sizing the unit quad to the attachment's actual width/height."""
     m = glm.mat4(1.0)
     m = glm.translate(m, glm.vec3(att.x, att.y, 0.0))
     m = glm.rotate(m, glm.radians(att.rotation), glm.vec3(0, 0, 1))

@@ -6,27 +6,22 @@ if TYPE_CHECKING:
     from .vu import Vu
     from .model import Model
 
+from .signal import Signal
 from .dispatcher import Dispatcher
 
 T_Node = TypeVar("T_Node", bound="Node")
-
-
-class NodeListener(Generic[T_Node]):
-    def on_node_transform_change(self, node: "Node[T_Node]") -> None:
-        pass
-
-    def on_node_model_change(self, node: "Node[T_Node]") -> None:
-        pass
 
 
 class Node(Dispatcher, Generic[T_Node]):
     def __init__(self, vu: "Vu" = None, model=None) -> None:
         super().__init__()
         self._vu: "Vu" = None
-        self._model: "Model" = None  # TODO: should model be a template type?
+        self._model: "Model" = None
         self.parent: "Node[T_Node]" = None
         self.children: list["Node[T_Node]"] = []
-        self.listeners: list[NodeListener[T_Node]] = []
+        
+        self.transform_changed: Signal["Node[T_Node]"] = Signal()
+        self.model_changed: Signal["Node[T_Node]"] = Signal()
 
         self.vu = vu
         self.model = model
@@ -53,14 +48,7 @@ class Node(Dispatcher, Generic[T_Node]):
         self._model = value
         if value is None:
             return
-        for listener in self.listeners:
-            listener.on_node_model_change(self)
-
-    def add_listener(self, listener: NodeListener[T_Node]) -> None:
-        self.listeners.append(listener)
-
-    def remove_listener(self, listener: NodeListener[T_Node]) -> None:
-        self.listeners.remove(listener)
+        self.model_changed.emit(self)
 
     def clear(self):
         for child in self.children:

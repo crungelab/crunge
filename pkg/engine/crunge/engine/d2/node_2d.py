@@ -15,10 +15,8 @@ from ..scene.scene_node import SceneNode
 class Node2D(SceneNode["Node2D", "Scene2D"]):
     def __init__(
         self,
-        #position=glm.vec2(),
         position: glm.vec2 = None,
         rotation=0.0,
-        #scale=glm.vec2(1.0, 1.0),
         scale: glm.vec2 = None,
         vu: "Vu2D" = None,
         model: Any = None,
@@ -50,10 +48,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     def position(self, value: glm.vec2):
         self._position = value
         self._mark_local_dirty()
-        self.on_position()
-
-    def on_position(self):
-        pass
 
     @property
     def x(self):
@@ -65,7 +59,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
             return
         self._position.x = value
         self._mark_local_dirty()
-        self.on_position()
 
     @property
     def y(self):
@@ -77,7 +70,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
             return
         self._position.y = value
         self._mark_local_dirty()
-        self.on_position()
 
     @property
     def depth(self):

@@ -52,10 +52,6 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
             return
         self._position = value
         self._mark_local_dirty()
-        self.on_position()
-
-    def on_position(self):
-        pass
 
     @property
     def orientation(self) -> glm.quat:

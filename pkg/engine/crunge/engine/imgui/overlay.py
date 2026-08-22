@@ -11,9 +11,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge.imgui import Key
 
-from ..viewport import ViewportListener
 from ..widget import Overlay
-from ..window import WindowListener
 
 from .vu import ImGuiVu
 from .scancode_map import scancode_map
@@ -22,7 +20,7 @@ from .board import Clipboard, Dropboard
 
 imgui_overlay: ContextVar[Optional["ImGuiOverlay"]] = ContextVar("imgui_overlay", default=None)
 
-class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
+class ImGuiOverlay(Overlay):
     context = None
     vu: ImGuiVu = None
 
@@ -48,14 +46,14 @@ class ImGuiOverlay(Overlay, ViewportListener, WindowListener):
     def _enable(self):
         super()._enable()
         logger.debug("enable")
-        self.window.viewport.add_listener(self)
-        self.window.add_listener(self)
+        self.window.viewport.size_changed.connect(self.on_viewport_size)
+        self.window.pre_frame.connect(self.on_pre_frame)
 
     def _disable(self):
         super()._disable()
         logger.debug("ImGuiLayer.disable")
-        self.window.viewport.remove_listener(self)
-        self.window.remove_listener(self)
+        self.window.viewport.size_changed.disconnect(self.on_viewport_size)
+        self.window.pre_frame.disconnect(self.on_pre_frame)
     
     def make_current(self):
         """Make the renderer current for the current context."""
