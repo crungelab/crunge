@@ -9,9 +9,10 @@ from crunge import wgpu
 from crunge.core import klass
 
 from ..signal import Signal
-from ..math import Bounds2
+from ..math import Bounds2, Rect2i
 from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport
+from ..easel import Easel
 from ..binding import SceneBindGroup
 
 from .renderer import Renderer2D
@@ -89,10 +90,23 @@ class Camera2D(Node2D):
 
     @viewport.setter
     def viewport(self, viewport: Viewport):
+        if self._viewport is not None:
+            self._viewport.rect_changed.disconnect(self.on_viewport_rect)
         self._viewport = viewport
         if viewport is not None:
-            self.on_viewport_size(viewport.size)
-            viewport.size_changed.connect(self.on_viewport_size)
+            viewport.rect_changed.connect(self.on_viewport_rect)
+            self.on_viewport_rect(viewport.global_rect)
+
+    def on_viewport_rect(self, rect: Rect2i):
+        logger.debug(f"Camera2D: on_viewport_rect: {rect}")
+
+        self.viewport_size = rect.size
+        self._update_camera_matrices()
+        self.create_bind_group()
+
+    @property
+    def easel(self) -> Easel:
+        return self.viewport.easel
 
     @property
     def zoom(self):
@@ -139,8 +153,8 @@ class Camera2D(Node2D):
             self.uniform_buffer_size,
             self.viewport.uniform_buffer,
             self.viewport.uniform_buffer_size,
-            self.viewport.snapshot_texture_view,
-            self.viewport.snapshot_sampler,
+            self.easel.snapshot_texture_view,
+            self.easel.snapshot_sampler,
         )
 
     def on_leader_position(self, position: glm.vec2):

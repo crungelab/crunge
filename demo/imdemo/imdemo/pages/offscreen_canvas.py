@@ -5,7 +5,8 @@ from crunge import skia
 
 from crunge.engine import App, colors
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.viewport.offscreen_viewport import OffscreenViewport
+from crunge.engine.viewport import Viewport
+from crunge.engine.easel import OffscreenEasel
 from crunge.engine.resource.texture import Texture2D
 
 from crunge.demo import Page, PageChannel
@@ -17,10 +18,12 @@ class OffscreenCanvasPage(Page):
         self.color_1 = colors.BLUE
         self.color_2 = colors.YELLOW
 
-        target_viewport_size = glm.ivec2(512, 256)
-        self.target_viewport = OffscreenViewport(target_viewport_size)
+        easel_size = glm.ivec2(512, 256)
+        self.easel = OffscreenEasel(easel_size)
+
+        self.target_viewport = Viewport(self.easel)
         self.texture = Texture2D(
-            self.target_viewport.color_texture, target_viewport_size
+            self.easel.color_texture, easel_size
         )
         ResourceManager().texture_kit.add(self.texture)
 
@@ -30,13 +33,13 @@ class OffscreenCanvasPage(Page):
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
 
-        with self.target_viewport.frame():
+        with self.easel.frame():
             self.draw_radial_gradient()
 
         super()._draw()
 
     def draw_radial_gradient(self):
-        canvas = self.target_viewport.canvas
+        canvas = self.easel.canvas
 
         gradient_paint = skia.Paint()
 
@@ -49,7 +52,7 @@ class OffscreenCanvasPage(Page):
         gradient_paint.set_shader(shader)
         canvas.draw_rect(skia.Rect(0, 0, 256, 256), gradient_paint)
 
-        self.target_viewport.submit_canvas()
+        self.easel.submit_canvas()
 
 
 def install(app: App):

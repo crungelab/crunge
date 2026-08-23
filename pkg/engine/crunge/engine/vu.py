@@ -4,6 +4,7 @@ from .base import Base
 from .node import Node
 
 from .viewport import Viewport
+from .easel import Easel
 from .renderer import Renderer
 
 T_Node = TypeVar("T_Node", bound=Node)
@@ -17,6 +18,10 @@ class Vu(Base, Generic[T_Node]):
     @property
     def current_viewport(self) -> Viewport:
         return Viewport.get_current()
+
+    @property
+    def current_easel(self) -> Easel:
+        return self.current_viewport.easel if self.current_viewport else None
 
     @property
     def current_renderer(self) -> Renderer:

@@ -12,14 +12,14 @@ from crunge import skia
 
 from ..base import Base
 from ..signal import Signal
-from ..uniforms import ViewportUniform, cast_vec2
-
 from ..render_options import RenderOptions
 
-viewport: ContextVar[Optional["Viewport"]] = ContextVar("viewport", default=None)
+current_easel: ContextVar[Optional["Easel"]] = ContextVar("current_easel", default=None)
 
 
-class Viewport(Base):
+class Easel(Base):
+    """Owns the GPU textures and Skia canvas that Viewports draw into."""
+
     def __init__(
         self,
         size: glm.ivec2,
@@ -51,8 +51,6 @@ class Viewport(Base):
         self._canvas: skia.Canvas = None
 
         self.create_device_objects()
-        self.create_buffers()
-        self.update_gpu()
 
     @property
     def size(self) -> glm.ivec2:
@@ -60,14 +58,13 @@ class Viewport(Base):
 
     @size.setter
     def size(self, value: glm.ivec2):
-        changed = self._size != value
+        if self._size == value:
+            return
         self._size = value
-        if changed:
-            self.on_size()
+        self.on_size()
 
     def on_size(self) -> None:
         self.create_device_objects()
-        self.update_gpu()
         self.size_changed.emit(self.size)
         self.resized = True
 
@@ -87,35 +84,29 @@ class Viewport(Base):
         return self._canvas
 
     def make_current(self):
-        """Make the renderer current for the current context."""
-        global viewport
-        viewport.set(self)
+        current_easel.set(self)
 
     @classmethod
-    def get_current(cls) -> Optional["Viewport"]:
-        """Get the current viewport."""
-        return viewport.get()
+    def get_current(cls) -> Optional["Easel"]:
+        return current_easel.get()
 
     @contextlib.contextmanager
     def use(self):
-        prev_viewport = self.get_current()
+        prev = self.get_current()
         self.make_current()
         yield self
-        if prev_viewport is not None:
-            prev_viewport.make_current()
+        if prev is not None:
+            prev.make_current()
 
     @contextlib.contextmanager
     def frame(self):
-        prev_viewport = self.get_current()
+        prev = self.get_current()
         self.make_current()
         self.begin_frame()
-
         yield self
-
         self.end_frame()
-
-        if prev_viewport is not None:
-            prev_viewport.make_current()
+        if prev is not None:
+            prev.make_current()
 
     def begin_frame(self) -> None:
         pass
@@ -170,27 +161,21 @@ class Viewport(Base):
 
         sampler_desc = wgpu.SamplerDescriptor(
             min_filter=wgpu.FilterMode.LINEAR,
-            # min_filter=wgpu.FilterMode.NEAREST,
             mag_filter=wgpu.FilterMode.LINEAR,
-            # mag_filter=wgpu.FilterMode.NEAREST,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
             address_mode_u=wgpu.AddressMode.CLAMP_TO_EDGE,
             address_mode_v=wgpu.AddressMode.CLAMP_TO_EDGE,
             address_mode_w=wgpu.AddressMode.CLAMP_TO_EDGE,
             max_anisotropy=1,
         )
-
         self.snapshot_sampler = self.device.create_sampler(sampler_desc)
 
     def snap(self, encoder: wgpu.CommandEncoder):
         if not self.render_options.use_snapshot:
-            # raise RuntimeError("Snapshot is not enabled for this viewport.")
             return
-
         if self.snapshot_texture is None:
             self.create_snapshot()
 
-        # Create a command encoder to copy the color texture to the snapshot texture
         source = wgpu.TexelCopyTextureInfo(texture=self.color_texture)
         destination = wgpu.TexelCopyTextureInfo(texture=self.snapshot_texture)
         encoder.copy_texture_to_texture(
@@ -206,18 +191,3 @@ class Viewport(Base):
             insert_info.f_recording = recording
             self.skia_context.insert_recording(insert_info)
             self.skia_context.submit(skia.SubmitInfo())
-
-    def create_buffers(self):
-        # Uniform Buffers
-        self.uniform_buffer_size = sizeof(ViewportUniform)
-        self.uniform_buffer = self.gfx.create_buffer(
-            "Viewport Uniform Buffer",
-            self.uniform_buffer_size,
-            wgpu.BufferUsage.UNIFORM,
-        )
-
-    def update_gpu(self):
-        uniform = ViewportUniform()
-        uniform.size = cast_vec2(self.size)
-
-        self.device.queue.write_buffer(self.uniform_buffer, 0, uniform)

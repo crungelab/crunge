@@ -8,10 +8,12 @@ from crunge import sdl
 from crunge import yoga
 
 from . import globals
+from .math import Rect2i
 from .signal import Signal, Pulse
 from .scheduler import Scheduler
 from .frame import Frame
-from .viewport import SurfaceViewport
+from .viewport import Viewport
+from .easel import SurfaceEasel
 from .renderer import Renderer
 from .render_options import RenderOptions
 from .channel import Channel
@@ -37,7 +39,8 @@ class Window(Frame):
         self.window: sdl.Window = None
         # self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True, use_snapshot=True)
         self.render_options = RenderOptions(use_depth_stencil=True, use_snapshot=True)
-        self.viewport: SurfaceViewport = None
+        self.viewport: Viewport = None
+        self.easel: SurfaceEasel = None
         self.renderer: Renderer = None
 
         # TODO: This should go in the Frame class
@@ -48,6 +51,7 @@ class Window(Frame):
         self.render_time: float = 0.0
         self.frame_time: float = 0.0
 
+        self.resize_pending = False
         self.window_size: Signal[glm.ivec2] = Signal()
         self.pre_frame: Pulse = Pulse()
         self.post_frame: Pulse = Pulse()
@@ -115,7 +119,9 @@ class Window(Frame):
         if not size.x or not size.y:
             return
 
-        self.viewport.size = glm.ivec2(self.get_framebuffer_size())
+        #self.viewport.size = glm.ivec2(self.get_framebuffer_size())
+        #self.viewport.rect = Rect2i(0, 0, size.x, size.y)
+        self.easel.size = glm.ivec2(self.get_framebuffer_size())
 
         logger.debug(f"Resized to {size}")
         self.resize_pending = True
@@ -136,7 +142,8 @@ class Window(Frame):
         pass
 
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
+        self.easel = SurfaceEasel(self.size, self.window, self.render_options)
+        self.viewport = Viewport(easel=self.easel, rect=None)
         self.viewport.make_current()
 
     def frame(self):
@@ -149,7 +156,7 @@ class Window(Frame):
         """
 
         self.pre_frame.emit()
-        with self.viewport.frame():
+        with self.easel.frame():
             with self.renderer.use():
                 self.draw()
         self.post_frame.emit()

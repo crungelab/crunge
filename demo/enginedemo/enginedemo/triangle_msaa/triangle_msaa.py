@@ -3,7 +3,7 @@ from loguru import logger
 from crunge import wgpu
 
 from crunge.engine import RenderOptions, Viewport
-from crunge.engine.viewport import SurfaceViewport
+from crunge.engine.easel import SurfaceEasel
 
 from ..demo import Demo, DemoView, DemoOverlay
 
@@ -63,11 +63,12 @@ class TriangleMsaaLayer(DemoOverlay):
 
     def _draw(self):
         viewport = Viewport.get_current()
+        easel = viewport.easel
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=viewport.msaa_texture_view,
-                resolve_target=viewport.color_texture_view,
+                view=easel.msaa_texture_view,
+                resolve_target=easel.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),
@@ -75,7 +76,7 @@ class TriangleMsaaLayer(DemoOverlay):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=viewport.depth_stencil_texture_view,
+            view=easel.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=0,
@@ -101,9 +102,9 @@ class TriangleMsaaLayer(DemoOverlay):
 
 class TriangleMsaaDemo(Demo):
     def create_viewport(self):
-        self.viewport = SurfaceViewport(
-            self.size, self.window, RenderOptions(use_depth_stencil=True, use_msaa=True)
-        )
+        self.easel = SurfaceEasel(self.size, self.window, RenderOptions(use_depth_stencil=True, use_msaa=True))
+        self.viewport = Viewport(self.easel)
+        self.viewport.make_current()
 
 
 def main():

@@ -9,6 +9,7 @@ from crunge import wgpu
 
 from ..base import Base
 from ..viewport import Viewport
+from ..easel import Easel
 
 if TYPE_CHECKING:
     from . import Renderer
@@ -22,6 +23,10 @@ class RenderPass(Generic[T], Base):
         self.clear = clear
         self.pass_enc: wgpu.RenderPassEncoder = None
 
+    @property
+    def easel(self) -> Easel:
+        return self.viewport.easel
+
     def begin(self, encoder: wgpu.CommandEncoder):
         raise NotImplementedError("Subclasses must implement the begin method.")
 
@@ -34,7 +39,7 @@ class DefaultRenderPass(RenderPass["Renderer"]):
         super().__init__(viewport, clear=True)
 
     def begin(self, encoder: wgpu.CommandEncoder):
-        if self.viewport.render_options.use_msaa:
+        if self.easel.render_options.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
                     view=self.viewport.msaa_texture_view,
@@ -47,7 +52,7 @@ class DefaultRenderPass(RenderPass["Renderer"]):
         else:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
-                    view=self.viewport.color_texture_view,
+                    view=self.easel.color_texture_view,
                     load_op=wgpu.LoadOp.CLEAR,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=wgpu.Color(0, 0, 0, 1),

@@ -1,6 +1,7 @@
 # camera_3d.py
 from ctypes import sizeof
 
+from crunge.engine.math.rect import Rect2i
 from loguru import logger
 import glm
 
@@ -8,6 +9,7 @@ from crunge.core import klass
 from crunge import wgpu
 
 from ..viewport import Viewport
+from ..easel import Easel
 from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 
@@ -81,17 +83,32 @@ class Camera3D(Node3D):
 
     @viewport.setter
     def viewport(self, viewport: Viewport):
+        if self._viewport is not None:
+            self._viewport.rect_changed.disconnect(self.on_viewport_rect)
+        self._viewport = viewport
+        if viewport is not None:
+            viewport.rect_changed.connect(self.on_viewport_rect)
+            self.on_viewport_rect(viewport.global_rect)
+
+    """
+    @viewport.setter
+    def viewport(self, viewport: Viewport):
         self._viewport = viewport
         if viewport is not None:
             self.on_viewport_size(viewport.size)
             viewport.size_changed.connect(self.on_viewport_size)
+    """
 
-    def on_viewport_size(self, size: glm.ivec2):
-        self.viewport_size = glm.vec2(size.x, size.y)
-        logger.debug(f"Camera3D: on_viewport_size: {size}")
+    def on_viewport_rect(self, rect: Rect2i):
+        self.viewport_size = glm.vec2(rect.width, rect.height)
+        logger.debug(f"Camera3D: on_viewport_rect: {rect}")
         self._update_projection()
         self.update_gpu()
         self.create_bind_group()
+
+    @property
+    def easel(self) -> Easel:
+        return self.viewport.easel
 
     @property
     def transform_matrix(self):
@@ -111,8 +128,8 @@ class Camera3D(Node3D):
             self.uniform_buffer_size,
             self.viewport.uniform_buffer,
             self.viewport.uniform_buffer_size,
-            self.viewport.snapshot_texture_view,
-            self.viewport.snapshot_sampler,
+            self.easel.snapshot_texture_view,
+            self.easel.snapshot_sampler,
         )
 
     def look_at(self, target: glm.vec3):

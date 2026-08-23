@@ -11,5 +11,5 @@ class Page(demo.Page):
 
     def _draw(self):
         renderer = Renderer.get_current()
-        renderer.viewport.submit_canvas()
+        renderer.easel.submit_canvas()
         super()._draw()

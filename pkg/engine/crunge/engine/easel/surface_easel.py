@@ -4,7 +4,7 @@ import sys
 from loguru import logger
 import glm
 
-from .viewport import Viewport
+from .easel import Easel
 
 from crunge import wgpu
 from crunge import sdl
@@ -12,7 +12,7 @@ from crunge import sdl
 from ..render_options import RenderOptions
 
 
-class SurfaceViewport(Viewport):
+class SurfaceEasel(Easel):
     def __init__(
         self,
         size: glm.ivec2,

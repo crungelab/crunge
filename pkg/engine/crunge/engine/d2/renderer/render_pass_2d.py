@@ -6,6 +6,7 @@ from loguru import logger
 from crunge import wgpu
 
 from ...viewport import Viewport
+from ...easel import Easel
 from ...renderer.render_pass import RenderPass
 
 if TYPE_CHECKING:
@@ -23,11 +24,11 @@ class RenderPass2D(RenderPass["Renderer2D"]):
         clear_value = wgpu.Color(0, 0, 0, 1)
         #clear_value = wgpu.Color(0.1, 0.1, 0.1, 1)
 
-        if self.viewport.render_options.use_msaa:
+        if self.easel.render_options.use_msaa:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
-                    view=self.viewport.msaa_texture_view,
-                    resolve_target=self.viewport.color_texture_view,
+                    view=self.easel.msaa_texture_view,
+                    resolve_target=self.easel.color_texture_view,
                     load_op=load_op,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=clear_value,
@@ -36,7 +37,7 @@ class RenderPass2D(RenderPass["Renderer2D"]):
         else:
             color_attachments = [
                 wgpu.RenderPassColorAttachment(
-                    view=self.viewport.color_texture_view,
+                    view=self.easel.color_texture_view,
                     load_op=load_op,
                     store_op=wgpu.StoreOp.STORE,
                     clear_value=clear_value,
@@ -44,7 +45,7 @@ class RenderPass2D(RenderPass["Renderer2D"]):
             ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=self.viewport.depth_stencil_texture_view,
+            view=self.easel.depth_stencil_texture_view,
             # depth_load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
             depth_load_op=load_op,
             depth_store_op=wgpu.StoreOp.STORE,

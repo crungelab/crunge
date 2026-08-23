@@ -440,7 +440,7 @@ class KawaseBlurVu(FilterVu):
 
     def _copy_from_viewport(self, encoder: wgpu.CommandEncoder):
         # Create a command encoder to copy the color texture to the snapshot texture
-        source=wgpu.TexelCopyTextureInfo(texture=self.current_viewport.color_texture)
+        source=wgpu.TexelCopyTextureInfo(texture=self.current_easel.color_texture)
         destination=wgpu.TexelCopyTextureInfo(texture=self.off_tex_a)
         encoder.copy_texture_to_texture(
             source=source,
@@ -481,12 +481,13 @@ class KawaseBlurVu(FilterVu):
 
     def _composite_to_viewport(self, encoder: wgpu.CommandEncoder):
         viewport = Viewport.get_current()
+        easel = viewport.easel
 
         self._write_composite_uniforms()
 
         ca = [
             wgpu.RenderPassColorAttachment(
-                view=viewport.color_texture_view,
+                view=easel.color_texture_view,
                 load_op=wgpu.LoadOp.LOAD,  # Load existing content
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),

@@ -12,7 +12,8 @@ from crunge import engine
 from crunge import imgui
 
 from crunge.engine import RenderOptions, Scheduler
-from crunge.engine.viewport import SurfaceViewport
+from crunge.engine.viewport import Viewport
+from crunge.engine.easel import SurfaceEasel
 
 from crunge.engine.loader.gltf import GltfLoader
 
@@ -39,7 +40,8 @@ class Viewer(engine.App):
         return self.view.camera
 
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
+        self.easel = SurfaceEasel(self.size, self.window, self.render_options)
+        self.viewport = Viewport(self.easel)
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
@@ -68,7 +70,12 @@ class Viewer(engine.App):
         self.controller = ArcballCameraController(self, self.camera, target, max_extent)
         self.controller.activate()
 
+        self.setup()
+
         return self
+
+    def setup(self):
+        pass
 
     def _draw(self):
         self.draw_mainmenu()

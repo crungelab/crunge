@@ -215,10 +215,11 @@ class CubesDemo(Demo):
 
     def _draw(self):
         viewport = Viewport.get_current()
+        easel = viewport.easel
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=viewport.color_texture_view,
+                view=easel.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0.5, 0.5, 0.5, 1.0),
@@ -226,7 +227,7 @@ class CubesDemo(Demo):
         ]
 
         depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=viewport.depth_stencil_texture_view,
+            view=easel.depth_stencil_texture_view,
             depth_load_op=wgpu.LoadOp.CLEAR,
             depth_store_op=wgpu.StoreOp.STORE,
             depth_clear_value=1.0,

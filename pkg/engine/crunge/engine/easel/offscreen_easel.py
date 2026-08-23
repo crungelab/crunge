@@ -3,14 +3,14 @@ import sys
 from loguru import logger
 import glm
 
-from .viewport import Viewport
+from .easel import Easel
 
 from crunge import wgpu
 
 from ..render_options import RenderOptions
 
 
-class OffscreenViewport(Viewport):
+class OffscreenEasel(Easel):
     def __init__(
         self,
         size: glm.ivec2,

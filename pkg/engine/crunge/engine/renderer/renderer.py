@@ -12,6 +12,7 @@ from crunge.engine.node import Node
 
 from ..base import Base
 from ..viewport import Viewport
+from ..easel import Easel
 
 if TYPE_CHECKING:
     from ..d2.camera_2d import Camera2D
@@ -54,6 +55,10 @@ class Renderer(Base):
         self.clear: bool = clear
 
     @property
+    def easel(self) -> Easel:
+        return self.viewport.easel
+
+    @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
         if not self.current_render_pass:
             raise RuntimeError("No render pass has been started.")
@@ -61,12 +66,12 @@ class Renderer(Base):
 
     @property
     def canvas(self) -> skia.Canvas:
-        return self.viewport.canvas
+        return self.easel.canvas
 
     @contextlib.contextmanager
     def canvas_target(self):
-        yield self.viewport.canvas
-        self.viewport.submit_canvas()
+        yield self.easel.canvas
+        self.easel.submit_canvas()
 
     def create_render_pass(self):
         return DefaultRenderPass(self.viewport)

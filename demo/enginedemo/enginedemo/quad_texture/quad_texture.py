@@ -213,10 +213,11 @@ class QuadTextureDemo(Demo):
 
     def _draw(self):
         viewport = Viewport.get_current()
+        easel = viewport.easel
 
         color_attachments = [
             wgpu.RenderPassColorAttachment(
-                view=viewport.color_texture_view,
+                view=easel.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),

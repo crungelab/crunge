@@ -10,7 +10,9 @@ from crunge import sdl
 from crunge import imgui
 from crunge import engine
 
-from crunge.engine.viewport import SurfaceViewport
+from crunge.engine.viewport import Viewport
+from crunge.engine.easel import SurfaceEasel
+
 from crunge.engine import Scheduler
 from crunge.engine.render_options import RenderOptions
 
@@ -48,7 +50,9 @@ class Viewer(engine.App):
         return self.view.camera
 
     def create_viewport(self):
-        self.viewport = SurfaceViewport(self.size, self.window, self.render_options)
+        self.easel = SurfaceEasel(self.size, self.window, self.render_options)
+        self.viewport = Viewport(easel=self.easel, rect=None)
+        self.viewport.make_current()
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")

@@ -11,6 +11,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge.imgui import Key
 
+from ..math import Rect2i
 from ..widget import Overlay
 
 from .vu import ImGuiVu
@@ -46,13 +47,13 @@ class ImGuiOverlay(Overlay):
     def _enable(self):
         super()._enable()
         logger.debug("enable")
-        self.window.viewport.size_changed.connect(self.on_viewport_size)
+        self.window.viewport.rect_changed.connect(self.on_viewport_rect)
         self.window.pre_frame.connect(self.on_pre_frame)
 
     def _disable(self):
         super()._disable()
         logger.debug("ImGuiLayer.disable")
-        self.window.viewport.size_changed.disconnect(self.on_viewport_size)
+        self.window.viewport.rect_changed.disconnect(self.on_viewport_rect)
         self.window.pre_frame.disconnect(self.on_pre_frame)
     
     def make_current(self):
@@ -73,20 +74,13 @@ class ImGuiOverlay(Overlay):
             prev_renderer.make_current()
 
 
-    def on_viewport_size(self, size: glm.ivec2):
-        logger.debug(f"ImGuiLayer.on_size: {size}")
+    def on_viewport_rect(self, rect: Rect2i):
+        logger.debug(f"ImGuiOverlay.on_viewport_rect: {rect}")
         self._set_pixel_ratio()
 
     def on_pre_frame(self):
         #logger.debug("ImGuiLayer.on_pre_frame")
         imgui.new_frame()
-
-    '''
-    def on_size(self):
-        super().on_size()
-        logger.debug(f"ImGuiLayer.on_size: {self.size}")
-        self._set_pixel_ratio()
-    '''
 
     def compute_framebuffer_scale(self,window_size, frame_buffer_size):
         win_width, win_height = window_size
@@ -103,6 +97,7 @@ class ImGuiOverlay(Overlay):
         self.io.display_size = window_size
 
         framebuffer_size = self.window.get_framebuffer_size()
+        logger.debug(f"ImGuiLayer._set_pixel_ratio: framebuffer_size: {framebuffer_size}")
         pixel_ratio = self.compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 

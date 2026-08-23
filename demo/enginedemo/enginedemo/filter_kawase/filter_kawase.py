@@ -484,12 +484,13 @@ class BlurFilterDemo(Demo):
 
     def _composite_to_viewport(self, encoder: wgpu.CommandEncoder):
         viewport = Viewport.get_current()
+        easel = viewport.easel
 
         self._write_composite_uniforms()
 
         ca = [
             wgpu.RenderPassColorAttachment(
-                view=viewport.color_texture_view,
+                view=easel.color_texture_view,
                 load_op=wgpu.LoadOp.CLEAR,
                 store_op=wgpu.StoreOp.STORE,
                 clear_value=wgpu.Color(0, 0, 0, 1),

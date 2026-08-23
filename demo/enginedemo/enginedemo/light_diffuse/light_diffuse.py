@@ -13,9 +13,16 @@ from ..demo.gltf_demo import GltfDemo
 
 class DiffuseLightDemo(GltfDemo):
     title = "Diffuse Light Demo"
+
+    def setup(self):
+        super().setup()
+        light = self.scene.lighting.lights[0]
+        light.energy = 5.0
+        light.range = 10.0
+
     def create_importer(self):
         module_path = Path(__file__).resolve()
-        template_dir = module_path.parent / 'templates'
+        template_dir = module_path.parent / "templates"
         importer = GltfLoader(template_loaders=[FileSystemLoader(template_dir)])
         return importer
 

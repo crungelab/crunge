@@ -4,7 +4,8 @@ from crunge import imgui
 
 from crunge.engine import RenderOptions, App
 from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.viewport.offscreen_viewport import OffscreenViewport
+from crunge.engine.viewport import Viewport
+from crunge.engine.easel import OffscreenEasel
 from crunge.engine.resource.texture import Texture2D
 
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
@@ -18,10 +19,11 @@ from crunge.demo import Page, PageChannel
 class OffscreenNodePage(Page):
     def __init__(self, name, title):
         super().__init__(name, title)
-        target_viewport_size = glm.ivec2(256, 256)
+        easel_size = glm.ivec2(256, 256)
         render_options = RenderOptions(use_depth_stencil=True)
-        self.target_viewport = OffscreenViewport(target_viewport_size, render_options=render_options)
-        self.texture = Texture2D(self.target_viewport.color_texture, target_viewport_size)
+        self.easel = OffscreenEasel(easel_size, render_options=render_options)
+        self.target_viewport = Viewport(self.easel)
+        self.texture = Texture2D(self.easel.color_texture, easel_size)
         ResourceManager().texture_kit.add(self.texture)
 
         self.camera = Camera2D()
@@ -37,7 +39,7 @@ class OffscreenNodePage(Page):
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
 
-        with self.target_viewport.frame():
+        with self.easel.frame():
             with self.renderer.frame():
                 with self.renderer.render_pass():
                     self.draw_node()
