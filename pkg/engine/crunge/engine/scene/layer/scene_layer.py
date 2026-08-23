@@ -19,7 +19,6 @@ class SceneLayer(Node["SceneLayer"]):
         layer.scene = self
         self.add_child(layer)
         self.layers_by_name[layer.name] = layer
-        # layer.enable() #redundant. enabled by add_child
         return layer
 
     def remove_layer(self, layer: "SceneLayer"):

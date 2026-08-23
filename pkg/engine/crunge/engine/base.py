@@ -21,11 +21,15 @@ class Base:
         if self.created:
             return
         self._create()
+        self._post_create()
         self.created = True
         self.reset()
         return self
 
     def _create(self):
+        pass
+
+    def _post_create(self):
         pass
 
     def reset(self) -> None:

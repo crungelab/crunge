@@ -37,7 +37,8 @@ class Node(Dispatcher, Generic[T_Node]):
         if value is None:
             return
         value.node = self
-        value.enable()
+        if self.enabled:
+            value.enable()
 
     @property
     def model(self) -> "Model":
@@ -83,6 +84,7 @@ class Node(Dispatcher, Generic[T_Node]):
     def add_child(self, child: "Node[T_Node]"):
         child.parent = self
         self.children.append(child)
+        logger.debug(f"Added child: {child} to parent: {self}")
         child.on_added()
         return child
 

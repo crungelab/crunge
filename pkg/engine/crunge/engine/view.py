@@ -52,7 +52,8 @@ class View(Widget):
     def add_overlay(self, overlay: Overlay) -> Overlay:
         overlay.view = self
         self.overlays_by_name[overlay.name] = overlay
-        self.add_child(overlay)
+        #self.add_child(overlay) #TODO: I've got major lifecycle issues with this, so I'm going to try just adding it to the children list directly for now.
+        self.children.append(overlay)
         self.sort_children(key=lambda child: child.priority)
         return overlay
 
