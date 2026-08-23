@@ -15,7 +15,6 @@ from ..signal import Signal
 from ..uniforms import ViewportUniform, cast_vec2
 
 from ..render_options import RenderOptions
-from ..blitter import Blitter
 
 viewport: ContextVar[Optional["Viewport"]] = ContextVar("viewport", default=None)
 
@@ -43,7 +42,6 @@ class Viewport(Base):
         self.snapshot_texture: wgpu.Texture = None
         self.snapshot_texture_view: wgpu.TextureView = None
         self.snapshot_sampler: wgpu.Sampler = None
-        self.blitter: Blitter = None
 
         # Skia
         self.skia_context = skia.create_context(self.gfx.instance, self.gfx.device)

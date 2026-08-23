@@ -46,7 +46,6 @@ class Camera2D(Node2D):
             else (leader.ppu if leader is not None else Settings2D().ppu)
         )
 
-        #self.leader = leader
         self._leader: "Camera2D" = None
 
         self.position_changed: Signal[glm.vec2] = Signal()
@@ -69,14 +68,6 @@ class Camera2D(Node2D):
         self.bind_group: SceneBindGroup = None
 
         self.leader = leader
-        """
-        if leader is not None:
-            self._zoom = leader.zoom
-            leader.position_changed.connect(self.on_leader_position)
-            leader.zoom_changed.connect(self.on_leader_zoom)
-            self.on_leader_position(leader.position)
-            self.on_leader_zoom(leader.zoom)
-        """
         
     def _create(self):
         super()._create()
