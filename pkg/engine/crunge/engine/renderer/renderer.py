@@ -31,7 +31,7 @@ class Renderer(Base):
         camera_2d: "Camera2D" = None,
         camera_3d: "Camera3D" = None,
         lighting_3d: "Lighting3D" = None,
-        clear: bool = True
+        clear: bool = True,
     ) -> None:
         super().__init__()
         self.viewport = viewport
@@ -85,38 +85,18 @@ class Renderer(Base):
         yield self
         if prev_renderer is not None:
             prev_renderer.make_current()
-    
+
     @contextlib.contextmanager
     def frame(self, encoder: wgpu.CommandEncoder = None):
+        self.encoder = encoder
         if encoder is not None:
-            self.encoder = encoder
             self.owns_encoder = False
-        else:
-            #self.encoder = self.device.create_command_encoder()
-            self.begin_encoder()
-        with self.use():
-            self.first_pass = True
-            #self.encoder = self.device.create_command_encoder()
-            yield self
-            """
-            if self.owns_encoder:
-                command_buffer = self.encoder.finish()
-                self.queue.submit([command_buffer])
-            """
-            self.end_encoder()
-            #self.first_pass = False
 
-    """
-    @contextlib.contextmanager
-    def frame(self):
         with self.use():
             self.first_pass = True
-            self.encoder = self.device.create_command_encoder()
+            self.begin_encode()
             yield self
-            command_buffer = self.encoder.finish()
-            self.queue.submit([command_buffer])
-            #self.first_pass = False
-    """
+            self.end_encode()
 
     @contextlib.contextmanager
     def render_pass(
@@ -127,10 +107,12 @@ class Renderer(Base):
             yield self.current_render_pass
             self.end_pass()
 
-    def begin_encoder(self):
-        self.encoder = self.device.create_command_encoder()
+    def begin_encode(self):
+        if self.encoder is None:
+            self.encoder = self.device.create_command_encoder()
+            self.owns_encoder = True
 
-    def end_encoder(self):
+    def end_encode(self):
         if self.owns_encoder:
             command_buffer = self.encoder.finish()
             self.queue.submit([command_buffer])
@@ -165,18 +147,6 @@ class Renderer(Base):
     def render(self, node: Node = None) -> None:
         self.ensure_plan()
         with self.render_pass():
-            #node.render()
             node.root_draw()
         self.plan.render()
         self.plan.clear()
-
-    """
-    def render(self, node: Node = None) -> None:
-        self.ensure_plan()
-        with self.frame():
-            with self.render_pass():
-                #node.render()
-                node.root_render()
-            self.plan.render()
-        self.plan.clear()
-    """

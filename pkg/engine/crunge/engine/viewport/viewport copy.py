@@ -172,9 +172,9 @@ class Viewport(Base):
 
         sampler_desc = wgpu.SamplerDescriptor(
             min_filter=wgpu.FilterMode.LINEAR,
-            # min_filter=wgpu.FilterMode.NEAREST,
+            #min_filter=wgpu.FilterMode.NEAREST,
             mag_filter=wgpu.FilterMode.LINEAR,
-            # mag_filter=wgpu.FilterMode.NEAREST,
+            #mag_filter=wgpu.FilterMode.NEAREST,
             mipmap_filter=wgpu.MipmapFilterMode.LINEAR,
             address_mode_u=wgpu.AddressMode.CLAMP_TO_EDGE,
             address_mode_v=wgpu.AddressMode.CLAMP_TO_EDGE,
@@ -184,7 +184,15 @@ class Viewport(Base):
 
         self.snapshot_sampler = self.device.create_sampler(sampler_desc)
 
-    def snap(self, encoder: wgpu.CommandEncoder):
+        # This is commented out because it causes a segfault when resizing the viewport.
+        # It seems to be related to the Blitter holding a reference to the textures.
+        '''
+        if self.color_texture is not None:
+            self.blitter = Blitter(self.color_texture, self.snapshot_texture)
+        '''
+
+    '''
+    def snap(self):
         if not self.render_options.use_snapshot:
             # raise RuntimeError("Snapshot is not enabled for this viewport.")
             return
@@ -192,9 +200,23 @@ class Viewport(Base):
         if self.snapshot_texture is None:
             self.create_snapshot()
 
+        #blitter = Blitter(self.color_texture, self.snapshot_texture)
+        #blitter.blit()
+        if self.blitter is not None:
+            self.blitter.blit()
+    '''
+
+    def snap(self, encoder: wgpu.CommandEncoder):
+        if not self.render_options.use_snapshot:
+            #raise RuntimeError("Snapshot is not enabled for this viewport.")
+            return
+        
+        if self.snapshot_texture is None:
+            self.create_snapshot()
+
         # Create a command encoder to copy the color texture to the snapshot texture
-        source = wgpu.TexelCopyTextureInfo(texture=self.color_texture)
-        destination = wgpu.TexelCopyTextureInfo(texture=self.snapshot_texture)
+        source=wgpu.TexelCopyTextureInfo(texture=self.color_texture)
+        destination=wgpu.TexelCopyTextureInfo(texture=self.snapshot_texture)
         encoder.copy_texture_to_texture(
             source=source,
             destination=destination,
