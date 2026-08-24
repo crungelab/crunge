@@ -13,7 +13,7 @@ class Frame(Widget):
         self.view_stack: list[View] = []
 
     @property
-    def view(self):
+    def view(self) -> View:
         return self._view
 
     @view.setter
@@ -37,12 +37,12 @@ class Frame(Widget):
         if self._view is not None:
             self.view = self._view
 
-    def push_view(self, new_view):
+    def push_view(self, new_view: View):
         # logger.debug('push_view')
         self.view_stack.append(self.view)
         self.view = new_view
 
-    def pop_view(self):
+    def pop_view(self) -> View:
         # logger.debug('pop_view')
         if self.view:
             self.view.disable()
