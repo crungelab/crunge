@@ -4,12 +4,11 @@ from loguru import logger
 
 from crunge import yoga
 
-if TYPE_CHECKING:
-    from ..view import View
-
 from . import Widget
 from ..vu import Vu
 
+if TYPE_CHECKING:
+    from ..window import Window
 
 class Overlay(Widget):
     def __init__(self, name: str, priority: int = 0, vu: Vu = None) -> None:
@@ -35,9 +34,5 @@ class Overlay(Widget):
 
         self.name = name
         self.priority = priority
-        self.view: "View" = None
         self.vu = vu
-
-    @property
-    def window(self):
-        return self.view.window
+        self.window: "Window" = None

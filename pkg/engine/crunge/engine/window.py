@@ -1,5 +1,8 @@
-from typing import List, Dict
+from typing import Optional
 import math
+
+import contextlib
+from contextvars import ContextVar
 
 from loguru import logger
 import glm
@@ -21,6 +24,7 @@ from .channel import Channel
 DEFAULT_WIDTH = 1280
 DEFAULT_HEIGHT = 720
 
+current_window: ContextVar[Optional["Window"]] = ContextVar("current_window", default=None)
 
 class Window(Frame):
     def __init__(
@@ -45,7 +49,7 @@ class Window(Frame):
 
         # TODO: This should go in the Frame class
         self._channel: Channel = None
-        self.channels: Dict[str, Channel] = {}
+        self.channels: dict[str, Channel] = {}
 
         self.update_time: float = 0.0
         self.render_time: float = 0.0
@@ -56,6 +60,21 @@ class Window(Frame):
         self.pre_frame: Pulse = Pulse()
         self.post_frame: Pulse = Pulse()
         self.channel_changed: Signal[Channel] = Signal()
+
+    def make_current(self):
+        current_window.set(self)
+
+    @classmethod
+    def get_current(cls) -> Optional["Window"]:
+        return current_window.get()
+
+    @contextlib.contextmanager
+    def use(self):
+        prev_window = self.get_current()
+        self.make_current()
+        yield self
+        if prev_window is not None:
+            prev_window.make_current()
 
     @property
     def channel(self) -> Channel:
@@ -119,8 +138,6 @@ class Window(Frame):
         if not size.x or not size.y:
             return
 
-        #self.viewport.size = glm.ivec2(self.get_framebuffer_size())
-        #self.viewport.rect = Rect2i(0, 0, size.x, size.y)
         self.easel.size = glm.ivec2(self.get_framebuffer_size())
 
         logger.debug(f"Resized to {size}")
@@ -161,15 +178,6 @@ class Window(Frame):
                 self.draw()
         self.post_frame.emit()
         self.instance.process_events()
-
-    """
-    def frame(self):
-        self.pre_frame()
-        with self.viewport:
-            self.renderer.make_current()
-            self.draw()
-        self.post_frame()
-    """
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")

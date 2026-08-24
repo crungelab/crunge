@@ -1,5 +1,4 @@
-from typing import TYPE_CHECKING, Generator
-from typing import Optional
+from typing import TYPE_CHECKING, Optional, Generator
 
 import contextlib
 from contextvars import ContextVar
@@ -22,7 +21,7 @@ if TYPE_CHECKING:
 
 from .render_pass import RenderPass, DefaultRenderPass
 
-renderer: ContextVar[Optional["Renderer"]] = ContextVar("renderer", default=None)
+current_renderer: ContextVar[Optional["Renderer"]] = ContextVar("current_renderer", default=None)
 
 
 class Renderer(Base):
@@ -81,11 +80,11 @@ class Renderer(Base):
         return DefaultRenderPass(self.viewport)
 
     def make_current(self):
-        renderer.set(self)
+        current_renderer.set(self)
 
     @classmethod
     def get_current(cls) -> Optional["Renderer"]:
-        return renderer.get()
+        return current_renderer.get()
 
     @contextlib.contextmanager
     def use(self):

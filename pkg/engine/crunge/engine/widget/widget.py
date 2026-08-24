@@ -100,7 +100,6 @@ class Widget(Node["Widget"]):
 
     def on_size(self) -> None:
         pass
-        #self.layout.mark_dirty()
 
     @property
     def width(self) -> int:
@@ -108,7 +107,7 @@ class Widget(Node["Widget"]):
 
     @width.setter
     def width(self, value: int) -> None:
-        self.size.x = value
+        self.size = glm.ivec2(value, self.height)
 
     @property
     def height(self) -> int:
@@ -116,7 +115,7 @@ class Widget(Node["Widget"]):
 
     @height.setter
     def height(self, value: int) -> None:
-        self.size.y = value
+        self.size = glm.ivec2(self.width, value)
 
     @property
     def controller(self) -> Controller:

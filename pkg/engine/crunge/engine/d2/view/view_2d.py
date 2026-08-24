@@ -25,4 +25,4 @@ class View2D(ImGuiView):
         self.camera = Camera2D(glm.vec2(self.width / 2, self.height / 2))
 
     def create_renderer(self) -> None:
-        self.renderer = Renderer2D(self.window.viewport, camera=self.camera)
+        self.renderer = Renderer2D(self.viewport, camera=self.camera)

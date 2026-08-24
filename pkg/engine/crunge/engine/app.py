@@ -56,6 +56,7 @@ class App(Window):
         self.running = False
 
     def run(self):
+        self.make_current()
         self.enable()
         self.running = True
 
