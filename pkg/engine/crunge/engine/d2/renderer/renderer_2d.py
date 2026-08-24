@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from ...viewport import Viewport
-from ...renderer import Renderer
+from ...renderer import Renderer, RenderFrame, RenderPass
 from ...renderer.task import RenderPlan
 from ...renderer.task.filter_phase import FilterPhase
 from ...renderer.task.composite_phase import CompositePhase
@@ -19,9 +19,16 @@ class Renderer2D(Renderer):
     ) -> None:
         super().__init__(viewport, camera_2d=camera, clear=clear)
 
+    def create_render_pass(self, clear: bool) -> RenderPass:
+        frame = RenderFrame.get_current()
+        return RenderPass2D(frame.easel, clear=clear)
+
+    """
     def create_render_pass(self):
+        frame = RenderFrame.get_current()
         clear = self.first_pass and self.clear
-        return RenderPass2D(self.easel, clear=clear)
+        return RenderPass2D(frame.easel, clear=clear)
+    """
 
     def create_plan(self) -> None:
         phases = [

@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from .task import RenderPlan
 
 from .render_pass import RenderPass, DefaultRenderPass
+from .render_frame import RenderFrame
 
 current_renderer: ContextVar[Optional["Renderer"]] = ContextVar("current_renderer", default=None)
 
@@ -76,8 +77,9 @@ class Renderer(Base):
         yield self.easel.canvas
         self.easel.submit_canvas()
 
-    def create_render_pass(self):
-        return DefaultRenderPass(self.viewport)
+    def create_render_pass(self, clear: bool) -> RenderPass:
+        frame = RenderFrame.get_current()
+        return DefaultRenderPass(frame.easel, clear=clear)
 
     def make_current(self):
         current_renderer.set(self)
@@ -127,13 +129,24 @@ class Renderer(Base):
 
     def begin_pass(self, render_pass: RenderPass = None):
         #logger.debug(f"begin_pass: renderer={id(self)} viewport={id(self.viewport)} rect={self.viewport.global_rect}")
+        frame = RenderFrame.get_current()
+        clear = self.clear and not frame.cleared
+        if clear:
+            frame.cleared = True
 
         if render_pass is not None:
             self.current_render_pass = render_pass
         else:
-            self.current_render_pass = self.create_render_pass()
+            self.current_render_pass = self.create_render_pass(clear)
 
-        self.current_render_pass.begin(self.encoder)
+        """
+        if render_pass is not None:
+            self.current_render_pass = render_pass
+        else:
+            self.current_render_pass = self.create_render_pass()
+        """
+
+        self.current_render_pass.begin(frame.encoder)
 
         r = self.viewport.global_rect
         self.pass_enc.set_viewport(r.x, r.y, r.width, r.height, 0.0, 1.0)
@@ -148,7 +161,8 @@ class Renderer(Base):
             self.lighting_3d.bind(self.pass_enc)
 
     def end_pass(self):
-        self.current_render_pass.end(self.encoder)
+        frame = RenderFrame.get_current()
+        self.current_render_pass.end(frame.encoder)
         self.first_pass = False
 
     def create_plan(self) -> None:

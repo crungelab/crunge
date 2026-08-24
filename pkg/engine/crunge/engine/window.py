@@ -17,7 +17,7 @@ from .scheduler import Scheduler
 from .frame import Frame
 from .viewport import Viewport
 from .easel import SurfaceEasel
-from .renderer import Renderer
+from .renderer import Renderer, RenderFrame
 from .render_options import RenderOptions
 from .channel import Channel
 
@@ -167,17 +167,36 @@ class Window(Frame):
         if self.resize_pending:
             self.resize_pending = False
             return
-        """
-        if self.resize_pending:
-            self.on_resize()
-        """
 
         self.pre_frame.emit()
+
+        with self.easel.frame():
+            encoder = self.device.create_command_encoder()
+            frame = RenderFrame(self.easel, encoder)
+
+            with self.renderer.use():
+                with frame.use():
+                    self.draw()
+            self.queue.submit([encoder.finish()])
+
+        self.post_frame.emit()
+        self.instance.process_events()
+
+    """
+    def frame(self):
+        if self.resize_pending:
+            self.resize_pending = False
+            return
+
+        self.pre_frame.emit()
+
         with self.easel.frame():
             with self.renderer.use():
                 self.draw()
+
         self.post_frame.emit()
         self.instance.process_events()
+    """
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")

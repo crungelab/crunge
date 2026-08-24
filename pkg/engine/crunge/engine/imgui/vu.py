@@ -1,5 +1,6 @@
 from ctypes import Structure, c_float, c_uint32, sizeof
 
+from crunge.engine.renderer.render_frame import RenderFrame
 from loguru import logger
 import glm
 
@@ -373,6 +374,7 @@ class ImGuiVu(Vu):
             idx_offset += commands.idx_buffer_size
 
     def render(self):
+        frame = RenderFrame.get_current()
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -405,7 +407,8 @@ class ImGuiVu(Vu):
         ]
         renderpass = wgpu.RenderPassDescriptor(label="ImGui Render Pass", color_attachments=color_attachments)
 
-        encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+        #encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
+        encoder = frame.encoder
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
         pass_enc.set_pipeline(self.pipeline)
         pass_enc.set_vertex_buffer(0, self.vertex_buffer)
@@ -414,4 +417,4 @@ class ImGuiVu(Vu):
         self.render_draw_data(draw_data, pass_enc)
 
         pass_enc.end()
-        self.queue.submit([encoder.finish()])
+        #self.queue.submit([encoder.finish()])

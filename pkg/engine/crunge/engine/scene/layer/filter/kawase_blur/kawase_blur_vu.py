@@ -3,6 +3,7 @@ from __future__ import annotations
 from ctypes import c_float, c_uint32, sizeof
 from dataclasses import dataclass
 
+from crunge.engine.renderer.render_frame import RenderFrame
 import numpy as np
 from loguru import logger
 
@@ -502,7 +503,9 @@ class KawaseBlurVu(FilterVu):
 
     def _draw(self):
         current_renderer = Renderer.get_current()
-        encoder: wgpu.CommandEncoder = current_renderer.encoder
+        #encoder: wgpu.CommandEncoder = current_renderer.encoder
+        encoder = RenderFrame.get_current().encoder
+
 
         current_renderer.end_pass()
 
