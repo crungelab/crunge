@@ -5,7 +5,6 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ...viewport import Viewport
 from ...easel import Easel
 from ...renderer.render_pass import RenderPass
 
@@ -14,8 +13,8 @@ if TYPE_CHECKING:
 
 
 class RenderPass2D(RenderPass["Renderer2D"]):
-    def __init__(self, viewport: Viewport, clear: bool = False) -> None:
-        super().__init__(viewport=viewport, clear=clear)
+    def __init__(self, easel: Easel, clear: bool = False) -> None:
+        super().__init__(easel=easel, clear=clear)
 
     def begin(self, encoder: wgpu.CommandEncoder):
         # load_op=wgpu.LoadOp.CLEAR

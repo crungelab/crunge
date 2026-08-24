@@ -21,7 +21,7 @@ class Renderer2D(Renderer):
 
     def create_render_pass(self):
         clear = self.first_pass and self.clear
-        return RenderPass2D(self.viewport, clear=clear)
+        return RenderPass2D(self.easel, clear=clear)
 
     def create_plan(self) -> None:
         phases = [

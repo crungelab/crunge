@@ -18,7 +18,7 @@ class Renderer3D(Renderer):
 
     def create_render_pass(self):
         clear = self.first_pass and self.clear
-        return RenderPass3D(self.viewport, clear=clear)
+        return RenderPass3D(self.easel, clear=clear)
     
     def create_plan(self) -> None:
         phases = [

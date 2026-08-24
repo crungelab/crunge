@@ -36,6 +36,8 @@ class Renderer(Base):
     ) -> None:
         super().__init__()
         self.viewport = viewport
+        self.easel = viewport.easel
+
         if camera_2d is not None:
             camera_2d.viewport = viewport
             camera_2d.enable()
@@ -54,9 +56,11 @@ class Renderer(Base):
         self.first_pass: bool = True
         self.clear: bool = clear
 
+    """
     @property
     def easel(self) -> Easel:
         return self.viewport.easel
+    """
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:

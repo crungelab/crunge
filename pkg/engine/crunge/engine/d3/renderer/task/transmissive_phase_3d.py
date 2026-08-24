@@ -6,7 +6,7 @@ from .render_item_3d import Transmissive3D
 class TransmissivePhase3D(BucketPhase3D[Transmissive3D]):
     def render(self) -> None:
         self.current_renderer.easel.snap(self.current_renderer.encoder)
-        with self.current_renderer.render_pass(RenderPass3D(self.current_renderer.viewport)):
+        with self.current_renderer.render_pass(RenderPass3D(self.current_renderer.easel)):
             self.render_items()
 
     def render_items(self):
