@@ -152,6 +152,6 @@ class Renderer(Base):
     def render(self, node: Node = None) -> None:
         self.ensure_plan()
         with self.render_pass():
-            node.root_draw()
+            node.render()
         self.plan.render()
         self.plan.clear()

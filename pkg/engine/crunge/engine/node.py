@@ -137,7 +137,7 @@ class Node(Dispatcher, Generic[T_Node]):
     def draw_child(self, child: "Node[T_Node]"):
         child.draw()
 
-    def root_draw(self):
+    def render(self):
         self.draw()
 
     def update(self, delta_time: float):

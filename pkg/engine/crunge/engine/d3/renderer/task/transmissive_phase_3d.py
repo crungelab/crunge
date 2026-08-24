@@ -20,18 +20,3 @@ class TransmissivePhase3D(BucketPhase3D[Transmissive3D]):
             #logger.debug(f"TransmissivePhase3D: drawing item for {d.node}")
             d.callback()
         #self.items.clear()
-
-    """
-    def render(self) -> None:
-        self.renderer.viewport.snap(self.renderer.encoder)
-        with self.renderer.render_pass(RenderPass3D(self.renderer.viewport)):
-            self.renderer.camera_3d.flush_deferred()
-    """
-
-    """
-    def render(self) -> None:
-        with self.renderer.frame():
-            self.renderer.viewport.snap(self.renderer.encoder)
-            with self.renderer.render_pass(RenderPass3D(self.renderer.viewport)):
-                self.renderer.camera_3d.flush_deferred()
-    """

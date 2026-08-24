@@ -45,6 +45,6 @@ class CompoundLayer2D(CompoundLayer):
         phase: CompositePhase = current_renderer.plan.get_phase(CompositePhase)
         phase.add(CompositeItem(do_render))
 
-    def root_draw(self):
+    def render(self):
         for child in self.children:
             child.draw()
