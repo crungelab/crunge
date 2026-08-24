@@ -20,8 +20,8 @@ class CompoundKawaseBlurDemo(TiledDemo):
     def center_camera(self):
         pass
     
-    def create_view(self):
-        super().create_view()
+    def create_screen(self):
+        super().create_screen()
         self.camera.zoom = 2.0
 
     def create_map(self):

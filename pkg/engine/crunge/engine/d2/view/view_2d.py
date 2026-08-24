@@ -1,7 +1,7 @@
 from loguru import logger
 import glm
 
-from crunge.engine.imgui import ImGuiView
+from crunge.engine.view import View
 
 from ..renderer.renderer_2d import Renderer2D
 
@@ -10,7 +10,7 @@ from ..camera_2d import Camera2D
 from ..overlay.scratch_overlay import ScratchOverlay
 
 
-class View2D(ImGuiView):
+class View2D(View):
     def __init__(self) -> None:
         super().__init__()
         self.scratch: ScratchOverlay = None

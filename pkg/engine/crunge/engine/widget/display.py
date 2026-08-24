@@ -15,7 +15,8 @@ class Display(Widget):
     def __init__(self, overlays: list[Overlay] = None) -> None:
         style = yoga.StyleBuilder().size_percent(100, 100).build()
         super().__init__(style)
-        self.window: "Window" = None
+        self._window: "Window" = None
+        self.viewport: Viewport = None
         self.overlays_by_name: dict[str, Overlay] = {}
 
         if overlays is None:
@@ -24,21 +25,30 @@ class Display(Widget):
             self.add_overlay(overlay)
 
     @property
+    def window(self) -> "Window":
+        if self._window is None:
+            from ..window import Window
+            self._window = Window.get_current()
+
+        return self._window
+
+    """
+    @property
     def viewport(self) -> Viewport:
         return self.window.viewport
+    """
+
+    def _create(self):
+        super()._create()
+        self.create_viewport()
+
+    def create_viewport(self):
+        self.viewport = self.window.viewport
 
     @property
     def overlays(self) -> list[Overlay]:
         return self.children
-
-    def _create(self):
-        #logger.debug("View.create")
-        super()._create()
-        if not self.window:
-            raise ValueError("Display.window is not set")
-        for overlay in self.overlays:
-            overlay.config(display=self).create()
-
+    
     def add_overlay(self, overlay: Overlay) -> Overlay:
         overlay.window = self.window
         self.overlays_by_name[overlay.name] = overlay

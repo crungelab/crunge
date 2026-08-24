@@ -30,10 +30,10 @@ class App(Window):
         width: int = DEFAULT_WIDTH,
         height: int = DEFAULT_HEIGHT,
         title: str = "Crunge App",
-        view=None,
+        screen=None,
         resizable=False,
     ):
-        super().__init__(width, height, title, view=view, resizable=resizable)
+        super().__init__(width, height, title, screen=screen, resizable=resizable)
         self.running = False
         self.stats = Statistics()
         self.services: list[Service] = []

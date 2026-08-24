@@ -17,11 +17,12 @@ class RenderPass2D(RenderPass["Renderer2D"]):
         super().__init__(easel=easel, clear=clear)
 
     def begin(self, encoder: wgpu.CommandEncoder):
+        # logger.debug(f"clear={self.clear}")
         # load_op=wgpu.LoadOp.CLEAR
         # load_op = wgpu.LoadOp.LOAD
         load_op = wgpu.LoadOp.CLEAR if self.clear else wgpu.LoadOp.LOAD
         clear_value = wgpu.Color(0, 0, 0, 1)
-        #clear_value = wgpu.Color(0.1, 0.1, 0.1, 1)
+        # clear_value = wgpu.Color(0.1, 0.1, 0.1, 1)
 
         if self.easel.render_options.use_msaa:
             color_attachments = [

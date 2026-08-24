@@ -17,8 +17,8 @@ class TiledLoaderDemo(TiledDemo):
         super().reset()
         self.create_map()
 
-    def create_view(self):
-        super().create_view()
+    def create_screen(self):
+        super().create_screen()
         self.camera.zoom = 2.0
 
     def create_map(self):

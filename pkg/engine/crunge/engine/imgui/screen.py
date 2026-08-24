@@ -1,11 +1,11 @@
 from loguru import logger
 import glm
 
-from ..view import View
+from ..screen import Screen
 
 from .overlay import ImGuiOverlay
 
-class ImGuiView(View):
+class ImGuiScreen(Screen):
     def __init__(self, overlays=None):
         super().__init__(overlays=overlays)
         self.gui: ImGuiOverlay = None

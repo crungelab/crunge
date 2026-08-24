@@ -126,12 +126,18 @@ class Renderer(Base):
             self.queue.submit([command_buffer])
 
     def begin_pass(self, render_pass: RenderPass = None):
+        #logger.debug(f"begin_pass: renderer={id(self)} viewport={id(self.viewport)} rect={self.viewport.global_rect}")
+
         if render_pass is not None:
             self.current_render_pass = render_pass
         else:
             self.current_render_pass = self.create_render_pass()
 
         self.current_render_pass.begin(self.encoder)
+
+        r = self.viewport.global_rect
+        self.pass_enc.set_viewport(r.x, r.y, r.width, r.height, 0.0, 1.0)
+        self.pass_enc.set_scissor_rect(r.x, r.y, r.width, r.height)
 
         if self.camera_2d is not None:
             self.camera_2d.bind(self.pass_enc)

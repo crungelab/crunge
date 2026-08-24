@@ -32,11 +32,11 @@ class Window(Frame):
         width: int = DEFAULT_WIDTH,
         height: int = DEFAULT_HEIGHT,
         title="",
-        view=None,
+        screen=None,
         resizable=False,
     ):
         style = yoga.StyleBuilder().size(width, height).build()
-        super().__init__(style, view=view)
+        super().__init__(style, screen=screen)
         globals.set_current_window(self)
         self.name = title
 
@@ -84,7 +84,7 @@ class Window(Frame):
     def channel(self, channel: Channel):
         self._channel = channel
         view = channel()
-        self.view = view
+        self.screen = view
         self.channel_changed.emit(channel)
 
     def add_channel(self, channel: Channel):

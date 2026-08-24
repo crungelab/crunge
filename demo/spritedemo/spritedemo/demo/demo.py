@@ -3,6 +3,7 @@ import timeit
 
 from loguru import logger
 import glm
+from crunge.engine.d2.view.view_2d import View2D
 
 from crunge import sdl
 from crunge import imgui
@@ -12,17 +13,17 @@ from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.d2.scene import Scene2D
 from crunge.engine.d2.camera_2d import Camera2D
 
-from .demo_view import DemoView
-
+from .demo_screen import DemoScreen
 
 class Demo(engine.App):
-    view: DemoView
+    screen: DemoScreen
 
     def __init__(self):
         super().__init__(
             title=self.__class__.__name__,
             resizable=True,
         )
+        self.scene: Scene2D = None
 
         self.resource_root = (
             Path(__file__).parent.parent.parent.parent.parent / "resources"
@@ -36,6 +37,10 @@ class Demo(engine.App):
     @property
     def ppu(self) -> float:
         return self.camera.ppu
+
+    @property
+    def view(self) -> View2D:
+        return self.screen.view
     
     @property
     def camera(self) -> Camera2D:
@@ -44,16 +49,16 @@ class Demo(engine.App):
     def reset(self):
         super().reset()
         self.create_scene()
-        self.create_view()
+        self.create_screen()
         self.center_camera()
 
     def create_scene(self):
         logger.debug("Creating scene")
         self.scene = Scene2D().create()
 
-    def create_view(self):
-        logger.debug("Creating view")
-        self.view = DemoView(self.scene)
+    def create_screen(self):
+        logger.debug("Creating screen")
+        self.screen = DemoScreen(self.scene)
 
     def center_camera(self):
         if self.camera:
