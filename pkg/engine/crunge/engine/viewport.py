@@ -201,11 +201,22 @@ class Viewport(Base):
 
     @contextlib.contextmanager
     def use(self):
+        with self.easel.use():
+            prev = self.get_current()
+            self.make_current()
+            yield self
+            if prev is not None:
+                prev.make_current()
+
+    """
+    @contextlib.contextmanager
+    def use(self):
         prev = self.get_current()
         self.make_current()
         yield self
         if prev is not None:
             prev.make_current()
+    """
 
     # -- gpu ---------------------------------------------------------
 

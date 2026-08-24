@@ -22,11 +22,3 @@ class SceneView3D(View3D):
 
         with self.renderer.use():
             super()._draw()
-
-    """
-    def _draw(self):
-        self.renderer.render(self.scene)
-
-        with self.renderer.use():
-            super()._draw()
-    """

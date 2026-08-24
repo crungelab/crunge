@@ -69,7 +69,7 @@ class Camera2D(Node2D):
         self.bind_group: SceneBindGroup = None
 
         self.leader = leader
-        
+
     def _create(self):
         super()._create()
         self.create_bind_group()
@@ -167,12 +167,6 @@ class Camera2D(Node2D):
         logger.debug(f"Camera2D: on_leader_zoom: {zoom}")
         self.zoom = zoom
 
-    def on_viewport_size(self, size: glm.ivec2):
-        self.viewport_size = glm.vec2(size.x, size.y)
-        logger.debug(f"Camera2D: on_viewport_size: {size}")
-        self._update_camera_matrices()
-        self.create_bind_group()
-
     def on_transform(self):
         self._update_camera_matrices()
         self.position_changed.emit(self.position)
@@ -207,23 +201,29 @@ class Camera2D(Node2D):
         self.bind_group.bind(pass_enc)
 
     def unproject(self, mouse_vec: glm.vec2):
+        viewport_width = self.viewport_size.x
+        viewport_height = self.viewport_size.y
+        """
+        viewport = self.viewport
+        viewport_width = viewport.width
+        viewport_height = viewport.height
+        """
+
         mx = mouse_vec.x
         my = mouse_vec.y
-        viewport = self.viewport
-        viewportWidth = viewport.width
-        viewPortHeight = viewport.height
 
         frustum = self.frustum
-        glOrthoWidth = frustum.width
-        glOrthoHeight = frustum.height
+        frustum_width = frustum.width
+        frustum_height = frustum.height
 
-        x_ndc = (2.0 * mx / viewportWidth) - 1.0
-        y_ndc = (2.0 * my / viewPortHeight) - 1.0
+        x_ndc = (2.0 * mx / viewport_width) - 1.0
+        y_ndc = (2.0 * my / viewport_height) - 1.0
         y_ndc = -y_ndc
 
-        x_world = x_ndc * (glOrthoWidth / 2.0)
-        y_world = y_ndc * (glOrthoHeight / 2.0)
+        x_world = x_ndc * (frustum_width / 2.0)
+        y_world = y_ndc * (frustum_height / 2.0)
 
         x_world += self.x
         y_world += self.y
+
         return glm.vec2(x_world, y_world)

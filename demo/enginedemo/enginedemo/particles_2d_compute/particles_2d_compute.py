@@ -343,16 +343,18 @@ class ParticlesDemo(Demo):
         imgui.end()
 
     def frame(self):
-        model = glm.mat4(1.0)  # Identity matrix
-        x = self.width / 2
-        y = self.height / 2
-        model = glm.translate(model, glm.vec3(x, y, 0))
-        # model = glm.rotate(model, glm.radians(45.0), glm.vec3(0, 0, 1))
-        model = glm.scale(model, glm.vec3(2, 2, 1))
-        view = glm.mat4(1.0)  # Identity matrix
+        viewport = self.viewport
+        viewport_width = viewport.width
+        viewport_height = viewport.height
 
-        viewport_width = self.width
-        viewport_height = self.height
+        x = viewport_width / 2
+        y = viewport_height / 2
+
+        model = glm.mat4(1.0)  # Identity matrix
+        model = glm.translate(model, glm.vec3(x, y, 0))
+        model = glm.scale(model, glm.vec3(2, 2, 1))
+
+        view = glm.mat4(1.0)  # Identity matrix
 
         ortho_left = 0
         ortho_right = viewport_width

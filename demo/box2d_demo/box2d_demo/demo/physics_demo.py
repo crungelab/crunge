@@ -49,86 +49,62 @@ class PhysicsDemo(ScrollingDemo):
         return box2d.Vec2(world.x, world.y)
 
     def _begin_drag(self, x: float, y: float):
+        if self._mouse_joint is not None:
+            return False
+
         world = self._screen_to_world(x, y)
         target = self._box2d_pos(world)
 
-        """
-        b2Circle circle = {b2Vec2_zero, 0.2f};
-        b2ShapeProxy proxy = b2MakeProxy(&circle.center, 1, circle.radius);
-        b2World_OverlapShape(myWorldId, &proxy, grenadeFilter, MyOverlapCallback, &myGame);
-        """
         hit = None
-        def overlap_callback(shape):
-            logger.debug(f"Overlap callback: {shape}")
-            nonlocal hit
-            hit = shape
-            return True
 
-        circle = box2d.Circle(center=target, radius=0.2)
-        proxy = box2d.make_proxy(circle.center, 1, circle.radius)
+        def overlap_callback(shape):
+            nonlocal hit
+            body = shape.body
+            if body.get_type() != box2d.BodyType.DYNAMIC_BODY:
+                return True  # keep searching
+            if not shape.test_point(target):  # ASSUMPTION: b2Shape_TestPoint binding
+                return True
+            hit = shape
+            return False  # first exact hit wins — stop the query
+
+        # Point proxy: no halo. Exact containment only.
+        proxy = box2d.make_proxy(target, 1, 0.0)
         self.world.overlap_shape(proxy, box2d.default_query_filter(), overlap_callback)
 
         if hit is None:
             return False
 
         body = hit.body
-        logger.debug(f"Hit body: {body}, index: {body.index1}")
-        if body.get_type() != box2d.BodyType.DYNAMIC_BODY:
-            return False
-
         self._dragged_body = body
         body.set_awake(True)
 
-        # Place the mouse body exactly at the click point
         self._mouse_body.set_transform(target, box2d.make_rot(0.0))
-        logger.debug(f"Mouse body: {self._mouse_body}, index: {self._mouse_body.index1}")
 
         joint_def = box2d.DistanceJointDef(
-            body_id_a = self._mouse_body,
-            body_id_b = body,
-            #local_frame_a.p = self._mouse_body.get_local_point(target)
-            #local_frame_b.p = body.get_local_point(target)
-
+            body_id_a=self._mouse_body,
+            body_id_b=body,
+            local_frame_a=box2d.Transform(p=self._mouse_body.get_local_point(target)),
+            local_frame_b=box2d.Transform(p=body.get_local_point(target)),
             length=0.25,
             enable_spring=True,
             hertz=2.5,
             damping_ratio=0.5,
         )
-
-        joint_def.local_frame_a.p = self._mouse_body.get_local_point(target)
-        joint_def.local_frame_b.p = body.get_local_point(target)
-
-        '''
-        joint_def = box2d.DistanceJointDef(
-            length=0.25,
-            enable_spring=True,
-            hertz=2.5,
-            damping_ratio=0.5,
-        )
-        joint_def.base.body_id_a = self._mouse_body
-        joint_def.base.body_id_b = body
-
-        joint_def.base.local_frame_a.p = self._mouse_body.get_local_point(target)
-        joint_def.base.local_frame_b.p = body.get_local_point(target)
-        '''
-
         self._mouse_joint = self.world.create_distance_joint(joint_def)
-
         logger.debug(f"Drag started on {hit} at {target}")
         return True
+
+    def _end_drag(self):
+        if self._mouse_joint is not None:
+            box2d.destroy_joint(self._mouse_joint, False)
+            self._mouse_joint = None
+        self._dragged_body = None
 
     def _update_drag(self, x: float, y: float):
         if self._mouse_joint is not None:
             world = self._screen_to_world(x, y)
             # Move the kinematic mouse body; the joint pulls the dynamic body along
             self._mouse_body.set_transform(self._box2d_pos(world), box2d.make_rot(0.0))
-
-    def _end_drag(self):
-        if self._mouse_joint is not None:
-            box2d.destroy_joint(self._mouse_joint, False)
-            self._mouse_joint = None
-            self._dragged_body = None
-            logger.debug("Drag ended")
 
     @property
     def is_dragging(self):

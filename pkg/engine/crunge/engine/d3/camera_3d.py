@@ -90,15 +90,6 @@ class Camera3D(Node3D):
             viewport.rect_changed.connect(self.on_viewport_rect)
             self.on_viewport_rect(viewport.global_rect)
 
-    """
-    @viewport.setter
-    def viewport(self, viewport: Viewport):
-        self._viewport = viewport
-        if viewport is not None:
-            self.on_viewport_size(viewport.size)
-            viewport.size_changed.connect(self.on_viewport_size)
-    """
-
     def on_viewport_rect(self, rect: Rect2i):
         self.viewport_size = glm.vec2(rect.width, rect.height)
         logger.debug(f"Camera3D: on_viewport_rect: {rect}")

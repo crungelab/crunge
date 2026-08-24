@@ -18,8 +18,10 @@ from .vu import ImGuiVu
 from .scancode_map import scancode_map
 from .board import Clipboard, Dropboard
 
+imgui_overlay: ContextVar[Optional["ImGuiOverlay"]] = ContextVar(
+    "imgui_overlay", default=None
+)
 
-imgui_overlay: ContextVar[Optional["ImGuiOverlay"]] = ContextVar("imgui_overlay", default=None)
 
 class ImGuiOverlay(Overlay):
     context = None
@@ -55,7 +57,7 @@ class ImGuiOverlay(Overlay):
         logger.debug("ImGuiLayer.disable")
         self.window.viewport.rect_changed.disconnect(self.on_viewport_rect)
         self.window.pre_frame.disconnect(self.on_pre_frame)
-    
+
     def make_current(self):
         """Make the renderer current for the current context."""
         imgui_overlay.set(self)
@@ -73,16 +75,15 @@ class ImGuiOverlay(Overlay):
         if prev_renderer is not None:
             prev_renderer.make_current()
 
-
     def on_viewport_rect(self, rect: Rect2i):
         logger.debug(f"ImGuiOverlay.on_viewport_rect: {rect}")
         self._set_pixel_ratio()
 
     def on_pre_frame(self):
-        #logger.debug("ImGuiLayer.on_pre_frame")
+        # logger.debug("ImGuiLayer.on_pre_frame")
         imgui.new_frame()
 
-    def compute_framebuffer_scale(self,window_size, frame_buffer_size):
+    def compute_framebuffer_scale(self, window_size, frame_buffer_size):
         win_width, win_height = window_size
         fb_width, fb_height = frame_buffer_size
 
@@ -97,7 +98,9 @@ class ImGuiOverlay(Overlay):
         self.io.display_size = window_size
 
         framebuffer_size = self.window.get_framebuffer_size()
-        logger.debug(f"ImGuiLayer._set_pixel_ratio: framebuffer_size: {framebuffer_size}")
+        logger.debug(
+            f"ImGuiLayer._set_pixel_ratio: framebuffer_size: {framebuffer_size}"
+        )
         pixel_ratio = self.compute_framebuffer_scale(window_size, framebuffer_size)
         self.io.display_framebuffer_scale = pixel_ratio
 
@@ -113,35 +116,6 @@ class ImGuiOverlay(Overlay):
 
         self.vu.render()
         imgui.end_frame()
-
-    """
-    def _draw(self):
-        if self.default_font:
-            imgui.push_font(self.default_font, 16.0)
-
-        with self.use():
-            super()._draw()
-
-        if self.default_font:
-            imgui.pop_font()
-
-        self.vu.render()
-        imgui.end_frame()
-    """
-
-    """
-    def _draw(self):
-        if self.default_font:
-            imgui.push_font(self.default_font, 16.0)
-
-        super()._draw()
-
-        if self.default_font:
-            imgui.pop_font()
-
-        self.vu.render()
-        imgui.end_frame()
-    """
 
     def on_text_input(self, event: sdl.TextInputEvent):
         # logger.debug(f"text: {event.text}")
