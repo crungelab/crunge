@@ -407,6 +407,15 @@ class ImGuiVu(Vu):
         ]
         renderpass = wgpu.RenderPassDescriptor(label="ImGui Render Pass", color_attachments=color_attachments)
 
+        with frame.gpu() as encoder:
+            pass_enc = encoder.begin_render_pass(renderpass)
+            pass_enc.set_pipeline(self.pipeline)
+            pass_enc.set_vertex_buffer(0, self.vertex_buffer)
+            pass_enc.set_index_buffer(self.index_buffer, wgpu.IndexFormat.UINT32)
+            self.render_draw_data(draw_data, pass_enc)
+            pass_enc.end()
+
+        """
         #encoder: wgpu.CommandEncoder = self.device.create_command_encoder()
         encoder = frame.encoder
         pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
@@ -418,3 +427,4 @@ class ImGuiVu(Vu):
 
         pass_enc.end()
         #self.queue.submit([encoder.finish()])
+        """

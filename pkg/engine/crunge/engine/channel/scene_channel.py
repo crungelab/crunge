@@ -1,5 +1,5 @@
 from ..factory import Factory
-from ..view import View
+from ..display import Display
 from ..scene import Scene
 
 from .channel import Channel
@@ -8,41 +8,18 @@ from .channel import Channel
 class SceneChannel(Channel):
     def __init__(
         self,
-        view_factory: Factory[View],
+        display_factory: Factory[Display],
         scene_factory: Factory[Scene],
         name: str,
         title: str = None,
         next_channel: str = None,
     ) -> None:
-        super().__init__(view_factory, name, title, next_channel)
+        super().__init__(display_factory, name, title, next_channel)
         self.scene_factory = scene_factory
 
     def produce_scene(self, *args, **kwargs) -> Scene:
         return self.scene_factory(self.name, *args, **kwargs)
 
-    def produce_view(self, *args, **kwargs) -> View:
+    def produce_display(self, *args, **kwargs) -> Display:
         scene = self.produce_scene()
-        return super().produce_view(scene, *args, **kwargs)
-
-
-"""
-class SceneChannel(Channel):
-    def __init__(
-        self,
-        view_factory: Factory[View],
-        scene_factory: Factory[Scene],
-        name: str,
-        title: str = None,
-        next_channel: str = None,
-    ) -> None:
-        super().__init__(view_factory, name, title, next_channel)
-        self.scene_factory = scene_factory
-
-    def produce_scene(self, *args, **kwargs) -> Scene:
-        return self.scene_factory(self.name, *args, **kwargs)
-
-    def produce_view(self, *args, **kwargs) -> View:
-        scene = self.produce_scene()
-        view = super().produce_view(scene)
-        return view
-"""
+        return super().produce_display(scene, *args, **kwargs)

@@ -1,8 +1,9 @@
+from loguru import logger
 import glm
 
 from crunge import imgui
 
-from crunge.engine import RenderOptions, App
+from crunge.engine import RenderOptions, App, RenderFrame
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.viewport import Viewport
 from crunge.engine.easel import OffscreenEasel
@@ -30,9 +31,27 @@ class OffscreenNodePage(Page):
         self.renderer = Renderer2D(self.target_viewport, camera=self.camera)
 
         sprite = self.sprite = SpriteLoader().load("${resources}/robocute.png")
+        #self.sprite_vu = SpriteVu(sprite).enable()
         self.sprite_vu = SpriteVu(sprite)
         self.node = Node2D(vu=self.sprite_vu).enable()
 
+    def _draw(self):
+        with self.easel.frame():
+            encoder = self.device.create_command_encoder()
+            frame = RenderFrame(self.easel, encoder)
+            with frame.use():
+                with self.renderer.render_pass():
+                    self.draw_node()
+            self.queue.submit([encoder.finish()])
+
+        imgui.begin(self.title)
+        size = self.target_viewport.width, self.target_viewport.height
+        imgui.image(imgui.TextureRef(self.texture.id), size)
+        imgui.end()
+
+        super()._draw()
+
+    """
     def _draw(self):
         imgui.begin(self.title)
         size = self.target_viewport.width, self.target_viewport.height
@@ -41,10 +60,22 @@ class OffscreenNodePage(Page):
 
         with self.easel.frame():
             with self.renderer.frame():
+                encoder = self.device.create_command_encoder()
+                frame = RenderFrame(self.easel, encoder)
+                with frame.use():
+                    with self.renderer.render_pass():
+                        self.draw_node()
+                self.queue.submit([encoder.finish()])
+
+        '''
+        with self.easel.frame():
+            with self.renderer.frame():
                 with self.renderer.render_pass():
                     self.draw_node()
+        '''
 
         super()._draw()
+    """
 
     def draw_node(self):
         self.node.draw()

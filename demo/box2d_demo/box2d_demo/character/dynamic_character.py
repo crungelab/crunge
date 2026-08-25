@@ -78,7 +78,7 @@ class DynamicCharacter(DynamicEntity2D):
         #self.body.angle = 0
         #self.body.angular_velocity = 0 # Stop any residual spin
         self.lock_rotation() # Re-lock rotation
-        globe.screen.pop_avatar()
+        globe.app.pop_avatar()
 
     def control(self):
         return DynamicCharacterController(self)

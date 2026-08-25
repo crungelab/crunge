@@ -149,7 +149,7 @@ class DynamicCharacterController(CharacterController):
             if isinstance(node, characters.Skateboard):
                 mount = node
                 mount.mount(self.avatar)
-                globe.screen.push_avatar(mount)
+                globe.app.push_avatar(mount)
 
     def check_ladder(self):
         if self.ladder_layer:

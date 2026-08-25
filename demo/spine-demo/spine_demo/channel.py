@@ -16,8 +16,9 @@ class SpineDemoChannel(SceneChannel):
         self.asset_name = name
         self.version = version
 
-    def produce_view(self, *args, **kwargs) -> Page:
-        return super().produce_view(*args, self.asset_name, self.title, self.version, **kwargs)
+    def produce_display(self, *args, **kwargs) -> Page:
+        #return super().produce_display(*args, self.asset_name, self.title, self.version, **kwargs)
+        return super().produce_display(self.asset_name, self.title, self.version, **kwargs)
 
 
 class SpineEssChannel(SpineDemoChannel):

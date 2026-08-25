@@ -2,19 +2,20 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from .widget import Display, Overlay
+from .widget import Overlay
+from .display import Display
 from .view import View
 
 
 class Screen(Display):
-    def __init__(self, overlays: list[Overlay] = None) -> None:
-        super().__init__(overlays)
-        self.view: View = None
+    def __init__(self, name: str = "Screen", title: str = "Screen", overlays: list[Overlay] = None) -> None:
+        super().__init__(name=name, title=title, overlays=overlays)
+        self._primary_view: "View" = None
 
-    def _create(self):
-        # logger.debug("Screen.create")
-        super()._create()
-        self.create_children()
-
-    def create_children(self):
-        pass
+    @property
+    def primary_view(self) -> "View":
+        if self._primary_view is not None:
+            return self._primary_view
+        if not self._views:
+            raise ValueError(f"{self.name}: no views")
+        return self._views[0]

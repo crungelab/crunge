@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from .task import RenderPlan
 
 from .render_pass import RenderPass, DefaultRenderPass
-from .render_frame import RenderFrame
+from .render_frame import RenderFrame, DrawApi
 
 current_renderer: ContextVar[Optional["Renderer"]] = ContextVar("current_renderer", default=None)
 
@@ -36,7 +36,6 @@ class Renderer(Base):
     ) -> None:
         super().__init__()
         self.viewport = viewport
-        self.easel = viewport.easel
 
         if camera_2d is not None:
             camera_2d.viewport = viewport
@@ -44,23 +43,19 @@ class Renderer(Base):
         elif camera_3d is not None:
             camera_3d.viewport = viewport
             camera_3d.enable()
+
         self.camera_2d = camera_2d
         self.camera_3d = camera_3d
         self.lighting_3d = lighting_3d
 
         self.current_render_pass: RenderPass = None
-        self.encoder: wgpu.CommandEncoder = None
-        self.owns_encoder: bool = True
 
         self.plan: "RenderPlan" = None
-        self.first_pass: bool = True
         self.clear: bool = clear
 
-    """
     @property
     def easel(self) -> Easel:
         return self.viewport.easel
-    """
 
     @property
     def pass_enc(self) -> wgpu.RenderPassEncoder:
@@ -74,12 +69,12 @@ class Renderer(Base):
 
     @contextlib.contextmanager
     def canvas_target(self):
-        yield self.easel.canvas
-        self.easel.submit_canvas()
+        frame = RenderFrame.get_current()
+        with frame.canvas() as canvas:
+            yield canvas
 
     def create_render_pass(self, clear: bool) -> RenderPass:
-        frame = RenderFrame.get_current()
-        return DefaultRenderPass(frame.easel, clear=clear)
+        return DefaultRenderPass(self.easel, clear=clear)
 
     def make_current(self):
         current_renderer.set(self)
@@ -90,23 +85,11 @@ class Renderer(Base):
 
     @contextlib.contextmanager
     def use(self):
-        prev_renderer = self.get_current()
-        self.make_current()
-        yield self
-        if prev_renderer is not None:
-            prev_renderer.make_current()
-
-    @contextlib.contextmanager
-    def frame(self, encoder: wgpu.CommandEncoder = None):
-        self.encoder = encoder
-        if encoder is not None:
-            self.owns_encoder = False
-
-        with self.use():
-            self.first_pass = True
-            self.begin_encode()
+        token = current_renderer.set(self)
+        try:
             yield self
-            self.end_encode()
+        finally:
+            current_renderer.reset(token)
 
     @contextlib.contextmanager
     def render_pass(
@@ -117,34 +100,21 @@ class Renderer(Base):
             yield self.current_render_pass
             self.end_pass()
 
-    def begin_encode(self):
-        if self.encoder is None:
-            self.encoder = self.device.create_command_encoder()
-            self.owns_encoder = True
-
-    def end_encode(self):
-        if self.owns_encoder:
-            command_buffer = self.encoder.finish()
-            self.queue.submit([command_buffer])
-
     def begin_pass(self, render_pass: RenderPass = None):
-        #logger.debug(f"begin_pass: renderer={id(self)} viewport={id(self.viewport)} rect={self.viewport.global_rect}")
         frame = RenderFrame.get_current()
+        if frame is None:
+            raise RuntimeError("No render frame is current.")
+        frame.require(DrawApi.GPU)
+
         clear = self.clear and not frame.cleared
-        if clear:
-            frame.cleared = True
 
         if render_pass is not None:
             self.current_render_pass = render_pass
         else:
             self.current_render_pass = self.create_render_pass(clear)
 
-        """
-        if render_pass is not None:
-            self.current_render_pass = render_pass
-        else:
-            self.current_render_pass = self.create_render_pass()
-        """
+        if clear:
+            frame.cleared = True
 
         self.current_render_pass.begin(frame.encoder)
 
@@ -163,7 +133,6 @@ class Renderer(Base):
     def end_pass(self):
         frame = RenderFrame.get_current()
         self.current_render_pass.end(frame.encoder)
-        self.first_pass = False
 
     def create_plan(self) -> None:
         pass

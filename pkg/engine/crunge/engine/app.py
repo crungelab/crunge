@@ -30,10 +30,10 @@ class App(Window):
         width: int = DEFAULT_WIDTH,
         height: int = DEFAULT_HEIGHT,
         title: str = "Crunge App",
-        screen=None,
+        display=None,
         resizable=False,
     ):
-        super().__init__(width, height, title, screen=screen, resizable=resizable)
+        super().__init__(width, height, title, display=display, resizable=resizable)
         self.running = False
         self.stats = Statistics()
         self.services: list[Service] = []
@@ -56,7 +56,7 @@ class App(Window):
         self.running = False
 
     def run(self):
-        self.make_current()
+        self.make_current() # TODO: This should be in _enable() or similar, not run()
         self.enable()
         self.running = True
 
@@ -139,7 +139,6 @@ class App(Window):
         if not self.layout.is_dirty():
             return
         self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
-        # self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
         super().apply_layout()
 
     def update(self, delta_time: float):

@@ -159,23 +159,13 @@ class PrimitiveBuilder(GltfBuilder):
         self.context.array_cache[accessor_index] = array
         return array
 
-    '''
-    def build_vertex_attributes(self):
-        logger.debug("Creating vertex attributes")
-        vert_attributes = wgpu.VertexAttributes()
-        offset = 0
-        for location, column in enumerate(self.vertex_table.columns):
-            vert_attributes.append(
-                wgpu.VertexAttribute(
-                    format=column.format,
-                    offset=offset,
-                    shader_location=location,
-                )
-            )
-            offset += column.struct_size
-        return vert_attributes
-    '''
+    def build_material(self):
+        tf_primitive = self.tf_primitive
+        logger.debug(f"primitive.material: {tf_primitive.material}")
+        self.material = MaterialBuilder(self.context, tf_primitive.material).build()
+        self.primitive.material = self.material
 
+    """
     def build_material(self):
         if self.tf_primitive.material < 0:
             return
@@ -183,39 +173,27 @@ class PrimitiveBuilder(GltfBuilder):
         logger.debug(f"primitive.material: {tf_primitive.material}")
         self.material = MaterialBuilder(self.context, tf_primitive.material).build()
         self.primitive.material = self.material
+    """
 
-    '''
     def build_program(self):
-        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
-        self.primitive.deferred = True
-
-    '''
-    
-    def build_program(self):
-        is_opaque = self.material.alpha_mode == "OPAQUE" or self.material.alpha_mode == "MASK"
+        is_opaque = (
+            self.material.alpha_mode == "OPAQUE" or self.material.alpha_mode == "MASK"
+        )
         is_transmissive = self.material.transmission_factor > 0.0
         is_blend = self.material.alpha_mode == "BLEND"
 
         if is_opaque and not is_transmissive:
             logger.debug("Creating Program for OPAQUE/MASK material")
-            self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+            self.primitive.program = ProgramBuilder(
+                self.context, self.vertex_table, self.material
+            ).build()
             self.primitive.deferred = False
             return
 
         if is_transmissive or is_blend:
             logger.debug("Creating Program for BLEND/TRANSMISSIVE material")
-            self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
+            self.primitive.program = ProgramBuilder(
+                self.context, self.vertex_table, self.material
+            ).build()
             self.primitive.deferred = True
             return
-
-    '''
-    def build_program(self):
-        if self.material.alpha_mode == "OPAQUE" or self.material.alpha_mode == "MASK":
-            logger.debug("Creating Program for OPAQUE/MASK material")
-            self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
-            return
-        
-        logger.debug("Creating Program for BLEND material")
-        self.primitive.program = ProgramBuilder(self.context, self.vertex_table, self.material).build()
-        self.primitive.deferred = True
-    '''

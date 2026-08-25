@@ -15,8 +15,8 @@ class StickerKnightDemo(TiledDemo):
         super().reset()
         self.create_map()
 
-    def create_screen(self):
-        super().create_screen()
+    def create_display(self):
+        super().create_display()
         self.camera.zoom = 2.0
 
     def create_map(self):

@@ -12,10 +12,11 @@ from crunge.engine.d2.physics.world_debug_overlay import WorldDebugOverlay
 
 
 class PhysicsDemo(ScrollingDemo):
-    def create_view(self):
-        super().create_view()
+    def create_display(self):
+        super().create_display()
         self.debug_overlay = WorldDebugOverlay()
-        self.view.add_overlay(self.debug_overlay)
+        #self.display.add_overlay(self.debug_overlay)
+        self.display.primary_view.add_overlay(self.debug_overlay)
 
     def create_physics_engine(self):
         self.world = PhysicsWorld2D()

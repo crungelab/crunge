@@ -1,5 +1,5 @@
 from ...viewport import Viewport
-from ...renderer import Renderer
+from ...renderer import Renderer, RenderFrame, RenderPass
 from ...renderer.task import RenderPlan
 
 from ..camera_3d import Camera3D
@@ -16,10 +16,16 @@ class Renderer3D(Renderer):
     ) -> None:
         super().__init__(viewport, camera_3d=camera, lighting_3d=lighting, clear=clear)
 
+    def create_render_pass(self, clear: bool) -> RenderPass:
+        frame = RenderFrame.get_current()
+        return RenderPass3D(frame.easel, clear=clear)
+    
+    """
     def create_render_pass(self):
         clear = self.first_pass and self.clear
         return RenderPass3D(self.easel, clear=clear)
-    
+    """
+
     def create_plan(self) -> None:
         phases = [
             OpaquePhase3D(),

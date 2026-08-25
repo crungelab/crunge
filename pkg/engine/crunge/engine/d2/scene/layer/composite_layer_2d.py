@@ -4,6 +4,7 @@ from glm import ivec2
 
 from crunge.engine.scene.layer.composite_layer import CompositeLayer
 from crunge.engine.viewport import Viewport
+from crunge.engine import RenderFrame
 from crunge.engine.easel import OffscreenEasel
 from crunge.engine.d2.renderer import Renderer2D
 from crunge.engine.d2.camera_2d import Camera2D
@@ -49,15 +50,18 @@ class CompositeLayer2D(CompositeLayer):
     def _draw(self):
         current_viewport = Viewport.get_current()
         current_renderer = Renderer2D.get_current()
+        render_frame = RenderFrame.get_current()
 
         def do_composite():
             memo = self.memo
             with memo.easel.frame():
-                with memo.renderer.frame(encoder=current_renderer.encoder):
+                #with memo.renderer.frame(encoder=current_renderer.encoder):
+                with memo.renderer.use():
                     memo.renderer.render(self)
 
             self.compositor.composite(
-                current_renderer.encoder,
+                render_frame.encoder,
+                #current_renderer.encoder,
                 src_view=memo.easel.color_texture_view,
                 dst_view=current_viewport.easel.color_texture_view,
                 is_premultiplied=True

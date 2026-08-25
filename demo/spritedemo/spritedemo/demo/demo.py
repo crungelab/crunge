@@ -16,7 +16,7 @@ from crunge.engine.d2.camera_2d import Camera2D
 from .demo_screen import DemoScreen
 
 class Demo(engine.App):
-    screen: DemoScreen
+    #display: DemoScreen
 
     def __init__(self):
         super().__init__(
@@ -40,7 +40,7 @@ class Demo(engine.App):
 
     @property
     def view(self) -> View2D:
-        return self.screen.view
+        return self.display.primary_view
     
     @property
     def camera(self) -> Camera2D:
@@ -49,16 +49,16 @@ class Demo(engine.App):
     def reset(self):
         super().reset()
         self.create_scene()
-        self.create_screen()
+        self.create_display()
         self.center_camera()
 
     def create_scene(self):
         logger.debug("Creating scene")
-        self.scene = Scene2D().create()
+        self.scene = Scene2D().enable()
 
-    def create_screen(self):
+    def create_display(self):
         logger.debug("Creating screen")
-        self.screen = DemoScreen(self.scene)
+        self.display = DemoScreen(self.scene)
 
     def center_camera(self):
         if self.camera:

@@ -6,8 +6,8 @@ from ..screen import Screen
 from .overlay import ImGuiOverlay
 
 class ImGuiScreen(Screen):
-    def __init__(self, overlays=None):
-        super().__init__(overlays=overlays)
+    def __init__(self, name: str = "ImGuiScreen", title: str = "ImGui Screen", overlays=None):
+        super().__init__(name=name, title=title, overlays=overlays)
         self.gui: ImGuiOverlay = None
 
     def _create(self):

@@ -43,7 +43,7 @@ class Viewport(Base):
 
         self._global_rect: Rect2i = None
         self._global_rect_dirty = True
-        self._resizing_easel = False
+        #self._resizing_easel = False
 
         self.rect_changed: Signal[Rect2i] = Signal()
 
@@ -136,12 +136,14 @@ class Viewport(Base):
             self._rect.height,
         )
 
+    """
     def _inherited_size(self) -> glm.ivec2:
         if self._parent is not None:
             return self._parent.global_rect.size
         if self._easel is not None:
             return self._easel.size
         return glm.ivec2(0, 0)
+    """
 
     # -- invalidation ------------------------------------------------
 
@@ -171,8 +173,8 @@ class Viewport(Base):
             child._notify_subtree()
 
     def on_easel_size(self, size: glm.ivec2) -> None:
-        if self._resizing_easel:
-            return
+        #if self._resizing_easel:
+        #    return
         self.invalidate()
 
     # -- skia --------------------------------------------------------

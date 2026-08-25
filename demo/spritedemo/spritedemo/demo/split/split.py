@@ -17,9 +17,9 @@ SCALE_STEP = 0.01
 
 
 class SplitDemo(Demo):
-    def create_screen(self):
+    def create_display(self):
         logger.debug("Creating screen")
-        self.screen = SplitScreen(self.scene).create()
+        self.display = SplitScreen(self.scene)
 
     def reset(self):
         super().reset()

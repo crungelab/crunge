@@ -84,6 +84,43 @@ class Node(Dispatcher, Generic[T_Node]):
     def add_child(self, child: "Node[T_Node]"):
         child.parent = self
         self.children.append(child)
+        self.on_child_added(child)      # parent-side hook, before the child reacts
+        child.on_added()
+        return child
+
+    def on_child_added(self, child: "Node[T_Node]") -> None:
+        pass
+
+    def on_added(self):
+        self.enable()
+
+    # BAD
+    """
+    def on_added(self):
+        if self.parent.enabled:
+            self.enable()
+        elif self.parent.created:
+            self.create()
+
+    """
+
+    def remove_child(self, child: "Node[T_Node]"):
+        child.on_removed()
+        self.on_child_removed(child)
+        child.parent = None
+        self.children.remove(child)
+
+    def on_child_removed(self, child: "Node[T_Node]") -> None:
+        pass
+
+
+    def on_removed(self):
+        pass
+
+    """
+    def add_child(self, child: "Node[T_Node]"):
+        child.parent = self
+        self.children.append(child)
         child.on_added()
         #logger.debug(f"Added child: {child} to parent: {self}")
         return child
@@ -95,9 +132,7 @@ class Node(Dispatcher, Generic[T_Node]):
         child.on_removed()
         child.parent = None
         self.children.remove(child)
-
-    def on_removed(self):
-        pass
+    """
 
     def add_children(self, children: list["Node[T_Node]"]):
         for child in children:

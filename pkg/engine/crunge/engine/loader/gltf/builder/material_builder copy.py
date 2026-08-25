@@ -20,11 +20,6 @@ from .builder_context import BuilderContext
 from .texture_builder import TextureBuilder
 
 
-# Sentinel cache key for the glTF default material. Real material indices are
-# always >= 0, so this cannot collide.
-DEFAULT_MATERIAL_KEY = -1
-
-
 class MaterialBuilder(GltfBuilder):
     def __init__(self, context: BuilderContext, material_index: int) -> None:
         super().__init__(context)
@@ -34,13 +29,6 @@ class MaterialBuilder(GltfBuilder):
         self.use_environment_map = False
 
     def build(self) -> None:
-        # A primitive with no material renders with the glTF default material.
-        # This must be intercepted before the subscript below: tf_model.materials
-        # is a pybind11 vector binding and honors negative indexing, so a raw -1
-        # would silently return the LAST material in the model.
-        if self.material_index < 0:
-            return self.build_default()
-
         if self.material_index in self.context.material_cache:
             return self.context.material_cache[self.material_index]
 
@@ -122,43 +110,6 @@ class MaterialBuilder(GltfBuilder):
         self.context.material_cache[self.material_index] = self.material
         return self.material
 
-    def build_default(self) -> Material3D:
-        """
-        Build the glTF 2.0 default material, used by primitives that declare no
-        material. Values come from the spec, not from Material3D's own field
-        defaults -- Material3D initializes metallic_factor and roughness_factor
-        to 0, where the spec calls for 1.0.
-
-        Carries no textures, but still builds a bind group layout and bind group
-        (both empty) so that Material3D.bind() has something valid to hand to
-        set_bind_group.
-        """
-        if DEFAULT_MATERIAL_KEY in self.context.material_cache:
-            return self.context.material_cache[DEFAULT_MATERIAL_KEY]
-
-        logger.debug("Building glTF default material")
-
-        self.material.name = "default"
-
-        self.material.alpha_mode = "OPAQUE"
-        self.material.alpha_cutoff = 0.5
-        self.material.double_sided = False
-
-        self.material.base_color_factor = (1.0, 1.0, 1.0, 1.0)
-
-        self.material.metallic_factor = 1.0
-        self.material.roughness_factor = 1.0
-        self.material.occlusion_strength = 1.0
-        self.material.emissive_factor = (0.0, 0.0, 0.0)
-
-        self.material.transmission_factor = 0.0
-
-        self.build_bind_group_layout()
-        self.build_bind_group()
-
-        self.context.material_cache[DEFAULT_MATERIAL_KEY] = self.material
-        return self.material
-
     def build_texture(self, name: str, texture_index: int) -> None:
         texture = TextureBuilder(self.context, name, texture_index).build()
         self.material.add_texture(texture)
@@ -208,7 +159,7 @@ class MaterialBuilder(GltfBuilder):
 
     def build_snapshot_texture(self) -> Texture:
         texture = Texture()
-
+        
     def build_transmission(self) -> None:
         extension = self.tf_material.extensions.get("KHR_materials_transmission")
         if extension is None:

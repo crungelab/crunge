@@ -1,49 +1,79 @@
+from typing import Optional
+
+import contextlib
+from contextvars import ContextVar
+
 from loguru import logger
 
 from crunge import yoga
 
 from .widget import Widget
-from .screen import Screen
+from .display import Display
+
+
+current_frame: ContextVar[Optional["Frame"]] = ContextVar(
+    "current_frame", default=None
+)
 
 
 class Frame(Widget):
-    def __init__(self, style: yoga.Style = yoga.Style(), screen: Screen = None) -> None:
+    def __init__(self, style: yoga.Style = yoga.Style(), display: Display = None) -> None:
         super().__init__(style)
-        self._screen = screen
-        self.screen_stack: list[Screen] = []
+        self._display = display
+        self.display_stack: list[Display] = []
+
+    def make_current(self):
+        current_frame.set(self)
+
+    @classmethod
+    def get_current(cls) -> Optional["Frame"]:
+        return current_frame.get()
+
+    @contextlib.contextmanager
+    def use(self):
+        prev_frame = self.get_current()
+        self.make_current()
+        yield self
+        if prev_frame is not None:
+            prev_frame.make_current()
 
     @property
-    def screen(self) -> Screen:
-        return self._screen
+    def display(self) -> Display:
+        return self._display
 
-    @screen.setter
-    def screen(self, screen: Screen) -> None:
-        if self._screen is not None and self._screen != screen:
-            self._screen.disable()
-            self.remove_child(self._screen)
+    @display.setter
+    def display(self, display: Display) -> None:
+        self.make_current() # TODO: This should be in _enable() or similar, not channel setter
 
-        self._screen = screen
+        if display is None:
+            raise ValueError("Display cannot be None")
+
+        if self._display is not None and self._display != display:
+            self._display.disable()
+            self.remove_child(self._display)
+
+        self._display = display
         self.children.clear()
-        self.add_child(screen)
-        self.on_screen()
+        self.add_child(display)
+        self.on_display()
 
-    def on_screen(self):
+    def on_display(self):
         pass
 
     def _create(self):
         super()._create()
         logger.debug("Frame.create")
-        if self._screen is not None:
-            self.screen = self._screen
+        if self._display is not None:
+            self.display = self._display
 
-    def push_screen(self, new_screen: Screen) -> None:
-        # logger.debug('push_screen')
-        self.screen_stack.append(self.screen)
-        self.screen = new_screen
+    def push_display(self, new_display: Display) -> None:
+        # logger.debug('push_display')
+        self.display_stack.append(self.display)
+        self.display = new_display
 
-    def pop_screen(self) -> Screen:
-        # logger.debug('pop_screen')
-        if self.screen:
-            self.screen.disable()
-        self.screen = self.screen_stack.pop()
-        return self.screen
+    def pop_display(self) -> Display:
+        # logger.debug('pop_display')
+        if self.display:
+            self.display.disable()
+        self.display = self.display_stack.pop()
+        return self.display

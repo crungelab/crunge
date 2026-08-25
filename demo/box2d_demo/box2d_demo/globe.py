@@ -1,5 +1,4 @@
-game = None
-screen = None
+app = None
 scene = None
 player = None
 avatar = None

@@ -43,17 +43,29 @@ class Vu2D(Vu[Node2D]):
             if group.is_render_group:
                 self.manual_draw = False
 
+        """
         if not self.manual_draw:
             return
 
         self.create_program()
         self.create_buffers()
         self.create_bind_groups()
+        """
 
     def _destroy(self):
         if self.group is not None:
             self.group.remove(self)
         super()._destroy()
+
+    def _enable(self) -> None:
+        super()._enable()
+        if not self.manual_draw:
+            return
+        self.create_program()
+        self.create_buffers()
+        self.create_bind_groups()
+
+        self.update_gpu()
 
     def create_buffers(self):
         self.node_buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")

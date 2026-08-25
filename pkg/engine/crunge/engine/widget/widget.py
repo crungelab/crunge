@@ -164,7 +164,7 @@ class Widget(Node["Widget"]):
         #logger.debug(f"Widget layout: {self.layout}")
         #logger.debug(f"Parent layout: {self.parent.layout}")
         self.parent.layout.add_child(self.layout)
-        super().on_added()  # Call the parent method to ensure proper attachment behavior
+        super().on_added()
 
     def on_removed(self) -> None:
         if self.parent is not None:

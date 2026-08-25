@@ -19,8 +19,8 @@ class TiledTestDemo(TiledDemo):
     def center_camera(self):
         pass
     
-    def create_screen(self):
-        super().create_screen()
+    def create_display(self):
+        super().create_display()
         self.camera.zoom = 2.0
 
     def create_map(self):

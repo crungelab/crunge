@@ -13,9 +13,7 @@ class SplitScreen(SceneScreen2D):
         ).build()  # ASSUMPTION: builder method + enum names
 
         style = yoga.StyleBuilder().size_percent(50, 100).build()
-        self.views = []
         for i in range(2):
             view = SplitView(self.scene)
             view.style = style
             self.add_child(view)
-            self.views.append(view)

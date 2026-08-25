@@ -2,6 +2,8 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
 
+from loguru import logger
+
 from crunge import skia
 from crunge.engine.vu import Vu
 
@@ -43,19 +45,23 @@ class DebugOverlay(Overlay):
     """
 
     def _camera_scale(self) -> float:
-        camera = Renderer.get_current().camera_2d
+        current_renderer = Renderer.get_current()
+        camera = current_renderer.camera_2d
+        #logger.debug(f"Renderer: {current_renderer}")
         return camera.ppu / camera.zoom
 
     @contextmanager
     def world_canvas(self):
         renderer = Renderer.get_current()
+        rect = renderer.viewport.global_rect
         with renderer.canvas_target() as canvas:
             canvas.save()
             canvas.translate(
-                renderer.viewport.width // 2, renderer.viewport.height // 2
+                rect.x + rect.width // 2,
+                rect.y + rect.height // 2,
             )
             scale = self._camera_scale()
-            canvas.scale(scale, -scale)  # world units -> px, invert Y for Skia
+            canvas.scale(scale, -scale)
             camera = renderer.camera_2d
             canvas.translate(-camera.position.x, -camera.position.y)
             try:
@@ -72,30 +78,6 @@ class DebugOverlay(Overlay):
     def _draw(self):
         with self.world_canvas() as canvas:
             self.draw_items()
-
-    """
-    def _draw(self):
-        renderer = Renderer.get_current()
-        with renderer.canvas_target() as canvas:
-            canvas.save()
-
-            canvas.translate(
-                renderer.viewport.width // 2, renderer.viewport.height // 2
-            )
-            scale = renderer.camera_2d.ppu / renderer.camera_2d.zoom
-            canvas.scale(scale, -scale)  # world units -> pixels, invert Y for Skia
-            camera_x, camera_y = (
-                renderer.camera_2d.position.x,
-                renderer.camera_2d.position.y,
-            )
-            canvas.translate(-camera_x, -camera_y)  # pan to camera
-
-            self.draw_items()
-
-            canvas.restore()
-
-        super()._draw()
-    """
 
     def draw_items(self):
         pass  # Implement in subclasses to draw specific items in world space

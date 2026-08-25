@@ -7,5 +7,5 @@ from .demo_view import DemoView
 class DemoScreen(SceneScreen2D):
     def create_children(self):
         logger.debug("Creating screen children")
-        self.view = DemoView(self.scene)
+        self.view = DemoView(self.scene).enable()
         self.add_child(self.view)

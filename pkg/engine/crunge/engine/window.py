@@ -24,7 +24,10 @@ from .channel import Channel
 DEFAULT_WIDTH = 1280
 DEFAULT_HEIGHT = 720
 
-current_window: ContextVar[Optional["Window"]] = ContextVar("current_window", default=None)
+current_window: ContextVar[Optional["Window"]] = ContextVar(
+    "current_window", default=None
+)
+
 
 class Window(Frame):
     def __init__(
@@ -32,11 +35,11 @@ class Window(Frame):
         width: int = DEFAULT_WIDTH,
         height: int = DEFAULT_HEIGHT,
         title="",
-        screen=None,
+        display=None,
         resizable=False,
     ):
         style = yoga.StyleBuilder().size(width, height).build()
-        super().__init__(style, screen=screen)
+        super().__init__(style, display=display)
         globals.set_current_window(self)
         self.name = title
 
@@ -61,8 +64,23 @@ class Window(Frame):
         self.post_frame: Pulse = Pulse()
         self.channel_changed: Signal[Channel] = Signal()
 
+    def _create(self):
+        super()._create()
+        self.make_current()
+
+    def _enable(self):
+        super()._enable()
+        self.make_current()
+
+    def make_current(self) -> Optional["Window"]:
+        super().make_current()
+        return current_window.set(self)
+
+    """
     def make_current(self):
+        super().make_current()
         current_window.set(self)
+    """
 
     @classmethod
     def get_current(cls) -> Optional["Window"]:
@@ -70,11 +88,21 @@ class Window(Frame):
 
     @contextlib.contextmanager
     def use(self):
+        token = self.make_current()
+        try:
+            yield self
+        finally:
+            current_window.reset(token)
+
+    """
+    @contextlib.contextmanager
+    def use(self):
         prev_window = self.get_current()
         self.make_current()
         yield self
         if prev_window is not None:
             prev_window.make_current()
+    """
 
     @property
     def channel(self) -> Channel:
@@ -83,8 +111,8 @@ class Window(Frame):
     @channel.setter
     def channel(self, channel: Channel):
         self._channel = channel
-        view = channel()
-        self.screen = view
+        display = channel(channel.name, channel.title)
+        self.display = display
         self.channel_changed.emit(channel)
 
     def add_channel(self, channel: Channel):
@@ -132,6 +160,10 @@ class Window(Frame):
     def create_renderer(self):
         self.renderer = Renderer(self.viewport)
 
+    def _enable(self):
+        self.viewport.make_current()
+        super()._enable()
+
     def on_size(self):
         super().on_size()
         size = self.size
@@ -171,39 +203,20 @@ class Window(Frame):
         self.pre_frame.emit()
 
         with self.easel.frame():
-            encoder = self.device.create_command_encoder()
-            frame = RenderFrame(self.easel, encoder)
-
+            frame = RenderFrame(self.easel)
             with self.renderer.use():
                 with frame.use():
                     self.draw()
-            self.queue.submit([encoder.finish()])
+            frame.finish()
 
         self.post_frame.emit()
         self.instance.process_events()
-
-    """
-    def frame(self):
-        if self.resize_pending:
-            self.resize_pending = False
-            return
-
-        self.pre_frame.emit()
-
-        with self.easel.frame():
-            with self.renderer.use():
-                self.draw()
-
-        self.post_frame.emit()
-        self.instance.process_events()
-    """
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
                 self.size = glm.ivec2(event.data1, event.data2)
-                # self.size = glm.ivec2(self.get_framebuffer_size())
             case _:
                 # pass
                 return super().on_window(event)

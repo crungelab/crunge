@@ -11,10 +11,10 @@ from crunge import imgui
 
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.d2.scene import Scene2D
-from crunge.engine.d2.view import SceneView2D
+from crunge.engine.d2.screen import SceneScreen2D
 
 
-class Page(SceneView2D):
+class Page(SceneScreen2D):
     def __init__(self, scene: Scene2D, name: str, title: str, version: str):
         super().__init__(scene)
         self.name = name

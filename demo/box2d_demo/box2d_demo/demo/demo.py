@@ -15,18 +15,18 @@ from crunge.engine.d2.camera_2d import Camera2D
 
 from .. import globe
 
-from .demo_view import DemoView
+from .demo_screen import DemoScreen
 
 
 class Demo(engine.App):
-    view: DemoView
+    display: DemoScreen
 
     def __init__(self):
         super().__init__(
             title=self.__class__.__name__,
             resizable=True,
         )
-        globe.screen = self
+        globe.app = self
         self.controller_stack = []
         self.avatar_stack = []
 
@@ -41,7 +41,7 @@ class Demo(engine.App):
 
     @property
     def camera(self) -> Camera2D:
-        return self.view.camera
+        return self.display.view.camera
 
     @property
     def avatar(self):
@@ -83,17 +83,17 @@ class Demo(engine.App):
     def reset(self):
         super().reset()
         self.create_scene()
-        self.create_view()
+        self.create_display()
         self.center_camera()
 
     def create_scene(self):
         logger.debug("Creating scene")
-        self.scene = Scene2D().create()
+        self.scene = Scene2D()
         self.scene.make_current()
 
-    def create_view(self):
-        logger.debug("Creating view")
-        self.view = DemoView(self.scene)
+    def create_display(self):
+        logger.debug("Creating display")
+        self.display = DemoScreen(self.scene)
 
     def center_camera(self):
         if self.camera:

@@ -110,13 +110,13 @@ class SpaceShooter(PhysicsDemo):
         explosion = Explosion(position, color) if color else Explosion(position)
         self.scene.attach(explosion)
 
-    def create_view(self):
-        super().create_view()
+    def create_display(self):
+        super().create_display()
         self.camera.zoom = 2
         self.camera.position = glm.vec2(0, 0)
 
     def create_ship(self, position):
-        ship = self.ship = Ship(position).create()
+        ship = self.ship = Ship(position)
         self.node = ship
         self.scene.attach(ship)
 

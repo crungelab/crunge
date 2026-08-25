@@ -20,7 +20,7 @@ from crunge.engine.loader.gltf import GltfLoader
 
 from crunge.engine.d3.scene import Scene3D
 from crunge.engine.d3.controller.camera.arcball import ArcballCameraController
-from crunge.engine.d3.view import SceneView3D
+from crunge.engine.d3.screen import SceneScreen3D
 from crunge.engine.d3.director_3d import Director3D
 
 from .ui.scene_tree_dock import SceneTreeDock
@@ -30,7 +30,7 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_MODELS"))
 
 
 class Viewer(engine.App):
-    view: SceneView3D
+    display: SceneScreen3D
 
     def __init__(self):
         super().__init__(title="WRender", resizable=True)
@@ -47,16 +47,11 @@ class Viewer(engine.App):
 
     @property
     def camera(self):
-        return self.view.camera
+        return self.display.primary_camera_3d
 
-    def create_viewport(self):
-        self.easel = SurfaceEasel(self.size, self.window, self.render_options)
-        self.viewport = Viewport(easel=self.easel, rect=None)
-        self.viewport.make_current()
-
-    def create_view(self, scene: Scene3D):
-        logger.debug("Creating view")
-        self.view = SceneView3D(scene)
+    def create_display(self, scene: Scene3D):
+        logger.debug("Creating display")
+        self.display = SceneScreen3D(scene)
 
     def open(self):
         logger.debug("Opening scene")
@@ -79,7 +74,7 @@ class Viewer(engine.App):
     def show(self, scene: Scene3D):
         logger.debug("Showing scene")
         self.scene = scene
-        self.create_view(scene)
+        self.create_display(scene)
 
         self.director = Director3D(scene)
 

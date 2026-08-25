@@ -39,7 +39,8 @@ class CompoundLayer2D(CompoundLayer):
 
         def do_render():
             renderer = self.memo.renderer
-            with renderer.frame(encoder=current_renderer.encoder):
+            #with renderer.frame(encoder=current_renderer.encoder):
+            with renderer.use():
                 renderer.render(self)
 
         phase: CompositePhase = current_renderer.plan.get_phase(CompositePhase)

@@ -1,5 +1,7 @@
 from typing import TypeVar, Generic
 
+from loguru import logger
+
 T_Type = TypeVar("T_Type")
 
 
@@ -20,6 +22,9 @@ class ClassFactory(Factory, Generic[T_Type]):
         self.klass = klass
 
     def produce(self, *args, **kwargs) -> T_Type:
+        logger.debug(
+            f"Producing instance of {self.klass.__name__} with args: {args}, kwargs: {kwargs}"
+        )
         return self.klass(*args, **kwargs)
 
 

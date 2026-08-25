@@ -2,12 +2,17 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from .widget import Display, Overlay
+from .widget import Overlay
+from .display import Display
 
 
 class View(Display):
     def __init__(self, overlays: list[Overlay] = None) -> None:
-        super().__init__(overlays)
+        super().__init__(overlays=overlays)
+
+    @property
+    def primary_view(self) -> "View":
+        return self
 
     def _create(self):
         # logger.debug("View.create")

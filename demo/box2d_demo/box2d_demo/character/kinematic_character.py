@@ -39,7 +39,7 @@ class KinematicCharacter(KinematicEntity2D):
         self.rotation = 0
         self.body.linear_velocity = (0, 0)
         self.physics = KinematicPhysics()
-        globe.screen.pop_avatar()
+        globe.app.pop_avatar()
 
     def control(self):
         return KinematicCharacterController(self)
