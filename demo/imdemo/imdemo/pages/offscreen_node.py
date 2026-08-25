@@ -31,10 +31,35 @@ class OffscreenNodePage(Page):
         self.renderer = Renderer2D(self.target_viewport, camera=self.camera)
 
         sprite = self.sprite = SpriteLoader().load("${resources}/robocute.png")
-        #self.sprite_vu = SpriteVu(sprite).enable()
         self.sprite_vu = SpriteVu(sprite)
         self.node = Node2D(vu=self.sprite_vu).enable()
 
+
+    """
+        with self.easel.frame():
+            frame = RenderFrame(self.easel)
+            with self.renderer.use():
+                with frame.use():
+                    self.draw()
+            frame.finish()
+    """
+
+    def _draw(self):
+        with self.easel.frame():
+            frame = RenderFrame(self.easel)
+            with frame.use():
+                with self.renderer.render_pass():
+                    self.draw_node()
+            frame.finish()
+
+        imgui.begin(self.title)
+        size = self.target_viewport.width, self.target_viewport.height
+        imgui.image(imgui.TextureRef(self.texture.id), size)
+        imgui.end()
+
+        super()._draw()
+
+    """
     def _draw(self):
         with self.easel.frame():
             encoder = self.device.create_command_encoder()
@@ -48,31 +73,6 @@ class OffscreenNodePage(Page):
         size = self.target_viewport.width, self.target_viewport.height
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
-
-        super()._draw()
-
-    """
-    def _draw(self):
-        imgui.begin(self.title)
-        size = self.target_viewport.width, self.target_viewport.height
-        imgui.image(imgui.TextureRef(self.texture.id), size)
-        imgui.end()
-
-        with self.easel.frame():
-            with self.renderer.frame():
-                encoder = self.device.create_command_encoder()
-                frame = RenderFrame(self.easel, encoder)
-                with frame.use():
-                    with self.renderer.render_pass():
-                        self.draw_node()
-                self.queue.submit([encoder.finish()])
-
-        '''
-        with self.easel.frame():
-            with self.renderer.frame():
-                with self.renderer.render_pass():
-                    self.draw_node()
-        '''
 
         super()._draw()
     """

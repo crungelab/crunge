@@ -21,6 +21,8 @@ class BuilderContext:
         self.sampler_cache: dict[int, Sampler] = {}
         self.image_cache: dict[int, Image] = {}
 
+        self.environment_texture: Texture = None
+
         from .shader import VertexShaderBuilder, FragmentShaderBuilder
 
         self.vertex_shader_builder_class = VertexShaderBuilder

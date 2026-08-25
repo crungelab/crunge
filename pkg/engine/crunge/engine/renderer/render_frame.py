@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Generator, Optional
 import contextlib
 from contextvars import ContextVar
 from enum import Enum, auto
@@ -94,7 +94,7 @@ class RenderFrame(Base):
         return current_render_frame.get()
 
     @contextlib.contextmanager
-    def use(self):
+    def use(self) -> Generator["RenderFrame", None, None]:
         token = current_render_frame.set(self)
         try:
             yield self

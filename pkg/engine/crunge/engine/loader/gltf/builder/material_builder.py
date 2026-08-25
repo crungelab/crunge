@@ -31,7 +31,7 @@ class MaterialBuilder(GltfBuilder):
         self.material_index = material_index
         self.tf_material: gltf.Material = None
         self.material = Material3D()
-        self.use_environment_map = False
+        #self.use_environment_map = False
 
     def build(self) -> None:
         # A primitive with no material renders with the glTF default material.
@@ -90,7 +90,8 @@ class MaterialBuilder(GltfBuilder):
         # Metallic Roughness Texture
         if pbr.metallic_roughness_texture.index >= 0:
             self.build_texture("metallicRoughness", pbr.metallic_roughness_texture.index)
-            self.use_environment_map = True
+            #self.use_environment_map = True
+            
 
         # Normal Texture
         if tf_material.normal_texture.index >= 0:
@@ -111,8 +112,11 @@ class MaterialBuilder(GltfBuilder):
             self.build_texture("emissive", tf_material.emissive_texture.index)
 
         # Environment Map
+        self.build_environment_map()
+        """
         if self.use_environment_map:
             self.build_environment_map()
+        """
 
         self.build_transmission()
 
@@ -171,9 +175,18 @@ class MaterialBuilder(GltfBuilder):
     '''
 
     def build_environment_map(self) -> None:
+        texture = self.context.environment_texture
+        if texture is None:
+            texture = self.build_cube_environment_texture()
+            self.context.environment_texture = texture
+        self.material.add_texture(texture)
+
+    """
+    def build_environment_map(self) -> None:
         # texture = self.build_environment_texture()
         texture = self.build_cube_environment_texture()
         self.material.add_texture(texture)
+    """
 
     def build_environment_texture(self) -> Texture:
         path = importlib.resources.path(

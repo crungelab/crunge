@@ -153,14 +153,11 @@ fn GetLight(input : VertexOutput) -> Light {
 fn getEnvironmentReflection(surface: Surface) -> vec3<f32> {
     let envDir = -reflect(surface.v, surface.normal);
     let envColor = textureSample(environmentTexture, environmentSampler, envDir).rgb;
-
-    // Attenuate reflection by roughness and metallic
-    let reflectionStrength = (1.0 - surface.roughness) * surface.metallic;
-    let adjustedReflection = envColor * reflectionStrength;
-
-    // Apply fresnel to control edge reflections
-    let fresnel = FresnelSchlick(dot(surface.v, surface.normal), surface.f0);
-    return adjustedReflection * fresnel;
+    let nDotV = max(dot(surface.normal, surface.v), 0.0);
+    let fresnel = FresnelSchlick(nDotV, surface.f0);
+    // f0 already encodes metal-vs-dielectric via the mix() in GetSurface,
+    // so don't multiply by metallic a second time.
+    return envColor * fresnel * (1.0 - surface.roughness);
 }
 {% endif %}
 
