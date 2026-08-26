@@ -127,6 +127,7 @@ class Display(Widget):
 
     def add_overlay(self, overlay: Overlay) -> Overlay:
         overlay.window = self.window
+        overlay.display = self
         return self.add_child(overlay)
 
     def remove_overlay(self, overlay: Overlay) -> None:

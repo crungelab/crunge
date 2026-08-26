@@ -9,7 +9,6 @@ from ..vu import Vu
 
 if TYPE_CHECKING:
     from ..window import Window
-    from ..display import Display
 
 class Overlay(Widget):
     def __init__(self, name: str, priority: int = 0, vu: Vu = None) -> None:
@@ -37,4 +36,3 @@ class Overlay(Widget):
         self.priority = priority
         self.vu = vu
         self.window: "Window" = None
-        self.display: "Display" = None

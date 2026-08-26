@@ -73,6 +73,18 @@ class Node(Dispatcher, Generic[T_Node]):
         for child in list(self.children):
             child.enable()
 
+    def enable_children(self) -> None:
+        super().enable_children()
+        for child in list(self.children):
+            #logger.debug(f"Creating child: {child}")
+            child.enable()
+
+    def reset_children(self) -> None:
+        super().reset_children()
+        for child in list(self.children):
+            #logger.debug(f"Resetting child: {child}")
+            child.reset()
+
     def _disable(self) -> None:
         for child in list(self.children):
             child.disable()

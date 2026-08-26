@@ -72,6 +72,15 @@ class Base:
 
     def reset(self) -> None:
         """Reset the object to its initial state."""
+        self._reset()
+        self.reset_children()
+
+    def _reset(self) -> None:
+        """Reset the object to its initial state."""
+        pass
+
+    def reset_children(self) -> None:
+        """Containers override."""
         pass
 
     def destroy(self) -> None:
@@ -93,9 +102,14 @@ class Base:
             self.create()
         self._is_enabled = True
         self._enable()
+        self.enable_children()
         return self
 
     def _enable(self) -> None:
+        pass
+
+    def enable_children(self) -> None:
+        """Containers override."""
         pass
 
     def disable(self):
