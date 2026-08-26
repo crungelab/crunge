@@ -46,27 +46,9 @@ class OffscreenNodePage(Page):
 
         super()._draw()
 
-    """
-    def _draw(self):
-        with self.easel.frame():
-            frame = RenderFrame(self.easel)
-            with frame.use():
-                with self.renderer.render_pass():
-                    self.draw_node()
-            frame.finish()
-
-        imgui.begin(self.title)
-        size = self.target_viewport.width, self.target_viewport.height
-        imgui.image(imgui.TextureRef(self.texture.id), size)
-        imgui.end()
-
-        super()._draw()
-    """
-
     def draw_node(self):
         self.node.draw()
 
+
 def install(app: App):
-    app.add_channel(
-        PageChannel(OffscreenNodePage, "offscreen_node", "Offscreen Node")
-    )
+    app.add_channel(PageChannel(OffscreenNodePage, "offscreen_node", "Offscreen Node"))

@@ -29,7 +29,7 @@ models_root = Path(os.environ.get("GLTF_SAMPLE_ASSETS"))
 
 
 class Viewer(engine.App):
-    view: SceneView3D
+    display: SceneView3D
     def __init__(self):
         super().__init__(title="Gltf Viewer", resizable=True)
         self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True)
@@ -37,15 +37,15 @@ class Viewer(engine.App):
 
     @property
     def camera(self) -> Camera3D:
-        return self.view.camera
+        return self.display.camera
 
     def create_viewport(self):
-        self.easel = SurfaceEasel(self.size, self.window, self.render_options)
+        self.easel = SurfaceEasel(self.size, self.sdl_window, self.render_options)
         self.viewport = Viewport(self.easel)
 
     def create_view(self, scene: Scene3D):
         logger.debug("Creating view")
-        self.view = SceneView3D(scene)
+        self.display = SceneView3D(scene)
 
     def open(self):
         logger.debug("Opening scene")

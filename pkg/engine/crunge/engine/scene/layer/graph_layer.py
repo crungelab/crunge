@@ -26,6 +26,14 @@ class GraphLayer(SceneLayer, Generic[T_Node]):
     def nodes(self) -> List[T_Node]:
         return self.root.children
 
+    def _create(self) -> None:
+        super()._create()
+        self.root.create()
+
+    def _enable(self) -> None:
+        super()._enable()
+        self.root.enable()
+
     def clear(self) -> None:
         self.root.clear()
 

@@ -15,10 +15,15 @@ from .d3.lighting_3d import Lighting3D
 from .viewport import Viewport
 from .widget import Widget, Overlay
 
+
 class Display(Widget):
-    def __init__(self, name: str = "Display", title: str = "Display", overlays: list[Overlay] = None, views: list["View"] = None) -> None:
-        self.name = name
-        self.title = title
+    def __init__(
+        self,
+        name: str = "Display",
+        title: str = "Display",
+        overlays: list[Overlay] = None,
+        views: list["View"] = None,
+    ) -> None:
         # Buckets must exist before any add_* call below.
         self._overlays: list[Overlay] = []
         self._views: list["View"] = []
@@ -27,6 +32,9 @@ class Display(Widget):
 
         style = yoga.StyleBuilder().size_percent(100, 100).build()
         super().__init__(style)
+
+        self.name = name
+        self.title = title
 
         for overlay in overlays or ():
             self.add_overlay(overlay)
@@ -48,20 +56,24 @@ class Display(Widget):
 
     def on_child_added(self, child: Widget) -> None:
         from .view import View
+
         if isinstance(child, View):
             self._views.append(child)
         elif isinstance(child, Overlay):
             self._overlays.append(child)
-        self.sort_children(key=lambda child: child.priority)
-        logger.debug(f"{self.name}: on_child_added: {child.name} ({type(child).__name__}, priority={child.priority})")
+        self.sort_children(key=lambda c: c.priority)
+        logger.debug(
+            f"{self.name}: on_child_added: {child.name} "
+            f"({type(child).__name__}, priority={child.priority})"
+        )
 
     def on_child_removed(self, child: Widget) -> None:
         from .view import View
+
         if isinstance(child, View):
             self._views.remove(child)
         elif isinstance(child, Overlay):
             self._overlays.remove(child)
-        self.sort_children(key=lambda child: child.priority)
 
     @property
     def overlays(self) -> list[Overlay]:
@@ -107,14 +119,28 @@ class Display(Widget):
         return self._children_by_name[name]
 
     # --- lifecycle ----------------------------------------------------
-
     def _create(self):
         super()._create()
         self.create_viewport()
-        self.create_children()
+        self.create_views()
+
+    def create_children(self):
+        super().create_children()
+        for overlay in self._overlays:
+            logger.debug(f"Setting overlay.window = {self.window} for overlay {overlay.name}")
+            overlay.window = self.window
+
+    """
+    def _create(self):
+        super()._create()
+        self.create_viewport()
+        for overlay in self._overlays:
+            logger.debug(f"Setting overlay.window = {self.window} for overlay {overlay.name}")
+            overlay.window = self.window
+    """
 
     def create_viewport(self):
         self.viewport = self.window.viewport
 
-    def create_children(self):
+    def create_views(self):
         pass

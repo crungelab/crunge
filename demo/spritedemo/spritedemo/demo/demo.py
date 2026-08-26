@@ -54,10 +54,10 @@ class Demo(engine.App):
 
     def create_scene(self):
         logger.debug("Creating scene")
-        self.scene = Scene2D().enable()
+        self.scene = Scene2D()
 
     def create_display(self):
-        logger.debug("Creating screen")
+        logger.debug("Creating display")
         self.display = DemoScreen(self.scene)
 
     def center_camera(self):

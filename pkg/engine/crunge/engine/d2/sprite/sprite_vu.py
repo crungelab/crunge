@@ -40,7 +40,7 @@ class SpriteVu(Vu2D):
         sprite_group = self.group.sprite_group if self.group is not None else None
         self.sprite_membership = sprite.join(sprite_group)
 
-        if self.enabled:
+        if self.is_enabled:
             self.update_gpu()
 
     def on_group(self) -> None:
@@ -66,6 +66,7 @@ class SpriteVu(Vu2D):
         self.sprite = node.model
 
     def create_program(self):
+        logger.debug("SpriteVu: create_program")
         self.program = SpriteProgram()
 
     def update_gpu(self):

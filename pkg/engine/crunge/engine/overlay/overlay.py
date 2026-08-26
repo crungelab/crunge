@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge import yoga
 
-from . import Widget
+from ..widget import Widget
 from ..vu import Vu
 
 if TYPE_CHECKING:

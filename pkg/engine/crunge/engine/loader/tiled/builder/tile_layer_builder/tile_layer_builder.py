@@ -6,6 +6,7 @@ from crunge import tmx
 from ..tiled_builder import TiledBuilder
 from ..tile_builder import TileBuilder
 
+
 class TileLayerBuilder(TiledBuilder):
     def __init__(self, tile_builder: TileBuilder):
         super().__init__()
@@ -31,7 +32,7 @@ class TileLayerBuilder(TiledBuilder):
                     continue
                 properties = tile.properties
                 properties["flip_flags"] = flip_flags
-                
+
                 x = i * tile_width + half_tile_width
                 y = (j - 1) * tile_height + half_tile_height
                 y = self.context.size.y - y
@@ -39,30 +40,3 @@ class TileLayerBuilder(TiledBuilder):
                 position = glm.vec2(x, y) / self.ppu
 
                 self.tile_builder.build(position, tile, tile_gid, properties)
-
-    '''
-    def build(self, tmx_layer: tmx.TileLayer):
-        map = self.map
-        map_size = map.tile_count
-        tile_size = map.tile_size
-        tile_width = tile_size.x
-        tile_height = tile_size.y
-        half_tile_width = tile_width / 2
-        half_tile_height = tile_height / 2
-        tiles = tmx_layer.tiles
-
-        for j in range(map_size.y):
-            for i in range(map_size.x):
-                tile_gid = tiles[j * map_size.x + i].id
-                tile = map.get_tile(tile_gid)
-                if tile is None:
-                    continue
-                properties = tile.properties
-                x = i * tile_width + half_tile_width
-                y = (j - 1) * tile_height + half_tile_height
-                y = self.context.size.y - y
-
-                position = glm.vec2(x, y) / self.ppu
-
-                self.tile_builder.build(position, tile, tile_gid, properties)
-    '''

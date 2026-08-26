@@ -11,8 +11,11 @@ class SceneView2D(View2D):
     def __init__(self, scene: Scene2D) -> None:
         super().__init__()
         self.scene = scene
-        if self.enabled:
-            scene.enable()
+
+    def _create(self):
+        super()._create()
+        logger.debug("Creating scene children")
+        self.scene.create()
 
     def create_renderer(self) -> None:
         self.renderer = Renderer2D(viewport=self.viewport, camera=self.camera)
@@ -26,6 +29,8 @@ class SceneView2D(View2D):
             self.renderer.render(self.scene)
             super().draw()
 
+    """
     def update(self, dt: float) -> None:
         self.scene.update(dt)
         super().update(dt)
+    """

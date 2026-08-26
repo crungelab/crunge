@@ -1,3 +1,3 @@
 from .widget import Widget
-from .overlay import Overlay
-from .widget_overlay import WidgetOverlay
+from ..overlay.overlay import Overlay
+from ..overlay.widget_overlay import WidgetOverlay

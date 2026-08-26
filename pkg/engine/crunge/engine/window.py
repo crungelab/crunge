@@ -15,6 +15,7 @@ from .math import Rect2i
 from .signal import Signal, Pulse
 from .scheduler import Scheduler
 from .frame import Frame
+
 """
 from .viewport import Viewport
 from .easel import SurfaceEasel
@@ -46,7 +47,7 @@ class Window(Frame):
         globals.set_current_window(self)
         self.name = title
 
-        self.window: sdl.Window = None
+        self.sdl_window: sdl.Window = None
         # self.render_options = RenderOptions(use_depth_stencil=True, use_msaa=True, use_snapshot=True)
         self.render_options = RenderOptions(use_depth_stencil=True, use_snapshot=True)
         self.viewport: Viewport = None
@@ -156,7 +157,7 @@ class Window(Frame):
         super()._create()
 
     def create_window(self):
-        self.window = sdl.create_window(
+        self.sdl_window = sdl.create_window(
             self.name, self.width, self.height, sdl.WindowFlags.RESIZABLE
         )
 
@@ -187,16 +188,16 @@ class Window(Frame):
     """
 
     def get_window_size(self):
-        return sdl.get_window_size(self.window)
+        return sdl.get_window_size(self.sdl_window)
 
     def get_framebuffer_size(self):
-        return sdl.get_window_size_in_pixels(self.window)
+        return sdl.get_window_size_in_pixels(self.sdl_window)
 
     def create_device_objects(self):
         pass
 
     def create_viewport(self):
-        self.easel = SurfaceEasel(self.size, self.window, self.render_options)
+        self.easel = SurfaceEasel(self.size, self.sdl_window, self.render_options)
         self.viewport = Viewport(easel=self.easel, rect=None)
         self.viewport.make_current()
 
@@ -210,25 +211,6 @@ class Window(Frame):
                 self.draw()
         self.post_frame.emit()
         self.instance.process_events()
-
-    """
-    def frame(self):
-        if self.resize_pending:
-            self.resize_pending = False
-            return
-
-        self.pre_frame.emit()
-
-        with self.easel.frame():
-            frame = RenderFrame(self.easel)
-            with self.renderer.use():
-                with frame.use():
-                    self.draw()
-            frame.finish()
-
-        self.post_frame.emit()
-        self.instance.process_events()
-    """
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")

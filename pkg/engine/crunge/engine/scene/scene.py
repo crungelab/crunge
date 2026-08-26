@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING, Optional, TypeVar, Generic, Dict, List
 import contextlib
 from contextvars import ContextVar
 
+from ..updater import Updater, Phase, Entry
+
 from .scene_node import SceneNode
 from .layer.graph_layer import GraphLayer
 from .layer.layer_group import LayerGroup
@@ -13,6 +15,11 @@ current_scene: ContextVar[Optional["Scene"]] = ContextVar("current_scene", defau
 class Scene(LayerGroup, Generic[T_Node]):
     def __init__(self, name: str) -> None:
         super().__init__(name)
+
+    def _create(self):
+        super()._create()
+        self.make_current()
+        Updater().register(self, phase=Phase.PHYSICS)
 
     @property
     def primary_layer(self) -> GraphLayer[T_Node]:

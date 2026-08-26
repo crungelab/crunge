@@ -9,6 +9,7 @@ from crunge import sdl
 from crunge import yoga
 
 from .window import Window, DEFAULT_WIDTH, DEFAULT_HEIGHT
+from .updater import Updater, Phase, Entry
 from .scheduler import Scheduler
 from .service import Service
 from .statistics import Statistics
@@ -38,6 +39,8 @@ class App(Window):
         self.running = False
         self.stats = Statistics()
         self.services: list[Service] = []
+
+        self.add_service(Updater())
         self.add_service(Scheduler())
 
         # Disable the automatic cyclic GC. We'll trigger gen-0 collections
@@ -59,12 +62,14 @@ class App(Window):
     def run(self):
         self.make_current() # TODO: This should be in _enable() or similar, not run()
         self.enable()
+        self.reset()
+
         self.running = True
 
         target_dt = 1.0 / 60.0
         last_frame_start = time.perf_counter()
 
-        sdl.start_text_input(self.window)
+        sdl.start_text_input(self.sdl_window)
 
         # Let init-time allocations (services, resource manager, scene
         # scaffolding, etc.) settle, then freeze them out of future
@@ -133,7 +138,7 @@ class App(Window):
             self.stats.timing.push_frame(update_s, render_s, frame_s)
             self.stats.end_frame()
 
-        sdl.stop_text_input(self.window)
+        sdl.stop_text_input(self.sdl_window)
         return self
 
     """

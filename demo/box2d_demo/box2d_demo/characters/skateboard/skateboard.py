@@ -88,6 +88,7 @@ class Skateboard(PhysicsGroup2D):
         self.front_wheel = self.add_node(Wheel.produce(front_wheel_pos))
         self.back_wheel = self.add_node(Wheel.produce(back_wheel_pos))
 
+
     @property
     def velocity(self):
         return self.chassis.velocity
@@ -129,8 +130,8 @@ class Skateboard(PhysicsGroup2D):
         self.mountee.on_dismount(self.chassis, point)
         self.mountee = None
 
-    def _create(self):
-        super()._create()
+    def _created(self):
+        super()._created()
 
         world = physics_globe.physics_engine
 

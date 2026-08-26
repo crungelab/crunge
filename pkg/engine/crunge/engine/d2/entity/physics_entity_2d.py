@@ -156,6 +156,7 @@ class PhysicsGroup2D(PhysicsEntity2D):
     def add_node(self, node: PhysicsEntity2D):
         node.group = self
         self.nodes.append(node)
+        self.add_child(node)
         return node
 
     def _create(self):

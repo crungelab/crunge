@@ -35,7 +35,7 @@ class OffscreenSpritePage(Page):
             size=sprite.size,
             rotation=0.0,
             scale=glm.vec3(1, 1, 1),
-            depth=0.0
+            depth=0.0,
         )
 
     def _draw(self):
@@ -50,26 +50,9 @@ class OffscreenSpritePage(Page):
 
         super()._draw()
 
-    """
-    def _draw(self):
-        with self.easel.frame():
-            encoder = self.device.create_command_encoder()
-            frame = RenderFrame(self.easel, encoder)
-            with frame.use():
-                with self.renderer.render_pass():
-                    self.draw_sprite()
-            self.queue.submit([encoder.finish()])
-
-        imgui.begin(self.title)
-        size = self.target_viewport.width, self.target_viewport.height
-        imgui.image(imgui.TextureRef(self.texture.id), size)
-        imgui.end()
-
-        super()._draw()
-    """
-
     def draw_sprite(self):
         self.sprite_vu.draw()
+
 
 def install(app: App):
     app.add_channel(

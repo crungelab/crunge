@@ -135,7 +135,7 @@ class SpaceShooter(PhysicsDemo):
 
         self.handle_collisions()
 
-        if self.ship.destroyed:
+        if self.ship.is_destroyed:
             return
 
         base_lerp_factor = 5.0

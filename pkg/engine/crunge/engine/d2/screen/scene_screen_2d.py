@@ -13,11 +13,13 @@ class SceneScreen2D(Screen2D):
         super().__init__(name=name, title=title)
         self.scene = scene
 
-    def create_children(self):
-        logger.debug("Creating screen children")
+    def create_views(self):
+        logger.debug("Creating views")
         self.view = SceneView2D(self.scene)
         self.add_child(self.view)
 
+    """
     def update(self, dt: float) -> None:
         self.scene.update(dt)
         super().update(dt)
+    """

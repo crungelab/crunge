@@ -5,7 +5,7 @@ from .sprite_vu_group import SpriteVuGroup
 from .sprite_group import SpriteGroup
 
 class SpriteLayer(GraphLayer2D):
-    def __init__(self, name: str = "SpriteInstanceLayer", count: int = 32) -> None:
+    def __init__(self, name: str = "SpriteLayer", count: int = 32) -> None:
         super().__init__(name)
         self.vu_group: SpriteVuGroup = None
         self.sprite_group: SpriteGroup = None

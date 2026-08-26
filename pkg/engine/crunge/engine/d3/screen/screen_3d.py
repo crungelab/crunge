@@ -13,7 +13,7 @@ class Screen3D(ImGuiScreen):
     def primary_camera_3d(self) -> Camera3D:
         return self.primary_view.primary_camera_3d
 
-    def create_children(self):
-        logger.debug("Creating screen children")
+    def create_views(self):
+        logger.debug("Creating screen views")
         self.view = View3D()
         self.add_child(self.view)

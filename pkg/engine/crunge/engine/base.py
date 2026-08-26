@@ -1,15 +1,46 @@
 # from typing import Self
 # from typing_extensions import Self
 
+from loguru import logger
+
+from enum import Enum, auto
+
 from . import globals
 from .gfx import Gfx
 
 
+class Lifetime(Enum):
+    INITIAL = auto()
+    CREATING = auto()
+    CREATED = auto()
+    DESTROYING = auto()
+    DESTROYED = auto()
+
+
 class Base:
     def __init__(self) -> None:
-        self.created = False
-        self.enabled = False
-        self.destroyed = False
+        self._lifetime = Lifetime.INITIAL
+        self._is_enabled = False
+
+    @property
+    def is_created(self) -> bool:
+        return self._lifetime is Lifetime.CREATED
+
+    @property
+    def is_creating(self) -> bool:
+        return self._lifetime is Lifetime.CREATING
+
+    @property
+    def is_destroyed(self) -> bool:
+        return self._lifetime is Lifetime.DESTROYED
+
+    @property
+    def is_destroying(self) -> bool:
+        return self._lifetime is Lifetime.DESTROYING
+
+    @property
+    def is_enabled(self) -> bool:
+        return self._is_enabled
 
     def config(self, **kwargs):
         for key, value in kwargs.items():
@@ -18,52 +49,103 @@ class Base:
 
     # def create(self) -> Self: #TODO: need Python 3.11+
     def create(self):
-        if self.created:
-            return
+        if self._lifetime is not Lifetime.INITIAL:
+            return self
+        self._lifetime = Lifetime.CREATING
         self._create()
-        self._post_create()
-        self.created = True
-        self.reset()
+        self.create_children()
+        self._lifetime = Lifetime.CREATED
+        self._created()
         return self
 
-    def _create(self):
+    def _create(self) -> None:
+        """Top-down. Own resources. Children NOT created yet."""
         pass
 
-    def _post_create(self):
+    def create_children(self) -> None:
+        """Containers override."""
+        pass
+
+    def _created(self) -> None:
+        """Bottom-up. Children created and reachable."""
         pass
 
     def reset(self) -> None:
+        """Reset the object to its initial state."""
         pass
 
     def destroy(self) -> None:
-        if self.destroyed:
+        if self.is_destroyed:
             return
         self._destroy()
-        self.destroyed = True
+        self._lifetime = Lifetime.DESTROYED
 
     def _destroy(self) -> None:
         pass
 
     def enable(self):
-        if self.enabled:
+        if self._is_enabled:
             return self
-        if not self.created:
+        if self.is_creating:
+            logger.warning(f"enable() during create: {self}")
+            return self
+        if not self.is_created:
+            self.create()
+        self._is_enabled = True
+        self._enable()
+        return self
+
+    """
+    def enable(self):
+        if self._is_enabled or not self.is_created:
+            return self
+        self._is_enabled = True
+        self._enable()
+        return self
+    """
+
+    def _enable(self) -> None:
+        pass
+
+    def disable(self):
+        if not self._is_enabled:
+            return self
+        self._is_enabled = False
+        self._disable()
+        return self
+
+    def _disable(self) -> None:
+        pass
+
+    def _sync_lifetime(self, obj: "Base"):
+        """Bring obj up to this node's lifetime state."""
+        if self.is_created:
+            obj.create()
+        if self._is_enabled:
+            obj.enable()
+
+    """
+    def enable(self):
+        if self.is_enabled:
+            return self
+        if not self.is_created:
             self.create()  # Ensure the object is created
         self._enable()
-        self.enabled = True
+        self._is_enabled = True
         return self
 
     def _enable(self) -> None:
         pass
 
     def disable(self):
-        if not self.enabled:
+        if not self._is_enabled:
             return
         self._disable()
-        self.enabled = False
+        self._is_enabled = False
 
     def _disable(self) -> None:
         pass
+    """
 
     @property
     def gfx(self):

@@ -42,11 +42,11 @@ class Vu2D(Vu[Node2D]):
         if group is not None:
             if group.is_render_group:
                 self.manual_draw = False
-
         """
         if not self.manual_draw:
             return
 
+        logger.debug(f"Vu2D: {self.__class__.__name__}_create: manual_draw=True")
         self.create_program()
         self.create_buffers()
         self.create_bind_groups()
@@ -110,7 +110,7 @@ class Vu2D(Vu[Node2D]):
         self.on_transform()
 
     def on_transform(self) -> None:
-        if self.enabled:
+        if self.is_enabled:
             self.update_gpu()
 
     @property
@@ -120,7 +120,7 @@ class Vu2D(Vu[Node2D]):
     @color.setter
     def color(self, value):
         self._color = value
-        if self.enabled:
+        if self.is_enabled:
             self.update_gpu()
 
     @property

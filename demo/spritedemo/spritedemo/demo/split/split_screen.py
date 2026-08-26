@@ -7,7 +7,7 @@ from crunge.engine.d2.screen import SceneScreen2D
 from .split_view import SplitView
 
 class SplitScreen(SceneScreen2D):
-    def create_children(self):
+    def create_views(self):
         self.style = yoga.StyleBuilder().size_percent(100, 100).flex_direction(
             yoga.FlexDirection.ROW
         ).build()  # ASSUMPTION: builder method + enum names

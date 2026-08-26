@@ -44,6 +44,7 @@ class Frame(Widget):
     @display.setter
     def display(self, display: Display) -> None:
         self.make_current() # TODO: This should be in _enable() or similar, not channel setter
+        #self.enable()
 
         if display is None:
             raise ValueError("Display cannot be None")
@@ -58,7 +59,8 @@ class Frame(Widget):
         self.on_display()
 
     def on_display(self):
-        pass
+        if self._display is not None:
+            self._display.enable()
 
     def _create(self):
         super()._create()

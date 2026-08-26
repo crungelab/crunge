@@ -13,8 +13,8 @@ class SceneScreen3D(Screen3D):
         super().__init__(name=name, title=title)
         self.scene = scene
 
-    def create_children(self):
-        logger.debug("Creating screen children")
+    def create_views(self):
+        logger.debug("Creating screen views")
         self.view = SceneView3D(self.scene)
         self.add_child(self.view)
 
