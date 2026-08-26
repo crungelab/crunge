@@ -1,9 +1,10 @@
 from loguru import logger
 
-from crunge.engine.imgui import ImGuiScreen
 from ..view.view_2d import View2D
+from ...screen import Screen
 
-class Screen2D(ImGuiScreen):
+
+class Screen2D(Screen):
     def __init__(self, name: str = "Screen2D", title: str = "Screen 2D") -> None:
         super().__init__(name=name, title=title)
 

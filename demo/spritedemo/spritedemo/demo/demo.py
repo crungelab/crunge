@@ -59,6 +59,7 @@ class Demo(engine.App):
     def create_display(self):
         logger.debug("Creating display")
         self.display = DemoScreen(self.scene)
+        gui = self.display.gui
 
     def center_camera(self):
         if self.camera:

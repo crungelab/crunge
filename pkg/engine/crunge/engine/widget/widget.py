@@ -162,8 +162,8 @@ class Widget(Node["Widget"]):
             return
         controller.enable()
 
-    def create_children(self) -> None:
-        super().create_children()
+    def _create(self) -> None:
+        super()._create()
         if self._controller is not None:
             self._controller.create()
 

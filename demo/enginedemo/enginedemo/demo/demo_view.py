@@ -1,7 +1,8 @@
 from loguru import logger
 
-from crunge.engine.imgui import ImGuiView
+from crunge.engine.view import View
 
-class DemoView(ImGuiView):
+
+class DemoView(View):
     def __init__(self, overlays=[]):
         super().__init__(overlays=overlays)

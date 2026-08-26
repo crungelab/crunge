@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Any
 
 from loguru import logger
 
@@ -9,61 +9,40 @@ if TYPE_CHECKING:
     from .view import View
 
 from .d2.camera_2d import Camera2D
-
 from .d3.camera_3d import Camera3D
 from .d3.lighting_3d import Lighting3D
 
 from .viewport import Viewport
 from .widget import Widget, Overlay
-from .overlay.overlay_manufacturer import OverlayManufacturer, OverlayConfig
-
-from .d2.overlay.scratch_overlay import ScratchOverlay
-from .imgui.overlay import ImGuiOverlay
 
 
 class Display(Widget):
-    default_overlays: tuple[OverlayConfig, ...] = ()
+    default_config: dict[str, Any] = {}
 
     def __init__(
         self,
         name: str = "Display",
         title: str = "Display",
-        overlays: Iterable[OverlayConfig] = None,
+        overlays: list[Overlay] = None,
+        views: list["View"] = None,
     ) -> None:
         self.name = name
         self.title = title
 
         self.viewport: Viewport = None
 
-        # Buckets must exist before super().__init__ touches children.
+        # Buckets must exist before any add_* call below.
         self._overlays: list[Overlay] = []
         self._views: list["View"] = []
         self._window: "Window" = None
 
-        self.overlay_manufacturer = OverlayManufacturer(
-            self.default_overlays if overlays is None else overlays
-        )
-
         style = yoga.StyleBuilder().size_percent(100, 100).build()
         super().__init__(style)
 
-        self._scratch: ScratchOverlay = None
-        self._gui: ImGuiOverlay = None
-
-
-    @property
-    def scratch(self) -> ScratchOverlay:
-        if self._scratch is None:
-            self._scratch = ScratchOverlay()
-            self.add_overlay(self._scratch)
-        return self._scratch
-
-    @property
-    def gui(self) -> ImGuiOverlay:
-        if self._gui is None:
-            self._gui = ImGuiOverlay()
-            self.add_overlay(self._gui)
-        return self._gui
+        for overlay in overlays or ():
+            self.add_overlay(overlay)
+        for view in views or ():
+            self.add_view(view)
 
     @property
     def window(self) -> "Window":
@@ -83,10 +62,8 @@ class Display(Widget):
 
         if isinstance(child, View):
             self._views.append(child)
-            self._views.sort(key=lambda c: c.priority)
         elif isinstance(child, Overlay):
             self._overlays.append(child)
-            self._overlays.sort(key=lambda c: c.priority)
         self.sort_children(key=lambda c: c.priority)
         logger.debug(
             f"{self.name}: on_child_added: {child.name} "
@@ -96,9 +73,9 @@ class Display(Widget):
     def on_child_removed(self, child: Widget) -> None:
         from .view import View
 
-        if isinstance(child, View) and child in self._views:
+        if isinstance(child, View):
             self._views.remove(child)
-        elif isinstance(child, Overlay) and child in self._overlays:
+        elif isinstance(child, Overlay):
             self._overlays.remove(child)
 
     @property
@@ -132,11 +109,8 @@ class Display(Widget):
     def remove_overlay(self, overlay: Overlay) -> None:
         self.remove_child(overlay)
 
-    def get_overlay(self, name: str) -> Overlay | None:
-        for overlay in self._overlays:
-            if overlay.name == name:
-                return overlay
-        return None
+    def get_overlay(self, name: str) -> Overlay:
+        return self._children_by_name[name]
 
     def add_view(self, view: "View") -> "View":
         return self.add_child(view)
@@ -144,24 +118,10 @@ class Display(Widget):
     def remove_view(self, view: "View") -> None:
         self.remove_child(view)
 
-    def get_view(self, name: str) -> "View | None":
-        for view in self._views:
-            if view.name == name:
-                return view
-        return None
-
-    def toggle_overlay(self, name: str) -> Overlay | None:
-        overlay = self.get_overlay(name)
-        if overlay is not None:
-            self.remove_overlay(overlay)
-            return None
-        overlay = self.overlay_manufacturer.manufacture(name)
-        if overlay is not None:
-            self.add_overlay(overlay)
-        return overlay
+    def get_view(self, name: str) -> "View":
+        return self._children_by_name[name]
 
     # --- lifecycle ----------------------------------------------------
-
     def _create(self):
         super()._create()
         self.create_viewport()
@@ -175,5 +135,6 @@ class Display(Widget):
         pass
 
     def create_overlays(self):
-        for overlay in self.overlay_manufacturer.manufacture_all():
-            self.add_overlay(overlay)
+        for overlay in self._overlays:
+            logger.debug(f"Setting overlay.window = {self.window} for overlay {overlay.name}")
+            overlay.window = self.window

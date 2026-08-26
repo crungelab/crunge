@@ -8,3 +8,7 @@ resource_root = Path(__file__).parent.parent / "resources"
 class SpineDemo(demo.Demo):
     def __init__(self):
         super().__init__("Spine Demo", __package__, resource_root)
+
+    def on_display(self):
+        super().on_display()
+        gui = self.gui

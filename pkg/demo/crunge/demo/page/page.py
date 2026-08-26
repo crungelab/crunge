@@ -1,11 +1,11 @@
 from crunge.engine import Renderer, App
-from crunge.engine.imgui import ImGuiView
+#from crunge.engine.imgui import ImGuiView
 from crunge import imgui
 
 from ..menubar import MenubarLocation
+from crunge.engine.view import View
 
-
-class Page(ImGuiView):
+class Page(View):
     def __init__(self, name: str, title: str):
         super().__init__()
         self.name = name
