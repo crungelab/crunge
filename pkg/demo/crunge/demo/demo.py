@@ -33,11 +33,11 @@ class Demo(engine.App):
 
     @property
     def page(self) -> Page:
-        return self.view
+        return self.display
 
     @page.setter
     def page(self, value: Page) -> None:
-        self.view = value
+        self.display = value
 
     def use(self, name):
         logger.debug(f"using: {name}")

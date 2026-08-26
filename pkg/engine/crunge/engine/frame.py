@@ -22,6 +22,13 @@ class Frame(Widget):
         self._display = display
         self.display_stack: list[Display] = []
 
+    """
+    def reset(self):
+        super().reset()
+        if self.display is not None:
+            self.display.reset()
+    """
+
     def make_current(self):
         current_frame.set(self)
 
@@ -60,7 +67,9 @@ class Frame(Widget):
 
     def on_display(self):
         if self._display is not None:
+            #self._display.enable().reset()
             self._display.enable()
+            self._display.reset()
 
     def _create(self):
         super()._create()

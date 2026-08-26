@@ -80,6 +80,12 @@ class Demo(engine.App):
         self.pop_controller()
         return avatar
 
+    """
+    def on_display(self):
+        super().on_display()
+        gui = self.display.gui
+    """
+    
     def reset(self):
         super().reset()
         self.create_scene()

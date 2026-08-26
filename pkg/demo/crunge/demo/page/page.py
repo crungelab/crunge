@@ -1,17 +1,14 @@
-from crunge.engine import Renderer, App
-#from crunge.engine.imgui import ImGuiView
+from crunge.engine import App
 from crunge import imgui
 
-from ..menubar import MenubarLocation
-from crunge.engine.view import View
+from crunge.engine.screen import Screen
 
-class Page(View):
+
+class Page(Screen):
     def __init__(self, name: str, title: str):
         super().__init__()
         self.name = name
         self.title = title
-        #self.fullwidth = True
-        #self.fullheight = True
 
     @classmethod
     def produce(cls, app: App, name: str, title: str):
@@ -19,5 +16,7 @@ class Page(View):
         return page
 
     def reset(self):
+        super().reset()
+        gui = self.gui  # initialize the GUI overlay
         io = imgui.get_io()
         io.config_flags |= imgui.ConfigFlags.DOCKING_ENABLE

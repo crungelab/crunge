@@ -76,6 +76,10 @@ class Window(Frame):
         super()._enable()
         self.make_current()
 
+    def on_display(self):
+        super().on_display()
+        gui = self.display.gui
+
     def make_current(self) -> Optional["Window"]:
         super().make_current()
         return current_window.set(self)

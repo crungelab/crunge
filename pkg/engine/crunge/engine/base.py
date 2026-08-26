@@ -95,15 +95,6 @@ class Base:
         self._enable()
         return self
 
-    """
-    def enable(self):
-        if self._is_enabled or not self.is_created:
-            return self
-        self._is_enabled = True
-        self._enable()
-        return self
-    """
-
     def _enable(self) -> None:
         pass
 
@@ -123,29 +114,6 @@ class Base:
             obj.create()
         if self._is_enabled:
             obj.enable()
-
-    """
-    def enable(self):
-        if self.is_enabled:
-            return self
-        if not self.is_created:
-            self.create()  # Ensure the object is created
-        self._enable()
-        self._is_enabled = True
-        return self
-
-    def _enable(self) -> None:
-        pass
-
-    def disable(self):
-        if not self._is_enabled:
-            return
-        self._disable()
-        self._is_enabled = False
-
-    def _disable(self) -> None:
-        pass
-    """
 
     @property
     def gfx(self):

@@ -8,3 +8,10 @@ resource_root = Path(__file__).parent.parent / 'resources'
 class ImGuiDemo(demo.Demo):
     def __init__(self):
         super().__init__("ImGui Demo", __package__, resource_root)
+
+    """
+    def on_display(self):
+        super().on_display()
+
+        gui = self.display.gui # initialize the GUI overlay
+    """
