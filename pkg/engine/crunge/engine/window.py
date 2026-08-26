@@ -10,15 +10,18 @@ import glm
 from crunge import sdl
 from crunge import yoga
 
-from . import globals
+from . import globals, SurfaceEasel, Viewport, Renderer, RenderOptions, compose
 from .math import Rect2i
 from .signal import Signal, Pulse
 from .scheduler import Scheduler
 from .frame import Frame
+"""
 from .viewport import Viewport
 from .easel import SurfaceEasel
-from .renderer import Renderer, RenderFrame
+from .renderer import Renderer
 from .render_options import RenderOptions
+"""
+
 from .channel import Channel
 
 DEFAULT_WIDTH = 1280
@@ -172,7 +175,9 @@ class Window(Frame):
 
         self.easel.size = glm.ivec2(self.get_framebuffer_size())
 
-        logger.debug(f"Resized to {size}")
+        logger.debug(f"Window size: {size}")
+        logger.debug(f"Framebuffer size: {self.easel.size}")
+
         self.resize_pending = True
 
     """
@@ -199,6 +204,18 @@ class Window(Frame):
         if self.resize_pending:
             self.resize_pending = False
             return
+        self.pre_frame.emit()
+        with compose(self.easel):
+            with self.renderer.use():
+                self.draw()
+        self.post_frame.emit()
+        self.instance.process_events()
+
+    """
+    def frame(self):
+        if self.resize_pending:
+            self.resize_pending = False
+            return
 
         self.pre_frame.emit()
 
@@ -211,6 +228,7 @@ class Window(Frame):
 
         self.post_frame.emit()
         self.instance.process_events()
+    """
 
     def on_window(self, event: sdl.WindowEvent):
         # logger.debug("window event")

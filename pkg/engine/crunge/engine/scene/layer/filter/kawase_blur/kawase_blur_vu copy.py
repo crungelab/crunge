@@ -3,7 +3,7 @@ from __future__ import annotations
 from ctypes import c_float, c_uint32, sizeof
 from dataclasses import dataclass
 
-from crunge.engine import Composition, DrawApi
+from crunge.engine import Composition
 import numpy as np
 from loguru import logger
 
@@ -215,15 +215,14 @@ class KawaseBlurVu(FilterVu):
 
     def _create(self):
         super()._create()
+        self.create_offscreen_targets()   # depends on viewport size
         self.create_pipelines_and_bindings()
-        self.ensure_offscreen_targets()
 
-    # -- offscreen targets ----------------------------------------------------
+    # If your framework has a resize hook, call create_offscreen_targets() there.
+    # Otherwise, we can lazily detect size changes in _draw() and rebuild.
 
     def _current_offscreen_size(self) -> tuple[int, int]:
         vp = Viewport.get_current()
-        if vp is None:
-            return 0, 0
         w = vp.width
         h = vp.height
         # Note: Uncomment below if you want downsampling (improves performance)
@@ -231,27 +230,9 @@ class KawaseBlurVu(FilterVu):
         # h = max(1, h // self.downsample)
         return w, h
 
-    def ensure_offscreen_targets(self) -> bool:
-        """Create or resize the ping-pong targets to match the current viewport.
-
-        Returns True if the targets are usable.
-        """
+    def create_offscreen_targets(self):
         w, h = self._current_offscreen_size()
-        if w <= 0 or h <= 0:
-            return False
 
-        if (
-            self.off_tex_a is not None
-            and self.off_tex_a.get_width() == w
-            and self.off_tex_a.get_height() == h
-        ):
-            return True
-
-        self.create_offscreen_targets(w, h)
-        self.create_bind_groups()
-        return True
-
-    def create_offscreen_targets(self, w: int, h: int):
         usage = (
             wgpu.TextureUsage.RENDER_ATTACHMENT
             | wgpu.TextureUsage.TEXTURE_BINDING
@@ -284,32 +265,6 @@ class KawaseBlurVu(FilterVu):
         self.off_view_b = self.off_tex_b.create_view()
 
         logger.info(f"Offscreen targets: {w}x{h} (downsample={self.downsample})")
-
-    def create_bind_groups(self):
-        """(Re)build the ping-pong bind groups against the current views."""
-        if self.blur_bgl is None:
-            return
-        if self.off_view_a is None or self.off_view_b is None:
-            return
-
-        def make_bg(view: wgpu.TextureView, label: str) -> wgpu.BindGroup:
-            return self.device.create_bind_group(
-                wgpu.BindGroupDescriptor(
-                    label=label,
-                    layout=self.blur_bgl,
-                    entries=[
-                        wgpu.BindGroupEntry(binding=0, texture_view=view),
-                        wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
-                        wgpu.BindGroupEntry(binding=2, buffer=self.blur_ubo),
-                        wgpu.BindGroupEntry(binding=3, buffer=self.comp_ubo),
-                    ],
-                )
-            )
-
-        self.bg_from_a = make_bg(self.off_view_a, "BG from Offscreen A")
-        self.bg_from_b = make_bg(self.off_view_b, "BG from Offscreen B")
-
-    # -- pipelines ------------------------------------------------------------
 
     def create_pipelines_and_bindings(self):
         shader = self.gfx.create_shader_module(WGSL)
@@ -454,7 +409,23 @@ class KawaseBlurVu(FilterVu):
             )
         )
 
-    # -- uniforms -------------------------------------------------------------
+        # --- Bind groups (two: sampling from A vs sampling from B) ---------------
+        def make_bg(view: wgpu.TextureView, label: str) -> wgpu.BindGroup:
+            return self.device.create_bind_group(
+                wgpu.BindGroupDescriptor(
+                    label=label,
+                    layout=self.blur_bgl,
+                    entries=[
+                        wgpu.BindGroupEntry(binding=0, texture_view=view),
+                        wgpu.BindGroupEntry(binding=1, sampler=self.sampler),
+                        wgpu.BindGroupEntry(binding=2, buffer=self.blur_ubo),
+                        wgpu.BindGroupEntry(binding=3, buffer=self.comp_ubo),
+                    ],
+                )
+            )
+
+        self.bg_from_a = make_bg(self.off_view_a, "BG from Offscreen A")
+        self.bg_from_b = make_bg(self.off_view_b, "BG from Offscreen B")
 
     def _write_blur_uniforms(self, tex_w: int, tex_h: int, offset_px: float):
         params = BlurParamsCPU(
@@ -468,24 +439,14 @@ class KawaseBlurVu(FilterVu):
         params = CompositeParamsCPU(alpha=float(self.alpha))
         self.queue.write_buffer(self.comp_ubo, 0, params.to_bytes())
 
-    # -- passes ---------------------------------------------------------------
-
     def _copy_from_viewport(self, encoder: wgpu.CommandEncoder):
-        # Copy the current color texture into offscreen A.
-        # Clamp to whichever is smaller so a mid-resize frame can't overrun
-        # either texture.
-        easel = self.current_easel
-        w = min(self.off_tex_a.get_width(), easel.width)
-        h = min(self.off_tex_a.get_height(), easel.height)
-        if w <= 0 or h <= 0:
-            return
-
-        source = wgpu.TexelCopyTextureInfo(texture=easel.color_texture)
-        destination = wgpu.TexelCopyTextureInfo(texture=self.off_tex_a)
+        # Create a command encoder to copy the color texture to the snapshot texture
+        source=wgpu.TexelCopyTextureInfo(texture=self.current_easel.color_texture)
+        destination=wgpu.TexelCopyTextureInfo(texture=self.off_tex_a)
         encoder.copy_texture_to_texture(
             source=source,
             destination=destination,
-            copy_size=wgpu.Extent3D(w, h, 1),
+            copy_size=wgpu.Extent3D(self.current_viewport.width, self.current_viewport.height, 1),
         )
 
     def _blur_ping_pong(self, encoder: wgpu.CommandEncoder):
@@ -513,7 +474,7 @@ class KawaseBlurVu(FilterVu):
 
         # Use smaller increments for smoother blur progression
         offset = self.base_offset
-
+        
         for i in range(self.iterations):
             blur_pass(True, self.off_view_b, offset, f"Blur Pass {i} A->B")
             blur_pass(False, self.off_view_a, offset, f"Blur Pass {i} B->A")
@@ -540,19 +501,17 @@ class KawaseBlurVu(FilterVu):
         rp.draw(3, 1, 0, 0)
         rp.end()
 
-    # -- draw -----------------------------------------------------------------
-
     def _draw(self):
         current_renderer = Renderer.get_current()
-        composition = Composition.get_current()
+        #encoder: wgpu.CommandEncoder = current_renderer.encoder
+        encoder = Composition.get_current().encoder
+
 
         current_renderer.end_pass()
 
-        if self.ensure_offscreen_targets():
-            with composition.gpu() as encoder:
-                self._copy_from_viewport(encoder)
-                self._blur_ping_pong(encoder)
-                self._composite_to_viewport(encoder)
+        self._copy_from_viewport(encoder)
+        self._blur_ping_pong(encoder)
+        self._composite_to_viewport(encoder)
 
         super()._draw()
 

@@ -3,7 +3,7 @@ import glm
 from crunge import imgui
 from crunge import skia
 
-from crunge.engine import App, colors
+from crunge.engine import App, colors, compose
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.viewport import Viewport
 from crunge.engine.easel import OffscreenEasel
@@ -33,10 +33,23 @@ class OffscreenCanvasPage(Page):
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
 
+        with compose(self.easel):
+            self.draw_radial_gradient()
+
+        super()._draw()
+
+    """
+    def _draw(self):
+        imgui.begin(self.title)
+        size = self.target_viewport.width, self.target_viewport.height
+        imgui.image(imgui.TextureRef(self.texture.id), size)
+        imgui.end()
+
         with self.easel.frame():
             self.draw_radial_gradient()
 
         super()._draw()
+    """
 
     def draw_radial_gradient(self):
         canvas = self.easel.canvas

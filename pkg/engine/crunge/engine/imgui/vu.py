@@ -1,6 +1,5 @@
 from ctypes import Structure, c_float, c_uint32, sizeof
 
-from crunge.engine.renderer.render_frame import RenderFrame
 from loguru import logger
 import glm
 
@@ -9,6 +8,7 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 from crunge import imgui
 
+from ..composition import Composition
 from ..renderer import Renderer
 from ..resource.resource_manager import ResourceManager
 from ..resource.texture import Texture2D
@@ -374,7 +374,7 @@ class ImGuiVu(Vu):
             idx_offset += commands.idx_buffer_size
 
     def render(self):
-        frame = RenderFrame.get_current()
+        composition = Composition.get_current()
         imgui.render()
         io = imgui.get_io()
         draw_data = imgui.get_draw_data()
@@ -407,7 +407,7 @@ class ImGuiVu(Vu):
         ]
         renderpass = wgpu.RenderPassDescriptor(label="ImGui Render Pass", color_attachments=color_attachments)
 
-        with frame.gpu() as encoder:
+        with composition.gpu() as encoder:
             pass_enc = encoder.begin_render_pass(renderpass)
             pass_enc.set_pipeline(self.pipeline)
             pass_enc.set_vertex_buffer(0, self.vertex_buffer)

@@ -98,6 +98,7 @@ class Easel(Base):
         if prev is not None:
             prev.make_current()
 
+    """
     @contextlib.contextmanager
     def frame(self):
         prev = self.get_current()
@@ -107,14 +108,19 @@ class Easel(Base):
         self.end_frame()
         if prev is not None:
             prev.make_current()
+    """
 
-    def begin_frame(self) -> None:
+    def begin(self) -> None:
         pass
 
-    def end_frame(self) -> None:
+    def end(self) -> None:
         pass
 
     def create_device_objects(self) -> None:
+        if not self._size.x or not self._size.y:
+            logger.warning("Easel size is zero, skipping device object creation.")
+            return
+
         if self.render_options.use_depth_stencil:
             self.create_depth_stencil()
         if self.render_options.use_msaa:

@@ -3,7 +3,7 @@ import glm
 
 from crunge import imgui
 
-from crunge.engine import RenderOptions, App, RenderFrame
+from crunge.engine import RenderOptions, App, compose
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.viewport import Viewport
 from crunge.engine.easel import OffscreenEasel
@@ -34,23 +34,10 @@ class OffscreenNodePage(Page):
         self.sprite_vu = SpriteVu(sprite)
         self.node = Node2D(vu=self.sprite_vu).enable()
 
-
-    """
-        with self.easel.frame():
-            frame = RenderFrame(self.easel)
-            with self.renderer.use():
-                with frame.use():
-                    self.draw()
-            frame.finish()
-    """
-
     def _draw(self):
-        with self.easel.frame():
-            frame = RenderFrame(self.easel)
-            with frame.use():
-                with self.renderer.render_pass():
-                    self.draw_node()
-            frame.finish()
+        with compose(self.easel):
+            with self.renderer.render_pass():
+                self.draw_node()
 
         imgui.begin(self.title)
         size = self.target_viewport.width, self.target_viewport.height
@@ -62,12 +49,11 @@ class OffscreenNodePage(Page):
     """
     def _draw(self):
         with self.easel.frame():
-            encoder = self.device.create_command_encoder()
-            frame = RenderFrame(self.easel, encoder)
+            frame = RenderFrame(self.easel)
             with frame.use():
                 with self.renderer.render_pass():
                     self.draw_node()
-            self.queue.submit([encoder.finish()])
+            frame.finish()
 
         imgui.begin(self.title)
         size = self.target_viewport.width, self.target_viewport.height

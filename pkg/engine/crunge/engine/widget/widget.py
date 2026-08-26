@@ -81,6 +81,22 @@ class Widget(Node["Widget"]):
             self.layout.get_computed_width(), self.layout.get_computed_height()
         )
 
+    """
+    @property
+    def size(self) -> glm.ivec2:
+        return glm.ivec2(self._size)
+    """
+
+    def _set_size(self, value: glm.ivec2) -> bool:
+        changed = self._size != value
+        self._size = glm.ivec2(value)
+
+        if changed:
+            self.on_size()
+
+        return changed
+
+    """
     def _set_size(self, value: glm.ivec2) -> bool:
         #logger.debug(f"Widget._set_size: {self}, {value}")
         changed = self._size != value
@@ -91,6 +107,7 @@ class Widget(Node["Widget"]):
             self.on_size()
 
         return changed
+    """
 
     @size.setter
     def size(self, value: glm.ivec2) -> None:
@@ -107,15 +124,28 @@ class Widget(Node["Widget"]):
 
     @width.setter
     def width(self, value: int) -> None:
+        self.size = glm.ivec2(value, self._size.y)
+
+    """
+    @width.setter
+    def width(self, value: int) -> None:
         self.size = glm.ivec2(value, self.height)
 
+    """
     @property
     def height(self) -> int:
         return self.size.y
 
     @height.setter
     def height(self, value: int) -> None:
+        self.size = glm.ivec2(self._size.x, value)
+
+    """
+
+    @height.setter
+    def height(self, value: int) -> None:
         self.size = glm.ivec2(self.width, value)
+    """
 
     @property
     def controller(self) -> Controller:

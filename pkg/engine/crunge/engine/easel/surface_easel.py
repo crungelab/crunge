@@ -80,7 +80,7 @@ class SurfaceEasel(Easel):
         self.surface.configure(config)
         logger.debug(f"Surface configured to size: {size}")
 
-    def begin_frame(self) -> None:
+    def begin(self) -> None:
         surface_texture = wgpu.SurfaceTexture()
         self.surface.get_current_texture(surface_texture)
         status = surface_texture.status
@@ -91,7 +91,7 @@ class SurfaceEasel(Easel):
         self.color_texture = surface_texture.texture
         self.color_texture_view = surface_texture.texture.create_view()
 
-    def end_frame(self) -> None:
+    def end(self) -> None:
         if self.resized:
             gc.collect()
             self.resized = False

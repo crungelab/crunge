@@ -2,7 +2,7 @@ import glm
 
 from crunge import imgui
 
-from crunge.engine import RenderOptions, App, RenderFrame
+from crunge.engine import RenderOptions, App, compose
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.viewport import Viewport
 from crunge.engine.easel import OffscreenEasel
@@ -39,6 +39,19 @@ class OffscreenSpritePage(Page):
         )
 
     def _draw(self):
+        with compose(self.easel):
+            with self.renderer.render_pass():
+                self.draw_sprite()
+
+        imgui.begin(self.title)
+        size = self.target_viewport.width, self.target_viewport.height
+        imgui.image(imgui.TextureRef(self.texture.id), size)
+        imgui.end()
+
+        super()._draw()
+
+    """
+    def _draw(self):
         with self.easel.frame():
             encoder = self.device.create_command_encoder()
             frame = RenderFrame(self.easel, encoder)
@@ -51,20 +64,6 @@ class OffscreenSpritePage(Page):
         size = self.target_viewport.width, self.target_viewport.height
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
-
-        super()._draw()
-
-    """
-    def _draw(self):
-        imgui.begin(self.title)
-        size = self.target_viewport.width, self.target_viewport.height
-        imgui.image(imgui.TextureRef(self.texture.id), size)
-        imgui.end()
-
-        with self.easel.frame():
-            with self.renderer.frame():
-                with self.renderer.render_pass():
-                    self.draw_sprite()
 
         super()._draw()
     """

@@ -3,6 +3,7 @@ import timeit
 import time
 
 from loguru import logger
+import glm
 
 from crunge import sdl
 from crunge import yoga
@@ -134,6 +135,22 @@ class App(Window):
 
         sdl.stop_text_input(self.window)
         return self
+
+    """
+    def apply_layout(self):
+        size = self.size
+        if not self.layout.is_dirty() and self._layout_size == size:
+            return
+        self._layout_size = glm.ivec2(size)
+        self.layout.calculate_bounds(size.x, size.y, yoga.Direction.LTR)
+        logger.debug(f"apply_layout: size={size} layout_size={self._layout_size} dirty={self.layout.is_dirty()}")
+
+        super().apply_layout()
+
+        new_size = self.size
+        logger.debug(f"Window size: {new_size}")
+        logger.debug(f"Framebuffer size: {self.easel.size}")
+    """
 
     def apply_layout(self):
         if not self.layout.is_dirty():

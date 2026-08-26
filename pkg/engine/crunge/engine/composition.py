@@ -1,4 +1,4 @@
-from typing import Generator, Optional
+from typing import Optional
 import contextlib
 from contextvars import ContextVar
 from enum import Enum, auto
@@ -8,11 +8,11 @@ from loguru import logger
 from crunge import wgpu
 from crunge import skia
 
-from ..base import Base
-from ..easel import Easel
+from .base import Base
+from .easel import Easel
 
-current_render_frame: ContextVar[Optional["RenderFrame"]] = ContextVar(
-    "current_render_frame", default=None
+current_composition: ContextVar[Optional["Composition"]] = ContextVar(
+    "current_composition", default=None
 )
 
 
@@ -22,12 +22,12 @@ class DrawApi(Enum):
     CANVAS = auto()
 
 
-class RenderFrame(Base):
-    """Per-frame render state.
+class Composition(Base):
+    """Assembles one frame's drawing onto an Easel.
 
-    Owns the encoder and the API boundary. Anything that draws declares
-    which API it needs; the frame flushes the other one first so that GPU
-    execution order matches traversal order.
+    Owns the command encoder and the API boundary. Anything that draws
+    declares which API it needs; the composition flushes the other one
+    first, so GPU execution order matches traversal order.
     """
 
     def __init__(self, easel: Easel) -> None:
@@ -41,6 +41,8 @@ class RenderFrame(Base):
 
     @property
     def encoder(self) -> wgpu.CommandEncoder:
+        if self._api is not DrawApi.GPU:
+            raise RuntimeError("Encoder accessed outside a gpu() scope.")
         if self._encoder is None:
             self._encoder = self.device.create_command_encoder()
         return self._encoder
@@ -77,7 +79,7 @@ class RenderFrame(Base):
         yield self.easel.canvas
 
     def finish(self) -> None:
-        """Flush whatever drew last. Called once by the frame owner."""
+        """Flush whatever drew last. Called once by the owner."""
         if self._api is DrawApi.GPU:
             self.flush_gpu()
         elif self._api is DrawApi.CANVAS:
@@ -86,17 +88,31 @@ class RenderFrame(Base):
 
     # -- context -----------------------------------------------------
 
-    def make_current(self):
-        current_render_frame.set(self)
-
     @classmethod
-    def get_current(cls) -> Optional["RenderFrame"]:
-        return current_render_frame.get()
+    def get_current(cls) -> Optional["Composition"]:
+        return current_composition.get()
 
     @contextlib.contextmanager
-    def use(self) -> Generator["RenderFrame", None, None]:
-        token = current_render_frame.set(self)
+    def use(self):
+        token = current_composition.set(self)
         try:
             yield self
         finally:
-            current_render_frame.reset(token)
+            current_composition.reset(token)
+
+
+@contextlib.contextmanager
+def compose(easel: Easel):
+    """Open a Composition over an Easel for one frame.
+
+    Convenience over the parts: Easel.begin/end, Composition(easel),
+    use() and finish() all remain public for cases this doesn't fit.
+    """
+    easel.begin()
+    try:
+        composition = Composition(easel)
+        with composition.use():
+            yield composition
+        composition.finish()
+    finally:
+        easel.end()
