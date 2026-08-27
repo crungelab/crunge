@@ -61,8 +61,10 @@ class Chip(Base, Generic[N]):
     @property
     def node(self) -> N:
         node = self._node
+        """
         if node is None:
             raise RuntimeError(f"{type(self).__name__} is not attached to a node")
+        """
         return node
 
     @property

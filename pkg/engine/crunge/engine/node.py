@@ -42,8 +42,10 @@ class Node(BaseNode, Generic[T_Node]):
         self.transform_changed: Signal["Node[T_Node]"] = Signal()
         self.model_changed: Signal["Node[T_Node]"] = Signal()
 
+        self.model = model
+        self.vu = vu
+        """
         if vu is not None:
-            vu._node = self
             self.vu = vu
             if model is not None:
                 vu.model = model
@@ -51,6 +53,7 @@ class Node(BaseNode, Generic[T_Node]):
         self.model = model
 
         self.add(vu) if vu is not None else None
+        """
         self.visible = True
 
     # -- properties ----------------------------------------------------
@@ -85,7 +88,13 @@ class Node(BaseNode, Generic[T_Node]):
         self._vu = value
         if value is None:
             return
-        self._sync_lifetime(value)
+
+        if self._model is not None:
+            value.model = self._model
+            value.sprite = self._model
+
+        #self._sync_lifetime(value)
+        self.add(value)
         #logger.debug(f"Node.vu set: {value}, lifetime: {value._lifetime}")
 
     @property

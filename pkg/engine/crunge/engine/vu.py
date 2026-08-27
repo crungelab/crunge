@@ -47,10 +47,22 @@ class Vu(Chip[T_Node]):
         return Renderer.get_current()
 
     # -- plug lifecycle ----------------------------------------------------
+    _listening: bool = False
+
+    def _enable(self) -> None:
+        super()._enable()
+        self.listen()
 
     def on_attached(self, node: "Node[T_Node]") -> None:
-        node.transform_changed.connect(self.on_transform_changed)
-        node.model_changed.connect(self.on_model_changed)
+        super().on_attached(node)
+        self.listen()
+
+    def listen(self) -> None:
+        if self._listening or self.node is None:
+            return
+        self.node.transform_changed.connect(self.on_transform_changed)
+        self.node.model_changed.connect(self.on_model_changed)
+        self._listening = True
 
     """
     def plug(self) -> None:
