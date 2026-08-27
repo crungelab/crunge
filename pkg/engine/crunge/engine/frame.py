@@ -7,8 +7,12 @@ from loguru import logger
 
 from crunge import yoga
 
+from .signal import Signal, Pulse
+from .scheduler import Scheduler
 from .widget import Widget
 from .display import Display
+from .channel import Channel
+
 
 current_frame: ContextVar[Optional["Frame"]] = ContextVar("current_frame", default=None)
 
@@ -20,6 +24,11 @@ class Frame(Widget):
         super().__init__(style)
         self._display = display
         self.display_stack: list[Display] = []
+
+        self._channel: Channel = None
+        self.channels: dict[str, Channel] = {}
+        self.channel_changed: Signal[Channel] = Signal()
+
 
     def make_current(self):
         current_frame.set(self)
@@ -109,3 +118,42 @@ class Frame(Widget):
         outgoing = self._display
         self.switch_display(self.display_stack.pop())
         return outgoing
+
+    # --- channels -------------------------------------------------------
+    @property
+    def channel(self) -> Channel:
+        return self._channel
+
+    @channel.setter
+    def channel(self, channel: Channel):
+        self._channel = channel
+        display = channel(channel.name, channel.title)
+        self.display = display
+        self.channel_changed.emit(channel)
+
+    def add_channel(self, channel: Channel):
+        if channel.name in self.channels:
+            raise ValueError(f"Channel already exists for name: {channel.name}")
+        self.channels[channel.name] = channel
+
+    def add_channels(self, channels: list[Channel]):
+        for channel in channels:
+            self.add_channel(channel)
+
+    def show_channel(self, name: str):
+        # logger.debug(f"show {name}")
+        def callback(delta_time: float):
+            channel = self.channels.get(name)
+            if channel is None:
+                raise ValueError(f"Channel not found for name: {name}")
+
+            self.channel = channel
+
+        Scheduler().schedule_once(callback, 0)
+
+    def reshow_channel(self):
+        if self.channel is not None:
+            self.show_channel(self.channel.name)
+
+    def show_next_channel(self):
+        self.show_channel(self.channel.next_channel)
