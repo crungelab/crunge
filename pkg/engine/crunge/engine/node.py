@@ -92,6 +92,7 @@ class Node(Dispatcher, Generic[T_Node]):
             self._vu.disable()
         super()._disable()
 
+    """
     def _destroy(self):
         logger.debug(f"Destroying node: {self}")
         if self.parent:
@@ -102,6 +103,21 @@ class Node(Dispatcher, Generic[T_Node]):
             child.destroy()
         self.clear()
         super()._destroy()
+    """
+    def _destroy(self) -> None:
+        logger.debug(f"Destroying node: {self}")
+        if self.parent is not None and not self.parent.is_destroying:
+            self.parent.remove_child(self)
+        if self.vu:
+            self.vu.destroy()
+
+        super()._destroy()
+
+    def destroy_children(self) -> None:
+        for child in list(self.children):
+            child.destroy()
+        self.children.clear()
+        super().destroy_children()
 
     """
     def _destroy(self) -> None:

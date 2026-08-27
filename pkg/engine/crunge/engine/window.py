@@ -84,12 +84,6 @@ class Window(Frame):
         super().make_current()
         return current_window.set(self)
 
-    """
-    def make_current(self):
-        super().make_current()
-        current_window.set(self)
-    """
-
     @classmethod
     def get_current(cls) -> Optional["Window"]:
         return current_window.get()

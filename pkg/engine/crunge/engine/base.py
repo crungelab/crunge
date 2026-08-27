@@ -87,9 +87,14 @@ class Base:
         if self.is_destroyed:
             return
         self._destroy()
+        self.destroy_children()
         self._lifetime = Lifetime.DESTROYED
 
     def _destroy(self) -> None:
+        pass
+
+    def destroy_children(self) -> None:
+        """Containers override."""
         pass
 
     def enable(self):

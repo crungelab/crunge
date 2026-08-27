@@ -79,12 +79,6 @@ class Demo(engine.App):
         globe.avatar = avatar
         self.pop_controller()
         return avatar
-
-    """
-    def on_display(self):
-        super().on_display()
-        gui = self.display.gui
-    """
     
     def reset(self):
         super().reset()

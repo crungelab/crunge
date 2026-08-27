@@ -64,10 +64,10 @@ class GltfV:
         scene_path = models_root / model / "glTF" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Embedded" / f"{model}.gltf"
         #scene_path = models_root / model / "glTF-Binary" / f"{model}.glb"
+
         scene = SceneBuilder().build(scene_path)
-        #exit()
+
         Viewer().show(scene)
-        #self.device.destroy()
 
 def main():
     GltfV().run()
