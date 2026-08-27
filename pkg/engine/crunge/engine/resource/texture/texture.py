@@ -6,6 +6,7 @@ import glm
 from crunge import wgpu
 
 from ..resource import Resource
+from ..sampler import Sampler
 
 if TYPE_CHECKING:
     from ..resource_group import ResourceGroup
@@ -16,7 +17,7 @@ class Texture(Resource):
         self,
         texture: wgpu.Texture,
         size: glm.ivec3,
-        sampler: wgpu.Sampler = None,
+        sampler: Sampler = None,
     ):
         super().__init__()
         self.texture = texture
@@ -24,6 +25,15 @@ class Texture(Resource):
         self.sampler = sampler
 
         self._view: wgpu.TextureView = None
+
+    def _destroy(self):
+        logger.debug(f"Destroying texture: {self}")
+        if self.texture is not None:
+            self.texture.destroy()
+            self.texture = None
+        self.sampler = None   # singleton: drop the reference, don't destroy it
+        self._view = None
+        super()._destroy()
 
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, size={self.size})"

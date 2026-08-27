@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 class Resource(Base):
     def __init__(self):
+        super().__init__()
         self.id = None
         self.name = None
         self.path = None

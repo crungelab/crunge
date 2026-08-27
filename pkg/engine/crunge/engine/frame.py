@@ -10,24 +10,16 @@ from crunge import yoga
 from .widget import Widget
 from .display import Display
 
-
-current_frame: ContextVar[Optional["Frame"]] = ContextVar(
-    "current_frame", default=None
-)
+current_frame: ContextVar[Optional["Frame"]] = ContextVar("current_frame", default=None)
 
 
 class Frame(Widget):
-    def __init__(self, style: yoga.Style = yoga.Style(), display: Display = None) -> None:
+    def __init__(
+        self, style: yoga.Style = yoga.Style(), display: Display = None
+    ) -> None:
         super().__init__(style)
         self._display = display
         self.display_stack: list[Display] = []
-
-    """
-    def reset(self):
-        super().reset()
-        if self.display is not None:
-            self.display.reset()
-    """
 
     def make_current(self):
         current_frame.set(self)
@@ -50,41 +42,70 @@ class Frame(Widget):
 
     @display.setter
     def display(self, display: Display) -> None:
-        self.make_current() # TODO: This should be in _enable() or similar, not channel setter
+        self.switch_display(display)
 
+    # --- switching -------------------------------------------------------
+
+    def switch_display(self, display: Display) -> None:
+        """Make `display` current. The outgoing display is suspended, not destroyed."""
         if display is None:
             raise ValueError("Display cannot be None")
 
-        if self._display is not None and self._display != display:
-            self._display.disable()
-            self.remove_child(self._display)
+        self.make_current()  # TODO: belongs in _enable(), not here
+
+        outgoing = self._display
+        if outgoing is not None and outgoing is not display:
+            self.suspend_display(outgoing)
 
         self._display = display
-        
-        self.children.clear()
-
-        self.add_child(display)
+        self.resume_display(display)
         self.on_display()
 
+    def replace_display(self, display: Display) -> None:
+        """Switch to `display` and destroy the one being replaced."""
+        outgoing = self._display
+        self.switch_display(display)
+        if outgoing is not None and outgoing is not display:
+            outgoing.destroy()
+
+    def suspend_display(self, display: Display) -> None:
+        display.disable()
+        self.remove_child(display)
+
+    def resume_display(self, display: Display) -> None:
+        if display.parent is not self:
+            self.add_child(display)
+        display.enable()
+        display.reset()
+
     def on_display(self):
-        if self._display is not None:
-            self._display.enable()
-            self._display.reset()
+        pass
+
+    # --- lifecycle -------------------------------------------------------
 
     def _create(self):
         super()._create()
         logger.debug("Frame.create")
         if self._display is not None:
-            self.display = self._display
+            self.switch_display(self._display)
 
-    def push_display(self, new_display: Display) -> None:
-        # logger.debug('push_display')
-        self.display_stack.append(self.display)
-        self.display = new_display
+    def _destroy(self):
+        for display in reversed(self.display_stack):
+            display.destroy()
+        self.display_stack.clear()
+        super()._destroy()
 
-    def pop_display(self) -> Display:
-        # logger.debug('pop_display')
-        if self.display:
-            self.display.disable()
-        self.display = self.display_stack.pop()
-        return self.display
+    # --- stack -----------------------------------------------------------
+
+    def push_display(self, display: Display) -> None:
+        if self._display is not None:
+            self.display_stack.append(self._display)
+        self.switch_display(display)
+
+    def pop_display(self) -> Optional[Display]:
+        if not self.display_stack:
+            logger.warning("pop_display: display stack is empty")
+            return None
+        outgoing = self._display
+        self.switch_display(self.display_stack.pop())
+        return outgoing
