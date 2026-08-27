@@ -17,9 +17,3 @@ class SceneScreen2D(Screen2D):
         logger.debug("Creating views")
         self.view = SceneView2D(self.scene)
         self.add_child(self.view)
-
-    """
-    def update(self, dt: float) -> None:
-        self.scene.update(dt)
-        super().update(dt)
-    """

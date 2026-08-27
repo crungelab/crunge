@@ -1,7 +1,8 @@
 from loguru import logger
 
-from ..view.view_2d import View2D
 from ...screen import Screen
+
+from ..view.view_2d import View2D
 
 
 class Screen2D(Screen):

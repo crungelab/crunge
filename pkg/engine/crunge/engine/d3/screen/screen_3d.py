@@ -1,11 +1,12 @@
 from loguru import logger
 
-from crunge.engine.imgui import ImGuiScreen
+from ...screen import Screen
+
 from ..view import View3D
 
 from ..camera_3d import Camera3D
 
-class Screen3D(ImGuiScreen):
+class Screen3D(Screen):
     def __init__(self, name: str = "Screen3D", title: str = "Screen 3D") -> None:
         super().__init__(name=name, title=title)
 
