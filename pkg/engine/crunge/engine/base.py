@@ -140,6 +140,7 @@ class Base:
 
     def _sync_lifetime(self, obj: "Base"):
         """Bring obj up to this node's lifetime state."""
+        logger.debug(f"Sync lifetime: {self} : {self._lifetime} -> {obj} : {obj._lifetime}")
         if self.is_created:
             obj.create()
         if self._is_enabled:

@@ -107,7 +107,7 @@ class SkeletonVu(Vu2D):
 
             self._slot_vus.append(slot_vu)
 
-    def on_node_transform_change(self, node: Node2D) -> None:
+    def on_transform_changed(self, node: Node2D) -> None:
         self.transform = node.transform
         self.bounds = node.bounds  # TODO: union of slot bounds, not the raw node bounds
 

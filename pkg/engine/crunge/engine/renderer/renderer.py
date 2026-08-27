@@ -7,7 +7,6 @@ from loguru import logger
 
 from crunge import wgpu
 from crunge import skia
-from crunge.engine.node import Node
 
 from ..base import Base
 from ..viewport import Viewport
@@ -21,6 +20,7 @@ if TYPE_CHECKING:
     from .task import RenderPlan
 
 from .render_pass import RenderPass, DefaultRenderPass
+from .renderable import Renderable
 
 current_renderer: ContextVar[Optional["Renderer"]] = ContextVar(
     "current_renderer", default=None
@@ -153,9 +153,9 @@ class Renderer(Base):
         if self.plan is None:
             self.create_plan()
 
-    def render(self, node: Node = None) -> None:
+    def render(self, renderable: Renderable = None) -> None:
         self.ensure_plan()
         with self.render_pass():
-            node.render()
+            renderable.render()
         self.plan.render()
         self.plan.clear()

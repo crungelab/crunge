@@ -1,53 +1,84 @@
-from typing import TYPE_CHECKING, TypeVar, Generic
+from __future__ import annotations
 
-from .base import Base
-from .node import Node
+from typing import TYPE_CHECKING, ClassVar, TypeVar
+
+from .chip import Chip
 
 from .viewport import Viewport
 from .easel import Easel
 from .renderer import Renderer
 
-T_Node = TypeVar("T_Node", bound=Node)
+if TYPE_CHECKING:
+    from .node import Node
+
+T_Node = TypeVar("T_Node", bound="Node")
 
 
-class Vu(Base, Generic[T_Node]):
-    def __init__(self) -> None:
-        super().__init__()
-        self._node: T_Node = None
+class Vu(Chip[T_Node]):
+    """The chip that renders its node.
+
+    Subclasses override `_draw`, not `draw`: `draw` owns the boundary work
+    that has to happen before anything is emitted, and calls `_draw` to do
+    the actual rendering.
+    """
+
+    # Declared rather than inferred. `draw` is overridden here, so the
+    # inference in Chip.__init_subclass__ would say True for every Vu
+    # regardless; saying it outright keeps the reason visible.
+    draws: ClassVar[bool] = True
+
+    # `update` is deliberately not overridden. A Vu that has nothing to do
+    # per frame stays out of the update bucket; one that does gets there by
+    # defining `update`, same as any other chip.
+
+    # -- ambient frame state ----------------------------------------------
 
     @property
-    def current_viewport(self) -> Viewport:
+    def current_viewport(self) -> Viewport | None:
         return Viewport.get_current()
 
     @property
-    def current_easel(self) -> Easel:
-        return self.current_viewport.easel if self.current_viewport else None
+    def current_easel(self) -> Easel | None:
+        viewport = self.current_viewport
+        return viewport.easel if viewport is not None else None
 
     @property
-    def current_renderer(self) -> Renderer:
+    def current_renderer(self) -> Renderer | None:
         return Renderer.get_current()
 
-    @property
-    def node(self) -> T_Node:
-        return self._node
+    # -- plug lifecycle ----------------------------------------------------
 
-    @node.setter
-    def node(self, value: T_Node):
-        self._node = value
-        value.transform_changed.connect(self.on_node_transform_change)
-        value.model_changed.connect(self.on_node_model_change)
+    def on_attached(self, node: "Node[T_Node]") -> None:
+        node.transform_changed.connect(self.on_transform_changed)
+        node.model_changed.connect(self.on_model_changed)
 
-    def draw(self):
+    """
+    def plug(self) -> None:
+        node = self.node
+        node.transform_changed.connect_now(self.on_transform_changed, node)
+        if node.model is not None:
+            node.model_changed.connect_now(self.on_model_changed, node)
+        else:
+            node.model_changed.connect(self.on_model_changed)
+    """
+
+    def unplug(self) -> None:
+        node = self.node
+        node.transform_changed.disconnect(self.on_transform_changed)
+        node.model_changed.disconnect(self.on_model_changed)
+
+    # -- signals -----------------------------------------------------------
+
+    def on_transform_changed(self, node: T_Node) -> None:
+        pass
+
+    def on_model_changed(self, node: T_Node) -> None:
+        pass
+
+    # -- frame -------------------------------------------------------------
+
+    def draw(self) -> None:
         self._draw()
 
-    def _draw(self):
-        pass
-
-    def update(self, delta_time: float):
-        pass
-
-    def on_node_transform_change(self, node: T_Node) -> None:
-        pass
-
-    def on_node_model_change(self, node: T_Node) -> None:
+    def _draw(self) -> None:
         pass

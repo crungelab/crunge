@@ -194,7 +194,7 @@ class Widget(Node["Widget"]):
             child.update(delta_time)
 
     def on_added(self) -> None:
-        #logger.debug(f"Widget.on_attached: {self}")
+        #logger.debug(f"Widget.on_added: {self}")
         #logger.debug(f"Parent: {self.parent}")
         #logger.debug(f"Widget layout: {self.layout}")
         #logger.debug(f"Parent layout: {self.parent.layout}")

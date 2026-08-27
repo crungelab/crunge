@@ -69,16 +69,3 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
         result = super().remove_child(child)
         child._mark_global_dirty()
         return result
-
-    """
-    def add_child(self, child: "SceneNode[T_Node, T_Layer]"):
-        # logger.debug(f"Attaching child: {child} to parent: {self} with layer: {self.layer}")
-        child.layer = self.layer
-        child._mark_global_dirty()
-        return super().add_child(child)
-
-    def remove_child(self, child: "SceneNode[T_Node, T_Layer]"):
-        # logger.debug(f"Detaching child: {child} from parent: {self}")
-        child.layer = None
-        return super().remove_child(child)
-    """

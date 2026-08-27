@@ -1,77 +1,33 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, TypeVar, Generic, Callable
 
 from loguru import logger
 
+if TYPE_CHECKING:
+    from .vu import Vu
+    from .model import Model
+
 from .signal import Signal
 from .base_node import BaseNode
-from .chip import Chip
-from .vu import Vu
-
-if TYPE_CHECKING:
-    from .model import Model
 
 T_Node = TypeVar("T_Node", bound="Node")
 
 
 class Node(BaseNode, Generic[T_Node]):
-    """A node in the scene graph.
-
-    The vu is no longer a special slot — it is a chip like any other, so
-    creation, enabling, drawing, updating and teardown all come from the
-    chip walk in BaseNode. `vu` is kept as a named accessor onto the chip
-    map, since that is how most call sites want to talk about it.
-    """
-
-    def __init__(
-        self,
-        vu: Vu | None = None,
-        model: "Model | None" = None,
-        chips: list[Chip[Any]] | None = None,
-    ) -> None:
-        super().__init__(chips)
+    def __init__(self, vu: "Vu" = None, model=None) -> None:
+        super().__init__()
         self._vu: "Vu" = None
-        self._model: "Model | None" = None
-        self.parent: "Node[T_Node] | None" = None
+        self._model: "Model" = None
+        self.parent: "Node[T_Node]" = None
         self.children: list["Node[T_Node]"] = []
 
-        # TODO: transform_changed belongs on Node2D/Node3D. Node has no
-        # transform, so a chip that connects here on a plain Node is
-        # listening to a signal that can never fire.
         self.transform_changed: Signal["Node[T_Node]"] = Signal()
         self.model_changed: Signal["Node[T_Node]"] = Signal()
 
-        if vu is not None:
-            vu._node = self
-            self.vu = vu
-            if model is not None:
-                vu.model = model
-                vu.sprite = model
+        self.vu = vu
         self.model = model
-
-        self.add(vu) if vu is not None else None
         self.visible = True
 
     # -- properties ----------------------------------------------------
-
-    
-    """
-    @property
-    def vu(self) -> Vu | None:
-        return self.get(Vu)
-
-    @vu.setter
-    def vu(self, value: Vu | None) -> None:
-        old = self.get(Vu)
-        if old is value:
-            return
-        if old is not None:
-            self.remove(old)
-            old.destroy()
-        if value is not None:
-            self.add(value)
-    """
 
     @property
     def vu(self) -> "Vu":
@@ -85,15 +41,16 @@ class Node(BaseNode, Generic[T_Node]):
         self._vu = value
         if value is None:
             return
+        value.node = self
         self._sync_lifetime(value)
         #logger.debug(f"Node.vu set: {value}, lifetime: {value._lifetime}")
 
     @property
-    def model(self) -> "Model | None":
+    def model(self) -> "Model":
         return self._model
 
     @model.setter
-    def model(self, value: "Model | None") -> None:
+    def model(self, value: "Model"):
         self._model = value
         if value is None:
             return
@@ -102,36 +59,53 @@ class Node(BaseNode, Generic[T_Node]):
     # -- lifetime ------------------------------------------------------
 
     def create_children(self) -> None:
-        super().create_children()  # chips created and plugged
+        super().create_children()
+        if self._vu is not None:
+            self._vu.create()
         for child in list(self.children):
+            #logger.debug(f"Creating child: {child}")
             child.create()
 
-    def enable_children(self) -> None:
-        super().enable_children()  # chips enabled
+    def _enable(self) -> None:
+        super()._enable()
+        if self._vu is not None:
+            self._vu.enable()
         for child in list(self.children):
             child.enable()
 
-    def reset_children(self) -> None:
-        super().reset_children()  # chips reset
+    def enable_children(self) -> None:
+        super().enable_children()
         for child in list(self.children):
+            #logger.debug(f"Creating child: {child}")
+            child.enable()
+
+    def reset_children(self) -> None:
+        super().reset_children()
+        for child in list(self.children):
+            #logger.debug(f"Resetting child: {child}")
             child.reset()
 
     def _disable(self) -> None:
         for child in list(self.children):
             child.disable()
-        super()._disable()  # chips disabled
+        if self._vu is not None:
+            self._vu.disable()
+        super()._disable()
 
     def _destroy(self) -> None:
         logger.debug(f"Destroying node: {self}")
         if self.parent is not None and not self.parent.is_destroying:
             self.parent.remove_child(self)
+        if self.vu:
+            self.vu.destroy()
+
         super()._destroy()
 
     def destroy_children(self) -> None:
         for child in list(self.children):
             child.destroy()
         self.children.clear()
-        super().destroy_children()  # chips destroyed
+        super().destroy_children()
 
     # -- tree ----------------------------------------------------------
 
@@ -141,6 +115,7 @@ class Node(BaseNode, Generic[T_Node]):
         self.on_child_added(child)
         child.on_added()
         self._sync_lifetime(child)
+        logger.debug(f"Added child: {child} to parent: {self}, lifetime: {child._lifetime}")
         return child
 
     def on_child_added(self, child: "Node[T_Node]") -> None:
@@ -187,15 +162,16 @@ class Node(BaseNode, Generic[T_Node]):
         self.children.sort(key=key, reverse=reverse)
 
     # -- frame ---------------------------------------------------------
-    #
-    # `_draw` and `_update` come from BaseNode and broadcast to the chips.
-    # Nothing to add here; Node only owns the walk over children.
 
     def draw(self) -> None:
         if not self.visible:
             return
         self._draw()
         self.draw_children()
+
+    def _draw(self) -> None:
+        if self._vu is not None:
+            self._vu.draw()
 
     def draw_children(self) -> None:
         for child in self.children:
@@ -210,6 +186,10 @@ class Node(BaseNode, Generic[T_Node]):
     def update(self, delta_time: float) -> None:
         self._update(delta_time)
         self.update_children(delta_time)
+
+    def _update(self, delta_time: float) -> None:
+        if self._vu is not None:
+            self._vu.update(delta_time)
 
     def update_children(self, delta_time: float) -> None:
         for child in self.children:

@@ -36,6 +36,7 @@ class SpriteVu(Vu2D):
     def sprite(self, sprite: Sprite):
         if sprite is None:
             return
+            #raise ValueError("Sprite cannot be None")
 
         sprite_group = self.group.sprite_group if self.group is not None else None
         self.sprite_membership = sprite.join(sprite_group)
@@ -60,8 +61,8 @@ class SpriteVu(Vu2D):
     def height(self) -> float:
         return self.size.y
 
-    def on_node_model_change(self, node: Node2D) -> None:
-        super().on_node_model_change(node)
+    def on_model_changed(self, node: Node2D) -> None:
+        super().on_model_changed(node)
         # logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
 
