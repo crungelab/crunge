@@ -13,7 +13,6 @@ class GraphLayer2D(GraphLayer[Node2D]):
         self.root.layer = self
 
     def __str__(self):
-        #return f"GraphLayer2D(name={self.name}, bounds={self.bounds})"
         return f"GraphLayer2D(name={self.name})"
     
     def __repr__(self):

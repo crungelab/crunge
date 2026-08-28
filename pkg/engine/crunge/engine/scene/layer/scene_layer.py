@@ -12,7 +12,7 @@ class SceneLayer(Node["SceneLayer"]):
     def __init__(self, name: str, model: "Model" = None) -> None:
         super().__init__(model=model)
         self.name = name
-        #self.scene: Scene = None
+        self.scene: Scene = None
         self.layers_by_name: dict[str, SceneLayer] = {}
 
     def add_layer(self, layer: "SceneLayer"):

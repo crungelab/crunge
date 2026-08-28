@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .scene.scene_3d import Scene3D
-    from .vu_3d import Vu3D
 
 from loguru import logger
 import glm
@@ -13,11 +12,14 @@ from ..scene.scene_node import SceneNode
 
 
 class Node3D(SceneNode["Node3D", "Scene3D"]):
-    def __init__(
-        self, position=glm.vec3(), vu: "Vu3D" = None, model: Any = None
-    ) -> None:
-        super().__init__(vu, model)
-        self._position = position
+    def __init__(self, position: glm.vec3 = None, model: Any = None) -> None:
+        # `vu` is no longer a constructor parameter. Attaching a chip inside
+        # __init__ runs on_attached before the subclass constructor has set
+        # up the transform. Chips go in via seat() or _seat().
+        super().__init__(model)
+        # None sentinel: a glm.vec3() default would be one shared mutable
+        # instance across every Node3D ever constructed.
+        self._position = glm.vec3() if position is None else glm.vec3(position)
         self._orientation = glm.quat(1.0, 0.0, 0.0, 0.0)
         self._scale = glm.vec3(1.0)
 
@@ -31,16 +33,18 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         # child bounds the way the old update_bounds() did. See chat note.
         self._bounds = Bounds3()
 
-    def on_transform(self):
-        self.gpu_update_model()
-
-    # TODO: DEPRECATED: this should be handled by the Vu class
-    def gpu_update_model(self):
-        pass
+    # `on_transform`/`gpu_update_model` are gone. A vu chip subscribes to
+    # transform_changed and marks its own dirt; the node has no business
+    # knowing there is a GPU.
 
     # ------------------------------------------------------------------
     # Properties
     # ------------------------------------------------------------------
+    #
+    # No equality guards. A caller holding a reference to _position and
+    # mutating it in place compares the value against itself, returns early,
+    # and the transform never rebuilds. Guard at the call site, where the
+    # input context is known.
 
     @property
     def position(self) -> glm.vec3:
@@ -48,8 +52,6 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
 
     @position.setter
     def position(self, value: glm.vec3):
-        if value == self._position:
-            return
         self._position = value
         self._mark_local_dirty()
 
@@ -59,8 +61,6 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
 
     @orientation.setter
     def orientation(self, value: glm.quat):
-        if value == self._orientation:
-            return
         self._orientation = value
         self._mark_local_dirty()
 
@@ -70,13 +70,11 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
 
     @scale.setter
     def scale(self, value: glm.vec3):
-        if value == self._scale:
-            return
         self._scale = value
         self._mark_local_dirty()
 
     # ------------------------------------------------------------------
-    # Local transform (was `matrix`)
+    # Local transform
     # ------------------------------------------------------------------
 
     @property
@@ -86,13 +84,6 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
             self._update_local_transform()
         return self._local_transform
 
-    """
-    @transform.setter
-    def transform(self, value: glm.mat4):
-        self._local_transform = value
-        self._local_dirty = False
-        self._mark_global_dirty()
-    """
     @transform.setter
     def transform(self, value: glm.mat4):
         self._position = glm.vec3(value[3])
@@ -101,9 +92,12 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         self._scale = scale
         # Normalize out scale before extracting rotation - quat_cast needs
         # an orthonormal basis (same issue as global_orientation).
-        if scale.x != 0: m[0] /= scale.x
-        if scale.y != 0: m[1] /= scale.y
-        if scale.z != 0: m[2] /= scale.z
+        if scale.x != 0:
+            m[0] /= scale.x
+        if scale.y != 0:
+            m[1] /= scale.y
+        if scale.z != 0:
+            m[2] /= scale.z
         self._orientation = glm.quat_cast(m)
         self._local_transform = value
         self._local_dirty = False
@@ -118,7 +112,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         self._local_dirty = False
 
     # ------------------------------------------------------------------
-    # Global (world) transform (was `transform`)
+    # Global (world) transform
     # ------------------------------------------------------------------
 
     @property
@@ -135,7 +129,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         self._global_dirty = False
 
     # ------------------------------------------------------------------
-    # Global decomposed properties (new, Godot-style)
+    # Global decomposed properties (Godot-style)
     # ------------------------------------------------------------------
 
     @property
@@ -159,13 +153,6 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         m[1] = glm.normalize(m[1])
         m[2] = glm.normalize(m[2])
         return glm.quat_cast(m)
-
-    """
-    @property
-    def global_orientation(self) -> glm.quat:
-        m = self.global_transform
-        return glm.quat_cast(glm.mat3(m))
-    """
 
     @global_orientation.setter
     def global_orientation(self, value: glm.quat):

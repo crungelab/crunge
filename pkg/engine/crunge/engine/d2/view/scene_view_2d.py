@@ -28,9 +28,3 @@ class SceneView2D(View2D):
         with self.renderer.use():
             self.renderer.render(self.scene)
             super().draw()
-
-    """
-    def update(self, dt: float) -> None:
-        self.scene.update(dt)
-        super().update(dt)
-    """

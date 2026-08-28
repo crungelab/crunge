@@ -20,12 +20,3 @@ class SceneView3D(View3D):
         with self.renderer.use():
             self.renderer.render(self.scene)
             super().draw()
-
-    """
-    def _draw(self):
-        with self.renderer.frame():
-            self.renderer.render(self.scene)
-
-        with self.renderer.use():
-            super()._draw()
-    """

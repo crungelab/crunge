@@ -10,6 +10,12 @@ class GraphLayer3D(GraphLayer[Node3D]):
         self.root = Node3D()
         self.root.layer = self
 
+    def __str__(self):
+        return f"GraphLayer2D(name={self.name})"
+    
+    def __repr__(self):
+        return str(self)
+
     @property
     def bounds(self) -> Bounds3:
         return self.root.bounds

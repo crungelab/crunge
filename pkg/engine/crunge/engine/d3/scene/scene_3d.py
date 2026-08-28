@@ -17,9 +17,11 @@ class Scene3D(Scene[Node3D]):
 
     @property
     def primary_layer(self) -> GraphLayer3D:
+        """
         if not self.children:
             self.create_default_layer()
-        return self.children[0]
+        """
+        return self.children[0] if self.children else None
 
     @property
     def bounds(self) -> Bounds3:
@@ -28,6 +30,21 @@ class Scene3D(Scene[Node3D]):
     @property
     def ambient_light(self):
         return self.lighting.ambient_light
+
+    def _create(self) -> None:
+        super()._create()
+        self.lighting.create()
+        if not self.children:
+            self.create_default_layer()
+
+
+    def _enable(self) -> None:
+        super()._enable()
+        self.lighting.enable()
+
+    def _disable(self) -> None:
+        self.lighting.disable()
+        super()._disable()
 
     def create_default_layer(self) -> None:
         """Create and return the default primary layer for the scene."""

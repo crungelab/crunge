@@ -33,12 +33,22 @@ class Vu3D(Vu[Node3D]):
         self.on_transform()
 
     def on_transform(self):
-        pass
+        """Self-notification, fired by the transform setter. Subclasses
+        that own GPU state mark dirt here."""
 
     @property
     def size(self) -> glm.vec3:
         raise NotImplementedError
 
-    def on_node_transform_change(self, node: Node3D) -> None:
-        logger.debug(f"Vu3D.on_node_transform_change: {node}")
+    # -- signals -----------------------------------------------------------
+    #
+    # Was `on_node_transform_change`, which the base class stopped calling
+    # when the handler names moved to the signal_name/on_signal_name
+    # convention. Nothing raised — the override was simply orphaned, the
+    # transform stayed identity, and everything drew collapsed at the origin.
+
+    def on_transform_changed(self, node: Node3D) -> None:
         self.transform = node.global_transform
+
+    def on_model_changed(self, node: Node3D) -> None:
+        pass

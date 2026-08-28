@@ -12,21 +12,30 @@ from ..math import Bounds3
 class Director3D:
     """Frames a Scene3D's contents: positions a camera and light so the
     whole scene subtree is visible, and derives parameter ranges (light
-    energy/range, position limits) scaled to the scene's extent."""
+    energy/range, position limits) scaled to the scene's extent.
+
+    Bounds are cached. The UI calls the limit methods every frame to size
+    its sliders, and each one used to walk the whole scene subtree — three
+    full walks per frame for numbers that only change when the scene does.
+    Call `invalidate()` after adding, removing or moving geometry.
+    """
 
     def __init__(self, scene: Scene3D) -> None:
         self.scene = scene
+        self._bounds: Bounds3 = None
 
     # ------------------------------------------------------------------
     # Scene measurement
     # ------------------------------------------------------------------
 
+    def invalidate(self) -> None:
+        """Drop the cached bounds. Cheap; the next query re-walks."""
+        self._bounds = None
+
     def get_bounds(self) -> Bounds3:
-        """Fresh subtree-bounds walk of the whole scene. Not cached - each
-        call re-walks the tree, so callers doing multiple things with the
-        same bounds (see place_camera_and_light) should compute once and
-        pass it down rather than calling this repeatedly."""
-        return self.scene.primary_layer.root.get_subtree_bounds()
+        if self._bounds is None:
+            self._bounds = self.scene.primary_layer.root.get_subtree_bounds()
+        return self._bounds
 
     def get_max_extent(self, bounds: Bounds3 = None) -> float:
         bounds = bounds if bounds is not None else self.get_bounds()
@@ -56,7 +65,7 @@ class Director3D:
     def get_light_energy_limits(self):
         extent = self.get_max_extent()
         energy_min = 0.0
-        energy_max = extent ** 2 * 10
+        energy_max = extent**2 * 10
         speed = energy_max * 0.01
         return (speed, energy_min, energy_max)
 
@@ -94,6 +103,10 @@ class Director3D:
         camera.position = camera_position
         camera.near = near_plane
         camera.far = far_plane
+        # Position alone leaves view_matrix at whatever it was — only
+        # look_at writes it. Without this the camera sits in the right
+        # place looking down an identity view.
+        camera.look_at(center)
 
     def place_light(self, light: Light3D, bounds: Bounds3 = None):
         bounds = bounds if bounds is not None else self.get_bounds()
@@ -108,7 +121,7 @@ class Director3D:
             center.y + light_distance,
             center.z + light_distance,
         )
-        light.energy = max_extent ** 2
+        light.energy = max_extent**2
         light.range = max_extent
 
     # ------------------------------------------------------------------
