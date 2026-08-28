@@ -32,12 +32,18 @@ class OffscreenNodePage(Page):
 
         sprite = self.sprite = SpriteLoader().load("${resources}/robocute.png")
         self.sprite_vu = SpriteVu(sprite)
-        self.node = Node2D(vu=self.sprite_vu).enable()
+
+        self.node: Node2D = Node2D().seat(self.sprite_vu)
+        self.node.enable()
 
     def _draw(self):
+        logger.debug(f"chips={self.node.chips} lifetime={self.node._lifetime}")
+        logger.debug(f"vu transform={self.sprite_vu.transform} dirt={self.sprite_vu.dirt}")
+        logger.debug(f"buffer={self.sprite_vu.node_buffer} bind={self.sprite_vu.node_bind_group}")
+
         with compose(self.easel):
             with self.renderer.render_pass():
-                self.draw_node()
+                self.node.draw()
 
         imgui.begin(self.title)
         size = self.target_viewport.width, self.target_viewport.height
@@ -46,8 +52,10 @@ class OffscreenNodePage(Page):
 
         super()._draw()
 
-    def draw_node(self):
-        self.node.draw()
+    def update(self, delta_time: float):
+        super().update(delta_time)
+        self.node.update(delta_time)
+        
 
 
 def install(app: App):

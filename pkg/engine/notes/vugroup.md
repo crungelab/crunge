@@ -1,0 +1,3 @@
+# VuGroup
+
+Used for instancing

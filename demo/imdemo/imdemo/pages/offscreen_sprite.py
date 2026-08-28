@@ -41,7 +41,7 @@ class OffscreenSpritePage(Page):
     def _draw(self):
         with compose(self.easel):
             with self.renderer.render_pass():
-                self.draw_sprite()
+                self.sprite_vu.draw()
 
         imgui.begin(self.title)
         size = self.target_viewport.width, self.target_viewport.height
@@ -50,8 +50,9 @@ class OffscreenSpritePage(Page):
 
         super()._draw()
 
-    def draw_sprite(self):
-        self.sprite_vu.draw()
+    def update(self, delta_time: float):
+        super().update(delta_time)
+        self.sprite_vu.update(delta_time)
 
 
 def install(app: App):

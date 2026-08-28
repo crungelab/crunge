@@ -9,10 +9,7 @@ requires-python = ">=3.10"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
-    #"loguru ==0.7.2",
-    #"box2d ==7.0.0",
     "scipy ==1.14.0",
-    #"PyTMX ==3.32",
 ]
 
 [tool.hatch.envs.default]
