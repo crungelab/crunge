@@ -12,6 +12,7 @@ T_Node = TypeVar("T_Node", bound=SceneNode)
 
 current_scene: ContextVar[Optional["Scene"]] = ContextVar("current_scene", default=None)
 
+
 class Scene(LayerGroup, Generic[T_Node]):
     def __init__(self, name: str) -> None:
         super().__init__(name)
@@ -24,17 +25,6 @@ class Scene(LayerGroup, Generic[T_Node]):
     def _disable(self):
         Updater().unregister(self)
         super()._disable()
-
-    """
-    def _create(self):
-        super()._create()
-        self.make_current()
-        Updater().register(self, phase=Phase.PHYSICS)
-
-    def _destroy(self):
-        Updater().unregister(self)
-        super()._destroy()
-    """
 
     @property
     def primary_layer(self) -> GraphLayer[T_Node]:

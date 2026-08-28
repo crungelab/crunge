@@ -13,14 +13,10 @@ from ..light_3d import OmniLight3D
 class Scene3D(Scene[Node3D]):
     def __init__(self) -> None:
         super().__init__("Scene3D")
-        self.lighting = Lighting3D()
+        self.lighting: Lighting3D = None
 
     @property
     def primary_layer(self) -> GraphLayer3D:
-        """
-        if not self.children:
-            self.create_default_layer()
-        """
         return self.children[0] if self.children else None
 
     @property
@@ -31,20 +27,14 @@ class Scene3D(Scene[Node3D]):
     def ambient_light(self):
         return self.lighting.ambient_light
 
-    def _create(self) -> None:
-        super()._create()
-        self.lighting.create()
+    def _seat(self) -> None:
+        super()._seat()
+        self.lighting = self.add(Lighting3D())
+
+    def create_children(self) -> None:
+        super().create_children()
         if not self.children:
             self.create_default_layer()
-
-
-    def _enable(self) -> None:
-        super()._enable()
-        self.lighting.enable()
-
-    def _disable(self) -> None:
-        self.lighting.disable()
-        super()._disable()
 
     def create_default_layer(self) -> None:
         """Create and return the default primary layer for the scene."""

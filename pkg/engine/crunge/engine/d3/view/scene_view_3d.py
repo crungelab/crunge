@@ -13,8 +13,17 @@ class SceneView3D(View3D):
         super().__init__()
         self.scene = scene
 
+    def _create(self):
+        super()._create()
+        logger.debug("Creating scene children")
+        self.scene.create()
+
     def create_renderer(self) -> None:
         self.renderer = Renderer3D(viewport=self.viewport, camera=self.camera, lighting=self.scene.lighting)
+
+    def _enable(self) -> None:
+        super()._enable()
+        self.scene.enable()
 
     def draw(self):
         with self.renderer.use():
