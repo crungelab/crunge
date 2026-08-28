@@ -28,7 +28,7 @@ class PolygonDemo(Demo):
                 glm.vec2(0, 1),
             ],
         )
-        self.node = Node2D().mount(shape)
+        self.node = Node2D().seat(shape)
         self.scene.attach(self.node)
 
     def center_camera(self):

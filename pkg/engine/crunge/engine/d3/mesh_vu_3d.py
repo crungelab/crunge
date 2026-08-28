@@ -104,11 +104,6 @@ class MeshVu3D(Vu3D):
         super().update(delta_time)
         self.flush()
 
-    def gpu_update_model(self):
-        """Deferred alias, kept so older callers keep working. Delete once
-        `rg gpu_update_model` comes back clean."""
-        self.mark_gpu()
-
     def _flush_gpu(self) -> bool:
         if self.model_uniform_buffer is None:
             return False

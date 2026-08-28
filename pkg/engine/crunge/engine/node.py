@@ -22,9 +22,9 @@ class Node(BaseNode, Generic[T_Node]):
     named accessor onto the chip map, since that is how most call sites want
     to talk about it.
 
-    Chips are attached with `mount`, never in the constructor:
+    Chips are attached with `seat`, never in the constructor:
 
-        node = Node2D(position, rotation).mount(SpriteVu(sprite))
+        node = Node2D(position, rotation).seat(SpriteVu(sprite))
     """
 
     def __init__(self, model: "Model | None" = None) -> None:

@@ -92,14 +92,6 @@ class Base:
         self.destroy_children()
         self._lifetime = Lifetime.DESTROYED
         return self
-    """
-    def destroy(self) -> None:
-        if self.is_destroyed:
-            return
-        self._destroy()
-        self.destroy_children()
-        self._lifetime = Lifetime.DESTROYED
-    """
 
     def _destroy(self) -> None:
         pass

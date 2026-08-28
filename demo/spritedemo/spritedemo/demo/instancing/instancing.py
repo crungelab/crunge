@@ -48,7 +48,7 @@ class InstancingDemo(Demo):
 
         for row in range(grid_size):
             for col in range(grid_size):
-                node = Node2D(scale=glm.vec2(self.scale, self.scale)).mount(SpriteVu(self.sprite))
+                node = Node2D(scale=glm.vec2(self.scale, self.scale)).seat(SpriteVu(self.sprite))
 
                 # Calculate position based on grid and spacing
                 x = (

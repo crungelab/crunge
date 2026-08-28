@@ -203,11 +203,6 @@ class Camera2D(Node2D):
     def unproject(self, mouse_vec: glm.vec2):
         viewport_width = self.viewport_size.x
         viewport_height = self.viewport_size.y
-        """
-        viewport = self.viewport
-        viewport_width = viewport.width
-        viewport_height = viewport.height
-        """
 
         mx = mouse_vec.x
         my = mouse_vec.y

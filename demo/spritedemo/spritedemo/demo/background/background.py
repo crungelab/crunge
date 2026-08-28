@@ -21,7 +21,7 @@ class BackgroundDemo(Demo):
         self.color = colors.WHITE
 
         sprite = self.sprite = SpriteLoader(sprite_builder=BackgroundSpriteBuilder()).load("${images}/backgroundColorGrass.png")
-        self.node = Node2D(model=sprite).mount(BackgroundVu())
+        self.node = Node2D(model=sprite).seat(BackgroundVu())
         self.scene.attach(self.node)
 
     def kill(self):

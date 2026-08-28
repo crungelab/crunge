@@ -2,7 +2,6 @@ from loguru import logger
 
 import glm
 
-from crunge.engine.d2.physics.geom import BoxGeom, ChainGeom
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2 import Node2D
 

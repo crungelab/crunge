@@ -12,7 +12,7 @@ from crunge import skia
 
 from .base import Base
 from .signal import Signal
-from .math import Rect2i  # ASSUMPTION: import path
+from .math import Rect2i
 from .uniforms import ViewportUniform, cast_vec2
 from .easel import Easel
 
@@ -185,7 +185,7 @@ class Viewport(Base):
         canvas = self.easel.canvas
         rect = self.global_rect
         canvas.save()
-        canvas.clip_rect(  # ASSUMPTION: skia binding
+        canvas.clip_rect(
             skia.Rect.make_xywh(rect.x, rect.y, rect.width, rect.height)
         )
         canvas.translate(rect.x, rect.y)

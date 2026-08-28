@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import IntFlag, auto
 from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar
 
-from .base import Base  # ASSUMPTION: Base provides the Lifetime machinery
+from .base import Base
 
 if TYPE_CHECKING:
     from .base_node import BaseNode

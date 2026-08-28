@@ -22,7 +22,7 @@ class LineDemo(Demo):
         self.color = colors.WHITE
 
         shape = self.shape = Line2D(glm.vec2(0, 0), glm.vec2(1, 1))
-        self.node = Node2D().mount(shape)
+        self.node = Node2D().seat(shape)
         self.scene.attach(self.node)
 
     def center_camera(self):

@@ -34,7 +34,7 @@ class SpriteAtlasDemo(Demo):
         sprite = self.sprite = atlas.get("bomb.png")
 
         self.sprite_vu = vu = SpriteVu()
-        node = self.node = Node2D(model=sprite).mount(vu)
+        node = self.node = Node2D(model=sprite).seat(vu)
         x = self.width / 2 / self.ppu
         y = self.height / 2 / self.ppu
         node.position = glm.vec2(x, y)

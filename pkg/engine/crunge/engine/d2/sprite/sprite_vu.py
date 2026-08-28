@@ -16,7 +16,6 @@ from ..uniforms_2d import NodeUniform
 from .sprite_program import SpriteProgram
 from .sprite import Sprite, SpriteMembership
 
-
 if TYPE_CHECKING:
     from .sprite_vu_group import SpriteVuGroup
 

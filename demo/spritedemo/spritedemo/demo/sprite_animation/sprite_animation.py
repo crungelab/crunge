@@ -32,7 +32,7 @@ class SpriteAnimationDemo(Demo):
 
         self.sprite = atlas.get("idle")
 
-        self.node = Node2D(model=self.sprite).mount(SpriteVu())
+        self.node = Node2D(model=self.sprite).seat(SpriteVu())
         self.scene.attach(self.node)
 
         animator = self.animator = SpriteAnimator(self.node)

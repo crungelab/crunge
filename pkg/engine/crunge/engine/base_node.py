@@ -95,7 +95,7 @@ class BaseNode(Dispatcher):
     # -- chips -------------------------------------------------------------
 
     def add(self, chip: C) -> C:
-        if self.is_destroying:  # ASSUMPTION: Base exposes is_destroying
+        if self.is_destroying:
             raise RuntimeError(f"cannot add {chip!r} to {self!r} while it tears down")
 
         cls = type(chip)
@@ -119,7 +119,7 @@ class BaseNode(Dispatcher):
         chip.on_attached(self)
         # Late arrival on a live node: bring the chip up to our lifetime and
         # let it resolve the set, which is already complete around it.
-        self._sync_lifetime(chip)  # ASSUMPTION: same helper add_child uses
+        self._sync_lifetime(chip)
         if self._plugged:
             chip.plug()
         return chip

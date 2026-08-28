@@ -132,7 +132,7 @@ class Director3D:
     def _farthest_corner_distance(point: glm.vec3, bounds: Bounds3) -> float:
         """Distance from `point` to the farthest of the AABB's 8 corners -
         used for a safe far-plane estimate."""
-        # ASSUMPTION: Bounds3 exposes `.min`/`.max` as glm.vec3 corners.
+
         lo, hi = bounds.min, bounds.max
         farthest = 0.0
         for x in (lo.x, hi.x):

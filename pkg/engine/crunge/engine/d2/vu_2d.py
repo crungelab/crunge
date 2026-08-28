@@ -153,11 +153,6 @@ class Vu2D(Vu[Node2D]):
         super().update(delta_time)
         self.flush()
 
-    def update_gpu(self) -> None:
-        """Deferred alias, kept so older callers keep working. Delete once
-        `rg update_gpu` comes back clean."""
-        self.mark_gpu()
-
     def build_uniform(self) -> NodeUniform:
         """Override point for subclasses with more to say. Head-call super,
         set the extra fields, return it."""
@@ -181,4 +176,11 @@ class Vu2D(Vu[Node2D]):
     def draw(self) -> None:
         if not self.manual_draw:
             return  # a render group draws us; we have no program of our own
+
+        # TODO: Adress this issue in next branch named vugroup. It shouldn't raise
+        """
+        if not self.manual_draw:
+            raise RuntimeError(f"{self.__class__.__name__}.draw() called on a grouped vu; the group draws it instead")
+        """
+
         self._draw()

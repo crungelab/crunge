@@ -209,8 +209,7 @@ class SequenceTimeline:
 
         count = self.attachment.sequence.count
         mode = kf.mode
-        # ASSUMPTION: mode semantics inferred from names, not verified against
-        # Spine's runtime. The dragon only uses "loop" and the default hold.
+
         if mode == "loop":
             index %= count
         elif mode == "pingpong":

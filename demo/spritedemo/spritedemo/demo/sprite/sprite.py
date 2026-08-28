@@ -24,7 +24,7 @@ class SpriteDemo(Demo):
 
         sprite = self.sprite = SpriteLoader().load("${images}/playerShip1_orange.png")
 
-        self.node = Node2D(model=sprite).mount(SpriteVu())
+        self.node = Node2D(model=sprite).seat(SpriteVu())
         self.scene.attach(self.node)
 
     def center_camera(self):
