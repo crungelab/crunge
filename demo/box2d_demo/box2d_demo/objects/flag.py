@@ -4,13 +4,13 @@ from crunge.engine.d2.sprite import SpriteVu
 
 class Pole(Node2D):
     def __init__(self, position, sprite):
-        super().__init__(position, vu=SpriteVu(), model=sprite)
+        super().__init__(position, model=sprite)
         self.collected = False
 
 
 class Flag(Node2D):
     def __init__(self, position, sprite):
-        super().__init__(position, vu=SpriteVu(), model=sprite)
+        super().__init__(position, model=sprite)
         self.collected = False
 
     @classmethod

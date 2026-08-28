@@ -11,7 +11,7 @@ class TileLayerGhostBuilder(tiled_builder.DefaultTileLayerBuilder):
     def __init__(self):
         def create_node_cb(position, sprite, properties: dict):
             if properties.get("type") == "dirtCenter":
-                return GhostTile(position, sprite)
-            return Tile(position, sprite)
+                return GhostTile(position, sprite).seat()
+            return Tile(position, sprite).seat()
 
         super().__init__(tile_builder=DefaultTileBuilder(create_node_cb=create_node_cb))

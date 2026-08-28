@@ -20,49 +20,38 @@ from .sprite import Sprite, SpriteMembership
 if TYPE_CHECKING:
     from .sprite_vu_group import SpriteVuGroup
 
-
 class SpriteVu(Vu2D):
     group: "SpriteVuGroup"
-
+    
     def __init__(self, sprite: Sprite = None) -> None:
         super().__init__()
-        # Held directly rather than read back through the membership, so a
-        # regroup can rejoin without needing the membership it is replacing.
-        self._sprite: Sprite = None
         self.sprite_membership: SpriteMembership = None
         self.sprite = sprite
 
-    # -- sprite ------------------------------------------------------------
-
     @property
     def sprite(self) -> Sprite:
-        return self._sprite
+        return self.sprite_membership.member if self.sprite_membership is not None else None
 
     @sprite.setter
-    def sprite(self, sprite: Sprite) -> None:
-        if sprite is None or sprite is self._sprite:
+    def sprite(self, sprite: Sprite):
+        if sprite is None:
             return
-        self._sprite = sprite
-        self.join()
-        self.mark_gpu()
+            #raise ValueError("Sprite cannot be None")
 
-    def join(self) -> None:
-        """(Re)join the group's sprite group. Tolerates either half being
-        absent — whichever of sprite/group arrives second calls this again."""
-        if self._sprite is None:
-            return
         sprite_group = self.group.sprite_group if self.group is not None else None
-        self.sprite_membership = self._sprite.join(sprite_group)
+        self.sprite_membership = sprite.join(sprite_group)
+
+        if self.is_enabled:
+            self.update_gpu()
 
     def on_group(self) -> None:
-        self.join()
-        self.mark_gpu()
+        self.sprite_membership = self.sprite.join(self.group.sprite_group)
 
     @property
     def size(self) -> glm.vec2:
-        if self._sprite is None:
+        if self.sprite is None:
             return glm.vec2(1.0)
-        return glm.vec2(self._sprite.size)
+        return glm.vec2(self.sprite.size)
 
     @property
     def width(self) -> float:
@@ -74,50 +63,45 @@ class SpriteVu(Vu2D):
 
     def on_model_changed(self, node: Node2D) -> None:
         super().on_model_changed(node)
+        # logger.debug(f"SpriteVu: on_node_model_change: {node.model}")
         self.sprite = node.model
 
     def create_program(self):
         logger.debug("SpriteVu: create_program")
         self.program = SpriteProgram()
 
-    # -- uniform -----------------------------------------------------------
+    def update_gpu(self):
+        uniform = NodeUniform()
+        uniform.transform.data = cast_matrix4(self.transform)
+        #uniform.color = cast_vec4(self.color)
+        uniform.color = cast_tuple4f(self.color)
 
-    def build_uniform(self) -> NodeUniform:
-        uniform = super().build_uniform()
         if self.sprite_membership is not None:
             uniform.model_index = self.sprite_membership.index
-        return uniform
 
-    # -- frame -------------------------------------------------------------
+        # logger.debug(f"SpriteVu: update_gpu: {uniform.model_index}")
+        self.node_buffer[self.node_buffer_index] = uniform
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         super().bind(pass_enc)
-        self._sprite.bind(pass_enc, self.sprite_membership)
+        self.sprite.bind(pass_enc, self.sprite_membership)
 
     def _draw(self) -> None:
-        if self._sprite is None or self.sprite_membership is None:
-            return
-
         renderer = Renderer.get_current()
 
         frustum = renderer.camera_2d.frustum
-
+        
         if not self.bounds.intersects(frustum):
+            # logger.debug(f"SpriteVu: {self} is not in frustum: {frustum}")
             return
 
+        # logger.debug("Drawing sprite")
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.render_pipeline.get())
         self.bind(pass_enc)
         pass_enc.draw(4)
 
-    def update_transform(
-        self,
-        position: glm.vec3,
-        size: glm.vec2,
-        rotation=0.0,
-        scale=glm.vec3(1, 1, 1),
-        depth=0.0,
-    ):
+    def update_transform(self, position: glm.vec3, size: glm.vec2, rotation=0.0, scale=glm.vec3(1,1,1), depth=0.0):
         x = position.x
         y = position.y
         z = depth
@@ -130,6 +114,7 @@ class SpriteVu(Vu2D):
         )
         self.transform = model
 
+            
         self.bounds = Bounds2(
             x - size.x / 2,
             y - size.y / 2,

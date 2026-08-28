@@ -26,6 +26,7 @@ class TiledMapLoader(Loader):
     def load(self, path: Path):
         path = ResourceManager().resolve_path(path)
         logger.debug(f"Loading map: {path}")
+
         map = tmx.Map()
         map.load(str(path))
         self.context.map = map

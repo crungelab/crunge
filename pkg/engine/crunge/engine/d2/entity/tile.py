@@ -12,12 +12,13 @@ from crunge.engine.d2.scene.layer import GraphLayer2D
 
 class Tile(StaticEntity2D):
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
-        super().__init__(position, vu=SpriteVu(sprite), model=sprite)
+        super().__init__(position, model=sprite)
 
 
 class GhostTile(Node2D):
+    default_vu = SpriteVu
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
-        super().__init__(position, vu=SpriteVu(sprite), model=sprite)
+        super().__init__(position, model=sprite)
 
 
 class TileLayer(GraphLayer2D):

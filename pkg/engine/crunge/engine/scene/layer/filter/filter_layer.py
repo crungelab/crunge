@@ -9,5 +9,5 @@ if TYPE_CHECKING:
 from ..scene_layer import SceneLayer
 
 class FilterLayer(SceneLayer):
-    def __init__(self, name: str, vu: "Vu" = None, model: "Model" = None) -> None:
-        super().__init__(name=name, vu=vu, model=model)
+    def __init__(self, name: str, model: "Model" = None) -> None:
+        super().__init__(name=name, model=model)

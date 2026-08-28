@@ -23,7 +23,7 @@ class Ship(DynamicEntity2D):
         
         sprite = atlas.get("playerShip1_orange.png")
 
-        super().__init__(position, vu=SpriteVu(), model=sprite, geom=BallGeom())
+        super().__init__(position, model=sprite, geom=BallGeom())
 
         self.rear_thruster: Thruster = None
         self.front_thruster: Thruster = None

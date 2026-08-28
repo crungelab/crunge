@@ -8,38 +8,68 @@ from crunge import wgpu
 import crunge.wgpu.utils as utils
 
 from ... import Renderer
-from ...uniforms import cast_matrix4, cast_tuple4f
+from ...uniforms import cast_tuple4f
 from ..vu_2d import Vu2D
 
 from ..uniforms_2d import Vec2, ModelUniform, ParticleUniform
 from ..binding_2d import EmitterBindGroup
-#from ..binding_2d import ModelBindGroup
 
 from ..program_2d import Program2D
 
 from .spawner import Spawner, RadialBurstSpawner
 
+
 class ParticleSystem2D(Vu2D):
-    def __init__(self, program: Program2D, color=(0.0, 0.0, 1.0, 1.0)):
+    """Emitter drawn as instanced quads, stepped by a compute pass.
+
+    The transform is not this class's business: it goes into NodeUniform,
+    which Vu2D writes to the node buffer. ModelUniform has no transform
+    field — only colour and texture description — which is why the old
+    `on_transform` override that wrote `model_uniform.transform` was
+    commented out rather than fixed.
+    """
+
+    def __init__(
+        self,
+        program: Program2D,
+        color=(0.0, 0.0, 1.0, 1.0),
+        num_particles: int = 32,
+    ):
         super().__init__()
-        self.color = color
         self.program = program
-        self.num_particles = 32
+        self.num_particles = num_particles
         self.spawner: Spawner = None
+        self.particles = None
 
         self.model_uniform_buffer: wgpu.Buffer = None
         self.model_uniform_buffer_size: int = 0
 
         self.particles_buffer: wgpu.Buffer = None
+        self.particles_buffer_size: int = 0
 
-        self.create_spawner()
-        self.create_particles()
-        self.create_buffers()
-        self.create_bind_groups()
+        self.compute_bind_group: wgpu.BindGroup = None
+        self.model_bind_group: EmitterBindGroup = None
+
+        # Setter marks GPU dirt, so it comes after the buffer fields exist.
+        self.color = color
+
+        # create_spawner/create_particles/create_buffers/create_bind_groups
+        # were all called here. The last two acquire GPU resources before
+        # the lifecycle has started, and Vu2D._enable calls them again —
+        # so every system built two sets of buffers, the second of which
+        # the bind groups pointed at while the first leaked.
 
     @property
     def size(self):
         return glm.vec2(10, 10)
+
+    # -- lifetime ----------------------------------------------------------
+
+    def _create(self):
+        super()._create()
+        # CPU-side only; the buffers built from this come later, in _enable.
+        self.create_spawner()
+        self.create_particles()
 
     def create_spawner(self):
         self.spawner = RadialBurstSpawner(self.color)
@@ -48,18 +78,6 @@ class ParticleSystem2D(Vu2D):
         self.particles = (ParticleUniform * self.num_particles)()
         for i in range(self.num_particles):
             self.spawner(self.particles[i])
-    '''
-    def create_particles(self):
-        self.particles = (ParticleUniform * self.num_particles)()
-        for i in range(0, self.num_particles):
-            self.particles[i].position = Vec2(0.0, 0.0)
-            self.particles[i].velocity = Vec2(
-                random.uniform(-1, 1), random.uniform(-1, 1)
-            )
-            self.particles[i].color = cast_tuple4f(self.color)
-            self.particles[i].age = 0.0
-            self.particles[i].lifespan = 100.0
-    '''
 
     def create_buffers(self):
         super().create_buffers()
@@ -89,7 +107,6 @@ class ParticleSystem2D(Vu2D):
         )
 
         self.compute_bind_group = self.device.create_bind_group(compute_bind_group_desc)
-        #logger.debug(self.compute_bind_group)
 
         self.model_bind_group = EmitterBindGroup(
             self.model_uniform_buffer,
@@ -98,35 +115,33 @@ class ParticleSystem2D(Vu2D):
             storage_buffer_size=self.particles_buffer_size,
         )
 
-    '''
-    def on_transform(self):
-        super().on_transform()
+    # -- deferred rebuild --------------------------------------------------
+
+    def _flush_gpu(self) -> bool:
+        if self.model_uniform_buffer is None:
+            return False
+        if not super()._flush_gpu():
+            return False
+
+        # Colour only. Each particle already carries its own colour from
+        # the spawner, so this is the emitter-wide tint; rect, texture_size
+        # and the flags stay at their defaults for an untextured system.
         model_uniform = ModelUniform()
-        model_uniform.transform.data = cast_matrix4(self.transform)
-
+        model_uniform.color = cast_tuple4f(self.color)
         self.gfx.queue.write_buffer(self.model_uniform_buffer, 0, model_uniform)
-    '''
+        return True
 
-    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
-        super().bind(pass_enc)
-        self.model_bind_group.bind(pass_enc)
-
-    '''
-    def _draw(self):
-        pass_enc = renderer.pass_enc
-        pass_enc.set_pipeline(self.program.render_pipeline.get())
-        self.model_bind_group.bind(pass_enc)
-        pass_enc.draw(4, self.num_particles)
-    '''
-
-    def _draw(self):
-        renderer = Renderer.get_current()
-        pass_enc = renderer.pass_enc
-        pass_enc.set_pipeline(self.program.render_pipeline.get())
-        self.bind(pass_enc)
-        pass_enc.draw(4, self.num_particles)
+    # -- frame -------------------------------------------------------------
 
     def update(self, delta_time: float):
+        # Head-call: Vu2D.update flushes pending uploads, and buffer writes
+        # have to land before any pass is opened. Without this the node and
+        # model uniforms were never written at all.
+        super().update(delta_time)
+
+        if self.compute_bind_group is None:
+            return
+
         compute_pass = wgpu.ComputePassDescriptor(
             label="Main Compute Pass",
         )
@@ -141,3 +156,17 @@ class ParticleSystem2D(Vu2D):
         command_buffer = encoder.finish()
 
         self.queue.submit([command_buffer])
+
+    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
+        super().bind(pass_enc)
+        self.model_bind_group.bind(pass_enc)
+
+    def _draw(self):
+        if self.model_bind_group is None:
+            return
+
+        renderer = Renderer.get_current()
+        pass_enc = renderer.pass_enc
+        pass_enc.set_pipeline(self.program.render_pipeline.get())
+        self.bind(pass_enc)
+        pass_enc.draw(4, self.num_particles)

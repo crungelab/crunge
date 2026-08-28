@@ -21,7 +21,7 @@ PLAYER_MASS = 1
 
 class KinematicCharacter(KinematicEntity2D):
     def __init__(self, position=glm.vec2(), vu=SpriteVu(), model=None, brain=None):
-        super().__init__(position, vu=vu, model=model, brain=brain, geom=HullGeom())
+        super().__init__(position, model=model, brain=brain, geom=HullGeom())
         self.mass = PLAYER_MASS
 
     def on_mount(self, node: PhysicsEntity2D, point: glm.vec2):

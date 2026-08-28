@@ -97,5 +97,5 @@ class DefaultObjectBuilder(ObjectBuilder):
         sprite: Sprite,
         properties: dict,
     ):
-        node = Node2D(position, rotation, scale, vu=SpriteVu(), model=sprite)
+        node = Node2D(position, rotation, scale, model=sprite).seat(SpriteVu())
         return node

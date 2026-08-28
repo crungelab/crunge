@@ -28,7 +28,7 @@ class DefaultObjectGroupBuilder(ObjectGroupBuilder):
         logger.debug(f"Building layer of kind: {kind}")
         layer: SceneLayer = None
         if kind == "KawaseBlurLayer":
-            layer = FilterLayer(name=tmx_layer.name, vu=KawaseBlurVu())
+            layer = FilterLayer(name=tmx_layer.name).mount(KawaseBlurVu())
         else:
             layer = GraphLayer2D(name=tmx_layer.name)
         self.context.push_layer(layer)

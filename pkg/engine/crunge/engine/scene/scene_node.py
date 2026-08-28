@@ -13,8 +13,8 @@ T_Layer = TypeVar("T_Layer", bound=SceneLayer)
 class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
     children: "list[SceneNode[T_Node, T_Layer]]"
 
-    def __init__(self, vu: Vu = None, model=None) -> None:
-        super().__init__(vu, model)
+    def __init__(self, model=None) -> None:
+        super().__init__(model)
         self.layer: T_Layer = None
 
         self._local_dirty = False

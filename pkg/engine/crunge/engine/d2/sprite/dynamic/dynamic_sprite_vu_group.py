@@ -29,22 +29,25 @@ class DynamicSpriteVuGroup(SpriteVuGroup):
         )
         logger.debug(f"Node Uniform Buffer: {self.node_buffer}")
 
-
     def _create(self):
         super()._create()
         self.create_bind_groups()
 
     def append(self, vu: SpriteVu) -> None:
+        # VuGroup.append assigns vu.group, which fires on_group. Assigning
+        # it again here fired on_group a second time and orphaned the first
+        # SpriteMembership.
         super().append(vu)
-        vu.group = self
         vu.node_buffer = self.node_buffer
+        # Setter marks GPU dirt, so the uniform written during enable —
+        # before this buffer existed — is retried on the next flush.
         vu.node_buffer_index = len(self.visuals) - 1
 
     def remove(self, vu: SpriteVu):
         super().remove(vu)
-        #vu.group = None
-        for index, vu in enumerate(self.visuals):
-            vu.node_buffer_index = index
+        # Loop variable was named `vu`, shadowing the parameter.
+        for index, member in enumerate(self.visuals):
+            member.node_buffer_index = index
 
     def create_bind_groups(self):
         self.node_bind_group = NodeBindGroup(

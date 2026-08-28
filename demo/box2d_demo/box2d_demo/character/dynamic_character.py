@@ -22,8 +22,8 @@ PLAYER_MASS = 20
 
 class DynamicCharacter(DynamicEntity2D):
     model: Sprite
-    def __init__(self, position=glm.vec2(), vu=SpriteVu(), model=None, brain=None):
-        super().__init__(position, vu=vu, model=model, brain=brain, geom=HullGeom())
+    def __init__(self, position=glm.vec2(), model=None, brain=None):
+        super().__init__(position, model=model, brain=brain, geom=HullGeom())
         self.mass = PLAYER_MASS
         self.mass_data: b2.MassData = None
 

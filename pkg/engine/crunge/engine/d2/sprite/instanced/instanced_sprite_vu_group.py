@@ -18,7 +18,6 @@ class InstancedSpriteVuBatch:
         self.instance_count = 1
 
     def draw(self):
-        # logger.debug("Drawing sprites")
         renderer = Renderer.get_current()
         pass_enc = renderer.pass_enc
         self.sprite_vu.sprite.bind(pass_enc, self.sprite_vu.sprite_membership)
@@ -26,15 +25,25 @@ class InstancedSpriteVuBatch:
 
 
 class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
+    """Batches its members by texture.
+
+    A vu can be appended before its model arrives, so batching has the same
+    not-ready-yet problem as a vu's own upload, and the same answer: skip,
+    mark, rebuild on the next update. Without the rebuild a vu that was
+    appended sprite-less never enters a batch and silently never draws.
+    """
+
     def __init__(self, count: int = ELEMENTS, sprite_group: SpriteGroup = None) -> None:
         super().__init__(count, sprite_group)
         self.is_render_group = True
         self.batches: list[InstancedSpriteVuBatch] = []
+        self._rebatch = False
         self.program = InstancedSpriteProgram()
 
     def clear(self):
         super().clear()
         self.batches.clear()
+        self._rebatch = False
 
     def append(self, vu: SpriteVu) -> None:
         super().append(vu)
@@ -44,7 +53,17 @@ class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
         super().remove(vu)
         self.batch_all()
 
+    def update(self, delta_time: float) -> None:
+        super().update(delta_time)
+        if self._rebatch:
+            self.batch_all()
+
     def batch(self, member: SpriteVu):
+        if member.sprite is None:
+            # Model has not landed yet. Rebuild once it has.
+            self._rebatch = True
+            return
+
         # TODO: Compare by texture until I start registering materials
         if (
             len(self.batches) == 0
@@ -58,6 +77,8 @@ class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
 
     def batch_all(self):
         self.batches.clear()
+        # Cleared first; batch() sets it again for any member still waiting.
+        self._rebatch = False
         for member in self.visuals:
             self.batch(member)
 

@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 
 class SceneLayer(Node["SceneLayer"]):
-    def __init__(self, name: str, vu: "Vu" = None, model: "Model" = None) -> None:
-        super().__init__(vu=vu, model=model)
+    def __init__(self, name: str, model: "Model" = None) -> None:
+        super().__init__(model=model)
         self.name = name
         #self.scene: Scene = None
         self.layers_by_name: dict[str, SceneLayer] = {}

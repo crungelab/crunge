@@ -17,3 +17,7 @@ class SpriteLayer(GraphLayer2D):
     def detach(self, node: Node2D) -> None:
         super().detach(node)
         self.vu_group.remove(node.vu)
+
+    def _update(self, delta_time: float) -> None:
+        super()._update(delta_time)
+        self.vu_group.update(delta_time)

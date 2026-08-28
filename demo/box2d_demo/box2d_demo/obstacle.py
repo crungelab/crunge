@@ -8,7 +8,7 @@ from .constants import *
 
 class Obstacle(DynamicEntity2D):
     def __init__(self, position, sprite, geom):
-        super().__init__(position, vu=SpriteVu(), model=sprite, geom=geom)
+        super().__init__(position, model=sprite, geom=geom)
 
     @classmethod
     def produce(self, kind, position, sprite):

@@ -24,7 +24,7 @@ class CircleDemo(Demo):
             glm.vec2(0, 0), radius=1.0, segments=32, color=self.color
         )
 
-        self.node = Node2D(vu=shape)
+        self.node = Node2D().mount(shape)
         self.scene.attach(self.node)
 
     def center_camera(self):

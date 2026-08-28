@@ -13,11 +13,10 @@ class Entity2D(Node2D):
         position=glm.vec2(),
         rotation=0.0,
         scale=glm.vec2(1.0),
-        vu: Vu2D = None,
         model=None,
         brain: Brain = None,
     ):
-        super().__init__(position, rotation, scale, vu, model)
+        super().__init__(position, rotation, scale, model=model)
         self._brain = None
         if brain is not None:
             self.brain = brain

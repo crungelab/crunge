@@ -1,34 +1,50 @@
-from typing import TypeVar, Generic, List
+from typing import Any, TypeVar, Generic, List
 
 from loguru import logger
 
 from .vu import Vu
-from .base import Base
+from .chip import Chip
 
 T_Vu = TypeVar("T_Vu", bound=Vu)
 
 
-class VuGroup(Base, Generic[T_Vu]):
+class VuGroup(Chip[Any], Generic[T_Vu]):
+    """A batch of vus drawn together.
+
+    A chip rather than a free-standing object: it has an update and a draw
+    and a lifetime, which is what a chip is. Mounted on the node that owns
+    the batch — for a graph layer, that is the layer's root — so the chip
+    walk drives it and no container has to remember to forward.
+    """
+
     def __init__(self):
         super().__init__()
         self.visuals: List[T_Vu] = []
         self.is_render_group = False
 
     def append(self, vu: T_Vu) -> None:
-        vu.group = self
         if vu in self.visuals:
             raise ValueError("Vu already in group")
         self.visuals.append(vu)
+        # Last: on_group fires from the setter, and a subclass appending
+        # buffer state does it after this returns. The vu marks dirt and
+        # the write lands on the next flush.
+        vu.group = self
 
     def extend(self, members: List[T_Vu]) -> None:
-        self.visuals.extend(members)
+        # Was a bare list extend, which skipped the group assignment
+        # entirely — vus added this way never got on_group.
+        for vu in members:
+            self.append(vu)
 
     def remove(self, vu: T_Vu) -> None:
         logger.debug(f"Removing {vu} from {self}")
-        # vu.group = None
         self.visuals.remove(vu)
+        vu.group = None
 
     def clear(self) -> None:
+        for vu in tuple(self.visuals):
+            vu.group = None
         self.visuals.clear()
 
     def __len__(self) -> int:

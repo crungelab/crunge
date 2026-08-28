@@ -27,17 +27,14 @@ class SpritesDemo(Demo):
         # Ship1
         sprite = SpriteLoader().load("${images}/playerShip1_orange.png")
 
-        node = self.node = Node2D(vu=SpriteVu(), model=sprite)
+        node = self.node = Node2D(model=sprite).mount(SpriteVu())
 
         self.scene.attach(self.node)
 
         # Ship2
         sprite = SpriteLoader().load("${images}/playerShip1_blue.png")
-        x = 1.0
-        y = 1.0
-
-        position = glm.vec2(x, y)
-        node = Node2D(position, vu=SpriteVu(), model=sprite)
+        position = glm.vec2(1.0, 1.0)
+        node = Node2D(position, model=sprite).mount(SpriteVu())
 
         self.scene.attach(node)
 

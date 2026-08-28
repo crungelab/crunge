@@ -42,9 +42,13 @@ class Wheel(DynamicEntity2D):
         sprite = sprite_loader.load("${resources}/tiled/items/coinGold.png")
         scale = glm.vec2(0.5, 0.5)
         super().__init__(
-            position, scale=scale, vu=SpriteVu(), model=sprite, geom=BallGeom()
+            position, scale=scale, model=sprite, geom=BallGeom()
         )
         self.mass = WHEEL_MASS
+
+    def _seat(self) -> None:
+        super()._seat()
+        self.add(SpriteVu())
 
     def add_shape(self, shape):
         surface_material = box2d.SurfaceMaterial(friction=0.0, restitution=0.0)
@@ -61,9 +65,13 @@ class Chassis(DynamicEntity2D):
 
         scale = glm.vec2(1.5, 0.1)
         super().__init__(
-            position, scale=scale, vu=SpriteVu(), model=sprite, geom=BoxGeom()
+            position, scale=scale, model=sprite, geom=BoxGeom()
         )
         self.mass = CHASSIS_MASS
+
+    def _seat(self) -> None:
+        super()._seat()
+        self.add(SpriteVu())
 
     @classmethod
     def produce(self, position=glm.vec2()):

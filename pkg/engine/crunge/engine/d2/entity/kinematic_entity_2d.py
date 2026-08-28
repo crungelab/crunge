@@ -16,13 +16,12 @@ class KinematicEntity2D(PhysicsEntity2D):
         position=glm.vec2(),
         rotation=0.0,
         scale=glm.vec2(1.0),
-        vu=None,
         model=None,
         brain=None,
         physics=physics.KinematicPhysics(),
         geom=geom.HullGeom(),
     ):
-        super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
+        super().__init__(position, rotation, scale, model=model, brain=brain, physics=physics, geom=geom)
 
     def update(self, delta_time=1 / 60):
         super().update(delta_time)

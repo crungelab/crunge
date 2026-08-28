@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypeVar
+from typing import Any, Self, TypeVar
 
 from loguru import logger
 
@@ -17,24 +17,15 @@ class BaseNode(Dispatcher):
     SceneNode adds the graph; Node2D/Node3D add the transform.
 
     Construction is two passes. `__init__` sets up the node's own state and
-    attaches nothing; `seat` attaches chips and returns self, so it reads
+    attaches nothing; `mount` attaches chips and returns self, so it reads
     as one expression:
 
-        node = Node2D(position, rotation).seat(SpriteVu(sprite))
+        node = Node2D(position, rotation).mount(SpriteVu(sprite))
 
     The split is load-bearing. A chip attached inside `Node.__init__` runs
     `on_attached` before `Node2D.__init__` has set up the transform, so any
     chip that reads node state crashes or silently reads a default. By the
-    time `seat` runs, every constructor in the MRO has returned.
-
-    A class that always needs a given chip declares it in `_seat` instead,
-    which keeps that knowledge in the class rather than at every call site,
-    and holds up under subclassing in a way that adding chips at the tail
-    of `__init__` does not.
-
-    Seated is not the same as plugged. `seat` puts chips in the board;
-    `plug` — driven later, from `create_children` — is where each one
-    resolves its siblings, once the set is complete and created.
+    time `mount` runs, every constructor in the MRO has returned.
 
     Chips are lifetime-owned the same way children are: the node walks its
     chip set inside the `*_children` hooks, so chips ride the existing
@@ -57,40 +48,40 @@ class BaseNode(Dispatcher):
         self._drawables: list[Chip[Any]] = []
         self._dispatchables: list[Chip[Any]] = []
 
-        self._seated = False
+        self._mounted = False
         self._plugged = False
 
-    # -- seating -----------------------------------------------------------
+    # -- mount -------------------------------------------------------------
 
-    def seat(self, *chips: Chip[Any]) -> object:
+    def mount(self, *chips: Chip[Any]) -> Self:
         """Attach chips. Once, after construction. Returns self.
 
-        Pass a built list with `node.seat(*chips)`.
+        Pass a built list with `node.mount(*chips)`.
         """
-        if self._seated:
-            raise RuntimeError(f"{self!r} is already seated")
-        self._seated = True
+        if self._mounted:
+            raise RuntimeError(f"{self!r} is already mounted")
+        self._mounted = True
 
         for chip in chips:
             self.add(chip)
-        self._seat()
+        self._mount()
         return self
 
-    def _seat(self) -> None:
+    def _mount(self) -> None:
         """Attach chips this class always needs.
 
         Runs after the caller's chips, so a default can stand down when the
         caller already supplied one:
 
-            def _seat(self) -> None:
-                super()._seat()
+            def _mount(self) -> None:
+                super()._mount()
                 if not self.has(Vu):
                     self.add(SpriteVu())
         """
 
     @property
-    def seated(self) -> bool:
-        return self._seated
+    def mounted(self) -> bool:
+        return self._mounted
 
     # -- chips -------------------------------------------------------------
 
@@ -196,12 +187,6 @@ class BaseNode(Dispatcher):
     # -- lifetime ----------------------------------------------------------
 
     def create_children(self) -> None:
-        # A caller supplying no extra chips has no reason to call seat, and
-        # forgetting it would give a silently empty node. Construction has
-        # certainly finished by now, so the two-pass guarantee holds.
-        if not self._seated:
-            self.seat()
-
         super().create_children()
         for chip in tuple(self._chips):
             chip.create()
@@ -235,7 +220,7 @@ class BaseNode(Dispatcher):
         self._updatables.clear()
         self._drawables.clear()
         self._dispatchables.clear()
-        self._seated = False
+        self._mounted = False
         super().destroy_children()
 
     # -- broadcasts (self only; Node walks the tree) -----------------------

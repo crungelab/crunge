@@ -20,16 +20,15 @@ class Chip(Base, Generic[N]):
 
     Ordering within a node, for the record:
 
-        create     chips -> vu -> children
-        enable     chips -> vu -> children
-        update     chips -> vu -> children
-        draw       vu    -> chips -> children
-        disable    children -> vu -> chips
-        destroy    children -> vu -> chips
+        create     chips -> children
+        enable     chips -> children
+        update     chips -> children
+        draw       chips -> children
+        disable    children -> chips
+        destroy    children -> chips
 
-    Chips run before the vu on the way in and after it on the way out, so a
-    chip's state is settled before the vu reads it, and the vu is still alive
-    while chips tear down.
+    The vu is a chip like any other and takes its place in that walk; there
+    is no separate slot for it.
     """
 
     # Set automatically from whether the subclass overrides the broadcast.
@@ -61,10 +60,8 @@ class Chip(Base, Generic[N]):
     @property
     def node(self) -> N:
         node = self._node
-        """
         if node is None:
             raise RuntimeError(f"{type(self).__name__} is not attached to a node")
-        """
         return node
 
     @property
@@ -73,11 +70,12 @@ class Chip(Base, Generic[N]):
 
     # -- attach lifecycle --------------------------------------------------
     #
-    # Two phases. `on_attached` fires the moment the chip joins the node,
-    # when siblings may not exist yet — the chip is seated but the board
-    # around it is unfinished. `plug` fires once the chip set is complete
-    # and every chip has been created, and is the only safe place to resolve
-    # siblings. Resolve there, cache the reference, never look up per frame.
+    # Two phases. `on_attached` fires the moment the chip is seated, when
+    # the board around it is unfinished and siblings may not exist yet.
+    # `plug` fires from `create_children`, once the chip set is complete
+    # and every chip has been created, and is the only safe place to
+    # resolve siblings. Resolve there, cache the reference, never look up
+    # per frame.
 
     def on_attached(self, node: N) -> None:
         self._node = node

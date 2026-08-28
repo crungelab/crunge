@@ -11,4 +11,8 @@ class Box(DynamicEntity2D):
     def __init__(self, position: glm.vec2) -> None:
         sprite = SpriteLoader().load("${images}/boxCrate.png")
         scale = glm.vec2(.25, .25)
-        super().__init__(position, scale=scale, vu=SpriteVu(), model=sprite, geom=BoxGeom())
+        super().__init__(position, scale=scale, model=sprite, geom=BoxGeom())
+
+    def _seat(self) -> None:
+        super()._seat()
+        self.add(SpriteVu())

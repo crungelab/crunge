@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Callable, Generic, TypeVar
 
 from loguru import logger
 
 from .signal import Signal
 from .base_node import BaseNode
+from .chip import Chip
 from .vu import Vu
 
 if TYPE_CHECKING:
@@ -17,18 +18,20 @@ T_Node = TypeVar("T_Node", bound="Node")
 class Node(BaseNode, Generic[T_Node]):
     """A node in the scene graph.
 
-    The vu is a chip like any other — creation, enabling, drawing, updating
-    and teardown all come from the chip walk in BaseNode. `vu` is kept as a
-    named accessor onto the chip map, since that is how most call sites want
-    to talk about it.
-
-    Chips are attached with `mount`, never in the constructor:
-
-        node = Node2D(position, rotation).mount(SpriteVu(sprite))
+    The vu is no longer a special slot — it is a chip like any other, so
+    creation, enabling, drawing, updating and teardown all come from the
+    chip walk in BaseNode. `vu` is kept as a named accessor onto the chip
+    map, since that is how most call sites want to talk about it.
     """
 
-    def __init__(self, model: "Model | None" = None) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        vu: Vu | None = None,
+        model: "Model | None" = None,
+        chips: list[Chip[Any]] | None = None,
+    ) -> None:
+        super().__init__(chips)
+        self._vu: "Vu" = None
         self._model: "Model | None" = None
         self.parent: "Node[T_Node] | None" = None
         self.children: list["Node[T_Node]"] = []
@@ -39,14 +42,24 @@ class Node(BaseNode, Generic[T_Node]):
         self.transform_changed: Signal["Node[T_Node]"] = Signal()
         self.model_changed: Signal["Node[T_Node]"] = Signal()
 
-        # Safe in __init__: the model is this class's own state, and there
-        # are no subscribers yet. A chip mounted later picks it up through
-        # connect_now.
         self.model = model
+        self.vu = vu
+        """
+        if vu is not None:
+            self.vu = vu
+            if model is not None:
+                vu.model = model
+                vu.sprite = model
+        self.model = model
+
+        self.add(vu) if vu is not None else None
+        """
         self.visible = True
 
     # -- properties ----------------------------------------------------
 
+    
+    """
     @property
     def vu(self) -> Vu | None:
         return self.get(Vu)
@@ -61,6 +74,28 @@ class Node(BaseNode, Generic[T_Node]):
             old.destroy()
         if value is not None:
             self.add(value)
+    """
+
+    @property
+    def vu(self) -> "Vu":
+        return self._vu
+
+    @vu.setter
+    def vu(self, value: "Vu"):
+        old = self._vu
+        if old is not None and old is not value:
+            old.destroy()
+        self._vu = value
+        if value is None:
+            return
+
+        if self._model is not None:
+            value.model = self._model
+            value.sprite = self._model
+
+        #self._sync_lifetime(value)
+        self.add(value)
+        #logger.debug(f"Node.vu set: {value}, lifetime: {value._lifetime}")
 
     @property
     def model(self) -> "Model | None":

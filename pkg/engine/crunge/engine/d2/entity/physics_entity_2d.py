@@ -4,12 +4,10 @@ from loguru import logger
 import glm
 from crunge import box2d
 
-from crunge.engine.d2 import Vu2D
+from crunge.engine.d2 import SpriteVu
 
 from crunge.engine.math import Rect2
 
-#from ..physics import globe
-#from ..physics.world import PhysicsWorld
 from ..physics import StaticPhysics, DynamicPhysics, GroupPhysics
 from ..physics.physics import MotionState
 from ..physics.geom import HullGeom, GroupGeom
@@ -18,18 +16,18 @@ from .entity_2d import Entity2D
 
 
 class PhysicsEntity2D(Entity2D):
+    default_vu: type[SpriteVu] | None = SpriteVu
     def __init__(
         self,
         position=glm.vec2(),
         rotation=0.0,
         scale=glm.vec2(1.0),
-        vu: Vu2D = None,
         model=None,
         brain=None,
         physics=StaticPhysics(),
         geom=HullGeom(),
     ):
-        super().__init__(position, rotation, scale, vu, model, brain)
+        super().__init__(position, rotation, scale, model=model, brain=brain)
         self.body: box2d.Body | None = None
         self.shapes: list[box2d.Shape] = []
         self._physics = physics
@@ -73,7 +71,7 @@ class PhysicsEntity2D(Entity2D):
     def physics(self, physics):
         if self._physics:
             self._physics = physics
-            #self.remove_shapes()
+            # self.remove_shapes()
             self.create_body()
             self.create_shapes()
             self.add_shapes()
@@ -87,7 +85,7 @@ class PhysicsEntity2D(Entity2D):
         self.add_shapes()
 
     def _destroy(self):
-        #self.remove_shapes()
+        # self.remove_shapes()
         logger.debug(f"Destroying body: {self.body}")
         if self.body.is_valid():
             self.body.destroy()
@@ -143,11 +141,10 @@ class PhysicsEntity2D(Entity2D):
 
 
 class PhysicsGroup2D(PhysicsEntity2D):
+    default_vu = None
     id_counter = 1
 
-    def __init__(
-        self, position=glm.vec2(), physics=GroupPhysics(), geom=GroupGeom()
-    ):
+    def __init__(self, position=glm.vec2(), physics=GroupPhysics(), geom=GroupGeom()):
         super().__init__(position, physics=physics, geom=geom)
         self.id_counter += 1
         self.id = self.id_counter
@@ -184,13 +181,12 @@ class StaticEntity2D(PhysicsEntity2D):
         position=glm.vec2(),
         rotation=0.0,
         scale=glm.vec2(1.0),
-        vu=None,
         model=None,
         brain=None,
         physics=StaticPhysics(),
         geom=HullGeom(),
     ):
-        super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
+        super().__init__(position, rotation, scale, model, brain, physics, geom)
 
 
 class DynamicEntity2D(PhysicsEntity2D):
@@ -199,10 +195,9 @@ class DynamicEntity2D(PhysicsEntity2D):
         position=glm.vec2(),
         rotation=0.0,
         scale=glm.vec2(1.0),
-        vu=None,
         model=None,
         brain=None,
         physics=DynamicPhysics(),
         geom=HullGeom(),
     ):
-        super().__init__(position, rotation, scale, vu, model, brain, physics, geom)
+        super().__init__(position, rotation, scale, model, brain, physics, geom)
