@@ -69,7 +69,6 @@ class Fruit(SpriteNode):
         self.energy -= 1
         if(self.energy <= 0):
             engine.sprite_engine.remove_beacon(self.beacon)
-            #self.layer.detach(self)
             self.destroy()
             return 0.01
         #else

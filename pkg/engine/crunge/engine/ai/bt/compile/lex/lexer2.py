@@ -1,6 +1,6 @@
 import sly.lex as lex
 import decimal
-from bough.compile.lex.tokens import tokens
+from crunge.engine.ai.bt.compile.lex.tokens import tokens
 
 EOF = 'EOF'
 NEWLINE = 'NEWLINE'

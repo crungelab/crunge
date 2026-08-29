@@ -1,5 +1,5 @@
 from bt.compile.compilerbase import CompilerBase
-#from bough.compile.policies.default import DefaultPolicy
+#from crunge.engine.ai.bt.compile.policies.default import DefaultPolicy
 import bt.compile.ast.node as yy
 
 class Compiler(CompilerBase):
@@ -123,8 +123,8 @@ class Compiler(CompilerBase):
     def Module(self, n):
         k, v = None, None
         self.write('''\
-from bough.run import Context, Term, Goal, Believe, Achieve, Assert, Retract, Attempt
-from bough.run import __, term_, _$, module_, Message, Rule, Trigger, Variable, runner_\
+from crunge.engine.ai.bt.run import Context, Term, Goal, Believe, Achieve, Assert, Retract, Attempt
+from crunge.engine.ai.bt.run import __, term_, _$, module_, Message, Rule, Trigger, Variable, runner_\
 '''
         )
         self.writeLn('')

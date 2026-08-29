@@ -1,11 +1,12 @@
 from typing import List
 
 from copy import copy
+from collections import defaultdict
 from uuid import uuid1
 from loguru import logger
 
 from ..run import _impasse
-from .task import Task, TS_SUCCESS
+from .task import Task, Status
 from .act import *
 from .context import Context
 
@@ -20,58 +21,67 @@ class Bot(Sequence):
         self.proposals: List[Message] = []
         self.scheduled: bool = False
         self.impassed: bool = False
-        self.signals = None
-    
+        self.signals = defaultdict(list)
+
+        # A bot is its own bot, so the whole subtree inherits a valid
+        # reference through Task.add and Task.create.
+        self.bot = self
+
     def broadcast(self, msg: Message):
         m = copy(msg)
-        logger.debug(f"Broadcast:\t{m}")
+        logger.debug("Broadcast:\t{}", m)
         m.sender = self
         self.post(m)
-        return map(self.tasks, lambda t: t.broadcast(m))
+        for t in self.tasks:
+            t.broadcast(m)
+        return m
 
     def post(self, msg: Message):
         if not msg.sender:
             msg.sender = self
-        logger.debug(f"Post:\t{msg}")
+        logger.debug("Post:\t{}", msg)
         return self.posts.append(msg)
 
     def fork(self, t: Task):
-        logger.debug(f"Fork:\t{t.msg}")
+        logger.debug("Fork:\t{}", t.msg)
         child = Bot()
         child.ctx = self.ctx.copy()
-        return child.run(t)
+        child.runner = self.runner
+        child.add(t)
+        child.schedule()
+        return child
 
     def dispatch(self, msg: Message):
         T = type(msg)
         if T is Propose:
-            logger.debug(f"* \t{msg}")
+            logger.debug("* \t{}", msg)
             pmsg = Attempt()
             pmsg.update(msg)
 
             self.proposals.append(pmsg)
             return
         elif T is Assert:
-            logger.debug(f"+ \t{msg}")
+            logger.debug("+ \t{}", msg)
             self.ctx.add(msg.data)
             return self.fire(msg)
         elif T is Retract:
-            logger.debug(f"- \t${msg}")
+            logger.debug("- \t{}", msg)
             self.ctx.remove(msg.data)
             return self.fire(msg)
         else:
-            logger.debug(f"Eval:\t{msg}")
+            logger.debug("Eval:\t{}", msg)
             return self.fire(msg)
 
     def fire(self, msg: Message):
         for m in msg.sender.match_rules(msg):
-            logger.debug(f"Fire:\t{m}:")
+            logger.debug("Fire:\t{}:", m)
             self.schedule_task(m.rule.action, m)
 
     async def main(self, msg=None):
         status = await super().main(msg)
-        if status == TS_FAILURE:
+        if status is Status.FAILURE:
             return status
-        logger.debug(f"@main {self.id}")
+        logger.debug("@main {}", self.id)
 
         posts = self.posts
         self.posts = []
@@ -84,7 +94,7 @@ class Bot(Sequence):
                     self.fork(m.to)
 
         self.proposals = []
-        self.status = TS_SUCCESS
+        self.status = Status.SUCCESS
 
         return self.status
 
@@ -93,15 +103,12 @@ class Bot(Sequence):
 
     def signal(self, trigger, task):
         logger.debug(trigger.verb)
-        self.signals.get(trigger.verb).append(task)
+        self.signals[trigger.verb].append(task)
 
     def impasse(self):
         if self.impassed:
             return True
-        logger.debug(f"@impasse {self.id}")
+        logger.debug("@impasse {}", self.id)
         self.impassed = True
         self.post(Attempt(Achieve(None, _impasse, None)))
         return False
-
-
-Bot_ = lambda before: Bot(before)

@@ -13,9 +13,8 @@ class Brain(Agent):
         self.node = node
         self.velocity = glm.vec2(0, 0)
         self.target_position = glm.vec2(0, 0)
-        self.sensor_range = 128
-        # self.sensor_range = 256
-        # self.sensor_range = 512
+        #self.sensor_range = 128
+        self.sensor_range = 10
 
     @property
     def position(self) -> glm.vec2:
@@ -40,8 +39,8 @@ class Brain(Agent):
         return angle_deg
 
     def at_goal(self) -> bool:
-        agent_radius = 16
-        target_radius = 16
+        agent_radius = 1
+        target_radius = 1
         distance = glm.distance(self.position, self.target_position)
         return distance <= (agent_radius + target_radius)
 

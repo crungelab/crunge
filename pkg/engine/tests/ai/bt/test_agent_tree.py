@@ -1,0 +1,24 @@
+import unittest
+
+from crunge.engine.ai.bt.run import *
+from crunge.engine.ai.bt.run.act import *
+from crunge.engine.ai.bt.run.agent import Agent
+
+class MyAgent(Agent):
+    def __init__(self):
+        super().__init__()
+        with root(self):
+            with counter(1, 11):
+                with action() as a:
+                    async def fn(task, msg):
+                        print('bot: ',task.bot)
+                        print('count: ',task.parent.count)
+                    a.use(fn)
+
+class Test(unittest.TestCase):
+    def test(self):
+        agent = MyAgent()
+        agent.run()
+
+if __name__ == '__main__':
+    unittest.main()

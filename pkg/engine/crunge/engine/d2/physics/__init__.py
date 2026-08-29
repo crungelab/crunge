@@ -5,6 +5,8 @@ from .static_physics import StaticPhysics
 from .kinematic_physics import KinematicPhysics
 from .dynamic_physics import DynamicPhysics
 
+from .physics_chip import PhysicsChip, BodyType
+
 # Debug
 DEBUG_COLLISION = False
 
