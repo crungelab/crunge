@@ -162,6 +162,26 @@ class DynamicCharacterController(CharacterController):
         self.physics.velocity = glm.vec2(target_vx, velocity.y)
 
     def _apply_ladder_movement(self) -> None:
+        """Direct velocity control. The counter-force cancels gravity during
+        the step; the velocity write only sets the starting value."""
+        dx = dy = 0.0
+        if self.up_pressed:
+            dy = PLAYER_MOVEMENT_SPEED
+        elif self.down_pressed:
+            dy = -PLAYER_MOVEMENT_SPEED
+        if self.left_pressed:
+            dx = -PLAYER_MOVEMENT_SPEED
+        elif self.right_pressed:
+            dx = PLAYER_MOVEMENT_SPEED
+
+        body = self.physics.body
+        gravity = self.world.get_gravity()
+        mass = body.get_mass()
+        self.physics.apply_force(glm.vec2(0.0, -gravity.y * mass))
+        self.physics.velocity = glm.vec2(dx, dy)
+
+    '''
+    def _apply_ladder_movement(self) -> None:
         """Direct velocity control; setting velocity each frame already
         cancels gravity, so no counter-force is needed."""
         dx = dy = 0.0
@@ -175,6 +195,7 @@ class DynamicCharacterController(CharacterController):
             dx = PLAYER_MOVEMENT_SPEED
 
         self.physics.velocity = glm.vec2(dx, dy)
+    '''
 
     def _apply_falling_movement(self) -> None:
         velocity = self.physics.velocity

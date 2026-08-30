@@ -10,12 +10,13 @@ from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.d2.entity import EntityGroup2D, Entity2D, DynamicEntity2D
 from crunge.engine.d2.physics import BoxGeom, BallGeom
 from crunge.engine.d2.physics import globe as physics_globe
+from crunge.engine.d2.physics.material import PhysicsMaterial
 
 from ...util import debounce
 
 from .skateboard_controller import SkateboardController
 
-WHEEL_RADIUS = 0.25
+WHEEL_RADIUS = 0.1
 WHEEL_MASS = 10
 
 CHASSIS_WIDTH = 0.5
@@ -37,12 +38,17 @@ MAX_SPEED = 0.5
 sprite_loader = SpriteLoader(sprite_builder=CollidableSpriteBuilder())
 
 
+class WheelMaterial(PhysicsMaterial):
+    def __init__(self):
+        super().__init__("skateboard_wheel", friction=0.0, restitution=0.0)
+
+
 class Wheel(DynamicEntity2D):
     def __init__(self, position=glm.vec2()):
         sprite = sprite_loader.load("${resources}/tiled/items/coinGold.png")
         scale = glm.vec2(0.5, 0.5)
         super().__init__(
-            position, scale=scale, model=sprite, geom=BallGeom()
+            position, scale=scale, model=sprite, geom=BallGeom(radius=WHEEL_RADIUS, material=WheelMaterial())
         )
         self.mass = WHEEL_MASS
 

@@ -72,6 +72,7 @@ class DynamicCharacter(DynamicEntity2D):
             glm.vec2(point.x, point.y + self.height / 2)
         )
         self.rotation = 0
+        body.set_transform(b2.Vec2(*self.position), b2.make_rot(0))
 
         if self.mass_data is not None:
             body.mass_data = self.mass_data
