@@ -58,6 +58,9 @@ class Ship(Node2D):
             self.physics.body.angular_velocity = 0
 
     def fire(self):
+        if self.is_destroyed:
+            return
+
         spawn_distance = 1  # Adjust based on your game's scale
         missile_speed = 10  # Adjust missile speed as needed
 

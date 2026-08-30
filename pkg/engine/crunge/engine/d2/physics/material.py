@@ -42,29 +42,15 @@ class PhysicsMaterial:
 
         # print(f"PhysicsMaterial.apply: {self.name} -> {shape_def}")
 
-    def apply_chain(self, chain_def) -> None:
-        chain_def.materials = box2d.SurfaceMaterial(
-            friction=self.friction,
-            restitution=self.restitution,
-            rolling_resistance=self.rolling_resistance,
-            tangent_speed=self.tangent_speed,
-            user_material_id=self.id,
-            custom_color=self.custom_color,
-        )
-
-    """
-    def apply_chain(self, chain_def) -> None:
-        material = box2d.SurfaceMaterial(
-            friction=self.friction,
-            restitution=self.restitution,
-            rolling_resistance=self.rolling_resistance,
-            tangent_speed=self.tangent_speed,
-            user_material_id=self.id,
-            custom_color=self.custom_color,
-        )
-        chain_def.materials = [material]  # ASSUMPTION: wrapper takes a list
-        chain_def.material_count = 1
-    """
+    def make_surface_material(self):
+        m = box2d.SurfaceMaterial()
+        m.friction = self.friction
+        m.restitution = self.restitution
+        m.rolling_resistance = self.rolling_resistance
+        m.tangent_speed = self.tangent_speed
+        m.user_material_id = self.id
+        m.custom_color = self.custom_color
+        return m
 
     def __repr__(self) -> str:
         return f"<PhysicsMaterial {self.name} id={self.id}>"

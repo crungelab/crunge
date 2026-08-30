@@ -17,7 +17,7 @@ from ..physics import (
     KinematicPhysics,
     MotionState,
 )
-from ..physics.geom import HullGeom, GroupGeom
+from ..physics.geom import HullGeom
 from ..physics.material import PhysicsMaterial, DEFAULT_MATERIAL
 
 from .entity_2d import Entity2D

@@ -57,6 +57,46 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("mass", &b2MassData::mass)
         .def_readwrite("center", &b2MassData::center)
         .def_readwrite("rotational_inertia", &b2MassData::rotationalInertia)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2MassData obj{};
+            static const std::unordered_set<std::string> allowed_keys = {"mass", "center", "rotational_inertia"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("mass"))
+            {
+                auto value = kwargs["mass"].cast<float>();
+                obj.mass = value;
+            }
+            if (kwargs.contains("center"))
+            {
+                auto value = kwargs["center"].cast<struct b2Vec2>();
+                obj.center = value;
+            }
+            if (kwargs.contains("rotational_inertia"))
+            {
+                auto value = kwargs["rotational_inertia"].cast<float>();
+                obj.rotationalInertia = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2MassData &self) {
+            std::stringstream ss;
+            ss << "MassData(";
+            ss << "mass=" << py::repr(py::cast(self.mass)).cast<std::string>();
+            ss << ", ";
+            ss << "center=" << py::repr(py::cast(self.center)).cast<std::string>();
+            ss << ", ";
+            ss << "rotationalInertia=" << py::repr(py::cast(self.rotationalInertia)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     py::class_<b2Circle> _Circle(_box2d, "Circle");

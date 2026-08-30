@@ -7,6 +7,12 @@ excludes:
   # Internal / Ignored
   - 'struct@b2DynamicTree'
 
+  # Array on structure problem
+  - 'field@b2ChainDef::points'
+  - 'field@b2ChainDef::count'
+  - 'field@b2ChainDef::materials'
+  - 'field@b2ChainDef::materialCount'
+
 specs:
   'struct@b2Polygon':
     extra:
@@ -30,3 +36,13 @@ specs:
         facade:
           kind: vector
           length_param: count
+
+  'struct@b2MassData':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
+          #use: function@b2DefaultWorldDef
+
+        __repr__:
+          auto: true

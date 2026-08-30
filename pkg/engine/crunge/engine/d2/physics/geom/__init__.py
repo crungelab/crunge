@@ -1,5 +1,5 @@
 from .geom import Geom
-from .group_geom import GroupGeom
+from .compound_geom import CompoundGeom
 from .box_geom import BoxGeom
 from .ball_geom import BallGeom
 from .poly_geom import PolyGeom

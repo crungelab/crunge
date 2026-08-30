@@ -56,7 +56,15 @@ class Physics(Chip):
         self.world = PhysicsWorld2D.get_current()
         self.create_body()
         self.shapes = self.geom.create_shapes(self)
+
+    """
+    def plug(self) -> None:
+        super().plug()
+        self.world = PhysicsWorld2D.get_current()
+        self.create_body()
+        self.shapes = self.geom.create_shapes(self)
         logger.debug(f"Created shapes: {self.shapes}")
+    """
 
     def unplug(self) -> None:
         if self.body is not None and self.body.is_valid():

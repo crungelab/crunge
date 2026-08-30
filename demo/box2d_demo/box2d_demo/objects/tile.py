@@ -55,10 +55,3 @@ class TerrainColliderTile(Node2D):
     def __init__(self, points: list[tuple[float, float]]) -> None:
         model = TerrainModel(points)
         super().__init__(model=model)
-
-
-"""
-class TerrainColliderTile(StaticEntity2D):
-    def __init__(self, position: glm.vec2, scale: glm.vec2) -> None:
-        super().__init__(position, scale=scale, vu=None, model=None, geom=ChainGeom())
-"""

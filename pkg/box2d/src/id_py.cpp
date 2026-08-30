@@ -32,6 +32,45 @@ void DestroyShape(b2ShapeId shapeId, bool updateBodyMass) {
 
 b2ChainId CreateChainFromPoints(
     b2BodyId body,
+    const b2ChainDef& base_def,
+    const std::vector<b2Vec2>& points,
+    const std::vector<b2SurfaceMaterial>& materials = {})
+{
+    b2ChainDef def = base_def;
+    def.points = points.data();
+    def.count = static_cast<int32_t>(points.size());
+
+    b2SurfaceMaterial fallback;
+    if (materials.empty()) {
+        fallback = b2DefaultSurfaceMaterial();
+        def.materials = &fallback;
+        def.materialCount = 1;
+    } else {
+        def.materials = materials.data();
+        def.materialCount = static_cast<int32_t>(materials.size());
+    }
+    return b2CreateChain(body, &def);
+}
+
+void init_id_py(py::module &_box2d, Registry &registry) {
+    PYEXTEND_BEGIN(b2BodyId, Body)
+    _Body.def("destroy", &DestroyBody)
+    .def("create_chain_from_points", &CreateChainFromPoints,
+        py::arg("base_def"),
+        py::arg("points"),
+        py::arg("materials") = std::vector<b2SurfaceMaterial>{})
+    ;
+    PYEXTEND_END
+
+    PYEXTEND_BEGIN(b2ShapeId, Shape)
+    _Shape.def("destroy", &DestroyShape, py::arg("update_body_mass"))
+    ;
+    PYEXTEND_END
+}
+
+/*
+b2ChainId CreateChainFromPoints(
+    b2BodyId body,
     const b2ChainDef& base_def,   // everything except points/count
     const std::vector<b2Vec2>& points)
 {
@@ -53,3 +92,4 @@ void init_id_py(py::module &_box2d, Registry &registry) {
     ;
     PYEXTEND_END
 }
+*/

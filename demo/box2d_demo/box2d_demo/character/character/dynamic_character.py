@@ -6,60 +6,78 @@ from crunge import box2d as b2
 from crunge.engine.math import Rect2
 
 from crunge.engine.d2.entity import PhysicsEntity2D, DynamicEntity2D
-from crunge.engine.d2.physics import HullGeom
 from crunge.engine.d2.physics import MotionState
+from crunge.engine.d2.physics.geom import CompoundGeom, HullGeom, BallGeom
 
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 
 from ... import globe
+from ...physics_material import PLAYER, FEET
 
 from .controller import DynamicCharacterController
 
-PLAYER_MASS = 20
+FOOT_RADIUS = 0.25
+MOUNTED_MASS = 0.1
+MOUNTED_COM_DROP = 1.0
 
 
 class DynamicCharacter(DynamicEntity2D):
     model: Sprite
-    geom_class = HullGeom
+    material = PLAYER
 
     def __init__(self, position=None, model=None, brain=None):
-        super().__init__(position, model=model, brain=brain)
-        self.mass = PLAYER_MASS
+        super().__init__(position, model=model, brain=brain, geom=self.make_geom())
         self.mass_data: b2.MassData = None
+
+    @classmethod
+    def make_geom(cls) -> CompoundGeom:
+        """Hull over the lower half of the sprite, plus a foot sensor circle."""
+        return CompoundGeom([
+            HullGeom(clip=Rect2(0, 0.5, 1.0, 0.5)),
+            BallGeom(
+                radius=FOOT_RADIUS,
+                offset=glm.vec2(0, -FOOT_RADIUS),
+                material=FEET,
+            ),
+        ])
 
     def _create(self):
         super()._create()
-        self.lock_rotation()
-
-    def lock_rotation(self):
-        self.body.set_motion_locks(b2.MotionLocks(False, False, True))
-
-    def unlock_rotation(self):
-        self.body.set_motion_locks(b2.MotionLocks(False, False, False))
+        self.physics.lock_rotation()
 
     def on_mount(self, node: PhysicsEntity2D, point: glm.vec2):
         self.motion_state = MotionState.MOUNTED
-        self.unlock_rotation()
+        self.physics.unlock_rotation()
 
-        self.mass_data = self.body.mass_data
-        mass_data = self.body.mass_data
-        mass_data.mass = 0.1
-        com = mass_data.center
-        mass_data.center = b2.Vec2(com.x, com.y - 1)
-        self.body.mass_data = mass_data
+        body = self.physics.body
+        saved = body.mass_data
+        self.mass_data = b2.MassData(
+            mass=saved.mass,
+            center=b2.Vec2(saved.center.x, saved.center.y),
+            rotational_inertia=saved.rotational_inertia,
+        )
+
+        mounted = body.mass_data
+        mounted.mass = MOUNTED_MASS
+        mounted.center = b2.Vec2(
+            mounted.center.x, mounted.center.y - MOUNTED_COM_DROP
+        )
+        body.mass_data = mounted
 
     def on_dismount(self, node: PhysicsEntity2D, point: glm.vec2):
         self.motion_state = MotionState.FALLING
-        self.lock_rotation()
-        self.position = node.get_tx_point(
+
+        body = self.physics.body
+        self.position = node.physics.get_tx_point(
             glm.vec2(point.x, point.y + self.height / 2)
         )
         self.rotation = 0
 
-        self.body.mass_data = self.mass_data
-        self.body.linear_velocity = b2.Vec2(0, 0)
-        self.body.set_transform(b2.Vec2(*self.position), b2.make_rot(0))
-        self.lock_rotation()
+        if self.mass_data is not None:
+            body.mass_data = self.mass_data
+            self.mass_data = None
+        body.linear_velocity = b2.Vec2(0, 0)
+        self.physics.lock_rotation()
         globe.app.pop_avatar()
 
     def control(self):
