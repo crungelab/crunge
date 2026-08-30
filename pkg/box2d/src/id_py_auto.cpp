@@ -37,6 +37,8 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("time_step")
             , py::arg("sub_step_count")
             )
+        .def("get_bounds", &b2World_GetBounds
+            )
         .def("get_body_events", &b2World_GetBodyEvents
             )
         .def("get_sensor_events", &b2World_GetSensorEvents
@@ -45,7 +47,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             )
         .def("get_joint_events", &b2World_GetJointEvents
             )
-        .def("overlap_aabb", [](b2WorldId worldId, b2AABB aabb, b2QueryFilter filter, py::function fcn)
+        .def("overlap_aabb", [](b2WorldId worldId, b2Pos origin, b2AABB aabb, b2QueryFilter filter, py::function fcn)
             {
                 cxbind::thunk_state _context(fcn);
                 auto context = &_context;
@@ -57,13 +59,14 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
                     return result.cast<_Bool>();
                 };
                 
-                return b2World_OverlapAABB(worldId, aabb, filter, _fcn, context);
+                return b2World_OverlapAABB(worldId, origin, aabb, filter, _fcn, context);
             }
+            , py::arg("origin")
             , py::arg("aabb")
             , py::arg("filter")
             , py::arg("fcn")
             )
-        .def("overlap_shape", [](b2WorldId worldId, const b2ShapeProxy * proxy, b2QueryFilter filter, py::function fcn)
+        .def("overlap_shape", [](b2WorldId worldId, b2Pos origin, const b2ShapeProxy * proxy, b2QueryFilter filter, py::function fcn)
             {
                 cxbind::thunk_state _context(fcn);
                 auto context = &_context;
@@ -75,8 +78,9 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
                     return result.cast<_Bool>();
                 };
                 
-                return b2World_OverlapShape(worldId, proxy, filter, _fcn, context);
+                return b2World_OverlapShape(worldId, origin, proxy, filter, _fcn, context);
             }
+            , py::arg("origin")
             , py::arg("proxy")
             , py::arg("filter")
             , py::arg("fcn")
@@ -94,6 +98,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("filter")
             )
         .def("cast_shape", &b2World_CastShape
+            , py::arg("origin")
             , py::arg("proxy")
             , py::arg("translation")
             , py::arg("filter")
@@ -101,11 +106,13 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("context")
             )
         .def("cast_mover", &b2World_CastMover
+            , py::arg("origin")
             , py::arg("mover")
             , py::arg("translation")
             , py::arg("filter")
             )
         .def("collide_mover", &b2World_CollideMover
+            , py::arg("origin")
             , py::arg("mover")
             , py::arg("filter")
             , py::arg("fcn")
@@ -136,7 +143,8 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("context")
             )
         .def("set_pre_solve_callback", &b2World_SetPreSolveCallback
-            , py::arg("fcn")
+            , py::arg("pre_solve_fcn")
+            , py::arg("pre_continuous_fcn")
             , py::arg("context")
             )
         .def("set_gravity", &b2World_SetGravity
@@ -151,6 +159,11 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("hertz")
             , py::arg("damping_ratio")
             , py::arg("push_speed")
+            )
+        .def("set_contact_recycle_distance", &b2World_SetContactRecycleDistance
+            , py::arg("recycle_distance")
+            )
+        .def("get_contact_recycle_distance", &b2World_GetContactRecycleDistance
             )
         .def("set_maximum_linear_speed", &b2World_SetMaximumLinearSpeed
             , py::arg("maximum_linear_speed")
@@ -168,16 +181,23 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             )
         .def("get_counters", &b2World_GetCounters
             )
+        .def("get_max_capacity", &b2World_GetMaxCapacity
+            )
         .def("set_user_data", &b2World_SetUserData
             , py::arg("user_data")
             )
         .def("get_user_data", &b2World_GetUserData
-            )
+            , py::return_value_policy::reference)
         .def("set_friction_callback", &b2World_SetFrictionCallback
             , py::arg("callback")
             )
         .def("set_restitution_callback", &b2World_SetRestitutionCallback
             , py::arg("callback")
+            )
+        .def("set_worker_count", &b2World_SetWorkerCount
+            , py::arg("count")
+            )
+        .def("get_worker_count", &b2World_GetWorkerCount
             )
         .def("dump_memory_stats", &b2World_DumpMemoryStats
             )
@@ -186,16 +206,40 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def("enable_speculative", &b2World_EnableSpeculative
             , py::arg("flag")
             )
+        .def("get_state_hash", &b2World_GetStateHash
+            )
+        .def("start_recording", [](b2WorldId worldId, py::capsule recording)
+            {
+                return b2World_StartRecording(worldId, static_cast<b2Recording *>(recording.get_pointer()));
+            }
+            , py::arg("recording")
+            )
+        .def("stop_recording", &b2World_StopRecording
+            )
+        .def("snapshot", &b2World_Snapshot
+            , py::arg("image")
+            , py::arg("capacity")
+            )
+        .def("restore", &b2World_Restore
+            , py::arg("image")
+            , py::arg("size")
+            )
         .def("create_body", &b2CreateBody
             , py::arg("def")
             )
         .def("create_distance_joint", &b2CreateDistanceJoint
             , py::arg("def")
             )
+        .def("create_filter_joint", &b2CreateFilterJoint
+            , py::arg("def")
+            )
         .def("create_motor_joint", &b2CreateMotorJoint
             , py::arg("def")
             )
-        .def("create_filter_joint", &b2CreateFilterJoint
+        .def("create_mover_joint", &b2CreateMoverJoint
+            , py::arg("def")
+            )
+        .def("create_pogo_joint", &b2CreatePogoJoint
             , py::arg("def")
             )
         .def("create_prismatic_joint", &b2CreatePrismaticJoint
@@ -229,7 +273,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("name")
             )
         .def("get_name", &b2Body_GetName
-            )
+            , py::return_value_policy::reference)
         .def("get_position", &b2Body_GetPosition
             )
         .def("get_rotation", &b2Body_GetRotation
@@ -305,9 +349,9 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             )
         .def("get_rotational_inertia", &b2Body_GetRotationalInertia
             )
-        .def("get_local_center_of_mass", &b2Body_GetLocalCenterOfMass
+        .def("get_local_center", &b2Body_GetLocalCenter
             )
-        .def("get_world_center_of_mass", &b2Body_GetWorldCenterOfMass
+        .def("get_world_center", &b2Body_GetWorldCenter
             )
         .def("set_mass_data", &b2Body_SetMassData
             , py::arg("mass_data")
@@ -348,6 +392,11 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             )
         .def("get_sleep_threshold", &b2Body_GetSleepThreshold
             )
+        .def("set_safety_factor", &b2Body_SetSafetyFactor
+            , py::arg("safety_factor")
+            )
+        .def("get_safety_factor", &b2Body_GetSafetyFactor
+            )
         .def("is_enabled", &b2Body_IsEnabled
             )
         .def("disable", &b2Body_Disable
@@ -363,6 +412,11 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("flag")
             )
         .def("is_bullet", &b2Body_IsBullet
+            )
+        .def("enable_contact_recycling", &b2Body_EnableContactRecycling
+            , py::arg("flag")
+            )
+        .def("is_contact_recycling_enabled", &b2Body_IsContactRecyclingEnabled
             )
         .def("enable_contact_events", &b2Body_EnableContactEvents
             , py::arg("flag")
@@ -399,6 +453,10 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def("create_segment_shape", &b2CreateSegmentShape
             , py::arg("def")
             , py::arg("segment")
+            )
+        .def("create_chain_segment_shape", &b2CreateChainSegmentShape
+            , py::arg("def")
+            , py::arg("chain_segment")
             )
         .def("create_capsule_shape", &b2CreateCapsuleShape
             , py::arg("def")
@@ -492,7 +550,8 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("point")
             )
         .def("ray_cast", &b2Shape_RayCast
-            , py::arg("input")
+            , py::arg("origin")
+            , py::arg("translation")
             )
         .def("get_circle", &b2Shape_GetCircle
             )
@@ -515,6 +574,9 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             )
         .def("set_polygon", &b2Shape_SetPolygon
             , py::arg("polygon")
+            )
+        .def("set_chain_segment", &b2Shape_SetChainSegment
+            , py::arg("chain_segment")
             )
         .def("get_parent_chain", &b2Shape_GetParentChain
             )

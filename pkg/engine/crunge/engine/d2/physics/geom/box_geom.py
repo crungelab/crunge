@@ -1,39 +1,52 @@
 from typing import TYPE_CHECKING
 
 from loguru import logger
-
 import glm
 
 from crunge import box2d
 from crunge.engine.math import Rect2
 
 if TYPE_CHECKING:
-    from box2d_demo.entity import PhysicsEntity2D
+    from ..physics import Physics
 
 from .geom import Geom
 
 
 class BoxGeom(Geom):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, size: glm.vec2 = None, clip: Rect2 = None):
+        super().__init__(clip)
+        self.size = size
 
     def create_shapes(
         self,
-        node: "PhysicsEntity2D",
+        chip: "Physics",
         transform: box2d.Transform = None,
         clip: Rect2 = None,
-    ):
-        logger.debug(f"BoxGeom node_class={node.__class__.__name__} body={node.body} width={node.width}, height={node.height}")
-        shapes = []
-        size = node.size
-        half_size = size * 0.5
-        shape_box = box2d.make_box(half_size.x, half_size.y)
-        shape_def = box2d.ShapeDef()
+    ) -> list:
+        node = chip.node
+        rect = self.resolve_clip(chip, clip)
 
-        shape = node.body.create_polygon_shape(shape_def, shape_box)
+        if self.size is not None:
+            half = self.size * 0.5
+            center = glm.vec2(0, 0)
+        elif rect is not None:
+            half = glm.vec2(rect.width, rect.height) * 0.5
+            center = glm.vec2(rect.x + half.x, rect.y + half.y)
+        else:
+            half = node.size * 0.5
+            center = glm.vec2(0, 0)
 
-        shape.user_data = node
-        shape.friction = 10
-        shape.restitution = 0.2
-        shapes.append(shape)
-        return shapes
+        logger.debug(f"BoxGeom {node} half={half} center={center}")
+
+        shape_def = self.make_shape_def(chip)
+        if center == glm.vec2(0, 0):
+            polygon = box2d.make_box(half.x, half.y)
+        else:
+            # ASSUMPTION: bindings emit b2MakeOffsetBox
+            polygon = box2d.make_offset_box(
+                half.x, half.y, box2d.Vec2(center.x, center.y), box2d.make_rot(0)
+            )
+        shape = chip.body.create_polygon_shape(shape_def, polygon)
+        shape.user_data = chip.node
+
+        return [shape]

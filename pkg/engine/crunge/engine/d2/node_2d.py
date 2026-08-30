@@ -1,9 +1,13 @@
 from typing import TYPE_CHECKING, ClassVar, Type, Dict, List, Any, Callable
 import math
 
+
 if TYPE_CHECKING:
     from .scene.scene_2d import Scene2D
     from .vu_2d import Vu2D
+    from .physics import Physics
+    from .physics.geom import Geom
+    from .physics.material import PhysicsMaterial
 
 from ..vu import Vu
 
@@ -17,6 +21,9 @@ from ..scene.scene_node import SceneNode
 
 class Node2D(SceneNode["Node2D", "Scene2D"]):
     default_vu: ClassVar["type[Vu2D] | None"] = None
+    default_physics: ClassVar["type[Physics] | None"] = None
+    default_geom: ClassVar["type[Geom] | None"] = None
+    default_material: "PhysicsMaterial | None" = None
 
     def __init__(
         self,
@@ -39,6 +46,21 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
         # World-space bounds, derived from local bounds + global transform.
         self._bounds = Bounds2()
+
+    def _seat(self) -> None:
+        super()._seat()
+        material = None
+        if self.default_vu is not None:
+            self.add(self.default_vu())
+
+        if self.default_geom is not None:
+            geom = self.default_geom()
+
+        if self.default_material is not None:
+            material = self.default_material
+
+        if self.default_physics is not None:
+            self.add(self.default_physics(geom=geom, material=material))
 
     # ------------------------------------------------------------------
     # Properties
@@ -279,16 +301,3 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     def intersects(self, other: "Node2D"):
         return self.bounds.intersects(other.bounds)
-
-    # --Vu
-    def _seat(self) -> None:
-        super()._seat()
-        if self.default_vu is not None and not self.has(Vu):
-            self.add(self.default_vu())
-
-    """
-    def _seat(self) -> None:
-        super()._seat()
-        if not self.has(Vu):
-            self.add(SpriteVu())
-    """

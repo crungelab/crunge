@@ -7,7 +7,7 @@ from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 
 from crunge.engine.d2.sprite import SpriteVu
-from crunge.engine.d2.entity import PhysicsGroup2D, Entity2D, DynamicEntity2D
+from crunge.engine.d2.entity import EntityGroup2D, Entity2D, DynamicEntity2D
 from crunge.engine.d2.physics import BoxGeom, BallGeom
 from crunge.engine.d2.physics import globe as physics_globe
 
@@ -40,12 +40,12 @@ sprite_loader = SpriteLoader(sprite_builder=CollidableSpriteBuilder())
 
 
 class Wheel(DynamicEntity2D):
+    default_geom = BallGeom
+
     def __init__(self, position=glm.vec2()):
         sprite = sprite_loader.load("${resources}/tiled/items/coinGold.png")
         scale = glm.vec2(0.5, 0.5)
-        super().__init__(
-            position, scale=scale, vu=SpriteVu(), model=sprite, geom=BallGeom()
-        )
+        super().__init__(position, scale=scale, model=sprite)
         self.mass = WHEEL_MASS
 
     def add_shape(self, shape):
@@ -58,12 +58,13 @@ class Wheel(DynamicEntity2D):
 
 
 class Chassis(DynamicEntity2D):
+    default_geom = BoxGeom
     def __init__(self, position=glm.vec2()):
         sprite = sprite_loader.load("${resources}/tiled/objects/boxCrate.png")
 
         scale = glm.vec2(1.5, 0.1)
         super().__init__(
-            position, scale=scale, vu=SpriteVu(), model=sprite, geom=BoxGeom()
+            position, scale=scale, model=sprite
         )
         self.mass = CHASSIS_MASS
 
@@ -76,7 +77,7 @@ class Chassis(DynamicEntity2D):
         return Chassis(position)
 
 
-class Car(PhysicsGroup2D):
+class Car(EntityGroup2D):
     def __init__(self, position=glm.vec2()):
         super().__init__(position)
         self.mountee = None
@@ -113,7 +114,7 @@ class Car(PhysicsGroup2D):
         mountee.on_mount(self.chassis, point)
         logger.debug(f"mountee body: {mountee.body}")
 
-        world = physics_globe.physics_engine
+        world = physics_globe.world
 
         mountee_anchor = box2d.Vec2(0, 0)
         mounted_anchor = box2d.Vec2(0, 0.6)
@@ -135,7 +136,7 @@ class Car(PhysicsGroup2D):
         logger.debug("dismounting")
         if self.mountee is None:
             return
-        world = physics_globe.physics_engine
+        world = physics_globe.world
         for joint_id in self.mountee_joints:
             box2d.destroy_joint(joint_id, False)
         self.mountee_joints = []
@@ -146,7 +147,7 @@ class Car(PhysicsGroup2D):
     def _create(self):
         super()._create()
 
-        world = physics_globe.physics_engine
+        world = physics_globe.world
 
         front_anchor_on_chassis = box2d.Vec2(
             *(self._front_wheel_pos - self.chassis.position)

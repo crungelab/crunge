@@ -86,7 +86,7 @@ class Vu2D(Vu[Node2D]):
         pass
 
     # -- group -------------------------------------------------------------
-
+    """
     @property
     def group(self) -> "VuGroup":
         return self._group
@@ -98,6 +98,7 @@ class Vu2D(Vu[Node2D]):
 
     def on_group(self) -> None:
         pass
+    """
 
     @property
     def node_buffer_index(self) -> int:

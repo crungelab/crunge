@@ -5,9 +5,10 @@ from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from ...character.dynamic_character import DynamicCharacter
+from ..character.dynamic_character import DynamicCharacter
 
 from .avatar_brain import AvatarBrain
+
 
 class Avatar(DynamicCharacter):
     def __init__(self, position=glm.vec2()):
@@ -19,11 +20,6 @@ class Avatar(DynamicCharacter):
         )
         brain = AvatarBrain(atlas)
         super().__init__(position, model=model, brain=brain)
-
-    def _seat(self) -> None:
-        super()._seat()
-        self.add(SpriteVu())
-
 
     @classmethod
     def produce(self, position=glm.vec2()):

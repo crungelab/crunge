@@ -11,17 +11,19 @@ from crunge.engine.d2.physics import MotionState
 
 from crunge.engine.d2.sprite import SpriteVu
 
-from ..constants import *
-from .. import globe
+from ...constants import *
+from ... import globe
 
-from ..character.controller import KinematicCharacterController
+from .controller import KinematicCharacterController
 
 PLAYER_MASS = 1
 
 
 class KinematicCharacter(KinematicEntity2D):
-    def __init__(self, position=glm.vec2(), vu=SpriteVu(), model=None, brain=None):
-        super().__init__(position, model=model, brain=brain, geom=HullGeom())
+    default_vu = SpriteVu
+    default_geom = HullGeom
+    def __init__(self, position=glm.vec2(), model=None, brain=None):
+        super().__init__(position, model=model, brain=brain)
         self.mass = PLAYER_MASS
 
     def on_mount(self, node: PhysicsEntity2D, point: glm.vec2):

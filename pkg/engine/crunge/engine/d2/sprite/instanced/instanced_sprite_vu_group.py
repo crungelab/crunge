@@ -79,7 +79,7 @@ class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
         self.batches.clear()
         # Cleared first; batch() sets it again for any member still waiting.
         self._rebatch = False
-        for member in self.visuals:
+        for member in self.members:
             self.batch(member)
 
     def _draw(self):

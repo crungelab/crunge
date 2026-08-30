@@ -1,7 +1,8 @@
 from loguru import logger
 import glm
 
-from crunge.engine.d2.entity import StaticEntity2D
+from crunge.engine.d2 import Node2D
+from crunge.engine.d2.physics import StaticPhysics
 from crunge.engine.d2.physics.geom import BoxGeom
 from crunge.engine.d2.scene.layer import GraphLayer2D
 
@@ -11,12 +12,16 @@ BARRIER_WIDTH = 100
 BARRIER_HEIGHT = 1000
 
 
-class Barrier(StaticEntity2D):
+class Barrier(Node2D):
     def __init__(self, left: float, bottom: float, right: float, top: float):
         width = right - left
         height = top - bottom
         position = glm.vec2(left + width / 2, bottom + height / 2)
-        super().__init__(position, scale=glm.vec2(width, height), geom=BoxGeom())
+        super().__init__(position, scale=glm.vec2(width, height))
+
+    def _seat(self) -> None:
+        super()._seat()
+        self.add(StaticPhysics(BoxGeom(), position=self.position))
 
 
 class BarrierLayer(GraphLayer2D):

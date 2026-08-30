@@ -20,7 +20,7 @@ class PhysicsWorld2D(box2d.World):
         world_def = box2d.WorldDef(gravity = box2d.Vec2(gravity[0], gravity[1]))
         super().__init__(world_def)
         logger.debug("PhysicsWorld2D.__init__")
-        globe.physics_engine = self
+        globe.world = self
         self.gravity = gravity
 
     def make_current(self):
@@ -45,3 +45,6 @@ class PhysicsWorld2D(box2d.World):
         #self.step(delta_time, 8)
         #self.step(delta_time, 16)
         self.step(delta_time, 32)
+
+    def draw(self, debug_draw):
+        box2d.world_draw(self, debug_draw)

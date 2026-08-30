@@ -9,7 +9,7 @@ from crunge.engine.d2.settings_2d import Settings2D
 
 
 from ...objects.floor import Floor
-from ...characters import Skateboard
+from ...character import Car
 
 from ..physics_demo import PhysicsDemo
 
@@ -31,7 +31,7 @@ class CarDemo(PhysicsDemo):
         self.scene.attach(floor)
 
     def create_avatar(self, position):
-        self.push_avatar(Skateboard(position))
+        self.push_avatar(Car(position))
         self.scene.attach(self.avatar)
 
     # ------------------------------------------------------------------

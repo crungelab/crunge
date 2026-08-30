@@ -14,8 +14,9 @@ excludes:
 
   # Internal / Ignored
 
-# specs:
-#   'function_prototype@b2OverlapResultFcn':
-#     facade:
-#       kind: callback
-#       context_param: context
+specs:
+  'struct@b2RecPlayer':
+    wrapper: 'pycapsule'
+
+  'struct@b2Recording':
+    wrapper: 'pycapsule'

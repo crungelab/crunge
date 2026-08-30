@@ -18,7 +18,7 @@ class PhysicsDemo(ScrollingDemo):
         #self.display.add_overlay(self.debug_overlay)
         self.display.primary_view.add_overlay(self.debug_overlay)
 
-    def create_physics_engine(self):
+    def create_world(self):
         self.world = PhysicsWorld2D()
         self.world.make_current()
 
@@ -27,7 +27,7 @@ class PhysicsDemo(ScrollingDemo):
 
         self.debug_draw_enabled = False
 
-        self.create_physics_engine()
+        self.create_world()
 
         # Mouse drag state — kinematic body follows mouse position
         body_def = box2d.BodyDef(type=box2d.BodyType.KINEMATIC_BODY)
@@ -70,7 +70,9 @@ class PhysicsDemo(ScrollingDemo):
 
         # Point proxy: no halo. Exact containment only.
         proxy = box2d.make_proxy(target, 1, 0.0)
-        self.world.overlap_shape(proxy, box2d.default_query_filter(), overlap_callback)
+
+        origin = box2d.Vec2(0, 0)
+        self.world.overlap_shape(origin, proxy, box2d.default_query_filter(), overlap_callback)
 
         if hit is None:
             return False
@@ -97,7 +99,7 @@ class PhysicsDemo(ScrollingDemo):
 
     def _end_drag(self):
         if self._mouse_joint is not None:
-            box2d.destroy_joint(self._mouse_joint, False)
+            box2d.destroy_joint(self._mouse_joint)
             self._mouse_joint = None
         self._dragged_body = None
 

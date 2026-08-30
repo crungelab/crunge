@@ -30,6 +30,16 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("hit", &b2RayResult::hit)
     ;
 
+    py::class_<b2Capacity> _Capacity(_box2d, "Capacity");
+    registry.on(_box2d, "Capacity", _Capacity);
+        _Capacity
+        .def_readwrite("static_shape_count", &b2Capacity::staticShapeCount)
+        .def_readwrite("dynamic_shape_count", &b2Capacity::dynamicShapeCount)
+        .def_readwrite("static_body_count", &b2Capacity::staticBodyCount)
+        .def_readwrite("dynamic_body_count", &b2Capacity::dynamicBodyCount)
+        .def_readwrite("contact_count", &b2Capacity::contactCount)
+    ;
+
     py::class_<b2WorldDef> _WorldDef(_box2d, "WorldDef");
     registry.on(_box2d, "WorldDef", _WorldDef);
         _WorldDef
@@ -46,11 +56,12 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("worker_count", &b2WorldDef::workerCount)
         .def_readwrite("user_task_context", &b2WorldDef::userTaskContext)
         .def_readwrite("user_data", &b2WorldDef::userData)
+        .def_readwrite("capacity", &b2WorldDef::capacity)
         .def_readwrite("internal_value", &b2WorldDef::internalValue)
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2WorldDef obj = b2DefaultWorldDef();
-            static const std::unordered_set<std::string> allowed_keys = {"gravity", "restitution_threshold", "hit_event_threshold", "contact_hertz", "contact_damping_ratio", "contact_speed", "maximum_linear_speed", "enable_sleep", "enable_continuous", "enable_contact_softening", "worker_count", "user_task_context", "user_data", "internal_value"};
+            static const std::unordered_set<std::string> allowed_keys = {"gravity", "restitution_threshold", "hit_event_threshold", "contact_hertz", "contact_damping_ratio", "contact_speed", "maximum_linear_speed", "enable_sleep", "enable_continuous", "enable_contact_softening", "worker_count", "user_task_context", "user_data", "capacity", "internal_value"};
             for (auto item : kwargs)
             {
                 std::string key = py::str(item.first);
@@ -124,6 +135,11 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
                 auto value = kwargs["user_data"].cast<void *>();
                 obj.userData = value;
             }
+            if (kwargs.contains("capacity"))
+            {
+                auto value = kwargs["capacity"].cast<struct b2Capacity>();
+                obj.capacity = value;
+            }
             if (kwargs.contains("internal_value"))
             {
                 auto value = kwargs["internal_value"].cast<int>();
@@ -159,6 +175,8 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
             ss << "userTaskContext=" << py::repr(py::cast(self.userTaskContext)).cast<std::string>();
             ss << ", ";
             ss << "userData=" << py::repr(py::cast(self.userData)).cast<std::string>();
+            ss << ", ";
+            ss << "capacity=" << py::repr(py::cast(self.capacity)).cast<std::string>();
             ss << ", ";
             ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
             ss << ")";
@@ -217,6 +235,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("angular_damping", &b2BodyDef::angularDamping)
         .def_readwrite("gravity_scale", &b2BodyDef::gravityScale)
         .def_readwrite("sleep_threshold", &b2BodyDef::sleepThreshold)
+        .def_readwrite("safety_factor", &b2BodyDef::safetyFactor)
         .def_property("name",
             [](const b2BodyDef& self){ return self.name; },
             [](b2BodyDef& self, const char* source){ self.name = strdup(source); }
@@ -228,11 +247,12 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("is_bullet", &b2BodyDef::isBullet)
         .def_readwrite("is_enabled", &b2BodyDef::isEnabled)
         .def_readwrite("allow_fast_rotation", &b2BodyDef::allowFastRotation)
+        .def_readwrite("enable_contact_recycling", &b2BodyDef::enableContactRecycling)
         .def_readwrite("internal_value", &b2BodyDef::internalValue)
         .def(py::init([](const py::kwargs& kwargs)
         {
             b2BodyDef obj = b2DefaultBodyDef();
-            static const std::unordered_set<std::string> allowed_keys = {"type", "position", "rotation", "linear_velocity", "angular_velocity", "linear_damping", "angular_damping", "gravity_scale", "sleep_threshold", "name", "user_data", "motion_locks", "enable_sleep", "is_awake", "is_bullet", "is_enabled", "allow_fast_rotation", "internal_value"};
+            static const std::unordered_set<std::string> allowed_keys = {"type", "position", "rotation", "linear_velocity", "angular_velocity", "linear_damping", "angular_damping", "gravity_scale", "sleep_threshold", "safety_factor", "name", "user_data", "motion_locks", "enable_sleep", "is_awake", "is_bullet", "is_enabled", "allow_fast_rotation", "enable_contact_recycling", "internal_value"};
             for (auto item : kwargs)
             {
                 std::string key = py::str(item.first);
@@ -286,6 +306,11 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
                 auto value = kwargs["sleep_threshold"].cast<float>();
                 obj.sleepThreshold = value;
             }
+            if (kwargs.contains("safety_factor"))
+            {
+                auto value = kwargs["safety_factor"].cast<float>();
+                obj.safetyFactor = value;
+            }
             if (kwargs.contains("name"))
             {
                 auto _value = kwargs["name"].cast<std::string>();
@@ -328,6 +353,11 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
                 auto value = kwargs["allow_fast_rotation"].cast<_Bool>();
                 obj.allowFastRotation = value;
             }
+            if (kwargs.contains("enable_contact_recycling"))
+            {
+                auto value = kwargs["enable_contact_recycling"].cast<_Bool>();
+                obj.enableContactRecycling = value;
+            }
             if (kwargs.contains("internal_value"))
             {
                 auto value = kwargs["internal_value"].cast<int>();
@@ -356,6 +386,8 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
             ss << ", ";
             ss << "sleepThreshold=" << py::repr(py::cast(self.sleepThreshold)).cast<std::string>();
             ss << ", ";
+            ss << "safetyFactor=" << py::repr(py::cast(self.safetyFactor)).cast<std::string>();
+            ss << ", ";
             ss << "name=" << py::repr(py::cast(self.name)).cast<std::string>();
             ss << ", ";
             ss << "userData=" << py::repr(py::cast(self.userData)).cast<std::string>();
@@ -371,6 +403,8 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
             ss << "isEnabled=" << py::repr(py::cast(self.isEnabled)).cast<std::string>();
             ss << ", ";
             ss << "allowFastRotation=" << py::repr(py::cast(self.allowFastRotation)).cast<std::string>();
+            ss << ", ";
+            ss << "enableContactRecycling=" << py::repr(py::cast(self.enableContactRecycling)).cast<std::string>();
             ss << ", ";
             ss << "internalValue=" << py::repr(py::cast(self.internalValue)).cast<std::string>();
             ss << ")";
@@ -775,8 +809,8 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("pairs", &b2Profile::pairs)
         .def_readwrite("collide", &b2Profile::collide)
         .def_readwrite("solve", &b2Profile::solve)
-        .def_readwrite("prepare_stages", &b2Profile::prepareStages)
-        .def_readwrite("solve_constraints", &b2Profile::solveConstraints)
+        .def_readwrite("solver_setup", &b2Profile::solverSetup)
+        .def_readwrite("constraints", &b2Profile::constraints)
         .def_readwrite("prepare_constraints", &b2Profile::prepareConstraints)
         .def_readwrite("integrate_velocities", &b2Profile::integrateVelocities)
         .def_readwrite("warm_start", &b2Profile::warmStart)
@@ -799,6 +833,7 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
     py::class_<b2Counters> _Counters(_box2d, "Counters");
     registry.on(_box2d, "Counters", _Counters);
         _Counters
+        .def_readwrite("byte_count", &b2Counters::byteCount)
         .def_readwrite("body_count", &b2Counters::bodyCount)
         .def_readwrite("shape_count", &b2Counters::shapeCount)
         .def_readwrite("contact_count", &b2Counters::contactCount)
@@ -807,15 +842,18 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("stack_used", &b2Counters::stackUsed)
         .def_readwrite("static_tree_height", &b2Counters::staticTreeHeight)
         .def_readwrite("tree_height", &b2Counters::treeHeight)
-        .def_readwrite("byte_count", &b2Counters::byteCount)
         .def_readwrite("task_count", &b2Counters::taskCount)
         .def_readonly("color_counts", &b2Counters::colorCounts)
+        .def_readwrite("awake_contact_count", &b2Counters::awakeContactCount)
+        .def_readwrite("recycled_contact_count", &b2Counters::recycledContactCount)
     ;
 
     py::enum_<b2JointType>(_box2d, "JointType", py::arithmetic())
         .value("DISTANCE_JOINT", b2JointType::b2_distanceJoint)
         .value("FILTER_JOINT", b2JointType::b2_filterJoint)
         .value("MOTOR_JOINT", b2JointType::b2_motorJoint)
+        .value("MOVER_JOINT", b2JointType::b2_moverJoint)
+        .value("POGO_JOINT", b2JointType::b2_pogoJoint)
         .value("PRISMATIC_JOINT", b2JointType::b2_prismaticJoint)
         .value("REVOLUTE_JOINT", b2JointType::b2_revoluteJoint)
         .value("WELD_JOINT", b2JointType::b2_weldJoint)
@@ -1072,6 +1110,18 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         )
     ;
 
+    py::class_<b2FilterJointDef> _FilterJointDef(_box2d, "FilterJointDef");
+    registry.on(_box2d, "FilterJointDef", _FilterJointDef);
+        _FilterJointDef
+        .def_readwrite("base", &b2FilterJointDef::base)
+        .def_readwrite("internal_value", &b2FilterJointDef::internalValue)
+    ;
+
+    _box2d
+    .def("default_filter_joint_def", &b2DefaultFilterJointDef
+        )
+    ;
+
     py::class_<b2MotorJointDef> _MotorJointDef(_box2d, "MotorJointDef");
     registry.on(_box2d, "MotorJointDef", _MotorJointDef);
         _MotorJointDef
@@ -1094,15 +1144,37 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         )
     ;
 
-    py::class_<b2FilterJointDef> _FilterJointDef(_box2d, "FilterJointDef");
-    registry.on(_box2d, "FilterJointDef", _FilterJointDef);
-        _FilterJointDef
-        .def_readwrite("base", &b2FilterJointDef::base)
-        .def_readwrite("internal_value", &b2FilterJointDef::internalValue)
+    py::class_<b2MoverJointDef> _MoverJointDef(_box2d, "MoverJointDef");
+    registry.on(_box2d, "MoverJointDef", _MoverJointDef);
+        _MoverJointDef
+        .def_readwrite("base", &b2MoverJointDef::base)
+        .def_readwrite("linear_velocity", &b2MoverJointDef::linearVelocity)
+        .def_readwrite("max_velocity_force", &b2MoverJointDef::maxVelocityForce)
+        .def_readwrite("internal_value", &b2MoverJointDef::internalValue)
     ;
 
     _box2d
-    .def("default_filter_joint_def", &b2DefaultFilterJointDef
+    .def("default_mover_joint_def", &b2DefaultMoverJointDef
+        )
+    ;
+
+    py::class_<b2PogoJointDef> _PogoJointDef(_box2d, "PogoJointDef");
+    registry.on(_box2d, "PogoJointDef", _PogoJointDef);
+        _PogoJointDef
+        .def_readwrite("base", &b2PogoJointDef::base)
+        .def_readwrite("normal", &b2PogoJointDef::normal)
+        .def_readwrite("hertz", &b2PogoJointDef::hertz)
+        .def_readwrite("damping_ratio", &b2PogoJointDef::dampingRatio)
+        .def_readwrite("rest_length", &b2PogoJointDef::restLength)
+        .def_readwrite("max_tension_force", &b2PogoJointDef::maxTensionForce)
+        .def_readwrite("max_compression_force", &b2PogoJointDef::maxCompressionForce)
+        .def_readwrite("impulse", &b2PogoJointDef::impulse)
+        .def_readwrite("velocity", &b2PogoJointDef::velocity)
+        .def_readwrite("internal_value", &b2PogoJointDef::internalValue)
+    ;
+
+    _box2d
+    .def("default_pogo_joint_def", &b2DefaultPogoJointDef
         )
     ;
 
@@ -1990,6 +2062,9 @@ void init_types_py_auto(py::module &_box2d, Registry &registry) {
         .export_values()
     ;
     _box2d
+    .def("get_graph_color", &b2GetGraphColor
+        , py::arg("index")
+        )
     .def("default_debug_draw", &b2DefaultDebugDraw
         )
     ;

@@ -14,7 +14,7 @@ from .ship import Ship
 from .zone import Zone
 from .explosion import Explosion
 
-from .collision_type import CollisionType
+from .physics_material import SHIP, LASER, METEOR
 
 
 class SpaceShooter(PhysicsDemo):
@@ -23,7 +23,7 @@ class SpaceShooter(PhysicsDemo):
         self.controller = None
         self.camera_target = glm.vec2(0, 0)
 
-        self.create_physics_engine()
+        self.create_world()
 
         self.create_ship(glm.vec2(0, 0))
 
@@ -38,7 +38,7 @@ class SpaceShooter(PhysicsDemo):
     def center_camera(self):
         pass
 
-    def create_physics_engine(self):
+    def create_world(self):
         self.world = PhysicsWorld2D(gravity=glm.vec2(0, 0))
         self.world.make_current()
 
@@ -73,22 +73,22 @@ class SpaceShooter(PhysicsDemo):
             ):
                 continue
 
-            if types == {CollisionType.LASER}:
+            if types == {LASER.id}:
                 continue  # laser/laser: no-op, same as before
 
-            if types == {CollisionType.LASER, CollisionType.METEOR}:
+            if types == {LASER.id, METEOR.id}:
                 laser = (
-                    node_a if shape_a.user_material == CollisionType.LASER else node_b
+                    node_a if shape_a.user_material == LASER.id else node_b
                 )
                 asteroid = (
-                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
+                    node_a if shape_a.user_material == METEOR.id else node_b
                 )
                 self._destroy_pair(laser, asteroid, destroyed)
 
-            elif types == {CollisionType.SHIP, CollisionType.METEOR}:
-                ship = node_a if shape_a.user_material == CollisionType.SHIP else node_b
+            elif types == {SHIP.id, METEOR.id}:
+                ship = node_a if shape_a.user_material == SHIP.id else node_b
                 asteroid = (
-                    node_a if shape_a.user_material == CollisionType.METEOR else node_b
+                    node_a if shape_a.user_material == METEOR.id else node_b
                 )
                 self._destroy_pair(
                     ship, asteroid, destroyed, color=glm.vec4(1.0, 0.0, 0.0, 1.0)
@@ -116,7 +116,7 @@ class SpaceShooter(PhysicsDemo):
         self.camera.position = glm.vec2(0, 0)
 
     def create_ship(self, position):
-        ship = self.ship = Ship(position)
+        ship = self.ship = Ship(position).seat()
         self.node = ship
         self.scene.attach(ship)
 
@@ -140,7 +140,7 @@ class SpaceShooter(PhysicsDemo):
 
         base_lerp_factor = 5.0
         speed_factor = 0.001
-        ship_speed = b2.length(self.ship.body.linear_velocity)
+        ship_speed = b2.length(self.ship.physics.body.linear_velocity)
         threshold_distance = 4.0
 
         self.camera_target = self.calculate_target_position(

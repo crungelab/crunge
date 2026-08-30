@@ -325,8 +325,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         _DistanceInput
         .def_readwrite("proxy_a", &b2DistanceInput::proxyA)
         .def_readwrite("proxy_b", &b2DistanceInput::proxyB)
-        .def_readwrite("transform_a", &b2DistanceInput::transformA)
-        .def_readwrite("transform_b", &b2DistanceInput::transformB)
+        .def_readwrite("transform", &b2DistanceInput::transform)
         .def_readwrite("use_radii", &b2DistanceInput::useRadii)
     ;
 
@@ -375,8 +374,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         _ShapeCastPairInput
         .def_readwrite("proxy_a", &b2ShapeCastPairInput::proxyA)
         .def_readwrite("proxy_b", &b2ShapeCastPairInput::proxyB)
-        .def_readwrite("transform_a", &b2ShapeCastPairInput::transformA)
-        .def_readwrite("transform_b", &b2ShapeCastPairInput::transformB)
+        .def_readwrite("transform", &b2ShapeCastPairInput::transform)
         .def_readwrite("translation_b", &b2ShapeCastPairInput::translationB)
         .def_readwrite("max_fraction", &b2ShapeCastPairInput::maxFraction)
         .def_readwrite("can_encroach", &b2ShapeCastPairInput::canEncroach)
@@ -453,10 +451,10 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
     py::class_<b2ManifoldPoint> _ManifoldPoint(_box2d, "ManifoldPoint");
     registry.on(_box2d, "ManifoldPoint", _ManifoldPoint);
         _ManifoldPoint
-        .def_readwrite("point", &b2ManifoldPoint::point)
         .def_readwrite("anchor_a", &b2ManifoldPoint::anchorA)
         .def_readwrite("anchor_b", &b2ManifoldPoint::anchorB)
         .def_readwrite("separation", &b2ManifoldPoint::separation)
+        .def_readwrite("base_separation", &b2ManifoldPoint::baseSeparation)
         .def_readwrite("normal_impulse", &b2ManifoldPoint::normalImpulse)
         .def_readwrite("tangent_impulse", &b2ManifoldPoint::tangentImpulse)
         .def_readwrite("total_normal_impulse", &b2ManifoldPoint::totalNormalImpulse)
@@ -474,81 +472,107 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("point_count", &b2Manifold::pointCount)
     ;
 
+    py::class_<b2LocalManifoldPoint> _LocalManifoldPoint(_box2d, "LocalManifoldPoint");
+    registry.on(_box2d, "LocalManifoldPoint", _LocalManifoldPoint);
+        _LocalManifoldPoint
+        .def_readwrite("point", &b2LocalManifoldPoint::point)
+        .def_readwrite("separation", &b2LocalManifoldPoint::separation)
+        .def_readwrite("id", &b2LocalManifoldPoint::id)
+    ;
+
+    py::class_<b2LocalManifold> _LocalManifold(_box2d, "LocalManifold");
+    registry.on(_box2d, "LocalManifold", _LocalManifold);
+        _LocalManifold
+        .def_readwrite("normal", &b2LocalManifold::normal)
+        .def_readonly("points", &b2LocalManifold::points)
+        .def_readwrite("point_count", &b2LocalManifold::pointCount)
+    ;
+
     _box2d
     .def("collide_circles", &b2CollideCircles
         , py::arg("circle_a")
-        , py::arg("xf_a")
         , py::arg("circle_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_capsule_and_circle", &b2CollideCapsuleAndCircle
         , py::arg("capsule_a")
-        , py::arg("xf_a")
         , py::arg("circle_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_segment_and_circle", &b2CollideSegmentAndCircle
         , py::arg("segment_a")
-        , py::arg("xf_a")
         , py::arg("circle_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_polygon_and_circle", &b2CollidePolygonAndCircle
         , py::arg("polygon_a")
-        , py::arg("xf_a")
         , py::arg("circle_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_capsules", &b2CollideCapsules
         , py::arg("capsule_a")
-        , py::arg("xf_a")
         , py::arg("capsule_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_segment_and_capsule", &b2CollideSegmentAndCapsule
         , py::arg("segment_a")
-        , py::arg("xf_a")
         , py::arg("capsule_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_polygon_and_capsule", &b2CollidePolygonAndCapsule
         , py::arg("polygon_a")
-        , py::arg("xf_a")
         , py::arg("capsule_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_polygons", &b2CollidePolygons
         , py::arg("polygon_a")
-        , py::arg("xf_a")
         , py::arg("polygon_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_segment_and_polygon", &b2CollideSegmentAndPolygon
         , py::arg("segment_a")
-        , py::arg("xf_a")
         , py::arg("polygon_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_chain_segment_and_circle", &b2CollideChainSegmentAndCircle
         , py::arg("segment_a")
-        , py::arg("xf_a")
         , py::arg("circle_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         )
     .def("collide_chain_segment_and_capsule", &b2CollideChainSegmentAndCapsule
         , py::arg("segment_a")
-        , py::arg("xf_a")
         , py::arg("capsule_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         , py::arg("cache")
         )
     .def("collide_chain_segment_and_polygon", &b2CollideChainSegmentAndPolygon
         , py::arg("segment_a")
-        , py::arg("xf_a")
         , py::arg("polygon_b")
-        , py::arg("xf_b")
+        , py::arg("xf")
         , py::arg("cache")
         )
+    ;
+
+    py::enum_<b2TreeNodeFlags>(_box2d, "TreeNodeFlags", py::arithmetic())
+        .value("ALLOCATED_NODE", b2TreeNodeFlags::b2_allocatedNode)
+        .value("ENLARGED_NODE", b2TreeNodeFlags::b2_enlargedNode)
+        .value("LEAF_NODE", b2TreeNodeFlags::b2_leafNode)
+        .export_values()
+    ;
+    py::class_<b2TreeNodeChildren> _TreeNodeChildren(_box2d, "TreeNodeChildren");
+    registry.on(_box2d, "TreeNodeChildren", _TreeNodeChildren);
+        _TreeNodeChildren
+        .def_readwrite("child1", &b2TreeNodeChildren::child1)
+        .def_readwrite("child2", &b2TreeNodeChildren::child2)
+    ;
+
+    py::class_<b2TreeNode> _TreeNode(_box2d, "TreeNode");
+    registry.on(_box2d, "TreeNode", _TreeNode);
+        _TreeNode
+        .def_readwrite("aabb", &b2TreeNode::aabb)
+        .def_readwrite("category_bits", &b2TreeNode::categoryBits)
+        .def_readwrite("height", &b2TreeNode::height)
+        .def_readwrite("flags", &b2TreeNode::flags)
     ;
 
     py::class_<b2TreeStats> _TreeStats(_box2d, "TreeStats");
@@ -560,6 +584,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
 
     _box2d
     .def("dynamic_tree_create", &b2DynamicTree_Create
+        , py::arg("proxy_capacity")
         )
     .def("dynamic_tree_destroy", &b2DynamicTree_Destroy
         , py::arg("tree")
@@ -613,7 +638,18 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("callback")
         , py::arg("context")
         )
-    .def("dynamic_tree_shape_cast", &b2DynamicTree_ShapeCast
+    ;
+
+    py::class_<b2BoxCastInput> _BoxCastInput(_box2d, "BoxCastInput");
+    registry.on(_box2d, "BoxCastInput", _BoxCastInput);
+        _BoxCastInput
+        .def_readwrite("box", &b2BoxCastInput::box)
+        .def_readwrite("translation", &b2BoxCastInput::translation)
+        .def_readwrite("max_fraction", &b2BoxCastInput::maxFraction)
+    ;
+
+    _box2d
+    .def("dynamic_tree_box_cast", &b2DynamicTree_BoxCast
         , py::arg("tree")
         , py::arg("input")
         , py::arg("mask_bits")
@@ -675,7 +711,7 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
     py::class_<b2PlaneSolverResult> _PlaneSolverResult(_box2d, "PlaneSolverResult");
     registry.on(_box2d, "PlaneSolverResult", _PlaneSolverResult);
         _PlaneSolverResult
-        .def_readwrite("translation", &b2PlaneSolverResult::translation)
+        .def_readwrite("delta", &b2PlaneSolverResult::delta)
         .def_readwrite("iteration_count", &b2PlaneSolverResult::iterationCount)
     ;
 

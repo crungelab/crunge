@@ -9,7 +9,7 @@ from crunge.engine.d2.settings_2d import Settings2D
 from ..physics_demo import PhysicsDemo
 
 from ...objects.floor import Floor
-from ...characters import Avatar
+from ...character import Avatar
 
 
 class DynamicCharacterDemo(PhysicsDemo):

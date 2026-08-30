@@ -10,7 +10,7 @@ from ..physics_demo import PhysicsDemo
 
 from ...objects import Floor
 
-from ...characters import Skateboard
+from ...character import Skateboard
 
 
 class SkateboardDemo(PhysicsDemo):

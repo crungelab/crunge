@@ -22,4 +22,5 @@ class SceneChannel(Channel):
 
     def produce_display(self, *args, **kwargs) -> Display:
         scene = self.produce_scene()
+        scene.make_current()
         return super().produce_display(scene, *args, **kwargs)

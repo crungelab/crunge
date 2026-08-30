@@ -13,12 +13,12 @@ from crunge.engine.d2.physics import MotionState
 from crunge.engine.d2.physics import globe as physics_globe
 from crunge.engine.d2.physics.constants import PT_DYNAMIC, PT_KINEMATIC, PT_STATIC
 
-from ... import globe, characters
-from ...constants import *
-from ...character.controller import CharacterController
+from .... import globe, character
+from ....constants import *
+from . import CharacterController
 
 if TYPE_CHECKING:
-    from ...characters.avatar import Avatar
+    from ...avatar import Avatar
 
 MAX_SPEED = 5.0
 JUMP_IMPULSE = 2.0
@@ -81,7 +81,7 @@ class DynamicFootSensorHandler:
 class DynamicCharacterController(CharacterController):
     def __init__(self, avatar: "Avatar"):
         super().__init__(avatar)
-        self.physics_engine = physics_globe.physics_engine
+        self.world = physics_globe.world
         self.avatar = avatar
 
         scene = Scene2D.get_current()
@@ -146,7 +146,7 @@ class DynamicCharacterController(CharacterController):
     def mount(self):
         hit_list = self.character_layer.query_intersection(self.avatar.bounds)
         for node in hit_list:
-            if isinstance(node, characters.Skateboard):
+            if isinstance(node, character.Skateboard):
                 mount = node
                 mount.mount(self.avatar)
                 globe.app.push_avatar(mount)
@@ -166,7 +166,7 @@ class DynamicCharacterController(CharacterController):
         super().update(delta_time)
 
         # 0. Pull this frame's contact events before reading grounded state.
-        world = self.physics_engine
+        world = self.world
         self._foot_handler.poll(world)
 
         # 1. State Transitions
@@ -228,7 +228,7 @@ class DynamicCharacterController(CharacterController):
         elif self.right_pressed: dx = PLAYER_MOVEMENT_SPEED
 
         body = self.avatar.body
-        world = self.physics_engine
+        world = self.world
         gravity = world.get_gravity()
         mass = body.get_mass()
 

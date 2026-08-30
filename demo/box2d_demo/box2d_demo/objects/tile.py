@@ -1,36 +1,40 @@
 import glm
 
-from crunge.engine.d2.physics.geom import BoxGeom, ChainGeom
+from crunge.engine.d2.physics.geom import HullGeom, BoxGeom, ChainGeom
 from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2 import Node2D
+from crunge.engine.d2.physics import StaticPhysics, DynamicPhysics
 
-from crunge.engine.d2.entity import StaticEntity2D
-
-
-class Tile(StaticEntity2D):
+class Tile(Node2D):
+    default_vu = SpriteVu
+    default_geom = HullGeom
+    default_physics = StaticPhysics
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
 
-class BoxTile(StaticEntity2D):
+class BoxTile(Node2D):
+    default_geom = BoxGeom
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
-        super().__init__(position, model=sprite, geom=BoxGeom())
+        super().__init__(position, model=sprite)
 
 
-class ChainTile(StaticEntity2D):
+class ChainTile(Node2D):
+    default_geom = ChainGeom
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
-        super().__init__(position, model=sprite, geom=ChainGeom())
+        super().__init__(position, model=sprite)
 
 
 class GhostTile(Node2D):
     default_vu = SpriteVu
+    default_physics = None
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
 
-class RunColliderTile(StaticEntity2D):
+class RunColliderTile(Node2D):
     def __init__(self, position: glm.vec2, scale: glm.vec2) -> None:
-        super().__init__(position, scale=scale, model=None, geom=BoxGeom())
+        super().__init__(position, scale=scale, model=None)
 
 
 class TerrainModel:
@@ -45,11 +49,12 @@ class TerrainModel:
         return glm.vec2(max(xs) - min(xs), max(ys) - min(ys))
 
 
-class TerrainColliderTile(StaticEntity2D):
-    default_vu = None
+class TerrainColliderTile(Node2D):
+    default_geom = ChainGeom
+    default_physics = StaticPhysics
     def __init__(self, points: list[tuple[float, float]]) -> None:
         model = TerrainModel(points)
-        super().__init__(model=model, geom=ChainGeom())
+        super().__init__(model=model)
 
 
 """

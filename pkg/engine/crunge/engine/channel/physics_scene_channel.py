@@ -1,7 +1,7 @@
 from ..factory import Factory
 from ..display import Display
 from ..scene import Scene
-from ..physics_engine import PhysicsEngine
+from ..world import PhysicsEngine
 
 from .scene_channel import SceneChannel
 
@@ -11,17 +11,17 @@ class PhysicsSceneChannel(SceneChannel):
         self,
         display_factory: Factory[Display],
         scene_factory: Factory[Scene],
-        physics_engine_factory: Factory[PhysicsEngine],
+        world_factory: Factory[PhysicsEngine],
         name: str,
         title: str = None,
         next_channel: str = None,
     ) -> None:
         super().__init__(display_factory, scene_factory, name, title, next_channel)
-        self.physics_engine_factory = physics_engine_factory
+        self.world_factory = world_factory
 
-    def produce_physics_engine(self, *args, **kwargs) -> PhysicsEngine:
-        return self.physics_engine_factory(*args, **kwargs)
+    def produce_world(self, *args, **kwargs) -> PhysicsEngine:
+        return self.world_factory(*args, **kwargs)
 
     def produce_scene(self, *args, **kwargs) -> Scene:
-        physics_engine = self.produce_physics_engine()
-        return self.scene_factory(self.name, physics_engine, *args, **kwargs)
+        world = self.produce_world()
+        return self.scene_factory(self.name, world, *args, **kwargs)

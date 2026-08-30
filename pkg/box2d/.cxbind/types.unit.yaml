@@ -15,7 +15,6 @@ excludes:
   - 'field@b2WorldDef::restitutionCallback'
   - 'field@b2WorldDef::finishTask'
 
-#b2DefaultWorldDef
 
 specs:
   'struct@b2WorldDef':

@@ -3,3 +3,4 @@ from .coin import Coin
 from .flag import Flag
 from .floor import Floor
 from .tile import Tile
+from .ball import Ball

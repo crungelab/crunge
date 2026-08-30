@@ -1,11 +1,18 @@
+from enum import Enum
+
 from .geom import Geom, BoxGeom, BallGeom, HullGeom
-from .physics import MotionState, Physics, GroupPhysics
+#from .physics import Physics, GroupPhysics
+from .physics import Physics
 from .world import PhysicsWorld2D
+
+"""
 from .static_physics import StaticPhysics
 from .kinematic_physics import KinematicPhysics
 from .dynamic_physics import DynamicPhysics
+"""
 
-from .physics_chip import PhysicsChip, BodyType
+from .physics import Physics, StaticPhysics, KinematicPhysics, DynamicPhysics
+from .material import PhysicsMaterial
 
 # Debug
 DEBUG_COLLISION = False
@@ -29,3 +36,11 @@ GT_BOX = 1
 GT_BALL = 2
 GT_HULL = 3
 GT_DECOMPOSED = 4
+
+
+class MotionState(Enum):
+    GROUNDED = 0
+    JUMPING = 1
+    CLIMBING = 2
+    FALLING = 3
+    MOUNTED = 4

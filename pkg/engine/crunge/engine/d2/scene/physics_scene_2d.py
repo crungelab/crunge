@@ -3,7 +3,7 @@ from ..physics import PhysicsWorld2D
 
 
 class PhysicsScene2D(Scene2D):
-    def __init__(self, physics_engine: PhysicsWorld2D) -> None:
+    def __init__(self, world: PhysicsWorld2D) -> None:
         super().__init__()
-        self.physics_engine = physics_engine
-        self.physics_engine.make_current()
+        self.world = world
+        self.world.make_current()

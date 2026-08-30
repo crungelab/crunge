@@ -10,6 +10,7 @@ from .renderer import Renderer
 
 if TYPE_CHECKING:
     from .node import Node
+    from .vu_group import VuGroup
 
 T_Node = TypeVar("T_Node", bound="Node")
 
@@ -71,6 +72,19 @@ class Vu(Chip[T_Node]):
         if node.model is not None:
             self.on_model_changed(node)
         self.on_transform_changed(node)
+
+    # -- group -------------------------------------------------------------
+    @property
+    def group(self) -> "VuGroup":
+        return self._group
+
+    @group.setter
+    def group(self, value: "VuGroup"):
+        self._group = value
+        self.on_group()
+
+    def on_group(self) -> None:
+        pass
 
     # -- signals -----------------------------------------------------------
     #

@@ -10,12 +10,18 @@ from crunge import box2d
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from crunge.engine.d2.entity import DynamicEntity2D
+from crunge.engine.d2 import Node2D
 from crunge.engine.d2.physics.geom import BallGeom
+from crunge.engine.d2.physics import DynamicPhysics
 
-from .collision_type import CollisionType
+from .physics_material import METEOR
 
-class Meteor(DynamicEntity2D):
+class Meteor(Node2D):
+    default_vu = SpriteVu
+    default_geom = BallGeom
+    default_physics = DynamicPhysics
+    default_material = METEOR
+
     linear_velocity_range=((-1, 1), (-1, 1))
     angular_velocity_range=(-2, 2)
 
@@ -24,20 +30,17 @@ class Meteor(DynamicEntity2D):
         #logger.debug(f"atlas: {atlas}")
         
         sprite = atlas.get(name)
-        super().__init__(position, model=sprite, geom=BallGeom())
+        super().__init__(position, model=sprite)
 
     @classmethod
     def produce(cls, position: glm.vec2):
         meteor = cls(position).create()
         return meteor
 
-    def add_shape(self, shape):
-        shape.user_material = CollisionType.METEOR
-        shape.enable_contact_events(True)
-        super().add_shape(shape)
-
     def _create(self):
         super()._create()
+        self.physics = self.get(DynamicPhysics)
+        self.body = self.physics.body
         linear_velocity = box2d.Vec2(random.uniform(*self.linear_velocity_range[0]), 
                            random.uniform(*self.linear_velocity_range[1]))
         self.body.linear_velocity = linear_velocity

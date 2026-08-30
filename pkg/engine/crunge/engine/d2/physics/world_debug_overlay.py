@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import glm
+import math
 
 from loguru import logger
 
@@ -19,177 +19,170 @@ def hex_to_argb_int(rgb: int, a: int = 255) -> int:
     return (a << 24) | (rgb & 0xFFFFFF)
 
 
-def transform_pos(transform: tuple[float, float, float, float]) -> tuple[float, float]:
-    """(px, py, c, s) -> (px, py)"""
-    return (transform[0], transform[1])
-
-
 class WorldDebugOverlay(DebugOverlay, box2d.DebugDrawBase):
+    """Skia renderer for b2DebugDraw.
+
+    Callback contract after box2d #1070:
+
+        draw_polygon(transform, vertices, color)
+        draw_solid_polygon(transform, vertices, radius, color)
+        draw_circle(center, radius, color)
+        draw_solid_circle(transform, center, radius, color)
+        draw_solid_capsule(p1, p2, radius, color)
+        draw_line(p1, p2, color)
+        draw_transform(transform)
+        draw_point(p, size, color)
+        draw_string(p, text, color)
+        draw_bounds(lower, upper, color)
+
+    `transform` is ``(x, y, angle)`` in world space, radians. Polygon vertices and
+    the solid-circle center are LOCAL to that transform; everything else already
+    arrives in world space. All lengths are meters.
+    """
+
+    # Length of the axes drawn by draw_transform, in meters.
+    transform_axis_length = 0.25
+
+    # Alpha applied to the fill of solid shapes, so outlines stay readable.
+    fill_alpha = 96
+
     def __init__(self):
         super().__init__("world_debug", 700)
         box2d.DebugDrawBase.__init__(self)
 
         self.visible = False
 
-        # Use the new C++ exposed properties/flags if you bound them
-        # (from the full file: draw_shapes/draw_joints/force_scale/joint_scale)
         self.draw_shapes = True
         self.draw_joints = True
         self.force_scale = 1.0
         self.joint_scale = 1.0
 
-        # Your engine palette (RGBA tuples)
         self.shape_outline_color = colors.PURPLE
+
+    # ------------- paint helpers -------------
+
+    def _stroke(self, color: int, width: float | None = None) -> skia.Paint:
+        paint = skia.Paint()
+        paint.set_color(hex_to_argb_int(color))
+        paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
+        paint.set_stroke_width(
+            self._scaled_stroke_width() if width is None else width
+        )
+        return paint
+
+    def _fill(self, color: int, alpha: int = 255) -> skia.Paint:
+        paint = skia.Paint()
+        paint.set_color(hex_to_argb_int(color, alpha))
+        paint.set_style(skia.Paint.Style.K_FILL_STYLE)
+        return paint
+
+    def _polygon_path(self, vertices):
+        builder = skia.PathBuilder()
+        builder.move_to(*vertices[0])
+        for pt in vertices[1:]:
+            builder.line_to(*pt)
+        builder.close()
+        return builder.detach()
+
+    def _push(self, transform) -> None:
+        """Move the canvas into the frame the vertices are expressed in."""
+        x, y, angle = transform
+        self.canvas.save()
+        self.canvas.translate(x, y)
+        self.canvas.rotate(math.degrees(angle))
 
     # ------------- Box2D -> Skia primitive callbacks -------------
 
     def draw_line(self, p1, p2, color: int):
         x1, y1 = p1
         x2, y2 = p2
-        paint = skia.Paint()
-        paint.set_color(hex_to_argb_int(color))
-        paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-        paint.set_stroke_width(self._scaled_stroke_width())
-        self.canvas.draw_line(x1, y1, x2, y2, paint)
+        self.canvas.draw_line(x1, y1, x2, y2, self._stroke(color))
 
-    def draw_polygon(self, vertices, color: int):
-        # vertices: list[(x,y), ...]
+    def draw_polygon(self, transform, vertices, color: int):
         if not vertices:
             return
 
-        builder = skia.PathBuilder()
-        builder.move_to(*vertices[0])
-        for pt in vertices[1:]:
-            builder.line_to(*pt)
-        builder.close()
-        path = builder.detach()
+        self._push(transform)
+        try:
+            self.canvas.draw_path(self._polygon_path(vertices), self._stroke(color))
+        finally:
+            self.canvas.restore()
 
-        outline_paint = skia.Paint()
-        outline_paint.set_color(hex_to_argb_int(color))
-        outline_paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-        outline_paint.set_stroke_width(self._scaled_stroke_width())
+    def draw_solid_polygon(self, transform, vertices, radius: float, color: int):
+        if not vertices:
+            return
 
-        self.canvas.draw_path(path, outline_paint)
+        self._push(transform)
+        try:
+            path = self._polygon_path(vertices)
+            self.canvas.draw_path(path, self._fill(color, self.fill_alpha))
 
-    def draw_solid_polygon(
-        self, transform: box2d.Transform, vertices, radius: float, color: int
-    ):
-        # If you want, you can apply transform (px,py,c,s) to vertices here.
-        # Box2D often provides local verts + transform; if your verts are already world-space, skip it.
-        # For now, we just draw outline in world-space as given.
-
-        self.canvas.save()
-
-        self.canvas.translate(transform[0], transform[1])
-        # self.canvas.rotate(transform[2])
-        self.canvas.rotate(glm.degrees(transform[2]))
-
-        self.draw_polygon(vertices, color)
-
-        # Optional: visualize "radius" as stroke width
-        # (This is NOT physically accurate; just helps you see rounded polygons.)
-        if radius > 0 and vertices:
-            builder = skia.PathBuilder()
-            builder.move_to(*vertices[0])
-            for pt in vertices[1:]:
-                builder.line_to(*pt)
-            builder.close()
-            path = builder.detach()
-
-            paint = skia.Paint()
-            paint.set_color(hex_to_argb_int(color))
-            paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-            paint.set_stroke_width(max(self._scaled_stroke_width(), radius * 2.0))
-            self.canvas.draw_path(path, paint)
-
-        self.canvas.restore()
+            # `radius` is the rounding on the polygon skin. Approximating it with a
+            # fat stroke is not exact, but it makes rounded shapes legible.
+            width = max(self._scaled_stroke_width(), radius * 2.0) if radius > 0 else None
+            self.canvas.draw_path(path, self._stroke(color, width))
+        finally:
+            self.canvas.restore()
 
     def draw_circle(self, center, radius: float, color: int):
         x, y = center
-        paint = skia.Paint()
-        paint.set_color(hex_to_argb_int(color))
-        paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-        paint.set_stroke_width(self._scaled_stroke_width())
-        self.canvas.draw_circle(skia.Point(x, y), radius, paint)
+        self.canvas.draw_circle(skia.Point(x, y), radius, self._stroke(color))
 
-    def draw_solid_circle(self, transform, radius: float, color: int):
-        # C++ passes only transform + radius + color; center is transform.p
-        x, y = transform_pos(transform)
+    def draw_solid_circle(self, transform, center, radius: float, color: int):
+        # `center` is local to `transform`; resolve it to world space.
+        px, py, angle = transform
+        c = math.cos(angle)
+        s = math.sin(angle)
+        cx, cy = center
+        x = px + c * cx - s * cy
+        y = py + s * cx + c * cy
 
-        fill = skia.Paint()
-        fill.set_color(hex_to_argb_int(color))
-        # fill.set_color(rgba_tuple_to_argb_int(colors.RED))
-        fill.set_style(skia.Paint.Style.K_FILL_STYLE)
-        self.canvas.draw_circle(skia.Point(x, y), radius, fill)
+        point = skia.Point(x, y)
+        self.canvas.draw_circle(point, radius, self._fill(color, self.fill_alpha))
+        self.canvas.draw_circle(point, radius, self._stroke(color))
 
-        stroke = skia.Paint()
-        stroke.set_color(hex_to_argb_int(color))
-        # stroke.set_color(rgba_tuple_to_argb_int(colors.PINK))
-        stroke.set_style(skia.Paint.Style.K_STROKE_STYLE)
-        stroke.set_stroke_width(self._scaled_stroke_width())
-        self.canvas.draw_circle(skia.Point(x, y), radius, stroke)
-
-        # Optional: draw an orientation “radius line” using c/s
-        try:
-            _, _, c, s = transform
-            x2 = x + c * radius
-            y2 = y + s * radius
-            self.draw_line((x, y), (x2, y2), color)
-        except Exception:
-            pass
+        # Orientation spoke along the body's local x axis.
+        self.draw_line((x, y), (x + c * radius, y + s * radius), color)
 
     def draw_solid_capsule(self, p1, p2, radius: float, color: int):
-        # A capsule is basically a fat segment + circles at endpoints.
-        # Render as: thick line + endpoint circles.
         x1, y1 = p1
         x2, y2 = p2
 
-        paint = skia.Paint()
-        paint.set_color(hex_to_argb_int(color))
-        paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
-        paint.set_stroke_width(max(self._scaled_stroke_width(), radius * 2.0))
-        paint.set_stroke_cap(
-            skia.Paint.Cap.K_ROUND_CAP
-        )  # if available in your skia binding
+        paint = self._stroke(color, max(self._scaled_stroke_width(), radius * 2.0))
+        paint.set_stroke_cap(skia.Paint.Cap.K_ROUND_CAP)
         self.canvas.draw_line(x1, y1, x2, y2, paint)
-
-        # End caps (optional, since round cap already draws them)
-        self.draw_circle(p1, radius, color)
-        self.draw_circle(p2, radius, color)
 
     def draw_point(self, p, size: float, color: int):
         x, y = p
-        paint = skia.Paint()
-        paint.set_color(hex_to_argb_int(color))
-        paint.set_style(skia.Paint.Style.K_FILL_STYLE)
-        # r = max(1.0, size * 0.5)
-        # r = max(self._scaled_stroke_width(), size * 0.5)
+        # `size` is a screen-space point size; the canvas is in meters.
         r = size / self.ppu
-        self.canvas.draw_circle(skia.Point(x, y), r, paint)
+        self.canvas.draw_circle(skia.Point(x, y), r, self._fill(color))
 
     def draw_transform(self, transform):
-        # Visualize transform axes at position, scaled by some constant.
-        # transform: (px, py, c, s) where (c,s) is x-axis direction.
-        x, y = transform_pos(transform)
-        _, _, c, s = transform
+        x, y, angle = transform
+        c = math.cos(angle)
+        s = math.sin(angle)
+        length = self.transform_axis_length
 
-        axis_len = 20.0
-        # x-axis in red, y-axis in green (if you want strict, pick engine colors instead)
-        self.draw_line((x, y), (x + c * axis_len, y + s * axis_len), 0xFF0000)
-        self.draw_line((x, y), (x - s * axis_len, y + c * axis_len), 0x00FF00)
+        self.draw_line((x, y), (x + c * length, y + s * length), 0xFF0000)
+        self.draw_line((x, y), (x - s * length, y + c * length), 0x00FF00)
+
+    def draw_bounds(self, lower, upper, color: int):
+        lx, ly = lower
+        ux, uy = upper
+
+        builder = skia.PathBuilder()
+        builder.move_to(lx, ly)
+        builder.line_to(ux, ly)
+        builder.line_to(ux, uy)
+        builder.line_to(lx, uy)
+        builder.close()
+        self.canvas.draw_path(builder.detach(), self._stroke(color))
 
     def draw_string(self, p, s: str, color: int):
-        # If your skia binding has text APIs, draw it. Otherwise log.
-        # Many Skia wrappers need a Font object. If you have that, wire it in here.
+        # TODO: wire up a skia.Font and canvas text draw.
         x, y = p
-        try:
-            paint = skia.Paint()
-            paint.set_color(hex_to_argb_int(color))
-            # TODO: replace with your skia text draw call
-            # self.canvas.draw_string(s, x, y, font, paint)
-            logger.debug(f"DebugDraw text @({x:.1f},{y:.1f}): {s}")
-        except Exception:
-            logger.debug(f"DebugDraw text @({x},{y}): {s}")
+        logger.debug(f"DebugDraw text @({x:.2f},{y:.2f}): {s}")
 
     def draw_items(self):
         world = PhysicsWorld2D.get_current()

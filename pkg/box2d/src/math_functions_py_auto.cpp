@@ -190,6 +190,12 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
     .def("is_valid_plane", &b2IsValidPlane
         , py::arg("a")
         )
+    .def("is_valid_position", &b2IsValidPosition
+        , py::arg("p")
+        )
+    .def("is_valid_world_transform", &b2IsValidWorldTransform
+        , py::arg("t")
+        )
     .def("min_int", &b2MinInt
         , py::arg("a")
         , py::arg("b")
@@ -205,6 +211,10 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("a")
         , py::arg("lower")
         , py::arg("upper")
+        )
+    .def("ceiling_int", &b2CeilingInt
+        , py::arg("numerator")
+        , py::arg("denominator")
         )
     .def("min_float", &b2MinFloat
         , py::arg("a")
@@ -309,18 +319,18 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
         , py::arg("b")
         )
     .def("normalize", &b2Normalize
-        , py::arg("v")
+        , py::arg("a")
         )
     .def("is_normalized", &b2IsNormalized
         , py::arg("a")
         )
-    .def("get_length_and_normalize", [](float * length, b2Vec2 v)
+    .def("get_length_and_normalize", [](float * length, b2Vec2 a)
         {
-            auto _ret = b2GetLengthAndNormalize(length, v);
+            auto _ret = b2GetLengthAndNormalize(length, a);
             return std::make_tuple(_ret, length);
         }
         , py::arg("length")
-        , py::arg("v")
+        , py::arg("a")
         )
     .def("normalize_rot", &b2NormalizeRot
         , py::arg("q")
@@ -409,6 +419,54 @@ void init_math_functions_py_auto(py::module &_box2d, Registry &registry) {
     .def("inv_mul_transforms", &b2InvMulTransforms
         , py::arg("a")
         , py::arg("b")
+        )
+    .def("to_pos", &b2ToPos
+        , py::arg("v")
+        )
+    .def("to_vec2", &b2ToVec2
+        , py::arg("p")
+        )
+    .def("round_down_float", &b2RoundDownFloat
+        , py::arg("x")
+        )
+    .def("round_up_float", &b2RoundUpFloat
+        , py::arg("x")
+        )
+    .def("sub_pos", &b2SubPos
+        , py::arg("a")
+        , py::arg("b")
+        )
+    .def("offset_pos", &b2OffsetPos
+        , py::arg("p")
+        , py::arg("d")
+        )
+    .def("lerp_position", &b2LerpPosition
+        , py::arg("a")
+        , py::arg("b")
+        , py::arg("t")
+        )
+    .def("transform_world_point", &b2TransformWorldPoint
+        , py::arg("t")
+        , py::arg("p")
+        )
+    .def("inv_transform_world_point", &b2InvTransformWorldPoint
+        , py::arg("t")
+        , py::arg("p")
+        )
+    .def("inv_mul_world_transforms", &b2InvMulWorldTransforms
+        , py::arg("a")
+        , py::arg("b")
+        )
+    .def("mul_world_transforms", &b2MulWorldTransforms
+        , py::arg("a")
+        , py::arg("b")
+        )
+    .def("to_relative_transform", &b2ToRelativeTransform
+        , py::arg("t")
+        , py::arg("base")
+        )
+    .def("make_world_transform", &b2MakeWorldTransform
+        , py::arg("t")
         )
     .def("mul_mv", &b2MulMV
         , py::arg("a")

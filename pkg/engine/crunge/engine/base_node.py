@@ -194,18 +194,29 @@ class BaseNode(Dispatcher):
             chip.unplug()
 
     # -- lifetime ----------------------------------------------------------
+    def _create(self) -> None:
+        # A caller supplying no extra chips has no reason to call seat, and
+        # forgetting it would give a silently empty node. Construction has
+        # certainly finished by now, so the two-pass guarantee holds.
+        if not self._seated:
+            self.seat()
+        super()._create()
+        for chip in tuple(self._chips):
+            chip.create()
+        self.plug()
 
+    """
     def create_children(self) -> None:
         # A caller supplying no extra chips has no reason to call seat, and
         # forgetting it would give a silently empty node. Construction has
         # certainly finished by now, so the two-pass guarantee holds.
         if not self._seated:
             self.seat()
-
         super().create_children()
         for chip in tuple(self._chips):
             chip.create()
         self.plug()
+    """
 
     def enable_children(self) -> None:
         super().enable_children()

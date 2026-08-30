@@ -15,9 +15,7 @@ from crunge.engine.loader.tiled.builder.tile_builder import DefaultTileBuilder
 
 from ..physics_demo import PhysicsDemo
 
-from .ball import Ball
-from .tile import Tile
-
+from ...objects import Ball, Tile
 
 class TiledPhysicsDemo(PhysicsDemo):
     def create_display(self):

@@ -17,7 +17,7 @@ class SpriteVuGroup(VuGroup[SpriteVu]):
     def _draw(self) -> None:
         renderer = Renderer.get_current()
         frustum = renderer.camera_2d.frustum
-        for vu in self.visuals:
+        for vu in self.members:
             if vu.bounds.intersects(frustum):
                 vu.draw()
 

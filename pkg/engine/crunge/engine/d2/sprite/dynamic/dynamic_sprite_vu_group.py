@@ -41,12 +41,12 @@ class DynamicSpriteVuGroup(SpriteVuGroup):
         vu.node_buffer = self.node_buffer
         # Setter marks GPU dirt, so the uniform written during enable —
         # before this buffer existed — is retried on the next flush.
-        vu.node_buffer_index = len(self.visuals) - 1
+        vu.node_buffer_index = len(self.members) - 1
 
     def remove(self, vu: SpriteVu):
         super().remove(vu)
         # Loop variable was named `vu`, shadowing the parameter.
-        for index, member in enumerate(self.visuals):
+        for index, member in enumerate(self.members):
             member.node_buffer_index = index
 
     def create_bind_groups(self):

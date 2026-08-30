@@ -1,38 +1,88 @@
-import math
-
 from loguru import logger
 import glm
+
 from crunge import box2d
 
+from crunge.engine.signal import Signal
+
 from crunge.engine.d2 import SpriteVu
+from ..physics.constants import GRAVITY
 
 from crunge.engine.math import Rect2
 
-from ..physics import StaticPhysics, DynamicPhysics, GroupPhysics
-from ..physics.physics import MotionState
+from ..physics import (
+    Physics,
+    StaticPhysics,
+    DynamicPhysics,
+    KinematicPhysics,
+    MotionState,
+)
 from ..physics.geom import HullGeom, GroupGeom
+from ..physics.material import PhysicsMaterial, DEFAULT_MATERIAL
 
 from .entity_2d import Entity2D
 
 
 class PhysicsEntity2D(Entity2D):
-    default_vu: type[SpriteVu] | None = SpriteVu
+    default_vu = SpriteVu
+    default_geom = HullGeom
+
     def __init__(
         self,
-        position=glm.vec2(),
-        rotation=0.0,
-        scale=glm.vec2(1.0),
+        position: glm.vec2 = None,
+        rotation: float = 0.0,
+        scale: glm.vec2 = None,
         model=None,
         brain=None,
-        physics=StaticPhysics(),
-        geom=HullGeom(),
+        geom=None,
+        offset: glm.vec2 = None,
+        **physics_kwargs,
     ):
-        super().__init__(position, rotation, scale, model=model, brain=brain)
-        self.body: box2d.Body | None = None
-        self.shapes: list[box2d.Shape] = []
-        self._physics = physics
-        self.geom = geom
+        super().__init__(
+            glm.vec2() if position is None else position,
+            rotation,
+            glm.vec2(1.0) if scale is None else scale,
+            model=model,
+            brain=brain,
+        )
+        self.geom = self.default_geom() if geom is None else geom
+        self._offset = offset
+        self._physics_kwargs = physics_kwargs
+
+        self.physics: Physics | None = None
+
         self.motion_state = MotionState.GROUNDED
+        self.motion_state_changed = Signal[MotionState]()
+
+    def _seat(self) -> None:
+        super()._seat()
+        self.physics = self.add(
+            self.physics_class(
+                self.geom,
+                position=self._offset,
+                **self._physics_kwargs,
+            )
+        )
+
+    # -- physics forwards --------------------------------------------------
+
+    @property
+    def body(self) -> "box2d.Body | None":
+        return self.physics.body if self.physics else None
+
+    @property
+    def shapes(self) -> list:
+        return self.physics.shapes if self.physics else []
+
+    @property
+    def velocity(self) -> glm.vec2:
+        return self.physics.velocity
+
+    @velocity.setter
+    def velocity(self, value: glm.vec2) -> None:
+        self.physics.velocity = value
+
+    # -- motion state ------------------------------------------------------
 
     @property
     def grounded(self):
@@ -54,150 +104,40 @@ class PhysicsEntity2D(Entity2D):
     def mounted(self):
         return self.motion_state == MotionState.MOUNTED
 
+    # -- motion state ------------------------------------------------------
+
+    def set_motion_state(self, state: MotionState) -> None:
+        if state is self.motion_state:
+            return
+        self.motion_state = state
+        self.motion_state_changed.emit(state)
+
+    # -- geometry ----------------------------------------------------------
+
     @property
-    def velocity(self):
-        lv = self.body.linear_velocity
-        return glm.vec2(lv.x, lv.y)
-
-    @velocity.setter
-    def velocity(self, value: glm.vec2):
-        self.body.linear_velocity = box2d.Vec2(value.x, value.y)
-
-    @property
-    def physics(self):
-        return self._physics
-
-    @physics.setter
-    def physics(self, physics):
-        if self._physics:
-            self._physics = physics
-            # self.remove_shapes()
-            self.create_body()
-            self.create_shapes()
-            self.add_shapes()
-        else:
-            self._physics = physics
-
-    def _create(self):
-        super()._create()
-        self.create_body()
-        self.create_shapes()
-        self.add_shapes()
-
-    def _destroy(self):
-        # self.remove_shapes()
-        logger.debug(f"Destroying body: {self.body}")
-        if self.body.is_valid():
-            self.body.destroy()
-        super()._destroy()
-
-    def update(self, delta_time: float):
-        if self.body:
-            body_position = glm.vec2(self.body.position.x, self.body.position.y)
-            rotated_offset = glm.rotate(self.physics.position, self.body.angle)
-            self.position = body_position - rotated_offset
-            self.rotation = self.body.angle
-            # logger.debug(f"position: {self.position}")
-            # logger.debug(f"rotation: {self.rotation}")
-        super().update(delta_time)
-
-    def create_body(self):
-        self.body = self.physics.create_body(self)
-
-    def create_shapes(self, clip: Rect2 = None) -> None:
-        self.shapes = self.geom.create_shapes(self, clip=clip)
-        logger.debug(f"Created shapes: {self.shapes}")
-
-    def add_shapes(self) -> None:
-        for shape in self.shapes:
-            self.add_shape(shape)
-
-    def add_shape(self, shape) -> None:
-        pass
-
-    def remove_shapes(self) -> None:
-        for shape in self.shapes:
-            shape.destroy(False)
+    def geom_transform(self) -> box2d.Transform:
+        position = -self.physics.offset
+        return box2d.Transform(box2d.Vec2(position.x, position.y), box2d.make_rot(0))
 
     def get_tx_point(self, offset: glm.vec2) -> glm.vec2:
         body_pos = self.body.position
-        angle = self.body.angle
-        tx = glm.mat4()
-        tx = glm.rotate(tx, angle, glm.vec3(0, 0, 1))
-        rel_pos = tx * glm.vec4(offset.x, offset.y, 0, 1)
-        pos = rel_pos + glm.vec4(body_pos.x, body_pos.y, 0, 1)
-        return glm.vec2(pos)
-
-    @property
-    def geom_transform(self):
-        a = self.scale.x
-        d = self.scale.y
-        position = -self.physics.position
-        tx = position.x
-        ty = position.y
-        t = box2d.Transform(box2d.Vec2(tx, ty), box2d.make_rot(0))
-        # logger.debug(f"t: {t}")
-        return t
-
-
-class PhysicsGroup2D(PhysicsEntity2D):
-    default_vu = None
-    id_counter = 1
-
-    def __init__(self, position=glm.vec2(), physics=GroupPhysics(), geom=GroupGeom()):
-        super().__init__(position, physics=physics, geom=geom)
-        self.id_counter += 1
-        self.id = self.id_counter
-        self.nodes: list[PhysicsEntity2D] = []
-
-    def add_node(self, node: PhysicsEntity2D):
-        node.group = self
-        self.nodes.append(node)
-        self.add_child(node)
-        return node
-
-    def _create(self):
-        super()._create()
-        for node in self.nodes:
-            node.gid = self.id
-            self.layer.attach(node)
-
-    def update(self, delta_time: float):
-        points = [node.position for node in self.nodes]
-        if points:
-            centroid = glm.vec2(
-                sum(point.x for point in points) / len(points),
-                sum(point.y for point in points) / len(points),
-            )
-        else:
-            centroid = glm.vec2(0, 0)  # Default centroid if the list is empty
-        self.position = centroid
-        return super().update(delta_time)
+        tx = glm.rotate(glm.mat4(), self.body.angle, glm.vec3(0, 0, 1))
+        rel = tx * glm.vec4(offset.x, offset.y, 0, 1)
+        return glm.vec2(rel.x + body_pos.x, rel.y + body_pos.y)
 
 
 class StaticEntity2D(PhysicsEntity2D):
-    def __init__(
-        self,
-        position=glm.vec2(),
-        rotation=0.0,
-        scale=glm.vec2(1.0),
-        model=None,
-        brain=None,
-        physics=StaticPhysics(),
-        geom=HullGeom(),
-    ):
-        super().__init__(position, rotation, scale, model, brain, physics, geom)
+    physics_class = StaticPhysics
 
 
 class DynamicEntity2D(PhysicsEntity2D):
-    def __init__(
-        self,
-        position=glm.vec2(),
-        rotation=0.0,
-        scale=glm.vec2(1.0),
-        model=None,
-        brain=None,
-        physics=DynamicPhysics(),
-        geom=HullGeom(),
-    ):
-        super().__init__(position, rotation, scale, model, brain, physics, geom)
+    physics_class = DynamicPhysics
+
+
+class KinematicEntity2D(PhysicsEntity2D):
+    physics_class = KinematicPhysics
+
+    def update(self, delta_time: float = 1 / 60):
+        super().update(delta_time)
+        if not self.climbing and not self.mounted and not self.jumping:
+            self.body.linear_velocity += box2d.Vec2(0, GRAVITY[1] * delta_time)

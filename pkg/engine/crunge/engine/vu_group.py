@@ -19,39 +19,39 @@ class VuGroup(Chip[Any], Generic[T_Vu]):
 
     def __init__(self):
         super().__init__()
-        self.visuals: List[T_Vu] = []
+        self.members: List[T_Vu] = []
         self.is_render_group = False
 
-    def append(self, vu: T_Vu) -> None:
-        if vu in self.visuals:
-            raise ValueError("Vu already in group")
-        self.visuals.append(vu)
+    def append(self, member: T_Vu) -> None:
+        if member in self.members:
+            raise ValueError(f"{member} already in group")
+        self.members.append(member)
         # Last: on_group fires from the setter, and a subclass appending
         # buffer state does it after this returns. The vu marks dirt and
         # the write lands on the next flush.
-        vu.group = self
+        member.group = self
 
     def extend(self, members: List[T_Vu]) -> None:
         # Was a bare list extend, which skipped the group assignment
         # entirely — vus added this way never got on_group.
-        for vu in members:
-            self.append(vu)
+        for member in members:
+            self.append(member)
 
-    def remove(self, vu: T_Vu) -> None:
-        logger.debug(f"Removing {vu} from {self}")
-        self.visuals.remove(vu)
-        vu.group = None
+    def remove(self, member: T_Vu) -> None:
+        logger.debug(f"Removing {member} from {self}")
+        self.members.remove(member)
+        member.group = None
 
     def clear(self) -> None:
-        for vu in tuple(self.visuals):
-            vu.group = None
-        self.visuals.clear()
+        for member in tuple(self.members):
+            member.group = None
+        self.members.clear()
 
     def __len__(self) -> int:
-        return len(self.visuals)
+        return len(self.members)
 
     def __iter__(self):
-        return iter(self.visuals)
+        return iter(self.members)
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}: length={len(self)}>"
@@ -63,9 +63,9 @@ class VuGroup(Chip[Any], Generic[T_Vu]):
         self._draw()
 
     def _draw(self) -> None:
-        for vu in self.visuals:
-            vu.draw()
+        for member in self.members:
+            member.draw()
 
     def update(self, delta_time: float) -> None:
-        for vu in self.visuals:
-            vu.update(delta_time)
+        for member in self.members:
+            member.update(delta_time)

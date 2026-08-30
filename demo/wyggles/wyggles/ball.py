@@ -3,7 +3,8 @@ import glm
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.d2.physics.geom import BallGeom
-from crunge.engine.d2.physics import PhysicsChip
+from crunge.engine.d2.physics import DynamicPhysics
+from crunge.engine.d2.entity import PhysicsEntity2D
 
 from .sprite_node import SpriteNode
 from . import engine
@@ -25,7 +26,7 @@ class Ball(SpriteNode):
         self.model = SpriteLoader().load('${images}/ball.png')
         self.add(SpriteVu())
         self.physics = self.add(
-            PhysicsChip(BallGeom(restitution=0.5, friction=0.9))
+            DynamicPhysics(BallGeom())
         )
 
     def _create(self) -> None:

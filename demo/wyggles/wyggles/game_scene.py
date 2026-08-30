@@ -175,8 +175,8 @@ class GameScene(PhysicsScene2D):
             Scheduler().schedule_once(re_spawn, 3.0)
 
         #self.space.step(1 / 60.0)
-        #self.physics_engine.update(delta_time)
-        self.physics_engine.update(1 / 60.0)
+        #self.world.update(delta_time)
+        self.world.update(1 / 60.0)
 
 
         # Save the time it took to do this.

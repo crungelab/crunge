@@ -3,10 +3,10 @@ from loguru import logger
 import crunge.engine.loader.tiled.builder as tiled_builder
 from crunge.engine.loader.tiled.builder import DefaultObjectBuilder
 
-from ...characters import Avatar
-from ...characters import Skateboard
+from ...character import Avatar
+from ...character import Skateboard
 
-from ...characters import Robot
+from ...character import Robot
 
 
 class CharacterLayerBuilder(tiled_builder.DefaultObjectGroupBuilder):

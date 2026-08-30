@@ -5,12 +5,12 @@ from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from ...character.kinematic_character import KinematicCharacter
+from ..character.dynamic_character import DynamicCharacter
 
 from .robot_brain import RobotBrain
 
 
-class Robot(KinematicCharacter):
+class Robot(DynamicCharacter):
     def __init__(self, position=glm.vec2()):
         model = SpriteLoader(sprite_builder=CollidableSpriteBuilder()).load(
             "${resources}/tiled/characters/robot_idle.png"
@@ -19,7 +19,7 @@ class Robot(KinematicCharacter):
             "${resources}/tiled/characters/robot/sheet.xml"
         )
         brain = RobotBrain(atlas)
-        super().__init__(position, vu=SpriteVu(), model=model, brain=brain)
+        super().__init__(position, model=model, brain=brain)
 
     @classmethod
     def produce(self, position=glm.vec2()):
