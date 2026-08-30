@@ -16,10 +16,12 @@ class Geom:
         self,
         offset: glm.vec2 = None,
         material=None,
+        density: float = None,
         clip: Rect2 = None,
     ):
         self.offset = glm.vec2() if offset is None else glm.vec2(offset)
         self.material = material
+        self.density = density
         self.clip = clip
 
     def create_shapes(self, chip: "Physics") -> list:
@@ -31,8 +33,6 @@ class Geom:
         material = self.material if self.material is not None else chip.material
         if material is not None:
             material.apply(shape_def)
-        self.configure_shape_def(chip, shape_def)
+        if self.density is not None:
+            shape_def.density = self.density
         return shape_def
-
-    def configure_shape_def(self, chip: "Physics", shape_def: box2d.ShapeDef) -> None:
-        pass

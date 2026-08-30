@@ -13,8 +13,8 @@ from .geom import Geom
 
 
 class BallGeom(Geom):
-    def __init__(self, radius: float = None, offset: glm.vec2 = None, material=None):
-        super().__init__(offset, material)
+    def __init__(self, radius: float = None, offset: glm.vec2 = None, material=None, density: float = None):
+        super().__init__(offset, material, density)
         self.radius = radius
 
     def create_shapes(self, chip: "Physics") -> list:

@@ -12,8 +12,8 @@ from .geom import Geom
 
 
 class BoxGeom(Geom):
-    def __init__(self, size: glm.vec2 = None, offset: glm.vec2 = None, material=None):
-        super().__init__(offset, material)
+    def __init__(self, size: glm.vec2 = None, offset: glm.vec2 = None, material=None, density: float = None):
+        super().__init__(offset, material, density)
         self.size = size
 
     def create_shapes(self, chip: "Physics") -> list:
