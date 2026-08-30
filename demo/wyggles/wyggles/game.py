@@ -7,6 +7,7 @@ from crunge import imgui
 
 from crunge.engine import App, Renderer, Scheduler
 from crunge.engine.d2.camera_2d import Camera2D
+from crunge.engine.d2.physics.world_debug_overlay import WorldDebugOverlay
 
 from crunge.engine.resource.resource_manager import ResourceManager
 
@@ -40,6 +41,13 @@ class Game(App):
 
         self.debug_agents = False
 
+    """
+    def _create(self):
+        super()._create()
+        self.debug_layer = WorldDebugOverlay()
+        self.add_overlay(self.debug_layer)
+    """
+
     def reset(self):
         self.scene = GameScene("default")
         self.create_view()
@@ -56,6 +64,8 @@ class Game(App):
     def create_view(self):
         logger.debug("Creating view")
         self.display = GameView(self.scene)
+        self.debug_layer = WorldDebugOverlay()
+        self.display.add_overlay(self.debug_layer)
         self.center_camera()
 
     def center_camera(self):
@@ -76,7 +86,11 @@ class Game(App):
         imgui.text(f"Update time: {self.update_time:.3f}")
         imgui.text(f"Frame time: {self.frame_time:.3f}")
 
-        _, self.debug_agents = imgui.checkbox("Agent Debug Draw", self.debug_agents)
+        _, self.debug_agents = imgui.checkbox("Debug Agents", self.debug_agents)
+
+        _, self.debug_layer.visible = imgui.checkbox(
+            "Debug World", self.debug_layer.visible
+        )
 
         if imgui.button("Reset"):
             self.reset()

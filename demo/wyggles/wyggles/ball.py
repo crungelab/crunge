@@ -24,7 +24,6 @@ class Ball(SpriteNode):
     def _seat(self) -> None:
         super()._seat()
         self.model = SpriteLoader().load('${images}/ball.png')
-        self.add(SpriteVu())
         self.physics = self.add(
             DynamicPhysics(BallGeom())
         )

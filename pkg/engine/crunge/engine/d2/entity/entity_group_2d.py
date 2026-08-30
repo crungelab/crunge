@@ -5,8 +5,6 @@ from .entity_2d import Entity2D
 
 class EntityGroup2D(Entity2D):
     default_vu = None
-    # physics_class = GroupPhysics
-    # geom_class = GroupGeom
 
     _id_counter = 0
 
