@@ -6,7 +6,7 @@ import glm
 
 from wyggles.sprite_node import SpriteNode
 
-from .. import engine
+from .. import world
 from wyggles.brain import Brain
 
 
@@ -51,7 +51,7 @@ class WyggleBrain(Brain):
             look_ahead = glm.vec2(0, 0)
         ahead_position = self.node.position + look_ahead
         end_position = pymunk.Vec2d(ahead_position.x, ahead_position.y)
-        space = engine.sprite_engine.space
+        space = engine.world_instance.space
 
         avoidance = glm.vec2(0, 0)
         results = space.segment_query(current_position, end_position, agent_radius, pymunk.ShapeFilter())
@@ -131,7 +131,7 @@ class WyggleBrain(Brain):
             end_pos = self.node.position + direction * stride
             end = pymunk.Vec2d(end_pos.x, end_pos.y)
 
-            results = engine.sprite_engine.space.segment_query(
+            results = world.world_instance.space.segment_query(
                 start, end, self.node.radius, pymunk.ShapeFilter()
             )
             '''

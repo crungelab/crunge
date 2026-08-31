@@ -8,7 +8,7 @@ from crunge.engine.ai.bt.run import _I
 from crunge.engine.ai.bt.run.act import *
 from crunge.engine.ai.bt.run.task import Status
 
-from ... import engine
+from ... import world
 from ...wyggle.brain import WyggleBrain
 from ...fruit import Fruit
 from ...ball import Ball
@@ -24,7 +24,7 @@ class Sees(Action):
     async def main(self, msg: Message):
         # was `while self.ok:` -- a bound method, always truthy
         while self.ok():
-            beacons = engine.sprite_engine.query(
+            beacons = world.world_instance.query(
                 self.bot.x, self.bot.y, self.bot.sensor_range
             )
             for beacon in beacons:
@@ -48,7 +48,7 @@ class SeesFood(Neuron):
         self.rule = self.bot.subscribe(t, action)
 
     def main(self):
-        beacons = engine.sprite_engine.query(
+        beacons = world.world_instance.query(
             self.bot.x, self.bot.y, self.bot.sensor_range
         )
         self.focus = None
@@ -122,7 +122,7 @@ class SeesBall(Neuron):
         self.focus = None
 
     def main(self):
-        beacons = engine.sprite_engine.query(
+        beacons = world.world_instance.query(
             self.bot.x, self.bot.y, self.bot.sensor_range
         )
         self.focus = None

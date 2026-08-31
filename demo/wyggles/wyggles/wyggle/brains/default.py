@@ -6,7 +6,7 @@ import random
 import glm
 
 from wyggles.beacon import Beacon
-from wyggles.engine import *
+from wyggles.world import *
 from wyggles.wyggle.brain import WyggleBrain
 from wyggles.fruit import Fruit
 
@@ -87,7 +87,7 @@ class DefaultWyggleBrain(WyggleBrain):
         else:
             self.consider_timer = self.consider_max
 
-        beacons = sprite_engine.query(self.x, self.y, self.sensor_range)
+        beacons = world_instance.query(self.x, self.y, self.sensor_range)
         #
         state = self.state
         if state == "wanderer":

@@ -19,11 +19,11 @@ world_right = 8
 world_top = 6
 
 
-class SpriteEngine(PhysicsWorld2D):
+class World(PhysicsWorld2D):
     def __init__(self):
         super().__init__(gravity=(0, 0))
-        global sprite_engine
-        sprite_engine = self
+        global world_instance
+        world_instance = self
         
         self.beacons: list[Beacon] = []
 
@@ -58,4 +58,4 @@ class SpriteEngine(PhysicsWorld2D):
 
         layer.attach(node)
 
-sprite_engine: SpriteEngine = None
+world_instance: World = None

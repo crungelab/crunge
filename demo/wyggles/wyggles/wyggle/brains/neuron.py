@@ -6,7 +6,7 @@ from crunge.engine.ai.bt.run import *
 from crunge.engine.ai.bt.run import _I
 from crunge.engine.ai.bt.run.act import *
 
-from wyggles.engine import *
+from wyggles.world import *
 from wyggles.wyggle.brain import WyggleBrain
 from wyggles.fruit import Fruit
 from wyggles.ball import Ball
@@ -20,7 +20,7 @@ class SeesFood(Neuron):
 
     def main(self):
         logger.debug(f"I see food")
-        beacons = sprite_engine.query(self.bot.x, self.bot.y, self.bot.sensor_range)
+        beacons = world_instance.query(self.bot.x, self.bot.y, self.bot.sensor_range)
         self.focus = None
         for beacon in beacons:
             if isinstance(beacon.sprite, Fruit):
@@ -70,7 +70,7 @@ class SeesBall(Neuron):
 
     def main(self):
         logger.debug(f"I see a ball")
-        beacons = sprite_engine.query(self.bot.x, self.bot.y, self.bot.sensor_range)
+        beacons = world_instance.query(self.bot.x, self.bot.y, self.bot.sensor_range)
         self.focus = None
         for beacon in beacons:
             if isinstance(beacon.sprite, Ball):

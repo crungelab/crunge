@@ -4,7 +4,7 @@ import imageio.v3 as iio
 from crunge.engine.resource import Image
 from crunge.engine.builder.texture.sprite_texture_builder import SpriteTextureBuilder
 
-from wyggles.engine import *
+from wyggles.world import *
 
 class Dna:
     id_counter: int = 0

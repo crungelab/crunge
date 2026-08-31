@@ -2,8 +2,8 @@ from crunge.engine import Scheduler
 
 from crunge.engine.d2.scene.layer.graph_layer_2d import GraphLayer2D
 
-from .. import engine
-from ..engine import world_left, world_right, world_top, world_bottom
+from .. import world
+from ..world import world_left, world_right, world_top, world_bottom
 
 from ..wall import Wall
 

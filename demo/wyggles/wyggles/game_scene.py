@@ -13,7 +13,7 @@ from crunge.engine.loader.tiled.builder.map_builder import DefaultMapBuilder
 from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 
 import wyggles.globe
-from .engine import SpriteEngine
+from .world import World
 
 from .layer import WallLayer, FruitLayer, BallLayer, WyggleLayer
 
@@ -32,7 +32,7 @@ class StaticObjectGroupBuilder(tiled_builder.DefaultObjectGroupBuilder):
 
 class GameScene(PhysicsScene2D):
     def __init__(self, name: str):
-        super().__init__(SpriteEngine())
+        super().__init__(World())
         self.name = name
         self.paused = False
 

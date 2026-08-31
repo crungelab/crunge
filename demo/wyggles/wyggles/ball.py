@@ -7,7 +7,7 @@ from crunge.engine.d2.physics import DynamicPhysics
 from crunge.engine.d2.entity import PhysicsEntity2D
 
 from .sprite_node import SpriteNode
-from . import engine
+from . import world
 from .beacon import *
 from .dna import Dna
 
@@ -31,10 +31,10 @@ class Ball(SpriteNode):
     def _create(self) -> None:
         super()._create()
         self.beacon = Beacon(self, self.type)
-        engine.sprite_engine.add_beacon(self.beacon)
+        world.world_instance.add_beacon(self.beacon)
 
     def _destroy(self) -> None:
-        engine.sprite_engine.remove_beacon(self.beacon)
+        world.world_instance.remove_beacon(self.beacon)
         super()._destroy()
 
     def receive_kick(self, position: glm.vec2, strength: float = None) -> None:

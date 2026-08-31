@@ -7,7 +7,7 @@ import cairo
 from crunge.engine.d2.sprite import Sprite
 from crunge.engine.resource.resource_manager import ResourceManager
 
-from . import engine
+from . import world
 
 from .beacon import Beacon
 
@@ -19,6 +19,7 @@ RADIUS = 32
 WIDTH = RADIUS
 HEIGHT = RADIUS
 
+
 class FruitDna(Dna):
     def __init__(self, klass):
         super().__init__(klass)
@@ -26,7 +27,7 @@ class FruitDna(Dna):
         self.create_sprites()
 
     def create_sprites(self):
-        #surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
+        # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, WIDTH, HEIGHT)
         path = f"${{images}}/{self.kind}.png"
         resolved_path = ResourceManager().resolve_path(path)
         surface = cairo.ImageSurface.create_from_png(resolved_path)
@@ -34,7 +35,7 @@ class FruitDna(Dna):
         ctx = cairo.Context(surface)
         ctx.scale(1, 1)  # Normalizing the canvas
 
-        imgsize = (WIDTH, HEIGHT) #The size of the image
+        imgsize = (WIDTH, HEIGHT)  # The size of the image
 
         texture = self.create_texture(surface, f"{self.kind}_0", imgsize)
         logger.debug(f"Texture created for {self.kind}: {texture}")
@@ -49,29 +50,31 @@ class FruitDna(Dna):
     def draw_bite(self, ctx, x, y):
         ctx.arc(x, y, 16, 0, PI * 2)
         ctx.close_path()
-        #pat = cairo.SolidPattern(0, 0, 0, alpha=0)
-        #ctx.set_source(pat)
+        # pat = cairo.SolidPattern(0, 0, 0, alpha=0)
+        # ctx.set_source(pat)
         ctx.set_operator(cairo.Operator.CLEAR)
         ctx.fill()
 
 
 #
 class Fruit(SpriteNode):
-    def __init__(self, dna):
+    dna: FruitDna
+
+    def __init__(self, dna: FruitDna):
         super().__init__(dna)
         self.type = dna.kind
         self.energy = 5
         self.beacon = Beacon(self, self.type)
-        engine.sprite_engine.add_beacon(self.beacon)
+        world.world_instance.add_beacon(self.beacon)
         self.model = dna.sprites[0]
 
     def receive_munch(self):
         self.energy -= 1
-        if(self.energy <= 0):
-            engine.sprite_engine.remove_beacon(self.beacon)
+        if self.energy <= 0:
+            world.world_instance.remove_beacon(self.beacon)
             self.destroy()
             return 0.01
-        #else
+        # else
         self.model = self.dna.sprites[5 - self.energy]
         return 0.01
 
@@ -109,7 +112,6 @@ class Strawberry(Fruit):
         super().__init__(FruitDna(self.__class__))
 
 
-
 class FruitFactory(SpriteFactory):
     def __init__(self, layer):
         super().__init__(layer)
@@ -117,11 +119,12 @@ class FruitFactory(SpriteFactory):
     def create_random(self):
         return list(kinds.values())[random.randint(0, 5)]()
 
+
 kinds = {
-    'apple': Apple,
-    'banana': Banana,
-    'grape': Grape,
-    'orange': Orange,
-    'pineapple': Pineapple,
-    'strawberry': Strawberry
+    "apple": Apple,
+    "banana": Banana,
+    "grape": Grape,
+    "orange": Orange,
+    "pineapple": Pineapple,
+    "strawberry": Strawberry,
 }
