@@ -25,6 +25,7 @@ class Vu(Chip[T_Node]):
     Dirt tracking and enable-scoped listening come from Chip. What Vu adds
     is the specific subscription — transform and model — and the draw.
     """
+    update_order = 100    # reads transforms
 
     # Declared rather than inferred. `draw` is overridden here, so the
     # inference in Chip.__init_subclass__ would say True for every Vu

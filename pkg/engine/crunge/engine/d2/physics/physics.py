@@ -14,6 +14,8 @@ from .world import PhysicsWorld2D
 
 
 class Physics(Chip):
+    update_order = -100   # writes transforms
+
     #default_material: PhysicsMaterial = DEFAULT_MATERIAL
     default_material: PhysicsMaterial = None
 

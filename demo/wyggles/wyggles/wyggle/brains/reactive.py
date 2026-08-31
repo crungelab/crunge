@@ -29,6 +29,7 @@ class Sees(Action):
             )
             for beacon in beacons:
                 self.post(Assert(Believe(_I, _see, beacon.node)))
+                logger.debug("Sees: {}", beacon.node)
             await self.sleep()
 
 
@@ -144,7 +145,7 @@ class Kick(Action):
 
         self.bot.focus = focus
         self.bot.state = 'kick'
-        focus.receive_kick(self.bot.node.position, 200)
+        focus.receive_kick(self.bot.node.position, .2)
         self.bot.reset()
         return self.succeed()
 

@@ -60,6 +60,8 @@ class Chip(Base, Generic[N]):
     # Set automatically from whether the subclass overrides the broadcast.
     # Declaring one explicitly in the class body wins — do that when the
     # chip draws or dispatches through a helper rather than an override.
+    update_order = 0
+
     updates: ClassVar[bool] = False
     draws: ClassVar[bool] = False
     dispatches: ClassVar[bool] = False

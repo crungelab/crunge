@@ -111,6 +111,7 @@ class BaseNode(Dispatcher):
 
         if cls.updates:
             self._updatables.append(chip)
+            self._updatables.sort(key=lambda chip: chip.update_order)
         if cls.draws:
             self._drawables.append(chip)
         if cls.dispatches:
