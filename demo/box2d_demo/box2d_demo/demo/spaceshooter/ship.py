@@ -19,9 +19,9 @@ from .laser import Laser
 
 class Ship(Node2D):
     default_vu = SpriteVu
-    default_geom = BallGeom
+    geom = BallGeom()
     default_physics = DynamicPhysics
-    default_material = SHIP
+    material = SHIP
 
     def __init__(self, position: glm.vec2) -> None:
         atlas = XmlSpriteAtlasLoader().load("${resources}/spaceshooter/sheet.xml")

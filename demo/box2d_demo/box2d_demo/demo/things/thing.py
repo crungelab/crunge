@@ -7,8 +7,8 @@ from crunge.engine.d2.physics.geom import HullGeom
 
 
 class Thing(Node2D):
+    geom = HullGeom()
     default_vu = SpriteVu
-    default_geom = HullGeom
     default_physics = DynamicPhysics
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         scale = glm.vec2(.25, .25)

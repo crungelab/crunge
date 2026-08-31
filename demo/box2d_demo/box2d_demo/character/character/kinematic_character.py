@@ -21,7 +21,6 @@ PLAYER_MASS = 1
 
 class KinematicCharacter(KinematicEntity2D):
     default_vu = SpriteVu
-    default_geom = HullGeom
     def __init__(self, position=glm.vec2(), model=None, brain=None):
         super().__init__(position, model=model, brain=brain)
         self.mass = PLAYER_MASS

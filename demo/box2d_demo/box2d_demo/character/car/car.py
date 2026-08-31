@@ -40,7 +40,7 @@ sprite_loader = SpriteLoader(sprite_builder=CollidableSpriteBuilder())
 
 
 class Wheel(DynamicEntity2D):
-    default_geom = BallGeom
+    geom = BallGeom()
 
     def __init__(self, position=glm.vec2()):
         sprite = sprite_loader.load("${resources}/tiled/items/coinGold.png")
@@ -58,7 +58,7 @@ class Wheel(DynamicEntity2D):
 
 
 class Chassis(DynamicEntity2D):
-    default_geom = BoxGeom
+    geom = BoxGeom()
     def __init__(self, position=glm.vec2()):
         sprite = sprite_loader.load("${resources}/tiled/objects/boxCrate.png")
 

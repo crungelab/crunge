@@ -24,8 +24,9 @@ from .entity_2d import Entity2D
 
 
 class PhysicsEntity2D(Entity2D):
+    geom = HullGeom()
+
     default_vu = SpriteVu
-    default_geom = HullGeom
 
     def __init__(
         self,
@@ -45,7 +46,7 @@ class PhysicsEntity2D(Entity2D):
             model=model,
             brain=brain,
         )
-        self.geom = self.default_geom() if geom is None else geom
+        self.geom = self.geom if geom is None else geom
         self._offset = offset
         self._physics_kwargs = physics_kwargs
 

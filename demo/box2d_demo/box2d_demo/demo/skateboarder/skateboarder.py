@@ -7,7 +7,7 @@ from crunge import imgui
 from crunge.engine.resource.resource_manager import ResourceManager
 
 from ...map.map_loader import MapLoader
-from ...character import Avatar, Skateboard
+from ...character import Avatar
 from ..physics_demo import PhysicsDemo
 
 

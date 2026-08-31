@@ -24,22 +24,18 @@ MOUNTED_COM_DROP = 1.0
 class DynamicCharacter(DynamicEntity2D):
     model: Sprite
     material = PLAYER
+    geom = CompoundGeom([
+        HullGeom(clip=Rect2(0, 0.5, 1.0, 0.5)),
+        BallGeom(
+            radius=FOOT_RADIUS,
+            offset=glm.vec2(0, -FOOT_RADIUS),
+            material=FEET,
+        ),
+    ])
 
     def __init__(self, position=None, model=None, brain=None):
-        super().__init__(position, model=model, brain=brain, geom=self.make_geom())
+        super().__init__(position, model=model, brain=brain)
         self.mass_data: b2.MassData = None
-
-    @classmethod
-    def make_geom(cls) -> CompoundGeom:
-        """Hull over the lower half of the sprite, plus a foot sensor circle."""
-        return CompoundGeom([
-            HullGeom(clip=Rect2(0, 0.5, 1.0, 0.5)),
-            BallGeom(
-                radius=FOOT_RADIUS,
-                offset=glm.vec2(0, -FOOT_RADIUS),
-                material=FEET,
-            ),
-        ])
 
     def _create(self):
         super()._create()

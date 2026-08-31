@@ -17,9 +17,9 @@ from .physics_material import LASER
 
 class Laser(Node2D):
     default_vu = SpriteVu
-    default_geom = BoxGeom
+    geom = BoxGeom()
     default_physics = DynamicPhysics
-    default_material = LASER
+    material = LASER
 
     def __init__(self, position: glm.vec2, rotation: float, speed: float) -> None:
         self.speed = speed

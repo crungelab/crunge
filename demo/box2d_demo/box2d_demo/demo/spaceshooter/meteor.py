@@ -18,9 +18,9 @@ from .physics_material import METEOR
 
 class Meteor(Node2D):
     default_vu = SpriteVu
-    default_geom = BallGeom
+    geom = BallGeom()
     default_physics = DynamicPhysics
-    default_material = METEOR
+    material = METEOR
 
     linear_velocity_range=((-1, 1), (-1, 1))
     angular_velocity_range=(-2, 2)

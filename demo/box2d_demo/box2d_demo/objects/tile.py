@@ -6,21 +6,21 @@ from crunge.engine.d2 import Node2D
 from crunge.engine.d2.physics import StaticPhysics, DynamicPhysics
 
 class Tile(Node2D):
+    geom = HullGeom()
     default_vu = SpriteVu
-    default_geom = HullGeom
     default_physics = StaticPhysics
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
 
 class BoxTile(Node2D):
-    default_geom = BoxGeom
+    geom = BoxGeom()
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
 
 class ChainTile(Node2D):
-    default_geom = ChainGeom
+    geom = ChainGeom()
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
@@ -50,7 +50,7 @@ class TerrainModel:
 
 
 class TerrainColliderTile(Node2D):
-    default_geom = ChainGeom
+    geom = ChainGeom()
     default_physics = StaticPhysics
     def __init__(self, points: list[tuple[float, float]]) -> None:
         model = TerrainModel(points)
