@@ -9,7 +9,7 @@ from crunge.engine.d2.physics import DynamicPhysics
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from crunge.engine.d2 import Node2D
+from crunge.engine.d2.entity import Entity2D
 from crunge.engine.d2.physics.geom import BallGeom
 
 from .physics_material import SHIP
@@ -17,10 +17,10 @@ from .thruster import Thruster
 from .laser import Laser
 
 
-class Ship(Node2D):
-    default_vu = SpriteVu
+class Ship(Entity2D):
+    vu_class = SpriteVu
     geom = BallGeom()
-    default_physics = DynamicPhysics
+    physics_class = DynamicPhysics
     material = SHIP
 
     def __init__(self, position: glm.vec2) -> None:

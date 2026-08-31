@@ -1,10 +1,10 @@
-from crunge.engine.base import Base
+from crunge.engine.ai.brain import Brain
 from crunge.engine.d2 import Node2D
 
-class EntityBrain(Base):
+class EntityBrain(Brain):
     def __init__(self):
         super().__init__()
-        self.node: Node2D = None
+        #self.node: Node2D = None
 
     @property
     def sprite(self):

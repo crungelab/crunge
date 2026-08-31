@@ -18,7 +18,7 @@ from .controller import KinematicCharacterController
 
 
 class KinematicCharacter(KinematicEntity2D):
-    default_vu = SpriteVu
+    vu_class = SpriteVu
     def __init__(self, position=glm.vec2(), model=None, brain=None):
         super().__init__(position, model=model, brain=brain)
 

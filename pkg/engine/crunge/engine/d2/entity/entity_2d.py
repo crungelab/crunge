@@ -1,13 +1,23 @@
+from typing import TYPE_CHECKING, ClassVar, Type, Dict, List, Any, Callable
+
 from loguru import logger
 
 import glm
 
 from crunge.engine.d2.node_2d import Node2D
-from crunge.engine.d2.vu_2d import Vu2D
+
+if TYPE_CHECKING:
+    from ..physics import Physics
 
 from .brain import EntityBrain
 
 class Entity2D(Node2D):
+    geom = None
+    material = None
+
+    physics_class: ClassVar["type[Physics] | None"] = None
+
+
     def __init__(
         self,
         position=glm.vec2(),
@@ -29,9 +39,18 @@ class Entity2D(Node2D):
     @brain.setter
     def brain(self, value):
         self._brain = value
-        self._brain.node = self
-        value.enable()
+        #self._brain.node = self
+        #value.enable()
 
+    def _seat(self) -> None:
+        super()._seat()
+        if self.physics_class is not None:
+            self.physics = self.add(self.physics_class(geom=self.geom, material=self.material))
+
+        if self.brain is not None:
+            self.add(self.brain)
+
+    """
     def update(self, delta_time: float):
         super().update(delta_time)
         self.update_brain(delta_time)
@@ -39,3 +58,4 @@ class Entity2D(Node2D):
     def update_brain(self, delta_time):
         if self.brain:
             self.brain.update(delta_time)
+    """

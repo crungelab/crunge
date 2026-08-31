@@ -19,7 +19,7 @@ class TerrainChunkModel:
 
 
 class TerrainChunk(StaticEntity2D):
-    default_vu = None
+    vu_class = None
     def __init__(self, points: list[tuple[float, float]]) -> None:
         model = TerrainChunkModel(points)
         super().__init__(model=model, geom=ChainGeom())

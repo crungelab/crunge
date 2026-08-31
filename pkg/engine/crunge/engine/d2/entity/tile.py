@@ -15,7 +15,7 @@ class Tile(StaticEntity2D):
 
 
 class GhostTile(Node2D):
-    default_vu = SpriteVu
+    vu_class = SpriteVu
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 

@@ -4,7 +4,7 @@ import glm
 from .entity_2d import Entity2D
 
 class EntityGroup2D(Entity2D):
-    default_vu = None
+    vu_class = None
 
     _id_counter = 0
 

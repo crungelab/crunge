@@ -4,7 +4,6 @@ import math
 if TYPE_CHECKING:
     from .scene.scene_2d import Scene2D
     from .vu_2d import Vu2D
-    from .physics import Physics
 
 from loguru import logger
 import glm
@@ -14,11 +13,7 @@ from ..scene.scene_node import SceneNode
 
 
 class Node2D(SceneNode["Node2D", "Scene2D"]):
-    geom = None
-    material = None
-
-    default_vu: ClassVar["type[Vu2D] | None"] = None
-    default_physics: ClassVar["type[Physics] | None"] = None
+    vu_class: ClassVar["type[Vu2D] | None"] = None
 
     def __init__(
         self,
@@ -44,11 +39,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     def _seat(self) -> None:
         super()._seat()
-        if self.default_vu is not None:
-            self.add(self.default_vu())
-
-        if self.default_physics is not None:
-            self.add(self.default_physics(geom=self.geom, material=self.material))
+        if self.vu_class is not None:
+            self.add(self.vu_class())
 
     # ------------------------------------------------------------------
     # Properties

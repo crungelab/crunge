@@ -10,16 +10,16 @@ from crunge import box2d
 from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from crunge.engine.d2 import Node2D
+from crunge.engine.d2.entity import Entity2D
 from crunge.engine.d2.physics.geom import BallGeom
 from crunge.engine.d2.physics import DynamicPhysics
 
 from .physics_material import METEOR
 
-class Meteor(Node2D):
-    default_vu = SpriteVu
+class Meteor(Entity2D):
+    vu_class = SpriteVu
     geom = BallGeom()
-    default_physics = DynamicPhysics
+    physics_class = DynamicPhysics
     material = METEOR
 
     linear_velocity_range=((-1, 1), (-1, 1))

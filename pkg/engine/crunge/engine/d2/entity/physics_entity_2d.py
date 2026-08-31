@@ -26,7 +26,7 @@ from .entity_2d import Entity2D
 class PhysicsEntity2D(Entity2D):
     geom = HullGeom()
 
-    default_vu = SpriteVu
+    vu_class = SpriteVu
 
     def __init__(
         self,
@@ -55,6 +55,7 @@ class PhysicsEntity2D(Entity2D):
         self.motion_state = MotionState.GROUNDED
         self.motion_state_changed = Signal[MotionState]()
 
+    """
     def _seat(self) -> None:
         super()._seat()
         self.physics = self.add(
@@ -64,7 +65,7 @@ class PhysicsEntity2D(Entity2D):
                 **self._physics_kwargs,
             )
         )
-
+    """
     # -- physics forwards --------------------------------------------------
 
     @property

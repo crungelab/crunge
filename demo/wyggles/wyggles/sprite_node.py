@@ -6,7 +6,7 @@ from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 
 
 class SpriteNode(Node2D):
-    default_vu: type[SpriteVu] | None = SpriteVu
+    vu_class: type[SpriteVu] | None = SpriteVu
     def __init__(self, dna=None):
         super().__init__()
         self.dna = dna
