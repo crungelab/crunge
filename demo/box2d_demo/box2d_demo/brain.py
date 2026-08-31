@@ -1,7 +1,7 @@
 from crunge.engine.base import Base
 from crunge.engine.d2 import Node2D
 
-class Brain(Base):
+class EntityBrain(Base):
     def __init__(self):
         super().__init__()
         self.node: Node2D = None

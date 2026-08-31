@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 import math
 import random
 
@@ -9,8 +11,13 @@ from wyggles.sprite_node import SpriteNode
 from .. import world
 from wyggles.brain import Brain
 
+if TYPE_CHECKING:
+    from wyggles.wyggle import Wyggle
+
 
 class WyggleBrain(Brain):
+    node: "Wyggle"
+
     def __init__(self, sprite):
         super().__init__(sprite)
         self.focus: SpriteNode = None
@@ -26,14 +33,12 @@ class WyggleBrain(Brain):
         self.focus = None
 
     def move(self):
-        #max_speed = 2.0
-        #max_speed = 1.0
         max_speed = 0.01
         avoidance_force = 4.0
         avoidance_distance = 48
         agent_radius = 16
-        wiggle_strength = 0.6    # Try 0.2 .. 1.2 for subtle to wild wiggle
-        wiggle_speed = 0.25      # Higher = faster wiggle
+        wiggle_strength = 0.6  # Try 0.2 .. 1.2 for subtle to wild wiggle
+        wiggle_speed = 0.25  # Higher = faster wiggle
 
         # --- Step 1: Seek target ---
         to_target = self.target_position - self.node.position
@@ -64,7 +69,7 @@ class WyggleBrain(Brain):
             #break  # Only avoid first obstacle
         """
         # --- Step 3: Combine steering ---
-        #steering_vec = seek_velocity + avoidance
+        # steering_vec = seek_velocity + avoidance
         steering_vec = seek_velocity  # + avoidance
         if glm.length(steering_vec) > 1e-3:
             steering_dir = glm.normalize(steering_vec)
@@ -87,25 +92,6 @@ class WyggleBrain(Brain):
         # --- Step 5: Move the agent ---
         next_position = self.node.position + final_velocity
         self.node.move(next_position)
-
-    '''
-    def left(self, angle):
-        heading = self.heading - angle
-        self.heading = heading if heading > 0 else 360 + heading
-
-    def right(self, angle):
-        heading = self.heading + angle
-        self.heading = heading if heading < 359 else heading - 360
-
-    def forward(self, distance):
-        x, y = self.position
-        px = x + (distance * (math.cos(glm.radians(self.heading))))
-        py = y + (distance * (math.sin(glm.radians(self.heading))))
-        self.move_to(glm.vec2(px, py))
-
-    def randforward(self):
-        self.forward(random.randint(0, self.sensor_range))
-    '''
 
     def get_clear_wander_direction(self):
         max_angle_offset = 90  # degrees
@@ -134,10 +120,10 @@ class WyggleBrain(Brain):
             results = world.world_instance.space.segment_query(
                 start, end, self.node.radius, pymunk.ShapeFilter()
             )
-            '''
+            """
             if not any(result.shape.body.node != self.node for result in results):
                 clear_candidates.append(angle)
-            '''
+            """
             if not results:
                 clear_candidates.append(angle)
 

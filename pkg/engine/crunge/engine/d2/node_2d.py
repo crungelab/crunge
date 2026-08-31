@@ -1,23 +1,16 @@
 from typing import TYPE_CHECKING, ClassVar, Type, Dict, List, Any, Callable
 import math
 
-
 if TYPE_CHECKING:
     from .scene.scene_2d import Scene2D
     from .vu_2d import Vu2D
     from .physics import Physics
-
-from .physics.geom import Geom, HullGeom
-from .physics.material import PhysicsMaterial
-
-from ..vu import Vu
 
 from loguru import logger
 import glm
 
 from ..math import Bounds2
 from ..scene.scene_node import SceneNode
-
 
 
 class Node2D(SceneNode["Node2D", "Scene2D"]):

@@ -5,7 +5,7 @@ from loguru import logger
 import glm
 
 import badwing.globe
-from badwing.brain import Brain
+from badwing.brain import EntityBrain
 
 from crunge.engine.loader.sprite.sprite_grid_loader import SpriteGridLoader
 
@@ -28,7 +28,7 @@ RATE_MAX = 0.1
 DEG_RADS = (math.pi * 2) / 360
 
 
-class ButterflyBrain(Brain):
+class ButterflyBrain(EntityBrain):
     def __init__(self, index: int):
         super().__init__()
         self.speed = 0.01

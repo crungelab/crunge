@@ -13,8 +13,8 @@ class Brain(Agent):
         self.node = node
         self.velocity = glm.vec2(0, 0)
         self.target_position = glm.vec2(0, 0)
-        #self.sensor_range = 128
-        self.sensor_range = 10
+        #self.sensor_range = 10
+        self.sensor_range = 3
 
     @property
     def position(self) -> glm.vec2:

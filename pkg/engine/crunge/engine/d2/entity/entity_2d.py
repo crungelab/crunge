@@ -5,7 +5,7 @@ import glm
 from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.d2.vu_2d import Vu2D
 
-from .brain import Brain
+from .brain import EntityBrain
 
 class Entity2D(Node2D):
     def __init__(
@@ -14,7 +14,7 @@ class Entity2D(Node2D):
         rotation=0.0,
         scale=glm.vec2(1.0),
         model=None,
-        brain: Brain = None,
+        brain: EntityBrain = None,
     ):
         super().__init__(position, rotation, scale, model=model)
         self._brain = None
