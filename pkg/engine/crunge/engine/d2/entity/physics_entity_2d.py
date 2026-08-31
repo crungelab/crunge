@@ -34,7 +34,6 @@ class PhysicsEntity2D(Entity2D):
         rotation: float = 0.0,
         scale: glm.vec2 = None,
         model=None,
-        brain=None,
         geom=None,
         offset: glm.vec2 = None,
         **physics_kwargs,
@@ -44,7 +43,6 @@ class PhysicsEntity2D(Entity2D):
             rotation,
             glm.vec2(1.0) if scale is None else scale,
             model=model,
-            brain=brain,
         )
         self.geom = self.geom if geom is None else geom
         self._offset = offset
