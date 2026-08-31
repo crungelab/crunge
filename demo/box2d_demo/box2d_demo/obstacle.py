@@ -7,8 +7,8 @@ from .constants import *
 
 
 class Obstacle(DynamicEntity2D):
-    def __init__(self, position, sprite, geom):
-        super().__init__(position, model=sprite, geom=geom)
+    def __init__(self, position, sprite):
+        super().__init__(position, model=sprite)
 
     @classmethod
     def produce(self, kind, position, sprite):
@@ -16,15 +16,11 @@ class Obstacle(DynamicEntity2D):
         return node
 
 
-BOX_MASS = 1
-BALL_MASS = 1
-ROCK_MASS = 1
-
-
 class Box(Obstacle):
+    geom = BoxGeom()
+
     def __init__(self, position, sprite=None):
-        super().__init__(position, sprite, geom=BoxGeom())
-        self.mass = BOX_MASS
+        super().__init__(position, sprite)
 
     @classmethod
     def produce(self, position, sprite):
@@ -32,9 +28,10 @@ class Box(Obstacle):
 
 
 class Ball(Obstacle):
+    geom = BallGeom()
+
     def __init__(self, position, sprite=None):
-        super().__init__(position, sprite, geom=BallGeom())
-        self.mass = BALL_MASS
+        super().__init__(position, sprite)
 
     @classmethod
     def produce(self, sprite):
@@ -42,8 +39,10 @@ class Ball(Obstacle):
 
 
 class Rock(Obstacle):
+    geom = HullGeom()
+
     def __init__(self, position=(0, 0), sprite=None):
-        super().__init__(position, sprite, geom=HullGeom())
+        super().__init__(position, sprite)
 
     @classmethod
     def produce(self, sprite):

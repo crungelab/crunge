@@ -16,11 +16,9 @@ from ...util import debounce
 from .car_controller import CarController
 
 WHEEL_RADIUS = 0.25
-WHEEL_MASS = 10.15
 
 CHASSIS_WIDTH = 0.5
 CHASSIS_HEIGHT = 0.1
-CHASSIS_MASS = 2
 
 # X_PAD = 0.2
 X_PAD = 0.3
@@ -46,11 +44,6 @@ class Wheel(DynamicEntity2D):
         sprite = sprite_loader.load("${resources}/tiled/items/coinGold.png")
         scale = glm.vec2(0.5, 0.5)
         super().__init__(position, scale=scale, model=sprite)
-        self.mass = WHEEL_MASS
-
-    def add_shape(self, shape):
-        # shape.density = WHEEL_MASS / (4/3 * 3.14159 * WHEEL_RADIUS**3)
-        shape.set_density(WHEEL_MASS / (4 / 3 * 3.14159 * WHEEL_RADIUS**3), True)
 
     @classmethod
     def produce(self, position=glm.vec2()):
@@ -66,11 +59,6 @@ class Chassis(DynamicEntity2D):
         super().__init__(
             position, scale=scale, model=sprite
         )
-        self.mass = CHASSIS_MASS
-
-    def add_shape(self, shape):
-        # shape.density = CHASSIS_MASS / (CHASSIS_WIDTH * CHASSIS_HEIGHT)
-        shape.set_density(CHASSIS_MASS / (CHASSIS_WIDTH * CHASSIS_HEIGHT), True)
 
     @classmethod
     def produce(self, position=glm.vec2()):

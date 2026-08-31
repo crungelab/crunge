@@ -18,14 +18,14 @@ from .skateboard_controller import SkateboardController
 
 WHEEL_RADIUS = 0.1
 
-#CHASSIS_WIDTH = 0.5
+# CHASSIS_WIDTH = 0.5
 CHASSIS_WIDTH = 1.0
 CHASSIS_HEIGHT = 0.1
 
 WHEEL_DENSITY = 1.0
 CHASSIS_DENSITY = 1.0
 
-#X_PAD = 0.3
+# X_PAD = 0.3
 X_PAD = 0
 Y_PAD = 0.25
 
@@ -45,18 +45,15 @@ WHEEL_MATERIAL = PhysicsMaterial("skateboard_wheel", friction=0.0, restitution=0
 
 
 class Wheel(DynamicEntity2D):
+    geom = BallGeom(
+        radius=WHEEL_RADIUS,
+        material=WHEEL_MATERIAL,
+        density=WHEEL_DENSITY,
+    )
+
     def __init__(self, position=None):
         sprite = sprite_loader.load("${resources}/tiled/items/coinGold.png")
-        super().__init__(
-            position,
-            scale=glm.vec2(0.5, 0.5),
-            model=sprite,
-            geom=BallGeom(
-                radius=WHEEL_RADIUS,
-                material=WHEEL_MATERIAL,
-                density=WHEEL_DENSITY,
-            ),
-        )
+        super().__init__(position, scale=glm.vec2(0.5, 0.5), model=sprite)
 
     @classmethod
     def produce(cls, position=None):
@@ -64,16 +61,17 @@ class Wheel(DynamicEntity2D):
 
 
 class Deck(DynamicEntity2D):
+    geom = BoxGeom(
+        size=glm.vec2(CHASSIS_WIDTH, CHASSIS_HEIGHT),
+        density=CHASSIS_DENSITY,
+    )
+
     def __init__(self, position=None):
         sprite = sprite_loader.load("${resources}/tiled/objects/boxCrate.png")
         super().__init__(
             position,
             scale=glm.vec2(1.5, 0.1),
             model=sprite,
-            geom=BoxGeom(
-                size=glm.vec2(CHASSIS_WIDTH, CHASSIS_HEIGHT),
-                density=CHASSIS_DENSITY,
-            ),
         )
 
     @classmethod
@@ -124,7 +122,7 @@ class Skateboard(EntityGroup2D):
             local_frame_a=box2d.Transform(p=box2d.Vec2(0, 0)),
             local_frame_b=box2d.Transform(p=box2d.Vec2(0, 0.6)),
         )
-        
+
         joint = box2d.create_weld_joint(world, weld_def)
         self.mountee_joints = [joint]
 
