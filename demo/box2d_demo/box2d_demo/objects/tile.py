@@ -2,10 +2,10 @@ import glm
 
 from crunge.engine.d2.physics.geom import HullGeom, BoxGeom, ChainGeom
 from crunge.engine.d2.sprite import Sprite, SpriteVu
-from crunge.engine.d2.entity import Entity2D
+from crunge.engine.d2.entity import StaticEntity2D
 from crunge.engine.d2.physics import StaticPhysics, DynamicPhysics
 
-class Tile(Entity2D):
+class Tile(StaticEntity2D):
     geom = HullGeom()
     vu_class = SpriteVu
     physics_class = StaticPhysics
@@ -13,26 +13,26 @@ class Tile(Entity2D):
         super().__init__(position, model=sprite)
 
 
-class BoxTile(Entity2D):
+class BoxTile(StaticEntity2D):
     geom = BoxGeom()
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
 
-class ChainTile(Entity2D):
+class ChainTile(StaticEntity2D):
     geom = ChainGeom()
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
 
-class GhostTile(Entity2D):
+class GhostTile(StaticEntity2D):
     vu_class = SpriteVu
     physics_class = None
     def __init__(self, position: glm.vec2, sprite: Sprite) -> None:
         super().__init__(position, model=sprite)
 
 
-class RunColliderTile(Entity2D):
+class RunColliderTile(StaticEntity2D):
     def __init__(self, position: glm.vec2, scale: glm.vec2) -> None:
         super().__init__(position, scale=scale, model=None)
 
@@ -49,7 +49,8 @@ class TerrainModel:
         return glm.vec2(max(xs) - min(xs), max(ys) - min(ys))
 
 
-class TerrainColliderTile(Entity2D):
+class TerrainColliderTile(StaticEntity2D):
+    vu_class = None
     geom = ChainGeom()
     physics_class = StaticPhysics
     def __init__(self, points: list[tuple[float, float]]) -> None:

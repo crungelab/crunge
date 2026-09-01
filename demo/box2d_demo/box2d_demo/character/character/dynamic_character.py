@@ -33,8 +33,8 @@ class DynamicCharacter(DynamicEntity2D):
         ),
     ])
 
-    def __init__(self, position=None, model=None, brain=None):
-        super().__init__(position, model=model, brain=brain)
+    def __init__(self, position=None, model=None):
+        super().__init__(position, model=model)
         self.mass_data: b2.MassData = None
 
     def _create(self):

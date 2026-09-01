@@ -19,8 +19,8 @@ from .controller import KinematicCharacterController
 
 class KinematicCharacter(KinematicEntity2D):
     vu_class = SpriteVu
-    def __init__(self, position=glm.vec2(), model=None, brain=None):
-        super().__init__(position, model=model, brain=brain)
+    def __init__(self, position=glm.vec2(), model=None):
+        super().__init__(position, model=model)
 
     def on_mount(self, node: PhysicsEntity2D, point: glm.vec2):
         self.motion_state = MotionState.MOUNTED

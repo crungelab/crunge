@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING, ClassVar
+
 from loguru import logger
 import glm
 
@@ -24,9 +26,13 @@ from .entity_2d import Entity2D
 
 
 class PhysicsEntity2D(Entity2D):
-    geom = HullGeom()
-
     vu_class = SpriteVu
+
+    geom = HullGeom()
+    material = None
+
+    physics_class: ClassVar["type[Physics] | None"] = None
+
 
     def __init__(
         self,
@@ -53,17 +59,19 @@ class PhysicsEntity2D(Entity2D):
         self.motion_state = MotionState.GROUNDED
         self.motion_state_changed = Signal[MotionState]()
 
-    """
     def _seat(self) -> None:
         super()._seat()
+        if self.physics_class is None:
+            return
         self.physics = self.add(
             self.physics_class(
                 self.geom,
+                material=self.material,
                 position=self._offset,
                 **self._physics_kwargs,
             )
         )
-    """
+
     # -- physics forwards --------------------------------------------------
 
     @property

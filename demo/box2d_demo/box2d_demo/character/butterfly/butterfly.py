@@ -34,7 +34,8 @@ class ButterflyKind(IntEnum):
 
 class Butterfly(Entity2D):
     def __init__(self, position=glm.vec2(), brain=None, border=DEFAULT_BORDER):
-        super().__init__(position, vu=SpriteVu(), brain=brain)
+        super().__init__(position, vu=SpriteVu())
+        self.add(brain)
         self.border = border
 
     @classmethod

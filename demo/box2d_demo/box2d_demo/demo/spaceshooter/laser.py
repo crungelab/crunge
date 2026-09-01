@@ -5,18 +5,16 @@ import glm
 
 from crunge import box2d as b2
 
-from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from crunge.engine.d2.entity import Entity2D
+from crunge.engine.d2.entity import DynamicEntity2D
 from crunge.engine.d2.physics.geom import BoxGeom
 from crunge.engine.d2.physics import DynamicPhysics
 
 from .physics_material import LASER
 
 
-class Laser(Entity2D):
-    vu_class = SpriteVu
+class Laser(DynamicEntity2D):
     geom = BoxGeom()
     physics_class = DynamicPhysics
     material = LASER
@@ -34,11 +32,10 @@ class Laser(Entity2D):
 
     def _create(self):
         super()._create()
-        self.physics = self.get(DynamicPhysics)
-        self.body = self.physics.body
+        body = self.physics.body
         direction = self.forward
         velocity = direction * self.speed
-        self.body.linear_velocity = b2.Vec2(*velocity)
+        body.linear_velocity = b2.Vec2(*velocity)
 
 
     def update(self, dt):

@@ -7,19 +7,16 @@ import glm
 
 from crunge import box2d
 
-from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
 
-from crunge.engine.d2.entity import Entity2D
+from crunge.engine.d2.entity import DynamicEntity2D
 from crunge.engine.d2.physics.geom import BallGeom
 from crunge.engine.d2.physics import DynamicPhysics
 
 from .physics_material import METEOR
 
-class Meteor(Entity2D):
-    vu_class = SpriteVu
+class Meteor(DynamicEntity2D):
     geom = BallGeom()
-    physics_class = DynamicPhysics
     material = METEOR
 
     linear_velocity_range=((-1, 1), (-1, 1))
@@ -39,14 +36,13 @@ class Meteor(Entity2D):
 
     def _create(self):
         super()._create()
-        self.physics = self.get(DynamicPhysics)
-        self.body = self.physics.body
+        body = self.physics.body
         linear_velocity = box2d.Vec2(random.uniform(*self.linear_velocity_range[0]), 
                            random.uniform(*self.linear_velocity_range[1]))
-        self.body.linear_velocity = linear_velocity
+        body.linear_velocity = linear_velocity
 
         angular_velocity = random.uniform(*self.angular_velocity_range)
-        self.body.angular_velocity = angular_velocity
+        body.angular_velocity = angular_velocity
         #self.body.mass = 1
 
     def create_fragment(self, cls: Type["Meteor"], position: glm.vec2, velocity: box2d.Vec2):
