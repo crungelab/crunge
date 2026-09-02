@@ -2,13 +2,13 @@ import math
 
 import glm
 
-from crunge.engine.d2 import Node2D
+from crunge.engine.d2.entity import Entity2D
 
 from crunge.engine.ai.bt.run.agent import Agent
 
 
-class Brain(Agent):
-    def __init__(self, node: Node2D):
+class GameAgent(Agent):
+    def __init__(self, node: Entity2D):
         super().__init__()
         self.node = node
         self.velocity = glm.vec2(0, 0)

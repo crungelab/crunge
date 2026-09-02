@@ -1,14 +1,12 @@
-from ..sprite_node import SpriteNode
+from ..game_entity import GameEntity
 
 from .dna import WyggleDna
 
-# from .brains.default import DefaultWyggleBrain as MyBrain
-# from .brains.behavior import BehavioralBrain as MyBrain
-# from .brains.neuron import NeuronBrain as MyBrain
-from .brains.reactive import ReactiveBrain as MyBrain
+#from .agents.reactive import ReactiveWyggleAgent
+from .mind import WyggleMind
 
 
-class WyggleSeg(SpriteNode):
+class WyggleSeg(GameEntity):
     dna: WyggleDna
 
     def __init__(self, dna):
@@ -68,8 +66,6 @@ class Wyggle(WyggleHead):
     def __init__(self):
         super().__init__(WyggleDna(Wyggle))
         self.name = WyggleDna.gen_id(self.kind)
-        self.brain = MyBrain(self)
-        self.brain.schedule()
         self.length_max = 6
         self.segs: list[WyggleSeg] = []
         self.model = self.dna.happy_face_sprite
@@ -77,6 +73,13 @@ class Wyggle(WyggleHead):
         self.track = [0] * self.track_max * 2
         self.length = 1
         self.butt = None
+
+        """
+        self.agent = ReactiveWyggleAgent(self)
+        self.agent.schedule()
+        """
+        self.mind = WyggleMind()
+        self.add(self.mind)
 
     def _create(self):
         super()._create()

@@ -1,6 +1,5 @@
-#
-# A purely behavioral brain
-#
+from loguru import logger
+
 import math
 
 from crunge.engine.ai.bt.run import *
@@ -8,43 +7,42 @@ from crunge.engine.ai.bt.run import _I
 from crunge.engine.ai.bt.run.act import *
 
 from wyggles.world import *
-from wyggles.wyggle.brain import WyggleBrain
+from wyggles.wyggle.agent import WyggleAgent
 from wyggles.fruit import Fruit
 from wyggles.ball import Ball
 
 _see = term_('see')
 
-class SeesFood(Sequence):
+class SeesFood(Neuron):
     def __init__(self):
         super().__init__()
         self.focus = None
 
-    async def main(self, msg: Message):
-        beacons = world_instance.query(self.bot.x, self.bot.y, self.bot.sensor_range)
+    def main(self):
+        logger.debug(f"I see food")
+        beacons = world_instance.query(self.agent.x, self.agent.y, self.agent.sensor_range)
         self.focus = None
         for beacon in beacons:
             if isinstance(beacon.sprite, Fruit):
                 self.focus = beacon.sprite
                 break
         else:
-            return self.fail()
+            return 0
+        return 1
 
-        self.post(Assert(Believe(_I, _see, self.focus)))
-        await super().main(msg)
-
-class Seek(Action):
+class MoveTo(Action):
     def __init__(self, sees):
         super().__init__()
         self.sees = sees
 
     async def main(self, msg: Message):
-        self.bot.focus = focus = self.sees.focus
-        self.bot.state = 'seek'
+        self.agent.focus = focus = self.sees.focus
+        self.agent.state = 'seek'
         while self.ok():
-            if self.bot.sprite.intersects(focus):
-                self.bot.state = ''
+            if self.agent.sprite.intersects(focus):
+                self.agent.state = ''
                 return self.succeed()
-            self.bot.seek(focus.position)
+            self.agent.seek(focus.position)
             await self.sleep()
 
 class Eat(Action):
@@ -53,34 +51,34 @@ class Eat(Action):
         self.sees = sees
 
     async def main(self, msg: Message):
-        self.bot.focus = focus = self.sees.focus
-        self.bot.state = 'eat'
+        self.agent.focus = focus = self.sees.focus
+        self.agent.state = 'eat'
         
         while self.ok():
             if focus.is_munched():
-                sprite = self.bot.sprite
+                sprite = self.agent.sprite
                 sprite.close_mouth()
                 sprite.energy = sprite.energy + focus.energy
-                self.bot.reset()
+                self.agent.reset()
                 return self.succeed()
             await self.sleep()
 
-class SeesBall(Sequence):
+class SeesBall(Neuron):
     def __init__(self):
         super().__init__()
         self.focus = None
 
-    async def main(self, msg: Message):
-        beacons = world_instance.query(self.bot.x, self.bot.y, self.bot.sensor_range)
+    def main(self):
+        logger.debug(f"I see a ball")
+        beacons = world_instance.query(self.agent.x, self.agent.y, self.agent.sensor_range)
         self.focus = None
         for beacon in beacons:
             if isinstance(beacon.sprite, Ball):
                 self.focus = beacon.sprite
                 break
         else:
-            return self.fail()
-        self.post(Assert(Believe(_I, _see, self.focus)))
-        await super().main(msg)
+            return 0
+        return 1
 
 class Kick(Action):
     def __init__(self, sees):
@@ -88,35 +86,37 @@ class Kick(Action):
         self.sees = sees
 
     async def main(self, msg: Message):
-        self.bot.focus = focus = self.sees.focus
-        self.bot.state = 'kick'
-        focus.receive_kick(self.bot.heading, 200)
-        self.bot.reset()
+        self.agent.focus = focus = self.sees.focus
+        self.agent.state = 'kick'
+        focus.receive_kick(self.agent.heading, 200)
+        self.agent.reset()
 
 class Wander(Action):
     async def main(self, msg: Message):
-        self.bot.state = 'wander'
+        self.agent.state = 'wander'
         while self.ok():
             await self.sleep()
             return self.fail()
 
-class BehavioralBrain(WyggleBrain):
+class NeuralWyggleAgent(WyggleAgent):
     def __init__(self, model):
         super().__init__(model)
         with root(self):
             with forever():
                 with selector():
-                    with sequence(SeesFood()) as sees_food:
-                        with action(Seek(sees_food)):
-                            pass
-                        with action(Eat(sees_food)):
-                            pass
+                    with neuron(SeesFood()) as sees_food:
+                        with sequence():
+                            with action(MoveTo(sees_food)):
+                                pass
+                            with action(Eat(sees_food)):
+                                pass
                     
-                    with sequence(SeesBall()) as sees_ball:
-                        with action(Seek(sees_ball)):
-                            pass
-                        with action(Kick(sees_ball)):
-                            pass
+                    with neuron(SeesBall()) as sees_ball:
+                        with sequence():
+                            with action(MoveTo(sees_ball)):
+                                pass
+                            with action(Kick(sees_ball)):
+                                pass
 
                     with action(Wander()):
                         pass
@@ -141,8 +141,6 @@ class BehavioralBrain(WyggleBrain):
                 self.left(pd)
             elif pt == 2:
                 self.right(pd)
-            else:
-                pass
             self.project(self.sensor_range)
         self.move()
 

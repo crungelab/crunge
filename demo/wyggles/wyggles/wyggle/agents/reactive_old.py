@@ -9,7 +9,7 @@ from crunge.engine.ai.bt.run.act import *
 from crunge.engine.ai.bt.run.task import Status
 
 from ... import world
-from ...wyggle.brain import WyggleBrain
+from ..agent import WyggleAgent
 from ...fruit import Fruit
 from ...ball import Ball
 
@@ -25,7 +25,7 @@ class Sees(Action):
         # was `while self.ok:` -- a bound method, always truthy
         while self.ok():
             beacons = world.world_instance.query(
-                self.bot.x, self.bot.y, self.bot.sensor_range
+                self.agent.x, self.agent.y, self.agent.sensor_range
             )
             for beacon in beacons:
                 self.post(Assert(Believe(_I, _see, beacon.node)))
@@ -45,11 +45,11 @@ class SeesFood(Neuron):
         async def action(task: Task, msg: Message):
             logger.debug("Match: {}", msg.data.obj)
 
-        self.rule = self.bot.subscribe(t, action)
+        self.rule = self.agent.subscribe(t, action)
 
     def main(self):
         beacons = world.world_instance.query(
-            self.bot.x, self.bot.y, self.bot.sensor_range
+            self.agent.x, self.agent.y, self.agent.sensor_range
         )
         self.focus = None
         for beacon in beacons:
@@ -71,25 +71,26 @@ class MoveTo(Action):
             # between scoring and running.
             return self.fail()
 
-        self.bot.focus = focus
-        self.bot.state = 'seek'
+        self.agent.focus = focus
+        self.agent.state = 'seek'
 
         try:
             while self.ok():
-                if self.bot.node.intersects(focus):
-                    self.bot.state = ''
+                if self.agent.node.intersects(focus):
+                    self.agent.state = ''
                     return self.succeed()
-                self.bot.move_to(focus.position)
+                self.agent.move_to(focus.position)
                 await self.sleep()
         finally:
             # Runs on cancellation too. Code placed after the loop never
             # executed, because closing the coroutine raises GeneratorExit
             # at the await.
             if self.status is not Status.SUCCESS:
-                self.bot.reset()
+                self.agent.reset()
 
 
 class Eat(Action):
+    agent: WyggleAgent
     def __init__(self, sees):
         super().__init__()
         self.sees = sees
@@ -99,21 +100,21 @@ class Eat(Action):
         if focus is None:
             return self.fail()
 
-        self.bot.focus = focus
-        self.bot.state = 'eat'
+        self.agent.focus = focus
+        self.agent.state = 'eat'
 
         try:
             while self.ok():
-                if focus.is_munched():
-                    node = self.bot.node
+                if focus.is_munched or focus.is_destroyed:
+                    node = self.agent.node
                     node.close_mouth()
                     node.energy = node.energy + focus.energy
-                    self.bot.reset()
+                    self.agent.reset()
                     return self.succeed()
                 await self.sleep()
         finally:
             if self.status is not Status.SUCCESS:
-                self.bot.reset()
+                self.agent.reset()
 
 
 class SeesBall(Neuron):
@@ -123,7 +124,7 @@ class SeesBall(Neuron):
 
     def main(self):
         beacons = world.world_instance.query(
-            self.bot.x, self.bot.y, self.bot.sensor_range
+            self.agent.x, self.agent.y, self.agent.sensor_range
         )
         self.focus = None
         for beacon in beacons:
@@ -143,10 +144,10 @@ class Kick(Action):
         if focus is None:
             return self.fail()
 
-        self.bot.focus = focus
-        self.bot.state = 'kick'
-        focus.receive_kick(self.bot.node.position, .2)
-        self.bot.reset()
+        self.agent.focus = focus
+        self.agent.state = 'kick'
+        focus.receive_kick(self.agent.node.position, .2)
+        self.agent.reset()
         return self.succeed()
 
 
@@ -155,12 +156,12 @@ class Wander(Action):
         # The movement itself happens in ReactiveBrain.state_wander via
         # update(). This just claims the state and yields one tick so the
         # utility node re-evaluates.
-        self.bot.state = 'wander'
+        self.agent.state = 'wander'
         await self.sleep()
         return self.fail()
 
 
-class ReactiveBrain(WyggleBrain):
+class ReactiveWyggleAgent(WyggleAgent):
     def __init__(self, model):
         super().__init__(model)
         with root(self):

@@ -1,10 +1,10 @@
 import glm
 
-from .sprite_node import SpriteNode
+from .game_entity import GameEntity
 
 class Beacon():
-    def __init__(self, node: SpriteNode, type: str):
-        self.node: SpriteNode = node
+    def __init__(self, node: GameEntity, type: str):
+        self.node: GameEntity = node
         self.type: str = type
 
     @property

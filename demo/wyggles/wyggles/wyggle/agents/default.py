@@ -7,10 +7,10 @@ import glm
 
 from wyggles.beacon import Beacon
 from wyggles.world import *
-from wyggles.wyggle.brain import WyggleBrain
+from wyggles.wyggle.agent import WyggleAgent
 from wyggles.fruit import Fruit
 
-class DefaultWyggleBrain(WyggleBrain):
+class DefaultWyggleAgent(WyggleAgent):
     def __init__(self, sprite):
         super().__init__(sprite)
 

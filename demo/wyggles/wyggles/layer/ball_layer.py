@@ -11,7 +11,6 @@ class BallLayer(GraphLayer2D):
     def __init__(self, name: str = "ball") -> None:
         super().__init__(name)
         self.balls: list[Ball] = []
-        self.respawning_balls = False
 
     def create_children(self):
         super().create_children()
@@ -30,15 +29,3 @@ class BallLayer(GraphLayer2D):
         if ball in self.balls:
             self.balls.remove(ball)
             self.remove_node(ball.node)
-
-    def update(self, delta_time: float):
-        if len(self.balls) < BALL_COUNT and not self.respawning_balls:
-            self.respawning_balls = True
-
-            def re_spawn(delta_time: float):
-                self.spawn_ball()
-                self.respawning_balls = False
-
-            Scheduler().schedule_once(re_spawn, 3.0)
-
-        super().update(delta_time)

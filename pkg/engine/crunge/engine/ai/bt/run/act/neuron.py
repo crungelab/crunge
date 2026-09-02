@@ -11,7 +11,7 @@ class Neuron:
     @property
     def activity(self):
         level = self.main()
-        logger.debug(f"neuron level: {level}")
+        #logger.debug(f"neuron level: {level}")
         return level
 
     def activate(self):

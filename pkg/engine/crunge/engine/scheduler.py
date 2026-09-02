@@ -69,11 +69,11 @@ class Scheduler(Service):
             if now >= task.next_run:
                 delta_time = now - (task.last_run if task.last_run is not None else task.next_run - (task.interval if task.interval else 0))
                 task.last_run = now
-                logger.debug(f"Executing task {task.func.__name__} with delta_time {delta_time:.2f}s")
+                #logger.debug(f"Executing task {task.func.__name__} with delta_time {delta_time:.2f}s")
                 task.func(delta_time)
                 if task.repeat and task.interval is not None:
                     task.next_run = now + task.interval
-                    logger.debug(f"Rescheduled repeating task {task.func.__name__}")
+                    #logger.debug(f"Rescheduled repeating task {task.func.__name__}")
                 else:
                     self.tasks.remove(task)
                     logger.debug(f"Removed one-time task {task.func.__name__}")

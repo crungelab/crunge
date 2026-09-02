@@ -294,7 +294,7 @@ def test_finally_runs_on_cancel(runner):
 
 def test_cancel_all_releases_references(runner):
     """The leak behind resetting the scene: a suspended frame holds the task,
-    which holds the bot, which holds the node."""
+    which holds the agent, which holds the node."""
     class Node:
         pass
 

@@ -6,13 +6,13 @@ from crunge.engine.d2.physics.geom import BallGeom
 from crunge.engine.d2.physics import DynamicPhysics
 from crunge.engine.d2.entity import PhysicsEntity2D
 
-from .sprite_node import SpriteNode
+from .game_entity import GameEntity
 from . import world
 from .beacon import *
 from .dna import Dna
 
 
-class Ball(SpriteNode):
+class Ball(GameEntity):
     KICK_STRENGTH = 12.0  # retuned for unit space; was 200 in pixels
 
     def __init__(self) -> None:

@@ -83,18 +83,18 @@ def clean_task_ctx():
     leaves it dangling, and the next test's tree attaches to the wrong parent.
     """
     from crunge.engine.ai.bt.run.act.helpers import (
-        bot_ctx_root,
+        agent_ctx_root,
         task_ctx_parent,
         neuron_ctx_root,
         neuron_ctx_parent,
     )
 
-    bot_ctx_root.set(None)
+    agent_ctx_root.set(None)
     task_ctx_parent.set(None)
     neuron_ctx_root.set(None)
     neuron_ctx_parent.set(None)
     yield
-    bot_ctx_root.set(None)
+    agent_ctx_root.set(None)
     task_ctx_parent.set(None)
     neuron_ctx_root.set(None)
     neuron_ctx_parent.set(None)

@@ -240,7 +240,7 @@ from crunge.engine.ai.bt.run import __, term_, _$, module_, Message, Rule, Trigg
             Variable
         })
         c = node.expr
-        header = "$query = self.bot.ctx.query(" if node.first else ".and("
+        header = "$query = self.agent.ctx.query(" if node.first else ".and("
         return self.writeLn(''.join([
             header,
             ''.join([
@@ -263,7 +263,7 @@ from crunge.engine.ai.bt.run import __, term_, _$, module_, Message, Rule, Trigg
             Variable
         })
         c = node.expr
-        header =  "$query = self.bot.ctx.query(" if node.first else ".not("
+        header =  "$query = self.agent.ctx.query(" if node.first else ".not("
         return self.writeLn(''.join([
             header,
             ''.join([

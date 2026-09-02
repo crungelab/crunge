@@ -59,7 +59,7 @@ class Act(Task):
         return self.add_rule(Rule(trigger, action))
 
     def sig(self, trigger, action):
-        # self.bot.signal(trigger, self)
+        # self.agent.signal(trigger, self)
         return self.define(trigger, action)
 
     def propose(self, c):
@@ -90,10 +90,10 @@ class Act(Task):
 # Root
 #
 @contextmanager
-def root(bot):
-    bot_ctx_root.set(bot)
-    ctx = task_ctx_enter(bot)
-    yield bot
+def root(agent):
+    agent_ctx_root.set(agent)
+    ctx = task_ctx_enter(agent)
+    yield agent
     task_ctx_exit(ctx)
 
 

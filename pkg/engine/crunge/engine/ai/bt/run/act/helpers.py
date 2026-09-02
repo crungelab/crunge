@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 from ..task import Task
 
-# from ..bot import Bot
+# from ..agent import Agent
 # from .neuron import Neuron
 
 ROOT = "root"
@@ -12,7 +12,7 @@ PARENT = "parent"
 #
 #
 #
-bot_ctx_root = contextvars.ContextVar("bot_ctx_root", default=None)
+agent_ctx_root = contextvars.ContextVar("agent_ctx_root", default=None)
 
 #
 # Neuron Context Management
@@ -23,8 +23,8 @@ neuron_ctx_parent = contextvars.ContextVar("neuron_ctx_parent", default=None)
 
 
 def neuron_ctx_enter(child):
-    bot = bot_ctx_root.get()
-    child.bot = bot
+    agent = agent_ctx_root.get()
+    child.agent = agent
 
     root = neuron_ctx_root.get()
     if not root:
@@ -53,14 +53,14 @@ task_ctx_parent = contextvars.ContextVar("task_ctx_parent", default=None)
 
 
 def task_ctx_enter(child: Task):
-    bot = bot_ctx_root.get()
+    agent = agent_ctx_root.get()
 
     neuron: Neuron = neuron_ctx_root.get()
     child.neuron = neuron
 
     parent: Task = task_ctx_parent.get()
 
-    child.create(bot, parent)
+    child.create(agent, parent)
 
     task_ctx_parent.set(child)
     return {PARENT: parent}
@@ -68,8 +68,8 @@ def task_ctx_enter(child: Task):
 
 """
 def task_ctx_enter(child: Task):
-    bot = bot_ctx_root.get()
-    child.bot = bot
+    agent = agent_ctx_root.get()
+    child.agent = agent
 
     neuron: Neuron = neuron_ctx_root.get()
     child.neuron = neuron

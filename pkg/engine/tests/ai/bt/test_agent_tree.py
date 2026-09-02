@@ -11,7 +11,7 @@ class MyAgent(Agent):
             with counter(1, 11):
                 with action() as a:
                     async def fn(task, msg):
-                        print('bot: ',task.bot)
+                        print('agent: ',task.agent)
                         print('count: ',task.parent.count)
                     a.use(fn)
 

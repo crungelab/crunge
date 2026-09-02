@@ -6,21 +6,21 @@ import random
 from loguru import logger
 import glm
 
-from wyggles.sprite_node import SpriteNode
+from wyggles.game_entity import GameEntity
 
 from .. import world
-from wyggles.brain import Brain
+from wyggles.game_agent import GameAgent
 
 if TYPE_CHECKING:
     from wyggles.wyggle import Wyggle
 
 
-class WyggleBrain(Brain):
+class WyggleAgent(GameAgent):
     node: "Wyggle"
 
-    def __init__(self, sprite):
-        super().__init__(sprite)
-        self.focus: SpriteNode = None
+    def __init__(self, node: "Wyggle"):
+        super().__init__(node)
+        self.focus: GameEntity = None
         self.state: str = "wanderer"
         self.consider_max = 10
         self.consider_timer = self.consider_max
@@ -31,6 +31,12 @@ class WyggleBrain(Brain):
     def reset(self):
         self.state = ""
         self.focus = None
+
+    def scan(self, sensor_range: float = None) -> GameEntity | None:
+        if sensor_range is None:
+            sensor_range = self.node.sensor_range
+        beacons = world.world_instance.query(self.node.position.x, self.node.position.y, sensor_range)
+        return beacons
 
     def move(self):
         max_speed = 0.01

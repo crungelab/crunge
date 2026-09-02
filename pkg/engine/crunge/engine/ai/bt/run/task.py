@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any, Callable, List, Optional, Coroutine
 
 if TYPE_CHECKING:
-    from .bot import Bot
+    from .agent import Agent
 
 import enum
 import types
@@ -66,7 +66,7 @@ class Task(Policy):
         self.error: Optional[BaseException] = None
 
         self.id = uuid1()
-        self.bot: "Bot" = None
+        self.agent: "Agent" = None
         self.runner: Optional["Runner"] = None
         self.parent: Optional["Task"] = None
         self.children: List["Task"] = []
@@ -77,12 +77,12 @@ class Task(Policy):
         return f"<{self.__class__.__name__} {self.status.value}>"
 
     @classmethod
-    def produce(cls, bot: "Bot", parent: "Task" = None):
+    def produce(cls, agent: "Agent", parent: "Task" = None):
         task = cls()
-        return task.create(bot, parent)
+        return task.create(agent, parent)
 
-    def create(self, bot: "Bot", parent: "Task" = None):
-        self.bot = bot
+    def create(self, agent: "Agent", parent: "Task" = None):
+        self.agent = agent
         self.parent = parent
         if parent:
             parent.add(self)
@@ -167,8 +167,8 @@ class Task(Policy):
         child.tasks = self.tasks
         if child.runner is None:
             child.runner = self.runner
-        if child.bot is None:
-            child.bot = self.bot
+        if child.agent is None:
+            child.agent = self.agent
         self.children.append(child)
         return self
 
@@ -210,8 +210,8 @@ class Task(Policy):
         return self._finish(Status.FAILURE)
 
     def halt(self):
-        if self.bot:
-            self.bot.halt()
+        if self.agent:
+            self.agent.halt()
         return self._finish(Status.HALTED)
 
     def cancel(self):
@@ -264,7 +264,7 @@ class Task(Policy):
 
     def post(self, msg: Message):
         msg.sender = self
-        return self.bot.post(msg)
+        return self.agent.post(msg)
 
     #
     # Utility
@@ -484,8 +484,8 @@ class Runner:
             task.status = Status.SUSPENDED
             task.awaited = yielded
             yielded.awaiter = task
-            if yielded.bot is None:
-                yielded.bot = task.bot
+            if yielded.agent is None:
+                yielded.agent = task.agent
             if isinstance(yielded, Trap):
                 self.trap(yielded)
             else:

@@ -1,7 +1,7 @@
 import unittest
 
 from crunge.engine.ai.bt.run import *
-from crunge.engine.ai.bt.run.bot import Bot
+from crunge.engine.ai.bt.run.agent import Agent
 from crunge.engine.ai.bt.run.policy import Rule
 
 _Bob = term_("Bob")
@@ -22,7 +22,7 @@ class Test(unittest.TestCase):
         m = Assert(c)
         print(m)
 
-        bot = Bot()
+        agent = Agent()
 
         t = Trigger(Assert, Believe, _Bob, _likes, _Fish)
         print(t.match(m))
@@ -36,10 +36,10 @@ class Test(unittest.TestCase):
         async def action(task, msg):
             print("Match:", msg.data.obj)
 
-        r = bot.subscribe(t, action)
+        r = agent.subscribe(t, action)
 
-        bot.post(m)
-        bot.run()
+        agent.post(m)
+        agent.run()
 
 if __name__ == "__main__":
     unittest.main()

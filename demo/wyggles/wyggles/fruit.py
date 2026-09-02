@@ -12,7 +12,7 @@ from . import world
 from .beacon import Beacon
 
 from wyggles import Dna
-from wyggles import SpriteNode, SpriteFactory
+from wyggles import GameEntity, SpriteFactory
 
 PI = math.pi
 RADIUS = 32
@@ -57,7 +57,7 @@ class FruitDna(Dna):
 
 
 #
-class Fruit(SpriteNode):
+class Fruit(GameEntity):
     dna: FruitDna
 
     def __init__(self, dna: FruitDna):
@@ -78,6 +78,7 @@ class Fruit(SpriteNode):
         self.model = self.dna.sprites[5 - self.energy]
         return 0.01
 
+    @property
     def is_munched(self):
         return self.energy <= 0
 

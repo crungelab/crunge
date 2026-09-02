@@ -1,17 +1,18 @@
 import math
 import glm
 
-from crunge.engine.d2 import Node2D, SpriteVu
+from crunge.engine.d2 import SpriteVu
+from crunge.engine.d2.entity import Entity2D
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 
 
-class SpriteNode(Node2D):
+class GameEntity(Entity2D):
     vu_class: type[SpriteVu] | None = SpriteVu
     def __init__(self, dna=None):
         super().__init__()
         self.dna = dna
         self.kind = self.__class__.__name__
-        self.brain = None
+        self.mind = None
         self.body = None
         self.beacon = None
         self._z = 0
@@ -28,8 +29,10 @@ class SpriteNode(Node2D):
         self.layer.depth_sort()
 
     def update(self, delta_time: float = 1 / 60):
+        """
         if self.brain:
             self.brain.update(delta_time)
+        """
         if self.body:
             self.position = glm.vec2(self.body.position)
             self.rotation = self.body.angle

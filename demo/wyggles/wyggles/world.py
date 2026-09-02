@@ -6,7 +6,7 @@ import glm
 from crunge.engine.d2.physics import PhysicsWorld2D
 from crunge.engine.d2.scene.layer import GraphLayer2D
 
-from .sprite_node import SpriteNode
+from .game_entity import GameEntity
 from .beacon import Beacon
 
 world_left = 0
@@ -34,7 +34,7 @@ class World(PhysicsWorld2D):
         if beacon in self.beacons:
             self.beacons.remove(beacon)
 
-    def query(self, x, y, distance):
+    def query(self, x, y, distance) -> list[Beacon]:
         result = []
         for beacon in self.beacons:
             dist = glm.distance(glm.vec2(x, y), glm.vec2(beacon.x, beacon.y))
@@ -45,7 +45,7 @@ class World(PhysicsWorld2D):
         result.sort(key=lambda x: x.distance)
         return result
 
-    def materialize_random_from_center(self, node: SpriteNode, layer: GraphLayer2D):
+    def materialize_random_from_center(self, node: GameEntity, layer: GraphLayer2D):
         halfMaxX = world_right / 2
         halfMaxY = world_top / 2
         diameter = world_top

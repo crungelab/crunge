@@ -104,23 +104,26 @@ class Game(App):
 
     def _draw_debug_agents(self):
         for wyggle in self.scene.wyggle_layer:
-            brain = wyggle.brain
-            if not brain:
+            mind = wyggle.mind
+            if not mind:
                 continue
-            txt = brain.state
+            agent = wyggle.mind.agent
+            if not agent:
+                continue
+            txt = agent.state
             position = wyggle.position
             text_offset = glm.vec2(0, 0.5)
             self.display.scratch.draw_text(
                 txt, position + text_offset, font_size=12
             )
             """
-            focus = brain.focus
+            focus = agent.focus
             if not focus:
                 continue
 
             self.display.scratch.draw_line(wyggle.position, focus.position)
             """
-            target_position = brain.target_position
+            target_position = agent.target_position
             self.display.scratch.draw_segment(
                 position, target_position
             )
@@ -130,7 +133,8 @@ def step_runner(delta_time: float):
     Runner().step()
 
 
-Scheduler().schedule(step_runner, 0.25)
+#Scheduler().schedule(step_runner, 0.25)
+Scheduler().schedule(step_runner, 0.016)  # 60 fps
 
 if __name__ == "__main__":
     Game().run()

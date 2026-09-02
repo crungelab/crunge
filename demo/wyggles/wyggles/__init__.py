@@ -1,2 +1,2 @@
 from .dna import Dna
-from .sprite_node import SpriteNode, SpriteFactory
+from .game_entity import GameEntity, SpriteFactory
