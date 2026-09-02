@@ -12,7 +12,7 @@ sudo apt install libcairo2-dev
 
 ```bash
 hatch shell
-pip install -e ../.. # installs crunge.engine.ai.bt into the wyggles virtual environment
+pip install -e ../.. # installs crunge.abt into the wyggles virtual environment
 ```
 
 ## Run

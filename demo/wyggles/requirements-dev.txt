@@ -7,3 +7,4 @@
 -e ../../pkg/tmx
 -e ../../pkg/box2d
 -e ../../pkg/engine
+-e ../../pkg/abt

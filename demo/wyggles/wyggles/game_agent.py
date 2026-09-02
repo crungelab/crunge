@@ -4,7 +4,7 @@ import glm
 
 from crunge.engine.d2.entity import Entity2D
 
-from crunge.engine.ai.bt.run.agent import Agent
+from crunge.abt.run.agent import Agent
 
 
 class GameAgent(Agent):

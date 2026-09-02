@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["crunge"]
+
+[tool.setuptools]
+packages = ["crunge", "crunge.abt"]
+
+[project]
+name = "crunge-abt"
+version = "0.1.0"
+description = 'Crunge Asynchronous Behavior Trees'
+#readme = "README.md"
+requires-python = ">=3.10"
+#license = { file = "LICENSE" }
+keywords = []
+authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "loguru ~=0.7.2",
+  "PyYAML ==6.0.3",
+  "sly ==0.5",
+]

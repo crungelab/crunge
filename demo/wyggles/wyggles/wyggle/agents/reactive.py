@@ -4,9 +4,9 @@ from loguru import logger
 
 import glm
 
-from crunge.engine.ai.bt.run import *
-from crunge.engine.ai.bt.run.act import *
-from crunge.engine.ai.bt.run.task import Status
+from crunge.abt.run import *
+from crunge.abt.run.act import *
+from crunge.abt.run.task import Status
 
 from ..agent import WyggleAgent
 from ...fruit import Fruit
