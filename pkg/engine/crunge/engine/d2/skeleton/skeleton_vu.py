@@ -115,10 +115,11 @@ class SkeletonVu(Vu2D):
     def size(self) -> glm.vec2:
         return glm.vec2(1.0)  # unused — on_node_transform_change is overridden above
 
-    """
     def update(self, delta_time: float):
         self.update_pose()
-    """
+        for slot_vu in self._slot_vus:
+            slot_vu.update(delta_time)
+        return super().update(delta_time)
 
     def update_pose(self):
         root = self.transform * self._centering

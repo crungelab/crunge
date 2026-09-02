@@ -67,8 +67,11 @@ class Demo(engine.App):
         for name in names:
             self.use(name)
 
-
     def _draw(self):
+        self.draw_gui()
+        super()._draw()
+
+    def draw_gui(self):
         self.draw_main_dockspace()
 
         if self.show_metrics:
@@ -100,8 +103,6 @@ class Demo(engine.App):
         #imgui.set_next_window_pos((x, y), imgui.Cond.ONCE)
         #imgui.set_next_window_size((width, height), imgui.Cond.ONCE)
 
-        super()._draw()
-
     def draw_main_dockspace(self):
         dockspace_id = imgui.get_id("MainDockspace")
         vp = imgui.get_main_viewport()
@@ -126,28 +127,6 @@ class Demo(engine.App):
         imgui.dock_space_over_viewport(
             dockspace_id, vp, imgui.DockNodeFlags.PASSTHRU_CENTRAL_NODE
         )
-
-    '''
-    def draw_main_dockspace(self):
-        dockspace_id = imgui.get_id("MainDockspace")
-        vp = imgui.get_main_viewport()
-
-        if imgui.internal.dock_builder_get_node(dockspace_id) is None:
-            imgui.internal.dock_builder_add_node(
-                dockspace_id, imgui.internal.DockNodeFlags.DOCK_SPACE
-            )
-            imgui.internal.dock_builder_set_node_size(dockspace_id, vp.work_size)
-
-            dock_left, dock_center = imgui.internal.dock_builder_split_node(
-                dockspace_id, imgui.Dir.LEFT, 0.25
-            )
-            imgui.internal.dock_builder_dock_window("Examples", dock_left)
-            imgui.internal.dock_builder_finish(dockspace_id)
-
-        imgui.dock_space_over_viewport(
-            dockspace_id, vp, imgui.DockNodeFlags.PASSTHRU_CENTRAL_NODE
-        )
-    '''
 
     def draw_navbar(self):
         flags = imgui.WindowFlags.MENU_BAR if self.menubar_location == MenubarLocation.NAVBAR else imgui.WindowFlags.NONE

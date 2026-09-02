@@ -11,7 +11,7 @@ name = "crunge-box2d"
 version = "0.1.0"
 description = 'Crunge Box2D Extension'
 #readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 #license = { file = "LICENSE" }
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]

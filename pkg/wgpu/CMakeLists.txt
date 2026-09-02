@@ -1,17 +1,24 @@
-cmake_minimum_required(VERSION 3.30...4.30 FATAL_ERROR)
-
-include(../../cmake/Pybind11.cmake)
-include(../../cmake/Core.cmake)
-include(../../cmake/Dawn.cmake)
+cmake_minimum_required(VERSION 3.30...4.0 FATAL_ERROR)
 
 set(THIS crunge-wgpu)
 set(MODULE wgpu)
 
 project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
-find_package(Python COMPONENTS Interpreter Development)
+include(../../cmake/Pybind11.cmake)
+include(../../cmake/Core.cmake)
+include(../../cmake/Dawn.cmake)
 
-pybind11_add_module(${THIS} SHARED src/wgpu_py_module.cpp)
+pybind11_add_module(${THIS} MODULE
+    src/wgpu_py_module.cpp
+    src/wgpu_py.cpp
+    src/wgpu_py_auto.cpp
+    src/pywgpu.cpp
+    src/chained_struct.cpp
+    src/callbacks.cpp
+    src/callbacks_py.cpp
+)
+
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
@@ -19,28 +26,16 @@ USES_PYBIND11(${THIS})
 USES_CORE(${THIS})
 USES_DAWN(${THIS})
 
-set(SOURCES
-    src/chained_struct.cpp
-    src/pywgpu.cpp
-    src/wgpu_py.cpp
-    src/wgpu_py_auto.cpp
-    src/callbacks.cpp
-    src/callbacks_py.cpp
-)
-
-target_sources(${THIS} PRIVATE ${SOURCES})
-
-# add include files
 target_include_directories(${THIS}
-    PUBLIC
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${DAWN_ROOT}>
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${DAWN_ROOT}
 )
 
-set_target_properties(${THIS} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-set_target_properties(${THIS} PROPERTIES INSTALL_RPATH "$ORIGIN/../core")
+set_target_properties(${THIS} PROPERTIES
+    BUILD_WITH_INSTALL_RPATH TRUE
+    INSTALL_RPATH "$ORIGIN/../native"
+)
 
-install(TARGETS ${THIS} DESTINATION crunge/${MODULE})
+install(TARGETS ${THIS} LIBRARY DESTINATION crunge/${MODULE})

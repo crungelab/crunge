@@ -50,7 +50,7 @@ class AnimationPage(Page):
         self.skeleton.event_listeners.append(self._on_spine_event)
 
         self.skeleton_vu = SkeletonVu(skeleton)
-        self.node = Node2D(vu=self.skeleton_vu)
+        self.node = Node2D().seat(self.skeleton_vu)
         self.scene.attach(self.node)
 
     def _on_spine_event(self, name, int_value, float_value, string_value):
@@ -236,7 +236,7 @@ class AnimationPage(Page):
         if not self.paused:
             self.anim_state.update(delta_time)
         self.anim_state.apply()
-        self.skeleton_vu.update_pose()
+        self.skeleton_vu.update(delta_time)
         return super().update(delta_time)
 
 

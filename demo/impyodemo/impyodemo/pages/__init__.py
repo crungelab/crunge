@@ -4,39 +4,12 @@ from loguru import logger
 from pyo import *
 
 from crunge import imgui
-from crunge.engine.imgui import ImGuiView
-from crunge.engine import Renderer
+from crunge import demo
 
-def trim_docstring(docstring):
-    if not docstring:
-        return ''
-    # Convert tabs to spaces (following the normal Python rules)
-    # and split into a list of lines:
-    lines = docstring.expandtabs().splitlines()
-    # Determine minimum indentation (first line doesn't count):
-    indent = sys.maxsize
-    for line in lines[1:]:
-        stripped = line.lstrip()
-        if stripped:
-            indent = min(indent, len(line) - len(stripped))
-    # Remove indentation (first line is special):
-    trimmed = [lines[0].strip()]
-    if indent < sys.maxsize:
-        for line in lines[1:]:
-            trimmed.append(line[indent:].rstrip())
-    # Strip off trailing and leading blank lines:
-    while trimmed and not trimmed[-1]:
-        trimmed.pop()
-    while trimmed and not trimmed[0]:
-        trimmed.pop(0)
-    # Return a single string:
-    return '\n'.join(trimmed)
 
-class Page(ImGuiView):
+class Page(demo.Page):
     def __init__(self, name, title):
-        super().__init__()
-        self.name = name
-        self.title = title
+        super().__init__(name, title)
         self.fullwidth = True
         self.fullheight = True
         self.server = None
@@ -46,7 +19,7 @@ class Page(ImGuiView):
         page = cls(name, title).config(window=app).create()
         page.reset()
         return page
-    
+
     @property
     def resource_path(self):
         return self.window.resource_path
@@ -71,8 +44,8 @@ class Page(ImGuiView):
     def create_server(self):
         logger.debug("Creating server")
         self.server = s = Server()
-        #self.server = s = Server(audio='coreaudio')
-        #self.server = s = Server(audio='jack')
+        # self.server = s = Server(audio='coreaudio')
+        # self.server = s = Server(audio='jack')
         s.setMidiInputDevice(4)
         s.boot()
 
@@ -87,37 +60,38 @@ class Page(ImGuiView):
             self.server.shutdown()
         self.gui.clear()
 
+    """
     def _draw(self):
         if self.window.show_metrics:
             self.window.show_metrics = imgui.show_metrics_window(True)
 
         if self.window.show_style_editor:
-            self.window.show_style_editor = imgui.begin('Style Editor', True)[1]
+            self.window.show_style_editor = imgui.begin("Style Editor", True)[1]
             imgui.show_style_editor()
             imgui.end()
 
         self.draw_mainmenu()
         self.draw_navbar()
 
-        #gui.set_next_window_pos((288, 32), imgui.Cond.ONCE)
-        #gui.set_next_window_pos((self.window.width - 512 - 32, 32), imgui.Cond.ONCE)
-        #gui.set_next_window_size((256, 512), imgui.Cond.ONCE)
+        # gui.set_next_window_pos((288, 32), imgui.Cond.ONCE)
+        # gui.set_next_window_pos((self.window.width - 512 - 32, 32), imgui.Cond.ONCE)
+        # gui.set_next_window_size((256, 512), imgui.Cond.ONCE)
         if self.fullwidth:
-            x = self.window.width - (512+256) - 32
+            x = self.window.width - (512 + 256) - 32
             width = 512
         else:
             x = self.window.width - (512) - 32
-            width = 512/2
+            width = 512 / 2
 
         if self.fullheight:
             y = 32
-            height = self.window.height-32-16
+            height = self.window.height - 32 - 16
         else:
             y = 32
-            height = (self.window.height-32-16)/2
+            height = (self.window.height - 32 - 16) / 2
 
-        #gui.set_next_window_pos((self.window.width - (512+256) - 32, 32), imgui.Cond.ONCE)
-        #gui.set_next_window_size((512, self.window.height-32-16), imgui.Cond.ONCE)
+        # gui.set_next_window_pos((self.window.width - (512+256) - 32, 32), imgui.Cond.ONCE)
+        # gui.set_next_window_size((512, self.window.height-32-16), imgui.Cond.ONCE)
 
         imgui.set_next_window_pos((x, y), imgui.Cond.ONCE)
         imgui.set_next_window_size((width, height), imgui.Cond.ONCE)
@@ -128,27 +102,28 @@ class Page(ImGuiView):
 
     def draw_navbar(self):
         imgui.set_next_window_pos((self.window.width - 256 - 16, 32), imgui.Cond.ONCE)
-        imgui.set_next_window_size((256, self.window.height-32-16), imgui.Cond.ONCE)
-        
+        imgui.set_next_window_size((256, self.window.height - 32 - 16), imgui.Cond.ONCE)
+
         imgui.begin("Examples")
 
         for section in self.window.sections.values():
-            if imgui.tree_node(section['title']):
-                for entry in section['pages'].values():
-                    opened, selected = imgui.selectable(entry['title'], entry['name'] == self.window.page.name)
+            if imgui.tree_node(section["title"]):
+                for entry in section["pages"].values():
+                    opened, selected = imgui.selectable(
+                        entry["title"], entry["name"] == self.window.page.name
+                    )
                     if opened:
-                        self.window.show(entry['name'])
+                        self.window.show(entry["name"])
                 imgui.tree_pop()
 
-        
         imgui.end()
 
     def draw_mainmenu(self):
         if imgui.begin_main_menu_bar():
             # File
-            if imgui.begin_menu('File', True):
+            if imgui.begin_menu("File", True):
                 clicked_quit, selected_quit = imgui.menu_item(
-                    "Quit", 'Cmd+Q', False, True
+                    "Quit", "Cmd+Q", False, True
                 )
 
                 if clicked_quit:
@@ -156,12 +131,12 @@ class Page(ImGuiView):
 
                 imgui.end_menu()
             # View
-            if imgui.begin_menu('View', True):
+            if imgui.begin_menu("View", True):
                 clicked_metrics, self.window.show_metrics = imgui.menu_item(
-                    "Metrics", 'Cmd+M', self.window.show_metrics, True
+                    "Metrics", "Cmd+M", self.window.show_metrics, True
                 )
                 clicked_metrics, self.window.show_style_editor = imgui.menu_item(
-                    "Style Editor", 'Cmd+S', self.window.show_style_editor, True
+                    "Style Editor", "Cmd+S", self.window.show_style_editor, True
                 )
                 imgui.end_menu()
 
@@ -170,12 +145,13 @@ class Page(ImGuiView):
     def draw_transport(self):
         imgui.begin(self.title)
 
-        if imgui.button('Start'):
+        if imgui.button("Start"):
             self.start()
-        if imgui.button('Stop'):
+        if imgui.button("Stop"):
             self.stop()
 
-        if(self.__doc__):
+        if self.__doc__:
             imgui.text_unformatted(trim_docstring(self.__doc__))
 
         imgui.end()
+    """

@@ -1,4 +1,4 @@
-import importlib.resources
+from importlib.resources import files
 import json
 
 from loguru import logger
@@ -189,9 +189,7 @@ class MaterialBuilder(GltfBuilder):
     """
 
     def build_environment_texture(self) -> Texture:
-        path = importlib.resources.path(
-            "crunge.engine.resources.textures", "environment.hdr"
-        )
+        path = files("crunge.engine.resources.textures") / "environment.hdr"
         texture = Texture2DLoader(image_loader=HdrImageLoader()).load(
             path, name="environment"
         )
@@ -200,7 +198,7 @@ class MaterialBuilder(GltfBuilder):
         return texture
 
     def build_cube_environment_texture(self) -> Texture:
-        root = importlib.resources.path("crunge.engine.resources.textures.cubemaps", "")
+        root = files("crunge.engine.resources.textures.cubemaps")
         name = "gcanyon_cube"
         ext = "png"
         paths = [

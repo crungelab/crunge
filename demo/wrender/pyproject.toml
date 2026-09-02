@@ -5,7 +5,7 @@ packages = ["wrender"]
 name = "wrender"
 version = "0.1.0"
 description = 'Crunge WebGPU/GLTF Demo'
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [

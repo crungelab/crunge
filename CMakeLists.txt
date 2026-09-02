@@ -1,129 +1,78 @@
-cmake_minimum_required(VERSION 3.30...4.30 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.30...4.0 FATAL_ERROR)
 
-#set(CMAKE_C_COMPILER "/usr/bin/clang")
-#set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+# SDL, Box2D, and RtAudio are C. Declaring both here checks the C compiler
+# once up front instead of letting each subproject enable it ad hoc.
+project(CRUNGE VERSION 0.1.0 LANGUAGES C CXX)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+include(Config)
+
+#
+# Global toolchain settings. These are inherited by every add_subdirectory()
+# below, so anything set here must be wanted by all of them.
+#
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(BUILD_SHARED_LIBS OFF)
 
-project(CRUNGE VERSION 0.1.0 LANGUAGES CXX)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-include(./cmake/Config.cmake)
-
-if (POLICY CMP0054)
-    cmake_policy(SET CMP0054 NEW)
-endif()
-
-if (POLICY CMP0069)
-    cmake_policy(SET CMP0069 NEW)
-endif()
-
-if (POLICY CMP0077)
-    cmake_policy(SET CMP0077 NEW)
-endif()
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+# Generic names honoured by most of the depot projects.
+set(BUILD_TESTING OFF)
+set(BUILD_EXAMPLES OFF)
+set(BUILD_SHARED OFF)
+set(BUILD_STATIC ON)
 
 #
-# pybind11
+# Python / pybind11 / cxbind
 #
-#set(-DCMAKE_CXX_STANDARD=20 -std=c++20)
-#set(PYBIND11_PYTHON_VERSION 3.10)
+set(PYBIND11_FINDPYTHON ON)
+find_package(Python 3.12 REQUIRED COMPONENTS Interpreter Development.Module Development.Embed)
 
-add_subdirectory(depot/pybind11)
+add_subdirectory(depot/pybind11 EXCLUDE_FROM_ALL)
 find_package(cxbind REQUIRED)
 
+#
+# Third-party dependencies
+#
+set(SDL_SHARED OFF)
+set(SDL_STATIC ON)
+set(SDL_TEST OFF)
+set(SDL_RENDER OFF)
+set(SDL_INSTALL OFF)
+add_subdirectory(depot/sdl EXCLUDE_FROM_ALL)
+
+set(SDLMIXER_INSTALL OFF)
+add_subdirectory(depot/sdl_mixer EXCLUDE_FROM_ALL)
+
+set(TINYGLTF_INSTALL OFF)
+set(TINYGLTF_BUILD_LOADER_EXAMPLE OFF)
+add_subdirectory(depot/tinygltf EXCLUDE_FROM_ALL)
+
+add_subdirectory(depot/yoga EXCLUDE_FROM_ALL)
+
+set(TMXLITE_STATIC_LIB TRUE)
+add_subdirectory(depot/tmxlite/tmxlite EXCLUDE_FROM_ALL)
+
+add_subdirectory(depot/box2d EXCLUDE_FROM_ALL)
+
+set(RTAUDIO_BUILD_TESTING OFF)
+add_subdirectory(${RTAUDIO_ROOT} ${CMAKE_BINARY_DIR}/depot/rtaudio EXCLUDE_FROM_ALL)
 
 #
-# SDL
+# Bindings
 #
-set(HAVE_LIBC ON)
-set(SDL_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
-set(SDL_STATIC ON CACHE BOOL "Build a static version of the library" FORCE)
-set(SDL_TEST OFF CACHE BOOL "Build the SDL3_test library" FORCE)
-
-set(SDL_RENDER OFF CACHE BOOL "Use render subsystem" FORCE)
-
-add_subdirectory(depot/sdl)
-set_target_properties(SDL3-static PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
 add_subdirectory(pkg/sdl)
-
-# SDL_mixer
-set(BUILD_TESTING OFF CACHE BOOL "Build tests" FORCE)
-set(BUILD_EXAMPLES OFF CACHE BOOL "Build samples" FORCE)
-set(BUILD_SHARED OFF CACHE BOOL "Build a shared version of the library" FORCE)
-set(BUILD_STATIC ON CACHE BOOL "Build a static version of the library" FORCE)
-
-add_subdirectory(depot/sdl_mixer)
-set_target_properties(SDL3_mixer-static PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
-#
-# ImGui and friends
-#
 add_subdirectory(pkg/imgui)
 add_subdirectory(pkg/implot)
 add_subdirectory(pkg/imnodes)
-
-#
-# TinyGLTF
-#
-add_subdirectory(depot/tinygltf)
-set_target_properties(tinygltf PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
 add_subdirectory(pkg/gltf)
-
-#
-# Dawn
-#
-
-#set(DAWN_BUILD_SAMPLES OFF CACHE BOOL "Build Samples" FORCE)
-#set(DAWN_FETCH_DEPENDENCIES ON)
-#add_subdirectory("depot/dawn" EXCLUDE_FROM_ALL)
-
 add_subdirectory(pkg/wgpu)
-
-#
-# Skia
-#
-
 add_subdirectory(pkg/skia)
-
-#
-# Yoga
-#
-add_subdirectory(depot/yoga)
 add_subdirectory(pkg/yoga)
-
-#
-# Nanort
-#
 add_subdirectory(pkg/nanort)
-
-#
-# TmxLite
-#
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-set(TMXLITE_STATIC_LIB TRUE)
-add_subdirectory(depot/tmxlite/tmxlite)
 add_subdirectory(pkg/tmx)
-
-#
-# Box2D
-#
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
-add_subdirectory(depot/box2d)
-set_target_properties(box2d PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
 add_subdirectory(pkg/box2d)
-
-#
-# RtAudio
-#
-set(RTAUDIO_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-add_subdirectory(${RTAUDIO_ROOT})
 add_subdirectory(pkg/augr)

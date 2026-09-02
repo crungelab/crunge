@@ -28,7 +28,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "loguru ~=0.7.2",
-  "numpy ~=1.26.3",
-  "PyGLM ==2.7.1",
+  "loguru ~=0.7.3",
+  "numpy ~=2.5.2",
+  "PyGLM ==2.8.3",
 ]

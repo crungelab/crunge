@@ -2,10 +2,10 @@ import os, sys
 
 sys.path.append(os.getcwd())
 
-from impyodemo import App
+from impyodemo import ImPyoDemo
 
 
-app = App().create()
+app = ImPyoDemo().create()
 
 app.use('help')
 app.use('intro')

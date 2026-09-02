@@ -1,2 +1,3 @@
+-e ../../pkg/native
 -e ../../pkg/core
 -e ../../pkg/wgpu

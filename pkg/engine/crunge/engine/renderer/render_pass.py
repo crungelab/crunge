@@ -30,8 +30,44 @@ class RenderPass(Generic[T], Base):
 
 
 class DefaultRenderPass(RenderPass["Renderer"]):
-    def __init__(self, easel: Easel) -> None:
-        super().__init__(easel=easel, clear=True)
+    def __init__(self, easel: Easel, clear: bool = False) -> None:
+        super().__init__(easel, clear=clear)
+
+    def begin(self, encoder: wgpu.CommandEncoder):
+        load_op = wgpu.LoadOp.CLEAR if self.clear else wgpu.LoadOp.LOAD
+        clear_value = wgpu.Color(0, 0, 0, 1)
+
+        if self.easel.render_options.use_msaa:
+            color_attachments = [
+                wgpu.RenderPassColorAttachment(
+                    view=self.easel.msaa_texture_view,
+                    resolve_target=self.easel.color_texture_view,
+                    load_op=load_op,
+                    store_op=wgpu.StoreOp.STORE,
+                    clear_value=clear_value,
+                )
+            ]
+        else:
+            color_attachments = [
+                wgpu.RenderPassColorAttachment(
+                    view=self.easel.color_texture_view,
+                    load_op=load_op,
+                    store_op=wgpu.StoreOp.STORE,
+                    clear_value=clear_value,
+                )
+            ]
+
+        renderpass = wgpu.RenderPassDescriptor(
+            label="Main Render Pass",
+            color_attachments=color_attachments,
+        )
+
+        self.pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(renderpass)
+
+"""
+class DefaultRenderPass(RenderPass["Renderer"]):
+    def __init__(self, easel: Easel, clear: bool = False) -> None:
+        super().__init__(easel=easel, clear=clear)
 
     def begin(self, encoder: wgpu.CommandEncoder):
         if self.easel.render_options.use_msaa:
@@ -53,22 +89,13 @@ class DefaultRenderPass(RenderPass["Renderer"]):
                     clear_value=wgpu.Color(0, 0, 0, 1),
                 )
             ]
-        '''
-        depth_stencil_attachment = wgpu.RenderPassDepthStencilAttachment(
-            view=self.viewport.depth_stencil_texture_view,
-            #depth_load_op=wgpu.LoadOp.CLEAR,
-            depth_load_op=wgpu.LoadOp.CLEAR if self.first else wgpu.LoadOp.LOAD,
-            depth_store_op=wgpu.StoreOp.STORE,
-            depth_clear_value=1.0,
-        )
-        '''
 
         renderpass = wgpu.RenderPassDescriptor(
             label="Main Render Pass",
             color_attachments=color_attachments,
-            #depth_stencil_attachment=depth_stencil_attachment,
         )
 
         self.pass_enc: wgpu.RenderPassEncoder = encoder.begin_render_pass(
             renderpass
         )
+"""

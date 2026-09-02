@@ -37,7 +37,7 @@ class MixedPage(Page):
         super().on_size()
 
     def create_device_objects(self):
-        super().create_device_objects()
+        #super().create_device_objects()
         self.create_pipeline()
 
     def create_pipeline(self):
@@ -81,6 +81,25 @@ class MixedPage(Page):
         self.pipeline = self.device.create_render_pipeline(descriptor)
         logger.debug(self.pipeline)
 
+
+    def _draw(self):
+        renderer = Renderer.get_current()
+
+        with renderer.render_pass():
+            pass_enc = renderer.pass_enc
+            pass_enc.set_pipeline(self.pipeline)
+            pass_enc.draw(3)
+
+        # Skia rendering
+
+        with renderer.canvas_target() as canvas:
+            paint = skia.Paint()
+            paint.set_color(0xFFFFFFFF)
+            canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
+
+        super()._draw()
+
+    """
     def _draw(self):
         renderer = Renderer.get_current()
 
@@ -99,7 +118,7 @@ class MixedPage(Page):
         canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
 
         super()._draw()
-
+    """
 
 def install(app: App):
     app.add_channel(PageChannel(MixedPage, "mixed", "Mixed Skia and WGPU"))

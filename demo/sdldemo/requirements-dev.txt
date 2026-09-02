@@ -1,4 +1,5 @@
 -e ../../pkg/core
+-e ../../pkg/native
 -e ../../pkg/wgpu
 -e ../../pkg/imgui
 -e ../../pkg/sdl

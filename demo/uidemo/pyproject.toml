@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "uidemo"
 version = "0.1.0"
 description = 'Crunge UI Demo'
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
@@ -15,5 +15,5 @@ dependencies = [
 [project.scripts]
 uidemo = 'uidemo.cli:cli'
 
-[tool.hatch.envs.default]
-python = "3.10"
+#[tool.hatch.envs.default]
+#python = "3.10"

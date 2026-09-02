@@ -31,10 +31,10 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "loguru ~=0.7.2",
+  #"loguru ~=0.7.2",
   "pydantic ~=2.13.4",
-  "numpy ~=1.26.3",
-  "PyGLM ~=2.7.1",
+  #"numpy ~=1.26.3",
+  #"PyGLM ~=2.7.1",
   "imageio ~=2.34.0",
   "opencv-python ~=4.10.0.84",
   "Jinja2 ==3.1.4",

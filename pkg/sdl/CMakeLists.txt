@@ -1,21 +1,20 @@
-cmake_minimum_required(VERSION 3.30...4.30 FATAL_ERROR)
-
-include(../../cmake/Pybind11.cmake)
-include(../../cmake/Core.cmake)
-include(../../cmake/Sdl.cmake)
-include(../../cmake/SdlMixer.cmake)
+cmake_minimum_required(VERSION 3.30...4.0 FATAL_ERROR)
 
 set(THIS crunge-sdl)
 set(MODULE sdl)
 
 project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
-find_package(Python COMPONENTS Interpreter Development)
+include(../../cmake/Pybind11.cmake)
+include(../../cmake/Core.cmake)
+include(../../cmake/Sdl.cmake)
+include(../../cmake/SdlMixer.cmake)
 
-set(HEADERS
-)
+find_package(Python 3.12 REQUIRED COMPONENTS Interpreter Development.Module)
 
-set(SOURCES
+pybind11_add_module(${THIS} MODULE
+    src/sdl_py_module.cpp
+    src/sdl_py.cpp
     src/sdl_init_py_auto.cpp
     src/sdl_video_py_auto.cpp
     src/sdl_events_py_auto.cpp
@@ -23,14 +22,11 @@ set(SOURCES
     src/sdl_mouse_py_auto.cpp
     src/sdl_scancode_py_auto.cpp
     src/sdl_properties_py_auto.cpp
-    src/sdl_py.cpp
-
     src/sdl_audio_py.cpp
     src/sdl_audio_py_auto.cpp
     src/mixer/sdl_mixer_py_auto.cpp
 )
 
-pybind11_add_module(${THIS} MODULE src/sdl_py_module.cpp)
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
@@ -38,15 +34,12 @@ USES_PYBIND11(${THIS})
 USES_CORE(${THIS})
 USES_SDL(${THIS})
 USES_SDL_MIXER(${THIS})
-target_sources(${THIS} PRIVATE ${SOURCES} ${HEADERS})
 
 target_include_directories(${THIS}
-	PUBLIC
-		$<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${SDL_ROOT}>
-	PRIVATE
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${SDL_ROOT}
 )
 
-install(TARGETS ${THIS} DESTINATION crunge/${MODULE})
+install(TARGETS ${THIS} LIBRARY DESTINATION crunge/${MODULE})

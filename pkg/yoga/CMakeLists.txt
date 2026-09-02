@@ -1,17 +1,30 @@
-cmake_minimum_required(VERSION 3.30...4.30 FATAL_ERROR)
-
-include(../../cmake/Pybind11.cmake)
-include(../../cmake/Core.cmake)
-include(../../cmake/Yoga.cmake)
+cmake_minimum_required(VERSION 3.30...4.0 FATAL_ERROR)
 
 set(THIS crunge-yoga)
 set(MODULE yoga)
 
 project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
-find_package(Python COMPONENTS Interpreter Development)
+include(../../cmake/Pybind11.cmake)
+include(../../cmake/Core.cmake)
+include(../../cmake/Yoga.cmake)
 
-pybind11_add_module(${THIS} SHARED src/bindings/yoga_py_module.cpp)
+pybind11_add_module(${THIS} MODULE
+    src/bindings/yoga_py_module.cpp
+    src/bindings/yoga_enums_py_auto.cpp
+    src/bindings/yoga_style_py_auto.cpp
+    src/bindings/yoga_layout_py.cpp
+    src/bindings/yoga_layout_py_auto.cpp
+
+    src/Layout.cpp
+    src/Config.cpp
+
+    # Generated but not exposed:
+    #src/bindings/yoga_py.cpp
+    #src/bindings/yoga_numeric_py_auto.cpp
+    #src/bindings/yoga_algorithm_py_auto.cpp
+)
+
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
@@ -19,31 +32,11 @@ USES_PYBIND11(${THIS})
 USES_CORE(${THIS})
 USES_YOGA(${THIS})
 
-set(SOURCES
-    src/Layout.cpp
-    src/Config.cpp
-    src/bindings/yoga_py_module.cpp
-    #src/bindings/yoga_py.cpp
-    #src/bindings/yoga_numeric_py_auto.cpp
-    src/bindings/yoga_enums_py_auto.cpp
-    src/bindings/yoga_style_py_auto.cpp
-    src/bindings/yoga_layout_py.cpp
-    src/bindings/yoga_layout_py_auto.cpp
-    #src/bindings/yoga_algorithm_py_auto.cpp
-)
-
-target_sources(${THIS} PRIVATE ${SOURCES})
-
 target_include_directories(${THIS}
-    PUBLIC
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${YOGA_ROOT}>
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${YOGA_ROOT}
 )
 
-set_target_properties(${THIS} PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
-#set_target_properties(${THIS} PROPERTIES INSTALL_RPATH "$ORIGIN/../core")
-
-install(TARGETS ${THIS} DESTINATION crunge/${MODULE})
+install(TARGETS ${THIS} LIBRARY DESTINATION crunge/${MODULE})

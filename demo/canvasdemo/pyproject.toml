@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "canvasdemo"
 version = "0.1.0"
 description = 'Crunge Canvas Demo'
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
@@ -16,4 +16,4 @@ dependencies = [
 canvasdemo = 'canvasdemo.cli:cli'
 
 [tool.hatch.envs.default]
-python = "3.10"
+python = "3.12"
