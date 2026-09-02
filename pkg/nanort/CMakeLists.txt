@@ -5,8 +5,6 @@ set(MODULE nanort)
 
 project(${THIS} VERSION "0.1" LANGUAGES CXX)
 
-include(../../cmake/Pybind11.cmake)
-include(../../cmake/Core.cmake)
 include(../../cmake/Nanort.cmake)
 
 pybind11_add_module(${THIS} MODULE
@@ -18,8 +16,6 @@ pybind11_add_module(${THIS} MODULE
 cxbind_module(${THIS})
 configure_project(${THIS} ${MODULE})
 
-USES_PYBIND11(${THIS})
-USES_CORE(${THIS})
 USES_NANORT(${THIS})
 
 target_include_directories(${THIS}
