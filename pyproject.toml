@@ -37,7 +37,7 @@ projects = [
   "pkg/box2d",
   "pkg/augr",
   ]
-plugins = ["cxbind"]
+#plugins = ["cxbind"]
 
-#[tool.hatch.envs.default]
-#python="3.10.11"
+[tool.hatch.envs.default]
+python="3.12"

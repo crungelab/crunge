@@ -1,6 +1,3 @@
 -e ../procure
--e ../cxbind
--e ../cxbind/plugins/clang
--e ../cxbind/plugins/dawn
 -e ../cxbuild
 

@@ -16,12 +16,14 @@ class PolicyMetaDict(dict):
                 )
         super().__setitem__(key, value)
 
+    # this is very bad.
+    """
     def __getitem__(self, key):
         if key not in self and key.isupper() and key[:1] != "_":
             return key.upper()
         else:
             return super().__getitem__(key)
-
+    """
 
 def _decorator(trigger, *extra):
     triggers = [trigger, *extra]
