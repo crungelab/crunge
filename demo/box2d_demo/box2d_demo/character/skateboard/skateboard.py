@@ -59,10 +59,12 @@ class Wheel(DynamicEntity2D):
     def produce(cls, position=None):
         return Wheel(position)
 
+DECK_MATERIAL = PhysicsMaterial("skateboard_deck", restitution=0.0)
 
 class Deck(DynamicEntity2D):
     geom = BoxGeom(
         size=glm.vec2(CHASSIS_WIDTH, CHASSIS_HEIGHT),
+        material=DECK_MATERIAL,
         density=CHASSIS_DENSITY,
     )
 

@@ -40,6 +40,7 @@ class Game(App):
         self.processing_time = 0
 
         self.debug_agents = False
+        self.debug_bounds = False
 
     """
     def _create(self):
@@ -87,6 +88,7 @@ class Game(App):
         imgui.text(f"Frame time: {self.frame_time:.3f}")
 
         _, self.debug_agents = imgui.checkbox("Debug Agents", self.debug_agents)
+        _, self.debug_bounds = imgui.checkbox("Debug Bounds", self.debug_bounds)
 
         _, self.debug_layer.visible = imgui.checkbox(
             "Debug World", self.debug_layer.visible
@@ -99,6 +101,12 @@ class Game(App):
 
         if self.debug_agents:
             self._draw_debug_agents()
+
+        if self.debug_bounds:
+            for entity in self.scene.fruit_layer.root.children:
+                bounds = entity.bounds
+                if bounds.is_valid():
+                    self.display.scratch.draw_bounds_2d(bounds)
 
         super()._draw()
 

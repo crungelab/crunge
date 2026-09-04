@@ -7,6 +7,7 @@ from crunge import skia
 from ...renderer import Renderer
 
 from ... import colors
+from ...math import Bounds2
 
 from .debug_overlay import DebugOverlay
 
@@ -92,6 +93,21 @@ class ScratchOverlay(DebugOverlay):
 
         self.add_call(draw)
 
+    def draw_bounds_2d(self, aabb: Bounds2, color=colors.YELLOW):
+        min_point = glm.vec2(aabb.min.x, aabb.min.y)
+        max_point = glm.vec2(aabb.max.x, aabb.max.y)
+
+        def draw(canvas: skia.Canvas):
+            paint = skia.Paint()
+            paint.set_color(color.to_argb_int())
+            paint.set_style(skia.Paint.Style.K_STROKE_STYLE)
+            paint.set_stroke_width(self._scaled_stroke_width())  # Set the outline thickness as needed
+            canvas.draw_rect(
+                skia.Rect(min_point.x, min_point.y, max_point.x, max_point.y), paint
+            )
+
+        self.add_call(draw)
+        
     def draw_text(
         self, text: str, position: glm.vec2, color=colors.WHITE, font_size=36
     ):

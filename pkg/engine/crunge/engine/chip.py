@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 from enum import IntFlag, auto
-from typing import TYPE_CHECKING, Any, ClassVar, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from .base import Base
 
 if TYPE_CHECKING:
     from .base_node import BaseNode
-
-N = TypeVar("N", bound="BaseNode")
 
 
 class Dirt(IntFlag):
@@ -25,7 +23,7 @@ class Dirt(IntFlag):
     GPU = auto()  # uniform data the chip owns
 
 
-class Chip(Base, Generic[N]):
+class Chip[N: "BaseNode"](Base):
     """A unit of behaviour owned by a node.
 
     Lifetime is driven entirely by the owner. A chip never creates or

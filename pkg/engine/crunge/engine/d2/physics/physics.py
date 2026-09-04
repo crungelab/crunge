@@ -12,11 +12,13 @@ from .geom import Geom
 from .material import PhysicsMaterial, DEFAULT_MATERIAL
 from .world import PhysicsWorld2D
 
+from ..node_2d import Node2D
 
-class Physics(Chip):
-    update_order = -100   # writes transforms
 
-    #default_material: PhysicsMaterial = DEFAULT_MATERIAL
+class Physics(Chip[Node2D]):
+    update_order = -100  # writes transforms
+
+    # default_material: PhysicsMaterial = DEFAULT_MATERIAL
     default_material: PhysicsMaterial = None
 
     BODY_TYPES = {
@@ -49,24 +51,11 @@ class Physics(Chip):
 
     # -- lifecycle ---------------------------------------------------------
 
-    def _seat(self) -> None:
-        super()._seat()
-        self.node.transform_changed.connect(self.on_transform_changed)
-
     def plug(self) -> None:
         super().plug()
         self.world = PhysicsWorld2D.get_current()
         self.create_body()
         self.shapes = self.geom.create_shapes(self)
-
-    """
-    def plug(self) -> None:
-        super().plug()
-        self.world = PhysicsWorld2D.get_current()
-        self.create_body()
-        self.shapes = self.geom.create_shapes(self)
-        logger.debug(f"Created shapes: {self.shapes}")
-    """
 
     def unplug(self) -> None:
         if self.body is not None and self.body.is_valid():
@@ -75,10 +64,6 @@ class Physics(Chip):
         self.shapes = []
         self.world = None
         super().unplug()
-
-    def _unseat(self) -> None:
-        self.node.transform_changed.disconnect(self.on_transform_changed)
-        super()._unseat()
 
     def create_body(self):
         node = self.node
@@ -127,16 +112,6 @@ class Physics(Chip):
             self.node.rotation = angle
         finally:
             self._syncing = False
-
-    def on_transform_changed(self) -> None:
-        if self._syncing or self.body is None:
-            return
-        position = self.node.position + glm.rotate(self.offset, self.node.rotation)
-        self.body.set_transform(
-            box2d.Vec2(position.x, position.y),
-            box2d.make_rot(self.node.rotation),
-        )
-        self.body.wake()
 
     # -- state -------------------------------------------------------------
 
@@ -196,6 +171,7 @@ class KinematicPhysics(Physics):
         lv = self.body.linear_velocity
         self.body.linear_velocity = box2d.Vec2(lv.x, lv.y + GRAVITY[1] * dt)
     """
+
 
 class StaticPhysics(Physics):
     def __init__(self, geom: Geom, material: PhysicsMaterial = None, **kwargs):

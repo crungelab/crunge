@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import Any, TypeVar
+from typing import Any, Self
 
 from loguru import logger
 
 from .dispatcher import Dispatcher
 from .chip import Chip
-
-C = TypeVar("C", bound=Chip[Any])
 
 
 class BaseNode(Dispatcher):
@@ -51,7 +49,7 @@ class BaseNode(Dispatcher):
         self._chips: list[Chip[Any]] = []
         # Type -> first instance, populated across the MRO so that
         # require(Mod) finds a SpriteMod.
-        self._chip_map: dict[type, Chip[Any]] = {}
+        self._chip_map: dict[type[Chip[Any]], Chip[Any]] = {}
         # Pre-filtered broadcast buckets; no branching in the hot loops.
         self._updatables: list[Chip[Any]] = []
         self._drawables: list[Chip[Any]] = []
@@ -62,7 +60,7 @@ class BaseNode(Dispatcher):
 
     # -- seating -----------------------------------------------------------
 
-    def seat(self, *chips: Chip[Any]) -> object:
+    def seat(self, *chips: Chip[Any]) -> Self:
         """Attach chips. Once, after construction. Returns self.
 
         Pass a built list with `node.seat(*chips)`.
@@ -94,7 +92,7 @@ class BaseNode(Dispatcher):
 
     # -- chips -------------------------------------------------------------
 
-    def add(self, chip: C) -> C:
+    def add[C: Chip[Any]](self, chip: C) -> C:
         if self.is_destroying:
             raise RuntimeError(f"cannot add {chip!r} to {self!r} while it tears down")
 
@@ -149,11 +147,11 @@ class BaseNode(Dispatcher):
         chip.disable()
         chip.on_detached()
 
-    def get(self, kind: type[C]) -> C | None:
+    def get[C: Chip[Any]](self, kind: type[C]) -> C | None:
         """One dict hit. Matches subclasses, since the map spans the MRO."""
         return self._chip_map.get(kind)  # type: ignore[return-value]
 
-    def require(self, kind: type[C]) -> C:
+    def require[C: Chip[Any]](self, kind: type[C]) -> C:
         chip = self._chip_map.get(kind)
         if chip is None:
             raise KeyError(f"{self!r} has no {kind.__name__}")
@@ -162,7 +160,7 @@ class BaseNode(Dispatcher):
     def has(self, kind: type) -> bool:
         return kind in self._chip_map
 
-    def get_all(self, kind: type[C]) -> list[C]:
+    def get_all[C: Chip[Any]](self, kind: type[C]) -> list[C]:
         """Multiples. Linear over a short list; rare by design."""
         return [c for c in self._chips if isinstance(c, kind)]
 

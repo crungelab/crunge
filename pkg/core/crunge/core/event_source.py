@@ -1,9 +1,7 @@
-from typing import Callable, Generic, List, TypeVar
-
-TEvent = TypeVar("TEvent")
+from typing import Callable, List
 
 
-class Subscription(Generic[TEvent]):
+class Subscription[TEvent]():
     def __init__(
         self, source: "EventSource[TEvent]", callback: Callable[[TEvent], None]
     ) -> None:
@@ -17,7 +15,7 @@ class Subscription(Generic[TEvent]):
         self.unsubscribe()
 
 
-class EventSource(Generic[TEvent]):
+class EventSource[TEvent]():
     def __init__(self) -> None:
         self.subscriptions: List[Subscription[TEvent]] = []
 

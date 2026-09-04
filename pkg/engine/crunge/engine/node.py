@@ -8,8 +8,10 @@ from .signal import Signal
 from .base_node import BaseNode
 from .vu import Vu
 
-if TYPE_CHECKING:
-    from .model import Model
+#if TYPE_CHECKING:
+#    from .model import Model
+
+from .model import Model
 
 T_Node = TypeVar("T_Node", bound="Node")
 
