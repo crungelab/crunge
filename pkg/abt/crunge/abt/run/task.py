@@ -259,12 +259,25 @@ class Task(Policy):
         except Exception as e:
             logger.warning("Error closing {}: {}", self, e)
 
+    #
+    # Messaging
+    #
+    def dispatch(self, msg: Message) -> bool:
+        # logger.debug(f"Widget.dispatch: {self}, {self.children}, {msg}")
+        for child in self.children:
+            if child.dispatch(msg):
+                return True
+
+        for match in self.match_rules(msg):
+            logger.debug("Fire:\t{}:", match)
+            self.schedule_task(match.rule.action, match.msg)
+
+
     def broadcast(self, msg: Message):
         pass
 
-    def post(self, msg: Message):
-        msg.sender = self
-        return self.agent.post(msg)
+    def post(self, msg: Message) -> None:
+        self.agent.post(msg)
 
     #
     # Utility

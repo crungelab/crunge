@@ -170,7 +170,7 @@ class Achieve(Goal):
 # Message
 #
 class Message:
-    def __init__(self, data, sender=None, to=None):
+    def __init__(self, data: Clause, sender=None, to=None):
         self.data = data
         self.sender = sender
         self.to = to
@@ -187,7 +187,7 @@ class Message:
             "FROM": self.sender if self.sender is not None else None,
         })
 
-    def match(self, F, T, s, v, o, **x):
+    def match(self, F, T, s, v, o, **x) -> bool:
         return isinstance(self, F) and self.data.match(T, s, v, o, **x)
 
 
@@ -229,8 +229,8 @@ class Trigger:
         self.obj = obj
         self.xtra = xtra
 
-    def match(self, m):
-        return m.match(
+    def match(self, msg: Message):
+        return msg.match(
             self.flavor, self.type, self.subj, self.verb, self.obj, **self.xtra
         )
 

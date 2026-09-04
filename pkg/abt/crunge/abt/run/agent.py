@@ -12,8 +12,8 @@ from .context import Context
 
 
 class Agent(Sequence):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, proposal: Propose = None):
+        super().__init__(msg=proposal)
         self.id = uuid1()
         self.ctx = Context()
         self.tasks: List[Task] = []
@@ -27,58 +27,53 @@ class Agent(Sequence):
         # reference through Task.add and Task.create.
         self.agent = self
 
+        if proposal:
+            attempt = Attempt(proposal.data, proposal.sender, proposal.to)
+            self.posts.append(attempt)
+
     def broadcast(self, msg: Message):
         m = copy(msg)
         logger.debug("Broadcast:\t{}", m)
-        m.sender = self
+        # m.sender = self
         self.post(m)
         for t in self.tasks:
             t.broadcast(m)
         return m
 
-    def post(self, msg: Message):
+    def post(self, msg: Message) -> None:
         if not msg.sender:
             msg.sender = self
-        logger.debug("Post:\t{}", msg)
-        return self.posts.append(msg)
+        if isinstance(msg, Propose):
+            logger.debug("Propose:\t{}", msg)
+            self.proposals.append(msg)
+        else:
+            logger.debug("Post:\t{}", msg)
+            self.posts.append(msg)
 
-    def fork(self, t: Task):
-        logger.debug("Fork:\t{}", t.msg)
-        child = Agent()
+    def fork(self, proposal: Propose) -> None:
+        logger.debug("Fork:\t{}", proposal)
+        child = Agent(proposal)
         child.ctx = self.ctx.copy()
         child.runner = self.runner
-        child.add(t)
         child.schedule()
-        return child
 
-    def dispatch(self, msg: Message):
-        T = type(msg)
-        if T is Propose:
-            logger.debug("* \t{}", msg)
-            pmsg = Attempt()
-            pmsg.update(msg)
+    def dispatch(self, msg: Message) -> bool:
+        match msg:
+            case Assert():
+                logger.debug("+ \t{}", msg)
+                self.ctx.add(msg.data)
 
-            self.proposals.append(pmsg)
-            return
-        elif T is Assert:
-            logger.debug("+ \t{}", msg)
-            self.ctx.add(msg.data)
-            return self.fire(msg)
-        elif T is Retract:
-            logger.debug("- \t{}", msg)
-            self.ctx.remove(msg.data)
-            return self.fire(msg)
-        else:
-            logger.debug("Eval:\t{}", msg)
-            return self.fire(msg)
+            case Retract():
+                logger.debug("- \t{}", msg)
+                self.ctx.remove(msg.data)
 
-    def fire(self, msg: Message):
-        for m in msg.sender.match_rules(msg):
-            logger.debug("Fire:\t{}:", m)
-            self.schedule_task(m.rule.action, m)
+            case _: # Attempt() | Propose() | _:
+                logger.debug("Eval:\t{}", msg)
 
-    async def main(self, msg=None):
-        status = await super().main(msg)
+        return super().dispatch(msg)
+
+    async def main(self, proposal=None):
+        status = await super().main(proposal)
         if status is Status.FAILURE:
             return status
         logger.debug("@main {}", self.id)
@@ -89,9 +84,8 @@ class Agent(Sequence):
             self.dispatch(post)
 
         if self.idle() and self.impasse() and not self.scheduled:
-            for msg in self.proposals:
-                for m in msg.sender.match_rules(msg):
-                    self.fork(m.to)
+            for proposal in self.proposals:
+                self.fork(proposal)
 
         self.proposals = []
         self.status = Status.SUCCESS

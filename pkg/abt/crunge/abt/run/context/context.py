@@ -1,9 +1,9 @@
-from ...run import term_, Believe, clause_
+from ...run import term_, Believe, clause_, Clause
 
 from .query import Query
 
 class Context:
-    def __init__(self, clauses=[]):
+    def __init__(self, clauses: list[Clause] = []):
         self.clauses = clauses
 
     def __iter__(self):

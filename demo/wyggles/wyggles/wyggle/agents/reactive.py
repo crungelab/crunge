@@ -6,7 +6,8 @@ import glm
 
 from crunge.abt.run import *
 from crunge.abt.run.act import *
-#from crunge.abt.run.act import Action, Neuron, Message, action, neuron
+
+# from crunge.abt.run.act import Action, Neuron, Message, action, neuron
 
 from crunge.abt.run.task import Status
 
@@ -88,17 +89,8 @@ class SeesKind[T: Node2D](Neuron):
 # ---------------------------------------------------------------------------
 # Actions
 # ---------------------------------------------------------------------------
-"""
-mc = type(Action)
-print(mc, mc.__module__)
 
-ns = mc.__prepare__("Probe", (Action,))
-print(type(ns), type(ns).__mro__)
-print(repr(ns["ZZZ"]), repr(ns["PIXELS_PER_METER"]))
 
-import inspect
-print(inspect.getsource(type(ns)))
-"""
 class FocusedAction[T: Node2D](Action):
     """Base for actions driven by a Focus slot.
 
@@ -107,13 +99,6 @@ class FocusedAction[T: Node2D](Action):
     -- including cancellation, which raises GeneratorExit at the await and so
     never reaches code placed after the loop.
     """
-
-    '''
-    print(f"T = {T}, type: {type(T)}")
-    print(f"A = {A}, type: {type(A)}")
-    print(f"B = {B}, type: {type(B)}")
-    '''
-
 
     agent: WyggleAgent
     state_name: str = ""

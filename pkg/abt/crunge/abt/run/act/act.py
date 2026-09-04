@@ -58,28 +58,28 @@ class Act(Task):
     def define(self, trigger, action):
         return self.add_rule(Rule(trigger, action))
 
+    # Legacy. remove after fixing parser
     def sig(self, trigger, action):
-        # self.agent.signal(trigger, self)
         return self.define(trigger, action)
 
-    def propose(self, c):
-        return self.post(Propose(c, self))
+    def propose(self, c) -> None:
+        self.post(Propose(c, self))
 
-    def attempt(self, c):
-        return self.post(Attempt(c, self))
+    def attempt(self, c) -> None:
+        self.post(Attempt(c, self))
 
-    def declare(self, c):
-        return self.post(Assert(c, self))
+    def declare(self, c) -> None:
+        self.post(Assert(c, self))
 
-    def retract(self, c):
-        return self.post(Retract(c, self))
+    def retract(self, c) -> None:
+        self.post(Retract(c, self))
 
-    def perform(self, s, p, o, x):
+    def perform(self, s, p, o, x) -> None:
         c = Achieve(s, p, o, x)
         m = Attempt(c, self)
-        return self.post(m)
+        self.post(m)
 
-    def call(self, s, p, o, x):
+    def call(self, s, p, o, x) -> Status:
         c = Achieve(s, p, o, x)
         m = Attempt(c, self)
         self.post(m)

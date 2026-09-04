@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Generic, Iterable, Protocol, TypeVar
+from typing import TYPE_CHECKING, Protocol
 
 from loguru import logger
 
@@ -6,6 +6,9 @@ import glm
 
 from crunge.abt.run import *
 from crunge.abt.run.act import *
+
+# from crunge.abt.run.act import Action, Neuron, Message, action, neuron
+
 from crunge.abt.run.task import Status
 
 from ..agent import WyggleAgent
@@ -15,9 +18,6 @@ from ...ball import Ball
 if TYPE_CHECKING:
     from crunge.engine.d2.node_2d import Node2D
     from ...wyggle.wyggle import Wyggle  # ASSUMPTION: module path
-
-
-T = TypeVar("T", bound="Node2D")
 
 
 # ---------------------------------------------------------------------------
@@ -30,12 +30,13 @@ class Beacon(Protocol):
 
     node: "Node2D"
 
+
 # ---------------------------------------------------------------------------
 # Shared slots
 # ---------------------------------------------------------------------------
 
 
-class Focus(Generic[T]):
+class Focus[T: Node2D]:
     """A one-slot blackboard shared between a scoring neuron and the actions
     that consume its pick.
 
@@ -61,7 +62,7 @@ class Focus(Generic[T]):
 # ---------------------------------------------------------------------------
 
 
-class SeesKind(Neuron, Generic[T]):
+class SeesKind[T: Node2D](Neuron):
     """Scores 1 when something of `kind` is in sensor range, and parks it in
     `focus` for the actions downstream.
 
@@ -90,7 +91,7 @@ class SeesKind(Neuron, Generic[T]):
 # ---------------------------------------------------------------------------
 
 
-class FocusedAction(Action, Generic[T]):
+class FocusedAction[T: Node2D](Action):
     """Base for actions driven by a Focus slot.
 
     Claims the slot on entry, fails cleanly if the reading went stale between
@@ -106,7 +107,7 @@ class FocusedAction(Action, Generic[T]):
         super().__init__()
         self.focus = focus
 
-    def claim(self) -> "T | None":
+    def claim(self) -> T | None:
         target = self.focus.target
         if target is None:
             return None
@@ -155,7 +156,7 @@ class Eat(FocusedAction[Fruit]):
 
         try:
             while self.ok():
-                if target.is_munched():
+                if target.is_munched:
                     node.close_mouth()
                     node.energy = node.energy + target.energy
                     agent.reset()

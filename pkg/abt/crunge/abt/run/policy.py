@@ -6,27 +6,32 @@ from copy import copy
 from loguru import logger
 
 from ..run.policy_meta import PolicyMeta
-from . import Message
+from . import Message, Trigger
 
+#
+# Match
+#
 
+class Match:
+    def __init__(self, msg: Message, rule: "Rule"):
+        self.msg = msg
+        self.rule = rule
 #
 # Rule
 #
 class Rule:
-    def __init__(self, trigger, action, prodname=None, filename=None, lineno=None):
+    def __init__(self, trigger: Trigger, action, prodname=None, filename=None, lineno=None) -> None:
         self.trigger = trigger
         self.action = action
         self.prodname = prodname
         self.filename = filename
         self.lineno = lineno
 
-    def match(self, msg: Message):
+    def match(self, msg: Message) -> Optional[Match]:
         result = self.trigger.match(msg)
         if not result:
-            return False
-        m = copy(msg)
-        m.rule = self
-        return m
+            return None
+        return Match(msg, self)
 
 
 #
