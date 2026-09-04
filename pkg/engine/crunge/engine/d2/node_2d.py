@@ -41,6 +41,11 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         super()._seat()
         if self.vu_class is not None:
             self.add(self.vu_class())
+            # The vu is what this node measures. Anything that read `bounds`
+            # before now cached the 1x1 fallback from local_size and cleared
+            # the dirty flag, and nothing else would ever set it again for a
+            # node that does not move.
+            self._mark_bounds_dirty()
 
     # ------------------------------------------------------------------
     # Properties
@@ -48,6 +53,10 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @property
     def position(self):
+        # Live reference, not a copy: `node.position.x = 5` mutates in place
+        # and skips _mark_local_dirty entirely. Returning a copy would send
+        # those writes nowhere instead, which is worse. Grep the call sites
+        # before changing this.
         return self._position
 
     @position.setter
@@ -115,15 +124,30 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         world = self.global_transform
         return glm.normalize(glm.vec2(world * glm.vec4(0, 1, 0, 0)))
 
+    # ------------------------------------------------------------------
+    # Extents
+    #
+    # local_* is the node's own measurement, in local space, with no scale
+    # applied. That is what feeds get_local_bounds, because the transform
+    # applies the scale on the way to world space. Folding scale into the
+    # value handed to the transform squares it, and compounds parent scale
+    # on top.
+    #
+    # size / collision_size stay scaled: gameplay code asks how big the thing
+    # is, not how big its untransformed source art is.
+    # ------------------------------------------------------------------
+
+    @property
+    def local_size(self) -> glm.vec2:
+        if self.model is not None:
+            return glm.vec2(self.model.size.x, self.model.size.y)
+        elif self.vu is not None:
+            return self.vu.size
+        return glm.vec2(1.0)
+
     @property
     def size(self) -> glm.vec2:
-        if self.model is not None:
-            size = glm.vec2(self.model.size.x, self.model.size.y) * self.scale
-        elif self.vu is not None:
-            size = self.vu.size * self.scale
-        else:
-            size = glm.vec2(1.0) * self.scale
-        return size
+        return self.local_size * self.scale
 
     @property
     def width(self):
@@ -138,15 +162,16 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         return self.size.x / 2
 
     @property
-    def collision_size(self) -> glm.vec2:
+    def local_collision_size(self) -> glm.vec2:
         if self.model is not None:
-            size = (
-                glm.vec2(self.model.collision_size.x, self.model.collision_size.y)
-                * self.scale
+            return glm.vec2(
+                self.model.collision_size.x, self.model.collision_size.y
             )
-        else:
-            size = self.size
-        return size
+        return self.local_size
+
+    @property
+    def collision_size(self) -> glm.vec2:
+        return self.local_collision_size * self.scale
 
     @property
     def collision_width(self):
@@ -275,9 +300,8 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         self._bounds_dirty = False
 
     def get_local_bounds(self) -> Bounds2:
-        half_width = self.size.x / 2
-        half_height = self.size.y / 2
-        return Bounds2(-half_width, -half_height, half_width, half_height)
+        half = self.local_size * 0.5
+        return Bounds2(-half.x, -half.y, half.x, half.y)
 
     def intersects(self, other: "Node2D"):
         return self.bounds.intersects(other.bounds)

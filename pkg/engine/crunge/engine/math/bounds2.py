@@ -1,10 +1,10 @@
+import math
+
 from loguru import logger
 import glm
 
 
 class Bounds2:
-    # def __init__(self, min=glm.vec3(float('inf')), max=glm.vec3(float('-inf'))):
-    # def __init__(self, min=glm.vec2(), max=glm.vec2()):
     def __init__(
         self,
         left: float = 0.0,
@@ -12,11 +12,19 @@ class Bounds2:
         right: float = 0.0,
         top: float = 0.0,
     ):
-        # self.min = min
-        #logger.debug(f"Bounds2: init: left={left}, bottom={bottom}, right={right}, top={top}")
         self.min = glm.vec2(left, bottom)
-        # self.max = max
         self.max = glm.vec2(right, top)
+
+    @classmethod
+    def empty(cls) -> "Bounds2":
+        """An inverted-infinite box, for accumulating with expand()/merge().
+
+        A zeroed box is not empty — it is a valid degenerate box at the
+        origin, so accumulating into one drags the result back to (0, 0).
+        Start from this instead.
+        """
+        inf = float("inf")
+        return cls(inf, inf, -inf, -inf)
 
     @property
     def left(self) -> float:
@@ -58,13 +66,28 @@ class Bounds2:
         """Returns the center point of the bounding box."""
         return (self.min + self.max) * 0.5
 
+    @property
+    def corners(self) -> "list[glm.vec2]":
+        """Corners in winding order, starting bottom-left."""
+        return [
+            glm.vec2(self.min.x, self.min.y),
+            glm.vec2(self.max.x, self.min.y),
+            glm.vec2(self.max.x, self.max.y),
+            glm.vec2(self.min.x, self.max.y),
+        ]
+
     def expand(self, point: glm.vec2) -> None:
         """Expands the bounding box to include the given point."""
         self.min = glm.vec2(min(self.min.x, point.x), min(self.min.y, point.y))
         self.max = glm.vec2(max(self.max.x, point.x), max(self.max.y, point.y))
 
     def merge(self, other: "Bounds2") -> None:
-        """Expands the bounding box to include another bounding box."""
+        """Expands the bounding box to include another bounding box.
+
+        An empty `other` is skipped: its infinities would poison this box.
+        """
+        if not other.is_valid():
+            return
         self.expand(other.min)
         self.expand(other.max)
 
@@ -84,19 +107,42 @@ class Bounds2:
         )
 
     def is_valid(self) -> bool:
-        """Checks if the bounding box is valid (min is less than or equal to max)."""
+        """Checks if the bounding box is valid (min is less than or equal to max).
+
+        An empty box (from Bounds2.empty() or reset()) is not valid — that is
+        the point of the sentinel. A zeroed box still reports valid, since a
+        degenerate point box at the origin is a legitimate result.
+        """
         return self.min.x <= self.max.x and self.min.y <= self.max.y
 
-    def reset(self) -> None:
-        """Resets the bounding box to an invalid state."""
-        # self.min = glm.vec2(float('inf'))
-        self.min = glm.vec2()
-        # self.max = glm.vec2(float('-inf'))
-        self.max = glm.vec2()
+    def is_finite(self) -> bool:
+        """True when every component is a real number.
 
+        A transform containing NaN, or a to_global() on an empty box, yields
+        corners that pass is_valid() by accident (comparisons against NaN are
+        all False, so the <= test can fall through). Use this when the box is
+        about to be handed to something that will divide by its size.
+        """
+        return all(
+            math.isfinite(v)
+            for v in (self.min.x, self.min.y, self.max.x, self.max.y)
+        )
+
+    def reset(self) -> None:
+        """Resets the bounding box to an empty (accumulation-ready) state."""
+        inf = float("inf")
+        self.min = glm.vec2(inf, inf)
+        self.max = glm.vec2(-inf, -inf)
 
     def to_global(self, transform: glm.mat4) -> "Bounds2":
-        # Transform all four corners
+        """Axis-aligned box enclosing this box after `transform`.
+
+        Note this is the AABB of the transformed corners, not the transformed
+        box: under rotation the result is larger than the source, by
+        |cos t| + |sin t|. That is what broadphase and intersects() want. If
+        you need a box that hugs a rotated node — for debug drawing, say —
+        transform `corners` yourself and draw the polygon.
+        """
         p1 = transform * glm.vec4(self.min.x, self.min.y, 0.0, 1.0)
         p2 = transform * glm.vec4(self.max.x, self.min.y, 0.0, 1.0)
         p3 = transform * glm.vec4(self.min.x, self.max.y, 0.0, 1.0)

@@ -104,9 +104,24 @@ class Game(App):
 
         if self.debug_bounds:
             for entity in self.scene.fruit_layer.root.children:
+                local = entity.get_local_bounds()
+                m = entity.global_transform
+                corners = [
+                    glm.vec2(m * glm.vec4(local.min.x, local.min.y, 0.0, 1.0)),
+                    glm.vec2(m * glm.vec4(local.max.x, local.min.y, 0.0, 1.0)),
+                    glm.vec2(m * glm.vec4(local.max.x, local.max.y, 0.0, 1.0)),
+                    glm.vec2(m * glm.vec4(local.min.x, local.max.y, 0.0, 1.0)),
+                ]
+                self.display.scratch.draw_polygon(corners)
+
+        '''
+        if self.debug_bounds:
+            for entity in self.scene.fruit_layer.root.children:
                 bounds = entity.bounds
+                logger.debug(f"Entity bounds: {bounds}")
                 if bounds.is_valid():
-                    self.display.scratch.draw_bounds_2d(bounds)
+                    self.display.scratch.draw_rect(bounds.min, bounds.max)
+        '''
 
         super()._draw()
 

@@ -1,6 +1,5 @@
 from __future__ import annotations
 from contextlib import contextmanager
-from dataclasses import dataclass
 
 from loguru import logger
 
@@ -11,17 +10,16 @@ from ...renderer import Renderer
 from ...widget import Overlay
 
 
-@dataclass
-class DebugOverlayMemo:
-    ppu: float
-
-
 class DebugOverlay(Overlay):
-    """Overlay that draws in world-space via the camera's ppu/zoom transform."""
+    """Overlay that draws in world-space via the camera's ppu/zoom transform.
+
+    Everything reaching draw_items() is in world units, Y-up: the canvas
+    carries the camera transform, including the flip. Do not project to
+    screen space before calling — that applies the camera twice.
+    """
 
     def __init__(self, name: str, priority: int = 0, vu: Vu = None) -> None:
         super().__init__(name, priority, vu)
-        self._memo: DebugOverlayMemo = None
         self.outline_width_px = 1.0  # desired constant on-screen thickness
 
     @property
@@ -37,16 +35,18 @@ class DebugOverlay(Overlay):
         return self.display.renderer.canvas
 
     @property
-    def memo(self):
-        if self._memo is None:
-            self._memo = DebugOverlayMemo(ppu=self.camera.ppu)
-        return self._memo
-
-    @property
     def ppu(self) -> float:
-        return self.memo.ppu
+        return self.camera.ppu
 
     def _camera_scale(self) -> float:
+        """World units -> pixels. The single definition of that factor.
+
+        This was previously computed in three places: here, inline in
+        world_canvas, and in _scaled_stroke_width against a memoized ppu that
+        was never invalidated. The stroke width read a stale ppu against a
+        live zoom, so any runtime ppu change silently desynced the outline
+        from the canvas it was drawn on.
+        """
         camera = self.camera
         return camera.ppu / camera.zoom
 
@@ -60,7 +60,7 @@ class DebugOverlay(Overlay):
                 rect.x + rect.width // 2,
                 rect.y + rect.height // 2,
             )
-            scale = camera.ppu / camera.zoom
+            scale = self._camera_scale()
             canvas.scale(scale, -scale)
             canvas.translate(-camera.position.x, -camera.position.y)
             try:
@@ -69,8 +69,8 @@ class DebugOverlay(Overlay):
                 canvas.restore()
 
     def _scaled_stroke_width(self) -> float:
-        scale = self.ppu / self.camera.zoom
-        return self.outline_width_px / scale
+        """World-unit width that renders as outline_width_px on screen."""
+        return self.outline_width_px / self._camera_scale()
 
     def _draw(self):
         with self.world_canvas() as canvas:

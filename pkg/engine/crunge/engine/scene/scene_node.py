@@ -20,6 +20,7 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
         self._bounds_dirty = False
 
         self._transform_notify_pending = False
+        self._transform_notify_again = False
 
     @property
     def scene(self):
@@ -37,6 +38,18 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
         self._local_dirty = True
         self._mark_global_dirty()
 
+    def _mark_bounds_dirty(self):
+        """Invalidate bounds without touching the transform chain.
+
+        Bounds derive from local extents (vu/model size) as well as from the
+        global transform. A size change is not a move, so it has no business
+        going through _mark_global_dirty — that would emit transform_changed
+        and walk the subtree for something that did not move. Call this from
+        anything that changes what the node measures: a Vu resolving its
+        texture, a model swap, a sprite rect edit.
+        """
+        self._bounds_dirty = True
+
     def _mark_global_dirty(self):
         # Flags before the guard. They were set after it, so a transform
         # changed from inside a transform_changed handler set _local_dirty,
@@ -45,18 +58,31 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
         self._global_dirty = True
         self._bounds_dirty = True
 
+        # Re-entry: the flags above are already recorded, but the notify for
+        # this new state still has to go out. Setting the flags and returning
+        # left handlers holding whatever the previous emit gave them, with no
+        # dirty bit anywhere to catch the staleness — signals carry values, so
+        # a dropped emit is a dropped value. Ask the active call to loop again.
         if self._transform_notify_pending:
+            self._transform_notify_again = True
             return
+
         self._transform_notify_pending = True
-
-        for child in self.children:
-            child._mark_global_dirty()
-
         try:
-            self.on_transform()
-            self.transform_changed.emit(self)
+            while True:
+                self._transform_notify_again = False
+
+                for child in self.children:
+                    child._mark_global_dirty()
+
+                self.on_transform()
+                self.transform_changed.emit(self)
+
+                if not self._transform_notify_again:
+                    break
         finally:
             self._transform_notify_pending = False
+            self._transform_notify_again = False
 
     def on_transform(self):
         """Self-notification. Chips use transform_changed; this is for a
