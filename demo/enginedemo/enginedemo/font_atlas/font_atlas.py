@@ -181,7 +181,7 @@ class FontAtlasDemo(Demo):
         )
 
     def create_textures(self):
-        path = self.wnd.resource_root / "fonts" / "DroidSans.ttf"
+        path = self.resource_root / "fonts" / "DroidSans.ttf"
         logger.debug(f"Loading font from {path}")
         if not path.exists():
             raise FileNotFoundError(f"Font file not found: {path}")

@@ -35,7 +35,6 @@ class Window(Frame):
     ):
         style = yoga.StyleBuilder().size(width, height).build()
         super().__init__(style, display=display)
-        globals.set_current_window(self)
         self.name = title
 
         self.sdl_window: sdl.Window = None

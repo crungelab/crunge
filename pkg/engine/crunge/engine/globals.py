@@ -1,8 +1,5 @@
 from typing import TYPE_CHECKING, Type, Dict, List, Any, Callable
 
-if TYPE_CHECKING:
-    from .window import Window
-
 from crunge import wgpu
 
 from .gfx import Gfx
@@ -22,13 +19,3 @@ def set_gfx(g: Gfx):
     device = g.device
     global queue
     queue = g.queue
-
-current_window: "Window" = None
-
-def set_current_window(w: "Window"):
-    global current_window
-    current_window = w
-
-def get_current_window() -> "Window":
-    return current_window
-

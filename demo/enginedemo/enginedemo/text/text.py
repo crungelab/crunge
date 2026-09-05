@@ -188,7 +188,7 @@ class TextDemo(Demo):
         )
 
     def create_textures(self):
-        path = self.wnd.resource_root / "fonts" / "DroidSans.ttf"
+        path = self.resource_root / "fonts" / "DroidSans.ttf"
         logger.debug(f"Loading font from {path}")
         if not path.exists():
             raise FileNotFoundError(f"Font file not found: {path}")
@@ -305,7 +305,7 @@ class TextDemo(Demo):
 
     def shape_text(self, text: str):
         # Load font data
-        path = self.wnd.resource_root / "fonts" / "DroidSans.ttf"
+        path = self.resource_root / "fonts" / "DroidSans.ttf"
         with open(path, "rb") as f:
             font_data = f.read()
 

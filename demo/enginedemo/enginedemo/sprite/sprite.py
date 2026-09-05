@@ -193,7 +193,7 @@ class SpriteDemo(Demo):
         )
 
     def create_textures(self):
-        path = self.wnd.resource_root / "images" / "playerShip1_orange.png"
+        path = self.resource_root / "images" / "playerShip1_orange.png"
         im = iio.imread(path)
         shape = im.shape
         logger.debug(shape)

@@ -161,7 +161,3 @@ class Base:
         if globals.queue is None:
             return Gfx().queue
         return globals.queue
-
-    @property
-    def wnd(self):
-        return globals.current_window

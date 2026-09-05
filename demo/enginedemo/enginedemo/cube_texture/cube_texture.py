@@ -202,7 +202,7 @@ class CubeTextureDemo(Demo):
         )
 
     def create_textures(self):
-        path = self.wnd.resource_root / "images" / "python_logo.png"
+        path = self.resource_root / "images" / "python_logo.png"
         im = iio.imread(path)
         shape = im.shape
         logger.debug(shape)

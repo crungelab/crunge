@@ -112,7 +112,7 @@ class InstancedTextDemo(Demo):
         self.create_pipeline()
 
     def create_textures(self):
-        path = self.wnd.resource_root / "fonts" / "DroidSans.ttf"
+        path = self.resource_root / "fonts" / "DroidSans.ttf"
         face = Face(path.as_posix())
         face.set_pixel_sizes(0, 48)
 
@@ -232,7 +232,7 @@ class InstancedTextDemo(Demo):
         )
 
     def shape_text(self, text: str):
-        path = self.wnd.resource_root / "fonts" / "DroidSans.ttf"
+        path = self.resource_root / "fonts" / "DroidSans.ttf"
         with open(path, "rb") as f:
             font_data = f.read()
         hb_font = hb.Font(hb.Face(hb.Blob(font_data)))
