@@ -287,10 +287,25 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
     # ------------------------------------------------------------------
 
     @property
+    def global_bounds(self) -> Bounds2:
+        if self._bounds_dirty:
+            self._update_bounds()
+        return self._bounds
+
+    @property
+    def bounds(self):
+        raise AttributeError(
+            f"{type(self).__name__}.bounds is being repointed from world to local. "
+            "Use global_bounds for world-space, get_local_bounds() for local."
+        )
+
+    '''
+    @property
     def bounds(self) -> Bounds2:
         if self._bounds_dirty:
             self._update_bounds()
         return self._bounds
+    '''
 
     def _update_bounds(self):
         local_bounds = self.get_local_bounds()
@@ -304,4 +319,4 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         return Bounds2(-half.x, -half.y, half.x, half.y)
 
     def intersects(self, other: "Node2D"):
-        return self.bounds.intersects(other.bounds)
+        return self.global_bounds.intersects(other.global_bounds)

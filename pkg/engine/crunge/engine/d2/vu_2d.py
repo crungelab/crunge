@@ -86,19 +86,6 @@ class Vu2D(Vu[Node2D]):
         pass
 
     # -- group -------------------------------------------------------------
-    """
-    @property
-    def group(self) -> "VuGroup":
-        return self._group
-
-    @group.setter
-    def group(self, value: "VuGroup"):
-        self._group = value
-        self.on_group()
-
-    def on_group(self) -> None:
-        pass
-    """
 
     @property
     def node_buffer_index(self) -> int:
@@ -145,8 +132,9 @@ class Vu2D(Vu[Node2D]):
             glm.vec3(self.size.x, self.size.y, 1),
         )
 
-        self.transform = node.transform * matrix
-        self.bounds = node.bounds
+        #self.transform = node.transform * matrix
+        self.transform = node.global_transform * matrix
+        self.bounds = node.global_bounds
 
     # -- deferred rebuild --------------------------------------------------
 

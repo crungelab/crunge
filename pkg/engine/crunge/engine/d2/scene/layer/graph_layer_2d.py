@@ -31,6 +31,6 @@ class GraphLayer2D(GraphLayer[Node2D]):
     def query_intersection(self, bounds: Bounds2):
         result:list[Node2D] = []
         for node in self.nodes:
-            if node.bounds.intersects(bounds):
+            if node.global_bounds.intersects(bounds):
                 result.append(node)
         return result

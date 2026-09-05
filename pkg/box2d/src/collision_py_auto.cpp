@@ -145,6 +145,46 @@ void init_collision_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("center1", &b2Capsule::center1)
         .def_readwrite("center2", &b2Capsule::center2)
         .def_readwrite("radius", &b2Capsule::radius)
+        .def(py::init([](const py::kwargs& kwargs)
+        {
+            b2Capsule obj{};
+            static const std::unordered_set<std::string> allowed_keys = {"center1", "center2", "radius"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
+            if (kwargs.contains("center1"))
+            {
+                auto value = kwargs["center1"].cast<struct b2Vec2>();
+                obj.center1 = value;
+            }
+            if (kwargs.contains("center2"))
+            {
+                auto value = kwargs["center2"].cast<struct b2Vec2>();
+                obj.center2 = value;
+            }
+            if (kwargs.contains("radius"))
+            {
+                auto value = kwargs["radius"].cast<float>();
+                obj.radius = value;
+            }
+            return obj;
+        }))
+        .def("__repr__", [](const b2Capsule &self) {
+            std::stringstream ss;
+            ss << "Capsule(";
+            ss << "center1=" << py::repr(py::cast(self.center1)).cast<std::string>();
+            ss << ", ";
+            ss << "center2=" << py::repr(py::cast(self.center2)).cast<std::string>();
+            ss << ", ";
+            ss << "radius=" << py::repr(py::cast(self.radius)).cast<std::string>();
+            ss << ")";
+            return ss.str();
+        })
     ;
 
     py::class_<b2Polygon> _Polygon(_box2d, "Polygon");

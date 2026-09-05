@@ -105,10 +105,10 @@ class DynamicCharacterController(CharacterController):
     def check_ladder(self) -> bool:
         if not self.ladder_layer:
             return False
-        return bool(self.ladder_layer.query_intersection(self.avatar.bounds))
+        return bool(self.ladder_layer.query_intersection(self.avatar.global_bounds))
 
     def mount(self) -> None:
-        for node in self.character_layer.query_intersection(self.avatar.bounds):
+        for node in self.character_layer.query_intersection(self.avatar.global_bounds):
             if isinstance(node, character.Skateboard):
                 node.mount(self.avatar)
                 globe.app.push_avatar(node)

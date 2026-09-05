@@ -2,7 +2,6 @@ from ..game_entity import GameEntity
 
 from .dna import WyggleDna
 
-#from .agents.reactive import ReactiveWyggleAgent
 from .mind import WyggleMind
 
 
@@ -74,10 +73,6 @@ class Wyggle(WyggleHead):
         self.length = 1
         self.butt = None
 
-        """
-        self.agent = ReactiveWyggleAgent(self)
-        self.agent.schedule()
-        """
         self.mind = WyggleMind()
         self.add(self.mind)
 

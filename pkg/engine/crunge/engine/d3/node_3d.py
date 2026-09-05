@@ -181,12 +181,26 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
     # ------------------------------------------------------------------
     # Bounds
     # ------------------------------------------------------------------
+    @property
+    def global_bounds(self) -> Bounds3:
+        if self._bounds_dirty:
+            self._update_bounds()
+        return self._bounds
 
+    @property
+    def bounds(self):
+        raise AttributeError(
+            f"{type(self).__name__}.bounds is being repointed from world to local. "
+            "Use global_bounds for world-space, get_local_bounds() for local."
+        )
+
+    '''
     @property
     def bounds(self) -> Bounds3:
         if self._bounds_dirty:
             self._update_bounds()
         return self._bounds
+    '''
 
     def _update_bounds(self):
         if self.model is not None:
@@ -203,7 +217,7 @@ class Node3D(SceneNode["Node3D", "Scene3D"]):
         contribute nothing but still recurse into their children."""
         bounds = Bounds3()
         if self.model is not None:
-            bounds.merge(self.bounds)
+            bounds.merge(self.global_bounds)
         for child in self.children:
             child_bounds = child.get_subtree_bounds()
             if child_bounds.is_valid():

@@ -109,7 +109,7 @@ class SkeletonVu(Vu2D):
 
     def on_transform_changed(self, node: Node2D) -> None:
         self.transform = node.transform
-        self.bounds = node.bounds  # TODO: union of slot bounds, not the raw node bounds
+        self.bounds = node.global_bounds  # TODO: union of slot bounds, not the raw node bounds
 
     @property
     def size(self) -> glm.vec2:

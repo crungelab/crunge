@@ -25,7 +25,15 @@ specs:
       methods:
         __init__:
           gen_kwargs: true
-          #use: function@b2DefaultWorldDef
+
+        __repr__:
+          auto: true
+
+  'struct@b2Capsule':
+    extra:
+      methods:
+        __init__:
+          gen_kwargs: true
 
         __repr__:
           auto: true

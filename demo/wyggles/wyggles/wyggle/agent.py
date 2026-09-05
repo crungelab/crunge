@@ -18,123 +18,130 @@ if TYPE_CHECKING:
 class WyggleAgent(GameAgent):
     node: "Wyggle"
 
+    MAX_SPEED = 0.01            # meters per tick
+    LOOK_AHEAD = 1.0            # meters
+    AVOID_AUTHORITY = 4.0       # steering weight vs seek at point blank
+    WIGGLE_STRENGTH = 0.2       # perpendicular amplitude, relative to unit heading
+    WIGGLE_SPEED = 0.25
+
+    WANDER_SAMPLES = 6
+    WANDER_SPREAD = 90.0        # degrees either side of current heading
+    WANDER_MIN_CLEARANCE = 0.3  # below this, treat every sample as boxed in
+    PROBE_ANGLE = 45.0          # degrees either side, for avoidance probes
+    GOAL_BACKOFF = 0.1          # keep the goal this far off a contact point
+
     def __init__(self, node: "Wyggle"):
         super().__init__(node)
         self.focus: GameEntity = None
         self.state: str = "wanderer"
-        self.consider_max = 10
-        self.consider_timer = self.consider_max
-        #
         self.wiggle_phase = 0.0
-        self.munch_timer = 10
+        self.turn_bias = random.choice((1.0, -1.0))
 
     def reset(self):
         self.state = ""
         self.focus = None
 
-    def scan(self, sensor_range: float = None) -> GameEntity | None:
+    def scan(self, sensor_range: float = None) -> list[GameEntity]:
         if sensor_range is None:
-            sensor_range = self.node.sensor_range
-        beacons = world.world_instance.query(self.node.position.x, self.node.position.y, sensor_range)
-        return beacons
+            sensor_range = self.sensor_range
+        return world.world_instance.query(
+            self.node.position.x, self.node.position.y, sensor_range
+        )
+
+    # --- steering ---------------------------------------------------------
+
+    def avoidance(self, direction: glm.vec2, distance: float) -> glm.vec2:
+        """Steering vector away from obstacles ahead. Zero if the path is clear.
+        Magnitude runs 0..AVOID_AUTHORITY, rising sharply as obstacles close in."""
+        radius = self.node.radius
+        origin = self.position
+
+        ahead = self.cast_mover(origin, direction * distance, radius)
+        if ahead >= 1.0:
+            return glm.vec2(0, 0)
+
+        perp = glm.vec2(-direction.y, direction.x)
+        rad = glm.radians(self.PROBE_ANGLE)
+        c, s = math.cos(rad), math.sin(rad)
+
+        left = self.cast_mover(origin, (direction * c + perp * s) * distance, radius)
+        right = self.cast_mover(origin, (direction * c - perp * s) * distance, radius)
+
+        if abs(left - right) < 1e-3:
+            turn = perp * self.turn_bias
+        else:
+            turn = perp if left > right else -perp
+
+        urgency = (1.0 - ahead) ** 2 * self.AVOID_AUTHORITY
+        return turn * urgency
 
     def move(self):
-        max_speed = 0.01
-        avoidance_force = 4.0
-        avoidance_distance = 48
-        agent_radius = 16
-        wiggle_strength = 0.6  # Try 0.2 .. 1.2 for subtle to wild wiggle
-        wiggle_speed = 0.25  # Higher = faster wiggle
-
-        # --- Step 1: Seek target ---
         to_target = self.target_position - self.node.position
-        if glm.length(to_target) > 1e-3:
-            seek_velocity = glm.normalize(to_target) * max_speed
+        distance = glm.length(to_target)
+
+        if distance > 1e-3:
+            heading_dir = to_target / distance
         else:
-            seek_velocity = glm.vec2(0, 0)
+            heading_dir = self.heading_vector
 
-        # --- Step 2: Obstacle avoidance (look ahead) ---
-        """
-        current_position = pymunk.Vec2d(self.node.position.x, self.node.position.y)
-        if glm.length(to_target) > 1e-3:
-            look_ahead = glm.normalize(to_target) * avoidance_distance
+        steering = heading_dir + self.avoidance(heading_dir, self.LOOK_AHEAD)
+
+        if glm.length(steering) > 1e-3:
+            steering_dir = glm.normalize(steering)
         else:
-            look_ahead = glm.vec2(0, 0)
-        ahead_position = self.node.position + look_ahead
-        end_position = pymunk.Vec2d(ahead_position.x, ahead_position.y)
-        space = engine.world_instance.space
+            steering_dir = heading_dir
 
-        avoidance = glm.vec2(0, 0)
-        results = space.segment_query(current_position, end_position, agent_radius, pymunk.ShapeFilter())
-        for result in results:
-            node = result.shape.body.node
-            if node == self.node or node == self.focus:
-                continue
-            normal = result.normal
-            avoidance += glm.normalize(glm.vec2(normal.x, normal.y)) * avoidance_force
-            #break  # Only avoid first obstacle
-        """
-        # --- Step 3: Combine steering ---
-        # steering_vec = seek_velocity + avoidance
-        steering_vec = seek_velocity  # + avoidance
-        if glm.length(steering_vec) > 1e-3:
-            steering_dir = glm.normalize(steering_vec)
-        else:
-            steering_dir = glm.vec2(1, 0)  # Arbitrary default
+        # Steering direction is what the agent *intends*; velocity carries the
+        # wiggle. Keeping them separate stops the wiggle from feeding back into
+        # next tick's avoidance probes.
+        self.velocity = steering_dir * self.MAX_SPEED
 
-        # --- Step 4: Add wormy wiggle ---
-        # Maintain a wiggle phase per worm
-        self.wiggle_phase += wiggle_speed
-
-        # Get perpendicular to current steering
+        self.wiggle_phase += self.WIGGLE_SPEED
+        clearance = self.cast_mover(
+            self.position, steering_dir * self.LOOK_AHEAD, self.node.radius
+        )
         perp = glm.vec2(-steering_dir.y, steering_dir.x)
-        # Sinusoidal "wiggle" in the perpendicular direction
-        steering_dir += perp * math.sin(self.wiggle_phase) * wiggle_strength
+        wiggle = perp * math.sin(self.wiggle_phase) * self.WIGGLE_STRENGTH * clearance
 
-        # Clamp to max speed
-        final_velocity = glm.normalize(steering_dir) * max_speed
-        self.velocity = final_velocity
+        step = glm.normalize(steering_dir + wiggle) * self.MAX_SPEED
+        self.node.move(self.node.position + step)
 
-        # --- Step 5: Move the agent ---
-        next_position = self.node.position + final_velocity
-        self.node.move(next_position)
+    # --- wander -----------------------------------------------------------
 
-    def get_clear_wander_direction(self):
-        max_angle_offset = 90  # degrees
-        n_samples = 6
+    def sample_wander(self) -> tuple[float, float]:
+        """Probe WANDER_SAMPLES headings around the current one.
+        Returns (heading degrees, clearance fraction) for the most open."""
         stride = self.sensor_range
+        radius = self.node.radius
+        current_heading = self.heading
+        origin = self.position
 
-        current_heading = self.heading  # or derive from velocity or steering direction
-        logger.debug(f"Current heading: {current_heading}")
+        best_angle = current_heading
+        best_fraction = 0.0
 
-        # Gather candidate angles
-        candidate_angles = [
-            current_heading + random.uniform(-max_angle_offset, max_angle_offset)
-            for _ in range(n_samples)
-        ]
-
-        clear_candidates = []
-
-        for angle in candidate_angles:
-            # Convert to direction vector
-            radians = glm.radians(angle)
-            direction = glm.vec2(math.cos(radians), math.sin(radians))
-            start = pymunk.Vec2d(self.node.position.x, self.node.position.y)
-            end_pos = self.node.position + direction * stride
-            end = pymunk.Vec2d(end_pos.x, end_pos.y)
-
-            results = world.world_instance.space.segment_query(
-                start, end, self.node.radius, pymunk.ShapeFilter()
+        for _ in range(self.WANDER_SAMPLES):
+            angle = current_heading + random.uniform(
+                -self.WANDER_SPREAD, self.WANDER_SPREAD
             )
-            """
-            if not any(result.shape.body.node != self.node for result in results):
-                clear_candidates.append(angle)
-            """
-            if not results:
-                clear_candidates.append(angle)
+            rad = glm.radians(angle)
+            direction = glm.vec2(math.cos(rad), math.sin(rad))
+            fraction = self.cast_mover(origin, direction * stride, radius)
 
-        if clear_candidates:
-            return random.choice(clear_candidates)
-        else:
-            # All directions blocked; fallback to current heading or slow down
-            return current_heading
+            if fraction > best_fraction:
+                best_fraction, best_angle = fraction, angle
+
+        if best_fraction <= self.WANDER_MIN_CLEARANCE:
+            logger.debug(f"Wander boxed in (best={best_fraction:.2f}); reversing")
+            return current_heading + 180.0, best_fraction
+
+        return best_angle, best_fraction
+
+    def get_clear_wander_direction(self) -> float:
+        return self.sample_wander()[0]
+
+    def wander_goal(self) -> glm.vec2:
+        """A reachable point to wander toward -- clamped short of whatever
+        the chosen heading runs into, so seek can actually arrive."""
+        heading, fraction = self.sample_wander()
+        reach = max(0.0, fraction - self.GOAL_BACKOFF)
+        return self.project(heading, self.sensor_range * reach)
