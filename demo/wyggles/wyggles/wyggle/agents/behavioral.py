@@ -2,12 +2,13 @@
 # A purely behavioral brain
 #
 import math
+import random
 
 from crunge.abt.run import *
 from crunge.abt.run import _I
 from crunge.abt.run.act import *
 
-from wyggles.world import *
+from wyggles import world
 from wyggles.wyggle.agent import WyggleAgent
 from wyggles.fruit import Fruit
 from wyggles.ball import Ball
@@ -20,11 +21,11 @@ class SeesFood(Sequence):
         self.focus = None
 
     async def main(self, msg: Message):
-        beacons = world_instance.query(self.agent.x, self.agent.y, self.agent.sensor_range)
+        entities = self.agent.scan()
         self.focus = None
-        for beacon in beacons:
-            if isinstance(beacon.sprite, Fruit):
-                self.focus = beacon.sprite
+        for entity in entities:
+            if isinstance(entity, Fruit):
+                self.focus = entity
                 break
         else:
             return self.fail()
@@ -41,10 +42,10 @@ class Seek(Action):
         self.agent.focus = focus = self.sees.focus
         self.agent.state = 'seek'
         while self.ok():
-            if self.agent.sprite.intersects(focus):
+            if self.agent.entity.intersects(focus):
                 self.agent.state = ''
                 return self.succeed()
-            self.agent.seek(focus.position)
+            self.agent.move_to(focus.position)
             await self.sleep()
 
 class Eat(Action):
@@ -57,8 +58,8 @@ class Eat(Action):
         self.agent.state = 'eat'
         
         while self.ok():
-            if focus.is_munched():
-                sprite = self.agent.sprite
+            if focus.is_munched:
+                sprite = self.agent.entity
                 sprite.close_mouth()
                 sprite.energy = sprite.energy + focus.energy
                 self.agent.reset()
@@ -71,11 +72,11 @@ class SeesBall(Sequence):
         self.focus = None
 
     async def main(self, msg: Message):
-        beacons = world_instance.query(self.agent.x, self.agent.y, self.agent.sensor_range)
+        entities = self.agent.scan()
         self.focus = None
-        for beacon in beacons:
-            if isinstance(beacon.sprite, Ball):
-                self.focus = beacon.sprite
+        for entity in entities:
+            if isinstance(entity, Ball):
+                self.focus = entity
                 break
         else:
             return self.fail()
@@ -90,7 +91,7 @@ class Kick(Action):
     async def main(self, msg: Message):
         self.agent.focus = focus = self.sees.focus
         self.agent.state = 'kick'
-        focus.receive_kick(self.agent.heading, 200)
+        focus.receive_kick(self.agent.heading, .2)
         self.agent.reset()
 
 class Wander(Action):
@@ -103,6 +104,8 @@ class Wander(Action):
 class BehavioralWyggleAgent(WyggleAgent):
     def __init__(self, model):
         super().__init__(model)
+        self.munch_timer = 10
+
         with root(self):
             with forever():
                 with selector():
@@ -156,10 +159,10 @@ class BehavioralWyggleAgent(WyggleAgent):
         else:
             self.munch_timer = 10
 
-        if self.node.face != "munchy":
-            self.node.open_mouth()
+        if self.entity.face != "munchy":
+            self.entity.open_mouth()
         else:
-            self.node.close_mouth()
+            self.entity.close_mouth()
             self.focus.receive_munch()
 
     def state_kick(self):

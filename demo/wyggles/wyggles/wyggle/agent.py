@@ -16,22 +16,22 @@ if TYPE_CHECKING:
 
 
 class WyggleAgent(GameAgent):
-    node: "Wyggle"
+    entity: "Wyggle"
 
-    MAX_SPEED = 0.01            # meters per tick
-    LOOK_AHEAD = 1.0            # meters
-    AVOID_AUTHORITY = 4.0       # steering weight vs seek at point blank
-    WIGGLE_STRENGTH = 0.2       # perpendicular amplitude, relative to unit heading
+    MAX_SPEED = 0.01  # meters per tick
+    LOOK_AHEAD = 1.0  # meters
+    AVOID_AUTHORITY = 4.0  # steering weight vs seek at point blank
+    WIGGLE_STRENGTH = 0.2  # perpendicular amplitude, relative to unit heading
     WIGGLE_SPEED = 0.25
 
     WANDER_SAMPLES = 6
-    WANDER_SPREAD = 90.0        # degrees either side of current heading
+    WANDER_SPREAD = 90.0  # degrees either side of current heading
     WANDER_MIN_CLEARANCE = 0.3  # below this, treat every sample as boxed in
-    PROBE_ANGLE = 45.0          # degrees either side, for avoidance probes
-    GOAL_BACKOFF = 0.1          # keep the goal this far off a contact point
+    PROBE_ANGLE = 45.0  # degrees either side, for avoidance probes
+    GOAL_BACKOFF = 0.1  # keep the goal this far off a contact point
 
-    def __init__(self, node: "Wyggle"):
-        super().__init__(node)
+    def __init__(self, entity: "Wyggle"):
+        super().__init__(entity)
         self.focus: GameEntity = None
         self.state: str = "wanderer"
         self.wiggle_phase = 0.0
@@ -44,17 +44,15 @@ class WyggleAgent(GameAgent):
     def scan(self, sensor_range: float = None) -> list[GameEntity]:
         if sensor_range is None:
             sensor_range = self.sensor_range
-        return world.world_instance.query(
-            self.node.position.x, self.node.position.y, sensor_range
-        )
+        return world.world_instance.proximity_query(self.entity.position, sensor_range)
 
     # --- steering ---------------------------------------------------------
 
     def avoidance(self, direction: glm.vec2, distance: float) -> glm.vec2:
         """Steering vector away from obstacles ahead. Zero if the path is clear.
         Magnitude runs 0..AVOID_AUTHORITY, rising sharply as obstacles close in."""
-        radius = self.node.radius
-        origin = self.position
+        radius = self.entity.radius
+        origin = self.entity.position
 
         ahead = self.cast_mover(origin, direction * distance, radius)
         if ahead >= 1.0:
@@ -76,7 +74,7 @@ class WyggleAgent(GameAgent):
         return turn * urgency
 
     def move(self):
-        to_target = self.target_position - self.node.position
+        to_target = self.target_position - self.entity.position
         distance = glm.length(to_target)
 
         if distance > 1e-3:
@@ -98,13 +96,13 @@ class WyggleAgent(GameAgent):
 
         self.wiggle_phase += self.WIGGLE_SPEED
         clearance = self.cast_mover(
-            self.position, steering_dir * self.LOOK_AHEAD, self.node.radius
+            self.entity.position, steering_dir * self.LOOK_AHEAD, self.entity.radius
         )
         perp = glm.vec2(-steering_dir.y, steering_dir.x)
         wiggle = perp * math.sin(self.wiggle_phase) * self.WIGGLE_STRENGTH * clearance
 
         step = glm.normalize(steering_dir + wiggle) * self.MAX_SPEED
-        self.node.move(self.node.position + step)
+        self.entity.move(self.entity.position + step)
 
     # --- wander -----------------------------------------------------------
 
@@ -112,9 +110,9 @@ class WyggleAgent(GameAgent):
         """Probe WANDER_SAMPLES headings around the current one.
         Returns (heading degrees, clearance fraction) for the most open."""
         stride = self.sensor_range
-        radius = self.node.radius
+        radius = self.entity.radius
         current_heading = self.heading
-        origin = self.position
+        origin = self.entity.position
 
         best_angle = current_heading
         best_fraction = 0.0

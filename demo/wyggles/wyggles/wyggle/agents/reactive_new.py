@@ -79,9 +79,9 @@ class SeesKind[T: Node2D](Neuron):
 
     def main(self) -> float:
         self.focus.clear()
-        for beacon in self.agent.scan(self.agent.sensor_range):
-            if isinstance(beacon.node, self.kind):
-                self.focus.target = beacon.node
+        for entity in self.agent.scan(self.agent.sensor_range):
+            if isinstance(entity, self.kind):
+                self.focus.target = entity
                 return 1.0
         return 0.0
 
@@ -127,7 +127,7 @@ class MoveTo(FocusedAction["Node2D"]):
         agent = self.agent
         try:
             while self.ok():
-                if agent.node.intersects(target):
+                if agent.entity.intersects(target):
                     agent.state = ""
                     return self.succeed()
                 agent.move_to(target.position)
@@ -151,14 +151,14 @@ class Eat(FocusedAction[Fruit]):
             return self.fail()
 
         agent = self.agent
-        node = agent.node
+        entity = agent.entity
         munch_timer = 0
 
         try:
             while self.ok():
                 if target.is_munched:
-                    node.close_mouth()
-                    node.energy = node.energy + target.energy
+                    entity.close_mouth()
+                    entity.energy = entity.energy + target.energy
                     agent.reset()
                     return self.succeed()
 
@@ -166,10 +166,10 @@ class Eat(FocusedAction[Fruit]):
                     munch_timer -= 1
                 else:
                     munch_timer = self.munch_interval
-                    if node.face != "munchy":
-                        node.open_mouth()
+                    if entity.face != "munchy":
+                        entity.open_mouth()
                     else:
-                        node.close_mouth()
+                        entity.close_mouth()
                         target.receive_munch()
 
                 await self.sleep()
@@ -189,7 +189,7 @@ class Kick(FocusedAction[Ball]):
         if target is None:
             return self.fail()
 
-        target.receive_kick(self.agent.node.position, self.kick_force)
+        target.receive_kick(self.agent.entity.position, self.kick_force)
         self.agent.reset()
         return self.succeed()
 

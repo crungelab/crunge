@@ -9,8 +9,6 @@ from crunge.engine.resource.resource_manager import ResourceManager
 
 from . import world
 
-from .beacon import Beacon
-
 from wyggles import Dna
 from wyggles import GameEntity, SpriteFactory
 
@@ -64,14 +62,13 @@ class Fruit(GameEntity):
         super().__init__(dna)
         self.type = dna.kind
         self.energy = 5
-        self.beacon = Beacon(self, self.type)
-        world.world_instance.add_beacon(self.beacon)
+        world.world_instance.add_entity(self)
         self.model = dna.sprites[0]
 
     def receive_munch(self):
         self.energy -= 1
         if self.energy <= 0:
-            world.world_instance.remove_beacon(self.beacon)
+            world.world_instance.remove_entity(self)
             self.destroy()
             return 0.01
         # else

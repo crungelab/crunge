@@ -14,7 +14,6 @@ class GameEntity(Entity2D):
         self.kind = self.__class__.__name__
         self.mind = None
         self.body = None
-        self.beacon = None
         self._z = 0
         #
         self.energy = 5

@@ -14,9 +14,9 @@ class GameAgent(Agent):
     #: how close counts as arrived, in meters
     GOAL_TOLERANCE = 0.3
 
-    def __init__(self, node: Entity2D):
+    def __init__(self, entity: Entity2D):
         super().__init__()
-        self.node = node
+        self.entity = entity
         self.velocity = glm.vec2(0, 0)
         self.target_position = glm.vec2(0, 0)
         self.sensor_range = 3
@@ -24,19 +24,11 @@ class GameAgent(Agent):
 
     @property
     def position(self) -> glm.vec2:
-        return self.node.position
+        return self.entity.position
 
     @position.setter
     def position(self, val: glm.vec2):
-        self.node.position = val
-
-    @property
-    def x(self) -> float:
-        return self.node.position.x
-
-    @property
-    def y(self) -> float:
-        return self.node.position.y
+        self.entity.position = val
 
     @property
     def heading(self) -> float:

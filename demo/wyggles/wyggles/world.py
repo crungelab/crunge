@@ -7,7 +7,6 @@ from crunge.engine.d2.physics import PhysicsWorld2D
 from crunge.engine.d2.scene.layer import GraphLayer2D
 
 from .game_entity import GameEntity
-from .beacon import Beacon
 
 world_left = 0
 world_bottom = 0
@@ -25,24 +24,22 @@ class World(PhysicsWorld2D):
         global world_instance
         world_instance = self
         
-        self.beacons: list[Beacon] = []
+        self.entities: list[GameEntity] = []
 
-    def add_beacon(self, beacon):
-        self.beacons.append(beacon)
+    def add_entity(self, entity):
+        self.entities.append(entity)
 
-    def remove_beacon(self, beacon):
-        if beacon in self.beacons:
-            self.beacons.remove(beacon)
+    def remove_entity(self, entity):
+        if entity in self.entities:
+            self.entities.remove(entity)
 
-    def query(self, x, y, distance) -> list[Beacon]:
+    def proximity_query(self, origin: glm.vec2, distance: float) -> list[GameEntity]:
         result = []
-        for beacon in self.beacons:
-            dist = glm.distance(glm.vec2(x, y), glm.vec2(beacon.x, beacon.y))
+        for entity in self.entities:
+            dist = glm.distance(origin, entity.position)
             if dist < distance:
-                b = copy.copy(beacon)
-                b.distance = dist
-                result.append(b)
-        result.sort(key=lambda x: x.distance)
+                result.append(entity)
+        result.sort(key=lambda e: glm.distance(origin, e.position))
         return result
 
     def materialize_random_from_center(self, node: GameEntity, layer: GraphLayer2D):

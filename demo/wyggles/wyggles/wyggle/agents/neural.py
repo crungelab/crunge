@@ -6,7 +6,7 @@ from crunge.abt.run import *
 from crunge.abt.run import _I
 from crunge.abt.run.act import *
 
-from wyggles.world import *
+from wyggles import world
 from wyggles.wyggle.agent import WyggleAgent
 from wyggles.fruit import Fruit
 from wyggles.ball import Ball
@@ -20,11 +20,11 @@ class SeesFood(Neuron):
 
     def main(self):
         logger.debug(f"I see food")
-        beacons = world_instance.query(self.agent.x, self.agent.y, self.agent.sensor_range)
+        entities = self.agent.scan()
         self.focus = None
-        for beacon in beacons:
-            if isinstance(beacon.sprite, Fruit):
-                self.focus = beacon.sprite
+        for entity in entities:
+            if isinstance(entity, Fruit):
+                self.focus = entity
                 break
         else:
             return 0
@@ -39,10 +39,10 @@ class MoveTo(Action):
         self.agent.focus = focus = self.sees.focus
         self.agent.state = 'seek'
         while self.ok():
-            if self.agent.sprite.intersects(focus):
+            if self.agent.entity.intersects(focus):
                 self.agent.state = ''
                 return self.succeed()
-            self.agent.seek(focus.position)
+            self.agent.move_to(focus.position)
             await self.sleep()
 
 class Eat(Action):
@@ -55,10 +55,10 @@ class Eat(Action):
         self.agent.state = 'eat'
         
         while self.ok():
-            if focus.is_munched():
-                sprite = self.agent.sprite
-                sprite.close_mouth()
-                sprite.energy = sprite.energy + focus.energy
+            if focus.is_munched:
+                entity = self.agent.entity
+                entity.close_mouth()
+                entity.energy = entity.energy + focus.energy
                 self.agent.reset()
                 return self.succeed()
             await self.sleep()
@@ -70,11 +70,11 @@ class SeesBall(Neuron):
 
     def main(self):
         logger.debug(f"I see a ball")
-        beacons = world_instance.query(self.agent.x, self.agent.y, self.agent.sensor_range)
+        entities = self.agent.scan()
         self.focus = None
-        for beacon in beacons:
-            if isinstance(beacon.sprite, Ball):
-                self.focus = beacon.sprite
+        for entity in entities:
+            if isinstance(entity, Ball):
+                self.focus = entity
                 break
         else:
             return 0
@@ -88,7 +88,7 @@ class Kick(Action):
     async def main(self, msg: Message):
         self.agent.focus = focus = self.sees.focus
         self.agent.state = 'kick'
-        focus.receive_kick(self.agent.heading, 200)
+        focus.receive_kick(self.agent.heading, .2)
         self.agent.reset()
 
 class Wander(Action):
@@ -101,6 +101,8 @@ class Wander(Action):
 class NeuralWyggleAgent(WyggleAgent):
     def __init__(self, model):
         super().__init__(model)
+        self.munch_timer = 0
+
         with root(self):
             with forever():
                 with selector():
@@ -141,7 +143,7 @@ class NeuralWyggleAgent(WyggleAgent):
                 self.left(pd)
             elif pt == 2:
                 self.right(pd)
-            self.project(self.sensor_range)
+            self.project(self.heading, self.sensor_range)
         self.move()
 
     def state_seek(self):
@@ -154,10 +156,10 @@ class NeuralWyggleAgent(WyggleAgent):
         else:
             self.munch_timer = 10
 
-        if self.node.face != "munchy":
-            self.node.open_mouth()
+        if self.entity.face != "munchy":
+            self.entity.open_mouth()
         else:
-            self.node.close_mouth()
+            self.entity.close_mouth()
             self.focus.receive_munch()
 
     def state_kick(self):

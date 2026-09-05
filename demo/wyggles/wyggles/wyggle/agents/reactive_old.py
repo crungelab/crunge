@@ -24,7 +24,7 @@ class Sees(Action):
     async def main(self, msg: Message):
         # was `while self.ok:` -- a bound method, always truthy
         while self.ok():
-            beacons = world.world_instance.query(
+            beacons = world.world_instance.proximity_query(
                 self.agent.x, self.agent.y, self.agent.sensor_range
             )
             for beacon in beacons:
@@ -48,7 +48,7 @@ class SeesFood(Neuron):
         self.rule = self.agent.subscribe(t, action)
 
     def main(self):
-        beacons = world.world_instance.query(
+        beacons = world.world_instance.proximity_query(
             self.agent.x, self.agent.y, self.agent.sensor_range
         )
         self.focus = None
@@ -123,7 +123,7 @@ class SeesBall(Neuron):
         self.focus = None
 
     def main(self):
-        beacons = world.world_instance.query(
+        beacons = world.world_instance.proximity_query(
             self.agent.x, self.agent.y, self.agent.sensor_range
         )
         self.focus = None

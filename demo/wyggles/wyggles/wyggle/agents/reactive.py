@@ -15,28 +15,17 @@ from ..agent import WyggleAgent
 from ...fruit import Fruit
 from ...ball import Ball
 
+from ...game_entity import GameEntity
+
 if TYPE_CHECKING:
-    from crunge.engine.d2.node_2d import Node2D
     from ...wyggle.wyggle import Wyggle  # ASSUMPTION: module path
-
-
-# ---------------------------------------------------------------------------
-# Host vocabulary
-# ---------------------------------------------------------------------------
-
-
-class Beacon(Protocol):
-    """What a spatial query hands back."""
-
-    node: "Node2D"
-
 
 # ---------------------------------------------------------------------------
 # Shared slots
 # ---------------------------------------------------------------------------
 
 
-class Focus[T: Node2D]:
+class Focus[T: GameEntity]:
     """A one-slot blackboard shared between a scoring neuron and the actions
     that consume its pick.
 
@@ -62,7 +51,7 @@ class Focus[T: Node2D]:
 # ---------------------------------------------------------------------------
 
 
-class SeesKind[T: Node2D](Neuron):
+class SeesKind[T: GameEntity](Neuron):
     """Scores 1 when something of `kind` is in sensor range, and parks it in
     `focus` for the actions downstream.
 
@@ -79,9 +68,9 @@ class SeesKind[T: Node2D](Neuron):
 
     def main(self) -> float:
         self.focus.clear()
-        for beacon in self.agent.scan(self.agent.sensor_range):
-            if isinstance(beacon.node, self.kind):
-                self.focus.target = beacon.node
+        for entity in self.agent.scan(self.agent.sensor_range):
+            if isinstance(entity, self.kind):
+                self.focus.target = entity
                 return 1.0
         return 0.0
 
@@ -91,7 +80,7 @@ class SeesKind[T: Node2D](Neuron):
 # ---------------------------------------------------------------------------
 
 
-class FocusedAction[T: Node2D](Action):
+class FocusedAction[T: GameEntity](Action):
     """Base for actions driven by a Focus slot.
 
     Claims the slot on entry, fails cleanly if the reading went stale between
@@ -111,12 +100,14 @@ class FocusedAction[T: Node2D](Action):
         target = self.focus.target
         if target is None:
             return None
+        if target.is_destroyed:
+            return None
         self.agent.focus = target
         self.agent.state = self.state_name
         return target
 
 
-class MoveTo(FocusedAction["Node2D"]):
+class MoveTo(FocusedAction[GameEntity]):
     state_name = "seek"
 
     async def main(self, msg: Message) -> Status:
@@ -127,7 +118,12 @@ class MoveTo(FocusedAction["Node2D"]):
         agent = self.agent
         try:
             while self.ok():
-                if agent.node.intersects(target):
+                if target.is_destroyed:
+                    return self.fail()
+                if glm.distance(agent.position, target.position) > agent.sensor_range:
+                    agent.state = ""
+                    return self.fail()
+                if agent.entity.intersects(target):
                     agent.state = ""
                     return self.succeed()
                 agent.move_to(target.position)
@@ -151,14 +147,14 @@ class Eat(FocusedAction[Fruit]):
             return self.fail()
 
         agent = self.agent
-        node = agent.node
+        entity = agent.entity
         munch_timer = 0
 
         try:
             while self.ok():
                 if target.is_munched:
-                    node.close_mouth()
-                    node.energy = node.energy + target.energy
+                    entity.close_mouth()
+                    entity.energy = entity.energy + target.energy
                     agent.reset()
                     return self.succeed()
 
@@ -166,10 +162,10 @@ class Eat(FocusedAction[Fruit]):
                     munch_timer -= 1
                 else:
                     munch_timer = self.munch_interval
-                    if node.face != "munchy":
-                        node.open_mouth()
+                    if entity.face != "munchy":
+                        entity.open_mouth()
                     else:
-                        node.close_mouth()
+                        entity.close_mouth()
                         target.receive_munch()
 
                 await self.sleep()
@@ -189,7 +185,7 @@ class Kick(FocusedAction[Ball]):
         if target is None:
             return self.fail()
 
-        target.receive_kick(self.agent.node.position, self.kick_force)
+        target.receive_kick(self.agent.entity.position, self.kick_force)
         self.agent.reset()
         return self.succeed()
 
@@ -222,8 +218,8 @@ class Wander(Action):
 
 
 class ReactiveWyggleAgent(WyggleAgent):
-    def __init__(self, model) -> None:
-        super().__init__(model)
+    def __init__(self, entity: "Wyggle") -> None:
+        super().__init__(entity)
 
         fruit: Focus[Fruit] = Focus()
         ball: Focus[Ball] = Focus()

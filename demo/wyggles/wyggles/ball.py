@@ -8,7 +8,6 @@ from crunge.engine.d2.entity import PhysicsEntity2D
 
 from .game_entity import GameEntity
 from . import world
-from .beacon import *
 from .dna import Dna
 
 
@@ -30,11 +29,10 @@ class Ball(GameEntity):
 
     def _create(self) -> None:
         super()._create()
-        self.beacon = Beacon(self, self.type)
-        world.world_instance.add_beacon(self.beacon)
+        world.world_instance.add_entity(self)
 
     def _destroy(self) -> None:
-        world.world_instance.remove_beacon(self.beacon)
+        world.world_instance.remove_entity(self)
         super()._destroy()
 
     def receive_kick(self, position: glm.vec2, strength: float = None) -> None:

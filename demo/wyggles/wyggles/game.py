@@ -114,15 +114,6 @@ class Game(App):
                 ]
                 self.display.scratch.draw_polygon(corners)
 
-        '''
-        if self.debug_bounds:
-            for entity in self.scene.fruit_layer.root.children:
-                bounds = entity.bounds
-                logger.debug(f"Entity bounds: {bounds}")
-                if bounds.is_valid():
-                    self.display.scratch.draw_rect(bounds.min, bounds.max)
-        '''
-
         super()._draw()
 
     def _draw_debug_agents(self):
