@@ -3,11 +3,13 @@ import glm
 
 from crunge import yoga
 
+from ..sdl.event_handler import EventHandler
 from ..node import Node
+from ..dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 from ..controller import Controller
 
 
-class Widget(Node["Widget"]):
+class Widget(EventHandler, Node["Widget"]):
     def __init__(self, style: yoga.Style = yoga.Style()) -> None:
         super().__init__()
         self._size = glm.ivec2(0, 0)
@@ -29,7 +31,7 @@ class Widget(Node["Widget"]):
         self.layout_dirty = True
 
     def apply_layout(self) -> None:
-        #logger.debug(f"Widget.apply_layout: {self}")
+        # logger.debug(f"Widget.apply_layout: {self}")
         if not self.layout.has_new_layout():
             return
 
@@ -40,10 +42,12 @@ class Widget(Node["Widget"]):
             child.apply_layout()
 
     def on_layout(self) -> None:
-        #logger.debug(f"Widget.on_layout: {self}")
-        self._set_size(glm.ivec2(
-            self.layout.get_computed_width(), self.layout.get_computed_height()
-        ))
+        # logger.debug(f"Widget.on_layout: {self}")
+        self._set_size(
+            glm.ivec2(
+                self.layout.get_computed_width(), self.layout.get_computed_height()
+            )
+        )
         if not self.introduced:
             self.intro()
             self.introduced = True
@@ -51,7 +55,7 @@ class Widget(Node["Widget"]):
     @property
     def style(self) -> yoga.Style:
         return self.layout.get_style()
-    
+
     @style.setter
     def style(self, value: yoga.Style) -> None:
         if not isinstance(value, yoga.Style):
@@ -63,7 +67,7 @@ class Widget(Node["Widget"]):
         return glm.ivec2(
             self.layout.get_computed_left(), self.layout.get_computed_top()
         )
-    
+
     @property
     def global_position(self) -> glm.ivec2:
         if self.parent is None:
@@ -81,12 +85,6 @@ class Widget(Node["Widget"]):
             self.layout.get_computed_width(), self.layout.get_computed_height()
         )
 
-    """
-    @property
-    def size(self) -> glm.ivec2:
-        return glm.ivec2(self._size)
-    """
-
     def _set_size(self, value: glm.ivec2) -> bool:
         changed = self._size != value
         self._size = glm.ivec2(value)
@@ -95,19 +93,6 @@ class Widget(Node["Widget"]):
             self.on_size()
 
         return changed
-
-    """
-    def _set_size(self, value: glm.ivec2) -> bool:
-        #logger.debug(f"Widget._set_size: {self}, {value}")
-        changed = self._size != value
-        self._size = value
-
-        if changed:
-            #logger.debug(f"Widget size changed: {self}, {self.size}")
-            self.on_size()
-
-        return changed
-    """
 
     @size.setter
     def size(self, value: glm.ivec2) -> None:
@@ -126,12 +111,6 @@ class Widget(Node["Widget"]):
     def width(self, value: int) -> None:
         self.size = glm.ivec2(value, self._size.y)
 
-    """
-    @width.setter
-    def width(self, value: int) -> None:
-        self.size = glm.ivec2(value, self.height)
-
-    """
     @property
     def height(self) -> int:
         return self.size.y
@@ -139,13 +118,6 @@ class Widget(Node["Widget"]):
     @height.setter
     def height(self, value: int) -> None:
         self.size = glm.ivec2(self._size.x, value)
-
-    """
-
-    @height.setter
-    def height(self, value: int) -> None:
-        self.size = glm.ivec2(self.width, value)
-    """
 
     @property
     def controller(self) -> Controller:
@@ -177,6 +149,15 @@ class Widget(Node["Widget"]):
         if self.controller is not None:
             self.controller.disable()
 
+    def dispatch(self, event) -> DispatchResult:
+        for child in reversed(self.children):
+            if child.dispatch(event) is not None:
+                return EVENT_HANDLED
+        if self.controller is not None and self.controller.dispatch(event) is not None:
+            return EVENT_HANDLED
+        return self.handle(event)
+
+    """
     def dispatch(self, event) -> bool:
         # logger.debug(f"Widget.dispatch: {self}, {self.children}, {event}")
         for child in self.children[::-1]:
@@ -185,7 +166,8 @@ class Widget(Node["Widget"]):
         if self.controller is not None:
             self.controller.dispatch(event)
         return super().dispatch(event)
-    
+    """
+
     def update(self, delta_time: float) -> None:
         # logger.debug("Widget.update")
         if self.controller is not None:
@@ -194,10 +176,10 @@ class Widget(Node["Widget"]):
             child.update(delta_time)
 
     def on_added(self) -> None:
-        #logger.debug(f"Widget.on_added: {self}")
-        #logger.debug(f"Parent: {self.parent}")
-        #logger.debug(f"Widget layout: {self.layout}")
-        #logger.debug(f"Parent layout: {self.parent.layout}")
+        # logger.debug(f"Widget.on_added: {self}")
+        # logger.debug(f"Parent: {self.parent}")
+        # logger.debug(f"Widget layout: {self.layout}")
+        # logger.debug(f"Parent layout: {self.parent.layout}")
         self.parent.layout.add_child(self.layout)
         super().on_added()
 
@@ -209,6 +191,9 @@ class Widget(Node["Widget"]):
     def hit_test(self, x: float, y: float) -> bool:
         position = self.global_position
         size = self.size
-        if position.x <= x <= position.x + size.x and position.y <= y <= position.y + size.y:
+        if (
+            position.x <= x <= position.x + size.x
+            and position.y <= y <= position.y + size.y
+        ):
             return True
         return False

@@ -7,7 +7,7 @@ from enum import Enum, auto
 
 from . import globals
 from .gfx import Gfx
-
+from .dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 class Lifetime(Enum):
     INITIAL = auto()
@@ -18,6 +18,7 @@ class Lifetime(Enum):
 
 
 class Base:
+
     def __init__(self) -> None:
         self._lifetime = Lifetime.INITIAL
         self._is_enabled = False
@@ -88,7 +89,7 @@ class Base:
             return self
         self._lifetime = Lifetime.DESTROYING
         self.disable()
-        self._destroy()             # tail-call convention, everything still alive
+        self._destroy()  # tail-call convention, everything still alive
         self.destroy_children()
         self._lifetime = Lifetime.DESTROYED
         return self
@@ -132,11 +133,16 @@ class Base:
 
     def _sync_lifetime(self, obj: "Base"):
         """Bring obj up to this node's lifetime state."""
-        logger.debug(f"Sync lifetime: {self} : {self._lifetime} -> {obj} : {obj._lifetime}")
+        logger.debug(
+            f"Sync lifetime: {self} : {self._lifetime} -> {obj} : {obj._lifetime}"
+        )
         if self.is_created:
             obj.create()
         if self._is_enabled:
             obj.enable()
+
+    def dispatch(self, event) -> DispatchResult:
+        return None
 
     @property
     def gfx(self):

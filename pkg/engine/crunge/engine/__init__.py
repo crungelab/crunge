@@ -5,7 +5,6 @@
 from .signal import Signal, Pulse
 from .colors import Color
 from .base import Base
-from .dispatcher import Dispatcher
 from .controller import Controller
 from .gfx import Gfx
 from .render_options import RenderOptions

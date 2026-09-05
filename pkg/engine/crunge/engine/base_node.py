@@ -4,11 +4,11 @@ from typing import Any, Self
 
 from loguru import logger
 
-from .dispatcher import Dispatcher
+from .base import Base
 from .chip import Chip
 
 
-class BaseNode(Dispatcher):
+class BaseNode(Base):
     """Owns a set of chips. Knows nothing about hierarchy, transforms, or
     scenes — usable on its own for an app, a widget, a pipeline stage.
 

@@ -13,6 +13,7 @@ from crunge.imgui import Key
 
 from ..math import Rect2i
 from ..widget import Overlay
+from ..dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from .vu import ImGuiVu
 from .scancode_map import scancode_map
@@ -134,7 +135,7 @@ class ImGuiOverlay(Overlay):
         self.io.add_key_event(scancode_map[event.scancode], down)
 
         if self.io.want_capture_keyboard:
-            return self.EVENT_HANDLED
+            return EVENT_HANDLED
 
     def update_modifiers(self):
         mod_state = sdl.get_mod_state()
@@ -159,7 +160,7 @@ class ImGuiOverlay(Overlay):
         self.io.add_mouse_pos_event(x, y)
         self.last_mouse = glm.vec2(x, y)
         if self.io.want_capture_mouse:
-            return self.EVENT_HANDLED
+            return EVENT_HANDLED
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         super().on_mouse_button(event)
@@ -173,13 +174,13 @@ class ImGuiOverlay(Overlay):
         if button < 3:
             self.io.add_mouse_button_event(button, event.down)
         if self.io.want_capture_mouse:
-            return self.EVENT_HANDLED
+            return EVENT_HANDLED
 
     def on_mouse_wheel(self, event: sdl.MouseWheelEvent):
         x, y = event.x, event.y
         self.io.add_mouse_wheel_event(x, y)
         if self.io.want_capture_mouse:
-            return self.EVENT_HANDLED
+            return EVENT_HANDLED
 
     def load_font(
         self,
