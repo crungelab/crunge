@@ -14,17 +14,6 @@ from loguru import logger
 
 from ..uniforms import Vec3, Mat4, CameraUniform
 
-'''
-class CameraUniform(Structure):
-    _fields_ = [
-        ("projection", Mat4),
-        ("view", Mat4),
-        ("position", Vec3),
-    ]
-
-
-assert sizeof(CameraUniform) % 16 == 0
-'''
 
 class ModelUniform(Structure):
     _fields_ = [
@@ -50,14 +39,16 @@ assert sizeof(AmbientLightUniform) % 16 == 0
 logger.debug(f"sizeof(AmbientLightUniform): {sizeof(AmbientLightUniform)}")
 assert sizeof(AmbientLightUniform) == 48
 
+
 class LightUniform(Structure):
     _fields_ = [
-        ("position", Vec3),   # 16 bytes
-        ("color", Vec3),      # 16 bytes
+        ("position", Vec3),  # 16 bytes
+        ("color", Vec3),  # 16 bytes
         ("energy", c_float),  # 4 bytes
-        ("range", c_float),   # 4 bytes
+        ("range", c_float),  # 4 bytes
         ("_pad1", c_float * 2),  # pad to 16 bytes (range + energy + 2*pad = 16)
     ]
+
 
 # Total size: 16 (position) + 16 (color) + 16 (rest) = 48 bytes, which is 3 * 16 bytes
 

@@ -157,17 +157,6 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
             return EVENT_HANDLED
         return self.handle(event)
 
-    """
-    def dispatch(self, event) -> bool:
-        # logger.debug(f"Widget.dispatch: {self}, {self.children}, {event}")
-        for child in self.children[::-1]:
-            if child.dispatch(event):
-                return True
-        if self.controller is not None:
-            self.controller.dispatch(event)
-        return super().dispatch(event)
-    """
-
     def update(self, delta_time: float) -> None:
         # logger.debug("Widget.update")
         if self.controller is not None:

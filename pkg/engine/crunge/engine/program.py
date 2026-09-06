@@ -1,14 +1,23 @@
 from typing import List
 
 from loguru import logger
-from jinja2 import Environment, BaseLoader, ChoiceLoader, PackageLoader, select_autoescape
+from jinja2 import (
+    Environment,
+    BaseLoader,
+    ChoiceLoader,
+    PackageLoader,
+    select_autoescape,
+)
 
 from crunge.engine import Base
 from crunge.engine.gfx_access import GfxAccess
 
+
 class Program(GfxAccess, Base):
     def __init__(self, template_loaders: List[BaseLoader] = []):
-        self.template_loader_stack: List[BaseLoader] = [PackageLoader("crunge.engine.resources", "shaders")]
+        self.template_loader_stack: List[BaseLoader] = [
+            PackageLoader("crunge.engine.resources", "shaders")
+        ]
         self.template_loader_stack.extend(template_loaders)
 
         self.update_template_env()
@@ -21,6 +30,5 @@ class Program(GfxAccess, Base):
         loaders = list(reversed(self.template_loader_stack))
         logger.debug(f"loaders: {loaders}")
         self.template_env = Environment(
-            loader = ChoiceLoader(loaders),
-            autoescape=select_autoescape()
+            loader=ChoiceLoader(loaders), autoescape=select_autoescape()
         )

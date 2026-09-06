@@ -15,26 +15,6 @@ from loguru import logger
 from ..uniforms import Vec2, Vec3, Vec4, Mat4, ViewportUniform, CameraUniform
 
 
-'''
-class ViewportUniform(Structure):
-    _fields_ = [
-        ("size", Vec2),
-        # ("_pad1", c_float * 4),
-    ]
-
-
-class CameraUniform(Structure):
-    _fields_ = [
-        ("projection", Mat4),
-        ("view", Mat4),
-        ("position", Vec3),
-        #("_pad1", c_float * 4),
-    ]
-'''
-
-# assert sizeof(CameraUniform) % 16 == 0
-
-
 class NodeUniform(Structure):
     _fields_ = [
         ("transform", Mat4),

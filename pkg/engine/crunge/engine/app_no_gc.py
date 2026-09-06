@@ -13,9 +13,6 @@ from .statistics import Statistics
 
 sdl.init(sdl.InitFlags.INIT_VIDEO)
 
-# Target frame period. 60 Hz.
-TARGET_FRAME_TIME = 1.0 / 60.0
-
 # Upper bound on the delta_time handed to update(). A frame that runs long
 # -- a lazy pipeline compile, a texture upload, the window being dragged --
 # would otherwise integrate as one enormous step: the camera lurches, physics
@@ -92,11 +89,10 @@ class App(Window):
                 self.frame()
                 render_s = time.perf_counter() - t0
 
-                # Frame cap
-                sleep_s = TARGET_FRAME_TIME - (time.perf_counter() - frame_start)
-                if sleep_s > 0.0:
-                    time.sleep(sleep_s)
-
+                # No sleep-based frame cap: the surface presents with Fifo, so
+                # frame() already blocks until the vblank. A second limiter on
+                # top of vsync only pushes work up against the interval
+                # boundary, where it randomly makes it or misses.
                 frame_s = time.perf_counter() - frame_start
 
                 self.frame_time = frame_s
