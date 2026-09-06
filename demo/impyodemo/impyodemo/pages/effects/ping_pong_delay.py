@@ -22,7 +22,7 @@ class PingPongDelay(Page):
         #self.server = Server(audio='jack', duplex=0).boot()
         self.server = Server(duplex=0).boot()
 
-    def do_reset(self):
+    def do_setup(self):
         s = self.server
         gui = self.gui
 

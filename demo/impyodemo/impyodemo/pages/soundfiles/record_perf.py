@@ -32,7 +32,7 @@ class RecordPerf(Page):
     with an argument to `recstart()`.
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Path of the recorded sound file.
         path = os.path.join(os.path.expanduser("~"), "Desktop", "synth.wav")
         # Record for 10 seconds a 24-bit wav file.

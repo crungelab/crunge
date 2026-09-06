@@ -4,6 +4,6 @@ from .demo import Demo
 from .scrolling_demo_controller import ScrollingDemoController
 
 class ScrollingDemo(Demo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.controller = ScrollingDemoController(self.camera)

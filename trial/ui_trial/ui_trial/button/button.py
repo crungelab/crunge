@@ -8,8 +8,8 @@ from ..trial import Trial
 
 
 class ButtonTrial(Trial):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.view.ui.add_child(
             Button(
                 "Hello, World!",

@@ -21,7 +21,7 @@ class TableStutter(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         global start, dur
         
         STUTTER = 0.025  # Delta time added each time the playback restart.

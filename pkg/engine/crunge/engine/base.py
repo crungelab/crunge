@@ -71,16 +71,16 @@ class Base:
         """Bottom-up. Children created and reachable."""
         pass
 
-    def reset(self) -> None:
+    def setup(self) -> None:
         """Reset the object to its initial state."""
-        self._reset()
-        self.reset_children()
+        self._setup()
+        self.setup_children()
 
-    def _reset(self) -> None:
+    def _setup(self) -> None:
         """Reset the object to its initial state."""
         pass
 
-    def reset_children(self) -> None:
+    def setup_children(self) -> None:
         """Containers override."""
         pass
 
@@ -132,6 +132,10 @@ class Base:
         #logger.debug(f"Readying base children of: {self}")
         """Containers override."""
         pass
+
+    def reset(self):
+        self.setup()
+        self.ready()
 
     def disable(self):
         if not self._is_enabled:

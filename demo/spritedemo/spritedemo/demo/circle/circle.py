@@ -13,8 +13,8 @@ SCALE_STEP = 0.01
 
 
 class CircleDemo(Demo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
         self.rotation = 0
         self.scale = 1.0

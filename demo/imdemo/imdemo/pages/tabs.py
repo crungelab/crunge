@@ -33,7 +33,7 @@ def tab_item(name, p_open):
         imgui.end_tab_item()
 
 class TabsPage(Page):
-    def reset(self):
+    def setup(self):
         self.tabs = [True, True]
         self.color = 1,1,1
 

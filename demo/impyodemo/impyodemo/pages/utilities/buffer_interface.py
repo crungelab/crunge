@@ -27,7 +27,7 @@ class BufferInterface(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         s = self.server
         # Get the length of an audio block.
         bs = s.getBufferSize()

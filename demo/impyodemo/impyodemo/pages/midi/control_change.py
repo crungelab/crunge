@@ -54,7 +54,7 @@ class ControlChange(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         #s.setMidiInputDevice(99)  # Open all input devices.
 
         ### Setup the MIDI controllers.

@@ -18,7 +18,7 @@ class DataSignalConversion(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # A python integer (or float).
         anumber = 100
 

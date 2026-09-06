@@ -18,7 +18,7 @@ class ParallelProc(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Drops the gain by 20 dB.
         self.server.amp = 0.1
 

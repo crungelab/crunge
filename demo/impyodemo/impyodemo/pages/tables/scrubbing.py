@@ -18,7 +18,7 @@ class Scrubbing(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # The callback given to the SndTable.view() method.
         def mouse(mpos):

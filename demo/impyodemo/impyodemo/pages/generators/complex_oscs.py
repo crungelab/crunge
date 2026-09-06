@@ -38,7 +38,7 @@ class ComplexOcs(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # Sets fundamental frequency.
         freq = 187.5

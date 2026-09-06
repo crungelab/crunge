@@ -291,10 +291,10 @@ class BaseNode(Base):
         for chip in tuple(self._chips):
             chip.enable()
 
-    def reset_children(self) -> None:
-        super().reset_children()
+    def setup_children(self) -> None:
+        super().setup_children()
         for chip in tuple(self._chips):
-            chip.reset()
+            chip.setup()
 
     def ready_children(self) -> None:
         super().ready_children()

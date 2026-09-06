@@ -24,7 +24,7 @@ class RecordTable(Page):
         #self.server = Server(audio='jack', duplex=1).boot()
         self.server = Server(duplex=1).boot()
 
-    def do_reset(self):
+    def do_setup(self):
         # Creates a two seconds stereo empty table. The "feedback" argument
         # is the amount of old data to mix with a new recording (overdub).
         self.t = t = NewTable(length=2, chnls=2, feedback=0.5)

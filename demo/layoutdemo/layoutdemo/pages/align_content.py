@@ -12,8 +12,8 @@ from ..page import Page
 
 
 class AlignContentPage(Page):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         # Create a root node
         self.root = root = yoga.Layout()
         root.set_width(200)

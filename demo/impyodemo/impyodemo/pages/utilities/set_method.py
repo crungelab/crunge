@@ -31,7 +31,7 @@ class SetMethod(Page):
         
     """
 
-    def do_reset(self):
+    def do_setup(self):
         #s = Server(duplex=0).boot()
 
         # 10 frequency modulations with random parameters.

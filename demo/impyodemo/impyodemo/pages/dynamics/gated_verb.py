@@ -13,7 +13,7 @@ class GatedVerb(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Play the drum lopp..
         sf = SfPlayer(str(self.resource_path / "snds" / "drumloop.wav"), loop=True)
 

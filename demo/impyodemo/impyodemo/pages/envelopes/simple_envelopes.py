@@ -22,7 +22,7 @@ class SimpleEnvelopes(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Infinite sustain for the global envelope.
         self.globalamp = globalamp = Fader(fadein=2, fadeout=2, dur=0)
 

@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class CollapsingHeader(Page):
-    def reset(self):
+    def setup(self):
         pass
 
     def _draw(self):
@@ -15,7 +15,7 @@ class CollapsingHeader(Page):
         super()._draw()
 
 class CollapsingHeaderClosable(Page):
-    def reset(self):
+    def setup(self):
         self.h_visible = True
 
     def _draw(self):

@@ -13,8 +13,8 @@ from ..page import Page
 
 
 class TreePage(Page):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         # Create a root node
         """
         root_style = yoga.Style()

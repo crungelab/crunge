@@ -26,8 +26,8 @@ def _mat3_translation(m: glm.mat3) -> glm.vec2:
 
 
 class AnimationPage(Page):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
         self.rotation = 0
         self.scale = 1.0

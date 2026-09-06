@@ -17,7 +17,7 @@ class EmbeddingGenerators(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Random walk over 3-note melody segments.
         self.e = Events(
             degree=EventDrunk(

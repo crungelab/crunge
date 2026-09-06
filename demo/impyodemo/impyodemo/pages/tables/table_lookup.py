@@ -18,7 +18,7 @@ class TableLookup(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         src = SfPlayer(str(self.resource_path / "snds" / "flute.aif"), loop=True)
 

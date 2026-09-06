@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class SelectablePage(Page):
-    def reset(self):
+    def setup(self):
         self.selected = [False, False]
 
     def _draw(self):

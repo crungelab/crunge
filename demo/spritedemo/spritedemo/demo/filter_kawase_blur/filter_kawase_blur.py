@@ -13,8 +13,8 @@ from ..tiled_demo import TiledDemo
 
 
 class TiledTestDemo(TiledDemo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_map()
 
     def center_camera(self):

@@ -16,7 +16,7 @@ class Flanger(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Rich frequency spectrum as stereo input source.
         #amp = Fader(fadein=0.25, mul=0.5).play()
         self.amp = amp = Fader(fadein=0.25, mul=0.5)

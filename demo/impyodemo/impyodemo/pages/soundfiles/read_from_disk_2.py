@@ -21,7 +21,7 @@ class ReadFromDisk2(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Sound bank
         folder = self.resource_path / 'snds'
         sounds = ["alum1.wav", "alum2.wav", "alum3.wav", "alum4.wav"]

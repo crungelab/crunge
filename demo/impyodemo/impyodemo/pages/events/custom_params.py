@@ -30,7 +30,7 @@ class CustomParams(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         self.e = Events(
             instr=MyInstrument,
             degree=EventSeq([5.00, 5.04, 5.07, 6.00]),

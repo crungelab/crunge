@@ -17,7 +17,7 @@ class UsingAudioObjects(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Attack - decay envelope.
         env = CosTable([(0, 0.0), (64, 1.0), (8191, 0.0)])
 

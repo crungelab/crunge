@@ -18,7 +18,7 @@ class RandomGeneratators(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Two streams of midi pitches chosen randomly in a predefined list.
         # The argument `choice` of Choice object can be a list of lists to
         # list-expansion.

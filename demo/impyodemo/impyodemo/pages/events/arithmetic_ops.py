@@ -30,7 +30,7 @@ class ArithmeticOps(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Half-semitone scale (the octave is divided in 24 equally-spaced steps).
         # The integer (a semitone in midi note) is divided by 2, which mean that
         # there are two values inside a single integer.

@@ -26,7 +26,7 @@ class FuzzDisto(Page):
         #self.server = Server(audio='jack', duplex=0).boot()
         self.server = Server(duplex=0).boot()
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # The audio source (try with your own sounds).
         SOURCE = str(self.resource_path / "snds" / "flute.aif")

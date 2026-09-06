@@ -7,7 +7,8 @@ class Page(demo.Page):
         self.dragged = None
         self.graph = Graph()
     
-    def reset(self):
+    def setup(self):
+        super().setup()
         self.graph.reset()
     
     def start_dnd(self, dragged):

@@ -80,8 +80,8 @@ class Demo(engine.App):
         self.pop_controller()
         return avatar
     
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_scene()
         self.create_display()
         self.center_camera()

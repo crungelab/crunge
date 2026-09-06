@@ -20,7 +20,7 @@ class HandlingChannels2(Page):
         #self.server = Server(audio='jack', nchnls=8).boot()
         self.server = Server(nchnls=8).boot()
 
-    def do_reset(self):
+    def do_setup(self):
         # Generates a sine wave
         a = Sine(freq=500, mul=0.3)
 

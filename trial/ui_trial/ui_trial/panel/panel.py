@@ -9,8 +9,8 @@ from ..trial import Trial
 
 
 class PanelTrial(Trial):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         panel = Panel(style=StyleBuilder().size(400, 300).build())
 
         self.view.ui.add_child(panel)

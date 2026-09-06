@@ -49,7 +49,8 @@ class Game(App):
         self.add_overlay(self.debug_layer)
     """
 
-    def reset(self):
+    def setup(self):
+        super().setup()
         self.scene = GameScene("default")
         self.create_view()
 

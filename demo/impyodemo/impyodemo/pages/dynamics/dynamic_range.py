@@ -31,7 +31,7 @@ class DynamicRange(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # The original source.
         src = SfPlayer(str(self.resource_path / "snds" / "drumloop.wav"), loop=True)
 

@@ -12,7 +12,7 @@ class NoteinObject(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         #s.boot()
 
         # Default arguments of the Notein object.

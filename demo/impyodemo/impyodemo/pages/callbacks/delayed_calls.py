@@ -13,7 +13,7 @@ class DelayedCalls(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # A four-streams oscillator to produce a chord.
         self.amp = amp = Fader(fadein=0.005, fadeout=0.05, mul=0.2)
         osc = SineLoop(freq=[0, 0, 0, 0], feedback=0.05, mul=amp)

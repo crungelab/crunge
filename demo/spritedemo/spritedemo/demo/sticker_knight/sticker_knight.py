@@ -11,8 +11,8 @@ from ..tiled_demo import TiledDemo
 
 
 class StickerKnightDemo(TiledDemo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_map()
 
     def create_display(self):

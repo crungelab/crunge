@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Checkbox(Page):
-    def reset(self):
+    def setup(self):
         self.checkbox1_enabled = True
         self.checkbox2_enabled = False
 
@@ -24,7 +24,7 @@ class Checkbox(Page):
         super()._draw()
 
 class CheckboxFlags(Page):
-    def reset(self):
+    def setup(self):
         #self.flags = imgui.WINDOW_FLAGS_NO_RESIZE | imgui.WINDOW_FLAGS_NO_MOVE
         self.flags = imgui.WindowFlags.NO_RESIZE | imgui.WindowFlags.NO_MOVE
 

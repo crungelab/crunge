@@ -8,7 +8,7 @@ from ..page import Page
 
 
 class TextBlobPage(Page):
-    def reset(self):
+    def setup(self):
         self.font = skia.Font()
         self.font.set_size(36)
 

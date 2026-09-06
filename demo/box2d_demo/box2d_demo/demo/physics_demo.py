@@ -22,8 +22,8 @@ class PhysicsDemo(ScrollingDemo):
         self.world = PhysicsWorld2D()
         self.world.make_current()
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
         self.debug_draw_enabled = False
 

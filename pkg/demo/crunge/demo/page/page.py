@@ -15,8 +15,8 @@ class Page(Screen):
         page = cls(name, title).config(window=app).create()
         return page
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         gui = self.gui  # initialize the GUI overlay
         io = imgui.get_io()
         io.config_flags |= imgui.ConfigFlags.DOCKING_ENABLE

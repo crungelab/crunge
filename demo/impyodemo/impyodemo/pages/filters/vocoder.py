@@ -22,7 +22,7 @@ class VocoderPage(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # First sound - dynamic spectrum.
         spktrm = SfPlayer(str(self.resource_path / "snds" / "baseballmajeur_m.aif"), speed=[1, 1.001], loop=True)
 

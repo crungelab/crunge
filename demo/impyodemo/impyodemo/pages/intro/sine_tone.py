@@ -10,7 +10,7 @@ class SineTone(Page):
     This script simply plays a 1000 Hz sine tone.
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Drops the gain by 20 dB.
         self.server.amp = 0.1
 

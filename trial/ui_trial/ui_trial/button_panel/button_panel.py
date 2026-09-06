@@ -11,8 +11,8 @@ from ..trial import Trial
 
 
 class ButtonPanelTrial(Trial):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
         panel = Panel(style=StyleBuilder()
             .size(400, 300)

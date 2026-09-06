@@ -43,7 +43,7 @@ def draw_utf8_string(canvas, text, x, y, font, paint):
     canvas.draw_text_blob(blob, x, y, paint)
 
 class BlendModePage(Page):
-    def reset(self):
+    def setup(self):
         self.font = skia.Font()
         self.font.set_size(24)
 

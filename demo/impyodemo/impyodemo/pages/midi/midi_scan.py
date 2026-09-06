@@ -36,7 +36,7 @@ class MidiScan(Page):
         s.setMidiInputDevice(1)
         s.boot()
 
-    def do_reset(self):
+    def do_setup(self):
         # Print the list of available MIDI devices to the console.
         pm_list_devices()
 

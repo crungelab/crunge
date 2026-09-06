@@ -62,7 +62,7 @@ class App(Window):
     def run(self):
         self.make_current() # TODO: This should be in _enable() or similar, not run()
         self.enable()
-        self.reset()
+        self.setup()
 
         self.running = True
 

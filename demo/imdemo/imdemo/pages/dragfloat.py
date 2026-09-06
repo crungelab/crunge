@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class DragFloat(Page):
-    def reset(self):
+    def setup(self):
         self.value = 42.0
 
     def _draw(self):
@@ -22,7 +22,7 @@ class DragFloat(Page):
 
 
 class DragFloat2(Page):
-    def reset(self):
+    def setup(self):
         self.values = 88.0, 42.0
 
     def _draw(self):
@@ -37,7 +37,7 @@ class DragFloat2(Page):
 
 
 class DragFloat3(Page):
-    def reset(self):
+    def setup(self):
         self.values = 88.0, 42.0, 69.0
 
     def _draw(self):
@@ -52,7 +52,7 @@ class DragFloat3(Page):
 
 
 class DragFloat4(Page):
-    def reset(self):
+    def setup(self):
         self.values = 88.0, 42.0, 69.0, 0.0
 
     def _draw(self):

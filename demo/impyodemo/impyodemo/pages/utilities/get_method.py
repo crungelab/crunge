@@ -29,7 +29,7 @@ class GetMethod(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         #s = Server(duplex=0).boot()
 
         t = CurveTable([(0, 0), (2048, 0.5), (4096, 0.2), (6144, 0.5), (8192, 0)], tension=0, bias=20).normalize()

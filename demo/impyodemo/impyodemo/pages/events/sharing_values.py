@@ -24,7 +24,7 @@ class SharingValues(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         scl = EventScale(root="C", scale="major", first=4, octaves=3)
 
         self.e = Events(

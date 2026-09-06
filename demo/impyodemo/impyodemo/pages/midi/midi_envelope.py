@@ -20,7 +20,7 @@ class MidiEnvelope(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         #s.setMidiInputDevice(99)  # Open all input devices.
 
         # Automatically converts MIDI pitches to frequencies in Hz.

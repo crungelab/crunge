@@ -112,7 +112,7 @@ class Parameters(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         ### Envelope
 
         # Using a PyoTableObject to define the envelope.

@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Button(Page):
-    def reset(self):
+    def setup(self):
         self.message = ""
 
     def _draw(self):
@@ -20,7 +20,7 @@ class Button(Page):
 
 
 class ColorButton(Page):
-    def reset(self):
+    def setup(self):
         self.color = colors.BLACK
         self.color_name = ""
 
@@ -45,7 +45,7 @@ class ColorButton(Page):
 
 
 class RadioButtonPage(Page):
-    def reset(self):
+    def setup(self):
         self.radio_active = False
 
     def _draw(self):

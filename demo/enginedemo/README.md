@@ -10,4 +10,5 @@ python -m enginedemo.light_ambient_diffuse
 python -m enginedemo.filter_kawase
 python -m enginedemo.filter_kawase_8
 python -m enginedemo.split_screen
+python -m enginedemo.particles_2d_compute
 ```

@@ -26,7 +26,7 @@ class Randoms(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         scl = [5.00, 5.02, 5.03, 5.05, 5.07, 5.08, 5.10, 6.00, 6.02, 6.03, 6.05, 6.07]
 
         # Random walk for the melody.

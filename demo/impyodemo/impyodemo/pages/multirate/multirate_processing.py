@@ -105,7 +105,7 @@ class MultirateProcessing(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         gui.clear()
         # Two different sources for testing, a sine wave and a flute melody.

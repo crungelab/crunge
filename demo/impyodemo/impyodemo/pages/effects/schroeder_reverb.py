@@ -33,7 +33,7 @@ class SchroederReverb(Page):
         #self.server = Server(audio='jack', duplex=0).boot()
         self.server = Server(duplex=0).boot()
 
-    def do_reset(self):
+    def do_setup(self):
 
         soundfile = SndTable(str(self.resource_path / "snds" / "transparent.aif"))
 

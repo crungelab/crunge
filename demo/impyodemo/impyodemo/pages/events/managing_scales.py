@@ -30,7 +30,7 @@ class ManagingScales(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # With type=2, the scale use octave.degree notation.
         scl = EventScale(root="C", scale="major", first=4, octaves=2, type=2)
 

@@ -15,7 +15,7 @@ class RmsTracing(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         MINFREQ = 250
         MAXFREQ = 5000
 

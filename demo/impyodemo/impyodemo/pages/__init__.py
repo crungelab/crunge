@@ -24,14 +24,15 @@ class Page(demo.Page):
     def resource_path(self):
         return self.window.resource_path
 
-    def reset(self):
+    def setup(self):
+        super().setup()
         if self.server:
             self.server.shutdown()
         self.create_server()
         self.gui.clear()
-        self.do_reset()
+        self.do_setup()
 
-    def do_reset(self):
+    def do_setup(self):
         pass
 
     def start(self):

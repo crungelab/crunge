@@ -93,7 +93,7 @@ class MultirateSynthesis(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         gui.clear()
         # Control for the modulation index parameter of the synthesis.

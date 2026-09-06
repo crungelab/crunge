@@ -8,7 +8,8 @@ from crunge.demo import Page, PageChannel
 
 
 class BarPlotPage(Page):
-    def reset(self):
+    def setup(self):
+        super().setup()
         self.a = np.random.rand(10)
         self.b = np.random.rand(10)
 
@@ -24,7 +25,8 @@ class BarPlotPage(Page):
         super()._draw()
 
 class BarPlotH(Page):
-    def reset(self):
+    def setup(self):
+        super().setup()
         self.a = np.random.rand(10)
         self.b = np.random.rand(10)
 

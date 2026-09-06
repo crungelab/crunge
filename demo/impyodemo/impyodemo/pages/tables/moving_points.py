@@ -15,7 +15,7 @@ class MovingPoints(Page):
     
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # Initialize an empty table.
         table = LinTable([(0, 0), (255, 0)], size=256)

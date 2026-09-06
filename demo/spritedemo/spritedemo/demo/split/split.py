@@ -21,8 +21,8 @@ class SplitDemo(Demo):
         logger.debug("Creating screen")
         self.display = SplitScreen(self.scene)
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
         self.rotation = 0
         self.scale = 1.0

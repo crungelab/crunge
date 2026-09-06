@@ -33,8 +33,8 @@ class InstancingDemo(Demo):
         texture = SpriteTextureLoader().load("${images}/playerShip1_orange.png")
         self.sprite = Sprite(texture, color=self.color)
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
         self.nodes.clear()
         self.color = colors.WHITE

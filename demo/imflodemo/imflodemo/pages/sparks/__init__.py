@@ -21,8 +21,8 @@ class SparksPage(Page):
         self.graph.connect(sine_node.get_pin('output'), scope_node.get_pin('input'))
         self.graph.connect(sine_node.get_pin('output'), spark_node.get_pin('input'))
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
     def on_show(self):
         arcade.set_background_color(arcade.color.BLACK)

@@ -16,8 +16,8 @@ class SkateboarderDemo(PhysicsDemo):
         super().create_display()
         self.camera.zoom = 2.0
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.last_mouse = glm.vec2()
         self.create_map()
 
@@ -47,7 +47,6 @@ class SkateboarderDemo(PhysicsDemo):
 
         if imgui.button("Reset"):
             self.reset()
-            self.ready()
 
         imgui.end()
 

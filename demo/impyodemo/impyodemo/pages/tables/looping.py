@@ -28,7 +28,7 @@ class Looping(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         table = SndTable(str(self.resource_path / "snds" / "baseballmajeur_m.aif"))
         gui.view(table)

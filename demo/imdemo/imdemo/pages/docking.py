@@ -5,7 +5,7 @@ from crunge.demo import Page, PageChannel
 
 class DockingPage(Page):
     '''
-    def reset(self):
+    def setup(self):
         io = imgui.get_io()
         io.config_flags |= imgui.ConfigFlags.DOCKING_ENABLE
     '''

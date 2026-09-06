@@ -28,7 +28,7 @@ class PeriodicCalls(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # A small instrument to play the events emitted by the function call.
         amp = Fader(fadein=0.005, fadeout=0.05, mul=0.15)
         self.osc = osc = RCOsc(freq=[100, 100], mul=amp)

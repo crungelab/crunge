@@ -25,7 +25,7 @@ class NoiseGenerators(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # White noise
         n1 = Noise(0.3)

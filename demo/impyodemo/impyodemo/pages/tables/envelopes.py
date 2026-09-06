@@ -33,7 +33,7 @@ class Envelopes(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # Defines tables for the amplitude, the ratio and the modulation index.
         amp_table = CosTable([(0, 0), (100, 1), (1024, 0.5), (7000, 0.5), (8192, 0)])

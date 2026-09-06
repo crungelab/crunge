@@ -25,7 +25,7 @@ class BreakpointsFunctions(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Randomly built 10-points amplitude envelope.
         t = 0
         points = [(0.0, 0.0), (2.0, 0.0)]

@@ -14,8 +14,8 @@ from crunge.engine import colors
 
 
 class BackgroundDemo(Demo):        
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         
         self.scale = 1.0
         self.color = colors.WHITE

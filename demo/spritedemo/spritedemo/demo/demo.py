@@ -46,8 +46,8 @@ class Demo(engine.App):
     def camera(self) -> Camera2D:
         return self.view.camera
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_scene()
         self.create_display()
         self.center_camera()

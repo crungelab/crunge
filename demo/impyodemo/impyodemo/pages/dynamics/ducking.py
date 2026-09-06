@@ -17,7 +17,7 @@ class Ducking(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Alternate voice and silence.
         table = SndTable(str(self.resource_path / "snds" / "transparent.aif"))
         metro = SDelay(Metro(3).play(), 1)

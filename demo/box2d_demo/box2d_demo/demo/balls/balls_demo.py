@@ -13,8 +13,8 @@ from ...objects.floor import Floor
 
 
 class BallsDemo(PhysicsDemo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.last_mouse = glm.vec2()
         self.create_floor()
 

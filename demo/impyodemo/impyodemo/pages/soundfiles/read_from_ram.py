@@ -18,7 +18,7 @@ class ReadFromRam(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         path = str(self.resource_path / 'snds' / "transparent.aif")
 
         # Loads the sound file in RAM. Beginning and ending points

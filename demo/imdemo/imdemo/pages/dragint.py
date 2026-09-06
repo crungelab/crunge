@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class DragInt(Page):
-    def reset(self):
+    def setup(self):
         self.value = 42
 
     def _draw(self):
@@ -15,7 +15,7 @@ class DragInt(Page):
         super()._draw()
 
 class DragInt2(Page):
-    def reset(self):
+    def setup(self):
         self.values = 88, 42
 
     def _draw(self):
@@ -28,7 +28,7 @@ class DragInt2(Page):
         super()._draw()
 
 class DragInt3(Page):
-    def reset(self):
+    def setup(self):
         self.values = 88, 42, 69
 
     def _draw(self):
@@ -41,7 +41,7 @@ class DragInt3(Page):
         super()._draw()
 
 class DragInt4(Page):
-    def reset(self):
+    def setup(self):
         self.values = 88, 42, 69, 0
 
     def _draw(self):

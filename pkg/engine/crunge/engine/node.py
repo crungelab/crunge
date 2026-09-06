@@ -109,10 +109,10 @@ class Node(BaseNode, Generic[T_Node]):
         for child in list(self.children):
             child.ready()
 
-    def reset_children(self) -> None:
-        super().reset_children()  # chips reset
+    def setup_children(self) -> None:
+        super().setup_children()  # chips reset
         for child in list(self.children):
-            child.reset()
+            child.setup()
 
     def _disable(self) -> None:
         for child in list(self.children):

@@ -26,7 +26,7 @@ class MidiOut(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         pm_list_devices()
 
         # Open all MIDI output devices.

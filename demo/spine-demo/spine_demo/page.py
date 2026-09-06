@@ -36,8 +36,8 @@ class Page(SceneScreen2D):
     def ppu(self) -> float:
         return self.camera.ppu
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.center_camera()
 
     def center_camera(self):

@@ -85,7 +85,7 @@ class Frame(Widget):
         if display.parent is not self:
             self.add_child(display)
         display.enable()
-        display.reset()
+        display.setup()
 
     def on_display(self):
         pass

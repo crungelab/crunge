@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Combo(Page):
-    def reset(self):
+    def setup(self):
         self.options = ["first", "second", "third"]
         self.current = 2
 

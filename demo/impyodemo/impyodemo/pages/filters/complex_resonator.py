@@ -16,7 +16,7 @@ class ComplexResonator(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Six random frequencies.
         freqs = [random.uniform(1000, 3000) for i in range(6)]
 

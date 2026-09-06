@@ -43,7 +43,7 @@ class ConvolutionFilters(Page):
         #self.server = Server(audio='jack', duplex=1).boot()
         self.server = Server(duplex=1).boot()
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # Length of the impulse response in samples.
         TLEN = 512

@@ -14,7 +14,7 @@ class BandpassFilters(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # White noise generator
         n = Noise(0.5)

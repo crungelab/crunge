@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class FloatSliderPage(Page):
-    def reset(self):
+    def setup(self):
         self.value = 88
 
     def _draw(self):
@@ -23,7 +23,7 @@ class FloatSliderPage(Page):
         super()._draw()
 
 class IntSliderPage(Page):
-    def reset(self):
+    def setup(self):
         self.value = 88
 
     def _draw(self):

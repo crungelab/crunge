@@ -13,7 +13,7 @@ class MidifileWithMido(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # A little audio synth to play the MIDI events.
         mid = Notein()
         amp = MidiAdsr(mid["velocity"])

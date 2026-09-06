@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class FontPage(Page):
-    def reset(self):
+    def setup(self):
         io = imgui.get_io()
         font_path = self.window.resource_root / "DroidSans.ttf"
         self.font = io.fonts.add_font_from_file_ttf(str(font_path), 20.0)

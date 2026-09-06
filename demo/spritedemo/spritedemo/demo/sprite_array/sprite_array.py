@@ -17,8 +17,8 @@ class SpriteArrayDemo(Demo):
     def __init__(self):
         super().__init__()
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
 
         self.rotation = 0
         self.scale = 1.0

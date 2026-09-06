@@ -29,7 +29,7 @@ class ColoredTextPage(Page):
         super()._draw()
 
 class UnformattedTextPage(Page):
-    def reset(self):
+    def setup(self):
         self.text = '''
             Really ... 
             long ... 

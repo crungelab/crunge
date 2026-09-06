@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class TextInputPage(Page):
-    def reset(self):
+    def setup(self):
         self.text_val = 'Type your message here.'
 
     def _draw(self):
@@ -21,7 +21,7 @@ class TextInputPage(Page):
         super()._draw()
 
 class MultiTextInputPage(Page):
-    def reset(self):
+    def setup(self):
         self.text_val = 'Type your message here.'
 
     def _draw(self):

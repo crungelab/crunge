@@ -23,7 +23,7 @@ class Phasing(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Simple fadein.
         self.fade = fade = Fader(fadein=0.5, mul=0.2)
 

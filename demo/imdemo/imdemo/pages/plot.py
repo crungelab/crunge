@@ -8,7 +8,7 @@ from crunge.demo import Page, PageChannel
 
 
 class PlotHistogramPage(Page):
-    def reset(self):
+    def setup(self):
         self.values = array('f', [random() for _ in range(20)])
 
     def _draw(self):
@@ -18,7 +18,7 @@ class PlotHistogramPage(Page):
         super()._draw()
 
 class PlotLinesPage(Page):
-    def reset(self):
+    def setup(self):
         self.values = array('f', [sin(x * 0.1) for x in range(100)])
 
     def _draw(self):

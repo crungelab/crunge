@@ -21,7 +21,7 @@ class FunctionCalls(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         self.db = -30
         self.dir = 1
 

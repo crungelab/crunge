@@ -21,7 +21,7 @@ class ReadFromDisk(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         path = str(self.resource_path / 'snds' / "transparent.aif")
         print(path)
 

@@ -25,7 +25,7 @@ class HandMadeHarmonizer(Page):
         #self.server = Server(audio='jack', duplex=0).boot()
         self.server = Server(duplex=0).boot()
 
-    def do_reset(self):
+    def do_setup(self):
         # Play a melodic sound and send its signal to the left speaker.
         self.sf = sf = SfPlayer(str(self.resource_path / "snds" / "flute.aif"), speed=1, loop=True, mul=0.5)
 

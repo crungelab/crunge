@@ -27,7 +27,7 @@ class OutputRange(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # The `mul` attribute multiplies each sample by its value.
         self.a = a = Sine(freq=100, mul=0.1)
 

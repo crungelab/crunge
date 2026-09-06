@@ -6,7 +6,7 @@ from crunge.demo import Page, PageChannel
 OPTIONS = ["first", "second", "third"]
 
 class ListboxPage(Page):
-    def reset(self):
+    def setup(self):
         self.options = OPTIONS
         self.current = 2
 
@@ -23,7 +23,7 @@ class ListboxPage(Page):
         super()._draw()
 
 class CustomListboxPage(Page):
-    def reset(self):
+    def setup(self):
         self.selected = 'second'
 
     def _draw(self):

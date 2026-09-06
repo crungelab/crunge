@@ -20,7 +20,7 @@ class BuildingLfo(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Creates a noise source
         n = Noise()
 

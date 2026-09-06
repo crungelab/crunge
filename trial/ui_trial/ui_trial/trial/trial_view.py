@@ -1,6 +1,6 @@
 from loguru import logger
 
-from crunge.engine.imgui import ImGuiView
+from crunge.engine.imgui.view import ImGuiView
 
 from .trial_overlay import TrialOverlay
 

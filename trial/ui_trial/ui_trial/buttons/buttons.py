@@ -11,8 +11,8 @@ from ..trial import Trial
 
 
 class ButtonsTrial(Trial):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         panel = Panel(style=StyleBuilder().size(400, 300).build())
 
         button_style = StyleBuilder().height(50).margin(yoga.Edge.ALL, 5).build()

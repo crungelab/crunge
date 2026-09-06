@@ -61,7 +61,6 @@ class App(Window):
         self.make_current()  # TODO: This should be in _enable() or similar, not run()
         self.enable()
         self.reset()
-        self.ready()
 
         self.running = True
         last_frame_start = time.perf_counter()

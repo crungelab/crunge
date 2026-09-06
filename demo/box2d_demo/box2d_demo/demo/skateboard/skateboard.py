@@ -14,8 +14,8 @@ from ...character import Skateboard
 
 
 class SkateboardDemo(PhysicsDemo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_floor()
         self.create_avatar()
 

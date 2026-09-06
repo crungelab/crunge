@@ -44,7 +44,7 @@ class Instruments(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # We tell the Events object which instrument to use with the 'instr' argument.
         self.e = Events(
             instr=MyInstrument,

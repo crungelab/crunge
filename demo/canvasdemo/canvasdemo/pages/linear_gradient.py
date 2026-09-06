@@ -10,8 +10,8 @@ from ..page import Page
 
 
 class LinearGradientPage(Page):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.color_1 = colors.BLUE
         self.color_2 = colors.YELLOW
 

@@ -14,8 +14,8 @@ from .box import Box
 
 
 class BoxesDemo(PhysicsDemo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_floor()
 
     # ------------------------------------------------------------------

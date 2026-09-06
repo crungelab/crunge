@@ -22,7 +22,7 @@ class FmGenerators(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # FM implements the basic Chowning algorithm
         fm1 = FM(carrier=250, ratio=[1.5, 1.49], index=10, mul=0.3)

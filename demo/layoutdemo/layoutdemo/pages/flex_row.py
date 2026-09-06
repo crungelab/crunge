@@ -12,8 +12,8 @@ from ..page import Page
 
 
 class FlexRowPage(Page):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.text_paint = text_paint = skia.Paint()
         text_paint.set_color(0xFFFF00FF)
         self.font = font = skia.Font()

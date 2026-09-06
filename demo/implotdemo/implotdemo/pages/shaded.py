@@ -7,7 +7,8 @@ from crunge.engine import Renderer, App
 from crunge.demo import Page, PageChannel
 
 class ShadedPlotPage(Page):
-    def reset(self):
+    def setup(self):
+        super().setup()
         self.a = np.random.rand(10)
         self.b = np.random.rand(10)
 
@@ -22,5 +23,5 @@ class ShadedPlotPage(Page):
         imgui.end()
         super()._draw()
 
-def install(app):
+def install(app: App):
     app.add_channel(PageChannel(ShadedPlotPage, "shaded", "Shaded Plot"))

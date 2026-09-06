@@ -20,7 +20,7 @@ class RecordStreams(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Creates an amplitude envelope
         self.amp = amp = Fader(fadein=1, fadeout=1, dur=10, mul=0.3)
 

@@ -26,7 +26,7 @@ class Granulation(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         snd = SndTable(str(self.resource_path / "snds" / "baseballmajeur_m.aif"))
         gui.view(snd)

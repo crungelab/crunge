@@ -8,7 +8,7 @@ from ..page import Page
 
 
 class DropShadowPage(Page):
-    def reset(self):
+    def setup(self):
         self.font = skia.Font()
         self.font.set_size(120)
         # self.font.set_typeface(skia.Typeface('Arial'))

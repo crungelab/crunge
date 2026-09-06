@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class Input(Page):
-    def reset(self):
+    def setup(self):
         self.test_input = 0
 
     def _draw(self):
@@ -20,7 +20,7 @@ class Input(Page):
 
 
 class InputDouble(Page):
-    def reset(self):
+    def setup(self):
         self.double_val = 3.14159265358979323846
 
     def _draw(self):
@@ -37,7 +37,7 @@ class InputDouble(Page):
 
 
 class InputFloat(Page):
-    def reset(self):
+    def setup(self):
         self.float_val = 0.4
 
     def _draw(self):

@@ -15,8 +15,8 @@ from .thing import Thing
 
 
 class ThingsDemo(PhysicsDemo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.last_mouse = glm.vec2()
         self.create_floor()
 

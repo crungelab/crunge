@@ -36,7 +36,7 @@ class HilbertTransform(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Large spectrum source.
         src = PinkNoise(0.2)
 

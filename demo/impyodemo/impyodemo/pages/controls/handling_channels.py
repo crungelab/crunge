@@ -25,7 +25,7 @@ class HandlingChannels(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Sets fundamental frequency and highest harmonic.
         freq = 100
         high = 20

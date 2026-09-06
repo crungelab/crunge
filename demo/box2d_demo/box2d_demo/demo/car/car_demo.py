@@ -15,8 +15,8 @@ from ..physics_demo import PhysicsDemo
 
 
 class CarDemo(PhysicsDemo):
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_floor()
         self.create_avatar(glm.vec2(3, 3))
 

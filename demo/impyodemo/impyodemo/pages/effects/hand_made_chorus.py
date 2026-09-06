@@ -30,7 +30,7 @@ class HandMadeChorus(Page):
         #self.server = Server(audio='jack', duplex=0).boot()
         self.server = Server(duplex=0).boot()
 
-    def do_reset(self):
+    def do_setup(self):
         # Start a source sound.
         sf = SfPlayer(str(self.resource_path / "snds" / "baseballmajeur_m.aif"), speed=1, loop=True, mul=0.3)
         # Mix the source in stereo and send the signal to the output.

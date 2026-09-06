@@ -44,7 +44,7 @@ class Filters(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         scl = EventScale(root="C", scale="wholeTone", first=4, octaves=3)
 
         # Takes a Weibull distribution, scales the values between 48 and 84, rounds

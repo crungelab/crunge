@@ -4,7 +4,7 @@ from crunge.demo import Page, PageChannel
 
 
 class ColorEdit3(Page):
-    def reset(self):
+    def setup(self):
         self.color_1 = 1., .0, .5
         self.color_2 = 0., .8, .3
 
@@ -21,7 +21,7 @@ class ColorEdit3(Page):
         super()._draw()
 
 class ColorEdit4(Page):
-    def reset(self):
+    def setup(self):
         self.color = 1., .0, .5, 1.
 
     def _draw(self):

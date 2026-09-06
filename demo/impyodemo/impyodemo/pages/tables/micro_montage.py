@@ -26,7 +26,7 @@ class MicroMontage(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         # Path and duration of the choosen soundfile.
         path = str(self.resource_path / "snds" / "baseballmajeur_m.aif")
         snddur = sndinfo(path)[1]

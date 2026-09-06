@@ -9,7 +9,7 @@ from ..page import Page
 
 
 class TurbulentPerlinNoisePage(Page):
-    def reset(self):
+    def setup(self):
         self.base_frequency_x = 0.05
         self.base_frequency_y = 0.05
         self.num_octaves = 4

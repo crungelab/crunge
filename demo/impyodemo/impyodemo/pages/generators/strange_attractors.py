@@ -31,7 +31,7 @@ class StrangeAttractors(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         ### Oscilloscope ###
 

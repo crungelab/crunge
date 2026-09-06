@@ -116,7 +116,7 @@ class ParticlesDemo(Demo):
         self.create_buffers()
         self.create_pipeline()
 
-    def reset(self):
+    def setup(self):
         self.create_particles()
         self.create_buffers()
         self.create_pipeline()

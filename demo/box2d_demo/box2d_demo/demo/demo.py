@@ -75,8 +75,8 @@ class Demo(engine.App):
 
         Scheduler().schedule_once(callback, 0)
 
-    def reset(self):
-        super().reset()
+    def setup(self):
+        super().setup()
         self.create_scene()
         self.create_display()
         self.center_camera()
@@ -109,9 +109,9 @@ class Demo(engine.App):
         if super().dispatch(event):
             return EVENT_HANDLED
         avatar = self.avatar
-        logger.debug(f"Dispatching event to avatar: {avatar}")
+        #logger.debug(f"Dispatching event to avatar: {avatar}")
         result = bool(avatar and avatar.controller and avatar.controller.dispatch(event))
-        logger.debug(f"Event dispatch result: {result}")
+        #logger.debug(f"Event dispatch result: {result}")
         return result
 
     def on_key(self, event: sdl.KeyboardEvent):

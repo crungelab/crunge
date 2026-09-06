@@ -34,7 +34,7 @@ class PostProcessing(Page):
     """
 
 
-    def do_reset(self):
+    def do_setup(self):
         # Some notes...
         scl = EventScale("C", "aeolian", 3, 3, type=2)
 

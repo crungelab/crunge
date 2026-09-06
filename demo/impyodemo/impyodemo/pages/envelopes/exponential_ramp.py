@@ -15,7 +15,7 @@ class ExponentialRamp(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         gui = self.gui
         # 2 seconds linear ramp starting at 0.0 and ending at 0.3.
         amp = SigTo(value=0.3, time=2.0, init=0.0)

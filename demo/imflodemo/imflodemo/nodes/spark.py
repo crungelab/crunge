@@ -45,7 +45,8 @@ class SparkNode(Node):
         self.change = 0
         self.input = Input(self, "input", self.process)
 
-    def reset(self):
+    def setup(self):
+        super().setup()
         self.create_emitter()
 
     def create_emitter(self):

@@ -17,7 +17,7 @@ class ListToAudioFile(Page):
 
     """
 
-    def do_reset(self):
+    def do_setup(self):
         pass
 
     def do_start(self):
