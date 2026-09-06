@@ -12,7 +12,8 @@ from ctypes import (
 
 import glm
 
-from ..types import Tuple4f
+from .types import Tuple4f
+
 
 class Vec2(Structure):
     _fields_ = [
@@ -74,6 +75,7 @@ assert sizeof(Mat4) == 64
 def cast_vec2(vec: glm.vec2):
     return Vec2(vec.x, vec.y)
 
+
 def cast_vec3(vec: glm.vec3):
     return Vec3(vec.x, vec.y, vec.z, 0.0)
 
@@ -81,8 +83,10 @@ def cast_vec3(vec: glm.vec3):
 def cast_vec4(vec: glm.vec4):
     return Vec4(vec.x, vec.y, vec.z, vec.w)
 
+
 def cast_tuple4f(tuple: Tuple4f):
     return Vec4(*tuple)
+
 
 def cast_matrix4(matrix: glm.mat4):
     ptr = glm.value_ptr(matrix)
@@ -93,4 +97,26 @@ def cast_matrix3(matrix: glm.mat3):
     ptr = glm.value_ptr(matrix)
     return cast(ptr, POINTER(c_float * 9)).contents
 
-from .viewport import ViewportUniform
+
+class ViewportUniform(Structure):
+    _fields_ = [
+        ("size", Vec2),
+        # ("_pad1", c_float * 4),
+    ]
+
+
+#assert sizeof(ViewportUniform) % 16 == 0
+#assert sizeof(ViewportUniform) == 16
+
+
+class CameraUniform(Structure):
+    _fields_ = [
+        ("projection", Mat4),
+        ("view", Mat4),
+        ("position", Vec3),
+        # ("_pad1", c_float * 4),
+    ]
+
+
+#assert sizeof(CameraUniform) % 16 == 0
+#assert sizeof(CameraUniform) == 64

@@ -12,8 +12,9 @@ from ctypes import (
 
 from loguru import logger
 
-from ..uniforms import Vec3, Mat4
+from ..uniforms import Vec3, Mat4, CameraUniform
 
+'''
 class CameraUniform(Structure):
     _fields_ = [
         ("projection", Mat4),
@@ -23,7 +24,7 @@ class CameraUniform(Structure):
 
 
 assert sizeof(CameraUniform) % 16 == 0
-
+'''
 
 class ModelUniform(Structure):
     _fields_ = [

@@ -10,11 +10,14 @@ from crunge import wgpu
 
 from ..viewport import Viewport
 from ..easel import Easel
-#from ..binding import SceneBindGroup
+from ..uniforms import cast_vec3, cast_matrix4
+from ..binding import SceneBindGroup
 from ..signal import Pulse
-from ..camera_chip import CameraChip
+from ..chip import Chip
+from ..gfx_access import GfxAccess
 
 from .node_3d import Node3D
+from .uniforms_3d import CameraUniform
 from .program_3d import Program3D
 
 
@@ -23,10 +26,128 @@ class CameraProgram3D(Program3D):
     pass
 
 
+class CameraChip(GfxAccess, Chip["Camera3D"]):
+    """Owns the camera's uniform buffer and scene bind group.
 
+    Two dirt domains. The uniform is rewritten whenever the camera moves or
+    its projection changes; the bind group is rebuilt only when what it
+    references changes — the viewport or the easel's snapshot texture. The
+    bind group also cannot be built until a viewport is assigned, which is
+    why it retries rather than throwing.
+    """
 
-class CameraChip3D(CameraChip["Camera3D"]):
-    pass
+    def __init__(self) -> None:
+        super().__init__()
+        self.uniform_buffer: wgpu.Buffer = None
+        self.uniform_buffer_size: int = 0
+        self.bind_group: SceneBindGroup = None
+
+    def _create(self) -> None:
+        super()._create()
+        self.uniform_buffer_size = sizeof(CameraUniform)
+        self.uniform_buffer = self.gfx.create_buffer(
+            "Camera Uniform Buffer",
+            self.uniform_buffer_size,
+            wgpu.BufferUsage.UNIFORM,
+        )
+
+    # -- listening ---------------------------------------------------------
+
+    def listen(self) -> None:
+        node = self.node
+        node.transform_changed.connect(self.on_transform_changed)
+        node.camera_changed.connect(self.mark_gpu)
+        node.binding_changed.connect(self.on_binding_changed)
+
+    def deafen(self) -> None:
+        node = self._node
+        if node is None:
+            return
+        node.transform_changed.disconnect(self.on_transform_changed)
+        node.camera_changed.disconnect(self.mark_gpu)
+        node.binding_changed.disconnect(self.on_binding_changed)
+
+    def sync(self) -> None:
+        self.mark_binding()
+        self.mark_gpu()
+
+    def on_transform_changed(self, node: "Camera3D") -> None:
+        self.mark_gpu()
+
+    def on_binding_changed(self) -> None:
+        # The uniform goes with it: a viewport change moves the projection.
+        self.mark_binding()
+        self.mark_gpu()
+
+    # -- deferred rebuild --------------------------------------------------
+
+    def update(self, delta_time: float) -> None:
+        self.flush()
+
+    def _flush_binding(self) -> bool:
+        if self.uniform_buffer is None:
+            return False
+
+        node = self.node
+        viewport = node.viewport
+        if viewport is None:
+            return False  # no viewport assigned yet; retry
+        easel = viewport.easel
+        if easel is None:
+            return False
+
+        self.bind_group = SceneBindGroup(
+            self.uniform_buffer,
+            self.uniform_buffer_size,
+            viewport.uniform_buffer,
+            viewport.uniform_buffer_size,
+            easel.snapshot_texture_view,
+            easel.snapshot_sampler,
+        )
+        return True
+
+    def _flush_gpu(self) -> bool:
+        if self.uniform_buffer is None:
+            return False
+
+        node = self.node
+        camera_uniform = CameraUniform()
+        camera_uniform.projection.data = cast_matrix4(node.projection_matrix)
+        camera_uniform.view.data = cast_matrix4(node.view_matrix)
+        camera_uniform.position = cast_vec3(node.global_position)
+
+        self.gfx.device.queue.write_buffer(self.uniform_buffer, 0, camera_uniform)
+        return True
+
+    # -- frame -------------------------------------------------------------
+    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
+        node = self._node
+        '''
+        logger.debug(
+            f"camera flush: pos={node.global_position} "
+            f"proj[0][0]={node.projection_matrix[0][0]:.4f} "
+            f"view[3]={node.view_matrix[3]}"
+        )
+        '''
+
+        self.flush()
+        if self.bind_group is None:
+            raise RuntimeError(
+                f"{self!r} has no bind group: "
+                f"viewport={self._node.viewport if self._node else None} "
+                f"buffer={self.uniform_buffer is not None}"
+            )
+        self.bind_group.bind(pass_enc)
+
+    """
+    def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
+        if self.bind_group is None:
+            raise RuntimeError(
+                f"{self!r} has no bind group: viewport="
+                f"{self._node.viewport if self._node else None}"
+            )
+        self.bind_group.bind(pass_enc)
+    """
 
 class Camera3D(Node3D):
     def __init__(
@@ -60,16 +181,15 @@ class Camera3D(Node3D):
 
     def _seat(self) -> None:
         super()._seat()
-        if not self.has(CameraChip3D):
-            self.add(CameraChip3D())
+        if not self.has(CameraChip):
+            self.add(CameraChip())
 
     # -- chip forwarding ---------------------------------------------------
 
     @property
-    def chip(self) -> CameraChip3D | None:
-        return self.get(CameraChip3D)
+    def chip(self) -> CameraChip | None:
+        return self.get(CameraChip)
 
-    '''
     @property
     def uniform_buffer(self) -> wgpu.Buffer:
         chip = self.chip
@@ -84,10 +204,9 @@ class Camera3D(Node3D):
     def bind_group(self) -> SceneBindGroup:
         chip = self.chip
         return chip.bind_group if chip is not None else None
-    '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        self.require(CameraChip3D).bind(pass_enc)
+        self.require(CameraChip).bind(pass_enc)
 
     # -- properties --------------------------------------------------------
 
