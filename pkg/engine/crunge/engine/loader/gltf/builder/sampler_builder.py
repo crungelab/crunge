@@ -9,28 +9,6 @@ from ....resource import Sampler
 from . import GltfBuilder
 from .builder_context import BuilderContext
 
-'''
-.def_readwrite("name", &tinygltf::Sampler::name)
-.def_readwrite("min_filter", &tinygltf::Sampler::minFilter)
-.def_readwrite("mag_filter", &tinygltf::Sampler::magFilter)
-.def_readwrite("wrap_s", &tinygltf::Sampler::wrapS)
-.def_readwrite("wrap_t", &tinygltf::Sampler::wrapT)
-.def_readwrite("extras", &tinygltf::Sampler::extras)
-.def_readwrite("extensions", &tinygltf::Sampler::extensions)
-.def_readwrite("extras_json_string", &tinygltf::Sampler::extras_json_string)
-.def_readwrite("extensions_json_string", &tinygltf::Sampler::extensions_json_string)
-'''
-
-'''
-class TextureFilter:
-    NEAREST = 9728
-    LINEAR = 9729
-    NEAREST_MIPMAP_NEAREST = 9984
-    LINEAR_MIPMAP_NEAREST = 9985
-    NEAREST_MIPMAP_LINEAR = 9986
-    LINEAR_MIPMAP_LINEAR = 9987
-'''
-
 min_filter_map = {
     gltf.TextureFilter.NEAREST: wgpu.FilterMode.NEAREST,
     gltf.TextureFilter.LINEAR: wgpu.FilterMode.LINEAR,
@@ -44,22 +22,6 @@ mag_filter_map = {
     gltf.TextureFilter.NEAREST: wgpu.FilterMode.NEAREST,
     gltf.TextureFilter.LINEAR: wgpu.FilterMode.LINEAR,
 }
-
-'''
-class TextureWrap:
-    REPEAT = 10497
-    CLAMP_TO_EDGE = 33071
-    MIRRORED_REPEAT = 33648
-'''
-
-'''
-py::enum_<AddressMode>(m, "AddressMode", py::arithmetic())
-    .value("UNDEFINED", AddressMode::Undefined)
-    .value("CLAMP_TO_EDGE", AddressMode::ClampToEdge)
-    .value("REPEAT", AddressMode::Repeat)
-    .value("MIRROR_REPEAT", AddressMode::MirrorRepeat)
-;
-'''
 
 wrap_s_map = {
     gltf.TextureWrap.CLAMP_TO_EDGE: wgpu.AddressMode.CLAMP_TO_EDGE,

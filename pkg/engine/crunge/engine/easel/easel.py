@@ -11,13 +11,14 @@ from crunge import wgpu
 from crunge import skia
 
 from ..base import Base
+from ..gfx_access import GfxAccess
 from ..signal import Signal
 from ..render_options import RenderOptions
 
 current_easel: ContextVar[Optional["Easel"]] = ContextVar("current_easel", default=None)
 
 
-class Easel(Base):
+class Easel(GfxAccess, Base):
     """Owns the GPU textures and Skia canvas that Viewports draw into."""
 
     def __init__(

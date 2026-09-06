@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar, TypeVar
 
+from .gfx_access import GfxAccess
 from .chip import Chip
 
 from .viewport import Viewport
@@ -15,7 +16,7 @@ if TYPE_CHECKING:
 T_Node = TypeVar("T_Node", bound="Node")
 
 
-class Vu(Chip[T_Node]):
+class Vu(GfxAccess, Chip[T_Node]):
     """The chip that renders its node.
 
     Subclasses override `_draw`, not `draw`: `draw` owns the boundary work

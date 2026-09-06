@@ -5,16 +5,16 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ..resource_builder import ResourceBuilder
-
 from ...resource.resource_manager import ResourceManager
 from ...resource.texture import Texture, TextureKit
 from ...resource.image import Image
+from ...gfx_access import GfxAccess
+from ..resource_builder import ResourceBuilder
 
 
 T_Resource = TypeVar("T_Resource", bound=Texture)
 
-class TextureBuilder(ResourceBuilder[T_Resource], Generic[T_Resource]):
+class TextureBuilder(GfxAccess, ResourceBuilder[T_Resource], Generic[T_Resource]):
     def __init__(self, kit: TextureKit = ResourceManager().texture_kit) -> None:
         super().__init__(kit)
 

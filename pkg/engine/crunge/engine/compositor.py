@@ -6,7 +6,7 @@ import numpy as np
 from crunge import wgpu
 
 from .base import Base
-
+from .gfx_access import GfxAccess
 
 # WGSL with support for both premultiplied and non-premultiplied sources
 WGSL_COMPOSITOR = r"""
@@ -73,7 +73,7 @@ class CompositeParamsCPU:
         return np.array([self.alpha, self.is_premultiplied, self._pad0, self._pad1], dtype=np.float32).tobytes()
 
 
-class Compositor(Base):
+class Compositor(GfxAccess, Base):
     """
     Composite a source viewport color texture onto a destination viewport color attachment
     using a fullscreen triangle.

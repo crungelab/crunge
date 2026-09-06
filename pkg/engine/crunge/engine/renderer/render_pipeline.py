@@ -1,7 +1,7 @@
 from crunge.engine import Base
+from crunge.engine.gfx_access import GfxAccess
 
-
-class RenderPipeline(Base):
+class RenderPipeline(GfxAccess, Base):
     def __init__(self):
         super().__init__()
         self.pipeline = None

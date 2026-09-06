@@ -4,9 +4,9 @@ from crunge import wgpu
 from crunge.wgpu.utils import divround_up
 
 from ..base import Base
+from ..gfx_access import GfxAccess
 
-
-class Buffer(Base):
+class Buffer(GfxAccess, Base):
     def __init__(self, size: int, usage: wgpu.BufferUsage = None, label: str = None):
         """
         Base class for WebGPU buffers.

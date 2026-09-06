@@ -7,9 +7,9 @@ from ..sdl.event_handler import EventHandler
 from ..node import Node
 from ..dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 from ..controller import Controller
+from ..gfx_access import GfxAccess
 
-
-class Widget(EventHandler, Node["Widget"]):
+class Widget(EventHandler, GfxAccess, Node["Widget"]):
     def __init__(self, style: yoga.Style = yoga.Style()) -> None:
         super().__init__()
         self._size = glm.ivec2(0, 0)

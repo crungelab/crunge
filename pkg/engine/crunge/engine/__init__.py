@@ -6,7 +6,7 @@ from .signal import Signal, Pulse
 from .colors import Color
 from .base import Base
 from .controller import Controller
-from .gfx import Gfx
+#from .gfx import Gfx
 from .render_options import RenderOptions
 from .composition import Composition, DrawApi, compose
 from .easel import Easel, SurfaceEasel, OffscreenEasel

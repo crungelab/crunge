@@ -4,10 +4,11 @@ from loguru import logger
 from jinja2 import Environment
 
 from crunge import wgpu
+from ..gfx_access import GfxAccess
 
 from .loader import Loader
 
-class ShaderLoader(Loader):
+class ShaderLoader(GfxAccess, Loader):
     def __init__(self, template_env: Environment, template_dict: Dict) -> None:
         super().__init__()
         self.template_env = template_env

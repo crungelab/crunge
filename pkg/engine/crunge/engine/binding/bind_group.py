@@ -5,11 +5,12 @@ from loguru import logger
 from crunge import wgpu
 
 from ..base import Base
+from ..gfx_access import GfxAccess
 
 from .bind_group_layout import BindGroupLayout
 
 
-class BindGroup(Base):
+class BindGroup(GfxAccess, Base):
     def __init__(
         self,
         layout: BindGroupLayout,

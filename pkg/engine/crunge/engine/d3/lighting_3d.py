@@ -5,6 +5,7 @@ from loguru import logger
 from crunge import wgpu
 
 from ..chip import Chip
+from ..gfx_access import GfxAccess
 from ..light import AmbientLight
 
 from .light_3d import Light3D
@@ -15,7 +16,7 @@ class Lighting3DProgram(Program3D):
     pass
 
 
-class Lighting3D(Chip):
+class Lighting3D(GfxAccess, Chip):
     """Owns the light bind group. Seated on the scene, so the ambient
     light's buffer is created by the chip walk rather than by whoever
     remembers to call create().

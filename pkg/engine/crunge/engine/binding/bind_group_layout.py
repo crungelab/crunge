@@ -6,9 +6,9 @@ from crunge import wgpu
 from crunge.core import klass
 
 from ..base import Base
+from ..gfx_access import GfxAccess
 
-
-class BindGroupLayout(Base):
+class BindGroupLayout(GfxAccess, Base):
     def __init__(
         self,
         entries: List[wgpu.BindGroupEntry],

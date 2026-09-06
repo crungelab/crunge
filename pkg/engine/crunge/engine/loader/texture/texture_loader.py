@@ -7,12 +7,14 @@ from loguru import logger
 from crunge import wgpu
 from crunge.wgpu import utils
 
-from ..resource_loader import ResourceLoader
-from ..image.image_loader import ImageLoader
+from crunge.engine.gfx_access import GfxAccess
 
 from ...resource.resource_manager import ResourceManager
 from ...resource.texture import Texture, TextureKit
 from ...resource.image import Image
+
+from ..resource_loader import ResourceLoader
+from ..image.image_loader import ImageLoader
 
 
 T_Resource = TypeVar("T_Resource", bound=Texture)
@@ -26,7 +28,7 @@ class TextureDetails:
         self.depth = depth
 
 
-class TextureLoader(ResourceLoader[T_Resource]):
+class TextureLoader(GfxAccess, ResourceLoader[T_Resource]):
     def __init__(
         self,
         kit: TextureKit = ResourceManager().texture_kit,

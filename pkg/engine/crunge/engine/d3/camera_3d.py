@@ -14,6 +14,7 @@ from ..uniforms import cast_vec3, cast_matrix4
 from ..binding import SceneBindGroup
 from ..signal import Pulse
 from ..chip import Chip
+from ..gfx_access import GfxAccess
 
 from .node_3d import Node3D
 from .uniforms_3d import CameraUniform
@@ -25,7 +26,7 @@ class CameraProgram3D(Program3D):
     pass
 
 
-class CameraChip(Chip["Camera3D"]):
+class CameraChip(GfxAccess, Chip["Camera3D"]):
     """Owns the camera's uniform buffer and scene bind group.
 
     Two dirt domains. The uniform is rewritten whenever the camera moves or

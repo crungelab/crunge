@@ -8,6 +8,8 @@ from crunge import wgpu
 from ..uniforms import cast_vec3
 from ..signal import Pulse
 from ..chip import Chip
+from ..gfx_access import GfxAccess
+
 from .node_3d import Node3D
 
 from .uniforms_3d import (
@@ -15,7 +17,7 @@ from .uniforms_3d import (
 )
 
 
-class LightChip(Chip["Light3D"]):
+class LightChip(GfxAccess, Chip["Light3D"]):
     """Owns the light's uniform buffer.
 
     Split out of Light3D because a node holding a GPU buffer is what chips

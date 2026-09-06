@@ -10,6 +10,7 @@ from crunge import skia
 
 from .base import Base
 from .easel import Easel
+from .gfx_access import GfxAccess
 
 current_composition: ContextVar[Optional["Composition"]] = ContextVar(
     "current_composition", default=None
@@ -22,7 +23,7 @@ class DrawApi(Enum):
     CANVAS = auto()
 
 
-class Composition(Base):
+class Composition(GfxAccess, Base):
     """Assembles one frame's drawing onto an Easel.
 
     Owns the command encoder and the API boundary. Anything that draws

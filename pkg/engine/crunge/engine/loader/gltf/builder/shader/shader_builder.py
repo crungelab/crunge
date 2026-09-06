@@ -1,5 +1,6 @@
 from loguru import logger
 
+from crunge.engine.gfx_access import GfxAccess
 from ..gltf_builder import GltfBuilder
 from ..builder_context import BuilderContext
 from ..vertex_table import VertexTable

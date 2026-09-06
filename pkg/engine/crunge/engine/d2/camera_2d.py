@@ -14,6 +14,7 @@ from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport
 from ..easel import Easel
 from ..binding import SceneBindGroup
+from ..gfx_access import GfxAccess
 
 from .renderer import Renderer2D
 from .node_2d import Node2D
@@ -28,7 +29,7 @@ class CameraProgram2D(Program2D):
     pass
 
 
-class Camera2D(Node2D):
+class Camera2D(GfxAccess, Node2D):
     def __init__(
         self,
         position=glm.vec2(0.0, 0.0),

@@ -9,9 +9,10 @@ from .d3.uniforms_3d import (
 )
 
 from .base import Base
+from .gfx_access import GfxAccess
 
 
-class AmbientLight(Base):
+class AmbientLight(GfxAccess, Base):
     def __init__(self, color: glm.vec3 = None, energy: float = 1.0):
         # Was missing, so Base's lifetime state was never initialised.
         super().__init__()

@@ -6,7 +6,6 @@ from loguru import logger
 from crunge import wgpu
 from crunge import gltf
 
-
 from crunge.engine.d3.material_3d import Material3D
 from crunge.engine.resource.texture import Texture
 from crunge.engine.resource.texture.cube_texture import CubeTexture

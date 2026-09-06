@@ -10,6 +10,7 @@ import glm
 from crunge import wgpu
 from crunge import skia
 
+from .gfx_access import GfxAccess
 from .base import Base
 from .signal import Signal
 from .math import Rect2i
@@ -21,7 +22,7 @@ current_viewport: ContextVar[Optional["Viewport"]] = ContextVar(
 )
 
 
-class Viewport(Base):
+class Viewport(GfxAccess, Base):
     """A rectangular region to render into, relative to its parent.
 
     A Viewport that owns an Easel is the origin of a new coordinate space:

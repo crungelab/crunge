@@ -5,8 +5,8 @@ from loguru import logger
 
 from enum import Enum, auto
 
-from . import globals
-from .gfx import Gfx
+#from . import globals
+#from .gfx import Gfx
 from .dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 class Lifetime(Enum):
@@ -144,6 +144,7 @@ class Base:
     def dispatch(self, event) -> DispatchResult:
         return None
 
+    '''
     @property
     def gfx(self):
         if globals.gfx is None:
@@ -167,3 +168,4 @@ class Base:
         if globals.queue is None:
             return Gfx().queue
         return globals.queue
+    '''
