@@ -100,6 +100,8 @@ class Skateboard(EntityGroup2D):
         self.front_wheel = self.add_node(Wheel.produce(self._front_wheel_pos))
         self.back_wheel = self.add_node(Wheel.produce(self._back_wheel_pos))
 
+        self.add(SkateboardController(self))
+
     @property
     def velocity(self):
         return self.deck.velocity
@@ -108,9 +110,10 @@ class Skateboard(EntityGroup2D):
     def produce(cls, position=None):
         return Skateboard(position)
 
+    '''
     def control(self):
         return SkateboardController(self)
-
+    '''
     # -- mounting ----------------------------------------------------------
 
     def mount(self, mountee: Entity2D):

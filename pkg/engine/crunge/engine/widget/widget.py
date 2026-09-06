@@ -6,14 +6,14 @@ from crunge import yoga
 from ..sdl.event_handler import EventHandler
 from ..node import Node
 from ..dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
-from ..controller import Controller
+#from ..controller import Controller
 from ..gfx_access import GfxAccess
 
 class Widget(EventHandler, GfxAccess, Node["Widget"]):
     def __init__(self, style: yoga.Style = yoga.Style()) -> None:
         super().__init__()
         self._size = glm.ivec2(0, 0)
-        self._controller: Controller = None
+        #self._controller: Controller = None
         self.priority = 0
         self.hovered = False
         # Layout
@@ -119,6 +119,23 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
     def height(self, value: int) -> None:
         self.size = glm.ivec2(self._size.x, value)
 
+    def dispatch(self, event) -> DispatchResult:
+        for child in reversed(self.children):
+            if child.dispatch(event):
+                return EVENT_HANDLED
+        return super().dispatch(event) or self.handle(event)
+
+    '''
+    def dispatch(self, event) -> DispatchResult:
+        for child in reversed(self.children):
+            if child.dispatch(event) is not None:
+                return EVENT_HANDLED
+        if super().dispatch(event) is not None:
+            return EVENT_HANDLED
+        return self.handle(event)
+    '''
+
+    '''
     @property
     def controller(self) -> Controller:
         return self._controller
@@ -163,6 +180,7 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
             self.controller.update(delta_time)
         for child in self.children:
             child.update(delta_time)
+    '''
 
     def on_added(self) -> None:
         # logger.debug(f"Widget.on_added: {self}")

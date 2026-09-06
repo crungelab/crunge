@@ -24,6 +24,10 @@ class SceneView2D(View2D):
         super()._enable()
         self.scene.enable()
 
+    def _ready(self) -> None:
+        super()._ready()
+        self.scene.ready()
+
     def draw(self):
         with self.renderer.use():
             self.renderer.render(self.scene)

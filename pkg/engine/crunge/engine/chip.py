@@ -4,6 +4,7 @@ from enum import IntFlag, auto
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from .base import Base
+from .dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 if TYPE_CHECKING:
     from .base_node import BaseNode
@@ -216,9 +217,9 @@ class Chip[N: "BaseNode"](Base):
 
     def draw(self) -> None: ...
 
-    def dispatch(self, event: Any) -> bool:
-        """Return True to consume the event and stop propagation."""
-        return False
+    def dispatch(self, event: Any) -> DispatchResult:
+        """Return EVENT_HANDLED to consume the event and stop propagation, or EVENT_UNHANDLED otherwise."""
+        return EVENT_UNHANDLED
 
     def __repr__(self) -> str:
         owner = type(self._node).__name__ if self._node else "detached"

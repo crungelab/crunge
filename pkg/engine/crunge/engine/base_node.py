@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Self
+from bisect import insort
 
 from loguru import logger
 
@@ -91,7 +92,40 @@ class BaseNode(Base):
         return self._seated
 
     # -- chips -------------------------------------------------------------
+    def add[C: Chip[Any]](self, chip: C) -> C:
+        if self.is_destroying:
+            raise RuntimeError(f"cannot add {chip!r} to {self!r} while it tears down")
+        if chip._node is not None:
+            raise RuntimeError(f"{chip!r} is already attached to {chip._node!r}")
 
+        cls = type(chip)
+        self._chips.append(chip)
+
+        # First-wins, per key: multiples stay reachable through get_all(),
+        # and get() keeps one unambiguous return type. remove() promotes a
+        # successor when a key holder leaves, so a key is never left stale.
+        # Filter rather than break on Chip, so mixin order in the subclass
+        # can't change which keys land in the map.
+        for klass in cls.__mro__:
+            if klass is not Chip and issubclass(klass, Chip):
+                self._chip_map.setdefault(klass, chip)
+
+        if cls.updates:
+            insort(self._updatables, chip, key=lambda chip: chip.update_order)
+        if cls.draws:
+            self._drawables.append(chip)
+        if cls.dispatches:
+            self._dispatchables.append(chip)
+
+        chip.on_attached(self)
+        # Late arrival on a live node: bring the chip up to our lifetime and
+        # let it resolve the set, which is already complete around it.
+        self._sync_lifetime(chip)
+        if self._plugged:
+            chip.plug()
+        return chip
+
+    '''
     def add[C: Chip[Any]](self, chip: C) -> C:
         if self.is_destroying:
             raise RuntimeError(f"cannot add {chip!r} to {self!r} while it tears down")
@@ -122,7 +156,41 @@ class BaseNode(Base):
         if self._plugged:
             chip.plug()
         return chip
+    '''
 
+    def remove(self, chip: Chip[Any]) -> None:
+        """Detach without destroying. The chip stays created and re-addable;
+        the caller owns it from here."""
+        if chip not in self._chips:
+            raise ValueError(f"{chip!r} is not attached to {self!r}")
+
+        self._chips.remove(chip)
+        for bucket in (self._updatables, self._drawables, self._dispatchables):
+            if chip in bucket:
+                bucket.remove(chip)
+
+        for klass in type(chip).__mro__:
+            if klass is Chip or not issubclass(klass, Chip):
+                continue
+            if self._chip_map.get(klass) is chip:
+                del self._chip_map[klass]
+                # Promote the next chip that satisfies this key, if any.
+                # Same test add() registers with, so the two agree on what
+                # "satisfies" means.
+                for candidate in self._chips:
+                    if klass in type(candidate).__mro__:
+                        self._chip_map[klass] = candidate
+                        break
+
+        # Teardown mirrors add() in reverse: enable/plug/create going up,
+        # disable/unplug/detach coming down. Disabling first means _disable
+        # still has its plugged references.
+        chip.disable()
+        if self._plugged:
+            chip.unplug()
+        chip.on_detached()
+
+    '''
     def remove(self, chip: Chip[Any]) -> None:
         """Detach without destroying. The chip stays created and re-addable;
         the caller owns it from here."""
@@ -146,6 +214,7 @@ class BaseNode(Base):
             chip.unplug()
         chip.disable()
         chip.on_detached()
+    '''
 
     def get[C: Chip[Any]](self, kind: type[C]) -> C | None:
         """One dict hit. Matches subclasses, since the map spans the MRO."""
@@ -226,6 +295,11 @@ class BaseNode(Base):
         super().reset_children()
         for chip in tuple(self._chips):
             chip.reset()
+
+    def ready_children(self) -> None:
+        super().ready_children()
+        for chip in tuple(self._chips):
+            chip.ready()
 
     def _disable(self) -> None:
         for chip in reversed(tuple(self._chips)):

@@ -72,23 +72,15 @@ class DynamicCharacterController(CharacterController):
         super().__init__(avatar)
         self.avatar = avatar
         self.world = physics_globe.world
-        self.character_layer = None
-        self.ground_layer = None
-        self.ladder_layer = None
 
-    def _enable(self) -> None:
-        super()._enable()
-        self.foot_sensor = FootSensor(self._find_foot_shape())
-        self.world.contact_began.connect(self.foot_sensor.on_contact_began)
-        self.world.contact_ended.connect(self.foot_sensor.on_contact_ended)
-
-    def _ready(self) -> None:
-        super()._ready()
-        #exit()
         scene = Scene2D.get_current()
         self.character_layer = scene.get_layer("pc")
         self.ground_layer = scene.get_layer("ground")
         self.ladder_layer = scene.get_layer("ladder")
+
+        self.foot_sensor = FootSensor(self._find_foot_shape())
+        self.world.contact_began.connect(self.foot_sensor.on_contact_began)
+        self.world.contact_ended.connect(self.foot_sensor.on_contact_ended)
 
     def _find_foot_shape(self) -> b2.Shape:
         for shape in self.avatar.physics.shapes:

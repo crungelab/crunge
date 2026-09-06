@@ -11,7 +11,7 @@ from ...character import Avatar
 from ..physics_demo import PhysicsDemo
 
 
-class PlatformerDemo(PhysicsDemo):
+class SkateboarderDemo(PhysicsDemo):
     def create_display(self):
         super().create_display()
         self.camera.zoom = 2.0
@@ -39,7 +39,7 @@ class PlatformerDemo(PhysicsDemo):
 
 
     def _draw(self):
-        imgui.begin("Platformer Demo")
+        imgui.begin("Skateboarder Demo")
         imgui.text("Click to create balls")
 
         self.draw_stats()
@@ -47,6 +47,7 @@ class PlatformerDemo(PhysicsDemo):
 
         if imgui.button("Reset"):
             self.reset()
+            self.ready()
 
         imgui.end()
 
@@ -97,7 +98,7 @@ class PlatformerDemo(PhysicsDemo):
         self.camera.position = glm.vec2(camera_x, camera_y)
 
 def main():
-    PlatformerDemo().run()
+    SkateboarderDemo().run()
 
 
 if __name__ == "__main__":

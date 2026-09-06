@@ -26,6 +26,10 @@ class PlatformerDemo(PhysicsDemo):
         tmx_path = ResourceManager().resolve_path("${resources}/tiled/level1.tmx")
         map_loader.load(tmx_path)
 
+
+    def _ready(self):
+        #exit()
+        super()._ready()
         self.character_layer = self.scene.get_layer("pc")
 
         for node in self.character_layer.root.children:
@@ -34,6 +38,22 @@ class PlatformerDemo(PhysicsDemo):
                 self.push_avatar(node)
                 break
 
+        #super()._ready()
+    '''
+    def create_map(self):
+        map_loader = MapLoader(self.scene)
+
+        tmx_path = ResourceManager().resolve_path("${resources}/tiled/level1.tmx")
+        map_loader.load(tmx_path)
+
+        self.character_layer = self.scene.get_layer("pc")
+
+        for node in self.character_layer.root.children:
+            logger.debug(f"Checking node: {node}")
+            if isinstance(node, Avatar):
+                self.push_avatar(node)
+                break
+    '''
 
     def _draw(self):
         imgui.begin("Platformer Demo")
@@ -44,6 +64,7 @@ class PlatformerDemo(PhysicsDemo):
 
         if imgui.button("Reset"):
             self.reset()
+            self.ready()
 
         imgui.end()
 

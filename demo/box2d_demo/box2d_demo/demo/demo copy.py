@@ -1,4 +1,5 @@
 from pathlib import Path
+import timeit
 
 from loguru import logger
 import glm
@@ -7,7 +8,6 @@ from crunge import sdl
 from crunge import imgui
 from crunge import engine
 
-from crunge.engine.dispatch import DispatchResult, EVENT_HANDLED
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.scheduler import Scheduler
 from crunge.engine.d2.scene import Scene2D
@@ -27,6 +27,7 @@ class Demo(engine.App):
             resizable=True,
         )
         globe.app = self
+        self.controller_stack = []
         self.avatar_stack = []
 
         self.resource_root = (
@@ -44,37 +45,41 @@ class Demo(engine.App):
 
     @property
     def avatar(self):
-        # The only piece of state here. An avatar owns its controller chip
-        # for its whole lifetime, so the controller is always just
-        # avatar.controller -- a parallel controller stack only gave the two
-        # a chance to disagree.
-        return self.avatar_stack[-1] if self.avatar_stack else None
+        if len(self.avatar_stack) > 0:
+            return self.avatar_stack[-1]
+        else:
+            return None
+
+    def push_controller(self, controller):
+        def callback(delta_time):
+            self.controller = controller
+            self.controller_stack.append(controller)
+
+        Scheduler().schedule_once(callback, 0)
+
+    def pop_controller(self):
+        def callback(delta_time):
+            controller = self.controller_stack.pop()
+            logger.debug(f"Popping controller: {controller}")
+            self.controller = self.controller_stack[-1] if self.controller_stack else None
+
+        Scheduler().schedule_once(callback, 0)
 
     def push_avatar(self, avatar):
         if avatar is None:
             raise ValueError("Avatar cannot be None")
-
-        # Deferred: pushes almost always originate inside event dispatch or
-        # an update, and mutating the stack mid-walk is the same class of
-        # re-entrancy problem the transform guards exist to prevent.
-        def callback(delta_time):
-            logger.debug(f"Pushing avatar: {avatar}")
-            self.avatar_stack.append(avatar)
-            globe.avatar = avatar
-
-        Scheduler().schedule_once(callback, 0)
+        self.avatar_stack.append(avatar)
+        globe.avatar = avatar
+        if avatar is not None:
+            self.push_controller(avatar.control())
 
     def pop_avatar(self):
-        def callback(delta_time):
-            if not self.avatar_stack:
-                logger.warning("pop_avatar on an empty stack")
-                return
-            logger.debug(f"Popping avatar: {self.avatar}")
-            self.avatar_stack.pop()
-            globe.avatar = self.avatar
-
-        Scheduler().schedule_once(callback, 0)
-
+        self.avatar_stack.pop()
+        avatar = self.avatar
+        globe.avatar = avatar
+        self.pop_controller()
+        return avatar
+    
     def reset(self):
         super().reset()
         self.create_scene()
@@ -98,26 +103,16 @@ class Demo(engine.App):
             self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
             logger.debug(f"Camera centered at {self.camera.position}")
 
+
     def on_size(self):
         super().on_size()
         self.center_camera()
 
-    def dispatch(self, event) -> DispatchResult:
-        # The widget tree gets first refusal, then the active avatar's
-        # controller. Avatars live in the scene rather than the widget tree,
-        # so nothing reaches them through the normal structural walk.
-        if super().dispatch(event):
-            return EVENT_HANDLED
-        avatar = self.avatar
-        logger.debug(f"Dispatching event to avatar: {avatar}")
-        result = bool(avatar and avatar.controller and avatar.controller.dispatch(event))
-        logger.debug(f"Event dispatch result: {result}")
-        return result
-
     def on_key(self, event: sdl.KeyboardEvent):
-        if event.key == sdl.SDLK_ESCAPE and event.down:
+        key = event.key
+        down = event.down
+        if key == sdl.SDLK_ESCAPE and down:
             self.quit()
-            return EVENT_HANDLED
 
     def draw_stats(self):
         # Display timings

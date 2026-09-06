@@ -7,6 +7,7 @@ from loguru import logger
 from .signal import Signal
 from .base_node import BaseNode
 from .vu import Vu
+from .controller import Controller
 
 from .model import Model
 
@@ -46,6 +47,19 @@ class Node(BaseNode, Generic[T_Node]):
 
     # -- properties ----------------------------------------------------
 
+    # Model property
+    @property
+    def model(self) -> "Model | None":
+        return self._model
+
+    @model.setter
+    def model(self, value: "Model | None") -> None:
+        self._model = value
+        if value is None:
+            return
+        self.model_changed.emit(self)
+
+    # Vu property
     @property
     def vu(self) -> Vu | None:
         return self.get(Vu)
@@ -61,16 +75,21 @@ class Node(BaseNode, Generic[T_Node]):
         if value is not None:
             self.add(value)
 
+    # Controller property
     @property
-    def model(self) -> "Model | None":
-        return self._model
+    def controller(self) -> Controller | None:
+        return self.get(Controller)
 
-    @model.setter
-    def model(self, value: "Model | None") -> None:
-        self._model = value
-        if value is None:
+    @controller.setter
+    def controller(self, value: Controller | None) -> None:
+        old = self.get(Controller)
+        if old is value:
             return
-        self.model_changed.emit(self)
+        if old is not None:
+            self.remove(old)
+            old.destroy()
+        if value is not None:
+            self.add(value)
 
     # -- lifetime ------------------------------------------------------
 
@@ -83,6 +102,12 @@ class Node(BaseNode, Generic[T_Node]):
         super().enable_children()  # chips enabled
         for child in list(self.children):
             child.enable()
+
+    def ready_children(self) -> None:
+        logger.debug(f"Readying children of node: {self}")
+        super().ready_children()  # chips readied
+        for child in list(self.children):
+            child.ready()
 
     def reset_children(self) -> None:
         super().reset_children()  # chips reset
