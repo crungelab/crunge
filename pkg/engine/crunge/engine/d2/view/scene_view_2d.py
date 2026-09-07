@@ -28,6 +28,10 @@ class SceneView2D(View2D):
         super()._ready()
         self.scene.ready()
 
+    def teardown(self) -> None:
+        self.scene.destroy()
+        super().teardown()
+
     def draw(self):
         with self.renderer.use():
             self.renderer.render(self.scene)

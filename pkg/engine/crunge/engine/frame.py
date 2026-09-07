@@ -82,11 +82,21 @@ class Frame(Widget):
         self.remove_child(display)
 
     def resume_display(self, display: Display) -> None:
+            if display.parent is not self:
+                self.add_child(display)
+            display.enable()
+            # build(), not reset(): a resumed display may still hold everything
+            # setup() gave it. Use replace_display() when the content should go.
+            display.build()
+    
+    '''
+    def resume_display(self, display: Display) -> None:
         if display.parent is not self:
             self.add_child(display)
         display.enable()
         display.setup()
-
+    '''
+    
     def on_display(self):
         pass
 
@@ -153,7 +163,38 @@ class Frame(Widget):
 
     def reshow_channel(self):
         if self.channel is not None:
+            if self._display is not None:
+                self._display.teardown()
             self.show_channel(self.channel.name)
 
     def show_next_channel(self):
         self.show_channel(self.channel.next_channel)
+
+    # --- build --------------------------------------------------------
+    def build(self) -> None:
+        self.setup()
+        if self._display is not None:
+            self._display.build()
+        self.ready()
+
+    '''
+    def reset(self) -> None:
+        if self._display is not None:
+            self._display.teardown()
+        self.teardown()
+        self.build()
+        if self._display is not None:
+            self._display.build()
+    '''
+
+    def reset(self) -> None:
+        self.teardown()
+        if self._display is not None:
+            self._display.reset()
+        self.build()
+
+    def setup(self) -> None:
+        """Override: head-call, super().setup() first."""
+
+    def teardown(self) -> None:
+        """Override: tail-call, super().teardown() last."""

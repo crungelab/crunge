@@ -90,16 +90,23 @@ class DynamicCharacterController(CharacterController):
         self.ground_layer = scene.get_layer("ground")
         self.ladder_layer = scene.get_layer("ladder")
 
+    def _disable(self) -> None:
+        self.world.contact_began.disconnect(self.foot_sensor.on_contact_began)
+        self.world.contact_ended.disconnect(self.foot_sensor.on_contact_ended)
+        super()._disable()
+
+    '''
+    def destroy(self) -> None:
+        self.world.contact_began.disconnect(self.foot_sensor.on_contact_began)
+        self.world.contact_ended.disconnect(self.foot_sensor.on_contact_ended)
+        super().destroy()
+    '''
+
     def _find_foot_shape(self) -> b2.Shape:
         for shape in self.avatar.physics.shapes:
             if shape.user_material == FEET.id:
                 return shape
         raise ValueError(f"{self.avatar}: no FEET shape; check its geom")
-
-    def destroy(self) -> None:
-        self.world.contact_began.disconnect(self.foot_sensor.on_contact_began)
-        self.world.contact_ended.disconnect(self.foot_sensor.on_contact_ended)
-        super().destroy()
 
     # -- state -------------------------------------------------------------
 

@@ -273,39 +273,52 @@ class BaseNode(Base):
             chip.create()
         self.plug()
 
-    """
-    def create_children(self) -> None:
-        # A caller supplying no extra chips has no reason to call seat, and
-        # forgetting it would give a silently empty node. Construction has
-        # certainly finished by now, so the two-pass guarantee holds.
-        if not self._seated:
-            self.seat()
-        super().create_children()
+    def _enable(self) -> None:
+        super()._enable()
         for chip in tuple(self._chips):
-            chip.create()
-        self.plug()
-    """
+            chip.enable()
 
+    '''
     def enable_children(self) -> None:
         super().enable_children()
         for chip in tuple(self._chips):
             chip.enable()
+    '''
 
-    def setup_children(self) -> None:
-        super().setup_children()
+    def _ready(self) -> None:
+        super()._ready()
         for chip in tuple(self._chips):
-            chip.setup()
+            chip.ready()
 
+    '''
     def ready_children(self) -> None:
         super().ready_children()
         for chip in tuple(self._chips):
             chip.ready()
+    '''
 
     def _disable(self) -> None:
         for chip in reversed(tuple(self._chips)):
             chip.disable()
         super()._disable()
 
+    def _destroy(self) -> None:
+        # Unplug first: every chip drops its sibling references while the
+        # set is whole, so no chip can observe a half-destroyed neighbour.
+        self.unplug()
+        for chip in reversed(tuple(self._chips)):
+            chip.destroy()
+            chip.on_detached()
+
+        self._chips.clear()
+        self._chip_map.clear()
+        self._updatables.clear()
+        self._drawables.clear()
+        self._dispatchables.clear()
+        self._seated = False
+        super()._destroy()
+
+    '''
     def destroy_children(self) -> None:
         # Unplug first: every chip drops its sibling references while the
         # set is whole, so no chip can observe a half-destroyed neighbour.
@@ -321,6 +334,7 @@ class BaseNode(Base):
         self._dispatchables.clear()
         self._seated = False
         super().destroy_children()
+    '''
 
     # -- broadcasts (self only; Node walks the tree) -----------------------
 

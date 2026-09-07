@@ -85,6 +85,8 @@ class Car(EntityGroup2D):
         self.front_wheel = self.add_node(Wheel.produce(front_wheel_pos))
         self.back_wheel = self.add_node(Wheel.produce(back_wheel_pos))
 
+        self.add(CarController(self))
+
     @property
     def velocity(self):
         return self.chassis.velocity
@@ -93,8 +95,10 @@ class Car(EntityGroup2D):
     def produce(self, position=glm.vec2(0, 0)):
         return Car(position)
 
+    '''
     def control(self):
         return CarController(self)
+    '''
 
     def mount(self, mountee: Entity2D):
         self.mountee = mountee

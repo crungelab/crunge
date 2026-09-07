@@ -19,3 +19,10 @@ class Screen(Display):
         if not self._views:
             raise ValueError(f"{self.name}: no views")
         return self._views[0]
+
+    '''
+    def teardown(self) -> None:
+        for view in self._views:
+            view.teardown()
+        super().teardown()
+    '''

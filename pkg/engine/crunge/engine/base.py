@@ -1,13 +1,11 @@
-# from typing import Self
-# from typing_extensions import Self
+from typing import Self
+from enum import Enum, auto
 
 from loguru import logger
 
-from enum import Enum, auto
 
-#from . import globals
-#from .gfx import Gfx
 from .dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+
 
 class Lifetime(Enum):
     INITIAL = auto()
@@ -43,13 +41,7 @@ class Base:
     def is_enabled(self) -> bool:
         return self._is_enabled
 
-    def config(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        return self
-
-    # def create(self) -> Self: #TODO: need Python 3.11+
-    def create(self):
+    def create(self) -> Self:
         if self._lifetime is not Lifetime.INITIAL:
             return self
         self._lifetime = Lifetime.CREATING
@@ -69,19 +61,6 @@ class Base:
 
     def _created(self) -> None:
         """Bottom-up. Children created and reachable."""
-        pass
-
-    def setup(self) -> None:
-        """Reset the object to its initial state."""
-        self._setup()
-        self.setup_children()
-
-    def _setup(self) -> None:
-        """Reset the object to its initial state."""
-        pass
-
-    def setup_children(self) -> None:
-        """Containers override."""
         pass
 
     def destroy(self):
@@ -129,13 +108,9 @@ class Base:
         pass
 
     def ready_children(self) -> None:
-        #logger.debug(f"Readying base children of: {self}")
+        # logger.debug(f"Readying base children of: {self}")
         """Containers override."""
         pass
-
-    def reset(self):
-        self.setup()
-        self.ready()
 
     def disable(self):
         if not self._is_enabled:
@@ -159,29 +134,3 @@ class Base:
 
     def dispatch(self, event) -> DispatchResult:
         return None
-
-    '''
-    @property
-    def gfx(self):
-        if globals.gfx is None:
-            return Gfx()
-        return globals.gfx
-
-    @property
-    def instance(self):
-        if globals.instance is None:
-            return Gfx().instance
-        return globals.instance
-
-    @property
-    def device(self):
-        if globals.device is None:
-            return Gfx().device
-        return globals.device
-
-    @property
-    def queue(self):
-        if globals.queue is None:
-            return Gfx().queue
-        return globals.queue
-    '''

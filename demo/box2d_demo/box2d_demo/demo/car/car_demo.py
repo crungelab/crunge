@@ -18,7 +18,7 @@ class CarDemo(PhysicsDemo):
     def setup(self):
         super().setup()
         self.create_floor()
-        self.create_avatar(glm.vec2(3, 3))
+        self.create_avatar()
 
     def create_floor(self):
         ppu = Settings2D().ppu
@@ -30,9 +30,22 @@ class CarDemo(PhysicsDemo):
         floor.create()
         self.scene.attach(floor)
 
+    def create_avatar(self):
+        ppu = Settings2D().ppu
+        width_units = self.width / ppu  # viewport width, converted to units
+        x = width_units / 2
+        y = 1.5
+        position = glm.vec2(x, y)
+
+        avatar = Car(position)
+        self.push_avatar(avatar)
+        self.scene.attach(avatar)
+
+    '''
     def create_avatar(self, position):
         self.push_avatar(Car(position))
         self.scene.attach(self.avatar)
+    '''
 
     # ------------------------------------------------------------------
     # UI & update

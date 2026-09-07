@@ -178,3 +178,35 @@ class Display(Widget):
     def create_overlays(self):
         for overlay in self.overlay_manufacturer.manufacture_all():
             self.add_overlay(overlay)
+
+    # --- build --------------------------------------------------------
+    def build(self) -> None:
+        """Populate, then announce. Split because a node can't tell from the
+        inside when the world around it is finished -- setup() is the last
+        phase that adds content, so ready() after it is the first moment
+        scene-wide lookups are safe."""
+        self.setup()
+        self.ready()
+ 
+    def reset(self) -> None:
+        self.teardown()
+        self.build()
+ 
+    def setup(self) -> None:
+        """Override: build the scene, load the map, populate layers.
+        Head-call: super().setup() first."""
+
+    def teardown(self) -> None:
+        """Override: drop whatever setup() built. Must be safe to call when
+        nothing was built -- the first build() never runs it, but a subclass
+        can't tell which path it's on. Tail-call: super().teardown() last."""
+
+        for view in self._views:
+            view.teardown()
+
+    '''
+    def teardown(self) -> None:
+        """Override: drop whatever setup() built. Must be safe to call when
+        nothing was built -- the first build() never runs it, but a subclass
+        can't tell which path it's on. Tail-call: super().teardown() last."""
+    '''

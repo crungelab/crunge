@@ -28,7 +28,6 @@ class PlatformerDemo(PhysicsDemo):
 
 
     def _ready(self):
-        #exit()
         super()._ready()
         self.character_layer = self.scene.get_layer("pc")
 

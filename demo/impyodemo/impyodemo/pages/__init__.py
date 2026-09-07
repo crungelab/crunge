@@ -14,11 +14,13 @@ class Page(demo.Page):
         self.fullheight = True
         self.server = None
 
+    '''
     @classmethod
     def produce(cls, app, name, title):
         page = cls(name, title).config(window=app).create()
         page.reset()
         return page
+    '''
 
     @property
     def resource_path(self):

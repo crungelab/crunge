@@ -10,10 +10,12 @@ class Page(Screen):
         self.name = name
         self.title = title
 
+    '''
     @classmethod
     def produce(cls, app: App, name: str, title: str):
         page = cls(name, title).config(window=app).create()
         return page
+    '''
 
     def setup(self):
         super().setup()
