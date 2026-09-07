@@ -114,7 +114,7 @@ class Node(BaseNode, Generic[T_Node]):
             child.enable()
 
     def ready_children(self) -> None:
-        logger.debug(f"Readying children of node: {self}")
+        #logger.debug(f"Readying children of node: {self}")
         super().ready_children()  # chips readied
         for child in list(self.children):
             child.ready()

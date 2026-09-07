@@ -2,7 +2,6 @@ from crunge.engine import Scheduler
 
 from crunge.engine.d2.scene.layer.graph_layer_2d import GraphLayer2D
 
-from .. import world
 from ..fruit import Fruit, FruitFactory
 
 FOOD_COUNT = 3
@@ -22,7 +21,7 @@ class FruitLayer(GraphLayer2D):
     def spawn_fruit(self):
         fruitFactory = FruitFactory(self)
         fruit = fruitFactory.create_random()
-        world.world_instance.materialize_random_from_center(fruit, self)
+        self.materialize_random_from_center(fruit)
 
     def add_fruit(self, fruit: Fruit) -> None:
         self.fruits.append(fruit)

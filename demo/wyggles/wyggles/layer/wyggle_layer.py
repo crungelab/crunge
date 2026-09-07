@@ -1,8 +1,5 @@
-from crunge.engine import Scheduler
-
 from crunge.engine.d2.scene.layer.graph_layer_2d import GraphLayer2D
 
-from .. import world
 from ..wyggle import Wyggle
 
 WYGGLE_COUNT = 3
@@ -21,7 +18,7 @@ class WyggleLayer(GraphLayer2D):
 
     def spawn_wyggle(self):
         wyggle = Wyggle()
-        world.world_instance.materialize_random_from_center(wyggle, self)
+        self.materialize_random_from_center(wyggle)
 
     def add_wyggle(self, wyggle: Wyggle) -> None:
         self.wyggles.append(wyggle)

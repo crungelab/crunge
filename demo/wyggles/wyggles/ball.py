@@ -1,10 +1,8 @@
 import glm
 
-from crunge.engine.d2.sprite import SpriteVu
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.d2.physics.geom import BallGeom
 from crunge.engine.d2.physics import DynamicPhysics
-from crunge.engine.d2.entity import PhysicsEntity2D
 
 from .game_entity import GameEntity
 from . import world
@@ -29,11 +27,21 @@ class Ball(GameEntity):
 
     def _create(self) -> None:
         super()._create()
+        self.scene.register_entity(self)
+
+    def _destroy(self) -> None:
+        self.scene.unregister_entity(self)
+        super()._destroy()
+    
+    '''
+    def _create(self) -> None:
+        super()._create()
         world.world_instance.add_entity(self)
 
     def _destroy(self) -> None:
         world.world_instance.remove_entity(self)
         super()._destroy()
+    '''
 
     def receive_kick(self, position: glm.vec2, strength: float = None) -> None:
         offset = glm.vec2(self.position) - glm.vec2(position)

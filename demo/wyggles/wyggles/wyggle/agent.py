@@ -44,7 +44,8 @@ class WyggleAgent(GameAgent):
     def scan(self, sensor_range: float = None) -> list[GameEntity]:
         if sensor_range is None:
             sensor_range = self.sensor_range
-        return world.world_instance.proximity_query(self.entity.position, sensor_range)
+        #return world.world_instance.proximity_query(self.entity.position, sensor_range)
+        return self.entity.scene.proximity_query(self.entity.position, sensor_range)
 
     # --- steering ---------------------------------------------------------
 

@@ -62,13 +62,26 @@ class Fruit(GameEntity):
         super().__init__(dna)
         self.type = dna.kind
         self.energy = 5
-        world.world_instance.add_entity(self)
+        #world.world_instance.add_entity(self)
         self.model = dna.sprites[0]
+
+    def _create(self) -> None:
+        super()._create()
+        self.scene.register_entity(self)
+
+    def _destroy(self) -> None:
+        self.scene.unregister_entity(self)
+        super()._destroy()
+
+    '''
+    def _destroy(self):
+        world.world_instance.remove_entity(self)
+        super()._destroy()
+    '''
 
     def receive_munch(self):
         self.energy -= 1
         if self.energy <= 0:
-            world.world_instance.remove_entity(self)
             self.destroy()
             return 0.01
         # else

@@ -1,4 +1,7 @@
+import random
+
 from loguru import logger
+import glm
 
 from ....math import Bounds2
 
@@ -8,7 +11,7 @@ from ...node_2d import Node2D
 class GraphLayer2D(GraphLayer[Node2D]):
     def __init__(self, name: str) -> None:
         super().__init__(name)
-        self.bounds = Bounds2()
+        #self.bounds = Bounds2()
         self.root = Node2D()
         self.root.layer = self
 
@@ -17,6 +20,10 @@ class GraphLayer2D(GraphLayer[Node2D]):
     
     def __repr__(self):
         return str(self)
+
+    @property
+    def bounds(self) -> Bounds2:
+        return self.scene.bounds
 
     def depth_sort(self):
         nodes = self.nodes
@@ -34,3 +41,23 @@ class GraphLayer2D(GraphLayer[Node2D]):
             if node.global_bounds.intersects(bounds):
                 result.append(node)
         return result
+
+    def materialize_random_from_center(self, node: Node2D):
+        world_right = self.bounds.max.x
+        world_top = self.bounds.max.y
+        halfMaxX = world_right / 2
+        halfMaxY = world_top / 2
+        diameter = world_top
+        radius = diameter / 2
+
+        position = glm.vec2(
+            (halfMaxX - radius) + (random.random() * diameter),
+            (halfMaxY - radius) + (random.random() * diameter),
+        )
+
+        logger.debug(f"Materializing node {node} at position {position} within bounds {self.bounds}")
+
+        node.position = position
+
+
+        self.attach(node)

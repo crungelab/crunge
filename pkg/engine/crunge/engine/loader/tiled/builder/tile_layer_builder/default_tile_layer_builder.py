@@ -19,7 +19,7 @@ class DefaultTileLayerBuilder(TileLayerBuilder):
         size = self.context.size
         sprite_group = DynamicSpriteGroup(1024).enable()
         self.layer = InstancedSpriteLayer(name=tmx_layer.name, count=1024, sprite_group=sprite_group).enable()
-        self.layer.bounds = Bounds2(0, 0, size.x, size.y)
+        #self.layer.bounds = Bounds2(0, 0, size.x, size.y)
         self.context.push_layer(self.layer)
         super().build(tmx_layer)
         self.build_runs(tmx_layer)

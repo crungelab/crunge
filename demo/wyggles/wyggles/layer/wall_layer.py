@@ -1,13 +1,9 @@
-from crunge.engine import Scheduler
-
 from crunge.engine.d2.scene.layer.graph_layer_2d import GraphLayer2D
-
-from .. import world
-from ..world import world_left, world_right, world_top, world_bottom
 
 from ..wall import Wall
 
 BALL_COUNT = 10
+
 
 class WallLayer(GraphLayer2D):
     def __init__(self, name: str = "wall") -> None:
@@ -19,22 +15,22 @@ class WallLayer(GraphLayer2D):
         node = Wall(left, bottom, right, top)
         self.attach(node)
 
-
     def create_children(self):
         super().create_children()
-        left = world_left
-        bottom = world_bottom
-        right = world_right
-        top = world_top
-        thickness = 200
-        # North Wall
+        bounds = self.bounds
+        left, bottom = bounds.left, bounds.bottom
+        right, top = bounds.right, bounds.top
+
+        thickness = 1.0  # meters
+
+        # North
         self.spawn_wall(left - thickness, top, right + thickness, top + thickness)
-        # South Wall
+        # South
         self.spawn_wall(left - thickness, bottom - thickness, right + thickness, bottom)
-        # East Wall
-        self.spawn_wall(right, bottom - thickness, right + thickness, top + thickness)
-        # West Wall
-        self.spawn_wall(left - thickness, bottom - thickness, left, top + thickness)
+        # East
+        self.spawn_wall(right, bottom, right + thickness, top)
+        # West
+        self.spawn_wall(left - thickness, bottom, left, top)
 
     def add_wall(self, wall: Wall) -> None:
         self.walls.append(wall)

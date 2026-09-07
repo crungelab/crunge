@@ -1,8 +1,5 @@
-from crunge.engine import Scheduler
-
 from crunge.engine.d2.scene.layer.graph_layer_2d import GraphLayer2D
 
-from .. import world
 from ..ball import Ball
 
 BALL_COUNT = 10
@@ -19,7 +16,7 @@ class BallLayer(GraphLayer2D):
 
     def spawn_ball(self):
         ball = Ball()
-        world.world_instance.materialize_random_from_center(ball, self)
+        self.materialize_random_from_center(ball)
 
     def add_ball(self, ball: Ball) -> None:
         self.balls.append(ball)

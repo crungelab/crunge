@@ -16,10 +16,11 @@ from crunge.abt.run.task import Runner
 from .game_view import GameView
 from .game_scene import GameScene
 
+from .controller import ScrollingCameraController
 
 class Game(App):
     """Main application class."""
-
+    controller_class = ScrollingCameraController
     view: GameView
 
     def __init__(self):

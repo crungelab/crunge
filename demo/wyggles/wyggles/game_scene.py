@@ -1,7 +1,11 @@
 import timeit
+import random
 
 from loguru import logger
+import glm
+
 from crunge.engine.d2.scene.physics_scene_2d import PhysicsScene2D
+from crunge.engine.d2.scene.layer import GraphLayer2D
 from crunge.engine.d2.entity import StaticEntity2D
 
 import crunge.engine.loader.tiled.builder as tiled_builder
@@ -14,6 +18,7 @@ from crunge.engine.loader.tiled.tiled_map_loader import TiledMapLoader
 
 import wyggles.globe
 from .world import World
+from .game_entity import GameEntity
 
 from .layer import WallLayer, FruitLayer, BallLayer, WyggleLayer
 
@@ -35,6 +40,7 @@ class GameScene(PhysicsScene2D):
         super().__init__(World())
         self.name = name
         self.paused = False
+        self._entities: list[GameEntity] = []
 
     def _create(self):
         self.create_map()
@@ -56,7 +62,8 @@ class GameScene(PhysicsScene2D):
         self.add_layer(self.wyggle_layer)
 
     def create_map(self):
-        tmx_path = ResourceManager().resolve_path("${resources}/level1.tmx")
+        tmx_path = ResourceManager().resolve_path("${resources}/debug1.tmx")
+        # tmx_path = ResourceManager().resolve_path("${resources}/level1.tmx")
         context = BuilderContext(scene=self)
         map_builder = DefaultMapBuilder()
         map_builder.add_object_group_builder("landscape", StaticObjectGroupBuilder())
@@ -78,3 +85,21 @@ class GameScene(PhysicsScene2D):
         self.processing_time = timeit.default_timer() - start_time
 
         super().update(delta_time)
+
+    def register_entity(self, entity: GameEntity) -> None:
+        self._entities.append(entity)
+
+    def unregister_entity(self, entity: GameEntity) -> None:
+        try:
+            self._entities.remove(entity)
+        except ValueError:
+            pass
+
+    def proximity_query(self, origin: glm.vec2, distance: float) -> list[GameEntity]:
+        result = [
+            entity
+            for entity in self._entities
+            if glm.distance(origin, entity.position) < distance
+        ]
+        result.sort(key=lambda e: glm.distance(origin, e.position))
+        return result

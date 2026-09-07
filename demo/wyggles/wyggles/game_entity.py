@@ -1,3 +1,6 @@
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from wyggles.game_scene import GameScene
 import math
 import glm
 
@@ -7,6 +10,7 @@ from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 
 
 class GameEntity(Entity2D):
+    scene: "GameScene"
     vu_class: type[SpriteVu] | None = SpriteVu
     def __init__(self, dna=None):
         super().__init__()
