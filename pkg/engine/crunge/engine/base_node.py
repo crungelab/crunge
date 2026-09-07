@@ -244,7 +244,7 @@ class BaseNode(Base):
     # -- plugging ----------------------------------------------------------
 
     def plug(self) -> None:
-        """Let every chip resolve its siblings. Driven from create_children
+        """Let every chip resolve its siblings. Driven from _create
         once the whole set exists and has been created."""
         if self._plugged:
             return
