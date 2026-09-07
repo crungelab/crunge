@@ -11,6 +11,8 @@ from ...character import Avatar
 from ..physics_demo import PhysicsDemo
 
 class PlatformerDemo(PhysicsDemo):
+    controller_class = None
+
     def create_display(self):
         super().create_display()
         self.camera.zoom = 2.0

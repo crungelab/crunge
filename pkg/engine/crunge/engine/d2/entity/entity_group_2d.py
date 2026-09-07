@@ -26,6 +26,19 @@ class EntityGroup2D(Entity2D):
             node.gid = self.id
             self.layer.attach(node)
 
+    def _update(self, delta_time: float):
+        points = [node.position for node in self.nodes]
+        if points:
+            centroid = glm.vec2(
+                sum(point.x for point in points) / len(points),
+                sum(point.y for point in points) / len(points),
+            )
+        else:
+            centroid = glm.vec2(0, 0)
+        self.position = centroid
+        return super()._update(delta_time)
+
+    '''
     def update(self, delta_time: float):
         points = [node.position for node in self.nodes]
         if points:
@@ -37,3 +50,4 @@ class EntityGroup2D(Entity2D):
             centroid = glm.vec2(0, 0)
         self.position = centroid
         return super().update(delta_time)
+    '''

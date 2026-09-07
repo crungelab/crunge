@@ -48,6 +48,9 @@ class Vu2D(Vu[Node2D]):
         self.manual_draw = True
 
     # -- lifetime ----------------------------------------------------------
+    def plug(self) -> None:
+        super().plug()
+        self.node._mark_bounds_dirty()
 
     def _create(self):
         super()._create()

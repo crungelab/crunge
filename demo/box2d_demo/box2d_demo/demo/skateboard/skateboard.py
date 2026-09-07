@@ -14,6 +14,8 @@ from ...character import Skateboard
 
 
 class SkateboardDemo(PhysicsDemo):
+    controller_class = None
+
     def setup(self):
         super().setup()
         self.create_floor()

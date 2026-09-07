@@ -6,10 +6,11 @@ from crunge import imgui
 
 from crunge.engine.d2.settings_2d import Settings2D
 
+from ...objects.floor import Floor
+
 from ..physics_demo import PhysicsDemo
 
 from .ball import Ball
-from ...objects.floor import Floor
 
 
 class BallsDemo(PhysicsDemo):

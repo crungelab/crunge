@@ -15,6 +15,8 @@ from ..physics_demo import PhysicsDemo
 
 
 class CarDemo(PhysicsDemo):
+    controller_class = None
+
     def setup(self):
         super().setup()
         self.create_floor()

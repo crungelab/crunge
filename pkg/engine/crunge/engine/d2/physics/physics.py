@@ -58,7 +58,6 @@ class Physics(Chip[Node2D]):
         self.shapes = self.geom.create_shapes(self)
 
     def unplug(self) -> None:
-        exit()
         if self.body is not None and self.body.is_valid():
             self.body.destroy()
         self.body = None

@@ -7,11 +7,11 @@ from crunge import box2d
 
 from crunge.engine.d2.physics import PhysicsWorld2D
 
-from .scrolling_demo import ScrollingDemo
+from .demo import Demo
 from crunge.engine.d2.physics.world_debug_overlay import WorldDebugOverlay
 
 
-class PhysicsDemo(ScrollingDemo):
+class PhysicsDemo(Demo):
     def create_display(self):
         super().create_display()
         self.debug_overlay = WorldDebugOverlay()

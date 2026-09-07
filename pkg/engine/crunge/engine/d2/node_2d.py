@@ -37,16 +37,6 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         # World-space bounds, derived from local bounds + global transform.
         self._bounds = Bounds2()
 
-    def _seat(self) -> None:
-        super()._seat()
-        if self.vu_class is not None:
-            self.add(self.vu_class())
-            # The vu is what this node measures. Anything that read `bounds`
-            # before now cached the 1x1 fallback from local_size and cleared
-            # the dirty flag, and nothing else would ever set it again for a
-            # node that does not move.
-            self._mark_bounds_dirty()
-
     # ------------------------------------------------------------------
     # Properties
     # ------------------------------------------------------------------

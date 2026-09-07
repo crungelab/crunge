@@ -25,9 +25,11 @@ EXPLOSION_RED = glm.vec4(1.0, 0.0, 0.0, 1.0)
 
 
 class SpaceShooter(PhysicsDemo):
+    controller_class = None
+
     def setup(self):
         super().setup()
-        self.controller = None
+        #self.controller = None
         self.camera_target = glm.vec2(0, 0)
         self._destroyed = set()
 

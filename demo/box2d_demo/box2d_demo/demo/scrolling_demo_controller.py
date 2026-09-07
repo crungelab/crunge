@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from loguru import logger
 import glm
 
@@ -8,7 +10,25 @@ from crunge.engine import Controller
 CAMERA_MOVEMENT_SPEED = 5.0
 LERP_SPEED = 10.0  # Higher = snappier, Lower = smoother/floatier
 
-class ScrollingDemoController(Controller):
+if TYPE_CHECKING:
+    from .scrolling_demo import ScrollingDemo
+
+class ScrollingDemoController(Controller["ScrollingDemo"]):
+    def __init__(self):
+        super().__init__()
+        self.velocity = glm.vec2(0, 0)
+
+        self.left_pressed = False
+        self.right_pressed = False
+        self.up_pressed = False
+        self.down_pressed = False
+
+        self.camera: Camera2D | None = None
+
+    def _ready(self):
+        super()._ready()
+        self.camera = self.node.camera
+    '''
     def __init__(self, camera: Camera2D):
         super().__init__()
         self.camera = camera
@@ -18,6 +38,7 @@ class ScrollingDemoController(Controller):
         self.right_pressed = False
         self.up_pressed = False
         self.down_pressed = False
+    '''
 
     def update(self, delta_time: float):
         target_velocity = glm.vec2(0, 0)

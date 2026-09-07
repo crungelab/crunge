@@ -16,9 +16,11 @@ from crunge.engine.d2.camera_2d import Camera2D
 from .. import globe
 
 from .demo_screen import DemoScreen
-
+from .scrolling_demo_controller import ScrollingDemoController
 
 class Demo(engine.App):
+    controller_class = ScrollingDemoController
+
     display: DemoScreen
 
     def __init__(self):

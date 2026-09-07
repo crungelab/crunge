@@ -13,6 +13,8 @@ from ...character import Avatar
 
 
 class DynamicCharacterDemo(PhysicsDemo):
+    controller_class = None
+
     def setup(self):
         super().setup()
         self.create_floor()

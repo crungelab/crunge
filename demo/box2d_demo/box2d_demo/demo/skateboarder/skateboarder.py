@@ -12,6 +12,8 @@ from ..physics_demo import PhysicsDemo
 
 
 class SkateboarderDemo(PhysicsDemo):
+    controller_class = None
+
     def create_display(self):
         super().create_display()
         self.camera.zoom = 2.0

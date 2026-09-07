@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, TypeVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .gfx_access import GfxAccess
 from .chip import Chip
@@ -13,10 +13,7 @@ if TYPE_CHECKING:
     from .node import Node
     from .vu_group import VuGroup
 
-T_Node = TypeVar("T_Node", bound="Node")
-
-
-class Vu(GfxAccess, Chip[T_Node]):
+class Vu[T_Node: "Node"](GfxAccess, Chip[T_Node]):
     """The chip that renders its node.
 
     Subclasses override `_draw`, not `draw`: `draw` owns the boundary work

@@ -84,7 +84,6 @@ class DynamicCharacterController(CharacterController):
 
     def _ready(self) -> None:
         super()._ready()
-        #exit()
         scene = Scene2D.get_current()
         self.character_layer = scene.get_layer("pc")
         self.ground_layer = scene.get_layer("ground")

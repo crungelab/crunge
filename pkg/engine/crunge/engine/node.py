@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Generic, TypeVar
+from typing import TYPE_CHECKING, ClassVar, Callable, Generic, TypeVar
 
 from loguru import logger
 
@@ -15,6 +15,9 @@ T_Node = TypeVar("T_Node", bound="Node")
 
 
 class Node(BaseNode, Generic[T_Node]):
+    vu_class: ClassVar[type[Vu] | None] = None
+    controller_class: ClassVar[type[Controller] | None] = None
+
     """A node in the scene graph.
 
     The vu is a chip like any other — creation, enabling, drawing, updating
@@ -44,6 +47,13 @@ class Node(BaseNode, Generic[T_Node]):
         # connect_now.
         self.model = model
         self.visible = True
+
+    def _seat(self) -> None:
+        super()._seat()
+        if self.vu_class is not None:
+            self.add(self.vu_class())
+        if self.controller_class is not None:
+            self.add(self.controller_class())
 
     # -- properties ----------------------------------------------------
 

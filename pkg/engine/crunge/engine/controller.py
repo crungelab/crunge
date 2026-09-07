@@ -1,12 +1,16 @@
+from typing import TYPE_CHECKING
+
 from loguru import logger
 
-#from .base import Base, DispatchResult, EVENT_HANDLED
 from .chip import Chip
 from .dispatch import DispatchResult, EVENT_HANDLED
 from .sdl.event_handler import EventHandler
 
+if TYPE_CHECKING:
+    from .node import Node
 
-class Controller(EventHandler, Chip):
+class Controller[T_Node: "Node"](EventHandler, Chip[T_Node]):
+#class Controller(EventHandler, Chip):
     def __init__(self):
         super().__init__()
         self.delta_time = 0
@@ -20,11 +24,6 @@ class Controller(EventHandler, Chip):
     def dispatch(self, event) -> DispatchResult:
         #logger.debug(f"class:{self.__class__.__name__}, Dispatching event: {event}")
         return super().dispatch(event) or self.handle(event)
-        '''
-        if super().dispatch(event) is not None:  # Base: descend
-            return EVENT_HANDLED
-        return self.handle(event)
-        '''
 
     def update(self, delta_time: float):
         self.delta_time = delta_time
