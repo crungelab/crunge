@@ -15,6 +15,10 @@ class WyggleMind(Chip):
         self.agent = MyAgent(self.node)
         self.agent.schedule()
 
+    def _disable(self):
+        self.agent.cancel()
+        super()._disable()
+
     def update(self, delta_time: float):
         self.agent.update(delta_time)
         super().update(delta_time)

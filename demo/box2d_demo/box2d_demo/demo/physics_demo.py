@@ -40,11 +40,11 @@ class PhysicsDemo(Demo):
             self._mouse_joint.destroy_joint()
             self._mouse_joint = None
         self._dragged_body = None
-        #self.world.destroy_body(self._mouse_body)
         self._mouse_body.destroy()
         self._mouse_body = None
-        self.world.destroy()
         super().teardown()
+        #self.world.destroy()
+        
 
     def update(self, delta_time: float):
         self.world.update(1 / 60)

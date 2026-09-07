@@ -34,6 +34,14 @@ class GraphLayer(SceneLayer, Generic[T_Node]):
         super()._enable()
         self.root.enable()
 
+    def _disable(self) -> None:
+        super()._disable()
+        self.root.disable()
+
+    def _destroy(self) -> None:
+        super()._destroy()
+        self.root.destroy()
+
     def _ready(self) -> None:
         super()._ready()
         self.root.ready()

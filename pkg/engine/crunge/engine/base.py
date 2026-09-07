@@ -79,6 +79,7 @@ class Base:
         self.destroy_children()
         self._destroy()
         self._lifetime = Lifetime.DESTROYED
+        self._destroyed()
         return self
 
     def _destroy(self) -> None:
@@ -86,6 +87,10 @@ class Base:
 
     def destroy_children(self) -> None:
         """Containers override."""
+        pass
+
+    def _destroyed(self) -> None:
+        """Bottom-up. Own resources already released. Children destroyed and unreachable."""
         pass
 
     def enable(self):

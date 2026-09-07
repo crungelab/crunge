@@ -16,15 +16,18 @@ class EntityGroup2D(Entity2D):
 
     def add_node(self, node: Entity2D):
         node.group = self
+        node.top_level = True
         self.nodes.append(node)
         self.add_child(node)
         return node
 
+    '''
     def _create(self):
         super()._create()
         for node in self.nodes:
             node.gid = self.id
             self.layer.attach(node)
+    '''
 
     def _update(self, delta_time: float):
         points = [node.position for node in self.nodes]

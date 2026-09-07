@@ -138,8 +138,8 @@ class Skateboard(EntityGroup2D):
 
     # -- joints ------------------------------------------------------------
 
-    def _created(self):
-        super()._created()
+    def _enable(self):
+        super()._enable()
 
         world = physics_globe.world
         front_anchor = box2d.Vec2(*(self._front_wheel_pos - self.deck.position))
@@ -147,6 +147,7 @@ class Skateboard(EntityGroup2D):
 
         self.front_joint = self._pin_wheel(world, self.front_wheel, front_anchor)
         self.back_joint = self._pin_wheel(world, self.back_wheel, back_anchor)
+
 
     def _pin_wheel(self, world, wheel, chassis_anchor):
         joint_def = box2d.RevoluteJointDef(
@@ -159,12 +160,13 @@ class Skateboard(EntityGroup2D):
         )
         return box2d.create_revolute_joint(world, joint_def)
 
-    def _destroy(self):
+    def _disable(self):
+        logger.debug(f"Destroying joints for skateboard: {self}")
         for joint in (self.front_joint, self.back_joint):
             if joint is not None:
                 box2d.destroy_joint(joint)
         self.front_joint = self.back_joint = None
-        super()._destroy()
+        super()._disable()
 
     # -- propulsion --------------------------------------------------------
 

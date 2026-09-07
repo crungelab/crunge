@@ -38,10 +38,12 @@ class DynamicCharacter(DynamicEntity2D):
         self.mass_data: b2.MassData = None
         #self.add(DynamicCharacterController(self))
 
+    '''
     def _seat(self):
         super()._seat()
         self.add(DynamicCharacterController(self))
-
+    '''
+    
     def _create(self):
         super()._create()
         self.physics.lock_rotation()

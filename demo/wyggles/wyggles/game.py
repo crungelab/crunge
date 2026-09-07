@@ -42,17 +42,15 @@ class Game(App):
         self.debug_agents = False
         self.debug_bounds = False
 
-    """
-    def _create(self):
-        super()._create()
-        self.debug_layer = WorldDebugOverlay()
-        self.add_overlay(self.debug_layer)
-    """
-
     def setup(self):
         super().setup()
         self.scene = GameScene("default")
         self.create_view()
+
+    def teardown(self):
+        self.scene.destroy()
+        #self.scene.world.destroy()
+        super().teardown()
 
     def on_display(self):
         super().on_display()

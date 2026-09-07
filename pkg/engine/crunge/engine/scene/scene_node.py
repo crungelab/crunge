@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeVar, Generic
+from typing import TYPE_CHECKING, ClassVar, TypeVar, Generic
 
 from loguru import logger
 
@@ -11,6 +11,11 @@ T_Layer = TypeVar("T_Layer", bound=SceneLayer)
 class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
     children: "list[SceneNode[T_Node, T_Layer]]"
 
+    # When True this node's local transform IS its world transform: subclasses
+    # skip the parent chain when composing global, and the dirt cascade below
+    # stops here. The node's own children still parent to it normally.
+    top_level_default: ClassVar[bool] = False
+
     def __init__(self, model=None) -> None:
         super().__init__(model)
         self.layer: T_Layer = None
@@ -21,6 +26,21 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
 
         self._transform_notify_pending = False
         self._transform_notify_again = False
+
+        self._top_level = self.top_level_default
+
+    @property
+    def top_level(self) -> bool:
+        return self._top_level
+
+    @top_level.setter
+    def top_level(self, value: bool):
+        if value == self._top_level:
+            return
+        self._top_level = value
+        # Local is now read against a different space. Nothing moved in world
+        # terms only if the parent chain is identity; otherwise this teleports.
+        self._mark_global_dirty()
 
     @property
     def scene(self):
@@ -73,6 +93,14 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
                 self._transform_notify_again = False
 
                 for child in self.children:
+                    # A top_level child's world transform does not derive from
+                    # ours, so our move is a no-op for it and for everything
+                    # under it. Don't descend: recursing would recompute an
+                    # identical global, re-dirty its bounds, and emit a
+                    # transform_changed that says nothing moved — the same
+                    # per-frame GPU write cascade top_level exists to avoid.
+                    if child.top_level:
+                        continue
                     child._mark_global_dirty()
 
                 self.on_transform()
@@ -91,6 +119,9 @@ class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
     def add_child(self, child):
         child.set_layer(self.layer)
         result = super().add_child(child)
+        # Reparenting changes a normal child's world transform. A top_level
+        # child's is unchanged by definition — but it still has to be marked
+        # once here, because it may never have been computed at all.
         child._mark_global_dirty()
         return result
 

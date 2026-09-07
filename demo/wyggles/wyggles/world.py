@@ -25,6 +25,7 @@ class World(PhysicsWorld2D):
         world_instance = self
         
         self.entities: list[GameEntity] = []
+        
 
     def add_entity(self, entity):
         self.entities.append(entity)

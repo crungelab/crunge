@@ -26,6 +26,8 @@ from .entity_2d import Entity2D
 
 
 class PhysicsEntity2D(Entity2D):
+    top_level_default = True
+
     vu_class = SpriteVu
 
     geom = HullGeom()

@@ -215,16 +215,19 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @property
     def global_transform(self) -> glm.mat4:
-        """World transform: this node's local transform chained through ancestors."""
+        """World transform: this node's local transform chained through ancestors.
+
+        For a top_level node there is no chaining: local is world.
+        """
         if self._global_dirty:
             self._update_global_transform()
         return self._global_transform
 
     def _update_global_transform(self):
-        if self.parent is not None:
-            self._global_transform = self.parent.global_transform * self.transform
-        else:
+        if self.top_level or self.parent is None:
             self._global_transform = self.transform
+        else:
+            self._global_transform = self.parent.global_transform * self.transform
         self._global_dirty = False
 
     # ------------------------------------------------------------------
@@ -238,12 +241,12 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @global_position.setter
     def global_position(self, value: glm.vec2):
-        if self.parent is not None:
+        if self.top_level or self.parent is None:
+            self.position = value
+        else:
             parent_inv = glm.inverse(self.parent.global_transform)
             local = parent_inv * glm.vec4(value.x, value.y, self._depth, 1.0)
             self.position = glm.vec2(local.x, local.y)
-        else:
-            self.position = value
 
     @property
     def global_rotation(self) -> float:
@@ -252,10 +255,10 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @global_rotation.setter
     def global_rotation(self, value: float):
-        if self.parent is not None:
-            self.rotation = value - self.parent.global_rotation
-        else:
+        if self.top_level or self.parent is None:
             self.rotation = value
+        else:
+            self.rotation = value - self.parent.global_rotation
 
     @property
     def global_scale(self) -> glm.vec2:
@@ -266,11 +269,11 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
 
     @global_scale.setter
     def global_scale(self, value: glm.vec2):
-        if self.parent is not None:
+        if self.top_level or self.parent is None:
+            self.scale = value
+        else:
             parent_scale = self.parent.global_scale
             self.scale = glm.vec2(value.x / parent_scale.x, value.y / parent_scale.y)
-        else:
-            self.scale = value
 
     # ------------------------------------------------------------------
     # Bounds

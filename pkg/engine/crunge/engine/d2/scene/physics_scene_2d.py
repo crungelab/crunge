@@ -7,3 +7,9 @@ class PhysicsScene2D(Scene2D):
         super().__init__()
         self.world = world
         self.world.make_current()
+
+    '''
+    def _destroy(self) -> None:
+        self.world.destroy()
+        super()._destroy()
+    '''

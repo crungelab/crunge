@@ -1,6 +1,7 @@
 import glm
 
 from crunge.engine.d2.sprite import SpriteVu
+from ..character.controller.dynamic_character_controller import DynamicCharacterController
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine.builder.sprite import CollidableSpriteBuilder
 from crunge.engine.loader.sprite.xml_sprite_atlas_loader import XmlSpriteAtlasLoader
@@ -23,6 +24,7 @@ class Avatar(DynamicCharacter):
             "${resources}/tiled/characters/male_adventurer/sheet.xml"
         )
         self.add(AvatarBrain(atlas))
+        self.add(DynamicCharacterController(self))
 
     @classmethod
     def produce(self, position=glm.vec2()):
