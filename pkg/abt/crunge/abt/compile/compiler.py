@@ -16,12 +16,7 @@ class Compiler(CompilerBase):
 
     def Paragraph(self, n):
         return ''.join([self.visit(c) for c in n.nodes])
-        '''
-        arr = []
-        for c in n.list:
-            arr.append(self.visit(c))
-        return arr.join('')
-        '''
+
     def Action(self, n):
         #print(n)
         result = self.visit(n.expr)
@@ -29,17 +24,8 @@ class Compiler(CompilerBase):
             self.writeLn(result)
 
     def Array(self, n):
-        return f"[ { str(self.visit(c)) for c in n.nodes } ]"
-        '''
-        arr = []
-        for c in n.nodes:
-            arr.append(self.visit(c))
-        return [
-            '[',
-            arr.join(),
-            ']'
-        ].join('')
-        '''
+        return f"[ {', '.join(str(self.visit(c)) for c in n.nodes)} ]"
+
     def Return(self, n):
         self.writeLn(f"yield self.succeed({self.visit(n.expr)})")
 
@@ -124,7 +110,7 @@ class Compiler(CompilerBase):
         k, v = None, None
         self.write('''\
 from crunge.abt.run import Context, Term, Goal, Believe, Achieve, Assert, Retract, Attempt
-from crunge.abt.run import __, term_, _$, module_, Message, Rule, Trigger, Variable, runner_\
+from crunge.abt.run import __, term_, _$, Message, Rule, Trigger, Variable, runner_\
 '''
         )
         self.writeLn('')

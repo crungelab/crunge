@@ -76,25 +76,18 @@ def logs():
 
 
 @pytest.fixture(autouse=True)
-def clean_task_ctx():
-    """Reset the DSL's context vars between tests.
+def clean_scopes():
+    """Reset the DSL scope stacks between tests.
 
-    task_ctx_parent is module-global. A test that fails inside a `with` block
-    leaves it dangling, and the next test's tree attaches to the wrong parent.
+    The stacks outlive a single test. A test that fails inside a `with` block
+    leaves one dangling, and the next test's tree attaches to the wrong parent.
     """
-    from crunge.abt.run.act.helpers import (
-        agent_ctx_root,
-        task_ctx_parent,
-        neuron_ctx_root,
-        neuron_ctx_parent,
-    )
+    from crunge.abt.run.scope import AgentScope, NeuronScope, TaskScope
 
-    agent_ctx_root.set(None)
-    task_ctx_parent.set(None)
-    neuron_ctx_root.set(None)
-    neuron_ctx_parent.set(None)
+    scopes = (TaskScope, NeuronScope, AgentScope)
+
+    for scope in scopes:
+        scope.clear()
     yield
-    agent_ctx_root.set(None)
-    task_ctx_parent.set(None)
-    neuron_ctx_root.set(None)
-    neuron_ctx_parent.set(None)
+    for scope in scopes:
+        scope.clear()

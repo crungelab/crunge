@@ -1,18 +1,19 @@
-from typing import List
+from typing import List, Optional
+import contextlib
 
 from loguru import logger
 
 from ..task import Task, Status, TS_SUCCESS, TS_FAILURE
 from ..policy import Rule
 from .. import Message, Propose, Attempt, Assert, Retract, Achieve
-from .neuron import Neuron
-from .helpers import *
+from ..neuron import Neuron
+from ..scope import NeuronScope
 
 
 class Act(Task):
     def __init__(self, action=None, msg=None):
         super().__init__(action, msg)
-        self.neuron: Neuron = None
+        self.neuron: Optional[Neuron] = NeuronScope.top()
 
     @property
     def activity(self):
@@ -89,12 +90,12 @@ class Act(Task):
 #
 # Root
 #
-@contextmanager
+
+
+@contextlib.contextmanager
 def root(agent):
-    agent_ctx_root.set(agent)
-    ctx = task_ctx_enter(agent)
-    yield agent
-    task_ctx_exit(ctx)
+    with agent:
+        yield agent
 
 
 #
@@ -104,15 +105,8 @@ class Sensor(Act):
     pass
 
 
-@contextmanager
-def sensor():
-    task = Sensor()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
-
-
-sensor_ = lambda: Sensor()
+# DSL
+sensor = Sensor
 
 
 #
@@ -126,16 +120,9 @@ class Condition(Act):
                 return self.fail()
 
 
-@contextmanager
+# DSL
 def condition(task=None):
-    if not task:
-        task = Condition()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
-
-
-condition_ = lambda: Condition()
+    return task if task is not None else Condition()
 
 
 #
@@ -145,16 +132,9 @@ class Action(Act):
     pass
 
 
-@contextmanager
+# DSL
 def action(task=None):
-    if not task:
-        task = Action()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
-
-
-action_ = lambda action: Action(action)
+    return task if task is not None else Action()
 
 
 #
@@ -168,13 +148,9 @@ class Sequence(Act):
                 return self.fail()
 
 
-@contextmanager
+# DSL
 def sequence(task=None):
-    if not task:
-        task = Sequence()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+    return task if task is not None else Sequence()
 
 
 #
@@ -194,12 +170,8 @@ class Selector(Act):
         return self.fail()
 
 
-@contextmanager
-def selector():
-    task = Selector()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+# DSL
+selector = Selector
 
 
 #
@@ -235,12 +207,8 @@ class Utility(Act):
             self.exit()
 
 
-@contextmanager
-def utility():
-    task = Utility()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+# DSL
+utility = Utility
 
 
 #
@@ -261,12 +229,8 @@ class Timer(Act):
                 return self.fail()
 
 
-@contextmanager
-def timer(timeout):
-    task = Timer(timeout)
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+# DSL
+timer = Timer
 
 
 #
@@ -287,12 +251,8 @@ class Loop(Act):
                 child.reset()
 
 
-@contextmanager
-def loop():
-    task = Loop()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+# DSL
+loop = Loop
 
 
 #
@@ -314,12 +274,8 @@ class Forever(Act):
                 child.reset()
 
 
-@contextmanager
-def forever():
-    task = Forever()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+# DSL
+forever = Forever
 
 
 #
@@ -342,12 +298,8 @@ class Counter(Act):
                 child.reset()
 
 
-@contextmanager
-def counter(start, stop):
-    task = Counter(start, stop)
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+# DSL
+counter = Counter
 
 
 #
@@ -363,12 +315,8 @@ class Parallel(Act):
         return self.suspend()
 
 
-@contextmanager
-def parallel():
-    task = Parallel()
-    ctx = task_ctx_enter(task)
-    yield task
-    task_ctx_exit(ctx)
+# DSL
+parallel = Parallel
 
 
 #
@@ -378,20 +326,8 @@ class Method(Sequence):
     pass
 
 
-method_ = lambda action: Method(action)
-
-
 #
 # Module
 #
 class Module(Method):
     pass
-
-
-module_ = lambda action: Module(action)
-
-sequence_ = lambda action: Sequence(action)
-
-counter_ = lambda start, stop, action: Counter(start, stop, action)
-
-parallel_ = lambda action: Parallel(action)

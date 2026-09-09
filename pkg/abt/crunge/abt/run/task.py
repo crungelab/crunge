@@ -14,7 +14,7 @@ from loguru import logger
 from ..utils import singleton
 from ..run import Message
 from .policy import Policy
-
+from .scope import TaskScope, AgentScope
 
 class Status(enum.Enum):
     INITIAL = "Initial"
@@ -66,29 +66,33 @@ class Task(Policy):
         self.error: Optional[BaseException] = None
 
         self.id = uuid1()
-        self.agent: "Agent" = None
-        self.runner: Optional["Runner"] = None
-        self.parent: Optional["Task"] = None
         self.children: List["Task"] = []
         self.status = Status.INITIAL
         self.tasks = None
 
+        # Ambient scope. Both are None outside any open `with`, which is the
+        # normal case for tasks built at run time; add() backfills from the
+        # parent when such a task is later attached to a live tree.
+        self.runner: Optional["Runner"] = None
+
+        self.agent: Optional["Agent"] = AgentScope.top()
+        self.parent: Optional["Task"] = TaskScope.top()
+
+        if self.parent is not None:
+            self.parent.add(self)
+            self.agent = self.parent.agent
+            self.runner = self.parent.runner
+
+    def __enter__(self) -> "Task":
+        TaskScope.push(self)
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        TaskScope.pop(self)
+        return False
+    
     def __repr__(self):
         return f"<{self.__class__.__name__} {self.status.value}>"
-
-    @classmethod
-    def produce(cls, agent: "Agent", parent: "Task" = None):
-        task = cls()
-        return task.create(agent, parent)
-
-    def create(self, agent: "Agent", parent: "Task" = None):
-        self.agent = agent
-        self.parent = parent
-        if parent:
-            parent.add(self)
-            if self.runner is None:
-                self.runner = parent.runner
-        return self
 
     def __await__(self):
         return (yield self)
@@ -148,16 +152,6 @@ class Task(Policy):
         self.coro = self.main(self.msg)
         self.status = Status.RUNNING
         return True
-
-    '''
-    def begin(self) -> bool:
-        if self.status.done:
-            logger.warning("Refusing to begin a finished task: {}", self)
-            return False
-        self.coro = self.main(self.msg)
-        self.status = Status.RUNNING
-        return True
-    '''
 
     #
     # TREE
@@ -412,21 +406,6 @@ class Runner:
                 if not task.status.done:
                     task.cancel()
             passes += 1
-
-    '''
-    def cancel_all(self):
-        """Synchronously tear everything down. Safe to call from teardown.
-
-        Cancelling closes coroutine frames, which is what actually releases
-        their references to bots and nodes.
-        """
-        queue = self.queue
-        self.queue = []
-        for task in queue:
-            if not task.status.done:
-                task.cancel()
-        self.callbacks = []
-    '''
 
     #
     # STEPPING

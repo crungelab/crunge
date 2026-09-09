@@ -1,2 +1,2 @@
 from .act import *
-from .neuron import *
+from ..neuron import *

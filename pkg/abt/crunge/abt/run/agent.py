@@ -9,6 +9,7 @@ from . import _impasse
 from .task import Task, Status
 from .act import *
 from .context import Context
+from .scope import AgentScope
 
 
 class Agent(Sequence):
@@ -30,6 +31,25 @@ class Agent(Sequence):
         if proposal:
             attempt = Attempt(proposal.data, proposal.sender, proposal.to)
             self.posts.append(attempt)
+
+    def __enter__(self) -> "Agent":
+        super().__enter__()
+        AgentScope.push(self)
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        AgentScope.pop(self)
+        return super().__exit__(exc_type, exc_value, tb)
+
+    '''
+    def __enter__(self) -> "Agent":
+        AgentScope.push(self)
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        AgentScope.pop(self)
+        return False
+    '''
 
     def broadcast(self, msg: Message):
         m = copy(msg)
@@ -67,7 +87,7 @@ class Agent(Sequence):
                 logger.debug("- \t{}", msg)
                 self.ctx.remove(msg.data)
 
-            case _: # Attempt() | Propose() | _:
+            case _:  # Attempt() | Propose() | _:
                 logger.debug("Eval:\t{}", msg)
 
         return super().dispatch(msg)
