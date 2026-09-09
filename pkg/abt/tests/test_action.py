@@ -32,8 +32,7 @@ def drain(runner, dt=0.0, max_steps=100):
 # COMPLETION SEMANTICS
 #
 def test_bare_return_is_success(runner):
-    """`main` returning None still means success -- the ergonomics that
-    TS_SUCCESS = None used to provide, now handled at the status layer."""
+    """`main` returning None means Status.SUCCESS"""
     calls = []
 
     async def fn(task, msg):

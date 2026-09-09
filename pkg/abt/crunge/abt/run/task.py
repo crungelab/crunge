@@ -47,16 +47,6 @@ _DONE = frozenset(
 )
 _LIVE = frozenset((Status.RUNNING, Status.SUSPENDED))
 
-# Migration aliases. TS_SUCCESS is no longer None -- see notes.
-TS_INITIAL = Status.INITIAL
-TS_RUNNING = Status.RUNNING
-TS_SUCCESS = Status.SUCCESS
-TS_FAILURE = Status.FAILURE
-TS_CANCELLED = Status.CANCELLED
-TS_SUSPENDED = Status.SUSPENDED
-TS_HALTED = Status.HALTED
-TS_ABORTED = Status.ABORTED
-
 
 class Preempt(BaseException):
     """Unwind the running branch back to `target`, which will re-select.
@@ -508,7 +498,9 @@ class Runner:
             try:
                 callback()
             except Exception:
-                logger.error("Callback {} raised:\n{}", callback, traceback.format_exc())
+                logger.error(
+                    "Callback {} raised:\n{}", callback, traceback.format_exc()
+                )
 
     def _advance(self, task: Task):
         """Resume one task. Failures are contained to that task."""
@@ -616,7 +608,9 @@ class Runner:
                 return
 
             except Exception as e:
-                logger.error("{} raised while preempting:\n{}", task, traceback.format_exc())
+                logger.error(
+                    "{} raised while preempting:\n{}", task, traceback.format_exc()
+                )
                 task.error = e
                 task._finish(Status.FAILURE)
                 return

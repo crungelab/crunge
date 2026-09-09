@@ -3,7 +3,7 @@ import contextlib
 
 from loguru import logger
 
-from ..task import Task, Status, TS_SUCCESS, TS_FAILURE, Preempt
+from ..task import Task, Status, Preempt
 from ..policy import Rule
 from .. import Message, Propose, Attempt, Assert, Retract, Achieve
 from ..neuron import Neuron

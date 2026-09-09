@@ -37,15 +37,6 @@ class Status(enum.Enum):
 _DONE = frozenset((Status.SUCCESS, Status.FAILURE, Status.CANCELLED, Status.HALTED))
 _LIVE = frozenset((Status.RUNNING, Status.SUSPENDED))
 
-# Migration aliases. TS_SUCCESS is no longer None -- see notes.
-TS_INITIAL = Status.INITIAL
-TS_RUNNING = Status.RUNNING
-TS_SUCCESS = Status.SUCCESS
-TS_FAILURE = Status.FAILURE
-TS_CANCELLED = Status.CANCELLED
-TS_SUSPENDED = Status.SUSPENDED
-TS_HALTED = Status.HALTED
-
 
 class Task(Policy):
     def __init__(self, action=None, msg=None):

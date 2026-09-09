@@ -225,7 +225,7 @@ def test_cancel_stops_a_running_sequence(runner):
 
 
 def test_cancelled_child_does_not_read_as_success(runner):
-    """The concrete bug behind TS_SUCCESS = None: a sequence woken by a
+    """The concrete bug behind Status.SUCCESS = None: a sequence woken by a
     cancelled child would march on to the next step."""
     log = []
 
