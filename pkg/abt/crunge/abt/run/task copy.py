@@ -16,7 +16,6 @@ from ..run import Message
 from .policy import Policy
 from .scope import TaskScope, AgentScope
 
-
 class Status(enum.Enum):
     INITIAL = "Initial"
     RUNNING = "Running"
@@ -25,7 +24,6 @@ class Status(enum.Enum):
     CANCELLED = "Cancelled"
     SUSPENDED = "Suspended"
     HALTED = "Halted"
-    ABORTED = "Aborted"
 
     @property
     def done(self) -> bool:
@@ -36,15 +34,7 @@ class Status(enum.Enum):
         return self in _LIVE
 
 
-_DONE = frozenset(
-    (
-        Status.SUCCESS,
-        Status.FAILURE,
-        Status.CANCELLED,
-        Status.HALTED,
-        Status.ABORTED,
-    )
-)
+_DONE = frozenset((Status.SUCCESS, Status.FAILURE, Status.CANCELLED, Status.HALTED))
 _LIVE = frozenset((Status.RUNNING, Status.SUSPENDED))
 
 # Migration aliases. TS_SUCCESS is no longer None -- see notes.
@@ -55,29 +45,9 @@ TS_FAILURE = Status.FAILURE
 TS_CANCELLED = Status.CANCELLED
 TS_SUSPENDED = Status.SUSPENDED
 TS_HALTED = Status.HALTED
-TS_ABORTED = Status.ABORTED
-
-
-class Preempt(BaseException):
-    """Unwind the running branch back to `target`, which will re-select.
-
-    BaseException so a stray `except Exception:` inside an action body cannot
-    swallow it. The runner walks the awaiter chain throwing this upward; every
-    task it passes through finishes ABORTED, and the first one that catches it
-    -- normally the Utility named as `target` -- absorbs it and picks again.
-    """
-
-    def __init__(self, target: Optional["Task"] = None):
-        self.target = target
-        super().__init__(target)
 
 
 class Task(Policy):
-    # Cleared for the span of an action that must not be torn down mid-flight
-    # (an Eat that has already committed, say). Deferral, not veto: the check
-    # simply runs again next step.
-    interruptible: bool = True
-
     def __init__(self, action=None, msg=None):
         super().__init__()
         if action:
@@ -120,7 +90,7 @@ class Task(Policy):
     def __exit__(self, exc_type, exc_value, tb):
         TaskScope.pop(self)
         return False
-
+    
     def __repr__(self):
         return f"<{self.__class__.__name__} {self.status.value}>"
 
@@ -184,41 +154,6 @@ class Task(Policy):
         return True
 
     #
-    # PREEMPTION
-    #
-    def check(self) -> Optional["Task"]:
-        """Ask whether the branch we are on should be torn down right now.
-
-        Returns the task that should absorb the Preempt and re-select, or None
-        to carry on. The runner calls this on the task it is about to resume,
-        which is always the live leaf -- suspended composites are not queued.
-
-        The default walks up and asks the same question of whoever is above,
-        so an arbiter anywhere on the path can answer. A Utility overrides it
-        to compare its incumbent against its siblings, asking upward *first*
-        so the shallowest changed decision wins:
-
-            def check(self):
-                victim = super().check()
-                if victim is not None:
-                    return victim
-                if self.current is None:
-                    return None
-                if self.best_child() is not self.current:
-                    return self
-                return None
-
-        `parent` is the static tree link, but tasks built at run time (a Sleep
-        awaited from inside a body) have no parent, so fall back to the awaiter
-        chain -- otherwise a branch would be un-preemptible for as long as it
-        happened to be sleeping.
-        """
-        up = self.parent if self.parent is not None else self.awaiter
-        if up is not None:
-            return up.check()
-        return None
-
-    #
     # TREE
     #
     def add(self, child: "Task"):
@@ -273,15 +208,6 @@ class Task(Policy):
             self.agent.halt()
         return self._finish(Status.HALTED)
 
-    def abort(self):
-        """Terminal, but distinct from failure: the branch was displaced.
-
-        A composite that sees ABORTED on last_awaited should unwind rather
-        than run its failure recovery -- nothing went wrong, something else
-        simply outranked it.
-        """
-        return self._finish(Status.ABORTED)
-
     def cancel(self):
         """Cancel this task and its whole subtree.
 
@@ -297,13 +223,8 @@ class Task(Policy):
             child.cancel()
         return self._finish(Status.CANCELLED)
 
-    def _finish(self, status: Status, wake: bool = True):
-        """Single exit point for every terminal transition. Re-entrant safe.
-
-        `wake=False` is for the preempt walk: the awaiter is about to be
-        thrown into by the runner, so rescheduling it here would queue a task
-        that is already being resumed.
-        """
+    def _finish(self, status: Status):
+        """Single exit point for every terminal transition. Re-entrant safe."""
         self.status = status
         self._close()
         if self.awaited is not None:
@@ -313,7 +234,7 @@ class Task(Policy):
         awaiter = self.awaiter
         if awaiter is not None:
             self.awaiter = None
-            if wake and awaiter.status is Status.SUSPENDED:
+            if awaiter.status is Status.SUSPENDED:
                 self._runner().reschedule(awaiter)
         return status
 
@@ -344,6 +265,7 @@ class Task(Policy):
         for match in self.match_rules(msg):
             logger.debug("Fire:\t{}:", match)
             self.schedule_task(match.rule.action, match.msg)
+
 
     def broadcast(self, msg: Message):
         pass
@@ -517,14 +439,6 @@ class Runner:
             logger.warning("No coroutine for {}", task)
             return
 
-        # Arbitration happens before the body runs, not after: an act whose
-        # branch has been outranked should not get one more frame of effect.
-        victim = task.check() if task.interruptible else None
-        if victim is not None:
-            logger.debug("preempt: {} -> {}", task, victim)
-            self._preempt(task, victim)
-            return
-
         try:
             result = None
             awaited = task.awaited
@@ -547,13 +461,6 @@ class Runner:
             task._finish(final)
             return
 
-        except Preempt:
-            # Raised from inside a body rather than thrown in by us. Nothing
-            # below is holding it, so it dies here instead of escaping step().
-            logger.warning("{} raised Preempt outside the preempt walk", task)
-            task._finish(Status.ABORTED)
-            return
-
         except Exception as e:
             # Previously this escaped step() and silently dropped every
             # remaining task in the batch.
@@ -562,104 +469,6 @@ class Runner:
             task._finish(Status.FAILURE)
             return
 
-        self._dispatch(task, yielded)
-
-    def _preempt(self, task: Task, victim: Task):
-        """Unwind the awaiter chain until `victim` absorbs the Preempt.
-
-        Each task in this runner owns its own coroutine, so frames along the
-        path are siblings rather than nested -- a raise in the leaf does not
-        propagate to its composite on its own. We walk it by hand. Throwing
-        into an awaiter resumes it at the `yield self` inside its child's
-        __await__, which is where per-act abort handling lives.
-        """
-        exc = Preempt(victim)
-
-        while task is not None:
-            awaiter = task.awaiter
-            coro = task.coro
-
-            # The child we were blocked on is dead or dying. Drop the link now
-            # or a resumed composite reads a stale result off it.
-            if task.awaited is not None:
-                task.last_awaited = task.awaited
-                task.awaited.awaiter = None
-                task.awaited = None
-
-            if coro is None:
-                logger.warning("No coroutine to preempt for {}", task)
-                task._finish(Status.ABORTED, wake=False)
-                task = awaiter
-                continue
-
-            try:
-                yielded = coro.throw(exc)
-
-            except Preempt as raised:
-                if raised is not exc:
-                    logger.warning("{} substituted its own Preempt", task)
-                # Did not absorb it. Abort and carry it upward. wake=False:
-                # the awaiter is next in this walk, not queue material.
-                task._finish(Status.ABORTED, wake=False)
-                task = awaiter
-                continue
-
-            except StopIteration as stop:
-                # Absorbed and ran to completion in the same breath.
-                value = stop.value
-                if isinstance(value, Status):
-                    final = value
-                else:
-                    task.result = value
-                    final = task.status if task.status.done else Status.SUCCESS
-                task._finish(final)
-                return
-
-            except Exception as e:
-                logger.error("{} raised while preempting:\n{}", task, traceback.format_exc())
-                task.error = e
-                task._finish(Status.FAILURE)
-                return
-
-            # Absorbed: it re-selected and handed us whatever it wants next.
-            self._dispatch(task, yielded)
-            return
-
-        logger.error(
-            "Preempt targeting {} escaped the root; branch is now dead", victim
-        )
-
-    def _dispatch(self, task: Task, yielded):
-        """Route whatever a resumed task handed back."""
-        if yielded is task:
-            self.reschedule(task)
-        elif yielded is not None:
-            task.status = Status.SUSPENDED
-            task.awaited = yielded
-            if yielded.agent is None:
-                yielded.agent = task.agent
-
-            if isinstance(yielded, Trap):
-                self.trap(yielded)
-            else:
-                self.schedule(yielded)
-
-            # After admission, never before: awaiting a finished task sends
-            # begin() through reset(), which clears awaiter. Re-selection is
-            # the only path that awaits a done task, so this stayed hidden.
-            if yielded.status.done:
-                logger.warning("{} refused admission for {}", yielded, task)
-                task.awaited = None
-                self.reschedule(task)
-                return
-            yielded.awaiter = task
-        else:
-            logger.warning("{} yielded None; rescheduling", task)
-            self.reschedule(task)
-
-    '''
-    def _dispatch(self, task: Task, yielded):
-        """Route whatever a resumed task handed back."""
         if yielded is task:
             # quick and dirty way to yield control back to the runner
             self.reschedule(task)
@@ -676,7 +485,6 @@ class Runner:
         else:
             logger.warning("{} yielded None; rescheduling", task)
             self.reschedule(task)
-    '''
 
     def run(self, task: Task, dt: float = 0.0, max_steps: int = 10000):
         """Drive a task to completion. Mainly for tests and tooling.

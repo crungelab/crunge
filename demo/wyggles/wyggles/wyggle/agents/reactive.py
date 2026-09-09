@@ -136,6 +136,8 @@ class MoveTo(FocusedAction[GameEntity]):
 
 
 class Eat(FocusedAction[Fruit]):
+    interruptible = False
+
     state_name = "eat"
 
     #: ticks between mouth toggles

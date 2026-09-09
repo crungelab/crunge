@@ -3,7 +3,7 @@ import contextlib
 
 from loguru import logger
 
-from ..task import Task, Status, TS_SUCCESS, TS_FAILURE
+from ..task import Task, Status, TS_SUCCESS, TS_FAILURE, Preempt
 from ..policy import Rule
 from .. import Message, Propose, Attempt, Assert, Retract, Achieve
 from ..neuron import Neuron
@@ -16,22 +16,22 @@ class Act(Task):
         self.neuron: Optional[Neuron] = NeuronScope.top()
 
     @property
-    def activity(self):
+    def utility(self):
         if self.neuron:
             return self.neuron.activity
         return 1
 
-    def activate(self):
+    def enable(self):
         if self.neuron:
-            return self.neuron.activate()
+            return self.neuron.enable()
 
-    def deactivate(self):
+    def disable(self):
         if self.neuron:
-            return self.neuron.deactivate()
+            return self.neuron.disable()
 
     def __await__(self):
-        activity = self.activity
-        if activity > 0:
+        utility = self.utility
+        if utility > 0:
             return (yield self)
         # Never ran, so nothing set our status. Do it here or an awaiting
         # composite reads a stale INITIAL off last_awaited.
@@ -178,32 +178,83 @@ selector = Selector
 # Utility
 #
 class Utility(Act):
+    """Arbiter. Runs its highest-utility child and re-decides every step.
+
+    The incumbent has no special standing: `check()` re-runs the same argmax
+    the descent ran, and if the winner changed, the runner unwinds the losing
+    branch back to here and `main` picks again.
+    """
+
+    def __init__(self, action=None, msg=None):
+        super().__init__(action, msg)
+        # The child currently being awaited. Load-bearing for check(): if it
+        # goes stale, we preempt branches that are not running.
+        self.current: Task = None
+
     def enter(self):
         for child in self.children:
-            child.activate()
+            child.enable()
 
     def exit(self, status=None):
         for child in self.children:
-            child.deactivate()
+            child.disable()
         return status
+
+    def best_child(self):
+        """Highest-utility child, or None if every branch is inert.
+
+        Called both on the descent and from check(), so it must stay cheap
+        and free of side effects -- it runs once per active leaf per step.
+        """
+        highest = 0
+        best = None
+        for child in self.children:
+            utility = child.utility
+            if utility > highest:
+                highest = utility
+                best = child
+        return best
+
+    def check(self):
+        # Ask upward first: a shallower arbiter that has changed its mind
+        # outranks us, and unwinding to it subsumes unwinding to here.
+        victim = super().check()
+        if victim is not None:
+            return victim
+        if self.current is None:
+            return None
+        # best_child() returning None means every branch went inert; that is
+        # still a change, and main() will turn it into a failure.
+        if self.best_child() is not self.current:
+            return self
+        return None
 
     async def main(self, msg=None):
         self.enter()
         try:
-            highest = 0
-            best = None
-            for child in self.children:
-                activity = child.activity
-                if activity > highest:
-                    highest = activity
-                    best = child
-            logger.debug("utility best: {}", best)
-            if best is None:
-                return self.fail()
-            await best
-            if not self.child_ok():
-                return self.fail()
+            while True:
+                best = self.best_child()
+                if best is None:
+                    return self.fail()
+
+                logger.debug("utility best: {}", best)
+                self.current = best
+                try:
+                    await best
+                except Preempt as preempt:
+                    if preempt.target is not self:
+                        # Aimed above us. Let it keep unwinding; our finally
+                        # deactivates on the way out.
+                        raise
+                    continue
+                finally:
+                    self.current = None
+
+                if not self.child_ok():
+                    return self.fail()
+                return self.succeed()
         finally:
+            self.current = None
             self.exit()
 
 

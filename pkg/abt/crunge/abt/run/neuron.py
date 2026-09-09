@@ -56,10 +56,10 @@ class Neuron:
     def activity(self) -> float:
         return self.main()
 
-    def activate(self):
+    def enable(self):
         pass
 
-    def deactivate(self):
+    def disable(self):
         pass
 
     def main(self) -> float:
