@@ -1,5 +1,5 @@
 from __future__ import annotations
-from contextlib import contextmanager
+import contextlib
 
 from loguru import logger
 
@@ -50,7 +50,7 @@ class DebugOverlay(Overlay):
         camera = self.camera
         return camera.ppu / camera.zoom
 
-    @contextmanager
+    @contextlib.contextmanager
     def world_canvas(self):
         camera = self.camera
         rect = self.viewport.global_rect

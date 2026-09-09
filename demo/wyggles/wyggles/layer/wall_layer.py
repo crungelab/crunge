@@ -17,11 +17,11 @@ class WallLayer(GraphLayer2D):
 
     def create_children(self):
         super().create_children()
+        thickness = 1.0  # meters
+
         bounds = self.bounds
         left, bottom = bounds.left, bounds.bottom
-        right, top = bounds.right, bounds.top
-
-        thickness = 1.0  # meters
+        right, top = bounds.right, bounds.top + thickness
 
         # North
         self.spawn_wall(left - thickness, top, right + thickness, top + thickness)
