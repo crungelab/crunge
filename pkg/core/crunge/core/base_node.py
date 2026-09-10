@@ -9,6 +9,45 @@ from .chip import Chip
 
 
 class BaseNode[T: BaseNode](Base):
+    _cls_chips: dict[type, Any] = {}
+
+    '''
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        merged = {}
+        for base in reversed(cls.__mro__[1:]):
+            merged.update(getattr(base, "_cls_chips", {}))
+        cls._cls_chips = merged
+    '''
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        merged = {}
+        for base in reversed(cls.__mro__[1:]):
+            merged.update(getattr(base, "_cls_chips", {}))
+        cls._cls_chips = merged
+
+        for name, value in list(vars(cls).items()):
+            inject = getattr(value, "inject", None)
+            if inject is not None:
+                inject(cls, value)
+
+    @classmethod
+    def add_cls_chip(cls, chip, key: type | None = None) -> None:
+        cls._cls_chips[key or type(chip)] = chip
+
+    @classmethod
+    def get_cls_chip(cls, kind: type) -> Any | None:
+        return cls._cls_chips.get(kind)
+
+    def get[C: Chip[Any]](self, kind: type[C]) -> C | None:
+        chip = self._chip_map.get(kind)
+        if chip is not None:
+            return chip
+        return self._cls_chips.get(kind)
+
+    def has(self, kind: type) -> bool:
+        return kind in self._chip_map or kind in self._cls_chips
+
     """A node in a tree that owns a set of chips.
 
     Knows nothing about transforms, scenes, or the frame — usable on its
@@ -172,9 +211,11 @@ class BaseNode[T: BaseNode](Base):
             chip.unplug()
         chip.on_detached()
 
+    '''
     def get[C: Chip[Any]](self, kind: type[C]) -> C | None:
         """One dict hit. Matches subclasses, since the map spans the MRO."""
         return self._chip_map.get(kind)  # type: ignore[return-value]
+    '''
 
     def require[C: Chip[Any]](self, kind: type[C]) -> C:
         chip = self._chip_map.get(kind)

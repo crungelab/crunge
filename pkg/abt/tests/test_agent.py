@@ -3,6 +3,8 @@ import unittest
 from crunge.abt.run import *
 from crunge.abt.run import _I
 from crunge.abt.run.agent import Agent
+from crunge.abt.run.message import *
+from crunge.abt.run.rule_kit import rule, RuleKit
 
 _jump = term_('jump')
 _say = term_('say')
@@ -12,15 +14,16 @@ class MyAgent(Agent):
     def __init__(self):
         super().__init__()
         #print(self.__class__.rules)
+        print(self.get_cls_chip(RuleKit))
         self.post(attempt_(Achieve, _I, _jump))
         self.post(attempt_(Achieve, _I, _say, 'Howdy Folks!'))
 
-    @_(OnAttempt(Achieve, _I, _jump))
+    @rule(OnAttempt(Achieve, _I, _jump))
     async def howhigh(self, msg):
         print('How high?')
         print(msg)
 
-    @_(OnAttempt(Achieve, _I, _say, _x_))
+    @rule(OnAttempt(Achieve, _I, _say, _x_))
     async def howdy(self, msg):
         print(msg.data.obj)
         print(msg)

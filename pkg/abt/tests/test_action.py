@@ -238,8 +238,8 @@ def test_cancel_recurses_to_children(runner):
     parent = Task()
     child = Task()
     grandchild = Task()
-    parent.add(child)
-    child.add(grandchild)
+    parent.add_child(child)
+    child.add_child(grandchild)
 
     parent.cancel()
 

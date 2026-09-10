@@ -2,7 +2,6 @@ import unittest
 
 from crunge.abt.run import *
 from crunge.abt.run.agent import Agent
-from crunge.abt.run.policy import Rule
 
 _Bob = term_("Bob")
 _likes = term_("likes")

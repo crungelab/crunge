@@ -41,25 +41,6 @@ class Agent(Sequence):
         AgentScope.pop(self)
         return super().__exit__(exc_type, exc_value, tb)
 
-    '''
-    def __enter__(self) -> "Agent":
-        AgentScope.push(self)
-        return self
-
-    def __exit__(self, exc_type, exc_value, tb):
-        AgentScope.pop(self)
-        return False
-    '''
-
-    def broadcast(self, msg: Message):
-        m = copy(msg)
-        logger.debug("Broadcast:\t{}", m)
-        # m.sender = self
-        self.post(m)
-        for t in self.tasks:
-            t.broadcast(m)
-        return m
-
     def post(self, msg: Message) -> None:
         if not msg.sender:
             msg.sender = self

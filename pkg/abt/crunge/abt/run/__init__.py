@@ -16,6 +16,45 @@ class Variable:
 var_ = lambda name, pattern=None: Variable(name, pattern)
 
 
+class Bindings:
+    __slots__ = ("values",)
+
+    def __init__(self, values=None):
+        self.values = values if values is not None else {}
+
+    def bind(self, name, value):
+        self.values[name] = value
+        return self
+
+    def __bool__(self) -> bool:
+        return True          # success with no bindings is still success
+
+    def __getitem__(self, name):
+        return self.values[name]
+
+    def __contains__(self, name) -> bool:
+        return name in self.values
+
+    def __repr__(self):
+        return f"<Bindings {self.values}>"
+
+
+def unify(p: Callable | Pattern | Variable, v, b: Bindings) -> Bindings | None:
+    if p is __ or p == v:
+        return b
+    if isinstance(p, Variable):
+        if p.pattern and unify(p.pattern, v, b) is None:
+            return None
+        if p.name in b and b[p.name] != v:
+            return None      # $x twice must mean the same thing
+        return b.bind(p.name, v)
+    if isinstance(p, Pattern) and p.test(v):
+        return b
+    if callable(p) and p(v):
+        return b
+    return None
+
+'''
 def match(p: Callable | Pattern | Variable, v, b=True):
     if p == __ or p == v:
         return b
@@ -32,7 +71,7 @@ def match(p: Callable | Pattern | Variable, v, b=True):
         return {p.name: v}
 
     return False
-
+'''
 
 class Term:
     def __init__(self, name):
@@ -96,7 +135,7 @@ _impasse = term_("impasse")
 
 
 class Clause:
-    def __init__(self, subj, verb, obj=None, xtra=None):
+    def __init__(self, subj: object, verb: object, obj: object = None, xtra=None):
         self.subj = subj
         self.verb = verb
         self.obj = obj
@@ -131,12 +170,28 @@ class Clause:
             "OBJ": self.obj if self.obj is not None else None,
         })
 
-    def match(self, T, s, v, o=None, x=None):
+    def match(self, T, s, v, o=None, **x) -> Bindings | None:
+        if not isinstance(self, T):
+            return None
+        b = Bindings()
+        for pattern, value in ((s, self.subj), (v, self.verb), (o, self.obj)):
+            b = unify(pattern, value, b)
+            if b is None:
+                return None
+        for key, pattern in x.items():
+            b = unify(pattern, getattr(self, key, None), b)
+            if b is None:
+                return None
+        return b
+
+    '''
+    def match(self, T: type["Clause"], s: object, v: object, o: object = None, x=None):
         return isinstance(self, T) and match(
             s, self.subj, match(v, self.verb, match(o, self.obj))
         )
+    '''
 
-    def __eq__(self, other: 'Clause'): 
+    def __eq__(self, other: 'Clause') -> bool: 
         return (
             self.__class__.__name__ == other.__class__.__name__
             and self.subj == other.subj
@@ -165,96 +220,4 @@ class Goal(Clause):
 class Achieve(Goal):
     pass
 
-
-#
-# Message
-#
-class Message:
-    def __init__(self, data: Clause, sender=None, to=None):
-        self.data = data
-        self.sender = sender
-        self.to = to
-
-    def __repr__(self):
-        return " ".join([self.__class__.__name__, str(self.data)])
-
-
-    def to_json(self):
-        return json.dumps({
-            "TYPE": self.__class__.__name__,
-            "DATA": self.data if self.data is not None else None,
-            "TO": self.to if self.to is not None else None,
-            "FROM": self.sender if self.sender is not None else None,
-        })
-
-    def match(self, F, T, s, v, o, **x) -> bool:
-        return isinstance(self, F) and self.data.match(T, s, v, o, **x)
-
-
-class Propose(Message):
-    pass
-
-
-propose_ = lambda T, s, v, o=None, **x: Propose(T(s, v, o, **x))
-
-
-class Attempt(Message):
-    pass
-
-
-attempt_ = lambda T, s, v, o=None, **x: Attempt(T(s, v, o, **x))
-
-
-class Assert(Message):
-    pass
-
-
-assert_ = lambda T, s, v, o=None, **x: Assert(T(s, v, o, **x))
-
-
-class Retract(Message):
-    pass
-
-
-retract_ = lambda T, s, v, o=None, x=None: Retract(T(s, v, o, x))
-#
-# Trigger
-#
-class Trigger:
-    def __init__(self, flavor, T, subj, verb, obj, **xtra):
-        self.flavor = flavor  # message type
-        self.type = T  # clause type
-        self.subj = subj
-        self.verb = verb
-        self.obj = obj
-        self.xtra = xtra
-
-    def match(self, msg: Message):
-        return msg.match(
-            self.flavor, self.type, self.subj, self.verb, self.obj, **self.xtra
-        )
-
-
-#
-class OnAssert(Trigger):
-    def __init__(self, T, s, v, o=None, **x):
-        super().__init__(Assert, T, s, v, o, **x)
-
-
-onAssert_ = lambda T, s, v, o=None, **x: OnAssert(T, s, v, o, **x)
-#
-class OnRetract(Trigger):
-    pass
-
-
-onRetract_ = lambda T, s, v, o=None, **x: OnRetract(T, s, v, o, **x)
-
-
-class OnAttempt(Trigger):
-    def __init__(self, T, s, v, o=None, **x):
-        super().__init__(Attempt, T, s, v, o, **x)
-
-
-onAttempt_ = lambda T, s, v, o=None, **x: OnAttempt(T, s, v, o, **x)
-
-destruct = lambda dict, *args: (dict[arg] for arg in args)
+from .message import *

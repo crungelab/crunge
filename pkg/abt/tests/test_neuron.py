@@ -1,6 +1,7 @@
 import unittest
 
 from crunge.abt.run.act import *
+from crunge.abt.run.neuron import *
 
 
 class Test(unittest.TestCase):

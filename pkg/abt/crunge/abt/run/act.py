@@ -1,16 +1,33 @@
+from __future__ import annotations
+
 from typing import List, Optional
 import contextlib
 
 from loguru import logger
 
-from ..task import Task, Status, Preempt
-from ..policy import Rule
-from .. import Message, Propose, Attempt, Assert, Retract, Achieve
-from ..neuron import Neuron
-from ..scope import NeuronScope
+from . import Achieve
+from .task import Task, Status, Preempt
+from .rule_kit import Rule
+from .message import Message, Propose, Attempt, Assert, Retract
+from .neuron import Neuron
+from .scope import NeuronScope
 
 
-class Act(Task):
+class Act(Task["Act"]):
+    """A behaviour-tree task with a utility signal attached.
+
+    Closes the type parameter on itself: an Act only ever holds Acts, so
+    `self.children` reads as `list[Act]` and `best_child` can reach for
+    `child.utility` without a cast. Nothing extends Act with a different
+    child type, which is what makes closing here safe -- a subclass that
+    needed to narrow further would have to make Act generic again.
+
+    `activate` / `deactivate` gate the neuron. They used to be called
+    `enable` / `disable`, which now belong to the Lifetime machine in Base:
+    same names, same arity, so an Act attached to a live tree would have had
+    its neuron switched off in place of a lifetime transition, silently.
+    """
+
     def __init__(self, action=None, msg=None):
         super().__init__(action, msg)
         self.neuron: Optional[Neuron] = NeuronScope.top()
@@ -21,11 +38,11 @@ class Act(Task):
             return self.neuron.activity
         return 1
 
-    def enable(self):
+    def activate(self):
         if self.neuron:
             return self.neuron.enable()
 
-    def disable(self):
+    def deactivate(self):
         if self.neuron:
             return self.neuron.disable()
 
@@ -189,18 +206,18 @@ class Utility(Act):
         super().__init__(action, msg)
         # The child currently being awaited. Load-bearing for check(): if it
         # goes stale, we preempt branches that are not running.
-        self.current: Task = None
+        self.current: Optional[Act] = None
 
     def enter(self):
         for child in self.children:
-            child.enable()
+            child.activate()
 
     def exit(self, status=None):
         for child in self.children:
-            child.disable()
+            child.deactivate()
         return status
 
-    def best_child(self):
+    def best_child(self) -> Optional[Act]:
         """Highest-utility child, or None if every branch is inert.
 
         Called both on the descent and from check(), so it must stay cheap

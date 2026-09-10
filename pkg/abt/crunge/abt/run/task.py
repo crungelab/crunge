@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any, Callable, List, Optional, Coroutine
 
 if TYPE_CHECKING:
@@ -11,10 +13,12 @@ from uuid import uuid1
 
 from loguru import logger
 
+from crunge.core.base_node import BaseNode
+
 from ..utils import singleton
-from ..run import Message
-from .policy import Policy
+from ..run.message import Message
 from .scope import TaskScope, AgentScope
+from .rule_kit import Rule, RuleKit
 
 
 class Status(enum.Enum):
@@ -57,12 +61,32 @@ class Preempt(BaseException):
     -- normally the Utility named as `target` -- absorbs it and picks again.
     """
 
-    def __init__(self, target: Optional["Task"] = None):
+    def __init__(self, target: Optional["Task[Any]"] = None):
         self.target = target
         super().__init__(target)
 
 
-class Task(Policy):
+class Task[T: Task](BaseNode[T]):
+    """A node in a behaviour tree.
+
+    Two state machines share this object and stay separate on purpose.
+    `Status` is the run of a single attempt -- RUNNING, SUCCESS, ABORTED --
+    and turns over many times across a task's life. Lifetime, inherited from
+    Base, is the existence of the object: created once, destroyed once. A
+    task that fails is not disabled, and a task that is disabled has not
+    failed.
+
+    They meet at exactly two points. `Runner._admit` drives `create()`, so a
+    task's chips exist by the time its body first runs; `_destroy` cancels a
+    still-live status, so tearing down a subtree cannot leave a coroutine
+    frame suspended forever.
+
+    The tree comes from BaseNode. `add_child` sets the link, fires the hooks,
+    and syncs lifetime; `on_child_added` is where the ambient scope --
+    runner, agent, task list -- is backfilled onto a child that was built
+    without one.
+    """
+
     # Cleared for the span of an action that must not be torn down mid-flight
     # (an Eat that has already committed, say). Deferral, not veto: the check
     # simply runs again next step.
@@ -76,34 +100,45 @@ class Task(Policy):
         self.coro: Optional[Coroutine] = None
 
         # The task we are currently blocked on, cleared when it is resumed.
-        self.awaited: Optional["Task"] = None
+        self.awaited: Optional[Task[Any]] = None
         # The task we were most recently blocked on, retained so a composite
         # can inspect its status after resuming.
-        self.last_awaited: Optional["Task"] = None
-        self.awaiter: Optional["Task"] = None
+        self.last_awaited: Optional[Task[Any]] = None
+        self.awaiter: Optional[Task[Any]] = None
 
         self.result: Any = None
         self.error: Optional[BaseException] = None
 
         self.id = uuid1()
-        self.children: List["Task"] = []
         self.status = Status.INITIAL
-        self.tasks = None
 
         # Ambient scope. Both are None outside any open `with`, which is the
-        # normal case for tasks built at run time; add() backfills from the
-        # parent when such a task is later attached to a live tree.
-        self.runner: Optional["Runner"] = None
+        # normal case for tasks built at run time; on_child_added backfills
+        # from the parent when such a task is later attached to a live tree.
+        self.runner: Optional[Runner] = None
 
         self.agent: Optional["Agent"] = AgentScope.top()
-        self.parent: Optional["Task"] = TaskScope.top()
 
-        if self.parent is not None:
-            self.parent.add(self)
-            self.agent = self.parent.agent
-            self.runner = self.parent.runner
+        self._rules: Optional[RuleKit] = None
+        '''
+        # `parent` and `children` belong to BaseNode now; attachment is what
+        # sets the link, not assignment.
+        parent = TaskScope.top()
+        if parent is not None:
+            parent.add_child(self)
+            # Scope wins over ambient for a task built inside a `with`: the
+            # is-None guards in on_child_added are for the runtime path.
+            self.agent = parent.agent
+            self.runner = parent.runner
+        '''
 
-    def __enter__(self) -> "Task":
+    def __enter__(self) -> "Task[T]":
+        # `parent` and `children` belong to BaseNode now; attachment is what
+        # sets the link, not assignment.
+        parent = TaskScope.top()
+        if parent is not None:
+            parent.add_child(self)
+
         TaskScope.push(self)
         return self
 
@@ -123,6 +158,9 @@ class Task(Policy):
         Repeating composites (Loop, Forever, Counter) need this between
         iterations: begin() re-arms only this task's own coroutine, and
         refuses outright once status is done.
+
+        Status only. Lifetime is untouched -- a reset task keeps its chips
+        and stays created.
         """
         self._close()
         self.status = Status.INITIAL
@@ -176,7 +214,7 @@ class Task(Policy):
     #
     # PREEMPTION
     #
-    def check(self) -> Optional["Task"]:
+    def check(self) -> Optional["Task[Any]"]:
         """Ask whether the branch we are on should be torn down right now.
 
         Returns the task that should absorb the Preempt and re-select, or None
@@ -211,22 +249,37 @@ class Task(Policy):
     #
     # TREE
     #
-    def add(self, child: "Task"):
-        child.parent = self
-        child.tasks = self.tasks
+    # add_child / remove_child / children / parent come from BaseNode. This
+    # hook is the old add()'s backfill: a task built at run time carries no
+    # ambient scope, so it inherits ours on attachment.
+    #
+    def on_child_added(self, child: T) -> None:
         if child.runner is None:
             child.runner = self.runner
         if child.agent is None:
             child.agent = self.agent
-        self.children.append(child)
-        return self
 
-    def remove(self, child: "Task"):
-        try:
-            self.children.remove(child)
-        except ValueError:
-            logger.warning("Not a child of {}: {}", self, child)
-        return self
+    #
+    # RULES
+    #
+    # Declared rules live on the class, shared by every instance. A task
+    # that gains one at run time forks into a kit of its own, so a
+    # subscription cannot leak into its siblings.
+    #
+    def add_rule(self, rule: Rule) -> Rule:
+        kit = self._rules
+        if kit is None:
+            inherited = self.get_cls_chip(RuleKit)
+            kit = self._rules = (
+                inherited.fork(self) if inherited is not None else RuleKit(owner=self)
+            )
+        return kit.add_rule(rule)
+
+    def match_rules(self, msg: Message):
+        kit = self._rules or self.get_cls_chip(RuleKit)
+        if kit is None:
+            return ()
+        return kit.match(msg)
 
     #
     # EXECUTION
@@ -234,7 +287,7 @@ class Task(Policy):
     def _runner(self) -> "Runner":
         return self.runner or Runner()
 
-    def schedule_task(self, task: "Task", msg=None):
+    def schedule_task(self, task: "Task[Any]", msg=None):
         self._runner().schedule(task, msg)
 
     def schedule(self, msg=None):
@@ -279,6 +332,9 @@ class Task(Policy):
         and the runner drops it on the next step. Anything blocked on this
         task is woken so it can observe the cancellation through
         `last_awaited.status` instead of hanging.
+
+        Status only -- a cancelled task is still created and still holds its
+        chips. Destroying is a separate act.
         """
         if self.status is Status.CANCELLED:
             return self.status
@@ -323,20 +379,50 @@ class Task(Policy):
             logger.warning("Error closing {}: {}", self, e)
 
     #
+    # LIFETIME
+    #
+    def _destroy(self) -> None:
+        """Close the status machine before the object goes away.
+
+        destroy_children runs ahead of this, so each child has already
+        cancelled itself on the way down -- no need to recurse through
+        cancel() and walk the tree a second time. wake=False because the
+        awaiter is being torn down in the same pass.
+        """
+        if not self.status.done:
+            self._finish(Status.CANCELLED, wake=False)
+        super()._destroy()
+
+    #
     # Messaging
     #
     def dispatch(self, msg: Message) -> bool:
-        # logger.debug(f"Widget.dispatch: {self}, {self.children}, {msg}")
         for child in self.children:
             if child.dispatch(msg):
                 return True
 
+        # Previously fell off the end returning None, so a fired rule never
+        # stopped propagation and every sibling saw the message anyway.
+        fired = False
         for match in self.match_rules(msg):
             logger.debug("Fire:\t{}:", match)
             self.schedule_task(match.rule.action, match.msg)
+            fired = True
+        if fired:
+            return True
+        return super().dispatch(msg)
 
+    '''
     def broadcast(self, msg: Message):
         pass
+    '''
+
+    def subscribe(self, trigger, action) -> Rule:
+        return self.add_rule(Rule(trigger, action))
+
+    def unsubscribe(self, rule: Rule) -> None:
+        if self._rules is not None:
+            self._rules.remove_rule(rule)
 
     def post(self, msg: Message) -> None:
         self.agent.post(msg)
@@ -359,11 +445,11 @@ class Task(Policy):
         if a:
             a.dst = b
             b.src = a
-        self.add(b)
+        self.add_child(b)
         return self
 
 
-class Trap(Task):
+class Trap(Task["Trap"]):
     """A task the runner handles specially rather than as ordinary work."""
 
 
@@ -416,7 +502,7 @@ class Runner:
     """
 
     def __init__(self):
-        self.queue: List[Task] = []
+        self.queue: List[Task[Any]] = []
         self.callbacks: List[Callable] = []
         self.time: float = 0.0
         self.steps: int = 0
@@ -442,12 +528,18 @@ class Runner:
         self._admit(task)
         return task
 
-    def _admit(self, task: Task):
+    def _admit(self, task: Task[Any]):
         task.runner = self
+        # The one place status and lifetime meet on the way in. Both are
+        # idempotent, so re-admitting a task is free; the first admission is
+        # what seats and creates its chips, and create_children carries that
+        # down the subtree.
+        #task.create()
+        #task.enable()
         if task.begin():
             self.queue.append(task)
 
-    def reschedule(self, task: Task):
+    def reschedule(self, task: Task[Any]):
         if task.status.done:
             logger.debug("Refusing to reschedule finished task: {}", task)
             return
@@ -502,7 +594,7 @@ class Runner:
                     "Callback {} raised:\n{}", callback, traceback.format_exc()
                 )
 
-    def _advance(self, task: Task):
+    def _advance(self, task: Task[Any]):
         """Resume one task. Failures are contained to that task."""
         coro = task.coro
         if coro is None:
@@ -556,7 +648,7 @@ class Runner:
 
         self._dispatch(task, yielded)
 
-    def _preempt(self, task: Task, victim: Task):
+    def _preempt(self, task: Task[Any], victim: Task[Any]):
         """Unwind the awaiter chain until `victim` absorbs the Preempt.
 
         Each task in this runner owns its own coroutine, so frames along the
@@ -623,7 +715,7 @@ class Runner:
             "Preempt targeting {} escaped the root; branch is now dead", victim
         )
 
-    def _dispatch(self, task: Task, yielded):
+    def _dispatch(self, task: Task[Any], yielded):
         """Route whatever a resumed task handed back."""
         if yielded is task:
             self.reschedule(task)
@@ -651,28 +743,7 @@ class Runner:
             logger.warning("{} yielded None; rescheduling", task)
             self.reschedule(task)
 
-    '''
-    def _dispatch(self, task: Task, yielded):
-        """Route whatever a resumed task handed back."""
-        if yielded is task:
-            # quick and dirty way to yield control back to the runner
-            self.reschedule(task)
-        elif yielded is not None:
-            task.status = Status.SUSPENDED
-            task.awaited = yielded
-            yielded.awaiter = task
-            if yielded.agent is None:
-                yielded.agent = task.agent
-            if isinstance(yielded, Trap):
-                self.trap(yielded)
-            else:
-                self.schedule(yielded)
-        else:
-            logger.warning("{} yielded None; rescheduling", task)
-            self.reschedule(task)
-    '''
-
-    def run(self, task: Task, dt: float = 0.0, max_steps: int = 10000):
+    def run(self, task: Task[Any], dt: float = 0.0, max_steps: int = 10000):
         """Drive a task to completion. Mainly for tests and tooling.
 
         `dt` advances runner time per step so sleeps resolve. With dt=0 any
