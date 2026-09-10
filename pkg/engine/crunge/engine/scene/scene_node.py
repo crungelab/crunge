@@ -1,15 +1,13 @@
-from typing import TYPE_CHECKING, ClassVar, TypeVar, Generic
+from typing import TYPE_CHECKING, ClassVar
 
 from loguru import logger
 
-from ..node import Node, T_Node
+from ..node import Node
 from .layer.scene_layer import SceneLayer
 
-T_Layer = TypeVar("T_Layer", bound=SceneLayer)
 
-
-class SceneNode(Node[T_Node], Generic[T_Node, T_Layer]):
-    children: "list[SceneNode[T_Node, T_Layer]]"
+class SceneNode[T_Node: "SceneNode", T_Layer: SceneLayer](Node[T_Node]):
+    #children: "list[SceneNode[T_Node, T_Layer]]"
 
     # When True this node's local transform IS its world transform: subclasses
     # skip the parent chain when composing global, and the dirt cascade below

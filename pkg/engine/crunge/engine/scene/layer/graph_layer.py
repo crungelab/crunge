@@ -1,13 +1,13 @@
-from typing import TYPE_CHECKING, TypeVar, Generic, Dict, List
+from typing import TYPE_CHECKING
 
-from ..scene_node import SceneNode, T_Node
+from ..scene_node import SceneNode
 
 if TYPE_CHECKING:
     from .. import Scene
 
 from .scene_layer import SceneLayer
 
-class GraphLayer(SceneLayer, Generic[T_Node]):
+class GraphLayer[T_Node: SceneNode](SceneLayer):
     scene: "Scene[T_Node]"
 
     def __init__(self, name: str) -> None:
@@ -23,7 +23,7 @@ class GraphLayer(SceneLayer, Generic[T_Node]):
         return len(self.nodes)
 
     @property
-    def nodes(self) -> List[T_Node]:
+    def nodes(self) -> list[T_Node]:
         return self.root.children
 
     def _create(self) -> None:

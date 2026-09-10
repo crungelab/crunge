@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from ... import Node
 
 if TYPE_CHECKING:
-    from ...vu import Vu
     from ...model import Model
     from .. import Scene
 

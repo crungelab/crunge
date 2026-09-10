@@ -1,24 +1,36 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ClassVar, Callable, Generic, TypeVar
-
-from loguru import logger
+from typing import Any, ClassVar
+from bisect import insort
 
 from .signal import Signal
 from .base_node import BaseNode
+from .chip import Chip
 from .vu import Vu
 from .controller import Controller
 
 from .model import Model
 
-T_Node = TypeVar("T_Node", bound="Node")
 
-
-class Node(BaseNode, Generic[T_Node]):
+class Node[T: Node](BaseNode[T]):
     vu_class: ClassVar[type[Vu] | None] = None
     controller_class: ClassVar[type[Controller] | None] = None
 
     """A node in the scene graph.
+
+    `BaseNode` gives the chip set, the tree, and lifetime propagation over
+    both. What `Node` adds is the frame: the pre-filtered broadcast buckets
+    — `_updatables`, `_drawables`, `_dispatchables` — and the per-frame
+    walks over children that go with them.
+
+    Those walks stay here rather than moving up because they are not shared.
+    A scene ticks and draws every child; a behaviour-tree composite ticks
+    one child until it succeeds. Only the lifetime walks are common to every
+    tree, and those are already upstairs.
+
+    Maintaining the buckets is `add`/`remove`'s job, layered over BaseNode's:
+    BaseNode owns membership and type lookup, Node files each chip into
+    whichever buckets its class declares.
 
     The vu is a chip like any other — creation, enabling, drawing, updating
     and teardown all come from the chip walk in BaseNode. `vu` is kept as a
@@ -33,14 +45,18 @@ class Node(BaseNode, Generic[T_Node]):
     def __init__(self, model: "Model | None" = None) -> None:
         super().__init__()
         self._model: "Model | None" = None
-        self.parent: "Node[T_Node] | None" = None
-        self.children: list["Node[T_Node]"] = []
+
+        # Pre-filtered broadcast buckets; no branching in the hot loops.
+        # Subsets of BaseNode._chips, which stays authoritative.
+        self._updatables: list[Chip[Any]] = []
+        self._drawables: list[Chip[Any]] = []
+        self._dispatchables: list[Chip[Any]] = []
 
         # TODO: transform_changed belongs on Node2D/Node3D. Node has no
         # transform, so a chip that connects here on a plain Node is
         # listening to a signal that can never fire.
-        self.transform_changed: Signal["Node[T_Node]"] = Signal()
-        self.model_changed: Signal["Node[T_Node]"] = Signal()
+        self.transform_changed: Signal[Node[T]] = Signal()
+        self.model_changed: Signal[Node[T]] = Signal()
 
         # Safe in __init__: the model is this class's own state, and there
         # are no subscribers yet. A chip mounted later picks it up through
@@ -55,7 +71,38 @@ class Node(BaseNode, Generic[T_Node]):
         if self.controller_class is not None:
             self.add(self.controller_class())
 
-    # -- properties ----------------------------------------------------
+    # -- chips -------------------------------------------------------------
+    #
+    # BaseNode decides membership; Node decides what each chip is broadcast
+    # to.
+
+    def add[C: Chip[Any]](self, chip: C) -> C:
+        chip = super().add(chip)
+
+        # Bucketed after super(), which means after on_attached and any
+        # plug: update_order can be settled from node or sibling state and
+        # still land in the right slot. Nothing broadcasts inside add, so
+        # the chip cannot miss a tick by being filed a few lines late.
+        cls = type(chip)
+        if cls.updates:
+            insort(self._updatables, chip, key=lambda chip: chip.update_order)
+        if cls.draws:
+            self._drawables.append(chip)
+        if cls.dispatches:
+            self._dispatchables.append(chip)
+        return chip
+
+    def remove(self, chip: Chip[Any]) -> None:
+        # Mirror of add: out of the buckets first, so the chip is off every
+        # broadcast list before super() disables and unplugs it. A chip that
+        # was never attached is in no bucket, so the guard in super() still
+        # gets to raise on a clean object.
+        for bucket in (self._updatables, self._drawables, self._dispatchables):
+            if chip in bucket:
+                bucket.remove(chip)
+        super().remove(chip)
+
+    # -- properties --------------------------------------------------------
 
     # Model property
     @property
@@ -101,98 +148,24 @@ class Node(BaseNode, Generic[T_Node]):
         if value is not None:
             self.add(value)
 
-    # -- lifetime ------------------------------------------------------
-
-    def create_children(self) -> None:
-        super().create_children()  # chips created and plugged
-        for child in list(self.children):
-            child.create()
-
-    def enable_children(self) -> None:
-        super().enable_children()  # chips enabled
-        for child in list(self.children):
-            child.enable()
-
-    def ready_children(self) -> None:
-        #logger.debug(f"Readying children of node: {self}")
-        super().ready_children()  # chips readied
-        for child in list(self.children):
-            child.ready()
-
-    def _disable(self) -> None:
-        for child in list(self.children):
-            child.disable()
-        super()._disable()  # chips disabled
+    # -- lifetime ----------------------------------------------------------
 
     def _destroy(self) -> None:
-        logger.debug(f"Destroying node: {self}")
-        if self.parent is not None and not self.parent.is_destroying:
-            self.parent.remove_child(self)
         super()._destroy()
+        # After super(), which has already destroyed and detached every
+        # chip. These are the last references the node holds to them.
+        self._updatables.clear()
+        self._drawables.clear()
+        self._dispatchables.clear()
 
-    def destroy_children(self) -> None:
-        for child in list(self.children):
-            child.destroy()
-        self.children.clear()
-        super().destroy_children()  # chips destroyed
-
-    # -- tree ----------------------------------------------------------
-
-    def add_child(self, child: "Node[T_Node]") -> "Node[T_Node]":
-        child.parent = self
-        self.children.append(child)
-        self.on_child_added(child)
-        child.on_added()
-        self._sync_lifetime(child)
-        return child
-
-    def on_child_added(self, child: "Node[T_Node]") -> None:
-        """Parent-side notification. Child is attached but not yet created."""
-
-    def on_added(self) -> None:
-        """Self-side notification. Parent is set; lifetime not yet synced."""
-
-    def remove_child(self, child: "Node[T_Node]") -> None:
-        child.disable()
-        self.on_child_removed(child)
-        child.on_removed()
-        child.parent = None
-        self.children.remove(child)
-
-    def on_child_removed(self, child: "Node[T_Node]") -> None:
-        """Parent-side notification. Child is disabled but still attached."""
-
-    def on_removed(self) -> None:
-        """Self-side notification. Parent is still set."""
-
-    def add_children(self, children: list["Node[T_Node]"]) -> None:
-        for child in children:
-            self.add_child(child)
-
-    def remove_children(self, children: list["Node[T_Node]"]) -> None:
-        for child in children:
-            self.remove_child(child)
-
-    def clear(self) -> None:
-        """Detach all children. They remain created and re-addable."""
-        for child in list(self.children):
-            self.remove_child(child)
-
-    def sort_children(
-        self, key: Callable[["Node[T_Node]"], object], reverse: bool = False
-    ) -> None:
-        """
-        Sorts the children list based on a key function.
-
-        :param key: A lambda function that defines the sorting key.
-        :param reverse: Whether to sort in reverse order. Default is False.
-        """
-        self.children.sort(key=key, reverse=reverse)
-
-    # -- frame ---------------------------------------------------------
+    # -- frame -------------------------------------------------------------
     #
-    # `_draw` and `_update` come from BaseNode and broadcast to the chips.
-    # Nothing to add here; Node only owns the walk over children.
+    # `_draw`, `_update` and `dispatch` broadcast to this node's own chips;
+    # `draw`, `update` and the child walks carry it down the tree.
+
+    def _draw(self) -> None:
+        for chip in self._drawables:
+            chip.draw()
 
     def draw(self) -> None:
         if not self.visible:
@@ -204,11 +177,15 @@ class Node(BaseNode, Generic[T_Node]):
         for child in self.children:
             self.draw_child(child)
 
-    def draw_child(self, child: "Node[T_Node]") -> None:
+    def draw_child(self, child: T) -> None:
         child.draw()
 
     def render(self) -> None:
         self.draw()
+
+    def _update(self, delta_time: float) -> None:
+        for chip in self._updatables:
+            chip.update(delta_time)
 
     def update(self, delta_time: float) -> None:
         self._update(delta_time)
@@ -218,5 +195,12 @@ class Node(BaseNode, Generic[T_Node]):
         for child in self.children:
             self.update_child(child, delta_time)
 
-    def update_child(self, child: "Node[T_Node]", delta_time: float) -> None:
+    def update_child(self, child: T, delta_time: float) -> None:
         child.update(delta_time)
+
+    def dispatch(self, event: Any) -> bool:
+        """First chip to claim the event wins."""
+        for chip in self._dispatchables:
+            if chip.dispatch(event):
+                return True
+        return super().dispatch(event)
