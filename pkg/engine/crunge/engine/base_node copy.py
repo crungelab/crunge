@@ -125,6 +125,39 @@ class BaseNode(Base):
             chip.plug()
         return chip
 
+    '''
+    def add[C: Chip[Any]](self, chip: C) -> C:
+        if self.is_destroying:
+            raise RuntimeError(f"cannot add {chip!r} to {self!r} while it tears down")
+
+        cls = type(chip)
+        self._chips.append(chip)
+
+        # First-wins, per key: multiples stay reachable through get_all(),
+        # and get() keeps one unambiguous return type. Filter rather than
+        # break on Chip, so mixin order in the subclass can't change which
+        # keys land in the map.
+        for klass in cls.__mro__:
+            if klass is not Chip and issubclass(klass, Chip):
+                self._chip_map.setdefault(klass, chip)
+
+        if cls.updates:
+            self._updatables.append(chip)
+            self._updatables.sort(key=lambda chip: chip.update_order)
+        if cls.draws:
+            self._drawables.append(chip)
+        if cls.dispatches:
+            self._dispatchables.append(chip)
+
+        chip.on_attached(self)
+        # Late arrival on a live node: bring the chip up to our lifetime and
+        # let it resolve the set, which is already complete around it.
+        self._sync_lifetime(chip)
+        if self._plugged:
+            chip.plug()
+        return chip
+    '''
+
     def remove(self, chip: Chip[Any]) -> None:
         """Detach without destroying. The chip stays created and re-addable;
         the caller owns it from here."""
@@ -156,6 +189,32 @@ class BaseNode(Base):
         if self._plugged:
             chip.unplug()
         chip.on_detached()
+
+    '''
+    def remove(self, chip: Chip[Any]) -> None:
+        """Detach without destroying. The chip stays created and re-addable;
+        the caller owns it from here."""
+        self._chips.remove(chip)
+        for bucket in (self._updatables, self._drawables, self._dispatchables):
+            if chip in bucket:
+                bucket.remove(chip)
+
+        for klass in type(chip).__mro__:
+            if klass is Chip or not issubclass(klass, Chip):
+                continue
+            if self._chip_map.get(klass) is chip:
+                del self._chip_map[klass]
+                # Promote the next chip that satisfies this key, if any.
+                for candidate in self._chips:
+                    if isinstance(candidate, klass):
+                        self._chip_map[klass] = candidate
+                        break
+
+        if self._plugged:
+            chip.unplug()
+        chip.disable()
+        chip.on_detached()
+    '''
 
     def get[C: Chip[Any]](self, kind: type[C]) -> C | None:
         """One dict hit. Matches subclasses, since the map spans the MRO."""
@@ -219,10 +278,24 @@ class BaseNode(Base):
         for chip in tuple(self._chips):
             chip.enable()
 
+    '''
+    def enable_children(self) -> None:
+        super().enable_children()
+        for chip in tuple(self._chips):
+            chip.enable()
+    '''
+
     def _ready(self) -> None:
         super()._ready()
         for chip in tuple(self._chips):
             chip.ready()
+
+    '''
+    def ready_children(self) -> None:
+        super().ready_children()
+        for chip in tuple(self._chips):
+            chip.ready()
+    '''
 
     def _disable(self) -> None:
         for chip in reversed(tuple(self._chips)):
@@ -244,6 +317,24 @@ class BaseNode(Base):
         self._dispatchables.clear()
         self._seated = False
         super()._destroy()
+
+    '''
+    def destroy_children(self) -> None:
+        # Unplug first: every chip drops its sibling references while the
+        # set is whole, so no chip can observe a half-destroyed neighbour.
+        self.unplug()
+        for chip in reversed(tuple(self._chips)):
+            chip.destroy()
+            chip.on_detached()
+
+        self._chips.clear()
+        self._chip_map.clear()
+        self._updatables.clear()
+        self._drawables.clear()
+        self._dispatchables.clear()
+        self._seated = False
+        super().destroy_children()
+    '''
 
     # -- broadcasts (self only; Node walks the tree) -----------------------
 
