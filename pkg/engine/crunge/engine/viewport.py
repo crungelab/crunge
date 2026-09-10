@@ -11,8 +11,8 @@ from crunge import wgpu
 from crunge import skia
 
 from .gfx_access import GfxAccess
-from .base import Base
-from .signal import Signal
+from crunge.core.base import Base
+from crunge.core.signal import Signal
 from .math import Rect2i
 from .uniforms import ViewportUniform, cast_vec2
 from .easel import Easel

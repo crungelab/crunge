@@ -8,7 +8,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge import skia
 
-from .base import Base
+from crunge.core.base import Base
 from .easel import Easel
 from .gfx_access import GfxAccess
 

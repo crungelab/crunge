@@ -8,7 +8,7 @@ from loguru import logger
 
 from crunge import box2d
 
-from crunge.engine.signal import Signal
+from crunge.core.signal import Signal
 
 from . import globe
 from .constants import GRAVITY

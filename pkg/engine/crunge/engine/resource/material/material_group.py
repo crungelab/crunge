@@ -1,6 +1,6 @@
 from typing import TypeVar, Generic, List
 
-from ...base import Base
+from crunge.core.base import Base
 from .material import Material
 
 T_Material = TypeVar("T_Material", bound=Material)

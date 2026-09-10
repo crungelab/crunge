@@ -1,4 +1,4 @@
-from .base import Base
+from crunge.core.base import Base
 
 
 class PhysicsEngine(Base):

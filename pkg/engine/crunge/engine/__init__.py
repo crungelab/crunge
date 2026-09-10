@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .signal import Signal, Pulse
+from crunge.core.signal import Signal, Pulse
 from .colors import Color
-from .base import Base
+from crunge.core.base import Base
 from .controller import Controller
 #from .gfx import Gfx
 from .render_options import RenderOptions

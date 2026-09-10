@@ -12,7 +12,7 @@ from crunge import yoga
 
 from . import globals, SurfaceEasel, Viewport, Renderer, RenderOptions, compose
 from .math import Rect2i
-from .signal import Signal, Pulse
+from crunge.core.signal import Signal, Pulse
 from .scheduler import Scheduler
 from .frame import Frame
 

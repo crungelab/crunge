@@ -5,7 +5,7 @@ import numpy as np
 
 from crunge import wgpu
 
-from .base import Base
+from crunge.core.base import Base
 from .gfx_access import GfxAccess
 
 # WGSL with support for both premultiplied and non-premultiplied sources

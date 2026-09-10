@@ -5,7 +5,7 @@ from crunge import yoga
 
 from ..sdl.event_handler import EventHandler
 from ..node import Node
-from ..dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 #from ..controller import Controller
 from ..gfx_access import GfxAccess
 

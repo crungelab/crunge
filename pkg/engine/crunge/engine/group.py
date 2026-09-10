@@ -2,7 +2,7 @@ from typing import Generic, Iterator, List, TypeVar
 
 from loguru import logger
 
-from .chip import Chip
+from crunge.core.chip import Chip
 
 class Grouped:
     """Protocol-ish base for anything that can belong to a Group."""

@@ -11,7 +11,7 @@ from crunge import wgpu
 from ..viewport import Viewport
 from ..easel import Easel
 #from ..binding import SceneBindGroup
-from ..signal import Pulse
+from crunge.core.signal import Pulse
 from ..camera_chip import CameraChip
 
 from .node_3d import Node3D

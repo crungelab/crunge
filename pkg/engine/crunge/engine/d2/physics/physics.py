@@ -5,7 +5,7 @@ import glm
 
 from crunge import box2d
 
-from crunge.engine.chip import Chip
+from crunge.core.chip import Chip
 
 from .constants import PT_DYNAMIC, PT_KINEMATIC, PT_STATIC, GRAVITY
 from .geom import Geom

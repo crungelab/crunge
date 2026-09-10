@@ -7,7 +7,7 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ..base import Base
+from crunge.core.base import Base
 from ..easel import Easel
 
 if TYPE_CHECKING:

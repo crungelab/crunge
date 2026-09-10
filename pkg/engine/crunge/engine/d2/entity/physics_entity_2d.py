@@ -5,7 +5,7 @@ import glm
 
 from crunge import box2d
 
-from crunge.engine.signal import Signal
+from crunge.core.signal import Signal
 
 from crunge.engine.d2 import SpriteVu
 from ..physics.constants import GRAVITY

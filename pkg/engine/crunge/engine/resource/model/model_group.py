@@ -1,6 +1,6 @@
 from typing import TypeVar, Generic, List
 
-from ...base import Base
+from crunge.core.base import Base
 from .model import ModelMembership
 
 T_Membership = TypeVar("T_Membership", bound=ModelMembership)

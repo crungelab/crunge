@@ -7,7 +7,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ..signal import Signal, Pulse
+from crunge.core.signal import Signal, Pulse
 from ..math import Bounds2, Rect2i
 from ..viewport import Viewport
 from ..easel import Easel

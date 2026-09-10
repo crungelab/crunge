@@ -3,7 +3,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge.wgpu.utils import divround_up
 
-from ..base import Base
+from crunge.core.base import Base
 from ..gfx_access import GfxAccess
 
 class Buffer(GfxAccess, Base):

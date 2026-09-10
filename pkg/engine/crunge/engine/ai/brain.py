@@ -1,4 +1,4 @@
-from ..chip import Chip
+from crunge.core.chip import Chip
 
 
 class Brain(Chip):

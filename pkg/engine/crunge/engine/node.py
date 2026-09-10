@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import Any, ClassVar
 from bisect import insort
 
-from .signal import Signal
-from .base_node import BaseNode
-from .chip import Chip
+from crunge.core.signal import Signal
+from crunge.core.base_node import BaseNode
+from crunge.core.chip import Chip
 from .vu import Vu
 from .controller import Controller
 

@@ -6,7 +6,7 @@ T_Resource = TypeVar("T_Resource", bound=Resource)
 
 from ..resource.resource_kit import ResourceKit
 
-from ..base import Base
+from crunge.core.base import Base
 
 
 class ResourceLoader(Base, Generic[T_Resource]):

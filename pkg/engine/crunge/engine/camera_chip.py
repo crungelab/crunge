@@ -4,7 +4,7 @@ import glm
 
 from crunge import wgpu
 
-from .chip import Chip
+from crunge.core.chip import Chip
 from .binding import SceneBindGroup
 from .gfx_access import GfxAccess
 from .uniforms import cast_matrix4, cast_vec3, CameraUniform

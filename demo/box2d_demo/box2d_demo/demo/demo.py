@@ -7,7 +7,7 @@ from crunge import sdl
 from crunge import imgui
 from crunge import engine
 
-from crunge.engine.dispatch import DispatchResult, EVENT_HANDLED
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED
 from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.scheduler import Scheduler
 from crunge.engine.d2.scene import Scene2D

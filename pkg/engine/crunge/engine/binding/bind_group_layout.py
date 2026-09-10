@@ -5,7 +5,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ..base import Base
+from crunge.core.base import Base
 from ..gfx_access import GfxAccess
 
 class BindGroupLayout(GfxAccess, Base):

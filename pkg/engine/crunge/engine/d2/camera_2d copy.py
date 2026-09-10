@@ -8,7 +8,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ..signal import Signal
+from crunge.core.signal import Signal
 from ..math import Bounds2, Rect2i
 from ..uniforms import cast_matrix4, cast_vec3
 from ..viewport import Viewport

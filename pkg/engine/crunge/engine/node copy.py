@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING, ClassVar, Callable, Generic, TypeVar
 
 from loguru import logger
 
-from .signal import Signal
-from .base_node import BaseNode
+from crunge.core.signal import Signal
+from crunge.core.base_node import BaseNode
 from .vu import Vu
 from .controller import Controller
 

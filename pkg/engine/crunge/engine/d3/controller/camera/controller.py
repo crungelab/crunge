@@ -2,7 +2,7 @@ from loguru import logger
 
 from crunge import sdl
 
-from ....dispatch import DispatchResult
+from crunge.core.dispatch import DispatchResult
 
 from ..controller import Controller
 from ...camera_3d import Camera3D

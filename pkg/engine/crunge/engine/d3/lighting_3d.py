@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge import wgpu
 
-from ..chip import Chip
+from crunge.core.chip import Chip
 from ..gfx_access import GfxAccess
 from ..light import AmbientLight
 

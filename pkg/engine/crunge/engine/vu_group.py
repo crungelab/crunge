@@ -3,7 +3,7 @@ from typing import Any, TypeVar, Generic, List
 from loguru import logger
 
 from .vu import Vu
-from .chip import Chip
+from crunge.core.chip import Chip
 
 T_Vu = TypeVar("T_Vu", bound=Vu)
 

@@ -1,4 +1,4 @@
-from crunge.engine.base import Base
+from crunge.core.base import Base
 
 class Builder(Base):
     def __init__(self) -> None:

@@ -4,7 +4,7 @@ from pathlib import Path
 from ..resource.resource_kit import ResourceKit
 from ..resource import Resource
 
-from ..base import Base
+from crunge.core.base import Base
 
 T_Resource = TypeVar("T_Resource", bound=Resource)
 

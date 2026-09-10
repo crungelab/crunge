@@ -1,6 +1,6 @@
 # event_handler.py
 from crunge import sdl
-from ..dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 
 class EventHandler:

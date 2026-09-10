@@ -10,9 +10,9 @@ import glm
 from crunge import wgpu
 from crunge import skia
 
-from ..base import Base
+from crunge.core.base import Base
 from ..gfx_access import GfxAccess
-from ..signal import Signal
+from crunge.core.signal import Signal
 from ..render_options import RenderOptions
 
 current_easel: ContextVar[Optional["Easel"]] = ContextVar("current_easel", default=None)

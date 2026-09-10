@@ -7,7 +7,7 @@ from loguru import logger
 
 from crunge import yoga
 
-from .signal import Signal, Pulse
+from crunge.core.signal import Signal, Pulse
 from .scheduler import Scheduler
 from .widget import Widget
 from .display import Display
