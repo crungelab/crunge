@@ -9,7 +9,7 @@ from lark.indenter import Indenter
 
 from crunge.mia.compile.ast.nodes import (
     AgentDef, Branch, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def,
-    ExpertDef, Fail, Filter, Goal, GoalKind, Halt, Import, Literal, Match,
+    ExpertDef, Fail, Filter, FrameDef, Goal, GoalKind, Halt, Import, Literal, Match,
     Message, Module, Name, NoMatch, Outcome, Pass, Performative, PredicateDef,
     Return, Slot, Snippet, Succeed, Throw, Trigger, Var, Where,
 )
@@ -79,15 +79,18 @@ class ToAst(Transformer):
     def context_def(self, meta, name, body):
         return ContextDef(str(name), body, **_pos(meta))
 
+    def frame_def(self, meta, name, body):
+        return FrameDef(str(name), body, **_pos(meta))
+
     def trigger(self, meta, performative, content):
         return Trigger(_term(content), performative, **_pos(meta))
 
     # ------------------------------------------------------------ where
 
-    def where_stmt(self, meta, *items):
+    def where_stmt(self, meta, frame, *items):
         conditions = [x for x in items if not isinstance(x, Branch)]
         branches = [x for x in items if isinstance(x, Branch)]
-        return Where(conditions, branches, **_pos(meta))
+        return Where(conditions, branches, str(frame) if frame else None, **_pos(meta))
 
     def match(self, meta, clause):
         return Match(clause, **_pos(meta))

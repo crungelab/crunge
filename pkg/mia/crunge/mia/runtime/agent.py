@@ -106,6 +106,8 @@ class Agent:
     def advance(self) -> Step:
         """Run until the agent is done or has to choose among its proposals."""
         step = self._advance()
+        if self.halted:
+            self.flush()
         if self.committed and self.step_cost == 0:
             self.cost += 1
         self.committed = False
@@ -130,6 +132,23 @@ class Agent:
             else:
                 break
         return Step.DONE
+
+    def flush(self) -> None:
+        """Apply queued context changes without firing triggers.
+
+        Halting stops the agent mid-queue, but facts a rule asserted before it
+        halted belong in the final state.
+        """
+        while self.messages:
+            message, _ = self.messages.popleft()
+            match message:
+                case Assert(clause=clause):
+                    self.context.add(clause)
+                case Retract(clause=clause):
+                    self.context.remove(clause)
+                case Modify(clause=clause):
+                    self.context.replace(clause)
+                    self.context.add(clause)
 
     def status(self) -> Status:
         if self.halted:

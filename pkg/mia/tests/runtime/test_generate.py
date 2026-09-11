@@ -139,3 +139,28 @@ def test_cost_is_a_statement_and_still_a_verb():
     code = generate(parse(source), runtime="tests.fake_runtime")
     assert "ctx.find(rt.Belief, t_Taxi1, t_cost, rt.ANY)" in code
     assert "agent.add_cost((v_fare + 1))" in code
+
+
+def test_frames_are_module_level_and_shared():
+    source = """class Person
+frame Fam
+    Person Billy parent John
+
+agent A
+    def A(/a $x)
+        where in Fam
+            $x parent $p
+            -->
+            pass
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert "f_Fam = _build_Fam()" in code
+    assert "for _c0 in f_Fam.find(" in code
+    assert "ctx = agent.context" not in code  # a frame-only rule never touches working memory
+
+
+def test_unknown_frame_and_misplaced_frame_are_rejected():
+    with pytest.raises(MiaCompileError, match="undeclared frame Nope"):
+        generate(parse("agent A\n    def A(/a)\n        where in Nope\n            $x b $c\n            -->\n            pass\n"))
+    with pytest.raises(MiaCompileError, match="belongs at module level"):
+        generate(parse("agent A\n    frame F\n        X y Z\n    def A(/a)\n        pass\n"))

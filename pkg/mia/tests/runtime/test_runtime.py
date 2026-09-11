@@ -425,3 +425,36 @@ def test_waterjug_measures_one_gallon():
                      if isinstance(c, rt.Belief) and c.subj is jug}
             if wj.t_empty in facts:
                 assert facts[wj.t_contents] + facts[wj.t_empty] == facts[wj.t_volume]
+
+
+# ---------------------------------------------------------------- sibling query
+
+
+def test_sibling_query(capsys):
+    sib = build("siblings")
+    host = rt.AgentHost(sib.SiblingAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    solution = host.solution.agents[0].solution
+
+    assert rt.Belief(sib.t_Billy, sib.t_sibling, sib.t_Suzy) in solution.context
+    # the frame is background knowledge: queried, never copied or changed
+    assert len(sib.f_FamilyTree) == 14
+    assert not any(c.verb is sib.t_sibling for c in sib.f_FamilyTree)
+    assert rt.Belief(sib.t_Billy, sib.t_parent, sib.t_John) not in solution.context
+    assert rt.Belief(sib.t_Billy, sib.t_sibling, sib.t_Billy) not in solution.context
+    # one line per shared parent
+    assert capsys.readouterr().out.count("Billy and Suzy are siblings") == 2
+
+
+def test_halting_keeps_facts_asserted_just_before():
+    a, b, likes = rt.noun("A"), rt.noun("B"), rt.verb("likes")
+
+    class Finish(rt.Task):
+        def resume(self, agent, result=None):
+            agent.post(rt.Assert(rt.Belief(a, likes, b)))
+            return agent.halt()
+
+    agent = rt.Agent()
+    agent.start(Finish(), None, None)
+    assert agent.run() is rt.Status.SUCCEEDED
+    assert rt.Belief(a, likes, b) in agent.context

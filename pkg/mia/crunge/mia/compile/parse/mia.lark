@@ -16,6 +16,7 @@ start: _NL? stmt*
      | predicate_decl
      | def_def
      | context_def
+     | frame_def
      | where_stmt
      | simple_stmt
 
@@ -30,13 +31,14 @@ bases:          "(" NOUN ("," NOUN)* ")"
 predicate_decl: "predicate" VERB ["(" type_ref ")"] _NL
 def_def:        "def" NOUN "(" [trigger] ")" _NL suite
 context_def:    "context" NOUN _NL suite
+frame_def:      "frame" NOUN _NL suite
 
 trigger: [performative] content
 ?type_ref: NOUN | VERB
 
 // ---------------------------------------------------------------- where
 
-where_stmt: "where" _NL _INDENT (condition _NL)+ outcome+ _DEDENT
+where_stmt: "where" ["in" NOUN] _NL _INDENT (condition _NL)+ outcome+ _DEDENT
 
 ?condition: clause              -> match
           | "not" clause        -> no_match

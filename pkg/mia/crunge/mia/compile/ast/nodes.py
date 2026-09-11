@@ -194,6 +194,7 @@ class Branch(Node):
 class Where(Node):
     conditions: list[Condition]
     branches: list[Branch]
+    frame: str | None = None  # the frame to search, or None for the agent's own context
 
 
 # ---------------------------------------------------------------- declarations
@@ -213,6 +214,12 @@ class PredicateDef(Node):
 
 @dataclass(slots=True)
 class ContextDef(Node):
+    name: str
+    body: list[Stmt]
+
+
+@dataclass(slots=True)
+class FrameDef(Node):
     name: str
     body: list[Stmt]
 
@@ -242,7 +249,7 @@ class Module(Node):
 
 
 type Stmt = (
-    AgentDef | ClassDef | PredicateDef | ContextDef | Def | Where | Message
+    AgentDef | ClassDef | PredicateDef | ContextDef | FrameDef | Def | Where | Message
     | Return | Succeed | Fail | Throw | Halt | Pass | Cost | Import | Snippet
 )
 

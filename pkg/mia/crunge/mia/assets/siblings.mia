@@ -1,0 +1,71 @@
+#
+# Sibling Query
+#
+
+class Person
+class Family
+
+# Background knowledge: built once, shared by every agent, never forked.
+
+frame FamilyTree
+
+    Family Smith
+
+    Person Mary
+        family Smith
+        spouse John
+        child Billy
+        child Suzy
+
+    Person John
+        family Smith
+        spouse Mary
+        child Billy
+        child Suzy
+
+    Person Billy
+        family Smith
+        parent John
+        parent Mary
+
+    Person Suzy
+        family Smith
+        parent John
+        parent Mary
+
+
+agent SiblingAgent
+
+    predicate family(Family)
+    predicate spouse(Person)
+    predicate child(Person)
+    predicate parent(Person)
+    predicate sibling(Person)
+
+    def SiblingAgent(/siblingAgent)
+
+        context PeopleContext
+
+            Person John
+            Person Mary
+            Person Billy
+            Person Suzy
+
+        /siblings context: PeopleContext
+
+
+    expert Siblings
+
+        def Siblings(/siblings)
+            /findSibling Billy
+
+        def SiblingFinder(/findSibling $x)
+            where in FamilyTree
+                $x parent $p
+                $y parent $p
+                $y != $x
+                -->
+                + $x sibling $y
+                | print(f"{$x} and {$y} are siblings")
+                ==>
+                halt

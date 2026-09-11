@@ -28,7 +28,7 @@ from dataclasses import dataclass, field
 
 from crunge.mia.compile.ast.nodes import (
     AgentDef, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def, ExpertDef, Fail,
-    Filter, Goal, GoalKind, Halt, Import, Literal, Match, Message, Module, Name,
+    Filter, FrameDef, Goal, GoalKind, Halt, Import, Literal, Match, Message, Module, Name,
     Node, NoMatch, Outcome, Pass, Performative, PredicateDef, Return, Snippet,
     Succeed, Throw, Var, Where, walk,
 )
@@ -123,6 +123,7 @@ class _Generator:
         self.agents: set[str] = set()
         self.nouns: dict[str, str | None] = {}
         self.verbs: dict[str, None] = {}
+        self.frames: set[str] = set()
         self.matches = 0
         self.loops = 0
 
@@ -153,15 +154,37 @@ class _Generator:
 
         for s in m.body:
             match s:
+                case FrameDef():
+                    w()
+                    w()
+                    self.frame(s)
+                case _:
+                    pass
+        for s in m.body:
+            match s:
                 case AgentDef():
                     w()
                     w()
                     self.agent(s)
-                case Import() | ClassDef():
+                case Import() | ClassDef() | FrameDef():
                     pass
                 case _:
                     raise MiaCompileError(s, f"{type(s).__name__} is not allowed at module level")
         return w.text()
+
+    def frame(self, f: FrameDef):
+        """A frame is background knowledge: built once, shared, never forked."""
+        w = self.w
+        scope = _Scope()
+        with w.block(f"def _build_{f.name}():"):
+            w(self.comment(f))
+            self.context(ContextDef(f.name, f.body, line=f.line), scope, name="_k")
+            w("return _k")
+        w(f"{self.frame_var(f.name)} = _build_{f.name}()")
+
+    @staticmethod
+    def frame_var(name: str) -> str:
+        return f"f_{name}"
 
     def collect(self, m: Module):
         contexts = set()
@@ -173,8 +196,10 @@ class _Generator:
                     self.types[name] = n
                 case AgentDef(name=name):
                     self.agents.add(name)
-                case ContextDef(name=name):
+                case ContextDef(name=name) | FrameDef(name=name):
                     contexts.add(name)
+                    if isinstance(n, FrameDef):
+                        self.frames.add(name)
                 case Clause(subj=None, verb="impasse", objs=[]):
                     pass
                 case Clause(verb=verb):
@@ -224,6 +249,8 @@ class _Generator:
                 match s:
                     case PredicateDef() | ClassDef():
                         continue
+                    case FrameDef():
+                        raise MiaCompileError(s, "a frame belongs at module level, not inside an agent")
                     case Def() | AgentDef():
                         if s.name in names:
                             raise MiaCompileError(s, f"{s.name} is already defined in {a.name}")
@@ -343,7 +370,7 @@ class _Generator:
             if self.suspends(s):
                 states.append([])
         with w.block("def resume(self, agent, result=None):"):
-            if any(isinstance(n, Where) for n in walk(d)):
+            if any(isinstance(n, Where) and n.frame is None for n in walk(d)):
                 w("ctx = agent.context")
             if len(states) == 1:
                 self.state(states[0], 0, scope, last=True)
@@ -440,7 +467,7 @@ class _Generator:
         for p in s.paragraph:
             sink(self.clause("rt.Belief", subj, p, scope))
 
-    def context(self, s: ContextDef, scope: _Scope):
+    def context(self, s: ContextDef, scope: _Scope, name: str | None = None):
         w = self.w
         w("_k = rt.Context()")
         sink = lambda c: w(f"_k.add({c})")
@@ -456,19 +483,23 @@ class _Generator:
                 sink(self.content(entry.content, scope))
             elif not isinstance(entry.content, Name):
                 raise MiaCompileError(entry, "a context entry must be a fact or a goal")
-        w(f"self.c_{s.name} = _k")
+        if name is None:
+            w(f"self.c_{s.name} = _k")
 
     # ------------------------------------------------------------ where
 
     def where(self, s: Where, scope: _Scope):
         w = self.w
+        if s.frame is not None and s.frame not in self.frames:
+            raise MiaCompileError(s, f"undeclared frame {s.frame}")
+        source = self.frame_var(s.frame) if s.frame else "ctx"
         m = f"_m{self.matches}"
         self.matches += 1
         w(f"{m} = []")
 
         inner = scope.child()
         bound: list[str] = []
-        opened = sum(self.condition(c, inner, bound) for c in s.conditions)
+        opened = sum(self.condition(c, inner, bound, source) for c in s.conditions)
         w(_tuple_append(m, [f"v_{name}" for name in bound]))
         w.depth -= opened
 
@@ -485,7 +516,7 @@ class _Generator:
                     with w.block(f"if not {m}:"):
                         self.block(branch.body, scope)
 
-    def condition(self, cond, scope: _Scope, bound: list[str]) -> int:
+    def condition(self, cond, scope: _Scope, bound: list[str], source: str = "ctx") -> int:
         """Emit one condition and return how many blocks it opened."""
         w = self.w
         match cond:
@@ -500,7 +531,7 @@ class _Generator:
                 obj_arg = args[1] if c.objs else "rt.ANY"
                 loop = f"_c{self.loops}"
                 self.loops += 1
-                w(f"for {loop} in ctx.find(rt.Belief, {args[0]}, t_{c.verb}, {obj_arg}):")
+                w(f"for {loop} in {source}.find(rt.Belief, {args[0]}, t_{c.verb}, {obj_arg}):")
                 w.depth += 1
                 opened = 1
                 for (attr, t), is_free in zip(positions, free):
@@ -517,7 +548,7 @@ class _Generator:
                 self.check_pattern(c, negated=True)
                 subj = self.pattern_arg(c.subj, scope)
                 obj = self.pattern_arg(c.objs[0], scope) if c.objs else "rt.ANY"
-                w(f"if not ctx.exists(rt.Belief, {subj}, t_{c.verb}, {obj}):")
+                w(f"if not {source}.exists(rt.Belief, {subj}, t_{c.verb}, {obj}):")
             case Compare(left=left, op=op, right=right):
                 w(f"if {self.term(left, scope)} {op} {self.term(right, scope)}:")
             case Filter(code=code):
