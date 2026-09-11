@@ -1,0 +1,94 @@
+#
+# Missionaries & Cannibals
+#
+
+class Bank
+class Boat
+
+agent MacAgent
+
+    predicate missionaries(int)
+    predicate cannibals(int)
+    predicate boat(Boat)
+
+    def MacAgent(/macAgent)
+
+        context MacContext
+
+            Boat Boat1
+
+            Bank Bank1
+                missionaries 3
+                cannibals 3
+                boat Boat1
+
+            Bank Bank2
+                missionaries 0
+                cannibals 0
+
+            @Bank2 missionaries 3
+            @Bank2 cannibals 3
+            @Bank2 boat Boat1
+
+        /mac context: MacContext
+
+
+    expert Mac
+
+        def Mac(/mac)
+            pass
+
+        def Impasse(impasse)
+            where
+                Goal $g status Active
+                -->
+                * $g
+                !==>
+                halt
+
+        # A bank where the cannibals outnumber the missionaries is a dead end.
+        # One rule per predicate, since only the changed one raises an event.
+        def EatenM(+ $b missionaries $m)
+            where
+                $b cannibals $c
+                {0 < $m < $c}
+                -->
+                throw
+
+        def EatenC(+ $b cannibals $c)
+            where
+                $b missionaries $m
+                {0 < $m < $c}
+                -->
+                throw
+
+        def Move(Achieve $g)
+            where
+                Bank $from boat $boat
+                Bank $to missionaries $_
+                $to != $from
+                -->
+                * /row $boat from: $from to: $to missionaries: 1 cannibals: 0
+                * /row $boat from: $from to: $to missionaries: 2 cannibals: 0
+                * /row $boat from: $from to: $to missionaries: 0 cannibals: 1
+                * /row $boat from: $from to: $to missionaries: 0 cannibals: 2
+                * /row $boat from: $from to: $to missionaries: 1 cannibals: 1
+            return
+
+        def Row(/row $boat from: $from to: $to missionaries: $m cannibals: $c)
+            where
+                $from missionaries $fm
+                $from cannibals $fc
+                $to missionaries $tm
+                $to cannibals $tc
+                {$fm >= $m}
+                {$fc >= $c}
+                -->
+                - $from boat $boat
+                + $to boat $boat
+                -+ $to missionaries {$tm + $m}
+                -+ $to cannibals {$tc + $c}
+                -+ $from missionaries {$fm - $m}
+                -+ $from cannibals {$fc - $c}
+                !==>
+                throw

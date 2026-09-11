@@ -269,3 +269,74 @@ def test_bananas_visits_the_key_before_the_chest(bananas):
         if spot is not None and (not visited or visited[-1] is not spot):
             visited.append(spot)
     assert visited == [b.t_Place1, b.t_Place3, b.t_Place2]  # start, key, chest
+
+
+# ---------------------------------------------------------------- missionaries & cannibals
+
+
+def test_everyone_crosses_safely():
+    mac = build("mac")
+    host = rt.AgentHost(mac.MacAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    solution = host.solution.agents[0].solution
+
+    def count(agent, bank, verb):
+        [clause] = [c for c in agent.context
+                    if isinstance(c, rt.Belief) and c.subj is bank and c.verb is verb]
+        return clause.obj
+
+    assert count(solution, mac.t_Bank2, mac.t_missionaries) == 3
+    assert count(solution, mac.t_Bank2, mac.t_cannibals) == 3
+    assert rt.Belief(mac.t_Bank2, mac.t_boat, mac.t_Boat1) in solution.context
+
+    # the classic minimum: 11 crossings
+    crossings = [m for m in solution.history if m.clause.verb is mac.t_row]
+    assert len(crossings) == 11
+
+    # no state along the way leaves missionaries outnumbered
+    chain, agent = [solution], solution
+    while agent.parent is not None:
+        agent = agent.parent
+        chain.append(agent)
+    for agent in chain:
+        for bank in (mac.t_Bank1, mac.t_Bank2):
+            counts = {c.verb: c.obj for c in agent.context
+                      if isinstance(c, rt.Belief) and c.subj is bank}
+            missionaries = counts.get(mac.t_missionaries)
+            cannibals = counts.get(mac.t_cannibals)
+            if missionaries is None or cannibals is None:
+                continue  # mid-move: the pair is updated one clause at a time
+            assert missionaries == 0 or missionaries >= cannibals
+
+
+# ---------------------------------------------------------------- towers of hanoi
+
+
+def test_towers_moves_the_stack():
+    towers = build("towers")
+    host = rt.AgentHost(towers.TowersAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    solution = host.solution.agents[0].solution
+
+    stack = {c.subj: c.obj for c in solution.context
+             if isinstance(c, rt.Belief) and c.verb is towers.t_onTop}
+    assert stack == {
+        towers.t_Disc1: towers.t_Disc2,
+        towers.t_Disc2: towers.t_Disc3,
+        towers.t_Disc3: towers.t_Peg3,
+    }
+    assert all(c.obj is towers.t_Peg3 for c in solution.context
+               if isinstance(c, rt.Belief) and c.verb is towers.t_at
+               and isinstance(c.subj, towers.Disc))
+
+    # a disc is only ever moved onto something larger, and only when clear
+    chain, agent = [solution], solution
+    while agent.parent is not None:
+        agent = agent.parent
+        chain.append(agent)
+    sizes = {c.subj: c.obj for c in solution.context
+             if isinstance(c, rt.Belief) and c.verb is towers.t_size}
+    for agent in chain:
+        for clause in agent.context:
+            if isinstance(clause, rt.Belief) and clause.verb is towers.t_onTop:
+                assert sizes[clause.subj] < sizes[clause.obj]
