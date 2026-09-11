@@ -25,15 +25,15 @@ void init_skia_data_py_auto(py::module &_skia, Registry &registry) {
         .def("size", &SkData::size
             )
         .def("data", &SkData::data
-            )
+            , py::return_value_policy::reference)
         .def("empty", &SkData::empty
             )
         .def("bytes", &SkData::bytes
-            )
+            , py::return_value_policy::reference)
         .def("byte_span", &SkData::byteSpan
             )
         .def("writable_data", &SkData::writable_data
-            )
+            , py::return_value_policy::reference)
         .def("copy_subset", &SkData::copySubset
             , py::arg("offset")
             , py::arg("length")

@@ -25,7 +25,7 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "TextBlob", _TextBlob);
         _TextBlob
         .def("bounds", &SkTextBlob::bounds
-            )
+            , py::return_value_policy::reference)
         .def("unique_id", &SkTextBlob::uniqueID
             )
         .def("get_intercepts", [](SkTextBlob& self, std::array<SkScalar, 2>& bounds, SkScalar intervals[], const SkPaint * paint)
@@ -154,9 +154,9 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             )
             .def_readwrite("clusters", &SkTextBlobBuilder::RunBuffer::clusters)
             .def("points", &SkTextBlobBuilder::RunBuffer::points
-                )
+                , py::return_value_policy::reference)
             .def("xforms", &SkTextBlobBuilder::RunBuffer::xforms
-                )
+                , py::return_value_policy::reference)
         ;
 
         _TextBlobBuilder
@@ -166,22 +166,22 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("x")
             , py::arg("y")
             , py::arg("bounds") = nullptr
-            )
+            , py::return_value_policy::reference)
         .def("alloc_run_pos_h", &SkTextBlobBuilder::allocRunPosH
             , py::arg("font")
             , py::arg("count")
             , py::arg("y")
             , py::arg("bounds") = nullptr
-            )
+            , py::return_value_policy::reference)
         .def("alloc_run_pos", &SkTextBlobBuilder::allocRunPos
             , py::arg("font")
             , py::arg("count")
             , py::arg("bounds") = nullptr
-            )
+            , py::return_value_policy::reference)
         .def("alloc_run_rs_xform", &SkTextBlobBuilder::allocRunRSXform
             , py::arg("font")
             , py::arg("count")
-            )
+            , py::return_value_policy::reference)
         .def("alloc_run_text", &SkTextBlobBuilder::allocRunText
             , py::arg("font")
             , py::arg("count")
@@ -189,26 +189,26 @@ void init_skia_text_blob_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("y")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            )
+            , py::return_value_policy::reference)
         .def("alloc_run_text_pos_h", &SkTextBlobBuilder::allocRunTextPosH
             , py::arg("font")
             , py::arg("count")
             , py::arg("y")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            )
+            , py::return_value_policy::reference)
         .def("alloc_run_text_pos", &SkTextBlobBuilder::allocRunTextPos
             , py::arg("font")
             , py::arg("count")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            )
+            , py::return_value_policy::reference)
         .def("alloc_run_text_rs_xform", &SkTextBlobBuilder::allocRunTextRSXform
             , py::arg("font")
             , py::arg("count")
             , py::arg("text_byte_count")
             , py::arg("bounds") = nullptr
-            )
+            , py::return_value_policy::reference)
     ;
 
 

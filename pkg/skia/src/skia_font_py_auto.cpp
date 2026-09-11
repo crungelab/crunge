@@ -73,7 +73,7 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("size")
             )
         .def("get_typeface", &SkFont::getTypeface
-            )
+            , py::return_value_policy::reference)
         .def("get_size", &SkFont::getSize
             )
         .def("get_scale_x", &SkFont::getScaleX
@@ -111,19 +111,6 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("text")
             , py::arg("byte_length")
             , py::arg("encoding")
-            )
-        .def("measure_text", py::overload_cast<const void *, size_t, SkTextEncoding, SkRect *>(&SkFont::measureText, py::const_)
-            , py::arg("text")
-            , py::arg("byte_length")
-            , py::arg("encoding")
-            , py::arg("bounds") = nullptr
-            )
-        .def("measure_text", py::overload_cast<const void *, size_t, SkTextEncoding, SkRect *, const SkPaint *>(&SkFont::measureText, py::const_)
-            , py::arg("text")
-            , py::arg("byte_length")
-            , py::arg("encoding")
-            , py::arg("bounds")
-            , py::arg("paint")
             )
         .def("make_strike_ref", &SkFont::makeStrikeRef
             )

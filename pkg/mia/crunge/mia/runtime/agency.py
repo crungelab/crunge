@@ -23,6 +23,7 @@ from .clauses import Belief
 from .context import ANY
 from .task import Status
 from .terms import ACTIVE, STATUS
+from .trace import context_changes, proposals, suspended
 
 Priority = Callable[[Agent], float]
 
@@ -44,6 +45,7 @@ def a_star(heuristic: Callable[[Agent], float] = active_goals) -> Priority:
     def priority(agent: Agent) -> float:
         return agent.cost + heuristic(agent)
 
+    priority.__name__ = f"a_star({heuristic.__name__})"
     return priority
 
 
@@ -54,33 +56,74 @@ class Agency:
         self.max_expansions = max_expansions
         self.expansions = 0
         self.solution: Agent | None = None
+        self.tracer = root.tracer
+        self.id = self.tracer.next_id() if self.tracer is not None else 0
         self._frontier: list = []
         self._best: dict = {}
         self._order = count()
 
     def run(self) -> Agent | None:
+        if self.tracer is not None:
+            self.tracer.emit(
+                "agency",
+                agency=self.id,
+                root=self.root.id,
+                parent=self.root.parent.id if self.root.parent is not None else None,
+                agent=type(self.root).__qualname__,
+                priority=getattr(self.priority, "__name__", repr(self.priority)),
+            )
         self._push(self.root, self.root.advance())
         while self._frontier:
             _, _, agent, step, key = heapq.heappop(self._frontier)
             if self._best[key] < agent.cost:
-                continue  # a cheaper path to the same state was found later
+                self._emit("skip", agent=agent.id)
+                continue
             if step is Step.DONE:
                 if agent.status() is Status.SUCCEEDED:
                     self.solution = self.root.solution = agent
-                    return agent
+                    self._emit("solution", agent=agent.id, cost=agent.cost)
+                    break
+                self._emit("dead", agent=agent.id)
                 continue
             if self.expansions >= self.max_expansions:
+                self._emit("exhausted")
                 break
             self.expansions += 1
+            self._emit("expand", agent=agent.id, expansion=self.expansions)
             for index in range(len(agent.proposals)):
                 child = agent.fork(index)
                 self._push(child, child.advance())
-        return None
+        self._emit(
+            "result",
+            solution=self.solution.id if self.solution is not None else None,
+            expansions=self.expansions,
+        )
+        return self.solution
 
     def _push(self, agent: Agent, step: Step):
         key = agent.state_key()
+        priority = self.priority(agent)
         known = self._best.get(key)
+        if self.tracer is not None:
+            base = None if agent is self.root else agent.parent
+            self._emit(
+                "state",
+                agent=agent.id,
+                depth=len(agent.history),
+                step=step.name,
+                status=agent.status().name if step is Step.DONE else None,
+                cost=agent.cost,
+                priority=priority,
+                **context_changes(agent, base),
+                proposals=proposals(agent),
+                suspended=suspended(agent),
+            )
         if known is not None and known <= agent.cost:
+            self._emit("prune", agent=agent.id, best=known)
             return
         self._best[key] = agent.cost
-        heapq.heappush(self._frontier, (self.priority(agent), next(self._order), agent, step, key))
+        heapq.heappush(self._frontier, (priority, next(self._order), agent, step, key))
+
+    def _emit(self, event: str, **fields):
+        if self.tracer is not None:
+            self.tracer.emit(event, agency=self.id, **fields)

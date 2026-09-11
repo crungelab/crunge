@@ -95,7 +95,7 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
     registry.on(_skia, "Image", _Image);
         _Image
         .def("image_info", &SkImage::imageInfo
-            )
+            , py::return_value_policy::reference)
         .def("width", &SkImage::width
             )
         .def("height", &SkImage::height
@@ -111,7 +111,7 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
         .def("color_type", &SkImage::colorType
             )
         .def("color_space", &SkImage::colorSpace
-            )
+            , py::return_value_policy::reference)
         .def("ref_color_space", &SkImage::refColorSpace
             )
         .def("is_alpha_only", &SkImage::isAlphaOnly
@@ -196,7 +196,7 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
                 )
             .def("data", &SkImage::AsyncReadResult::data
                 , py::arg("i")
-                )
+                , py::return_value_policy::reference)
             .def("row_bytes", &SkImage::AsyncReadResult::rowBytes
                 , py::arg("i")
                 )

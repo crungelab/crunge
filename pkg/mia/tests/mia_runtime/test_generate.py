@@ -2,7 +2,6 @@
 against a fake runtime."""
 import copy
 import types
-from pathlib import Path
 
 import pytest
 
@@ -10,12 +9,11 @@ from tests import fake_runtime as rt
 
 from crunge.mia.compile.codegen.generator import MiaCompileError, generate
 from crunge.mia.compile.parse.parser import parse
-
-SAMPLES = Path(__file__).parent.parent / "samples"
+from tests.samples import sample
 
 
 def build(name):
-    source = (SAMPLES / f"{name}.mia").read_text()
+    source = sample(f"{name}.mia")
     code = generate(parse(source), f"{name}.mia", source, runtime="tests.fake_runtime")
     module = types.ModuleType(f"{name}_mia")
     exec(compile(code, f"{name}_mia.py", "exec"), module.__dict__)

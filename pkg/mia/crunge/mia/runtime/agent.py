@@ -19,6 +19,7 @@ from functools import cache
 
 from .clauses import Achieve, Belief, Clause, Goal, Perform
 from .context import Context
+from .format import to_mia
 from .messages import IMPASSE, Assert, Attempt, Message, Modify, Retract, Trigger
 from .task import SUCCESS, Result, Status, Task
 from .terms import ACTIVE, SELF, STATUS
@@ -52,15 +53,19 @@ class Agent:
     max_steps = 100_000
     priority = None  # search priority for this agent's agency; None means A*
 
-    def __init__(self, context: Context | None = None, parent: Agent | None = None):
+    def __init__(self, context: Context | None = None, parent: Agent | None = None, tracer=None):
         self.context = context if context is not None else Context()
         self.parent = parent
+        self.tracer = tracer if tracer is not None else parent.tracer if parent is not None else None
+        self.id = self.tracer.next_id() if self.tracer is not None else 0
+        self.spawned = False
         self.agents: list[Agent] = []
         self.messages: deque[tuple[object, Task | None]] = deque()
         self.ready: deque[tuple[Task, Result | None]] = deque()
         self.proposals: list[Proposal] = []
         self.suspended: list[Task] = []
         self.history: list[Message] = []
+        self.chosen: list[str | None] = []  # the plan picked for each commit, when several matched
         self.steps = 0
         self.cost = 0.0
         self.step_cost = 0.0
@@ -146,10 +151,20 @@ class Agent:
         child = type(self)(context, parent=self)
         child.messages, child.ready, child.proposals, child.suspended = messages, ready, proposals, suspended
         child.history = list(self.history)
+        child.chosen = list(self.chosen)
         child.steps = self.steps
         child.cost = self.cost
         self.agents.append(child)
-        child.commit(child.proposals[index])
+        proposal = child.proposals[index]
+        if self.tracer is not None:
+            self.tracer.emit(
+                "fork",
+                agent=child.id,
+                parent=self.id,
+                proposal=to_mia(proposal.message),
+                plan=_plan_name(proposal.plan),
+            )
+        child.commit(proposal)
         return child
 
     def state_key(self):
@@ -168,6 +183,7 @@ class Agent:
         self.committed = True
         self.step_cost = 0.0
         self.history.append(proposal.message)
+        self.chosen.append(_plan_name(proposal.plan))
         if proposal.plan is None:
             self.dispatch(proposal.message, proposal.waiter)
         else:
@@ -276,7 +292,12 @@ class Agent:
 
     def spawn(self, plan: Spawn, message) -> Result:
         child = plan.expert(parent=self)
+        child.spawned = True
         self.agents.append(child)
+        if self.tracer is not None:
+            self.tracer.emit(
+                "spawn", agent=child.id, parent=self.id, expert=plan.expert.__qualname__, message=to_mia(message)
+            )
         clause = getattr(message, "clause", None)
         source = clause.slots.get("context") if isinstance(clause, Clause) else None
         if source is not None:
@@ -295,12 +316,14 @@ class Deliberator(Agent):
 class AgentHost:
     """What an application holds: creates an agent and runs its boot rule."""
 
-    def __init__(self, agent_class: type[Agent], context: Context | None = None):
-        self.agent = agent_class(context)
+    def __init__(self, agent_class: type[Agent], context: Context | None = None, tracer=None):
+        self.agent = agent_class(context, tracer=tracer)
         self.solution: Agent | None = None
 
     def run(self) -> Status:
         agent = self.agent
+        if agent.tracer is not None:
+            agent.tracer.header(type(agent))
         boot = type(agent).boot
         if boot is not None:
             trigger = boot.trigger
@@ -346,6 +369,14 @@ def _plan_key(plan):
     if isinstance(plan, Spawn):
         return (plan.expert.__qualname__, _task_key(plan.boot))
     return _task_key(plan)
+
+
+def _plan_name(plan) -> str | None:
+    if plan is None:
+        return None
+    if isinstance(plan, Spawn):
+        return plan.expert.__name__
+    return type(plan).__name__
 
 
 def _belief(goal: Achieve) -> Belief:

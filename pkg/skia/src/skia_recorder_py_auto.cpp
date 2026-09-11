@@ -38,13 +38,13 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
         .def("type", &skgpu::graphite::Recorder::type
             )
         .def("cpu_recorder", &skgpu::graphite::Recorder::cpuRecorder
-            )
+            , py::return_value_policy::reference)
         .def("snap", &skgpu::graphite::Recorder::snap
             )
         .def("client_image_provider", py::overload_cast<>(&skgpu::graphite::Recorder::clientImageProvider)
-            )
+            , py::return_value_policy::reference)
         .def("client_image_provider", py::overload_cast<>(&skgpu::graphite::Recorder::clientImageProvider, py::const_)
-            )
+            , py::return_value_policy::reference)
         .def("max_texture_size", &skgpu::graphite::Recorder::maxTextureSize
             )
         .def("create_backend_texture", &skgpu::graphite::Recorder::createBackendTexture
@@ -74,7 +74,7 @@ void init_skia_recorder_py_auto(py::module &_skia, Registry &registry) {
         .def("make_deferred_canvas", &skgpu::graphite::Recorder::makeDeferredCanvas
             , py::arg("arg0")
             , py::arg("arg1")
-            )
+            , py::return_value_policy::reference)
         .def("free_gpu_resources", &skgpu::graphite::Recorder::freeGpuResources
             )
         .def("perform_deferred_cleanup", &skgpu::graphite::Recorder::performDeferredCleanup

@@ -1,12 +1,13 @@
-source: '../../depot/skia/include/core/SkData.h'
-target: 'src/skia_data_py_auto.cpp'
+source: "../../depot/skia/include/core/SkData.h"
+target: "src/skia_data_py_auto.cpp"
 
 specs:
-  'class@SkData':
+  "class@SkData":
     holder: sk_sp
 
 excludes:
   # Wrapped
 
   # Internal / Ignored
-  - 'method@SkData::shareSubset' #TODO: They forgot to define the const version
+  - "method@SkData::shareSubset" #TODO: They forgot to define the const version
+  - "method@SkData::Equals" #TODO: They have both instance and static overrides.  Pybind11 does not like this

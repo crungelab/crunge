@@ -75,7 +75,7 @@ void init_skia_blend_mode_py_auto(py::module &_skia, Registry &registry) {
         )
     .def("blend_mode_name", &SkBlendMode_Name
         , py::arg("blend_mode")
-        )
+        , py::return_value_policy::reference)
     ;
 
 

@@ -136,7 +136,7 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
         .def("make_sorted", &SkIRect::makeSorted
             )
         .def("as_int32s", &SkIRect::asInt32s
-            )
+            , py::return_value_policy::reference)
     ;
 
     py::class_<SkRect> _Rect(_skia, "Rect");
@@ -325,7 +325,7 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
         .def("make_sorted", &SkRect::makeSorted
             )
         .def("as_scalars", &SkRect::asScalars
-            )
+            , py::return_value_policy::reference)
         .def("dump", py::overload_cast<bool>(&SkRect::dump, py::const_)
             , py::arg("as_hex")
             )

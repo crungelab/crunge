@@ -1,0 +1,33 @@
+{"event": "trace", "version": 1, "agent": "BloxAgent", "started": "2026-09-11T07:52:26+00:00"}
+{"event": "agency", "agency": 2, "root": 1, "parent": null, "agent": "BloxAgent", "priority": "a_star(active_goals)"}
+{"event": "spawn", "agent": 3, "parent": 1, "expert": "BloxAgent.Blox", "message": "/blox context: <context of 7>"}
+{"event": "agency", "agency": 4, "root": 3, "parent": 1, "agent": "BloxAgent.Blox", "priority": "a_star(active_goals)"}
+{"event": "state", "agency": 4, "agent": 3, "depth": 0, "step": "DECIDE", "status": null, "cost": 0.0, "priority": 2.0, "added": ["Table1 isClear True", "Block1 onTop Table1", "Block2 onTop Block1", "Block3 onTop Block2", "Block3 isClear True", "@Block1 onTop Block2", "@Block2 onTop Block3", "(@Block1 onTop Block2) status Active", "(@Block2 onTop Block3) status Active", "Table1 beneath Block1", "Block1 beneath Block2", "Block2 beneath Block3"], "removed": [], "proposals": [{"message": "@Block1 onTop Block2", "plan": null}, {"message": "@Block2 onTop Block3", "plan": null}], "suspended": []}
+{"event": "expand", "agency": 4, "agent": 3, "expansion": 1}
+{"event": "fork", "agent": 5, "parent": 3, "proposal": "@Block1 onTop Block2", "plan": null}
+{"event": "state", "agency": 4, "agent": 5, "depth": 1, "step": "DECIDE", "status": null, "cost": 1.0, "priority": 3.0, "added": [], "removed": [], "proposals": [{"message": "@Block2 onTop Table1", "plan": null}, {"message": "@Block2 onTop Block3", "plan": null}], "suspended": []}
+{"event": "fork", "agent": 6, "parent": 3, "proposal": "@Block2 onTop Block3", "plan": null}
+{"event": "state", "agency": 4, "agent": 6, "depth": 1, "step": "DECIDE", "status": null, "cost": 1.0, "priority": 3.0, "added": [], "removed": [], "proposals": [{"message": "@Block3 onTop Table1", "plan": null}], "suspended": []}
+{"event": "expand", "agency": 4, "agent": 5, "expansion": 2}
+{"event": "fork", "agent": 7, "parent": 5, "proposal": "@Block2 onTop Table1", "plan": null}
+{"event": "state", "agency": 4, "agent": 7, "depth": 2, "step": "DECIDE", "status": null, "cost": 2.0, "priority": 4.0, "added": [], "removed": [], "proposals": [{"message": "@Block3 onTop Table1", "plan": null}], "suspended": []}
+{"event": "prune", "agency": 4, "agent": 7, "best": 1.0}
+{"event": "fork", "agent": 8, "parent": 5, "proposal": "@Block2 onTop Block3", "plan": null}
+{"event": "state", "agency": 4, "agent": 8, "depth": 2, "step": "DECIDE", "status": null, "cost": 2.0, "priority": 4.0, "added": [], "removed": [], "proposals": [{"message": "@Block3 onTop Table1", "plan": null}], "suspended": []}
+{"event": "prune", "agency": 4, "agent": 8, "best": 1.0}
+{"event": "expand", "agency": 4, "agent": 6, "expansion": 3}
+{"event": "fork", "agent": 9, "parent": 6, "proposal": "@Block3 onTop Table1", "plan": null}
+{"event": "state", "agency": 4, "agent": 9, "depth": 2, "step": "DECIDE", "status": null, "cost": 2.0, "priority": 4.0, "added": ["Block3 onTop Table1", "Block2 isClear True", "Table1 beneath Block3"], "removed": ["Block3 onTop Block2", "Block2 beneath Block3"], "proposals": [{"message": "@Block1 onTop Block2", "plan": null}, {"message": "@Block2 onTop Block3", "plan": null}], "suspended": []}
+{"event": "expand", "agency": 4, "agent": 9, "expansion": 4}
+{"event": "fork", "agent": 10, "parent": 9, "proposal": "@Block1 onTop Block2", "plan": null}
+{"event": "state", "agency": 4, "agent": 10, "depth": 3, "step": "DECIDE", "status": null, "cost": 3.0, "priority": 5.0, "added": [], "removed": [], "proposals": [{"message": "@Block2 onTop Table1", "plan": null}, {"message": "@Block2 onTop Block3", "plan": null}], "suspended": []}
+{"event": "fork", "agent": 11, "parent": 9, "proposal": "@Block2 onTop Block3", "plan": null}
+{"event": "state", "agency": 4, "agent": 11, "depth": 3, "step": "DECIDE", "status": null, "cost": 3.0, "priority": 4.0, "added": ["Block2 onTop Block3", "Block1 isClear True", "Block3 beneath Block2"], "removed": ["Block2 onTop Block1", "Block3 isClear True", "(@Block2 onTop Block3) status Active", "Block1 beneath Block2"], "proposals": [{"message": "@Block1 onTop Block2", "plan": null}], "suspended": []}
+{"event": "expand", "agency": 4, "agent": 11, "expansion": 5}
+{"event": "fork", "agent": 12, "parent": 11, "proposal": "@Block1 onTop Block2", "plan": null}
+{"event": "state", "agency": 4, "agent": 12, "depth": 4, "step": "DONE", "status": "SUCCEEDED", "cost": 4.0, "priority": 4.0, "added": ["Block1 onTop Block2", "Block2 beneath Block1"], "removed": ["Block1 onTop Table1", "(@Block1 onTop Block2) status Active", "Table1 beneath Block1", "Block2 isClear True"], "proposals": [], "suspended": []}
+{"event": "solution", "agency": 4, "agent": 12, "cost": 4.0}
+{"event": "result", "agency": 4, "solution": 12, "expansions": 5}
+{"event": "state", "agency": 2, "agent": 1, "depth": 0, "step": "DONE", "status": "SUCCEEDED", "cost": 0.0, "priority": 0.0, "added": [], "removed": [], "proposals": [], "suspended": []}
+{"event": "solution", "agency": 2, "agent": 1, "cost": 0.0}
+{"event": "result", "agency": 2, "solution": 1, "expansions": 0}

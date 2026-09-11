@@ -87,7 +87,7 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("cs")
         )
         .def("color_space", &SkColorInfo::colorSpace
-            )
+            , py::return_value_policy::reference)
         .def("ref_color_space", &SkColorInfo::refColorSpace
             )
         .def("color_type", &SkColorInfo::colorType
@@ -199,13 +199,13 @@ void init_skia_image_info_py_auto(py::module &_skia, Registry &registry) {
         .def("alpha_type", &SkImageInfo::alphaType
             )
         .def("color_space", &SkImageInfo::colorSpace
-            )
+            , py::return_value_policy::reference)
         .def("ref_color_space", &SkImageInfo::refColorSpace
             )
         .def("is_empty", &SkImageInfo::isEmpty
             )
         .def("color_info", &SkImageInfo::colorInfo
-            )
+            , py::return_value_policy::reference)
         .def("is_opaque", &SkImageInfo::isOpaque
             )
         .def("dimensions", &SkImageInfo::dimensions

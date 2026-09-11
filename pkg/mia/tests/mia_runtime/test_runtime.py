@@ -1,20 +1,18 @@
 """Run the sample programs on the real runtime."""
 import copy
 import types
-from pathlib import Path
 
 import pytest
 
 import crunge.mia.runtime as rt
 from crunge.mia.compile.codegen.generator import generate
 from crunge.mia.compile.parse.parser import parse
+from tests.samples import sample
 from crunge.mia.runtime import Step
-
-SAMPLES = Path(__file__).parent.parent / "samples"
 
 
 def build(name):
-    source = (SAMPLES / f"{name}.mia").read_text()
+    source = sample(f"{name}.mia")
     module = types.ModuleType(f"{name}_mia")
     exec(compile(generate(parse(source), f"{name}.mia", source), f"{name}_mia.py", "exec"), module.__dict__)
     return module

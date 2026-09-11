@@ -81,7 +81,7 @@ void init_skia_gradient_py_auto(py::module &_skia, Registry &registry) {
             .def("positions", &SkGradient::Colors::positions
                 )
             .def("color_space", &SkGradient::Colors::colorSpace
-                )
+                , py::return_value_policy::reference)
             .def("tile_mode", &SkGradient::Colors::tileMode
                 )
         ;
@@ -93,9 +93,9 @@ void init_skia_gradient_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("interp")
         )
         .def("colors", &SkGradient::colors
-            )
+            , py::return_value_policy::reference)
         .def("interpolation", &SkGradient::interpolation
-            )
+            , py::return_value_policy::reference)
     ;
 
     _skia

@@ -10,6 +10,7 @@
 #include <crunge/skia/conversions.h>
 
 #include <include/core/SkFont.h>
+#include <include/core/SkFontTypes.h>
 #include <include/core/SkFontMgr.h>
 
 #ifdef __APPLE__
@@ -66,7 +67,21 @@ void init_skia_font_py(py::module &_skia, Registry &registry) {
                 "\"Default font\" is deprecated upstream. Please specify name/file/style choices.",
                 builtins.attr("DeprecationWarning"));
             return SkFont(SkFontMgr_RefDefault()->legacyMakeTypeface("", SkFontStyle()));
-        }));
+        }))
+
+    .def("measure_text",
+        [](const SkFont& self, std::string_view text) {
+            return self.measureText(text.data(), text.size(), SkTextEncoding::kUTF8);
+        },
+        py::arg("text"))
+
+    .def("measure_text_bounds",
+        [](const SkFont& self, std::string_view text) {
+            SkRect bounds;
+            SkScalar advance = self.measureText(text.data(), text.size(), SkTextEncoding::kUTF8, &bounds);
+            return py::make_tuple(advance, bounds);
+        },
+        py::arg("text"));
 
     PYEXTEND_END
 }

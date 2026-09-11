@@ -39,7 +39,7 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
         , py::arg("message")
         )
         .def("message", &skgpu::graphite::InsertStatus::message
-            )
+            , py::return_value_policy::reference)
     ;
 
     py::class_<skgpu::graphite::InsertRecordingInfo> _InsertRecordingInfo(_skia, "InsertRecordingInfo");

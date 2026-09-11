@@ -19,7 +19,7 @@ void init_skia_color_py_auto(py::module &_skia, Registry &registry) {
     .def("rgb_to_hsv", [](U8CPU red, U8CPU green, U8CPU blue, std::array<SkScalar, 3>& hsv)
         {
             SkRGBToHSV(red, green, blue, &hsv[0]);
-            return std::make_tuple(hsv);
+            return hsv;
         }
         , py::arg("red")
         , py::arg("green")

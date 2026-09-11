@@ -131,14 +131,14 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("join")
             )
         .def("get_shader", &SkPaint::getShader
-            )
+            , py::return_value_policy::reference)
         .def("ref_shader", &SkPaint::refShader
             )
         .def("set_shader", &SkPaint::setShader
             , py::arg("shader")
             )
         .def("get_color_filter", &SkPaint::getColorFilter
-            )
+            , py::return_value_policy::reference)
         .def("ref_color_filter", &SkPaint::refColorFilter
             )
         .def("set_color_filter", &SkPaint::setColorFilter
@@ -155,28 +155,28 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("mode")
             )
         .def("get_blender", &SkPaint::getBlender
-            )
+            , py::return_value_policy::reference)
         .def("ref_blender", &SkPaint::refBlender
             )
         .def("set_blender", &SkPaint::setBlender
             , py::arg("blender")
             )
         .def("get_path_effect", &SkPaint::getPathEffect
-            )
+            , py::return_value_policy::reference)
         .def("ref_path_effect", &SkPaint::refPathEffect
             )
         .def("set_path_effect", &SkPaint::setPathEffect
             , py::arg("path_effect")
             )
         .def("get_mask_filter", &SkPaint::getMaskFilter
-            )
+            , py::return_value_policy::reference)
         .def("ref_mask_filter", &SkPaint::refMaskFilter
             )
         .def("set_mask_filter", &SkPaint::setMaskFilter
             , py::arg("mask_filter")
             )
         .def("get_image_filter", &SkPaint::getImageFilter
-            )
+            , py::return_value_policy::reference)
         .def("ref_image_filter", &SkPaint::refImageFilter
             )
         .def("set_image_filter", &SkPaint::setImageFilter
@@ -189,16 +189,16 @@ void init_skia_paint_py_auto(py::module &_skia, Registry &registry) {
         .def("compute_fast_bounds", &SkPaint::computeFastBounds
             , py::arg("orig")
             , py::arg("storage")
-            )
+            , py::return_value_policy::reference)
         .def("compute_fast_stroke_bounds", &SkPaint::computeFastStrokeBounds
             , py::arg("orig")
             , py::arg("storage")
-            )
+            , py::return_value_policy::reference)
         .def("do_compute_fast_bounds", &SkPaint::doComputeFastBounds
             , py::arg("orig")
             , py::arg("storage")
             , py::arg("style")
-            )
+            , py::return_value_policy::reference)
     ;
 
 

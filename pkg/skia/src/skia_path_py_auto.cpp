@@ -238,7 +238,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         .def("approximate_bytes_used", &SkPath::approximateBytesUsed
             )
         .def("get_bounds", &SkPath::getBounds
-            )
+            , py::return_value_policy::reference)
         .def("update_bounds_cache", &SkPath::updateBoundsCache
             )
         .def("compute_tight_bounds", &SkPath::computeTightBounds
@@ -320,11 +320,11 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         _Path
         .def("set_is_volatile", &SkPath::setIsVolatile
             , py::arg("is_volatile")
-            )
+            , py::return_value_policy::reference)
         .def("swap", [](SkPath& self, SkPath & other)
             {
                 self.swap(other);
-                return std::make_tuple(other);
+                return other;
             }
             , py::arg("other")
             )
@@ -334,7 +334,7 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         .def("toggle_inverse_fill_type", &SkPath::toggleInverseFillType
             )
         .def("reset", &SkPath::reset
-            )
+            , py::return_value_policy::reference)
         .def("iter", &SkPath::iter
             )
         ;

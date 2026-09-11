@@ -3,7 +3,7 @@ import unittest
 
 from crunge.mia.run import *
 from crunge.mia.run.context.yaml import *
-from crunge.mia.assets import asset
+from crunge.mia import assets
 
 from tests.common import *
 
@@ -16,7 +16,7 @@ inject_defs(_module)
 
 class Test(unittest.TestCase):
     def test(self):
-        ctx = yamlcontext_().load(asset("bob.yml"))
+        ctx = yamlcontext_().load(assets.load("bob.yml"))
 
         logger.info(h2("All Clauses"))
         logger.info(str(ctx))

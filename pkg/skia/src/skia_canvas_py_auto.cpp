@@ -79,11 +79,11 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("props") = nullptr
             )
         .def("recorder", &SkCanvas::recorder
-            )
+            , py::return_value_policy::reference)
         .def("base_recorder", &SkCanvas::baseRecorder
-            )
+            , py::return_value_policy::reference)
         .def("get_surface", &SkCanvas::getSurface
-            )
+            , py::return_value_policy::reference)
         .def("access_top_layer_pixels", [](SkCanvas& self, SkImageInfo * info, size_t * rowBytes, SkIPoint * origin)
             {
                 auto _ret = self.accessTopLayerPixels(info, rowBytes, origin);
@@ -92,7 +92,7 @@ void init_skia_canvas_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("info")
             , py::arg("row_bytes")
             , py::arg("origin") = nullptr
-            )
+            , py::return_value_policy::reference)
         .def("access_top_raster_handle", &SkCanvas::accessTopRasterHandle
             )
         .def("peek_pixels", &SkCanvas::peekPixels

@@ -1,7 +1,7 @@
 source: '../../depot/skia/include/core/SkColorSpace.h'
 target: 'src/skia_color_space_py_auto.cpp'
 
-excludes:
+#excludes:
   # Wrapped
   # Internal / Ignored
   #- 'function@SkHSVToColor'

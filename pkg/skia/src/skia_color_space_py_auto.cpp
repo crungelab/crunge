@@ -31,6 +31,37 @@ void init_skia_color_space_py_auto(py::module &_skia, Registry &registry) {
             )
     ;
 
+    py::enum_<SkNamedPrimaries::CicpId>(_skia, "CICP_ID", py::arithmetic())
+        .value("K_REC709", SkNamedPrimaries::CicpId::kRec709)
+        .value("K_REC470_SYSTEM_M", SkNamedPrimaries::CicpId::kRec470SystemM)
+        .value("K_REC470_SYSTEM_BG", SkNamedPrimaries::CicpId::kRec470SystemBG)
+        .value("K_REC601", SkNamedPrimaries::CicpId::kRec601)
+        .value("K_SMPTE_ST_240", SkNamedPrimaries::CicpId::kSMPTE_ST_240)
+        .value("K_GENERIC_FILM", SkNamedPrimaries::CicpId::kGenericFilm)
+        .value("K_REC2020", SkNamedPrimaries::CicpId::kRec2020)
+        .value("K_SMPTE_ST_428_1", SkNamedPrimaries::CicpId::kSMPTE_ST_428_1)
+        .value("K_SMPTE_RP_431_2", SkNamedPrimaries::CicpId::kSMPTE_RP_431_2)
+        .value("K_SMPTE_EG_432_1", SkNamedPrimaries::CicpId::kSMPTE_EG_432_1)
+        .value("K_ITU_T_H273_VALUE22", SkNamedPrimaries::CicpId::kITU_T_H273_Value22)
+        .export_values()
+    ;
+    py::enum_<SkNamedTransferFn::CicpId>(_skia, "NamedTransferFnCICP_ID", py::arithmetic())
+        .value("K_REC709", SkNamedTransferFn::CicpId::kRec709)
+        .value("K_REC470_SYSTEM_M", SkNamedTransferFn::CicpId::kRec470SystemM)
+        .value("K_REC470_SYSTEM_BG", SkNamedTransferFn::CicpId::kRec470SystemBG)
+        .value("K_REC601", SkNamedTransferFn::CicpId::kRec601)
+        .value("K_SMPTE_ST_240", SkNamedTransferFn::CicpId::kSMPTE_ST_240)
+        .value("K_LINEAR", SkNamedTransferFn::CicpId::kLinear)
+        .value("K_IEC61966_2_4", SkNamedTransferFn::CicpId::kIEC61966_2_4)
+        .value("K_IEC61966_2_1", SkNamedTransferFn::CicpId::kIEC61966_2_1)
+        .value("K_SRGB", SkNamedTransferFn::CicpId::kSRGB)
+        .value("K_REC2020_10BIT", SkNamedTransferFn::CicpId::kRec2020_10bit)
+        .value("K_REC2020_12BIT", SkNamedTransferFn::CicpId::kRec2020_12bit)
+        .value("K_PQ", SkNamedTransferFn::CicpId::kPQ)
+        .value("K_SMPTE_ST_428_1", SkNamedTransferFn::CicpId::kSMPTE_ST_428_1)
+        .value("K_HLG", SkNamedTransferFn::CicpId::kHLG)
+        .export_values()
+    ;
     py::class_<SkColorSpace,sk_sp<SkColorSpace>> _ColorSpace(_skia, "ColorSpace");
     registry.on(_skia, "ColorSpace", _ColorSpace);
         _ColorSpace
@@ -88,7 +119,7 @@ void init_skia_color_space_py_auto(py::module &_skia, Registry &registry) {
         .def("transfer_fn", [](SkColorSpace& self, std::array<float, 7>& gabcdef)
             {
                 self.transferFn(&gabcdef[0]);
-                return std::make_tuple(gabcdef);
+                return gabcdef;
             }
             , py::arg("gabcdef")
             )

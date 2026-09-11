@@ -5,4 +5,5 @@ excludes:
   # Wrapped
   # Internal / Ignored
   - 'ctor@SkFont::SkFont'
+  - method@SkFont::measureText
   # Overloads
