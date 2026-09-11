@@ -28,7 +28,7 @@ from dataclasses import dataclass, field
 
 from crunge.mia.compile.ast.nodes import (
     AgentDef, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def, ExpertDef, Fail,
-    Filter, FrameDef, Goal, GoalKind, Halt, Import, Literal, Match, Message, Module, Name,
+    Filter, FrameDef, Goal, GoalKind, Halt, Import, KnowsDef, Literal, Match, Message, Module, Name,
     Node, NoMatch, Outcome, Pass, Performative, PredicateDef, Return, Snippet,
     Succeed, Throw, Var, Where, walk,
 )
@@ -124,6 +124,7 @@ class _Generator:
         self.nouns: dict[str, str | None] = {}
         self.verbs: dict[str, None] = {}
         self.frames: set[str] = set()
+        self.known: list[str] = []
         self.matches = 0
         self.loops = 0
 
@@ -239,6 +240,16 @@ class _Generator:
         w = self.w
         with w.block(f"class {a.name}({self.bases(a, a.bases, 'rt.Agent')}):"):
             w(self.comment(a))
+            # An expert inherits what the agent around it knows, and may add more.
+            known = list(self.known)
+            for k in (s for s in a.body if isinstance(s, KnowsDef)):
+                if k.name not in self.frames:
+                    raise MiaCompileError(k, f"undeclared frame {k.name}")
+                if k.name not in known:
+                    known.append(k.name)
+            if known:
+                w(f"frames = {_tuple([self.frame_var(name) for name in known])}")
+            self.known = known
             predicates = [s for s in a.body if isinstance(s, PredicateDef)]
             if predicates:
                 items = ", ".join(f'"{p.name}": {self.predicate_type(p)}' for p in predicates)
@@ -247,7 +258,7 @@ class _Generator:
             boot, rules, experts, names = None, [], [], set()
             for s in a.body:
                 match s:
-                    case PredicateDef() | ClassDef():
+                    case PredicateDef() | ClassDef() | KnowsDef():
                         continue
                     case FrameDef():
                         raise MiaCompileError(s, "a frame belongs at module level, not inside an agent")
@@ -257,7 +268,9 @@ class _Generator:
                         names.add(s.name)
                         w()
                         if isinstance(s, AgentDef):
+                            outer = self.known
                             self.agent(s)
+                            self.known = outer
                             experts.append(s.name)
                         else:
                             self.rule(s)
@@ -371,7 +384,7 @@ class _Generator:
                 states.append([])
         with w.block("def resume(self, agent, result=None):"):
             if any(isinstance(n, Where) and n.frame is None for n in walk(d)):
-                w("ctx = agent.context")
+                w("ctx = agent.view" if self.known else "ctx = agent.context")
             if len(states) == 1:
                 self.state(states[0], 0, scope, last=True)
                 return

@@ -213,6 +213,11 @@ class PredicateDef(Node):
 
 
 @dataclass(slots=True)
+class KnowsDef(Node):
+    name: str
+
+
+@dataclass(slots=True)
 class ContextDef(Node):
     name: str
     body: list[Stmt]
@@ -249,7 +254,7 @@ class Module(Node):
 
 
 type Stmt = (
-    AgentDef | ClassDef | PredicateDef | ContextDef | FrameDef | Def | Where | Message
+    AgentDef | ClassDef | PredicateDef | KnowsDef | ContextDef | FrameDef | Def | Where | Message
     | Return | Succeed | Fail | Throw | Halt | Pass | Cost | Import | Snippet
 )
 

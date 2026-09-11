@@ -9,7 +9,7 @@ from lark.indenter import Indenter
 
 from crunge.mia.compile.ast.nodes import (
     AgentDef, Branch, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def,
-    ExpertDef, Fail, Filter, FrameDef, Goal, GoalKind, Halt, Import, Literal, Match,
+    ExpertDef, Fail, Filter, FrameDef, Goal, GoalKind, Halt, Import, KnowsDef, Literal, Match,
     Message, Module, Name, NoMatch, Outcome, Pass, Performative, PredicateDef,
     Return, Slot, Snippet, Succeed, Throw, Trigger, Var, Where,
 )
@@ -72,6 +72,9 @@ class ToAst(Transformer):
 
     def predicate_decl(self, meta, name, type_ref):
         return PredicateDef(str(name), str(type_ref) if type_ref else None, **_pos(meta))
+
+    def knows_decl(self, meta, name):
+        return KnowsDef(str(name), **_pos(meta))
 
     def def_def(self, meta, name, trigger, body):
         return Def(str(name), trigger, body, **_pos(meta))

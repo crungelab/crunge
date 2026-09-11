@@ -18,7 +18,7 @@ from enum import Enum, auto
 from functools import cache
 
 from .clauses import Achieve, Belief, Clause, Goal, Perform
-from .context import Context
+from .context import Context, View
 from .format import to_mia
 from .messages import IMPASSE, Assert, Attempt, Message, Modify, Retract, Trigger
 from .task import SUCCESS, Result, Status, Task
@@ -50,11 +50,14 @@ class Agent:
     rules: tuple[type[Task], ...] = ()
     experts: tuple[type[Agent], ...] = ()
     predicates: dict = {}
+    frames: tuple = ()   # background knowledge this agent knows, searched after its own context
     max_steps = 100_000
     priority = None  # search priority for this agent's agency; None means A*
 
     def __init__(self, context: Context | None = None, parent: Agent | None = None, tracer=None):
         self.context = context if context is not None else Context()
+        frames = _frames(type(self))
+        self.view = View((self.context, *frames)) if frames else self.context
         self.parent = parent
         self.tracer = tracer if tracer is not None else parent.tracer if parent is not None else None
         self.id = self.tracer.next_id() if self.tracer is not None else 0
@@ -360,6 +363,16 @@ class AgentHost:
 
         self.solution = Agency(agent, type(agent).priority).run()
         return Status.SUCCEEDED if self.solution is not None else Status.FAILED
+
+
+@cache
+def _frames(cls: type[Agent]) -> tuple:
+    frames: list = []
+    for klass in reversed(cls.__mro__):
+        for frame in vars(klass).get("frames", ()):
+            if frame not in frames:
+                frames.append(frame)
+    return tuple(frames)
 
 
 @cache

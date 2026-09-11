@@ -430,20 +430,36 @@ def test_waterjug_measures_one_gallon():
 # ---------------------------------------------------------------- sibling query
 
 
-def test_sibling_query(capsys):
+def test_sibling_query_joins_frame_and_working_memory(capsys):
     sib = build("siblings")
     host = rt.AgentHost(sib.SiblingAgent)
     assert host.run() is rt.Status.SUCCEEDED
     solution = host.solution.agents[0].solution
 
     assert rt.Belief(sib.t_Billy, sib.t_sibling, sib.t_Suzy) in solution.context
+    assert rt.Belief(sib.t_Billy, sib.t_sibling, sib.t_Billy) not in solution.context
+    assert capsys.readouterr().out.count("are siblings") == 2  # one line per shared parent
+
     # the frame is background knowledge: queried, never copied or changed
     assert len(sib.f_FamilyTree) == 14
     assert not any(c.verb is sib.t_sibling for c in sib.f_FamilyTree)
     assert rt.Belief(sib.t_Billy, sib.t_parent, sib.t_John) not in solution.context
-    assert rt.Belief(sib.t_Billy, sib.t_sibling, sib.t_Billy) not in solution.context
-    # one line per shared parent
-    assert capsys.readouterr().out.count("Billy and Suzy are siblings") == 2
+
+    # the view spans both spaces; the expert inherits what the agent knows
+    assert sib.SiblingAgent.Siblings.frames == (sib.f_FamilyTree,)
+    assert len(solution.view) == len(solution.context) + len(sib.f_FamilyTree)
+    assert rt.Belief(sib.t_Billy, sib.t_parent, sib.t_John) in solution.view
+
+
+def test_the_join_needs_both_spaces():
+    # Suzy is Billy's sister in the frame, but if she is not in the room the
+    # working-memory half of the query fails and no sibling is found.
+    source = sample("siblings.mia").replace("            Person Suzy here True\n", "")
+    module = build_source(source, "absent_siblings")
+    host = rt.AgentHost(module.SiblingAgent)
+    host.run()
+    solution = host.solution.agents[0].solution
+    assert not [c for c in solution.context if c.verb is module.t_sibling]
 
 
 def test_halting_keeps_facts_asserted_just_before():
@@ -458,3 +474,16 @@ def test_halting_keeps_facts_asserted_just_before():
     agent.start(Finish(), None, None)
     assert agent.run() is rt.Status.SUCCEEDED
     assert rt.Belief(a, likes, b) in agent.context
+
+
+def test_view_merges_contexts_without_duplicates():
+    a, b, likes = rt.noun("A"), rt.noun("B"), rt.verb("likes")
+    shared = rt.Belief(a, likes, b)
+    working = rt.Context([shared, rt.Belief(a, likes, a)])
+    frame = rt.Context([shared, rt.Belief(b, likes, a)])
+    view = rt.View((working, frame))
+
+    assert len(view) == 3 and shared in view
+    assert view.find(rt.Belief, a, likes, rt.ANY) == [shared, rt.Belief(a, likes, a)]
+    assert view.find(rt.Belief, rt.ANY, likes, a) == [rt.Belief(a, likes, a), rt.Belief(b, likes, a)]
+    assert view.exists(rt.Belief, b, likes, a) and not view.exists(rt.Belief, b, likes, b)

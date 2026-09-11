@@ -164,3 +164,34 @@ def test_unknown_frame_and_misplaced_frame_are_rejected():
         generate(parse("agent A\n    def A(/a)\n        where in Nope\n            $x b $c\n            -->\n            pass\n"))
     with pytest.raises(MiaCompileError, match="belongs at module level"):
         generate(parse("agent A\n    frame F\n        X y Z\n    def A(/a)\n        pass\n"))
+
+
+def test_knows_makes_queries_span_both_spaces():
+    source = """class Person
+frame Fam
+    Person Billy parent John
+
+agent A
+    knows Fam
+
+    def A(/a $x)
+        where
+            $x parent $p
+            -->
+            pass
+
+    expert E
+        def E(/e)
+            where
+                $x parent $p
+                -->
+                pass
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert code.count("frames = (f_Fam,)") == 2   # the expert inherits it
+    assert "ctx = agent.view" in code and "ctx = agent.context" not in code
+
+
+def test_knows_an_undeclared_frame_is_rejected():
+    with pytest.raises(MiaCompileError, match="undeclared frame Nope"):
+        generate(parse("agent A\n    knows Nope\n    def A(/a)\n        pass\n"))

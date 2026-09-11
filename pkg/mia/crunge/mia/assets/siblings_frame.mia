@@ -6,6 +6,7 @@ class Person
 class Family
 
 # Background knowledge: built once, shared by every agent, never forked.
+
 frame FamilyTree
 
     Family Smith
@@ -35,25 +36,22 @@ frame FamilyTree
 
 agent SiblingAgent
 
-    knows FamilyTree
-
     predicate family(Family)
     predicate spouse(Person)
     predicate child(Person)
     predicate parent(Person)
     predicate sibling(Person)
-    predicate here(bool)
 
     def SiblingAgent(/siblingAgent)
 
-        # Working memory: who is actually in the room right now.
-        context RoomContext
+        context PeopleContext
 
-            Person Billy here True
-            Person Suzy here True
-            Person Mary here True
+            Person John
+            Person Mary
+            Person Billy
+            Person Suzy
 
-        /siblings context: RoomContext
+        /siblings context: PeopleContext
 
 
     expert Siblings
@@ -61,23 +59,13 @@ agent SiblingAgent
         def Siblings(/siblings)
             /findSibling Billy
 
-        # One query, two spaces: `parent` comes from the frame, `here` from
-        # working memory, and the rule does not have to say which is which.
         def SiblingFinder(/findSibling $x)
-            where
+            where in FamilyTree
                 $x parent $p
                 $y parent $p
                 $y != $x
-                $y here True
                 -->
                 + $x sibling $y
-                | print(f"{$x} and {$y} are siblings, both here")
+                | print(f"{$x} and {$y} are siblings")
                 ==>
                 halt
-
-        # Restricting to one space is still possible.
-        def Relatives(/relatives $x)
-            where in FamilyTree
-                $x parent $p
-                -->
-                + $x relative $p

@@ -3,7 +3,7 @@
 from .agency import Agency, a_star, active_goals, breadth_first, depth_first
 from .agent import Agent, AgentHost, Deliberator, Proposal, Spawn, Step
 from .clauses import Achieve, Belief, Clause, Goal, Maintain, Perform, Query, Slots
-from .context import ANY, Context
+from .context import ANY, Context, View
 from .format import to_mia
 from .messages import IMPASSE, Assert, Attempt, Message, Modify, Retract, Trigger
 from .task import SUCCESS, Result, Status, Task
@@ -15,5 +15,5 @@ __all__ = [
     "Achieve", "Agency", "JsonlSink", "ListSink", "Tracer", "read_trace", "to_mia", "Agent", "AgentHost", "Assert", "Attempt", "Belief", "Clause", "Context",
     "Deliberator", "Entity", "Goal", "Maintain", "Message", "Modify", "Perform", "Proposal",
     "Query", "Result", "Retract", "Slots", "Spawn", "Status", "Step", "Task", "Term",
-    "Trigger", "Verb", "a_star", "active_goals", "breadth_first", "depth_first", "noun", "verb",
+    "Trigger", "Verb", "View", "a_star", "active_goals", "breadth_first", "depth_first", "noun", "verb",
 ]
