@@ -16,7 +16,7 @@ inject_defs(_module)
 
 class Test(unittest.TestCase):
     def test(self):
-        ctx = yamlcontext_().load(assets.load("bob.yml"))
+        ctx = yamlcontext_().load(assets.asset("bob.yml"))
 
         logger.info(h2("All Clauses"))
         logger.info(str(ctx))

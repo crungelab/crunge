@@ -10,12 +10,12 @@ SKIA = {
     "Paint": ["set_anti_alias", "set_color4f", "set_stroke", "set_stroke_width"],
     "Canvas": ["save", "restore", "scale", "translate", "draw_line", "draw_round_rect", "draw_string"],
     "Color4f": [],
-    "Rect": [],
+    "Rect": ["make_ltrb"],
 }
 
 IMGUI = [
     "begin", "end", "text", "text_colored", "button", "same_line", "separator",
-    "input_text", "slider_int", "collapsing_header", "get_io",
+    "input_text", "slider_int", "slider_float", "collapsing_header", "get_io",
     "is_mouse_dragging", "is_mouse_released",
 ]
 

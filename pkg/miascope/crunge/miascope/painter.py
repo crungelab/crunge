@@ -12,7 +12,7 @@ from crunge import skia
 from .camera import Camera
 from .model import Node
 from .scene import Scene
-from .style import EDGE, FONT_SIZE, PHASE_FILL, SELECTED, SOLUTION_EDGE, SPAWN_EDGE, TEXT
+from .style import EDGE, FONT_SIZE, MIN_TEXT_PIXELS, PHASE_FILL, SELECTED, SOLUTION_EDGE, SPAWN_EDGE, TEXT
 
 
 def make_font(size: float):
@@ -33,24 +33,10 @@ def make_paint(color, stroke: bool = False, width: float = 1.0):
         paint.set_stroke_width(width)     # ASSUMPTION
     return paint
 
-'''
-   /** Returns the advance width of text.
-        The advance is the normal distance to move before drawing additional text.
-        Returns the bounding box of text if bounds is not nullptr.
-
-        @param text        character storage encoded with SkTextEncoding
-        @param byteLength  length of character storage in bytes
-        @param bounds      returns bounding box relative to (0, 0) if not nullptr
-        @return            the sum of the default advance widths
-    */
-    SkScalar measureText(const void* text, size_t byteLength, SkTextEncoding encoding,
-                         SkRect* bounds = nullptr) const {
-        return this->measureText(text, byteLength, encoding, bounds, nullptr);
-    }
-'''
 
 class Painter:
     def __init__(self, font_size: float = FONT_SIZE):
+        self.font_size = font_size
         self.font = make_font(font_size)
         self.text = make_paint(TEXT)
         self.fills = {phase: make_paint(color) for phase, color in PHASE_FILL.items()}
@@ -60,7 +46,11 @@ class Painter:
         self.selected = make_paint(SELECTED, stroke=True, width=3.0)
 
     def measure(self, text: str) -> float:
-        return self.font.measure_text(text)   # ASSUMPTION: returns the advance width as a float
+        # SkFont::measureText takes (const void*, size_t, SkTextEncoding, SkRect*),
+        # which needs a hand-written binding. Until it exists, estimate the width.
+        if hasattr(self.font, "measure_text"):
+            return self.font.measure_text(text)
+        return 0.6 * self.font_size * len(text)
 
     def paint(self, canvas, scene: Scene, camera: Camera, t: int | None,
               selected: Node | None, width: float, height: float) -> None:
@@ -75,12 +65,14 @@ class Painter:
 
         radius = scene.padding
         baseline = scene.padding + scene.font_size * 0.8
+        readable = scene.font_size * camera.zoom >= MIN_TEXT_PIXELS
         for box, phase in scene.visible(t, rect):
-            r = skia.Rect(box.left, box.top, box.right, box.bottom)
+            r = skia.Rect(box.left, box.top, box.right - box.left, box.bottom - box.top)
             canvas.draw_round_rect(r, radius, radius, self.fills[phase])   # ASSUMPTION
             if box.node is selected:
                 canvas.draw_round_rect(r, radius, radius, self.selected)
-            canvas.draw_string(box.node.label, box.left + scene.padding, box.top + baseline,
-                               self.font, self.text)      # ASSUMPTION
+            if readable:
+                canvas.draw_string(box.node.label, box.left + scene.padding, box.top + baseline,
+                                   self.font, self.text)      # ASSUMPTION
 
         canvas.restore()

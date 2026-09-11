@@ -24,7 +24,7 @@ from ..model import Trace
 from ..painter import Painter
 from ..scene import Scene
 from ..sources import DEFAULT_SAMPLE, load_trace, sample_names
-from ..style import CHANGE_TEXT, ERROR_TEXT
+from ..style import CHANGE_TEXT, ERROR_TEXT, FONT_SIZE, GAP, LEVEL, PADDING
 from ..timeline import Timeline, describe
 
 
@@ -55,7 +55,8 @@ def _xy(value) -> tuple[float, float]:
 class TracePage(Page):
     def setup(self):
         super().setup()
-        self.painter = Painter()
+        self.scale = 1.0
+        self.painter = Painter(FONT_SIZE)
         self.camera = Camera()
         self.trace: Trace | None = None
         self.scene: Scene | None = None
@@ -88,10 +89,29 @@ class TracePage(Page):
             self.error = f"{type(e).__name__}: {e}"
             return
         self.source, self.trace, self.error = source, trace, None
-        self.scene = Scene(trace, self.painter.measure)
+        self.scene = self.build_scene()
         self.timeline = Timeline(len(trace.events))
         self.selected = None
         self.needs_fit = True
+
+    def build_scene(self) -> Scene:
+        return Scene(
+            self.trace,
+            self.painter.measure,
+            font_size=FONT_SIZE * self.scale,
+            padding=PADDING * self.scale,
+            gap=GAP * self.scale,
+            level=LEVEL * self.scale,
+        )
+
+    def set_scale(self, scale: float):
+        """Resize nodes, keeping the same part of the tree in view."""
+        ratio = scale / self.scale
+        self.scale = scale
+        self.painter = Painter(FONT_SIZE * scale)
+        self.scene = self.build_scene()
+        self.camera.x *= ratio
+        self.camera.y *= ratio
 
     def _draw(self):
         if self.open_requested:
@@ -129,6 +149,9 @@ class TracePage(Page):
             imgui.same_line()
             if imgui.button("Fit"):
                 self.needs_fit = True
+            changed, scale = imgui.slider_float("Node size", self.scale, 0.5, 2.0)   # ASSUMPTION: returns (changed, value)
+            if changed:
+                self.set_scale(scale)
             t = self.trace
             imgui.text(Path(self.source).name)
             imgui.text(f"{t.top.agent}: {len(t.nodes)} agents, {len(t.searches)} searches, {len(t.events)} events")

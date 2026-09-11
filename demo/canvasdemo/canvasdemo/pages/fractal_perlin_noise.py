@@ -25,7 +25,7 @@ class FractalPerlinNoisePage(Page):
         self.seed = 0.0
 
     def _draw(self):
-        imgui.begin("Properties")
+        imgui.begin("Inspector")
         changed, self.base_frequency_x = imgui.drag_float(
             "Base Frequency X",
             self.base_frequency_x,

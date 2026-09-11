@@ -3,7 +3,7 @@
 from ast import literal_eval
 from pathlib import Path
 
-from lark import Lark, Token, Transformer, v_args
+from lark import Lark, Token, Transformer, Tree, v_args
 from lark.exceptions import VisitError
 from lark.indenter import Indenter
 
@@ -207,10 +207,19 @@ _lark = Lark.open(
 )
 
 
-def parse(text: str) -> Module:
+def parse_raw(text: str) -> Tree:
+    """The Lark parse tree, before it is turned into syntax-tree nodes.
+
+    Useful for inspecting the grammar's own view of a program — `print(tree.pretty())`
+    — when a rule matches differently than expected. Use `parse` for compiling.
+    """
     if not text.endswith("\n"):
         text += "\n"
-    tree = _lark.parse(text)
+    return _lark.parse(text)
+
+
+def parse(text: str) -> Module:
+    tree = parse_raw(text)
     try:
         return ToAst().transform(tree)
     except VisitError as e:

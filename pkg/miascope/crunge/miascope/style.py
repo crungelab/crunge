@@ -2,10 +2,11 @@
 
 from .model import Phase
 
-FONT_SIZE = 14.0
-PADDING = 6.0   # inside a node box, around its label
-GAP = 16.0      # between neighboring boxes on a level
-LEVEL = 56.0    # between the tops of successive levels
+FONT_SIZE = 11.0
+PADDING = 3.0   # inside a node box, around its label
+GAP = 10.0      # between neighboring boxes on a level
+LEVEL = 34.0    # between the tops of successive levels
+MIN_TEXT_PIXELS = 5.0  # labels smaller than this on screen aren't drawn
 
 PHASE_FILL = {
     Phase.RUNNING: (0.50, 0.50, 0.55, 1.0),

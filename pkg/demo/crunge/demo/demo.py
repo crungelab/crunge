@@ -121,7 +121,7 @@ class Demo(engine.App):
             )
 
             imgui.internal.dock_builder_dock_window("Examples", dock_right_top)
-            imgui.internal.dock_builder_dock_window("Properties", dock_right_bottom)
+            imgui.internal.dock_builder_dock_window("Inspector", dock_right_bottom)
             imgui.internal.dock_builder_finish(dockspace_id)
 
         imgui.dock_space_over_viewport(

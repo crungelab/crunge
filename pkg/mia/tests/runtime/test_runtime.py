@@ -225,3 +225,47 @@ def test_same_state_at_higher_cost_is_dropped():
 def test_negative_cost_is_rejected():
     with pytest.raises(ValueError):
         rt.Agent().add_cost(-1)
+
+
+# ---------------------------------------------------------------- monkey & bananas
+
+
+@pytest.fixture(scope="module")
+def bananas():
+    return build("bananas")
+
+
+def test_monkey_gets_the_banana(bananas):
+    b = bananas
+    host = rt.AgentHost(b.BananasAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    expert = host.solution.agents[0].solution
+
+    where = {c.subj: c.obj for c in expert.context if isinstance(c, rt.Belief) and c.verb is b.t_container}
+    assert where[b.t_Banana1] is b.t_Monkey1        # the monkey has the banana
+    assert where[b.t_Key1] is b.t_Monkey1           # it needed the key on the way
+    assert where[b.t_Monkey1] is b.t_Place2         # and ended up at the chest
+    assert rt.Belief(b.t_Chest1, b.t_locked, False) in expert.context
+    assert expert.cost == 5
+
+
+def test_bananas_visits_the_key_before_the_chest(bananas):
+    b = bananas
+    host = rt.AgentHost(b.BananasAgent)
+    host.run()
+    solution = host.solution.agents[0].solution
+
+    def monkey_at(agent):
+        return next((c.obj for c in agent.context if isinstance(c, rt.Belief)
+                     and c.subj is b.t_Monkey1 and c.verb is b.t_container), None)
+
+    chain, agent = [solution], solution
+    while agent.parent is not None:
+        agent = agent.parent
+        chain.append(agent)
+    visited = []
+    for agent in reversed(chain):
+        spot = monkey_at(agent)
+        if spot is not None and (not visited or visited[-1] is not spot):
+            visited.append(spot)
+    assert visited == [b.t_Place1, b.t_Place3, b.t_Place2]  # start, key, chest

@@ -5,7 +5,7 @@ from crunge.demo import Page, PageChannel
 
 class Index(Page):
     def _draw(self):
-        imgui.begin("Properties")
+        imgui.begin("Inspector")
         imgui.text("Welcome to the Spine Demo!")
         imgui.end()
         super()._draw()

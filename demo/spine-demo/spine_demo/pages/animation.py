@@ -60,7 +60,7 @@ class AnimationPage(Page):
             self.event_log.pop(0)
 
     def _draw(self):
-        imgui.begin("Properties")
+        imgui.begin("Inspector")
 
         changed, self.rotation = imgui.drag_float("Rotation", self.rotation, ANGLE_STEP)
         if changed:
