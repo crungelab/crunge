@@ -54,9 +54,8 @@ def test_stack_clears_first_and_returns(blox):
         rt.Belief(blox.t_Block2, blox.t_onTop, blox.t_Block1),
     ]))
     task = blox.BloxAgent.Blox.Stack()
-    goal = rt.Perform(rt.SELF, blox.t_stack, blox.t_Block1, {"on": blox.t_Block2})
-    assert task.bind(rt.Attempt(goal))
-    assert (task.v_x, task.v_y, task.v_g) == (blox.t_Block1, blox.t_Block2, goal)
+    assert task.bind(rt.Attempt(rt.Achieve(blox.t_Block1, blox.t_onTop, blox.t_Block2)))
+    assert (task.v_x, task.v_y) == (blox.t_Block1, blox.t_Block2)
 
     assert task.resume(agent) == "RETURNED"
     assert agent.posts == [rt.Attempt(rt.Perform(rt.SELF, blox.t_clear, blox.t_Block1))]
@@ -73,8 +72,8 @@ def test_clear_proposes_every_clear_destination(blox):
     task = t.BloxAgent.Blox.Clear()
     assert task.bind(rt.Attempt(rt.Perform(rt.SELF, t.t_clear, t.t_Block1)))
     assert task.resume(agent) == "SUCCEEDED"
-    stack = lambda z: rt.Attempt(rt.Perform(rt.SELF, t.t_stack, t.t_Block2, {"on": z}))
-    assert agent.proposals == [stack(t.t_Table1), stack(t.t_Block3)]
+    onto = lambda z: rt.Attempt(rt.Achieve(t.t_Block2, t.t_onTop, z))
+    assert agent.proposals == [onto(t.t_Table1), onto(t.t_Block3)]
 
 
 def test_typed_where_condition_checks_the_class(blox):
@@ -93,7 +92,7 @@ def test_typed_where_condition_checks_the_class(blox):
 
 def test_tasks_copy_independently(blox):
     task = blox.BloxAgent.Blox.Stack()
-    task.bind(rt.Attempt(rt.Perform(rt.SELF, blox.t_stack, blox.t_Block1, {"on": blox.t_Block2})))
+    task.bind(rt.Attempt(rt.Achieve(blox.t_Block1, blox.t_onTop, blox.t_Block2)))
     clone = copy.copy(task)
     task.v_x = blox.t_Block3
     assert clone.v_x is blox.t_Block1
@@ -129,3 +128,16 @@ def test_errors_report_lines():
         generate(parse("agent A\n    def B(/b $x)\n        + $x likes $y\n"))
     with pytest.raises(MiaCompileError, match="undeclared type Blok"):
         generate(parse("agent A\n    def A(/a)\n        context C\n            Blok B1 onTop T1\n"))
+
+
+def test_cost_is_a_statement_and_still_a_verb():
+    source = """agent A
+    def B(/b)
+        where
+            Taxi1 cost $fare
+            -->
+            cost {$fare + 1}
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert "ctx.find(rt.Belief, t_Taxi1, t_cost, rt.ANY)" in code
+    assert "agent.add_cost((v_fare + 1))" in code

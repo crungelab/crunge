@@ -63,6 +63,7 @@ predicate: VERB [objects] slot*
        | "throw"                -> throw_stmt
        | "halt"                 -> halt_stmt
        | "pass"                 -> pass_stmt
+       | "cost" term            -> cost_stmt
        | "import" dotted        -> import_stmt
        | SNIPPET                -> snippet
 

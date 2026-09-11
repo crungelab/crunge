@@ -136,6 +136,11 @@ class Pass(Node):
 
 
 @dataclass(slots=True)
+class Cost(Node):
+    value: Term
+
+
+@dataclass(slots=True)
 class Import(Node):
     path: str
 
@@ -238,7 +243,7 @@ class Module(Node):
 
 type Stmt = (
     AgentDef | ClassDef | PredicateDef | ContextDef | Def | Where | Message
-    | Return | Succeed | Fail | Throw | Halt | Pass | Import | Snippet
+    | Return | Succeed | Fail | Throw | Halt | Pass | Cost | Import | Snippet
 )
 
 

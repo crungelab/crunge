@@ -1,9 +1,12 @@
 """Agents: a context, a message queue, and tasks created from rules.
 
 An agent runs until it halts, finishes, or reaches a decision: nothing left to
-dispatch or run, with proposals waiting. `advance()` stops at that point, which
-is where an agency will fork one child per proposal. `run()` commits to the
-first proposal instead, which is enough to run programs end to end.
+dispatch or run, with proposals waiting. `advance()` stops at that point, and
+an `Agency` forks one child per proposal. `run()` commits to the first
+proposal instead, which is handy for debugging a program without search.
+
+Each agent carries `cost`, the path cost of the choices that led to it. Rules
+add to it with `cost <expr>`; a commit whose rules add nothing costs 1.
 """
 
 from __future__ import annotations
@@ -14,11 +17,11 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from functools import cache
 
-from .clauses import Clause, Perform
+from .clauses import Achieve, Belief, Clause, Goal, Perform
 from .context import Context
 from .messages import IMPASSE, Assert, Attempt, Message, Modify, Retract, Trigger
 from .task import SUCCESS, Result, Status, Task
-from .terms import SELF
+from .terms import ACTIVE, SELF, STATUS
 
 
 class Step(Enum):
@@ -47,6 +50,7 @@ class Agent:
     experts: tuple[type[Agent], ...] = ()
     predicates: dict = {}
     max_steps = 100_000
+    priority = None  # search priority for this agent's agency; None means A*
 
     def __init__(self, context: Context | None = None, parent: Agent | None = None):
         self.context = context if context is not None else Context()
@@ -58,6 +62,10 @@ class Agent:
         self.suspended: list[Task] = []
         self.history: list[Message] = []
         self.steps = 0
+        self.cost = 0.0
+        self.step_cost = 0.0
+        self.committed = False
+        self.solution: Agent | None = None
         self.halted = False
         self.dead = False
         self.impassed = False
@@ -76,6 +84,12 @@ class Agent:
         self.halted = True
         return Status.HALTED
 
+    def add_cost(self, amount) -> None:
+        if amount < 0:
+            raise ValueError(f"cost must not be negative, got {amount}")
+        self.cost += amount
+        self.step_cost += amount
+
     # ------------------------------------------------------------ running
 
     def run(self) -> Status:
@@ -86,6 +100,14 @@ class Agent:
 
     def advance(self) -> Step:
         """Run until the agent is done or has to choose among its proposals."""
+        step = self._advance()
+        if self.committed and self.step_cost == 0:
+            self.cost += 1
+        self.committed = False
+        self.step_cost = 0.0
+        return step
+
+    def _advance(self) -> Step:
         while not (self.halted or self.dead):
             if self.steps >= self.max_steps:
                 self.dead = True
@@ -125,13 +147,26 @@ class Agent:
         child.messages, child.ready, child.proposals, child.suspended = messages, ready, proposals, suspended
         child.history = list(self.history)
         child.steps = self.steps
+        child.cost = self.cost
         self.agents.append(child)
         child.commit(child.proposals[index])
         return child
 
+    def state_key(self):
+        """What makes two agents the same search state (cost excluded)."""
+        return (
+            frozenset(self.context),
+            tuple((p.message, _plan_key(p.plan)) for p in self.proposals),
+            tuple(_task_key(t) for t in self.suspended),
+            self.halted,
+            self.dead,
+        )
+
     def commit(self, proposal: Proposal):
         self.proposals.clear()
         self.impassed = False
+        self.committed = True
+        self.step_cost = 0.0
         self.history.append(proposal.message)
         if proposal.plan is None:
             self.dispatch(proposal.message, proposal.waiter)
@@ -156,6 +191,8 @@ class Agent:
                     self.changed(Retract(old))
                 if self.context.add(clause):
                     self.changed(Assert(clause))
+            case Attempt(clause=Achieve() as goal) if _belief(goal) in self.context:
+                pass  # already achieved: succeed without running a plan
             case Attempt():
                 plans = self.plans(message)
                 if len(plans) == 1:
@@ -173,8 +210,31 @@ class Agent:
 
     def changed(self, event: Message):
         self.impassed = False
+        self.track_goals(event)
         for plan in self.plans(event):
             self.start(plan, event, None)
+
+    def track_goals(self, event: Message):
+        """Keep `goal status Active` beliefs current.
+
+        A perform goal is active while it's in the context. An achieve goal is
+        active while it's in the context and its belief doesn't hold, so
+        undoing an achieved goal makes it active again.
+        """
+        added = isinstance(event, Assert)
+        match event.clause:
+            case Achieve() as goal:
+                self.set_active(goal, added and _belief(goal) not in self.context)
+            case Goal() as goal:
+                self.set_active(goal, added)
+            case Belief() as belief:
+                goal = Achieve(belief.subj, belief.verb, belief.obj, belief.slots)
+                if goal in self.context:
+                    self.set_active(goal, not added)
+
+    def set_active(self, goal: Goal, active: bool):
+        status = Belief(goal, STATUS, ACTIVE)
+        self.post(Assert(status) if active else Retract(status))
 
     def plans(self, message) -> list[Task | Spawn]:
         found: list[Task | Spawn] = []
@@ -223,7 +283,9 @@ class Agent:
             for c in source:
                 child.post(Assert(c))
         child.start(plan.boot, message, None)
-        return Result(child.run() is Status.SUCCEEDED)
+        from .agency import Agency
+
+        return Result(Agency(child, plan.expert.priority).run() is not None)
 
 
 class Deliberator(Agent):
@@ -235,6 +297,7 @@ class AgentHost:
 
     def __init__(self, agent_class: type[Agent], context: Context | None = None):
         self.agent = agent_class(context)
+        self.solution: Agent | None = None
 
     def run(self) -> Status:
         agent = self.agent
@@ -248,7 +311,10 @@ class AgentHost:
             if not task.bind(message):
                 raise RuntimeError(f"{boot.__qualname__} did not accept its boot message")
             agent.start(task, message, None)
-        return agent.run()
+        from .agency import Agency
+
+        self.solution = Agency(agent, type(agent).priority).run()
+        return Status.SUCCEEDED if self.solution is not None else Status.FAILED
 
 
 @cache
@@ -259,6 +325,31 @@ def _rules(cls: type[Agent]) -> tuple[type[Task], ...]:
             if rule not in rules:
                 rules.append(rule)
     return tuple(rules)
+
+
+def _freeze(value):
+    try:
+        hash(value)
+        return value
+    except TypeError:
+        return id(value)  # unhashable state never counts as a duplicate
+
+
+def _task_key(task: Task):
+    fields = sorted((k, _freeze(v)) for k, v in vars(task).items() if k.startswith(("v_", "c_")))
+    return (type(task).__qualname__, task.pc, tuple(fields))
+
+
+def _plan_key(plan):
+    if plan is None:
+        return None
+    if isinstance(plan, Spawn):
+        return (plan.expert.__qualname__, _task_key(plan.boot))
+    return _task_key(plan)
+
+
+def _belief(goal: Achieve) -> Belief:
+    return Belief(goal.subj, goal.verb, goal.obj, goal.slots)
 
 
 def _matches(trigger, message) -> bool:

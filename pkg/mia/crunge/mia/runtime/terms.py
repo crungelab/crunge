@@ -73,3 +73,7 @@ def verb(name: str) -> Verb:
 
 
 SELF = noun("Self")
+
+# Maintained by the agent: `goal status Active` while a goal still needs work.
+STATUS = verb("status")
+ACTIVE = noun("Active")

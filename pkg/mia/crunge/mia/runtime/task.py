@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from .clauses import Perform
 from .messages import Attempt, Retract
 
 
@@ -44,8 +45,10 @@ class Task:
         raise NotImplementedError
 
     def succeed(self, agent) -> Status:
-        # Finishing an attempted goal removes it, as in the C# runtime.
-        if isinstance(self.message, Attempt):
+        # Finishing a perform goal removes it, as in the C# runtime. Achieve
+        # goals stay: they're done when their belief holds, and active again
+        # if it stops holding.
+        if isinstance(self.message, Attempt) and isinstance(self.message.clause, Perform):
             agent.post(Retract(self.message.clause))
         return Status.SUCCEEDED
 

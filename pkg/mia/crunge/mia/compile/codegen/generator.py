@@ -27,7 +27,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 
 from crunge.mia.compile.ast.nodes import (
-    AgentDef, ClassDef, Clause, Code, Compare, ContextDef, Def, ExpertDef, Fail,
+    AgentDef, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def, ExpertDef, Fail,
     Filter, Goal, GoalKind, Halt, Import, Literal, Match, Message, Module, Name,
     Node, NoMatch, Outcome, Pass, Performative, PredicateDef, Return, Snippet,
     Succeed, Throw, Var, Where, walk,
@@ -393,6 +393,8 @@ class _Generator:
             case Pass():
                 if mode != "body":  # a rule body always ends in a return
                     w("pass")
+            case Cost(value=value):
+                w(f"agent.add_cost({self.term(value, scope)})")
             case Snippet(text=text):
                 w(self.code(s, text, scope))
             case _:

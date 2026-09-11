@@ -7,8 +7,8 @@ from lark import Lark, Token, Transformer, v_args
 from lark.exceptions import VisitError
 from lark.indenter import Indenter
 
-from ..ast.nodes import (
-    AgentDef, Branch, ClassDef, Clause, Code, Compare, ContextDef, Def,
+from crunge.mia.compile.ast.nodes import (
+    AgentDef, Branch, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def,
     ExpertDef, Fail, Filter, Goal, GoalKind, Halt, Import, Literal, Match,
     Message, Module, Name, NoMatch, Outcome, Pass, Performative, PredicateDef,
     Return, Slot, Snippet, Succeed, Throw, Trigger, Var, Where,
@@ -149,6 +149,9 @@ class ToAst(Transformer):
     def pass_stmt(self, meta):
         return Pass(**_pos(meta))
 
+    def cost_stmt(self, meta, value):
+        return Cost(_term(value), **_pos(meta))
+
     def import_stmt(self, meta, path):
         return Import(path, **_pos(meta))
 
@@ -212,8 +215,3 @@ def parse(text: str) -> Module:
         return ToAst().transform(tree)
     except VisitError as e:
         raise e.orig_exc from None
-
-def parse_raw(text: str):
-    if not text.endswith("\n"):
-        text += "\n"
-    return _lark.parse(text)
