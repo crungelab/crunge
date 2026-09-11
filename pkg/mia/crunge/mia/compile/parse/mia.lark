@@ -1,0 +1,115 @@
+// mia.lark: draft grammar for Mia. LALR(1) with Lark's Indenter postlexer.
+//
+// Lexical conventions:
+//   $name      variable
+//   Name       noun: object, constant, or type
+//   name       verb: predicate or task
+//   name:      slot (no space before the colon)
+//   {...}      inline Python expression; $vars inside are rewritten
+//   | ...      Python statement, rest of line
+
+start: _NL? stmt*
+
+?stmt: agent_def
+     | expert_def
+     | class_def
+     | predicate_decl
+     | def_def
+     | context_def
+     | where_stmt
+     | simple_stmt
+
+suite: _INDENT stmt+ _DEDENT
+
+// ---------------------------------------------------------------- declarations
+
+agent_def:      "agent" NOUN [bases] _NL suite
+expert_def:     "expert" NOUN [bases] _NL suite
+class_def:      "class" NOUN [bases] _NL
+bases:          "(" NOUN ("," NOUN)* ")"
+predicate_decl: "predicate" VERB ["(" type_ref ")"] _NL
+def_def:        "def" NOUN "(" [trigger] ")" _NL suite
+context_def:    "context" NOUN _NL suite
+
+trigger: [performative] content
+?type_ref: NOUN | VERB
+
+// ---------------------------------------------------------------- where
+
+where_stmt: "where" _NL _INDENT (condition _NL)+ outcome+ _DEDENT
+
+?condition: clause              -> match
+          | "not" clause        -> no_match
+          | term COMPARE term   -> compare
+          | CODE                -> filter
+
+COMPARE: "==" | "!=" | "<=" | ">=" | "<" | ">"
+
+?outcome: "-->" _NL stmt+       -> each_match
+        | "==>" _NL stmt+       -> any_match
+        | "!==>" _NL stmt+      -> none_match
+
+// ---------------------------------------------------------------- statements
+
+// Any message may carry an indented paragraph of predicates about its head.
+simple_stmt: action _NL [paragraph]
+paragraph: _INDENT (predicate _NL)+ _DEDENT
+predicate: VERB [objects] slot*
+
+?action: message
+       | "return" [term]        -> return_stmt
+       | "succeed"              -> succeed_stmt
+       | "fail"                 -> fail_stmt
+       | "throw"                -> throw_stmt
+       | "halt"                 -> halt_stmt
+       | "pass"                 -> pass_stmt
+       | "import" dotted        -> import_stmt
+       | SNIPPET                -> snippet
+
+// Envelope and content are separate axes:
+//   [*] propose   [+ - -+] assert / retract / modify   (default: attempt)
+message: [PROPOSE] [performative] content
+
+PROPOSE: "*"
+!performative: "+" | "-" | "-+"
+
+?content: clause | goal | term
+
+goal: "/" VERB [objects] slot* [binding]    -> perform
+    | "@" clause                            -> achieve
+    | "?" clause                            -> query
+
+// ---------------------------------------------------------------- clauses & terms
+
+clause: [term] VERB [objects] slot* [binding]
+objects: term ("," term)*
+slot: SLOT term
+binding: "->" VAR
+
+?term: typed
+     | atom
+     | "(" clause ")"
+
+typed: NOUN (VAR | NOUN)
+?atom: VAR | NOUN | literal | CODE
+!literal: "True" | "False" | "None" | NUMBER | STRING
+
+dotted: (NOUN | VERB) ("." (NOUN | VERB))*
+
+// ---------------------------------------------------------------- tokens
+
+VAR: /\$[A-Za-z_]\w*/
+NOUN: /[A-Z]\w*/
+SLOT.2: /[a-z_]\w*:/
+VERB: /[a-z_]\w*/
+NUMBER: /\d+(\.\d+)?/
+STRING: /"([^"\\\n]|\\.)*"|'([^'\\\n]|\\.)*'/
+CODE: /\{[^}\n]*\}/
+SNIPPET: /\|[^\n]*/
+
+COMMENT: /#[^\n]*/
+_NL: /(\r?\n[\t ]*(#[^\n]*)?)+/
+
+%ignore /[\t ]+/
+%ignore COMMENT
+%declare _INDENT _DEDENT

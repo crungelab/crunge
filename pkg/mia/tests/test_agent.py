@@ -1,10 +1,10 @@
 import unittest
 
-from crunge.abt.run import *
-from crunge.abt.run import _I
-from crunge.abt.run.agent import Agent
-from crunge.abt.run.message import *
-from crunge.abt.run.rule_kit import rule, RuleKit
+from crunge.mia.run import *
+from crunge.mia.run import _I
+from crunge.mia.run.agent import Agent
+from crunge.mia.run.message import *
+from crunge.mia.run.rule_kit import rule, RuleKit
 
 _jump = term_('jump')
 _say = term_('say')

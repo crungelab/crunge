@@ -1,0 +1,85 @@
+#
+# Blocks World
+#
+
+class Table
+class Block
+
+agent BloxAgent
+
+    predicate isClear(bool)
+
+    def BloxAgent(/bloxAgent)
+
+        context BloxContext
+
+            Table Table1 isClear True
+
+            Block Block1 onTop Table1
+
+            Block Block2 onTop Block1
+
+            Block Block3
+                onTop Block2
+                isClear True
+
+            @Block1 onTop Block2
+
+            @Block2 onTop Block3
+
+        /blox context: BloxContext
+
+
+    expert Blox
+
+        def Blox(/blox)
+            pass
+
+        def Impasse(impasse)
+            where
+                Goal $g status Active
+                -->
+                * $g
+                !==>
+                halt
+
+        def Stack(@$x onTop $y)
+            where
+                not $x isClear True
+                -->
+                /clear $x
+                ==>
+                return
+
+            where
+                not $y isClear True
+                -->
+                /clear $y
+                ==>
+                return
+
+            -+ $x onTop $y
+
+        def Clear(/clear $x)
+            where
+                $x beneath $y
+                $z isClear True
+                $z != $x
+                $z != $y
+                -->
+                * @$y onTop $z
+
+        def NotOnTopElab(- $x onTop $y)
+            - $y beneath $x
+            + $y isClear True
+
+        def OntopElab(+ $x onTop $y)
+            where
+                Block $y isClear True
+                -->
+                - $y isClear True
+
+            where
+                $x onTop $y
+                -->
+                + $y beneath $x
