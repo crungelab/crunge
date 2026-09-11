@@ -12,7 +12,10 @@ from crunge.mia.runtime import Step
 
 
 def build(name):
-    source = sample(f"{name}.mia")
+    return build_source(sample(f"{name}.mia"), name)
+
+
+def build_source(source, name):
     module = types.ModuleType(f"{name}_mia")
     exec(compile(generate(parse(source), f"{name}.mia", source), f"{name}_mia.py", "exec"), module.__dict__)
     return module
@@ -312,8 +315,12 @@ def test_everyone_crosses_safely():
 # ---------------------------------------------------------------- towers of hanoi
 
 
-def test_towers_moves_the_stack():
-    towers = build("towers")
+@pytest.fixture(scope="module")
+def towers():
+    return build("towers")
+
+
+def test_towers_moves_the_stack(towers):
     host = rt.AgentHost(towers.TowersAgent)
     assert host.run() is rt.Status.SUCCEEDED
     solution = host.solution.agents[0].solution
@@ -329,14 +336,92 @@ def test_towers_moves_the_stack():
                if isinstance(c, rt.Belief) and c.verb is towers.t_at
                and isinstance(c.subj, towers.Disc))
 
-    # a disc is only ever moved onto something larger, and only when clear
+    # the classic minimum: 7 disc moves
     chain, agent = [solution], solution
     while agent.parent is not None:
         agent = agent.parent
         chain.append(agent)
+    stacks = [{c.subj: c.obj for c in a.context if isinstance(c, rt.Belief) and c.verb is towers.t_onTop}
+              for a in reversed(chain)]
+    stacks = [s for s in stacks if len(s) == 3]  # before the context arrives there are none
+    assert sum(1 for a, b in zip(stacks, stacks[1:]) if a != b) == 7
+
+    # a disc is only ever moved onto something larger, and only when clear
     sizes = {c.subj: c.obj for c in solution.context
              if isinstance(c, rt.Belief) and c.verb is towers.t_size}
     for agent in chain:
         for clause in agent.context:
             if isinstance(clause, rt.Belief) and clause.verb is towers.t_onTop:
                 assert sizes[clause.subj] < sizes[clause.obj]
+
+
+def test_dependent_goals_wait_their_turn(towers):
+    host = rt.AgentHost(towers.TowersAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    solution = host.solution.agents[0].solution
+
+    top = rt.Achieve(towers.t_Disc1, towers.t_onTop, towers.t_Disc2)
+    middle = rt.Achieve(towers.t_Disc2, towers.t_onTop, towers.t_Disc3)
+    bottom = rt.Achieve(towers.t_Disc3, towers.t_onTop, towers.t_Peg3)
+
+    # dependencies are elaborated both ways, and transitively
+    assert rt.Belief(middle, towers.t_hasDependent, top) in solution.context
+    assert rt.Belief(top, towers.t_indirectlyDependsOn, bottom) in solution.context
+
+    # nothing is left suspended once every goal is achieved
+    assert not [c for c in solution.context if c.verb is towers.t_suspended]
+
+    # at the start Disc1 is already on Disc2, so that goal is not active;
+    # the middle goal waits on the bottom one, leaving one thing to work on
+    root = host.solution.agents[0]
+    assert rt.Belief(top, rt.STATUS, rt.ACTIVE) not in root.context
+    assert rt.Belief(middle, towers.t_suspended, True) in root.context
+    assert rt.Belief(bottom, towers.t_suspended, True) not in root.context
+    assert [p.message.clause for p in root.proposals] == [bottom]
+
+
+def test_a_dependency_cycle_is_not_success(towers):
+    source = sample("towers.mia").replace(
+        "            @Disc3 onTop Peg3\n",
+        "            @Disc3 onTop Peg3\n                dependsOn (@Disc1 onTop Disc2)\n",
+        1,
+    )
+    module = build_source(source, "cyclic_towers")
+    assert rt.AgentHost(module.TowersAgent).run() is rt.Status.FAILED
+
+
+def test_an_unwaited_failure_ends_the_branch():
+    class Failing(rt.Task):
+        def resume(self, agent, result=None):
+            return self.fail(agent)
+
+    agent = rt.Agent()
+    agent.start(Failing(), None, None)
+    assert agent.run() is rt.Status.FAILED and agent.dead
+
+
+# ---------------------------------------------------------------- water jug
+
+
+def test_waterjug_measures_one_gallon():
+    wj = build("waterjug")
+    host = rt.AgentHost(wj.WaterjugAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    solution = host.solution.agents[0].solution
+    assert rt.Belief(wj.t_Jug1, wj.t_contents, 1) in solution.context
+
+    # the classic minimum: fill, pour, fill, pour
+    moves = [rt.to_mia(m) for m in solution.history if isinstance(m.clause, rt.Perform)]
+    assert moves == ["/fill Jug1", "/pour Jug1 to: Jug2", "/fill Jug1", "/pour Jug1 to: Jug2"]
+
+    # `empty` stays in step with `contents` for both jugs, all the way along
+    chain, agent = [solution], solution
+    while agent.parent is not None:
+        agent = agent.parent
+        chain.append(agent)
+    for agent in chain:
+        for jug in (wj.t_Jug1, wj.t_Jug2):
+            facts = {c.verb: c.obj for c in agent.context
+                     if isinstance(c, rt.Belief) and c.subj is jug}
+            if wj.t_empty in facts:
+                assert facts[wj.t_contents] + facts[wj.t_empty] == facts[wj.t_volume]

@@ -285,10 +285,13 @@ class Agent:
         if status is Status.SUSPENDED:
             self.suspended.append(task)
             return
-        if status is Status.THROWN:
-            self.dead = True
         if task.waiter is not None:
+            if status is Status.THROWN:
+                self.dead = True
             self.ready.append((task.waiter, Result(status in SUCCESS)))
+        elif status not in SUCCESS:
+            # Nobody is waiting on this task, so its failure ends the branch.
+            self.dead = True
 
     def spawn(self, plan: Spawn, message) -> Result:
         child = plan.expert(parent=self)

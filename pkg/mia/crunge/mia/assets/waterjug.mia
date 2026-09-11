@@ -1,0 +1,91 @@
+#
+# Water Jug
+#
+
+class Jug
+
+agent WaterjugAgent
+
+    predicate volume(int)
+    predicate contents(int)
+    predicate empty(int)
+
+    def WaterjugAgent(/waterjugAgent)
+
+        context WaterjugContext
+
+            Jug Jug1
+                volume 3
+                contents 0
+
+            Jug Jug2
+                volume 5
+                contents 0
+
+            @Jug1 contents 1
+
+        /waterjug context: WaterjugContext
+
+
+    expert Waterjug
+
+        def Waterjug(/waterjug)
+            pass
+
+        def Impasse(impasse)
+            where
+                Goal $g status Active
+                -->
+                * $g
+                !==>
+                halt
+
+        # Every legal move, whatever the goal is.
+        def Moves(Achieve $g)
+            where
+                Jug $j empty $e
+                {$e > 0}
+                -->
+                * /fill $j
+
+            where
+                Jug $j contents $c
+                {$c > 0}
+                -->
+                * /makeEmpty $j
+
+            where
+                Jug $from contents $c
+                Jug $to empty $e
+                $from != $to
+                {$c > 0}
+                {$e > 0}
+                -->
+                * /pour $from to: $to
+
+            return
+
+        def Fill(/fill $j)
+            where
+                $j volume $v
+                -->
+                -+ $j contents $v
+
+        def MakeEmpty(/makeEmpty $j)
+            -+ $j contents 0
+
+        def Pour(/pour $from to: $to)
+            where
+                $from contents $c1
+                $to contents $c2
+                $to empty $e2
+                -->
+                -+ $from contents {$c1 - min($c1, $e2)}
+                -+ $to contents {$c2 + min($c1, $e2)}
+
+        # What is left over is always volume minus contents.
+        def ContentsElab(+ $j contents $c)
+            where
+                $j volume $v
+                -->
+                -+ $j empty {$v - $c}

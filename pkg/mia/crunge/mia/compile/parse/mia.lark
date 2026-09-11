@@ -89,7 +89,7 @@ binding: "->" VAR
 
 ?term: typed
      | atom
-     | "(" clause ")"
+     | "(" content ")"
 
 typed: NOUN (VAR | NOUN)
 ?atom: VAR | NOUN | literal | CODE
