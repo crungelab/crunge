@@ -30,7 +30,7 @@ from crunge.mia.compile.ast.nodes import (
     AgentDef, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def, ExpertDef, Fail,
     Filter, FrameDef, Goal, GoalKind, Halt, Import, KnowsDef, Literal, Match, Message, Module, Name,
     Node, NoMatch, Outcome, Pass, Performative, PredicateDef, Return, Snippet,
-    Succeed, Throw, Var, Where, walk,
+    Select, Succeed, Throw, Var, Where, walk,
 )
 
 
@@ -419,6 +419,8 @@ class _Generator:
         match s:
             case Where():
                 self.where(s, scope)
+            case Select():
+                self.select(s, scope, mode)
             case ContextDef():
                 self.context(s, scope)
             case Message():
@@ -559,6 +561,41 @@ class _Generator:
                 case Outcome.NONE:
                     with w.block(f"if not {m}:"):
                         self.block(branch.body, scope)
+
+    def select(self, s: Select, scope: _Scope, mode: str):
+        """Bind the first match for the rest of the rule.
+
+        The bindings become task variables, so they survive a suspension later
+        in the body. With nothing to match, the `!==>` body runs and the task
+        ends; a select cannot fall through unbound.
+        """
+        w = self.w
+        if s.frame is not None and s.frame not in self.frames:
+            raise MiaCompileError(s, f"undeclared frame {s.frame}")
+        source = self.frame_var(s.frame) if s.frame else ("agent.view" if self.known else "agent.context")
+        name = f"_select{self.matches}"
+        self.matches += 1
+
+        inner = scope.child()
+        bound: list[str] = []
+        with w.block(f"def {name}(ctx={source}):"):
+            opened = sum(self.condition(c, inner, bound) for c in s.conditions)
+            w(f"return {_tuple([f'v_{n}' for n in bound])}" if bound else "return ()")
+            w.depth -= opened
+            w("return None")
+        w(f"_found = {name}()")
+        with w.block("if _found is None:"):
+            if s.otherwise:
+                self.block(s.otherwise, scope)
+                if not isinstance(s.otherwise[-1], TERMINATORS):
+                    w("return self.fail(agent)")
+            else:
+                w("return self.fail(agent)")
+        if bound:
+            targets = ", ".join(f"self.v_{n}" for n in bound)
+            w(f"{targets}{',' if len(bound) == 1 else ''} = _found")
+            for n in bound:
+                scope.task[n] = None
 
     def condition(self, cond, scope: _Scope, bound: list[str], source: str = "ctx") -> int:
         """Emit one condition and return how many blocks it opened."""

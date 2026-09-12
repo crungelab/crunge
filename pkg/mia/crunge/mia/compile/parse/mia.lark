@@ -19,6 +19,7 @@ start: _NL? stmt*
      | context_def
      | frame_def
      | where_stmt
+     | select_stmt
      | simple_stmt
 
 suite: _INDENT stmt+ _DEDENT
@@ -41,6 +42,10 @@ trigger: [performative] content
 // ---------------------------------------------------------------- where
 
 where_stmt: "where" ["in" NOUN] _NL _INDENT (condition _NL)+ outcome+ _DEDENT
+
+// Like `where`, but keeps the first match's bindings for the rest of the rule.
+select_stmt: "select" ["in" NOUN] _NL _INDENT (condition _NL)+ [none_branch] _DEDENT
+none_branch: "!==>" _NL stmt+
 
 ?condition: clause              -> match
           | "not" clause        -> no_match

@@ -11,7 +11,7 @@ from crunge.mia.compile.ast.nodes import (
     AgentDef, Branch, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def,
     ExpertDef, Fail, Filter, FrameDef, Goal, GoalKind, Halt, Import, KnowsDef, Literal, Match,
     Message, Module, Name, NoMatch, Outcome, Pass, Performative, PredicateDef,
-    Return, Slot, Snippet, Succeed, Throw, Trigger, Var, Where,
+    Return, Select, Slot, Snippet, Succeed, Throw, Trigger, Var, Where,
 )
 
 
@@ -94,6 +94,15 @@ class ToAst(Transformer):
         conditions = [x for x in items if not isinstance(x, Branch)]
         branches = [x for x in items if isinstance(x, Branch)]
         return Where(conditions, branches, str(frame) if frame else None, **_pos(meta))
+
+    def select_stmt(self, meta, frame, *items):
+        # The optional `!==>` body arrives as a list, or as None when absent.
+        conditions = [x for x in items if x is not None and not isinstance(x, list)]
+        otherwise = next((x for x in items if isinstance(x, list)), [])
+        return Select(conditions, otherwise, str(frame) if frame else None, **_pos(meta))
+
+    def none_branch(self, meta, *body):
+        return list(body)
 
     def match(self, meta, clause):
         return Match(clause, **_pos(meta))

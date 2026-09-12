@@ -559,3 +559,53 @@ def test_immediate_and_deferred_effects_side_by_side(capsys):
     host.run()
     # the `|` logging line ran once per move considered, in every branch
     assert len(host.plan) == 2
+
+
+# ---------------------------------------------------------------- travel
+
+
+@pytest.fixture(scope="module")
+def travel():
+    return build("travel")
+
+
+def test_travel_takes_a_taxi_and_pays_for_it(travel):
+    host = rt.AgentHost(travel.TravelAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    solution = host.solution.agents[0].solution
+
+    assert rt.Belief(rt.SELF, travel.t_location, travel.t_Restaurant1) in solution.context
+    assert rt.Belief(rt.SELF, travel.t_cash, 14.5) in solution.context   # 20 - (1.5 + 0.5 * 8)
+    assert solution.cost == 6.5
+
+    # the plan is the taxi sequence, in order, and nothing from the walking branch
+    assert [a.text.split("(")[1].split(")")[0] for a in host.plan] == [
+        'f"call a taxi to {Home1}"',
+        'f"ride from {Home1} to {Restaurant1}"',
+        'f"pay the driver {1.5 + 0.5 * 8:.2f}"',
+    ]
+
+
+def test_a_short_trip_is_walked(travel):
+    source = sample("travel.mia").replace("distance: 8", "distance: 1")
+    module = build_source(source, "short_travel")
+    host = rt.AgentHost(module.TravelAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    assert host.solution.agents[0].solution.cost == 2   # 1 to commit, 1 to walk
+    assert len(host.plan) == 1 and "walk" in host.plan.actions[0].text
+
+
+def test_alternative_plans_become_separate_branches(travel):
+    host = rt.AgentHost(travel.TravelAgent)
+    host.run()
+
+    def descendants(agent):
+        for child in agent.agents:
+            yield child
+            yield from descendants(child)
+
+    branches = {a.chosen[-1]: a for a in descendants(host.agent.agents[0]) if a.chosen and a.chosen[-1]}
+    assert set(branches) == {"TravelByFoot", "TravelByTaxi"}
+    # walking eight miles does not apply, so that branch throws and dies
+    assert branches["TravelByFoot"].dead
+    assert not branches["TravelByTaxi"].dead

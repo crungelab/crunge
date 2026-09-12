@@ -221,3 +221,32 @@ def test_immediate_and_deferred_snippets():
 def test_a_snippet_cannot_use_an_unbound_variable(bar):
     with pytest.raises(MiaCompileError, match=r"\$q is not bound"):
         generate(parse(f"agent A\n    def A(/a)\n        {bar} move_to($q)\n"), runtime="tests.fake_runtime")
+
+
+def test_select_binds_for_the_rest_of_the_rule():
+    source = """agent A
+    def A(/a $to)
+        select
+            Self location $from
+            !==>
+            throw
+        /go $from
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert "def _select0(ctx=agent.context):" in code
+    assert "return (v_from,)" in code
+    assert "return self.throw(agent)" in code
+    assert "self.v_from, = _found" in code
+    # the binding survives the suspension that follows
+    assert "t_go, self.v_from" in code
+
+
+def test_select_without_an_else_fails_when_nothing_matches():
+    source = """agent A
+    def A(/a)
+        select
+            Self location $from
+        /go $from
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert "if _found is None:\n" in code and "return self.fail(agent)" in code

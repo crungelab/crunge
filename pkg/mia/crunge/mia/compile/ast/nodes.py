@@ -202,6 +202,13 @@ class Where(Node):
 
 
 @dataclass(slots=True)
+class Select(Node):
+    conditions: list[Condition]
+    otherwise: list[Stmt] = field(default_factory=list)  # runs when nothing matches
+    frame: str | None = None
+
+
+@dataclass(slots=True)
 class ClassDef(Node):
     name: str
     bases: list[str] = field(default_factory=list)
@@ -255,7 +262,7 @@ class Module(Node):
 
 
 type Stmt = (
-    AgentDef | ClassDef | PredicateDef | KnowsDef | ContextDef | FrameDef | Def | Where | Message
+    AgentDef | ClassDef | PredicateDef | KnowsDef | ContextDef | FrameDef | Def | Where | Select | Message
     | Return | Succeed | Fail | Throw | Halt | Pass | Cost | Import | Snippet
 )
 
