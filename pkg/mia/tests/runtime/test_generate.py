@@ -295,3 +295,22 @@ expert Driver
 """
     code = generate(parse(source), runtime="tests.fake_runtime")
     assert code.count("starting_context = staticmethod(_build_W)") == 2
+
+
+def test_a_start_rule_named_after_its_expert_still_runs():
+    source = """expert Counting
+    def Counting(start)
+        pass
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert "rules = (Counting,)" in code   # dispatched like any other rule
+    assert "entry = None" in code          # a signal rule is not a spawn entry
+
+
+def test_an_entry_rule_is_also_an_ordinary_rule():
+    source = """expert Quest
+    def Quest(/quest)
+        pass
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert "rules = (Quest,)" in code and "entry = Quest" in code

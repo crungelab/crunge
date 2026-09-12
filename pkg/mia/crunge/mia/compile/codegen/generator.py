@@ -296,10 +296,12 @@ class _Generator:
                             experts.append(s.name)
                         else:
                             self.rule(s)
-                            if s.name == a.name:
+                            rules.append(s.name)
+                            # A rule named after its expert is also how another
+                            # expert spawns it — unless it waits on a signal,
+                            # which nothing can spawn.
+                            if s.name == a.name and not _is_signal(s.trigger):
                                 entry = s.name
-                            else:
-                                rules.append(s.name)
                     case _:
                         raise MiaCompileError(s, f"{type(s).__name__} is not allowed in an expert body")
             w()
@@ -766,6 +768,16 @@ class _Generator:
 
     def code(self, node: Node, text: str, scope: _Scope) -> str:
         return _DOLLAR.sub(lambda m: self.term(Var(m.group(1), line=node.line), scope), text)
+
+
+def _is_signal(trigger) -> bool:
+    return (
+        trigger is not None
+        and isinstance(trigger.content, Clause)
+        and trigger.content.subj is None
+        and trigger.content.verb in SIGNALS
+        and trigger.performative is None
+    )
 
 
 def _tuple_append(target: str, items: list[str]) -> str:
