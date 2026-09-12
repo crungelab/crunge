@@ -46,27 +46,29 @@ def describe(event: dict) -> str:
     g = event.get
     match kind:
         case "trace":
-            return f"trace of {g('agent')}, started {g('started')}"
-        case "agency":
-            return f"search {g('agency')}: {g('agent')} from agent {g('root')} ({g('priority')})"
+            return f"trace of {g('expert')}, started {g('started')}"
+        case "space":
+            return f"space {g('space')}: {g('expert')} from state {g('root')} ({g('priority')})"
         case "fork":
             plan = f" [{g('plan')}]" if g("plan") else ""
-            return f"fork agent {g('agent')} from {g('parent')}: {g('proposal')}{plan}"
+            return f"fork state {g('state')} from {g('parent')}: {g('proposal')}{plan}"
         case "spawn":
-            return f"spawn {g('expert')} as agent {g('agent')}: {g('message')}"
-        case "state":
+            return f"spawn {g('expert')} as state {g('state')}: {g('message')}"
+        case "status":
             status = f" {g('status').lower()}" if g("status") else ""
-            return f"agent {g('agent')} {g('step', '').lower()}{status}, cost {g('cost'):g}, priority {g('priority'):g}"
+            return f"state {g('state')} {g('step', '').lower()}{status}, cost {g('cost'):g}, priority {g('priority'):g}"
+        case "action":
+            return f"state {g('state')} records: {g('text')}"
         case "prune":
-            return f"prune agent {g('agent')}: state already reached at cost {g('best'):g}"
+            return f"prune state {g('state')}: already reached at cost {g('best'):g}"
         case "expand":
-            return f"expand agent {g('agent')} (expansion {g('expansion')})"
+            return f"expand state {g('state')} (expansion {g('expansion')})"
         case "skip" | "dead" | "solution":
-            return f"{kind} agent {g('agent')}"
+            return f"{kind} state {g('state')}"
         case "exhausted":
-            return f"search {g('agency')} hit its expansion limit"
+            return f"space {g('space')} hit its expansion limit"
         case "result":
-            found = f"solution agent {g('solution')}" if g("solution") is not None else "no solution"
-            return f"search {g('agency')} finished: {found} after {g('expansions')} expansions"
+            found = f"solution state {g('solution')}" if g("solution") is not None else "no solution"
+            return f"space {g('space')} finished: {found} after {g('expansions')} expansions"
         case _:
             return kind

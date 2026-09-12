@@ -1,51 +1,42 @@
 #
-# Counting: simple proposal test
+# Counting: a proposal per step, and a boot rule
 #
 
-agent CountingAgent
-
-    predicate countTo(int)
-    predicate value(int)
-
-    def CountingAgent(/countingAgent)
-        context CountingContext
-            /countTo 5
-                value 0
-
-        * /counting context: CountingContext
+predicate countTo(int)
+predicate value(int)
 
 
-    expert Counting(Deliberator)
+context CountingContext
+    /countTo 5
+        value 0
 
-        def Counting(/counting)
-            | print("Counting in sub-contexts")
 
-        def Impasse(impasse)
-            where
-                Goal $g status Active
-                -->
-                * $g
-                !==>
-                halt
+expert Counting(Deliberator)
 
-        def GoalElab(+ Goal $g)
-            + $g status Active
+    # `start` is raised once, after the starting context is in place.
+    def Setup(start)
+        | print("counting in sub-contexts")
 
-        def NotGoalElab(- Goal $g)
-            - $g status Active
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
 
-        def IncrementPropose(/countTo $v1 -> $g)
-            where
-                $g value $v1
-                -->
-                succeed
-                !==>
-                * /increment $g
-                return
+    def IncrementPropose(/countTo $v1 -> $g)
+        where
+            $g value $v1
+            -->
+            succeed
+            !==>
+            * /increment $g
+            return
 
-        def IncrementApply(/increment $g)
-            where
-                $g value $v1
-                -->
-                -+ $g value {$v1 + 1}
-                || print($v1 + 1, "...")
+    def IncrementApply(/increment $g)
+        where
+            $g value $v1
+            -->
+            -+ $g value {$v1 + 1}
+            || print($v1 + 1, "...")

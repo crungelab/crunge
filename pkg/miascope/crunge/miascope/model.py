@@ -1,12 +1,12 @@
-"""miascope's model of a trace: agents, searches, and replay over time.
+"""miascope's model of a trace: states, problem spaces, and replay over time.
 
 Built only from trace events, so miascope never imports the Mia runtime or the
 program that produced the trace.
 
 Time is an event index. A node exists from the event that created it (fork,
-spawn, or agency), is queued once its `state` event arrives, and is resolved by
+spawn, or space), is queued once its `status` event arrives, and is resolved by
 its outcome event (expand, prune, skip, dead, or solution). `Node.phase(t)`
-answers "what was this agent doing at event t" for a timeline slider.
+answers "what was this state doing at event t" for a timeline slider.
 """
 
 from __future__ import annotations
@@ -15,6 +15,8 @@ import json
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
+
+from crunge.mia.runtime.trace import TRACE_VERSION
 
 
 class TraceError(ValueError):
@@ -42,27 +44,27 @@ _OUTCOMES = {
 
 @dataclass(eq=False)
 class Node:
-    """One agent: a node in its search tree."""
+    """One state: a node in its search tree."""
 
     id: int
     created: int
-    search: Search | None = None
-    parent: Node | None = None  # the agent it was forked from; None for a search root
+    space: Space | None = None
+    parent: Node | None = None  # the state it was forked from; None for a space root
     children: list[Node] = field(default_factory=list)
-    spawned: list[Search] = field(default_factory=list)
+    spawned: list[Space] = field(default_factory=list)
     proposal: str | None = None  # the proposal it committed to, or the message that spawned it
     plan: str | None = None  # the plan chosen, when several matched
     state: dict | None = None
-    actions: list[str] = field(default_factory=list)  # `||` lines this agent recorded
+    actions: list[str] = field(default_factory=list)  # `||` lines this state recorded
     reached: int | None = None
     resolved: int | None = None
     outcome: Phase | None = None
 
     @property
     def label(self) -> str:
-        if self.parent is None and self.search is not None:
-            return self.search.agent.rsplit(".", 1)[-1]
-        text = self.proposal or f"agent {self.id}"
+        if self.parent is None and self.space is not None:
+            return self.space.expert.rsplit(".", 1)[-1]
+        text = self.proposal or f"state {self.id}"
         return f"{text} [{self.plan}]" if self.plan else text
 
     @property
@@ -74,7 +76,7 @@ class Node:
         return self.state["priority"] if self.state else None
 
     def phase(self, t: int | None = None) -> Phase | None:
-        """What this agent was doing at event `t` (the end of the trace if None)."""
+        """What this state was doing at event `t` (the end of the trace if None)."""
         if t is not None and self.created > t:
             return None
         if self.resolved is not None and (t is None or self.resolved <= t):
@@ -84,17 +86,17 @@ class Node:
         return Phase.RUNNING
 
     def display_children(self) -> list[Node]:
-        """Forks, then the roots of experts this agent spawned."""
-        return self.children + [search.root for search in self.spawned]
+        """Forks, then the roots of experts this state spawned."""
+        return self.children + [space.root for space in self.spawned]
 
 
 @dataclass(eq=False)
-class Search:
-    """One agency: a search tree rooted at an agent."""
+class Space:
+    """One problem space: a search tree rooted at a state."""
 
     id: int
     root: Node
-    agent: str
+    expert: str
     priority: str
     spawner: Node | None
     nodes: list[Node] = field(default_factory=list)
@@ -109,13 +111,13 @@ class Trace:
         self.events = events
         self.header: dict = {}
         self.nodes: dict[int, Node] = {}
-        self.searches: dict[int, Search] = {}
+        self.spaces: dict[int, Space] = {}
         for index, event in enumerate(events):
             self._apply(index, event)
-        tops = [s for s in self.searches.values() if s.spawner is None]
+        tops = [s for s in self.spaces.values() if s.spawner is None]
         if len(tops) != 1:
-            raise TraceError(f"expected one top-level search, found {len(tops)}")
-        self.top: Search = tops[0]
+            raise TraceError(f"expected one top-level problem space, found {len(tops)}")
+        self.top: Space = tops[0]
 
     @classmethod
     def load(cls, path: str | Path) -> Trace:
@@ -130,7 +132,7 @@ class Trace:
     # ------------------------------------------------------------ queries
 
     def path(self, node: Node) -> list[Node]:
-        """From the node's search root down to the node."""
+        """From the node's space root down to the node."""
         path = [node]
         while path[-1].parent is not None:
             path.append(path[-1].parent)
@@ -141,7 +143,7 @@ class Trace:
         clauses: dict[str, None] = {}
         for step in self.path(node):
             if step.state is None:
-                raise TraceError(f"agent {step.id} has no recorded state")
+                raise TraceError(f"state {step.id} has no recorded status")
             for clause in step.state["removed"]:
                 clauses.pop(clause, None)
             for clause in step.state["added"]:
@@ -149,8 +151,8 @@ class Trace:
                 clauses[clause] = None
         return list(clauses)
 
-    def solution_path(self, search: Search) -> list[Node]:
-        return self.path(search.solution) if search.solution is not None else []
+    def solution_path(self, space: Space) -> list[Node]:
+        return self.path(space.solution) if space.solution is not None else []
 
     def plan(self, node: Node) -> list[str]:
         """The actions along the path to `node`, including those of experts it
@@ -158,9 +160,9 @@ class Trace:
         actions: list[str] = []
         for step in self.path(node):
             actions += step.actions
-            for search in step.spawned:
-                if search.solution is not None:
-                    actions += self.plan(search.solution)
+            for space in step.spawned:
+                if space.solution is not None:
+                    actions += self.plan(space.solution)
         return actions
 
     # ------------------------------------------------------------ building
@@ -169,58 +171,63 @@ class Trace:
         kind = event.get("event")
         match kind:
             case "trace":
+                if event.get("version") != TRACE_VERSION:
+                    raise TraceError(
+                        f"trace version {event.get('version')} is not supported; "
+                        f"miascope reads version {TRACE_VERSION}"
+                    )
                 self.header = event
             case "spawn":
-                node = self._node(event["agent"], index)
+                node = self._node(event["state"], index)
                 node.proposal = event["message"]
-            case "agency":
+            case "space":
                 root = self._node(event["root"], index)
                 spawner = self._existing(event["parent"]) if event["parent"] is not None else None
-                search = Search(event["agency"], root, event["agent"], event["priority"], spawner, [root])
-                self.searches[search.id] = search
-                root.search = search
+                space = Space(event["space"], root, event["expert"], event["priority"], spawner, [root])
+                self.spaces[space.id] = space
+                root.space = space
                 if spawner is not None:
-                    spawner.spawned.append(search)
+                    spawner.spawned.append(space)
             case "fork":
                 parent = self._existing(event["parent"])
-                node = self._node(event["agent"], index)
-                node.parent, node.search = parent, parent.search
+                node = self._node(event["state"], index)
+                node.parent, node.space = parent, parent.space
                 node.proposal, node.plan = event["proposal"], event.get("plan")
                 parent.children.append(node)
-                if parent.search is not None:
-                    parent.search.nodes.append(node)
-            case "state":
-                node = self._existing(event["agent"])
+                if parent.space is not None:
+                    parent.space.nodes.append(node)
+            case "status":
+                node = self._existing(event["state"])
                 node.state, node.reached = event, index
             case "action":
-                self._existing(event["agent"]).actions.append(event["text"])
+                self._existing(event["state"]).actions.append(event["text"])
             case _ if kind in _OUTCOMES:
-                node = self._existing(event["agent"])
+                node = self._existing(event["state"])
                 node.outcome, node.resolved = _OUTCOMES[kind], index
                 if kind == "solution":
-                    self._search(event).solution = node
+                    self._space(event).solution = node
             case "exhausted":
-                self._search(event).exhausted = True
+                self._space(event).exhausted = True
             case "result":
-                search = self._search(event)
-                search.expansions, search.finished = event["expansions"], index
+                space = self._space(event)
+                space.expansions, space.finished = event["expansions"], index
             case _:
                 pass  # unknown events are ignored, so newer traces still load
 
-    def _node(self, agent_id: int, index: int) -> Node:
-        node = self.nodes.get(agent_id)
+    def _node(self, state_id: int, index: int) -> Node:
+        node = self.nodes.get(state_id)
         if node is None:
-            node = self.nodes[agent_id] = Node(agent_id, index)
+            node = self.nodes[state_id] = Node(state_id, index)
         return node
 
-    def _existing(self, agent_id: int) -> Node:
+    def _existing(self, state_id: int) -> Node:
         try:
-            return self.nodes[agent_id]
+            return self.nodes[state_id]
         except KeyError:
-            raise TraceError(f"event refers to agent {agent_id} before it was created") from None
+            raise TraceError(f"event refers to state {state_id} before it was created") from None
 
-    def _search(self, event: dict) -> Search:
+    def _space(self, event: dict) -> Space:
         try:
-            return self.searches[event["agency"]]
+            return self.spaces[event["space"]]
         except KeyError:
-            raise TraceError(f"event refers to unknown agency {event.get('agency')}") from None
+            raise TraceError(f"event refers to unknown problem space {event.get('space')}") from None

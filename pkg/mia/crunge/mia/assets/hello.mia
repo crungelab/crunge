@@ -2,10 +2,10 @@
 # Hello World
 #
 
-class HelloWorld
+expert HelloWorld
 
-  def constructor()
-    say 'Hello World'
+    def Start(start)
+        /say 'Hello World'
     
-  def say(say $t)
-    | print t
+    def Say(/say $t)
+        | print($t)

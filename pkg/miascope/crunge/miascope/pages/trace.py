@@ -158,7 +158,7 @@ class TracePage(Page):
                 self.set_scale(scale)
             t = self.trace
             imgui.text(Path(self.source).name)
-            imgui.text(f"{t.top.agent}: {len(t.nodes)} agents, {len(t.searches)} searches, {len(t.events)} events")
+            imgui.text(f"{t.top.expert}: {len(t.nodes)} states, {len(t.spaces)} spaces, {len(t.events)} events")
         if self.error:
             imgui.text_colored(ERROR_TEXT, self.error)       # ASSUMPTION: text_colored(color, text)
         if self.samples and imgui.collapsing_header("Samples"):
@@ -192,7 +192,7 @@ class TracePage(Page):
         imgui.end()
 
     def draw_plan_panel(self):
-        """The actions of the solution: what the agent would actually do."""
+        """The actions of the solution: what the expert would actually do."""
         imgui.begin("Plan")
         node = self.selected if self.selected is not None else self.solution_node()
         if node is None:
@@ -200,7 +200,7 @@ class TracePage(Page):
             imgui.end()
             return
         actions = self.trace.plan(node)
-        imgui.text(f"agent {node.id}: {len(actions)} actions")
+        imgui.text(f"state {node.id}: {len(actions)} actions")
         if self.loaded.runnable and node is self.solution_node():
             imgui.same_line()
             # Replaying performs real side effects, so only offer it for a
@@ -213,13 +213,13 @@ class TracePage(Page):
         imgui.end()
 
     def solution_node(self):
-        """The deepest solved agent: the top-level search's solution."""
+        """The top-level space's solution."""
         return self.trace.top.solution
 
     def draw_inspector_panel(self):
         imgui.begin("Inspector")
         if self.selected is None:
-            imgui.text("Click an agent to inspect it.")
+            imgui.text("Click a state to inspect it.")
             imgui.end()
             return
         r = report(self.trace, self.selected, self.timeline.t)

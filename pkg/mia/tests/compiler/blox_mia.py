@@ -25,12 +25,12 @@ t_clear = rt.verb("clear")
 t_beneath = rt.verb("beneath")
 
 
-class BloxAgent(rt.Agent):
-    # blox.mia:8  agent BloxAgent
+class BloxProblem(rt.Agent):
+    # blox.mia:8  agent BloxProblem
     predicates = {"isClear": bool}
 
-    class BloxAgent(rt.Task):
-        # blox.mia:12  def BloxAgent(/bloxAgent)
+    class BloxProblem(rt.Task):
+        # blox.mia:12  def BloxProblem(/bloxAgent)
         trigger = rt.Trigger(rt.Attempt, rt.Perform, t_bloxBrain)
 
         def bind(self, msg):
@@ -220,6 +220,6 @@ class BloxAgent(rt.Agent):
         rules = (Impasse, GoalElab, NotGoalElab, Stack, Clear, NotOnTopElab, OntopElab)
         experts = ()
 
-    boot = BloxAgent
+    boot = BloxProblem
     rules = ()
     experts = (Blox,)

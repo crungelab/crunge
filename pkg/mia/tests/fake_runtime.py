@@ -14,6 +14,7 @@ class _Sentinel:
 
 
 ANY = _Sentinel("ANY")
+START = _Sentinel("START")
 IMPASSE = _Sentinel("IMPASSE")
 
 
@@ -120,15 +121,24 @@ class Context:
     def exists(self, cls, subj, verb, obj):
         return any(True for _ in self.find(cls, subj, verb, obj))
 
+    def __iter__(self):
+        return iter(self.clauses)
+
+    def __len__(self):
+        return len(self.clauses)
+
+    def __contains__(self, clause):
+        return clause in self.clauses
+
 
 class Task:
     pc = 0
     trigger = None
 
-    def succeed(self, agent): return "SUCCEEDED"
-    def return_(self, agent, value=None): return "RETURNED"
-    def fail(self, agent): return "FAILED"
-    def throw(self, agent): return "THROWN"
+    def succeed(self, state): return "SUCCEEDED"
+    def return_(self, state, value=None): return "RETURNED"
+    def fail(self, state): return "FAILED"
+    def throw(self, state): return "THROWN"
 
 
 class Result:
@@ -136,8 +146,8 @@ class Result:
         self.succeeded = succeeded
 
 
-class Agent:
-    boot = None
+class Expert:
+    entry = None
     rules = ()
     experts = ()
     predicates = {}
@@ -163,5 +173,5 @@ class Agent:
         return "HALTED"
 
 
-class Deliberator(Agent):
+class Deliberator(Expert):
     pass

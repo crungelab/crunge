@@ -5,6 +5,6 @@ viewer draws on top of them.
 """
 
 from .layout import Point, tidy_tree
-from .model import Node, Phase, Search, Trace, TraceError
+from .model import Node, Phase, Trace, TraceError
 
-__all__ = ["Node", "Phase", "Point", "Search", "Trace", "TraceError", "tidy_tree"]
+__all__ = ["Node", "Phase", "Point", "Trace", "TraceError", "tidy_tree"]

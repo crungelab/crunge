@@ -5,7 +5,15 @@
 class Person
 class Family
 
-# Background knowledge: built once, shared by every agent, never forked.
+predicate family(Family)
+predicate spouse(Person)
+predicate child(Person)
+predicate parent(Person)
+predicate sibling(Person)
+predicate here(bool)
+
+
+# Background knowledge: built once, shared by every expert, never forked.
 frame FamilyTree
 
     Family Smith
@@ -33,51 +41,38 @@ frame FamilyTree
         parent Mary
 
 
-agent SiblingAgent
+# Working memory: who is actually in the room right now.
+context RoomContext
+
+    Person Billy here True
+    Person Suzy here True
+    Person Mary here True
+
+
+expert Siblings
 
     knows FamilyTree
 
-    predicate family(Family)
-    predicate spouse(Person)
-    predicate child(Person)
-    predicate parent(Person)
-    predicate sibling(Person)
-    predicate here(bool)
+    def Setup(start)
+        /findSibling Billy
 
-    def SiblingAgent(/siblingAgent)
+    # One query, two spaces: `parent` comes from the frame, `here` from
+    # working memory, and the rule does not have to say which is which.
+    def SiblingFinder(/findSibling $x)
+        where
+            $x parent $p
+            $y parent $p
+            $y != $x
+            $y here True
+            -->
+            + $x sibling $y
+            || print(f"{$x} and {$y} are siblings, both here")
+            ==>
+            halt
 
-        # Working memory: who is actually in the room right now.
-        context RoomContext
-
-            Person Billy here True
-            Person Suzy here True
-            Person Mary here True
-
-        /siblings context: RoomContext
-
-
-    expert Siblings
-
-        def Siblings(/siblings)
-            /findSibling Billy
-
-        # One query, two spaces: `parent` comes from the frame, `here` from
-        # working memory, and the rule does not have to say which is which.
-        def SiblingFinder(/findSibling $x)
-            where
-                $x parent $p
-                $y parent $p
-                $y != $x
-                $y here True
-                -->
-                + $x sibling $y
-                || print(f"{$x} and {$y} are siblings, both here")
-                ==>
-                halt
-
-        # Restricting to one space is still possible.
-        def Relatives(/relatives $x)
-            where in FamilyTree
-                $x parent $p
-                -->
-                + $x relative $p
+    # Restricting to one space is still possible.
+    def Relatives(/relatives $x)
+        where in FamilyTree
+            $x parent $p
+            -->
+            + $x relative $p

@@ -1,33 +1,26 @@
-agent Trip
+context Start
+    Self location Home
+    @Self location Work
 
-    def Trip(/trip)
-        context Start
-            Self location Home
-            @Self location Work
-        /go context: Start
+expert Trip
 
-    expert Go
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
 
-        def Go(/go)
-            pass
+    def Walk(@Self location $to)
+        cost 10
+        -+ Self location $to
+        + Self tired True
 
-        def Impasse(impasse)
-            where
-                Goal $g status Active
-                -->
-                * $g
-                !==>
-                halt
+    def Drive(@Self location $to)
+        cost 2
+        /park
+        -+ Self location $to
 
-        def Walk(@Self location $to)
-            cost 10
-            -+ Self location $to
-            + Self tired True
-
-        def Drive(@Self location $to)
-            cost 2
-            /park
-            -+ Self location $to
-
-        def Park(/park)
-            cost 1
+    def Park(/park)
+        cost 1

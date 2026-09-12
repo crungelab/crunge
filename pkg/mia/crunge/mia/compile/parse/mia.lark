@@ -10,8 +10,7 @@
 
 start: _NL? stmt*
 
-?stmt: agent_def
-     | expert_def
+?stmt: expert_def
      | class_def
      | predicate_decl
      | knows_decl
@@ -26,7 +25,6 @@ suite: _INDENT stmt+ _DEDENT
 
 // ---------------------------------------------------------------- declarations
 
-agent_def:      "agent" NOUN [bases] _NL suite
 expert_def:     "expert" NOUN [bases] _NL suite
 class_def:      "class" NOUN [bases] _NL
 bases:          "(" NOUN ("," NOUN)* ")"

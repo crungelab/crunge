@@ -18,34 +18,33 @@ def blox():
 # ---------------------------------------------------------------- model
 
 
-def test_searches_and_spawns(blox):
+def test_spaces_and_states(blox):
     _, trace = blox
-    assert trace.header["agent"] == "BloxAgent"
-    assert trace.top.agent == "BloxAgent" and trace.top.root.label == "BloxAgent"
-    [expert] = trace.top.root.spawned
-    assert expert.agent == "BloxAgent.Blox" and expert.spawner is trace.top.root
-    assert expert.root.label == "Blox" and expert.root.proposal.startswith("/blox context:")
-    assert trace.top.root.display_children() == [expert.root]
-    assert expert.expansions == 5 and not expert.exhausted
+    assert trace.header["expert"] == "Blox"
+    space = trace.top
+    assert space.expert == "Blox" and space.spawner is None
+    assert space.root.label == "Blox" and space.root.proposal is None
+    assert space.expansions == 5 and not space.exhausted
+    assert len(trace.spaces) == 1
 
 
 def test_solution_path_and_outcomes(blox):
     _, trace = blox
-    [expert] = trace.top.root.spawned
-    labels = [node.label for node in trace.solution_path(expert)]
+    space = trace.top
+    labels = [node.label for node in trace.solution_path(space)]
     assert labels == ["Blox", "@Block2 onTop Block3", "@Block3 onTop Table1", "@Block2 onTop Block3", "@Block1 onTop Block2"]
 
-    phases = [node.phase() for node in expert.nodes]
+    phases = [node.phase() for node in space.nodes]
     assert phases.count(Phase.SOLUTION) == 1
     assert phases.count(Phase.EXPANDED) == 5
     assert phases.count(Phase.PRUNED) == sum(1 for e in trace.events if e["event"] == "prune")
-    assert expert.solution.cost == 4
+    assert space.solution.cost == 4
 
 
 def test_phase_over_time(blox):
     _, trace = blox
-    [expert] = trace.top.root.spawned
-    node = expert.solution
+    space = trace.top
+    node = space.solution
     assert node.phase(node.created - 1) is None
     assert node.phase(node.created) is Phase.RUNNING
     assert node.phase(node.reached) is Phase.QUEUED
@@ -54,19 +53,17 @@ def test_phase_over_time(blox):
 
 
 def test_context_is_rebuilt_from_changes(blox):
-    host, trace = blox
-    [expert] = trace.top.root.spawned
-    solved = host.solution.agents[0].solution
-    rebuilt = trace.context(expert.solution)
+    solver, trace = blox
+    space = trace.top
+    solved = solver.solution
+    rebuilt = trace.context(space.solution)
     assert set(rebuilt) == {rt.to_mia(c) for c in solved.context}
     assert len(rebuilt) == len(solved.context)
 
 
 def test_counting_context_reaches_five():
     _, trace = record("counting.mia")
-    [fork] = trace.top.root.children
-    [counting] = fork.spawned
-    assert "(/countTo 5) value 5" in trace.context(counting.solution)
+    assert "(/countTo 5) value 5" in trace.context(trace.top.solution)
 
 
 def test_load_from_file(tmp_path):
@@ -76,12 +73,12 @@ def test_load_from_file(tmp_path):
     with as_file(ASSETS.joinpath("blox.mia")) as program:
         assert main(["run", str(program), "--trace", str(out)]) == 0
     trace = Trace.load(out)
-    assert trace.top.agent == "BloxAgent" and len(trace.nodes) == 10  # 2 search roots + 8 forks
+    assert trace.top.expert == "Blox" and len(trace.nodes) == 9  # the root state plus 8 forks
 
 
 def test_bad_traces_are_reported():
-    with pytest.raises(TraceError, match="agent 9"):
-        Trace([{"event": "fork", "agent": 10, "parent": 9, "proposal": "x"}])
+    with pytest.raises(TraceError, match="state 9"):
+        Trace([{"event": "fork", "state": 10, "parent": 9, "proposal": "x"}])
     with pytest.raises(TraceError, match="top-level"):
         Trace([])
 
@@ -144,8 +141,8 @@ def test_layout_of_a_trace(blox):
     width = lambda node: len(node.label) * 0.6
     pos = tidy_tree(trace.top.root, Node.display_children, width, gap=1, level=3)
     assert len(pos) == len(trace.nodes)
-    [expert] = trace.top.root.spawned
-    assert pos[expert.root].y == 3 and pos[expert.solution].y == 15
+    space = trace.top
+    assert pos[space.root].y == 0 and pos[space.solution].y == 12
     assert_tidy(list(trace.nodes.values()), Node.display_children, pos, width, 1)
 
 
@@ -153,12 +150,12 @@ def test_layout_of_a_trace(blox):
 
 
 def test_plan_is_readable_from_a_trace_alone():
-    host, trace = record("mouse.mia")
-    [expert] = trace.top.root.spawned
-    actions = trace.plan(expert.solution)
-    assert actions == [action.text for action in host.plan]
+    solver, trace = record("mouse.mia")
+    space = trace.top
+    actions = trace.plan(space.solution)
+    assert actions == [action.text for action in solver.plan]
 
-    # the top-level agent's plan includes what the expert it spawned decided
+    # the top-level state's plan includes what the expert it spawned decided
     assert trace.plan(trace.top.solution) == actions
 
     # every branch's actions are in the trace; only the solution's are in the plan

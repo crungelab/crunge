@@ -64,13 +64,13 @@ def record_program(source: str, name: str = "<mia>") -> Source:
     """Compile and run a Mia program with tracing, and keep its plan."""
     # Imported here so the viewer's model never depends on the runtime.
     import crunge.mia.runtime as rt
-    from crunge.mia.load import agent_classes, load_source
+    from crunge.mia.load import expert_classes, load_source
 
     module = load_source(source, Path(name).stem + "_mia", name)
-    agents = agent_classes(module)
-    if not agents:
-        raise ValueError(f"{name} defines no agents")
+    experts = expert_classes(module)
+    if not experts:
+        raise ValueError(f"{name} defines no experts")
     sink = rt.ListSink()
-    host = rt.AgentHost(agents[0], tracer=rt.Tracer(sink))
-    host.run()
-    return Source(name, Trace(sink.events), host.plan)
+    solver = rt.ProblemSolver(experts[0], tracer=rt.Tracer(sink))
+    solver.run()
+    return Source(name, Trace(sink.events), solver.plan)

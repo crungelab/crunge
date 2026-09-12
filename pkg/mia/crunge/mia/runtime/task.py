@@ -11,7 +11,7 @@ class Status(Enum):
     SUCCEEDED = auto()
     RETURNED = auto()   # success that leaves the attempted goal in place
     FAILED = auto()
-    THROWN = auto()     # this plan doesn't apply; the agent's branch is dead
+    THROWN = auto()     # this plan doesn't apply; this branch is dead
     SUSPENDED = auto()
     HALTED = auto()     # the problem is solved
 
@@ -41,24 +41,24 @@ class Task:
     def bind(self, message) -> bool:
         return True
 
-    def resume(self, agent, result=None) -> Status:
+    def resume(self, expert, result=None) -> Status:
         raise NotImplementedError
 
-    def succeed(self, agent) -> Status:
+    def succeed(self, expert) -> Status:
         # Finishing a perform goal removes it, as in the C# runtime. Achieve
         # goals stay: they're done when their belief holds, and active again
         # if it stops holding.
         if isinstance(self.message, Attempt) and isinstance(self.message.clause, Perform):
-            agent.post(Retract(self.message.clause))
+            expert.post(Retract(self.message.clause))
         return Status.SUCCEEDED
 
-    def return_(self, agent, value=None) -> Status:
+    def return_(self, expert, value=None) -> Status:
         return Status.RETURNED
 
-    def fail(self, agent) -> Status:
+    def fail(self, expert) -> Status:
         return Status.FAILED
 
-    def throw(self, agent) -> Status:
+    def throw(self, expert) -> Status:
         return Status.THROWN
 
     def __repr__(self):

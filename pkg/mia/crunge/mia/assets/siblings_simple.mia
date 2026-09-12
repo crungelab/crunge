@@ -5,57 +5,51 @@
 class Person
 class Family
 
-agent SiblingAgent
+predicate family(Family)
+predicate spouse(Person)
+predicate child(Person)
+predicate parent(Person)
+predicate sibling(Person)
 
-    predicate family(Family)
-    predicate spouse(Person)
-    predicate child(Person)
-    predicate parent(Person)
-    predicate sibling(Person)
+context FamilyContext
 
-    def SiblingAgent(/siblingAgent)
+    Family Smith
 
-        context FamilyContext
+    Person Mary
+        family Smith
+        spouse John
+        child Billy
+        child Suzy
 
-            Family Smith
+    Person John
+        family Smith
+        spouse Mary
+        child Billy
+        child Suzy
 
-            Person Mary
-                family Smith
-                spouse John
-                child Billy
-                child Suzy
+    Person Billy
+        family Smith
+        parent John
+        parent Mary
 
-            Person John
-                family Smith
-                spouse Mary
-                child Billy
-                child Suzy
-
-            Person Billy
-                family Smith
-                parent John
-                parent Mary
-
-            Person Suzy
-                family Smith
-                parent John
-                parent Mary
-
-        /siblings context: FamilyContext
+    Person Suzy
+        family Smith
+        parent John
+        parent Mary
 
 
-    expert Siblings
+expert Siblings
 
-        def Siblings(/siblings)
-            /findSibling Billy
+    def SetUp(start)
+        /findSibling Billy
 
-        def SiblingFinder(/findSibling $x)
-            where
-                $x parent $p
-                $y parent $p
-                $y != $x
-                -->
-                + $x sibling $y
-                | print(f"{$x} and {$y} are siblings")
-                ==>
-                halt
+    def SiblingFinder(/findSibling $x)
+        where
+            $x parent $p
+            $y parent $p
+            $y != $x
+            -->
+            + $x sibling $y
+            | print(f"{$x} and {$y} are siblings")
+            ==>
+            halt

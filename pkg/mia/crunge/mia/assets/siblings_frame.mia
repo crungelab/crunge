@@ -34,38 +34,32 @@ frame FamilyTree
         parent Mary
 
 
-agent SiblingAgent
+predicate family(Family)
+predicate spouse(Person)
+predicate child(Person)
+predicate parent(Person)
+predicate sibling(Person)
 
-    predicate family(Family)
-    predicate spouse(Person)
-    predicate child(Person)
-    predicate parent(Person)
-    predicate sibling(Person)
+context PeopleContext
 
-    def SiblingAgent(/siblingAgent)
-
-        context PeopleContext
-
-            Person John
-            Person Mary
-            Person Billy
-            Person Suzy
-
-        /siblings context: PeopleContext
+    Person John
+    Person Mary
+    Person Billy
+    Person Suzy
 
 
-    expert Siblings
+expert Siblings
 
-        def Siblings(/siblings)
-            /findSibling Billy
+    def SetUp(start)
+        /findSibling Billy
 
-        def SiblingFinder(/findSibling $x)
-            where in FamilyTree
-                $x parent $p
-                $y parent $p
-                $y != $x
-                -->
-                + $x sibling $y
-                | print(f"{$x} and {$y} are siblings")
-                ==>
-                halt
+    def SiblingFinder(/findSibling $x)
+        where in FamilyTree
+            $x parent $p
+            $y parent $p
+            $y != $x
+            -->
+            + $x sibling $y
+            | print(f"{$x} and {$y} are siblings")
+            ==>
+            halt

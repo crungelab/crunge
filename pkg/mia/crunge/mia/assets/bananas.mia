@@ -9,95 +9,86 @@ class Chest(Thing)
 class Banana(Thing)
 class Key(Thing)
 
-agent BananasAgent
+predicate contains(Thing)
+predicate container(Thing)
+predicate locked(bool)
 
-    predicate contains(Thing)
-    predicate container(Thing)
-    predicate locked(bool)
+context BananasContext
 
-    def BananasAgent(/bananasAgent)
+    Place Place1
+    Place Place2
+    Place Place3
 
-        context BananasContext
+    Monkey Monkey1 container Place1
 
-            Place Place1
-            Place Place2
-            Place Place3
+    Chest Chest1
+        container Place2
+        locked True
 
-            Monkey Monkey1 container Place1
+    Banana Banana1 container Chest1
 
-            Chest Chest1
-                container Place2
-                locked True
+    Key Key1 container Place3
 
-            Banana Banana1 container Chest1
-
-            Key Key1 container Place3
-
-            @Monkey1 contains Banana1
-
-        /bananas context: BananasContext
+    @Monkey1 contains Banana1
 
 
-    expert Bananas
+expert Bananas
 
-        def Bananas(/bananas)
-            pass
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
 
-        def Impasse(impasse)
-            where
-                Goal $g status Active
-                -->
-                * $g
-                !==>
-                halt
+    # Get an object: unlock its container and travel to it first.
+    def Get(@$a contains $o)
+        where
+            $o container $c
+            $c locked True
+            -->
+            /unlock $c by: $a
+            ==>
+            return
 
-        # Get an object: unlock its container and travel to it first.
-        def Get(@$a contains $o)
-            where
-                $o container $c
-                $c locked True
-                -->
-                /unlock $c by: $a
-                ==>
-                return
+        where
+            $a container Place $here
+            $o container Place $there
+            $here != $there
+            -->
+            /goto $a to: $there
+            ==>
+            return
 
-            where
-                $a container Place $here
-                $o container Place $there
-                $here != $there
-                -->
-                /goto $a to: $there
-                ==>
-                return
+        where
+            $o container $c
+            -->
+            - $o container $c
 
-            where
-                $o container $c
-                -->
-                - $o container $c
+        -+ $o container $a
+        + $a contains $o
 
-            -+ $o container $a
-            + $a contains $o
+    # Unlock a container: fetch a key and travel to the container first.
+    def Unlock(/unlock $o by: $a)
+        where
+            Key $k container $_
+            not $a contains $k
+            -->
+            @$a contains $k
+            ==>
+            return
 
-        # Unlock a container: fetch a key and travel to the container first.
-        def Unlock(/unlock $o by: $a)
-            where
-                Key $k container $_
-                not $a contains $k
-                -->
-                @$a contains $k
-                ==>
-                return
+        where
+            $a container Place $here
+            $o container Place $there
+            $here != $there
+            -->
+            /goto $a to: $there
+            ==>
+            return
 
-            where
-                $a container Place $here
-                $o container Place $there
-                $here != $there
-                -->
-                /goto $a to: $there
-                ==>
-                return
+        -+ $o locked False
 
-            -+ $o locked False
-
-        def Goto(/goto $a to: $p)
-            -+ $a container $p
+    def Goto(/goto $a to: $p)
+        -+ $a container $p

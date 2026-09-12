@@ -1,9 +1,9 @@
 """Plans: the side effects along a solution, ready to be replayed.
 
 Rules record `|` statements as effects instead of performing them, because a
-branch that loses the search should leave no trace outside the agent. When an
-agency returns a solution, its effects are the plan: the actions of the route
-that was actually chosen, in the order the rules recorded them.
+branch that loses the search should leave no trace outside the expert. When a
+problem space returns a solution, its effects are the plan: the actions of the
+route that was chosen, in the order the rules recorded them.
 """
 
 from __future__ import annotations
@@ -38,13 +38,13 @@ class Action:
 
 
 class Plan:
-    """The effects of one solved agent, in order."""
+    """The effects of one solved state, in order."""
 
-    __slots__ = ("agent", "actions")
+    __slots__ = ("state", "actions")
 
-    def __init__(self, agent):
-        self.agent = agent
-        self.actions = [Action(function, args) for function, args in agent.effects]
+    def __init__(self, state):
+        self.state = state
+        self.actions = [Action(function, args) for function, args in state.effects]
 
     def run(self) -> None:
         for action in self.actions:

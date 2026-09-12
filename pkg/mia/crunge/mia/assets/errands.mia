@@ -1,0 +1,67 @@
+#
+# Errands: two experts, one world
+#
+# Both experts solve the same problem from the same starting context, and
+# `mia run errands.mia --expert Driver` picks between them. Each has a rule
+# triggered on `start`, which the solver raises once the world is in place.
+#
+
+class Place
+
+predicate at(Place)
+predicate road(Place)
+
+context World
+
+    Place Home
+    Place Market road Home
+    Home road Market
+
+    Courier at Home
+    @Courier at Market
+
+
+expert Walker
+
+    def Setup(start)
+        | print("walker ready")
+
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
+
+    def Walk(@$who at $there)
+        where
+            $who at $here
+            $here road $there
+            -->
+            cost 5
+            -+ $who at $there
+            || print(f"walk to {$there}")
+
+
+expert Driver
+
+    def Setup(start)
+        | print("driver ready")
+
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
+
+    def Drive(@$who at $there)
+        where
+            $who at $here
+            $here road $there
+            -->
+            cost 1
+            -+ $who at $there
+            || print(f"drive to {$there}")

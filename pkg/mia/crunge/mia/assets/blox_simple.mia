@@ -5,94 +5,84 @@
 class Table
 class Block
 
-agent BloxAgent
+predicate isClear(bool)
 
-    predicate isClear(bool)
+context BloxContext
 
-    def BloxAgent(/bloxAgent)
+    Table Table1 isClear True
 
-        context BloxContext
+    Block Block1 onTop Table1
 
-            Table Table1 isClear True
+    Block Block2 onTop Block1
 
-            Block Block1 onTop Table1
+    Block Block3
+        onTop Block2
+        isClear True
 
-            Block Block2 onTop Block1
+    /stack Block1 on: Block2
 
-            Block Block3
-                onTop Block2
-                isClear True
+    /stack Block2 on: Block3
 
-            /stack Block1 on: Block2
+expert BloxExpert
 
-            /stack Block2 on: Block3
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
 
-        /blox context: BloxContext
+    def GoalElab(+ Goal $g)
+        + $g status Active
 
+    def NotGoalElab(- Goal $g)
+        - $g status Active
 
-    expert Blox
+    def Stack(/stack $x on: $y -> $g)
+        where
+            not $x isClear True
+            -->
+            /clear $x
+            ==>
+            return
 
-        def Blox(/blox)
-            pass
+        where
+            not $y isClear True
+            -->
+            /clear $y
+            ==>
+            return
 
-        def Impasse(impasse)
-            where
-                Goal $g status Active
-                -->
-                * $g
-                !==>
-                halt
+        where
+            $x onTop $z
+            -->
+            - $x onTop $z
 
-        def GoalElab(+ Goal $g)
-            + $g status Active
+        + $x onTop $y
 
-        def NotGoalElab(- Goal $g)
-            - $g status Active
+        - $g
 
-        def Stack(/stack $x on: $y -> $g)
-            where
-                not $x isClear True
-                -->
-                /clear $x
-                ==>
-                return
+    def Clear(/clear $x)
+        where
+            $x beneath $y
+            $z isClear True
+            $z != $x
+            $z != $y
+            -->
+            * /stack $y on: $z
 
-            where
-                not $y isClear True
-                -->
-                /clear $y
-                ==>
-                return
+    def NotOnTopElab(- $x onTop $y)
+        - $y beneath $x
+        + $y isClear True
 
-            where
-                $x onTop $z
-                -->
-                - $x onTop $z
+    def OntopElab(+ $x onTop $y)
+        where
+            Block $y isClear True
+            -->
+            - $y isClear True
 
-            + $x onTop $y
-
-            - $g
-
-        def Clear(/clear $x)
-            where
-                $x beneath $y
-                $z isClear True
-                $z != $x
-                $z != $y
-                -->
-                * /stack $y on: $z
-
-        def NotOnTopElab(- $x onTop $y)
-            - $y beneath $x
-            + $y isClear True
-
-        def OntopElab(+ $x onTop $y)
-            where
-                Block $y isClear True
-                -->
-                - $y isClear True
-
-            where
-                $x onTop $y
-                -->
-                + $y beneath $x
+        where
+            $x onTop $y
+            -->
+            + $y beneath $x

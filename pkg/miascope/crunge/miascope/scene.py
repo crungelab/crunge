@@ -96,7 +96,7 @@ class Scene:
         )
 
     def _solution_nodes(self) -> set[Node]:
-        """Solution paths, following spawned searches only from agents already on a path."""
+        """Solution paths, following spawned searches only from experts already on a path."""
         nodes: set[Node] = set()
         pending = [self.trace.top]
         while pending:

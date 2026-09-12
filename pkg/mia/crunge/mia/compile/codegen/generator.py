@@ -4,7 +4,8 @@ The generated module imports the runtime as `rt` and defines:
 
 * one class per declared type, subclassing `rt.Entity` unless given bases
 * one module-level term per noun and verb (`t_Table1`, `t_onTop`)
-* one `rt.Agent` subclass per agent or expert, with experts nested
+* one builder function per module-level context and frame
+* one `rt.Expert` subclass per expert, with nested experts inside
 * one `rt.Task` subclass per rule, compiled to a resumable state machine
 
 Generated names can't collide with each other or with Python: terms are
@@ -27,7 +28,7 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 
 from crunge.mia.compile.ast.nodes import (
-    AgentDef, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def, ExpertDef, Fail,
+    ClassDef, Clause, Code, Compare, ContextDef, Cost, Def, ExpertDef, Fail,
     Filter, FrameDef, Goal, GoalKind, Halt, Import, KnowsDef, Literal, Match, Message, Module, Name,
     Node, NoMatch, Outcome, Pass, Performative, PredicateDef, Return, Snippet,
     Select, Succeed, Throw, Var, Where, walk,
@@ -41,7 +42,7 @@ class MiaCompileError(Exception):
 
 PY_TYPES = {"bool", "int", "float", "str"}
 CLAUSE_TYPES = {"Clause", "Belief", "Goal", "Perform", "Achieve", "Query", "Maintain"}
-RUNTIME_TYPES = CLAUSE_TYPES | {"Entity", "Agent", "Deliberator"}
+RUNTIME_TYPES = CLAUSE_TYPES | {"Entity", "Expert", "Deliberator"}
 
 MESSAGE_CLASSES = {
     None: "rt.Attempt",
@@ -55,6 +56,7 @@ GOAL_CLASSES = {
     GoalKind.QUERY: "rt.Query",
 }
 TERMINATORS = (Return, Succeed, Fail, Throw, Halt)
+SIGNALS = ("start", "impasse")   # triggers the runtime raises, not clauses
 
 _DOLLAR = re.compile(r"\$([A-Za-z_]\w*)")
 
@@ -120,11 +122,12 @@ class _Generator:
         self.runtime = runtime
         self.w = _Writer()
         self.types: dict[str, ClassDef] = {}
-        self.agents: set[str] = set()
+        self.experts: set[str] = set()
         self.nouns: dict[str, str | None] = {}
         self.verbs: dict[str, None] = {}
         self.frames: set[str] = set()
         self.known: list[str] = []
+        self.predicates: dict[str, PredicateDef] = {}   # declared at module level
         self.matches = 0
         self.loops = 0
         self.effects: list[str] = []   # module-level functions for `|` statements
@@ -133,6 +136,7 @@ class _Generator:
 
     def module(self, m: Module) -> str:
         self.collect(m)
+        self.predicates = {p.name: p for p in m.body if isinstance(p, PredicateDef)}
         w = self.w
         w(f"# Generated from {self.filename} by the Mia compiler. Do not edit.")
         w(f"import {self.runtime} as rt")
@@ -155,20 +159,20 @@ class _Generator:
             w(f't_{name} = rt.verb("{name}")')
 
         for s in m.body:
-            match s:
-                case FrameDef():
-                    w()
-                    w()
-                    self.frame(s)
-                case _:
-                    pass
+            if isinstance(s, (FrameDef, ContextDef)):
+                w()
+                w()
+                self.frame(s)
+        starting = [s.name for s in m.body if isinstance(s, ContextDef)]
+        if len(starting) > 1:
+            raise MiaCompileError(m, "a program can have only one starting context")
         for s in m.body:
             match s:
-                case AgentDef():
+                case ExpertDef():
                     w()
                     w()
-                    self.agent(s)
-                case Import() | ClassDef() | FrameDef():
+                    self.expert(s, starting=starting[0] if starting else None)
+                case Import() | ClassDef() | FrameDef() | ContextDef() | PredicateDef():
                     pass
                 case _:
                     raise MiaCompileError(s, f"{type(s).__name__} is not allowed at module level")
@@ -178,15 +182,21 @@ class _Generator:
             w(text)
         return w.text()
 
-    def frame(self, f: FrameDef):
-        """A frame is background knowledge: built once, shared, never forked."""
+    def frame(self, f):
+        """Build a module-level context once.
+
+        A frame is background knowledge, shared and never forked. A starting
+        context is the first expert's working memory, so it is rebuilt for each
+        run rather than shared.
+        """
         w = self.w
         scope = _Scope()
         with w.block(f"def _build_{f.name}():"):
             w(self.comment(f))
             self.context(ContextDef(f.name, f.body, line=f.line), scope, name="_k")
             w("return _k")
-        w(f"{self.frame_var(f.name)} = _build_{f.name}()")
+        if isinstance(f, FrameDef):
+            w(f"{self.frame_var(f.name)} = _build_{f.name}()")
 
     @staticmethod
     def frame_var(name: str) -> str:
@@ -200,13 +210,15 @@ class _Generator:
                     if name in self.types or name in RUNTIME_TYPES:
                         raise MiaCompileError(n, f"type {name} is already defined")
                     self.types[name] = n
-                case AgentDef(name=name):
-                    self.agents.add(name)
+                case ExpertDef(name=name):
+                    if name in self.types:
+                        raise MiaCompileError(n, f"{name} is already a class; experts and types share a namespace")
+                    self.experts.add(name)
                 case ContextDef(name=name) | FrameDef(name=name):
                     contexts.add(name)
                     if isinstance(n, FrameDef):
                         self.frames.add(name)
-                case Clause(subj=None, verb="impasse", objs=[]):
+                case Clause(subj=None, verb=verb, objs=[]) if verb in SIGNALS:
                     pass
                 case Clause(verb=verb):
                     self.verbs.setdefault(verb)
@@ -224,7 +236,7 @@ class _Generator:
             self.nouns[n.name] = n.type
 
     def type_name(self, node: Node, name: str) -> str:
-        if name in self.types or name in self.agents:
+        if name in self.types or name in self.experts:
             return name
         if name in RUNTIME_TYPES:
             return f"rt.{name}"
@@ -239,13 +251,15 @@ class _Generator:
             return f"# {where}  {self.source_lines[node.line - 1].strip()}"
         return f"# {where}"
 
-    # ------------------------------------------------------------ agents
+    # ------------------------------------------------------------ experts
 
-    def agent(self, a: AgentDef):
+    def expert(self, a: ExpertDef, starting: str | None = None):
         w = self.w
-        with w.block(f"class {a.name}({self.bases(a, a.bases, 'rt.Agent')}):"):
+        with w.block(f"class {a.name}({self.bases(a, a.bases, 'rt.Expert')}):"):
             w(self.comment(a))
-            # An expert inherits what the agent around it knows, and may add more.
+            if starting is not None:
+                w(f"starting_context = staticmethod(_build_{starting})")
+            # A nested expert inherits what the one around it knows, and may add more.
             known = list(self.known)
             for k in (s for s in a.body if isinstance(s, KnowsDef)):
                 if k.name not in self.frames:
@@ -255,38 +269,41 @@ class _Generator:
             if known:
                 w(f"frames = {_tuple([self.frame_var(name) for name in known])}")
             self.known = known
-            predicates = [s for s in a.body if isinstance(s, PredicateDef)]
+            predicates = dict(self.predicates)
+            for p in a.body:
+                if isinstance(p, PredicateDef):
+                    predicates[p.name] = p
             if predicates:
-                items = ", ".join(f'"{p.name}": {self.predicate_type(p)}' for p in predicates)
+                items = ", ".join(f'"{name}": {self.predicate_type(p)}' for name, p in predicates.items())
                 w(f"predicates = {{{items}}}")
 
-            boot, rules, experts, names = None, [], [], set()
+            entry, rules, experts, names = None, [], [], set()
             for s in a.body:
                 match s:
                     case PredicateDef() | ClassDef() | KnowsDef():
                         continue
                     case FrameDef():
-                        raise MiaCompileError(s, "a frame belongs at module level, not inside an agent")
-                    case Def() | AgentDef():
+                        raise MiaCompileError(s, "a frame belongs at module level, not inside an expert")
+                    case Def() | ExpertDef():
                         if s.name in names:
                             raise MiaCompileError(s, f"{s.name} is already defined in {a.name}")
                         names.add(s.name)
                         w()
-                        if isinstance(s, AgentDef):
+                        if isinstance(s, ExpertDef):
                             outer = self.known
-                            self.agent(s)
+                            self.expert(s)
                             self.known = outer
                             experts.append(s.name)
                         else:
                             self.rule(s)
                             if s.name == a.name:
-                                boot = s.name
+                                entry = s.name
                             else:
                                 rules.append(s.name)
                     case _:
-                        raise MiaCompileError(s, f"{type(s).__name__} is not allowed in an agent body")
+                        raise MiaCompileError(s, f"{type(s).__name__} is not allowed in an expert body")
             w()
-            w(f"boot = {boot}")
+            w(f"entry = {entry}")
             w(f"rules = {_tuple(rules)}")
             w(f"experts = {_tuple(experts)}")
 
@@ -320,8 +337,10 @@ class _Generator:
             return "None", None
         kind = MESSAGE_CLASSES[t.performative]
         match t.content:
-            case Clause(subj=None, verb="impasse", objs=[], slots=[]) if t.performative is None:
-                return "rt.IMPASSE", None
+            case Clause(subj=None, verb=verb, objs=[], slots=[]) if (
+                verb in SIGNALS and t.performative is None
+            ):
+                return f"rt.{verb.upper()}", None
             case Clause(subj=None, verb=verb):
                 raise MiaCompileError(t, f"'{verb}' needs a subject; write /{verb} for a perform goal")
             case Clause() as c:
@@ -387,9 +406,9 @@ class _Generator:
             states[-1].append(s)
             if self.suspends(s):
                 states.append([])
-        with w.block("def resume(self, agent, result=None):"):
+        with w.block("def resume(self, expert, result=None):"):
             if any(isinstance(n, Where) and n.frame is None for n in walk(d)):
-                w("ctx = agent.view" if self.known else "ctx = agent.context")
+                w("ctx = expert.view" if self.known else "ctx = expert.context")
             if len(states) == 1:
                 self.state(states[0], 0, scope, last=True)
                 return
@@ -406,11 +425,11 @@ class _Generator:
         w = self.w
         if index > 0:
             w("if not result.succeeded:")
-            w("    return self.fail(agent)")
+            w("    return self.fail(expert)")
         for s in stmts:
             self.stmt(s, scope, "body", next_pc=index + 1)
         if last and not (stmts and isinstance(stmts[-1], TERMINATORS)):
-            w("return self.succeed(agent)")
+            w("return self.succeed(expert)")
 
     # ------------------------------------------------------------ statements
 
@@ -426,22 +445,22 @@ class _Generator:
             case Message():
                 self.message(s, scope, mode, next_pc)
             case Return(value=None):
-                w("return self.return_(agent)")
+                w("return self.return_(expert)")
             case Return(value=value):
-                w(f"return self.return_(agent, {self.term(value, scope)})")
+                w(f"return self.return_(expert, {self.term(value, scope)})")
             case Succeed():
-                w("return self.succeed(agent)")
+                w("return self.succeed(expert)")
             case Fail():
-                w("return self.fail(agent)")
+                w("return self.fail(expert)")
             case Throw():
-                w("return self.throw(agent)")
+                w("return self.throw(expert)")
             case Halt():
-                w("return agent.halt()")
+                w("return expert.halt()")
             case Pass():
                 if mode != "body":  # a rule body always ends in a return
                     w("pass")
             case Cost(value=value):
-                w(f"agent.add_cost({self.term(value, scope)})")
+                w(f"expert.add_cost({self.term(value, scope)})")
             case Snippet(text=text, deferred=True):
                 self.action(s, text, scope)
             case Snippet(text=text):
@@ -471,7 +490,7 @@ class _Generator:
             f"_effect_{index}.names = {tuple(names)!r}"
         )
         args = "".join(f", {self.term(Var(name, line=node.line), scope)}" for name in names)
-        self.w(f"agent.effect(_effect_{index}{args})")
+        self.w(f"expert.effect(_effect_{index}{args})")
 
     def block(self, stmts: list, scope: _Scope):
         for s in stmts:
@@ -482,16 +501,16 @@ class _Generator:
         if s.paragraph:
             if s.propose or s.performative is not Performative.ASSERT:
                 raise MiaCompileError(s, "only an assert (+) can have a paragraph in a rule body")
-            self.paragraph(s, scope, lambda c: w(f"agent.post(rt.Assert({c}))"))
+            self.paragraph(s, scope, lambda c: w(f"expert.post(rt.Assert({c}))"))
             return
 
         msg = f"{MESSAGE_CLASSES[s.performative]}({self.content(s.content, scope)})"
         if s.propose:
-            call = f"agent.propose({msg}"
+            call = f"expert.propose({msg}"
         elif s.performative is None:
-            call = f"agent.post({msg}"
+            call = f"expert.post({msg}"
         else:
-            w(f"agent.post({msg})")
+            w(f"expert.post({msg})")
             return
 
         if mode == "body":
@@ -572,7 +591,7 @@ class _Generator:
         w = self.w
         if s.frame is not None and s.frame not in self.frames:
             raise MiaCompileError(s, f"undeclared frame {s.frame}")
-        source = self.frame_var(s.frame) if s.frame else ("agent.view" if self.known else "agent.context")
+        source = self.frame_var(s.frame) if s.frame else ("expert.view" if self.known else "expert.context")
         name = f"_select{self.matches}"
         self.matches += 1
 
@@ -594,7 +613,7 @@ class _Generator:
             if s.otherwise:
                 self.block(s.otherwise, scope)
             else:
-                w("return self.fail(agent)")
+                w("return self.fail(expert)")
         if bound:
             targets = ", ".join(f"self.v_{n}" for n in bound)
             w(f"{targets}{',' if len(bound) == 1 else ''} = _found")

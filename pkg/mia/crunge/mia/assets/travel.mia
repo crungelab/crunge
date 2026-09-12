@@ -5,100 +5,96 @@
 class Place
 class Taxi
 
-agent TravelAgent
 
-    predicate distanceTo(Place)
-    predicate distance(float)
-    predicate location(Place)
-    predicate cash(float)
-
-    def TravelAgent(/travelAgent)
-
-        context TravelContext
-
-            Taxi Taxi1
-
-            Place Home1 distanceTo Restaurant1 distance: 8
-
-            Place Restaurant1
-
-            Self
-                location Home1
-                cash 20.0
-
-            /travelTo Restaurant1
-
-        /travel context: TravelContext
+predicate distanceTo(Place)
+predicate distance(float)
+predicate location(Place)
+predicate cash(float)
 
 
-    expert Travel
+context TravelContext
 
-        def Travel(/travel)
-            pass
+    Taxi Taxi1
 
-        def Impasse(impasse)
-            where
-                Goal $g status Active
-                -->
-                * $g
-                !==>
-                halt
+    Place Home1 distanceTo Restaurant1 distance: 8
 
-        # Two ways to get there. Each plan checks whether it applies and
-        # throws if it does not, so the branch dies instead of the agent.
-        def TravelByFoot(/travelTo $to)
-            select
-                Self location $from
-                $from distanceTo $to distance: $d
-                {$d <= 2}
-                !==>
-                throw
+    Place Restaurant1
 
-            cost $d
-            /walkTo $to
+    Self
+        location Home1
+        cash 20.0
 
-        # `select` keeps its bindings for the whole rule, so the trip below can
-        # run as a sequence: each step waits for the one before it.
-        def TravelByTaxi(/travelTo $to)
-            select
-                Self location $from
-                $from distanceTo $to distance: $d
-                Self cash $cash
-                {$cash >= 1.5 + 0.5 * $d}
-                !==>
-                throw
+    /travelTo Restaurant1
 
-            cost {1.5 + 0.5 * $d}
-            /callTaxi $from
-            /ride from: $from to: $to
-            /payDriver from: $from to: $to
 
-        def Walk(/walkTo $to)
+expert Travel
+
+    def Travel(/travel)
+        pass
+
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
+
+    # Two ways to get there. Each plan checks whether it applies and
+    # throws if it does not, so the branch dies instead of the agent.
+    def TravelByFoot(/travelTo $to)
+        select
+            Self location $from
+            $from distanceTo $to distance: $d
+            {$d <= 2}
+            !==>
+            throw
+
+        cost $d
+        /walkTo $to
+
+    # `select` keeps its bindings for the whole rule, so the trip below can
+    # run as a sequence: each step waits for the one before it.
+    def TravelByTaxi(/travelTo $to)
+        select
+            Self location $from
+            $from distanceTo $to distance: $d
+            Self cash $cash
+            {$cash >= 1.5 + 0.5 * $d}
+            !==>
+            throw
+
+        cost {1.5 + 0.5 * $d}
+        /callTaxi $from
+        /ride from: $from to: $to
+        /payDriver from: $from to: $to
+
+    def Walk(/walkTo $to)
+        -+ Self location $to
+        || print(f"walk to {$to}")
+
+    def CallTaxi(/callTaxi $where)
+        -+ Taxi1 location $where
+        || print(f"call a taxi to {$where}")
+
+    def Ride(/ride from: $from to: $to)
+        where
+            Taxi1 location $from
+            Self location $from
+            -->
+            -+ Taxi1 location $to
             -+ Self location $to
-            || print(f"walk to {$to}")
+            || print(f"ride from {$from} to {$to}")
+            !==>
+            throw
 
-        def CallTaxi(/callTaxi $where)
-            -+ Taxi1 location $where
-            || print(f"call a taxi to {$where}")
-
-        def Ride(/ride from: $from to: $to)
-            where
-                Taxi1 location $from
-                Self location $from
-                -->
-                -+ Taxi1 location $to
-                -+ Self location $to
-                || print(f"ride from {$from} to {$to}")
-                !==>
-                throw
-
-        def PayDriver(/payDriver from: $from to: $to)
-            where
-                $from distanceTo $to distance: $d
-                Self cash $cash
-                {$cash >= 1.5 + 0.5 * $d}
-                -->
-                -+ Self cash {$cash - (1.5 + 0.5 * $d)}
-                || print(f"pay the driver {1.5 + 0.5 * $d:.2f}")
-                !==>
-                throw
+    def PayDriver(/payDriver from: $from to: $to)
+        where
+            $from distanceTo $to distance: $d
+            Self cash $cash
+            {$cash >= 1.5 + 0.5 * $d}
+            -->
+            -+ Self cash {$cash - (1.5 + 0.5 * $d)}
+            || print(f"pay the driver {1.5 + 0.5 * $d:.2f}")
+            !==>
+            throw

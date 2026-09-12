@@ -15,8 +15,8 @@ def measure(text):
 
 @pytest.fixture(scope="module")
 def blox():
-    host, trace = record("blox.mia")
-    return host, trace, Scene(trace, measure)
+    solver, trace = record("blox.mia")
+    return solver, trace, Scene(trace, measure)
 
 
 # ---------------------------------------------------------------- camera
@@ -56,23 +56,23 @@ def test_scene_boxes_edges_and_solution(blox):
     _, trace, scene = blox
     assert set(scene.boxes) == set(trace.nodes.values())
     assert len(scene.edges) == len(trace.nodes) - 1
-    assert sum(e.spawn for e in scene.edges) == 1
+    assert not any(e.spawn for e in scene.edges)   # one expert, so no sub-space
 
-    [expert] = trace.top.root.spawned
-    assert set(trace.solution_path(expert)) <= scene.solution
-    assert trace.top.root in scene.solution
+    space = trace.top
+    assert set(trace.solution_path(space)) <= scene.solution
+    assert space.root in scene.solution
     solution_edges = [e for e in scene.edges if e.solution]
-    assert len(solution_edges) == len(trace.solution_path(expert))  # the spawn edge plus 4 commits
+    assert len(solution_edges) == len(trace.solution_path(space)) - 1   # 4 commits
 
-    box = scene.boxes[expert.root]
+    box = scene.boxes[space.root]
     assert box.right - box.left == measure("Blox") + 2 * scene.padding
-    edge = next(e for e in scene.edges if e.child is expert.root)
-    assert (edge.x1, edge.y1) == ((box.left + box.right) / 2, box.top)
+    edge = next(e for e in scene.edges if e.parent is space.root)
+    assert (edge.x0, edge.y0) == ((box.left + box.right) / 2, box.bottom)
 
 
 def test_scene_visibility_follows_time(blox):
     _, trace, scene = blox
-    [expert] = trace.top.root.spawned
+    expert = trace.top
     solution = expert.solution
     before = solution.created - 1
     assert solution not in {b.node for b, _ in scene.visible(before)}
@@ -117,15 +117,15 @@ def test_every_event_has_a_description(blox):
     _, trace, _ = blox
     texts = [describe(e) for e in trace.events]
     assert all(texts)
-    assert any(t.startswith("fork agent") and "@Block1 onTop Block2" in t for t in texts)
+    assert any(t.startswith("fork state") and "@Block1 onTop Block2" in t for t in texts)
 
 
 # ---------------------------------------------------------------- inspector
 
 
 def test_report_marks_changes(blox):
-    host, trace, _ = blox
-    [expert] = trace.top.root.spawned
+    solver, trace, _ = blox
+    expert = trace.top
 
     root = report(trace, expert.root)
     assert {row.change for row in root.context} == {"kept"}

@@ -28,8 +28,8 @@ def report(trace: Trace, node: Node, t: int | None = None) -> Report:
     phase = node.phase(t)
     state = node.state if node.reached is not None and (t is None or node.reached <= t) else None
     fields = [
-        ("agent", str(node.id)),
-        ("search", node.search.agent if node.search else "?"),
+        ("state", str(node.id)),
+        ("expert", node.space.expert if node.space else "?"),
         ("phase", phase.value if phase else "not created yet"),
         ("proposal", node.proposal or "-"),
     ]

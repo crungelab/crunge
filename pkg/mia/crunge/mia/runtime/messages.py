@@ -2,6 +2,7 @@
 
 from .terms import Sentinel
 
+START = Sentinel("START")
 IMPASSE = Sentinel("IMPASSE")
 
 

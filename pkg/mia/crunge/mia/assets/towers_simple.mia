@@ -6,125 +6,118 @@ class Thing
 class Peg(Thing)
 class Disc(Thing)
 
-agent TowersAgent
+predicate onTop(Thing)
+predicate beneath(Thing)
+predicate at(Peg)
+predicate size(int)
+predicate clear(bool)
 
-    predicate onTop(Thing)
-    predicate beneath(Thing)
-    predicate at(Peg)
-    predicate size(int)
-    predicate clear(bool)
+context TowersContext
 
-    def TowersAgent(/towersAgent)
+    Peg Peg1
+        at Peg1
+        size 4
 
-        context TowersContext
+    Peg Peg2
+        at Peg2
+        size 4
+        clear True
 
-            Peg Peg1
-                at Peg1
-                size 4
+    Peg Peg3
+        at Peg3
+        size 4
+        clear True
 
-            Peg Peg2
-                at Peg2
-                size 4
-                clear True
+    Disc Disc1
+        at Peg1
+        onTop Disc2
+        size 1
+        clear True
 
-            Peg Peg3
-                at Peg3
-                size 4
-                clear True
+    Disc Disc2
+        at Peg1
+        onTop Disc3
+        size 2
 
-            Disc Disc1
-                at Peg1
-                onTop Disc2
-                size 1
-                clear True
+    Disc Disc3
+        at Peg1
+        onTop Peg1
+        size 3
 
-            Disc Disc2
-                at Peg1
-                onTop Disc3
-                size 2
+    @Disc3 onTop Peg3
+    @Disc2 onTop Disc3
+    @Disc1 onTop Disc2
 
-            Disc Disc3
-                at Peg1
-                onTop Peg1
-                size 3
+expert Towers
 
-            @Disc3 onTop Peg3
-            @Disc2 onTop Disc3
-            @Disc1 onTop Disc2
+    def Towers(/towers)
+        pass
 
-        /towers context: TowersContext
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
 
+    # Move a disc onto a target: clear both, then stack.
+    def Stack(@$x onTop $y)
+        where
+            not $x clear True
+            -->
+            /clear $x
+            ==>
+            return
 
-    expert Towers
+        where
+            not $y clear True
+            -->
+            /clear $y
+            ==>
+            return
 
-        def Towers(/towers)
-            pass
+        where
+            $x onTop $z
+            -->
+            - $x onTop $z
 
-        def Impasse(impasse)
-            where
-                Goal $g status Active
-                -->
-                * $g
-                !==>
-                halt
+        where
+            $x at $p1
+            $y at $p2
+            -->
+            - $x at $p1
+            + $x at $p2
 
-        # Move a disc onto a target: clear both, then stack.
-        def Stack(@$x onTop $y)
-            where
-                not $x clear True
-                -->
-                /clear $x
-                ==>
-                return
+        + $x onTop $y
 
-            where
-                not $y clear True
-                -->
-                /clear $y
-                ==>
-                return
+    # Clearing means moving whatever sits on top of it somewhere smaller-free.
+    def Clear(/clear $x)
+        where
+            $x beneath $y
+            $x at $p1
+            $z clear True
+            $z at $p2
+            $p1 != $p2
+            $z != $x
+            $z != $y
+            $y size $s1
+            $z size $s2
+            {$s1 < $s2}
+            -->
+            * @$y onTop $z
 
-            where
-                $x onTop $z
-                -->
-                - $x onTop $z
+    def NotOnTopElab(- $x onTop $y)
+        - $y beneath $x
+        + $y clear True
 
-            where
-                $x at $p1
-                $y at $p2
-                -->
-                - $x at $p1
-                + $x at $p2
+    def OnTopElab(+ $x onTop $y)
+        where
+            $y clear True
+            -->
+            - $y clear True
 
-            + $x onTop $y
-
-        # Clearing means moving whatever sits on top of it somewhere smaller-free.
-        def Clear(/clear $x)
-            where
-                $x beneath $y
-                $x at $p1
-                $z clear True
-                $z at $p2
-                $p1 != $p2
-                $z != $x
-                $z != $y
-                $y size $s1
-                $z size $s2
-                {$s1 < $s2}
-                -->
-                * @$y onTop $z
-
-        def NotOnTopElab(- $x onTop $y)
-            - $y beneath $x
-            + $y clear True
-
-        def OnTopElab(+ $x onTop $y)
-            where
-                $y clear True
-                -->
-                - $y clear True
-
-            where
-                $x onTop $y
-                -->
-                + $y beneath $x
+        where
+            $x onTop $y
+            -->
+            + $y beneath $x

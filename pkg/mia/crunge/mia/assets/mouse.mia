@@ -47,67 +47,58 @@ frame Maze
         adjacent Loft
 
 
-agent MouseAgent
 
+predicate adjacent(Place)
+predicate coordX(int)
+predicate coordY(int)
+predicate at(Place)
+predicate vacant(bool)
+
+context MazeContext
+
+    Mouse Squeak at Start
+
+    Hall vacant True
+    Stair vacant True
+    Attic vacant True
+    Loft vacant True
+    Pantry vacant True
+
+    @Squeak at Pantry
+
+
+expert MouseExpert
     knows Maze
 
-    predicate adjacent(Place)
-    predicate coordX(int)
-    predicate coordY(int)
-    predicate at(Place)
-    predicate vacant(bool)
+    def Impasse(impasse)
+        where
+            Goal $g status Active
+            -->
+            * $g
+            !==>
+            halt
 
-    def MouseAgent(/mouseAgent)
+    # Anywhere vacant next door is worth trying.
+    def Look(Achieve $g)
+        where
+            Mouse $m at $here
+            $here adjacent $there
+            $there vacant True
+            -->
+            * /moveTo $m to: $there
+        return
 
-        context MazeContext
-
-            Mouse Squeak at Start
-
-            Hall vacant True
-            Stair vacant True
-            Attic vacant True
-            Loft vacant True
-            Pantry vacant True
-
-            @Squeak at Pantry
-
-        /mouse context: MazeContext
-
-
-    expert Mouse
-
-        def Mouse(/mouse)
-            pass
-
-        def Impasse(impasse)
-            where
-                Goal $g status Active
-                -->
-                * $g
-                !==>
-                halt
-
-        # Anywhere vacant next door is worth trying.
-        def Look(Achieve $g)
-            where
-                Mouse $m at $here
-                $here adjacent $there
-                $there vacant True
-                -->
-                * /moveTo $m to: $there
-            return
-
-        # The move changes what the mouse believes, and records what the mouse
-        # should actually do if this branch turns out to be the plan. `|` runs
-        # now, in every branch explored; `||` runs only if this branch wins.
-        def MoveTo(/moveTo $m to: $p)
-            where
-                $m at $from
-                $p coordX $x
-                $p coordY $y
-                -->
-                | loguru.logger.debug(f"considering a move to ({$x}, {$y})")
-                -+ $m at $p
-                - $p vacant True
-                + $from vacant True
-                || print(f"moveTo({$x}, {$y})")
+    # The move changes what the mouse believes, and records what the mouse
+    # should actually do if this branch turns out to be the plan. `|` runs
+    # now, in every branch explored; `||` runs only if this branch wins.
+    def MoveTo(/moveTo $m to: $p)
+        where
+            $m at $from
+            $p coordX $x
+            $p coordY $y
+            -->
+            | loguru.logger.debug(f"considering a move to ({$x}, {$y})")
+            -+ $m at $p
+            - $p vacant True
+            + $from vacant True
+            || print(f"moveTo({$x}, {$y})")

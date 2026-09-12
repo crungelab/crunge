@@ -8,7 +8,7 @@ from lark.exceptions import VisitError
 from lark.indenter import Indenter
 
 from crunge.mia.compile.ast.nodes import (
-    AgentDef, Branch, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def,
+    Branch, ClassDef, Clause, Code, Compare, ContextDef, Cost, Def,
     ExpertDef, Fail, Filter, FrameDef, Goal, GoalKind, Halt, Import, KnowsDef, Literal, Match,
     Message, Module, Name, NoMatch, Outcome, Pass, Performative, PredicateDef,
     Return, Select, Slot, Snippet, Succeed, Throw, Trigger, Var, Where,
@@ -57,9 +57,6 @@ class ToAst(Transformer):
 
     def suite(self, meta, *stmts):
         return list(stmts)
-
-    def agent_def(self, meta, name, bases, body):
-        return AgentDef(str(name), bases or [], body, **_pos(meta))
 
     def expert_def(self, meta, name, bases, body):
         return ExpertDef(str(name), bases or [], body, **_pos(meta))

@@ -195,7 +195,7 @@ class Branch(Node):
 class Where(Node):
     conditions: list[Condition]
     branches: list[Branch]
-    frame: str | None = None  # the frame to search, or None for the agent's own context
+    frame: str | None = None  # the frame to search, or None for the expert's own context
 
 
 # ---------------------------------------------------------------- declarations
@@ -245,15 +245,10 @@ class Def(Node):
 
 
 @dataclass(slots=True)
-class AgentDef(Node):
+class ExpertDef(Node):
     name: str
     bases: list[str]
     body: list[Stmt]
-
-
-@dataclass(slots=True)
-class ExpertDef(AgentDef):
-    pass
 
 
 @dataclass(slots=True)
@@ -262,7 +257,7 @@ class Module(Node):
 
 
 type Stmt = (
-    AgentDef | ClassDef | PredicateDef | KnowsDef | ContextDef | FrameDef | Def | Where | Select | Message
+    ExpertDef | ClassDef | PredicateDef | KnowsDef | ContextDef | FrameDef | Def | Where | Select | Message
     | Return | Succeed | Fail | Throw | Halt | Pass | Cost | Import | Snippet
 )
 

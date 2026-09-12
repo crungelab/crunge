@@ -3,7 +3,7 @@ import pytest
 
 import crunge.mia.runtime as rt
 from crunge.mia.cli import main
-from crunge.mia.load import agent_classes, load_source
+from crunge.mia.load import expert_classes, load_source
 from tests.samples import sample, sample_path
 
 
@@ -14,9 +14,9 @@ def blox():
 
 def traced_run(agent_class):
     sink = rt.ListSink()
-    host = rt.AgentHost(agent_class, tracer=rt.Tracer(sink))
-    assert host.run() is rt.Status.SUCCEEDED
-    return host, sink.events
+    solver = rt.ProblemSolver(agent_class, tracer=rt.Tracer(sink))
+    assert solver.run() is rt.Status.SUCCEEDED
+    return solver, sink.events
 
 
 def of(events, kind, **match):
@@ -34,46 +34,46 @@ def test_to_mia():
 
 
 def test_trace_describes_the_search(blox):
-    host, events = traced_run(blox.BloxAgent)
-    assert events[0]["event"] == "trace" and events[0]["agent"] == "BloxAgent"
+    solver, events = traced_run(blox.Blox)
+    assert events[0]["event"] == "trace" and events[0]["expert"] == "Blox"
 
-    outer, inner = of(events, "agency")
-    assert inner["agent"] == "BloxAgent.Blox" and inner["parent"] == outer["root"]
-    assert of(events, "spawn")[0]["agent"] == inner["root"]
+    [space] = of(events, "space")
+    assert space["expert"] == "Blox" and space["parent"] is None
+    assert of(events, "spawn") == []   # one expert, no sub-space
 
-    # every non-root agent is announced by a fork before its state is recorded
-    forks = {e["agent"]: e for e in of(events, "fork")}
+    # every non-root state is announced by a fork before its status is recorded
+    forks = {e["state"]: e for e in of(events, "fork")}
     seen = set()
     for e in events:
         if e["event"] == "fork":
-            seen.add(e["agent"])
-        elif e["event"] == "state" and e["agent"] not in (outer["root"], inner["root"]):
-            assert e["agent"] in seen
+            seen.add(e["state"])
+        elif e["event"] == "status" and e["state"] != space["root"]:
+            assert e["state"] in seen
 
     # the root state lists the whole context; forks list only changes
-    root_state = of(events, "state", agent=inner["root"])[0]
-    assert {"Block1 onTop Table1", "@Block1 onTop Block2", "(@Block1 onTop Block2) status Active"} <= set(root_state["added"])
-    assert root_state["removed"] == []
+    root_status = of(events, "status", state=space["root"])[0]
+    assert {"Block1 onTop Table1", "@Block1 onTop Block2", "(@Block1 onTop Block2) status Active"} <= set(root_status["added"])
+    assert root_status["removed"] == []
 
     # walk the solution back to the root through fork events
-    solution = of(events, "solution", agency=inner["agency"])[0]
-    path, agent = [], solution["agent"]
-    while agent in forks:
-        path.append(forks[agent]["proposal"])
-        agent = forks[agent]["parent"]
-    assert agent == inner["root"]
+    solution = of(events, "solution", space=space["space"])[0]
+    path, state = [], solution["state"]
+    while state in forks:
+        path.append(forks[state]["proposal"])
+        state = forks[state]["parent"]
+    assert state == space["root"]
     assert path[::-1] == ["@Block2 onTop Block3", "@Block3 onTop Table1", "@Block2 onTop Block3", "@Block1 onTop Block2"]
 
-    final = of(events, "state", agent=solution["agent"])[0]
+    final = of(events, "status", state=solution["state"])[0]
     assert final["status"] == "SUCCEEDED" and final["cost"] == 4
     assert "Block1 onTop Block2" in final["added"]
-    assert of(events, "result", agency=inner["agency"])[0]["expansions"] == 5
+    assert of(events, "result", space=space["space"])[0]["expansions"] == 5
 
 
 def test_untraced_agents_emit_nothing(blox):
-    host = rt.AgentHost(blox.BloxAgent)
-    assert host.run() is rt.Status.SUCCEEDED
-    assert host.agent.tracer is None and host.agent.id == 0
+    solver = rt.ProblemSolver(blox.Blox)
+    assert solver.run() is rt.Status.SUCCEEDED
+    assert solver.state.tracer is None and solver.state.id == 0
 
 
 def test_run_command_writes_a_trace(tmp_path, capsys):
@@ -81,7 +81,7 @@ def test_run_command_writes_a_trace(tmp_path, capsys):
     with sample_path("trip.mia") as program:
         assert main(["run", str(program), "--trace", str(out)]) == 0
     printed = capsys.readouterr().out
-    assert "Go (cost 4):" in printed and "[Drive]" in printed
+    assert "Go: SUCCEEDED (cost 4)" in printed and "[Drive]" in printed
 
     events = rt.read_trace(out)
     assert events[0]["event"] == "trace"
@@ -92,10 +92,10 @@ def test_run_command_priority_option(tmp_path, capsys):
     try:
         with sample_path("trip.mia") as program:
             assert main(["run", str(program), "--priority", "breadth_first"]) == 0
-        assert "Go (cost 11):" in capsys.readouterr().out
+        assert "Go: SUCCEEDED (cost 11)" in capsys.readouterr().out
     finally:
-        rt.Agent.priority = None
+        rt.Expert.priority = None
 
 
-def test_agent_classes_lists_top_level_agents(blox):
-    assert agent_classes(blox) == [blox.BloxAgent]
+def test_expert_classes_lists_top_level_experts(blox):
+    assert expert_classes(blox) == [blox.Blox]

@@ -1,11 +1,13 @@
-"""Agents: a context, a message queue, and tasks created from rules.
+"""Experts: a context, a message queue, and tasks created from rules.
 
-An agent runs until it halts, finishes, or reaches a decision: nothing left to
-dispatch or run, with proposals waiting. `advance()` stops at that point, and
-an `Agency` forks one child per proposal. `run()` commits to the first
-proposal instead, which is handy for debugging a program without search.
+An expert class is a set of rules; each instance is one state those rules are
+running in. A state runs until it halts, finishes, or reaches a decision:
+nothing left to dispatch or run, with proposals waiting. `advance()` stops at
+that point, and a `ProblemSpace` forks one child state per proposal. `run()`
+commits to the first proposal instead, which is handy for debugging a program
+without search.
 
-Each agent carries `cost`, the path cost of the choices that led to it. Rules
+Each state carries `cost`, the path cost of the choices that led to it. Rules
 add to it with `cost <expr>`; a commit whose rules add nothing costs 1.
 """
 
@@ -20,7 +22,7 @@ from functools import cache
 from .clauses import Achieve, Belief, Clause, Goal, Perform
 from .context import Context, View
 from .format import to_mia
-from .messages import IMPASSE, Assert, Attempt, Message, Modify, Retract, Trigger
+from .messages import IMPASSE, START, Assert, Attempt, Message, Modify, Retract, Trigger
 from .task import SUCCESS, Result, Status, Task
 from .terms import ACTIVE, SELF, STATUS
 
@@ -32,10 +34,10 @@ class Step(Enum):
 
 @dataclass(slots=True)
 class Spawn:
-    """A plan that runs an expert as a child agent."""
+    """A plan that runs an expert in a child problem space."""
 
-    expert: type[Agent]
-    boot: Task
+    expert: type[Expert]
+    entry: Task
 
 
 @dataclass(slots=True)
@@ -45,16 +47,17 @@ class Proposal:
     waiter: Task | None
 
 
-class Agent:
-    boot: type[Task] | None = None
+class Expert:
+    entry: type[Task] | None = None   # the rule that starts this expert when another spawns it
     rules: tuple[type[Task], ...] = ()
-    experts: tuple[type[Agent], ...] = ()
+    experts: tuple[type[Expert], ...] = ()
     predicates: dict = {}
-    frames: tuple = ()   # background knowledge this agent knows, searched after its own context
+    frames: tuple = ()   # background knowledge this expert knows, searched after its own context
+    starting_context = None   # builds the working memory a ProblemSolver starts this expert with
     max_steps = 100_000
-    priority = None  # search priority for this agent's agency; None means A*
+    priority = None  # search priority for this expert's problem space; None means A*
 
-    def __init__(self, context: Context | None = None, parent: Agent | None = None, tracer=None):
+    def __init__(self, context: Context | None = None, parent: Expert | None = None, tracer=None):
         self.context = context if context is not None else Context()
         frames = _frames(type(self))
         self.view = View((self.context, *frames)) if frames else self.context
@@ -62,7 +65,7 @@ class Agent:
         self.tracer = tracer if tracer is not None else parent.tracer if parent is not None else None
         self.id = self.tracer.next_id() if self.tracer is not None else 0
         self.spawned = False
-        self.agents: list[Agent] = []
+        self.states: list[Expert] = []
         self.messages: deque[tuple[object, Task | None]] = deque()
         self.ready: deque[tuple[Task, Result | None]] = deque()
         self.proposals: list[Proposal] = []
@@ -74,7 +77,7 @@ class Agent:
         self.cost = 0.0
         self.step_cost = 0.0
         self.committed = False
-        self.solution: Agent | None = None
+        self.solution: Expert | None = None
         self.halted = False
         self.dead = False
         self.impassed = False
@@ -93,13 +96,13 @@ class Agent:
         """Record a side effect instead of performing it.
 
         A branch that loses the search is discarded with its effects; only the
-        winning agent's are replayed, in order, by its `Plan`.
+        winning state's are replayed, in order, by its `Plan`.
         """
         self.effects.append((function, args))
         if self.tracer is not None:
             from .plan import action_text
 
-            self.tracer.emit("action", agent=self.id, text=action_text(function, args))
+            self.tracer.emit("action", state=self.id, text=action_text(function, args))
 
     def halt(self) -> Status:
         self.halted = True
@@ -120,7 +123,7 @@ class Agent:
         return self.status()
 
     def advance(self) -> Step:
-        """Run until the agent is done or has to choose among its proposals."""
+        """Run until this state is done or has to choose among its proposals."""
         step = self._advance()
         if self.halted:
             self.flush()
@@ -152,7 +155,7 @@ class Agent:
     def flush(self) -> None:
         """Apply queued context changes without firing triggers.
 
-        Halting stops the agent mid-queue, but facts a rule asserted before it
+        Halting stops the state mid-queue, but facts a rule asserted before it
         halted belong in the final state.
         """
         while self.messages:
@@ -173,8 +176,8 @@ class Agent:
             return Status.FAILED
         return Status.SUCCEEDED
 
-    def fork(self, index: int) -> Agent:
-        """Clone this agent and commit the clone to proposal `index`.
+    def fork(self, index: int) -> Expert:
+        """Clone this state and commit the clone to proposal `index`.
 
         One deepcopy call covers the context, queues, proposals, and suspended
         tasks, so a task waiting on a proposal is still that proposal's waiter
@@ -190,12 +193,12 @@ class Agent:
         child.effects = list(self.effects)
         child.steps = self.steps
         child.cost = self.cost
-        self.agents.append(child)
+        self.states.append(child)
         proposal = child.proposals[index]
         if self.tracer is not None:
             self.tracer.emit(
                 "fork",
-                agent=child.id,
+                state=child.id,
                 parent=self.id,
                 proposal=to_mia(proposal.message),
                 plan=_plan_name(proposal.plan),
@@ -204,7 +207,7 @@ class Agent:
         return child
 
     def state_key(self):
-        """What makes two agents the same search state (cost excluded)."""
+        """What makes two states the same for the search (cost excluded)."""
         return (
             frozenset(self.context),
             tuple((p.message, _plan_key(p.plan)) for p in self.proposals),
@@ -229,7 +232,7 @@ class Agent:
 
     def dispatch(self, message, waiter: Task | None):
         match message:
-            case _ if message is IMPASSE:
+            case _ if message is IMPASSE or message is START:
                 for plan in self.plans(message):
                     self.start(plan, message, None)
             case Assert(clause=clause):
@@ -296,8 +299,8 @@ class Agent:
                 if task.bind(message):
                     found.append(task)
         for expert in type(self).experts:
-            if expert.boot is not None and _matches(expert.boot.trigger, message):
-                task = expert.boot()
+            if expert.entry is not None and _matches(expert.entry.trigger, message):
+                task = expert.entry()
                 if task.bind(message):
                     found.append(Spawn(expert, task))
         return found
@@ -332,54 +335,52 @@ class Agent:
     def spawn(self, plan: Spawn, message) -> Result:
         child = plan.expert(parent=self)
         child.spawned = True
-        self.agents.append(child)
+        self.states.append(child)
         if self.tracer is not None:
             self.tracer.emit(
-                "spawn", agent=child.id, parent=self.id, expert=plan.expert.__qualname__, message=to_mia(message)
+                "spawn", state=child.id, parent=self.id, expert=plan.expert.__qualname__, message=to_mia(message)
             )
         clause = getattr(message, "clause", None)
         source = clause.slots.get("context") if isinstance(clause, Clause) else None
         if source is not None:
             for c in source:
                 child.post(Assert(c))
-        child.start(plan.boot, message, None)
-        from .agency import Agency
+        child.start(plan.entry, message, None)
+        from .space import ProblemSpace
 
-        solution = Agency(child, plan.expert.priority).run()
+        solution = ProblemSpace(child, plan.expert.priority).run()
         if solution is not None:
-            # The expert's chosen branch is part of this agent's plan.
+            # The sub-space's chosen branch is part of this state's plan.
             self.effects.extend(solution.effects)
         return Result(solution is not None)
 
 
-class Deliberator(Agent):
+class Deliberator(Expert):
     pass
 
 
-class AgentHost:
-    """What an application holds: creates an agent and runs its boot rule."""
+class ProblemSolver:
+    """What an application holds: seeds the first state and searches from it."""
 
-    def __init__(self, agent_class: type[Agent], context: Context | None = None, tracer=None):
-        self.agent = agent_class(context, tracer=tracer)
-        self.solution: Agent | None = None
+    def __init__(self, expert_class: type[Expert], context: Context | None = None, tracer=None):
+        # A program's module-level `context` is this expert's starting working
+        # memory; an explicit context overrides it.
+        self.starting: Context = Context()
+        if context is None and expert_class.starting_context is not None:
+            self.starting = expert_class.starting_context()
+        self.state = expert_class(context, tracer=tracer)
+        self.solution: Expert | None = None
 
     def run(self) -> Status:
-        agent = self.agent
-        if agent.tracer is not None:
-            agent.tracer.header(type(agent))
-        boot = type(agent).boot
-        if boot is not None:
-            trigger = boot.trigger
-            message = None
-            if isinstance(trigger, Trigger) and trigger.verb is not None:
-                message = Attempt(Perform(SELF, trigger.verb))
-            task = boot()
-            if not task.bind(message):
-                raise RuntimeError(f"{boot.__qualname__} did not accept its boot message")
-            agent.start(task, message, None)
-        from .agency import Agency
+        state = self.state
+        if state.tracer is not None:
+            state.tracer.header(type(state))
+        for clause in self.starting:
+            state.post(Assert(clause))
+        state.post(START)   # rules triggered on `start` run once, on the world as given
+        from .space import ProblemSpace
 
-        self.solution = Agency(agent, type(agent).priority).run()
+        self.solution = ProblemSpace(state, type(state).priority).run()
         return Status.SUCCEEDED if self.solution is not None else Status.FAILED
 
     @property
@@ -391,7 +392,7 @@ class AgentHost:
 
 
 @cache
-def _frames(cls: type[Agent]) -> tuple:
+def _frames(cls: type[Expert]) -> tuple:
     frames: list = []
     for klass in reversed(cls.__mro__):
         for frame in vars(klass).get("frames", ()):
@@ -401,7 +402,7 @@ def _frames(cls: type[Agent]) -> tuple:
 
 
 @cache
-def _rules(cls: type[Agent]) -> tuple[type[Task], ...]:
+def _rules(cls: type[Expert]) -> tuple[type[Task], ...]:
     rules: list[type[Task]] = []
     for klass in reversed(cls.__mro__):
         for rule in vars(klass).get("rules", ()):
@@ -427,7 +428,7 @@ def _plan_key(plan):
     if plan is None:
         return None
     if isinstance(plan, Spawn):
-        return (plan.expert.__qualname__, _task_key(plan.boot))
+        return (plan.expert.__qualname__, _task_key(plan.entry))
     return _task_key(plan)
 
 
@@ -443,7 +444,10 @@ def _belief(goal: Achieve) -> Belief:
     return Belief(goal.subj, goal.verb, goal.obj, goal.slots)
 
 
+_SIGNALS = (IMPASSE, START)
+
+
 def _matches(trigger, message) -> bool:
-    if trigger is IMPASSE or message is IMPASSE:
+    if trigger in _SIGNALS or message in _SIGNALS:
         return trigger is message
     return trigger is not None and trigger.matches(message)
