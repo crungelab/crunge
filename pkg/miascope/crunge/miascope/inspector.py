@@ -19,6 +19,7 @@ class ContextRow:
 @dataclass
 class Report:
     fields: list[tuple[str, str]]
+    experts: list[str] = field(default_factory=list)
     proposals: list[dict] = field(default_factory=list)
     suspended: list[dict] = field(default_factory=list)
     context: list[ContextRow] = field(default_factory=list)
@@ -27,16 +28,20 @@ class Report:
 def report(trace: Trace, node: Node, t: int | None = None) -> Report:
     phase = node.phase(t)
     state = node.state if node.reached is not None and (t is None or node.reached <= t) else None
+    experts = state["experts"] if state and "experts" in state else (
+        list(node.space.experts) if node.space else []
+    )
     fields = [
         ("state", str(node.id)),
-        ("expert", node.space.expert if node.space else "?"),
+        ("experts", ", ".join(e.rsplit(".", 1)[-1] for e in experts) or "?"),
         ("phase", phase.value if phase else "not created yet"),
         ("proposal", node.proposal or "-"),
     ]
     if node.plan:
         fields.append(("plan", node.plan))
+    short = [e.rsplit(".", 1)[-1] for e in experts]
     if state is None:
-        return Report(fields)
+        return Report(fields, short)
     fields += [
         ("depth", str(state["depth"])),
         ("cost", f"{state['cost']:g}"),
@@ -46,4 +51,4 @@ def report(trace: Trace, node: Node, t: int | None = None) -> Report:
     rows = [ContextRow(c, "added" if c in added else "kept") for c in trace.context(node)]
     if node.parent is not None:
         rows += [ContextRow(c, "removed") for c in state["removed"]]
-    return Report(fields, state["proposals"], state["suspended"], rows)
+    return Report(fields, short, state["proposals"], state["suspended"], rows)

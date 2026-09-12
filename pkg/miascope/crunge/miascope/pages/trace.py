@@ -158,7 +158,7 @@ class TracePage(Page):
                 self.set_scale(scale)
             t = self.trace
             imgui.text(Path(self.source).name)
-            imgui.text(f"{t.top.expert}: {len(t.nodes)} states, {len(t.spaces)} spaces, {len(t.events)} events")
+            imgui.text(f"{t.top.label}: {len(t.nodes)} states, {len(t.spaces)} spaces, {len(t.events)} events")
         if self.error:
             imgui.text_colored(ERROR_TEXT, self.error)       # ASSUMPTION: text_colored(color, text)
         if self.samples and imgui.collapsing_header("Samples"):
@@ -224,7 +224,12 @@ class TracePage(Page):
             return
         r = report(self.trace, self.selected, self.timeline.t)
         for name, value in r.fields:
+            if name == "experts" and len(r.experts) > 1:
+                continue   # listed on their own below
             imgui.text(f"{name}: {value}")
+        if len(r.experts) > 1 and imgui.collapsing_header(f"Experts ({len(r.experts)})"):
+            for expert in r.experts:
+                imgui.text(expert)
         if r.proposals and imgui.collapsing_header(f"Proposals ({len(r.proposals)})"):   # ASSUMPTION: returns bool
             for p in r.proposals:
                 imgui.text(p["message"] + (f"  [{p['plan']}]" if p["plan"] else ""))

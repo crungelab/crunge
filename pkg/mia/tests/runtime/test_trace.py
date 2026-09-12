@@ -99,3 +99,17 @@ def test_run_command_priority_option(tmp_path, capsys):
 
 def test_expert_classes_lists_top_level_experts(blox):
     assert expert_classes(blox) == [blox.Blox]
+
+
+def test_run_activates_every_expert_by_default(capsys):
+    with sample_path("errands.mia") as program:
+        assert main(["run", str(program)]) == 0
+    printed = capsys.readouterr().out
+    assert "walker ready" in printed and "driver ready" in printed
+    assert "Walker + Driver: SUCCEEDED (cost 2)" in printed
+
+    with sample_path("errands.mia") as program:
+        assert main(["run", str(program), "--expert", "Walker"]) == 0
+    printed = capsys.readouterr().out
+    assert "driver ready" not in printed
+    assert "Walker: SUCCEEDED (cost 5)" in printed

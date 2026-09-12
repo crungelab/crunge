@@ -38,7 +38,7 @@ def trip():
 
 def blox_root(blox):
     """A Blox expert seeded with the program's starting context."""
-    root = blox.Blox()
+    root = rt.State(blox.Blox)
     for clause in blox.Blox.starting_context():
         root.post(rt.Assert(clause))
     return root
@@ -107,7 +107,7 @@ def test_blocks_world_builds_the_tower(blox):
 
 def test_undoing_an_achieved_goal_reactivates_it():
     a, b, on = rt.noun("A"), rt.noun("B"), rt.verb("on")
-    state = rt.Expert()
+    state = rt.State()
     goal = rt.Achieve(a, on, b)
     active = rt.Belief(goal, rt.STATUS, rt.ACTIVE)
 
@@ -135,7 +135,7 @@ def test_attempting_a_satisfied_achieve_goal_succeeds_without_a_plan():
             self.result = result
             return self.succeed(state)
 
-    state = rt.Expert(rt.Context([rt.Belief(a, on, b)]))
+    state = rt.State(context=rt.Context([rt.Belief(a, on, b)]))
     waiter = Waiter()
     state.start(waiter, None, None)
     assert state.run() is rt.Status.SUCCEEDED
@@ -215,15 +215,15 @@ def test_a_star_takes_the_cheapest_plan_not_the_shortest(trip):
 
 def test_same_state_at_higher_cost_is_dropped():
     a, on, b, c = rt.noun("A"), rt.verb("on"), rt.noun("B"), rt.noun("C")
-    cheap, dear = rt.Expert(rt.Context([rt.Belief(a, on, b)])), rt.Expert(rt.Context([rt.Belief(a, on, b)]))
+    cheap, dear = rt.State(context=rt.Context([rt.Belief(a, on, b)])), rt.State(context=rt.Context([rt.Belief(a, on, b)]))
     dear.cost = 5
     assert cheap.state_key() == dear.state_key()
-    assert cheap.state_key() != rt.Expert(rt.Context([rt.Belief(a, on, c)])).state_key()
+    assert cheap.state_key() != rt.State(context=rt.Context([rt.Belief(a, on, c)])).state_key()
 
 
 def test_negative_cost_is_rejected():
     with pytest.raises(ValueError):
-        rt.Expert().add_cost(-1)
+        rt.State().add_cost(-1)
 
 
 # ---------------------------------------------------------------- monkey & bananas
@@ -393,7 +393,7 @@ def test_an_unwaited_failure_ends_the_branch():
         def resume(self, state, result=None):
             return self.fail(state)
 
-    state = rt.Expert()
+    state = rt.State()
     state.start(Failing(), None, None)
     assert state.run() is rt.Status.FAILED and state.dead
 
@@ -469,7 +469,7 @@ def test_halting_keeps_facts_asserted_just_before():
             state.post(rt.Assert(rt.Belief(a, likes, b)))
             return state.halt()
 
-    state = rt.Expert()
+    state = rt.State()
     state.start(Finish(), None, None)
     assert state.run() is rt.Status.SUCCEEDED
     assert rt.Belief(a, likes, b) in state.context
@@ -532,9 +532,9 @@ def test_a_losing_branch_leaves_no_effects():
             state.effect(note, self.value)
             return state.halt() if self.halting else self.succeed(state)
 
-    parent = rt.Expert()
+    parent = rt.State()
     parent.effect(note, "shared")
-    winner, loser = rt.Expert(parent=parent), rt.Expert(parent=parent)
+    winner, loser = rt.State(parent=parent), rt.State(parent=parent)
     winner.effects = list(parent.effects)
     loser.effects = list(parent.effects)
     winner.start(Act("kept", halt=True), None, None)
@@ -703,3 +703,54 @@ def test_start_runs_after_the_world_is_in_place():
     solver = rt.ProblemSolver(Watcher)
     assert solver.run() is rt.Status.SUCCEEDED
     assert seen == [rt.Belief(a, sees, b)]
+
+
+# ---------------------------------------------------------------- several experts, one state
+
+
+def test_two_experts_on_one_state_offer_both_plans(capsys):
+    errands = build("errands")
+    solver = rt.ProblemSolver([errands.Walker, errands.Driver])
+    assert solver.run() is rt.Status.SUCCEEDED
+
+    # both start rules ran, and the search chose the cheaper plan
+    printed = capsys.readouterr().out.split()
+    assert printed.count("walker") == 1 and printed.count("driver") == 1
+    assert solver.solution.cost == 2   # 1 to commit + 1 to drive, against 5 to walk
+    assert [a.text for a in solver.plan] == ['print(f"drive to {Market}")']
+
+    # the state carries both experts, and the search saw both plans
+    assert solver.state.experts == (errands.Walker, errands.Driver)
+    assert {s.chosen[-1] for s in solver.state.states if s.chosen} == {None}
+    chosen = {s.chosen[-1] for s in solver.state.states for s in s.states if s.chosen}
+    assert chosen == {"Walk", "Drive"}
+
+
+def test_experts_can_be_added_and_removed_while_a_state_runs():
+    errands = build("errands")
+    state = rt.State(errands.Walker)
+    assert len(state.experts) == 1
+    walking_rules = len(state.plans(rt.IMPASSE)) + 1
+
+    state.add_expert(errands.Driver)
+    assert state.experts == (errands.Walker, errands.Driver)
+    state.add_expert(errands.Driver)   # already active
+    assert len(state.experts) == 2
+
+    state.remove_expert(errands.Walker)
+    assert state.experts == (errands.Driver,)
+    assert walking_rules   # sanity: the walker had rules to begin with
+
+
+def test_the_active_experts_are_part_of_a_states_identity():
+    errands = build("errands")
+    walking = rt.State(errands.Walker)
+    driving = rt.State(errands.Driver)
+    assert walking.state_key() != driving.state_key()
+    assert walking.state_key() == rt.State(errands.Walker).state_key()
+
+
+def test_an_expert_is_a_rule_set_not_a_state():
+    errands = build("errands")
+    with pytest.raises(TypeError, match="not a state"):
+        errands.Walker()

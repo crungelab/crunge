@@ -22,7 +22,7 @@ def test_spaces_and_states(blox):
     _, trace = blox
     assert trace.header["expert"] == "Blox"
     space = trace.top
-    assert space.expert == "Blox" and space.spawner is None
+    assert space.experts == ("Blox",) and space.expert == "Blox" and space.spawner is None
     assert space.root.label == "Blox" and space.root.proposal is None
     assert space.expansions == 5 and not space.exhausted
     assert len(trace.spaces) == 1
@@ -174,3 +174,26 @@ def test_sources_keep_the_live_plan_for_programs_only(tmp_path):
     from_disk = load(str(out))
     assert not from_disk.runnable  # the functions are gone, the text remains
     assert from_disk.trace.plan(from_disk.trace.top.solution) == live.trace.plan(live.trace.top.solution)
+
+
+def test_several_experts_show_up_in_the_model_and_inspector():
+    from crunge.miascope.inspector import report
+
+    _, trace = record("errands.mia")
+    space = trace.top
+    assert space.experts == ("Walker", "Driver")
+    assert space.label == "Walker + Driver" and space.root.label == "Walker + Driver"
+
+    # every state records the experts that were active in it
+    for node in space.nodes:
+        if node.state is not None:
+            assert node.state["experts"] == ["Walker", "Driver"]
+
+    r = report(trace, space.solution)
+    assert r.experts == ["Walker", "Driver"]
+    assert dict(r.fields)["experts"] == "Walker, Driver"
+
+    # the search saw a plan from each expert and took the cheaper one
+    assert {n.plan for n in space.nodes if n.plan} == {"Walk", "Drive"}
+    assert space.solution.plan == "Drive"
+    assert trace.plan(space.solution) == ['print(f"drive to {Market}")']

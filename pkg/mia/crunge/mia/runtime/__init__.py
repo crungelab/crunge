@@ -2,7 +2,9 @@
 
 from .clauses import Achieve, Belief, Clause, Goal, Maintain, Perform, Query, Slots
 from .context import ANY, Context, View
-from .expert import Deliberator, Expert, ProblemSolver, Proposal, Spawn, Step
+from .expert import Deliberator, Expert
+from .solver import ProblemSolver
+from .state import Proposal, Spawn, State, Step
 from .format import to_mia
 from .messages import IMPASSE, START, Assert, Attempt, Message, Modify, Retract, Trigger
 from .plan import Action, Plan, action_text
@@ -16,7 +18,7 @@ __all__ = [
     "Achieve", "Action", "Assert", "Attempt", "Belief", "Clause", "Context", "Deliberator",
     "Entity", "Expert", "Goal", "JsonlSink", "ListSink", "Maintain", "Message", "Modify",
     "Perform", "Plan", "ProblemSolver", "ProblemSpace", "Proposal", "Query", "Result",
-    "Retract", "Slots", "Spawn", "Status", "Step", "Task", "Term", "Tracer", "Trigger",
+    "Retract", "Slots", "Spawn", "State", "Status", "Step", "Task", "Term", "Tracer", "Trigger",
     "Verb", "View", "a_star", "action_text", "active_goals", "breadth_first", "depth_first",
     "noun", "read_trace", "to_mia", "verb",
 ]

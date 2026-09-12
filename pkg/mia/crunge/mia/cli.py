@@ -1,4 +1,4 @@
-"""python -m crunge.mia run program.mia [--expert NAME] [--priority NAME] [--trace PATH]"""
+"""python -m crunge.mia run program.mia [--expert NAME ...] [--priority NAME] [--trace PATH]"""
 
 from __future__ import annotations
 
@@ -20,7 +20,12 @@ def main(argv: list[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run", help="compile and run a Mia program")
     run.add_argument("file")
-    run.add_argument("--expert", help="expert to run (default: the first one in the file)")
+    run.add_argument(
+        "--expert",
+        action="append",
+        metavar="NAME",
+        help="expert to activate; repeat for several (default: every expert in the file)",
+    )
     run.add_argument("--priority", choices=PRIORITIES, help="search priority for every problem space")
     run.add_argument("--trace", metavar="PATH", help="record a trace for miascope")
     run.add_argument("--act", action="store_true", help="replay the plan's effects after solving")
@@ -30,24 +35,28 @@ def main(argv: list[str] | None = None) -> int:
     experts = {cls.__name__: cls for cls in expert_classes(module)}
     if not experts:
         parser.error(f"{args.file} defines no experts")
-    name = args.expert or next(iter(experts))
-    if name not in experts:
-        parser.error(f"no expert {name}; choose from {', '.join(experts)}")
+    # Every expert in the file is active by default: a program's experts are
+    # its expertise, all applied to the same world. --expert narrows that.
+    names = args.expert or list(experts)
+    for name in names:
+        if name not in experts:
+            parser.error(f"no expert {name}; choose from {', '.join(experts)}")
     if args.priority:
         rt.Expert.priority = PRIORITIES[args.priority]
 
     tracer = rt.Tracer(rt.JsonlSink(args.trace)) if args.trace else None
     try:
-        solver = rt.ProblemSolver(experts[name], tracer=tracer)
+        solver = rt.ProblemSolver([experts[n] for n in names], tracer=tracer)
         status = solver.run()
     finally:
         if tracer is not None:
             tracer.close()
 
+    label = " + ".join(names)
     if solver.solution is not None:
-        print(f"{name}: {status.name} (cost {solver.solution.cost:g})")
+        print(f"{label}: {status.name} (cost {solver.solution.cost:g})")
     else:
-        print(f"{name}: {status.name}")
+        print(f"{label}: {status.name}")
     if solver.solution is not None:
         print_plan(solver.solution, depth=1)
         plan = solver.plan

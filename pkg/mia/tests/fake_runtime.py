@@ -151,9 +151,15 @@ class Expert:
     rules = ()
     experts = ()
     predicates = {}
+    frames = ()
+    starting_context = None
 
-    def __init__(self, context=None):
+
+class State:
+    def __init__(self, experts=(), context=None):
+        self.experts = (experts,) if isinstance(experts, type) else tuple(experts)
         self.context = context or Context()
+        self.view = self.context
         self.posts = []
         self.proposals = []
         self.effects = []

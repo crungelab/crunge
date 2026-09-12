@@ -17,58 +17,63 @@ import heapq
 from collections.abc import Callable
 from itertools import count
 
-from .expert import Expert, Step
+from .state import State, Step
 from .clauses import Belief
 from .context import ANY
 from .task import Status
 from .terms import ACTIVE, STATUS
 from .trace import context_changes, proposals, suspended
 
-Priority = Callable[[Expert], float]
+Priority = Callable[[State], float]
 
 
-def breadth_first(state: Expert) -> float:
+def breadth_first(state: State) -> float:
     return len(state.history)
 
 
-def depth_first(state: Expert) -> float:
+def depth_first(state: State) -> float:
     return -len(state.history)
 
 
-def active_goals(state: Expert) -> float:
+def active_goals(state: State) -> float:
     """Default A* heuristic: the number of goals still active."""
     return len(state.context.find(Belief, ANY, STATUS, ACTIVE))
 
 
-def a_star(heuristic: Callable[[Expert], float] = active_goals) -> Priority:
-    def priority(state: Expert) -> float:
+def a_star(heuristic: Callable[[State], float] = active_goals) -> Priority:
+    def priority(state: State) -> float:
         return state.cost + heuristic(state)
 
     priority.__name__ = f"a_star({heuristic.__name__})"
     return priority
 
 
+def _experts_name(state) -> str:
+    """The experts active in a state, for traces: the usual case is one."""
+    return " + ".join(e.__qualname__ for e in state.experts) or "State"
+
+
 class ProblemSpace:
-    def __init__(self, root: Expert, priority: Priority | None = None, max_expansions: int = 10_000):
+    def __init__(self, root: State, priority: Priority | None = None, max_expansions: int = 10_000):
         self.root = root
         self.priority = priority or a_star()
         self.max_expansions = max_expansions
         self.expansions = 0
-        self.solution: Expert | None = None
+        self.solution: State | None = None
         self.tracer = root.tracer
         self.id = self.tracer.next_id() if self.tracer is not None else 0
         self._frontier: list = []
         self._best: dict = {}
         self._order = count()
 
-    def run(self) -> Expert | None:
+    def run(self) -> State | None:
         if self.tracer is not None:
             self.tracer.emit(
                 "space",
                 space=self.id,
                 root=self.root.id,
                 parent=self.root.parent.id if self.root.parent is not None else None,
-                expert=type(self.root).__qualname__,
+                expert=_experts_name(self.root),
                 priority=getattr(self.priority, "__name__", repr(self.priority)),
             )
         self._push(self.root, self.root.advance())
@@ -99,7 +104,7 @@ class ProblemSpace:
         )
         return self.solution
 
-    def _push(self, state: Expert, step: Step):
+    def _push(self, state: State, step: Step):
         key = state.state_key()
         priority = self.priority(state)
         known = self._best.get(key)
@@ -108,6 +113,7 @@ class ProblemSpace:
             self._emit(
                 "status",
                 state=state.id,
+                experts=[e.__qualname__ for e in state.experts],
                 depth=len(state.history),
                 step=step.name,
                 status=state.status().name if step is Step.DONE else None,

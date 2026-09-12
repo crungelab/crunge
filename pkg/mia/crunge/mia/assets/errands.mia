@@ -1,9 +1,10 @@
 #
 # Errands: two experts, one world
 #
-# Both experts solve the same problem from the same starting context, and
-# `mia run errands.mia --expert Driver` picks between them. Each has a rule
-# triggered on `start`, which the solver raises once the world is in place.
+# Both experts are active on the same world by default, so the search sees a
+# plan from each and picks the cheaper one. `mia run errands.mia --expert
+# Walker` narrows it to one. Each has a rule triggered on `start`, raised
+# once the world is in place.
 #
 
 class Place

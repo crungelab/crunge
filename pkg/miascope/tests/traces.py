@@ -12,10 +12,14 @@ def sample(name: str) -> str:
     return ASSETS.joinpath(name).read_text(encoding="utf-8")
 
 
-def record(name: str):
-    """Run a sample program with tracing; return the host and the loaded Trace."""
+def record(name: str, experts=None):
+    """Run a sample program with tracing; return the solver and the loaded Trace.
+
+    Every expert in the file is active by default, as `mia run` does it.
+    """
     module = load_source(sample(name), name.replace(".", "_"), name)
+    chosen = expert_classes(module) if experts is None else [getattr(module, e) for e in experts]
     sink = rt.ListSink()
-    host = rt.ProblemSolver(expert_classes(module)[0], tracer=rt.Tracer(sink))
-    assert host.run() is rt.Status.SUCCEEDED
-    return host, Trace(sink.events)
+    solver = rt.ProblemSolver(chosen, tracer=rt.Tracer(sink))
+    assert solver.run() is rt.Status.SUCCEEDED
+    return solver, Trace(sink.events)

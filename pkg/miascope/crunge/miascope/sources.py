@@ -71,6 +71,7 @@ def record_program(source: str, name: str = "<mia>") -> Source:
     if not experts:
         raise ValueError(f"{name} defines no experts")
     sink = rt.ListSink()
-    solver = rt.ProblemSolver(experts[0], tracer=rt.Tracer(sink))
+    # Every expert in the file is active, as `mia run` does it.
+    solver = rt.ProblemSolver(experts, tracer=rt.Tracer(sink))
     solver.run()
     return Source(name, Trace(sink.events), solver.plan)

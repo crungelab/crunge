@@ -10,7 +10,8 @@ Events, in the order they can occur:
   space     a search begins: space, root state, parent state, expert, priority
   fork      a child state is created: state, parent, proposal
   spawn     an expert starts in a child space: state, parent, expert, message
-  status    a state reached a decision or finished: cost, priority, context
+  status    a state reached a decision or finished: active experts, cost,
+            priority, context
             changes against its parent (the whole context for a root),
             proposals, suspended tasks
   action    a `||` line this state recorded for its plan: text
@@ -110,7 +111,7 @@ def context_changes(state, base) -> dict:
 
 
 def proposals(state) -> list[dict]:
-    from .expert import _plan_name
+    from .state import _plan_name
 
     return [{"message": to_mia(p.message), "plan": _plan_name(p.plan)} for p in state.proposals]
 

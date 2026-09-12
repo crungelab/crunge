@@ -63,7 +63,7 @@ class Node:
     @property
     def label(self) -> str:
         if self.parent is None and self.space is not None:
-            return self.space.expert.rsplit(".", 1)[-1]
+            return self.space.label
         text = self.proposal or f"state {self.id}"
         return f"{text} [{self.plan}]" if self.plan else text
 
@@ -96,7 +96,7 @@ class Space:
 
     id: int
     root: Node
-    expert: str
+    experts: tuple[str, ...]   # the experts active in this space's root state
     priority: str
     spawner: Node | None
     nodes: list[Node] = field(default_factory=list)
@@ -104,6 +104,15 @@ class Space:
     expansions: int = 0
     exhausted: bool = False
     finished: int | None = None
+
+    @property
+    def expert(self) -> str:
+        """The active experts as one name, for headings."""
+        return " + ".join(self.experts)
+
+    @property
+    def label(self) -> str:
+        return " + ".join(e.rsplit(".", 1)[-1] for e in self.experts)
 
 
 class Trace:
@@ -183,7 +192,8 @@ class Trace:
             case "space":
                 root = self._node(event["root"], index)
                 spawner = self._existing(event["parent"]) if event["parent"] is not None else None
-                space = Space(event["space"], root, event["expert"], event["priority"], spawner, [root])
+                experts = tuple(event["expert"].split(" + "))
+                space = Space(event["space"], root, experts, event["priority"], spawner, [root])
                 self.spaces[space.id] = space
                 root.space = space
                 if spawner is not None:

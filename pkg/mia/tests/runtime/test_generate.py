@@ -39,7 +39,7 @@ def test_blox_starting_context(blox):
 
 
 def test_stack_clears_first_and_returns(blox):
-    state = blox.Blox(rt.Context([
+    state = rt.State(blox.Blox, rt.Context([
         rt.Belief(blox.t_Block1, blox.t_onTop, blox.t_Table1),
         rt.Belief(blox.t_Block2, blox.t_onTop, blox.t_Block1),
     ]))
@@ -53,7 +53,7 @@ def test_stack_clears_first_and_returns(blox):
 
 def test_clear_proposes_every_clear_destination(blox):
     t = blox
-    state = t.Blox(rt.Context([
+    state = rt.State(t.Blox, rt.Context([
         rt.Belief(t.t_Block1, t.t_beneath, t.t_Block2),
         rt.Belief(t.t_Table1, t.t_isClear, True),
         rt.Belief(t.t_Block2, t.t_isClear, True),
@@ -70,7 +70,7 @@ def test_typed_where_condition_checks_the_class(blox):
     t = blox
     rule = t.Blox.OntopElab
     for target, expected in [(t.t_Block1, 2), (t.t_Table1, 1)]:
-        state = t.Blox(rt.Context([
+        state = rt.State(t.Blox, rt.Context([
             rt.Belief(t.t_Block2, t.t_onTop, target),
             rt.Belief(target, t.t_isClear, True),
         ]))
@@ -96,20 +96,20 @@ def test_counting(counting):
 
     propose = t.Counting.IncrementPropose()
     assert propose.bind(rt.Attempt(goal))
-    expert = t.Counting(context)
-    assert propose.resume(expert) == "RETURNED"
-    assert expert.proposals == [rt.Attempt(rt.Perform(rt.SELF, t.t_increment, goal))]
+    state = rt.State(t.Counting, context)
+    assert propose.resume(state) == "RETURNED"
+    assert state.proposals == [rt.Attempt(rt.Perform(rt.SELF, t.t_increment, goal))]
 
     apply = t.Counting.IncrementApply()
     assert apply.bind(rt.Attempt(rt.Perform(rt.SELF, t.t_increment, goal)))
-    assert apply.resume(expert) == "SUCCEEDED"
-    assert expert.posts == [rt.Modify(rt.Belief(goal, t.t_value, 1))]
-    [(function, args)] = expert.effects
+    assert apply.resume(state) == "SUCCEEDED"
+    assert state.posts == [rt.Modify(rt.Belief(goal, t.t_value, 1))]
+    [(function, args)] = state.effects
     assert function.text == 'print($v1 + 1, "...")' and args == (0,)
 
     impasse = t.Counting.Impasse()
     assert impasse.bind(None) and t.Counting.Impasse.trigger is rt.IMPASSE
-    assert impasse.resume(t.Counting()) == "HALTED"
+    assert impasse.resume(rt.State(t.Counting)) == "HALTED"
 
 
 def test_errors_report_lines():
