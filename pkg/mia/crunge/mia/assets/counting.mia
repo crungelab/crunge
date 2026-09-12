@@ -48,4 +48,4 @@ agent CountingAgent
                 $g value $v1
                 -->
                 -+ $g value {$v1 + 1}
-                | print($v1 + 1, "...")
+                || print($v1 + 1, "...")

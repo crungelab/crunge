@@ -68,6 +68,7 @@ class Agent:
         self.proposals: list[Proposal] = []
         self.suspended: list[Task] = []
         self.history: list[Message] = []
+        self.effects: list[tuple] = []   # (function, args) recorded by `|` statements, replayed by a Plan
         self.chosen: list[str | None] = []  # the plan picked for each commit, when several matched
         self.steps = 0
         self.cost = 0.0
@@ -87,6 +88,14 @@ class Agent:
     def propose(self, message, waiter: Task | None = None):
         self.proposals.append(Proposal(message, None, waiter))
         return Status.SUSPENDED if waiter is not None else None
+
+    def effect(self, function, *args) -> None:
+        """Record a side effect instead of performing it.
+
+        A branch that loses the search is discarded with its effects; only the
+        winning agent's are replayed, in order, by its `Plan`.
+        """
+        self.effects.append((function, args))
 
     def halt(self) -> Status:
         self.halted = True
@@ -174,6 +183,7 @@ class Agent:
         child.messages, child.ready, child.proposals, child.suspended = messages, ready, proposals, suspended
         child.history = list(self.history)
         child.chosen = list(self.chosen)
+        child.effects = list(self.effects)
         child.steps = self.steps
         child.cost = self.cost
         self.agents.append(child)
@@ -331,7 +341,11 @@ class Agent:
         child.start(plan.boot, message, None)
         from .agency import Agency
 
-        return Result(Agency(child, plan.expert.priority).run() is not None)
+        solution = Agency(child, plan.expert.priority).run()
+        if solution is not None:
+            # The expert's chosen branch is part of this agent's plan.
+            self.effects.extend(solution.effects)
+        return Result(solution is not None)
 
 
 class Deliberator(Agent):
@@ -363,6 +377,13 @@ class AgentHost:
 
         self.solution = Agency(agent, type(agent).priority).run()
         return Status.SUCCEEDED if self.solution is not None else Status.FAILED
+
+    @property
+    def plan(self):
+        """The effects of the solution, ready to replay. Empty before a successful run."""
+        from .plan import Plan
+
+        return Plan(self.solution) if self.solution is not None else None
 
 
 @cache

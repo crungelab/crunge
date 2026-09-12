@@ -71,7 +71,7 @@ agent SiblingAgent
                 $y here True
                 -->
                 + $x sibling $y
-                | print(f"{$x} and {$y} are siblings, both here")
+                || print(f"{$x} and {$y} are siblings, both here")
                 ==>
                 halt
 

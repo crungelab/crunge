@@ -148,6 +148,7 @@ class Import(Node):
 @dataclass(slots=True)
 class Snippet(Node):
     text: str
+    deferred: bool = False  # `||` records the line as a plan action; `|` runs it now
 
 
 # ---------------------------------------------------------------- where

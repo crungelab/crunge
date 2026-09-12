@@ -146,6 +146,7 @@ class Agent:
         self.context = context or Context()
         self.posts = []
         self.proposals = []
+        self.effects = []
 
     def post(self, message, waiter=None):
         self.posts.append(message)
@@ -154,6 +155,9 @@ class Agent:
     def propose(self, message, waiter=None):
         self.proposals.append(message)
         return "SUSPENDED" if waiter else None
+
+    def effect(self, function, *args):
+        self.effects.append((function, args))
 
     def halt(self):
         return "HALTED"

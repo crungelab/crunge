@@ -127,6 +127,7 @@ class _Generator:
         self.known: list[str] = []
         self.matches = 0
         self.loops = 0
+        self.effects: list[str] = []   # module-level functions for `|` statements
 
     # ------------------------------------------------------------ module
 
@@ -171,6 +172,10 @@ class _Generator:
                     pass
                 case _:
                     raise MiaCompileError(s, f"{type(s).__name__} is not allowed at module level")
+        for text in self.effects:
+            w()
+            w()
+            w(text)
         return w.text()
 
     def frame(self, f: FrameDef):
@@ -435,10 +440,36 @@ class _Generator:
                     w("pass")
             case Cost(value=value):
                 w(f"agent.add_cost({self.term(value, scope)})")
+            case Snippet(text=text, deferred=True):
+                self.action(s, text, scope)
             case Snippet(text=text):
                 w(self.code(s, text, scope))
             case _:
                 raise MiaCompileError(s, f"{type(s).__name__} is not allowed in a rule body")
+
+    def action(self, node: Node, text: str, scope: _Scope):
+        """A `||` line becomes a module-level function called later, with the
+        values its variables had when the rule ran."""
+        names: list[str] = []
+        for match in _DOLLAR.finditer(text):
+            name = match.group(1)
+            if name not in names:
+                self.term(Var(name, line=node.line), scope)  # raises if it is not bound here
+                names.append(name)
+        body = _DOLLAR.sub(lambda m: f"v_{m.group(1)}", text)
+        index = len(self.effects)
+        parameters = ", ".join(f"v_{name}" for name in names)
+        self.effects.append(
+            f"def _effect_{index}({parameters}):\n"
+            f"    {self.comment(node)}\n"
+            f"    {body}\n"
+            f"\n"
+            f"\n"
+            f"_effect_{index}.text = {text!r}\n"
+            f"_effect_{index}.names = {tuple(names)!r}"
+        )
+        args = "".join(f", {self.term(Var(name, line=node.line), scope)}" for name in names)
+        self.w(f"agent.effect(_effect_{index}{args})")
 
     def block(self, stmts: list, scope: _Scope):
         for s in stmts:

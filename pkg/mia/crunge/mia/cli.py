@@ -15,14 +15,15 @@ PRIORITIES = {
 }
 
 
-def main(argv: list[str] | None = None, prog: str = "mia") -> int:
-    parser = argparse.ArgumentParser(prog=prog)
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
     commands = parser.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run", help="compile and run a Mia program")
     run.add_argument("file")
     run.add_argument("--agent", help="agent to run (default: the first one in the file)")
     run.add_argument("--priority", choices=PRIORITIES, help="search priority for every agency")
     run.add_argument("--trace", metavar="PATH", help="record a trace for miascope")
+    run.add_argument("--act", action="store_true", help="replay the plan's effects after solving")
     args = parser.parse_args(argv)
 
     module = load_file(args.file)
@@ -46,6 +47,14 @@ def main(argv: list[str] | None = None, prog: str = "mia") -> int:
     print(f"{name}: {status.name}")
     if host.solution is not None:
         print_plan(host.solution, depth=1)
+        plan = host.plan
+        if len(plan):
+            print(f"\nPlan ({len(plan)} actions):")
+            for action in plan:
+                print(f"  {action.text}")
+            if args.act:
+                print("\nActing:")
+                plan.run()
     if args.trace:
         print(f"trace written to {args.trace}")
     return 0 if status is rt.Status.SUCCEEDED else 1
@@ -65,3 +74,6 @@ def print_plan(solution: rt.Agent, depth: int):
                 print(f"{pad}{type(child).__name__} (cost {child.solution.cost:g}):")
                 print_plan(child.solution, depth + 1)
 
+
+if __name__ == "__main__":
+    sys.exit(main())

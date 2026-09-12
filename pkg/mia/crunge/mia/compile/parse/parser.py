@@ -167,6 +167,9 @@ class ToAst(Transformer):
     def snippet(self, meta, token):
         return Snippet(token[1:].strip(), **_pos(meta))
 
+    def action_stmt(self, meta, token):
+        return Snippet(token[2:].strip(), deferred=True, **_pos(meta))
+
     # ------------------------------------------------------------ goals, clauses, terms
 
     def perform(self, meta, verb, objs, *rest):

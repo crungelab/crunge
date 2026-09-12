@@ -115,6 +115,9 @@ def test_counting(counting):
     assert apply.bind(rt.Attempt(rt.Perform(rt.SELF, t.t_increment, goal)))
     assert apply.resume(agent) == "SUCCEEDED"
     assert agent.posts == [rt.Modify(rt.Belief(goal, t.t_value, 1))]
+    # the print is recorded, not performed
+    [(function, args)] = agent.effects
+    assert function.text == 'print($v1 + 1, "...")' and args == (0,)
 
     impasse = counter.Impasse()
     assert impasse.bind(None) and counter.Impasse.trigger is rt.IMPASSE
@@ -195,3 +198,26 @@ agent A
 def test_knows_an_undeclared_frame_is_rejected():
     with pytest.raises(MiaCompileError, match="undeclared frame Nope"):
         generate(parse("agent A\n    knows Nope\n    def A(/a)\n        pass\n"))
+
+
+def test_immediate_and_deferred_snippets():
+    source = """agent A
+    def A(/a $p)
+        where
+            $p coordX $x
+            -->
+            | log(f"trying {$x}")
+            || move_to($x)
+"""
+    code = generate(parse(source), runtime="tests.fake_runtime")
+    assert 'log(f"trying {v_x}")' in code        # `|` runs where it is written
+    assert "agent.effect(_effect_0, v_x)" in code  # `||` is recorded for the plan
+    assert "def _effect_0(v_x):" in code
+    assert "    move_to(v_x)" in code
+    assert "_effect_0.names = ('x',)" in code
+
+
+@pytest.mark.parametrize("bar", ["|", "||"])
+def test_a_snippet_cannot_use_an_unbound_variable(bar):
+    with pytest.raises(MiaCompileError, match=r"\$q is not bound"):
+        generate(parse(f"agent A\n    def A(/a)\n        {bar} move_to($q)\n"), runtime="tests.fake_runtime")

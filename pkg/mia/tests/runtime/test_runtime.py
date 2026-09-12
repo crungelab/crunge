@@ -93,6 +93,10 @@ def test_counting_counts_to_five(counting, capsys):
     goal = rt.Perform(rt.SELF, counting.t_countTo, 5)
     assert rt.Belief(goal, counting.t_value, 5) in expert.context
     assert goal not in expert.context  # succeed retracted the goal
+
+    # `|` runs during the search, `||` waits for the plan
+    assert capsys.readouterr().out.strip() == "Counting in sub-contexts"
+    host.plan.run()
     assert capsys.readouterr().out.splitlines()[-1] == "5 ..."
 
 
@@ -438,6 +442,7 @@ def test_sibling_query_joins_frame_and_working_memory(capsys):
 
     assert rt.Belief(sib.t_Billy, sib.t_sibling, sib.t_Suzy) in solution.context
     assert rt.Belief(sib.t_Billy, sib.t_sibling, sib.t_Billy) not in solution.context
+    host.plan.run()
     assert capsys.readouterr().out.count("are siblings") == 2  # one line per shared parent
 
     # the frame is background knowledge: queried, never copied or changed
@@ -487,3 +492,70 @@ def test_view_merges_contexts_without_duplicates():
     assert view.find(rt.Belief, a, likes, rt.ANY) == [shared, rt.Belief(a, likes, a)]
     assert view.find(rt.Belief, rt.ANY, likes, a) == [rt.Belief(a, likes, a), rt.Belief(b, likes, a)]
     assert view.exists(rt.Belief, b, likes, a) and not view.exists(rt.Belief, b, likes, b)
+
+
+# ---------------------------------------------------------------- plans
+
+
+def test_mouse_plan_holds_only_the_chosen_route(capsys):
+    mouse = build("mouse")
+    host = rt.AgentHost(mouse.MouseAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+
+    # nothing happened outside the agent while it searched
+    assert capsys.readouterr().out == ""
+
+    plan = host.plan
+    assert [action.text for action in plan] == [
+        'print(f"moveTo({1}, {0})")',
+        'print(f"moveTo({2}, {0})")',
+    ]
+    plan.run()
+    assert capsys.readouterr().out.split() == ["moveTo(1,", "0)", "moveTo(2,", "0)"]
+
+    # the search recorded far more effects than the plan replays
+    def effects(agent):
+        return len(agent.effects) + sum(effects(child) for child in agent.agents)
+
+    assert effects(host.agent.agents[0]) > 2 * len(plan)
+
+
+def test_a_losing_branch_leaves_no_effects():
+    recorded = []
+
+    def note(value):
+        recorded.append(value)
+
+    note.text = "note($v)"
+    note.names = ("v",)
+
+    class Act(rt.Task):
+        def __init__(self, value, halt):
+            super().__init__()
+            self.value, self.halting = value, halt
+
+        def resume(self, agent, result=None):
+            agent.effect(note, self.value)
+            return agent.halt() if self.halting else self.succeed(agent)
+
+    parent = rt.Agent()
+    parent.effect(note, "shared")
+    winner, loser = rt.Agent(parent=parent), rt.Agent(parent=parent)
+    winner.effects = list(parent.effects)
+    loser.effects = list(parent.effects)
+    winner.start(Act("kept", halt=True), None, None)
+    loser.start(Act("dropped", halt=True), None, None)
+    winner.run()
+    loser.run()
+
+    rt.Plan(winner).run()
+    assert recorded == ["shared", "kept"]
+    assert str(rt.Plan(winner)) == "note('shared')\nnote('kept')"
+
+
+def test_immediate_and_deferred_effects_side_by_side(capsys):
+    mouse = build("mouse")
+    host = rt.AgentHost(mouse.MouseAgent)
+    host.run()
+    # the `|` logging line ran once per move considered, in every branch
+    assert len(host.plan) == 2

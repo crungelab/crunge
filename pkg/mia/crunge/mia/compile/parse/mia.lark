@@ -70,6 +70,7 @@ predicate: VERB [objects] slot*
        | "cost" term            -> cost_stmt
        | "import" dotted        -> import_stmt
        | SNIPPET                -> snippet
+       | ACTION                 -> action_stmt
 
 // Envelope and content are separate axes:
 //   [*] propose   [+ - -+] assert / retract / modify   (default: attempt)
@@ -110,6 +111,7 @@ VERB: /[a-z_]\w*/
 NUMBER: /\d+(\.\d+)?/
 STRING: /"([^"\\\n]|\\.)*"|'([^'\\\n]|\\.)*'/
 CODE: /\{[^}\n]*\}/
+ACTION.2: /\|\|[^\n]*/
 SNIPPET: /\|[^\n]*/
 
 COMMENT: /#[^\n]*/
