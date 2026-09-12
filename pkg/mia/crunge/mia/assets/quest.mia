@@ -1,0 +1,169 @@
+#
+# Quest: hierarchical task decomposition
+#
+# A courier must deliver a parcel across a river. Every compound task has
+# more than one method, so the search chooses a decomposition at each level,
+# and a method that fails deep down forces a different choice higher up.
+#
+
+class Place
+class Item
+class Person
+
+agent QuestAgent
+
+    predicate at(Place)
+    predicate holds(Item)
+    predicate coins(int)
+    predicate connects(Place)
+    predicate toll(int)
+    predicate open(bool)
+    predicate sells(Item)
+    predicate price(int)
+
+    def QuestAgent(/questAgent)
+
+        context Village
+
+            Place Home
+            Place Market
+            Place Bridge
+            Place Ferry
+            Place Farm
+
+            Item Parcel
+            Item Ticket
+
+            # Two ways across the river, and the bridge is shut.
+            Bridge connects Farm toll: 2
+            Bridge open False
+
+            Ferry connects Farm toll: 0
+
+            Market sells Ticket price: 3
+
+            Person Courier
+                at Home
+                holds Parcel
+                coins 5
+
+            /deliver Parcel to: Farm
+
+        /quest context: Village
+
+
+    expert Quest
+
+        def Quest(/quest)
+            pass
+
+        def Impasse(impasse)
+            where
+                Goal $g status Active
+                -->
+                * $g
+                !==>
+                halt
+
+        # ---- deliver: two methods, one per river crossing ----------------
+
+        def DeliverByBridge(/deliver $item to: $there)
+            select
+                Courier holds $item
+                Bridge connects $there toll: $toll
+                !==>
+                throw
+
+            cost 1
+            /cross Bridge paying: $toll
+            /handOver $item at: $there
+
+        def DeliverByFerry(/deliver $item to: $there)
+            select
+                Courier holds $item
+                Ferry connects $there
+                !==>
+                throw
+
+            cost 1
+            /board Ferry
+            /handOver $item at: $there
+
+        # ---- cross the bridge: it has to be open, and the toll paid ------
+
+        def CrossBridge(/cross $bridge paying: $toll)
+            select
+                $bridge open True
+                Courier coins $coins
+                {$coins >= $toll}
+                !==>
+                throw
+
+            cost 2
+            -+ Courier coins {$coins - $toll}
+            -+ Courier at Farm
+            || print(f"cross the bridge, paying {$toll}")
+
+        # ---- board the ferry: two methods, and one recurses ---------------
+
+        def BoardWithTicket(/board $ferry)
+            select
+                Courier holds Ticket
+                !==>
+                throw
+
+            cost 2
+            - Courier holds Ticket
+            -+ Courier at Farm
+            || print("board the ferry")
+
+        # No ticket yet: get one, then board. The task comes back to the
+        # method above once the ticket is in hand.
+        def BoardAfterBuying(/board $ferry)
+            select
+                not Courier holds Ticket
+                !==>
+                throw
+
+            /buy Ticket
+            /board $ferry
+
+        def BuyTicket(/buy $item)
+            select
+                Market sells $item price: $price
+                Courier coins $coins
+                {$coins >= $price}
+                !==>
+                throw
+
+            cost 1
+            /goTo Market
+            -+ Courier coins {$coins - $price}
+            + Courier holds $item
+            || print(f"buy a {$item} for {$price}")
+
+        def BegForTicket(/buy $item)
+            select
+                Market sells $item price: $price
+                {$price > 100}
+                !==>
+                throw
+
+            cost 5
+            + Courier holds $item
+
+        def GoTo(/goTo $place)
+            -+ Courier at $place
+            || print(f"walk to {$place}")
+
+        def HandOver(/handOver $item at: $there)
+            select
+                Courier at $there
+                Courier holds $item
+                !==>
+                throw
+
+            cost 1
+            - Courier holds $item
+            + $there holds $item
+            || print(f"hand over the {$item} at {$there}")

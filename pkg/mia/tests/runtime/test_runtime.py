@@ -609,3 +609,63 @@ def test_alternative_plans_become_separate_branches(travel):
     # walking eight miles does not apply, so that branch throws and dies
     assert branches["TravelByFoot"].dead
     assert not branches["TravelByTaxi"].dead
+
+
+# ---------------------------------------------------------------- quest (HTN)
+
+
+@pytest.fixture(scope="module")
+def quest():
+    return build("quest")
+
+
+def test_quest_decomposes_around_a_closed_bridge(quest):
+    host = rt.AgentHost(quest.QuestAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    solution = host.solution.agents[0].solution
+
+    assert rt.Belief(quest.t_Farm, quest.t_holds, quest.t_Parcel) in solution.context
+    assert rt.Belief(quest.t_Courier, quest.t_coins, 2) in solution.context  # 5 - 3 for the ticket
+    assert [a.text for a in host.plan] == [
+        'print(f"walk to {Market}")',
+        'print(f"buy a {Ticket} for {3}")',
+        'print("board the ferry")',
+        'print(f"hand over the {Parcel} at {Farm}")',
+    ]
+
+
+def test_opening_the_bridge_changes_the_decomposition(quest):
+    source = sample("quest.mia").replace("Bridge open False", "Bridge open True")
+    module = build_source(source, "open_bridge_quest")
+    host = rt.AgentHost(module.QuestAgent)
+    assert host.run() is rt.Status.SUCCEEDED
+    assert host.solution.agents[0].solution.cost == 5   # cheaper than the ferry route's 7
+    assert [a.text for a in host.plan] == [
+        'print(f"cross the bridge, paying {2}")',
+        'print(f"hand over the {Parcel} at {Farm}")',
+    ]
+
+
+def test_a_partly_built_plan_is_carried_into_successor_states(quest):
+    host = rt.AgentHost(quest.QuestAgent)
+    host.run()
+
+    def descendants(agent):
+        for child in agent.agents:
+            yield child
+            yield from descendants(child)
+
+    agents = list(descendants(host.agent.agents[0]))
+
+    # at its deepest the courier is three methods into the decomposition
+    stacks = [[type(task).__name__ for task in a.suspended] for a in agents]
+    assert ["DeliverByFerry", "BoardAfterBuying"] in stacks
+
+    # a method that fails deep down kills its branch, not the agent
+    bridge = next(a for a in agents if a.chosen and a.chosen[-1] == "DeliverByBridge")
+    assert bridge.dead and bridge.suspended  # it died mid-decomposition
+
+    # each child resumes its own copy of the suspended work
+    forked = next(a for a in agents if len(a.agents) > 1 and a.suspended)
+    for child in forked.agents:
+        assert all(task not in forked.suspended for task in child.suspended)

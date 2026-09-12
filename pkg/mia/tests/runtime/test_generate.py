@@ -250,3 +250,16 @@ def test_select_without_an_else_fails_when_nothing_matches():
 """
     code = generate(parse(source), runtime="tests.fake_runtime")
     assert "if _found is None:\n" in code and "return self.fail(agent)" in code
+
+
+def test_a_select_else_body_must_end_the_rule():
+    source = """agent A
+    def A(/a)
+        select
+            Self location $from
+            !==>
+            /ask
+        /go $from
+"""
+    with pytest.raises(MiaCompileError, match="must end the rule"):
+        generate(parse(source), runtime="tests.fake_runtime")

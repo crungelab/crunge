@@ -584,11 +584,15 @@ class _Generator:
             w.depth -= opened
             w("return None")
         w(f"_found = {name}()")
+        if s.otherwise and not isinstance(s.otherwise[-1], TERMINATORS):
+            raise MiaCompileError(
+                s.otherwise[-1],
+                "the !==> body of a select must end the rule (throw, fail, return, succeed or halt); "
+                "for an alternative way to do the task, write another rule with the same trigger",
+            )
         with w.block("if _found is None:"):
             if s.otherwise:
                 self.block(s.otherwise, scope)
-                if not isinstance(s.otherwise[-1], TERMINATORS):
-                    w("return self.fail(agent)")
             else:
                 w("return self.fail(agent)")
         if bound:
