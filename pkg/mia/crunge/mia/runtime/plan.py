@@ -11,6 +11,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
+def action_text(function, args) -> str:
+    """The `||` line as written, with the values it was recorded with."""
+    source = getattr(function, "text", None)
+    if source is None:
+        return f"{getattr(function, '__name__', function)}{args}"
+    for name, value in zip(getattr(function, "names", ()), args):
+        source = source.replace(f"${name}", repr(value))
+    return source
+
+
 @dataclass(frozen=True, slots=True)
 class Action:
     function: object
@@ -18,14 +28,7 @@ class Action:
 
     @property
     def text(self) -> str:
-        """The `|` line as written, with the values it was recorded with."""
-        source = getattr(self.function, "text", None)
-        if source is None:
-            return f"{getattr(self.function, '__name__', self.function)}{self.args}"
-        names = getattr(self.function, "names", ())
-        for name, value in zip(names, self.args):
-            source = source.replace(f"${name}", repr(value))
-        return source
+        return action_text(self.function, self.args)
 
     def run(self):
         return self.function(*self.args)

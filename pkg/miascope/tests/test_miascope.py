@@ -1,4 +1,5 @@
 """miascope's trace model and tree layout."""
+import json
 import random
 from importlib.resources import as_file
 
@@ -146,3 +147,33 @@ def test_layout_of_a_trace(blox):
     [expert] = trace.top.root.spawned
     assert pos[expert.root].y == 3 and pos[expert.solution].y == 15
     assert_tidy(list(trace.nodes.values()), Node.display_children, pos, width, 1)
+
+
+# ---------------------------------------------------------------- plans
+
+
+def test_plan_is_readable_from_a_trace_alone():
+    host, trace = record("mouse.mia")
+    [expert] = trace.top.root.spawned
+    actions = trace.plan(expert.solution)
+    assert actions == [action.text for action in host.plan]
+
+    # the top-level agent's plan includes what the expert it spawned decided
+    assert trace.plan(trace.top.solution) == actions
+
+    # every branch's actions are in the trace; only the solution's are in the plan
+    recorded = sum(len(node.actions) for node in trace.nodes.values())
+    assert recorded > len(actions)
+
+
+def test_sources_keep_the_live_plan_for_programs_only(tmp_path):
+    from crunge.miascope.sources import load
+
+    live = load("mouse.mia")
+    assert live.runnable and [a.text for a in live.plan] == live.trace.plan(live.trace.top.solution)
+
+    out = tmp_path / "mouse.miatrace"
+    out.write_text("".join(json.dumps(e) + "\n" for e in live.trace.events), encoding="utf-8")
+    from_disk = load(str(out))
+    assert not from_disk.runnable  # the functions are gone, the text remains
+    assert from_disk.trace.plan(from_disk.trace.top.solution) == live.trace.plan(live.trace.top.solution)

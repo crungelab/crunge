@@ -23,8 +23,10 @@ from ..inspector import report
 from ..model import Trace
 from ..painter import Painter
 from ..scene import Scene
-from ..sources import DEFAULT_SAMPLE, load_trace, sample_names
+from ..sources import DEFAULT_SAMPLE, load, sample_names
 from ..style import CHANGE_TEXT, ERROR_TEXT, FONT_SIZE, GAP, LEVEL, PADDING
+
+TEXT_BUFFER = 256  # crunge.imgui.input_text needs an explicit buffer size
 from ..timeline import Timeline, describe
 
 
@@ -63,6 +65,7 @@ class TracePage(Page):
         self.timeline: Timeline | None = None
         self.selected = None
         self.source: str | None = None  # a sample name or a path
+        self.loaded = None              # the Source: trace, and the plan when it can be replayed
         self.samples = sample_names()
         self.error: str | None = None
         self.filter = ""
@@ -83,14 +86,14 @@ class TracePage(Page):
         """Load a sample by name (`blox.mia` records it fresh) or a file by path."""
         logger.debug(f"Loading trace from {source}")
         try:
-            trace = load_trace(source)
+            loaded = load(source)
         except Exception as e:  # show compile, runtime, and file errors in the panel
             logger.exception(f"Could not load {source}")
             self.error = f"{type(e).__name__}: {e}"
             return
-        self.source, self.trace, self.error = source, trace, None
+        self.source, self.loaded, self.trace, self.error = source, loaded, loaded.trace, None
         self.scene = self.build_scene()
-        self.timeline = Timeline(len(trace.events))
+        self.timeline = Timeline(len(self.trace.events))
         self.selected = None
         self.needs_fit = True
 
@@ -128,6 +131,7 @@ class TracePage(Page):
             self.timeline.update(io.delta_time)
             self.draw_timeline_panel()
             self.draw_inspector_panel()
+            self.draw_plan_panel()
             self.handle_mouse(io)
             canvas = Renderer.get_current().canvas
             # ASSUMPTION: canvas pixels match ImGui display coordinates. On a
@@ -187,6 +191,31 @@ class TracePage(Page):
         imgui.text(describe(self.trace.events[tl.t]))
         imgui.end()
 
+    def draw_plan_panel(self):
+        """The actions of the solution: what the agent would actually do."""
+        imgui.begin("Plan")
+        node = self.selected if self.selected is not None else self.solution_node()
+        if node is None:
+            imgui.text("No solution in this trace.")
+            imgui.end()
+            return
+        actions = self.trace.plan(node)
+        imgui.text(f"agent {node.id}: {len(actions)} actions")
+        if self.loaded.runnable and node is self.solution_node():
+            imgui.same_line()
+            # Replaying performs real side effects, so only offer it for a
+            # program miascope ran itself, where the functions still exist.
+            if imgui.button("Run"):
+                logger.info(f"Running plan for {self.source}")
+                self.loaded.plan.run()
+        for index, text in enumerate(actions, 1):
+            imgui.text(f"{index}. {text}")
+        imgui.end()
+
+    def solution_node(self):
+        """The deepest solved agent: the top-level search's solution."""
+        return self.trace.top.solution
+
     def draw_inspector_panel(self):
         imgui.begin("Inspector")
         if self.selected is None:
@@ -204,7 +233,7 @@ class TracePage(Page):
                 variables = ", ".join(f"${k} = {v}" for k, v in task["vars"].items())
                 imgui.text(f"{task['task']}  pc {task['pc']}  {variables}")
         if r.context and imgui.collapsing_header(f"Context ({len(r.context)})"):
-            _, self.filter = imgui.input_text("Filter", self.filter, 256)
+            _, self.filter = imgui.input_text("Filter", self.filter, TEXT_BUFFER)
             marks = {"added": "+ ", "removed": "- ", "kept": "  "}
             for row in r.context:
                 if row.matches(self.filter):

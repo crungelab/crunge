@@ -53,6 +53,7 @@ class Node:
     proposal: str | None = None  # the proposal it committed to, or the message that spawned it
     plan: str | None = None  # the plan chosen, when several matched
     state: dict | None = None
+    actions: list[str] = field(default_factory=list)  # `||` lines this agent recorded
     reached: int | None = None
     resolved: int | None = None
     outcome: Phase | None = None
@@ -151,6 +152,17 @@ class Trace:
     def solution_path(self, search: Search) -> list[Node]:
         return self.path(search.solution) if search.solution is not None else []
 
+    def plan(self, node: Node) -> list[str]:
+        """The actions along the path to `node`, including those of experts it
+        spawned along the way — the same order the runtime would replay them."""
+        actions: list[str] = []
+        for step in self.path(node):
+            actions += step.actions
+            for search in step.spawned:
+                if search.solution is not None:
+                    actions += self.plan(search.solution)
+        return actions
+
     # ------------------------------------------------------------ building
 
     def _apply(self, index: int, event: dict):
@@ -180,6 +192,8 @@ class Trace:
             case "state":
                 node = self._existing(event["agent"])
                 node.state, node.reached = event, index
+            case "action":
+                self._existing(event["agent"]).actions.append(event["text"])
             case _ if kind in _OUTCOMES:
                 node = self._existing(event["agent"])
                 node.outcome, node.resolved = _OUTCOMES[kind], index

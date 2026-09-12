@@ -96,6 +96,10 @@ class Agent:
         winning agent's are replayed, in order, by its `Plan`.
         """
         self.effects.append((function, args))
+        if self.tracer is not None:
+            from .plan import action_text
+
+            self.tracer.emit("action", agent=self.id, text=action_text(function, args))
 
     def halt(self) -> Status:
         self.halted = True

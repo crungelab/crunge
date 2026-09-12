@@ -13,6 +13,7 @@ Events, in the order they can occur:
   state     an agent reached a decision or finished: cost, priority, context
             changes against its parent (the whole context for a root),
             proposals, suspended tasks
+  action    a `||` line this agent recorded for its plan: text
   prune     the state was already reached at lower or equal cost: best
   expand    the agency forks this agent's proposals
   skip      popped, but a cheaper path to its state was found since
