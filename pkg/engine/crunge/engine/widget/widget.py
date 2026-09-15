@@ -125,63 +125,6 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
                 return EVENT_HANDLED
         return super().dispatch(event) or self.handle(event)
 
-    '''
-    def dispatch(self, event) -> DispatchResult:
-        for child in reversed(self.children):
-            if child.dispatch(event) is not None:
-                return EVENT_HANDLED
-        if super().dispatch(event) is not None:
-            return EVENT_HANDLED
-        return self.handle(event)
-    '''
-
-    '''
-    @property
-    def controller(self) -> Controller:
-        return self._controller
-
-    @controller.setter
-    def controller(self, controller: Controller) -> None:
-        if controller == self._controller:
-            return
-        if self._controller:
-            self._controller.disable()
-        self._controller = controller
-        if controller is None:
-            return
-        controller.enable()
-
-    def _create(self) -> None:
-        super()._create()
-        if self._controller is not None:
-            self._controller.create()
-
-    def _enable(self) -> None:
-        super()._enable()
-        if self.controller is not None:
-            self.controller.enable()
-
-    def _disable(self) -> None:
-        super()._disable()
-        if self.controller is not None:
-            self.controller.disable()
-
-    def dispatch(self, event) -> DispatchResult:
-        for child in reversed(self.children):
-            if child.dispatch(event) is not None:
-                return EVENT_HANDLED
-        if self.controller is not None and self.controller.dispatch(event) is not None:
-            return EVENT_HANDLED
-        return self.handle(event)
-
-    def update(self, delta_time: float) -> None:
-        # logger.debug("Widget.update")
-        if self.controller is not None:
-            self.controller.update(delta_time)
-        for child in self.children:
-            child.update(delta_time)
-    '''
-
     def on_added(self) -> None:
         # logger.debug(f"Widget.on_added: {self}")
         # logger.debug(f"Parent: {self.parent}")

@@ -17,9 +17,9 @@ class SurfaceEasel(Easel):
         self,
         size: glm.ivec2,
         window: sdl.Window,
-        render_options: RenderOptions = RenderOptions(),
+        render_options: RenderOptions = None,
     ):
-        super().__init__(size, render_options)
+        super().__init__(size, render_options or RenderOptions())
         self.window = window
         self.surface: wgpu.Surface = None
         self.create_surface()

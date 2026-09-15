@@ -52,49 +52,23 @@ class Vu2D(Vu[Node2D]):
         super().plug()
         self.node._mark_bounds_dirty()
 
-    '''
     def _create(self):
         super()._create()
         group = self.group
         if group is not None:
             if group.is_render_group:
                 self.manual_draw = False
-    '''
 
     def _destroy(self):
         if self.group is not None:
             self.group.remove(self)
         super()._destroy()
 
-    def find_vu_group(self) -> "VuGroup | None":
-        if self._node is not None:
-            self.group = self._node.find_vu_group()
-        return self.group
-    '''
-    def find_vu_group(self) -> "VuGroup | None":
-        node = self.node
-        while self.group is None and node is not None:
-            node = node.parent
-            self.group = node.vu_group if node is not None else None
-            if self.group is not None:
-                break
-        return self.group
-    '''
-
     def _enable(self) -> None:
         # Vu._enable subscribes and syncs, which marks dirt. The buffers it
         # will be written into are created below; the write itself waits for
         # the next flush, so the order here is safe either way.
         super()._enable()
-
-        self.find_vu_group()
-
-        group = self.group
-        if group is not None:
-            group.append(self)
-            if group.is_render_group:
-                self.manual_draw = False
-
         if not self.manual_draw:
             return
         self.create_program()

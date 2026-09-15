@@ -24,11 +24,12 @@ class Easel(GfxAccess, Base):
     def __init__(
         self,
         size: glm.ivec2,
-        render_options: RenderOptions = RenderOptions(),
+        #render_options: RenderOptions = RenderOptions(),
+        render_options: RenderOptions = None,
     ):
         self._size = size
         self.resized = False
-        self.render_options = render_options
+        self.render_options = render_options or RenderOptions()
         self.size_changed: Signal[glm.ivec2] = Signal()
 
         self.color_texture: wgpu.Texture = None

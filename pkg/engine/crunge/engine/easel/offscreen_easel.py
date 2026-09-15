@@ -14,9 +14,10 @@ class OffscreenEasel(Easel):
     def __init__(
         self,
         size: glm.ivec2,
-        render_options: RenderOptions = RenderOptions(),
+        render_options: RenderOptions = None,
     ):
-        super().__init__(size, render_options)
+        super().__init__(size, render_options or RenderOptions())
+        #super().__init__(size, render_options)
         self.create_texture()
 
     def on_size(self) -> None:

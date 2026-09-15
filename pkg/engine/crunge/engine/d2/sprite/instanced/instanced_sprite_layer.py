@@ -1,3 +1,4 @@
+from crunge.engine.vu_group import VuGroup
 from loguru import logger
 
 from ... import Node2D
@@ -26,10 +27,14 @@ class InstancedSpriteLayer(GraphLayer2D):
         # never forwarded update to, which is why rebatching never ran.
         self.vu_group = self.root.add(InstancedSpriteVuGroup(count, sprite_group))
 
+    def get_vu_group(self, vu_type: type = None) -> VuGroup | None:
+        return self.vu_group
+
     # `_draw` is not overridden. GraphLayer._draw walks the root, which
     # draws its chips — the group among them — and then its children. The
     # old override drew only the group and skipped the node tree entirely.
 
+    '''
     def attach(self, node: Node2D) -> None:
         vu = node.vu
         if vu is not None:
@@ -45,3 +50,4 @@ class InstancedSpriteLayer(GraphLayer2D):
         if node.vu is not None:
             self.vu_group.remove(node.vu)
         super().detach(node)
+    '''

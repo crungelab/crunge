@@ -15,12 +15,14 @@ class Controller[T_Node: "Node"](EventHandler, Chip[T_Node]):
         super().__init__()
         self.delta_time = 0
 
+    '''
     def activate(self):
         pass
 
     def deactivate(self):
         pass
-
+    '''
+    
     def dispatch(self, event) -> DispatchResult:
         #logger.debug(f"class:{self.__class__.__name__}, Dispatching event: {event}")
         return super().dispatch(event) or self.handle(event)

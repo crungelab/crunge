@@ -63,7 +63,6 @@ class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
             # Model has not landed yet. Rebuild once it has.
             self._rebatch = True
             return
-
         # TODO: Compare by texture until I start registering materials
         if (
             len(self.batches) == 0

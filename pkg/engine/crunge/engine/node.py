@@ -7,6 +7,7 @@ from crunge.core.signal import Signal
 from crunge.core.base_node import BaseNode
 from crunge.core.chip import Chip
 from .vu import Vu
+from .vu_group import VuGroup
 from .controller import Controller
 
 from .model import Model
@@ -131,6 +132,56 @@ class Node[T: Node](BaseNode[T]):
             old.destroy()
         if value is not None:
             self.add(value)
+
+    def find_vu_group(self, vu_type: type = None) -> VuGroup | None:
+        group = None
+        group = self.get_vu_group(vu_type)
+        if group is not None:
+            return group
+        node = self.parent
+        while node is not None:
+            group = node.get_vu_group(vu_type)
+            if group is not None:
+                return group
+            node = node.parent
+        return None
+
+    # default on Node
+    def get_vu_group(self, vu_type: type = None) -> VuGroup | None:
+        return None
+
+    '''
+    def find_vu_group(self, vu_type: type = None) -> VuGroup | None:
+        node = self.parent
+        while node is not None:
+            group = node.get_vu_group(vu_type)
+            if group is not None:
+                return group
+            node = node.parent
+        return None
+
+    # default on Node
+    def get_vu_group(self, vu_type: type = None):
+        return None
+    '''
+
+    '''
+    # VuGroup property
+    @property
+    def vu_group(self) -> VuGroup | None:
+        return self.get(VuGroup)
+
+    @vu_group.setter
+    def vu_group(self, value: VuGroup | None) -> None:
+        old = self.get(VuGroup)
+        if old is value:
+            return
+        if old is not None:
+            self.remove(old)
+            old.destroy()
+        if value is not None:
+            self.add(value)
+    '''
 
     # Controller property
     @property
