@@ -2,7 +2,7 @@ from loguru import logger
 
 from crunge import imgui
 from crunge.engine import Renderer
-from crunge.engine.widget.label import Label
+from crunge.engine.ui.label import Label
 
 from ..trial import Trial
 
@@ -10,7 +10,7 @@ from ..trial import Trial
 class LabelTrial(Trial):
     def setup(self):
         super().setup()
-        self.view.ui.add_child(Label("Hello, World!"))
+        self.display.ui.add_child(Label("Hello, World!"))
 
 def main():
     LabelTrial().run()

@@ -1,4 +1,4 @@
-from crunge.engine.widget import WidgetOverlay
+from crunge.engine.ui import WidgetOverlay
 
 class TrialOverlay(WidgetOverlay):
     def __init__(self):

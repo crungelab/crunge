@@ -336,6 +336,18 @@ class BaseNode[T: BaseNode](Base):
 
     # -- tree --------------------------------------------------------------
 
+    def push_child(self, child: T) -> T:
+        """Push a child to the end of the children list."""
+        return self.add_child(child)
+
+    def pop_child(self) -> T:
+        """Pop the last child from the children list."""
+        if not self.children:
+            return None
+        child = self.children[-1]
+        self.remove_child(child)
+        return child
+
     def add_child(self, child: T) -> T:
         child.parent = self
         self.children.append(child)

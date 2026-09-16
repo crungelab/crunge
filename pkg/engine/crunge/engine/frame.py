@@ -9,7 +9,7 @@ from crunge import yoga
 
 from crunge.core.signal import Signal, Pulse
 from .scheduler import Scheduler
-from .widget import Widget
+from .ui import Widget
 from .display import Display
 from .channel import Channel
 

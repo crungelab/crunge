@@ -14,7 +14,7 @@ from .d3.camera_3d import Camera3D
 from .d3.lighting_3d import Lighting3D
 
 from .viewport import Viewport
-from .widget import Widget, Overlay
+from .ui import Widget, Overlay
 from .overlay.overlay_manufacturer import OverlayManufacturer, OverlayConfig
 
 from .d2.overlay.scratch_overlay import ScratchOverlay

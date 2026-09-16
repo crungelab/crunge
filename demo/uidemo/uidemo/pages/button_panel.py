@@ -1,16 +1,20 @@
+import math
+
 from loguru import logger
 
-from crunge import imgui
 from crunge import yoga
-from crunge.yoga import StyleBuilder
-from crunge.engine import Renderer
-from crunge.engine.ui.panel import Panel
+
+from crunge.engine import App
+from crunge.demo import PageChannel
+
+from ..page import Page
+
 from crunge.engine.ui.button import Button
+from crunge.engine.ui.panel import Panel
+from crunge.yoga import StyleBuilder
 
-from ..trial import Trial
 
-
-class ButtonPanelTrial(Trial):
+class ButtonPanelPage(Page):
     def setup(self):
         super().setup()
 
@@ -35,7 +39,7 @@ class ButtonPanelTrial(Trial):
         )
         panel.add_child(button2)
 
-        ui = self.display.ui
+        ui = self.ui
 
         ui.layout.set_width_percent(100)
         ui.layout.set_height_percent(100)
@@ -45,9 +49,5 @@ class ButtonPanelTrial(Trial):
         ui.add_child(panel)
 
 
-def main():
-    ButtonPanelTrial().run()
-
-
-if __name__ == "__main__":
-    main()
+def install(app: App):
+    app.add_channel(PageChannel(ButtonPanelPage, "button_panel", "Button Panel"))

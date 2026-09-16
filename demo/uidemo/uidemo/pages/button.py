@@ -1,16 +1,20 @@
+import math
+
 from loguru import logger
 
-from crunge.engine import Renderer
+from crunge.engine import App
+from crunge.demo import PageChannel
+
+from ..page import Page
+
 from crunge.engine.ui.button import Button
 from crunge.yoga import StyleBuilder
 
-from ..trial import Trial
 
-
-class ButtonTrial(Trial):
+class ButtonPage(Page):
     def setup(self):
         super().setup()
-        self.display.ui.add_child(
+        self.ui.add_child(
             Button(
                 "Hello, World!",
                 style=StyleBuilder().size(200, 50).build(),
@@ -18,9 +22,5 @@ class ButtonTrial(Trial):
         )
 
 
-def main():
-    ButtonTrial().run()
-
-
-if __name__ == "__main__":
-    main()
+def install(app: App):
+    app.add_channel(PageChannel(ButtonPage, "button", "Button"))

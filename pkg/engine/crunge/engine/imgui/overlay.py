@@ -12,7 +12,7 @@ from crunge import imgui
 from crunge.imgui import Key
 
 from ..math import Rect2i
-from ..widget import Overlay
+from ..ui import Overlay
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from .vu import ImGuiVu

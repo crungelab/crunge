@@ -4,8 +4,8 @@ from crunge import imgui
 from crunge import yoga
 from crunge.yoga import StyleBuilder
 from crunge.engine import Renderer
-from crunge.engine.widget.panel import Panel
-from crunge.engine.widget.button import Button
+from crunge.engine.ui.panel import Panel
+from crunge.engine.ui.button import Button
 
 from ..trial import Trial
 
@@ -31,7 +31,7 @@ class ButtonsTrial(Trial):
         )
         panel.add_child(button2)
 
-        self.view.ui.add_child(panel)
+        self.display.ui.add_child(panel)
 
 
 def main():

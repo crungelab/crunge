@@ -4,15 +4,26 @@ from loguru import logger
 
 from crunge import yoga
 
-from ..widget import Widget
+from ..ui import Widget
 from ..vu import Vu
 
 if TYPE_CHECKING:
     from ..window import Window
     from ..display import Display
 
+
 class Overlay(Widget):
-    def __init__(self, name: str, priority: int = 0, vu: Vu = None) -> None:
+    def __init__(self, name: str, priority: int = 0, style: yoga.Style = None) -> None:
+        if style is None:
+            style = (
+                yoga.StyleBuilder()
+                .position_type(yoga.PositionType.ABSOLUTE)
+                .size_percent(100, 100)
+                .position(yoga.Edge.LEFT, 0)
+                .position(yoga.Edge.TOP, 0)
+                .build()
+            )
+        '''
         style = (
             yoga.StyleBuilder()
             .position_type(yoga.PositionType.ABSOLUTE)
@@ -21,8 +32,9 @@ class Overlay(Widget):
             .position(yoga.Edge.TOP, 0)
             .build()
         )
+        '''
 
-        super().__init__(style)
+        super().__init__(style, priority=priority)
 
         # This also works
         """
@@ -34,7 +46,5 @@ class Overlay(Widget):
         """
 
         self.name = name
-        self.priority = priority
-        self.vu = vu
         self.window: "Window" = None
         self.display: "Display" = None

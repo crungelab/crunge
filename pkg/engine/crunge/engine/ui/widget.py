@@ -6,21 +6,19 @@ from crunge import yoga
 from ..sdl.event_handler import EventHandler
 from ..node import Node
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
-#from ..controller import Controller
 from ..gfx_access import GfxAccess
 
 class Widget(EventHandler, GfxAccess, Node["Widget"]):
-    def __init__(self, style: yoga.Style = yoga.Style()) -> None:
+    def __init__(self, style: yoga.Style = None, priority: int = 0) -> None:
         super().__init__()
         self._size = glm.ivec2(0, 0)
-        #self._controller: Controller = None
-        self.priority = 0
+        self.priority = priority
         self.hovered = False
         # Layout
         self.introduced = False
         self.layout_dirty = False
         self.layout = yoga.Layout()
-        self.layout.set_style(style)
+        self.layout.set_style(style or yoga.Style())
         self.layout.set_dirtied_func(self.mark_layout_dirty)
 
     def intro(self) -> None:
@@ -29,6 +27,8 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
     def mark_layout_dirty(self) -> None:
         logger.debug(f"Widget.mark_layout_dirty: {self}")
         self.layout_dirty = True
+        if self.parent is not None:
+            self.parent.mark_layout_dirty()
 
     def apply_layout(self) -> None:
         # logger.debug(f"Widget.apply_layout: {self}")
@@ -136,6 +136,11 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
     def on_removed(self) -> None:
         if self.parent is not None:
             self.parent.layout.remove_child(self.layout)
+            self.mark_layout_dirty()
+            from ..window import Window
+
+            Window.get_current().apply_layout()
+            #self.parent.layout.calculate_bounds()
         super().on_removed()
 
     def hit_test(self, x: float, y: float) -> bool:

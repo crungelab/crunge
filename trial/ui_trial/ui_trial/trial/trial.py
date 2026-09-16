@@ -8,7 +8,7 @@ from .trial_view import TrialView
 
 
 class Trial(engine.App):
-    view: TrialView
+    display: TrialView
 
     kWidth = 1024
     kHeight = 768
@@ -18,7 +18,7 @@ class Trial(engine.App):
             self.kWidth,
             self.kHeight,
             self.__class__.__name__,
-            view=view,
+            display=view,
             resizable=True,
         )
         self.resource_root = (

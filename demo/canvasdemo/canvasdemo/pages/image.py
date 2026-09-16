@@ -7,7 +7,25 @@ from crunge.demo import PageChannel
 from ..page import Page
 
 
-info = skia.ImageInfo()
+class ImageDemo(Page):
+    def setup(self):
+        super().setup()
+        data = skia.Data.make_from_file_name(
+            "../../depot/skia/resources/images/color_wheel.png"
+        )
+        logger.debug(f"data: {data}")
+        self.image = skia.deferred_from_encoded_data(data)
+        logger.debug(
+            f"image: {self.image}, color_type: {self.image.color_type()}, alpha_type: {self.image.alpha_type()}, width: {self.image.width()}, height: {self.image.height()}"
+        )
+
+    def _draw(self):
+        canvas = Renderer.get_current().canvas
+        canvas.draw_image(self.image, 0, 0)
+        super()._draw()
+
+
+"""
 data = skia.Data.make_from_file_name(
     "../../depot/skia/resources/images/color_wheel.png"
 )
@@ -17,24 +35,12 @@ logger.debug(
     f"image: {image}, color_type: {image.color_type()}, alpha_type: {image.alpha_type()}, width: {image.width()}, height: {image.height()}"
 )
 
-sampling_options = skia.SamplingOptions()
-logger.debug(f"sampling_options: {sampling_options}")
-
-matrix = skia.Matrix()
-matrix.set_scale(0.75, 0.75)
-matrix.pre_rotate(30.0)
-logger.debug(f"matrix: {matrix}")
-
-shader = image.make_shader(
-    skia.TileMode.K_REPEAT, skia.TileMode.K_REPEAT, sampling_options, matrix
-)
-
-
 class ImageDemo(Page):
     def _draw(self):
         canvas = Renderer.get_current().canvas
         canvas.draw_image(image, 0, 0)
         super()._draw()
+"""
 
 
 def install(app: App):

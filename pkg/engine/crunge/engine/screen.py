@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from .widget import Overlay
+from .ui import Overlay
 from .display import Display
 from .view import View
 

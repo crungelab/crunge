@@ -14,4 +14,4 @@ class ImGuiView(View):
         super()._create()
         #self.gui = ImGuiOverlay()
         #self.add_overlay(self.gui)
-        gui = self.gui()
+        gui = self.gui
