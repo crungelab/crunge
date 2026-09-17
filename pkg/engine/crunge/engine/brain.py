@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .node import Node
 
 
-class Controller[T_Node: "Node"](EventHandler, Chip[T_Node]):
+class Brain[T_Node: "Node"](EventHandler, Chip[T_Node]):
     def __init__(self):
         super().__init__()
         self.delta_time = 0

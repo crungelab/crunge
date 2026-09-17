@@ -15,8 +15,8 @@ ELEMENTS = 32
 
 
 class DynamicSpriteVuGroup(SpriteVuGroup):
-    def __init__(self, count: int = ELEMENTS, sprite_group: SpriteGroup = None) -> None:
-        super().__init__(sprite_group)
+    def __init__(self, count: int = ELEMENTS, sprite_group: SpriteGroup = None, is_managed: bool = False) -> None:
+        super().__init__(sprite_group, is_managed=is_managed)
         self.is_dynamic_group = True
         self.count = count
 

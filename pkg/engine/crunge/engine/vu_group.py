@@ -17,10 +17,11 @@ class VuGroup(Chip[Any], Generic[T_Vu]):
     walk drives it and no container has to remember to forward.
     """
 
-    def __init__(self):
+    def __init__(self, is_managed: bool = False):
         super().__init__()
         self.members: List[T_Vu] = []
         self.is_render_group = False
+        self.is_managed = is_managed
 
     def append(self, member: T_Vu) -> None:
         if member in self.members:

@@ -8,8 +8,8 @@ from . import SpriteGroup
 
 
 class SpriteVuGroup(VuGroup[SpriteVu]):
-    def __init__(self, sprite_group: SpriteGroup) -> None:
-        super().__init__()
+    def __init__(self, sprite_group: SpriteGroup, is_managed: bool = False) -> None:
+        super().__init__(is_managed=is_managed)
         self.is_dynamic_group = False
         self.is_render_group = False
         self.sprite_group = sprite_group

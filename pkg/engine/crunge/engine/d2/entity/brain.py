@@ -1,4 +1,4 @@
-from crunge.engine.ai import Brain
+from crunge.engine.brain import Brain
 from crunge.engine.d2 import Node2D
 
 class EntityBrain(Brain):

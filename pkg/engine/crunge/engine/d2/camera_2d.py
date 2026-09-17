@@ -174,6 +174,16 @@ class Camera2D(Node2D):
         self.zoom_changed.emit(value)
 
     @property
+    def zoom_pct(self):
+        return  1 / self._zoom * 100
+
+    @zoom_pct.setter
+    def zoom_pct(self, pct):
+        if pct <= 0:
+            pct = 10
+        self.zoom = 100 / pct
+
+    @property
     def leader(self):
         return self._leader
 
