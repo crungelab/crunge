@@ -34,7 +34,7 @@ class ThreePatchInstancedDemo(ThreePatchDemoBase):
         )
         return [self.row, self.column]
 
-    def layout(self, view_projection: glm.mat4, width: float, height: float, elapsed: float):
+    def layout_patches(self, view_projection: glm.mat4, width: float, height: float, elapsed: float):
         half = width / 2
 
         # Row: stretches horizontally, centered in the left half

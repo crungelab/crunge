@@ -516,11 +516,12 @@ class InstancedThreePatch:
     ):
         rects = layout_three_patch(self.orientation, self.sizes, x, y, width, height)
         for i, rect in enumerate(rects):
-            # PyGLM exports matrices column by column, so flattening the numpy
-            # view gives the column-major order WGSL expects
+            # PyGLM exports matrices as a Fortran-ordered (4, 4) buffer: the
+            # raw memory is column-major, but numpy indexes it as [row][col].
+            # Flatten in F order to get back the column-major layout WGSL expects.
             self.instance_data[i, :16] = np.asarray(
                 rect_model(rect), dtype=np.float32
-            ).reshape(-1)
+            ).reshape(-1, order="F")
 
         self.queue.write_buffer(self.uniform_buffer, 0, view_projection)
         # ASSUMPTION: write_buffer accepts any buffer-protocol object, as it

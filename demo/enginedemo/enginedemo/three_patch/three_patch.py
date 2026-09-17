@@ -21,7 +21,7 @@ class ThreePatchDemo(ThreePatchDemoBase):
         )
         return [self.bubble]
 
-    def layout(self, view_projection: glm.mat4, width: float, height: float, elapsed: float):
+    def layout_patches(self, view_projection: glm.mat4, width: float, height: float, elapsed: float):
         # Animate the width so the middle patch visibly stretches and shrinks
         bubble_height = 100.0
         bubble_width = width * (0.5 + 0.25 * math.sin(elapsed))

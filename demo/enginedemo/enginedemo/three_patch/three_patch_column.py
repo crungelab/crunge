@@ -21,7 +21,7 @@ class ThreePatchColumnDemo(ThreePatchDemoBase):
         )
         return [self.bubble]
 
-    def layout(self, view_projection: glm.mat4, width: float, height: float, elapsed: float):
+    def layout_patches(self, view_projection: glm.mat4, width: float, height: float, elapsed: float):
         # Animate the height so the middle patch visibly stretches and shrinks
         column_width = 200.0
         column_height = height * (0.5 + 0.25 * math.sin(elapsed))

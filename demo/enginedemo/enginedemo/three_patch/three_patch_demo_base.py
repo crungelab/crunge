@@ -13,7 +13,7 @@ class ThreePatchDemoBase(Demo):
     Draws every renderer in `self.patches` in one render pass.
 
     Subclasses build their renderers in `create_patches` and position them
-    each frame in `layout`.
+    each frame in `arrange_patches`.
     """
 
     def __init__(self, *args, **kwargs):
@@ -27,7 +27,7 @@ class ThreePatchDemoBase(Demo):
     def create_patches(self) -> list:
         raise NotImplementedError
 
-    def layout(
+    def layout_patches(
         self, view_projection: glm.mat4, width: float, height: float, elapsed: float
     ):
         raise NotImplementedError
@@ -71,6 +71,6 @@ class ThreePatchDemoBase(Demo):
         view_projection = glm.ortho(0, width, 0, height, -1, 1)
 
         elapsed = time.perf_counter() - self.start_time
-        self.layout(view_projection, width, height, elapsed)
+        self.layout_patches(view_projection, width, height, elapsed)
 
         super().frame()
