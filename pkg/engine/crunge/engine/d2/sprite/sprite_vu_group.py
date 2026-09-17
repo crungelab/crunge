@@ -1,24 +1,12 @@
-from loguru import logger
-
-from ...renderer import Renderer
-from ...vu_group import VuGroup
-
-from . import SpriteVu
-from . import SpriteGroup
+from .base_sprite_vu_group import BaseSpriteVuGroup
+from .sprite_group import SpriteGroup
+from .sprite_vu import SpriteVu
 
 
-class SpriteVuGroup(VuGroup[SpriteVu]):
+class SpriteVuGroup(BaseSpriteVuGroup[SpriteVu]):
     def __init__(self, sprite_group: SpriteGroup, is_managed: bool = False) -> None:
-        super().__init__(is_managed=is_managed)
-        self.is_dynamic_group = False
-        self.is_render_group = False
-        self.sprite_group = sprite_group
+        super().__init__(sprite_group, is_managed=is_managed)
 
-    def _draw(self) -> None:
-        renderer = Renderer.get_current()
-        frustum = renderer.camera_2d.frustum
-        for vu in self.members:
-            if vu.bounds.intersects(frustum):
-                vu.draw()
-
-    # `update` dropped: it was identical to VuGroup's.
+    @property
+    def sprite_group(self) -> SpriteGroup:
+        return self.model_group

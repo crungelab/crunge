@@ -19,6 +19,37 @@ class NodeUniform(Structure):
     _fields_ = [
         ("transform", Mat4),
         ("color", Vec4),
+        ("size", Vec2),  # node size in local units, before node scale
+        ("model_index", c_uint32),
+        ("_pad1", c_float),
+    ]
+
+
+class ModelUniform(Structure):
+    _fields_ = [
+        ("color", Vec4),
+        ("rect", Vec4),
+        ("texture_size", Vec2),
+        ("flip_flags", c_uint32),
+        ("texture_layer", c_int),
+    ]
+
+
+class NinePatchUniform(ModelUniform):
+    # ctypes appends subclass fields after the base's, which is exactly the
+    # prefix the WGSL struct relies on
+    _fields_ = [
+        ("insets", Vec4),  # normalized left, top, right, bottom
+        ("border_scale", c_float),  # texels -> local units (border_zoom / ppu)
+        ("fill_flags", c_uint32),  # NinePatchFill
+        ("_pad", c_float * 2),  # WGSL rounds the struct up to 80
+    ]
+
+'''
+class NodeUniform(Structure):
+    _fields_ = [
+        ("transform", Mat4),
+        ("color", Vec4),
         ("model_index", c_uint32),
         ("_pad1", c_float * 3),
     ]
@@ -35,7 +66,7 @@ class ModelUniform(Structure):
         ("flip_flags", c_uint32),
         ("texture_layer", c_int),
     ]
-
+'''
 
 # assert sizeof(ModelUniform) % 16 == 0
 

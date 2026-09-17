@@ -35,7 +35,7 @@ class MaterialBindGroupLayout(BindGroupLayout):
             ),
         ]
 
-        super().__init__(entries=entries, label="Material Bind Group Layout")
+        super().__init__(entries=entries, label="Sprite Bind Group Layout")
 
 
 class MaterialBindGroup(BindGroup):

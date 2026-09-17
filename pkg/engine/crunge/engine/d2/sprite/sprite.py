@@ -1,50 +1,22 @@
 from typing import TYPE_CHECKING, List
-from enum import IntFlag
 
 from loguru import logger
 import glm
 
-from crunge import wgpu
-
 from ...math import Rect2i
-from ...resource import SpriteTexture, Model, ModelMembership, Sampler
+from ...resource import SpriteTexture, Sampler
 from ... import colors
 
-from ...uniforms import cast_vec4, cast_vec2, cast_tuple4f
 from ..uniforms_2d import ModelUniform
-from ...buffer import UniformBuffer
 
-from ..settings_2d import Settings2D
-from ..binding_2d import MaterialBindGroup, ModelBindGroup
-from .sprite_sampler import DefaultSpriteSampler
+from .base_sprite import BaseSprite, BaseSpriteMembership, SpriteFlipFlags
 
 if TYPE_CHECKING:
     from .sprite_group import SpriteGroup
 
 
-class SpriteFlipFlags(IntFlag):
-    NONE = 0
-    HORIZONTAL = 1
-    VERTICAL = 2
-    DIAGONAL = 4  # transpose — applied before H/V
-
-
-class SpriteMembership(ModelMembership):
-    def __init__(
-        self,
-        group: "SpriteGroup",
-        member: "Sprite",
-        index: int,
-        buffer: UniformBuffer[ModelUniform],
-        bind_group: ModelBindGroup = None,
-    ) -> None:
-        super().__init__(group, member, index)
-        self.buffer: UniformBuffer[ModelUniform] = buffer
-        self.bind_group = bind_group
-
-    def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        if self.bind_group is not None:
-            self.bind_group.bind(pass_enc)
+class SpriteMembership(BaseSpriteMembership[ModelUniform]):
+    pass
 
 
 def flip_points(points, size: glm.vec2, flip: SpriteFlipFlags):
@@ -71,7 +43,11 @@ def flip_points(points, size: glm.vec2, flip: SpriteFlipFlags):
     return out
 
 
-class Sprite(Model):
+class Sprite(BaseSprite[ModelUniform]):
+    """A subtexture drawn as one quad, sized by its rect."""
+
+    uniform_class = ModelUniform
+
     def __init__(
         self,
         texture: SpriteTexture,
@@ -84,117 +60,23 @@ class Sprite(Model):
         texture_layer: int = 0,
         ppu: float = None,
     ) -> None:
-        super().__init__()
-        self._texture = texture
-        if rect is None:
-            rect = Rect2i(0, 0, texture.width, texture.height)
-        self.flip_flags = flip_flags
-
-        self.sampler = sampler if sampler is not None else DefaultSpriteSampler()
-        self.texture_layer = texture_layer
-        self._color = color
         self.points = points
         self.collision_rect = collision_rect
-        self.ppu = ppu if ppu is not None else Settings2D().ppu
-
-        self.memberships: List[SpriteMembership] = []
-
-        self.material_bind_group: MaterialBindGroup = None
-
-        self.create_bind_groups()
-
-        self._rect: Rect2i = None
-        self.rect = rect
-
-    @property
-    def flip_h(self) -> bool:
-        return bool(self.flip_flags & SpriteFlipFlags.HORIZONTAL)
-
-    @property
-    def flip_v(self) -> bool:
-        return bool(self.flip_flags & SpriteFlipFlags.VERTICAL)
-
-    @property
-    def flip_d(self) -> bool:
-        return bool(self.flip_flags & SpriteFlipFlags.DIAGONAL)
-
-    def __str__(self):
-        return f"Sprite(id={self.id}, name={self.name}, path={self.path}, texture={self.texture}, rect={self.rect})"
-
-    def __repr__(self):
-        return str(self)
-
-    def join(self, group: "SpriteGroup") -> SpriteMembership:
-        from .global_sprite_group import GlobalSpriteGroup
-
-        if group is None:
-            group = GlobalSpriteGroup()
-        membership = self.get_membership(group)
-        if membership is None:
-            membership = group.create_membership(self)
-            self.add_membership(membership)
-        return membership
-
-    def add_membership(self, membership: SpriteMembership) -> None:
-        self.memberships.append(membership)
-        self.update_gpu()
-
-    def get_membership(self, group: "SpriteGroup") -> SpriteMembership:
-        for membership in self.memberships:
-            if membership.group == group:
-                return membership
-        return None
-
-    def is_member_of(self, group: "SpriteGroup") -> bool:
-        return any(membership.group == group for membership in self.memberships)
-
-    @property
-    def texture(self):
-        return self._texture
-
-    @texture.setter
-    def texture(self, value: SpriteTexture):
-        old_texture = self._texture
-        self._texture = value
-        if old_texture is not None and old_texture.texture != value.texture:
-            self.create_bind_groups()
-        # logger.debug(f"Setting texture: {value}")
-        self.update_gpu()
-
-    @property
-    def rect(self):
-        return self._rect
-
-    @rect.setter
-    def rect(self, value: Rect2i):
-        self._rect = value
-        self.update_gpu()
-
-    @property
-    def size(self) -> glm.vec2:
-        return glm.vec2(self.rect.size) / self.ppu
+        super().__init__(
+            texture,
+            rect,
+            sampler,
+            color,
+            flip_flags,
+            texture_layer,
+            ppu,
+        )
+        self.memberships: List[SpriteMembership] = self.memberships
 
     @property
     def collision_size(self) -> glm.vec2:
         rect = self.collision_rect if self.collision_rect is not None else self.rect
         return glm.vec2(rect.size) / self.ppu
-
-    @property
-    def width(self):
-        return self.size.x
-
-    @property
-    def height(self):
-        return self.size.y
-
-    @property
-    def color(self):
-        return self._color
-
-    @color.setter
-    def color(self, value):
-        self._color = value
-        self.update_gpu()
 
     def clone(self):
         return Sprite(
@@ -213,37 +95,3 @@ class Sprite(Model):
         self.points = flip_points(self.points, self.size, flip_flags)
         self.update_gpu()
         return self
-
-    def create_bind_groups(self):
-        self.material_bind_group = MaterialBindGroup(
-            self.texture.view,
-            self.sampler.sampler,
-        )
-
-    def update_gpu(self):
-        for membership in self.memberships:
-            self.update_buffer(membership.buffer, membership.index)
-
-    def update_buffer(self, buffer: UniformBuffer[ModelUniform], index: int):
-        uniform = ModelUniform()
-        uniform.color = cast_tuple4f(self.color)
-
-        rect = self.rect
-        uniform.rect = cast_vec4(glm.vec4(rect.x, rect.y, rect.width, rect.height))
-        uniform.texture_size = cast_vec2(self.texture.size)
-
-        uniform.flip_flags = self.flip_flags
-
-        uniform.texture_layer = self.texture_layer
-
-        try:
-            buffer[index] = uniform
-        except IndexError as e:
-            logger.error(
-                f"IndexError: {index} out of bounds for buffer of size {buffer.size}"
-            )
-            raise e
-
-    def bind(self, pass_enc: wgpu.RenderPassEncoder, membership: SpriteMembership):
-        self.material_bind_group.bind(pass_enc)
-        membership.bind(pass_enc)
