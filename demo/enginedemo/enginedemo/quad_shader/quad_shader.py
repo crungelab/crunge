@@ -19,7 +19,7 @@ fn fs_main() -> @location(0) vec4<f32> {
 """
 
 
-class QuadShaderLayer(DemoOverlay):
+class QuadShaderOverlay(DemoOverlay):
     def _create(self):
         super()._create()
         shader_module = self.gfx.create_shader_module(shader_code)
@@ -97,7 +97,7 @@ class QuadShaderDemo(Demo):
 
 
 def main():
-    QuadShaderDemo(DemoView(overlays=[QuadShaderLayer()])).run()
+    QuadShaderDemo(DemoView(overlays=[QuadShaderOverlay()])).run()
 
 
 if __name__ == "__main__":
