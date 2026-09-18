@@ -3,9 +3,9 @@ from loguru import logger
 from crunge import wgpu
 from crunge.core import klass
 
-from ....binding import BindGroupLayout, BindGroup
+from ...binding import BindGroupLayout, BindGroup
 
-from .. import BindGroupIndex
+from . import BindGroupIndex
 
 
 class MaterialBindIndex:

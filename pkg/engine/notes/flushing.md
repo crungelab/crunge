@@ -21,7 +21,7 @@ There is no single order. Four different arrival orders are all legal:
 2. **Buffer before model.** A tile node is attached to a layer, then its
    model lands from a loader a frame later.
 
-3. **Neither, then both.** A grouped vu (`manual_draw = False`) never
+3. **Neither, then both.** A grouped vu (`is_grouped = True`) never
    creates buffers of its own at all — they come from the group, whenever
    the group gets around to it.
 

@@ -7,7 +7,7 @@ from crunge.core.signal import Signal
 from crunge.core.base_node import BaseNode
 from crunge.core.chip import Chip
 from .vu import Vu
-from .vu_group import VuGroup
+from .render_group import RenderGroup
 from .controller import Controller
 
 from .model import Model
@@ -133,47 +133,15 @@ class Node[T: Node](BaseNode[T]):
         if value is not None:
             self.add(value)
 
-    def find_vu_group(self, vu_type: type = None) -> VuGroup | None:
-        group = None
-        group = self.get_vu_group(vu_type)
-        if group is not None:
-            return group
-        node = self.parent
-        while node is not None:
-            group = node.get_vu_group(vu_type)
-            if group is not None:
-                return group
-            node = node.parent
-        return None
-
-    # default on Node
-    def get_vu_group(self, vu_type: type = None) -> VuGroup | None:
-        return None
-
-    '''
-    def find_vu_group(self, vu_type: type = None) -> VuGroup | None:
-        node = self.parent
-        while node is not None:
-            group = node.get_vu_group(vu_type)
-            if group is not None:
-                return group
-            node = node.parent
-        return None
-
-    # default on Node
-    def get_vu_group(self, vu_type: type = None):
-        return None
-    '''
-
-    '''
-    # VuGroup property
+    # RenderGroup property
     @property
-    def vu_group(self) -> VuGroup | None:
-        return self.get(VuGroup)
+    def render_group(self) -> RenderGroup | None:
+        return self.get(RenderGroup)
 
-    @vu_group.setter
-    def vu_group(self, value: VuGroup | None) -> None:
-        old = self.get(VuGroup)
+    '''
+    @render_group.setter
+    def render_group(self, value: RenderGroup | None) -> None:
+        old = self.get(RenderGroup)
         if old is value:
             return
         if old is not None:
@@ -182,6 +150,31 @@ class Node[T: Node](BaseNode[T]):
         if value is not None:
             self.add(value)
     '''
+
+    # -- render group lookup -----------------------------------------------
+
+    def find_render_group(self) -> RenderGroup | None:
+        """Nearest render group at or above this node.
+
+        Self first, then up: the node that owns the batch — a layer's root —
+        has to be able to find its own.
+        """
+        node = self
+        while node is not None:
+            group = node.get_render_group()
+            if group is not None:
+                return group
+            node = node.parent
+        return None
+
+    def get_render_group(self) -> RenderGroup | None:
+        """The render group seated on this node, if any.
+
+        A real default rather than None, because the RenderGroup is a chip
+        like any other — so the chip map already answers this, and a layer
+        that seats one needs no override.
+        """
+        return self.get(RenderGroup)
 
     # Controller property
     @property

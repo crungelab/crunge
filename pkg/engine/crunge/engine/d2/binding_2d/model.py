@@ -47,7 +47,7 @@ class DynamicModelBindGroupLayout(BindGroupLayout):
                 ),
             ),
         ]
-        super().__init__(entries=entries, label="ModelBindGroupLayout")
+        super().__init__(entries=entries, label="Dynamic Model Bind Group Layout")
 
 
 class ModelBindGroup(BindGroup):

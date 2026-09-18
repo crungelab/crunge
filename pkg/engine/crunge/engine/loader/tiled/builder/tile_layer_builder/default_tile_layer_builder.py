@@ -2,7 +2,7 @@ from loguru import logger
 from crunge import tmx
 
 from crunge.engine.math import Bounds2
-from crunge.engine.d2.sprite.instanced import InstancedSpriteLayer
+from crunge.engine.d2.sprite.sprite_render_layer import SpriteRenderLayer
 from crunge.engine.d2.sprite.dynamic import DynamicSpriteGroup
 
 from ..tile_builder import TileBuilder, DefaultTileBuilder
@@ -18,8 +18,7 @@ class DefaultTileLayerBuilder(TileLayerBuilder):
     def build(self, tmx_layer: tmx.TileLayer):
         size = self.context.size
         sprite_group = DynamicSpriteGroup(1024).enable()
-        self.layer = InstancedSpriteLayer(name=tmx_layer.name, count=1024, sprite_group=sprite_group).enable()
-        #self.layer.bounds = Bounds2(0, 0, size.x, size.y)
+        self.layer = SpriteRenderLayer(name=tmx_layer.name, count=1024, sprite_group=sprite_group).enable()
         self.context.push_layer(self.layer)
         super().build(tmx_layer)
         self.build_runs(tmx_layer)

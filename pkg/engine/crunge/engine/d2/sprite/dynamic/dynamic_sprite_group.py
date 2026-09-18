@@ -16,7 +16,6 @@ ELEMENTS = 256
 class DynamicSpriteGroup(SpriteGroup):
     def __init__(self, count: int = ELEMENTS) -> None:
         super().__init__()
-        self.is_dynamic_group = True
         self.count = count
 
         self.bind_group: ModelBindGroup = None

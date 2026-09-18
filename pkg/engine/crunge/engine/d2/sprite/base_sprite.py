@@ -230,6 +230,23 @@ class BaseSprite[UniformT](Model):
             )
             raise e
 
+    def bind_material(self, pass_enc: wgpu.RenderPassEncoder) -> None:
+        """Texture and sampler only.
+
+        Split out because a group that owns a shared model buffer binds
+        index 2 itself; calling bind() there overwrites it with the
+        membership's own model bind group and the pipeline layout stops
+        matching.
+        """
+        self.material_bind_group.bind(pass_enc)
+
+    def bind(self, pass_enc, membership) -> None:
+        """Material plus this membership's model binding, for a sprite that
+        draws itself."""
+        self.bind_material(pass_enc)
+        membership.bind(pass_enc)
+
+    '''
     def bind(
         self,
         pass_enc: wgpu.RenderPassEncoder,
@@ -237,3 +254,4 @@ class BaseSprite[UniformT](Model):
     ):
         self.material_bind_group.bind(pass_enc)
         membership.bind(pass_enc)
+    '''

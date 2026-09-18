@@ -35,8 +35,8 @@ class ArcballCameraController(CameraController):
 
         self.update_camera()
 
-    def activate(self):
-        super().activate()
+    def _enable(self):
+        super()._enable()
         self.update_camera()
 
     def rotate(self, prev_mouse: glm.vec2, cur_mouse: glm.vec2):

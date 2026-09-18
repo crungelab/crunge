@@ -135,8 +135,8 @@ class Car(EntityGroup2D):
         self.mountee.on_dismount(self.chassis, point)
         self.mountee = None
 
-    def _create(self):
-        super()._create()
+    def _enable(self):
+        super()._enable()
 
         world = physics_globe.world
 

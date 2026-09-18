@@ -28,11 +28,20 @@ class Vu2D(Vu[Node2D]):
     Owns the node uniform. Every setter that feeds it marks GPU dirt rather
     than writing; the write happens in `_flush_gpu`, driven from `update`
     before the render pass opens. A grouped vu does not own its buffer —
-    the group assigns `node_buffer` and `node_buffer_index` at append time,
-    which can happen after the vu is enabled. The flush guards on that and
-    retries, so the two orders are equivalent.
+    the group assigns `node_buffer` at append time and the RenderGroup
+    assigns `node_buffer_index` at replan, both of which can happen after
+    the vu is enabled. The flush guards on each and retries, so the orders
+    are equivalent.
+
+    `groupable`, `is_grouped`, `find_render_group` and group membership all
+    live on Vu. What is left here is the half that membership decides: an
+    ungrouped vu allocates its own buffer and bind group and draws itself;
+    a grouped one does neither.
     """
-    groupable: bool = True          # class-level: can this type ever be grouped?
+
+    # Sentinel for "grouped, but the plan has not placed me yet". A real
+    # index, including 0, means the slot is mine to write.
+    UNPLACED = -1
 
     def __init__(self) -> None:
         super().__init__()
@@ -43,81 +52,57 @@ class Vu2D(Vu[Node2D]):
         self.node_bind_group: NodeBindGroup = None
         self.node_buffer: UniformBuffer[NodeUniform] = None
         self._node_buffer_index = 0
+        self._sort_key = 0.0
 
-        self._group: "VuGroup" = None
         self.program: Program2D = None
-        #self.manual_draw = True
 
-    @property
-    def is_grouped(self) -> bool:   # instance-level: is it, in fact?
-        return self.group is not None
-    
     # -- lifetime ----------------------------------------------------------
+
     def plug(self) -> None:
         super().plug()
         self.node._mark_bounds_dirty()
 
-    '''
-    def _create(self):
-        super()._create()
-        group = self.group
-        if group is not None:
-            if group.is_render_group:
-                self.manual_draw = False
-    '''
-
-    def _destroy(self):
-        if self.group is not None:
-            self.group.remove(self)
-        super()._destroy()
-
-    def find_vu_group(self) -> "VuGroup | None":
-        if self._node is not None:
-            self.group = self._node.find_vu_group()
-        return self.group
-
     def _enable(self) -> None:
-        # Vu._enable subscribes and syncs, which marks dirt. The buffers it
-        # will be written into are created below; the write itself waits for
-        # the next flush, so the order here is safe either way.
+        # Head call: Vu._enable subscribes, syncs, and settles membership,
+        # so is_grouped is answered by the time it returns. The dirt marked
+        # by sync waits for the next flush either way.
         super()._enable()
-
-        self.find_vu_group()
-
-        group = self.group
-        if group is not None:
-            if not group.is_managed:
-                group.append(self)
-            '''
-            if group.is_render_group:
-                self.manual_draw = False
-            '''
 
         if self.is_grouped:
             return
 
-        '''
-        if not self.manual_draw:
-            return
-        '''
         self.create_program()
         self.create_buffers()
         self.create_bind_groups()
         self.mark_gpu()
 
     def _disable(self) -> None:
-        if self.group is not None:
-            self.group.remove(self)
+        # Checked before super(), which frees the slot and clears the render
+        # group — after that there is no way to tell whether the buffer was
+        # ours to release or the group's.
+        if not self.is_grouped:
+            self.destroy_buffers()
         super()._disable()
 
     def create_buffers(self):
         self.node_buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")
+        self._node_buffer_index = 0
 
     def create_bind_groups(self):
         self.node_bind_group = NodeBindGroup(
             self.node_buffer.get(),
             self.node_buffer.size,
         )
+
+    def destroy_buffers(self):
+        """Mirror of create_buffers/create_bind_groups.
+
+        Was missing, so a vu that enabled, disabled and re-enabled leaked
+        the first allocation — and under gc.disable() it never came back.
+        """
+        self.node_bind_group = None
+        self.node_buffer = None
+        self.program = None
 
     def create_program(self):
         pass
@@ -131,7 +116,36 @@ class Vu2D(Vu[Node2D]):
     @node_buffer_index.setter
     def node_buffer_index(self, value: int):
         self._node_buffer_index = value
+        # Marks dirt, so the uniform written before the slot was known is
+        # retried into the right place on the next flush.
         self.on_transform()
+
+    @property
+    def is_placed(self) -> bool:
+        return self._node_buffer_index >= 0
+
+    @property
+    def sort_key(self) -> float:
+        """Global draw order. Lower draws first.
+
+        Settable rather than derived, because what a 2D vu sorts by is the
+        caller's business: a grid supplies a projected depth, a flat layer
+        leaves it at 0 and lets the stable sort preserve insertion order.
+        """
+        return self._sort_key
+
+    @sort_key.setter
+    def sort_key(self, value: float) -> None:
+        if value == self._sort_key:
+            return
+        self._sort_key = value
+        # Order is the RenderGroup's plan, not the buffer's contents, so
+        # mark_gpu is the wrong signal here — nothing in the uniform
+        # changed. Without this the plan keeps the old order until some
+        # unrelated append happens to invalidate it.
+        render_group = self.render_group
+        if render_group is not None:
+            render_group.invalidate()
 
     # -- transform and colour ---------------------------------------------
 
@@ -169,7 +183,6 @@ class Vu2D(Vu[Node2D]):
             glm.vec3(self.size.x, self.size.y, 1),
         )
 
-        #self.transform = node.transform * matrix
         self.transform = node.global_transform * matrix
         self.bounds = node.global_bounds
 
@@ -190,7 +203,12 @@ class Vu2D(Vu[Node2D]):
     def _flush_gpu(self) -> bool:
         if self.node_buffer is None:
             return False  # grouped vu, not appended yet; retry next frame
-        self.node_buffer[self.node_buffer_index] = self.build_uniform()
+        if not self.is_placed:
+            # Appended but not yet placed by a replan, or removed. -1 is a
+            # valid Python index, so without this guard the write lands on
+            # the last slot and silently corrupts whoever owns it.
+            return False
+        self.node_buffer[self._node_buffer_index] = self.build_uniform()
         return True
 
     # -- frame -------------------------------------------------------------
@@ -198,20 +216,10 @@ class Vu2D(Vu[Node2D]):
     def bind(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         self.node_bind_group.bind(pass_enc)
 
-    # -- draw --------------------------------------------------------------
     def draw(self) -> None:
+        # A grouped vu is still in its node's _drawables bucket, so this is
+        # called every frame and has to decline. Silent rather than raising:
+        # the arrangement is legitimate, not a mistake to catch.
         if self.is_grouped:
             return
-
-        '''
-        if not self.manual_draw:
-            return  # a render group draws us; we have no program of our own
-        '''
-
-        # TODO: Adress this issue in next branch named vugroup. It shouldn't raise
-        """
-        if not self.manual_draw:
-            raise RuntimeError(f"{self.__class__.__name__}.draw() called on a grouped vu; the group draws it instead")
-        """
-
         self._draw()

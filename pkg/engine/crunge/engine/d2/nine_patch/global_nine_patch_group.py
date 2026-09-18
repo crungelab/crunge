@@ -12,7 +12,6 @@ from .nine_patch_group import NinePatchGroup
 class GlobalNinePatchGroup(NinePatchGroup):
     def __init__(self):
         super().__init__()
-        self.is_dynamic_group = False
 
     def create_membership(self, nine_patch: NinePatch) -> NinePatchMembership:
         buffer = UniformBuffer(NinePatchUniform, 1, label="Nine Patch Model Buffer")

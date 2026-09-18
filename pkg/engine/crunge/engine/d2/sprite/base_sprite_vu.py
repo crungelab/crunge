@@ -16,14 +16,14 @@ from ..uniforms_2d import NodeUniform
 from .base_sprite import BaseSprite, BaseSpriteMembership
 
 if TYPE_CHECKING:
-    from .base_sprite_vu_group import BaseSpriteVuGroup
+    from .sprite_vu_group import SpriteVuGroup
 
 
 class BaseSpriteVu[SpriteT: BaseSprite](Vu2D):
     """Draws one sprite-like model: bind its material and uniform slot, then
     one instanced strip. Subclasses supply the program and the instance count."""
 
-    group: "BaseSpriteVuGroup"
+    group: "SpriteVuGroup"
 
     instance_count: ClassVar[int] = 1
 
@@ -54,8 +54,8 @@ class BaseSpriteVu[SpriteT: BaseSprite](Vu2D):
         absent — whichever of sprite/group arrives second calls this again."""
         if self._sprite is None:
             return
-        model_group = self.group.model_group if self.group is not None else None
-        self.sprite_membership = self._sprite.join(model_group)
+        sprite_group = self.group.sprite_group if self.group is not None else None
+        self.sprite_membership = self._sprite.join(sprite_group)
 
     def on_group(self) -> None:
         self.join()

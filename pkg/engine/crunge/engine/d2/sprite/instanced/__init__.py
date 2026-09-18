@@ -1,2 +1,1 @@
-from .instanced_sprite_vu_group import InstancedSpriteVuGroup
-from .instanced_sprite_layer import InstancedSpriteLayer
+from .instanced_sprite_program import InstancedSpriteProgram

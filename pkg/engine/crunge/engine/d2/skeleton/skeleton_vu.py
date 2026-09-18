@@ -69,7 +69,6 @@ class SkeletonVu(Vu2D):
         )
 
         self.anim_state = None
-        #self.manual_draw = True
 
         self._slot_vus: list[SpriteVu] = []
         self._last_attachment: list[object] = []
