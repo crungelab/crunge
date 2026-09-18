@@ -218,17 +218,11 @@ class BaseSprite[UniformT](Model):
 
         uniform.texture_layer = self.texture_layer
 
+
     def update_buffer(self, buffer: UniformBuffer[UniformT], index: int) -> None:
         uniform = self.uniform_class()
         self.fill_uniform(uniform)
-
-        try:
-            buffer[index] = uniform
-        except IndexError as e:
-            logger.error(
-                f"IndexError: {index} out of bounds for buffer of size {buffer.size}"
-            )
-            raise e
+        buffer[index] = uniform
 
     def bind_material(self, pass_enc: wgpu.RenderPassEncoder) -> None:
         """Texture and sampler only.

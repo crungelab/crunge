@@ -15,6 +15,12 @@ class GlobalSpriteGroup(SpriteGroup):
         super().__init__()
 
     def create_membership(self, sprite: Sprite) -> SpriteMembership:
+        # A buffer per membership, not a slot in a shared one. This group
+        # exists for sprites whose vu draws itself, so each needs its own
+        # ModelBindGroup over the single-model layout — which is why the
+        # bind_group argument is filled here and left None by
+        # DynamicSpriteGroup. Nothing here ever grows.
+
         buffer = UniformBuffer(ModelUniform, 1, label="Sprite Model Buffer")
         bind_group = ModelBindGroup(
             buffer.get(),

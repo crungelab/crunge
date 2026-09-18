@@ -33,6 +33,7 @@ class VuGroup2D[VuT: Vu2D](VuGroup[VuT]):
             wgpu.BufferUsage.STORAGE,
             label=f"{self.__class__.__name__} Node Buffer",
         )
+        self.node_buffer.resized.connect(self.on_node_buffer_resized)
         logger.debug(f"Node Uniform Buffer: {self.node_buffer}")
 
     # -- lifetime ----------------------------------------------------------
@@ -47,6 +48,12 @@ class VuGroup2D[VuT: Vu2D](VuGroup[VuT]):
             self.node_buffer.size,
             layout=self.program.render_pipeline.node_bind_group_layout,
         )
+
+    def on_node_buffer_resized(self, buffer) -> None:
+        # The old bind group points at a buffer that no longer holds the
+        # data. Every holder of one over this buffer has to rebuild, or it
+        # binds a handle the shader reads nothing from.
+        self.create_bind_group()
 
     def destroy(self) -> None:
         super().destroy()

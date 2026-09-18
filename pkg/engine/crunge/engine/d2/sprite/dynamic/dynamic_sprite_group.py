@@ -25,6 +25,7 @@ class DynamicSpriteGroup(SpriteGroup):
             wgpu.BufferUsage.STORAGE,
             label="DynamicSpriteGroup Buffer",
         )
+        self.storage_buffer.resized.connect(self.on_storage_buffer_resized)
         logger.debug(f"Model Uniform Buffer: {self.storage_buffer}")
         self.create_bind_group()
 
@@ -34,10 +35,22 @@ class DynamicSpriteGroup(SpriteGroup):
 
     def create_membership(self, sprite: Sprite) -> SpriteMembership:
         super().append(sprite)
+        index = len(self.memberships) - 1
+        # Before the membership exists, so the slot it is about to be given
+        # is allocated. `count` follows the buffer rather than the
+        # constructor argument, which is now a starting size.
+        self.storage_buffer.ensure(index + 1)
+        self.count = self.storage_buffer.count
+        return SpriteMembership(self, sprite, index, self.storage_buffer)
+
+    '''
+    def create_membership(self, sprite: Sprite) -> SpriteMembership:
+        super().append(sprite)
         membership = SpriteMembership(
             self, sprite, len(self.memberships) - 1, self.storage_buffer
         )
         return membership
+    '''
 
     def create_bind_group(self):
         # No layout= argument. The type fixes it, so this group can no
@@ -50,3 +63,9 @@ class DynamicSpriteGroup(SpriteGroup):
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.bind_group.bind(pass_enc)
+
+    def on_storage_buffer_resized(self, buffer) -> None:
+        # The old bind group points at a buffer that no longer holds the
+        # data. Every holder of one over this buffer has to rebuild, or it
+        # binds a handle the shader reads nothing from.
+        self.create_bind_group()
