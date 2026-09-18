@@ -20,7 +20,7 @@ class VuGroup(Chip[Any], Generic[T_Vu]):
     def __init__(self, is_managed: bool = False):
         super().__init__()
         self.members: List[T_Vu] = []
-        self.is_render_group = False
+        #self.is_render_group = False
         self.is_managed = is_managed
 
     def append(self, member: T_Vu) -> None:

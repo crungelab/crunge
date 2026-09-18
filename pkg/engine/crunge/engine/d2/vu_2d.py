@@ -32,6 +32,7 @@ class Vu2D(Vu[Node2D]):
     which can happen after the vu is enabled. The flush guards on that and
     retries, so the two orders are equivalent.
     """
+    groupable: bool = True          # class-level: can this type ever be grouped?
 
     def __init__(self) -> None:
         super().__init__()
@@ -45,8 +46,12 @@ class Vu2D(Vu[Node2D]):
 
         self._group: "VuGroup" = None
         self.program: Program2D = None
-        self.manual_draw = True
+        #self.manual_draw = True
 
+    @property
+    def is_grouped(self) -> bool:   # instance-level: is it, in fact?
+        return self.group is not None
+    
     # -- lifetime ----------------------------------------------------------
     def plug(self) -> None:
         super().plug()
@@ -70,16 +75,6 @@ class Vu2D(Vu[Node2D]):
         if self._node is not None:
             self.group = self._node.find_vu_group()
         return self.group
-    '''
-    def find_vu_group(self) -> "VuGroup | None":
-        node = self.node
-        while self.group is None and node is not None:
-            node = node.parent
-            self.group = node.vu_group if node is not None else None
-            if self.group is not None:
-                break
-        return self.group
-    '''
 
     def _enable(self) -> None:
         # Vu._enable subscribes and syncs, which marks dirt. The buffers it
@@ -93,15 +88,27 @@ class Vu2D(Vu[Node2D]):
         if group is not None:
             if not group.is_managed:
                 group.append(self)
+            '''
             if group.is_render_group:
                 self.manual_draw = False
+            '''
 
+        if self.is_grouped:
+            return
+
+        '''
         if not self.manual_draw:
             return
+        '''
         self.create_program()
         self.create_buffers()
         self.create_bind_groups()
         self.mark_gpu()
+
+    def _disable(self) -> None:
+        if self.group is not None:
+            self.group.remove(self)
+        super()._disable()
 
     def create_buffers(self):
         self.node_buffer = UniformBuffer(NodeUniform, 1, label="Sprite Node Buffer")
@@ -193,8 +200,13 @@ class Vu2D(Vu[Node2D]):
 
     # -- draw --------------------------------------------------------------
     def draw(self) -> None:
+        if self.is_grouped:
+            return
+
+        '''
         if not self.manual_draw:
             return  # a render group draws us; we have no program of our own
+        '''
 
         # TODO: Adress this issue in next branch named vugroup. It shouldn't raise
         """

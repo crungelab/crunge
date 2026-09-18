@@ -35,7 +35,7 @@ class InstancedSpriteVuGroup(DynamicSpriteVuGroup):
 
     def __init__(self, count: int = ELEMENTS, sprite_group: SpriteGroup = None, is_managed: bool = False) -> None:
         super().__init__(count, sprite_group, is_managed=is_managed)
-        self.is_render_group = True
+        #self.is_render_group = True
         self.batches: list[InstancedSpriteVuBatch] = []
         self._rebatch = False
         self.program = InstancedSpriteProgram()

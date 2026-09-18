@@ -59,6 +59,8 @@ def _centering_offset_mat4(skeleton_data) -> glm.mat4:
 
 
 class SkeletonVu(Vu2D):
+    groupable = False
+
     def __init__(self, skeleton: Skeleton = None) -> None:
         super().__init__()
         self.skeleton = skeleton
@@ -67,7 +69,7 @@ class SkeletonVu(Vu2D):
         )
 
         self.anim_state = None
-        self.manual_draw = True
+        #self.manual_draw = True
 
         self._slot_vus: list[SpriteVu] = []
         self._last_attachment: list[object] = []

@@ -12,7 +12,7 @@ class BaseSpriteVuGroup[VuT: BaseSpriteVu](VuGroup[VuT]):
     def __init__(self, model_group: BaseSpriteGroup, is_managed: bool = False) -> None:
         super().__init__(is_managed=is_managed)
         self.is_dynamic_group = False
-        self.is_render_group = False
+        #self.is_render_group = False
         self.model_group = model_group
 
     def _draw(self) -> None:
