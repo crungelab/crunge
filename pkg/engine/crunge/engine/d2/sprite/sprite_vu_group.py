@@ -12,7 +12,7 @@ class SpriteRun(Run):
     """A run of sprites sharing one texture.
 
     Carries a representative vu rather than just the texture, because the
-    per-run bind still goes through the sprite.
+    material bind group is reached through the sprite.
     """
 
     __slots__ = ("vu", "texture")
@@ -35,7 +35,7 @@ class SpriteVuGroup(VuGroup2D[SpriteVu]):
     `program` is required and injected, never defaulted. Reaching for
     InstancedSpriteProgram here would make this module depend on the
     `instanced` subpackage it sits above, and importing anything from that
-    package runs its __init__ — which is how the last import cycle formed.
+    package runs its __init__ — which is how an earlier import cycle formed.
     """
 
     def __init__(
@@ -104,26 +104,28 @@ class SpriteVuGroup(VuGroup2D[SpriteVu]):
     # -- drawing -----------------------------------------------------------
 
     def draw_run(self, state: RenderState, run: SpriteRun) -> None:
+        """Three bind groups, each at the index it carries itself.
+
+        No slot numbers here. Each of these lands at BindGroupIndex.MODEL,
+        .NODE and .MATERIAL respectively, and RenderState reads that off
+        the object rather than taking one from this call site — so two of
+        them writing the same index is a collision the cache can see, not a
+        silent overwrite.
+
+        The order is arbitrary. Every one of these is a no-op when the
+        previous run already left it live, which for a run of sprites from
+        one group means only the material actually changes.
+        """
         state.set_pipeline(self.program)
-        state.set_bind_group(2, self.sprite_group)      # dynamic model buffer
-        state.set_bind_group(1, self.node_bind_group)
-        if state.claim(0, run.texture):                  # ASSUMPTION: material at 0
-            run.vu.sprite.bind_material(state.pass_enc)
-        state.pass_enc.draw(4, run.count, 0, run.first)
-
-    '''
-    def draw_run(self, state: RenderState, run: SpriteRun) -> None:
-        state.set_pipeline(self.program)
-        state.set_bind_group(0, self.sprite_group)
-        state.set_bind_group(1, self.node_bind_group)
-
-        # ASSUMPTION: sprite.bind() binds the texture/atlas, and the
-        # per-instance rect comes from NodeUniform.model_index. If it binds
-        # anything membership-specific instead, then batching by texture was
-        # already unsound in the old code and this wants splitting into a
-        # texture-only bind.
-        if state.claim(2, run.texture):
-            run.vu.sprite.bind(state.pass_enc, run.vu.sprite_membership)
+        # Reaches past sprite_group.bind() into the bind group itself,
+        # because the cache needs the object, not the side effect. Passing a
+        # RenderState into BaseSpriteGroup.bind would be tidier and changes
+        # every group's signature plus the self-drawing callers.
+        state.set_bind_group(self.sprite_group.bind_group)
+        state.set_bind_group(self.node_bind_group)
+        # Material only. A sprite's own bind() also binds its membership's
+        # ModelBindGroup, which would overwrite the dynamic group's at the
+        # same index and stop matching the pipeline layout.
+        state.set_bind_group(run.vu.sprite.material_bind_group)
 
         state.pass_enc.draw(4, run.count, 0, run.first)
-    '''

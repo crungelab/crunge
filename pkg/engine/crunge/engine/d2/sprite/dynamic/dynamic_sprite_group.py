@@ -4,7 +4,7 @@ from crunge import wgpu
 
 from ....buffer import UniformBuffer
 from ...uniforms_2d import ModelUniform
-from ...binding_2d import ModelBindGroup, DynamicModelBindGroupLayout
+from ...binding_2d import DynamicModelBindGroup
 
 from ..sprite import Sprite, SpriteMembership
 
@@ -18,7 +18,7 @@ class DynamicSpriteGroup(SpriteGroup):
         super().__init__()
         self.count = count
 
-        self.bind_group: ModelBindGroup = None
+        self.bind_group: DynamicModelBindGroup = None
         self.storage_buffer = UniformBuffer(
             ModelUniform,
             count,
@@ -40,10 +40,11 @@ class DynamicSpriteGroup(SpriteGroup):
         return membership
 
     def create_bind_group(self):
-        self.bind_group = ModelBindGroup(
+        # No layout= argument. The type fixes it, so this group can no
+        # longer be handed the single-model layout by omission.
+        self.bind_group = DynamicModelBindGroup(
             self.storage_buffer.get(),
             self.storage_buffer.size,
-            layout=DynamicModelBindGroupLayout(),
             label="DynamicSpriteGroup Bind Group",
         )
 

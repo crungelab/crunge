@@ -1,5 +1,3 @@
-from typing import List
-
 from loguru import logger
 
 from crunge import wgpu
@@ -12,6 +10,7 @@ from ..binding_2d import (
     MaterialBindGroupLayout,
     ModelBindGroupLayout,
     NodeBindGroupLayout,
+    BindGroupIndex,
 )
 
 
@@ -40,6 +39,22 @@ class RenderPipeline2D(RenderPipeline):
 
     @property
     def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:
+        by_index = {
+            BindGroupIndex.SCENE: self.scene_bind_group_layout,
+            BindGroupIndex.MATERIAL: self.material_bind_group_layout,
+            BindGroupIndex.MODEL: self.model_bind_group_layout,
+            BindGroupIndex.NODE: self.node_bind_group_layout,
+        }
+        # Array position is the group index the shader sees, so it is
+        # derived from BindGroupIndex rather than written out again —
+        # reordering this list used to shift every bind group by one, and
+        # the resulting validation error names neither the list nor the
+        # index.
+        return [by_index[i].get() for i in sorted(by_index)]
+
+    '''
+    @property
+    def bind_group_layouts(self) -> list[wgpu.BindGroupLayout]:
         bind_group_layouts = [
             self.scene_bind_group_layout.get(),
             self.material_bind_group_layout.get(),
@@ -48,6 +63,7 @@ class RenderPipeline2D(RenderPipeline):
         ]
 
         return bind_group_layouts
+    '''
 
     def _create(self):
         vertex_state = self.create_vertex_state()

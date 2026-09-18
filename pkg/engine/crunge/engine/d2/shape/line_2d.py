@@ -28,7 +28,6 @@ vertex_dtype = np.dtype(
 class Line2D(Vu2D):
     def __init__(self, begin: glm.vec2, end: glm.vec2, color=colors.WHITE) -> None:
         super().__init__()
-        # Were class attributes; instance state belongs on the instance.
         self.model_bind_group: ModelBindGroup = None
         self.vertices: np.ndarray = None
         self.vertex_buffer: wgpu.Buffer = None

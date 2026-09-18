@@ -10,6 +10,17 @@ from .material import (
     MaterialBindGroupLayout,
     MaterialBindIndex,
 )
-from .model import ModelBindGroup, ModelBindGroupLayout, DynamicModelBindGroupLayout, ModelBindIndex
-from .node import NodeBindGroup, NodeBindGroupLayout, DynamicNodeBindGroupLayout, NodeBindIndex
+from .model import (
+    ModelBindGroup,
+    ModelBindGroupLayout,
+    DynamicModelBindGroup,
+    DynamicModelBindGroupLayout,
+    ModelBindIndex,
+)
+from .node import (
+    NodeBindGroup,
+    NodeBindGroupLayout,
+    DynamicNodeBindGroupLayout,
+    NodeBindIndex,
+)
 from .emitter import EmitterBindGroup, EmitterBindGroupLayout, EmitterBindIndex
