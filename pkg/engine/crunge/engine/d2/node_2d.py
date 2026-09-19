@@ -21,8 +21,9 @@ class Node2D(SceneNode["Node2D", "Scene2D"]):
         rotation=0.0,
         scale: glm.vec2 = None,
         model: Any = None,
+        children: list["Node2D"] = None,
     ) -> None:
-        super().__init__(model)
+        super().__init__(model, children)
         self._position = position if position is not None else glm.vec2()
         self._depth = 0.0
         self._rotation = rotation  # radians

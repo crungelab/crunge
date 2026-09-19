@@ -10,4 +10,4 @@ class Floor(Node2D):
 
     def _seat(self) -> None:
         super()._seat()
-        self.add(StaticPhysics(BoxGeom()))
+        self.add_chip(StaticPhysics(BoxGeom()))

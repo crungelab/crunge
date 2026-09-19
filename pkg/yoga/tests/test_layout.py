@@ -2,14 +2,14 @@ from crunge import yoga
 
 def main():
     # Create a root node
-    root = yoga.Layout()
+    root = yoga.LayoutNode()
 
     # Set the width and height of the root node
     root.set_width(100)
     root.set_height(100)
 
     # Create a child node
-    child = yoga.Layout()
+    child = yoga.LayoutNode()
 
     # Set the width and height of the child node
     child.set_width(50)
@@ -24,7 +24,7 @@ def main():
     # Print the layout of the root and child nodes
     root_bounds = root.get_computed_bounds()
     child_bounds = child.get_computed_bounds()
-    #print(f"Root Node Layout: {root_layout}")
+    #print(f"Root Node LayoutNode: {root_layout}")
     print(f"Root Node Bounds: left={root_bounds.left}, top={root_bounds.top}, width={root_bounds.width}, height={root_bounds.height}")
     print(f"Child Node Bounds: left={child_bounds.left}, top={child_bounds.top}, width={child_bounds.width}, height={child_bounds.height}")
 

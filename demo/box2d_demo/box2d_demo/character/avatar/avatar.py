@@ -23,8 +23,8 @@ class Avatar(DynamicCharacter):
         atlas = XmlSpriteAtlasLoader(sprite_builder=CollidableSpriteBuilder()).load(
             "${resources}/tiled/characters/male_adventurer/sheet.xml"
         )
-        self.add(AvatarBrain(atlas))
-        self.add(DynamicCharacterController(self))
+        self.add_chip(AvatarBrain(atlas))
+        self.add_chip(DynamicCharacterController(self))
 
     @classmethod
     def produce(self, position=glm.vec2()):

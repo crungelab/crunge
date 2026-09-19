@@ -10,7 +10,7 @@ class Page(demo.Page):
     def __init__(self, name: str, title: str):
         super().__init__(name, title)
 
-    def debug_layout(self, layout: yoga.Layout):
+    def debug_layout(self, layout: yoga.LayoutNode):
         bounds = layout.get_computed_bounds()
         left = bounds.left
         top = bounds.top

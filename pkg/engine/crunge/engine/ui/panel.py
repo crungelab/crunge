@@ -2,7 +2,7 @@ from loguru import logger
 
 from crunge import skia
 
-from . import Widget
+from .. import Widget
 from ..renderer import Renderer
 
 

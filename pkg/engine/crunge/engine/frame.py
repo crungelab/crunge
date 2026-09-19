@@ -9,7 +9,7 @@ from crunge import yoga
 
 from crunge.core.signal import Signal, Pulse
 from .scheduler import Scheduler
-from .ui import Widget
+from .widget import Widget
 from .display import Display
 from .channel import Channel
 
@@ -19,7 +19,7 @@ current_frame: ContextVar[Optional["Frame"]] = ContextVar("current_frame", defau
 
 class Frame(Widget):
     def __init__(
-        self, style: yoga.Style = yoga.Style(), display: Display = None
+        self, style: yoga.Style = None, display: Display = None
     ) -> None:
         super().__init__(style)
         self._display = display

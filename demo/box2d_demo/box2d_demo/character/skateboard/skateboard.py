@@ -99,7 +99,7 @@ class Skateboard(EntityGroup2D):
         self.front_wheel = self.add_node(Wheel.produce(self._front_wheel_pos))
         self.back_wheel = self.add_node(Wheel.produce(self._back_wheel_pos))
 
-        self.add(SkateboardController(self))
+        self.add_chip(SkateboardController(self))
 
     @property
     def velocity(self):

@@ -5,6 +5,6 @@ from .style_builder import StyleBuilder
 
 class LayoutBuilder(StyleBuilder):
     def build(self):
-        layout = yoga.Layout()
+        layout = yoga.LayoutNode()
         layout.set_style(self.style)
         return layout

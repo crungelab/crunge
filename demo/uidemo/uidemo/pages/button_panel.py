@@ -41,10 +41,10 @@ class ButtonPanelPage(Page):
 
         ui = self.ui
 
-        ui.layout.set_width_percent(100)
-        ui.layout.set_height_percent(100)
-        ui.layout.set_justify_content(yoga.Justify.CENTER)
-        ui.layout.set_align_items(yoga.Align.CENTER)
+        ui.layout.layout_node.set_width_percent(100)
+        ui.layout.layout_node.set_height_percent(100)
+        ui.layout.layout_node.set_justify_content(yoga.Justify.CENTER)
+        ui.layout.layout_node.set_align_items(yoga.Align.CENTER)
 
         ui.add_child(panel)
 

@@ -101,18 +101,18 @@ class Light3D(Node3D):
 
     def _seat(self) -> None:
         super()._seat()
-        if not self.has(LightChip):
-            self.add(LightChip())
+        if not self.has_chip(LightChip):
+            self.add_chip(LightChip())
 
     @property
     def uniform_buffer(self) -> wgpu.Buffer:
         """Forwarded so the lighting system keeps reading it off the node."""
-        chip = self.get(LightChip)
+        chip = self.get_chip(LightChip)
         return chip.uniform_buffer if chip is not None else None
 
     @property
     def uniform_buffer_size(self) -> int:
-        chip = self.get(LightChip)
+        chip = self.get_chip(LightChip)
         return chip.uniform_buffer_size if chip is not None else 0
 
     # -- properties --------------------------------------------------------

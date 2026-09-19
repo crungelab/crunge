@@ -14,8 +14,8 @@ class SceneNode[T_Node: "SceneNode", T_Layer: SceneLayer](Node[T_Node]):
     # stops here. The node's own children still parent to it normally.
     top_level_default: ClassVar[bool] = False
 
-    def __init__(self, model=None) -> None:
-        super().__init__(model)
+    def __init__(self, model=None, children: list["SceneNode[T_Node, T_Layer]"] = None) -> None:
+        super().__init__(model, children)
         self.layer: T_Layer = None
 
         self._local_dirty = False

@@ -11,10 +11,10 @@ pybind11_add_module(${THIS} MODULE
     src/bindings/yoga_py_module.cpp
     src/bindings/yoga_enums_py_auto.cpp
     src/bindings/yoga_style_py_auto.cpp
-    src/bindings/yoga_layout_py.cpp
-    src/bindings/yoga_layout_py_auto.cpp
+    src/bindings/yoga_layout_node_py.cpp
+    src/bindings/yoga_layout_node_py_auto.cpp
 
-    src/Layout.cpp
+    src/LayoutNode.cpp
     src/Config.cpp
 
     # Generated but not exposed:

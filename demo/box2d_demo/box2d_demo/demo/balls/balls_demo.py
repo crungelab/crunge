@@ -7,10 +7,11 @@ from crunge import imgui
 from crunge.engine.d2.settings_2d import Settings2D
 
 from ...objects.floor import Floor
+from ...objects.ball import Ball
 
 from ..physics_demo import PhysicsDemo
 
-from .ball import Ball
+# from .ball import Ball
 
 
 class BallsDemo(PhysicsDemo):
@@ -31,10 +32,11 @@ class BallsDemo(PhysicsDemo):
 
     def create_floor(self):
         ppu = Settings2D().ppu
-        width_units = self.width / ppu  # viewport width, converted to units
+        width_units = self.viewport.width / ppu
         x = width_units / 2
         y = 0
         position = glm.vec2(x, y)
+        logger.debug(f"Creating floor at {position}")
         floor = Floor(position, glm.vec2(width_units, 2))  # 2 units thick, not 2 px
         floor.create()
         self.scene.attach(floor)

@@ -20,12 +20,12 @@ class Page(demo.Page):
 
         return self._ui
 
-    def debug_layout(self, layout: yoga.Layout):
+    def debug_layout(self, layout: yoga.LayoutNode):
         bounds = layout.get_computed_bounds()
         left = bounds.left
         top = bounds.top
         width = bounds.width
         height = bounds.height
-        print(f"Node Layout: Left={left}, Top={top}, Width={width}, Height={height}")
+        print(f"Node LayoutNode: Left={left}, Top={top}, Width={width}, Height={height}")
         for child in layout.children:
             self.debug_layout(child)

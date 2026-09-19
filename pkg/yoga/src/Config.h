@@ -10,35 +10,35 @@
 #include <yoga/Yoga.h>
 
 class Config {
-  friend class Layout;
+    friend class LayoutNode;
 
- public:
-  static Config* create(void);
+public:
+    static Config *create(void);
 
-  static void destroy(Config* config);
+    static void destroy(Config *config);
 
- private:
-  Config(void);
+private:
+    Config(void);
 
- public:
-  ~Config(void);
+public:
+    ~Config(void);
 
- public: // Prevent accidental copy
-  Config(Config const&) = delete;
+public: // Prevent accidental copy
+    Config(Config const &) = delete;
 
-  Config const& operator=(Config const&) = delete;
+    Config const &operator=(Config const &) = delete;
 
- public: // Setters
-  void setExperimentalFeatureEnabled(int feature, bool enabled);
-  void setPointScaleFactor(float pixelsInPoint);
-  void setErrata(int errata);
-  void setUseWebDefaults(bool useWebDefaults);
+public: // Setters
+    void setExperimentalFeatureEnabled(int feature, bool enabled);
+    void setPointScaleFactor(float pixelsInPoint);
+    void setErrata(int errata);
+    void setUseWebDefaults(bool useWebDefaults);
 
- public: // Getters
-  bool isExperimentalFeatureEnabled(int feature) const;
-  int getErrata() const;
-  bool useWebDefaults() const;
+public: // Getters
+    bool isExperimentalFeatureEnabled(int feature) const;
+    int getErrata() const;
+    bool useWebDefaults() const;
 
- private:
-  YGConfigRef m_config;
+private:
+    YGConfigRef m_config;
 };

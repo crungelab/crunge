@@ -31,7 +31,7 @@ class TreePage(Page):
         self.root = root = yoga.Node()
         root.set_style(root_style)
         """
-        self.root = root = yoga.Layout()
+        self.root = root = yoga.LayoutNode()
         root.set_style(
             yoga.StyleBuilder()
             .flex_direction(yoga.FlexDirection.ROW)
@@ -41,7 +41,7 @@ class TreePage(Page):
             .build()
         )
 
-        child0 = yoga.Layout()
+        child0 = yoga.LayoutNode()
         child0_style = yoga.Style()
         child0_style.set_flex_grow(1.0)
         # child0_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
@@ -52,7 +52,7 @@ class TreePage(Page):
 
         root.add_child(child0)
 
-        child1 = yoga.Layout()
+        child1 = yoga.LayoutNode()
         child1_style = yoga.Style()
         # child1_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
         # child1_style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(10))
@@ -79,7 +79,7 @@ class TreePage(Page):
             self.draw_layout(self.root, canvas)
         super()._draw()
 
-    def draw_layout(self, node: yoga.Layout, canvas: skia.Canvas, depth=0, max_depth=6):
+    def draw_layout(self, node: yoga.LayoutNode, canvas: skia.Canvas, depth=0, max_depth=6):
         bounds = node.get_computed_bounds()
         left = bounds.left
         top = bounds.top

@@ -84,7 +84,7 @@ class Car(EntityGroup2D):
         self.front_wheel = self.add_node(Wheel.produce(front_wheel_pos))
         self.back_wheel = self.add_node(Wheel.produce(back_wheel_pos))
 
-        self.add(CarController(self))
+        self.add_chip(CarController(self))
 
     @property
     def velocity(self):

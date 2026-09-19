@@ -9,45 +9,6 @@ from .chip import Chip
 
 
 class BaseNode[T: BaseNode](Base):
-    _cls_chips: dict[type, Any] = {}
-
-    '''
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        merged = {}
-        for base in reversed(cls.__mro__[1:]):
-            merged.update(getattr(base, "_cls_chips", {}))
-        cls._cls_chips = merged
-    '''
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        merged = {}
-        for base in reversed(cls.__mro__[1:]):
-            merged.update(getattr(base, "_cls_chips", {}))
-        cls._cls_chips = merged
-
-        for name, value in list(vars(cls).items()):
-            inject = getattr(value, "inject", None)
-            if inject is not None:
-                inject(cls, value)
-
-    @classmethod
-    def add_cls_chip(cls, chip, key: type | None = None) -> None:
-        cls._cls_chips[key or type(chip)] = chip
-
-    @classmethod
-    def get_cls_chip(cls, kind: type) -> Any | None:
-        return cls._cls_chips.get(kind)
-
-    def get[C: Chip[Any]](self, kind: type[C]) -> C | None:
-        chip = self._chip_map.get(kind)
-        if chip is not None:
-            return chip
-        return self._cls_chips.get(kind)
-
-    def has(self, kind: type) -> bool:
-        return kind in self._chip_map or kind in self._cls_chips
-
     """A node in a tree that owns a set of chips.
 
     Knows nothing about transforms, scenes, or the frame — usable on its
@@ -108,13 +69,15 @@ class BaseNode[T: BaseNode](Base):
     destroyed after them.
     """
 
-    def __init__(self) -> None:
+    _cls_chips: dict[type, Any] = {}
+
+    def __init__(self, children: list[T] | None = None) -> None:
         super().__init__()
 
         # Authoritative, insertion-ordered. The only list that sees multiples.
         self._chips: list[Chip[Any]] = []
         # Type -> first instance, populated across the MRO so that
-        # require(Mod) finds a SpriteMod.
+        # require_chip(SpriteVu) finds a SpriteVu instance.
         self._chip_map: dict[type[Chip[Any]], Chip[Any]] = {}
 
         self.parent: T | None = None
@@ -122,6 +85,48 @@ class BaseNode[T: BaseNode](Base):
 
         self._seated = False
         self._plugged = False
+
+        if children is not None:
+            for child in children:
+                self.add_child(child)
+
+    """
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        merged = {}
+        for base in reversed(cls.__mro__[1:]):
+            merged.update(getattr(base, "_cls_chips", {}))
+        cls._cls_chips = merged
+    """
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        merged = {}
+        for base in reversed(cls.__mro__[1:]):
+            merged.update(getattr(base, "_cls_chips", {}))
+        cls._cls_chips = merged
+
+        for name, value in list(vars(cls).items()):
+            inject = getattr(value, "inject", None)
+            if inject is not None:
+                inject(cls, value)
+
+    @classmethod
+    def add_cls_chip(cls, chip, key: type | None = None) -> None:
+        cls._cls_chips[key or type(chip)] = chip
+
+    @classmethod
+    def get_cls_chip(cls, kind: type) -> Any | None:
+        return cls._cls_chips.get(kind)
+
+    def get_chip[C: Chip[Any]](self, kind: type[C]) -> C | None:
+        chip = self._chip_map.get(kind)
+        if chip is not None:
+            return chip
+        return self._cls_chips.get(kind)
+
+    def has_chip(self, kind: type) -> bool:
+        return kind in self._chip_map or kind in self._cls_chips
 
     # -- seating -----------------------------------------------------------
 
@@ -135,7 +140,7 @@ class BaseNode[T: BaseNode](Base):
         self._seated = True
 
         for chip in chips:
-            self.add(chip)
+            self.add_chip(chip)
         self._seat()
         return self
 
@@ -147,8 +152,8 @@ class BaseNode[T: BaseNode](Base):
 
             def _seat(self) -> None:
                 super()._seat()
-                if not self.has(Vu):
-                    self.add(SpriteVu())
+                if not self.has_chip(Vu):
+                    self.add_chip(SpriteVu())
         """
 
     @property
@@ -156,7 +161,7 @@ class BaseNode[T: BaseNode](Base):
         return self._seated
 
     # -- chips -------------------------------------------------------------
-    def add[C: Chip[Any]](self, chip: C) -> C:
+    def add_chip[C: Chip[Any]](self, chip: C) -> C:
         if self.is_destroying:
             raise RuntimeError(f"cannot add {chip!r} to {self!r} while it tears down")
         if chip._node is not None:
@@ -182,7 +187,7 @@ class BaseNode[T: BaseNode](Base):
             chip.plug()
         return chip
 
-    def remove(self, chip: Chip[Any]) -> None:
+    def remove_chip(self, chip: Chip[Any]) -> None:
         """Detach without destroying. The chip stays created and re-addable;
         the caller owns it from here."""
         if chip not in self._chips:
@@ -211,22 +216,13 @@ class BaseNode[T: BaseNode](Base):
             chip.unplug()
         chip.on_detached()
 
-    '''
-    def get[C: Chip[Any]](self, kind: type[C]) -> C | None:
-        """One dict hit. Matches subclasses, since the map spans the MRO."""
-        return self._chip_map.get(kind)  # type: ignore[return-value]
-    '''
-
-    def require[C: Chip[Any]](self, kind: type[C]) -> C:
+    def require_chip[C: Chip[Any]](self, kind: type[C]) -> C:
         chip = self._chip_map.get(kind)
         if chip is None:
             raise KeyError(f"{self!r} has no {kind.__name__}")
         return chip  # type: ignore[return-value]
 
-    def has(self, kind: type) -> bool:
-        return kind in self._chip_map
-
-    def get_all[C: Chip[Any]](self, kind: type[C]) -> list[C]:
+    def get_all_chips[C: Chip[Any]](self, kind: type[C]) -> list[C]:
         """Multiples. Linear over a short list; rare by design."""
         return [c for c in self._chips if isinstance(c, kind)]
 
@@ -296,7 +292,7 @@ class BaseNode[T: BaseNode](Base):
             chip.ready()
 
     def ready_children(self) -> None:
-        #logger.debug(f"Readying children of node: {self}")
+        # logger.debug(f"Readying children of node: {self}")
         super().ready_children()
         for child in list(self.children):
             child.ready()
@@ -361,6 +357,8 @@ class BaseNode[T: BaseNode](Base):
 
     def on_added(self) -> None:
         """Self-side notification. Parent is set; lifetime not yet synced."""
+        for chip in self._chips:
+            chip.on_added()
 
     def remove_child(self, child: T) -> None:
         child.disable()
@@ -374,6 +372,8 @@ class BaseNode[T: BaseNode](Base):
 
     def on_removed(self) -> None:
         """Self-side notification. Parent is still set."""
+        for chip in self._chips:
+            chip.on_removed()
 
     def add_children(self, children: list[T]) -> None:
         for child in children:

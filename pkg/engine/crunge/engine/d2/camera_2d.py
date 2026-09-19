@@ -76,14 +76,14 @@ class Camera2D(Node2D):
 
     def _seat(self) -> None:
         super()._seat()
-        if not self.has(CameraChip2D):
-            self.add(CameraChip2D())
+        if not self.has_chip(CameraChip2D):
+            self.add_chip(CameraChip2D())
 
     # -- chip forwarding ---------------------------------------------------
 
     @property
     def chip(self) -> CameraChip2D | None:
-        return self.get(CameraChip2D)
+        return self.get_chip(CameraChip2D)
 
     '''
     @property
@@ -103,7 +103,7 @@ class Camera2D(Node2D):
     '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        self.require(CameraChip2D).bind(pass_enc)
+        self.require_chip(CameraChip2D).bind(pass_enc)
 
     # -- use ---------------------------------------------------------------
     @contextlib.contextmanager

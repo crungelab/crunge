@@ -60,14 +60,14 @@ class Camera3D(Node3D):
 
     def _seat(self) -> None:
         super()._seat()
-        if not self.has(CameraChip3D):
-            self.add(CameraChip3D())
+        if not self.has_chip(CameraChip3D):
+            self.add_chip(CameraChip3D())
 
     # -- chip forwarding ---------------------------------------------------
 
     @property
     def chip(self) -> CameraChip3D | None:
-        return self.get(CameraChip3D)
+        return self.get_chip(CameraChip3D)
 
     '''
     @property
@@ -87,7 +87,7 @@ class Camera3D(Node3D):
     '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
-        self.require(CameraChip3D).bind(pass_enc)
+        self.require_chip(CameraChip3D).bind(pass_enc)
 
     # -- properties --------------------------------------------------------
 

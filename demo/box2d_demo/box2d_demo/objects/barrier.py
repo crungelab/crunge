@@ -21,7 +21,7 @@ class Barrier(Node2D):
 
     def _seat(self) -> None:
         super()._seat()
-        self.add(StaticPhysics(BoxGeom(), position=self.position))
+        self.add_chip(StaticPhysics(BoxGeom(), position=self.position))
 
 
 class BarrierLayer(GraphLayer2D):

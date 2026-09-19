@@ -77,10 +77,6 @@ class Game(App):
             self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
             logger.debug(f"Camera centered at {self.camera.position}")
 
-    def on_size(self):
-        super().on_size()
-        self.center_camera()
-
     def _draw(self):
         imgui.begin("Wyggles")
 

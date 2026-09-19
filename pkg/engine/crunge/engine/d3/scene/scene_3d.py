@@ -29,7 +29,7 @@ class Scene3D(Scene[Node3D]):
 
     def _seat(self) -> None:
         super()._seat()
-        self.lighting = self.add(Lighting3D())
+        self.lighting = self.add_chip(Lighting3D())
 
     def create_children(self) -> None:
         super().create_children()

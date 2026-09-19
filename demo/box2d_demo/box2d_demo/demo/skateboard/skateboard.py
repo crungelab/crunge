@@ -27,7 +27,7 @@ class SkateboardDemo(PhysicsDemo):
 
     def create_floor(self):
         ppu = Settings2D().ppu
-        width_units = self.width / ppu  # viewport width, converted to units
+        width_units = self.viewport.width / ppu  # viewport width, converted to units
         x = width_units / 2
         y = 0
         position = glm.vec2(x, y)
@@ -37,7 +37,7 @@ class SkateboardDemo(PhysicsDemo):
 
     def create_avatar(self):
         ppu = Settings2D().ppu
-        width_units = self.width / ppu  # viewport width, converted to units
+        width_units = self.viewport.width / ppu  # viewport width, converted to units
         x = width_units / 2
         y = 1.5
         position = glm.vec2(x, y)

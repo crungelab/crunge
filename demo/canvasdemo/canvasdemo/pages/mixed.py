@@ -33,9 +33,6 @@ class MixedPage(Page):
         super()._create()
         self.create_device_objects()
 
-    def on_size(self):
-        super().on_size()
-
     def create_device_objects(self):
         #super().create_device_objects()
         self.create_pipeline()

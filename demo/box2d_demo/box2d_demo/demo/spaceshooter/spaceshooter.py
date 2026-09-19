@@ -37,8 +37,10 @@ class SpaceShooter(PhysicsDemo):
         self.create_ship(glm.vec2(0, 0))
 
         ppu = Settings2D().ppu
-        width_units = self.width / ppu
-        height_units = self.height / ppu
+        width_units = self.viewport.width / ppu
+        height_units = self.viewport.height / ppu
+
+        logger.debug(f"Viewport size in units: width={width_units}, height={height_units}")
 
         Zone(
             self.scene, glm.vec2(0, 0), glm.vec2(width_units * 2, height_units * 2)

@@ -14,7 +14,8 @@ from .viewport import Viewport
 from .renderer import Renderer
 from .node import Node
 from .vu import Vu
-from .ui import Widget, Overlay
+from .widget import Widget
+from .overlay import Overlay
 from .window import Window
 from .app import App
 from .scheduler import Scheduler

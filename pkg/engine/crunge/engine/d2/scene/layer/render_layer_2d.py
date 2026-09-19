@@ -14,7 +14,7 @@ class RenderLayer2D(GraphLayer2D):
         # update, draw and destroy. The RenderGroup is now the only chip in
         # the arrangement; VuGroups are plain objects it owns, which is what
         # keeps them from being updated and drawn twice.
-        self.root_render_group = self.root.add(RenderGroup(is_managed=is_managed))
+        self.root_render_group = self.root.add_chip(RenderGroup(is_managed=is_managed))
         self.register_vu_groups()
 
     def register_vu_groups(self) -> None:

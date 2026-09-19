@@ -15,7 +15,7 @@ class AlignContentPage(Page):
     def setup(self):
         super().setup()
         # Create a root node
-        self.root = root = yoga.Layout()
+        self.root = root = yoga.LayoutNode()
         root.set_width(200)
         root.set_height(250)
         root.set_padding(yoga.Edge.ALL, 10)
@@ -23,7 +23,7 @@ class AlignContentPage(Page):
         root.set_flex_wrap(yoga.Wrap.WRAP)
 
         for i in range(5):
-            child = yoga.Layout()
+            child = yoga.LayoutNode()
             child.set_width(50)
             child.set_height(50)
             child.set_margin(yoga.Edge.ALL, 5)
@@ -46,7 +46,7 @@ class AlignContentPage(Page):
             self.draw_layout(self.root, canvas)
         super()._draw()
 
-    def draw_layout(self, node: yoga.Layout, canvas: skia.Canvas, depth=0, max_depth=6):
+    def draw_layout(self, node: yoga.LayoutNode, canvas: skia.Canvas, depth=0, max_depth=6):
         bounds = node.get_computed_bounds()
         left = bounds.left
         top = bounds.top

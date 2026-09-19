@@ -62,16 +62,11 @@ class Demo(engine.App):
         gui = self.display.gui
 
     def center_camera(self):
-        if self.camera:
-            ppu = self.camera.ppu
-            view_width_units = self.viewport.width / ppu
-            view_height_units = self.viewport.height / ppu
-            self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
-            logger.debug(f"Camera centered at {self.camera.position}")
-
-    def on_size(self):
-        super().on_size()
-        self.center_camera()
+        ppu = self.camera.ppu
+        view_width_units = self.viewport.width / ppu
+        view_height_units = self.viewport.height / ppu
+        self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
+        logger.debug(f"Camera centered at {self.camera.position}")
 
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.key

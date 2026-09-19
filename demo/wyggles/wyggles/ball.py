@@ -21,7 +21,7 @@ class Ball(GameEntity):
     def _seat(self) -> None:
         super()._seat()
         self.model = SpriteLoader().load('${images}/ball.png')
-        self.physics = self.add(
+        self.physics = self.add_chip(
             DynamicPhysics(BallGeom())
         )
 

@@ -13,10 +13,10 @@ def main():
     root_style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(100))
     #style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(math.nan))
 
-    root = yoga.Layout()
+    root = yoga.LayoutNode()
     root.set_style(root_style)
 
-    child0 = yoga.Layout()
+    child0 = yoga.LayoutNode()
     child0_style = yoga.Style()
     child0_style.set_flex_grow(1.0)
     child0_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
@@ -28,7 +28,7 @@ def main():
     #root.add_child(child0)
     root.insert_child(child0, 0)
 
-    child1 = yoga.Layout()
+    child1 = yoga.LayoutNode()
     child1_style = yoga.Style()
     child1_style.set_dimension(yoga.Dimension.WIDTH, yoga.StyleSizeLength.points(100))
     child1_style.set_dimension(yoga.Dimension.HEIGHT, yoga.StyleSizeLength.points(10))

@@ -22,7 +22,7 @@ class Robot(DynamicCharacter):
         atlas = XmlSpriteAtlasLoader(sprite_builder=CollidableSpriteBuilder()).load(
             "${resources}/tiled/characters/robot/sheet.xml"
         )
-        self.add(RobotBrain(atlas))
+        self.add_chip(RobotBrain(atlas))
 
     @classmethod
     def produce(self, position=glm.vec2()):

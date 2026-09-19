@@ -113,18 +113,19 @@ class App(Window):
         return self
 
     def apply_layout(self):
-        if not self.layout_dirty:
-            return
-        self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
-        super().apply_layout()
+        """Root-level layout pass.
 
-    '''
-    def apply_layout(self):
-        if not self.layout.is_dirty():
+        The only place the tree is calculated. Runs from update(), before
+        children update, so anything reading size or position this frame
+        sees this frame's values. Widgets no longer force a synchronous
+        relayout when they are removed -- removal dirties the tree and the
+        next frame picks it up.
+        """
+        if not self.layout.stale:
             return
-        self.layout.calculate_bounds(self.width, self.height, yoga.Direction.LTR)
-        super().apply_layout()
-    '''
+        width, height = self.get_window_size()
+        self.layout.calculate(width, height, yoga.Direction.LTR)
+        self.layout.apply()
 
     def update(self, delta_time: float):
         for service in self.services:

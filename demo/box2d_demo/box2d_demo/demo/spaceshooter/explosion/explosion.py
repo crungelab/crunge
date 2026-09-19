@@ -12,5 +12,5 @@ class Explosion(Node2D):
         self.color = color
 
     def _seat(self) -> None:
-        self.add(ExplosionVu(self.color))
+        self.add_chip(ExplosionVu(self.color))
         super()._seat()

@@ -75,17 +75,44 @@ class Window(Frame):
 
     def _create(self):
         logger.debug("Window.create")
-        self.layout.calculate_bounds(math.nan, math.nan, yoga.Direction.LTR)
-        logger.debug(f"Window.size: {self.size}")
+
+        # Pre-pass. Unconstrained, so the root's computed size comes from
+        # its style -- the width/height handed to __init__. Computes only:
+        # nothing below exists yet to be notified, which is the whole
+        # reason calculate and apply are separate calls.
+        self.layout.calculate(math.nan, math.nan, yoga.Direction.LTR)
+        #logger.debug(f"Window.size: {self.layout.size}")
+        logger.debug(f"pre-pass computed: {self.layout.size}")
+
+        # Everything from here to apply() reads geometry off the chip.
+        # self.size is still zero: it is written by on_layout, and the
+        # first on_layout is the apply() below.
         self.create_window()
         self.create_viewport()
         self.create_device_objects()
         self.create_renderer()
+
+        # Safe now -- on_size needs the easel, so this cannot run any
+        # earlier than the easel's own construction.
+
+        # TODO: This used to only be called in _update.  Should it be here?
+        self.layout.apply()
+
         super()._create()
 
+    @property
+    def layout_size(self) -> glm.ivec2:
+        """Computed size straight off the chip, in integer pixels.
+
+        For construction-time callers that run before the first apply.
+        Everything after that should read self.size.
+        """
+        return glm.ivec2(self.layout.width, self.layout.height)
+
     def create_window(self):
+        size = self.layout_size
         self.sdl_window = sdl.create_window(
-            self.name, self.width, self.height, sdl.WindowFlags.RESIZABLE
+            self.name, size.x, size.y, sdl.WindowFlags.RESIZABLE
         )
 
     def create_renderer(self):
@@ -94,6 +121,7 @@ class Window(Frame):
     def _enable(self):
         self.viewport.make_current()
         super()._enable()
+
 
     def on_size(self):
         super().on_size()
@@ -108,12 +136,6 @@ class Window(Frame):
 
         self.resize_pending = True
 
-    """
-    def on_resize(self):
-        self.viewport.size = glm.ivec2(self.get_framebuffer_size())
-        self.resize_pending = False
-    """
-
     def get_window_size(self):
         return sdl.get_window_size(self.sdl_window)
 
@@ -124,7 +146,9 @@ class Window(Frame):
         pass
 
     def create_viewport(self):
-        self.easel = SurfaceEasel(self.size, self.sdl_window, self.render_options)
+        self.easel = SurfaceEasel(
+            self.layout_size, self.sdl_window, self.render_options
+        )
         self.viewport = Viewport(easel=self.easel, rect=None)
         self.viewport.make_current()
 
@@ -143,7 +167,12 @@ class Window(Frame):
         # logger.debug("window event")
         match event.type:
             case sdl.EventType.WINDOW_RESIZED:
-                self.size = glm.ivec2(event.data1, event.data2)
+                # Writes the style, which dirties the tree. The new size
+                # comes back through on_layout on the next pass -- the
+                # old `self.size = ...` setter did the same thing, but
+                # self.size is a plain attribute now and assigning to it
+                # would be overwritten by the next apply.
+                self.layout.set_size(event.data1, event.data2)
             case _:
                 # pass
                 return super().on_window(event)

@@ -43,8 +43,8 @@ class Node[T: Node](BaseNode[T]):
         node = Node2D(position, rotation).seat(SpriteVu(sprite))
     """
 
-    def __init__(self, model: "Model | None" = None) -> None:
-        super().__init__()
+    def __init__(self, model: "Model | None" = None, children: list["Node[T]"] = None) -> None:
+        super().__init__(children)
         self._model: "Model | None" = None
 
         # Pre-filtered broadcast buckets; no branching in the hot loops.
@@ -68,17 +68,17 @@ class Node[T: Node](BaseNode[T]):
     def _seat(self) -> None:
         super()._seat()
         if self.vu_class is not None:
-            self.add(self.vu_class())
+            self.add_chip(self.vu_class())
         if self.controller_class is not None:
-            self.add(self.controller_class())
+            self.add_chip(self.controller_class())
 
     # -- chips -------------------------------------------------------------
     #
     # BaseNode decides membership; Node decides what each chip is broadcast
     # to.
 
-    def add[C: Chip[Any]](self, chip: C) -> C:
-        chip = super().add(chip)
+    def add_chip[C: Chip[Any]](self, chip: C) -> C:
+        chip = super().add_chip(chip)
 
         # Bucketed after super(), which means after on_attached and any
         # plug: update_order can be settled from node or sibling state and
@@ -93,7 +93,7 @@ class Node[T: Node](BaseNode[T]):
             self._dispatchables.append(chip)
         return chip
 
-    def remove(self, chip: Chip[Any]) -> None:
+    def remove_chip(self, chip: Chip[Any]) -> None:
         # Mirror of add: out of the buckets first, so the chip is off every
         # broadcast list before super() disables and unplugs it. A chip that
         # was never attached is in no bucket, so the guard in super() still
@@ -101,7 +101,7 @@ class Node[T: Node](BaseNode[T]):
         for bucket in (self._updatables, self._drawables, self._dispatchables):
             if chip in bucket:
                 bucket.remove(chip)
-        super().remove(chip)
+        super().remove_chip(chip)
 
     # -- properties --------------------------------------------------------
 
@@ -120,35 +120,35 @@ class Node[T: Node](BaseNode[T]):
     # Vu property
     @property
     def vu(self) -> Vu | None:
-        return self.get(Vu)
+        return self.get_chip(Vu)
 
     @vu.setter
     def vu(self, value: Vu | None) -> None:
-        old = self.get(Vu)
+        old = self.get_chip(Vu)
         if old is value:
             return
         if old is not None:
-            self.remove(old)
+            self.remove_chip(old)
             old.destroy()
         if value is not None:
-            self.add(value)
+            self.add_chip(value)
 
     # RenderGroup property
     @property
     def render_group(self) -> RenderGroup | None:
-        return self.get(RenderGroup)
+        return self.get_chip(RenderGroup)
 
     '''
     @render_group.setter
     def render_group(self, value: RenderGroup | None) -> None:
-        old = self.get(RenderGroup)
+        old = self.get_chip(RenderGroup)
         if old is value:
             return
         if old is not None:
-            self.remove(old)
+            self.remove_chip(old)
             old.destroy()
         if value is not None:
-            self.add(value)
+            self.add_chip(value)
     '''
 
     # -- render group lookup -----------------------------------------------
@@ -174,23 +174,23 @@ class Node[T: Node](BaseNode[T]):
         like any other — so the chip map already answers this, and a layer
         that seats one needs no override.
         """
-        return self.get(RenderGroup)
+        return self.get_chip(RenderGroup)
 
     # Controller property
     @property
     def controller(self) -> Controller | None:
-        return self.get(Controller)
+        return self.get_chip(Controller)
 
     @controller.setter
     def controller(self, value: Controller | None) -> None:
-        old = self.get(Controller)
+        old = self.get_chip(Controller)
         if old is value:
             return
         if old is not None:
-            self.remove(old)
+            self.remove_chip(old)
             old.destroy()
         if value is not None:
-            self.add(value)
+            self.add_chip(value)
 
     # -- lifetime ----------------------------------------------------------
 

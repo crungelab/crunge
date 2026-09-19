@@ -27,10 +27,10 @@ class FlexRowDemo(Demo):
         )
         root_style.set_padding(yoga.Edge.ALL, yoga.StyleLength.points(32))
 
-        self.root = root = yoga.Layout()
+        self.root = root = yoga.LayoutNode()
         root.set_style(root_style)
 
-        child0 = yoga.Layout()
+        child0 = yoga.LayoutNode()
         child0_style = yoga.Style()
         child0_style.set_flex_grow(0.25)
         child0_style.set_margin(yoga.Edge.RIGHT, yoga.StyleLength.points(10))
@@ -40,7 +40,7 @@ class FlexRowDemo(Demo):
         root.add_child(child0)
         #root.insert_child(child0, 0)
 
-        child1 = yoga.Layout()
+        child1 = yoga.LayoutNode()
         child1_style = yoga.Style()
         child1_style.set_flex_grow(0.75)
 
@@ -61,7 +61,7 @@ class FlexRowDemo(Demo):
         with self.canvas_target() as canvas:
             self.render_layout(self.root, canvas)
 
-    def render_layout(self, node: yoga.Layout, canvas: skia.Canvas, depth=0, max_depth=6):
+    def render_layout(self, node: yoga.LayoutNode, canvas: skia.Canvas, depth=0, max_depth=6):
         bounds = node.get_computed_bounds()
         left = bounds.left
         top = bounds.top

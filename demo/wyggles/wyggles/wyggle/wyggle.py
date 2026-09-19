@@ -74,7 +74,7 @@ class Wyggle(WyggleHead):
         self.butt = None
 
         self.mind = WyggleMind()
-        self.add(self.mind)
+        self.add_chip(self.mind)
 
     def _create(self):
         super()._create()

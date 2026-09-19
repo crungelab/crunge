@@ -111,7 +111,7 @@ class Chip[N: "BaseNode"](Base):
     def plug(self) -> None:
         """Resolve sibling chips and cache them.
 
-        e.g.  self.mod = self.node.require(Mod)
+        e.g.  self.mod = self.node.require_chip(Mod)
         """
 
     def unplug(self) -> None:
@@ -148,6 +148,25 @@ class Chip[N: "BaseNode"](Base):
 
     def sync(self) -> None:
         """Catch up on state that changed while unsubscribed."""
+
+    # -- node signals --------------------------------------------------------
+
+    def on_added(self) -> None:
+        """The node joined a parent.
+
+        Fires top-down, so the parent's chips have already seen their own
+        add and any tree they mirror is linked above this point. Unlike
+        listen/sync, this is not scoped to enablement -- a disabled chip
+        still needs to know where it sits.
+        """
+
+    def on_removed(self) -> None:
+        """The node is leaving its parent.
+
+        Fires bottom-up, before the link is broken, so `self.node.parent`
+        is still the parent being left. Must tolerate running without a
+        matching on_added -- a node destroyed in place never joined a tree.
+        """
 
     # -- dirt --------------------------------------------------------------
 

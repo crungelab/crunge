@@ -11,6 +11,7 @@ python -m spritedemo.demo.filter_kawase_blur
 python -m spritedemo.demo.composite_kawase_blur
 python -m spritedemo.demo.compound_kawase_blur
 python -m spritedemo.demo.split
+python -m spritedemo.demo.nine_patch
 
 ```
 

@@ -15,5 +15,5 @@ class Ball(Node2D):
 
     def _seat(self) -> None:
         super()._seat()
-        self.add(SpriteVu())
-        self.add(DynamicPhysics(BallGeom()))
+        self.add_chip(SpriteVu())
+        self.add_chip(DynamicPhysics(BallGeom()))

@@ -7,7 +7,7 @@ from crunge import skia
 from crunge.engine.vu import Vu
 
 from ...renderer import Renderer
-from ...ui import Overlay
+from ...overlay import Overlay
 
 
 class DebugOverlay(Overlay):

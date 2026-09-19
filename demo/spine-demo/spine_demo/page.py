@@ -32,29 +32,6 @@ class Page(SceneScreen2D):
             spines=self.spine_root / "examples",
         )
 
-    @property
-    def ppu(self) -> float:
-        return self.camera.ppu
-
-    def setup(self):
-        super().setup()
-        self.center_camera()
-
-    def center_camera(self):
-        pass
-        """
-        if self.camera:
-            ppu = self.camera.ppu
-            view_width_units = self.viewport.width / ppu
-            view_height_units = self.viewport.height / ppu
-            self.camera.position = glm.vec2(view_width_units / 2, view_height_units / 2)
-            logger.debug(f"Camera centered at {self.camera.position}")
-        """
-
-    def on_size(self):
-        super().on_size()
-        self.center_camera()
-
     def on_key(self, event: sdl.KeyboardEvent):
         key = event.key
         down = event.down

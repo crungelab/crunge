@@ -16,5 +16,5 @@ class Box(Node2D):
 
     def _seat(self) -> None:
         super()._seat()
-        self.add(SpriteVu())
-        self.add(DynamicPhysics(BoxGeom()))
+        self.add_chip(SpriteVu())
+        self.add_chip(DynamicPhysics(BoxGeom()))

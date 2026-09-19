@@ -27,7 +27,7 @@ class Entity2D(Node2D):
     def _seat(self) -> None:
         super()._seat()
         if self.physics_class is not None:
-            self.physics = self.add(
+            self.physics = self.add_chip(
                 self.physics_class(geom=self.geom, material=self.material)
             )
     """

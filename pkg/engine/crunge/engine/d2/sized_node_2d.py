@@ -22,9 +22,10 @@ class SizedNode2D(Node2D):
         scale: glm.vec2 = None,
         model: Any = None,
         size: glm.vec2 = None,
+        children: list[Node2D] = None,
     ) -> None:
         self._size: glm.vec2 = glm.vec2(size) if size is not None else None
-        super().__init__(position, rotation, scale, model)
+        super().__init__(position, rotation, scale, model, children)
 
     @property
     def local_size(self) -> glm.vec2:

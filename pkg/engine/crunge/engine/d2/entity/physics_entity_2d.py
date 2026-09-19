@@ -65,7 +65,7 @@ class PhysicsEntity2D(Entity2D):
         super()._seat()
         if self.physics_class is None:
             return
-        self.physics = self.add(
+        self.physics = self.add_chip(
             self.physics_class(
                 self.geom,
                 material=self.material,

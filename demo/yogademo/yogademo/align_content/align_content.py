@@ -13,7 +13,7 @@ class AlignContentDemo(Demo):
     def __init__(self):
         super().__init__()
         # Create a root node
-        self.root = root = yoga.Layout()
+        self.root = root = yoga.LayoutNode()
         root.set_width(200)
         root.set_height(250)
         root.set_padding(yoga.Edge.ALL, 10)
@@ -21,7 +21,7 @@ class AlignContentDemo(Demo):
         root.set_flex_wrap(yoga.Wrap.WRAP)
 
         for i in range(5):
-            child = yoga.Layout()
+            child = yoga.LayoutNode()
             child.set_width(50)
             child.set_height(50)
             child.set_margin(yoga.Edge.ALL, 5)
@@ -41,7 +41,7 @@ class AlignContentDemo(Demo):
             # canvas.draw_rect(skia.Rect(10, 10, 210, 110), paint)
             self.render_node(self.root, canvas)
 
-    def render_node(self, node: yoga.Layout, canvas: skia.Canvas, depth=0, max_depth=6):
+    def render_node(self, node: yoga.LayoutNode, canvas: skia.Canvas, depth=0, max_depth=6):
         bounds = node.get_computed_bounds()
         left = bounds.left
         top = bounds.top

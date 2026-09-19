@@ -14,7 +14,8 @@ from .d3.camera_3d import Camera3D
 from .d3.lighting_3d import Lighting3D
 
 from .viewport import Viewport
-from .ui import Widget, Overlay
+from .widget import Widget
+from .overlay import Overlay
 from .overlay.overlay_manufacturer import OverlayManufacturer, OverlayConfig
 
 from .d2.overlay.scratch_overlay import ScratchOverlay
@@ -44,7 +45,15 @@ class Display(Widget):
             self.default_overlays if overlays is None else overlays
         )
 
-        style = yoga.StyleBuilder().size_percent(100, 100).build()
+        #style = yoga.StyleBuilder().size_percent(100, 100).build()
+        style = (
+            yoga.StyleBuilder()
+            .position_type(yoga.PositionType.ABSOLUTE)
+            .size_percent(100, 100)
+            .position(yoga.Edge.LEFT, 0)
+            .position(yoga.Edge.TOP, 0)
+            .build()
+        )
         super().__init__(style)
 
         self._scratch: ScratchOverlay = None
