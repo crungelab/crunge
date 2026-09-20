@@ -23,6 +23,7 @@
 #include <yoga/enums/PositionType.h>
 #include <yoga/enums/Unit.h>
 #include <yoga/enums/Wrap.h>
+#include <yoga/enums/MeasureMode.h>
 
 namespace py = pybind11;
 
@@ -141,6 +142,13 @@ void init_yoga_enums_py_auto(py::module &_yoga, Registry &registry) {
         .value("NO_WRAP", facebook::yoga::Wrap::NoWrap)
         .value("WRAP", facebook::yoga::Wrap::Wrap)
         .value("REVERSE", facebook::yoga::Wrap::WrapReverse)
+        .export_values()
+    ;
+
+    py::enum_<facebook::yoga::MeasureMode>(_yoga, "MeasureMode", py::arithmetic())
+        .value("UNDEFINED", facebook::yoga::MeasureMode::Undefined)
+        .value("EXACTLY", facebook::yoga::MeasureMode::Exactly)
+        .value("AT_MOST", facebook::yoga::MeasureMode::AtMost)
         .export_values()
     ;
 

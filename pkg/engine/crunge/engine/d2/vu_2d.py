@@ -174,6 +174,7 @@ class Vu2D(Vu[Node2D]):
     def size(self) -> glm.vec2:
         raise NotImplementedError
 
+    '''
     def on_transform_changed(self, node: Node2D) -> None:
         matrix = glm.mat4(1.0)  # Identity matrix
         # matrix = glm.translate(matrix, glm.vec3(x, y, z))
@@ -182,6 +183,19 @@ class Vu2D(Vu[Node2D]):
             matrix,
             glm.vec3(self.size.x, self.size.y, 1),
         )
+
+        self.transform = node.global_transform * matrix
+        self.bounds = node.global_bounds
+    '''
+    def on_transform_changed(self, node: Node2D) -> None:
+        # node.unscaled_size, not self.size: the node's size is what the layout
+        # computed and what get_local_bounds measures. A vu that derives its
+        # extent from its own model can only ever draw the source art, which
+        # is why the nine patch tracked the layout and the sprites did not.
+        size = node.unscaled_size
+
+        matrix = glm.mat4(1.0)
+        matrix = glm.scale(matrix, glm.vec3(size.x, size.y, 1))
 
         self.transform = node.global_transform * matrix
         self.bounds = node.global_bounds

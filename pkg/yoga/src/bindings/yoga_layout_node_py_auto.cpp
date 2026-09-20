@@ -26,6 +26,50 @@ void init_yoga_layout_node_py_auto(py::module &_yoga, Registry &registry) {
     ;
 
 
+    py::class_<Config> _Config(_yoga, "Config");
+    registry.on(_yoga, "Config", _Config);
+        _Config
+        .def_static("create", &Config::create
+            , py::return_value_policy::reference)
+        .def_static("destroy", &Config::destroy
+            , py::arg("config")
+            )
+        .def("set_experimental_feature_enabled", &Config::setExperimentalFeatureEnabled
+            , py::arg("feature")
+            , py::arg("enabled")
+            )
+        .def("set_point_scale_factor", &Config::setPointScaleFactor
+            , py::arg("pixels_in_point")
+            )
+        .def("set_errata", &Config::setErrata
+            , py::arg("errata")
+            )
+        .def("set_use_web_defaults", &Config::setUseWebDefaults
+            , py::arg("use_web_defaults")
+            )
+        .def("is_experimental_feature_enabled", &Config::isExperimentalFeatureEnabled
+            , py::arg("feature")
+            )
+        .def("get_errata", &Config::getErrata
+            )
+        .def("use_web_defaults", &Config::useWebDefaults
+            )
+    ;
+
+
+    py::class_<Size> _Size(_yoga, "Size");
+    registry.on(_yoga, "Size", _Size);
+        _Size
+        .def_readwrite("width", &Size::width)
+        .def_readwrite("height", &Size::height)
+        .def(py::init<>())
+        .def(py::init<double, double>()
+        , py::arg("width")
+        , py::arg("height")
+        )
+    ;
+
+
     py::class_<LayoutNode> _LayoutNode(_yoga, "LayoutNode");
     registry.on(_yoga, "LayoutNode", _LayoutNode);
         _LayoutNode

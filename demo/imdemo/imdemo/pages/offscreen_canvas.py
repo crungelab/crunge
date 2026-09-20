@@ -33,23 +33,9 @@ class OffscreenCanvasPage(Page):
         imgui.image(imgui.TextureRef(self.texture.id), size)
         imgui.end()
 
-        with compose(self.easel):
-            self.draw_radial_gradient()
+        self.draw_radial_gradient()
 
         super()._draw()
-
-    """
-    def _draw(self):
-        imgui.begin(self.title)
-        size = self.target_viewport.width, self.target_viewport.height
-        imgui.image(imgui.TextureRef(self.texture.id), size)
-        imgui.end()
-
-        with self.easel.frame():
-            self.draw_radial_gradient()
-
-        super()._draw()
-    """
 
     def draw_radial_gradient(self):
         canvas = self.easel.canvas

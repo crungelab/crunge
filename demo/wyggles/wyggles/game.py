@@ -99,6 +99,20 @@ class Game(App):
             self._draw_debug_agents()
 
         if self.debug_bounds:
+            for layer in self.scene.children:
+                for node in layer.root.children:
+                    local = node.get_local_bounds()
+                    m = node.global_transform
+                    corners = [
+                        glm.vec2(m * glm.vec4(local.min.x, local.min.y, 0.0, 1.0)),
+                        glm.vec2(m * glm.vec4(local.max.x, local.min.y, 0.0, 1.0)),
+                        glm.vec2(m * glm.vec4(local.max.x, local.max.y, 0.0, 1.0)),
+                        glm.vec2(m * glm.vec4(local.min.x, local.max.y, 0.0, 1.0)),
+                    ]
+                    self.display.scratch.draw_polygon(corners)
+
+        '''
+        if self.debug_bounds:
             for entity in self.scene.fruit_layer.root.children:
                 local = entity.get_local_bounds()
                 m = entity.global_transform
@@ -109,6 +123,7 @@ class Game(App):
                     glm.vec2(m * glm.vec4(local.min.x, local.max.y, 0.0, 1.0)),
                 ]
                 self.display.scratch.draw_polygon(corners)
+        '''
 
         super()._draw()
 

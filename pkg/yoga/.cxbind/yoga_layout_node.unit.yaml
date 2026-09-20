@@ -3,6 +3,8 @@ sources:
   #- ../../depot/yoga/yoga/node/LayoutResults.h
   #- ../../depot/yoga/yoga/node/Node.h
   - src/Bounds.h
+  - src/Config.h
+  - src/Size.h
   - src/LayoutNode.h
 
 target: src/bindings/yoga_layout_node_py_auto.cpp
@@ -12,6 +14,8 @@ excludes:
   - 'field@LayoutNode::m_measureFunc'
   - 'field@LayoutNode::m_dirtiedFunc'
   - 'method@LayoutNode::fromYGNode'
+  - 'method@Config::getConfigRef'
+
 
 specs:
   'field@LayoutNode::py_children': { pyname: children }

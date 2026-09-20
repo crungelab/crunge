@@ -23,6 +23,7 @@
 #include <yoga/enums/PositionType.h>
 #include <yoga/enums/Unit.h>
 #include <yoga/enums/Wrap.h>
+#include <yoga/enums/MeasureMode.h>
 
 namespace py = pybind11;
 

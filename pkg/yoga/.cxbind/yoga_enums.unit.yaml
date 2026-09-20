@@ -15,6 +15,7 @@ sources:
   - ../../depot/yoga/yoga/enums/PositionType.h
   - ../../depot/yoga/yoga/enums/Unit.h
   - ../../depot/yoga/yoga/enums/Wrap.h
+  - ../../depot/yoga/yoga/enums/MeasureMode.h
 
 excludes:
   - 'function@facebook::yoga::ordinalCount'

@@ -5,7 +5,7 @@ from crunge import imgui
 
 from crunge.engine.d2.nine_patch.nine_patch import NinePatch, NinePatchFill
 from crunge.engine.d2.nine_patch.nine_patch_vu import NinePatchVu
-from crunge.engine.d2.sized_node_2d import SizedNode2D
+from crunge.engine.d2.node_2d import Node2D
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine import Color, colors
 
@@ -46,7 +46,7 @@ class NinePatchDemo(Demo):
         # The node owns the drawn size; the patch only supplies the borders
         self.patch_size = glm.vec2(patch.size) * 2.0
 
-        self.node = SizedNode2D(model=patch, size=self.patch_size).seat(NinePatchVu())
+        self.node = Node2D(model=patch, size=self.patch_size).seat(NinePatchVu())
         self.scene.attach(self.node)
 
     def center_camera(self):
@@ -63,6 +63,10 @@ class NinePatchDemo(Demo):
         imgui.begin("Nine Patch")
 
         # Size: what the node was told to be, which is what the patch fills
+        _, self.debug_bounds = imgui.checkbox("Debug Bounds", self.debug_bounds)
+        if self.debug_bounds:
+            self.draw_debug_bounds()
+
         imgui.text("Size")
         changed, width = imgui.drag_float("Width", self.patch_size.x, SIZE_STEP)
         if changed:

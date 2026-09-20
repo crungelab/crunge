@@ -82,6 +82,11 @@ class BaseSpriteVu[SpriteT: BaseSprite](Vu2D):
     # -- uniform -----------------------------------------------------------
 
     def build_uniform(self) -> NodeUniform:
+        '''
+        logger.debug(f"{self.node} uniform.size={self.size} node={self.node.unscaled_size} "
+                    f"bounds={self.node.global_bounds}")
+        '''
+
         uniform = super().build_uniform()
         if self.sprite_membership is not None:
             uniform.model_index = self.sprite_membership.index

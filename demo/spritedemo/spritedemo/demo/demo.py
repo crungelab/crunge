@@ -34,6 +34,8 @@ class Demo(engine.App):
             images=self.resource_root / "images",
         )
 
+        self.debug_bounds = False
+
     @property
     def ppu(self) -> float:
         return self.camera.ppu
@@ -78,3 +80,16 @@ class Demo(engine.App):
         # Display timings
         imgui.text(f"Update time: {self.update_time:.4f}")
         imgui.text(f"Frame time: {self.frame_time:.4f}")
+
+    def draw_debug_bounds(self):
+        for layer in self.scene.children:
+            for node in layer.root.children:
+                local = node.get_local_bounds()
+                m = node.global_transform
+                corners = [
+                    glm.vec2(m * glm.vec4(local.min.x, local.min.y, 0.0, 1.0)),
+                    glm.vec2(m * glm.vec4(local.max.x, local.min.y, 0.0, 1.0)),
+                    glm.vec2(m * glm.vec4(local.max.x, local.max.y, 0.0, 1.0)),
+                    glm.vec2(m * glm.vec4(local.min.x, local.max.y, 0.0, 1.0)),
+                ]
+                self.display.scratch.draw_polygon(corners)

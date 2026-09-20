@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 from enum import IntFlag
 
 import glm
+from loguru import logger
 
 from ...math import Rect2i
 from ...resource import SpriteTexture, Sampler
@@ -72,6 +73,7 @@ class NinePatch(BaseSprite[NinePatchUniform]):
             texture_layer,
             ppu,
         )
+        logger.debug(f"Patch ppu: {self.ppu}")
 
     @classmethod
     def from_sprite(

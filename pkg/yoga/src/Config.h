@@ -38,6 +38,7 @@ public: // Getters
     bool isExperimentalFeatureEnabled(int feature) const;
     int getErrata() const;
     bool useWebDefaults() const;
+    YGConfigRef getConfigRef() const { return m_config; }
 
 private:
     YGConfigRef m_config;

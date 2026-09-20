@@ -40,6 +40,15 @@ void init_yoga_layout_node_py(py::module &_yoga, Registry &registry) {
         return node->style();
     });
 
+    _LayoutNode.def("set_config", [](LayoutNode& self, Config* config) {
+        auto node = static_cast<facebook::yoga::Node*>(self.m_node);
+        if (!node) {
+            throw std::runtime_error("LayoutNode is not initialized.");
+        }
+        //node->setConfig(config->getConfig());
+        node->setConfig(static_cast<facebook::yoga::Config*>(config->getConfigRef()));
+    }, py::arg("config"), py::keep_alive<1, 2>());
+
     PYEXTEND_END
 
     /*

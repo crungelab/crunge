@@ -608,7 +608,8 @@ void LayoutNode::setMeasureFunc(py::function measureFunc)
 void LayoutNode::unsetMeasureFunc(void)
 {
   // m_measureFunc.reset(nullptr);
-  m_measureFunc = py::none();
+  // m_measureFunc = py::none();
+  m_measureFunc = py::function();
 
   YGNodeSetMeasureFunc(m_node, nullptr);
 }
