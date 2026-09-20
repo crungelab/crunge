@@ -11,7 +11,6 @@ from ...node_2d import Node2D
 class GraphLayer2D(GraphLayer[Node2D]):
     def __init__(self, name: str) -> None:
         super().__init__(name)
-        #self.bounds = Bounds2()
         self.root = Node2D()
         self.root.layer = self
 

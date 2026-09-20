@@ -1,5 +1,9 @@
 from typing import TYPE_CHECKING
 
+from loguru import logger
+
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+
 from ..scene_node import SceneNode
 
 if TYPE_CHECKING:
@@ -13,6 +17,7 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
     def __init__(self, name: str) -> None:
         super().__init__(name)
         self.root: SceneNode[T_Node] = None
+        self._controls: list[T_Node] = []
 
     def __iter__(self):
         """Make GraphLayer iterable by returning iterator over nodes"""
@@ -25,6 +30,12 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
     @property
     def nodes(self) -> list[T_Node]:
         return self.root.children
+
+    def add_control(self, dispatcher: T_Node):
+        self._controls.append(dispatcher)
+
+    def remove_control(self, dispatcher: T_Node):
+        self._controls.remove(dispatcher)
 
     def _create(self) -> None:
         super()._create()
@@ -60,3 +71,19 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
 
     def detach(self, node: T_Node) -> None:
         self.root.remove_child(node)
+
+    def dispatch_2d(self, event, point) -> DispatchResult:
+        for control in reversed(self._controls):
+            logger.debug(f"Dispatching event {event} to control {control}")
+            if control.dispatch_2d(event, point):
+                return EVENT_HANDLED
+        return super().dispatch_2d(event, point)
+
+    '''
+    def dispatch(self, event) -> DispatchResult:
+        for control in reversed(self._controls):
+            logger.debug(f"Dispatching event {event} to control {control}")
+            if control.dispatch(event):
+                return EVENT_HANDLED
+        return super().dispatch(event)
+    '''

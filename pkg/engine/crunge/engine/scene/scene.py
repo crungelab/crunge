@@ -14,6 +14,8 @@ current_scene: ContextVar[Optional["Scene"]] = ContextVar("current_scene", defau
 
 
 class Scene(LayerGroup, Generic[T_Node]):
+    is_scene = True
+
     def __init__(self, name: str) -> None:
         super().__init__(name)
 

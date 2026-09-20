@@ -1,3 +1,4 @@
+import dataclasses
 from loguru import logger
 import glm
 
@@ -14,6 +15,8 @@ from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.resource.texture import SpriteTexture
 from crunge.engine.ui.button import Button
 from crunge.engine.d2.settings_2d import Settings2D
+
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from ..demo import Demo
 
@@ -35,6 +38,7 @@ class WidgetControl(Node2D):
         #self.button = Button("Click Me")
         self.button = Button(
             "Hello, World!",
+            on_click=self.on_click,
             style=StyleBuilder().size(200, 50).build(),
         )
 
@@ -49,14 +53,19 @@ class WidgetControl(Node2D):
         self.texture: SpriteTexture | None = None
         self.surface_dirty = True
 
+    def on_click(self):
+        logger.debug("Button clicked")
+
     def _enable(self):
         super()._enable()
+        self.layer.add_control(self)
         self.button.enable()
-        logger.debug(f"Button size: {self.button.size}, PPU: {self.ppu}")
+        logger.info(f"Button size: {self.button.size}, PPU: {self.ppu}")
         self.size = glm.vec2(self.button.size) / self.ppu
 
     def _disable(self):
         super()._disable()
+        self.layer.remove_control(self)
         self.button.disable()
 
     def _destroy(self):
@@ -118,10 +127,36 @@ class WidgetControl(Node2D):
         self.surface_dirty = False
 
     # -- input -------------------------------------------------------------
+    def dispatch_2d(self, event: object, point: glm.vec2):
+        logger.debug(f"Dispatching event: {event}")
 
-    def dispatch(self, event) -> bool:
         if not self.visible or self.easel is None:
             return False
+
+        logger.debug(f"Widget visible: {self.visible}, easel: {self.easel}")
+
+
+        # World -> local -> surface pixels. bounds is local space, so the ratio of
+        # surface size to bounds size is the conversion, no PPU lookup needed.
+        local = glm.inverse(self.global_transform) * glm.vec4(point.x, point.y, 0.0, 1.0)
+        # ASSUMPTION: bounds exposes .min and .size as vec2
+        scale = glm.vec2(self.surface_size) / self.global_bounds.size
+        surface_point = (glm.vec2(local.x, local.y) - self.global_bounds.min) * scale
+
+        size = self.surface_size
+        if not (0 <= surface_point.x < size.x and 0 <= surface_point.y < size.y):
+            return False
+
+        return self.button.dispatch_2d(event, surface_point)
+
+    '''
+    def dispatch(self, event: object):
+        logger.debug(f"Dispatching event: {event}")
+
+        if not self.visible or self.easel is None:
+            return False
+
+        logger.debug(f"Widget visible: {self.visible}, easel: {self.easel}")
 
         # ASSUMPTION: positional events carry .position in world space
         point = getattr(event, "position", None)
@@ -132,16 +167,17 @@ class WidgetControl(Node2D):
         # surface size to bounds size is the conversion, no PPU lookup needed.
         local = glm.inverse(self.global_transform) * glm.vec4(point.x, point.y, 0.0, 1.0)
         # ASSUMPTION: bounds exposes .min and .size as vec2
-        scale = glm.vec2(self.surface_size) / self.bounds.size
-        surface_point = (glm.vec2(local.x, local.y) - self.bounds.min) * scale
+        scale = glm.vec2(self.surface_size) / self.global_bounds.size
+        surface_point = (glm.vec2(local.x, local.y) - self.global_bounds.min) * scale
 
         size = self.surface_size
         if not (0 <= surface_point.x < size.x and 0 <= surface_point.y < size.y):
             return False
 
         # ASSUMPTION: the widget tree can be dispatched at an explicit local point
-        return self.button.dispatch_at(surface_point, event)
-
+        #return self.button.dispatch(surface_point, event)
+        return self.button.dispatch(event)
+        '''
     # -- frame -------------------------------------------------------------
 
     def _update(self, delta_time):

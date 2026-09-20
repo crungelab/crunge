@@ -1,4 +1,8 @@
 from loguru import logger
+import glm
+from crunge import sdl
+
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from ..scene.scene_2d import Scene2D
 from .view_2d import View2D
@@ -36,3 +40,28 @@ class SceneView2D(View2D):
         with self.renderer.use():
             self.renderer.render(self.scene)
             super().draw()
+
+    """
+    def dispatch(self, event) -> DispatchResult:
+        if self.scene.dispatch(event):
+            return EVENT_HANDLED
+        return super().dispatch(event)
+    """
+
+    def on_mouse_button(self, event: sdl.MouseButtonEvent) -> DispatchResult:
+        # logger.debug(f"mouse button: button={event.button}, down={event.down}")
+        point = self.camera.unproject(glm.vec2(event.x, event.y))
+        return self.scene.dispatch_2d(event, point)
+
+    """
+    def on_mouse_button(self, event: sdl.MouseButtonEvent) -> DispatchResult:
+        # logger.debug(f"mouse button: button={event.button}, down={event.down}")
+        input_event = PointerButtonEvent(
+            button=PointerButton(event.button),
+            pressed=event.down,
+            clicks=event.clicks,
+            position=self.camera.unproject(glm.vec2(event.x, event.y)),
+            screen_position=glm.vec2(event.x, event.y),
+        )
+        return self.scene.dispatch(input_event)
+    """

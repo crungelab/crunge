@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import Any, ClassVar
 from bisect import insort
 
+import glm
+
 from crunge.core.signal import Signal
 from crunge.core.base_node import BaseNode
 from crunge.core.chip import Chip
@@ -248,3 +250,6 @@ class Node[T: Node](BaseNode[T]):
             if chip.dispatch(event):
                 return True
         return super().dispatch(event)
+
+    def dispatch_2d(self, event: Any, point: glm.vec2) -> bool:
+        pass

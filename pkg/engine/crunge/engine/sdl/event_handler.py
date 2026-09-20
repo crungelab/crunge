@@ -1,4 +1,8 @@
 # event_handler.py
+from loguru import logger
+
+import glm
+
 from crunge import sdl
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
@@ -20,6 +24,22 @@ class EventHandler:
                 return self.on_mouse_button(event)
             case sdl.MouseWheelEvent():
                 return self.on_mouse_wheel(event)
+        return None
+
+    def handle_2d(self, event, point) -> DispatchResult:
+        match event:
+            case sdl.MouseMotionEvent():
+                event.x = point.x
+                event.y = point.y
+                return self.handle(event)
+            case sdl.MouseButtonEvent():
+                logger.debug(f"mouse button 2d: x={point.x}, y={point.y}")
+                event.x = point.x
+                event.y = point.y
+                return self.handle(event)
+            case _:
+                return self.handle(event)
+
         return None
 
     def on_window(self, event: sdl.WindowEvent) -> DispatchResult:
