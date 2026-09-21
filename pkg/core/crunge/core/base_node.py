@@ -67,6 +67,14 @@ class BaseNode[T: BaseNode](Base):
     `Base` runs `_create` before `create_children` and `destroy_children`
     before `_destroy`, chips are created and enabled before children and
     destroyed after them.
+
+    Tree membership is broadcast to chips across the whole subtree, not
+    just the node that moved. A chip that mirrors the tree into a parallel
+    structure -- Layout is the first -- may be linked *across* nodes that
+    carry no such chip, so when one of those intermediates moves, the chips
+    that care sit below it and would otherwise never hear. The node-level
+    `on_added`/`on_removed` hooks stay local: they are for the node that
+    actually changed parent.
     """
 
     _cls_chips: dict[type, Any] = {}
@@ -89,15 +97,6 @@ class BaseNode[T: BaseNode](Base):
         if children is not None:
             for child in children:
                 self.add_child(child)
-
-    """
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        merged = {}
-        for base in reversed(cls.__mro__[1:]):
-            merged.update(getattr(base, "_cls_chips", {}))
-        cls._cls_chips = merged
-    """
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
@@ -292,7 +291,6 @@ class BaseNode[T: BaseNode](Base):
             chip.ready()
 
     def ready_children(self) -> None:
-        # logger.debug(f"Readying children of node: {self}")
         super().ready_children()
         for child in list(self.children):
             child.ready()
@@ -349,6 +347,7 @@ class BaseNode[T: BaseNode](Base):
         self.children.append(child)
         self.on_child_added(child)
         child.on_added()
+        child._announce_added()
         self._sync_lifetime(child)
         return child
 
@@ -356,14 +355,27 @@ class BaseNode[T: BaseNode](Base):
         """Parent-side notification. Child is attached but not yet created."""
 
     def on_added(self) -> None:
-        """Self-side notification. Parent is set; lifetime not yet synced."""
-        for chip in self._chips:
+        """Self-side notification, for this node only. Parent is set;
+        lifetime not yet synced. Chips hear separately, and subtree-wide,
+        through _announce_added."""
+
+    def _announce_added(self) -> None:
+        """Tell every chip in this subtree its ancestry changed.
+
+        Top-down, so an ancestor's chips have linked before a descendant's
+        look upward for them. Chips on nodes not yet seated are skipped
+        simply by not existing yet; they catch up in plug.
+        """
+        for chip in tuple(self._chips):
             chip.on_added()
+        for child in tuple(self.children):
+            child._announce_added()
 
     def remove_child(self, child: T) -> None:
         child.disable()
         self.on_child_removed(child)
         child.on_removed()
+        child._announce_removed()
         child.parent = None
         self.children.remove(child)
 
@@ -371,8 +383,21 @@ class BaseNode[T: BaseNode](Base):
         """Parent-side notification. Child is disabled but still attached."""
 
     def on_removed(self) -> None:
-        """Self-side notification. Parent is still set."""
-        for chip in self._chips:
+        """Self-side notification, for this node only. Parent is still set.
+        Chips hear separately, and subtree-wide, through _announce_removed."""
+
+    def _announce_removed(self) -> None:
+        """Tell every chip in this subtree its ancestry is about to change.
+
+        Bottom-up, mirroring disable and destroy, and with every parent
+        link still in place, so no chip observes a half-detached ancestry.
+        Chips linked entirely within the leaving subtree hear this too; a
+        mirror that unlinks them relinks them on the next _announce_added,
+        which is simpler than every chip working out which ancestor left.
+        """
+        for child in reversed(tuple(self.children)):
+            child._announce_removed()
+        for chip in reversed(tuple(self._chips)):
             chip.on_removed()
 
     def add_children(self, children: list[T]) -> None:
@@ -389,13 +414,14 @@ class BaseNode[T: BaseNode](Base):
             self.remove_child(child)
 
     def sort_children(self, key: Callable[[T], object], reverse: bool = False) -> None:
-        """
-        Sorts the children list based on a key function.
+        """Sort children in place, then tell this node's chips.
 
-        :param key: A lambda function that defines the sorting key.
+        :param key: A function that defines the sorting key.
         :param reverse: Whether to sort in reverse order. Default is False.
         """
         self.children.sort(key=key, reverse=reverse)
+        for chip in tuple(self._chips):
+            chip.on_children_sorted()
 
     def __repr__(self) -> str:
         return (

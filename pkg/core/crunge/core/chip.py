@@ -28,9 +28,10 @@ class Chip[N: "BaseNode"](Base):
     """A unit of behaviour owned by a node.
 
     Lifetime is driven entirely by the owner. A chip never creates or
-    destroys itself; `BaseNode` walks its chip set inside `create_children`,
-    `enable_children`, `_disable` and `destroy_children`, so a chip added to
-    an already-created node is brought up to date on `add()`.
+    destroys itself; `BaseNode` walks its chip set inside its own lifetime
+    hooks -- `_create`, `_enable`, `_ready`, `_disable`, `_destroy` -- and
+    walks its children in the `*_children` hooks. A chip added to an
+    already-live node is brought up to date by `add_chip`.
 
     Ordering within a node, for the record:
 
@@ -38,6 +39,8 @@ class Chip[N: "BaseNode"](Base):
         enable     chips -> children
         update     chips -> children
         draw       chips -> children
+        added      chips -> children    (whole subtree that moved)
+        removed    children -> chips    (whole subtree that moved)
         disable    children -> chips
         destroy    children -> chips
 
@@ -100,10 +103,11 @@ class Chip[N: "BaseNode"](Base):
     #
     # Two phases. `on_attached` fires the moment the chip is seated, when
     # the board around it is unfinished and siblings may not exist yet.
-    # `plug` fires from `create_children`, once the chip set is complete
-    # and every chip has been created, and is the only safe place to
-    # resolve siblings. Resolve there, cache the reference, never look up
-    # per frame.
+    # `plug` fires from the node's `_create`, once the chip set is complete
+    # and every chip has been created -- or from `add_chip`, for a chip
+    # arriving on a node that is already plugged. It is the only safe place
+    # to resolve siblings. Resolve there, cache the reference, never look
+    # up per frame.
 
     def on_attached(self, node: N) -> None:
         self._node = node
@@ -149,23 +153,38 @@ class Chip[N: "BaseNode"](Base):
     def sync(self) -> None:
         """Catch up on state that changed while unsubscribed."""
 
-    # -- node signals --------------------------------------------------------
+    # -- tree membership ---------------------------------------------------
+    #
+    # Broadcasts, not signals, and not scoped to enablement: a disabled
+    # chip still needs to know where it sits. They reach every chip in the
+    # subtree that moved, not only the chips on the node that moved,
+    # because a chip mirroring the tree may be linked across ancestors
+    # that carry no such chip. A chip that only cares about its own node's
+    # parent can compare against what it cached; most need nothing.
 
     def on_added(self) -> None:
-        """The node joined a parent.
+        """The node, or an ancestor of it, joined a tree.
 
-        Fires top-down, so the parent's chips have already seen their own
-        add and any tree they mirror is linked above this point. Unlike
-        listen/sync, this is not scoped to enablement -- a disabled chip
-        still needs to know where it sits.
+        Fires top-down, so the chips above this one have already seen it
+        and anything they mirror is linked above this point. Fires before
+        the node's lifetime is synced to its new parent -- a node added to
+        a live tree is not yet created, and a chip whose node has never
+        been seated will not hear this at all. Catch that case in `plug`.
         """
 
     def on_removed(self) -> None:
-        """The node is leaving its parent.
+        """The node, or an ancestor of it, is leaving a tree.
 
-        Fires bottom-up, before the link is broken, so `self.node.parent`
-        is still the parent being left. Must tolerate running without a
-        matching on_added -- a node destroyed in place never joined a tree.
+        Fires bottom-up with every parent link still in place, so no chip
+        sees a half-detached ancestry. Must tolerate running without a
+        matching on_added -- a node destroyed in place never joined one.
+        """
+
+    def on_children_sorted(self) -> None:
+        """The node reordered its children in place.
+
+        Only the sorted node's own chips hear this. A chip linked across a
+        layout-less node that sorts will miss it.
         """
 
     # -- dirt --------------------------------------------------------------

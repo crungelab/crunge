@@ -48,6 +48,17 @@ class Layout2D(Layout["Control2D"]):
     def measurable(self) -> bool:
         return True
 
+    def mark_dirty(self) -> None:
+        """Discard yoga's cached measurement so the next pass measures again.
+
+        Yoga caches measure results and only re-asks a node that is dirty, so a
+        control whose intrinsic size changed after a pass stays laid out at the
+        old size until something else happens to dirty the tree. Legal here
+        because yoga only permits this on nodes with a measure function, and
+        every Layout2D has one. Dirtiness propagates to the root.
+        """
+        self.layout_node.mark_dirty()
+
 
 class Control2D(Node2D):
     """A Node2D whose rect is computed by yoga, laid out like a Widget.
@@ -75,7 +86,7 @@ class Control2D(Node2D):
         super().__init__(position, rotation, scale, model, children, size)
 
         self.layout = Layout2D(style)
-        self.add_chip(self.layout)  # ASSUMPTION: node-side chip attachment
+        self.add_chip(self.layout)
 
     # ------------------------------------------------------------------
     # Layout
@@ -122,7 +133,22 @@ class Control2D(Node2D):
 
     def on_size(self) -> None:
         """Fires when the computed size changes. Same name and contract as
-        Widget.on_size."""
+        Widget.on_size.
+
+        This is where a control pushes its assigned size into whatever it
+        contains. It must not call invalidate_measure: the size came *from*
+        a layout pass, and dirtying in response asks yoga to lay out again
+        because of its own answer.
+        """
+
+    def invalidate_measure(self) -> None:
+        """Tell yoga this control's intrinsic_size has changed.
+
+        The one sanctioned way to request a remeasure. Call it when the thing
+        intrinsic_size reads from changes -- new model, new content -- never
+        from on_measure or on_size.
+        """
+        self.layout.mark_dirty()
 
     def on_measure(
         self, width: float, width_mode: str, height: float, height_mode: str

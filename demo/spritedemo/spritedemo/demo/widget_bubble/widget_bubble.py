@@ -14,6 +14,7 @@ from crunge.engine.d2.settings_2d import Settings2D
 
 from crunge.engine.d2.control import WidgetControl2D
 from crunge.engine.ui.button import Button
+from crunge.engine.ui.text import Text
 
 
 from ..demo import Demo
@@ -79,15 +80,18 @@ class WidgetBubbleDemo(Demo):
             style=yoga.StyleBuilder().size(200, 50).build(),
         )
 
-        control = WidgetControl2D(self.button)
-        self.controls.append(control)
-        self.node.add_child(control)
+        self.add_control(WidgetControl2D(self.button))
+        self.add_control(WidgetControl2D(Text("Hello, World!")))
 
         self.scene.attach(self.node)
 
         # After attach, not before: the Layout chip builds its yoga node in
         # _create, so set_size before this point would write through a None.
         self.node.layout.set_size(self.patch_size.x, self.patch_size.y)
+
+    def add_control(self, control: WidgetControl2D) -> None:
+        self.controls.append(control)
+        self.node.add_child(control)
 
     def on_click(self):
         logger.info(f"Button clicked: {self.button.text}")
@@ -123,7 +127,7 @@ class WidgetBubbleDemo(Demo):
                     f"control {i} root={l.is_root} parent_size={l.parent_size} "
                     f"left={l.left} top={l.top} size={l.size} local={control.unscaled_size}"
                 )
-            logger.debug(f"bubble children={len(self.node.layout.children)}")
+            logger.debug(f"bubble children={len(self.node.children)}")
 
     def _draw(self):
         imgui.set_next_window_pos((self.width - 300 - 16, 32), imgui.Cond.ONCE)

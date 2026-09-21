@@ -26,10 +26,15 @@ class WidgetControl2D(Control2D):
     The node knows about transform, bounds, sort order and the coordinate hop.
     Everything about *being UI* is delegated to the widget.
 
-    Two sizes are kept apart:
+    Three sizes are kept apart:
 
-    - logical size: the widget's layout size in pixels. Layout, hit-testing and
-      the node's world size are all in these units and never change with zoom.
+    - natural size: what the widget's own style asks for, captured once at
+      create. This is what yoga measures, and it never follows the layout
+      result -- otherwise a slot that stretched the control would become the
+      control's new natural size, and it could grow but never shrink back.
+    - logical size: the widget's current size in pixels. The scene layout
+      assigns it through on_size, so it equals the control's laid-out size.
+      Painting and hit-testing are in these units.
     - raster size: the texture's pixel dimensions, logical size times the
       raster scale. Only painting knows about it.
     """
@@ -65,17 +70,25 @@ class WidgetControl2D(Control2D):
         super().__init__(position, rotation, scale, model, children, size, style)
         self.widget = widget
 
+        # Here rather than in _create: yoga may measure before _create runs,
+        # and intrinsic_size needs both.
+        self.ppu = Settings2D().ppu
+        self._natural_size = glm.vec2(0.0, 0.0)
+
     # -- lifecycle ---------------------------------------------------------
 
     def _create(self):
         super()._create()
-        self.ppu = Settings2D().ppu
 
         self.widget.layout.calculate()
         self.widget.layout.apply()
+        self._natural_size = glm.vec2(self.widget.size)
+        # A pass may already have measured us at zero, before the widget was
+        # laid out. Yoga cached that answer; make it ask again.
+        self.invalidate_measure()
 
-        # The surface is built lazily on first draw: the widget's size isn't
-        # real until layout has run, and the raster scale needs a camera.
+        # The surface is built lazily on first draw: the logical size isn't
+        # final until the scene layout has run, and raster scale needs a camera.
         self.easel: OffscreenEasel | None = None
         self.viewport: Viewport | None = None
         self.renderer: Renderer | None = None
@@ -90,8 +103,6 @@ class WidgetControl2D(Control2D):
         super()._enable()
         self.layer.add_control(self)
         self.widget.enable()
-        # Set before the first draw so culling and sorting see real bounds.
-        self.size = glm.vec2(self.logical_size) / self.ppu
 
     def _disable(self):
         super()._disable()
@@ -101,6 +112,33 @@ class WidgetControl2D(Control2D):
     def _destroy(self):
         self._release_surface()
         super()._destroy()
+
+    # -- layout ------------------------------------------------------------
+
+    @property
+    def intrinsic_size(self) -> glm.vec2:
+        """The widget's natural size in world units. Deliberately not the
+        sprite's: the sprite doesn't exist until first draw, and its texture is
+        raster-scaled, so measuring it would make zoom re-lay out the UI."""
+        return self._natural_size / self.ppu
+
+    def on_size(self) -> None:
+        """The scene layout assigned a size: make the widget that size.
+
+        No invalidate_measure here. The measurement reads natural size, which
+        this doesn't touch, so the pass settles. The changed logical size is
+        picked up by render_surface, which rebuilds the texture to match.
+        """
+        super().on_size()
+
+        target = self.unscaled_size * self.ppu
+        size = glm.ivec2(round(target.x), round(target.y))
+        if size == self.logical_size:
+            return
+
+        self.widget.layout.set_size(size.x, size.y)
+        self.widget.layout.calculate()
+        self.widget.layout.apply()
 
     # -- frame -------------------------------------------------------------
 
@@ -223,8 +261,8 @@ class WidgetControl2D(Control2D):
 
     def _build_surface(self, raster_scale: float, logical: glm.ivec2):
         """(Re)create the easel at the given raster scale, and the sprite that
-        presents it. The sprite's world size comes from logical size, so a
-        rebuild changes sharpness, never how big the control is in the world."""
+        presents it. The quad's world size comes from the scene layout, not
+        the texture, so a rebuild changes sharpness, never size."""
         self._release_surface()
 
         self.raster_scale = raster_scale
@@ -237,7 +275,6 @@ class WidgetControl2D(Control2D):
         ResourceManager().texture_kit.add(self.texture)
 
         self.model = Sprite(self.texture)
-        self.size = glm.vec2(logical) / self.ppu
 
         self.surface_logical_size = logical
         self.surface_dirty = True
@@ -290,7 +327,8 @@ class WidgetControl2D(Control2D):
         The inverse transform removes rotation and scale; PPU and half-extents
         move the origin to the top-left corner, and y flips for the canvas.
         Raster scale never appears: widgets hit-test in logical pixels however
-        finely they were rasterized.
+        finely they were rasterized. Correct under stretching too, because
+        on_size keeps logical size equal to the laid-out size.
         """
         local = glm.inverse(self.global_transform) * glm.vec4(point.x, point.y, 0.0, 1.0)
         size = self.logical_size

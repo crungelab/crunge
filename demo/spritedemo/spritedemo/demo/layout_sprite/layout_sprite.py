@@ -134,7 +134,7 @@ class LayoutDemo(Demo):
                     f"ship {i} root={l.is_root} parent_size={l.parent_size} "
                     f"left={l.left} top={l.top} size={l.size} local={ship.unscaled_size}"
                 )
-            logger.debug(f"bubble children={len(self.node.layout.children)}")
+            logger.debug(f"bubble children={len(self.node.children)}")
 
     def _draw(self):
         imgui.set_next_window_pos((self.width - 300 - 16, 32), imgui.Cond.ONCE)
