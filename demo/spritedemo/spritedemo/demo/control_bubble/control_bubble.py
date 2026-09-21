@@ -14,7 +14,8 @@ from crunge.engine import colors
 from crunge.engine.d2.settings_2d import Settings2D
 
 from crunge.engine.d2.control import WidgetControl2D
-from crunge.engine.ui import Button, Text, Row, Column
+from crunge.engine.ui.button import Button
+from crunge.engine.ui.text import Text
 
 
 from ..demo import Demo
@@ -32,7 +33,7 @@ DEFAULT_INSETS = glm.vec4(0.45, 0.45, 0.45, 0.45)
 DEFAULT_FILL = NinePatchFill.TILE_X
 
 
-class WidgetBubbleDemo(Demo):
+class ControlBubbleDemo(Demo):
     """A bubble that fits its children.
 
     Nothing in here sets a size or a position on anything the layout owns.
@@ -84,11 +85,8 @@ class WidgetBubbleDemo(Demo):
             style=yoga.StyleBuilder().size(200, 50).build(),
         )
 
-        self.add_control(WidgetControl2D(Row([self.button, Text("Hello, World!")])) )
-        '''
         self.add_control(WidgetControl2D(self.button))
         self.add_control(WidgetControl2D(Text("Hello, World!")))
-        '''
 
         self.scene.attach(self.node)
 
@@ -267,7 +265,7 @@ class WidgetBubbleDemo(Demo):
 
 
 def main():
-    WidgetBubbleDemo().run()
+    ControlBubbleDemo().run()
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from crunge import skia
 
-from . import Widget
+from .. import Widget
 from ..renderer import Renderer
 
 class Label(Widget):

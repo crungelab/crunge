@@ -20,6 +20,67 @@
 namespace py = pybind11;
 
 void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
+    py::class_<SkFontMetrics> _FontMetrics(_skia, "FontMetrics");
+    registry.on(_skia, "FontMetrics", _FontMetrics);
+        py::enum_<SkFontMetrics::FontMetricsFlags>(_FontMetrics, "FontMetricsFlags", py::arithmetic())
+            .value("K_UNDERLINE_THICKNESS_IS_VALID_FLAG", SkFontMetrics::FontMetricsFlags::kUnderlineThicknessIsValid_Flag)
+            .value("K_UNDERLINE_POSITION_IS_VALID_FLAG", SkFontMetrics::FontMetricsFlags::kUnderlinePositionIsValid_Flag)
+            .value("K_STRIKEOUT_THICKNESS_IS_VALID_FLAG", SkFontMetrics::FontMetricsFlags::kStrikeoutThicknessIsValid_Flag)
+            .value("K_STRIKEOUT_POSITION_IS_VALID_FLAG", SkFontMetrics::FontMetricsFlags::kStrikeoutPositionIsValid_Flag)
+            .value("K_BOUNDS_INVALID_FLAG", SkFontMetrics::FontMetricsFlags::kBoundsInvalid_Flag)
+            .export_values()
+        ;
+        _FontMetrics
+        .def_readwrite("f_flags", &SkFontMetrics::fFlags)
+        .def_readwrite("f_top", &SkFontMetrics::fTop)
+        .def_readwrite("f_ascent", &SkFontMetrics::fAscent)
+        .def_readwrite("f_descent", &SkFontMetrics::fDescent)
+        .def_readwrite("f_bottom", &SkFontMetrics::fBottom)
+        .def_readwrite("f_leading", &SkFontMetrics::fLeading)
+        .def_readwrite("f_avg_char_width", &SkFontMetrics::fAvgCharWidth)
+        .def_readwrite("f_max_char_width", &SkFontMetrics::fMaxCharWidth)
+        .def_readwrite("f_x_min", &SkFontMetrics::fXMin)
+        .def_readwrite("f_x_max", &SkFontMetrics::fXMax)
+        .def_readwrite("f_x_height", &SkFontMetrics::fXHeight)
+        .def_readwrite("f_cap_height", &SkFontMetrics::fCapHeight)
+        .def_readwrite("f_underline_thickness", &SkFontMetrics::fUnderlineThickness)
+        .def_readwrite("f_underline_position", &SkFontMetrics::fUnderlinePosition)
+        .def_readwrite("f_strikeout_thickness", &SkFontMetrics::fStrikeoutThickness)
+        .def_readwrite("f_strikeout_position", &SkFontMetrics::fStrikeoutPosition)
+        .def("has_underline_thickness", [](SkFontMetrics& self, SkScalar * thickness)
+            {
+                auto _ret = self.hasUnderlineThickness(thickness);
+                return std::make_tuple(_ret, thickness);
+            }
+            , py::arg("thickness")
+            )
+        .def("has_underline_position", [](SkFontMetrics& self, SkScalar * position)
+            {
+                auto _ret = self.hasUnderlinePosition(position);
+                return std::make_tuple(_ret, position);
+            }
+            , py::arg("position")
+            )
+        .def("has_strikeout_thickness", [](SkFontMetrics& self, SkScalar * thickness)
+            {
+                auto _ret = self.hasStrikeoutThickness(thickness);
+                return std::make_tuple(_ret, thickness);
+            }
+            , py::arg("thickness")
+            )
+        .def("has_strikeout_position", [](SkFontMetrics& self, SkScalar * position)
+            {
+                auto _ret = self.hasStrikeoutPosition(position);
+                return std::make_tuple(_ret, position);
+            }
+            , py::arg("position")
+            )
+        .def("has_bounds", &SkFontMetrics::hasBounds
+            )
+        .def(py::init<>())
+    ;
+
+
     py::class_<SkFont> _Font(_skia, "Font");
     registry.on(_skia, "Font", _Font);
         py::enum_<SkFont::Edging>(_Font, "Edging", py::arithmetic())

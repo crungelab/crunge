@@ -10,7 +10,9 @@ from ..renderer import Renderer
 class TextLayout(WidgetLayout):
     """A widget layout that asks its node for an intrinsic size."""
 
-    measurable = True
+    @property
+    def measurable(self) -> bool:
+        return True
 
 
 class Text(Widget):
@@ -73,11 +75,13 @@ class Text(Widget):
         # ASSUMPTION: binding names. SkFont::measureText and
         # SkFont::getMetrics; the metric fields may come through as
         # fAscent/fDescent depending on how cxbind named them.
-        metrics = self.font.get_metrics()
+        metrics = skia.FontMetrics()
+        self.font.get_metrics(metrics)
+        #metrics = self.font.get_metrics()
         measured_width = self.font.measure_text(self._text)
         # Skia's ascent is negative (above the baseline), so this is the
         # full box from the top of the tallest glyph to the lowest descender.
-        measured_height = metrics.descent - metrics.ascent
+        measured_height = metrics.f_descent - metrics.f_ascent
 
         return glm.vec2(
             self._constrain(measured_width, width, width_mode),
@@ -97,14 +101,16 @@ class Text(Widget):
     def _draw(self):
         canvas = Renderer.get_current().canvas
         position = self.global_position
-        metrics = self.font.get_metrics()
+        #metrics = self.font.get_metrics()
+        metrics = skia.FontMetrics()
+        self.font.get_metrics(metrics)
         # draw_string takes a baseline, not a top edge. The box on_measure
         # reported starts at the ascent, so the baseline sits -ascent
         # below the top of the box.
         canvas.draw_string(
             self._text,
             position.x,
-            position.y - metrics.ascent,
+            position.y - metrics.f_ascent,
             self.font,
             self.paint,
         )

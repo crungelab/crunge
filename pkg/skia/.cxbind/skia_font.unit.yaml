@@ -1,5 +1,15 @@
-source: '../../depot/skia/include/core/SkFont.h'
+#source: '../../depot/skia/include/core/SkFont.h'
+sources:
+  - ../../depot/skia/include/core/SkFontMetrics.h
+  - ../../depot/skia/include/core/SkFont.h
+
 target: 'src/skia_font_py_auto.cpp'
+
+specs:
+  'struct@SkFontMetrics':
+    extra:
+      methods:
+        __init__: {}
 
 excludes:
   # Wrapped

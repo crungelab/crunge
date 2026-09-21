@@ -66,6 +66,11 @@ class Node[T: Node](BaseNode[T]):
         # connect_now.
         self.model = model
         self.visible = True
+        self.layout = None
+        self.create_layout()
+
+    def create_layout(self) -> None:
+        pass
 
     def _seat(self) -> None:
         super()._seat()
@@ -135,6 +140,22 @@ class Node[T: Node](BaseNode[T]):
         if value is not None:
             self.add_chip(value)
 
+    # Controller property
+    @property
+    def controller(self) -> Controller | None:
+        return self.get_chip(Controller)
+
+    @controller.setter
+    def controller(self, value: Controller | None) -> None:
+        old = self.get_chip(Controller)
+        if old is value:
+            return
+        if old is not None:
+            self.remove_chip(old)
+            old.destroy()
+        if value is not None:
+            self.add_chip(value)
+
     # RenderGroup property
     @property
     def render_group(self) -> RenderGroup | None:
@@ -177,22 +198,6 @@ class Node[T: Node](BaseNode[T]):
         that seats one needs no override.
         """
         return self.get_chip(RenderGroup)
-
-    # Controller property
-    @property
-    def controller(self) -> Controller | None:
-        return self.get_chip(Controller)
-
-    @controller.setter
-    def controller(self, value: Controller | None) -> None:
-        old = self.get_chip(Controller)
-        if old is value:
-            return
-        if old is not None:
-            self.remove_chip(old)
-            old.destroy()
-        if value is not None:
-            self.add_chip(value)
 
     # -- lifetime ----------------------------------------------------------
 

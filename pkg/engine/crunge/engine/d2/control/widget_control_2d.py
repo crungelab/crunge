@@ -80,13 +80,14 @@ class WidgetControl2D(Control2D):
     def _create(self):
         super()._create()
 
+        '''
         self.widget.layout.calculate()
         self.widget.layout.apply()
         self._natural_size = glm.vec2(self.widget.size)
         # A pass may already have measured us at zero, before the widget was
         # laid out. Yoga cached that answer; make it ask again.
         self.invalidate_measure()
-
+        '''
         # The surface is built lazily on first draw: the logical size isn't
         # final until the scene layout has run, and raster scale needs a camera.
         self.easel: OffscreenEasel | None = None
@@ -103,6 +104,14 @@ class WidgetControl2D(Control2D):
         super()._enable()
         self.layer.add_control(self)
         self.widget.enable()
+
+        self.widget.layout.calculate()
+        self.widget.layout.apply()
+        self._natural_size = glm.vec2(self.widget.size)
+        # A pass may already have measured us at zero, before the widget was
+        # laid out. Yoga cached that answer; make it ask again.
+        self.invalidate_measure()
+
 
     def _disable(self):
         super()._disable()

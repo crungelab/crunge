@@ -6,13 +6,13 @@ from crunge.yoga.style_builder import StyleBuilder
 
 from crunge.engine import Renderer, App
 from crunge.engine.widget import Widget
-from crunge.engine.ui.flex import Column, expanded
+from crunge.engine.ui.flex import Row, expanded
 from crunge.demo import PageChannel
 
 from ..page import Page
 
 
-class FlexColumnPage(Page):
+class FlexRowDebugPage(Page):
     def setup(self):
         super().setup()
         self.text_paint = text_paint = skia.Paint()
@@ -20,28 +20,27 @@ class FlexColumnPage(Page):
         self.font = font = skia.Font()
         font.set_size(16)
 
-        self.root = Column(
+        self.root = Row(
             [
                 expanded(Widget(), 0.25),
                 expanded(Widget(), 0.75),
             ],
-            spacing=10,  # was child0's bottom margin
+            spacing=10,  # was child0's right margin
             style=(
                 StyleBuilder()
                 .size(512, 512)
-                .padding(yoga.Edge.ALL, yoga.StyleLength.points(32))
+                .padding(yoga.Edge.ALL, 32)
                 .build()
             ),
         ).create()
 
         # Layout chips link yoga's tree in plug/on_added. If these widgets
         # never go through the chip lifecycle, the root has no yoga children
-        # and the column computes empty -- say so rather than draw a blank page.
-        # ASSUMPTION: get_child_count is bound (YGNodeGetChildCount).
+        # and the row computes empty -- say so rather than draw a blank page.
         linked = self.root.layout.layout_node.get_child_count()
         if linked != len(self.root.children):
             logger.warning(
-                f"FlexColumnPage: {linked} of {len(self.root.children)} "
+                f"FlexRowPage: {linked} of {len(self.root.children)} "
                 "children linked into yoga; chip lifecycle has not run"
             )
 
@@ -74,8 +73,8 @@ class FlexColumnPage(Page):
 
         paint = skia.Paint()
         paint.set_color(color)
-        # ASSUMPTION: skia.Rect(l, t, r, b) is LTRB, like SkRect.
-        rect = skia.Rect(position.x, position.y, size.x, size.y)  # binding's Rect is XYWH
+        # The binding's Rect is XYWH, not SkRect's LTRB.
+        rect = skia.Rect(position.x, position.y, size.x, size.y)
         canvas.draw_rect(rect, paint)
 
         canvas.draw_string(
@@ -87,4 +86,4 @@ class FlexColumnPage(Page):
 
 
 def install(app: App):
-    app.add_channel(PageChannel(FlexColumnPage, "flex_column", "Flex Column"))
+    app.add_channel(PageChannel(FlexRowDebugPage, "flex_row_debug", "Flex Row Debug"))

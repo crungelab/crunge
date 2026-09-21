@@ -31,7 +31,7 @@ void init_skia_color_space_py_auto(py::module &_skia, Registry &registry) {
             )
     ;
 
-    py::enum_<SkNamedPrimaries::CicpId>(_skia, "CICP_ID", py::arithmetic())
+    py::enum_<SkNamedPrimaries::CicpId>(_skia, "CicpId", py::arithmetic())
         .value("K_REC709", SkNamedPrimaries::CicpId::kRec709)
         .value("K_REC470_SYSTEM_M", SkNamedPrimaries::CicpId::kRec470SystemM)
         .value("K_REC470_SYSTEM_BG", SkNamedPrimaries::CicpId::kRec470SystemBG)
@@ -45,7 +45,7 @@ void init_skia_color_space_py_auto(py::module &_skia, Registry &registry) {
         .value("K_ITU_T_H273_VALUE22", SkNamedPrimaries::CicpId::kITU_T_H273_Value22)
         .export_values()
     ;
-    py::enum_<SkNamedTransferFn::CicpId>(_skia, "NamedTransferFnCICP_ID", py::arithmetic())
+    py::enum_<SkNamedTransferFn::CicpId>(_skia, "NamedTransferFnCicpId", py::arithmetic())
         .value("K_REC709", SkNamedTransferFn::CicpId::kRec709)
         .value("K_REC470_SYSTEM_M", SkNamedTransferFn::CicpId::kRec470SystemM)
         .value("K_REC470_SYSTEM_BG", SkNamedTransferFn::CicpId::kRec470SystemBG)

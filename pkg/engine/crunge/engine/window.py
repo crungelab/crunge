@@ -74,6 +74,7 @@ class Window(Frame):
             current_window.reset(token)
 
     def _create(self):
+        super()._create()
         logger.debug("Window.create")
 
         # Pre-pass. Unconstrained, so the root's computed size comes from
@@ -98,7 +99,7 @@ class Window(Frame):
         # TODO: This used to only be called in _update.  Should it be here?
         self.layout.apply()
 
-        super()._create()
+        #super()._create()
 
     @property
     def layout_size(self) -> glm.ivec2:

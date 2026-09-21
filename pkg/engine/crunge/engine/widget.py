@@ -17,7 +17,14 @@ class WidgetLayout(Layout["Widget"]):
 
 
 class Widget(EventHandler, GfxAccess, Node["Widget"]):
-    def __init__(self, style: yoga.Style = None, priority: int = 0, children: list["Widget"] = None) -> None:
+    layout_class: type[WidgetLayout] = WidgetLayout
+
+    def __init__(
+        self,
+        style: yoga.Style = None,
+        priority: int = 0,
+        children: list["Widget"] = None,
+    ) -> None:
         super().__init__(children=children)
         self.priority = priority
         self.hovered = False
@@ -26,8 +33,13 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
         self._position = glm.ivec2(0, 0)
         self._size = glm.ivec2(0, 0)
 
+        self.layout = self.layout_class(style)
+        self.add_chip(self.layout)
+
+        '''
         self.layout = WidgetLayout(style)
-        self.add_chip(self.layout)  # ASSUMPTION: node-side chip attachment method
+        self.add_chip(self.layout)
+        '''
 
     # -- geometry ----------------------------------------------------------
     #
