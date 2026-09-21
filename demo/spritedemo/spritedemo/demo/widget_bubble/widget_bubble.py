@@ -14,7 +14,8 @@ from crunge.engine import colors
 from crunge.engine.d2.settings_2d import Settings2D
 
 from crunge.engine.d2.control import WidgetControl2D
-from crunge.engine.ui import Button, Text, Row, Column
+from crunge.engine.ui import Button, Text, Image
+from crunge.engine.ui.flex import Row, Column, Spacer
 
 
 from ..demo import Demo
@@ -83,12 +84,10 @@ class WidgetBubbleDemo(Demo):
             on_click=self.on_click,
             style=yoga.StyleBuilder().size(200, 50).build(),
         )
-
-        self.add_control(WidgetControl2D(Row([self.button, Text("Hello, World!")])) )
-        '''
-        self.add_control(WidgetControl2D(self.button))
-        self.add_control(WidgetControl2D(Text("Hello, World!")))
-        '''
+        self.image = Image("${resources}/images/d12_128x128.png")
+        self.add_control(
+            WidgetControl2D(Row([self.button, Text("Hello, World!"), self.image], spacing=10))
+        )
 
         self.scene.attach(self.node)
 
@@ -180,7 +179,9 @@ class WidgetBubbleDemo(Demo):
             self.min_size.y = max(height, 0.0)
             self.apply_min_size()
 
-        changed, self.pad_to_border = imgui.checkbox("Pad to border", self.pad_to_border)
+        changed, self.pad_to_border = imgui.checkbox(
+            "Pad to border", self.pad_to_border
+        )
         if changed:
             self.apply_padding()
 
@@ -196,7 +197,9 @@ class WidgetBubbleDemo(Demo):
                 self.apply_padding()
 
         texels = self.patch.border_texels
-        imgui.text(f"{int(texels.x)}, {int(texels.y)}, {int(texels.z)}, {int(texels.w)} texels")
+        imgui.text(
+            f"{int(texels.x)}, {int(texels.y)}, {int(texels.z)}, {int(texels.w)} texels"
+        )
 
         # Fill: unset axes stretch, which is what a gradient needs
         imgui.separator()

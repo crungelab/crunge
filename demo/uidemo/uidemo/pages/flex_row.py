@@ -8,6 +8,7 @@ from crunge.engine import Renderer, App
 from crunge.engine.widget import Widget
 from crunge.engine.ui.flex import Row, expanded, CrossAxisAlignment
 from crunge.engine.ui import Text, Button
+from crunge.engine.colors import Color, WHITE
 from crunge.demo import PageChannel
 
 from ..page import Page
@@ -23,9 +24,9 @@ class FlexRowPage(Page):
 
         self.root = Row(
             [
-                Text("Hello"),
-                Text("World"),
-                Text("Again"),
+                Text("Hello", color=WHITE),
+                Text("World", color=WHITE),
+                Text("Again", color=WHITE),
             ],
             spacing=10,
             cross_axis_alignment=CrossAxisAlignment.CENTER,
@@ -36,22 +37,6 @@ class FlexRowPage(Page):
                 .build()
             ),
         ).create()
-
-        '''
-        self.root = Row(
-            [
-                expanded(Text("Hello"), 0.25),
-                expanded(Text("World"), 0.75),
-            ],
-            spacing=10,  # was child0's right margin
-            style=(
-                StyleBuilder()
-                .size(512, 512)
-                .padding(yoga.Edge.ALL, 32)
-                .build()
-            ),
-        ).create()
-        '''
 
         # Layout chips link yoga's tree in plug/on_added. If these widgets
         # never go through the chip lifecycle, the root has no yoga children

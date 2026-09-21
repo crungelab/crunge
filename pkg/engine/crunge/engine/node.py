@@ -45,9 +45,9 @@ class Node[T: Node](BaseNode[T]):
         node = Node2D(position, rotation).seat(SpriteVu(sprite))
     """
 
-    def __init__(self, model: "Model | None" = None, children: list["Node[T]"] = None) -> None:
+    def __init__(self, model: Model | None = None, children: list["Node[T]"] = None) -> None:
         super().__init__(children)
-        self._model: "Model | None" = None
+        self._model: Model | None = None
 
         # Pre-filtered broadcast buckets; no branching in the hot loops.
         # Subsets of BaseNode._chips, which stays authoritative.

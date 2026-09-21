@@ -5,7 +5,7 @@ from crunge import skia
 from .. import Widget
 from ..widget import WidgetLayout
 from ..renderer import Renderer
-
+from ..colors import Color, BLACK
 
 class TextLayout(WidgetLayout):
     """A widget layout that asks its node for an intrinsic size."""
@@ -25,13 +25,13 @@ class Text(Widget):
 
     layout_class = TextLayout
 
-    def __init__(self, text: str = "", font_size: float = 36, **kwargs):
+    def __init__(self, text: str = "", font_size: float = 36, color: Color = BLACK, **kwargs):
         super().__init__(**kwargs)
         # Plain fields here, not the setters: the setters dirty the
         # layout, and nothing has been measured yet to be stale.
         self._text = text
         self.paint = skia.Paint()
-        self.paint.set_color(0xFFFF00FF)
+        self.paint.set_color(color.to_argb_int())
         self.font = skia.Font()
         self.font.set_size(font_size)
 
@@ -77,7 +77,6 @@ class Text(Widget):
         # fAscent/fDescent depending on how cxbind named them.
         metrics = skia.FontMetrics()
         self.font.get_metrics(metrics)
-        #metrics = self.font.get_metrics()
         measured_width = self.font.measure_text(self._text)
         # Skia's ascent is negative (above the baseline), so this is the
         # full box from the top of the tallest glyph to the lowest descender.
@@ -101,7 +100,7 @@ class Text(Widget):
     def _draw(self):
         canvas = Renderer.get_current().canvas
         position = self.global_position
-        #metrics = self.font.get_metrics()
+        # metrics = self.font.get_metrics()
         metrics = skia.FontMetrics()
         self.font.get_metrics(metrics)
         # draw_string takes a baseline, not a top edge. The box on_measure
