@@ -7,12 +7,12 @@ import glm
 
 from crunge import yoga
 
-from ..math import Bounds2
-from ..layout import Layout
+from ...math import Bounds2
+from ...layout import Layout
 
-from .settings_2d import Settings2D
+from ..settings_2d import Settings2D
 
-from .node_2d import Node2D
+from ..node_2d import Node2D
 
 
 class Layout2D(Layout["Control2D"]):

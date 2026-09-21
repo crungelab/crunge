@@ -27,6 +27,7 @@ class Easel(GfxAccess, Base):
         #render_options: RenderOptions = RenderOptions(),
         render_options: RenderOptions = None,
     ):
+        super().__init__()
         self._size = size
         self.resized = False
         self.render_options = render_options or RenderOptions()

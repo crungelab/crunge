@@ -1,3 +1,4 @@
+import dataclasses
 from loguru import logger
 import glm
 
@@ -6,7 +7,7 @@ from crunge.yoga import StyleBuilder
 
 from crunge.engine.renderer import Renderer
 from crunge.engine.d2.sprite import Sprite, SpriteVu
-from crunge.engine.d2.control_2d import Control2D
+from crunge.engine.d2.control import Control2D
 from crunge.engine import colors, compose
 from crunge.engine.viewport import Viewport
 from crunge.engine.easel import OffscreenEasel
@@ -14,6 +15,8 @@ from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.resource.texture import SpriteTexture
 from crunge.engine.ui.button import Button
 from crunge.engine.d2.settings_2d import Settings2D
+
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from ..demo import Demo
 
@@ -32,9 +35,9 @@ class WidgetControl(Control2D):
     def _create(self):
         super()._create()
         self.ppu = Settings2D().ppu
-        #self.button = Button("Click Me")
         self.button = Button(
             "Hello, World!",
+            on_click=self.on_click,
             style=StyleBuilder().size(200, 50).build(),
         )
 
@@ -49,30 +52,24 @@ class WidgetControl(Control2D):
         self.texture: SpriteTexture | None = None
         self.surface_dirty = True
 
+    def on_click(self):
+        logger.info(f"Button clicked: {self.button.text}")
+
     def _enable(self):
         super()._enable()
+        self.layer.add_control(self)
         self.button.enable()
-
-    '''
-    def _enable(self):
-        super()._enable()
-        self.button.enable()
-        self.button.layout.calculate()
-        self.button.layout.apply()
-        logger.debug("Button size: {}", self.button.size)
-
-        self.size = self.button.size / self.ppu
-    '''
+        logger.debug(f"Button size: {self.button.size}, PPU: {self.ppu}")
+        self.size = glm.vec2(self.button.size) / self.ppu
 
     def _disable(self):
         super()._disable()
+        self.layer.remove_control(self)
         self.button.disable()
 
     def _destroy(self):
         if self.easel is not None:
-            # ASSUMPTION: texture_kit.remove() takes the texture object
             ResourceManager().texture_kit.remove(self.texture)
-            # ASSUMPTION: OffscreenEasel exposes destroy()
             self.easel.destroy()
             self.easel = None
             self.viewport = None
@@ -121,35 +118,36 @@ class WidgetControl(Control2D):
             return
 
         with self.renderer.use():
-            with compose(self.easel):
-                self.button.draw()
+            self.button.draw()
+
         self.easel.submit_canvas()
         self.surface_dirty = False
 
     # -- input -------------------------------------------------------------
+    def dispatch_2d(self, event: object, point: glm.vec2):
+        logger.debug(f"Dispatching event: {event}")
 
-    def dispatch(self, event) -> bool:
         if not self.visible or self.easel is None:
             return False
 
-        # ASSUMPTION: positional events carry .position in world space
-        point = getattr(event, "position", None)
-        if point is None:
-            return self.button.dispatch(event)
+        logger.debug(f"Widget visible: {self.visible}, easel: {self.easel}")
+
 
         # World -> local -> surface pixels. bounds is local space, so the ratio of
         # surface size to bounds size is the conversion, no PPU lookup needed.
         local = glm.inverse(self.global_transform) * glm.vec4(point.x, point.y, 0.0, 1.0)
-        # ASSUMPTION: bounds exposes .min and .size as vec2
-        scale = glm.vec2(self.surface_size) / self.bounds.size
-        surface_point = (glm.vec2(local.x, local.y) - self.bounds.min) * scale
+
+        size = self.surface_size
+        surface_point = glm.vec2(
+            local.x * self.ppu + size.x * 0.5,
+            size.y * 0.5 - local.y * self.ppu,
+        )
 
         size = self.surface_size
         if not (0 <= surface_point.x < size.x and 0 <= surface_point.y < size.y):
             return False
 
-        # ASSUMPTION: the widget tree can be dispatched at an explicit local point
-        return self.button.dispatch_at(surface_point, event)
+        return self.button.dispatch_2d(event, surface_point)
 
     # -- frame -------------------------------------------------------------
 

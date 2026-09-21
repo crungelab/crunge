@@ -6,7 +6,7 @@ from crunge import imgui
 from crunge.engine.d2.nine_patch.nine_patch import NinePatch, NinePatchFill
 from crunge.engine.d2.nine_patch.nine_patch_vu import NinePatchVu
 from crunge.engine.d2.sprite import SpriteVu
-from crunge.engine.d2.control_2d import Control2D
+from crunge.engine.d2.control import Control2D
 from crunge.engine.loader.sprite.sprite_loader import SpriteLoader
 from crunge.engine import Color, colors
 from crunge.engine.d2.settings_2d import Settings2D
