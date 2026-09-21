@@ -5,17 +5,9 @@ from crunge import imgui
 from crunge import yoga
 
 
-from crunge.engine.d2.sprite import Sprite, SpriteVu
 from crunge.engine.d2.control import WidgetControl2D
-from crunge.engine import colors, compose
-from crunge.engine.viewport import Viewport
-from crunge.engine.easel import OffscreenEasel
-from crunge.engine.resource.resource_manager import ResourceManager
-from crunge.engine.resource.texture import SpriteTexture
 from crunge.engine.ui.button import Button
-from crunge.engine.d2.settings_2d import Settings2D
 
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from ..demo import Demo
 

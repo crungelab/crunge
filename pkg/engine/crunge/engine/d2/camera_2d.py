@@ -1,24 +1,26 @@
 import contextlib
 
 import glm
-
 from loguru import logger
 
 from crunge import wgpu
 from crunge.core import klass
-
 from crunge.core.signal import Signal, Pulse
+
 from ..math import Bounds2, Rect2i
 from ..viewport import Viewport
 from ..easel import Easel
-#from ..binding import SceneBindGroup
 from ..camera_chip import CameraChip
 
 from .renderer import Renderer2D
 from .node_2d import Node2D
 from .settings_2d import Settings2D
-
 from .program_2d import Program2D
+
+
+# Zoom is clamped here rather than rejected, so a drag slider bottoming out
+# can't collapse the frustum to a point.
+MIN_ZOOM = 0.01
 
 
 @klass.singleton
@@ -33,25 +35,42 @@ class CameraChip2D(CameraChip["Camera2D"]):
 
 
 class Camera2D(Node2D):
+    """Orthographic 2D camera.
+
+    `zoom` is magnification: 2.0 shows everything twice as large, 0.5 half as
+    large. The visible world width is `viewport_width / ppu / zoom`.
+
+    A camera with a leader follows the leader's position (scaled by
+    parallax_factor about parallax_origin) and copies its zoom.
+    """
+
     def __init__(
         self,
-        position=glm.vec2(0.0, 0.0),
-        zoom=1.0,
+        position: glm.vec2 = None,
+        zoom: float = 1.0,
         leader: "Camera2D" = None,
-        parallax_factor=glm.vec2(1.0, 1.0),
-        parallax_origin=glm.vec2(0.0, 0.0),
+        parallax_factor: glm.vec2 = None,
+        parallax_origin: glm.vec2 = None,
         ppu: float = None,
     ):
-        super().__init__(position)
+        # Vector defaults are built per instance: glm vectors are mutable, so a
+        # shared default would be shared state between every camera.
+        super().__init__(position if position is not None else glm.vec2(0.0, 0.0))
 
-        self._zoom = zoom
-        self.ppu = (
-            ppu
-            if ppu is not None
-            else (leader.ppu if leader is not None else Settings2D().ppu)
+        self._zoom = max(zoom, MIN_ZOOM)
+        if ppu is not None:
+            self.ppu = ppu
+        elif leader is not None:
+            self.ppu = leader.ppu
+        else:
+            self.ppu = Settings2D().ppu
+
+        self.parallax_factor = (
+            parallax_factor if parallax_factor is not None else glm.vec2(1.0, 1.0)
         )
-
-        self._leader: "Camera2D" = None
+        self.parallax_origin = (
+            parallax_origin if parallax_origin is not None else glm.vec2(0.0, 0.0)
+        )
 
         self.position_changed: Signal[glm.vec2] = Signal()
         self.zoom_changed: Signal[float] = Signal()
@@ -61,23 +80,33 @@ class Camera2D(Node2D):
         self.camera_changed = Pulse()
         self.binding_changed = Pulse()
 
-        self.parallax_factor = parallax_factor
-        self.parallax_origin = parallax_origin
-
         self.projection_matrix = glm.mat4(1.0)
         self.view_matrix = glm.mat4(1.0)
+        self.frustum: Bounds2 | None = None
 
-        self.frustum: Bounds2 = None
+        self._viewport: Viewport | None = None
+        self.viewport_size = glm.vec2(0.0, 0.0)
 
-        self._viewport: Viewport = None
-        self.viewport_size = glm.vec2(0, 0)
-
+        self._leader: "Camera2D | None" = None
         self.leader = leader
+
+    # -- lifecycle ---------------------------------------------------------
 
     def _seat(self) -> None:
         super()._seat()
         if not self.has_chip(CameraChip2D):
             self.add_chip(CameraChip2D())
+
+    def _destroy(self):
+        # Under gc.disable(), these connections are what keep a dead camera
+        # reachable — and receiving callbacks — from a live leader or viewport.
+        # Disconnect directly rather than through the viewport setter, which
+        # would emit binding_changed mid-teardown.
+        if self._viewport is not None:
+            self._viewport.rect_changed.disconnect(self.on_viewport_rect)
+            self._viewport = None
+        self.leader = None
+        super()._destroy()
 
     # -- chip forwarding ---------------------------------------------------
 
@@ -85,27 +114,9 @@ class Camera2D(Node2D):
     def chip(self) -> CameraChip2D | None:
         return self.get_chip(CameraChip2D)
 
-    '''
-    @property
-    def uniform_buffer(self) -> wgpu.Buffer:
-        chip = self.chip
-        return chip.uniform_buffer if chip is not None else None
-
-    @property
-    def uniform_buffer_size(self) -> int:
-        chip = self.chip
-        return chip.uniform_buffer_size if chip is not None else 0
-
-    @property
-    def bind_group(self) -> SceneBindGroup:
-        chip = self.chip
-        return chip.bind_group if chip is not None else None
-    '''
-
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.require_chip(CameraChip2D).bind(pass_enc)
 
-    # -- use ---------------------------------------------------------------
     @contextlib.contextmanager
     def use(self):
         renderer = Renderer2D.get_current()
@@ -120,25 +131,15 @@ class Camera2D(Node2D):
             renderer.camera_2d = prev_camera
             if prev_camera is not None:
                 prev_camera.bind(renderer.pass_enc)
-    '''
-    @contextlib.contextmanager
-    def use(self):
-        current_renderer = Renderer2D.get_current()
-        prev_camera = current_renderer.camera_2d
-        current_renderer.camera_2d = self
-        self.bind(current_renderer.pass_enc)
-        yield self
-        current_renderer.camera_2d = prev_camera
-        prev_camera.bind(current_renderer.pass_enc)
-    '''
-    # -- properties --------------------------------------------------------
+
+    # -- viewport ----------------------------------------------------------
 
     @property
-    def viewport(self):
+    def viewport(self) -> Viewport | None:
         return self._viewport
 
     @viewport.setter
-    def viewport(self, viewport: Viewport):
+    def viewport(self, viewport: Viewport | None):
         if self._viewport is not None:
             self._viewport.rect_changed.disconnect(self.on_viewport_rect)
         self._viewport = viewport
@@ -148,25 +149,27 @@ class Camera2D(Node2D):
         else:
             self.binding_changed.emit()
 
-    def on_viewport_rect(self, rect: Rect2i):
-        logger.debug(f"Camera2D: on_viewport_rect: {rect}")
-
-        self.viewport_size = glm.vec2(rect.width, rect.height)
-        self._update_camera_matrices()
-        # Was rebuilding the bind group inline, which could run before the
-        # buffer existed and during a frame.
-        self.binding_changed.emit()
-
     @property
     def easel(self) -> Easel:
         return self.viewport.easel
 
+    def on_viewport_rect(self, rect: Rect2i):
+        logger.debug(f"Camera2D: on_viewport_rect: {rect}")
+        self.viewport_size = glm.vec2(rect.width, rect.height)
+        self._update_camera_matrices()
+        # Rebuilding the bind group here could run before the buffer existed
+        # and mid-frame, so the chip does it on its own schedule.
+        self.binding_changed.emit()
+
+    # -- zoom --------------------------------------------------------------
+
     @property
-    def zoom(self):
+    def zoom(self) -> float:
         return self._zoom
 
     @zoom.setter
     def zoom(self, value: float):
+        value = max(value, MIN_ZOOM)
         if value == self._zoom:
             return
         self._zoom = value
@@ -174,35 +177,34 @@ class Camera2D(Node2D):
         self.zoom_changed.emit(value)
 
     @property
-    def zoom_pct(self):
-        return  1 / self._zoom * 100
+    def zoom_pct(self) -> float:
+        return self._zoom * 100.0
 
     @zoom_pct.setter
-    def zoom_pct(self, pct):
-        if pct <= 0:
-            pct = 10
-        self.zoom = 100 / pct
+    def zoom_pct(self, pct: float):
+        self.zoom = pct / 100.0
+
+    # -- leader ------------------------------------------------------------
 
     @property
-    def leader(self):
+    def leader(self) -> "Camera2D | None":
         return self._leader
 
     @leader.setter
-    def leader(self, value: "Camera2D"):
-        if value == self._leader:
+    def leader(self, value: "Camera2D | None"):
+        if value is self._leader:
             return
         if self._leader is not None:
             self._leader.position_changed.disconnect(self.on_leader_position)
             self._leader.zoom_changed.disconnect(self.on_leader_zoom)
         self._leader = value
         if value is not None:
-            self._zoom = value.zoom
             value.position_changed.connect(self.on_leader_position)
             value.zoom_changed.connect(self.on_leader_zoom)
+            # Sync through the setters so matrices update and signals fire.
+            # Assigning _zoom directly here used to make on_leader_zoom a no-op.
             self.on_leader_position(value.position)
             self.on_leader_zoom(value.zoom)
-
-    # -- transform ---------------------------------------------------------
 
     def on_leader_position(self, position: glm.vec2):
         self.position = (
@@ -211,8 +213,9 @@ class Camera2D(Node2D):
         )
 
     def on_leader_zoom(self, zoom: float):
-        logger.debug(f"Camera2D: on_leader_zoom: {zoom}")
         self.zoom = zoom
+
+    # -- transform ---------------------------------------------------------
 
     def on_transform(self):
         self._update_camera_matrices()
@@ -222,98 +225,63 @@ class Camera2D(Node2D):
         # so the chip marks itself; no explicit camera_changed needed.
 
     def _update_camera_matrices(self):
-        view_width = (self.viewport_size.x / self.ppu) * self.zoom
-        view_height = (self.viewport_size.y / self.ppu) * self.zoom
+        # With no viewport yet, the frustum would have zero extent and
+        # glm.ortho would produce an infinite matrix. Wait for on_viewport_rect.
+        if self.viewport_size.x <= 0 or self.viewport_size.y <= 0:
+            self.frustum = None
+            return
+
+        view_width = self.viewport_size.x / self.ppu / self._zoom
+        view_height = self.viewport_size.y / self.ppu / self._zoom
 
         center = self.global_position
-        ortho_left = center.x - view_width / 2
-        ortho_right = center.x + view_width / 2
-        ortho_bottom = center.y - view_height / 2
-        ortho_top = center.y + view_height / 2
+        left = center.x - view_width / 2
+        right = center.x + view_width / 2
+        bottom = center.y - view_height / 2
+        top = center.y + view_height / 2
 
-        self.frustum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
-
-        self.projection_matrix = glm.ortho(
-            ortho_left, ortho_right, ortho_bottom, ortho_top, -1, 1
-        )
+        self.frustum = Bounds2(left, bottom, right, top)
+        self.projection_matrix = glm.ortho(left, right, bottom, top, -1, 1)
         self.camera_changed.emit()
 
-    '''
-    def _update_camera_matrices(self):
-        view_width = (self.viewport_size.x / self.ppu) * self.zoom
-        view_height = (self.viewport_size.y / self.ppu) * self.zoom
+    # -- screen <-> world --------------------------------------------------
 
-        ortho_left = self.x - view_width / 2
-        ortho_right = self.x + view_width / 2
-        ortho_bottom = self.y - view_height / 2
-        ortho_top = self.y + view_height / 2
-
-        self.frustum = Bounds2(ortho_left, ortho_bottom, ortho_right, ortho_top)
-
-        self.projection_matrix = glm.ortho(
-            ortho_left, ortho_right, ortho_bottom, ortho_top, -1, 1
+    def _can_map(self) -> bool:
+        frustum = self.frustum
+        return (
+            self.viewport_size.x > 0
+            and self.viewport_size.y > 0
+            and frustum is not None
+            and frustum.is_finite()
+            and frustum.width > 0
+            and frustum.height > 0
         )
-        self.camera_changed.emit()
-    '''
 
-    def unproject(self, mouse_vec: glm.vec2):
-        viewport_width = self.viewport_size.x
-        viewport_height = self.viewport_size.y
-        if viewport_width == 0 or viewport_height == 0:
+    def unproject(self, screen: glm.vec2) -> glm.vec2:
+        """Viewport pixels (y down) -> world units (y up)."""
+        if not self._can_map():
             return glm.vec2(0.0, 0.0)
 
         frustum = self.frustum
-        if frustum is None or not frustum.is_finite():
-            return glm.vec2(0.0, 0.0)
-
-        x_ndc = (2.0 * mouse_vec.x / viewport_width) - 1.0
-        y_ndc = -((2.0 * mouse_vec.y / viewport_height) - 1.0)
+        x_ndc = (2.0 * screen.x / self.viewport_size.x) - 1.0
+        y_ndc = 1.0 - (2.0 * screen.y / self.viewport_size.y)
 
         return frustum.center + glm.vec2(
             x_ndc * frustum.width / 2.0,
             y_ndc * frustum.height / 2.0,
         )
 
-    '''
-    def unproject(self, mouse_vec: glm.vec2):
-        viewport_width = self.viewport_size.x
-        viewport_height = self.viewport_size.y
-        if viewport_width == 0 or viewport_height == 0:
+    def project(self, world: glm.vec2) -> glm.vec2:
+        """World units (y up) -> viewport pixels (y down). Inverse of unproject."""
+        if not self._can_map():
             return glm.vec2(0.0, 0.0)
 
         frustum = self.frustum
+        offset = world - frustum.center
+        x_ndc = offset.x / (frustum.width / 2.0)
+        y_ndc = offset.y / (frustum.height / 2.0)
 
-        x_ndc = (2.0 * mouse_vec.x / viewport_width) - 1.0
-        y_ndc = -((2.0 * mouse_vec.y / viewport_height) - 1.0)
-
-        center = self.global_position
-        x_world = center.x + x_ndc * (frustum.width / 2.0)
-        y_world = center.y + y_ndc * (frustum.height / 2.0)
-
-        return glm.vec2(x_world, y_world)
-    '''
-
-    '''
-    def unproject(self, mouse_vec: glm.vec2):
-        viewport_width = self.viewport_size.x
-        viewport_height = self.viewport_size.y
-
-        mx = mouse_vec.x
-        my = mouse_vec.y
-
-        frustum = self.frustum
-        frustum_width = frustum.width
-        frustum_height = frustum.height
-
-        x_ndc = (2.0 * mx / viewport_width) - 1.0
-        y_ndc = (2.0 * my / viewport_height) - 1.0
-        y_ndc = -y_ndc
-
-        x_world = x_ndc * (frustum_width / 2.0)
-        y_world = y_ndc * (frustum_height / 2.0)
-
-        x_world += self.x
-        y_world += self.y
-
-        return glm.vec2(x_world, y_world)
-    '''
+        return glm.vec2(
+            (x_ndc + 1.0) * self.viewport_size.x / 2.0,
+            (1.0 - y_ndc) * self.viewport_size.y / 2.0,
+        )

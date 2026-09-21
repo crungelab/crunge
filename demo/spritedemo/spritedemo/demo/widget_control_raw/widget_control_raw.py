@@ -80,7 +80,6 @@ class WidgetControl(Control2D):
 
     @property
     def surface_size(self) -> glm.ivec2:
-        # ASSUMPTION: Button exposes its computed layout size as .width / .height
         return glm.ivec2(int(self.button.width), int(self.button.height))
 
     def create_surface(self) -> bool:

@@ -6,7 +6,6 @@ from loguru import logger
 from crunge import skia
 from crunge.engine.vu import Vu
 
-from ...renderer import Renderer
 from ...overlay import Overlay
 
 
