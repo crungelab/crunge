@@ -29,6 +29,7 @@ class EventHandler:
     def handle_2d(self, event, point) -> DispatchResult:
         match event:
             case sdl.MouseMotionEvent():
+                #logger.debug(f"mouse motion 2d: x={point.x}, y={point.y}")
                 event.x = point.x
                 event.y = point.y
                 return self.handle(event)

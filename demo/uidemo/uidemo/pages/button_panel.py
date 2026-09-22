@@ -9,7 +9,8 @@ from crunge.demo import PageChannel
 
 from ..page import Page
 
-from crunge.engine.ui.button import Button
+from crunge.engine.colors import Color, WHITE
+from crunge.engine.ui import Button, Text
 from crunge.engine.ui.panel import Panel
 from crunge.yoga import StyleBuilder
 
@@ -26,16 +27,16 @@ class ButtonPanelPage(Page):
         button_style = StyleBuilder().height(50).margin(yoga.Edge.ALL, 5).build()
 
         button1 = Button(
-            "Button 1",
+            Text("Button 1", color=WHITE),
             style=button_style,
-            on_click=lambda: logger.info("Button 1 clicked!"),
+            on_pressed=lambda: logger.info("Button 1 clicked!"),
         )
         panel.add_child(button1)
 
         button2 = Button(
-            "Button 2",
+            Text("Button 2", color=WHITE),
             style=button_style,
-            on_click=lambda: logger.info("Button 2 clicked!"),
+            on_pressed=lambda: logger.info("Button 2 clicked!"),
         )
         panel.add_child(button2)
 

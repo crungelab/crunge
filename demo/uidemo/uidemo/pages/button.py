@@ -7,7 +7,9 @@ from crunge.demo import PageChannel
 
 from ..page import Page
 
-from crunge.engine.ui.button import Button
+from crunge.engine.ui import Button, Text
+from crunge.engine.colors import Color, WHITE
+
 from crunge.yoga import StyleBuilder
 
 
@@ -16,8 +18,8 @@ class ButtonPage(Page):
         super().setup()
         self.ui.add_child(
             Button(
-                "Hello, World!",
-                style=StyleBuilder().size(200, 50).build(),
+                Text("Hello, World!", color=WHITE),
+                #style=StyleBuilder().size(200, 50).build(),
             )
         )
 

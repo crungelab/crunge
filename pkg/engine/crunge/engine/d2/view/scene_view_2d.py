@@ -53,15 +53,6 @@ class SceneView2D(View2D):
         point = self.camera.unproject(glm.vec2(event.x, event.y))
         return self.scene.dispatch_2d(event, point)
 
-    """
-    def on_mouse_button(self, event: sdl.MouseButtonEvent) -> DispatchResult:
-        # logger.debug(f"mouse button: button={event.button}, down={event.down}")
-        input_event = PointerButtonEvent(
-            button=PointerButton(event.button),
-            pressed=event.down,
-            clicks=event.clicks,
-            position=self.camera.unproject(glm.vec2(event.x, event.y)),
-            screen_position=glm.vec2(event.x, event.y),
-        )
-        return self.scene.dispatch(input_event)
-    """
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> DispatchResult:
+        point = self.camera.unproject(glm.vec2(event.x, event.y))
+        return self.scene.dispatch_2d(event, point)

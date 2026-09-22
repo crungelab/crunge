@@ -74,7 +74,7 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
 
     def dispatch_2d(self, event, point) -> DispatchResult:
         for control in reversed(self._controls):
-            logger.debug(f"Dispatching event {event} to control {control}")
+            #logger.debug(f"Dispatching event {event} to control {control}")
             if control.dispatch_2d(event, point):
                 return EVENT_HANDLED
         return super().dispatch_2d(event, point)

@@ -10,11 +10,12 @@ import glm
 from crunge import sdl
 from crunge import yoga
 
-from . import globals, SurfaceEasel, Viewport, Renderer, RenderOptions, compose
-from .math import Rect2i
 from crunge.core.signal import Signal, Pulse
-from .scheduler import Scheduler
+
+from . import SurfaceEasel, Viewport, Renderer, RenderOptions, compose
 from .frame import Frame
+from .hover import HoverTracker
+from .layout import Layout
 
 DEFAULT_WIDTH = 1280
 DEFAULT_HEIGHT = 720
@@ -53,6 +54,8 @@ class Window(Frame):
         self.pre_frame: Pulse = Pulse()
         self.post_frame: Pulse = Pulse()
 
+        self.hover_tracker: HoverTracker = HoverTracker(self)
+
     def on_display(self):
         super().on_display()
         gui = self.display.gui
@@ -82,7 +85,7 @@ class Window(Frame):
         # nothing below exists yet to be notified, which is the whole
         # reason calculate and apply are separate calls.
         self.layout.calculate(math.nan, math.nan, yoga.Direction.LTR)
-        #logger.debug(f"Window.size: {self.layout.size}")
+        # logger.debug(f"Window.size: {self.layout.size}")
         logger.debug(f"pre-pass computed: {self.layout.size}")
 
         # Everything from here to apply() reads geometry off the chip.
@@ -99,7 +102,7 @@ class Window(Frame):
         # TODO: This used to only be called in _update.  Should it be here?
         self.layout.apply()
 
-        #super()._create()
+        # super()._create()
 
     @property
     def layout_size(self) -> glm.ivec2:
@@ -122,7 +125,6 @@ class Window(Frame):
     def _enable(self):
         self.viewport.make_current()
         super()._enable()
-
 
     def on_size(self):
         super().on_size()
@@ -177,3 +179,11 @@ class Window(Frame):
             case _:
                 # pass
                 return super().on_window(event)
+
+    def on_layout(self, layout: Layout) -> None:
+        self.hover_tracker.refresh()
+        return super().on_layout(layout)
+
+    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
+        self.hover_tracker.move(event.x, event.y)
+        return super().on_mouse_motion(event)

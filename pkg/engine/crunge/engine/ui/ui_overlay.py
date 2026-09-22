@@ -2,10 +2,10 @@ from loguru import logger
 
 from .. import Renderer
 
-from .overlay import Overlay
+from ..overlay.overlay import Overlay
 
 
-class WidgetOverlay(Overlay):
+class UiOverlay(Overlay):
     def __init__(self):
         super().__init__("WidgetOverlay", priority=950)
 

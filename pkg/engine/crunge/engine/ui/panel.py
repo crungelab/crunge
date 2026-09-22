@@ -11,7 +11,6 @@ class Panel(Widget):
         super().__init__(**kwargs)
         if paint is None:
             paint = skia.Paint()
-            #paint.set_color(0xFFFFFFFF)
             paint.set_color(0xFF181A1B)
 
         self.paint = paint

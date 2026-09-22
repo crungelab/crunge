@@ -4,19 +4,19 @@ from crunge import skia
 from crunge import yoga
 from crunge.engine import Renderer
 from crunge import demo
-from crunge.engine.overlay.widget_overlay import WidgetOverlay
+from crunge.engine.ui.ui_overlay import UiOverlay
 
 class Page(demo.Page):
     def __init__(self, name: str, title: str):
         super().__init__(name, title)
-        self._ui: WidgetOverlay = None
+        self._ui: UiOverlay = None
 
     @property
-    def ui(self) -> WidgetOverlay:
+    def ui(self) -> UiOverlay:
         if self._ui is None:
-            widget_overlay = WidgetOverlay()
-            self.add_overlay(widget_overlay)
-            self._ui = widget_overlay
+            ui_overlay = UiOverlay()
+            self.add_overlay(ui_overlay)
+            self._ui = ui_overlay
 
         return self._ui
 

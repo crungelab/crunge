@@ -10,6 +10,7 @@ from .updater import Updater
 from .scheduler import Scheduler
 from .service import Service
 from .statistics import Statistics
+from .cursors import destroy_cursors
 
 sdl.init(sdl.InitFlags.INIT_VIDEO)
 
@@ -111,6 +112,13 @@ class App(Window):
             sdl.stop_text_input(self.sdl_window)
 
         return self
+
+    def setup(self):
+        super().setup()
+
+    def teardown(self):
+        destroy_cursors()
+        super().teardown()
 
     def apply_layout(self):
         """Root-level layout pass.

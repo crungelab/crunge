@@ -1,76 +1,200 @@
+"""Flutter-style buttons.
+
+A button is a padded, centered container around a single child. Size comes
+from the child plus padding: the child measures itself, yoga adds the
+padding, and the button only draws its own background and border. Label,
+icon or a Row of both -- the button doesn't care what the child is.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from functools import cache
+from typing import Callable, ClassVar
+
 from loguru import logger
 
 from crunge import skia
 from crunge import sdl
-
-# from crunge import yoga
+from crunge import yoga
+from crunge.yoga.style_builder import StyleBuilder
 
 from ..widget import Widget
 from ..renderer import Renderer
 from ..cursors import CURSOR_HAND, CURSOR_ARROW
+from ..colors import Color, WHITE  # ASSUMPTION: module path
+from .flex import EdgeInsets
 
-PAINT = skia.Paint()
-PAINT.set_color(0xFFF3F4F6)
 
-BG_PAINT = skia.Paint()
-BG_PAINT.set_color(0xFF23272A)
+# -- style ---------------------------------------------------------------------
 
-HOVER_PAINT = skia.Paint()
-HOVER_PAINT.set_color(0xFF2563EB)
+@dataclass(frozen=True, slots=True)
+class ButtonStyle:
+    """None means draw nothing for that state."""
 
+    background: Color | None = None
+    hover: Color | None = None
+    pressed: Color | None = None
+    border: Color | None = None
+    border_width: float = 1.0
+    padding: EdgeInsets = EdgeInsets.symmetric(horizontal=16, vertical=8)
+
+
+# Color is an immutable NamedTuple, so it keys the caches directly: buttons
+# sharing a color share one Paint.
+
+@cache
+def _fill_paint(color: Color) -> skia.Paint:
+    paint = skia.Paint()
+    paint.set_color(color.to_argb_int())
+    return paint
+
+
+@cache
+def _stroke_paint(color: Color, width: float) -> skia.Paint:
+    paint = skia.Paint()
+    paint.set_color(color.to_argb_int())
+    paint.set_stroke(True)  # ASSUMPTION: SkPaint::setStroke is bound
+    paint.set_stroke_width(width)
+    return paint
+
+
+# -- base ----------------------------------------------------------------------
 
 class Button(Widget):
-    def __init__(self, text: str = "", on_click=lambda: 0, **kwargs):
-        super().__init__(**kwargs)
-        self.text = text
-        self.on_click = on_click
-        self.paint = PAINT
-        self.font = skia.Font()
+    """Plain button; keeps the look of the old text-only Button."""
 
-    def on_size(self):
-        super().on_size()
-        logger.debug(
-            f"{self.text}: pos={self.global_position} size={self.size} "
-            f"linked={self.layout.parent is not None}"
+    default_style: ClassVar[ButtonStyle] = ButtonStyle(
+        background=Color.from_hex("#23272a"),
+        hover=Color.from_hex("#2563eb"),
+        pressed=Color.from_hex("#1d4ed8"),
+    )
+
+    def __init__(
+        self,
+        child: Widget,
+        on_pressed: Callable[[], None] | None = None,
+        *,
+        button_style: ButtonStyle | None = None,
+        style: yoga.Style | None = None,
+        **kwargs,
+    ) -> None:
+        # Raise-first: old call sites passed a string as the first argument.
+        if isinstance(child, str):
+            raise TypeError(
+                f"{type(self).__name__} takes a child widget now: "
+                f"{type(self).__name__}(Text({child!r}), on_pressed=...)"
+            )
+
+        self.button_style = button_style or self.default_style
+        b = (
+            StyleBuilder(style)
+            .justify_content(yoga.Justify.CENTER)
+            .align_items(yoga.Align.CENTER)
         )
-        # Update the font size based on the button size
-        self.font.set_size(self.size.y * 0.75)
+        self.button_style.padding.apply(b)
+        super().__init__(style=b.build(), children=[child], **kwargs)
 
-    def _draw(self):
+        self.on_pressed = on_pressed
+        self.pressed = False
+
+    @property
+    def enabled(self) -> bool:
+        """Flutter's rule: no callback means disabled."""
+        return self.on_pressed is not None
+
+    @property
+    def cursor(self):
+        return CURSOR_HAND if self.enabled else None
+
+    # -- drawing -----------------------------------------------------------
+
+    def _fill_color(self) -> Color | None:
+        s = self.button_style
+        if not self.enabled:
+            return s.background
+        if self.pressed and self.hovered and s.pressed is not None:
+            return s.pressed
+        if self.hovered and s.hover is not None:
+            return s.hover
+        return s.background
+
+    def _draw(self) -> None:
+        # ASSUMPTION: Node.draw() calls _draw() before drawing children, so
+        # the background lands under the child.
         canvas = Renderer.get_current().canvas
-
         position = self.global_position
         size = self.size
+        rect = skia.Rect(position.x, position.y, size.x, size.y)  # binding's Rect is XYWH
 
-        canvas.draw_rect(skia.Rect(position.x, position.y, size.x, size.y), BG_PAINT)
+        fill = self._fill_color()
+        if fill is not None:
+            canvas.draw_rect(rect, _fill_paint(fill))
 
-        self.font.set_size(self.size.y * 0.5)
-        canvas.draw_string(
-            self.text,
-            position.x + 10,
-            position.y + self.size.y * 0.75,
-            self.font,
-            self.paint,
-        )
+        s = self.button_style
+        if s.border is not None:
+            canvas.draw_rect(rect, _stroke_paint(s.border, s.border_width))
 
+    # -- events ------------------------------------------------------------
+
+    '''
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
-        x, y = event.x, event.y
-        hovering = self.hit_test(x, y)
-        if hovering and not self.hovered:
-            self.paint = HOVER_PAINT
-            sdl.set_cursor(CURSOR_HAND)
-            self.hovered = True
-        elif not hovering and self.hovered:
-            self.paint = PAINT
-            self.hovered = False
-            sdl.set_cursor(CURSOR_ARROW)
-            # Don't set cursor here! Let the App handle it if needed.
+        logger.debug(f"Mouse motion at ({event.x}, {event.y})")
+        if not self.enabled:
+            return
+        hovering = self.hit_test(event.x, event.y)
+        if hovering == self.hovered:
+            return
+        self.hovered = hovering
+        sdl.set_cursor(CURSOR_HAND if hovering else CURSOR_ARROW)
+    '''
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         super().on_mouse_button(event)
-        if event.button == 1 and event.down:  # Left mouse button
-            x, y = event.x, event.y
-            if self.hit_test(x, y):
-                logger.debug(f"Button clicked: {self.text} at ({x}, {y})")
-                self.on_click()
-                return True  # Indicate that the event was handled
+        if not self.enabled or event.button != 1:  # left button only
+            return False
+
+        inside = self.hit_test(event.x, event.y)
+        if event.down:
+            self.pressed = inside
+            return inside
+
+        # Fire on release inside, like Flutter: dragging off cancels.
+        was_pressed = self.pressed
+        self.pressed = False
+        if was_pressed and inside:
+            logger.debug(f"{type(self).__name__} pressed at ({event.x}, {event.y})")
+            self.on_pressed()
+            return True
+        return False
+
+
+# -- variants --------------------------------------------------------------------
+
+class FilledButton(Button):
+    """High emphasis: solid accent fill."""
+
+    default_style = ButtonStyle(
+        background=Color.from_hex("#2563eb"),
+        hover=Color.from_hex("#3b82f6"),
+        pressed=Color.from_hex("#1d4ed8"),
+    )
+
+
+class OutlinedButton(Button):
+    """Medium emphasis: border, fill only on interaction."""
+
+    default_style = ButtonStyle(
+        hover=WHITE.with_alpha(0.1),
+        pressed=WHITE.with_alpha(0.2),
+        border=Color.from_hex("#6b7280"),
+    )
+
+
+class TextButton(Button):
+    """Low emphasis: no fill or border until hovered."""
+
+    default_style = ButtonStyle(
+        hover=WHITE.with_alpha(0.1),
+        pressed=WHITE.with_alpha(0.2),
+        padding=EdgeInsets.symmetric(horizontal=8, vertical=4),
+    )

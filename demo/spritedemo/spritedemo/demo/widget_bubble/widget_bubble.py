@@ -80,9 +80,8 @@ class WidgetBubbleDemo(Demo):
         self.node = Control2D(model=patch).seat(NinePatchVu())
 
         self.button = Button(
-            "Hello, World!",
-            on_click=self.on_click,
-            style=yoga.StyleBuilder().size(200, 50).build(),
+            Text("Hello, World!", color=colors.WHITE),
+            on_pressed=self.on_click,
         )
         self.image = Image("${resources}/images/d12_128x128.png")
         self.add_control(
@@ -105,7 +104,7 @@ class WidgetBubbleDemo(Demo):
         self.node.add_child(control)
 
     def on_click(self):
-        logger.info(f"Button clicked: {self.button.text}")
+        logger.info(f"Button clicked: {self.button}")
 
     def center_camera(self):
         pass

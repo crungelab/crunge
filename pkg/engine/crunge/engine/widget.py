@@ -9,6 +9,8 @@ from .sdl.event_handler import EventHandler
 from .node import Node
 from .layout import Layout
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from .cursors import CURSOR_ARROW
+
 from .gfx_access import GfxAccess
 
 
@@ -103,6 +105,20 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
     def bounds(self) -> yoga.Bounds:
         return self.layout.bounds
 
+    # -- style -------------------------------------------------------------
+    @property
+    def style(self) -> yoga.Style:
+        return self.layout.style
+
+    @style.setter
+    def style(self, value: yoga.Style) -> None:
+        self.layout.style = value
+
+    @property
+    def cursor(self):
+        #return CURSOR_ARROW
+        return None
+
     # -- layout ------------------------------------------------------------
 
     def on_layout(self, layout: Layout) -> None:
@@ -120,13 +136,11 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
         """Fires when the computed size changes. Same name and contract as
         the hook the old _set_size called."""
 
-    @property
-    def style(self) -> yoga.Style:
-        return self.layout.style
+    def on_enter(self) -> None:
+        """Pointer entered this widget or a descendant."""
 
-    @style.setter
-    def style(self, value: yoga.Style) -> None:
-        self.layout.style = value
+    def on_exit(self) -> None:
+        """Pointer left this widget and all its descendants."""
 
     # -- events ------------------------------------------------------------
 

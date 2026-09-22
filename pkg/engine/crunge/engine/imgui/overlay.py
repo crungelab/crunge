@@ -36,6 +36,7 @@ class ImGuiOverlay(Overlay):
             imgui.style_colors_dark()
 
         self.io = imgui.get_io()
+        self.io.config_flags |= imgui.ConfigFlags.NO_MOUSE_CURSOR_CHANGE
 
         self.default_font = None
         self.clipboard = Clipboard()
@@ -75,6 +76,9 @@ class ImGuiOverlay(Overlay):
         yield self
         if prev_renderer is not None:
             prev_renderer.make_current()
+
+    def hit_test(self, x: float, y: float) -> bool:
+        return self.io.want_capture_mouse  # ASSUMPTION: binding names
 
     def on_viewport_rect(self, rect: Rect2i):
         logger.debug(f"ImGuiOverlay.on_viewport_rect: {rect}")
