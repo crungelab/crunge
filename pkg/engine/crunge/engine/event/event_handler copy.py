@@ -6,11 +6,13 @@ import glm
 from crunge import sdl
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
+from .input import Input
 
 class EventHandler:
     """Demux an SDL event to an on_* handler. No tree, no super() chain."""
 
-    def handle(self, event) -> DispatchResult:
+    def handle(self, input: Input) -> DispatchResult:
+        event = input.event
         match event:
             case sdl.WindowEvent():
                 return self.on_window(event)
@@ -47,25 +49,6 @@ class EventHandler:
                 return self.handle(event)
 
         return None
-
-    '''
-    def handle_2d(self, event, point) -> DispatchResult:
-        match event:
-            case sdl.MouseMotionEvent():
-                #logger.debug(f"mouse motion 2d: x={point.x}, y={point.y}")
-                event.x = point.x
-                event.y = point.y
-                return self.handle(event)
-            case sdl.MouseButtonEvent():
-                logger.debug(f"mouse button 2d: x={point.x}, y={point.y}")
-                event.x = point.x
-                event.y = point.y
-                return self.handle(event)
-            case _:
-                return self.handle(event)
-
-        return None
-    '''
 
     def on_window(self, event: sdl.WindowEvent) -> DispatchResult:
         match event.type:

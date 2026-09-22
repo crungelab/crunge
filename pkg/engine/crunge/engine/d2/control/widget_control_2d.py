@@ -1,5 +1,6 @@
 import math
 
+from crunge.engine.event.input import PointerInput
 from loguru import logger
 import glm
 
@@ -326,12 +327,14 @@ class WidgetControl2D(Control2D):
 
         return self.widget, surface_point
 
-    def dispatch_2d(self, event: object, point: glm.vec2) -> DispatchResult:
+    def dispatch(self, input: PointerInput) -> DispatchResult:
+        event = input.event
+        point = input.point
         hit = self.widget_at(point)
         if hit is None:
             return EVENT_UNHANDLED
         widget, surface_point = hit
-        return widget.dispatch_2d(event, surface_point)
+        return widget.dispatch(input.moved_to(surface_point))
 
     def _surface_point(self, point: glm.vec2) -> glm.vec2:
         """World -> logical widget pixels.

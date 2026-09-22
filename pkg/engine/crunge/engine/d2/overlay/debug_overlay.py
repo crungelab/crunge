@@ -47,7 +47,7 @@ class DebugOverlay(Overlay):
         from the canvas it was drawn on.
         """
         camera = self.camera
-        return camera.ppu / camera.zoom
+        return camera.ppu * camera.zoom
 
     @contextlib.contextmanager
     def world_canvas(self):

@@ -16,6 +16,7 @@ from . import SurfaceEasel, Viewport, Renderer, RenderOptions, compose
 from .frame import Frame
 from .hover import HoverTracker
 from .layout import Layout
+from .event import Input
 
 DEFAULT_WIDTH = 1280
 DEFAULT_HEIGHT = 720
@@ -77,7 +78,6 @@ class Window(Frame):
             current_window.reset(token)
 
     def _create(self):
-        super()._create()
         logger.debug("Window.create")
 
         # Pre-pass. Unconstrained, so the root's computed size comes from
@@ -102,7 +102,7 @@ class Window(Frame):
         # TODO: This used to only be called in _update.  Should it be here?
         self.layout.apply()
 
-        # super()._create()
+        super()._create()
 
     @property
     def layout_size(self) -> glm.ivec2:
@@ -184,14 +184,16 @@ class Window(Frame):
         self.hover_tracker.refresh()
         return super().on_layout(layout)
 
-    '''
+    """
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         self.hover_tracker.move(event.x, event.y)
         return super().on_mouse_motion(event)
-    '''
+    """
 
-    def dispatch(self, event) -> DispatchResult:
+    def dispatch(self, input: Input) -> DispatchResult:
         # Raw window coordinates, before anything below can touch the event.
+        event = input.event
+
         if isinstance(event, sdl.MouseMotionEvent):
             self.hover_tracker.move(event.x, event.y)
-        return super().dispatch(event)
+        return super().dispatch(input)

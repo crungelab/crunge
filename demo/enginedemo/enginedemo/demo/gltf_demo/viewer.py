@@ -68,7 +68,7 @@ class Viewer(engine.App):
         target = self.director.get_target_position()
         max_extent = self.director.get_max_extent()
         self.controller = ArcballCameraController(self, self.camera, target, max_extent)
-        self.controller.activate()
+        self.controller.enable()
 
         self.setup()
 

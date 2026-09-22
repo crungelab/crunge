@@ -5,7 +5,7 @@ import glm
 
 from crunge import yoga
 
-from .sdl.event_handler import EventHandler
+from .event.event_handler import EventHandler
 from .node import Node
 from .layout import Layout
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
@@ -161,12 +161,6 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
             if child.dispatch(event):
                 return EVENT_HANDLED
         return super().dispatch(event) or self.handle(event)
-
-    def dispatch_2d(self, event, point) -> DispatchResult:
-        for child in reversed(self.children):
-            if child.dispatch_2d(event, point):
-                return EVENT_HANDLED
-        return super().dispatch_2d(event, point) or self.handle_2d(event, point)
 
     def hit_test(self, x: float, y: float) -> bool:
         position = self.global_position

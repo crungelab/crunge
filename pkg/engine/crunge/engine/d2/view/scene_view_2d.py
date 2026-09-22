@@ -4,10 +4,12 @@ from crunge import sdl
 
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
+from ...event import PointerInput
+
 from ..scene.scene_2d import Scene2D
-from .view_2d import View2D
 from ..renderer import Renderer2D
 
+from .view_2d import View2D
 
 class SceneView2D(View2D):
     renderer: Renderer2D
@@ -72,7 +74,7 @@ class SceneView2D(View2D):
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent) -> DispatchResult:
         # logger.debug(f"mouse button: button={event.button}, down={event.down}")
-        return self.scene.dispatch_2d(event, self._world_point(event.x, event.y))
+        return self.scene.dispatch(PointerInput(event, self._world_point(event.x, event.y)))
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> DispatchResult:
-        return self.scene.dispatch_2d(event, self._world_point(event.x, event.y))
+        return self.scene.dispatch(PointerInput(event, self._world_point(event.x, event.y)))

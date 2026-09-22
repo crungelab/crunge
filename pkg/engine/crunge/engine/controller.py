@@ -4,7 +4,7 @@ from loguru import logger
 
 from crunge.core.chip import Chip
 from crunge.core.dispatch import DispatchResult, EVENT_HANDLED
-from .sdl.event_handler import EventHandler
+from .event.event_handler import EventHandler
 
 if TYPE_CHECKING:
     from .node import Node

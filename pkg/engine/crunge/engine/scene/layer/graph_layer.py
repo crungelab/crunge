@@ -74,13 +74,6 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
     def detach(self, node: T_Node) -> None:
         self.root.remove_child(node)
 
-    def dispatch_2d(self, event, point) -> DispatchResult:
-        for control in reversed(self._controls):
-            #logger.debug(f"Dispatching event {event} to control {control}")
-            if control.dispatch_2d(event, point):
-                return EVENT_HANDLED
-        return super().dispatch_2d(event, point)
-
     def widget_at(self, point: "glm.vec2") -> "tuple[Widget, glm.vec2] | None":
         """Controls first, then child layers -- the dispatch_2d order.
 
@@ -93,11 +86,9 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
                 return hit
         return super().widget_at(point)
 
-    '''
-    def dispatch(self, event) -> DispatchResult:
+    def dispatch(self, input) -> DispatchResult:
         for control in reversed(self._controls):
-            logger.debug(f"Dispatching event {event} to control {control}")
-            if control.dispatch(event):
+            logger.debug(f"Dispatching input {input} to control {control}")
+            if control.dispatch(input):
                 return EVENT_HANDLED
-        return super().dispatch(event)
-    '''
+        return super().dispatch(input)

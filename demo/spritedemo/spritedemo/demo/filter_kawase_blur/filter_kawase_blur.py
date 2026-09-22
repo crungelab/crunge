@@ -22,7 +22,7 @@ class TiledTestDemo(TiledDemo):
     
     def create_display(self):
         super().create_display()
-        self.camera.zoom = 2.0
+        self.camera.zoom = 0.5
 
     def create_map(self):
         context = BuilderContext(scene=self.scene)

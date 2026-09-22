@@ -5,6 +5,7 @@ from loguru import logger
 from crunge import sdl
 from crunge import yoga
 
+from .event import Input
 from .window import Window, DEFAULT_WIDTH, DEFAULT_HEIGHT
 from .updater import Updater
 from .scheduler import Scheduler
@@ -79,7 +80,8 @@ class App(Window):
                 # Events
                 self.instance.process_events()
                 while event := sdl.poll_event():
-                    self.dispatch(event)
+                    #self.dispatch(event)
+                    self.dispatch(Input(event))
                     if event.type == sdl.EventType.QUIT:
                         self.running = False
 

@@ -6,7 +6,8 @@ from crunge import yoga
 
 
 from crunge.engine.d2.control import WidgetControl2D
-from crunge.engine.ui.button import Button
+from crunge.engine.ui import Button, Text
+from crunge.engine.colors import WHITE
 
 
 from ..demo import Demo
@@ -25,16 +26,16 @@ class WidgetControlDemo(Demo):
         self.zoom = 1.0
 
         self.button = Button(
-            "Hello, World!",
-            on_click=self.on_click,
-            style=yoga.StyleBuilder().size(200, 50).build(),
+            Text("Hello, World!", color=WHITE),
+            on_pressed=self.on_click,
+            #style=yoga.StyleBuilder().size(200, 50).build(),
         )
 
         self.node = WidgetControl2D(self.button)
         self.scene.attach(self.node)
 
     def on_click(self):
-        logger.info(f"Button clicked: {self.button.text}")
+        logger.info(f"Button clicked: {self.button.children[0].text}")
 
     def center_camera(self):
         pass

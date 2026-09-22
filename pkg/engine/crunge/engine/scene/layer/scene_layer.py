@@ -42,12 +42,6 @@ class SceneLayer(Node["SceneLayer"]):
     def get_layer(self, name: str):
         return self.layers_by_name.get(name)
 
-    def dispatch_2d(self, event, point) -> DispatchResult:
-        for child in reversed(self.children):
-            if child.dispatch_2d(event, point):
-                return EVENT_HANDLED
-        return super().dispatch_2d(event, point)
-
     def widget_at(self, point: "glm.vec2") -> "tuple[Widget, glm.vec2] | None":
         """Topmost embedded widget tree under a world point.
 
@@ -60,10 +54,8 @@ class SceneLayer(Node["SceneLayer"]):
                 return hit
         return None
 
-    '''
     def dispatch(self, event) -> DispatchResult:
         for child in reversed(self.children):
             if child.dispatch(event):
                 return EVENT_HANDLED
         return super().dispatch(event)
-    '''
