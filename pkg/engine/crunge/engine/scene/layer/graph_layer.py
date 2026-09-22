@@ -7,6 +7,8 @@ from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 from ..scene_node import SceneNode
 
 if TYPE_CHECKING:
+    import glm
+    from ...widget import Widget
     from .. import Scene
 
 from .scene_layer import SceneLayer
@@ -78,6 +80,18 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
             if control.dispatch_2d(event, point):
                 return EVENT_HANDLED
         return super().dispatch_2d(event, point)
+
+    def widget_at(self, point: "glm.vec2") -> "tuple[Widget, glm.vec2] | None":
+        """Controls first, then child layers -- the dispatch_2d order.
+
+        Only enabled controls are in _controls, so a disabled control drops
+        out of hover on the next refresh without anything else to do.
+        """
+        for control in reversed(self._controls):
+            hit = control.widget_at(point)
+            if hit is not None:
+                return hit
+        return super().widget_at(point)
 
     '''
     def dispatch(self, event) -> DispatchResult:

@@ -136,11 +136,23 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
         """Fires when the computed size changes. Same name and contract as
         the hook the old _set_size called."""
 
+    # -- hover -------------------------------------------------------------
+    #
+    # Driven by the HoverTracker, never by the widget's own motion events.
+
     def on_enter(self) -> None:
         """Pointer entered this widget or a descendant."""
 
     def on_exit(self) -> None:
         """Pointer left this widget and all its descendants."""
+
+    def hover_portal(self, x: float, y: float) -> tuple[Widget, glm.vec2] | None:
+        """An embedded widget tree under (x, y), and the point in its space.
+
+        For widgets whose content isn't their children, like a scene view.
+        The tracker asks only after no child was hit.
+        """
+        return None
 
     # -- events ------------------------------------------------------------
 

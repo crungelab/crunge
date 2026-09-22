@@ -11,7 +11,7 @@ from crunge import sdl
 from crunge import yoga
 
 from crunge.core.signal import Signal, Pulse
-
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 from . import SurfaceEasel, Viewport, Renderer, RenderOptions, compose
 from .frame import Frame
 from .hover import HoverTracker
@@ -184,6 +184,14 @@ class Window(Frame):
         self.hover_tracker.refresh()
         return super().on_layout(layout)
 
+    '''
     def on_mouse_motion(self, event: sdl.MouseMotionEvent):
         self.hover_tracker.move(event.x, event.y)
         return super().on_mouse_motion(event)
+    '''
+
+    def dispatch(self, event) -> DispatchResult:
+        # Raw window coordinates, before anything below can touch the event.
+        if isinstance(event, sdl.MouseMotionEvent):
+            self.hover_tracker.move(event.x, event.y)
+        return super().dispatch(event)

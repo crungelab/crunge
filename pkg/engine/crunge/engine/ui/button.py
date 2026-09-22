@@ -136,18 +136,6 @@ class Button(Widget):
 
     # -- events ------------------------------------------------------------
 
-    '''
-    def on_mouse_motion(self, event: sdl.MouseMotionEvent):
-        logger.debug(f"Mouse motion at ({event.x}, {event.y})")
-        if not self.enabled:
-            return
-        hovering = self.hit_test(event.x, event.y)
-        if hovering == self.hovered:
-            return
-        self.hovered = hovering
-        sdl.set_cursor(CURSOR_HAND if hovering else CURSOR_ARROW)
-    '''
-
     def on_mouse_button(self, event: sdl.MouseButtonEvent):
         super().on_mouse_button(event)
         if not self.enabled or event.button != 1:  # left button only

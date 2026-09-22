@@ -30,6 +30,29 @@ class EventHandler:
         match event:
             case sdl.MouseMotionEvent():
                 #logger.debug(f"mouse motion 2d: x={point.x}, y={point.y}")
+                # Handlers read local coordinates off the event, but it's one
+                # shared object: put the originals back for everyone after us.
+                x, y = event.x, event.y
+                event.x, event.y = point.x, point.y
+                try:
+                    return self.handle(event)
+                finally:
+                    event.x, event.y = x, y
+            case sdl.MouseButtonEvent():
+                logger.debug(f"{self.__class__.__name__} mouse button 2d: x={point.x}, y={point.y}")
+                event.x = point.x
+                event.y = point.y
+                return self.handle(event)
+            case _:
+                return self.handle(event)
+
+        return None
+
+    '''
+    def handle_2d(self, event, point) -> DispatchResult:
+        match event:
+            case sdl.MouseMotionEvent():
+                #logger.debug(f"mouse motion 2d: x={point.x}, y={point.y}")
                 event.x = point.x
                 event.y = point.y
                 return self.handle(event)
@@ -42,6 +65,7 @@ class EventHandler:
                 return self.handle(event)
 
         return None
+    '''
 
     def on_window(self, event: sdl.WindowEvent) -> DispatchResult:
         match event.type:

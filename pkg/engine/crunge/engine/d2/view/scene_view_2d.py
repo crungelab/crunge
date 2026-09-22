@@ -41,6 +41,28 @@ class SceneView2D(View2D):
             self.renderer.render(self.scene)
             super().draw()
 
+    # -- input -------------------------------------------------------------
+    #
+    # Clicks and hover share one window -> world conversion, so they can't
+    # disagree about what's under the pointer.
+
+    def _world_point(self, x: float, y: float) -> glm.vec2:
+        """Window coordinates -> world. Reads the camera directly, not the
+        current renderer, so it's safe from refresh() outside any render
+        scope."""
+        return self.camera.unproject(glm.vec2(x, y))
+
+    def hover_portal(self, x: float, y: float):
+        world = self._world_point(x, y)
+        hit = self.scene.widget_at(world)
+        logger.debug(f"portal: ({x:.0f}, {y:.0f}) -> world {world} -> {hit}")
+        return hit
+
+    '''
+    def hover_portal(self, x: float, y: float):
+        return self.scene.widget_at(self._world_point(x, y))
+    '''
+
     """
     def dispatch(self, event) -> DispatchResult:
         if self.scene.dispatch(event):
@@ -50,9 +72,7 @@ class SceneView2D(View2D):
 
     def on_mouse_button(self, event: sdl.MouseButtonEvent) -> DispatchResult:
         # logger.debug(f"mouse button: button={event.button}, down={event.down}")
-        point = self.camera.unproject(glm.vec2(event.x, event.y))
-        return self.scene.dispatch_2d(event, point)
+        return self.scene.dispatch_2d(event, self._world_point(event.x, event.y))
 
     def on_mouse_motion(self, event: sdl.MouseMotionEvent) -> DispatchResult:
-        point = self.camera.unproject(glm.vec2(event.x, event.y))
-        return self.scene.dispatch_2d(event, point)
+        return self.scene.dispatch_2d(event, self._world_point(event.x, event.y))

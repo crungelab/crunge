@@ -20,8 +20,12 @@ class ButtonPage(Page):
             Button(
                 Text("Hello, World!", color=WHITE),
                 #style=StyleBuilder().size(200, 50).build(),
+                on_pressed=self.on_button_pressed,
             )
         )
+
+    def on_button_pressed(self):
+        logger.info("Button pressed!")
 
 
 def install(app: App):

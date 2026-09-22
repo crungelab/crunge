@@ -1,7 +1,9 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    import glm
     from ...model import Model
+    from ...widget import Widget
     from .. import Scene
 
 from ... import Node
@@ -45,6 +47,18 @@ class SceneLayer(Node["SceneLayer"]):
             if child.dispatch_2d(event, point):
                 return EVENT_HANDLED
         return super().dispatch_2d(event, point)
+
+    def widget_at(self, point: "glm.vec2") -> "tuple[Widget, glm.vec2] | None":
+        """Topmost embedded widget tree under a world point.
+
+        Same order as dispatch_2d, so hover and clicks always agree on
+        which control is on top.
+        """
+        for child in reversed(self.children):
+            hit = child.widget_at(point)
+            if hit is not None:
+                return hit
+        return None
 
     '''
     def dispatch(self, event) -> DispatchResult:

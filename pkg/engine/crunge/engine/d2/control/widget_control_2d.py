@@ -80,14 +80,6 @@ class WidgetControl2D(Control2D):
     def _create(self):
         super()._create()
 
-        '''
-        self.widget.layout.calculate()
-        self.widget.layout.apply()
-        self._natural_size = glm.vec2(self.widget.size)
-        # A pass may already have measured us at zero, before the widget was
-        # laid out. Yoga cached that answer; make it ask again.
-        self.invalidate_measure()
-        '''
         # The surface is built lazily on first draw: the logical size isn't
         # final until the scene layout has run, and raster scale needs a camera.
         self.easel: OffscreenEasel | None = None
@@ -111,7 +103,6 @@ class WidgetControl2D(Control2D):
         # A pass may already have measured us at zero, before the widget was
         # laid out. Yoga cached that answer; make it ask again.
         self.invalidate_measure()
-
 
     def _disable(self):
         super()._disable()
@@ -244,7 +235,7 @@ class WidgetControl2D(Control2D):
         if screen_scale is None or not self._needs_rescale(screen_scale):
             return None
 
-        # Clamping can make the target equal the current scale — e.g. at the
+        # Clamping can make the target equal the current scale -- e.g. at the
         # maximum while still zooming in. Don't rebuild for nothing.
         target = self._target_raster_scale(screen_scale, logical)
         return target if target != self.raster_scale else None
@@ -306,8 +297,8 @@ class WidgetControl2D(Control2D):
     def _paint(self):
         with self.renderer.use():
             canvas = self.renderer.canvas
-            # Without a clear, anything the widget doesn't cover opaquely —
-            # rounded corners, antialiased edges — accumulates across repaints.
+            # Without a clear, anything the widget doesn't cover opaquely --
+            # rounded corners, antialiased edges -- accumulates across repaints.
             canvas.clear(0x00000000)
             canvas.save()
             canvas.scale(self.raster_scale, self.raster_scale)
@@ -318,17 +309,29 @@ class WidgetControl2D(Control2D):
         self.surface_dirty = False
 
     # -- input -------------------------------------------------------------
+    #
+    # widget_at is the one hit-test for this control. dispatch_2d routes
+    # clicks through it and the HoverTracker reaches it through the scene
+    # view's portal, so the two can't disagree about what's under the pointer.
 
-    def dispatch_2d(self, event: object, point: glm.vec2) -> DispatchResult:
+    def widget_at(self, point: glm.vec2) -> tuple[Widget, glm.vec2] | None:
+        """World point -> (widget root, surface point), or None if outside."""
         if not self.visible or self.easel is None:
-            return EVENT_UNHANDLED
+            return None
 
         surface_point = self._surface_point(point)
         size = self.logical_size
         if not (0 <= surface_point.x < size.x and 0 <= surface_point.y < size.y):
-            return EVENT_UNHANDLED
+            return None
 
-        return self.widget.dispatch_2d(event, surface_point)
+        return self.widget, surface_point
+
+    def dispatch_2d(self, event: object, point: glm.vec2) -> DispatchResult:
+        hit = self.widget_at(point)
+        if hit is None:
+            return EVENT_UNHANDLED
+        widget, surface_point = hit
+        return widget.dispatch_2d(event, surface_point)
 
     def _surface_point(self, point: glm.vec2) -> glm.vec2:
         """World -> logical widget pixels.

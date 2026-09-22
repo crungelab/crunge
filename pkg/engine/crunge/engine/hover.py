@@ -6,22 +6,26 @@ last result and sends on_exit / on_enter. A widget can't miss its exit
 because an event was routed elsewhere or never arrived -- the tracker
 doesn't depend on routing at all.
 
+The walk crosses into embedded widget trees through portals: a widget whose
+content isn't its children -- a scene view full of WidgetControl2Ds -- hands
+back the embedded root and the point converted into its space, and the path
+continues there. Embedded widgets are then ordinary entries in the path, so
+enter/exit and the cursor need nothing special.
+
 It also owns the cursor: the deepest hovered widget with a non-None
 `cursor` wins, so two widgets can never fight over it on the same move.
 
 Hover state and the cursor update on different schedules. Hover is
 recomputed whenever asked, including from refresh() in the frame. The
-cursor is only ever *set* from event handling (move, leave): SDL wants
-cursor changes made there, and a set_cursor from the frame doesn't take.
-refresh() just records the cursor it wants, and the next event applies it.
+cursor is only ever *set* from event handling (move, leave); refresh()
+just records the cursor it wants, and the next event applies it.
 """
-
 from __future__ import annotations
 
 from loguru import logger
 
 from .widget import Widget
-from .cursors import CURSOR_ARROW, set_cursor, get_cursor_name
+from .cursors import CURSOR_ARROW, get_cursor_name, set_cursor
 
 
 def hover_path(widget: Widget, x: float, y: float) -> list[Widget]:
@@ -30,11 +34,20 @@ def hover_path(widget: Widget, x: float, y: float) -> list[Widget]:
     Children are tried last-first, matching dispatch order, so of two
     overlapping siblings only the one drawn on top is hovered. A child
     outside its parent's bounds is unreachable, as if clipped.
+
+    Children come before the portal: anything a widget draws over its
+    embedded content, like a HUD over a scene, wins.
     """
     if not widget.hit_test(x, y):
         return []
     for child in reversed(widget.children):
         path = hover_path(child, x, y)
+        if path:
+            return [widget, *path]
+    portal = widget.hover_portal(x, y)
+    if portal is not None:
+        inner, point = portal
+        path = hover_path(inner, point.x, point.y)
         if path:
             return [widget, *path]
     return [widget]
@@ -57,6 +70,9 @@ class HoverTracker:
         self._update(hover_path(self.root, x, y))
         self._apply_cursor()
 
+        path = hover_path(self.root, x, y)
+        logger.debug(f"hover path: {[type(w).__name__ for w in path]}")
+
     def leave(self) -> None:
         """Pointer left the window: everything exits."""
         self._point = None
@@ -67,7 +83,7 @@ class HoverTracker:
 
     def refresh(self) -> None:
         """Re-hit-test at the last point, for when the tree moves under a
-        stationary pointer -- after a layout apply, or a widget removal.
+        stationary pointer -- a layout apply, a widget removal, a camera pan.
 
         Updates hover state now; a cursor change waits for the next event.
         """
@@ -101,15 +117,12 @@ class HoverTracker:
         )
 
     def _apply_cursor(self) -> None:
-        #logger.debug(f"Applying cursor: wanted={self._wanted}, applied={self._applied}")
-
         if self._wanted is self._applied:
             return
         logger.debug(
             f"Cursor {get_cursor_name(self._applied)} -> {get_cursor_name(self._wanted)}"
         )
-        # SDL3 returns bool; compare to False in case the binding returns None.
-        if set_cursor(self._wanted) is False:
+        if not set_cursor(self._wanted):
             # Leave _applied alone so the next event retries.
             logger.error(f"set_cursor({get_cursor_name(self._wanted)}) failed")
             return
