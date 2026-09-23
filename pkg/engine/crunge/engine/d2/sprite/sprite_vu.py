@@ -16,5 +16,4 @@ class SpriteVu(BaseSpriteVu[Sprite]):
     sprite_membership: SpriteMembership
 
     def create_program(self):
-        logger.debug("SpriteVu: create_program")
         self.program = SpriteProgram()

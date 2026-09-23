@@ -37,21 +37,13 @@ class Image(Widget):
     the aspect ratio. Give it both and the box is fixed, and `fit` decides how
     the image sits inside it.
 
-    `crop` selects a sub-rectangle of the file, in source pixels, and every
-    size below is in terms of that rectangle: sprite sheets, and art drawn in
-    a padded frame like the CuteGod tiles, whose transparent band would
-    otherwise lay out as empty space. Cropping here rather than offsetting at
-    draw time keeps measure, aspect ratio, layout and hit-testing consistent,
-    because nothing below ever sees the part that was cut away.
-
     The aspect ratio goes to yoga as a style property rather than being worked
     out in on_measure, for the same reason Control2D gives: in the style, the
     flex algorithm can see it; computed in measure, it's invisible to flex.
 
     Decoded images are cached by resolved path for the life of the process.
     A Dash drawer of icon buttons will load the same few files many times, and
-    decoding is the expensive part. The cache is keyed by file, not by crop:
-    one decoded image serves every crop of it.
+    decoding is the expensive part.
     """
 
     layout_class = ImageLayout
@@ -63,7 +55,6 @@ class Image(Widget):
         src: str,
         fit: ImageFit = ImageFit.CONTAIN,
         keep_aspect: bool = True,
-        crop: tuple[float, float, float, float] | None = None,
         style: yoga.Style = None,
         **kwargs,
     ):
@@ -72,7 +63,6 @@ class Image(Widget):
         self.keep_aspect = keep_aspect
         self.sampling = skia.SamplingOptions(skia.FilterMode.K_LINEAR)  # ASSUMPTION: binding names
 
-        self._crop = crop  # (x, y, width, height) in source pixels
         self._src: str | None = None
         self.image: skia.Image | None = None
         self.src = src
@@ -89,22 +79,6 @@ class Image(Widget):
             return
         self._src = value
         self.image = self._load(value)
-        self._invalidate_size()
-
-    @property
-    def crop(self) -> tuple[float, float, float, float] | None:
-        """Sub-rectangle of the file to use, (x, y, width, height) in source
-        pixels, or None for the whole image."""
-        return self._crop
-
-    @crop.setter
-    def crop(self, value: tuple[float, float, float, float] | None) -> None:
-        if value == self._crop:
-            return
-        self._crop = value
-        self._invalidate_size()
-
-    def _invalidate_size(self) -> None:
         self._apply_aspect_ratio()
         # The intrinsic size changed, so yoga's cached measurement is stale.
         # ASSUMPTION: binding names YGNodeMarkDirty mark_dirty
@@ -135,29 +109,11 @@ class Image(Widget):
     def clear_cache(cls) -> None:
         cls._cache.clear()
 
-    # -- sizes -------------------------------------------------------------
-
     @property
-    def source_size(self) -> glm.vec2:
-        """The whole file, in pixels."""
+    def natural_size(self) -> glm.vec2:
         if self.image is None:
             return glm.vec2(0.0, 0.0)
         return glm.vec2(self.image.width(), self.image.height())
-
-    @property
-    def natural_size(self) -> glm.vec2:
-        """What this widget considers the image's own size: the crop if there
-        is one, otherwise the whole file."""
-        if self._crop is not None:
-            return glm.vec2(self._crop[2], self._crop[3])
-        return self.source_size
-
-    def _source_rect(self) -> skia.Rect:
-        if self._crop is not None:
-            x, y, w, h = self._crop
-            return skia.Rect(x, y, w, h)
-        size = self.source_size
-        return skia.Rect(0.0, 0.0, size.x, size.y)
 
     def _apply_aspect_ratio(self) -> None:
         natural = self.natural_size
@@ -232,24 +188,8 @@ class Image(Widget):
             canvas.save()
             canvas.clip_rect(_rect(box_pos, box_size))
 
-        # ASSUMPTION: binding mirrors drawImageRect(image, src, dst, sampling).
-        # Without the src overload, clip to dst and draw the whole image
-        # scaled and offset so the crop lands on dst instead.
-        # The src overload requires paint and constraint; only the no-src form
-        # defaults them.
-        canvas.draw_image_rect(
-            self.image,
-            self._source_rect(),
-            _rect(pos, size),
-            self.sampling,
-            None,
-            skia.Canvas.SrcRectConstraint.K_STRICT_SRC_RECT_CONSTRAINT,  # ASSUMPTION: enum member name
-        )
-        '''
-        canvas.draw_image_rect(
-            self.image, self._source_rect(), _rect(pos, size), self.sampling
-        )
-        '''
+        # ASSUMPTION: binding mirrors drawImageRect(image, dst, sampling)
+        canvas.draw_image_rect(self.image, _rect(pos, size), self.sampling)
 
         if clip:
             canvas.restore()
@@ -258,5 +198,5 @@ class Image(Widget):
 
 
 def _rect(pos: glm.vec2, size: glm.vec2) -> skia.Rect:
-    # The binding's Rect is XYWH, not SkRect's LTRB.
+    # ASSUMPTION: skia.Rect takes left, top, right, bottom
     return skia.Rect(pos.x, pos.y, size.x, size.y)

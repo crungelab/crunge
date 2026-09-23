@@ -44,5 +44,4 @@ class NinePatchVu(BaseSpriteVu[NinePatch]):
         return super().size
 
     def create_program(self):
-        logger.debug("NinePatchVu: create_program")
         self.program = NinePatchProgram()

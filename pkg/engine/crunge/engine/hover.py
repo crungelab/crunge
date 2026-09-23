@@ -70,8 +70,8 @@ class HoverTracker:
         self._update(hover_path(self.root, x, y))
         self._apply_cursor()
 
-        path = hover_path(self.root, x, y)
-        logger.debug(f"hover path: {[type(w).__name__ for w in path]}")
+        #path = hover_path(self.root, x, y)
+        #logger.debug(f"hover path: {[type(w).__name__ for w in path]}")
 
     def leave(self) -> None:
         """Pointer left the window: everything exits."""
@@ -100,12 +100,12 @@ class HoverTracker:
         # Exits deepest-first, enters outermost-first, as the DOM does.
         for widget in reversed(self._hovered):
             if id(widget) not in new_ids:
-                logger.debug(f"Widget exited: {widget}")
+                #logger.debug(f"Widget exited: {widget}")
                 widget.hovered = False
                 widget.on_exit()
         for widget in path:
             if id(widget) not in old_ids:
-                logger.debug(f"Widget entered: {widget}")
+                #logger.debug(f"Widget entered: {widget}")
                 widget.hovered = True
                 widget.on_enter()
 
