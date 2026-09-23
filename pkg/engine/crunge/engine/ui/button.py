@@ -4,6 +4,10 @@ A button is a padded, centered container around a single child. Size comes
 from the child plus padding: the child measures itself, yoga adds the
 padding, and the button only draws its own background and border. Label,
 icon or a Row of both -- the button doesn't care what the child is.
+
+Behavior lives in a GestureChip, so this class is only appearance. A widget
+that wants the click without the chrome doesn't need a Button at all --
+seat a GestureChip on it directly.
 """
 from __future__ import annotations
 
@@ -11,17 +15,14 @@ from dataclasses import dataclass
 from functools import cache
 from typing import Callable, ClassVar
 
-from loguru import logger
-
 from crunge import skia
-from crunge import sdl
 from crunge import yoga
 from crunge.yoga.style_builder import StyleBuilder
 
 from ..widget import Widget
+from .chips import GestureChip
 from ..renderer import Renderer
-from ..cursors import CURSOR_HAND, CURSOR_ARROW
-from ..colors import Color, WHITE  # ASSUMPTION: module path
+from ..colors import Color, WHITE
 from .flex import EdgeInsets
 
 
@@ -94,24 +95,27 @@ class Button(Widget):
         self.button_style.padding.apply(b)
         super().__init__(style=b.build(), children=[child], **kwargs)
 
-        self.on_pressed = on_pressed
-        self.pressed = False
+        self.gesture = GestureChip(on_tap=on_pressed)
+        self.add_chip(self.gesture)
+
+    # -- gesture state ------------------------------------------------------
 
     @property
-    def enabled(self) -> bool:
-        """Flutter's rule: no callback means disabled."""
-        return self.on_pressed is not None
+    def pressed(self) -> bool:
+        return self.gesture.pressed
 
     @property
-    def cursor(self):
-        return CURSOR_HAND if self.enabled else None
+    def interactive(self) -> bool:
+        return self.gesture.interactive
 
     # -- drawing -----------------------------------------------------------
 
     def _fill_color(self) -> Color | None:
         s = self.button_style
-        if not self.enabled:
+        if not self.interactive:
             return s.background
+        # `hovered` as well as `pressed`: a press dragged off stops looking
+        # pressed at once, before the release cancels it.
         if self.pressed and self.hovered and s.pressed is not None:
             return s.pressed
         if self.hovered and s.hover is not None:
@@ -133,27 +137,6 @@ class Button(Widget):
         s = self.button_style
         if s.border is not None:
             canvas.draw_rect(rect, _stroke_paint(s.border, s.border_width))
-
-    # -- events ------------------------------------------------------------
-
-    def on_mouse_button(self, event: sdl.MouseButtonEvent):
-        super().on_mouse_button(event)
-        if not self.enabled or event.button != 1:  # left button only
-            return False
-
-        inside = self.hit_test(event.x, event.y)
-        if event.down:
-            self.pressed = inside
-            return inside
-
-        # Fire on release inside, like Flutter: dragging off cancels.
-        was_pressed = self.pressed
-        self.pressed = False
-        if was_pressed and inside:
-            logger.debug(f"{type(self).__name__} pressed at ({event.x}, {event.y})")
-            self.on_pressed()
-            return True
-        return False
 
 
 # -- variants --------------------------------------------------------------------

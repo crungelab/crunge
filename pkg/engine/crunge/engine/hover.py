@@ -26,7 +26,7 @@ from loguru import logger
 
 from .widget import Widget
 from .cursors import CURSOR_ARROW, get_cursor_name, set_cursor
-
+from .cursor_chip import CursorChip
 
 def hover_path(widget: Widget, x: float, y: float) -> list[Widget]:
     """Root-to-leaf chain of widgets under the point, topmost branch only.
@@ -111,10 +111,17 @@ class HoverTracker:
 
         self._hovered = path
 
+        chips = (w.get_chip(CursorChip) for w in reversed(self._hovered))
+        self._wanted = next(
+            (chip.cursor for chip in chips if chip is not None and chip.cursor is not None),
+            CURSOR_ARROW,
+        )
+        '''
         self._wanted = next(
             (w.cursor for w in reversed(path) if w.cursor is not None),
             CURSOR_ARROW,
         )
+        '''
 
     def _apply_cursor(self) -> None:
         if self._wanted is self._applied:

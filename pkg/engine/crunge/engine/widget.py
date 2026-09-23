@@ -5,13 +5,15 @@ import glm
 
 from crunge import yoga
 
+from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from crunge.core.signal import Signal
+
 from .event.event_handler import EventHandler
 from .node import Node
 from .layout import Layout
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
-from .cursors import CURSOR_ARROW
 
 from .gfx_access import GfxAccess
+from .cursor_chip import CursorChip
 
 
 class WidgetLayout(Layout["Widget"]):
@@ -29,7 +31,6 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
     ) -> None:
         super().__init__(children=children)
         self.priority = priority
-        self.hovered = False
 
         # Written only by the layout chip, through on_layout.
         self._position = glm.ivec2(0, 0)
@@ -38,10 +39,8 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
         self.layout = self.layout_class(style)
         self.add_chip(self.layout)
 
-        '''
-        self.layout = WidgetLayout(style)
-        self.add_chip(self.layout)
-        '''
+        self._hovered = False
+        self.hover_changed: Signal[Widget] = Signal()
 
     # -- geometry ----------------------------------------------------------
     #
@@ -105,6 +104,24 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
     def bounds(self) -> yoga.Bounds:
         return self.layout.bounds
 
+    # -- hover state --------------------------------------------------------
+    @property
+    def hovered(self) -> bool:
+        return self._hovered
+
+    @hovered.setter
+    def hovered(self, value: bool) -> None:
+        if self._hovered != value:
+            self._hovered = value
+            self.hover_changed.emit(self)
+
+    '''
+    @property
+    def cursor(self):
+        chip = self.get_chip(CursorChip)
+        return chip.cursor if chip is not None else None
+    '''
+
     # -- style -------------------------------------------------------------
     @property
     def style(self) -> yoga.Style:
@@ -113,11 +130,6 @@ class Widget(EventHandler, GfxAccess, Node["Widget"]):
     @style.setter
     def style(self, value: yoga.Style) -> None:
         self.layout.style = value
-
-    @property
-    def cursor(self):
-        #return CURSOR_ARROW
-        return None
 
     # -- layout ------------------------------------------------------------
 

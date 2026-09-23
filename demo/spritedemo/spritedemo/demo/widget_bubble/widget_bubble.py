@@ -16,6 +16,9 @@ from crunge.engine.d2.settings_2d import Settings2D
 from crunge.engine.d2.control import WidgetControl2D
 from crunge.engine.ui import Button, Text, Image
 from crunge.engine.ui.flex import Row, Column, Spacer
+from crunge.engine.ui.chips import GestureChip
+from crunge.engine.cursor_chip import CursorChip
+
 
 
 from ..demo import Demo
@@ -81,9 +84,10 @@ class WidgetBubbleDemo(Demo):
 
         self.button = Button(
             Text("Hello, World!", color=colors.WHITE),
-            on_pressed=self.on_click,
+            on_pressed=self.on_button_pressed,
         )
-        self.image = Image("${resources}/images/d12_128x128.png")
+        #self.image = Image("${resources}/images/d12_128x128.png").seat(GestureChip(on_tap=self.on_image_tap), CursorChip())
+        self.image = Image("${resources}/images/d12_128x128.png").seat(GestureChip(on_tap=self.on_image_tap))
         self.add_control(
             WidgetControl2D(Row([self.button, Text("Hello, World!"), self.image], spacing=10))
         )
@@ -103,8 +107,11 @@ class WidgetBubbleDemo(Demo):
         self.controls.append(control)
         self.node.add_child(control)
 
-    def on_click(self):
-        logger.info(f"Button clicked: {self.button}")
+    def on_button_pressed(self):
+        logger.info(f"Button pressed: {self.button}")
+
+    def on_image_tap(self):
+        logger.info(f"Image tapped: {self.image}")
 
     def center_camera(self):
         pass
