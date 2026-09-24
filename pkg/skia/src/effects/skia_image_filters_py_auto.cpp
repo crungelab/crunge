@@ -241,7 +241,6 @@ void init_skia_image_filters_py_auto(py::module &_skia, Registry &registry) {
         py::enum_<SkImageFilters::Dither>(_ImageFilters, "Dither", py::arithmetic())
             .value("K_NO", SkImageFilters::Dither::kNo)
             .value("K_YES", SkImageFilters::Dither::kYes)
-            .export_values()
         ;
         _ImageFilters
         .def_static("shader", py::overload_cast<sk_sp<SkShader>, const SkImageFilters::CropRect &>(&SkImageFilters::Shader)

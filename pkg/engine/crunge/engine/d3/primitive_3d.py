@@ -1,5 +1,4 @@
 from loguru import logger
-import numpy as np
 
 from crunge import wgpu
 
@@ -10,7 +9,7 @@ from ..resource.mesh.primitive import Primitive
 from .material_3d import Material3D
 
 from .program_3d import Program3D
-from .node_3d import Node3D
+
 
 class Primitive3DProgram(Program3D):
     def __init__(self):
@@ -28,7 +27,7 @@ class Primitive3D(Primitive):
 
     def draw(self):
         renderer = Renderer.get_current()
-        
+
         pass_enc = renderer.pass_enc
         pass_enc.set_pipeline(self.program.pipeline)
         self.material.bind(pass_enc)

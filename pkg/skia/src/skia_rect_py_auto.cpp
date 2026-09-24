@@ -22,6 +22,31 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
         .def_readwrite("f_top", &SkIRect::fTop)
         .def_readwrite("f_right", &SkIRect::fRight)
         .def_readwrite("f_bottom", &SkIRect::fBottom)
+        .def_static("make_empty", &SkIRect::MakeEmpty
+            )
+        .def_static("make_wh", &SkIRect::MakeWH
+            , py::arg("w")
+            , py::arg("h")
+            )
+        .def_static("make_size", &SkIRect::MakeSize
+            , py::arg("size")
+            )
+        .def_static("make_pt_size", &SkIRect::MakePtSize
+            , py::arg("pt")
+            , py::arg("size")
+            )
+        .def_static("make_ltrb", &SkIRect::MakeLTRB
+            , py::arg("l")
+            , py::arg("t")
+            , py::arg("r")
+            , py::arg("b")
+            )
+        .def_static("make_xywh", &SkIRect::MakeXYWH
+            , py::arg("x")
+            , py::arg("y")
+            , py::arg("w")
+            , py::arg("h")
+            )
         .def("left", &SkIRect::left
             )
         .def("top", &SkIRect::top
@@ -128,6 +153,10 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
             , py::arg("a")
             , py::arg("b")
             )
+        .def_static("intersects", &SkIRect::Intersects
+            , py::arg("a")
+            , py::arg("b")
+            )
         .def("join", &SkIRect::join
             , py::arg("r")
             )
@@ -146,6 +175,37 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
         .def_readwrite("f_top", &SkRect::fTop)
         .def_readwrite("f_right", &SkRect::fRight)
         .def_readwrite("f_bottom", &SkRect::fBottom)
+        .def_static("make_empty", &SkRect::MakeEmpty
+            )
+        .def_static("make_wh", &SkRect::MakeWH
+            , py::arg("w")
+            , py::arg("h")
+            )
+        .def_static("make_iwh", &SkRect::MakeIWH
+            , py::arg("w")
+            , py::arg("h")
+            )
+        .def_static("make_size", &SkRect::MakeSize
+            , py::arg("size")
+            )
+        .def_static("make_ltrb", &SkRect::MakeLTRB
+            , py::arg("l")
+            , py::arg("t")
+            , py::arg("r")
+            , py::arg("b")
+            )
+        .def_static("make_xywh", &SkRect::MakeXYWH
+            , py::arg("x")
+            , py::arg("y")
+            , py::arg("w")
+            , py::arg("h")
+            )
+        .def_static("make", py::overload_cast<const SkISize &>(&SkRect::Make)
+            , py::arg("size")
+            )
+        .def_static("make", py::overload_cast<const SkIRect &>(&SkRect::Make)
+            , py::arg("irect")
+            )
         .def("is_empty", &SkRect::isEmpty
             )
         .def("is_sorted", &SkRect::isSorted
@@ -282,6 +342,10 @@ void init_skia_rect_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("intersects", &SkRect::intersects
             , py::arg("r")
+            )
+        .def_static("intersects_static", py::overload_cast<const SkRect &, const SkRect &>(&SkRect::Intersects)
+            , py::arg("a")
+            , py::arg("b")
             )
         .def("join", &SkRect::join
             , py::arg("r")

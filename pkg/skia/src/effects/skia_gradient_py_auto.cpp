@@ -23,7 +23,6 @@ void init_skia_gradient_py_auto(py::module &_skia, Registry &registry) {
             py::enum_<SkGradient::Interpolation::InPremul>(_GradientInterpolation, "InPremul", py::arithmetic())
                 .value("K_NO", SkGradient::Interpolation::InPremul::kNo)
                 .value("K_YES", SkGradient::Interpolation::InPremul::kYes)
-                .export_values()
             ;
             py::enum_<SkGradient::Interpolation::ColorSpace>(_GradientInterpolation, "ColorSpace", py::arithmetic())
                 .value("K_DESTINATION", SkGradient::Interpolation::ColorSpace::kDestination)
@@ -42,7 +41,6 @@ void init_skia_gradient_py_auto(py::module &_skia, Registry &registry) {
                 .value("K_PROPHOTO_RGB", SkGradient::Interpolation::ColorSpace::kProphotoRGB)
                 .value("K_A98_RGB", SkGradient::Interpolation::ColorSpace::kA98RGB)
                 .value("K_LAST_COLOR_SPACE", SkGradient::Interpolation::ColorSpace::kLastColorSpace)
-                .export_values()
             ;
             py::enum_<SkGradient::Interpolation::HueMethod>(_GradientInterpolation, "HueMethod", py::arithmetic())
                 .value("K_SHORTER", SkGradient::Interpolation::HueMethod::kShorter)
@@ -50,7 +48,6 @@ void init_skia_gradient_py_auto(py::module &_skia, Registry &registry) {
                 .value("K_INCREASING", SkGradient::Interpolation::HueMethod::kIncreasing)
                 .value("K_DECREASING", SkGradient::Interpolation::HueMethod::kDecreasing)
                 .value("K_LAST_HUE_METHOD", SkGradient::Interpolation::HueMethod::kLastHueMethod)
-                .export_values()
             ;
             _GradientInterpolation
             .def_readwrite("f_in_premul", &SkGradient::Interpolation::fInPremul)

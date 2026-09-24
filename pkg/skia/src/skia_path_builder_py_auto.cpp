@@ -342,7 +342,6 @@ void init_skia_path_builder_py_auto(py::module &_skia, Registry &registry) {
         py::enum_<SkPathBuilder::Reserve>(_PathBuilder, "Reserve", py::arithmetic())
             .value("K_EXACT", SkPathBuilder::Reserve::kExact)
             .value("K_GROW", SkPathBuilder::Reserve::kGrow)
-            .export_values()
         ;
         _PathBuilder
         .def("add_raw", &SkPathBuilder::addRaw
@@ -356,7 +355,6 @@ void init_skia_path_builder_py_auto(py::module &_skia, Registry &registry) {
         py::enum_<SkPathBuilder::DumpFormat>(_PathBuilder, "DumpFormat", py::arithmetic())
             .value("K_DECIMAL", SkPathBuilder::DumpFormat::kDecimal)
             .value("K_HEX", SkPathBuilder::DumpFormat::kHex)
-            .export_values()
         ;
         _PathBuilder
         .def("dump_to_string", &SkPathBuilder::dumpToString

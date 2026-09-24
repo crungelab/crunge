@@ -20,14 +20,12 @@ void init_skia_font_types_py_auto(py::module &_skia, Registry &registry) {
         .value("K_UTF16", SkTextEncoding::kUTF16)
         .value("K_UTF32", SkTextEncoding::kUTF32)
         .value("K_GLYPH_ID", SkTextEncoding::kGlyphID)
-        .export_values()
     ;
     py::enum_<SkFontHinting>(_skia, "FontHinting", py::arithmetic())
         .value("K_NONE", SkFontHinting::kNone)
         .value("K_SLIGHT", SkFontHinting::kSlight)
         .value("K_NORMAL", SkFontHinting::kNormal)
         .value("K_FULL", SkFontHinting::kFull)
-        .export_values()
     ;
 
 }

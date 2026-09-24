@@ -31,7 +31,7 @@ void init_skia_color_space_py_auto(py::module &_skia, Registry &registry) {
             )
     ;
 
-    py::enum_<SkNamedPrimaries::CicpId>(_skia, "CicpId", py::arithmetic())
+    py::enum_<SkNamedPrimaries::CicpId>(_skia, "NamedPrimariesCicpId", py::arithmetic())
         .value("K_REC709", SkNamedPrimaries::CicpId::kRec709)
         .value("K_REC470_SYSTEM_M", SkNamedPrimaries::CicpId::kRec470SystemM)
         .value("K_REC470_SYSTEM_BG", SkNamedPrimaries::CicpId::kRec470SystemBG)
@@ -43,7 +43,6 @@ void init_skia_color_space_py_auto(py::module &_skia, Registry &registry) {
         .value("K_SMPTE_RP_431_2", SkNamedPrimaries::CicpId::kSMPTE_RP_431_2)
         .value("K_SMPTE_EG_432_1", SkNamedPrimaries::CicpId::kSMPTE_EG_432_1)
         .value("K_ITU_T_H273_VALUE22", SkNamedPrimaries::CicpId::kITU_T_H273_Value22)
-        .export_values()
     ;
     py::enum_<SkNamedTransferFn::CicpId>(_skia, "NamedTransferFnCicpId", py::arithmetic())
         .value("K_REC709", SkNamedTransferFn::CicpId::kRec709)
@@ -60,7 +59,6 @@ void init_skia_color_space_py_auto(py::module &_skia, Registry &registry) {
         .value("K_PQ", SkNamedTransferFn::CicpId::kPQ)
         .value("K_SMPTE_ST_428_1", SkNamedTransferFn::CicpId::kSMPTE_ST_428_1)
         .value("K_HLG", SkNamedTransferFn::CicpId::kHLG)
-        .export_values()
     ;
     py::class_<SkColorSpace,sk_sp<SkColorSpace>> _ColorSpace(_skia, "ColorSpace");
     registry.on(_skia, "ColorSpace", _ColorSpace);

@@ -6,12 +6,12 @@ from loguru import logger
 import glm
 
 from crunge.core import klass
+from crunge.core.signal import Pulse
+
 from crunge import wgpu
 
 from ..viewport import Viewport
 from ..easel import Easel
-#from ..binding import SceneBindGroup
-from crunge.core.signal import Pulse
 from ..camera_chip import CameraChip
 
 from .node_3d import Node3D
@@ -23,10 +23,9 @@ class CameraProgram3D(Program3D):
     pass
 
 
-
-
 class CameraChip3D(CameraChip["Camera3D"]):
     pass
+
 
 class Camera3D(Node3D):
     def __init__(
@@ -68,23 +67,6 @@ class Camera3D(Node3D):
     @property
     def chip(self) -> CameraChip3D | None:
         return self.get_chip(CameraChip3D)
-
-    '''
-    @property
-    def uniform_buffer(self) -> wgpu.Buffer:
-        chip = self.chip
-        return chip.uniform_buffer if chip is not None else None
-
-    @property
-    def uniform_buffer_size(self) -> int:
-        chip = self.chip
-        return chip.uniform_buffer_size if chip is not None else 0
-
-    @property
-    def bind_group(self) -> SceneBindGroup:
-        chip = self.chip
-        return chip.bind_group if chip is not None else None
-    '''
 
     def bind(self, pass_enc: wgpu.RenderPassEncoder):
         self.require_chip(CameraChip3D).bind(pass_enc)

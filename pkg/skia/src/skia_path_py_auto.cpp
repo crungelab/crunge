@@ -47,13 +47,11 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         .value("K_INVERSE_WINDING", SkPathFillType::kInverseWinding)
         .value("K_INVERSE_EVEN_ODD", SkPathFillType::kInverseEvenOdd)
         .value("K_DEFAULT", SkPathFillType::kDefault)
-        .export_values()
     ;
     py::enum_<SkPathDirection>(_skia, "PathDirection", py::arithmetic())
         .value("K_CW", SkPathDirection::kCW)
         .value("K_CCW", SkPathDirection::kCCW)
         .value("K_DEFAULT", SkPathDirection::kDefault)
-        .export_values()
     ;
     py::enum_<SkPathSegmentMask>(_skia, "PathSegmentMask", py::arithmetic())
         .value("K_LINE_SK_PATH_SEGMENT_MASK", SkPathSegmentMask::kLine_SkPathSegmentMask)
@@ -70,7 +68,6 @@ void init_skia_path_py_auto(py::module &_skia, Registry &registry) {
         .value("K_CUBIC", SkPathVerb::kCubic)
         .value("K_CLOSE", SkPathVerb::kClose)
         .value("K_LAST_VERB", SkPathVerb::kLast_Verb)
-        .export_values()
     ;
 
     py::class_<SkPath> _Path(_skia, "Path");

@@ -19,14 +19,12 @@ void init_skia_sampling_options_py_auto(py::module &_skia, Registry &registry) {
         .value("K_NEAREST", SkFilterMode::kNearest)
         .value("K_LINEAR", SkFilterMode::kLinear)
         .value("K_LAST", SkFilterMode::kLast)
-        .export_values()
     ;
     py::enum_<SkMipmapMode>(_skia, "MipmapMode", py::arithmetic())
         .value("K_NONE", SkMipmapMode::kNone)
         .value("K_NEAREST", SkMipmapMode::kNearest)
         .value("K_LINEAR", SkMipmapMode::kLinear)
         .value("K_LAST", SkMipmapMode::kLast)
-        .export_values()
     ;
     py::class_<SkCubicResampler> _CubicResampler(_skia, "CubicResampler");
     registry.on(_skia, "CubicResampler", _CubicResampler);

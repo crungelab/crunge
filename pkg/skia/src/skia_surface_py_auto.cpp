@@ -22,7 +22,6 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
     py::enum_<SkSurfaces::BackendSurfaceAccess>(_skia, "BackendSurfaceAccess", py::arithmetic())
         .value("K_NO_ACCESS", SkSurfaces::BackendSurfaceAccess::kNoAccess)
         .value("K_PRESENT", SkSurfaces::BackendSurfaceAccess::kPresent)
-        .export_values()
     ;
     _skia
     .def("null", &SkSurfaces::Null
@@ -85,7 +84,6 @@ void init_skia_surface_py_auto(py::module &_skia, Registry &registry) {
             .value("K_FLUSH_READ_BACKEND_HANDLE_ACCESS", SkSurface::BackendHandleAccess::kFlushRead_BackendHandleAccess)
             .value("K_FLUSH_WRITE_BACKEND_HANDLE_ACCESS", SkSurface::BackendHandleAccess::kFlushWrite_BackendHandleAccess)
             .value("K_DISCARD_WRITE_BACKEND_HANDLE_ACCESS", SkSurface::BackendHandleAccess::kDiscardWrite_BackendHandleAccess)
-            .export_values()
         ;
         _Surface
         .def("get_canvas", &SkSurface::getCanvas

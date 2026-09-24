@@ -20,7 +20,6 @@ void init_skia_tile_mode_py_auto(py::module &_skia, Registry &registry) {
         .value("K_MIRROR", SkTileMode::kMirror)
         .value("K_DECAL", SkTileMode::kDecal)
         .value("K_LAST_TILE_MODE", SkTileMode::kLastTileMode)
-        .export_values()
     ;
 
 }

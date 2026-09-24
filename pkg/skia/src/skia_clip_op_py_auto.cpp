@@ -18,7 +18,6 @@ void init_skia_clip_op_py_auto(py::module &_skia, Registry &registry) {
         .value("K_DIFFERENCE", SkClipOp::kDifference)
         .value("K_INTERSECT", SkClipOp::kIntersect)
         .value("K_MAX_ENUM_VALUE", SkClipOp::kMax_EnumValue)
-        .export_values()
     ;
 
 }

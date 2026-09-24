@@ -48,7 +48,6 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
     py::enum_<SkImages::BitDepth>(_skia, "BitDepth", py::arithmetic())
         .value("K_U8", SkImages::BitDepth::kU8)
         .value("K_F16", SkImages::BitDepth::kF16)
-        .export_values()
     ;
     _skia
     .def("deferred_from_picture", py::overload_cast<sk_sp<SkPicture>, const SkISize &, const SkMatrix *, const SkPaint *, SkImages::BitDepth, sk_sp<SkColorSpace>, SkSurfaceProps>(&SkImages::DeferredFromPicture)
@@ -205,14 +204,12 @@ void init_skia_image_py_auto(py::module &_skia, Registry &registry) {
         py::enum_<SkImage::RescaleGamma>(_Image, "RescaleGamma", py::arithmetic())
             .value("K_SRC", SkImage::RescaleGamma::kSrc)
             .value("K_LINEAR", SkImage::RescaleGamma::kLinear)
-            .export_values()
         ;
         py::enum_<SkImage::RescaleMode>(_Image, "RescaleMode", py::arithmetic())
             .value("K_NEAREST", SkImage::RescaleMode::kNearest)
             .value("K_LINEAR", SkImage::RescaleMode::kLinear)
             .value("K_REPEATED_LINEAR", SkImage::RescaleMode::kRepeatedLinear)
             .value("K_REPEATED_CUBIC", SkImage::RescaleMode::kRepeatedCubic)
-            .export_values()
         ;
         _Image
         .def("async_rescale_and_read_pixels", &SkImage::asyncRescaleAndReadPixels

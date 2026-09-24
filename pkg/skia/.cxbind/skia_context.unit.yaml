@@ -5,8 +5,5 @@ excludes:
   # Wrapped
 
   # Internal / Ignored
-  # .def("start_capture", &skgpu::graphite::Context::startCapture)
-  # .def("end_capture", &skgpu::graphite::Context::endCapture
-
   - 'method@skgpu::graphite::Context::startCapture'
   - 'method@skgpu::graphite::Context::endCapture'

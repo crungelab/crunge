@@ -87,7 +87,6 @@ void init_skia_font_py_auto(py::module &_skia, Registry &registry) {
             .value("K_ALIAS", SkFont::Edging::kAlias)
             .value("K_ANTI_ALIAS", SkFont::Edging::kAntiAlias)
             .value("K_SUBPIXEL_ANTI_ALIAS", SkFont::Edging::kSubpixelAntiAlias)
-            .export_values()
         ;
         _Font
         .def("is_force_auto_hinting", &SkFont::isForceAutoHinting

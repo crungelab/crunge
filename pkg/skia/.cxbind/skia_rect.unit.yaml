@@ -1,26 +1,2 @@
 source: '../../depot/skia/include/core/SkRect.h'
 target: 'src/skia_rect_py_auto.cpp'
-
-excludes:
-  # Wrapped
-  # Internal / Ignored
-  - 'method@SkIRect::MakeEmpty'
-  - 'method@SkIRect::MakeWH'
-  - 'method@SkIRect::MakeSize'
-  - 'method@SkIRect::MakePtSize'
-  - 'method@SkIRect::MakeLTRB'
-  - 'method@SkIRect::MakeXYWH'
-  - 'method@SkIRect::Intersects'
-
-  - 'method@SkRect::Make'
-  - 'method@SkRect::MakeEmpty'
-  - 'method@SkRect::MakeWH'
-  - 'method@SkRect::MakeSize'
-  - 'method@SkRect::MakePtSize'
-  - 'method@SkRect::MakeLTRB'
-  - 'method@SkRect::MakeXYWH'
-  - 'method@SkRect::Intersects'
-
-  - 'method@SkRect::MakeIWH'
-
-  # Overloads

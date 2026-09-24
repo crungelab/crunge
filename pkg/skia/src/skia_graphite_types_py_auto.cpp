@@ -79,12 +79,10 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
     py::enum_<skgpu::graphite::SyncToCpu>(_skia, "SyncToCpu", py::arithmetic())
         .value("K_YES", skgpu::graphite::SyncToCpu::kYes)
         .value("K_NO", skgpu::graphite::SyncToCpu::kNo)
-        .export_values()
     ;
     py::enum_<skgpu::graphite::MarkFrameBoundary>(_skia, "MarkFrameBoundary", py::arithmetic())
         .value("K_YES", skgpu::graphite::MarkFrameBoundary::kYes)
         .value("K_NO", skgpu::graphite::MarkFrameBoundary::kNo)
-        .export_values()
     ;
     py::class_<skgpu::graphite::SubmitInfo> _SubmitInfo(_skia, "SubmitInfo");
     registry.on(_skia, "SubmitInfo", _SubmitInfo);
@@ -106,14 +104,12 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
     py::enum_<skgpu::graphite::Volatile>(_skia, "Volatile", py::arithmetic())
         .value("K_NO", skgpu::graphite::Volatile::kNo)
         .value("K_YES", skgpu::graphite::Volatile::kYes)
-        .export_values()
     ;
     py::enum_<skgpu::graphite::DepthStencilFlags>(_skia, "DepthStencilFlags", py::arithmetic())
         .value("K_NONE", skgpu::graphite::DepthStencilFlags::kNone)
         .value("K_DEPTH", skgpu::graphite::DepthStencilFlags::kDepth)
         .value("K_STENCIL", skgpu::graphite::DepthStencilFlags::kStencil)
         .value("K_DEPTH_STENCIL", skgpu::graphite::DepthStencilFlags::kDepthStencil)
-        .export_values()
     ;
     py::enum_<skgpu::graphite::SampleCount>(_skia, "SampleCount", py::arithmetic())
         .value("K1", skgpu::graphite::SampleCount::k1)
@@ -121,7 +117,6 @@ void init_skia_graphite_types_py_auto(py::module &_skia, Registry &registry) {
         .value("K4", skgpu::graphite::SampleCount::k4)
         .value("K8", skgpu::graphite::SampleCount::k8)
         .value("K16", skgpu::graphite::SampleCount::k16)
-        .export_values()
     ;
     _skia
     .def("to_sample_count", &skgpu::graphite::ToSampleCount
