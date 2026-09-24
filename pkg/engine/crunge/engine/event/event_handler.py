@@ -67,7 +67,17 @@ class EventHandler:
 
     def on_key(self, event: sdl.KeyboardEvent):
         # logger.debug(f"key: {event.key}")
+        if event.down and not event.repeat:
+            self.on_key_press(event)
+
+    def on_key_press(self, event: sdl.KeyboardEvent):
         pass
+
+    '''
+    def on_key(self, event: sdl.KeyboardEvent):
+        # logger.debug(f"key: {event.key}")
+        pass
+    '''
 
     def on_mouse_enter(self, event: sdl.WindowEvent):
         # logger.debug("mouse enter")
