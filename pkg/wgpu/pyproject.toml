@@ -9,9 +9,10 @@ packages = ["crunge", "crunge.wgpu"]
 name = "crunge-wgpu"
 version = "0.1.0"
 description = 'Crunge WebGPU Extension'
-#readme = "README.md"
+readme = "README.md"
 requires-python = ">=3.10"
-#license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [
@@ -24,8 +25,6 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-
-[tool.cxbuild.project]
 
 [tool.cxbuild.extension]
 name="crunge.wgpu._wgpu"

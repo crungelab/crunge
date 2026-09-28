@@ -225,34 +225,34 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("size")
             )
         .def("create_body", &b2CreateBody
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_distance_joint", &b2CreateDistanceJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_filter_joint", &b2CreateFilterJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_motor_joint", &b2CreateMotorJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_mover_joint", &b2CreateMoverJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_pogo_joint", &b2CreatePogoJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_prismatic_joint", &b2CreatePrismaticJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_revolute_joint", &b2CreateRevoluteJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_weld_joint", &b2CreateWeldJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def("create_wheel_joint", &b2CreateWheelJoint
-            , py::arg("def")
+            , py::arg("def_")
             )
     ;
 
@@ -447,27 +447,27 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def("compute_aabb", &b2Body_ComputeAABB
             )
         .def("create_circle_shape", &b2CreateCircleShape
-            , py::arg("def")
+            , py::arg("def_")
             , py::arg("circle")
             )
         .def("create_segment_shape", &b2CreateSegmentShape
-            , py::arg("def")
+            , py::arg("def_")
             , py::arg("segment")
             )
         .def("create_chain_segment_shape", &b2CreateChainSegmentShape
-            , py::arg("def")
+            , py::arg("def_")
             , py::arg("chain_segment")
             )
         .def("create_capsule_shape", &b2CreateCapsuleShape
-            , py::arg("def")
+            , py::arg("def_")
             , py::arg("capsule")
             )
         .def("create_polygon_shape", &b2CreatePolygonShape
-            , py::arg("def")
+            , py::arg("def_")
             , py::arg("polygon")
             )
         .def("create_chain", &b2CreateChain
-            , py::arg("def")
+            , py::arg("def_")
             )
         .def_property("user_data", &Body_GetUserData, &Body_SetUserData)
         .def_property("mass_data", &b2Body_GetMassData, &b2Body_SetMassData)

@@ -10,21 +10,19 @@ packages = ["crunge", "crunge.box2d"]
 name = "crunge-box2d"
 version = "0.1.0"
 description = 'Crunge Box2D Extension'
-#readme = "README.md"
+readme = "README.md"
 requires-python = ">=3.12"
-#license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-
-[tool.cxbuild.project]
 
 [tool.cxbuild.extension]
 name="crunge.box2d._box2d"

@@ -94,4 +94,7 @@ temp
 depot/*
 
 # CxBuild
-_cxbuild
+_cxbuild/
+
+# CxBind
+_cxbind/

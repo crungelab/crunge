@@ -20,6 +20,73 @@ specs:
   'struct@ImFontAtlasBuilder':
     wrapper: 'pycapsule'
 
+  'struct@ImDrawList':
+    stub:
+      imports: [collections.abc.Iterator]
+      members: |
+        def __iter__(self) -> Iterator[DrawCmd]: ...
+        @property
+        def cmd_buffer_size(self) -> int: ...
+        @property
+        def cmd_buffer_data(self) -> memoryview: ...
+        @property
+        def vtx_buffer_size(self) -> int: ...
+        @property
+        def vtx_buffer_data(self) -> memoryview: ...
+        @property
+        def idx_buffer_size(self) -> int: ...
+        @property
+        def idx_buffer_data(self) -> memoryview: ...
+
+  'struct@ImDrawCmd':
+    stub:
+      members: |
+        @property
+        def texture_id(self) -> int: ...
+
+  'struct@ImDrawData':
+    stub:
+      members: |
+        @property
+        def cmd_lists(self) -> list[DrawList]: ...
+
+  'struct@ImGuiStyle':
+    stub:
+      members: |
+        @property
+        def colors(self) -> list[tuple[float, float, float, float]]: ...
+        def set_color(self, item: int, color: Vec4) -> None: ...
+
+  'struct@ImTextureData':
+    stub:
+      members: |
+        @property
+        def pixels(self) -> memoryview | None: ...
+
+  'struct@ImTextureRef':
+    stub:
+      members: |
+        @property
+        def texture_id(self) -> int: ...
+
+  'struct@ImDrawVert':
+    stub:
+      imports: [typing.ClassVar]
+      members: |
+        pos_offset: ClassVar[int]
+        uv_offset: ClassVar[int]
+        col_offset: ClassVar[int]
+
+  'struct@ImFontAtlas':
+    stub:
+      members: |
+        def add_font_from_file_ttf(self, filename: str, size_pixels: float, font_cfg: FontConfig | None = ..., glyph_ranges: GlyphRanges = ...) -> Font: ...
+
+  'struct@ImGuiIO':
+    stub:
+      members: |
+        def set_mouse_down(self, button: int, down: bool) -> None: ...
+
 excludes:
   # Wrapped
   - 'function@ImGui::SetDragDropPayload'

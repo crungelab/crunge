@@ -1,0 +1,4 @@
+# pybind11 internal marker on module_local classes (py::bind_vector of a
+# builtin element type). The name encodes the pybind11 internals version
+# and C++ ABI, so it can't be declared portably in the stub.
+.*\.__pybind11_module_local_.*

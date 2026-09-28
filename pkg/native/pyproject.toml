@@ -12,9 +12,10 @@ packages = ["crunge", "crunge.native"]
 name = "crunge-native"
 version = "0.1.0"
 description = 'Crunge Native'
-#readme = "README.md"
+readme = "README.md"
 requires-python = ">=3.12"
-#license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [

@@ -47,14 +47,21 @@ add_subdirectory(depot/sdl EXCLUDE_FROM_ALL)
 set(SDLMIXER_INSTALL OFF)
 add_subdirectory(depot/sdl_mixer EXCLUDE_FROM_ALL)
 
+set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 set(TINYGLTF_INSTALL OFF)
 set(TINYGLTF_BUILD_LOADER_EXAMPLE OFF)
 add_subdirectory(depot/tinygltf EXCLUDE_FROM_ALL)
+unset(CMAKE_POLICY_VERSION_MINIMUM)
 
-add_subdirectory(depot/yoga EXCLUDE_FROM_ALL)
+#add_subdirectory(depot/yoga EXCLUDE_FROM_ALL)
+# yoga's top-level CMakeLists.txt always adds its tests (fetching googletest at configure
+# time); the library directory builds just `yogacore`.
+add_subdirectory(depot/yoga/yoga)
 
+set(CMAKE_POLICY_VERSION_MINIMUM 3.10)
 set(TMXLITE_STATIC_LIB TRUE)
 add_subdirectory(depot/tmxlite/tmxlite EXCLUDE_FROM_ALL)
+unset(CMAKE_POLICY_VERSION_MINIMUM)
 
 add_subdirectory(depot/box2d EXCLUDE_FROM_ALL)
 

@@ -1,4 +1,0 @@
-# Google Depot Tools
-
-export PATH=$HOME/SDK/depot_tools:$PATH
-export EDITOR=nano

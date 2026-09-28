@@ -9,5 +9,8 @@ flags: [
 
 prefixes: [ImGui, Im]
 
+targets:
+  pyi: crunge/imgui/_imgui.pyi
+
 unit_files:
   - path: imgui.unit.yaml

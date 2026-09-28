@@ -12,9 +12,9 @@ packages = ["crunge", "crunge.abt"]
 name = "crunge-abt"
 version = "0.1.0"
 description = 'Crunge Asynchronous Behavior Trees'
-#readme = "README.md"
-requires-python = ">=3.12"
-#license = { file = "LICENSE" }
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [
@@ -29,3 +29,5 @@ dependencies = [
   "PyYAML ==6.0.3",
   "sly ==0.5",
 ]
+requires-python = ">=3.12"
+

@@ -1,33 +1,27 @@
 [build-system]
-requires = ["cxbuild==0.2", "setuptools", "wheel"]
+requires = ["cxbuild>=0.3"]
 build-backend = "cxbuild.backend"
-
-[tool.setuptools]
-packages = ["crunge", "crunge.imgui"]
-
 
 [project]
 name = "crunge-imgui"
 version = "0.1.0"
-description = 'Crunge ImGui Extension'
-#readme = "README.md"
-requires-python = ">=3.10"
-#license = { file = "LICENSE" }
+description = "Crunge ImGui Extension"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = []
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+  "Typing :: Typed",
 ]
 
-[tool.cxbuild.project]
+[project.optional-dependencies]
+test = ["pytest", "mypy"]
 
 [tool.cxbuild.extension]
-name="crunge.imgui._imgui"
-
+name = "crunge.imgui._imgui"

@@ -19,7 +19,7 @@ namespace py = pybind11;
 void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
     _box2d
     .def("create_world", &b2CreateWorld
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("destroy_world", &b2DestroyWorld
         , py::arg("world_id")
@@ -313,7 +313,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_body", &b2CreateBody
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("body_is_valid", &b2Body_IsValid
         , py::arg("id")
@@ -569,27 +569,27 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_circle_shape", &b2CreateCircleShape
         , py::arg("body_id")
-        , py::arg("def")
+        , py::arg("def_")
         , py::arg("circle")
         )
     .def("create_segment_shape", &b2CreateSegmentShape
         , py::arg("body_id")
-        , py::arg("def")
+        , py::arg("def_")
         , py::arg("segment")
         )
     .def("create_chain_segment_shape", &b2CreateChainSegmentShape
         , py::arg("body_id")
-        , py::arg("def")
+        , py::arg("def_")
         , py::arg("chain_segment")
         )
     .def("create_capsule_shape", &b2CreateCapsuleShape
         , py::arg("body_id")
-        , py::arg("def")
+        , py::arg("def_")
         , py::arg("capsule")
         )
     .def("create_polygon_shape", &b2CreatePolygonShape
         , py::arg("body_id")
-        , py::arg("def")
+        , py::arg("def_")
         , py::arg("polygon")
         )
     .def("shape_is_valid", &b2Shape_IsValid
@@ -760,7 +760,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_chain", &b2CreateChain
         , py::arg("body_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("destroy_chain", &b2DestroyChain
         , py::arg("chain_id")
@@ -882,7 +882,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_distance_joint", &b2CreateDistanceJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("distance_joint_set_length", &b2DistanceJoint_SetLength
         , py::arg("joint_id")
@@ -973,11 +973,11 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_filter_joint", &b2CreateFilterJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("create_motor_joint", &b2CreateMotorJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("motor_joint_set_linear_velocity", &b2MotorJoint_SetLinearVelocity
         , py::arg("joint_id")
@@ -1051,7 +1051,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_mover_joint", &b2CreateMoverJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("mover_joint_set_linear_velocity", &b2MoverJoint_SetLinearVelocity
         , py::arg("joint_id")
@@ -1069,7 +1069,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_pogo_joint", &b2CreatePogoJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("pogo_joint_set_rest_length", &b2PogoJoint_SetRestLength
         , py::arg("joint_id")
@@ -1103,7 +1103,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_prismatic_joint", &b2CreatePrismaticJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("prismatic_joint_enable_spring", &b2PrismaticJoint_EnableSpring
         , py::arg("joint_id")
@@ -1183,7 +1183,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_revolute_joint", &b2CreateRevoluteJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("revolute_joint_enable_spring", &b2RevoluteJoint_EnableSpring
         , py::arg("joint_id")
@@ -1260,7 +1260,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_weld_joint", &b2CreateWeldJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("weld_joint_set_linear_hertz", &b2WeldJoint_SetLinearHertz
         , py::arg("joint_id")
@@ -1292,7 +1292,7 @@ void init_box2d_py_auto(py::module &_box2d, Registry &registry) {
         )
     .def("create_wheel_joint", &b2CreateWheelJoint
         , py::arg("world_id")
-        , py::arg("def")
+        , py::arg("def_")
         )
     .def("wheel_joint_enable_spring", &b2WheelJoint_EnableSpring
         , py::arg("joint_id")

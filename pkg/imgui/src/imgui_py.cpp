@@ -19,16 +19,9 @@
 
 namespace py = pybind11;
 
-/*thread_local ImGuiContext* TImGui;
-ImGuiContext* GetGImGui() {
-  return TImGui;
-}*/
 ImGuiContext* TImGui;  // Current implicit context pointer
 
 PYBIND11_MAKE_OPAQUE(std::vector<ImWchar>);
-//PYBIND11_MAKE_OPAQUE(std::vector<ImDrawCmd>);
-//PYBIND11_MAKE_OPAQUE(std::vector<ImDrawVert>);
-//PYBIND11_MAKE_OPAQUE(std::vector<ImFontGlyph>);
 
 void init_imgui_py(py::module &_imgui, Registry &registry) {
     py::bind_vector<std::vector<ImWchar>>(_imgui, "GlyphRanges", "ImGui Glyph Range Vector");
@@ -190,7 +183,6 @@ void init_imgui_py(py::module &_imgui, Registry &registry) {
         [](const ImDrawList &dl) { return py::make_iterator(dl.CmdBuffer.Data, dl.CmdBuffer.Data + dl.CmdBuffer.Size); },
         py::keep_alive<0, 1>() /* Essential: keep object alive while iterator exists */);
 
-    //void ImDrawList::AddPolyline(const ImVec2* points, const int points_count, ImU32 col, bool closed, float thickness)
     _DrawList.def("add_polyline",  [](ImDrawList& self, py::list points, ImU32 col, bool closed, float thickness)
     {
         const int points_count = points.size();
