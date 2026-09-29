@@ -60,6 +60,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("WINDOW_LEAVE_FULLSCREEN", SDL_EventType::SDL_EVENT_WINDOW_LEAVE_FULLSCREEN)
         .value("WINDOW_DESTROYED", SDL_EventType::SDL_EVENT_WINDOW_DESTROYED)
         .value("WINDOW_HDR_STATE_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_HDR_STATE_CHANGED)
+        .value("WINDOW_SETTINGS_CHANGED", SDL_EventType::SDL_EVENT_WINDOW_SETTINGS_CHANGED)
         .value("WINDOW_FIRST", SDL_EventType::SDL_EVENT_WINDOW_FIRST)
         .value("WINDOW_LAST", SDL_EventType::SDL_EVENT_WINDOW_LAST)
         .value("KEY_DOWN", SDL_EventType::SDL_EVENT_KEY_DOWN)
@@ -72,12 +73,16 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("TEXT_EDITING_CANDIDATES", SDL_EventType::SDL_EVENT_TEXT_EDITING_CANDIDATES)
         .value("SCREEN_KEYBOARD_SHOWN", SDL_EventType::SDL_EVENT_SCREEN_KEYBOARD_SHOWN)
         .value("SCREEN_KEYBOARD_HIDDEN", SDL_EventType::SDL_EVENT_SCREEN_KEYBOARD_HIDDEN)
+        .value("KEYBOARD_FIRST", SDL_EventType::SDL_EVENT_KEYBOARD_FIRST)
+        .value("KEYBOARD_LAST", SDL_EventType::SDL_EVENT_KEYBOARD_LAST)
         .value("MOUSE_MOTION", SDL_EventType::SDL_EVENT_MOUSE_MOTION)
         .value("MOUSE_BUTTON_DOWN", SDL_EventType::SDL_EVENT_MOUSE_BUTTON_DOWN)
         .value("MOUSE_BUTTON_UP", SDL_EventType::SDL_EVENT_MOUSE_BUTTON_UP)
         .value("MOUSE_WHEEL", SDL_EventType::SDL_EVENT_MOUSE_WHEEL)
         .value("MOUSE_ADDED", SDL_EventType::SDL_EVENT_MOUSE_ADDED)
         .value("MOUSE_REMOVED", SDL_EventType::SDL_EVENT_MOUSE_REMOVED)
+        .value("MOUSE_FIRST", SDL_EventType::SDL_EVENT_MOUSE_FIRST)
+        .value("MOUSE_LAST", SDL_EventType::SDL_EVENT_MOUSE_LAST)
         .value("JOYSTICK_AXIS_MOTION", SDL_EventType::SDL_EVENT_JOYSTICK_AXIS_MOTION)
         .value("JOYSTICK_BALL_MOTION", SDL_EventType::SDL_EVENT_JOYSTICK_BALL_MOTION)
         .value("JOYSTICK_HAT_MOTION", SDL_EventType::SDL_EVENT_JOYSTICK_HAT_MOTION)
@@ -87,6 +92,8 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("JOYSTICK_REMOVED", SDL_EventType::SDL_EVENT_JOYSTICK_REMOVED)
         .value("JOYSTICK_BATTERY_UPDATED", SDL_EventType::SDL_EVENT_JOYSTICK_BATTERY_UPDATED)
         .value("JOYSTICK_UPDATE_COMPLETE", SDL_EventType::SDL_EVENT_JOYSTICK_UPDATE_COMPLETE)
+        .value("JOYSTICK_FIRST", SDL_EventType::SDL_EVENT_JOYSTICK_FIRST)
+        .value("JOYSTICK_LAST", SDL_EventType::SDL_EVENT_JOYSTICK_LAST)
         .value("GAMEPAD_AXIS_MOTION", SDL_EventType::SDL_EVENT_GAMEPAD_AXIS_MOTION)
         .value("GAMEPAD_BUTTON_DOWN", SDL_EventType::SDL_EVENT_GAMEPAD_BUTTON_DOWN)
         .value("GAMEPAD_BUTTON_UP", SDL_EventType::SDL_EVENT_GAMEPAD_BUTTON_UP)
@@ -99,23 +106,39 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("GAMEPAD_SENSOR_UPDATE", SDL_EventType::SDL_EVENT_GAMEPAD_SENSOR_UPDATE)
         .value("GAMEPAD_UPDATE_COMPLETE", SDL_EventType::SDL_EVENT_GAMEPAD_UPDATE_COMPLETE)
         .value("GAMEPAD_STEAM_HANDLE_UPDATED", SDL_EventType::SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED)
+        .value("GAMEPAD_CAPSENSE_TOUCH", SDL_EventType::SDL_EVENT_GAMEPAD_CAPSENSE_TOUCH)
+        .value("GAMEPAD_CAPSENSE_RELEASE", SDL_EventType::SDL_EVENT_GAMEPAD_CAPSENSE_RELEASE)
+        .value("GAMEPAD_FIRST", SDL_EventType::SDL_EVENT_GAMEPAD_FIRST)
+        .value("GAMEPAD_LAST", SDL_EventType::SDL_EVENT_GAMEPAD_LAST)
         .value("FINGER_DOWN", SDL_EventType::SDL_EVENT_FINGER_DOWN)
         .value("FINGER_UP", SDL_EventType::SDL_EVENT_FINGER_UP)
         .value("FINGER_MOTION", SDL_EventType::SDL_EVENT_FINGER_MOTION)
         .value("FINGER_CANCELED", SDL_EventType::SDL_EVENT_FINGER_CANCELED)
+        .value("FINGER_FIRST", SDL_EventType::SDL_EVENT_FINGER_FIRST)
+        .value("FINGER_LAST", SDL_EventType::SDL_EVENT_FINGER_LAST)
         .value("PINCH_BEGIN", SDL_EventType::SDL_EVENT_PINCH_BEGIN)
         .value("PINCH_UPDATE", SDL_EventType::SDL_EVENT_PINCH_UPDATE)
         .value("PINCH_END", SDL_EventType::SDL_EVENT_PINCH_END)
+        .value("PINCH_FIRST", SDL_EventType::SDL_EVENT_PINCH_FIRST)
+        .value("PINCH_LAST", SDL_EventType::SDL_EVENT_PINCH_LAST)
         .value("CLIPBOARD_UPDATE", SDL_EventType::SDL_EVENT_CLIPBOARD_UPDATE)
+        .value("CLIPBOARD_FIRST", SDL_EventType::SDL_EVENT_CLIPBOARD_FIRST)
+        .value("CLIPBOARD_LAST", SDL_EventType::SDL_EVENT_CLIPBOARD_LAST)
         .value("DROP_FILE", SDL_EventType::SDL_EVENT_DROP_FILE)
         .value("DROP_TEXT", SDL_EventType::SDL_EVENT_DROP_TEXT)
         .value("DROP_BEGIN", SDL_EventType::SDL_EVENT_DROP_BEGIN)
         .value("DROP_COMPLETE", SDL_EventType::SDL_EVENT_DROP_COMPLETE)
         .value("DROP_POSITION", SDL_EventType::SDL_EVENT_DROP_POSITION)
+        .value("DROP_FIRST", SDL_EventType::SDL_EVENT_DROP_FIRST)
+        .value("DROP_LAST", SDL_EventType::SDL_EVENT_DROP_LAST)
         .value("AUDIO_DEVICE_ADDED", SDL_EventType::SDL_EVENT_AUDIO_DEVICE_ADDED)
         .value("AUDIO_DEVICE_REMOVED", SDL_EventType::SDL_EVENT_AUDIO_DEVICE_REMOVED)
         .value("AUDIO_DEVICE_FORMAT_CHANGED", SDL_EventType::SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED)
+        .value("AUDIO_DEVICE_FIRST", SDL_EventType::SDL_EVENT_AUDIO_DEVICE_FIRST)
+        .value("AUDIO_DEVICE_LAST", SDL_EventType::SDL_EVENT_AUDIO_DEVICE_LAST)
         .value("SENSOR_UPDATE", SDL_EventType::SDL_EVENT_SENSOR_UPDATE)
+        .value("SENSOR_FIRST", SDL_EventType::SDL_EVENT_SENSOR_FIRST)
+        .value("SENSOR_LAST", SDL_EventType::SDL_EVENT_SENSOR_LAST)
         .value("PEN_PROXIMITY_IN", SDL_EventType::SDL_EVENT_PEN_PROXIMITY_IN)
         .value("PEN_PROXIMITY_OUT", SDL_EventType::SDL_EVENT_PEN_PROXIMITY_OUT)
         .value("PEN_DOWN", SDL_EventType::SDL_EVENT_PEN_DOWN)
@@ -124,13 +147,22 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .value("PEN_BUTTON_UP", SDL_EventType::SDL_EVENT_PEN_BUTTON_UP)
         .value("PEN_MOTION", SDL_EventType::SDL_EVENT_PEN_MOTION)
         .value("PEN_AXIS", SDL_EventType::SDL_EVENT_PEN_AXIS)
+        .value("PEN_FIRST", SDL_EventType::SDL_EVENT_PEN_FIRST)
+        .value("PEN_LAST", SDL_EventType::SDL_EVENT_PEN_LAST)
         .value("CAMERA_DEVICE_ADDED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_ADDED)
         .value("CAMERA_DEVICE_REMOVED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_REMOVED)
         .value("CAMERA_DEVICE_APPROVED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_APPROVED)
         .value("CAMERA_DEVICE_DENIED", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_DENIED)
+        .value("CAMERA_DEVICE_FIRST", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_FIRST)
+        .value("CAMERA_DEVICE_LAST", SDL_EventType::SDL_EVENT_CAMERA_DEVICE_LAST)
+        .value("NOTIFICATION_ACTION_INVOKED", SDL_EventType::SDL_EVENT_NOTIFICATION_ACTION_INVOKED)
+        .value("NOTIFICATION_FIRST", SDL_EventType::SDL_EVENT_NOTIFICATION_FIRST)
+        .value("NOTIFICATION_LAST", SDL_EventType::SDL_EVENT_NOTIFICATION_LAST)
         .value("RENDER_TARGETS_RESET", SDL_EventType::SDL_EVENT_RENDER_TARGETS_RESET)
         .value("RENDER_DEVICE_RESET", SDL_EventType::SDL_EVENT_RENDER_DEVICE_RESET)
         .value("RENDER_DEVICE_LOST", SDL_EventType::SDL_EVENT_RENDER_DEVICE_LOST)
+        .value("RENDER_FIRST", SDL_EventType::SDL_EVENT_RENDER_FIRST)
+        .value("RENDER_LAST", SDL_EventType::SDL_EVENT_RENDER_LAST)
         .value("PRIVATE0", SDL_EventType::SDL_EVENT_PRIVATE0)
         .value("PRIVATE1", SDL_EventType::SDL_EVENT_PRIVATE1)
         .value("PRIVATE2", SDL_EventType::SDL_EVENT_PRIVATE2)
@@ -435,6 +467,19 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("sensor_timestamp", &SDL_GamepadSensorEvent::sensor_timestamp)
     ;
 
+    py::class_<SDL_GamepadCapSenseEvent> _GamepadCapSenseEvent(_sdl, "GamepadCapSenseEvent");
+    registry.on(_sdl, "GamepadCapSenseEvent", _GamepadCapSenseEvent);
+        _GamepadCapSenseEvent
+        .def_readwrite("type", &SDL_GamepadCapSenseEvent::type)
+        .def_readwrite("reserved", &SDL_GamepadCapSenseEvent::reserved)
+        .def_readwrite("timestamp", &SDL_GamepadCapSenseEvent::timestamp)
+        .def_readwrite("which", &SDL_GamepadCapSenseEvent::which)
+        .def_readwrite("capsense", &SDL_GamepadCapSenseEvent::capsense)
+        .def_readwrite("down", &SDL_GamepadCapSenseEvent::down)
+        .def_readwrite("padding1", &SDL_GamepadCapSenseEvent::padding1)
+        .def_readwrite("padding2", &SDL_GamepadCapSenseEvent::padding2)
+    ;
+
     py::class_<SDL_AudioDeviceEvent> _AudioDeviceEvent(_sdl, "AudioDeviceEvent");
     registry.on(_sdl, "AudioDeviceEvent", _AudioDeviceEvent);
         _AudioDeviceEvent
@@ -455,6 +500,19 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("reserved", &SDL_CameraDeviceEvent::reserved)
         .def_readwrite("timestamp", &SDL_CameraDeviceEvent::timestamp)
         .def_readwrite("which", &SDL_CameraDeviceEvent::which)
+    ;
+
+    py::class_<SDL_NotificationEvent> _NotificationEvent(_sdl, "NotificationEvent");
+    registry.on(_sdl, "NotificationEvent", _NotificationEvent);
+        _NotificationEvent
+        .def_readwrite("type", &SDL_NotificationEvent::type)
+        .def_readwrite("reserved", &SDL_NotificationEvent::reserved)
+        .def_readwrite("timestamp", &SDL_NotificationEvent::timestamp)
+        .def_readwrite("which", &SDL_NotificationEvent::which)
+        .def_property("action_id",
+            [](const SDL_NotificationEvent& self){ return self.action_id; },
+            [](SDL_NotificationEvent& self, const char* source){ self.action_id = strdup(source); }
+        )
     ;
 
     py::class_<SDL_RenderEvent> _RenderEvent(_sdl, "RenderEvent");
@@ -490,6 +548,10 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("timestamp", &SDL_PinchFingerEvent::timestamp)
         .def_readwrite("scale", &SDL_PinchFingerEvent::scale)
         .def_readwrite("window_id", &SDL_PinchFingerEvent::windowID)
+        .def_readwrite("span_x", &SDL_PinchFingerEvent::span_x)
+        .def_readwrite("span_y", &SDL_PinchFingerEvent::span_y)
+        .def_readwrite("focus_x", &SDL_PinchFingerEvent::focus_x)
+        .def_readwrite("focus_y", &SDL_PinchFingerEvent::focus_y)
     ;
 
     py::class_<SDL_PenProximityEvent> _PenProximityEvent(_sdl, "PenProximityEvent");
@@ -500,6 +562,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("timestamp", &SDL_PenProximityEvent::timestamp)
         .def_readwrite("window_id", &SDL_PenProximityEvent::windowID)
         .def_readwrite("which", &SDL_PenProximityEvent::which)
+        .def_readwrite("pen_state", &SDL_PenProximityEvent::pen_state)
     ;
 
     py::class_<SDL_PenMotionEvent> _PenMotionEvent(_sdl, "PenMotionEvent");

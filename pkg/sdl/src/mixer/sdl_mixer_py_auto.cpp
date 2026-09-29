@@ -31,7 +31,7 @@ void init_sdl_mixer_py_auto(py::module &_sdl, Registry &registry) {
         )
     .def("get_audio_decoder", &MIX_GetAudioDecoder
         , py::arg("index")
-        )
+        , py::return_value_policy::reference)
     .def("create_mixer_device", [](SDL_AudioDeviceID devid, const SDL_AudioSpec * spec)
         {
             return py::capsule(MIX_CreateMixerDevice(devid, spec), "MIX_Mixer");

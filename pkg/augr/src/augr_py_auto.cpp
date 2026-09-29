@@ -23,7 +23,6 @@ void init_augr_py_auto(py::module &_augr, Registry &registry) {
         .value("SINT32", AudioFormat::SINT32)
         .value("FLOAT32", AudioFormat::FLOAT32)
         .value("FLOAT64", AudioFormat::FLOAT64)
-        .export_values()
     ;
     py::enum_<AudioStreamFlags>(_augr, "AudioStreamFlags", py::arithmetic())
         .value("NONINTERLEAVED", AudioStreamFlags::NONINTERLEAVED)
@@ -32,12 +31,10 @@ void init_augr_py_auto(py::module &_augr, Registry &registry) {
         .value("SCHEDULE_REALTIME", AudioStreamFlags::SCHEDULE_REALTIME)
         .value("ALSA_USE_DEFAULT", AudioStreamFlags::ALSA_USE_DEFAULT)
         .value("JACK_DONT_CONNECT", AudioStreamFlags::JACK_DONT_CONNECT)
-        .export_values()
     ;
     py::enum_<AudioStreamStatus>(_augr, "AudioStreamStatus", py::arithmetic())
         .value("INPUT_OVERFLOW", AudioStreamStatus::INPUT_OVERFLOW)
         .value("OUTPUT_UNDERFLOW", AudioStreamStatus::OUTPUT_UNDERFLOW)
-        .export_values()
     ;
     py::class_<AudioStream> _AudioStream(_augr, "AudioStream");
     registry.on(_augr, "AudioStream", _AudioStream);
@@ -69,6 +66,15 @@ void init_augr_py_auto(py::module &_augr, Registry &registry) {
         .def(py::init([](const py::kwargs& kwargs)
         {
             AudioStream obj{};
+            static const std::unordered_set<std::string> allowed_keys = {"audio", "output_parameters", "input_parameters", "format", "sample_rate", "buffer_frames", "callback", "options"};
+            for (auto item : kwargs)
+            {
+                std::string key = py::str(item.first);
+                if (allowed_keys.find(key) == allowed_keys.end())
+                {
+                    throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                }
+            }
             if (kwargs.contains("audio"))
             {
                 auto value = kwargs["audio"].cast<rt::audio::RtAudio>();

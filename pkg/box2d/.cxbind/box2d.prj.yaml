@@ -1,5 +1,5 @@
 module: box2d
-
+language: c
 flags: [
   '-I../../depot/box2d/include/box2d',
   '-B2_API=',

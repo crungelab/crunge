@@ -37,6 +37,20 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
         .value("SYSTEM_CURSOR_S_RESIZE", SDL_SystemCursor::SDL_SYSTEM_CURSOR_S_RESIZE)
         .value("SYSTEM_CURSOR_SW_RESIZE", SDL_SystemCursor::SDL_SYSTEM_CURSOR_SW_RESIZE)
         .value("SYSTEM_CURSOR_W_RESIZE", SDL_SystemCursor::SDL_SYSTEM_CURSOR_W_RESIZE)
+        .value("SYSTEM_CURSOR_CONTEXT_MENU", SDL_SystemCursor::SDL_SYSTEM_CURSOR_CONTEXT_MENU)
+        .value("SYSTEM_CURSOR_HELP", SDL_SystemCursor::SDL_SYSTEM_CURSOR_HELP)
+        .value("SYSTEM_CURSOR_CELL", SDL_SystemCursor::SDL_SYSTEM_CURSOR_CELL)
+        .value("SYSTEM_CURSOR_VERTICAL_TEXT", SDL_SystemCursor::SDL_SYSTEM_CURSOR_VERTICAL_TEXT)
+        .value("SYSTEM_CURSOR_ALIAS", SDL_SystemCursor::SDL_SYSTEM_CURSOR_ALIAS)
+        .value("SYSTEM_CURSOR_COPY", SDL_SystemCursor::SDL_SYSTEM_CURSOR_COPY)
+        .value("SYSTEM_CURSOR_NO_DROP", SDL_SystemCursor::SDL_SYSTEM_CURSOR_NO_DROP)
+        .value("SYSTEM_CURSOR_GRAB", SDL_SystemCursor::SDL_SYSTEM_CURSOR_GRAB)
+        .value("SYSTEM_CURSOR_GRABBING", SDL_SystemCursor::SDL_SYSTEM_CURSOR_GRABBING)
+        .value("SYSTEM_CURSOR_COL_RESIZE", SDL_SystemCursor::SDL_SYSTEM_CURSOR_COL_RESIZE)
+        .value("SYSTEM_CURSOR_ROW_RESIZE", SDL_SystemCursor::SDL_SYSTEM_CURSOR_ROW_RESIZE)
+        .value("SYSTEM_CURSOR_ALL_SCROLL", SDL_SystemCursor::SDL_SYSTEM_CURSOR_ALL_SCROLL)
+        .value("SYSTEM_CURSOR_ZOOM_IN", SDL_SystemCursor::SDL_SYSTEM_CURSOR_ZOOM_IN)
+        .value("SYSTEM_CURSOR_ZOOM_OUT", SDL_SystemCursor::SDL_SYSTEM_CURSOR_ZOOM_OUT)
         .value("SYSTEM_CURSOR_COUNT", SDL_SystemCursor::SDL_SYSTEM_CURSOR_COUNT)
         .export_values()
     ;
@@ -61,10 +75,10 @@ void init_sdl_mouse_py_auto(py::module &_sdl, Registry &registry) {
             return std::make_tuple(_ret, count);
         }
         , py::arg("count")
-        )
+        , py::return_value_policy::reference)
     .def("get_mouse_name_for_id", &SDL_GetMouseNameForID
         , py::arg("instance_id")
-        )
+        , py::return_value_policy::reference)
     .def("get_mouse_focus", []()
         {
             return SDLWindowWrapper(SDL_GetMouseFocus());

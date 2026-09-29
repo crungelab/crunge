@@ -26,8 +26,12 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("index1", &b2WorldId::index1)
         .def_readwrite("generation", &b2WorldId::generation)
         .def(py::init(&b2CreateWorld))
-        .def("draw", &World_Draw
-            , py::arg("arg1")
+        .def("draw", [](int worldId, PyDebugDrawBase & dbg)
+            {
+                World_Draw(worldId, dbg);
+                return dbg;
+            }
+            , py::arg("dbg")
             )
         .def("destroy", &b2DestroyWorld
             )

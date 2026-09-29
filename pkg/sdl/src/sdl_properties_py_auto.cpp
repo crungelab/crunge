@@ -83,12 +83,12 @@ void init_sdl_properties_py_auto(py::module &_sdl, Registry &registry) {
         , py::arg("props")
         , py::arg("name")
         , py::arg("default_value")
-        )
+        , py::return_value_policy::reference)
     .def("get_string_property", &SDL_GetStringProperty
         , py::arg("props")
         , py::arg("name")
         , py::arg("default_value")
-        )
+        , py::return_value_policy::reference)
     .def("get_number_property", &SDL_GetNumberProperty
         , py::arg("props")
         , py::arg("name")
@@ -107,6 +107,9 @@ void init_sdl_properties_py_auto(py::module &_sdl, Registry &registry) {
     .def("clear_property", &SDL_ClearProperty
         , py::arg("props")
         , py::arg("name")
+        )
+    .def("get_num_properties", &SDL_GetNumProperties
+        , py::arg("props")
         )
     .def("enumerate_properties", &SDL_EnumerateProperties
         , py::arg("props")

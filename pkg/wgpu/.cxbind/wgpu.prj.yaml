@@ -1,7 +1,6 @@
 module: _wgpu
 
 flags: [
-    '-x', 'c++',
     '-std=c++17',
     '-I./src'
 ]

@@ -1,7 +1,6 @@
 module: skia
-
+language: c++
 flags: [
-  '-x', 'c++',
   '-std=c++17',
   '-I../../depot/skia',
   '-DSK_API=',

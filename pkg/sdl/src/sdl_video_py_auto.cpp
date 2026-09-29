@@ -95,9 +95,9 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         )
     .def("get_video_driver", &SDL_GetVideoDriver
         , py::arg("index")
-        )
+        , py::return_value_policy::reference)
     .def("get_current_video_driver", &SDL_GetCurrentVideoDriver
-        )
+        , py::return_value_policy::reference)
     .def("get_system_theme", &SDL_GetSystemTheme
         )
     .def("get_displays", [](int * count)
@@ -106,7 +106,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
             return std::make_tuple(_ret, count);
         }
         , py::arg("count")
-        )
+        , py::return_value_policy::reference)
     .def("get_primary_display", &SDL_GetPrimaryDisplay
         )
     .def("get_display_properties", &SDL_GetDisplayProperties
@@ -114,7 +114,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         )
     .def("get_display_name", &SDL_GetDisplayName
         , py::arg("display_id")
-        )
+        , py::return_value_policy::reference)
     .def("get_display_bounds", &SDL_GetDisplayBounds
         , py::arg("display_id")
         , py::arg("rect")
@@ -142,10 +142,10 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         )
     .def("get_desktop_display_mode", &SDL_GetDesktopDisplayMode
         , py::arg("display_id")
-        )
+        , py::return_value_policy::reference)
     .def("get_current_display_mode", &SDL_GetCurrentDisplayMode
         , py::arg("display_id")
-        )
+        , py::return_value_policy::reference)
     .def("get_display_for_point", &SDL_GetDisplayForPoint
         , py::arg("point")
         )
@@ -182,7 +182,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
             return SDL_GetWindowFullscreenMode(static_cast<SDL_Window *>(window.get()));
         }
         , py::arg("window")
-        )
+        , py::return_value_policy::reference)
     .def("get_window_icc_profile", [](SDLWindowWrapper window, size_t * size)
         {
             auto _ret = SDL_GetWindowICCProfile(static_cast<SDL_Window *>(window.get()), size);
@@ -190,7 +190,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
         }
         , py::arg("window")
         , py::arg("size")
-        )
+        , py::return_value_policy::reference)
     .def("get_window_pixel_format", [](SDLWindowWrapper window)
         {
             return SDL_GetWindowPixelFormat(static_cast<SDL_Window *>(window.get()));
@@ -265,7 +265,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
             return SDL_GetWindowTitle(static_cast<SDL_Window *>(window.get()));
         }
         , py::arg("window")
-        )
+        , py::return_value_policy::reference)
     .def("set_window_icon", [](SDLWindowWrapper window, SDL_Surface * icon)
         {
             return SDL_SetWindowIcon(static_cast<SDL_Window *>(window.get()), icon);
@@ -473,7 +473,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
             return SDL_GetWindowSurface(static_cast<SDL_Window *>(window.get()));
         }
         , py::arg("window")
-        )
+        , py::return_value_policy::reference)
     .def("set_window_surface_v_sync", [](SDLWindowWrapper window, int vsync)
         {
             return SDL_SetWindowSurfaceVSync(static_cast<SDL_Window *>(window.get()), vsync);
@@ -552,7 +552,7 @@ void init_sdl_video_py_auto(py::module &_sdl, Registry &registry) {
             return SDL_GetWindowMouseRect(static_cast<SDL_Window *>(window.get()));
         }
         , py::arg("window")
-        )
+        , py::return_value_policy::reference)
     .def("set_window_opacity", [](SDLWindowWrapper window, float opacity)
         {
             return SDL_SetWindowOpacity(static_cast<SDL_Window *>(window.get()), opacity);

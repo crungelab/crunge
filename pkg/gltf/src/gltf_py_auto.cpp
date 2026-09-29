@@ -32,7 +32,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
     ;
     _gltf
     .def("is_data_uri", &tinygltf::IsDataURI
-        , py::arg("in")
+        , py::arg("in_")
         )
     .def("decode_data_uri", [](std::vector<unsigned char> * out, std::string & mime_type, const std::string & in, size_t reqBytes, bool checkSize)
         {
@@ -41,7 +41,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         }
         , py::arg("out")
         , py::arg("mime_type")
-        , py::arg("in")
+        , py::arg("in_")
         , py::arg("req_bytes")
         , py::arg("check_size")
         )
@@ -63,6 +63,9 @@ void init_generated(py::module &_gltf, Registry &registry) {
         .def(py::init<const std::string &>()
         , py::arg("s")
         )
+        .def(py::init<std::string &&>()
+        , py::arg("s")
+        )
         .def(py::init<const char *>()
         , py::arg("s")
         )
@@ -70,10 +73,19 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("p")
         , py::arg("n")
         )
+        .def(py::init<std::vector<unsigned char> &&>()
+        , py::arg("v")
+        )
         .def(py::init<const tinygltf::Value::Array &>()
         , py::arg("a")
         )
+        .def(py::init<tinygltf::Value::Array &&>()
+        , py::arg("a")
+        )
         .def(py::init<const tinygltf::Value::Object &>()
+        , py::arg("o")
+        )
+        .def(py::init<tinygltf::Value::Object &&>()
         , py::arg("o")
         )
         .def("is_bool", &tinygltf::Value::IsBool
@@ -627,7 +639,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         )
     .def("file_exists", &tinygltf::FileExists
         , py::arg("abs_filename")
-        , py::arg("arg")
+        , py::arg("arg1")
         )
     .def("expand_file_path", &tinygltf::ExpandFilePath
         , py::arg("filepath")
@@ -637,13 +649,13 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("out")
         , py::arg("err")
         , py::arg("filepath")
-        , py::arg("arg")
+        , py::arg("arg3")
         )
     .def("write_whole_file", &tinygltf::WriteWholeFile
         , py::arg("err")
         , py::arg("filepath")
         , py::arg("contents")
-        , py::arg("arg")
+        , py::arg("arg3")
         )
     .def("load_image_data", &tinygltf::LoadImageData
         , py::arg("image")
@@ -654,7 +666,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("req_height")
         , py::arg("bytes")
         , py::arg("size")
-        , py::arg("arg")
+        , py::arg("arg8")
         )
     .def("write_image_data", &tinygltf::WriteImageData
         , py::arg("basepath")
@@ -664,7 +676,7 @@ void init_generated(py::module &_gltf, Registry &registry) {
         , py::arg("fs_cb")
         , py::arg("uri_cb")
         , py::arg("out_uri")
-        , py::arg("arg")
+        , py::arg("arg7")
         )
     ;
 

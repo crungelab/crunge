@@ -24,10 +24,10 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
             return std::make_tuple(_ret, count);
         }
         , py::arg("count")
-        )
+        , py::return_value_policy::reference)
     .def("get_keyboard_name_for_id", &SDL_GetKeyboardNameForID
         , py::arg("instance_id")
-        )
+        , py::return_value_policy::reference)
     .def("get_keyboard_focus", []()
         {
             return SDLWindowWrapper(SDL_GetKeyboardFocus());
@@ -39,7 +39,7 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
             return std::make_tuple(_ret, numkeys);
         }
         , py::arg("numkeys")
-        )
+        , py::return_value_policy::reference)
     .def("reset_keyboard", &SDL_ResetKeyboard
         )
     .def("get_mod_state", &SDL_GetModState
@@ -66,13 +66,13 @@ void init_sdl_keyboard_py_auto(py::module &_sdl, Registry &registry) {
         )
     .def("get_scancode_name", &SDL_GetScancodeName
         , py::arg("scancode")
-        )
+        , py::return_value_policy::reference)
     .def("get_scancode_from_name", &SDL_GetScancodeFromName
         , py::arg("name")
         )
     .def("get_key_name", &SDL_GetKeyName
         , py::arg("key")
-        )
+        , py::return_value_policy::reference)
     .def("get_key_from_name", &SDL_GetKeyFromName
         , py::arg("name")
         )

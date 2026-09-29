@@ -175,6 +175,7 @@ void init_sdl_scancode_py_auto(py::module &_sdl, Registry &registry) {
         .value("SCANCODE_CLEARAGAIN", SDL_Scancode::SDL_SCANCODE_CLEARAGAIN)
         .value("SCANCODE_CRSEL", SDL_Scancode::SDL_SCANCODE_CRSEL)
         .value("SCANCODE_EXSEL", SDL_Scancode::SDL_SCANCODE_EXSEL)
+        .value("SCANCODE_FRONT", SDL_Scancode::SDL_SCANCODE_FRONT)
         .value("SCANCODE_KP_00", SDL_Scancode::SDL_SCANCODE_KP_00)
         .value("SCANCODE_KP_000", SDL_Scancode::SDL_SCANCODE_KP_000)
         .value("SCANCODE_THOUSANDSSEPARATOR", SDL_Scancode::SDL_SCANCODE_THOUSANDSSEPARATOR)

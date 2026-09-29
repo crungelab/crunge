@@ -48,7 +48,6 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("MINI_MAP_CANVAS", ImNodesCol_::ImNodesCol_MiniMapCanvas)
         .value("MINI_MAP_CANVAS_OUTLINE", ImNodesCol_::ImNodesCol_MiniMapCanvasOutline)
         .value("COUNT", ImNodesCol_::ImNodesCol_COUNT)
-        .export_values()
     ;
     py::enum_<ImNodesStyleVar_>(_imnodes, "StyleVar", py::arithmetic())
         .value("GRID_SPACING", ImNodesStyleVar_::ImNodesStyleVar_GridSpacing)
@@ -67,7 +66,6 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("MINI_MAP_PADDING", ImNodesStyleVar_::ImNodesStyleVar_MiniMapPadding)
         .value("MINI_MAP_OFFSET", ImNodesStyleVar_::ImNodesStyleVar_MiniMapOffset)
         .value("COUNT", ImNodesStyleVar_::ImNodesStyleVar_COUNT)
-        .export_values()
     ;
     py::enum_<ImNodesStyleFlags_>(_imnodes, "StyleFlags", py::arithmetic())
         .value("NONE", ImNodesStyleFlags_::ImNodesStyleFlags_None)
@@ -75,7 +73,6 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("GRID_LINES", ImNodesStyleFlags_::ImNodesStyleFlags_GridLines)
         .value("GRID_LINES_PRIMARY", ImNodesStyleFlags_::ImNodesStyleFlags_GridLinesPrimary)
         .value("GRID_SNAPPING", ImNodesStyleFlags_::ImNodesStyleFlags_GridSnapping)
-        .export_values()
     ;
     py::enum_<ImNodesPinShape_>(_imnodes, "PinShape", py::arithmetic())
         .value("CIRCLE", ImNodesPinShape_::ImNodesPinShape_Circle)
@@ -90,7 +87,6 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         .value("NONE", ImNodesAttributeFlags_::ImNodesAttributeFlags_None)
         .value("ENABLE_LINK_DETACH_WITH_DRAG_CLICK", ImNodesAttributeFlags_::ImNodesAttributeFlags_EnableLinkDetachWithDragClick)
         .value("ENABLE_LINK_CREATION_ON_SNAP", ImNodesAttributeFlags_::ImNodesAttributeFlags_EnableLinkCreationOnSnap)
-        .export_values()
     ;
     py::class_<ImNodesIO> _IO(_imnodes, "IO");
     registry.on(_imnodes, "IO", _IO);
@@ -167,17 +163,17 @@ void init_generated(py::module &_imnodes, Registry &registry) {
             return py::capsule(ImNodes::EditorContextCreate(), "ImNodesEditorContext");
         }
         )
-    .def("editor_context_free", [](py::capsule arg)
+    .def("editor_context_free", [](py::capsule arg0)
         {
-            return ImNodes::EditorContextFree(static_cast<ImNodesEditorContext *>(arg.get_pointer()));
+            return ImNodes::EditorContextFree(static_cast<ImNodesEditorContext *>(arg0.get_pointer()));
         }
-        , py::arg("arg")
+        , py::arg("arg0")
         )
-    .def("editor_context_set", [](py::capsule arg)
+    .def("editor_context_set", [](py::capsule arg0)
         {
-            return ImNodes::EditorContextSet(static_cast<ImNodesEditorContext *>(arg.get_pointer()));
+            return ImNodes::EditorContextSet(static_cast<ImNodesEditorContext *>(arg0.get_pointer()));
         }
-        , py::arg("arg")
+        , py::arg("arg0")
         )
     .def("editor_context_get_panning", &ImNodes::EditorContextGetPanning
         )
@@ -318,14 +314,14 @@ void init_generated(py::module &_imnodes, Registry &registry) {
     .def("get_selected_nodes", [](int * node_ids)
         {
             ImNodes::GetSelectedNodes(node_ids);
-            return std::make_tuple(node_ids);
+            return node_ids;
         }
         , py::arg("node_ids")
         )
     .def("get_selected_links", [](int * link_ids)
         {
             ImNodes::GetSelectedLinks(link_ids);
-            return std::make_tuple(link_ids);
+            return link_ids;
         }
         , py::arg("link_ids")
         )
@@ -408,7 +404,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
             return std::make_tuple(_ret, data_size);
         }
         , py::arg("data_size") = nullptr
-        )
+        , py::return_value_policy::reference)
     .def("save_editor_state_to_ini_string", [](py::capsule editor, size_t * data_size)
         {
             auto _ret = ImNodes::SaveEditorStateToIniString(static_cast<const ImNodesEditorContext *>(editor.get_pointer()), data_size);
@@ -416,7 +412,7 @@ void init_generated(py::module &_imnodes, Registry &registry) {
         }
         , py::arg("editor")
         , py::arg("data_size") = nullptr
-        )
+        , py::return_value_policy::reference)
     .def("load_current_editor_state_from_ini_string", &ImNodes::LoadCurrentEditorStateFromIniString
         , py::arg("data")
         , py::arg("data_size")

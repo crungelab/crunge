@@ -1,19 +1,16 @@
+#include <limits>
+
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
-#include <limits>
-
-#include <nanort.h>
-#include <iostream>
 
 #include <cxbind/cxbind.h>
-#include <crunge/nanort/conversions.h>
+
+#include "nanort.h"
 
 namespace py = pybind11;
 
-using namespace nanort;
-
-void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
+void register_nanort_py_auto(py::module &_nanort, Registry &registry) {
     py::enum_<nanort::RayType>(_nanort, "RayType", py::arithmetic())
         .value("RAY_TYPE_NONE", nanort::RayType::RAY_TYPE_NONE)
         .value("RAY_TYPE_PRIMARY", nanort::RayType::RAY_TYPE_PRIMARY)
@@ -82,8 +79,7 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
             , py::return_value_policy::reference)
         .def("bounding_box", [](nanort::BVHAccel<double>& self, std::array<double, 3>& bmin, std::array<double, 3>& bmax)
             {
-                self.BoundingBox(&bmin[0], &bmax[0]);
-                return std::make_tuple(bmin, bmax);
+                return self.BoundingBox(&bmin[0], &bmax[0]);
             }
             , py::arg("bmin")
             , py::arg("bmax")
@@ -129,9 +125,9 @@ void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
         .def_readwrite("faces", &nanort::TriangleMesh<double>::faces_)
         .def_readonly("vertex_stride_bytes", &nanort::TriangleMesh<double>::vertex_stride_bytes_)
         .def("get_vertices", &nanort::TriangleMesh<double>::GetVertices
-            )
+            , py::return_value_policy::reference)
         .def("get_faces", &nanort::TriangleMesh<double>::GetFaces
-            )
+            , py::return_value_policy::reference)
         .def("get_vertex_stride_bytes", &nanort::TriangleMesh<double>::GetVertexStrideBytes
             )
     ;

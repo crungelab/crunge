@@ -1,4 +1,7 @@
-#include <pybind11/pybind11.h>
+#pragma once
+
+//#include <pybind11/pybind11.h>
+#include <cxbind/cxbind.h>
 
 #include "debug_draw_py.h"
 

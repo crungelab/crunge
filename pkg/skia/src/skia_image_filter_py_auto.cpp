@@ -35,7 +35,7 @@ void init_skia_image_filter_py_auto(py::module &_skia, Registry &registry) {
             )
         .def("get_input", &SkImageFilter::getInput
             , py::arg("i")
-            )
+            , py::return_value_policy::reference)
         .def("compute_fast_bounds", &SkImageFilter::computeFastBounds
             , py::arg("bounds")
             )

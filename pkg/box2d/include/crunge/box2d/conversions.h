@@ -1,3 +1,5 @@
+#pragma once
+
 #include <box2d/math_functions.h>
 
 #include <pybind11/pybind11.h>

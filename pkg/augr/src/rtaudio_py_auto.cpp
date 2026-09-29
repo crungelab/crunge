@@ -97,6 +97,15 @@ void init_rtaudio_py_auto(py::module &_augr, Registry &registry) {
             .def(py::init([](const py::kwargs& kwargs)
             {
                 rt::audio::RtAudio::StreamParameters obj{};
+                static const std::unordered_set<std::string> allowed_keys = {"device_id", "n_channels", "first_channel"};
+                for (auto item : kwargs)
+                {
+                    std::string key = py::str(item.first);
+                    if (allowed_keys.find(key) == allowed_keys.end())
+                    {
+                        throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                    }
+                }
                 if (kwargs.contains("device_id"))
                 {
                     auto value = kwargs["device_id"].cast<unsigned int>();
@@ -137,6 +146,15 @@ void init_rtaudio_py_auto(py::module &_augr, Registry &registry) {
             .def(py::init([](const py::kwargs& kwargs)
             {
                 rt::audio::RtAudio::StreamOptions obj{};
+                static const std::unordered_set<std::string> allowed_keys = {"flags", "number_of_buffers", "stream_name", "priority"};
+                for (auto item : kwargs)
+                {
+                    std::string key = py::str(item.first);
+                    if (allowed_keys.find(key) == allowed_keys.end())
+                    {
+                        throw py::value_error("Unexpected keyword argument: '" + key + "'");
+                    }
+                }
                 if (kwargs.contains("flags"))
                 {
                     auto value = kwargs["flags"].cast<unsigned int>();
@@ -180,7 +198,7 @@ void init_rtaudio_py_auto(py::module &_augr, Registry &registry) {
         .def_static("get_compiled_api", [](std::vector<rt::audio::RtAudio::Api> & apis)
             {
                 rt::audio::RtAudio::getCompiledApi(apis);
-                return std::make_tuple(apis);
+                return apis;
             }
             , py::arg("apis")
             )
@@ -238,7 +256,7 @@ void init_rtaudio_py_auto(py::module &_augr, Registry &registry) {
         .def("abort_stream", py::overload_cast<>(&rt::audio::RtAudio::abortStream)
             )
         .def("get_error_text", py::overload_cast<>(&rt::audio::RtAudio::getErrorText)
-            )
+            , py::return_value_policy::reference)
         .def("is_stream_open", py::overload_cast<>(&rt::audio::RtAudio::isStreamOpen, py::const_)
             )
         .def("is_stream_running", py::overload_cast<>(&rt::audio::RtAudio::isStreamRunning, py::const_)

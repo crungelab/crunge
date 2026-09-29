@@ -1,5 +1,6 @@
 source: '../../depot/box2d/include/box2d/id.h'
 target: 'src/id_py_auto.cpp'
+#language: c++
 
 specs:
   # 'function_prototype@b2OverlapResultFcn':
@@ -21,46 +22,46 @@ specs:
     extra:
       properties:
         user_data:
-          setter: "Body_SetUserData"
-          getter: "Body_GetUserData"
+          setter: "function@Body_SetUserData"
+          getter: "function@Body_GetUserData"
         mass_data:
-          setter: "b2Body_SetMassData"
-          getter: "b2Body_GetMassData"
+          setter: "function@b2Body_SetMassData"
+          getter: "function@b2Body_GetMassData"
         position:
-          setter: "Body_SetPosition"
-          getter: "b2Body_GetPosition"
+          setter: "function@Body_SetPosition"
+          getter: "function@b2Body_GetPosition"
         rotation:
-          getter: "b2Body_GetRotation"
+          getter: "function@b2Body_GetRotation"
         angle:
-          getter: "Body_GetAngle"
+          getter: "function@Body_GetAngle"
         transform:
-          setter: "b2Body_SetTransform"
-          getter: "b2Body_GetTransform"
+          setter: "function@b2Body_SetTransform"
+          getter: "function@b2Body_GetTransform"
         linear_velocity:
-          setter: "b2Body_SetLinearVelocity"
-          getter: "b2Body_GetLinearVelocity"
+          setter: "function@b2Body_SetLinearVelocity"
+          getter: "function@b2Body_GetLinearVelocity"
         angular_velocity:
-          setter: "b2Body_SetAngularVelocity"
-          getter: "b2Body_GetAngularVelocity"
+          setter: "function@b2Body_SetAngularVelocity"
+          getter: "function@b2Body_GetAngularVelocity"
 
   'struct@b2ShapeId':
     pyname: Shape
     extra:
       properties:
         user_data:
-          setter: "Shape_SetUserData"
-          getter: "Shape_GetUserData"
+          setter: "function@Shape_SetUserData"
+          getter: "function@Shape_GetUserData"
         body:
-          getter: b2Shape_GetBody
+          getter: function@b2Shape_GetBody
         friction:
-          setter: "b2Shape_SetFriction"
-          getter: "b2Shape_GetFriction"        
+          setter: "function@b2Shape_SetFriction"
+          getter: "function@b2Shape_GetFriction"        
         restitution:
-          setter: "b2Shape_SetRestitution"
-          getter: "b2Shape_GetRestitution"
+          setter: "function@b2Shape_SetRestitution"
+          getter: "function@b2Shape_GetRestitution"
         user_material:
-          setter: "b2Shape_SetUserMaterial"
-          getter: "b2Shape_GetUserMaterial"
+          setter: "function@b2Shape_SetUserMaterial"
+          getter: "function@b2Shape_GetUserMaterial"
 
 
 transforms:

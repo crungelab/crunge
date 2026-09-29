@@ -4,16 +4,13 @@
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 
-#include "implot.h"
-//#include "implot_internal.h"
-
 #include <cxbind/cxbind.h>
-#include <crunge/imgui/crunge-imgui.h>
-#include <crunge/imgui/conversions.h>
+
+#include "implot.h"
 
 namespace py = pybind11;
 
-void init_generated(py::module &_implot, Registry &registry) {
+void register_implot_py_auto(py::module &_implot, Registry &registry) {
     py::enum_<ImAxis_>(_implot, "Axis", py::arithmetic())
         .value("X1", ImAxis_::ImAxis_X1)
         .value("X2", ImAxis_::ImAxis_X2)
@@ -22,7 +19,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("Y2", ImAxis_::ImAxis_Y2)
         .value("Y3", ImAxis_::ImAxis_Y3)
         .value("COUNT", ImAxis_::ImAxis_COUNT)
-        .export_values()
     ;
     py::enum_<ImPlotFlags_>(_implot, "Flags", py::arithmetic())
         .value("NONE", ImPlotFlags_::ImPlotFlags_None)
@@ -36,7 +32,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("EQUAL", ImPlotFlags_::ImPlotFlags_Equal)
         .value("CROSSHAIRS", ImPlotFlags_::ImPlotFlags_Crosshairs)
         .value("CANVAS_ONLY", ImPlotFlags_::ImPlotFlags_CanvasOnly)
-        .export_values()
     ;
     py::enum_<ImPlotAxisFlags_>(_implot, "AxisFlags", py::arithmetic())
         .value("NONE", ImPlotAxisFlags_::ImPlotAxisFlags_None)
@@ -59,7 +54,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("LOCK", ImPlotAxisFlags_::ImPlotAxisFlags_Lock)
         .value("NO_DECORATIONS", ImPlotAxisFlags_::ImPlotAxisFlags_NoDecorations)
         .value("AUX_DEFAULT", ImPlotAxisFlags_::ImPlotAxisFlags_AuxDefault)
-        .export_values()
     ;
     py::enum_<ImPlotSubplotFlags_>(_implot, "SubplotFlags", py::arithmetic())
         .value("NONE", ImPlotSubplotFlags_::ImPlotSubplotFlags_None)
@@ -74,7 +68,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("LINK_ALL_X", ImPlotSubplotFlags_::ImPlotSubplotFlags_LinkAllX)
         .value("LINK_ALL_Y", ImPlotSubplotFlags_::ImPlotSubplotFlags_LinkAllY)
         .value("COL_MAJOR", ImPlotSubplotFlags_::ImPlotSubplotFlags_ColMajor)
-        .export_values()
     ;
     py::enum_<ImPlotLegendFlags_>(_implot, "LegendFlags", py::arithmetic())
         .value("NONE", ImPlotLegendFlags_::ImPlotLegendFlags_None)
@@ -85,14 +78,12 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("OUTSIDE", ImPlotLegendFlags_::ImPlotLegendFlags_Outside)
         .value("HORIZONTAL", ImPlotLegendFlags_::ImPlotLegendFlags_Horizontal)
         .value("SORT", ImPlotLegendFlags_::ImPlotLegendFlags_Sort)
-        .export_values()
     ;
     py::enum_<ImPlotMouseTextFlags_>(_implot, "MouseTextFlags", py::arithmetic())
         .value("NONE", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_None)
         .value("NO_AUX_AXES", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_NoAuxAxes)
         .value("NO_FORMAT", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_NoFormat)
         .value("SHOW_ALWAYS", ImPlotMouseTextFlags_::ImPlotMouseTextFlags_ShowAlways)
-        .export_values()
     ;
     py::enum_<ImPlotDragToolFlags_>(_implot, "DragToolFlags", py::arithmetic())
         .value("NONE", ImPlotDragToolFlags_::ImPlotDragToolFlags_None)
@@ -100,20 +91,17 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("NO_FIT", ImPlotDragToolFlags_::ImPlotDragToolFlags_NoFit)
         .value("NO_INPUTS", ImPlotDragToolFlags_::ImPlotDragToolFlags_NoInputs)
         .value("DELAYED", ImPlotDragToolFlags_::ImPlotDragToolFlags_Delayed)
-        .export_values()
     ;
     py::enum_<ImPlotColormapScaleFlags_>(_implot, "ColormapScaleFlags", py::arithmetic())
         .value("NONE", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_None)
         .value("NO_LABEL", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_NoLabel)
         .value("OPPOSITE", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_Opposite)
         .value("INVERT", ImPlotColormapScaleFlags_::ImPlotColormapScaleFlags_Invert)
-        .export_values()
     ;
     py::enum_<ImPlotItemFlags_>(_implot, "ItemFlags", py::arithmetic())
         .value("NONE", ImPlotItemFlags_::ImPlotItemFlags_None)
         .value("NO_LEGEND", ImPlotItemFlags_::ImPlotItemFlags_NoLegend)
         .value("NO_FIT", ImPlotItemFlags_::ImPlotItemFlags_NoFit)
-        .export_values()
     ;
     py::enum_<ImPlotLineFlags_>(_implot, "LineFlags", py::arithmetic())
         .value("NONE", ImPlotLineFlags_::ImPlotLineFlags_None)
@@ -122,60 +110,49 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("SKIP_NA_N", ImPlotLineFlags_::ImPlotLineFlags_SkipNaN)
         .value("NO_CLIP", ImPlotLineFlags_::ImPlotLineFlags_NoClip)
         .value("SHADED", ImPlotLineFlags_::ImPlotLineFlags_Shaded)
-        .export_values()
     ;
     py::enum_<ImPlotScatterFlags_>(_implot, "ScatterFlags", py::arithmetic())
         .value("NONE", ImPlotScatterFlags_::ImPlotScatterFlags_None)
         .value("NO_CLIP", ImPlotScatterFlags_::ImPlotScatterFlags_NoClip)
-        .export_values()
     ;
     py::enum_<ImPlotStairsFlags_>(_implot, "StairsFlags", py::arithmetic())
         .value("NONE", ImPlotStairsFlags_::ImPlotStairsFlags_None)
         .value("PRE_STEP", ImPlotStairsFlags_::ImPlotStairsFlags_PreStep)
         .value("SHADED", ImPlotStairsFlags_::ImPlotStairsFlags_Shaded)
-        .export_values()
     ;
     py::enum_<ImPlotShadedFlags_>(_implot, "ShadedFlags", py::arithmetic())
         .value("NONE", ImPlotShadedFlags_::ImPlotShadedFlags_None)
-        .export_values()
     ;
     py::enum_<ImPlotBarsFlags_>(_implot, "BarsFlags", py::arithmetic())
         .value("NONE", ImPlotBarsFlags_::ImPlotBarsFlags_None)
         .value("HORIZONTAL", ImPlotBarsFlags_::ImPlotBarsFlags_Horizontal)
-        .export_values()
     ;
     py::enum_<ImPlotBarGroupsFlags_>(_implot, "BarGroupsFlags", py::arithmetic())
         .value("NONE", ImPlotBarGroupsFlags_::ImPlotBarGroupsFlags_None)
         .value("HORIZONTAL", ImPlotBarGroupsFlags_::ImPlotBarGroupsFlags_Horizontal)
         .value("STACKED", ImPlotBarGroupsFlags_::ImPlotBarGroupsFlags_Stacked)
-        .export_values()
     ;
     py::enum_<ImPlotErrorBarsFlags_>(_implot, "ErrorBarsFlags", py::arithmetic())
         .value("NONE", ImPlotErrorBarsFlags_::ImPlotErrorBarsFlags_None)
         .value("HORIZONTAL", ImPlotErrorBarsFlags_::ImPlotErrorBarsFlags_Horizontal)
-        .export_values()
     ;
     py::enum_<ImPlotStemsFlags_>(_implot, "StemsFlags", py::arithmetic())
         .value("NONE", ImPlotStemsFlags_::ImPlotStemsFlags_None)
         .value("HORIZONTAL", ImPlotStemsFlags_::ImPlotStemsFlags_Horizontal)
-        .export_values()
     ;
     py::enum_<ImPlotInfLinesFlags_>(_implot, "InfLinesFlags", py::arithmetic())
         .value("NONE", ImPlotInfLinesFlags_::ImPlotInfLinesFlags_None)
         .value("HORIZONTAL", ImPlotInfLinesFlags_::ImPlotInfLinesFlags_Horizontal)
-        .export_values()
     ;
     py::enum_<ImPlotPieChartFlags_>(_implot, "PieChartFlags", py::arithmetic())
         .value("NONE", ImPlotPieChartFlags_::ImPlotPieChartFlags_None)
         .value("NORMALIZE", ImPlotPieChartFlags_::ImPlotPieChartFlags_Normalize)
         .value("IGNORE_HIDDEN", ImPlotPieChartFlags_::ImPlotPieChartFlags_IgnoreHidden)
         .value("EXPLODING", ImPlotPieChartFlags_::ImPlotPieChartFlags_Exploding)
-        .export_values()
     ;
     py::enum_<ImPlotHeatmapFlags_>(_implot, "HeatmapFlags", py::arithmetic())
         .value("NONE", ImPlotHeatmapFlags_::ImPlotHeatmapFlags_None)
         .value("COL_MAJOR", ImPlotHeatmapFlags_::ImPlotHeatmapFlags_ColMajor)
-        .export_values()
     ;
     py::enum_<ImPlotHistogramFlags_>(_implot, "HistogramFlags", py::arithmetic())
         .value("NONE", ImPlotHistogramFlags_::ImPlotHistogramFlags_None)
@@ -184,30 +161,24 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("DENSITY", ImPlotHistogramFlags_::ImPlotHistogramFlags_Density)
         .value("NO_OUTLIERS", ImPlotHistogramFlags_::ImPlotHistogramFlags_NoOutliers)
         .value("COL_MAJOR", ImPlotHistogramFlags_::ImPlotHistogramFlags_ColMajor)
-        .export_values()
     ;
     py::enum_<ImPlotDigitalFlags_>(_implot, "DigitalFlags", py::arithmetic())
         .value("NONE", ImPlotDigitalFlags_::ImPlotDigitalFlags_None)
-        .export_values()
     ;
     py::enum_<ImPlotImageFlags_>(_implot, "ImageFlags", py::arithmetic())
         .value("NONE", ImPlotImageFlags_::ImPlotImageFlags_None)
-        .export_values()
     ;
     py::enum_<ImPlotTextFlags_>(_implot, "TextFlags", py::arithmetic())
         .value("NONE", ImPlotTextFlags_::ImPlotTextFlags_None)
         .value("VERTICAL", ImPlotTextFlags_::ImPlotTextFlags_Vertical)
-        .export_values()
     ;
     py::enum_<ImPlotDummyFlags_>(_implot, "DummyFlags", py::arithmetic())
         .value("NONE", ImPlotDummyFlags_::ImPlotDummyFlags_None)
-        .export_values()
     ;
     py::enum_<ImPlotCond_>(_implot, "Cond", py::arithmetic())
         .value("NONE", ImPlotCond_::ImPlotCond_None)
         .value("ALWAYS", ImPlotCond_::ImPlotCond_Always)
         .value("ONCE", ImPlotCond_::ImPlotCond_Once)
-        .export_values()
     ;
     py::enum_<ImPlotCol_>(_implot, "Col", py::arithmetic())
         .value("LINE", ImPlotCol_::ImPlotCol_Line)
@@ -232,7 +203,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("SELECTION", ImPlotCol_::ImPlotCol_Selection)
         .value("CROSSHAIRS", ImPlotCol_::ImPlotCol_Crosshairs)
         .value("COUNT", ImPlotCol_::ImPlotCol_COUNT)
-        .export_values()
     ;
     py::enum_<ImPlotStyleVar_>(_implot, "StyleVar", py::arithmetic())
         .value("LINE_WEIGHT", ImPlotStyleVar_::ImPlotStyleVar_LineWeight)
@@ -263,7 +233,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("PLOT_DEFAULT_SIZE", ImPlotStyleVar_::ImPlotStyleVar_PlotDefaultSize)
         .value("PLOT_MIN_SIZE", ImPlotStyleVar_::ImPlotStyleVar_PlotMinSize)
         .value("COUNT", ImPlotStyleVar_::ImPlotStyleVar_COUNT)
-        .export_values()
     ;
     py::enum_<ImPlotScale_>(_implot, "Scale", py::arithmetic())
         .value("LINEAR", ImPlotScale_::ImPlotScale_Linear)
@@ -285,7 +254,6 @@ void init_generated(py::module &_implot, Registry &registry) {
         .value("PLUS", ImPlotMarker_::ImPlotMarker_Plus)
         .value("ASTERISK", ImPlotMarker_::ImPlotMarker_Asterisk)
         .value("COUNT", ImPlotMarker_::ImPlotMarker_COUNT)
-        .export_values()
     ;
     py::enum_<ImPlotColormap_>(_implot, "Colormap", py::arithmetic())
         .value("DEEP", ImPlotColormap_::ImPlotColormap_Deep)
@@ -850,7 +818,7 @@ void init_generated(py::module &_implot, Registry &registry) {
     .def("end_drag_drop_source", &ImPlot::EndDragDropSource
         )
     .def("get_style", &ImPlot::GetStyle
-        )
+        , py::return_value_policy::reference)
     .def("style_colors_auto", &ImPlot::StyleColorsAuto
         , py::arg("dst") = nullptr
         )
@@ -913,10 +881,10 @@ void init_generated(py::module &_implot, Registry &registry) {
         )
     .def("get_style_color_name", &ImPlot::GetStyleColorName
         , py::arg("idx")
-        )
+        , py::return_value_policy::reference)
     .def("get_marker_name", &ImPlot::GetMarkerName
         , py::arg("idx")
-        )
+        , py::return_value_policy::reference)
     .def("add_colormap", py::overload_cast<const char *, const ImVec4 *, int, bool>(&ImPlot::AddColormap)
         , py::arg("name")
         , py::arg("cols")
@@ -933,7 +901,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         )
     .def("get_colormap_name", &ImPlot::GetColormapName
         , py::arg("cmap")
-        )
+        , py::return_value_policy::reference)
     .def("get_colormap_index", &ImPlot::GetColormapIndex
         , py::arg("name")
         )
@@ -988,7 +956,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("plot_title_id") = nullptr
         )
     .def("get_input_map", &ImPlot::GetInputMap
-        )
+        , py::return_value_policy::reference)
     .def("map_input_default", &ImPlot::MapInputDefault
         , py::arg("dst") = nullptr
         )
@@ -1005,7 +973,7 @@ void init_generated(py::module &_implot, Registry &registry) {
         , py::arg("cmap")
         )
     .def("get_plot_draw_list", &ImPlot::GetPlotDrawList
-        )
+        , py::return_value_policy::reference)
     .def("push_plot_clip_rect", &ImPlot::PushPlotClipRect
         , py::arg("expand") = 0
         )
@@ -1028,14 +996,14 @@ void init_generated(py::module &_implot, Registry &registry) {
     .def("show_metrics_window", [](bool * p_popen)
         {
             ImPlot::ShowMetricsWindow(p_popen);
-            return std::make_tuple(p_popen);
+            return p_popen;
         }
         , py::arg("p_popen") = nullptr
         )
     .def("show_demo_window", [](bool * p_open)
         {
             ImPlot::ShowDemoWindow(p_open);
-            return std::make_tuple(p_open);
+            return p_open;
         }
         , py::arg("p_open") = nullptr
         )
