@@ -1,5 +1,7 @@
 module: nanort
 
+language: c++
+
 flags: [
   '-std=c++17',
 ]

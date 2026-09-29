@@ -26,11 +26,7 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def_readwrite("index1", &b2WorldId::index1)
         .def_readwrite("generation", &b2WorldId::generation)
         .def(py::init(&b2CreateWorld))
-        .def("draw", [](int worldId, PyDebugDrawBase & dbg)
-            {
-                World_Draw(worldId, dbg);
-                return dbg;
-            }
+        .def("draw", &World_Draw
             , py::arg("dbg")
             )
         .def("destroy", &b2DestroyWorld
@@ -473,6 +469,16 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
         .def("create_chain", &b2CreateChain
             , py::arg("def_")
             )
+        .def("set_user_data", &Body_SetUserData
+            , py::arg("user_data")
+            )
+        .def("get_user_data", &Body_GetUserData
+            )
+        .def("set_position", &Body_SetPosition
+            , py::arg("position")
+            )
+        .def("get_angle", &Body_GetAngle
+            )
         .def_property("user_data", &Body_GetUserData, &Body_SetUserData)
         .def_property("mass_data", &b2Body_GetMassData, &b2Body_SetMassData)
         .def_property("position", &b2Body_GetPosition, &Body_SetPosition)
@@ -608,6 +614,11 @@ void init_id_py_auto(py::module &_box2d, Registry &registry) {
             , py::arg("drag")
             , py::arg("lift")
             , py::arg("wake")
+            )
+        .def("set_user_data", &Shape_SetUserData
+            , py::arg("user_data")
+            )
+        .def("get_user_data", &Shape_GetUserData
             )
         .def_property("user_data", &Shape_GetUserData, &Shape_SetUserData)
         .def_property_readonly("body", &b2Shape_GetBody)

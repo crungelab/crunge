@@ -21,20 +21,19 @@ void init_tmx_object_group_py_auto(py::module &_tmx, Registry &registry) {
         py::enum_<tmx::ObjectGroup::DrawOrder>(_ObjectGroup, "DrawOrder", py::arithmetic())
             .value("INDEX", tmx::ObjectGroup::DrawOrder::Index)
             .value("TOP_DOWN", tmx::ObjectGroup::DrawOrder::TopDown)
-            .export_values()
         ;
         _ObjectGroup
         .def(py::init<>())
         .def("get_type", &tmx::ObjectGroup::getType
             )
         .def("get_colour", &tmx::ObjectGroup::getColour
-            )
+            , py::return_value_policy::reference)
         .def("get_draw_order", &tmx::ObjectGroup::getDrawOrder
             )
         .def("get_properties", &tmx::ObjectGroup::getProperties
-            )
+            , py::return_value_policy::reference)
         .def("get_objects", &tmx::ObjectGroup::getObjects
-            )
+            , py::return_value_policy::reference)
     ;
 
 

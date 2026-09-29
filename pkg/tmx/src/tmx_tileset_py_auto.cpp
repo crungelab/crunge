@@ -73,7 +73,6 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
             .value("BOTTOM_LEFT", tmx::Tileset::ObjectAlignment::BottomLeft)
             .value("BOTTOM", tmx::Tileset::ObjectAlignment::Bottom)
             .value("BOTTOM_RIGHT", tmx::Tileset::ObjectAlignment::BottomRight)
-            .export_values()
         ;
         _Tileset
         .def("load_without_map", &tmx::Tileset::loadWithoutMap
@@ -90,11 +89,11 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
         .def("get_last_gid", &tmx::Tileset::getLastGID
             )
         .def("get_name", &tmx::Tileset::getName
-            )
+            , py::return_value_policy::reference)
         .def("get_class", &tmx::Tileset::getClass
-            )
+            , py::return_value_policy::reference)
         .def("get_tile_size", &tmx::Tileset::getTileSize
-            )
+            , py::return_value_policy::reference)
         .def("get_spacing", &tmx::Tileset::getSpacing
             )
         .def("get_margin", &tmx::Tileset::getMargin
@@ -106,27 +105,27 @@ void init_tmx_tileset_py_auto(py::module &_tmx, Registry &registry) {
         .def("get_object_alignment", &tmx::Tileset::getObjectAlignment
             )
         .def("get_tile_offset", &tmx::Tileset::getTileOffset
-            )
+            , py::return_value_policy::reference)
         .def("get_properties", &tmx::Tileset::getProperties
-            )
+            , py::return_value_policy::reference)
         .def("get_image_path", &tmx::Tileset::getImagePath
-            )
+            , py::return_value_policy::reference)
         .def("get_image_size", &tmx::Tileset::getImageSize
-            )
+            , py::return_value_policy::reference)
         .def("get_transparency_colour", &tmx::Tileset::getTransparencyColour
-            )
+            , py::return_value_policy::reference)
         .def("has_transparency", &tmx::Tileset::hasTransparency
             )
         .def("get_terrain_types", &tmx::Tileset::getTerrainTypes
-            )
+            , py::return_value_policy::reference)
         .def("get_tiles", &tmx::Tileset::getTiles
-            )
+            , py::return_value_policy::reference)
         .def("has_tile", &tmx::Tileset::hasTile
             , py::arg("id")
             )
         .def("get_tile", &tmx::Tileset::getTile
             , py::arg("id")
-            )
+            , py::return_value_policy::reference)
         .def_property_readonly("name", &tmx::Tileset::getName)
         .def_property_readonly("tiles", &tmx::Tileset::getTiles)
     ;

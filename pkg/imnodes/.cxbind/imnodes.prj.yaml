@@ -1,5 +1,7 @@
 module: imnodes
 
+language: c++
+
 flags: [
     '-std=c++17',
     '-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1',

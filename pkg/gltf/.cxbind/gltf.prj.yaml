@@ -1,5 +1,7 @@
 module: gltf
 
+language: c++
+
 flags: [
   '-std=c++17',
 ]

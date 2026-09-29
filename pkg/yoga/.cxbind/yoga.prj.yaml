@@ -1,8 +1,11 @@
 module: yoga
 
+language: c++
+
 flags: [
   '-std=c++20',
   '-I../../depot/yoga',
+  '-I../../depot/pybind11/include',
 ]
 
 #prefixes: [YG]

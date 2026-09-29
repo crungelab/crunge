@@ -1,16 +1,19 @@
-#include <limits>
-
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
+#include <limits>
+
+#include <nanort.h>
+#include <iostream>
 
 #include <cxbind/cxbind.h>
-
-#include "nanort.h"
+#include <crunge/nanort/conversions.h>
 
 namespace py = pybind11;
 
-void register_nanort_py_auto(py::module &_nanort, Registry &registry) {
+using namespace nanort;
+
+void init_nanort_py_auto(py::module &_nanort, Registry &registry) {
     py::enum_<nanort::RayType>(_nanort, "RayType", py::arithmetic())
         .value("RAY_TYPE_NONE", nanort::RayType::RAY_TYPE_NONE)
         .value("RAY_TYPE_PRIMARY", nanort::RayType::RAY_TYPE_PRIMARY)

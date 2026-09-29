@@ -1,5 +1,7 @@
 module: skia
+
 language: c++
+
 flags: [
   '-std=c++17',
   '-I../../depot/skia',

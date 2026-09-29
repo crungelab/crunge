@@ -34,7 +34,6 @@ void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
             .value("LEFT", tmx::Text::HAlign::Left)
             .value("CENTRE", tmx::Text::HAlign::Centre)
             .value("RIGHT", tmx::Text::HAlign::Right)
-            .export_values()
         ;
         _Text
         .def_readwrite("h_align", &tmx::Text::hAlign)
@@ -44,7 +43,6 @@ void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
             .value("TOP", tmx::Text::VAlign::Top)
             .value("CENTRE", tmx::Text::VAlign::Centre)
             .value("BOTTOM", tmx::Text::VAlign::Bottom)
-            .export_values()
         ;
         _Text
         .def_readwrite("v_align", &tmx::Text::vAlign)
@@ -60,22 +58,21 @@ void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
             .value("POLYGON", tmx::Object::Shape::Polygon)
             .value("POLYLINE", tmx::Object::Shape::Polyline)
             .value("TEXT", tmx::Object::Shape::Text)
-            .export_values()
         ;
         _Object
         .def(py::init<>())
         .def("get_uid", &tmx::Object::getUID
             )
         .def("get_name", &tmx::Object::getName
-            )
+            , py::return_value_policy::reference)
         .def("get_type", &tmx::Object::getType
-            )
+            , py::return_value_policy::reference)
         .def("get_class", &tmx::Object::getClass
-            )
+            , py::return_value_policy::reference)
         .def("get_position", &tmx::Object::getPosition
-            )
+            , py::return_value_policy::reference)
         .def("get_aabb", &tmx::Object::getAABB
-            )
+            , py::return_value_policy::reference)
         .def("get_rotation", &tmx::Object::getRotation
             )
         .def("get_tile_id", &tmx::Object::getTileID
@@ -87,15 +84,15 @@ void init_tmx_object_py_auto(py::module &_tmx, Registry &registry) {
         .def("get_shape", &tmx::Object::getShape
             )
         .def("get_points", &tmx::Object::getPoints
-            )
+            , py::return_value_policy::reference)
         .def("get_properties", &tmx::Object::getProperties
-            )
+            , py::return_value_policy::reference)
         .def("get_text", py::overload_cast<>(&tmx::Object::getText, py::const_)
-            )
+            , py::return_value_policy::reference)
         .def("get_text", py::overload_cast<>(&tmx::Object::getText)
-            )
+            , py::return_value_policy::reference)
         .def("get_tileset_name", &tmx::Object::getTilesetName
-            )
+            , py::return_value_policy::reference)
         .def_property_readonly("name", &tmx::Object::getName)
         .def_property_readonly("rotation", &tmx::Object::getRotation)
     ;

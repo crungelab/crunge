@@ -25,13 +25,13 @@ void init_tmx_image_layer_py_auto(py::module &_tmx, Registry &registry) {
         .def("get_type", &tmx::ImageLayer::getType
             )
         .def("get_image_path", &tmx::ImageLayer::getImagePath
-            )
+            , py::return_value_policy::reference)
         .def("get_transparency_colour", &tmx::ImageLayer::getTransparencyColour
-            )
+            , py::return_value_policy::reference)
         .def("has_transparency", &tmx::ImageLayer::hasTransparency
             )
         .def("get_image_size", &tmx::ImageLayer::getImageSize
-            )
+            , py::return_value_policy::reference)
         .def("has_repeat_x", &tmx::ImageLayer::hasRepeatX
             )
         .def("has_repeat_y", &tmx::ImageLayer::hasRepeatY

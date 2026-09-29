@@ -38,33 +38,28 @@ void init_yoga_enums_py_auto(py::module &_yoga, Registry &registry) {
         .value("SPACE_BETWEEN", facebook::yoga::Align::SpaceBetween)
         .value("SPACE_AROUND", facebook::yoga::Align::SpaceAround)
         .value("SPACE_EVENLY", facebook::yoga::Align::SpaceEvenly)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::BoxSizing>(_yoga, "BoxSizing", py::arithmetic())
         .value("BORDER_BOX", facebook::yoga::BoxSizing::BorderBox)
         .value("CONTENT_BOX", facebook::yoga::BoxSizing::ContentBox)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Dimension>(_yoga, "Dimension", py::arithmetic())
         .value("WIDTH", facebook::yoga::Dimension::Width)
         .value("HEIGHT", facebook::yoga::Dimension::Height)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Direction>(_yoga, "Direction", py::arithmetic())
         .value("INHERIT", facebook::yoga::Direction::Inherit)
         .value("LTR", facebook::yoga::Direction::LTR)
         .value("RTL", facebook::yoga::Direction::RTL)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Display>(_yoga, "Display", py::arithmetic())
         .value("FLEX", facebook::yoga::Display::Flex)
         .value("NONE", facebook::yoga::Display::None)
         .value("CONTENTS", facebook::yoga::Display::Contents)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Edge>(_yoga, "Edge", py::arithmetic())
@@ -77,7 +72,6 @@ void init_yoga_enums_py_auto(py::module &_yoga, Registry &registry) {
         .value("HORIZONTAL", facebook::yoga::Edge::Horizontal)
         .value("VERTICAL", facebook::yoga::Edge::Vertical)
         .value("ALL", facebook::yoga::Edge::All)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::FlexDirection>(_yoga, "FlexDirection", py::arithmetic())
@@ -85,14 +79,12 @@ void init_yoga_enums_py_auto(py::module &_yoga, Registry &registry) {
         .value("COLUMN_REVERSE", facebook::yoga::FlexDirection::ColumnReverse)
         .value("ROW", facebook::yoga::FlexDirection::Row)
         .value("ROW_REVERSE", facebook::yoga::FlexDirection::RowReverse)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Gutter>(_yoga, "Gutter", py::arithmetic())
         .value("COLUMN", facebook::yoga::Gutter::Column)
         .value("ROW", facebook::yoga::Gutter::Row)
         .value("ALL", facebook::yoga::Gutter::All)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Justify>(_yoga, "Justify", py::arithmetic())
@@ -102,14 +94,12 @@ void init_yoga_enums_py_auto(py::module &_yoga, Registry &registry) {
         .value("SPACE_BETWEEN", facebook::yoga::Justify::SpaceBetween)
         .value("SPACE_AROUND", facebook::yoga::Justify::SpaceAround)
         .value("SPACE_EVENLY", facebook::yoga::Justify::SpaceEvenly)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Overflow>(_yoga, "Overflow", py::arithmetic())
         .value("VISIBLE", facebook::yoga::Overflow::Visible)
         .value("HIDDEN", facebook::yoga::Overflow::Hidden)
         .value("SCROLL", facebook::yoga::Overflow::Scroll)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::PhysicalEdge>(_yoga, "PhysicalEdge", py::arithmetic())
@@ -117,14 +107,12 @@ void init_yoga_enums_py_auto(py::module &_yoga, Registry &registry) {
         .value("TOP", facebook::yoga::PhysicalEdge::Top)
         .value("RIGHT", facebook::yoga::PhysicalEdge::Right)
         .value("BOTTOM", facebook::yoga::PhysicalEdge::Bottom)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::PositionType>(_yoga, "PositionType", py::arithmetic())
         .value("STATIC", facebook::yoga::PositionType::Static)
         .value("RELATIVE", facebook::yoga::PositionType::Relative)
         .value("ABSOLUTE", facebook::yoga::PositionType::Absolute)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Unit>(_yoga, "Unit", py::arithmetic())
@@ -135,21 +123,18 @@ void init_yoga_enums_py_auto(py::module &_yoga, Registry &registry) {
         .value("MAX_CONTENT", facebook::yoga::Unit::MaxContent)
         .value("FIT_CONTENT", facebook::yoga::Unit::FitContent)
         .value("STRETCH", facebook::yoga::Unit::Stretch)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::Wrap>(_yoga, "Wrap", py::arithmetic())
         .value("NO_WRAP", facebook::yoga::Wrap::NoWrap)
         .value("WRAP", facebook::yoga::Wrap::Wrap)
         .value("REVERSE", facebook::yoga::Wrap::WrapReverse)
-        .export_values()
     ;
 
     py::enum_<facebook::yoga::MeasureMode>(_yoga, "MeasureMode", py::arithmetic())
         .value("UNDEFINED", facebook::yoga::MeasureMode::Undefined)
         .value("EXACTLY", facebook::yoga::MeasureMode::Exactly)
         .value("AT_MOST", facebook::yoga::MeasureMode::AtMost)
-        .export_values()
     ;
 
 }

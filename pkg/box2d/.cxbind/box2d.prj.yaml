@@ -1,8 +1,12 @@
 module: box2d
+
 language: c
+
 flags: [
+  '-I../../depot/box2d/include',
   '-I../../depot/box2d/include/box2d',
-  '-B2_API=',
+  '-I../../depot/pybind11/include',
+  '-DB2_API=',
 ]
 
 prefixes: [b2]

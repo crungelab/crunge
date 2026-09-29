@@ -32,7 +32,6 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
         .value("STAGGERED", tmx::Orientation::Staggered)
         .value("HEXAGONAL", tmx::Orientation::Hexagonal)
         .value("NONE", tmx::Orientation::None)
-        .export_values()
     ;
     py::enum_<tmx::RenderOrder>(_tmx, "RenderOrder", py::arithmetic())
         .value("RIGHT_DOWN", tmx::RenderOrder::RightDown)
@@ -40,19 +39,16 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
         .value("LEFT_DOWN", tmx::RenderOrder::LeftDown)
         .value("LEFT_UP", tmx::RenderOrder::LeftUp)
         .value("NONE", tmx::RenderOrder::None)
-        .export_values()
     ;
     py::enum_<tmx::StaggerAxis>(_tmx, "StaggerAxis", py::arithmetic())
         .value("X", tmx::StaggerAxis::X)
         .value("Y", tmx::StaggerAxis::Y)
         .value("NONE", tmx::StaggerAxis::None)
-        .export_values()
     ;
     py::enum_<tmx::StaggerIndex>(_tmx, "StaggerIndex", py::arithmetic())
         .value("EVEN", tmx::StaggerIndex::Even)
         .value("ODD", tmx::StaggerIndex::Odd)
         .value("NONE", tmx::StaggerIndex::None)
-        .export_values()
     ;
     py::class_<tmx::Map> _Map(_tmx, "Map");
     registry.on(_tmx, "Map", _Map);
@@ -66,15 +62,15 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
             , py::arg("working_dir")
             )
         .def("get_version", &tmx::Map::getVersion
-            )
+            , py::return_value_policy::reference)
         .def("get_orientation", &tmx::Map::getOrientation
             )
         .def("get_render_order", &tmx::Map::getRenderOrder
             )
         .def("get_tile_count", &tmx::Map::getTileCount
-            )
+            , py::return_value_policy::reference)
         .def("get_tile_size", &tmx::Map::getTileSize
-            )
+            , py::return_value_policy::reference)
         .def("get_bounds", &tmx::Map::getBounds
             )
         .def("get_hex_side_length", &tmx::Map::getHexSideLength
@@ -84,25 +80,25 @@ void init_tmx_map_py_auto(py::module &_tmx, Registry &registry) {
         .def("get_stagger_index", &tmx::Map::getStaggerIndex
             )
         .def("get_background_colour", &tmx::Map::getBackgroundColour
-            )
+            , py::return_value_policy::reference)
         .def("get_tilesets", &tmx::Map::getTilesets
-            )
+            , py::return_value_policy::reference)
         .def("get_class", &tmx::Map::getClass
-            )
+            , py::return_value_policy::reference)
         .def("get_properties", &tmx::Map::getProperties
-            )
+            , py::return_value_policy::reference)
         .def("get_animated_tiles", &tmx::Map::getAnimatedTiles
-            )
+            , py::return_value_policy::reference)
         .def("get_working_directory", &tmx::Map::getWorkingDirectory
-            )
+            , py::return_value_policy::reference)
         .def("get_template_objects", py::overload_cast<>(&tmx::Map::getTemplateObjects)
-            )
+            , py::return_value_policy::reference)
         .def("get_template_objects", py::overload_cast<>(&tmx::Map::getTemplateObjects, py::const_)
-            )
+            , py::return_value_policy::reference)
         .def("get_template_tilesets", py::overload_cast<>(&tmx::Map::getTemplateTilesets)
-            )
+            , py::return_value_policy::reference)
         .def("get_template_tilesets", py::overload_cast<>(&tmx::Map::getTemplateTilesets, py::const_)
-            )
+            , py::return_value_policy::reference)
         .def("is_infinite", &tmx::Map::isInfinite
             )
         .def("get_parallax_origin", &tmx::Map::getParallaxOrigin

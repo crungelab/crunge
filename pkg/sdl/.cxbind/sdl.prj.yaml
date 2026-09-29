@@ -1,8 +1,8 @@
 module: sdl
 
 language: c
+
 flags: [
-  #'-x', 'c',
   '-I../../depot/sdl/include',
 ]
 

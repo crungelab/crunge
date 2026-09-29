@@ -13,12 +13,19 @@ public:
     explicit PyHolder(py::object o) : obj(std::move(o)) {}
 };
 
+static void World_Draw(b2WorldId worldId, py::object dbg) {
+    // debug_draw_py.h's world_draw binds the Python object to the draw context,
+    // resolves its subclass's method cache, and rethrows callback exceptions.
+    world_draw(worldId, std::move(dbg));
+}
+/*
 static void World_Draw(b2WorldId worldId, PyDebugDrawBase &dbg) {
     // IMPORTANT: dbg must outlive this call (it does because Python owns dbg).
     // The thunks acquire the GIL, so this is safe as long as you're calling
     // b2World_Draw from Python while the interpreter is alive.
     b2World_Draw(worldId, dbg.ptr());
 }
+*/
 
 static void Body_SetUserData(b2BodyId bodyId, py::object userData) {
     // Clean up any previously stored PyHolder to avoid memory leaks
