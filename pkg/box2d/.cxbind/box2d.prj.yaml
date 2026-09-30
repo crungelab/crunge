@@ -11,6 +11,9 @@ flags: [
 
 prefixes: [b2]
 
+targets:
+  pyi: crunge/box2d/_box2d.pyi
+
 unit_files:
   - path: box2d.unit.yaml
   - path: types.unit.yaml

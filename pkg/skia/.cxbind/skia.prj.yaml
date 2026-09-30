@@ -12,6 +12,9 @@ flags: [
 
 prefixes: [Sk]
 
+targets:
+  pyi: crunge/skia/_skia.pyi
+
 unit_files:
   - path: skia_graphite_types.unit.yaml
   - path: skia_clip_op.unit.yaml

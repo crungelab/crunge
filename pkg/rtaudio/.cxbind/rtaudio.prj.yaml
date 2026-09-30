@@ -1,0 +1,19 @@
+module: rtaudio
+
+language: c++
+
+flags: [
+  '-std=c++17',
+  '-DRTAUDIO_DLL_PUBLIC=',
+  '-I../../depot/pybind11/include',
+  '-I../../depot/rtaudio'
+]
+
+prefixes: [Rt]
+
+targets:
+  pyi: crunge/rtaudio/_rtaudio.pyi
+
+unit_files:
+  - path: rtaudio.unit.yaml
+  - path: audio_stream.unit.yaml

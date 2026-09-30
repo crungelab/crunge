@@ -6,5 +6,8 @@ flags: [
   '-std=c++17',
 ]
 
+targets:
+  pyi: crunge/gltf/_gltf.pyi
+
 unit_files:
   - path: gltf.unit.yaml

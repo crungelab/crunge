@@ -12,5 +12,8 @@ flags: [
 
 prefixes: [ImNodes, Im]
 
+targets:
+  pyi: crunge/imnodes/_imnodes.pyi
+
 unit_files:
   - path: imnodes.unit.yaml

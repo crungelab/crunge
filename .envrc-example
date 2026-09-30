@@ -1,7 +1,17 @@
 export CMAKE_GENERATOR=Ninja
 export CMAKE_C_COMPILER=/usr/bin/clang
 export CMAKE_CXX_COMPILER=/usr/bin/clang++
-export CMAKE_CXX_FLAGS=-stdlib=libc++
 
-#export CXX=clang++
-#export LDFLAGS=-fuse-ld=lld
+export CMAKE_CXX_FLAGS_DEBUG="-fsanitize=address -fno-omit-frame-pointer -g"
+export CMAKE_EXE_LINKER_FLAGS_DEBUG="-fsanitize=address"
+export CMAKE_SHARED_LINKER_FLAGS_DEBUG="-fsanitize=address"
+
+export DAWN_DEBUG_BREAK_ON_ERROR=1
+export DAWN_ENABLE_ASSERTS=1
+export DAWN_ENABLE_BACKTRACE=1
+
+# Export the CMake variable to initialize target scanning on all targets
+export CMAKE_CXX_SCAN_FOR_MODULES=OFF
+
+# Optional: Add compiler-specific module paths or flags if necessary
+export CXXFLAGS="-std=c++20 -fconcepts"

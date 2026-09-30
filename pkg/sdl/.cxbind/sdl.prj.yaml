@@ -8,6 +8,9 @@ flags: [
 
 prefixes: [SDL_]
 
+targets:
+  pyi: crunge/sdl/_sdl.pyi
+
 unit_files:
   - path: sdl_events.unit.yaml
   - path: sdl_init.unit.yaml

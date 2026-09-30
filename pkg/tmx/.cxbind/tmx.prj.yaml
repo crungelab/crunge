@@ -10,6 +10,9 @@ flags: [
 
 prefixes: [SDL_]
 
+targets:
+  pyi: crunge/tmx/_tmx.pyi
+
 unit_files:
   - path: tmx_map.unit.yaml
   - path: tmx_layer.unit.yaml

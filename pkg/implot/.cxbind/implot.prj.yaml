@@ -12,5 +12,8 @@ flags: [
 
 prefixes: [ImPlot, Im]
 
+targets:
+  pyi: crunge/implot/_implot.pyi
+
 unit_files:
   - path: implot.unit.yaml

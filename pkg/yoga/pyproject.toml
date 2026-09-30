@@ -1,5 +1,5 @@
 [build-system]
-requires = ["cxbuild==0.2", "setuptools", "wheel"]
+requires = ["cxbuild>=0.4"]
 build-backend = "cxbuild.backend"
 
 [tool.setuptools]

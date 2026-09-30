@@ -10,6 +10,9 @@ flags: [
 
 #prefixes: [YG]
 
+targets:
+  pyi: crunge/yoga/_yoga.pyi
+
 unit_files:
   #- path: yoga_numeric.unit.yaml
   - path: yoga_enums.unit.yaml

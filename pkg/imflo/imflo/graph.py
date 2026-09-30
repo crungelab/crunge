@@ -1,6 +1,7 @@
 from loguru import logger
 
-from crunge import imgui, imnodes
+from crunge import imgui
+from crunge import imnodes
 
 from imflo.wire import Wire
 

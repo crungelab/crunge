@@ -90,6 +90,9 @@ _skbuild
 tmp
 temp
 
+# Mypy
+.mypy_cache/
+
 # Procure
 depot/*
 
