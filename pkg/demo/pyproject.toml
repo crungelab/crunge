@@ -27,5 +27,4 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "click ~=8.2.1",
 ]

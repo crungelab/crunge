@@ -1,5 +1,8 @@
 # The crunge solution root: cxbuild builds and installs the projects listed below.
 # Not a package itself, so there is no [build-system] and hatch doesn't install it.
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "crunge-root"
@@ -48,12 +51,14 @@ python = "3.12"
 installer = "uv"
 skip-install = true  # the root is the solution, not a package
 workspace.members = [
-  "pkg/imgui", "pkg/implot", "pkg/imnodes", "pkg/wgpu", "pkg/skia", "pkg/yoga",
-  "pkg/gltf", "pkg/sdl", "pkg/nanort", "pkg/tmx", "pkg/box2d", "pkg/rtaudio",
   # Build toolchain
   "../cxbuild", "../cxbind",
   # Generation toolchain (cxbind plugins, cxtest): only needed where bindings are generated
   "../cxbind/plugins/clang", "../cxbind/plugins/dawn", "../cxtest",
+
+  "pkg/imgui", "pkg/implot", "pkg/imnodes", "pkg/wgpu", "pkg/skia", "pkg/yoga",
+  "pkg/gltf", "pkg/sdl", "pkg/nanort", "pkg/tmx", "pkg/box2d", "pkg/rtaudio",
+  "pkg/core", "pkg/engine", "pkg/demo", "pkg/mia", "pkg/miascope",
 ]
 dependencies = ["uv", "pytest", "mypy"]
 

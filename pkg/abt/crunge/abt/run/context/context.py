@@ -123,9 +123,6 @@ class Context:
                     self.believe(subj, verb, term_(vv))
         return self
 
-    # Legacy spelling.
-    fromJSON = from_json
-
     def __repr__(self) -> str:
         return "\n".join(str(c) for c in self.clauses)
 
