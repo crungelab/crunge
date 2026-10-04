@@ -85,23 +85,29 @@ class Demo:
 
     def create_surface(self):
         logger.debug("Creating surface")
-        if sys.platform == "darwin":
-            handle = glfw.get_cocoa_window(self.window)
-            # TODO: Implement SurfaceDescriptorFromMetalLayer
-        elif sys.platform == "win32":
-            wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-            handle = glfw.get_win32_window(self.window)
-            wsd.hwnd = as_capsule(handle)
-            wsd.hinstance = None
-
-        elif sys.platform == "linux":
-            handle = glfw.get_x11_window(self.window)
-            display = glfw.get_x11_display()
-
-            wsd = wgpu.SurfaceSourceXlibWindow(
-                display=as_capsule(display),
-                window=handle,
-            )
+        wsd = None
+        match sys.platform:
+            case "darwin":
+                handle = glfw.get_cocoa_window(self.window)
+            case "win32":
+                wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
+                handle = glfw.get_win32_window(self.window)
+                wsd.hwnd = as_capsule(handle)
+                wsd.hinstance = None
+            case "linux":
+                platform = glfw.get_platform()
+                if platform == glfw.PLATFORM_X11:
+                    display = glfw.get_x11_display()
+                    handle = glfw.get_x11_window(self.window)
+                    wsd = wgpu.SurfaceSourceXlibWindow(
+                        display=as_capsule(display), window=handle
+                    )
+                elif platform == glfw.PLATFORM_WAYLAND:
+                    display = glfw.get_wayland_display()
+                    surface = glfw.get_wayland_window(self.window)
+                    wsd = wgpu.SurfaceSourceWaylandSurface(
+                        display=as_capsule(display), surface=as_capsule(surface)
+                    )
 
         sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
         self.surface = self.instance.create_surface(sd)

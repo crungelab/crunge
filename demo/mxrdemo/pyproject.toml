@@ -3,15 +3,12 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["crunge"]
-
-[tool.setuptools]
-packages = ["crunge", "crunge.miascope"]
+packages = ["mxrdemo"]
 
 [project]
-name = "crunge-miascope"
+name = "mxrdemo"
 version = "0.1.0"
-description = 'Crunge Mia Scope'
+description = 'SDL Mixer Demo'
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
@@ -26,9 +23,23 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "loguru ~=0.7.2",
-  "PyYAML ==6.0.3",
+  "loguru",
 ]
 
 [project.scripts]
-miascope = 'crunge.miascope.cli:cli'
+mxrdemo = 'mxrdemo.cli:cli'
+
+[tool.hatch.envs.default]
+python = "3.12"
+installer = "uv"
+workspace.members = [
+  # Build toolchain
+  "../../../cxbuild",
+  # Generation toolchain (cxbuild requirement)
+  "../../../cxbind",
+
+  # Crunge packages
+  "../../pkg/core",
+  "../../pkg/sdl", 
+]
+dependencies = ["uv", "pytest", "mypy"]

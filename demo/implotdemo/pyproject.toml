@@ -17,3 +17,16 @@ implotdemo = 'implotdemo.cli:cli'
 
 [tool.hatch.envs.default]
 python = "3.12"
+installer = "uv"
+workspace.members = [
+  # Build toolchain
+  "../../../cxbuild",
+  # Generation toolchain (cxbuild requirement)
+  "../../../cxbind",
+
+  # Crunge packages
+  "../../pkg/core", "../../pkg/imgui", "../../pkg/implot", "../../pkg/wgpu", "../../pkg/skia", "../../pkg/yoga",
+  "../../pkg/sdl",
+  "../../pkg/engine", "../../pkg/demo",
+]
+dependencies = ["uv", "pytest", "mypy"]

@@ -35,23 +35,30 @@ class Viewer(Base):
 
     def create_view(self, scene: Scene):
         wsd = None
-        if sys.platform == "darwin":
-            handle = glfw.get_cocoa_window(self.window)
-        elif sys.platform == "win32":
-            wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-            handle = glfw.get_win32_window(self.window)
-            wsd.hwnd = as_capsule(handle)
-            wsd.hinstance = None
+        match sys.platform:
+            case "darwin":
+                handle = glfw.get_cocoa_window(self.window)
+            case "win32":
+                wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
+                handle = glfw.get_win32_window(self.window)
+                wsd.hwnd = as_capsule(handle)
+                wsd.hinstance = None
+            case "linux":
+                platform = glfw.get_platform()
+                if platform == glfw.PLATFORM_X11:
+                    display = glfw.get_x11_display()
+                    handle = glfw.get_x11_window(self.window)
+                    wsd = wgpu.SurfaceSourceXlibWindow(
+                        display=as_capsule(display), window=handle
+                    )
+                elif platform == glfw.PLATFORM_WAYLAND:
+                    display = glfw.get_wayland_display()
+                    surface = glfw.get_wayland_window(self.window)
+                    wsd = wgpu.SurfaceSourceWaylandSurface(
+                        display=as_capsule(display), surface=as_capsule(surface)
+                    )
 
-        elif sys.platform == "linux":
-            handle = glfw.get_x11_window(self.window)
-            display = glfw.get_x11_display()
-            wsd = wgpu.SurfaceSourceXlibWindow(
-                display=as_capsule(display),
-                window=handle
-            )
-
-        view = View(scene, self.size)
+        view = View(scene, glm.ivec2(self.kWidth, self.kHeight))
         view.create_from_wsd(wsd)
         self.view = view
 

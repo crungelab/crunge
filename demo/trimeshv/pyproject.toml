@@ -1,5 +1,6 @@
-[tool.setuptools]
-packages = ["trimeshv"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "trimeshv"
@@ -10,20 +11,23 @@ authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
     "click ==8.1.7",
-    "glfw ==2.7.0",
-    "trimesh[easy] ==4.4.3",
+    "glfw ==2.10.2",
+    "trimesh[easy] ==5.1.1",
 ]
 
 [project.scripts]
 trimeshv = 'trimeshv.cli:cli'
 
 [tool.hatch.envs.default]
-dependencies = [
-  "pytest",
-  "pytest-cov",
-  "debugpy",
-]
+python = "3.12"
+installer = "uv"
+workspace.members = [
+  # Build toolchain
+  "../../../cxbuild",
+  # Generation toolchain (cxbuild requirement)
+  "../../../cxbind",
 
-[tool.hatch.envs.default.scripts]
-cov = "pytest --cov-report=term-missing --cov-config=pyproject.toml --cov=ragamuffin --cov=tests {args}"
-no-cov = "cov --no-cov {args}"
+  # Crunge packages
+  "../../pkg/core", "../../pkg/wgpu",
+]
+dependencies = ["uv", "pytest", "mypy"]

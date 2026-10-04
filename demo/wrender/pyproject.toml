@@ -1,5 +1,6 @@
-[tool.setuptools]
-packages = ["wrender"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "wrender"
@@ -9,15 +10,28 @@ requires-python = ">=3.12"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
-    "loguru ==0.7.2",
-    "click ==8.1.7",
-    "PyGLM ==2.7.1",
+    "loguru",
+    "click",
+    "PyGLM",
 
-    "Jinja2 ==3.1.4",
-
-    #"numpy ==1.26.3",
-    #"imageio ==2.34.0",
+    "Jinja2",
 ]
 
 [project.scripts]
 wrender = 'wrender.cli:cli'
+
+[tool.hatch.envs.default]
+python = "3.12"
+installer = "uv"
+workspace.members = [
+  # Build toolchain
+  "../../../cxbuild",
+  # Generation toolchain (cxbuild requirement)
+  "../../../cxbind",
+
+  # Crunge packages
+  "../../pkg/core", "../../pkg/imgui", "../../pkg/wgpu", "../../pkg/skia", "../../pkg/yoga",
+  "../../pkg/sdl", "../../pkg/gltf",
+  "../../pkg/engine", "../../pkg/demo",
+]
+dependencies = ["uv", "pytest", "mypy"]

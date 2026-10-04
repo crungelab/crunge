@@ -21,19 +21,23 @@ from .controller.camera.arcball import ArcballCameraController
 class Viewer(Base):
     kWidth = 1024
     kHeight = 768
-    
+
     def __init__(self):
         self.camera: Camera = None
         self.camera_controller: CameraController = None
         self.delta_time = 0
 
     def create_window(self):
+        glfw.init_hint(glfw.WAYLAND_LIBDECOR, glfw.WAYLAND_PREFER_LIBDECOR)
         glfw.init()
+        print(glfw.get_version_string())
 
         glfw.window_hint(glfw.CLIENT_API, glfw.NO_API)
         glfw.window_hint(glfw.RESIZABLE, True)
 
-        self.window = glfw.create_window(self.kWidth, self.kHeight, "GlTF Viewer", None, None)
+        self.window = glfw.create_window(
+            self.kWidth, self.kHeight, "GlTF Viewer", None, None
+        )
 
         glfw.set_cursor_pos_callback(self.window, self.on_cursor_pos)
         glfw.set_mouse_button_callback(self.window, self.on_mouse_button)
@@ -43,21 +47,28 @@ class Viewer(Base):
 
     def create_view(self, scene: Scene):
         wsd = None
-        if sys.platform == "darwin":
-            handle = glfw.get_cocoa_window(self.window)
-        elif sys.platform == "win32":
-            wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
-            handle = glfw.get_win32_window(self.window)
-            wsd.hwnd = as_capsule(handle)
-            wsd.hinstance = None
-
-        elif sys.platform == "linux":
-            handle = glfw.get_x11_window(self.window)
-            display = glfw.get_x11_display()
-            wsd = wgpu.SurfaceSourceXlibWindow(
-                display=as_capsule(display),
-                window=handle
-            )
+        match sys.platform:
+            case "darwin":
+                handle = glfw.get_cocoa_window(self.window)
+            case "win32":
+                wsd = wgpu.SurfaceDescriptorFromWindowsHWND()
+                handle = glfw.get_win32_window(self.window)
+                wsd.hwnd = as_capsule(handle)
+                wsd.hinstance = None
+            case "linux":
+                platform = glfw.get_platform()
+                if platform == glfw.PLATFORM_X11:
+                    display = glfw.get_x11_display()
+                    handle = glfw.get_x11_window(self.window)
+                    wsd = wgpu.SurfaceSourceXlibWindow(
+                        display=as_capsule(display), window=handle
+                    )
+                elif platform == glfw.PLATFORM_WAYLAND:
+                    display = glfw.get_wayland_display()
+                    surface = glfw.get_wayland_window(self.window)
+                    wsd = wgpu.SurfaceSourceWaylandSurface(
+                        display=as_capsule(display), surface=as_capsule(surface)
+                    )
 
         view = View(scene, glm.ivec2(self.kWidth, self.kHeight))
         view.create_from_wsd(wsd)
@@ -76,9 +87,6 @@ class Viewer(Base):
         target_frame_time = 1 / 60  # Target frame time for 60 FPS
 
         while not glfw.window_should_close(self.window):
-            #Error: Assertion failure at /home/kurt/Dev/crunge/depot/dawn/src/dawn/native/EventManager.cpp:479 (WaitRef): !wasAlreadyWaited
-            #globals.instance.process_events()
-
             glfw.poll_events()
 
             now = time.perf_counter()
@@ -99,12 +107,11 @@ class Viewer(Base):
             self.view.frame()
 
         glfw.destroy_window(self.window)
-        #glfw.terminate() # causes crash on exit
 
     def on_cursor_pos(self, window, xpos, ypos):
         self.camera_controller.on_cursor_pos(window, xpos, ypos)
 
-    def on_mouse_button(self,window, button, action, mods):
+    def on_mouse_button(self, window, button, action, mods):
         self.camera_controller.on_mouse_button(window, button, action, mods)
 
     def on_scroll(self, window, xoffset, yoffset):

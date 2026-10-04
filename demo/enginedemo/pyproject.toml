@@ -1,5 +1,6 @@
-[tool.setuptools]
-packages = ["enginedemo"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "enginedemo"
@@ -9,13 +10,23 @@ requires-python = ">=3.12"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
-    #"loguru ==0.7.2",
-    #"PyGLM ==2.7.1",
-    #"trimesh ==4.4.3",
     "trimesh ==5.0.0",
-    #"imageio ==2.34.2",
-
     "freetype-py ==2.5.1",
     "uharfbuzz ==0.47.0"
-
 ]
+
+[tool.hatch.envs.default]
+python = "3.12"
+installer = "uv"
+workspace.members = [
+  # Build toolchain
+  "../../../cxbuild",
+  # Generation toolchain (cxbuild requirement)
+  "../../../cxbind",
+
+  # Crunge packages
+  "../../pkg/core", "../../pkg/imgui", "../../pkg/wgpu", "../../pkg/skia", "../../pkg/yoga",
+  "../../pkg/sdl",
+  "../../pkg/engine", "../../pkg/gltf"
+]
+dependencies = ["uv", "pytest", "mypy"]

@@ -1,5 +1,6 @@
-[tool.setuptools]
-packages = ["spritedemo"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "spritedemo"
@@ -9,10 +10,23 @@ requires-python = ">=3.12"
 authors = [{ name = "Kurtis Fields", email = "kurtisfields@gmail.com" }]
 
 dependencies = [
-    "loguru ==0.7.2",
-    "scipy ==1.14.0",
-    "PyTMX ==3.32",
+    "loguru",
+    "scipy",
+    "PyTMX",
 ]
 
 [tool.hatch.envs.default]
-python="3.12"
+python = "3.12"
+installer = "uv"
+workspace.members = [
+  # Build toolchain
+  "../../../cxbuild",
+  # Generation toolchain (cxbuild requirement)
+  "../../../cxbind",
+
+  # Crunge packages
+  "../../pkg/core", "../../pkg/imgui", "../../pkg/wgpu", "../../pkg/skia", "../../pkg/yoga",
+  "../../pkg/sdl",
+  "../../pkg/engine", "../../pkg/demo",
+]
+dependencies = ["uv", "pytest", "mypy"]
