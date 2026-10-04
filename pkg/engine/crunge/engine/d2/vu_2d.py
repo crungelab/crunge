@@ -222,6 +222,7 @@ class Vu2D(Vu[Node2D]):
             # valid Python index, so without this guard the write lands on
             # the last slot and silently corrupts whoever owns it.
             return False
+        #logger.debug(f"flush {id(self):x} slot={self._node_buffer_index}")
         self.node_buffer[self._node_buffer_index] = self.build_uniform()
         return True
 

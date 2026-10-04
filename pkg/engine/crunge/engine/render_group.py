@@ -34,6 +34,7 @@ class RenderGroup(Chip[Any]):
 
     def __init__(self, is_managed: bool = False) -> None:
         super().__init__()
+        logger.debug(f"RenderGroup created: {id(self):x}")
         # is_managed: membership is somebody else's business — a grid that
         # rebuilds an ordered stream explicitly. Vus do not self-append.
         self.is_managed = is_managed
@@ -89,6 +90,12 @@ class RenderGroup(Chip[Any]):
     def group_for(self, vu: Vu) -> VuGroup:
         route = self.route_for(type(vu))
         groups = self.groups[route]
+        '''
+        logger.debug(
+            f"route={route.__name__} groups={len(groups)} "
+            f"full={[g.full for g in groups]} count={[g.count for g in groups]}"
+        )
+        '''
         for group in groups:
             if not group.full:
                 return group
@@ -184,12 +191,27 @@ class RenderGroup(Chip[Any]):
         super()._destroy()
 
     # -- frame -------------------------------------------------------------
+    def update(self, delta_time: float) -> None:
+        # Replan first. A clear-and-rebuild resets every slot to -1, so the
+        # replan is what assigns them — and a flush that runs before it
+        # writes each vu's uniform into whatever slot it held last frame.
+        # The vu then draws from its new slot, which still contains the
+        # previous occupant: a ghost at a position that was correct one
+        # frame ago. Nothing here depends on the members having updated
+        # first; replan reads only sort_key and ready.
+        if self._replan:
+            self.replan()
+        for group in self.groups_flat():
+            group.update(delta_time)
 
+    '''
     def update(self, delta_time: float) -> None:
         for group in self.groups_flat():
+            logger.debug(f"update: {len(group.members)} members")
             group.update(delta_time)
         if self._replan:
             self.replan()
+    '''
 
     def replan(self) -> None:
         entries: list[tuple[Any, VuGroup, Vu]] = []
