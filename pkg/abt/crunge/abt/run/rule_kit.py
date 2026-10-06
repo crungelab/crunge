@@ -22,18 +22,6 @@ class Match:
     def __repr__(self) -> str:
         return f"<Match {self.rule} {self.msg} {self.bindings}>"
 
-'''
-class Match:
-    __slots__ = ("msg", "rule")
-
-    def __init__(self, msg: Message, rule: "Rule"):
-        self.msg = msg
-        self.rule = rule
-
-    def __repr__(self) -> str:
-        return f"<Match {self.rule} {self.msg}>"
-'''
-
 #
 # Rule
 #
@@ -67,35 +55,6 @@ class Rule:
             return None
         return Match(msg, self, bindings)
 
-    '''
-    def match(self, msg: Message) -> Optional[Match]:
-        result = self.trigger.match(msg)
-        print("Match result: {}".format(result))
-        if not result:
-            return None
-        return Match(msg, self, result if isinstance(result, dict) else None)
-    '''
-
-    '''
-    def match(self, msg: Message) -> Optional[Match]:
-        if not self.trigger.match(msg):
-            return None
-        return Match(msg, self)
-    '''
-
-    '''
-    def match(self, msg: Message) -> Optional[Message]:
-        """The message stamped with this rule, or None.
-
-        A copy, so the same message can match several rules and each match
-        carries its own provenance.
-        """
-        if not self.trigger.match(msg):
-            return None
-        stamped = copy(msg)
-        stamped.rule = self
-        return stamped
-    '''
 
     def bind(self, node: "BaseNode") -> Callable:
         """The action as a method of `node`.

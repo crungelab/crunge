@@ -106,7 +106,7 @@ class TestRuleDecorator(unittest.TestCase):
         self.assertIsNone(Bare.get_cls_chip(RuleKit))
 
     def test_instances_share_the_class_kit(self):
-        self.assertIs(Host().get(RuleKit), Host().get(RuleKit))
+        self.assertIs(Host().get_chip(RuleKit), Host().get_chip(RuleKit))
 
     def test_multiple_triggers_make_multiple_rules(self):
         class Multi(BaseNode):

@@ -177,16 +177,6 @@ class Frame(Widget):
             self._display.build()
         self.ready()
 
-    '''
-    def reset(self) -> None:
-        if self._display is not None:
-            self._display.teardown()
-        self.teardown()
-        self.build()
-        if self._display is not None:
-            self._display.build()
-    '''
-
     def reset(self) -> None:
         self.teardown()
         if self._display is not None:
