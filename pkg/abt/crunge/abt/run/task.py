@@ -123,17 +123,6 @@ class Task[T: Task](BaseNode[T]):
         self.agent: Optional["Agent"] = AgentScope.top()
 
         self._rules: Optional[RuleKit] = None
-        '''
-        # `parent` and `children` belong to BaseNode now; attachment is what
-        # sets the link, not assignment.
-        parent = TaskScope.top()
-        if parent is not None:
-            parent.add_child(self)
-            # Scope wins over ambient for a task built inside a `with`: the
-            # is-None guards in on_child_added are for the runtime path.
-            self.agent = parent.agent
-            self.runner = parent.runner
-        '''
 
     def __enter__(self) -> "Task[T]":
         # `parent` and `children` belong to BaseNode now; attachment is what
@@ -207,23 +196,6 @@ class Task[T: Task](BaseNode[T]):
             raise TypeError(f"Not a coroutine function: {fn!r}")
         self.main = types.MethodType(fn, self)
 
-    '''
-    def use(self, fn):
-        if inspect.ismethod(fn):
-            self.main = fn
-            return
-        if not inspect.iscoroutinefunction(fn):
-            raise TypeError(f"Not a coroutine function: {fn!r}")
-        self.main = types.MethodType(fn, self)
-    '''
-
-    '''
-    def use(self, fn: Coroutine):
-        if not inspect.iscoroutinefunction(fn):
-            raise TypeError(f"Not a coroutine function: {fn!r}")
-        self.main = types.MethodType(fn, self)
-    '''
-
     def begin(self) -> bool:
         if self.status is Status.CANCELLED:
             logger.warning("Refusing to begin a cancelled task: {}", self)
@@ -233,18 +205,6 @@ class Task[T: Task](BaseNode[T]):
         self.coro = self.main(self.msg, **self.bindings)
         self.status = Status.RUNNING
         return True
-
-    '''
-    def begin(self) -> bool:
-        if self.status is Status.CANCELLED:
-            logger.warning("Refusing to begin a cancelled task: {}", self)
-            return False
-        if self.status.done:
-            self.reset()
-        self.coro = self.main(self.msg)
-        self.status = Status.RUNNING
-        return True
-    '''
 
     #
     # PREEMPTION
@@ -464,29 +424,6 @@ class Task[T: Task](BaseNode[T]):
         task.bindings = match.bindings
         self._runner().schedule(task)
         return task
-
-    '''
-    def dispatch(self, msg: Message) -> bool:
-        for child in self.children:
-            if child.dispatch(msg):
-                return True
-
-        # Previously fell off the end returning None, so a fired rule never
-        # stopped propagation and every sibling saw the message anyway.
-        fired = False
-        for match in self.match_rules(msg):
-            logger.debug("Fire:\t{}:", match)
-            self.schedule_task(match.rule.action, match.msg)
-            fired = True
-        if fired:
-            return True
-        return super().dispatch(msg)
-    '''
-
-    '''
-    def broadcast(self, msg: Message):
-        pass
-    '''
 
     def subscribe(self, trigger, action) -> Rule:
         return self.add_rule(Rule(trigger, action))
