@@ -1,7 +1,0 @@
--e ../procure
-
-../cxbind
-
--e ../cxbuild
--e ../cxtest
-

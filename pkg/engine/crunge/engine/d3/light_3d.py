@@ -4,10 +4,9 @@ from ctypes import sizeof
 import glm
 
 from crunge import wgpu
+from crunge.core import Pulse, Chip
 
 from ..uniforms import cast_vec3
-from crunge.core.signal import Pulse
-from crunge.core.chip import Chip
 from ..gfx_access import GfxAccess
 
 from .node_3d import Node3D

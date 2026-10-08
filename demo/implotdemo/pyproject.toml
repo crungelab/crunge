@@ -24,6 +24,9 @@ workspace.members = [
   # Generation toolchain (cxbuild requirement)
   "../../../cxbind",
 
+  # KCore
+  "../../../kcore",
+
   # Crunge packages
   "../../pkg/core", "../../pkg/imgui", "../../pkg/implot", "../../pkg/wgpu", "../../pkg/skia", "../../pkg/yoga",
   "../../pkg/sdl",

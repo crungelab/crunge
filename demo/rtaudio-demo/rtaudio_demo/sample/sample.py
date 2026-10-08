@@ -4,7 +4,7 @@ from loguru import logger
 import soundfile as sf
 import numpy as np
 
-from crunge.augr import (
+from crunge.rtaudio import (
     RtAudio,
     RtAudioStreamParameters,
     AudioFormat,

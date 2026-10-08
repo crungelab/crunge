@@ -3,9 +3,8 @@ from typing import List
 from loguru import logger
 
 from crunge import wgpu
-from crunge.core import klass
+from crunge.core import Base
 
-from crunge.core.base import Base
 from ..gfx_access import GfxAccess
 
 class BindGroupLayout(GfxAccess, Base):

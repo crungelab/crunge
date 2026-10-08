@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 from ... import Node
 
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from crunge.core import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 class SceneLayer(Node["SceneLayer"]):
     is_scene = False

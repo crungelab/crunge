@@ -17,7 +17,7 @@ from crunge.engine.resource.resource_manager import ResourceManager
 from crunge.engine.resource.texture import SpriteTexture
 from crunge.engine.d2.settings_2d import Settings2D
 
-from crunge.core.dispatch import DispatchResult, EVENT_UNHANDLED
+from crunge.core import DispatchResult, EVENT_UNHANDLED
 
 
 class WidgetControl2D(Control2D):

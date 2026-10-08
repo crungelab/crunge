@@ -1,4 +1,4 @@
-from crunge.core.chip import Chip
+from crunge.core import Chip
 
 #from .agents.behavioral import BehavioralWyggleAgent as MyAgent
 #from .agents.default import DefaultWyggleAgent as MyAgent

@@ -4,8 +4,7 @@ import glm
 from loguru import logger
 
 from crunge import wgpu
-from crunge.core import klass
-from crunge.core.signal import Signal, Pulse
+from crunge.core import klass, Signal, Pulse
 
 from ..math import Bounds2, Rect2i
 from ..viewport import Viewport

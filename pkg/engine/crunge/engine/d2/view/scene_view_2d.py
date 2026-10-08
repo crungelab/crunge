@@ -2,7 +2,7 @@ from loguru import logger
 import glm
 from crunge import sdl
 
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from crunge.core import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from ...event import PointerInput
 

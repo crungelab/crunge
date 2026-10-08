@@ -2,7 +2,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from crunge.augr import RtAudio
+from crunge.rtaudio import RtAudio
 
 
 class Trial:

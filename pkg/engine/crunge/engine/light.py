@@ -8,7 +8,7 @@ from .d3.uniforms_3d import (
     AmbientLightUniform,
 )
 
-from crunge.core.base import Base
+from crunge.core import Base
 from .gfx_access import GfxAccess
 
 

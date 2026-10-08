@@ -1,4 +1,4 @@
-from crunge.core.chip import Chip
+from crunge.core import Chip
 from typing import TYPE_CHECKING
 from .cursors import CURSOR_HAND
 

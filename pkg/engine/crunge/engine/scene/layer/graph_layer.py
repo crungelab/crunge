@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from crunge.core import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from ..scene_node import SceneNode
 

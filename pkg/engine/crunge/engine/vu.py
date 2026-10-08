@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 from .gfx_access import GfxAccess
-from crunge.core.chip import Chip
+from crunge.core import Chip
 
 from .viewport import Viewport
 from .easel import Easel

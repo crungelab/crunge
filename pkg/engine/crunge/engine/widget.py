@@ -5,8 +5,7 @@ import glm
 
 from crunge import yoga
 
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
-from crunge.core.signal import Signal
+from crunge.core import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED, Signal
 
 from .event.event_handler import EventHandler
 from .node import Node

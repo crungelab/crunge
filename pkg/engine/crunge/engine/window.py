@@ -10,8 +10,8 @@ import glm
 from crunge import sdl
 from crunge import yoga
 
-from crunge.core.signal import Signal, Pulse
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+from crunge.core import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED, Signal, Pulse
+
 from . import SurfaceEasel, Viewport, Renderer, RenderOptions, compose
 from .frame import Frame
 from .hover import HoverTracker

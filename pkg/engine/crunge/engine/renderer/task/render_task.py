@@ -1,6 +1,6 @@
 from loguru import logger
 
-from crunge.core.base import Base
+from crunge.core import Base
 
 from ..renderer import Renderer
 

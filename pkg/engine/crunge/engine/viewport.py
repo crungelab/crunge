@@ -10,9 +10,9 @@ import glm
 from crunge import wgpu
 from crunge import skia
 
+from crunge.core import Base, Signal
+
 from .gfx_access import GfxAccess
-from crunge.core.base import Base
-from crunge.core.signal import Signal
 from .math import Rect2i
 from .uniforms import ViewportUniform, cast_vec2
 from .easel import Easel

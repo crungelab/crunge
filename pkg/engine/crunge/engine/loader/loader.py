@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from crunge.core.base import Base
+from crunge.core import Base
 class Loader(Base):
     def __init__(self) -> None:
         super().__init__()

@@ -13,7 +13,7 @@ from uuid import uuid1
 
 from loguru import logger
 
-from crunge.core.base_node import BaseNode
+from crunge.core import BaseNode
 
 from ..utils import singleton
 from ..run.message import Message

@@ -3,8 +3,7 @@ from loguru import logger
 from crunge import wgpu
 from crunge.wgpu.utils import divround_up
 
-from crunge.core.base import Base
-from crunge.core.signal import Signal
+from crunge.core import Base, Signal
 
 from ..gfx_access import GfxAccess
 

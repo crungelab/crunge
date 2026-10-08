@@ -10,10 +10,10 @@ import glm
 from crunge import sdl
 from crunge import imgui
 from crunge.imgui import Key
+from crunge.core import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from ..math import Rect2i
 from ..overlay import Overlay
-from crunge.core.dispatch import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
 
 from .vu import ImGuiVu
 from .scancode_map import scancode_map

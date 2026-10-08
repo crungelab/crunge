@@ -5,9 +5,8 @@ from bisect import insort
 
 import glm
 
-from crunge.core.signal import Signal
-from crunge.core.base_node import BaseNode
-from crunge.core.chip import Chip
+from crunge.core import Chip, BaseNode, Signal
+
 from .vu import Vu
 from .render_group import RenderGroup
 from .controller import Controller

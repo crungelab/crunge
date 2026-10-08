@@ -5,8 +5,7 @@ from crunge.engine.math.rect import Rect2i
 from loguru import logger
 import glm
 
-from crunge.core import klass
-from crunge.core.signal import Pulse
+from crunge.core import klass, Pulse
 
 from crunge import wgpu
 

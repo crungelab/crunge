@@ -113,7 +113,7 @@ class ImGuiSampler(Sampler):
         super().__init__(sampler)
 
 
-@klass.singleton_producer
+@klass.singleton_creator
 class ImGuiVu(Vu):
     def __init__(self) -> None:
         super().__init__()

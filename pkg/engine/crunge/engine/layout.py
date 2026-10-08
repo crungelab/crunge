@@ -8,8 +8,7 @@ import glm
 
 from crunge import yoga
 
-from crunge.core.base_node import BaseNode
-from crunge.core.chip import Chip
+from crunge.core import BaseNode, Chip
 
 
 class Layout[N: BaseNode](Chip[N]):

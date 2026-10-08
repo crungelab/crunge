@@ -2,7 +2,7 @@ from typing import Any, Callable, Iterator
 
 from loguru import logger
 
-from crunge.core.chip import Chip
+from crunge.core import Chip
 
 from .renderer import Renderer
 from .render_state import RenderState

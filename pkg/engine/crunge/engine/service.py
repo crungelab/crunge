@@ -1,4 +1,4 @@
-from crunge.core.base import Base
+from crunge.core import Base
 
 
 class Service(Base):
