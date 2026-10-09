@@ -1,0 +1,165 @@
+from typing import Self
+from enum import Enum, auto
+
+from loguru import logger
+
+
+from . import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED
+
+
+class Lifetime(Enum):
+    INITIAL = auto()
+    CREATING = auto()
+    CREATED = auto()
+    DESTROYING = auto()
+    DESTROYED = auto()
+
+
+class Base:
+
+    def __init__(self) -> None:
+        self._lifetime = Lifetime.INITIAL
+        self._is_enabled = False
+        # Not part of Lifetime: that enum is a one-way progression, while
+        # ready fires again on every rebuild. Same shape as _is_enabled.
+        self._is_ready = False
+
+    @property
+    def is_created(self) -> bool:
+        return self._lifetime is Lifetime.CREATED
+
+    @property
+    def is_creating(self) -> bool:
+        return self._lifetime is Lifetime.CREATING
+
+    @property
+    def is_destroyed(self) -> bool:
+        return self._lifetime is Lifetime.DESTROYED
+
+    @property
+    def is_destroying(self) -> bool:
+        return self._lifetime is Lifetime.DESTROYING
+
+    @property
+    def is_enabled(self) -> bool:
+        return self._is_enabled
+
+    @property
+    def is_ready(self) -> bool:
+        return self._is_ready
+
+    def create(self) -> Self:
+        if self._lifetime is not Lifetime.INITIAL:
+            return self
+        self._lifetime = Lifetime.CREATING
+        self._create()
+        self.create_children()
+        self._lifetime = Lifetime.CREATED
+        self._created()
+        return self
+
+    def _create(self) -> None:
+        """Top-down. Own resources. Children NOT created yet."""
+        pass
+
+    def create_children(self) -> None:
+        """Containers override."""
+        pass
+
+    def _created(self) -> None:
+        """Bottom-up. Children created and reachable."""
+        pass
+
+    def destroy(self):
+        if self._lifetime in (Lifetime.DESTROYING, Lifetime.DESTROYED):
+            return self
+        self._lifetime = Lifetime.DESTROYING
+        self.disable()
+        self._is_ready = False
+        self.destroy_children()
+        self._destroy()
+        self._lifetime = Lifetime.DESTROYED
+        self._destroyed()
+        return self
+
+    def _destroy(self) -> None:
+        pass
+
+    def destroy_children(self) -> None:
+        """Containers override."""
+        pass
+
+    def _destroyed(self) -> None:
+        """Bottom-up. Own resources already released. Children destroyed and unreachable."""
+        pass
+
+    def enable(self):
+        if self._is_enabled:
+            return self
+        if self.is_creating:
+            logger.warning(f"enable() during create: {self}")
+            return self
+        if not self.is_created:
+            self.create()
+        self._is_enabled = True
+        self._enable()
+        self.enable_children()
+        return self
+
+    def _enable(self) -> None:
+        pass
+
+    def enable_children(self) -> None:
+        """Containers override."""
+        pass
+
+    def ready(self) -> None:
+        """Deliberately unguarded: a rebuild must re-fire this. _is_ready
+        records that it has happened so _sync_lifetime can catch up a late
+        arrival -- it is not a gate."""
+        self.ready_children()
+        self._ready()
+        self._is_ready = True
+
+    def _ready(self) -> None:
+        """The surrounding world is built -- scene-wide lookups are safe here,
+        and nowhere earlier. Runs again on every rebuild, so this must be
+        idempotent: assignment is fine, appending to a list or connecting a
+        signal will double up."""
+        pass
+
+    def ready_children(self) -> None:
+        """Containers override."""
+        pass
+
+    def disable(self):
+        if not self._is_enabled:
+            return self
+        self._is_enabled = False
+        self.disable_children()
+        self._disable()
+        return self
+
+    def disable_children(self) -> None:
+        """Containers override."""
+        pass
+
+    def _disable(self) -> None:
+        pass
+
+    def _sync_lifetime(self, obj: "Base"):
+        """Bring obj up to this node's lifetime state."""
+        '''
+        logger.debug(
+            f"Sync lifetime: {self} : {self._lifetime} -> {obj} : {obj._lifetime}"
+        )
+        '''
+        if self.is_created:
+            obj.create()
+        if self._is_enabled:
+            obj.enable()
+        if self._is_ready:
+            obj.ready()
+
+    def dispatch(self, event) -> DispatchResult:
+        return EVENT_UNHANDLED

@@ -3,8 +3,15 @@ __version__ = '0.1.0'
 import sys
 from pathlib import Path
 
-from kcore import DispatchResult, EVENT_HANDLED, EVENT_UNHANDLED, Base, BaseNode, Chip, Signal, Pulse
-from kcore import klass
+type DispatchResult = bool
+
+EVENT_HANDLED: DispatchResult = True
+EVENT_UNHANDLED: DispatchResult = False
+
+from .base import Base
+from .chip import Chip
+from .base_node import BaseNode
+from .signal import Signal, Pulse
 
 from .utils import as_capsule, from_capsule, pointer_to_memoryview
 

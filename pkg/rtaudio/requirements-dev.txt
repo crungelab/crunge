@@ -1,3 +1,0 @@
--e ../core
--e ../../../cxbind
--e ../../../cxbind/plugins/clang

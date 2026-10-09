@@ -501,6 +501,7 @@ class PenProximityEvent(metaclass=_pybind11_type):
     window_id: int
     which: int
     pen_state: int
+    device_type: Any
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
 class PenMotionEvent(metaclass=_pybind11_type):
@@ -512,6 +513,7 @@ class PenMotionEvent(metaclass=_pybind11_type):
     pen_state: int
     x: float
     y: float
+    device_type: Any
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
 class PenTouchEvent(metaclass=_pybind11_type):
@@ -525,6 +527,7 @@ class PenTouchEvent(metaclass=_pybind11_type):
     y: float
     eraser: bool
     down: bool
+    device_type: Any
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
 class PenButtonEvent(metaclass=_pybind11_type):
@@ -538,6 +541,7 @@ class PenButtonEvent(metaclass=_pybind11_type):
     y: float
     button: int
     down: bool
+    device_type: Any
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
 class PenAxisEvent(metaclass=_pybind11_type):
@@ -551,6 +555,7 @@ class PenAxisEvent(metaclass=_pybind11_type):
     y: float
     axis: Any
     value: float
+    device_type: Any
     def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
 class DropEvent(metaclass=_pybind11_type):

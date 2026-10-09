@@ -29,6 +29,47 @@ class SurfaceEasel(Easel):
         self.configure_surface()
         self.resized = True
 
+    def create_surface(self):
+        logger.debug("Creating surface")
+        props = sdl.get_window_properties(self.window)
+        wsd = None
+
+        match sys.platform:
+            case "darwin":
+                # Needs SDL_WINDOW_METAL in the window flags
+                self.metal_view = sdl.metal_create_view(self.window)
+                layer = sdl.metal_get_layer(self.metal_view)
+                wsd = wgpu.SurfaceSourceMetalLayer(layer=layer)
+
+            case "win32":
+                hwnd = sdl.get_pointer_property(props, "SDL.window.win32.hwnd", None)
+                hinstance = sdl.get_pointer_property(props, "SDL.window.win32.instance", None)
+                wsd = wgpu.SurfaceSourceWindowsHWND(hwnd=hwnd, hinstance=hinstance)
+
+            case "linux":
+                match sdl.get_current_video_driver():
+                    case "x11":
+                        logger.debug("Using X11 video driver")
+                        display = sdl.get_pointer_property(props, "SDL.window.x11.display", None)
+                        window = sdl.get_number_property(props, "SDL.window.x11.window", 0)
+                        wsd = wgpu.SurfaceSourceXlibWindow(display=display, window=window)
+                    case "wayland":
+                        logger.debug("Using Wayland video driver")
+                        display = sdl.get_pointer_property(props, "SDL.window.wayland.display", None)
+                        surface = sdl.get_pointer_property(props, "SDL.window.wayland.surface", None)
+                        wsd = wgpu.SurfaceSourceWaylandSurface(display=display, surface=surface)
+
+        if wsd is None:
+            raise RuntimeError(
+                f"Unsupported platform/video driver: {sys.platform} / {sdl.get_current_video_driver()}"
+            )
+
+        sd = wgpu.SurfaceDescriptor(next_in_chain=wsd)
+        self.surface = self.instance.create_surface(sd)
+        logger.debug(self.surface)
+        self.configure_surface()
+
+    '''
     def create_surface(self) -> None:
         logger.debug("Creating surface")
         properties = sdl.get_window_properties(self.window)
@@ -54,6 +95,7 @@ class SurfaceEasel(Easel):
         self.surface = self.instance.create_surface(sd)
         logger.debug(self.surface)
         self.configure_surface()
+    '''
 
     def configure_surface(self) -> None:
         self.gfx.wait_for_gpu()

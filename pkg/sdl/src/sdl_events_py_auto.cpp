@@ -563,6 +563,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("window_id", &SDL_PenProximityEvent::windowID)
         .def_readwrite("which", &SDL_PenProximityEvent::which)
         .def_readwrite("pen_state", &SDL_PenProximityEvent::pen_state)
+        .def_readwrite("device_type", &SDL_PenProximityEvent::device_type)
     ;
 
     py::class_<SDL_PenMotionEvent> _PenMotionEvent(_sdl, "PenMotionEvent");
@@ -576,6 +577,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("pen_state", &SDL_PenMotionEvent::pen_state)
         .def_readwrite("x", &SDL_PenMotionEvent::x)
         .def_readwrite("y", &SDL_PenMotionEvent::y)
+        .def_readwrite("device_type", &SDL_PenMotionEvent::device_type)
     ;
 
     py::class_<SDL_PenTouchEvent> _PenTouchEvent(_sdl, "PenTouchEvent");
@@ -591,6 +593,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("y", &SDL_PenTouchEvent::y)
         .def_readwrite("eraser", &SDL_PenTouchEvent::eraser)
         .def_readwrite("down", &SDL_PenTouchEvent::down)
+        .def_readwrite("device_type", &SDL_PenTouchEvent::device_type)
     ;
 
     py::class_<SDL_PenButtonEvent> _PenButtonEvent(_sdl, "PenButtonEvent");
@@ -606,6 +609,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("y", &SDL_PenButtonEvent::y)
         .def_readwrite("button", &SDL_PenButtonEvent::button)
         .def_readwrite("down", &SDL_PenButtonEvent::down)
+        .def_readwrite("device_type", &SDL_PenButtonEvent::device_type)
     ;
 
     py::class_<SDL_PenAxisEvent> _PenAxisEvent(_sdl, "PenAxisEvent");
@@ -621,6 +625,7 @@ void init_sdl_events_py_auto(py::module &_sdl, Registry &registry) {
         .def_readwrite("y", &SDL_PenAxisEvent::y)
         .def_readwrite("axis", &SDL_PenAxisEvent::axis)
         .def_readwrite("value", &SDL_PenAxisEvent::value)
+        .def_readwrite("device_type", &SDL_PenAxisEvent::device_type)
     ;
 
     py::class_<SDL_DropEvent> _DropEvent(_sdl, "DropEvent");

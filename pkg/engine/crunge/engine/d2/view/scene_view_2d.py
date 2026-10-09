@@ -57,7 +57,7 @@ class SceneView2D(View2D):
     def hover_portal(self, x: float, y: float):
         world = self._world_point(x, y)
         hit = self.scene.widget_at(world)
-        logger.debug(f"portal: ({x:.0f}, {y:.0f}) -> world {world} -> {hit}")
+        #logger.debug(f"portal: ({x:.0f}, {y:.0f}) -> world {world} -> {hit}")
         return hit
 
     '''
