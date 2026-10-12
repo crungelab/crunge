@@ -63,8 +63,7 @@ def request_adapter_sync(instance: wgpu.Instance) -> wgpu.Adapter:
     return adapter_holder
 
 def main():
-    capabilities = wgpu.InstanceCapabilities(timed_wait_any_enable = True)
-    instance_descriptor = wgpu.InstanceDescriptor(capabilities=capabilities)
+    instance_descriptor = wgpu.InstanceDescriptor(required_features=[wgpu.InstanceFeatureName.TIMED_WAIT_ANY])
     instance = wgpu.create_instance(instance_descriptor)
 
     #adapter = instance.request_adapter()

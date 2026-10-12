@@ -88,7 +88,7 @@ class GraphLayer[T_Node: SceneNode](SceneLayer):
 
     def dispatch(self, input) -> DispatchResult:
         for control in reversed(self._controls):
-            logger.debug(f"Dispatching input {input} to control {control}")
+            #logger.debug(f"Dispatching input {input} to control {control}")
             if control.dispatch(input):
                 return EVENT_HANDLED
         return super().dispatch(input)
